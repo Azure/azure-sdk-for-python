@@ -838,6 +838,10 @@ class Subscription(_serialization.Model):
     :ivar state: The subscription state. Possible values are Enabled, Warned, PastDue, Disabled,
      and Deleted. Known values are: "Enabled", "Warned", "PastDue", "Disabled", and "Deleted".
     :vartype state: str or ~azure.mgmt.subscription.models.SubscriptionState
+    :ivar tenant_id: The tenant ID. For example, 00000000-0000-0000-0000-000000000000.
+    :vartype tenant_id: str
+    :ivar tags: Tags for the subscription.
+    :vartype tags: dict[str, str]
     :ivar subscription_policies: The subscription policies.
     :vartype subscription_policies: ~azure.mgmt.subscription.models.SubscriptionPolicies
     :ivar authorization_source: The authorization source of the request. Valid values are one or
@@ -851,6 +855,7 @@ class Subscription(_serialization.Model):
         "subscription_id": {"readonly": True},
         "display_name": {"readonly": True},
         "state": {"readonly": True},
+        "tenant_id": {"readonly": True},
     }
 
     _attribute_map = {
@@ -858,6 +863,8 @@ class Subscription(_serialization.Model):
         "subscription_id": {"key": "subscriptionId", "type": "str"},
         "display_name": {"key": "displayName", "type": "str"},
         "state": {"key": "state", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
         "subscription_policies": {"key": "subscriptionPolicies", "type": "SubscriptionPolicies"},
         "authorization_source": {"key": "authorizationSource", "type": "str"},
     }
@@ -865,11 +872,14 @@ class Subscription(_serialization.Model):
     def __init__(
         self,
         *,
+        tags: Optional[Dict[str, str]] = None,
         subscription_policies: Optional["_models.SubscriptionPolicies"] = None,
         authorization_source: Optional[str] = None,
         **kwargs
     ):
         """
+        :keyword tags: Tags for the subscription.
+        :paramtype tags: dict[str, str]
         :keyword subscription_policies: The subscription policies.
         :paramtype subscription_policies: ~azure.mgmt.subscription.models.SubscriptionPolicies
         :keyword authorization_source: The authorization source of the request. Valid values are one or
@@ -882,6 +892,8 @@ class Subscription(_serialization.Model):
         self.subscription_id = None
         self.display_name = None
         self.state = None
+        self.tenant_id = None
+        self.tags = tags
         self.subscription_policies = subscription_policies
         self.authorization_source = authorization_source
 
@@ -1233,16 +1245,45 @@ class TenantIdDescription(_serialization.Model):
     :vartype id: str
     :ivar tenant_id: The tenant ID. For example, 00000000-0000-0000-0000-000000000000.
     :vartype tenant_id: str
+    :ivar tenant_category: The category of the tenant. Possible values are
+     TenantCategoryHome,TenantCategoryProjectedBy,TenantCategoryManagedBy.
+    :vartype tenant_category: str
+    :ivar country: The country/region name of the address for the tenant.
+    :vartype country: str
+    :ivar country_code: The Country/region abbreviation for the tenant.
+    :vartype country_code: str
+    :ivar display_name: The display name of the tenant.
+    :vartype display_name: str
+    :ivar domains: The list of domains for the tenant.
+    :vartype domains: str
+    :ivar default_domain: The default domain for the tenant.
+    :vartype default_domain: str
+    :ivar tenant_type: The tenant type. Only available for Home tenant category.
+    :vartype tenant_type: str
     """
 
     _validation = {
         "id": {"readonly": True},
         "tenant_id": {"readonly": True},
+        "tenant_category": {"readonly": True},
+        "country": {"readonly": True},
+        "country_code": {"readonly": True},
+        "display_name": {"readonly": True},
+        "domains": {"readonly": True},
+        "default_domain": {"readonly": True},
+        "tenant_type": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "tenant_id": {"key": "tenantId", "type": "str"},
+        "tenant_category": {"key": "tenantCategory", "type": "str"},
+        "country": {"key": "country", "type": "str"},
+        "country_code": {"key": "countryCode", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "domains": {"key": "domains", "type": "str"},
+        "default_domain": {"key": "defaultDomain", "type": "str"},
+        "tenant_type": {"key": "tenantType", "type": "str"},
     }
 
     def __init__(self, **kwargs):
@@ -1250,6 +1291,13 @@ class TenantIdDescription(_serialization.Model):
         super().__init__(**kwargs)
         self.id = None
         self.tenant_id = None
+        self.tenant_category = None
+        self.country = None
+        self.country_code = None
+        self.display_name = None
+        self.domains = None
+        self.default_domain = None
+        self.tenant_type = None
 
 
 class TenantListResult(_serialization.Model):

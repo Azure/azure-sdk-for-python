@@ -2,9 +2,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import pytest
-from .._util import _UTILS_TIMEOUT_SECOND
-
 from devtools_testutils import AzureRecordedTestCase
+
+from .._util import _UTILS_TIMEOUT_SECOND
 
 
 @pytest.mark.timeout(_UTILS_TIMEOUT_SECOND)

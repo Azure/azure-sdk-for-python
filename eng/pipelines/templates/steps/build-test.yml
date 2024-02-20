@@ -31,10 +31,14 @@ steps:
     parameters:
       versionSpec: '${{ parameters.PythonVersion }}'
 
-  - script: |
-      python -m pip install pip==20.3.3
+  - pwsh: |
+      $ErrorActionPreference = 'Stop'
+      $PSNativeCommandUseErrorActionPreference = $true
+      python -m pip freeze
+      python -m pip install pip==23.2.1
+      python -m pip install setuptools==67.6.0
       python -m pip install wheel==0.37.0
-      pip install -r eng/ci_tools.txt
+      python -m pip install -r eng/ci_tools.txt
       pip --version
       pip freeze
     displayName: 'Prep Environment'
@@ -56,7 +60,7 @@ steps:
   - task: PythonScript@0
     displayName: 'Run Tests'
     inputs:
-      scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+      scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
       arguments: >-
         "$(TargetingString)"
         ${{ parameters.AdditionalTestArgs }}
@@ -79,38 +83,41 @@ steps:
       displayName: Dump Test-Proxy Logs
       condition: succeededOrFailed()
 
+  - ${{ parameters.AfterTestSteps }}
+
+  - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+    parameters:
+      ArtifactPath: '$(Build.SourcesDirectory)/_coverage'
+      ArtifactName: '$(System.StageName)_$(Agent.JobName)_coverage'
+      CustomCondition: '${{ parameters.RunCoverage }}'
+
+  - pwsh: |
+      python -m pip install coverage==7.2.5
+      python scripts/devops_tasks/create_coverage.py
+    displayName: Create Coverage Report
+    condition: and(succeeded(), ${{ parameters.RunCoverage }})
+
+  - task: PythonScript@0
+    displayName: 'Test Samples'
+    condition: and(succeeded(), eq(variables['TestSamples'], 'true'))
+    inputs:
+      scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
+      arguments: >-
+        "$(TargetingString)"
+        --service="${{ parameters.ServiceDirectory }}"
+        --toxenv="samples"
+    env: ${{ parameters.EnvVars }}
+
   - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
     parameters:
       ArtifactPath: '$(Build.SourcesDirectory)/.logs'
       ArtifactName: '$(System.StageName)_$(Agent.JobName)_logs'
 
-  - task: PublishPipelineArtifact@1
-    displayName: Publish Tox Logs
-    condition: failed()
-    continueOnError: true
-    inputs:
-      targetPath: '$(Build.SourcesDirectory)/_tox_logs'
-      artifactType: 'pipeline'
-
-  - ${{ parameters.AfterTestSteps }}
-
-  - pwsh: |
-      if (Test-Path -Path '.\_coverage\') {
-        Get-ChildItem .\_coverage\ -Recurse |
-        Foreach-Object {
-          Get-Content $_
-        }
-      }
-    displayName: 'Show .coverage files'
-    condition: and(succeeded(), ${{ parameters.RunCoverage }})
-
-  - task: PublishPipelineArtifact@1
-    displayName: 'Publish .coverage files'
-    continueOnError: true
-    condition: and(succeeded(), ${{ parameters.RunCoverage }})
-    inputs:
-      targetPath: '$(Build.SourcesDirectory)/_coverage'
-      artifactType: 'pipeline'
+  - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+    parameters:
+      ArtifactPath: '$(Build.SourcesDirectory)/_tox_logs'
+      ArtifactName: '$(System.StageName)_$(Agent.JobName)_tox_logs'
+      CustomCondition: failed()
 
   - task: PublishTestResults@2
     condition: always()
@@ -119,13 +126,10 @@ steps:
       testRunTitle: '${{ parameters.ServiceDirectory }} ${{ parameters.CloudName }} $(Agent.JobName)'
       failTaskOnFailedTests: true
 
-  - task: PythonScript@0
-    displayName: 'Test Samples'
-    condition: and(succeeded(), eq(variables['TestSamples'], 'true'))
+  - task: PublishCodeCoverageResults@1
+    displayName: 'Publish Code Coverage to DevOps'
+    continueOnError: true
+    condition: and(succeeded(), ${{ parameters.RunCoverage }})
     inputs:
-      scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
-      arguments: >-
-        "$(TargetingString)"
-        --service="${{ parameters.ServiceDirectory }}"
-        --toxenv="samples"
-    env: ${{ parameters.EnvVars }}
+      codeCoverageTool: Cobertura
+      summaryFileLocation: '$(Build.SourcesDirectory)/coverage.xml'

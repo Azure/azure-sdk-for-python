@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -9,15 +10,14 @@
 import datetime
 from typing import Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from .. import _serialization
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    import __init__ as _models
+    from .. import models as _models
 
 
-class Amount(msrest.serialization.Model):
+class Amount(_serialization.Model):
     """The amount.
 
     :ivar currency: The type of currency being used for the value.
@@ -27,29 +27,23 @@ class Amount(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'currency': {'key': 'currency', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'float'},
+        "currency": {"key": "currency", "type": "str"},
+        "value": {"key": "value", "type": "float"},
     }
 
-    def __init__(
-        self,
-        *,
-        currency: Optional[str] = None,
-        value: Optional[float] = None,
-        **kwargs
-    ):
+    def __init__(self, *, currency: Optional[str] = None, value: Optional[float] = None, **kwargs):
         """
         :keyword currency: The type of currency being used for the value.
         :paramtype currency: str
         :keyword value: Amount value.
         :paramtype value: float
         """
-        super(Amount, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.currency = currency
         self.value = value
 
 
-class ErrorResponse(msrest.serialization.Model):
+class ErrorResponse(_serialization.Model):
     """Describes the format of Error response.
 
     :ivar code: Error code.
@@ -59,29 +53,23 @@ class ErrorResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        message: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
         """
         :keyword code: Error code.
         :paramtype code: str
         :keyword message: Error message indicating why the operation failed.
         :paramtype message: str
         """
-        super(ErrorResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
 
 
-class ErrorResponseBody(msrest.serialization.Model):
+class ErrorResponseBody(_serialization.Model):
     """Error response indicates that the service is not able to process the incoming request. The reason is provided in the error message.
 
     :ivar error: The details of the error.
@@ -89,24 +77,19 @@ class ErrorResponseBody(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorResponse'},
+        "error": {"key": "error", "type": "ErrorResponse"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: Optional["_models.ErrorResponse"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, error: Optional["_models.ErrorResponse"] = None, **kwargs):
         """
         :keyword error: The details of the error.
         :paramtype error: ~azure.mgmt.education.models.ErrorResponse
         """
-        super(ErrorResponseBody, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.error = error
 
 
-class Resource(msrest.serialization.Model):
+class Resource(_serialization.Model):
     """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -125,26 +108,22 @@ class Resource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(Resource, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -171,49 +150,45 @@ class GrantDetails(Resource):
     :vartype offer_cap: ~azure.mgmt.education.models.Amount
     :ivar effective_date: Grant Effective Date.
     :vartype effective_date: ~datetime.datetime
-    :ivar offer_type: Grant Offer Type. Known values are: "Student", "Academic".
+    :ivar offer_type: Grant Offer Type. Known values are: "Student" and "Academic".
     :vartype offer_type: str or ~azure.mgmt.education.models.GrantType
     :ivar expiration_date: Expiration Date.
     :vartype expiration_date: ~datetime.datetime
-    :ivar status: Grant status. Known values are: "Active", "Inactive".
+    :ivar status: Grant status. Known values are: "Active" and "Inactive".
     :vartype status: str or ~azure.mgmt.education.models.GrantStatus
     :ivar allocated_budget: allocated budget.
     :vartype allocated_budget: ~azure.mgmt.education.models.Amount
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'offer_cap': {'readonly': True},
-        'effective_date': {'readonly': True},
-        'offer_type': {'readonly': True},
-        'expiration_date': {'readonly': True},
-        'status': {'readonly': True},
-        'allocated_budget': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "offer_cap": {"readonly": True},
+        "effective_date": {"readonly": True},
+        "offer_type": {"readonly": True},
+        "expiration_date": {"readonly": True},
+        "status": {"readonly": True},
+        "allocated_budget": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'offer_cap': {'key': 'properties.offerCap', 'type': 'Amount'},
-        'effective_date': {'key': 'properties.effectiveDate', 'type': 'iso-8601'},
-        'offer_type': {'key': 'properties.offerType', 'type': 'str'},
-        'expiration_date': {'key': 'properties.expirationDate', 'type': 'iso-8601'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'allocated_budget': {'key': 'properties.allocatedBudget', 'type': 'Amount'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "offer_cap": {"key": "properties.offerCap", "type": "Amount"},
+        "effective_date": {"key": "properties.effectiveDate", "type": "iso-8601"},
+        "offer_type": {"key": "properties.offerType", "type": "str"},
+        "expiration_date": {"key": "properties.expirationDate", "type": "iso-8601"},
+        "status": {"key": "properties.status", "type": "str"},
+        "allocated_budget": {"key": "properties.allocatedBudget", "type": "Amount"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(GrantDetails, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.offer_cap = None
         self.effective_date = None
         self.offer_type = None
@@ -222,7 +197,7 @@ class GrantDetails(Resource):
         self.allocated_budget = None
 
 
-class GrantListResponse(msrest.serialization.Model):
+class GrantListResponse(_serialization.Model):
     """List of Grants info.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -234,27 +209,23 @@ class GrantListResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[GrantDetails]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[GrantDetails]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(GrantListResponse, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class InviteCodeGenerateRequest(msrest.serialization.Model):
+class InviteCodeGenerateRequest(_serialization.Model):
     """invite code generate request.
 
     :ivar max_student_count: the total number of students that can be accepted to the lab.
@@ -262,20 +233,15 @@ class InviteCodeGenerateRequest(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'max_student_count': {'key': 'maxStudentCount', 'type': 'float'},
+        "max_student_count": {"key": "maxStudentCount", "type": "float"},
     }
 
-    def __init__(
-        self,
-        *,
-        max_student_count: Optional[float] = None,
-        **kwargs
-    ):
+    def __init__(self, *, max_student_count: Optional[float] = None, **kwargs):
         """
         :keyword max_student_count: the total number of students that can be accepted to the lab.
         :paramtype max_student_count: float
         """
-        super(InviteCodeGenerateRequest, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.max_student_count = max_student_count
 
 
@@ -301,26 +267,26 @@ class JoinRequestDetails(Resource):
     :vartype last_name: str
     :ivar email: join request email.
     :vartype email: str
-    :ivar status: Join request status. Known values are: "Pending", "Denied".
+    :ivar status: Join request status. Known values are: "Pending" and "Denied".
     :vartype status: str or ~azure.mgmt.education.models.JoinRequestStatus
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'first_name': {'key': 'properties.firstName', 'type': 'str'},
-        'last_name': {'key': 'properties.lastName', 'type': 'str'},
-        'email': {'key': 'properties.email', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "first_name": {"key": "properties.firstName", "type": "str"},
+        "last_name": {"key": "properties.lastName", "type": "str"},
+        "email": {"key": "properties.email", "type": "str"},
+        "status": {"key": "properties.status", "type": "str"},
     }
 
     def __init__(
@@ -339,17 +305,17 @@ class JoinRequestDetails(Resource):
         :paramtype last_name: str
         :keyword email: join request email.
         :paramtype email: str
-        :keyword status: Join request status. Known values are: "Pending", "Denied".
+        :keyword status: Join request status. Known values are: "Pending" and "Denied".
         :paramtype status: str or ~azure.mgmt.education.models.JoinRequestStatus
         """
-        super(JoinRequestDetails, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.first_name = first_name
         self.last_name = last_name
         self.email = email
         self.status = status
 
 
-class JoinRequestList(msrest.serialization.Model):
+class JoinRequestList(_serialization.Model):
     """list of join requests.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -361,27 +327,23 @@ class JoinRequestList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[JoinRequestDetails]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[JoinRequestDetails]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(JoinRequestList, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class LabDetails(Resource):
+class LabDetails(Resource):  # pylint: disable=too-many-instance-attributes
     """Lab details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -407,7 +369,7 @@ class LabDetails(Resource):
     :vartype expiration_date: ~datetime.datetime
     :ivar effective_date: Lab creation date.
     :vartype effective_date: ~datetime.datetime
-    :ivar status: The status of this lab. Known values are: "Active", "Deleted", "Pending".
+    :ivar status: The status of this lab. Known values are: "Active", "Deleted", and "Pending".
     :vartype status: str or ~azure.mgmt.education.models.LabStatus
     :ivar max_student_count: the total number of students that can be accepted to the lab.
     :vartype max_student_count: float
@@ -425,33 +387,39 @@ class LabDetails(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'effective_date': {'readonly': True},
-        'status': {'readonly': True},
-        'max_student_count': {'readonly': True},
-        'invitation_code': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "effective_date": {"readonly": True},
+        "status": {"readonly": True},
+        "max_student_count": {"readonly": True},
+        "invitation_code": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'budget_per_student': {'key': 'properties.budgetPerStudent', 'type': 'Amount'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'expiration_date': {'key': 'properties.expirationDate', 'type': 'iso-8601'},
-        'effective_date': {'key': 'properties.effectiveDate', 'type': 'iso-8601'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'max_student_count': {'key': 'properties.maxStudentCount', 'type': 'float'},
-        'invitation_code': {'key': 'properties.invitationCode', 'type': 'str'},
-        'currency_properties_total_allocated_budget_currency': {'key': 'properties.totalAllocatedBudget.currency', 'type': 'str'},
-        'value_properties_total_allocated_budget_value': {'key': 'properties.totalAllocatedBudget.value', 'type': 'float'},
-        'currency_properties_total_budget_currency': {'key': 'properties.totalBudget.currency', 'type': 'str'},
-        'value_properties_total_budget_value': {'key': 'properties.totalBudget.value', 'type': 'float'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "budget_per_student": {"key": "properties.budgetPerStudent", "type": "Amount"},
+        "description": {"key": "properties.description", "type": "str"},
+        "expiration_date": {"key": "properties.expirationDate", "type": "iso-8601"},
+        "effective_date": {"key": "properties.effectiveDate", "type": "iso-8601"},
+        "status": {"key": "properties.status", "type": "str"},
+        "max_student_count": {"key": "properties.maxStudentCount", "type": "float"},
+        "invitation_code": {"key": "properties.invitationCode", "type": "str"},
+        "currency_properties_total_allocated_budget_currency": {
+            "key": "properties.totalAllocatedBudget.currency",
+            "type": "str",
+        },
+        "value_properties_total_allocated_budget_value": {
+            "key": "properties.totalAllocatedBudget.value",
+            "type": "float",
+        },
+        "currency_properties_total_budget_currency": {"key": "properties.totalBudget.currency", "type": "str"},
+        "value_properties_total_budget_value": {"key": "properties.totalBudget.value", "type": "float"},
     }
 
     def __init__(
@@ -487,7 +455,7 @@ class LabDetails(Resource):
         :keyword value_properties_total_budget_value: Amount value.
         :paramtype value_properties_total_budget_value: float
         """
-        super(LabDetails, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.display_name = display_name
         self.budget_per_student = budget_per_student
         self.description = description
@@ -502,7 +470,7 @@ class LabDetails(Resource):
         self.value_properties_total_budget_value = value_properties_total_budget_value
 
 
-class LabListResult(msrest.serialization.Model):
+class LabListResult(_serialization.Model):
     """List of labs.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -514,27 +482,23 @@ class LabListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[LabDetails]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[LabDetails]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(LabListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class Operation(msrest.serialization.Model):
+class Operation(_serialization.Model):
     """Details of a REST API operation, returned from the Resource Provider Operations API.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -549,39 +513,34 @@ class Operation(msrest.serialization.Model):
     :vartype display: ~azure.mgmt.education.models.OperationDisplay
     :ivar origin: The intended executor of the operation; as in Resource Based Access Control
      (RBAC) and audit logs UX. Default value is "user,system". Known values are: "user", "system",
-     "user,system".
+     and "user,system".
     :vartype origin: str or ~azure.mgmt.education.models.Origin
     :ivar action_type: Enum. Indicates the action type. "Internal" refers to actions that are for
-     internal only APIs. Known values are: "Internal".
+     internal only APIs. "Internal"
     :vartype action_type: str or ~azure.mgmt.education.models.ActionType
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'is_data_action': {'readonly': True},
-        'origin': {'readonly': True},
-        'action_type': {'readonly': True},
+        "name": {"readonly": True},
+        "is_data_action": {"readonly": True},
+        "origin": {"readonly": True},
+        "action_type": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
-        'origin': {'key': 'origin', 'type': 'str'},
-        'action_type': {'key': 'actionType', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "is_data_action": {"key": "isDataAction", "type": "bool"},
+        "display": {"key": "display", "type": "OperationDisplay"},
+        "origin": {"key": "origin", "type": "str"},
+        "action_type": {"key": "actionType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        display: Optional["_models.OperationDisplay"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, display: Optional["_models.OperationDisplay"] = None, **kwargs):
         """
         :keyword display: Localized display information for this particular operation.
         :paramtype display: ~azure.mgmt.education.models.OperationDisplay
         """
-        super(Operation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = None
         self.is_data_action = None
         self.display = display
@@ -589,7 +548,7 @@ class Operation(msrest.serialization.Model):
         self.action_type = None
 
 
-class OperationDisplay(msrest.serialization.Model):
+class OperationDisplay(_serialization.Model):
     """Localized display information for this particular operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -609,33 +568,29 @@ class OperationDisplay(msrest.serialization.Model):
     """
 
     _validation = {
-        'provider': {'readonly': True},
-        'resource': {'readonly': True},
-        'operation': {'readonly': True},
-        'description': {'readonly': True},
+        "provider": {"readonly": True},
+        "resource": {"readonly": True},
+        "operation": {"readonly": True},
+        "description": {"readonly": True},
     }
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(OperationDisplay, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.provider = None
         self.resource = None
         self.operation = None
         self.description = None
 
 
-class OperationListResult(msrest.serialization.Model):
+class OperationListResult(_serialization.Model):
     """A list of REST API operations supported by an Azure Resource Provider. It contains an URL link to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -647,74 +602,63 @@ class OperationListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Operation]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Operation]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(OperationListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class RedeemRequest(msrest.serialization.Model):
+class RedeemRequest(_serialization.Model):
     """redeem request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar redeem_code: Required. redeem code.
+    :ivar redeem_code: redeem code. Required.
     :vartype redeem_code: str
-    :ivar first_name: Required. first name of requester.
+    :ivar first_name: first name of requester. Required.
     :vartype first_name: str
-    :ivar last_name: Required. last name of requester.
+    :ivar last_name: last name of requester. Required.
     :vartype last_name: str
     """
 
     _validation = {
-        'redeem_code': {'required': True},
-        'first_name': {'required': True},
-        'last_name': {'required': True},
+        "redeem_code": {"required": True},
+        "first_name": {"required": True},
+        "last_name": {"required": True},
     }
 
     _attribute_map = {
-        'redeem_code': {'key': 'redeemCode', 'type': 'str'},
-        'first_name': {'key': 'firstName', 'type': 'str'},
-        'last_name': {'key': 'lastName', 'type': 'str'},
+        "redeem_code": {"key": "redeemCode", "type": "str"},
+        "first_name": {"key": "firstName", "type": "str"},
+        "last_name": {"key": "lastName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        redeem_code: str,
-        first_name: str,
-        last_name: str,
-        **kwargs
-    ):
+    def __init__(self, *, redeem_code: str, first_name: str, last_name: str, **kwargs):
         """
-        :keyword redeem_code: Required. redeem code.
+        :keyword redeem_code: redeem code. Required.
         :paramtype redeem_code: str
-        :keyword first_name: Required. first name of requester.
+        :keyword first_name: first name of requester. Required.
         :paramtype first_name: str
-        :keyword last_name: Required. last name of requester.
+        :keyword last_name: last name of requester. Required.
         :paramtype last_name: str
         """
-        super(RedeemRequest, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.redeem_code = redeem_code
         self.first_name = first_name
         self.last_name = last_name
 
 
-class StudentDetails(Resource):
+class StudentDetails(Resource):  # pylint: disable=too-many-instance-attributes
     """Student details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -736,7 +680,7 @@ class StudentDetails(Resource):
     :vartype last_name: str
     :ivar email: Student Email.
     :vartype email: str
-    :ivar role: Student Role. Known values are: "Student", "Admin".
+    :ivar role: Student Role. Known values are: "Student" and "Admin".
     :vartype role: str or ~azure.mgmt.education.models.StudentRole
     :ivar budget: Student Budget.
     :vartype budget: ~azure.mgmt.education.models.Amount
@@ -745,7 +689,7 @@ class StudentDetails(Resource):
     :ivar expiration_date: Date this student is set to expire from the lab.
     :vartype expiration_date: ~datetime.datetime
     :ivar status: Student Lab Status. Known values are: "Active", "Disabled", "Expired", "Pending",
-     "Deleted".
+     and "Deleted".
     :vartype status: str or ~azure.mgmt.education.models.StudentLabStatus
     :ivar effective_date: Date student was added to the lab.
     :vartype effective_date: ~datetime.datetime
@@ -756,31 +700,31 @@ class StudentDetails(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'subscription_id': {'readonly': True},
-        'status': {'readonly': True},
-        'effective_date': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "subscription_id": {"readonly": True},
+        "status": {"readonly": True},
+        "effective_date": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'first_name': {'key': 'properties.firstName', 'type': 'str'},
-        'last_name': {'key': 'properties.lastName', 'type': 'str'},
-        'email': {'key': 'properties.email', 'type': 'str'},
-        'role': {'key': 'properties.role', 'type': 'str'},
-        'budget': {'key': 'properties.budget', 'type': 'Amount'},
-        'subscription_id': {'key': 'properties.subscriptionId', 'type': 'str'},
-        'expiration_date': {'key': 'properties.expirationDate', 'type': 'iso-8601'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'effective_date': {'key': 'properties.effectiveDate', 'type': 'iso-8601'},
-        'subscription_alias': {'key': 'properties.subscriptionAlias', 'type': 'str'},
-        'subscription_invite_last_sent_date': {'key': 'properties.subscriptionInviteLastSentDate', 'type': 'iso-8601'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "first_name": {"key": "properties.firstName", "type": "str"},
+        "last_name": {"key": "properties.lastName", "type": "str"},
+        "email": {"key": "properties.email", "type": "str"},
+        "role": {"key": "properties.role", "type": "str"},
+        "budget": {"key": "properties.budget", "type": "Amount"},
+        "subscription_id": {"key": "properties.subscriptionId", "type": "str"},
+        "expiration_date": {"key": "properties.expirationDate", "type": "iso-8601"},
+        "status": {"key": "properties.status", "type": "str"},
+        "effective_date": {"key": "properties.effectiveDate", "type": "iso-8601"},
+        "subscription_alias": {"key": "properties.subscriptionAlias", "type": "str"},
+        "subscription_invite_last_sent_date": {"key": "properties.subscriptionInviteLastSentDate", "type": "iso-8601"},
     }
 
     def __init__(
@@ -803,7 +747,7 @@ class StudentDetails(Resource):
         :paramtype last_name: str
         :keyword email: Student Email.
         :paramtype email: str
-        :keyword role: Student Role. Known values are: "Student", "Admin".
+        :keyword role: Student Role. Known values are: "Student" and "Admin".
         :paramtype role: str or ~azure.mgmt.education.models.StudentRole
         :keyword budget: Student Budget.
         :paramtype budget: ~azure.mgmt.education.models.Amount
@@ -814,7 +758,7 @@ class StudentDetails(Resource):
         :keyword subscription_invite_last_sent_date: subscription invite last sent date.
         :paramtype subscription_invite_last_sent_date: ~datetime.datetime
         """
-        super(StudentDetails, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.first_name = first_name
         self.last_name = last_name
         self.email = email
@@ -828,7 +772,7 @@ class StudentDetails(Resource):
         self.subscription_invite_last_sent_date = subscription_invite_last_sent_date
 
 
-class StudentLabDetails(Resource):
+class StudentLabDetails(Resource):  # pylint: disable=too-many-instance-attributes
     """Student lab details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -851,14 +795,14 @@ class StudentLabDetails(Resource):
     :ivar expiration_date: Date the lab will expire and by default will be the expiration date for
      each student in this lab.
     :vartype expiration_date: ~datetime.datetime
-    :ivar role: Student Role. Known values are: "Student", "Admin".
+    :ivar role: Student Role. Known values are: "Student" and "Admin".
     :vartype role: str or ~azure.mgmt.education.models.StudentRole
     :ivar budget: Student Budget.
     :vartype budget: ~azure.mgmt.education.models.Amount
     :ivar subscription_id: Subscription Id.
     :vartype subscription_id: str
     :ivar status: Student Lab Status. Known values are: "Active", "Disabled", "Expired", "Pending",
-     "Deleted".
+     and "Deleted".
     :vartype status: str or ~azure.mgmt.education.models.StudentLabStatus
     :ivar effective_date: User Added Date.
     :vartype effective_date: ~datetime.datetime
@@ -868,44 +812,40 @@ class StudentLabDetails(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'display_name': {'readonly': True},
-        'description': {'readonly': True},
-        'expiration_date': {'readonly': True},
-        'role': {'readonly': True},
-        'budget': {'readonly': True},
-        'subscription_id': {'readonly': True},
-        'status': {'readonly': True},
-        'effective_date': {'readonly': True},
-        'lab_scope': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "display_name": {"readonly": True},
+        "description": {"readonly": True},
+        "expiration_date": {"readonly": True},
+        "role": {"readonly": True},
+        "budget": {"readonly": True},
+        "subscription_id": {"readonly": True},
+        "status": {"readonly": True},
+        "effective_date": {"readonly": True},
+        "lab_scope": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'expiration_date': {'key': 'properties.expirationDate', 'type': 'iso-8601'},
-        'role': {'key': 'properties.role', 'type': 'str'},
-        'budget': {'key': 'properties.budget', 'type': 'Amount'},
-        'subscription_id': {'key': 'properties.subscriptionId', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'effective_date': {'key': 'properties.effectiveDate', 'type': 'iso-8601'},
-        'lab_scope': {'key': 'properties.labScope', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "expiration_date": {"key": "properties.expirationDate", "type": "iso-8601"},
+        "role": {"key": "properties.role", "type": "str"},
+        "budget": {"key": "properties.budget", "type": "Amount"},
+        "subscription_id": {"key": "properties.subscriptionId", "type": "str"},
+        "status": {"key": "properties.status", "type": "str"},
+        "effective_date": {"key": "properties.effectiveDate", "type": "iso-8601"},
+        "lab_scope": {"key": "properties.labScope", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(StudentLabDetails, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.display_name = None
         self.description = None
         self.expiration_date = None
@@ -917,7 +857,7 @@ class StudentLabDetails(Resource):
         self.lab_scope = None
 
 
-class StudentLabListResult(msrest.serialization.Model):
+class StudentLabListResult(_serialization.Model):
     """List of labs.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -929,27 +869,23 @@ class StudentLabListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[StudentLabDetails]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[StudentLabDetails]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(StudentLabListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class StudentListResult(msrest.serialization.Model):
+class StudentListResult(_serialization.Model):
     """List of students.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -961,52 +897,48 @@ class StudentListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[StudentDetails]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[StudentDetails]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(StudentListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class SystemData(msrest.serialization.Model):
+class SystemData(_serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
     :vartype created_by: str
     :ivar created_by_type: The type of identity that created the resource. Known values are:
-     "User", "Application", "ManagedIdentity", "Key".
+     "User", "Application", "ManagedIdentity", and "Key".
     :vartype created_by_type: str or ~azure.mgmt.education.models.CreatedByType
     :ivar created_at: The timestamp of resource creation (UTC).
     :vartype created_at: ~datetime.datetime
     :ivar last_modified_by: The identity that last modified the resource.
     :vartype last_modified_by: str
     :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
-     are: "User", "Application", "ManagedIdentity", "Key".
+     are: "User", "Application", "ManagedIdentity", and "Key".
     :vartype last_modified_by_type: str or ~azure.mgmt.education.models.CreatedByType
     :ivar last_modified_at: The timestamp of resource last modification (UTC).
     :vartype last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
-        'created_by': {'key': 'createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'createdByType', 'type': 'str'},
-        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
-        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
     }
 
     def __init__(
@@ -1024,19 +956,19 @@ class SystemData(msrest.serialization.Model):
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
         :keyword created_by_type: The type of identity that created the resource. Known values are:
-         "User", "Application", "ManagedIdentity", "Key".
+         "User", "Application", "ManagedIdentity", and "Key".
         :paramtype created_by_type: str or ~azure.mgmt.education.models.CreatedByType
         :keyword created_at: The timestamp of resource creation (UTC).
         :paramtype created_at: ~datetime.datetime
         :keyword last_modified_by: The identity that last modified the resource.
         :paramtype last_modified_by: str
         :keyword last_modified_by_type: The type of identity that last modified the resource. Known
-         values are: "User", "Application", "ManagedIdentity", "Key".
+         values are: "User", "Application", "ManagedIdentity", and "Key".
         :paramtype last_modified_by_type: str or ~azure.mgmt.education.models.CreatedByType
         :keyword last_modified_at: The timestamp of resource last modification (UTC).
         :paramtype last_modified_at: ~datetime.datetime
         """
-        super(SystemData, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
         self.created_at = created_at

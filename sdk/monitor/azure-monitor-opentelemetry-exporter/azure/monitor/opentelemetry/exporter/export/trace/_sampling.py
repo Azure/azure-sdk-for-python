@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 from typing import Optional, Sequence
 
+# pylint:disable=no-name-in-module
 from fixedint import Int32
 # pylint:disable=W0611
 from opentelemetry.context import Context
@@ -36,7 +37,7 @@ class ApplicationInsightsSampler(Sampler):
         if not 0.0 <= sampling_ratio <= 1.0:
             raise ValueError("sampling_ratio must be in the range [0,1]")
         self._ratio = sampling_ratio
-        self._sample_rate = round(sampling_ratio * 100)
+        self._sample_rate = sampling_ratio * 100
 
     # pylint:disable=C0301
     # See https://github.com/microsoft/Telemetry-Collection-Spec/blob/main/OpenTelemetry/trace/ApplicationInsightsSampler.md
@@ -71,7 +72,6 @@ class ApplicationInsightsSampler(Sampler):
             _get_parent_trace_state(parent_context),
         )
 
-    # pylint:disable=R0201
     def _get_DJB2_sample_score(self, trace_id_hex: str) -> int:
         # This algorithm uses 32bit integers
         hash_value = Int32(_HASH)
@@ -91,7 +91,7 @@ class ApplicationInsightsSampler(Sampler):
         return "ApplicationInsightsSampler{}".format(self._ratio)
 
 
-def azure_monitor_opentelemetry_sampler_factory(sampler_argument):
+def azure_monitor_opentelemetry_sampler_factory(sampler_argument):  # pylint: disable=name-too-long
     try:
         rate = float(sampler_argument)
         return ApplicationInsightsSampler(rate)

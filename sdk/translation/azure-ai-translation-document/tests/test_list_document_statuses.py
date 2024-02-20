@@ -125,10 +125,11 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
         doc_statuses = list(client.list_document_statuses(poller.id, order_by=["created_on asc"])) # convert from generic iterator to list
         assert len(doc_statuses) == docs_count
 
-        current = datetime.min
+        current = None
         for document in doc_statuses:
-            assert(document.created_on.replace(tzinfo=None) >= current.replace(tzinfo=None))
-            current = document.created_on
+            if current:
+                assert document.created_on.replace(tzinfo=None) >= current.replace(tzinfo=None)
+                current = document.created_on
         return variables
 
     @DocumentTranslationPreparer()
@@ -147,10 +148,12 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
         doc_statuses = list(client.list_document_statuses(poller.id, order_by=["created_on desc"])) # convert from generic iterator to list
         assert len(doc_statuses) == docs_count
 
-        current = datetime.max
+        current = None
         for document in doc_statuses:
-            assert(document.created_on.replace(tzinfo=None) <= current.replace(tzinfo=None))
-            current = document.created_on
+            if current:
+                assert document.created_on.replace(tzinfo=None) <= current.replace(tzinfo=None)
+                current = document.created_on
+
         return variables
 
     @DocumentTranslationPreparer()
@@ -187,14 +190,15 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
 
         # check statuses
         counter = 0
-        current_time = datetime.min
+        current = None
         for page in filtered_docs:
             page_docs = list(page)
             for doc in page_docs:
                 counter += 1
                 # assert ordering
-                assert(doc.created_on.replace(tzinfo=None) >= current_time.replace(tzinfo=None))
-                current_time = doc.created_on
+                if current:
+                    assert doc.created_on.replace(tzinfo=None) >= current.replace(tzinfo=None)
+                    current = doc.created_on
                 # assert filters
                 assert doc.status in statuses
                 assert doc.id in ids

@@ -79,7 +79,7 @@ The samples project demonstrates the following:
 
 Let's create models using the code below. You need to pass an array containing list of models.
 
-```Python Snippet:dt_models_lifecycle
+```python Snippet:dt_models_lifecycle
 temporary_component = {
     "@id": component_id,
     "@type": "Interface",
@@ -132,7 +132,7 @@ print(models)
 ### List models
 Using `list_models` to retrieve all created models
 
-```Python Snippet:dt_models_lifecycle
+```python Snippet:dt_models_lifecycle
 listed_models = service_client.list_models()
 for model in listed_models:
     print(model)
@@ -141,7 +141,7 @@ for model in listed_models:
 ### Get model
 Use `get_model` with model's unique identifier to get a specific model.
 
-```Python Snippet:dt_models_lifecycle
+```python Snippet:dt_models_lifecycle
 # Get a model
 get_model = service_client.get_model(model_id)
 print('Get Model:')
@@ -151,7 +151,7 @@ print(get_model)
 ### Decommission model
 To decommision a model, pass in a model Id for the model you want to decommision.
 
-```Python Snippet:dt_models_lifecycle
+```python Snippet:dt_models_lifecycle
 # Decommission a model
 service_client.decommission_model(model_id)
 ```
@@ -159,7 +159,7 @@ service_client.decommission_model(model_id)
 ### Delete model
 To delete a model, pass in a model Id for the model you want to delete.
 
-```Python Snippet:dt_models_lifecycle
+```python Snippet:dt_models_lifecycle
 # Delete a model
 service_client.delete_model(model_id)
 ```
@@ -169,7 +169,7 @@ service_client.delete_model(model_id)
 ### Create digital twins
 For Creating Twin you will need to provide Id of a digital Twin such as `my_twin` and the application/json digital twin based on the model created earlier. You can look at sample application/json [here](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/digitaltwins/azure-digitaltwins-core/samples/dtdl/digital_twins).
 
-```Python Snippet:dt_digitaltwins_lifecycle
+```python Snippet:dt_digitaltwins_lifecycle
 digital_twin_id = 'digitalTwin-' + str(uuid.uuid4())
 temporary_twin = {
     "$metadata": {
@@ -187,7 +187,7 @@ print(created_twin)
 ### Get a digital twin
 
 Getting a digital twin is extremely easy.
-```Python Snippet:dt_digitaltwins_lifecycle
+```python Snippet:dt_digitaltwins_lifecycle
 get_twin = service_client.get_digital_twin(digital_twin_id)
 print('Get Digital Twin:')
 print(get_twin)
@@ -200,7 +200,7 @@ Query the Azure Digital Twins instance for digital twins using the [Azure Digita
 Note that there may be a delay between before changes in your instance are reflected in queries.
 For more details on query limitations, see (https://docs.microsoft.com/azure/digital-twins/how-to-query-graph#query-limitations)
 
-```Python Snippet:dt_digitaltwins_query
+```python Snippet:dt_digitaltwins_query
 query_expression = 'SELECT * FROM digitaltwins'
 query_result = service_client.query_twins(query_expression)
 print('DigitalTwins:')
@@ -212,7 +212,7 @@ for twin in query_result:
 
 Delete a digital twin simply by providing Id of a digital twin as below.
 
-```Python Snippet:dt_digitaltwins_lifecycle
+```python Snippet:dt_digitaltwins_lifecycle
 service_client.delete_digital_twin(digital_twin_id)
 ```
 
@@ -222,7 +222,7 @@ service_client.delete_digital_twin(digital_twin_id)
 
 To update a component or in other words to replace, remove and/or add a component property or subproperty within Digital Twin, you would need Id of a digital twin, component name and application/json-patch+json operations to be performed on the specified digital twin's component. Here is the sample code on how to do it.
 
-```Python Snippet:dt_component_lifecycle
+```python Snippet:dt_component_lifecycle
 component_name = "Component1"
 patch = [
     {
@@ -238,7 +238,7 @@ service_client.update_component(digital_twin_id, component_name, patch)
 
 Get a component by providing name of a component and Id of digital twin to which it belongs.
 
-```Python Snippet:dt_component_lifecycle
+```python Snippet:dt_component_lifecycle
 get_component = service_client.get_component(digital_twin_id, component_name)
 print('Get Component:')
 print(get_component)
@@ -250,7 +250,7 @@ print(get_component)
 
 `upsert_relationship` creates a relationship on a digital twin provided with Id of a digital twin, name of relationship such as "contains", Id of an relationship such as "FloorContainsRoom" and an application/json relationship to be created. Must contain property with key "\$targetId" to specify the target of the relationship. Sample payloads for relationships can be found [here](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/digitaltwins/azure-digitaltwins-core/samples/dtdl/relationships/hospitalRelationships.json).
 
-```Python Snippet:dt_scenario
+```python Snippet:dt_scenario
 hospital_relationships = [
     {
         "$relationshipId": "BuildingHasFloor",
@@ -291,13 +291,13 @@ for relationship in hospital_relationships:
 
 `list_relationships` and `list_incoming_relationships` lists all the relationships and all incoming relationships respectively of a digital twin.
 
-```Python Snippet:dt_relationships_list
+```python Snippet:dt_relationships_list
 relationships = service_client.list_relationships(digital_twint_id)
 for relationship in relationships:
     print(relationship)
 ```
 
-```Python Snippet:dt_incoming_relationships_list
+```python Snippet:dt_incoming_relationships_list
 incoming_relationships = service_client.list_incoming_relationships(digital_twin_id)
 for incoming_relationship in incoming_relationships:
     print(incoming_relationship)
@@ -309,7 +309,7 @@ for incoming_relationship in incoming_relationships:
 
 To create an event route, provide an Id of an event route such as "myEventRouteId" and event route data containing the endpoint and optional filter like the example shown below.
 
-```Python Snippet:dt_scenario
+```python Snippet:dt_scenario
 event_route_id = 'eventRoute-' + str(uuid.uuid4())
 event_filter = "$eventType = 'DigitalTwinTelemetryMessages' or $eventType = 'DigitalTwinLifecycleNotification'"
 route = DigitalTwinsEventRoute(
@@ -325,7 +325,7 @@ For more information on the event route filter language, see the "how to manage 
 
 List a specific event route given event route Id or all event routes setting options with `list_event_routes`.
 
-```Python Snippet:dt_event_routes_list
+```python Snippet:dt_event_routes_list
 event_routes = service_client.list_event_routes()
 for event_route in event_routes:
     print(event_route)
@@ -335,7 +335,7 @@ for event_route in event_routes:
 
 Delete an event route given event route Id.
 
-```Python Snippet:dt_scenario
+```python Snippet:dt_scenario
 service_client.delete_event_route(event_route_id)
 ```
 
@@ -343,7 +343,7 @@ service_client.delete_event_route(event_route_id)
 
 To publish a telemetry message for a digital twin, you need to provide the digital twin Id, along with the payload on which telemetry that needs the update.
 
-```Python Snippet:dt_publish_telemetry
+```python Snippet:dt_publish_telemetry
 digita_twin_id = "<DIGITAL TWIN ID>"
 telemetry_payload = '{"Telemetry1": 5}'
 service_client.publish_telemetry(
@@ -354,7 +354,7 @@ service_client.publish_telemetry(
 
 You can also publish a telemetry message for a specific component in a digital twin. In addition to the digital twin Id and payload, you need to specify the target component Id.
 
-```Python Snippet:dt_publish_component_telemetry
+```python Snippet:dt_publish_component_telemetry
 digita_twin_id = "<DIGITAL TWIN ID>"
 component_name = "<COMPONENT_NAME>"
 telemetry_payload = '{"Telemetry1": 5}'

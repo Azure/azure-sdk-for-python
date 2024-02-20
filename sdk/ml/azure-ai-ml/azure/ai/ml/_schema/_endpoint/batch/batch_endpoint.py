@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=unused-argument,no-self-use
+# pylint: disable=unused-argument
 
 import logging
 from typing import Any
@@ -18,7 +18,6 @@ module_logger = logging.getLogger(__name__)
 
 
 class BatchEndpointSchema(EndpointSchema):
-
     defaults = NestedField(BatchEndpointsDefaultsSchema)
 
     @post_load

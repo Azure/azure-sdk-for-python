@@ -8,6 +8,7 @@
 An example to show authentication using a connection string obtained via the Azure Portal, or the Azure CLI toolkit.
 """
 
+ # [START connection_string_authentication]
 import os
 from azure.eventhub import EventHubConsumerClient
 
@@ -22,3 +23,4 @@ consumer_client = EventHubConsumerClient.from_connection_string(
 
 with consumer_client:
     pass # consumer_client is now ready to be used.
+# [END connection_string_authentication]

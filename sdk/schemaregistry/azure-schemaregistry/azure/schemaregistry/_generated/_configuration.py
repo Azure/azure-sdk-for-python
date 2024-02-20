@@ -29,14 +29,14 @@ class AzureSchemaRegistryConfiguration(Configuration):  # pylint: disable=too-ma
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :keyword api_version: Api Version. Default value is "2021-10". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2022-10". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, endpoint: str, credential: "TokenCredential", **kwargs: Any) -> None:
         super(AzureSchemaRegistryConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop("api_version", "2021-10")  # type: str
+        api_version: str = kwargs.pop("api_version", "2022-10")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
@@ -50,10 +50,7 @@ class AzureSchemaRegistryConfiguration(Configuration):  # pylint: disable=too-ma
         kwargs.setdefault("sdk_moniker", "azureschemaregistry/{}".format(VERSION))
         self._configure(**kwargs)
 
-    def _configure(
-        self, **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+    def _configure(self, **kwargs: Any) -> None:
         self.user_agent_policy = kwargs.get("user_agent_policy") or policies.UserAgentPolicy(**kwargs)
         self.headers_policy = kwargs.get("headers_policy") or policies.HeadersPolicy(**kwargs)
         self.proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)

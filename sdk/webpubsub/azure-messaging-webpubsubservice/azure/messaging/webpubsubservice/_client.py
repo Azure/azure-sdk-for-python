@@ -9,32 +9,31 @@
 from copy import deepcopy
 from typing import Any, TYPE_CHECKING
 
-from msrest import Deserializer, Serializer
-
 from azure.core import PipelineClient
 from azure.core.rest import HttpRequest, HttpResponse
 
 from ._configuration import WebPubSubServiceClientConfiguration
 from ._operations import WebPubSubServiceClientOperationsMixin
+from ._serialization import Deserializer, Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Dict
-
     from azure.core.credentials import TokenCredential
 
 
-class WebPubSubServiceClient(WebPubSubServiceClientOperationsMixin):
+class WebPubSubServiceClient(
+    WebPubSubServiceClientOperationsMixin
+):  # pylint: disable=client-accepts-api-version-keyword
     """WebPubSubServiceClient.
 
     :param hub: Target hub name, which should start with alphabetic characters and only contain
-     alpha-numeric characters or underscore.
+     alpha-numeric characters or underscore. Required.
     :type hub: str
-    :param endpoint: HTTP or HTTPS endpoint for the Web PubSub service instance.
+    :param endpoint: HTTP or HTTPS endpoint for the Web PubSub service instance. Required.
     :type endpoint: str
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :keyword api_version: Api Version. Default value is "2021-10-01". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2022-11-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
@@ -57,7 +56,7 @@ class WebPubSubServiceClient(WebPubSubServiceClientOperationsMixin):
         >>> response = client.send_request(request)
         <HttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest

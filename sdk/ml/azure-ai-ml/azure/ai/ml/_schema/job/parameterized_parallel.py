@@ -6,10 +6,13 @@ from marshmallow import INCLUDE, fields
 
 from azure.ai.ml._schema.component.parallel_task import ComponentParallelTaskSchema
 from azure.ai.ml._schema.component.retry_settings import RetrySettingsSchema
-from azure.ai.ml._schema.core.fields import NestedField, DumpableEnumField
+from azure.ai.ml._schema.core.fields import DumpableEnumField, NestedField
 from azure.ai.ml._schema.core.schema import PathAwareSchema
+from azure.ai.ml._schema.job.input_output_entry import InputLiteralValueSchema
 from azure.ai.ml._schema.job_resource_configuration import JobResourceConfigurationSchema
 from azure.ai.ml.constants._common import LoggingLevel
+
+from ..core.fields import UnionField
 
 
 class ParameterizedParallelSchema(PathAwareSchema):
@@ -28,8 +31,7 @@ class ParameterizedParallelSchema(PathAwareSchema):
         metadata={"description": "The batch size of current job."},
     )
     partition_keys = fields.List(
-        fields.Str(),
-        metadata={"description": "The keys used to partition input data into mini-batches"}
+        fields.Str(), metadata={"description": "The keys used to partition input data into mini-batches"}
     )
     input_data = fields.Str()
     resources = NestedField(JobResourceConfigurationSchema)
@@ -61,4 +63,10 @@ class ParameterizedParallelSchema(PathAwareSchema):
             )
         },
     )
-    environment_variables = fields.Dict(keys=fields.Str(), values=fields.Str())
+    environment_variables = UnionField(
+        [
+            fields.Dict(keys=fields.Str(), values=fields.Str()),
+            # Used for binding environment variables
+            NestedField(InputLiteralValueSchema),
+        ]
+    )

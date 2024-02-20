@@ -95,7 +95,7 @@ def final(a, b, c):
 
 
 def compute_hash(data, init_val=0, init_val2=0):
-    # pylint: disable=too-many-statements
+    # pylint: disable=too-many-statements,docstring-missing-param,docstring-missing-rtype,docstring-missing-return
     """
     implementation by:
     https://stackoverflow.com/questions/3279615/python-implementation-of-jenkins-hash
@@ -276,6 +276,9 @@ class PartitionResolver:
     def get_next_partition_id(self):
         """
         round-robin partition assignment
+
+        :return: The next partition id.
+        :rtype: str
         """
         with self._lock:
             self._idx += 1

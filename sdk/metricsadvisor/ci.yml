@@ -31,6 +31,11 @@ extends:
   parameters:
     ServiceDirectory: metricsadvisor
     TestProxy: true
+    MatrixConfigs:
+      - Name: metricadvisor_ci_matrix
+        Path: eng/pipelines/templates/stages/platform-matrix-metricsadvisor_tables.json
+        Selection: sparse
+        GenerateVMJobs: true
     Artifacts:
     - name: azure-ai-metricsadvisor
       safeName: azureaimetricsadvisor

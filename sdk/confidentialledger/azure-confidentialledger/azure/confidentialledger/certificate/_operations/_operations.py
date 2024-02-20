@@ -17,8 +17,7 @@ from azure.core.exceptions import (
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpResponse
-from azure.core.rest import HttpRequest
+from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
@@ -61,7 +60,7 @@ def build_get_ledger_identity_request(ledger_id: str, **kwargs: Any) -> HttpRequ
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class ConfidentialLedgerCertificateClientOperationsMixin(MixinABC):
+class ConfidentialLedgerCertificateClientOperationsMixin(MixinABC):  # pylint: disable=name-too-long
     @distributed_trace
     def get_ledger_identity(self, ledger_id: str, **kwargs: Any) -> JSON:
         """Gets identity information for a Confidential Ledger instance.

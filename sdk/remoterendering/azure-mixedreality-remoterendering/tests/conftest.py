@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import pytest
+import pytest_asyncio
 
 from azure.core.credentials import AzureKeyCredential
 from azure.mixedreality.remoterendering import RemoteRenderingClient
@@ -91,7 +92,7 @@ def arr_client(account_info):
     client.close()
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 async def async_arr_client(account_info):
     polling_interval = 10 if is_live() else 0
     client = RemoteRenderingClientAsync(

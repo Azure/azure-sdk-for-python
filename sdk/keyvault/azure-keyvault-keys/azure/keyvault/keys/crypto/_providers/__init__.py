@@ -14,18 +14,15 @@ if TYPE_CHECKING:
     from ... import JsonWebKey
 
 
-def get_local_cryptography_provider(key):
-    # type: (JsonWebKey) -> LocalCryptographyProvider
+def get_local_cryptography_provider(key: "JsonWebKey") -> LocalCryptographyProvider:
     if key.kty in (KeyType.ec, KeyType.ec_hsm):  # type: ignore[attr-defined]
         return EllipticCurveCryptographyProvider(key)
     if key.kty in (KeyType.rsa, KeyType.rsa_hsm):  # type: ignore[attr-defined]
         return RsaCryptographyProvider(key)
     if key.kty in (KeyType.oct, KeyType.oct_hsm):  # type: ignore[attr-defined]
         return SymmetricCryptographyProvider(key)
-    if key.kty in (KeyType.okp, KeyType.okp_hsm):  # type: ignore[attr-defined]
-        return NoLocalCryptography()
 
-    raise ValueError('Unsupported key type "{}"'.format(key.kty))  # type: ignore[attr-defined]
+    raise ValueError(f'Unsupported key type "{key.kty}"')  # type: ignore[attr-defined]
 
 
 class NoLocalCryptography(LocalCryptographyProvider):

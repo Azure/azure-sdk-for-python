@@ -7,7 +7,7 @@
 import logging
 from os import PathLike
 from pathlib import Path
-from typing import Any, Dict, Union
+from typing import Any, Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2022_05_01.models import BatchDeploymentData
 from azure.ai.ml._restclient.v2022_05_01.models import BatchDeploymentDetails as RestBatchDeployment
@@ -22,6 +22,7 @@ from azure.ai.ml.entities._assets import Environment, Model
 from azure.ai.ml.entities._deployment.deployment_settings import BatchRetrySettings
 from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
 from azure.ai.ml.entities._util import load_from_dict
+from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 from .code_configuration import CodeConfiguration
@@ -30,23 +31,23 @@ from .deployment import Deployment
 module_logger = logging.getLogger(__name__)
 
 
-class BatchDeployment(Deployment):
+class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attributes
     """Batch endpoint deployment entity.
 
     :param name: the name of the batch deployment
     :type name: str
     :param description: Description of the resource.
-    :type description: str, optional
+    :type description: str
     :param tags: Tag dictionary. Tags can be added, removed, and updated.
     :type tags: dict[str, str]
     :param properties: The asset property dictionary.
     :type properties: dict[str, str]
     :param model: Model entity for the endpoint deployment, defaults to None
-    :type model: Union[str, Model], optional
+    :type model: Union[str, Model]
     :param code_configuration: defaults to None
-    :type code_configuration: CodeConfiguration, optional
+    :type code_configuration: CodeConfiguration
     :param environment: Environment entity for the endpoint deployment., defaults to None
-    :type environment: Union[str, Environment], optional
+    :type environment: Union[str, Environment]
     :param compute: Compute target for batch inference operation.
     :type compute: str
     :param output_action: Indicates how the output will be organized. Possible values include:
@@ -62,23 +63,23 @@ class BatchDeployment(Deployment):
         -1 value indicates, ignore all failures during batch inference
         For FileDataset count of file failures
         For TabularDataset, this is the count of record failures, defaults to -1
-    :type error_threshold: int, optional
+    :type error_threshold: int
     :param retry_settings: Retry settings for a batch inference operation, defaults to None
-    :type retry_settings: BatchRetrySettings, optional
+    :type retry_settings: BatchRetrySettings
     :param resources: Indicates compute configuration for the job.
     :type resources: ~azure.mgmt.machinelearningservices.models.ResourceConfiguration
     :param logging_level: Logging level for batch inference operation, defaults to "info"
-    :type logging_level: str, optional
+    :type logging_level: str
     :param mini_batch_size: Size of the mini-batch passed to each batch invocation, defaults to 10
-    :type mini_batch_size: int, optional
+    :type mini_batch_size: int
     :param environment_variables: Environment variables that will be set in deployment.
-    :type environment_variables: dict, optional
+    :type environment_variables: dict
     :param code_path: Folder path to local code assets. Equivalent to code_configuration.code.
-    :type code_path: Union[str, PathLike], optional
+    :type code_path: Union[str, PathLike]
     :param scoring_script: Scoring script name. Equivalent to code_configuration.code.scoring_script.
-    :type scoring_script: Union[str, PathLike], optional
+    :type scoring_script: Union[str, PathLike]
     :param instance_count: Number of instances the interfering will run on. Equivalent to resources.instance_count.
-    :type instance_count: int, optional
+    :type instance_count: int
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if BatchDeployment cannot be successfully validated.
         Details will be provided in the error message.
     """
@@ -87,28 +88,31 @@ class BatchDeployment(Deployment):
         self,
         *,
         name: str,
-        endpoint_name: str = None,
-        description: str = None,
-        tags: Dict[str, Any] = None,
-        properties: Dict[str, str] = None,
-        model: Union[str, Model] = None,
-        code_configuration: CodeConfiguration = None,
-        environment: Union[str, Environment] = None,
-        compute: str = None,
-        resources: ResourceConfiguration = None,
-        output_file_name: str = None,
-        output_action: BatchDeploymentOutputAction = None,
-        error_threshold: int = None,
-        retry_settings: BatchRetrySettings = None,
-        logging_level: str = None,
-        mini_batch_size: int = None,
-        max_concurrency_per_instance: int = None,
-        environment_variables: Dict[str, str] = None,
-        code_path: Union[str, PathLike] = None,  # promoted property from code_configuration.code
-        scoring_script: Union[str, PathLike] = None,  # promoted property from code_configuration.scoring_script
-        instance_count: int = None,  # promoted property from resources.instance_count
+        endpoint_name: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional[Dict[str, Any]] = None,
+        properties: Optional[Dict[str, str]] = None,
+        model: Optional[Union[str, Model]] = None,
+        code_configuration: Optional[CodeConfiguration] = None,
+        environment: Optional[Union[str, Environment]] = None,
+        compute: Optional[str] = None,
+        resources: Optional[ResourceConfiguration] = None,
+        output_file_name: Optional[str] = None,
+        output_action: Optional[BatchDeploymentOutputAction] = None,
+        error_threshold: Optional[int] = None,
+        retry_settings: Optional[BatchRetrySettings] = None,
+        logging_level: Optional[str] = None,
+        mini_batch_size: Optional[int] = None,
+        max_concurrency_per_instance: Optional[int] = None,
+        environment_variables: Optional[Dict[str, str]] = None,
+        code_path: Optional[Union[str, PathLike]] = None,  # promoted property from code_configuration.code
+        scoring_script: Optional[
+            Union[str, PathLike]
+        ] = None,  # promoted property from code_configuration.scoring_script
+        instance_count: Optional[int] = None,  # promoted property from resources.instance_count
         **kwargs,
     ) -> None:
+        self._provisioning_state = kwargs.pop("provisioning_state", None)
 
         super(BatchDeployment, self).__init__(
             name=name,
@@ -152,6 +156,15 @@ class BatchDeployment(Deployment):
     def instance_count(self) -> int:
         return self.resources.instance_count if self.resources else None
 
+    @property
+    def provisioning_state(self) -> Optional[str]:
+        """Batch deployment provisioning state, readonly.
+
+        :return: Batch deployment provisioning state.
+        :rtype: Optional[str]
+        """
+        return self._provisioning_state
+
     @instance_count.setter
     def instance_count(self, value: int) -> None:
         if not self.resources:
@@ -173,7 +186,6 @@ class BatchDeployment(Deployment):
 
     @classmethod
     def _yaml_output_action_to_rest_output_action(cls, yaml_output_action: str) -> str:
-
         output_switcher = {
             BatchDeploymentOutputAction.APPEND_ROW: BatchOutputAction.APPEND_ROW,
             BatchDeploymentOutputAction.SUMMARY_ONLY: BatchOutputAction.SUMMARY_ONLY,
@@ -216,14 +228,13 @@ class BatchDeployment(Deployment):
 
     @classmethod
     def _from_rest_object(cls, deployment: BatchDeploymentData):  # pylint: disable=arguments-renamed
-
         modelId = deployment.properties.model.asset_id if deployment.properties.model else None
         code_configuration = (
             CodeConfiguration._from_rest_code_configuration(deployment.properties.code_configuration)
             if deployment.properties.code_configuration
             else None
         )
-        return BatchDeployment(
+        deployment = BatchDeployment(
             name=deployment.name,
             description=deployment.properties.description,
             id=deployment.id,
@@ -246,14 +257,18 @@ class BatchDeployment(Deployment):
             max_concurrency_per_instance=deployment.properties.max_concurrency_per_instance,
             endpoint_name=_parse_endpoint_name_from_deployment_id(deployment.id),
             properties=deployment.properties.properties,
+            creation_context=SystemData._from_rest_object(deployment.system_data),
+            provisioning_state=deployment.properties.provisioning_state,
         )
+
+        return deployment
 
     @classmethod
     def _load(
         cls,
-        data: Dict = None,
-        yaml_path: Union[PathLike, str] = None,
-        params_override: list = None,
+        data: Optional[Dict] = None,
+        yaml_path: Optional[Union[PathLike, str]] = None,
+        params_override: Optional[list] = None,
         **kwargs,
     ) -> "BatchDeployment":
         data = data or {}

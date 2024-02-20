@@ -107,6 +107,8 @@ class FileSharedAccessSignature(SharedAccessSignature):
         :param str content_type:
             Response header value for Content-Type when resource is accessed
             using this shared access signature.
+        :returns: The generated SAS token for the account.
+        :rtype: str
         '''
         resource_path = share_name
         if directory_name is not None:
@@ -186,6 +188,8 @@ class FileSharedAccessSignature(SharedAccessSignature):
         :param str content_type:
             Response header value for Content-Type when resource is accessed
             using this shared access signature.
+        :returns: The generated SAS token for the account.
+        :rtype: str
         '''
         sas = _FileSharedAccessHelper()
         sas.add_base(permission, expiry, start, ip, protocol, self.x_ms_version)

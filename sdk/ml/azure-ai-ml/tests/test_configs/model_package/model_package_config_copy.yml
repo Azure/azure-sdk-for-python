@@ -1,0 +1,6 @@
+target_environment_name: diabetes-online-mlflow
+inferencing_server: 
+    type: azureml_online
+model_configuration:
+    mode: copy
+    mount_path: .

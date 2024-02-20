@@ -6,20 +6,20 @@
 # --------------------------------------------------------------------------
 
 import functools
+import warnings
 from typing import (
     Any, AnyStr, Dict, List, IO, Iterable, Iterator, Optional, overload, Union,
     TYPE_CHECKING
 )
 from urllib.parse import urlparse, quote, unquote
 
-import six
 from typing_extensions import Self
 
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import Pipeline
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
+from azure.core.pipeline.transport import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from ._shared.base_client import StorageAccountHostsMixin, TransportWrapper, parse_connection_str, parse_query
 from ._shared.request_handlers import add_metadata_headers, serialize_iso
@@ -52,6 +52,7 @@ from ._serialize import get_modify_conditions, get_container_cpk_scope_info, get
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
+    from azure.core.pipeline.transport import HttpResponse  # pylint: disable=C4756
     from datetime import datetime
     from ._models import (  # pylint: disable=unused-import
         PublicAccess,
@@ -64,6 +65,8 @@ def _get_blob_name(blob):
     """Return the blob name.
 
     :param blob: A blob string or BlobProperties
+    :paramtype blob: str or BlobProperties
+    :returns: The name of the blob.
     :rtype: str
     """
     try:
@@ -119,6 +122,9 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         the exceeded part will be downloaded in chunks (could be parallel). Defaults to 32*1024*1024, or 32MB.
     :keyword int max_chunk_get_size: The maximum chunk size used for downloading a blob. Defaults to 4*1024*1024,
         or 4MB.
+    :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
+        authentication. Only has an effect when credential is of type TokenCredential. The value could be
+        https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
 
     .. admonition:: Example:
 
@@ -145,13 +151,13 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         try:
             if not account_url.lower().startswith('http'):
                 account_url = "https://" + account_url
-        except AttributeError:
-            raise ValueError("Container URL must be a string.")
+        except AttributeError as exc:
+            raise ValueError("Container URL must be a string.") from exc
         parsed_url = urlparse(account_url.rstrip('/'))
         if not container_name:
             raise ValueError("Please specify a container name.")
         if not parsed_url.netloc:
-            raise ValueError("Invalid URL: {}".format(account_url))
+            raise ValueError(f"Invalid URL: {account_url}")
 
         _, sas_token = parse_query(parsed_url.query)
         self.container_name = container_name
@@ -170,13 +176,9 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
 
     def _format_url(self, hostname):
         container_name = self.container_name
-        if isinstance(container_name, six.text_type):
+        if isinstance(container_name, str):
             container_name = container_name.encode('UTF-8')
-        return "{}://{}/{}{}".format(
-            self.scheme,
-            hostname,
-            quote(container_name),
-            self._query_str)
+        return f"{self.scheme}://{hostname}/{quote(container_name)}{self._query_str}"
 
     @classmethod
     def from_container_url(
@@ -200,27 +202,27 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
+        :paramtype credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
+            authentication. Only has an effect when credential is of type TokenCredential. The value could be
+            https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
         :returns: A container client.
         :rtype: ~azure.storage.blob.ContainerClient
         """
         try:
             if not container_url.lower().startswith('http'):
                 container_url = "https://" + container_url
-        except AttributeError:
-            raise ValueError("Container URL must be a string.")
+        except AttributeError as exc:
+            raise ValueError("Container URL must be a string.") from exc
         parsed_url = urlparse(container_url)
         if not parsed_url.netloc:
-            raise ValueError("Invalid URL: {}".format(container_url))
+            raise ValueError(f"Invalid URL: {container_url}")
 
         container_path = parsed_url.path.strip('/').split('/')
         account_path = ""
         if len(container_path) > 1:
             account_path = "/" + "/".join(container_path[:-1])
-        account_url = "{}://{}{}?{}".format(
-            parsed_url.scheme,
-            parsed_url.netloc.rstrip('/'),
-            account_path,
-            parsed_url.query)
+        account_url = f"{parsed_url.scheme}://{parsed_url.netloc.rstrip('/')}{account_path}?{parsed_url.query}"
         container_name = unquote(container_path[-1])
         if not container_name:
             raise ValueError("Invalid URL. Please provide a URL with a valid container name")
@@ -249,6 +251,10 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             Credentials provided here will take precedence over those in the connection string.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
+        :paramtype credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
+            authentication. Only has an effect when credential is of type TokenCredential. The value could be
+            https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
         :returns: A container client.
         :rtype: ~azure.storage.blob.ContainerClient
 
@@ -288,7 +294,11 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
 
         :paramtype container_encryption_scope: dict or ~azure.storage.blob.ContainerEncryptionScope
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            #other-client--per-operation-configuration>`_.
         :returns: A dictionary of response headers.
         :rtype: Dict[str, Union[str, datetime]]
 
@@ -330,7 +340,11 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             matches the active lease ID of the source container.
         :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            #other-client--per-operation-configuration>`_.
         :rtype: ~azure.storage.blob.ContainerClient
         """
         lease = kwargs.pop('lease', None)
@@ -340,7 +354,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             kwargs['source_lease_id'] = lease
         try:
             renamed_container = ContainerClient(
-                "{}://{}".format(self.scheme, self.primary_hostname), container_name=new_name,
+                f"{self.scheme}://{self.primary_hostname}", container_name=new_name,
                 credential=self.credential, api_version=self.api_version, _configuration=self._config,
                 _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
                 require_encryption=self.require_encryption, encryption_version=self.encryption_version,
@@ -381,7 +395,11 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            #other-client--per-operation-configuration>`_.
         :rtype: None
 
         .. admonition:: Example:
@@ -443,7 +461,11 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            #other-client--per-operation-configuration>`_.
         :returns: A BlobLeaseClient object, that can be run in a context manager.
         :rtype: ~azure.storage.blob.BlobLeaseClient
 
@@ -489,7 +511,11 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             container's lease is active and matches this ID.
         :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            #other-client--per-operation-configuration>`_.
         :return: Properties for the specified container within a container object.
         :rtype: ~azure.storage.blob.ContainerProperties
 
@@ -523,8 +549,13 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         Returns True if a container exists and returns False otherwise.
 
         :kwarg int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            #other-client--per-operation-configuration>`_.
         :returns: boolean
+        :rtype: bool
         """
         try:
             self._client.container.get_properties(**kwargs)
@@ -570,7 +601,11 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             An ETag value, or the wildcard character (*). Used to check if the resource has changed,
             and act according to the condition specified by the `match_condition` parameter.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            #other-client--per-operation-configuration>`_.
         :returns: Container-updated property dict (Etag and last modified).
         :rtype: dict[str, str or datetime]
 
@@ -628,7 +663,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         else:
             _pipeline = self._pipeline   # pylint: disable = protected-access
         return BlobServiceClient(
-            "{}://{}".format(self.scheme, self.primary_hostname),
+            f"{self.scheme}://{self.primary_hostname}",
             credential=self._raw_credential, api_version=self.api_version, _configuration=self._config,
             _location_mode=self._location_mode, _hosts=self._hosts, require_encryption=self.require_encryption,
             encryption_version=self.encryption_version, key_encryption_key=self.key_encryption_key,
@@ -645,7 +680,11 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             container's lease is active and matches this ID.
         :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            #other-client--per-operation-configuration>`_.
         :returns: Access policy information in a dict.
         :rtype: dict[str, Any]
 
@@ -708,7 +747,11 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            #other-client--per-operation-configuration>`_.
         :returns: Container-updated property dict (Etag and last modified).
         :rtype: dict[str, str or ~datetime.datetime]
 
@@ -764,7 +807,11 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             'tags', 'versions', 'immutabilitypolicy', 'legalhold'.
         :type include: list[str] or str
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            #other-client--per-operation-configuration>`_.
         :returns: An iterable (auto-paging) response of BlobProperties.
         :rtype: ~azure.core.paging.ItemPaged[~azure.storage.blob.BlobProperties]
 
@@ -805,7 +852,11 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             Filters the results to return only blobs whose names
             begin with the specified prefix.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            #other-client--per-operation-configuration>`_.
         :returns: An iterable (auto-paging) response of blob names as strings.
         :rtype: ~azure.core.paging.ItemPaged[str]
         """
@@ -855,7 +906,11 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             names begin with the same substring up to the appearance of the delimiter
             character. The delimiter may be a single character or a string.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            #other-client--per-operation-configuration>`_.
         :returns: An iterable (auto-paging) response of BlobProperties.
         :rtype: ~azure.core.paging.ItemPaged[~azure.storage.blob.BlobProperties]
         """
@@ -893,7 +948,11 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         :keyword int results_per_page:
             The max result per page when paginating.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            #other-client--per-operation-configuration>`_.
         :returns: An iterable (auto-paging) response of FilteredBlob.
         :rtype: ~azure.core.paging.ItemPaged[~azure.storage.blob.BlobProperties]
         """
@@ -910,19 +969,16 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
 
     @distributed_trace
     def upload_blob(
-            self, name,  # type: Union[str, BlobProperties]
-            data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
-            blob_type=BlobType.BlockBlob,  # type: Union[str, BlobType]
-            length=None,  # type: Optional[int]
-            metadata=None,  # type: Optional[Dict[str, str]]
+            self, name: str,
+            data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
+            blob_type: Union[str, BlobType] = BlobType.BlockBlob,
+            length: Optional[int] = None,
+            metadata: Optional[Dict[str, str]] = None,
             **kwargs
-        ):
-        # type: (...) -> BlobClient
+        ) -> BlobClient:
         """Creates a new blob from a data source with automatic chunking.
 
-        :param name: The blob with which to interact. If specified, this value will override
-            a blob value specified in the blob URL.
-        :type name: str or ~azure.storage.blob.BlobProperties
+        :param str name: The blob with which to interact.
         :param data: The blob data to upload.
         :param ~azure.storage.blob.BlobType blob_type: The type of the blob. This can be
             either BlockBlob, PageBlob or AppendBlob. The default value is BlockBlob.
@@ -978,9 +1034,12 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             .. versionadded:: 12.4.0
 
         :keyword int timeout:
-            The timeout parameter is expressed in seconds. This method may make
-            multiple calls to the Azure service and the timeout will apply to
-            each call individually.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            #other-client--per-operation-configuration>`_. This method may make multiple calls to the service and
+            the timeout will apply to each call individually.
         :keyword ~azure.storage.blob.PremiumPageBlobTier premium_page_blob_tier:
             A page blob tier value to set the blob to. The tier correlates to the size of the
             blob and number of allowed IOPS. This is only applicable to page blobs on
@@ -1014,7 +1073,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             Defaults to UTF-8.
         :keyword progress_hook:
             A callback to track the progress of a long running upload. The signature is
-            function(current: int, total: Optional[int]) where current is the number of bytes transfered
+            function(current: int, total: Optional[int]) where current is the number of bytes transferred
             so far, and total is the size of the blob or None if the size is unknown.
         :paramtype progress_hook: Callable[[int, Optional[int]], None]
         :returns: A BlobClient to interact with the newly uploaded blob.
@@ -1029,6 +1088,11 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
                 :dedent: 8
                 :caption: Upload blob to the container.
         """
+        if isinstance(name, BlobProperties):
+            warnings.warn(
+                "The use of a 'BlobProperties' instance for param blob is deprecated. Please use str instead.",
+                DeprecationWarning
+            )
         blob = self.get_blob_client(name)
         kwargs.setdefault('merge_span', True)
         timeout = kwargs.pop('timeout', None)
@@ -1046,9 +1110,9 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
 
     @distributed_trace
     def delete_blob(
-            self, blob,  # type: Union[str, BlobProperties]
-            delete_snapshots=None,  # type: Optional[str]
-            **kwargs
+            self, blob: str,
+            delete_snapshots: Optional[str] = None,
+            **kwargs: Any
         ):
         # type: (...) -> None
         """Marks the specified blob or snapshot for deletion.
@@ -1064,9 +1128,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         Soft deleted blob or snapshot is accessible through :func:`list_blobs()` specifying `include=["deleted"]`
         option. Soft-deleted blob or snapshot can be restored using :func:`~azure.storage.blob.BlobClient.undelete()`
 
-        :param blob: The blob with which to interact. If specified, this value will override
-            a blob value specified in the blob URL.
-        :type blob: str or ~azure.storage.blob.BlobProperties
+        :param str blob: The blob with which to interact.
         :param str delete_snapshots:
             Required if the blob has associated snapshots. Values include:
              - "only": Deletes only the blobs snapshots.
@@ -1106,9 +1168,18 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             .. versionadded:: 12.4.0
 
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            #other-client--per-operation-configuration>`_.
         :rtype: None
         """
+        if isinstance(blob, BlobProperties):
+            warnings.warn(
+                "The use of a 'BlobProperties' instance for param blob is deprecated. Please use str instead.",
+                DeprecationWarning
+            )
         blob_client = self.get_blob_client(blob) # type: ignore
         kwargs.setdefault('merge_span', True)
         timeout = kwargs.pop('timeout', None)
@@ -1119,39 +1190,40 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
 
     @overload
     def download_blob(
-            self, blob: Union[str, BlobProperties],
+            self, blob: str,
             offset: int = None,
             length: int = None,
             *,
             encoding: str,
-            **kwargs) -> StorageStreamDownloader[str]:
+            **kwargs: Any
+    ) -> StorageStreamDownloader[str]:
         ...
 
     @overload
     def download_blob(
-            self, blob: Union[str, BlobProperties],
+            self, blob: str,
             offset: int = None,
             length: int = None,
             *,
             encoding: None = None,
-            **kwargs) -> StorageStreamDownloader[bytes]:
+            **kwargs: Any
+    ) -> StorageStreamDownloader[bytes]:
         ...
 
     @distributed_trace
     def download_blob(
-            self, blob: Union[str, BlobProperties],
+            self, blob: str,
             offset: int = None,
             length: int = None,
             *,
             encoding: Optional[str] = None,
-            **kwargs) -> StorageStreamDownloader:
+            **kwargs: Any
+    ) -> StorageStreamDownloader:
         """Downloads a blob to the StorageStreamDownloader. The readall() method must
         be used to read all the content or readinto() must be used to download the blob into
         a stream. Using chunks() returns an iterator which allows the user to iterate over the content in chunks.
 
-        :param blob: The blob with which to interact. If specified, this value will override
-            a blob value specified in the blob URL.
-        :type blob: str or ~azure.storage.blob.BlobProperties
+        :param str blob: The blob with which to interact.
         :param int offset:
             Start of byte range to use for downloading a section of the blob.
             Must be set if length is provided.
@@ -1213,16 +1285,26 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             Encoding to decode the downloaded bytes. Default is None, i.e. no decoding.
         :keyword progress_hook:
             A callback to track the progress of a long running download. The signature is
-            function(current: int, total: int) where current is the number of bytes transfered
+            function(current: int, total: int) where current is the number of bytes transferred
             so far, and total is the total size of the download.
         :paramtype progress_hook: Callable[[int, int], None]
         :keyword int timeout:
-            The timeout parameter is expressed in seconds. This method may make
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            #other-client--per-operation-configuration>`_. This method may make multiple calls to the service and
+            the timeout will apply to each call individually.
             multiple calls to the Azure service and the timeout will apply to
             each call individually.
         :returns: A streaming object (StorageStreamDownloader)
         :rtype: ~azure.storage.blob.StorageStreamDownloader
         """
+        if isinstance(blob, BlobProperties):
+            warnings.warn(
+                "The use of a 'BlobProperties' instance for param blob is deprecated. Please use str instead.",
+                DeprecationWarning
+            )
         blob_client = self.get_blob_client(blob) # type: ignore
         kwargs.setdefault('merge_span', True)
         return blob_client.download_blob(
@@ -1231,6 +1313,8 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             encoding=encoding,
             **kwargs)
 
+    # This code is a copy from _generated.
+    # Once Autorest is able to provide request preparation this code should be removed.
     def _generate_delete_blobs_subrequest_options(
         self, snapshot=None,
         version_id=None,
@@ -1239,10 +1323,6 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         modified_access_conditions=None,
         **kwargs
     ):
-        """This code is a copy from _generated.
-
-        Once Autorest is able to provide request preparation this code should be removed.
-        """
         lease_id = None
         if lease_access_conditions is not None:
             lease_id = lease_access_conditions.lease_id
@@ -1345,7 +1425,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
 
             req = HttpRequest(
                 "DELETE",
-                "/{}/{}{}".format(quote(container_name), quote(blob_name, safe='/~'), self._query_str),
+                f"/{quote(container_name)}/{quote(blob_name, safe='/~')}{self._query_str}",
                 headers=header_parameters
             )
             req.format_parameters(query_parameters)
@@ -1354,10 +1434,10 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         return reqs, kwargs
 
     @distributed_trace
-    def delete_blobs(
+    def delete_blobs(  # pylint: disable=delete-operation-wrong-return-type
             self, *blobs: Union[str, Dict[str, Any], BlobProperties],
             **kwargs: Any
-        ) -> Iterator[HttpResponse]:
+        ) -> Iterator["HttpResponse"]:
         """Marks the specified blobs or snapshots for deletion.
 
         The blobs are later deleted during garbage collection.
@@ -1427,7 +1507,11 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             This is a boolean param which defaults to True. When this is set, an exception
             is raised even if there is a single operation failure.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            #other-client--per-operation-configuration>`_.
         :return: An iterator of responses, one for each blob in order
         :rtype: Iterator[~azure.core.pipeline.transport.HttpResponse]
 
@@ -1441,19 +1525,17 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
                 :caption: Deleting multiple blobs.
         """
         if len(blobs) == 0:
-            return iter(list())
+            return iter([])
 
         reqs, options = self._generate_delete_blobs_options(*blobs, **kwargs)
 
         return self._batch_send(*reqs, **options)
 
+    # This code is a copy from _generated.
+    # Once Autorest is able to provide request preparation this code should be removed.
     def _generate_set_tiers_subrequest_options(
         self, tier, snapshot=None, version_id=None, rehydrate_priority=None, lease_access_conditions=None, **kwargs
     ):
-        """This code is a copy from _generated.
-
-        Once Autorest is able to provide request preparation this code should be removed.
-        """
         if not tier:
             raise ValueError("A blob tier must be specified")
         if snapshot and version_id:
@@ -1527,7 +1609,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
 
             req = HttpRequest(
                 "PUT",
-                "/{}/{}{}".format(quote(container_name), quote(blob_name, safe='/~'), self._query_str),
+                f"/{quote(container_name)}/{quote(blob_name, safe='/~')}{self._query_str}",
                 headers=header_parameters
             )
             req.format_parameters(query_parameters)
@@ -1540,7 +1622,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         self, standard_blob_tier: Optional[Union[str, 'StandardBlobTier']],
         *blobs: Union[str, Dict[str, Any], BlobProperties],
         **kwargs: Any
-    ) -> Iterator[HttpResponse]:
+    ) -> Iterator["HttpResponse"]:
         """This operation sets the tier on block blobs.
 
         A block blob's tier determines Hot/Cool/Archive storage type.
@@ -1595,7 +1677,11 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             .. versionadded:: 12.4.0
 
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            #other-client--per-operation-configuration>`_.
         :keyword bool raise_on_any_failure:
             This is a boolean param which defaults to True. When this is set, an exception
             is raised even if there is a single operation failure.
@@ -1611,7 +1697,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         self, premium_page_blob_tier: Optional[Union[str, 'PremiumPageBlobTier']],
         *blobs: Union[str, Dict[str, Any], BlobProperties],
         **kwargs: Any
-    ) -> Iterator[HttpResponse]:
+    ) -> Iterator["HttpResponse"]:
         """Sets the page blob tiers on all blobs. This API is only supported for page blobs on premium accounts.
 
         The maximum number of blobs that can be updated in a single request is 256.
@@ -1644,34 +1730,38 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
 
         :type blobs: str or dict(str, Any) or ~azure.storage.blob.BlobProperties
         :keyword int timeout:
-            The timeout parameter is expressed in seconds. This method may make
-            multiple calls to the Azure service and the timeout will apply to
-            each call individually.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            #other-client--per-operation-configuration>`_.
         :keyword bool raise_on_any_failure:
             This is a boolean param which defaults to True. When this is set, an exception
             is raised even if there is a single operation failure.
         :return: An iterator of responses, one for each blob in order
-        :rtype: iterator[~azure.core.pipeline.transport.HttpResponse]
+        :rtype: Iterator[~azure.core.pipeline.transport.HttpResponse]
         """
         reqs, options = self._generate_set_tiers_options(premium_page_blob_tier, *blobs, **kwargs)
 
         return self._batch_send(*reqs, **options)
 
     def get_blob_client(
-            self, blob,  # type: Union[str, BlobProperties]
-            snapshot=None  # type: str
-        ):
-        # type: (...) -> BlobClient
+            self, blob: str,
+            snapshot: Optional[str] = None,
+            *,
+            version_id: Optional[str] = None
+    ) -> BlobClient:
         """Get a client to interact with the specified blob.
 
         The blob need not already exist.
 
-        :param blob:
+        :param str blob:
             The blob with which to interact.
-        :type blob: str or ~azure.storage.blob.BlobProperties
         :param str snapshot:
             The optional blob snapshot on which to operate. This can be the snapshot ID string
             or the response returned from :func:`~BlobClient.create_snapshot()`.
+        :keyword str version_id: The version id parameter is an opaque DateTime value that, when present,
+            specifies the version of the blob to operate on.
         :returns: A BlobClient.
         :rtype: ~azure.storage.blob.BlobClient
 
@@ -1684,6 +1774,11 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
                 :dedent: 8
                 :caption: Get the blob client.
         """
+        if isinstance(blob, BlobProperties):
+            warnings.warn(
+                "The use of a 'BlobProperties' instance for param blob is deprecated. Please use str instead.",
+                DeprecationWarning
+            )
         blob_name = _get_blob_name(blob)
         _pipeline = Pipeline(
             transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
@@ -1694,4 +1789,5 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             credential=self.credential, api_version=self.api_version, _configuration=self._config,
             _pipeline=_pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
             require_encryption=self.require_encryption, encryption_version=self.encryption_version,
-            key_encryption_key=self.key_encryption_key, key_resolver_function=self.key_resolver_function)
+            key_encryption_key=self.key_encryption_key, key_resolver_function=self.key_resolver_function,
+            version_id=version_id)

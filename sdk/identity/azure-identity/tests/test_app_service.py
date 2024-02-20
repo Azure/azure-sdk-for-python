@@ -25,7 +25,10 @@ class TestAppService(RecordedTestCase):
         else:
             # in playback we need to set environment variables and clear any that would interfere
             # (MSI_SECRET ends up in a header; vcr.py doesn't match headers, so the value doesn't matter)
-            env = {EnvironmentVariables.IDENTITY_ENDPOINT: PLAYBACK_URL, EnvironmentVariables.IDENTITY_HEADER: "redacted"}
+            env = {
+                EnvironmentVariables.IDENTITY_ENDPOINT: PLAYBACK_URL,
+                EnvironmentVariables.IDENTITY_HEADER: "redacted",
+            }
             self.patch = mock.patch.dict(os.environ, env, clear=True)
 
     @pytest.mark.manual

@@ -45,9 +45,7 @@ def build_get_request(resource_name: str, scope: str, **kwargs: Any) -> HttpRequ
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop(
-        "api_version", _params.pop("api-version", "2021-03-15-preview")
-    )  # type: Literal["2021-03-15-preview"]
+    api_version: Literal["2023-02-01"] = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -57,7 +55,7 @@ def build_get_request(resource_name: str, scope: str, **kwargs: Any) -> HttpRequ
         "scope": _SERIALIZER.url("scope", scope, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -72,9 +70,7 @@ def build_list_request(scope: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop(
-        "api_version", _params.pop("api-version", "2021-03-15-preview")
-    )  # type: Literal["2021-03-15-preview"]
+    api_version: Literal["2023-02-01"] = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -83,7 +79,7 @@ def build_list_request(scope: str, **kwargs: Any) -> HttpRequest:
         "scope": _SERIALIZER.url("scope", scope, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -100,7 +96,7 @@ class UsagesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.quota.AzureQuotaExtensionAPI`'s
+        :class:`~azure.mgmt.quota.QuotaMgmtClient`'s
         :attr:`usages` attribute.
     """
 
@@ -146,10 +142,10 @@ class UsagesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2023-02-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2021-03-15-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.CurrentUsagesBase]
+        )
+        cls: ClsType[_models.CurrentUsagesBase] = kwargs.pop("cls", None)
 
         request = build_get_request(
             resource_name=resource_name,
@@ -160,10 +156,11 @@ class UsagesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -183,7 +180,7 @@ class UsagesOperations:
 
         return deserialized
 
-    get.metadata = {"url": "/{scope}/providers/Microsoft.Quota/usages/{resourceName}"}  # type: ignore
+    get.metadata = {"url": "/{scope}/providers/Microsoft.Quota/usages/{resourceName}"}
 
     @distributed_trace
     def list(self, scope: str, **kwargs: Any) -> Iterable["_models.CurrentUsagesBase"]:
@@ -203,10 +200,10 @@ class UsagesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2023-02-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2021-03-15-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.UsagesLimits]
+        )
+        cls: ClsType[_models.UsagesLimits] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -227,7 +224,7 @@ class UsagesOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -243,7 +240,7 @@ class UsagesOperations:
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -251,14 +248,15 @@ class UsagesOperations:
             deserialized = self._deserialize("UsagesLimits", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -271,4 +269,4 @@ class UsagesOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list.metadata = {"url": "/{scope}/providers/Microsoft.Quota/usages"}  # type: ignore
+    list.metadata = {"url": "/{scope}/providers/Microsoft.Quota/usages"}

@@ -25,6 +25,7 @@ import azure.cosmos.cosmos_client as cosmos_client
 from azure.cosmos import PartitionKey
 import test_config
 import os
+import uuid
 
 pytestmark = pytest.mark.cosmosEmulator
 
@@ -72,7 +73,7 @@ class EnvTest(unittest.TestCase):
 
     def test_insert(self):
         # create a document using the document definition
-        d = {'id': '1',
+        d = {'id': str(uuid.uuid4()),
                  'name': 'sample document',
                  'spam': 'eggs',
                  'cnt': '1',

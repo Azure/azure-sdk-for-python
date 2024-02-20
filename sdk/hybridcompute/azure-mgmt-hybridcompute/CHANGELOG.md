@@ -1,5 +1,24 @@
 # Release History
 
+## 8.0.0 (2023-02-15)
+
+### Features Added
+
+  - Added operation group HybridComputeManagementClientOperationsMixin
+  - Model HybridComputePrivateLinkScopeProperties has a new parameter private_endpoint_connections
+  - Model MachineExtensionProperties has a new parameter enable_automatic_upgrade
+  - Model MachineProperties has a new parameter agent_configuration
+  - Model MachineProperties has a new parameter cloud_metadata
+  - Model MachineProperties has a new parameter mssql_discovered
+  - Model MachineProperties has a new parameter os_type
+  - Model MachineProperties has a new parameter service_statuses
+  - Model MachineUpdateProperties has a new parameter cloud_metadata
+  - Model MachineUpdateProperties has a new parameter os_profile
+  - Model OSProfile has a new parameter linux_configuration
+  - Model OSProfile has a new parameter windows_configuration
+  - Model OperationValue has a new parameter is_data_action
+  - Model PrivateEndpointConnectionProperties has a new parameter group_ids
+
 ## 8.0.0b1 (2022-11-18)
 
 ### Features Added

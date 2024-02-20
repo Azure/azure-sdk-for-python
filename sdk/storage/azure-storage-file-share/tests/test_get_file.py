@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 import base64
 import os
+import tempfile
 import uuid
 from io import BytesIO
 
@@ -19,7 +20,6 @@ from test_helpers import ProgressTracker
 
 # ------------------------------------------------------------------------------
 TEST_FILE_PREFIX = 'file'
-FILE_PATH = 'file_output.temp.{}.dat'.format(str(uuid.uuid4()))
 # ------------------------------------------------------------------------------
 
 
@@ -59,12 +59,6 @@ class TestStorageGetFile(StorageRecordedTestCase):
             )
             file_client.upload_file(self.byte_data)
 
-    def _teardown(self, FILE_PATH):
-        if os.path.isfile(FILE_PATH):
-            try:
-                os.remove(FILE_PATH)
-            except:
-                pass
     # --Helpers-----------------------------------------------------------------
 
     def _get_file_reference(self):
@@ -333,18 +327,18 @@ class TestStorageGetFile(StorageRecordedTestCase):
 
         # Act
         chunk_size_list = list()
-        with open(FILE_PATH, 'wb') as stream:
-            for data in file_client.download_file().chunks():
-                chunk_size_list.append(len(data))
-                stream.write(data)
-
         for i in range(0, len(chunk_size_list) - 1):
             assert chunk_size_list[i] == self.MAX_CHUNK_GET_SIZE
-        # Assert
-        with open(FILE_PATH, 'rb') as stream:
-            actual = stream.read()
+
+        with tempfile.TemporaryFile() as temp_file:
+            for data in file_client.download_file().chunks():
+                chunk_size_list.append(len(data))
+                temp_file.write(data)
+
+            # Assert
+            temp_file.seek(0)
+            actual = temp_file.read()
             assert self.byte_data == actual
-        self._teardown(FILE_PATH)
 
     @pytest.mark.live_test_only
     @FileSharePreparer()
@@ -364,15 +358,13 @@ class TestStorageGetFile(StorageRecordedTestCase):
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
         # Act
-        with open(FILE_PATH, 'wb') as stream:
-            bytes_read = file_client.download_file(max_concurrency=2).readinto(stream)
-
-        # Assert
-        assert isinstance(bytes_read, int)
-        with open(FILE_PATH, 'rb') as stream:
-            actual = stream.read()
+        with tempfile.TemporaryFile() as temp_file:
+            bytes_read = file_client.download_file(max_concurrency=2).readinto(temp_file)
+            # Assert
+            assert isinstance(bytes_read, int)
+            temp_file.seek(0)
+            actual = temp_file.read()
             assert self.byte_data == actual
-        self._teardown(FILE_PATH)
 
     @pytest.mark.live_test_only
     @FileSharePreparer()
@@ -399,20 +391,14 @@ class TestStorageGetFile(StorageRecordedTestCase):
                 progress.append((current, total))
 
         # Act
-        with open(FILE_PATH, 'wb') as stream:
-            bytes_read = file_client.download_file(raw_response_hook=callback, max_concurrency=2).readinto(stream)
-
-        # Assert
-        assert isinstance(bytes_read, int)
-        with open(FILE_PATH, 'rb') as stream:
-            actual = stream.read()
+        with tempfile.TemporaryFile() as temp_file:
+            bytes_read = file_client.download_file(raw_response_hook=callback, max_concurrency=2).readinto(temp_file)
+            # Assert
+            assert isinstance(bytes_read, int)
+            temp_file.seek(0)
+            actual = temp_file.read()
             assert self.byte_data == actual
-        self.assert_download_progress(
-            len(self.byte_data),
-            self.MAX_CHUNK_GET_SIZE,
-            self.MAX_SINGLE_GET_SIZE,
-            progress)
-        self._teardown(FILE_PATH)
+        self.assert_download_progress(len(self.byte_data), self.MAX_CHUNK_GET_SIZE, self.MAX_SINGLE_GET_SIZE, progress)
 
     @FileSharePreparer()
     @recorded_by_proxy
@@ -437,20 +423,14 @@ class TestStorageGetFile(StorageRecordedTestCase):
                 progress.append((current, total))
 
         # Act
-        with open(FILE_PATH, 'wb') as stream:
-            bytes_read = file_client.download_file(raw_response_hook=callback, max_concurrency=1).readinto(stream)
-
-        # Assert
-        assert isinstance(bytes_read, int)
-        with open(FILE_PATH, 'rb') as stream:
-            actual = stream.read()
+        with tempfile.TemporaryFile() as temp_file:
+            bytes_read = file_client.download_file(raw_response_hook=callback, max_concurrency=1).readinto(temp_file)
+            # Assert
+            assert isinstance(bytes_read, int)
+            temp_file.seek(0)
+            actual = temp_file.read()
             assert self.byte_data == actual
-        self.assert_download_progress(
-            len(self.byte_data),
-            self.MAX_CHUNK_GET_SIZE,
-            self.MAX_SINGLE_GET_SIZE,
-            progress)
-        self._teardown(FILE_PATH)
+        self.assert_download_progress(len(self.byte_data), self.MAX_CHUNK_GET_SIZE, self.MAX_SINGLE_GET_SIZE, progress)
 
     @FileSharePreparer()
     @recorded_by_proxy
@@ -478,20 +458,14 @@ class TestStorageGetFile(StorageRecordedTestCase):
                 progress.append((current, total))
 
         # Act
-        with open(FILE_PATH, 'wb') as stream:
-            bytes_read = file_client.download_file(raw_response_hook=callback, max_concurrency=1).readinto(stream)
-
-        # Assert
-        assert isinstance(bytes_read, int)
-        with open(FILE_PATH, 'rb') as stream:
-            actual = stream.read()
+        with tempfile.TemporaryFile() as temp_file:
+            bytes_read = file_client.download_file(raw_response_hook=callback, max_concurrency=1).readinto(temp_file)
+            # Assert
+            assert isinstance(bytes_read, int)
+            temp_file.seek(0)
+            actual = temp_file.read()
             assert file_data == actual
-        self.assert_download_progress(
-            len(file_data),
-            self.MAX_CHUNK_GET_SIZE,
-            self.MAX_SINGLE_GET_SIZE,
-            progress)
-        self._teardown(FILE_PATH)
+        self.assert_download_progress(len(file_data), self.MAX_CHUNK_GET_SIZE, self.MAX_SINGLE_GET_SIZE, progress)
 
     @pytest.mark.live_test_only
     @FileSharePreparer()
@@ -522,15 +496,13 @@ class TestStorageGetFile(StorageRecordedTestCase):
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
         # Act
-        with open(FILE_PATH, 'wb') as stream:
-            bytes_read = snapshot_client.download_file(max_concurrency=2).readinto(stream)
-
-        # Assert
-        assert isinstance(bytes_read, int)
-        with open(FILE_PATH, 'rb') as stream:
-            actual = stream.read()
+        with tempfile.TemporaryFile() as temp_file:
+            bytes_read = snapshot_client.download_file(max_concurrency=2).readinto(temp_file)
+            # Assert
+            assert isinstance(bytes_read, int)
+            temp_file.seek(0)
+            actual = temp_file.read()
             assert self.byte_data == actual
-        self._teardown(FILE_PATH)
 
     @pytest.mark.live_test_only
     @FileSharePreparer()
@@ -568,20 +540,14 @@ class TestStorageGetFile(StorageRecordedTestCase):
                 progress.append((current, total))
 
         # Act
-        with open(FILE_PATH, 'wb') as stream:
-            bytes_read = snapshot_client.download_file(raw_response_hook=callback, max_concurrency=2).readinto(stream)
-
-        # Assert
-        assert isinstance(bytes_read, int)
-        with open(FILE_PATH, 'rb') as stream:
-            actual = stream.read()
+        with tempfile.TemporaryFile() as temp_file:
+            bytes_read = snapshot_client.download_file(raw_response_hook=callback, max_concurrency=2).readinto(temp_file)
+            # Assert
+            assert isinstance(bytes_read, int)
+            temp_file.seek(0)
+            actual = temp_file.read()
             assert self.byte_data == actual
-        self.assert_download_progress(
-            len(self.byte_data),
-            self.MAX_CHUNK_GET_SIZE,
-            self.MAX_SINGLE_GET_SIZE,
-            progress)
-        self._teardown(FILE_PATH)
+        self.assert_download_progress(len(self.byte_data), self.MAX_CHUNK_GET_SIZE, self.MAX_SINGLE_GET_SIZE, progress)
 
     @FileSharePreparer()
     @recorded_by_proxy
@@ -617,20 +583,14 @@ class TestStorageGetFile(StorageRecordedTestCase):
                 progress.append((current, total))
 
         # Act
-        with open(FILE_PATH, 'wb') as stream:
-            bytes_read = snapshot_client.download_file(raw_response_hook=callback, max_concurrency=1).readinto(stream)
-
-        # Assert
-        assert isinstance(bytes_read, int)
-        with open(FILE_PATH, 'rb') as stream:
-            actual = stream.read()
+        with tempfile.TemporaryFile() as temp_file:
+            bytes_read = snapshot_client.download_file(raw_response_hook=callback, max_concurrency=1).readinto(temp_file)
+            # Assert
+            assert isinstance(bytes_read, int)
+            temp_file.seek(0)
+            actual = temp_file.read()
             assert self.byte_data == actual
-        self.assert_download_progress(
-            len(self.byte_data),
-            self.MAX_CHUNK_GET_SIZE,
-            self.MAX_SINGLE_GET_SIZE,
-            progress)
-        self._teardown(FILE_PATH)
+        self.assert_download_progress(len(self.byte_data), self.MAX_CHUNK_GET_SIZE, self.MAX_SINGLE_GET_SIZE, progress)
 
     @FileSharePreparer()
     @recorded_by_proxy
@@ -670,20 +630,14 @@ class TestStorageGetFile(StorageRecordedTestCase):
                 progress.append((current, total))
 
         # Act
-        with open(FILE_PATH, 'wb') as stream:
-            bytes_read = snapshot_client.download_file(raw_response_hook=callback, max_concurrency=1).readinto(stream)
-
-        # Assert
-        assert isinstance(bytes_read, int)
-        with open(FILE_PATH, 'rb') as stream:
-            actual = stream.read()
+        with tempfile.TemporaryFile() as temp_file:
+            bytes_read = snapshot_client.download_file(raw_response_hook=callback, max_concurrency=1).readinto(temp_file)
+            # Assert
+            assert isinstance(bytes_read, int)
+            temp_file.seek(0)
+            actual = temp_file.read()
             assert file_data == actual
-        self.assert_download_progress(
-            len(file_data),
-            self.MAX_CHUNK_GET_SIZE,
-            self.MAX_SINGLE_GET_SIZE,
-            progress)
-        self._teardown(FILE_PATH)
+        self.assert_download_progress(len(file_data), self.MAX_CHUNK_GET_SIZE, self.MAX_SINGLE_GET_SIZE, progress)
 
     @pytest.mark.live_test_only
     @FileSharePreparer()
@@ -704,15 +658,13 @@ class TestStorageGetFile(StorageRecordedTestCase):
 
         # Act
         end_range = self.MAX_SINGLE_GET_SIZE + 1024
-        with open(FILE_PATH, 'wb') as stream:
-            bytes_read = file_client.download_file(offset=1, length=end_range, max_concurrency=2).readinto(stream)
-
-        # Assert
-        assert isinstance(bytes_read, int)
-        with open(FILE_PATH, 'rb') as stream:
-            actual = stream.read()
+        with tempfile.TemporaryFile() as temp_file:
+            bytes_read = file_client.download_file(offset=1, length=end_range, max_concurrency=2).readinto(temp_file)
+            # Assert
+            assert isinstance(bytes_read, int)
+            temp_file.seek(0)
+            actual = temp_file.read()
             assert self.byte_data[1:end_range + 1] == actual
-        self._teardown(FILE_PATH)
 
     @pytest.mark.live_test_only
     @FileSharePreparer()
@@ -733,16 +685,14 @@ class TestStorageGetFile(StorageRecordedTestCase):
 
         # Act
         end_range = self.MAX_SINGLE_GET_SIZE + 1024
-        with open(FILE_PATH, 'wb') as stream:
-            bytes_read = file_client.download_file(offset=0, length=1).readinto(stream)
-
-        # Assert
-        assert isinstance(bytes_read, int)
-        with open(FILE_PATH, 'rb') as stream:
-            actual = stream.read()
+        with tempfile.TemporaryFile() as temp_file:
+            bytes_read = file_client.download_file(offset=0, length=1).readinto(temp_file)
+            # Assert
+            assert isinstance(bytes_read, int)
+            temp_file.seek(0)
+            actual = temp_file.read()
             assert 1 == len(actual)
             assert self.byte_data[0] == actual[0]
-        self._teardown(FILE_PATH)
 
     @FileSharePreparer()
     @recorded_by_proxy
@@ -797,25 +747,23 @@ class TestStorageGetFile(StorageRecordedTestCase):
         # Act
         start_range = 3
         end_range = self.MAX_SINGLE_GET_SIZE + 1024
-        with open(FILE_PATH, 'wb') as stream:
+        with tempfile.TemporaryFile() as temp_file:
             length = end_range - start_range + 1
             bytes_read = file_client.download_file(
                 offset=start_range,
                 length=length,
                 raw_response_hook=callback,
-                max_concurrency=2).readinto(stream)
-
-        # Assert
-        assert isinstance(bytes_read, int)
-        with open(FILE_PATH, 'rb') as stream:
-            actual = stream.read()
+                max_concurrency=2).readinto(temp_file)
+            # Assert
+            assert isinstance(bytes_read, int)
+            temp_file.seek(0)
+            actual = temp_file.read()
             assert self.byte_data[start_range:end_range + 1] == actual
         self.assert_download_progress(
             end_range - start_range + 1,
             self.MAX_CHUNK_GET_SIZE,
             self.MAX_SINGLE_GET_SIZE,
             progress)
-        self._teardown(FILE_PATH)
 
     @FileSharePreparer()
     @recorded_by_proxy
@@ -833,15 +781,13 @@ class TestStorageGetFile(StorageRecordedTestCase):
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
         # Act
-        with open(FILE_PATH, 'wb') as stream:
-            bytes_read = file_client.download_file(offset=1, length=4, max_concurrency=1).readinto(stream)
-
-        # Assert
-        assert isinstance(bytes_read, int)
-        with open(FILE_PATH, 'rb') as stream:
-            actual = stream.read()
+        with tempfile.TemporaryFile() as temp_file:
+            bytes_read = file_client.download_file(offset=1, length=4, max_concurrency=1).readinto(temp_file)
+            # Assert
+            assert isinstance(bytes_read, int)
+            temp_file.seek(0)
+            actual = temp_file.read()
             assert self.byte_data[1:5] == actual
-        self._teardown(FILE_PATH)
 
     @FileSharePreparer()
     @recorded_by_proxy
@@ -859,15 +805,13 @@ class TestStorageGetFile(StorageRecordedTestCase):
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
         # Act
-        with open(FILE_PATH, 'wb') as stream:
-            bytes_read = file_client.download_file(offset=1, length=3, max_concurrency=1).readinto(stream)
-
-        # Assert
-        assert isinstance(bytes_read, int)
-        with open(FILE_PATH, 'rb') as stream:
-            actual = stream.read()
+        with tempfile.TemporaryFile() as temp_file:
+            bytes_read = file_client.download_file(offset=1, length=3, max_concurrency=1).readinto(temp_file)
+            # Assert
+            assert isinstance(bytes_read, int)
+            temp_file.seek(0)
+            actual = temp_file.read()
             assert self.byte_data[1:4] == actual
-        self._teardown(FILE_PATH)
 
     @pytest.mark.live_test_only
     @FileSharePreparer()
@@ -893,16 +837,14 @@ class TestStorageGetFile(StorageRecordedTestCase):
         # Act
         start = 3
         end_range = 2 * self.MAX_SINGLE_GET_SIZE
-        with open(FILE_PATH, 'wb') as stream:
+        with tempfile.TemporaryFile() as temp_file:
             length = end_range - start + 1
-            bytes_read = file_client.download_file(offset=start, length=length, max_concurrency=2).readinto(stream)
-
-        # Assert
-        assert isinstance(bytes_read, int)
-        with open(FILE_PATH, 'rb') as stream:
-            actual = stream.read()
+            bytes_read = file_client.download_file(offset=start, length=length, max_concurrency=2).readinto(temp_file)
+            # Assert
+            assert isinstance(bytes_read, int)
+            temp_file.seek(0)
+            actual = temp_file.read()
             assert file_data[start:file_size] == actual
-        self._teardown(FILE_PATH)
 
     @FileSharePreparer()
     @recorded_by_proxy
@@ -927,16 +869,14 @@ class TestStorageGetFile(StorageRecordedTestCase):
         # Act
         start = 3
         end_range = 2 * self.MAX_SINGLE_GET_SIZE
-        with open(FILE_PATH, 'wb') as stream:
+        with tempfile.TemporaryFile() as temp_file:
             length = end_range - start + 1
-            bytes_read = file_client.download_file(offset=start, length=length, max_concurrency=1).readinto(stream)
-
-        # Assert
-        assert isinstance(bytes_read, int)
-        with open(FILE_PATH, 'rb') as stream:
-            actual = stream.read()
+            bytes_read = file_client.download_file(offset=start, length=length, max_concurrency=1).readinto(temp_file)
+            # Assert
+            assert isinstance(bytes_read, int)
+            temp_file.seek(0)
+            actual = temp_file.read()
             assert file_data[start:file_size] == actual
-        self._teardown(FILE_PATH)
 
     @pytest.mark.live_test_only
     @FileSharePreparer()
@@ -1154,16 +1094,14 @@ class TestStorageGetFile(StorageRecordedTestCase):
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
         # Act
-        with open(FILE_PATH, 'wb') as stream:
-            non_seekable_stream = TestStorageGetFile.NonSeekableFile(stream)
+        with tempfile.TemporaryFile() as temp_file:
+            non_seekable_stream = TestStorageGetFile.NonSeekableFile(temp_file)
             bytes_read = file_client.download_file(max_concurrency=1).readinto(non_seekable_stream)
-
-        # Assert
-        assert isinstance(bytes_read, int)
-        with open(FILE_PATH, 'rb') as stream:
-            actual = stream.read()
+            # Assert
+            assert isinstance(bytes_read, int)
+            temp_file.seek(0)
+            actual = temp_file.read()
             assert self.byte_data == actual
-        self._teardown(FILE_PATH)
 
     @pytest.mark.live_test_only
     @FileSharePreparer()
@@ -1183,14 +1121,11 @@ class TestStorageGetFile(StorageRecordedTestCase):
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
         # Act
-        with open(FILE_PATH, 'wb') as stream:
-            non_seekable_stream = TestStorageGetFile.NonSeekableFile(stream)
-
+        with tempfile.TemporaryFile() as temp_file:
+            non_seekable_stream = TestStorageGetFile.NonSeekableFile(temp_file)
+            # Assert
             with pytest.raises(ValueError):
                 file_client.download_file(max_concurrency=2).readinto(non_seekable_stream)
-
-                # Assert
-        self._teardown(FILE_PATH)
 
     @FileSharePreparer()
     @recorded_by_proxy
@@ -1219,16 +1154,14 @@ class TestStorageGetFile(StorageRecordedTestCase):
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
         # Act
-        with open(FILE_PATH, 'wb') as stream:
-            non_seekable_stream = TestStorageGetFile.NonSeekableFile(stream)
+        with tempfile.TemporaryFile() as temp_file:
+            non_seekable_stream = TestStorageGetFile.NonSeekableFile(temp_file)
             bytes_read = snapshot_client.download_file(max_concurrency=1).readinto(non_seekable_stream)
-
-        # Assert
-        assert isinstance(bytes_read, int)
-        with open(FILE_PATH, 'rb') as stream:
-            actual = stream.read()
+            # Assert
+            assert isinstance(bytes_read, int)
+            temp_file.seek(0)
+            actual = temp_file.read()
             assert self.byte_data == actual
-        self._teardown(FILE_PATH)
 
     @pytest.mark.live_test_only
     @FileSharePreparer()
@@ -1259,12 +1192,11 @@ class TestStorageGetFile(StorageRecordedTestCase):
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
         # Act
-        with open(FILE_PATH, 'wb') as stream:
-            non_seekable_stream = TestStorageGetFile.NonSeekableFile(stream)
-
+        with tempfile.TemporaryFile() as temp_file:
+            non_seekable_stream = TestStorageGetFile.NonSeekableFile(temp_file)
+            # Assert
             with pytest.raises(ValueError):
                 snapshot_client.download_file(max_concurrency=2).readinto(non_seekable_stream)
-        self._teardown(FILE_PATH)
 
     @FileSharePreparer()
     @recorded_by_proxy

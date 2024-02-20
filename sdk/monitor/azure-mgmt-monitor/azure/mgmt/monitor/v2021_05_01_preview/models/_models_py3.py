@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
@@ -23,10 +23,9 @@ class AutoscaleErrorResponse(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar error: The error object.
-    :vartype error:
-     ~$(python-base-namespace).v2021_05_01_preview.models.AutoscaleErrorResponseError
+    :vartype error: ~azure.mgmt.monitor.v2021_05_01_preview.models.AutoscaleErrorResponseError
     :ivar system_data: The system metadata related to the response.
-    :vartype system_data: ~$(python-base-namespace).v2021_05_01_preview.models.SystemData
+    :vartype system_data: ~azure.mgmt.monitor.v2021_05_01_preview.models.SystemData
     """
 
     _validation = {
@@ -38,11 +37,10 @@ class AutoscaleErrorResponse(_serialization.Model):
         "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(self, *, error: Optional["_models.AutoscaleErrorResponseError"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.AutoscaleErrorResponseError"] = None, **kwargs: Any) -> None:
         """
         :keyword error: The error object.
-        :paramtype error:
-         ~$(python-base-namespace).v2021_05_01_preview.models.AutoscaleErrorResponseError
+        :paramtype error: ~azure.mgmt.monitor.v2021_05_01_preview.models.AutoscaleErrorResponseError
         """
         super().__init__(**kwargs)
         self.error = error
@@ -76,8 +74,8 @@ class AutoscaleErrorResponseError(_serialization.Model):
         message: Optional[str] = None,
         target: Optional[str] = None,
         details: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword code: One of a server-defined set of error codes.
         :paramtype code: str
@@ -106,10 +104,9 @@ class AutoscaleNotification(_serialization.Model):
      Required. Default value is "Scale".
     :vartype operation: str
     :ivar email: the email notification.
-    :vartype email: ~$(python-base-namespace).v2021_05_01_preview.models.EmailNotification
+    :vartype email: ~azure.mgmt.monitor.v2021_05_01_preview.models.EmailNotification
     :ivar webhooks: the collection of webhook notifications.
-    :vartype webhooks:
-     list[~$(python-base-namespace).v2021_05_01_preview.models.WebhookNotification]
+    :vartype webhooks: list[~azure.mgmt.monitor.v2021_05_01_preview.models.WebhookNotification]
     """
 
     _validation = {
@@ -129,14 +126,13 @@ class AutoscaleNotification(_serialization.Model):
         *,
         email: Optional["_models.EmailNotification"] = None,
         webhooks: Optional[List["_models.WebhookNotification"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword email: the email notification.
-        :paramtype email: ~$(python-base-namespace).v2021_05_01_preview.models.EmailNotification
+        :paramtype email: ~azure.mgmt.monitor.v2021_05_01_preview.models.EmailNotification
         :keyword webhooks: the collection of webhook notifications.
-        :paramtype webhooks:
-         list[~$(python-base-namespace).v2021_05_01_preview.models.WebhookNotification]
+        :paramtype webhooks: list[~azure.mgmt.monitor.v2021_05_01_preview.models.WebhookNotification]
         """
         super().__init__(**kwargs)
         self.email = email
@@ -151,16 +147,16 @@ class AutoscaleProfile(_serialization.Model):
     :ivar name: the name of the profile. Required.
     :vartype name: str
     :ivar capacity: the number of instances that can be used during this profile. Required.
-    :vartype capacity: ~$(python-base-namespace).v2021_05_01_preview.models.ScaleCapacity
+    :vartype capacity: ~azure.mgmt.monitor.v2021_05_01_preview.models.ScaleCapacity
     :ivar rules: the collection of rules that provide the triggers and parameters for the scaling
      action. A maximum of 10 rules can be specified. Required.
-    :vartype rules: list[~$(python-base-namespace).v2021_05_01_preview.models.ScaleRule]
+    :vartype rules: list[~azure.mgmt.monitor.v2021_05_01_preview.models.ScaleRule]
     :ivar fixed_date: the specific date-time for the profile. This element is not used if the
      Recurrence element is used.
-    :vartype fixed_date: ~$(python-base-namespace).v2021_05_01_preview.models.TimeWindow
+    :vartype fixed_date: ~azure.mgmt.monitor.v2021_05_01_preview.models.TimeWindow
     :ivar recurrence: the repeating times at which this profile begins. This element is not used if
      the FixedDate element is used.
-    :vartype recurrence: ~$(python-base-namespace).v2021_05_01_preview.models.Recurrence
+    :vartype recurrence: ~azure.mgmt.monitor.v2021_05_01_preview.models.Recurrence
     """
 
     _validation = {
@@ -185,22 +181,22 @@ class AutoscaleProfile(_serialization.Model):
         rules: List["_models.ScaleRule"],
         fixed_date: Optional["_models.TimeWindow"] = None,
         recurrence: Optional["_models.Recurrence"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: the name of the profile. Required.
         :paramtype name: str
         :keyword capacity: the number of instances that can be used during this profile. Required.
-        :paramtype capacity: ~$(python-base-namespace).v2021_05_01_preview.models.ScaleCapacity
+        :paramtype capacity: ~azure.mgmt.monitor.v2021_05_01_preview.models.ScaleCapacity
         :keyword rules: the collection of rules that provide the triggers and parameters for the
          scaling action. A maximum of 10 rules can be specified. Required.
-        :paramtype rules: list[~$(python-base-namespace).v2021_05_01_preview.models.ScaleRule]
+        :paramtype rules: list[~azure.mgmt.monitor.v2021_05_01_preview.models.ScaleRule]
         :keyword fixed_date: the specific date-time for the profile. This element is not used if the
          Recurrence element is used.
-        :paramtype fixed_date: ~$(python-base-namespace).v2021_05_01_preview.models.TimeWindow
+        :paramtype fixed_date: ~azure.mgmt.monitor.v2021_05_01_preview.models.TimeWindow
         :keyword recurrence: the repeating times at which this profile begins. This element is not used
          if the FixedDate element is used.
-        :paramtype recurrence: ~$(python-base-namespace).v2021_05_01_preview.models.Recurrence
+        :paramtype recurrence: ~azure.mgmt.monitor.v2021_05_01_preview.models.Recurrence
         """
         super().__init__(**kwargs)
         self.name = name
@@ -231,19 +227,19 @@ class AutoscaleSettingResource(_serialization.Model):  # pylint: disable=too-man
      characters and a value no greater in length than 256 characters.
     :vartype tags: dict[str, str]
     :ivar system_data: The system metadata related to the response.
-    :vartype system_data: ~$(python-base-namespace).v2021_05_01_preview.models.SystemData
+    :vartype system_data: ~azure.mgmt.monitor.v2021_05_01_preview.models.SystemData
     :ivar profiles: the collection of automatic scaling profiles that specify different scaling
      parameters for different time periods. A maximum of 20 profiles can be specified. Required.
-    :vartype profiles: list[~$(python-base-namespace).v2021_05_01_preview.models.AutoscaleProfile]
+    :vartype profiles: list[~azure.mgmt.monitor.v2021_05_01_preview.models.AutoscaleProfile]
     :ivar notifications: the collection of notifications.
     :vartype notifications:
-     list[~$(python-base-namespace).v2021_05_01_preview.models.AutoscaleNotification]
+     list[~azure.mgmt.monitor.v2021_05_01_preview.models.AutoscaleNotification]
     :ivar enabled: the enabled flag. Specifies whether automatic scaling is enabled for the
      resource. The default value is 'false'.
     :vartype enabled: bool
     :ivar predictive_autoscale_policy: the predictive autoscale policy mode.
     :vartype predictive_autoscale_policy:
-     ~$(python-base-namespace).v2021_05_01_preview.models.PredictiveAutoscalePolicy
+     ~azure.mgmt.monitor.v2021_05_01_preview.models.PredictiveAutoscalePolicy
     :ivar name_properties_name: the name of the autoscale setting.
     :vartype name_properties_name: str
     :ivar target_resource_uri: the resource identifier of the resource that the autoscale setting
@@ -294,8 +290,8 @@ class AutoscaleSettingResource(_serialization.Model):  # pylint: disable=too-man
         name_properties_name: Optional[str] = None,
         target_resource_uri: Optional[str] = None,
         target_resource_location: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -306,17 +302,16 @@ class AutoscaleSettingResource(_serialization.Model):  # pylint: disable=too-man
         :paramtype tags: dict[str, str]
         :keyword profiles: the collection of automatic scaling profiles that specify different scaling
          parameters for different time periods. A maximum of 20 profiles can be specified. Required.
-        :paramtype profiles:
-         list[~$(python-base-namespace).v2021_05_01_preview.models.AutoscaleProfile]
+        :paramtype profiles: list[~azure.mgmt.monitor.v2021_05_01_preview.models.AutoscaleProfile]
         :keyword notifications: the collection of notifications.
         :paramtype notifications:
-         list[~$(python-base-namespace).v2021_05_01_preview.models.AutoscaleNotification]
+         list[~azure.mgmt.monitor.v2021_05_01_preview.models.AutoscaleNotification]
         :keyword enabled: the enabled flag. Specifies whether automatic scaling is enabled for the
          resource. The default value is 'false'.
         :paramtype enabled: bool
         :keyword predictive_autoscale_policy: the predictive autoscale policy mode.
         :paramtype predictive_autoscale_policy:
-         ~$(python-base-namespace).v2021_05_01_preview.models.PredictiveAutoscalePolicy
+         ~azure.mgmt.monitor.v2021_05_01_preview.models.PredictiveAutoscalePolicy
         :keyword name_properties_name: the name of the autoscale setting.
         :paramtype name_properties_name: str
         :keyword target_resource_uri: the resource identifier of the resource that the autoscale
@@ -348,8 +343,7 @@ class AutoscaleSettingResourceCollection(_serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar value: the values for the autoscale setting resources. Required.
-    :vartype value:
-     list[~$(python-base-namespace).v2021_05_01_preview.models.AutoscaleSettingResource]
+    :vartype value: list[~azure.mgmt.monitor.v2021_05_01_preview.models.AutoscaleSettingResource]
     :ivar next_link: URL to get the next set of results.
     :vartype next_link: str
     """
@@ -363,11 +357,12 @@ class AutoscaleSettingResourceCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.AutoscaleSettingResource"], next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: List["_models.AutoscaleSettingResource"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: the values for the autoscale setting resources. Required.
-        :paramtype value:
-         list[~$(python-base-namespace).v2021_05_01_preview.models.AutoscaleSettingResource]
+        :paramtype value: list[~azure.mgmt.monitor.v2021_05_01_preview.models.AutoscaleSettingResource]
         :keyword next_link: URL to get the next set of results.
         :paramtype next_link: str
         """
@@ -383,16 +378,16 @@ class AutoscaleSettingResourcePatch(_serialization.Model):
     :vartype tags: dict[str, str]
     :ivar profiles: the collection of automatic scaling profiles that specify different scaling
      parameters for different time periods. A maximum of 20 profiles can be specified.
-    :vartype profiles: list[~$(python-base-namespace).v2021_05_01_preview.models.AutoscaleProfile]
+    :vartype profiles: list[~azure.mgmt.monitor.v2021_05_01_preview.models.AutoscaleProfile]
     :ivar notifications: the collection of notifications.
     :vartype notifications:
-     list[~$(python-base-namespace).v2021_05_01_preview.models.AutoscaleNotification]
+     list[~azure.mgmt.monitor.v2021_05_01_preview.models.AutoscaleNotification]
     :ivar enabled: the enabled flag. Specifies whether automatic scaling is enabled for the
      resource. The default value is 'false'.
     :vartype enabled: bool
     :ivar predictive_autoscale_policy: the predictive autoscale policy mode.
     :vartype predictive_autoscale_policy:
-     ~$(python-base-namespace).v2021_05_01_preview.models.PredictiveAutoscalePolicy
+     ~azure.mgmt.monitor.v2021_05_01_preview.models.PredictiveAutoscalePolicy
     :ivar name: the name of the autoscale setting.
     :vartype name: str
     :ivar target_resource_uri: the resource identifier of the resource that the autoscale setting
@@ -432,24 +427,23 @@ class AutoscaleSettingResourcePatch(_serialization.Model):
         name: Optional[str] = None,
         target_resource_uri: Optional[str] = None,
         target_resource_location: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword profiles: the collection of automatic scaling profiles that specify different scaling
          parameters for different time periods. A maximum of 20 profiles can be specified.
-        :paramtype profiles:
-         list[~$(python-base-namespace).v2021_05_01_preview.models.AutoscaleProfile]
+        :paramtype profiles: list[~azure.mgmt.monitor.v2021_05_01_preview.models.AutoscaleProfile]
         :keyword notifications: the collection of notifications.
         :paramtype notifications:
-         list[~$(python-base-namespace).v2021_05_01_preview.models.AutoscaleNotification]
+         list[~azure.mgmt.monitor.v2021_05_01_preview.models.AutoscaleNotification]
         :keyword enabled: the enabled flag. Specifies whether automatic scaling is enabled for the
          resource. The default value is 'false'.
         :paramtype enabled: bool
         :keyword predictive_autoscale_policy: the predictive autoscale policy mode.
         :paramtype predictive_autoscale_policy:
-         ~$(python-base-namespace).v2021_05_01_preview.models.PredictiveAutoscalePolicy
+         ~azure.mgmt.monitor.v2021_05_01_preview.models.PredictiveAutoscalePolicy
         :keyword name: the name of the autoscale setting.
         :paramtype name: str
         :keyword target_resource_uri: the resource identifier of the resource that the autoscale
@@ -497,7 +491,7 @@ class Resource(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -519,11 +513,10 @@ class DiagnosticSettingsCategoryResource(Resource):
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :ivar system_data: The system metadata related to this resource.
-    :vartype system_data: ~$(python-base-namespace).v2021_05_01_preview.models.SystemData
+    :vartype system_data: ~azure.mgmt.monitor.v2021_05_01_preview.models.SystemData
     :ivar category_type: The type of the diagnostic settings category. Known values are: "Metrics"
      and "Logs".
-    :vartype category_type: str or
-     ~$(python-base-namespace).v2021_05_01_preview.models.CategoryType
+    :vartype category_type: str or ~azure.mgmt.monitor.v2021_05_01_preview.models.CategoryType
     :ivar category_groups: the collection of what category groups are supported.
     :vartype category_groups: list[str]
     """
@@ -549,13 +542,12 @@ class DiagnosticSettingsCategoryResource(Resource):
         *,
         category_type: Optional[Union[str, "_models.CategoryType"]] = None,
         category_groups: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword category_type: The type of the diagnostic settings category. Known values are:
          "Metrics" and "Logs".
-        :paramtype category_type: str or
-         ~$(python-base-namespace).v2021_05_01_preview.models.CategoryType
+        :paramtype category_type: str or ~azure.mgmt.monitor.v2021_05_01_preview.models.CategoryType
         :keyword category_groups: the collection of what category groups are supported.
         :paramtype category_groups: list[str]
         """
@@ -570,18 +562,20 @@ class DiagnosticSettingsCategoryResourceCollection(_serialization.Model):
 
     :ivar value: The collection of diagnostic settings category resources.
     :vartype value:
-     list[~$(python-base-namespace).v2021_05_01_preview.models.DiagnosticSettingsCategoryResource]
+     list[~azure.mgmt.monitor.v2021_05_01_preview.models.DiagnosticSettingsCategoryResource]
     """
 
     _attribute_map = {
         "value": {"key": "value", "type": "[DiagnosticSettingsCategoryResource]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.DiagnosticSettingsCategoryResource"]] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.DiagnosticSettingsCategoryResource"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The collection of diagnostic settings category resources.
         :paramtype value:
-         list[~$(python-base-namespace).v2021_05_01_preview.models.DiagnosticSettingsCategoryResource]
+         list[~azure.mgmt.monitor.v2021_05_01_preview.models.DiagnosticSettingsCategoryResource]
         """
         super().__init__(**kwargs)
         self.value = value
@@ -601,7 +595,7 @@ class DiagnosticSettingsResource(Resource):  # pylint: disable=too-many-instance
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :ivar system_data: The system metadata related to this resource.
-    :vartype system_data: ~$(python-base-namespace).v2021_05_01_preview.models.SystemData
+    :vartype system_data: ~azure.mgmt.monitor.v2021_05_01_preview.models.SystemData
     :ivar storage_account_id: The resource ID of the storage account to which you would like to
      send Diagnostic Logs.
     :vartype storage_account_id: str
@@ -614,9 +608,9 @@ class DiagnosticSettingsResource(Resource):  # pylint: disable=too-many-instance
      will be selected.
     :vartype event_hub_name: str
     :ivar metrics: The list of metric settings.
-    :vartype metrics: list[~$(python-base-namespace).v2021_05_01_preview.models.MetricSettings]
+    :vartype metrics: list[~azure.mgmt.monitor.v2021_05_01_preview.models.MetricSettings]
     :ivar logs: The list of logs settings.
-    :vartype logs: list[~$(python-base-namespace).v2021_05_01_preview.models.LogSettings]
+    :vartype logs: list[~azure.mgmt.monitor.v2021_05_01_preview.models.LogSettings]
     :ivar workspace_id: The full ARM resource ID of the Log Analytics workspace to which you would
      like to send Diagnostic Logs. Example:
      /subscriptions/4b9e8510-67ab-4e9a-95a9-e2f1e570ea9c/resourceGroups/insights-integration/providers/Microsoft.OperationalInsights/workspaces/viruela2.
@@ -666,8 +660,8 @@ class DiagnosticSettingsResource(Resource):  # pylint: disable=too-many-instance
         workspace_id: Optional[str] = None,
         marketplace_partner_id: Optional[str] = None,
         log_analytics_destination_type: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword storage_account_id: The resource ID of the storage account to which you would like to
          send Diagnostic Logs.
@@ -681,9 +675,9 @@ class DiagnosticSettingsResource(Resource):  # pylint: disable=too-many-instance
          will be selected.
         :paramtype event_hub_name: str
         :keyword metrics: The list of metric settings.
-        :paramtype metrics: list[~$(python-base-namespace).v2021_05_01_preview.models.MetricSettings]
+        :paramtype metrics: list[~azure.mgmt.monitor.v2021_05_01_preview.models.MetricSettings]
         :keyword logs: The list of logs settings.
-        :paramtype logs: list[~$(python-base-namespace).v2021_05_01_preview.models.LogSettings]
+        :paramtype logs: list[~azure.mgmt.monitor.v2021_05_01_preview.models.LogSettings]
         :keyword workspace_id: The full ARM resource ID of the Log Analytics workspace to which you
          would like to send Diagnostic Logs. Example:
          /subscriptions/4b9e8510-67ab-4e9a-95a9-e2f1e570ea9c/resourceGroups/insights-integration/providers/Microsoft.OperationalInsights/workspaces/viruela2.
@@ -714,19 +708,18 @@ class DiagnosticSettingsResourceCollection(_serialization.Model):
     """Represents a collection of alert rule resources.
 
     :ivar value: The collection of diagnostic settings resources;.
-    :vartype value:
-     list[~$(python-base-namespace).v2021_05_01_preview.models.DiagnosticSettingsResource]
+    :vartype value: list[~azure.mgmt.monitor.v2021_05_01_preview.models.DiagnosticSettingsResource]
     """
 
     _attribute_map = {
         "value": {"key": "value", "type": "[DiagnosticSettingsResource]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.DiagnosticSettingsResource"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.DiagnosticSettingsResource"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The collection of diagnostic settings resources;.
         :paramtype value:
-         list[~$(python-base-namespace).v2021_05_01_preview.models.DiagnosticSettingsResource]
+         list[~azure.mgmt.monitor.v2021_05_01_preview.models.DiagnosticSettingsResource]
         """
         super().__init__(**kwargs)
         self.value = value
@@ -758,8 +751,8 @@ class EmailNotification(_serialization.Model):
         send_to_subscription_administrator: bool = False,
         send_to_subscription_co_administrators: bool = False,
         custom_emails: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword send_to_subscription_administrator: a value indicating whether to send email to
          subscription administrator.
@@ -791,7 +784,7 @@ class ErrorResponse(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword code: Error code.
         :paramtype code: str
@@ -819,7 +812,7 @@ class LogSettings(_serialization.Model):
     :ivar enabled: a value indicating whether this log is enabled. Required.
     :vartype enabled: bool
     :ivar retention_policy: the retention policy for this log.
-    :vartype retention_policy: ~$(python-base-namespace).v2021_05_01_preview.models.RetentionPolicy
+    :vartype retention_policy: ~azure.mgmt.monitor.v2021_05_01_preview.models.RetentionPolicy
     """
 
     _validation = {
@@ -840,8 +833,8 @@ class LogSettings(_serialization.Model):
         category: Optional[str] = None,
         category_group: Optional[str] = None,
         retention_policy: Optional["_models.RetentionPolicy"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword category: Name of a Diagnostic Log category for a resource type this setting is
          applied to. To obtain the list of Diagnostic Log categories for a resource, first perform a GET
@@ -854,8 +847,7 @@ class LogSettings(_serialization.Model):
         :keyword enabled: a value indicating whether this log is enabled. Required.
         :paramtype enabled: bool
         :keyword retention_policy: the retention policy for this log.
-        :paramtype retention_policy:
-         ~$(python-base-namespace).v2021_05_01_preview.models.RetentionPolicy
+        :paramtype retention_policy: ~azure.mgmt.monitor.v2021_05_01_preview.models.RetentionPolicy
         """
         super().__init__(**kwargs)
         self.category = category
@@ -878,7 +870,7 @@ class ManagementGroupDiagnosticSettingsResource(Resource):  # pylint: disable=to
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :ivar system_data: The system metadata related to this resource.
-    :vartype system_data: ~$(python-base-namespace).v2021_05_01_preview.models.SystemData
+    :vartype system_data: ~azure.mgmt.monitor.v2021_05_01_preview.models.SystemData
     :ivar storage_account_id: The resource ID of the storage account to which you would like to
      send Diagnostic Logs.
     :vartype storage_account_id: str
@@ -891,8 +883,7 @@ class ManagementGroupDiagnosticSettingsResource(Resource):  # pylint: disable=to
      will be selected.
     :vartype event_hub_name: str
     :ivar logs: The list of logs settings.
-    :vartype logs:
-     list[~$(python-base-namespace).v2021_05_01_preview.models.ManagementGroupLogSettings]
+    :vartype logs: list[~azure.mgmt.monitor.v2021_05_01_preview.models.ManagementGroupLogSettings]
     :ivar workspace_id: The full ARM resource ID of the Log Analytics workspace to which you would
      like to send Diagnostic Logs. Example:
      /subscriptions/4b9e8510-67ab-4e9a-95a9-e2f1e570ea9c/resourceGroups/insights-integration/providers/Microsoft.OperationalInsights/workspaces/viruela2.
@@ -933,8 +924,8 @@ class ManagementGroupDiagnosticSettingsResource(Resource):  # pylint: disable=to
         logs: Optional[List["_models.ManagementGroupLogSettings"]] = None,
         workspace_id: Optional[str] = None,
         marketplace_partner_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword storage_account_id: The resource ID of the storage account to which you would like to
          send Diagnostic Logs.
@@ -949,7 +940,7 @@ class ManagementGroupDiagnosticSettingsResource(Resource):  # pylint: disable=to
         :paramtype event_hub_name: str
         :keyword logs: The list of logs settings.
         :paramtype logs:
-         list[~$(python-base-namespace).v2021_05_01_preview.models.ManagementGroupLogSettings]
+         list[~azure.mgmt.monitor.v2021_05_01_preview.models.ManagementGroupLogSettings]
         :keyword workspace_id: The full ARM resource ID of the Log Analytics workspace to which you
          would like to send Diagnostic Logs. Example:
          /subscriptions/4b9e8510-67ab-4e9a-95a9-e2f1e570ea9c/resourceGroups/insights-integration/providers/Microsoft.OperationalInsights/workspaces/viruela2.
@@ -974,18 +965,20 @@ class ManagementGroupDiagnosticSettingsResourceCollection(_serialization.Model):
 
     :ivar value: The collection of management group diagnostic settings resources.
     :vartype value:
-     list[~$(python-base-namespace).v2021_05_01_preview.models.ManagementGroupDiagnosticSettingsResource]
+     list[~azure.mgmt.monitor.v2021_05_01_preview.models.ManagementGroupDiagnosticSettingsResource]
     """
 
     _attribute_map = {
         "value": {"key": "value", "type": "[ManagementGroupDiagnosticSettingsResource]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.ManagementGroupDiagnosticSettingsResource"]] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.ManagementGroupDiagnosticSettingsResource"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The collection of management group diagnostic settings resources.
         :paramtype value:
-         list[~$(python-base-namespace).v2021_05_01_preview.models.ManagementGroupDiagnosticSettingsResource]
+         list[~azure.mgmt.monitor.v2021_05_01_preview.models.ManagementGroupDiagnosticSettingsResource]
         """
         super().__init__(**kwargs)
         self.value = value
@@ -1017,8 +1010,8 @@ class ManagementGroupLogSettings(_serialization.Model):
     }
 
     def __init__(
-        self, *, enabled: bool, category: Optional[str] = None, category_group: Optional[str] = None, **kwargs
-    ):
+        self, *, enabled: bool, category: Optional[str] = None, category_group: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword category: Name of a Management Group Diagnostic Log category for a resource type this
          setting is applied to.
@@ -1049,7 +1042,7 @@ class MetricSettings(_serialization.Model):
     :ivar enabled: a value indicating whether this category is enabled. Required.
     :vartype enabled: bool
     :ivar retention_policy: the retention policy for this category.
-    :vartype retention_policy: ~$(python-base-namespace).v2021_05_01_preview.models.RetentionPolicy
+    :vartype retention_policy: ~azure.mgmt.monitor.v2021_05_01_preview.models.RetentionPolicy
     """
 
     _validation = {
@@ -1070,8 +1063,8 @@ class MetricSettings(_serialization.Model):
         time_grain: Optional[datetime.timedelta] = None,
         category: Optional[str] = None,
         retention_policy: Optional["_models.RetentionPolicy"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword time_grain: the timegrain of the metric in ISO8601 format.
         :paramtype time_grain: ~datetime.timedelta
@@ -1082,8 +1075,7 @@ class MetricSettings(_serialization.Model):
         :keyword enabled: a value indicating whether this category is enabled. Required.
         :paramtype enabled: bool
         :keyword retention_policy: the retention policy for this category.
-        :paramtype retention_policy:
-         ~$(python-base-namespace).v2021_05_01_preview.models.RetentionPolicy
+        :paramtype retention_policy: ~azure.mgmt.monitor.v2021_05_01_preview.models.RetentionPolicy
         """
         super().__init__(**kwargs)
         self.time_grain = time_grain
@@ -1111,8 +1103,7 @@ class MetricTrigger(_serialization.Model):  # pylint: disable=too-many-instance-
     :vartype time_grain: ~datetime.timedelta
     :ivar statistic: the metric statistic type. How the metrics from multiple instances are
      combined. Required. Known values are: "Average", "Min", "Max", "Sum", and "Count".
-    :vartype statistic: str or
-     ~$(python-base-namespace).v2021_05_01_preview.models.MetricStatisticType
+    :vartype statistic: str or ~azure.mgmt.monitor.v2021_05_01_preview.models.MetricStatisticType
     :ivar time_window: the range of time in which instance data is collected. This value must be
      greater than the delay in metric collection, which can vary from resource-to-resource. Must be
      between 12 hours and 5 minutes. Required.
@@ -1121,18 +1112,18 @@ class MetricTrigger(_serialization.Model):  # pylint: disable=too-many-instance-
      combined over time. The default value is Average. Required. Known values are: "Average",
      "Minimum", "Maximum", "Total", "Count", and "Last".
     :vartype time_aggregation: str or
-     ~$(python-base-namespace).v2021_05_01_preview.models.TimeAggregationType
+     ~azure.mgmt.monitor.v2021_05_01_preview.models.TimeAggregationType
     :ivar operator: the operator that is used to compare the metric data and the threshold.
      Required. Known values are: "Equals", "NotEquals", "GreaterThan", "GreaterThanOrEqual",
      "LessThan", and "LessThanOrEqual".
     :vartype operator: str or
-     ~$(python-base-namespace).v2021_05_01_preview.models.ComparisonOperationType
+     ~azure.mgmt.monitor.v2021_05_01_preview.models.ComparisonOperationType
     :ivar threshold: the threshold of the metric that triggers the scale action. Required.
     :vartype threshold: float
     :ivar dimensions: List of dimension conditions. For example:
      [{"DimensionName":"AppName","Operator":"Equals","Values":["App1"]},{"DimensionName":"Deployment","Operator":"Equals","Values":["default"]}].
     :vartype dimensions:
-     list[~$(python-base-namespace).v2021_05_01_preview.models.ScaleRuleMetricDimension]
+     list[~azure.mgmt.monitor.v2021_05_01_preview.models.ScaleRuleMetricDimension]
     :ivar divide_per_instance: a value indicating whether metric should divide per instance.
     :vartype divide_per_instance: bool
     """
@@ -1178,8 +1169,8 @@ class MetricTrigger(_serialization.Model):  # pylint: disable=too-many-instance-
         metric_resource_location: Optional[str] = None,
         dimensions: Optional[List["_models.ScaleRuleMetricDimension"]] = None,
         divide_per_instance: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword metric_name: the name of the metric that defines what the rule monitors. Required.
         :paramtype metric_name: str
@@ -1196,8 +1187,7 @@ class MetricTrigger(_serialization.Model):  # pylint: disable=too-many-instance-
         :paramtype time_grain: ~datetime.timedelta
         :keyword statistic: the metric statistic type. How the metrics from multiple instances are
          combined. Required. Known values are: "Average", "Min", "Max", "Sum", and "Count".
-        :paramtype statistic: str or
-         ~$(python-base-namespace).v2021_05_01_preview.models.MetricStatisticType
+        :paramtype statistic: str or ~azure.mgmt.monitor.v2021_05_01_preview.models.MetricStatisticType
         :keyword time_window: the range of time in which instance data is collected. This value must be
          greater than the delay in metric collection, which can vary from resource-to-resource. Must be
          between 12 hours and 5 minutes. Required.
@@ -1206,18 +1196,18 @@ class MetricTrigger(_serialization.Model):  # pylint: disable=too-many-instance-
          combined over time. The default value is Average. Required. Known values are: "Average",
          "Minimum", "Maximum", "Total", "Count", and "Last".
         :paramtype time_aggregation: str or
-         ~$(python-base-namespace).v2021_05_01_preview.models.TimeAggregationType
+         ~azure.mgmt.monitor.v2021_05_01_preview.models.TimeAggregationType
         :keyword operator: the operator that is used to compare the metric data and the threshold.
          Required. Known values are: "Equals", "NotEquals", "GreaterThan", "GreaterThanOrEqual",
          "LessThan", and "LessThanOrEqual".
         :paramtype operator: str or
-         ~$(python-base-namespace).v2021_05_01_preview.models.ComparisonOperationType
+         ~azure.mgmt.monitor.v2021_05_01_preview.models.ComparisonOperationType
         :keyword threshold: the threshold of the metric that triggers the scale action. Required.
         :paramtype threshold: float
         :keyword dimensions: List of dimension conditions. For example:
          [{"DimensionName":"AppName","Operator":"Equals","Values":["App1"]},{"DimensionName":"Deployment","Operator":"Equals","Values":["default"]}].
         :paramtype dimensions:
-         list[~$(python-base-namespace).v2021_05_01_preview.models.ScaleRuleMetricDimension]
+         list[~azure.mgmt.monitor.v2021_05_01_preview.models.ScaleRuleMetricDimension]
         :keyword divide_per_instance: a value indicating whether metric should divide per instance.
         :paramtype divide_per_instance: bool
         """
@@ -1244,7 +1234,7 @@ class PredictiveAutoscalePolicy(_serialization.Model):
     :ivar scale_mode: the predictive autoscale mode. Required. Known values are: "Disabled",
      "ForecastOnly", and "Enabled".
     :vartype scale_mode: str or
-     ~$(python-base-namespace).v2021_05_01_preview.models.PredictiveAutoscalePolicyScaleMode
+     ~azure.mgmt.monitor.v2021_05_01_preview.models.PredictiveAutoscalePolicyScaleMode
     :ivar scale_look_ahead_time: the amount of time to specify by which instances are launched in
      advance. It must be between 1 minute and 60 minutes in ISO 8601 format.
     :vartype scale_look_ahead_time: ~datetime.timedelta
@@ -1264,13 +1254,13 @@ class PredictiveAutoscalePolicy(_serialization.Model):
         *,
         scale_mode: Union[str, "_models.PredictiveAutoscalePolicyScaleMode"],
         scale_look_ahead_time: Optional[datetime.timedelta] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword scale_mode: the predictive autoscale mode. Required. Known values are: "Disabled",
          "ForecastOnly", and "Enabled".
         :paramtype scale_mode: str or
-         ~$(python-base-namespace).v2021_05_01_preview.models.PredictiveAutoscalePolicyScaleMode
+         ~azure.mgmt.monitor.v2021_05_01_preview.models.PredictiveAutoscalePolicyScaleMode
         :keyword scale_look_ahead_time: the amount of time to specify by which instances are launched
          in advance. It must be between 1 minute and 60 minutes in ISO 8601 format.
         :paramtype scale_look_ahead_time: ~datetime.timedelta
@@ -1296,7 +1286,7 @@ class PredictiveResponse(_serialization.Model):
     :ivar target_resource_id: resource of the predictive metric.
     :vartype target_resource_id: str
     :ivar data: the value of the collection.
-    :vartype data: list[~$(python-base-namespace).v2021_05_01_preview.models.PredictiveValue]
+    :vartype data: list[~azure.mgmt.monitor.v2021_05_01_preview.models.PredictiveValue]
     """
 
     _attribute_map = {
@@ -1315,8 +1305,8 @@ class PredictiveResponse(_serialization.Model):
         metric_name: Optional[str] = None,
         target_resource_id: Optional[str] = None,
         data: Optional[List["_models.PredictiveValue"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword timespan: The timespan for which the data was retrieved. Its value consists of two
          datetimes concatenated, separated by '/'.  This may be adjusted in the future and returned back
@@ -1331,7 +1321,7 @@ class PredictiveResponse(_serialization.Model):
         :keyword target_resource_id: resource of the predictive metric.
         :paramtype target_resource_id: str
         :keyword data: the value of the collection.
-        :paramtype data: list[~$(python-base-namespace).v2021_05_01_preview.models.PredictiveValue]
+        :paramtype data: list[~azure.mgmt.monitor.v2021_05_01_preview.models.PredictiveValue]
         """
         super().__init__(**kwargs)
         self.timespan = timespan
@@ -1362,7 +1352,7 @@ class PredictiveValue(_serialization.Model):
         "value": {"key": "value", "type": "float"},
     }
 
-    def __init__(self, *, time_stamp: datetime.datetime, value: float, **kwargs):
+    def __init__(self, *, time_stamp: datetime.datetime, value: float, **kwargs: Any) -> None:
         """
         :keyword time_stamp: the timestamp for the metric value in ISO 8601 format. Required.
         :paramtype time_stamp: ~datetime.datetime
@@ -1375,7 +1365,8 @@ class PredictiveValue(_serialization.Model):
 
 
 class Recurrence(_serialization.Model):
-    """The repeating times at which this profile begins. This element is not used if the FixedDate element is used.
+    """The repeating times at which this profile begins. This element is not used if the FixedDate
+    element is used.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -1384,10 +1375,9 @@ class Recurrence(_serialization.Model):
      set a daily schedule, set **schedule** to every day of the week. The frequency property
      specifies that the schedule is repeated weekly. Required. Known values are: "None", "Second",
      "Minute", "Hour", "Day", "Week", "Month", and "Year".
-    :vartype frequency: str or
-     ~$(python-base-namespace).v2021_05_01_preview.models.RecurrenceFrequency
+    :vartype frequency: str or ~azure.mgmt.monitor.v2021_05_01_preview.models.RecurrenceFrequency
     :ivar schedule: the scheduling constraints for when the profile begins. Required.
-    :vartype schedule: ~$(python-base-namespace).v2021_05_01_preview.models.RecurrentSchedule
+    :vartype schedule: ~azure.mgmt.monitor.v2021_05_01_preview.models.RecurrentSchedule
     """
 
     _validation = {
@@ -1401,18 +1391,21 @@ class Recurrence(_serialization.Model):
     }
 
     def __init__(
-        self, *, frequency: Union[str, "_models.RecurrenceFrequency"], schedule: "_models.RecurrentSchedule", **kwargs
-    ):
+        self,
+        *,
+        frequency: Union[str, "_models.RecurrenceFrequency"],
+        schedule: "_models.RecurrentSchedule",
+        **kwargs: Any
+    ) -> None:
         """
         :keyword frequency: the recurrence frequency. How often the schedule profile should take
          effect. This value must be Week, meaning each week will have the same set of profiles. For
          example, to set a daily schedule, set **schedule** to every day of the week. The frequency
          property specifies that the schedule is repeated weekly. Required. Known values are: "None",
          "Second", "Minute", "Hour", "Day", "Week", "Month", and "Year".
-        :paramtype frequency: str or
-         ~$(python-base-namespace).v2021_05_01_preview.models.RecurrenceFrequency
+        :paramtype frequency: str or ~azure.mgmt.monitor.v2021_05_01_preview.models.RecurrenceFrequency
         :keyword schedule: the scheduling constraints for when the profile begins. Required.
-        :paramtype schedule: ~$(python-base-namespace).v2021_05_01_preview.models.RecurrentSchedule
+        :paramtype schedule: ~azure.mgmt.monitor.v2021_05_01_preview.models.RecurrentSchedule
         """
         super().__init__(**kwargs)
         self.frequency = frequency
@@ -1479,7 +1472,7 @@ class RecurrentSchedule(_serialization.Model):
         "minutes": {"key": "minutes", "type": "[int]"},
     }
 
-    def __init__(self, *, time_zone: str, days: List[str], hours: List[int], minutes: List[int], **kwargs):
+    def __init__(self, *, time_zone: str, days: List[str], hours: List[int], minutes: List[int], **kwargs: Any) -> None:
         """
         :keyword time_zone: the timezone for the hours of the profile. Some examples of valid time
          zones are: Dateline Standard Time, UTC-11, Hawaiian Standard Time, Alaskan Standard Time,
@@ -1550,7 +1543,7 @@ class RetentionPolicy(_serialization.Model):
         "days": {"key": "days", "type": "int"},
     }
 
-    def __init__(self, *, enabled: bool, days: int, **kwargs):
+    def __init__(self, *, enabled: bool, days: int, **kwargs: Any) -> None:
         """
         :keyword enabled: a value indicating whether the retention policy is enabled. Required.
         :paramtype enabled: bool
@@ -1570,10 +1563,10 @@ class ScaleAction(_serialization.Model):
 
     :ivar direction: the scale direction. Whether the scaling action increases or decreases the
      number of instances. Required. Known values are: "None", "Increase", and "Decrease".
-    :vartype direction: str or ~$(python-base-namespace).v2021_05_01_preview.models.ScaleDirection
+    :vartype direction: str or ~azure.mgmt.monitor.v2021_05_01_preview.models.ScaleDirection
     :ivar type: the type of action that should occur when the scale rule fires. Required. Known
      values are: "ChangeCount", "PercentChangeCount", "ExactCount", and "ServiceAllowedNextValue".
-    :vartype type: str or ~$(python-base-namespace).v2021_05_01_preview.models.ScaleType
+    :vartype type: str or ~azure.mgmt.monitor.v2021_05_01_preview.models.ScaleType
     :ivar value: the number of instances that are involved in the scaling action. This value must
      be 1 or greater. The default value is 1.
     :vartype value: str
@@ -1602,16 +1595,15 @@ class ScaleAction(_serialization.Model):
         type: Union[str, "_models.ScaleType"],
         cooldown: datetime.timedelta,
         value: str = "1",
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword direction: the scale direction. Whether the scaling action increases or decreases the
          number of instances. Required. Known values are: "None", "Increase", and "Decrease".
-        :paramtype direction: str or
-         ~$(python-base-namespace).v2021_05_01_preview.models.ScaleDirection
+        :paramtype direction: str or ~azure.mgmt.monitor.v2021_05_01_preview.models.ScaleDirection
         :keyword type: the type of action that should occur when the scale rule fires. Required. Known
          values are: "ChangeCount", "PercentChangeCount", "ExactCount", and "ServiceAllowedNextValue".
-        :paramtype type: str or ~$(python-base-namespace).v2021_05_01_preview.models.ScaleType
+        :paramtype type: str or ~azure.mgmt.monitor.v2021_05_01_preview.models.ScaleType
         :keyword value: the number of instances that are involved in the scaling action. This value
          must be 1 or greater. The default value is 1.
         :paramtype value: str
@@ -1654,7 +1646,7 @@ class ScaleCapacity(_serialization.Model):
         "default": {"key": "default", "type": "str"},
     }
 
-    def __init__(self, *, minimum: str, maximum: str, default: str, **kwargs):
+    def __init__(self, *, minimum: str, maximum: str, default: str, **kwargs: Any) -> None:
         """
         :keyword minimum: the minimum number of instances for the resource. Required.
         :paramtype minimum: str
@@ -1678,9 +1670,9 @@ class ScaleRule(_serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar metric_trigger: the trigger that results in a scaling action. Required.
-    :vartype metric_trigger: ~$(python-base-namespace).v2021_05_01_preview.models.MetricTrigger
+    :vartype metric_trigger: ~azure.mgmt.monitor.v2021_05_01_preview.models.MetricTrigger
     :ivar scale_action: the parameters for the scaling action. Required.
-    :vartype scale_action: ~$(python-base-namespace).v2021_05_01_preview.models.ScaleAction
+    :vartype scale_action: ~azure.mgmt.monitor.v2021_05_01_preview.models.ScaleAction
     """
 
     _validation = {
@@ -1693,12 +1685,14 @@ class ScaleRule(_serialization.Model):
         "scale_action": {"key": "scaleAction", "type": "ScaleAction"},
     }
 
-    def __init__(self, *, metric_trigger: "_models.MetricTrigger", scale_action: "_models.ScaleAction", **kwargs):
+    def __init__(
+        self, *, metric_trigger: "_models.MetricTrigger", scale_action: "_models.ScaleAction", **kwargs: Any
+    ) -> None:
         """
         :keyword metric_trigger: the trigger that results in a scaling action. Required.
-        :paramtype metric_trigger: ~$(python-base-namespace).v2021_05_01_preview.models.MetricTrigger
+        :paramtype metric_trigger: ~azure.mgmt.monitor.v2021_05_01_preview.models.MetricTrigger
         :keyword scale_action: the parameters for the scaling action. Required.
-        :paramtype scale_action: ~$(python-base-namespace).v2021_05_01_preview.models.ScaleAction
+        :paramtype scale_action: ~azure.mgmt.monitor.v2021_05_01_preview.models.ScaleAction
         """
         super().__init__(**kwargs)
         self.metric_trigger = metric_trigger
@@ -1716,7 +1710,7 @@ class ScaleRuleMetricDimension(_serialization.Model):
      being equal to any of the values. 'NotEquals' being not equal to all of the values. Required.
      Known values are: "Equals" and "NotEquals".
     :vartype operator: str or
-     ~$(python-base-namespace).v2021_05_01_preview.models.ScaleRuleMetricDimensionOperationType
+     ~azure.mgmt.monitor.v2021_05_01_preview.models.ScaleRuleMetricDimensionOperationType
     :ivar values: list of dimension values. For example: ["App1","App2"]. Required.
     :vartype values: list[str]
     """
@@ -1739,8 +1733,8 @@ class ScaleRuleMetricDimension(_serialization.Model):
         dimension_name: str,
         operator: Union[str, "_models.ScaleRuleMetricDimensionOperationType"],
         values: List[str],
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword dimension_name: Name of the dimension. Required.
         :paramtype dimension_name: str
@@ -1748,7 +1742,7 @@ class ScaleRuleMetricDimension(_serialization.Model):
          'Equals' being equal to any of the values. 'NotEquals' being not equal to all of the values.
          Required. Known values are: "Equals" and "NotEquals".
         :paramtype operator: str or
-         ~$(python-base-namespace).v2021_05_01_preview.models.ScaleRuleMetricDimensionOperationType
+         ~azure.mgmt.monitor.v2021_05_01_preview.models.ScaleRuleMetricDimensionOperationType
         :keyword values: list of dimension values. For example: ["App1","App2"]. Required.
         :paramtype values: list[str]
         """
@@ -1772,7 +1766,7 @@ class SubscriptionDiagnosticSettingsResource(Resource):  # pylint: disable=too-m
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :ivar system_data: The system metadata related to this resource.
-    :vartype system_data: ~$(python-base-namespace).v2021_05_01_preview.models.SystemData
+    :vartype system_data: ~azure.mgmt.monitor.v2021_05_01_preview.models.SystemData
     :ivar storage_account_id: The resource ID of the storage account to which you would like to
      send Diagnostic Logs.
     :vartype storage_account_id: str
@@ -1785,8 +1779,7 @@ class SubscriptionDiagnosticSettingsResource(Resource):  # pylint: disable=too-m
      will be selected.
     :vartype event_hub_name: str
     :ivar logs: The list of logs settings.
-    :vartype logs:
-     list[~$(python-base-namespace).v2021_05_01_preview.models.SubscriptionLogSettings]
+    :vartype logs: list[~azure.mgmt.monitor.v2021_05_01_preview.models.SubscriptionLogSettings]
     :ivar workspace_id: The full ARM resource ID of the Log Analytics workspace to which you would
      like to send Diagnostic Logs. Example:
      /subscriptions/4b9e8510-67ab-4e9a-95a9-e2f1e570ea9c/resourceGroups/insights-integration/providers/Microsoft.OperationalInsights/workspaces/viruela2.
@@ -1827,8 +1820,8 @@ class SubscriptionDiagnosticSettingsResource(Resource):  # pylint: disable=too-m
         logs: Optional[List["_models.SubscriptionLogSettings"]] = None,
         workspace_id: Optional[str] = None,
         marketplace_partner_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword storage_account_id: The resource ID of the storage account to which you would like to
          send Diagnostic Logs.
@@ -1842,8 +1835,7 @@ class SubscriptionDiagnosticSettingsResource(Resource):  # pylint: disable=too-m
          will be selected.
         :paramtype event_hub_name: str
         :keyword logs: The list of logs settings.
-        :paramtype logs:
-         list[~$(python-base-namespace).v2021_05_01_preview.models.SubscriptionLogSettings]
+        :paramtype logs: list[~azure.mgmt.monitor.v2021_05_01_preview.models.SubscriptionLogSettings]
         :keyword workspace_id: The full ARM resource ID of the Log Analytics workspace to which you
          would like to send Diagnostic Logs. Example:
          /subscriptions/4b9e8510-67ab-4e9a-95a9-e2f1e570ea9c/resourceGroups/insights-integration/providers/Microsoft.OperationalInsights/workspaces/viruela2.
@@ -1868,18 +1860,20 @@ class SubscriptionDiagnosticSettingsResourceCollection(_serialization.Model):
 
     :ivar value: The collection of subscription diagnostic settings resources.
     :vartype value:
-     list[~$(python-base-namespace).v2021_05_01_preview.models.SubscriptionDiagnosticSettingsResource]
+     list[~azure.mgmt.monitor.v2021_05_01_preview.models.SubscriptionDiagnosticSettingsResource]
     """
 
     _attribute_map = {
         "value": {"key": "value", "type": "[SubscriptionDiagnosticSettingsResource]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.SubscriptionDiagnosticSettingsResource"]] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.SubscriptionDiagnosticSettingsResource"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The collection of subscription diagnostic settings resources.
         :paramtype value:
-         list[~$(python-base-namespace).v2021_05_01_preview.models.SubscriptionDiagnosticSettingsResource]
+         list[~azure.mgmt.monitor.v2021_05_01_preview.models.SubscriptionDiagnosticSettingsResource]
         """
         super().__init__(**kwargs)
         self.value = value
@@ -1911,8 +1905,8 @@ class SubscriptionLogSettings(_serialization.Model):
     }
 
     def __init__(
-        self, *, enabled: bool, category: Optional[str] = None, category_group: Optional[str] = None, **kwargs
-    ):
+        self, *, enabled: bool, category: Optional[str] = None, category_group: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword category: Name of a Subscription Diagnostic Log category for a resource type this
          setting is applied to.
@@ -1936,8 +1930,7 @@ class SystemData(_serialization.Model):
     :vartype created_by: str
     :ivar created_by_type: The type of identity that created the resource. Known values are:
      "User", "Application", "ManagedIdentity", and "Key".
-    :vartype created_by_type: str or
-     ~$(python-base-namespace).v2021_05_01_preview.models.CreatedByType
+    :vartype created_by_type: str or ~azure.mgmt.monitor.v2021_05_01_preview.models.CreatedByType
     :ivar created_at: The timestamp of resource creation (UTC).
     :vartype created_at: ~datetime.datetime
     :ivar last_modified_by: The identity that last modified the resource.
@@ -1945,7 +1938,7 @@ class SystemData(_serialization.Model):
     :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
      are: "User", "Application", "ManagedIdentity", and "Key".
     :vartype last_modified_by_type: str or
-     ~$(python-base-namespace).v2021_05_01_preview.models.CreatedByType
+     ~azure.mgmt.monitor.v2021_05_01_preview.models.CreatedByType
     :ivar last_modified_at: The timestamp of resource last modification (UTC).
     :vartype last_modified_at: ~datetime.datetime
     """
@@ -1968,15 +1961,14 @@ class SystemData(_serialization.Model):
         last_modified_by: Optional[str] = None,
         last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
         :keyword created_by_type: The type of identity that created the resource. Known values are:
          "User", "Application", "ManagedIdentity", and "Key".
-        :paramtype created_by_type: str or
-         ~$(python-base-namespace).v2021_05_01_preview.models.CreatedByType
+        :paramtype created_by_type: str or ~azure.mgmt.monitor.v2021_05_01_preview.models.CreatedByType
         :keyword created_at: The timestamp of resource creation (UTC).
         :paramtype created_at: ~datetime.datetime
         :keyword last_modified_by: The identity that last modified the resource.
@@ -1984,7 +1976,7 @@ class SystemData(_serialization.Model):
         :keyword last_modified_by_type: The type of identity that last modified the resource. Known
          values are: "User", "Application", "ManagedIdentity", and "Key".
         :paramtype last_modified_by_type: str or
-         ~$(python-base-namespace).v2021_05_01_preview.models.CreatedByType
+         ~azure.mgmt.monitor.v2021_05_01_preview.models.CreatedByType
         :keyword last_modified_at: The timestamp of resource last modification (UTC).
         :paramtype last_modified_at: ~datetime.datetime
         """
@@ -2050,7 +2042,9 @@ class TimeWindow(_serialization.Model):
         "end": {"key": "end", "type": "iso-8601"},
     }
 
-    def __init__(self, *, start: datetime.datetime, end: datetime.datetime, time_zone: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, start: datetime.datetime, end: datetime.datetime, time_zone: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword time_zone: the timezone of the start and end times for the profile. Some examples of
          valid time zones are: Dateline Standard Time, UTC-11, Hawaiian Standard Time, Alaskan Standard
@@ -2108,7 +2102,9 @@ class WebhookNotification(_serialization.Model):
         "properties": {"key": "properties", "type": "{str}"},
     }
 
-    def __init__(self, *, service_uri: Optional[str] = None, properties: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(
+        self, *, service_uri: Optional[str] = None, properties: Optional[Dict[str, str]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword service_uri: the service address to receive the notification.
         :paramtype service_uri: str

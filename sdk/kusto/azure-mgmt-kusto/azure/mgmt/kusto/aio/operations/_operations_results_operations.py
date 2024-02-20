@@ -54,9 +54,9 @@ class OperationsResultsOperations:
     async def get(self, location: str, operation_id: str, **kwargs: Any) -> _models.OperationResult:
         """Returns operation results.
 
-        :param location: Azure location (region) name. Required.
+        :param location: The name of Azure region. Required.
         :type location: str
-        :param operation_id: The Guid of the operation ID. Required.
+        :param operation_id: The ID of an ongoing async operation. Required.
         :type operation_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: OperationResult or the result of cls(response)
@@ -74,8 +74,8 @@ class OperationsResultsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.OperationResult]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[_models.OperationResult] = kwargs.pop("cls", None)
 
         request = build_get_request(
             location=location,
@@ -87,17 +87,19 @@ class OperationsResultsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("OperationResult", pipeline_response)
 
@@ -106,4 +108,6 @@ class OperationsResultsOperations:
 
         return deserialized
 
-    get.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Kusto/locations/{location}/operationResults/{operationId}"}  # type: ignore
+    get.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Kusto/locations/{location}/operationResults/{operationId}"
+    }

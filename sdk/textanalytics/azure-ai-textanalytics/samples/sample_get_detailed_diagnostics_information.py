@@ -19,16 +19,14 @@ USAGE:
     2) AZURE_LANGUAGE_KEY - your Language subscription key
 """
 
-import os
-import logging
-import json
-
-_LOGGER = logging.getLogger(__name__)
-
 
 def sample_get_detailed_diagnostics_information() -> None:
+    import os
+    import logging
+    import json
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics import TextAnalyticsClient
+    _LOGGER = logging.getLogger(__name__)
 
     endpoint = os.environ["AZURE_LANGUAGE_ENDPOINT"]
     key = os.environ["AZURE_LANGUAGE_KEY"]

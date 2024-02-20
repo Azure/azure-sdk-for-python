@@ -24,7 +24,7 @@
 #
 # --------------------------------------------------------------------------
 from enum import Enum
-from typing import TYPE_CHECKING, Optional, Union
+from typing import Optional, Union, TypeVar, Dict, Any, Sequence
 
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.polling.base_polling import (
@@ -39,16 +39,22 @@ from azure.core.polling.base_polling import (
     _is_empty,
 )
 
-if TYPE_CHECKING:
-    from azure.core.pipeline import PipelineResponse
-    from azure.core.pipeline.transport import (
-        HttpResponse,
-        AsyncHttpResponse,
-        HttpRequest,
-    )
+from azure.core.pipeline import PipelineResponse
+from azure.core.pipeline.transport import (
+    HttpRequest as LegacyHttpRequest,
+    HttpResponse as LegacyHttpResponse,
+    AsyncHttpResponse as LegacyAsyncHttpResponse,
+)
+from azure.core.rest import HttpRequest, HttpResponse, AsyncHttpResponse
 
-    ResponseType = Union[HttpResponse, AsyncHttpResponse]
-    PipelineResponseType = PipelineResponse[HttpRequest, ResponseType]
+ResponseType = Union[HttpResponse, AsyncHttpResponse]
+PipelineResponseType = PipelineResponse[HttpRequest, ResponseType]
+HttpRequestType = Union[LegacyHttpRequest, HttpRequest]
+AllHttpResponseType = Union[
+    LegacyHttpResponse, HttpResponse, LegacyAsyncHttpResponse, AsyncHttpResponse
+]  # Sync or async
+HttpRequestTypeVar = TypeVar("HttpRequestTypeVar", bound=HttpRequestType)
+AllHttpResponseTypeVar = TypeVar("AllHttpResponseTypeVar", bound=AllHttpResponseType)  # Sync or async
 
 
 class _LroOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -64,69 +70,74 @@ class _FinalStateViaOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     LOCATION_FINAL_STATE = "location"
 
 
-class AzureAsyncOperationPolling(OperationResourcePolling):
-    """Implements a operation resource polling, typically from Azure-AsyncOperation.
-    """
+class AzureAsyncOperationPolling(OperationResourcePolling[HttpRequestTypeVar, AllHttpResponseTypeVar]):
+    """Implements a operation resource polling, typically from Azure-AsyncOperation."""
 
-    def __init__(self, lro_options=None):
-        super(AzureAsyncOperationPolling, self).__init__(
-            operation_location_header="azure-asyncoperation"
-        )
+    def __init__(self, lro_options: Optional[Dict[str, Any]] = None) -> None:
+        super(AzureAsyncOperationPolling, self).__init__(operation_location_header="azure-asyncoperation")
 
         self._lro_options = lro_options or {}
 
-    def get_final_get_url(self, pipeline_response):
-        # type: (PipelineResponseType) -> Optional[str]
+    def get_final_get_url(
+        self, pipeline_response: PipelineResponse[HttpRequestTypeVar, AllHttpResponseTypeVar]
+    ) -> Optional[str]:
         """If a final GET is needed, returns the URL.
 
+        :param ~azure.core.pipeline.PipelineResponse pipeline_response: The pipeline response object.
+        :return: The URL to poll for the final GET.
         :rtype: str
         """
         if (
-            self._lro_options.get(_LroOption.FINAL_STATE_VIA)
-            == _FinalStateViaOption.AZURE_ASYNC_OPERATION_FINAL_STATE
+            self._lro_options.get(_LroOption.FINAL_STATE_VIA) == _FinalStateViaOption.AZURE_ASYNC_OPERATION_FINAL_STATE
             and self._request.method == "POST"
         ):
             return None
-        return super(AzureAsyncOperationPolling, self).get_final_get_url(
-            pipeline_response
-        )
+        return super(AzureAsyncOperationPolling, self).get_final_get_url(pipeline_response)
 
 
-class BodyContentPolling(LongRunningOperation):
+class BodyContentPolling(LongRunningOperation[HttpRequestTypeVar, AllHttpResponseTypeVar]):
     """Poll based on the body content.
 
     Implement a ARM resource poller (using provisioning state).
     """
 
-    def __init__(self):
-        self._initial_response = None
+    _initial_response: PipelineResponse[HttpRequestTypeVar, AllHttpResponseTypeVar]
+    """Store the initial response."""
 
-    def can_poll(self, pipeline_response):
-        # type: (PipelineResponseType) -> bool
+    def can_poll(self, pipeline_response: PipelineResponse[HttpRequestTypeVar, AllHttpResponseTypeVar]) -> bool:
         """Answer if this polling method could be used.
+
+        :param ~azure.core.pipeline.PipelineResponse pipeline_response: The pipeline response object.
+        :return: True if this polling method could be used.
+        :rtype: bool
         """
         response = pipeline_response.http_response
         return response.request.method in ["PUT", "PATCH"]
 
-    def get_polling_url(self):
-        # type: () -> str
+    def get_polling_url(self) -> str:
         """Return the polling URL.
+        :return: The polling URL.
+        :rtype: str
         """
         return self._initial_response.http_response.request.url
 
-    def get_final_get_url(self, pipeline_response):
-        # type: (PipelineResponseType) -> Optional[str]
+    def get_final_get_url(self, pipeline_response: Any) -> None:
         """If a final GET is needed, returns the URL.
 
+        :param ~azure.core.pipeline.PipelineResponse pipeline_response: The pipeline response object.
+        :return: The URL to poll for the final GET.
         :rtype: str
         """
         return None
 
-    def set_initial_status(self, pipeline_response):
-        # type: (PipelineResponseType) -> str
+    def set_initial_status(
+        self, pipeline_response: PipelineResponse[HttpRequestTypeVar, AllHttpResponseTypeVar]
+    ) -> str:
         """Process first response after initiating long running operation.
 
-        :param azure.core.pipeline.PipelineResponse response: initial REST call response.
+        :param ~azure.core.pipeline.PipelineResponse pipeline_response: initial REST call response.
+        :return: Status string.
+        :rtype: str
         """
         self._initial_response = pipeline_response
         response = pipeline_response.http_response
@@ -145,31 +156,30 @@ class BodyContentPolling(LongRunningOperation):
         raise OperationFailed("Invalid status found")
 
     @staticmethod
-    def _get_provisioning_state(response):
-        # type: (ResponseType) -> Optional[str]
+    def _get_provisioning_state(response: AllHttpResponseTypeVar) -> Optional[str]:
         """Attempt to get provisioning state from resource.
 
         :param azure.core.pipeline.transport.HttpResponse response: latest REST call response.
         :returns: Status if found, else 'None'.
+        :rtype: str or None
         """
         if _is_empty(response):
             return None
         body = _as_json(response)
         return body.get("properties", {}).get("provisioningState")
 
-    def get_status(self, pipeline_response):
-        # type: (PipelineResponseType) -> str
+    def get_status(self, pipeline_response: PipelineResponse[HttpRequestTypeVar, AllHttpResponseTypeVar]) -> str:
         """Process the latest status update retrieved from the same URL as
         the previous request.
 
-        :param azure.core.pipeline.PipelineResponse response: latest REST call response.
+        :param ~azure.core.pipeline.PipelineResponse pipeline_response: latest REST call response.
+        :return: Status string.
+        :rtype: str
         :raises: BadResponse if status not 200 or 204.
         """
         response = pipeline_response.http_response
         if _is_empty(response):
-            raise BadResponse(
-                "The response from long running operation does not contain a body."
-            )
+            raise BadResponse("The response from long running operation does not contain a body.")
 
         status = self._get_provisioning_state(response)
         return status or "Succeeded"
@@ -178,12 +188,12 @@ class BodyContentPolling(LongRunningOperation):
 class ARMPolling(LROBasePolling):
     def __init__(
         self,
-        timeout=30,
-        lro_algorithms=None,
-        lro_options=None,
-        path_format_arguments=None,
-        **operation_config
-    ):
+        timeout: float = 30,
+        lro_algorithms: Optional[Sequence[LongRunningOperation[HttpRequestTypeVar, AllHttpResponseTypeVar]]] = None,
+        lro_options: Optional[Dict[str, Any]] = None,
+        path_format_arguments: Optional[Dict[str, str]] = None,
+        **operation_config: Any
+    ) -> None:
         lro_algorithms = lro_algorithms or [
             AzureAsyncOperationPolling(lro_options=lro_options),
             LocationPolling(),
@@ -198,8 +208,9 @@ class ARMPolling(LROBasePolling):
             **operation_config
         )
 
+
 __all__ = [
-    'AzureAsyncOperationPolling',
-    'BodyContentPolling',
-    'ARMPolling',
+    "AzureAsyncOperationPolling",
+    "BodyContentPolling",
+    "ARMPolling",
 ]

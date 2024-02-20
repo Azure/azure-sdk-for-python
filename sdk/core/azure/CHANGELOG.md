@@ -199,8 +199,6 @@ Thank you to brandondahler, schaefi for their contributions.
 **Disclaimer**
 
 * There is some breaking changes in the Storage client, due to the update the latest API-Version.
-  There is a storage sample with the new version available here:
-  https://github.com/Azure-Samples/storage-python-manage
 * There is some breaking changes in the GraphRbac client, due to the update the latest API-Version.
   This is an example of change on our tests:
   https://github.com/Azure/azure-sdk-for-python/commit/b03cae526d9ac46d1b477840f15d3729aa0d939f#diff-296e794143f66af83d1bf2db6eb7a935

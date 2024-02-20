@@ -62,9 +62,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "7.3"))  # type: Literal["7.3"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.FullBackupOperation]
+        api_version: Literal["7.3"] = kwargs.pop("api_version", _params.pop("api-version", "7.3"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.FullBackupOperation] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -90,9 +90,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         path_format_arguments = {
             "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -116,7 +116,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
 
         return deserialized
 
-    _full_backup_initial.metadata = {"url": "/backup"}  # type: ignore
+    _full_backup_initial.metadata = {"url": "/backup"}
 
     @overload
     async def begin_full_backup(
@@ -202,8 +202,8 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         :type vault_base_url: str
         :param azure_storage_blob_container_uri: Azure blob shared access signature token pointing to a
          valid Azure blob container where full backup needs to be stored. This token needs to be valid
-         for at least next 24 hours from the time of making this call. Is either a model type or a IO
-         type. Default value is None.
+         for at least next 24 hours from the time of making this call. Is either a SASTokenParameter
+         type or a IO type. Default value is None.
         :type azure_storage_blob_container_uri: ~azure.keyvault.v7_3.models.SASTokenParameter or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -224,14 +224,14 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "7.3"))  # type: Literal["7.3"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.FullBackupOperation]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        api_version: Literal["7.3"] = kwargs.pop("api_version", _params.pop("api-version", "7.3"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.FullBackupOperation] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._full_backup_initial(  # type: ignore
+            raw_result = await self._full_backup_initial(
                 vault_base_url=vault_base_url,
                 azure_storage_blob_container_uri=azure_storage_blob_container_uri,
                 api_version=api_version,
@@ -261,7 +261,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         }
 
         if polling is True:
-            polling_method = cast(
+            polling_method: AsyncPollingMethod = cast(
                 AsyncPollingMethod,
                 AsyncLROBasePolling(
                     lro_delay,
@@ -269,7 +269,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
                     path_format_arguments=path_format_arguments,
                     **kwargs
                 ),
-            )  # type: AsyncPollingMethod
+            )
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
@@ -281,9 +281,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_full_backup.metadata = {"url": "/backup"}  # type: ignore
+    begin_full_backup.metadata = {"url": "/backup"}
 
     @distributed_trace_async
     async def full_backup_status(self, vault_base_url: str, job_id: str, **kwargs: Any) -> _models.FullBackupOperation:
@@ -309,8 +309,8 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "7.3"))  # type: Literal["7.3"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.FullBackupOperation]
+        api_version: Literal["7.3"] = kwargs.pop("api_version", _params.pop("api-version", "7.3"))
+        cls: ClsType[_models.FullBackupOperation] = kwargs.pop("cls", None)
 
         request = build_full_backup_status_request(
             job_id=job_id,
@@ -323,9 +323,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         path_format_arguments = {
             "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -343,7 +343,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
 
         return deserialized
 
-    full_backup_status.metadata = {"url": "/backup/{jobId}/pending"}  # type: ignore
+    full_backup_status.metadata = {"url": "/backup/{jobId}/pending"}
 
     async def _full_restore_operation_initial(
         self,
@@ -362,9 +362,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "7.3"))  # type: Literal["7.3"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.RestoreOperation]
+        api_version: Literal["7.3"] = kwargs.pop("api_version", _params.pop("api-version", "7.3"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.RestoreOperation] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -390,9 +390,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         path_format_arguments = {
             "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -416,7 +416,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
 
         return deserialized
 
-    _full_restore_operation_initial.metadata = {"url": "/restore"}  # type: ignore
+    _full_restore_operation_initial.metadata = {"url": "/restore"}
 
     @overload
     async def begin_full_restore_operation(
@@ -499,7 +499,8 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net. Required.
         :type vault_base_url: str
         :param restore_blob_details: The Azure blob SAS token pointing to a folder where the previous
-         successful full backup was stored. Is either a model type or a IO type. Default value is None.
+         successful full backup was stored. Is either a RestoreOperationParameters type or a IO type.
+         Default value is None.
         :type restore_blob_details: ~azure.keyvault.v7_3.models.RestoreOperationParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -520,14 +521,14 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "7.3"))  # type: Literal["7.3"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.RestoreOperation]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        api_version: Literal["7.3"] = kwargs.pop("api_version", _params.pop("api-version", "7.3"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.RestoreOperation] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._full_restore_operation_initial(  # type: ignore
+            raw_result = await self._full_restore_operation_initial(
                 vault_base_url=vault_base_url,
                 restore_blob_details=restore_blob_details,
                 api_version=api_version,
@@ -557,7 +558,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         }
 
         if polling is True:
-            polling_method = cast(
+            polling_method: AsyncPollingMethod = cast(
                 AsyncPollingMethod,
                 AsyncLROBasePolling(
                     lro_delay,
@@ -565,7 +566,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
                     path_format_arguments=path_format_arguments,
                     **kwargs
                 ),
-            )  # type: AsyncPollingMethod
+            )
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
@@ -577,9 +578,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_full_restore_operation.metadata = {"url": "/restore"}  # type: ignore
+    begin_full_restore_operation.metadata = {"url": "/restore"}
 
     @distributed_trace_async
     async def restore_status(self, vault_base_url: str, job_id: str, **kwargs: Any) -> _models.RestoreOperation:
@@ -605,8 +606,8 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "7.3"))  # type: Literal["7.3"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.RestoreOperation]
+        api_version: Literal["7.3"] = kwargs.pop("api_version", _params.pop("api-version", "7.3"))
+        cls: ClsType[_models.RestoreOperation] = kwargs.pop("cls", None)
 
         request = build_restore_status_request(
             job_id=job_id,
@@ -619,9 +620,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         path_format_arguments = {
             "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -639,7 +640,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
 
         return deserialized
 
-    restore_status.metadata = {"url": "/restore/{jobId}/pending"}  # type: ignore
+    restore_status.metadata = {"url": "/restore/{jobId}/pending"}
 
     async def _selective_key_restore_operation_initial(
         self,
@@ -659,9 +660,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "7.3"))  # type: Literal["7.3"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SelectiveKeyRestoreOperation]
+        api_version: Literal["7.3"] = kwargs.pop("api_version", _params.pop("api-version", "7.3"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.SelectiveKeyRestoreOperation] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -688,9 +689,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         path_format_arguments = {
             "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -714,7 +715,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
 
         return deserialized
 
-    _selective_key_restore_operation_initial.metadata = {"url": "/keys/{keyName}/restore"}  # type: ignore
+    _selective_key_restore_operation_initial.metadata = {"url": "/keys/{keyName}/restore"}
 
     @overload
     async def begin_selective_key_restore_operation(
@@ -808,7 +809,8 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         :param key_name: The name of the key to be restored from the user supplied backup. Required.
         :type key_name: str
         :param restore_blob_details: The Azure blob SAS token pointing to a folder where the previous
-         successful full backup was stored. Is either a model type or a IO type. Default value is None.
+         successful full backup was stored. Is either a SelectiveKeyRestoreOperationParameters type or a
+         IO type. Default value is None.
         :type restore_blob_details: ~azure.keyvault.v7_3.models.SelectiveKeyRestoreOperationParameters
          or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -831,14 +833,14 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "7.3"))  # type: Literal["7.3"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SelectiveKeyRestoreOperation]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        api_version: Literal["7.3"] = kwargs.pop("api_version", _params.pop("api-version", "7.3"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.SelectiveKeyRestoreOperation] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._selective_key_restore_operation_initial(  # type: ignore
+            raw_result = await self._selective_key_restore_operation_initial(
                 vault_base_url=vault_base_url,
                 key_name=key_name,
                 restore_blob_details=restore_blob_details,
@@ -869,7 +871,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         }
 
         if polling is True:
-            polling_method = cast(
+            polling_method: AsyncPollingMethod = cast(
                 AsyncPollingMethod,
                 AsyncLROBasePolling(
                     lro_delay,
@@ -877,7 +879,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
                     path_format_arguments=path_format_arguments,
                     **kwargs
                 ),
-            )  # type: AsyncPollingMethod
+            )
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
@@ -889,6 +891,6 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_selective_key_restore_operation.metadata = {"url": "/keys/{keyName}/restore"}  # type: ignore
+    begin_selective_key_restore_operation.metadata = {"url": "/keys/{keyName}/restore"}

@@ -27,7 +27,7 @@
         },
         "status": "Completed",
         "command": "echo ${{inputs.filePath}} && ls ${{inputs.dirPath}}",
-        "environmentId": "/subscriptions/5f08d643-1910-4a38-a7c7-84a39d4f42e0/resourceGroups/rihorn-cli/providers/Microsoft.MachineLearningServices/workspaces/rihorn/environments/AzureML-sklearn-0.24-ubuntu18.04-py37-cpu/versions/1",
+        "environmentId": "/subscriptions/5f08d643-1910-4a38-a7c7-84a39d4f42e0/resourceGroups/rihorn-cli/providers/Microsoft.MachineLearningServices/workspaces/rihorn/environments/AzureML-sklearn-1.0-ubuntu20.04-py38-cpu/versions/1",
         "inputs": {
             "filePath": {
                 "jobInputType": "uri_file",

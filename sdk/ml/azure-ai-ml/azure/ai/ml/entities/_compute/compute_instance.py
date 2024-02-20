@@ -4,32 +4,31 @@
 
 # pylint: disable=protected-access,too-many-instance-attributes
 
+import logging
 import re
 import warnings
-import logging
 from typing import Dict, List, Optional
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import AssignedUser
 from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeInstance as CIRest
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
-    ComputeInstanceSshSettings as CiSShSettings,
-)
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeInstanceProperties
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeInstanceSshSettings as CiSShSettings
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     ComputeResource,
     PersonalComputeInstanceSettings,
     ResourceId,
 )
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeInstanceProperties
 from azure.ai.ml._schema._utils.utils import get_subnet_str
 from azure.ai.ml._schema.compute.compute_instance import ComputeInstanceSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.constants._compute import ComputeDefaults, ComputeType
 from azure.ai.ml.entities._compute.compute import Compute, NetworkSettings
+from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._mixins import DictMixin
 from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
-from azure.ai.ml.entities._credentials import IdentityConfiguration
 
+from ._custom_applications import CustomApplications, validate_custom_applications
+from ._image_metadata import ImageMetadata
 from ._schedule import ComputeSchedules
 from ._setup_scripts import SetupScripts
 
@@ -37,34 +36,40 @@ module_logger = logging.getLogger(__name__)
 
 
 class ComputeInstanceSshSettings:
-    """Credentials for an administrator user account to SSH into the compute
-    node.
+    """Credentials for an administrator user account to SSH into the compute node.
 
-    Can only be configured if ssh_public_access_enabled is set to true.
+    Can only be configured if `ssh_public_access_enabled` is set to true on compute
+    resource.
+
+    :param ssh_key_value: The SSH public key of the administrator user account.
+    :type ssh_key_value: Optional[str]
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_compute.py
+            :start-after: [START compute_instance_ssh_settings]
+            :end-before: [END compute_instance_ssh_settings]
+            :language: python
+            :dedent: 8
+            :caption: Configuring ComputeInstanceSshSettings object.
     """
 
     def __init__(
         self,
         *,
-        ssh_key_value: str = None,
+        ssh_key_value: Optional[str] = None,
         **kwargs,
-    ):
-        """[summary]
-
-        :param ssh_key_value:  The SSH public key of the administrator user account.
-        :type ssh_key_value: str
-        """
+    ) -> None:
         self.ssh_key_value = ssh_key_value
         self._ssh_port = kwargs.pop("ssh_port", None)
         self._admin_username = kwargs.pop("admin_username", None)
 
     @property
     def admin_username(self) -> str:
-        """The name of the administrator user account which can be used to SSH
-        into nodes.
+        """The name of the administrator user account which can be used to SSH into nodes.
 
-        return: The name of the administrator user account.
-        rtype: str
+        :return: The name of the administrator user account.
+        :rtype: str
         """
         return self._admin_username
 
@@ -72,23 +77,31 @@ class ComputeInstanceSshSettings:
     def ssh_port(self) -> str:
         """SSH port.
 
-        return: SSH port.
-        rtype: str
+        :return: SSH port.
+        :rtype: str
         """
         return self._ssh_port
 
 
 class AssignedUserConfiguration(DictMixin):
-    """Settings to create a compute on behalf of another user."""
+    """Settings to create a compute resource on behalf of another user.
 
-    def __init__(self, *, user_tenant_id: str, user_object_id: str):
-        """[summary]
+    :param user_tenant_id: Tenant ID of the user to assign the compute target to.
+    :type user_tenant_id: str
+    :param user_object_id: Object ID of the user to assign the compute target to.
+    :type user_object_id: str
 
-        :param user_tenant_id: Tenant ID of the user to assign the compute target to.
-        :type user_tenant_id: str
-        :param user_object_id: Object ID of the user to assign the compute target to.
-        :type user_object_id: str
-        """
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_compute.py
+            :start-after: [START assigned_user_configuration]
+            :end-before: [END assigned_user_configuration]
+            :language: python
+            :dedent: 8
+            :caption: Creating an AssignedUserConfiguration.
+    """
+
+    def __init__(self, *, user_tenant_id: str, user_object_id: str) -> None:
         self.user_tenant_id = user_tenant_id
         self.user_object_id = user_object_id
 
@@ -96,48 +109,66 @@ class AssignedUserConfiguration(DictMixin):
 class ComputeInstance(Compute):
     """Compute Instance resource.
 
-    :param name: Name of the compute
+    :param name: Name of the compute.
     :type name: str
-    :param location: The resource location, defaults to None
-    :type location: Optional[str], optional
+    :param location: The resource location.
+    :type location: Optional[str]
     :param description: Description of the resource.
-    :type description: Optional[str], optional
-    :param size: Compute Size, defaults to None
-    :type size: Optional[str], optional
-    :param create_on_behalf_of: defaults to None
-    :type create_on_behalf_of: Optional[AssignedUserConfiguration], optional
-    :ivar state: defaults to None
-    :type state: Optional[str], optional
-    :ivar last_operation: defaults to None
-    :type last_operation: Optional[Dict[str, str]], optional
-    :ivar applications: defaults to None
-    :type applications: Optional[List[Dict[str, str]]], optional
-    :param network_settings: defaults to None
-    :type network_settings: Optional[NetworkSettings], optional
-    :param ssh_settings: defaults to None
-    :type ssh_settings: Optional[ComputeInstanceSshSettings], optional
-    :param ssh_public_access_enabled: State of the public SSH port. Possible values are: ["False", "True", "None"]
-        False - Indicates that the public ssh port is closed on all nodes of the cluster.
-        True - Indicates that the public ssh port is open on all nodes of the cluster.
-        None -Indicates that the public ssh port is closed on all nodes of the cluster if VNet is defined,
-        else is open all public nodes. It can be default only during cluster creation time, after
-        creation it will be either True or False. Possible values include: True, False, None.
-        Default value: None.
+    :type description: Optional[str]
+    :param size: Compute size.
+    :type size: Optional[str]
+    :param tags: A set of tags. Contains resource tags defined as key/value pairs.
+    :type tags: Optional[dict[str, str]]
+    :param create_on_behalf_of: Configuration to create resource on behalf of another user. Defaults to None.
+    :type create_on_behalf_of: Optional[~azure.ai.ml.entities.AssignedUserConfiguration]
+    :ivar state: State of the resource.
+    :type state: Optional[str]
+    :ivar last_operation: The last operation.
+    :type last_operation: Optional[Dict[str, str]]
+    :ivar applications: Applications associated with the compute instance.
+    :type applications: Optional[List[Dict[str, str]]]
+    :param network_settings: Network settings for the compute instance.
+    :type network_settings: Optional[~azure.ai.ml.entities.NetworkSettings]
+    :param ssh_settings: SSH settings for the compute instance.
+    :type ssh_settings: Optional[~azure.ai.ml.entities.ComputeInstanceSshSettings]
+    :param ssh_public_access_enabled: State of the public SSH port. Defaults to None. Possible values are:
 
-    :type ssh_public_access_enabled: Optional[bool], optional
-    :param schedules: Compute instance schedules, defaults to None
-    :type schedules: Optional[ComputeSchedules], optional
-    :param identity:  The identity configuration, identities that are associated with the compute cluster.
-    :type identity: IdentityConfiguration, optional
-    :param idle_time_before_shutdown: Deprecated. Use :param: `idle_time_before_shutdown_minutes` instead.
+        * False - Indicates that the public ssh port is closed on all nodes of the cluster.
+        * True - Indicates that the public ssh port is open on all nodes of the cluster.
+        * None -Indicates that the public ssh port is closed on all nodes of the cluster if VNet is defined,
+            else is open all public nodes. It can be default only during cluster creation time, after
+            creation it will be either True or False.
+
+    :type ssh_public_access_enabled: Optional[bool]
+    :param schedules: Compute instance schedules. Defaults to None.
+    :type schedules: Optional[~azure.ai.ml.entities.ComputeSchedules]
+    :param identity: The identities that are associated with the compute cluster.
+    :type identity: ~azure.ai.ml.entities.IdentityConfiguration
+    :param idle_time_before_shutdown: Deprecated. Use the `idle_time_before_shutdown_minutes` parameter instead.
         Stops compute instance after user defined period of inactivity.
-        Time is defined in ISO8601 format. Minimum is 15 min, maximum is 3 days.
-    :type idle_time_before_shutdown: Optional[str], optional
+        Time is defined in ISO8601 format. Minimum is 15 minutes, maximum is 3 days.
+    :type idle_time_before_shutdown: Optional[str]
     :param idle_time_before_shutdown_minutes: Stops compute instance after a user defined period of
-        inactivity in minutes. Minimum is 15 min, maximum is 3 days.
-    :type idle_time_before_shutdown_minutes: Optional[int], optional
+        inactivity in minutes. Minimum is 15 minutes, maximum is 3 days.
+    :type idle_time_before_shutdown_minutes: Optional[int]
+    :param enable_node_public_ip: Enable or disable node public IP address provisioning. Defaults to True.
+        Possible values are:
+            * True - Indicates that the compute nodes will have public IPs provisioned.
+            * False - Indicates that the compute nodes will have a private endpoint and no public IPs.
+    :type enable_node_public_ip: Optional[bool]
     :param setup_scripts: Details of customized scripts to execute for setting up the cluster.
-    :type setup_scripts: Optional[SetupScripts], optional
+    :type setup_scripts: Optional[~azure.ai.ml.entities.SetupScripts]
+    :param custom_applications: List of custom applications and their endpoints for the compute instance.
+    :type custom_applications: Optional[List[~azure.ai.ml.entities.CustomApplications]]
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_compute.py
+            :start-after: [START compute_instance]
+            :end-before: [END compute_instance]
+            :language: python
+            :dedent: 8
+            :caption: Creating a ComputeInstance object.
     """
 
     def __init__(
@@ -146,26 +177,31 @@ class ComputeInstance(Compute):
         name: str,
         description: Optional[str] = None,
         size: Optional[str] = None,
+        tags: Optional[dict] = None,
         ssh_public_access_enabled: Optional[bool] = None,
         create_on_behalf_of: Optional[AssignedUserConfiguration] = None,
         network_settings: Optional[NetworkSettings] = None,
         ssh_settings: Optional[ComputeInstanceSshSettings] = None,
         schedules: Optional[ComputeSchedules] = None,
-        identity: IdentityConfiguration = None,
+        identity: Optional[IdentityConfiguration] = None,
         idle_time_before_shutdown: Optional[str] = None,
         idle_time_before_shutdown_minutes: Optional[int] = None,
         setup_scripts: Optional[SetupScripts] = None,
+        enable_node_public_ip: bool = True,
+        custom_applications: Optional[List[CustomApplications]] = None,
         **kwargs,
-    ):
+    ) -> None:
         kwargs[TYPE] = ComputeType.COMPUTEINSTANCE
         self._state = kwargs.pop("state", None)
         self._last_operation = kwargs.pop("last_operation", None)
+        self._os_image_metadata = kwargs.pop("os_image_metadata", None)
         self._services = kwargs.pop("services", None)
         super().__init__(
             name=name,
             location=kwargs.pop("location", None),
             resource_id=kwargs.pop("resource_id", None),
             description=description,
+            tags=tags,
             **kwargs,
         )
         self.size = size
@@ -178,14 +214,16 @@ class ComputeInstance(Compute):
         self.idle_time_before_shutdown = idle_time_before_shutdown
         self.idle_time_before_shutdown_minutes = idle_time_before_shutdown_minutes
         self.setup_scripts = setup_scripts
+        self.enable_node_public_ip = enable_node_public_ip
+        self.custom_applications = custom_applications
         self.subnet = None
 
     @property
     def services(self) -> List[Dict[str, str]]:
-        """
+        """The compute instance's services.
 
-        return: The services for the compute instance.
-        rtype: List[Dict[str, str]]
+        :return: The compute instance's services.
+        :rtype: List[Dict[str, str]]
         """
         return self._services
 
@@ -193,8 +231,8 @@ class ComputeInstance(Compute):
     def last_operation(self) -> Dict[str, str]:
         """The last operation.
 
-        return: The last operation.
-        rtype: str
+        :return: The last operation.
+        :rtype: str
         """
         return self._last_operation
 
@@ -202,37 +240,34 @@ class ComputeInstance(Compute):
     def state(self) -> str:
         """The state of the compute.
 
-        return: The state of the compute.
-        rtype: str
+        :return: The state of the compute.
+        :rtype: str
         """
         return self._state
+
+    @property
+    def os_image_metadata(self) -> ImageMetadata:
+        """Metadata about the operating system image for this compute instance.
+
+        :return: Operating system image metadata.
+        :rtype: ~azure.ai.ml.entities.ImageMetadata
+        """
+        return self._os_image_metadata
 
     def _to_rest_object(self) -> ComputeResource:
         if self.network_settings and self.network_settings.subnet:
             subnet_resource = ResourceId(id=self.subnet)
         else:
             subnet_resource = None
-        if self.ssh_public_access_enabled and not (
-            self.ssh_settings and self.ssh_settings.ssh_key_value
-        ):
-            msg = "ssh_key_value is required when ssh_public_access_enabled = True."
-            raise ValidationException(
-                message=msg,
-                target=ErrorTarget.COMPUTE,
-                no_personal_data_message=msg,
-                error_category=ErrorCategory.USER_ERROR,
-            )
+
         ssh_settings = None
-        if self.ssh_settings and self.ssh_settings.ssh_key_value:
-            ssh_settings = CiSShSettings(
-                admin_public_key=self.ssh_settings.ssh_key_value,
+        if self.ssh_public_access_enabled is not None or self.ssh_settings is not None:
+            ssh_settings = CiSShSettings()
+            ssh_settings.ssh_public_access = "Enabled" if self.ssh_public_access_enabled else "Disabled"
+            ssh_settings.admin_public_key = (
+                self.ssh_settings.ssh_key_value if self.ssh_settings and self.ssh_settings.ssh_key_value else None
             )
-            if self.ssh_public_access_enabled is not None:
-                ssh_settings.ssh_public_access = (
-                    "Enabled" if self.ssh_public_access_enabled else "Disabled"
-                )
-            else:
-                ssh_settings.ssh_public_access = "NotSpecified"
+
         personal_compute_instance_settings = None
         if self.create_on_behalf_of:
             personal_compute_instance_settings = PersonalComputeInstanceSettings(
@@ -259,13 +294,15 @@ class ComputeInstance(Compute):
             ssh_settings=ssh_settings,
             personal_compute_instance_settings=personal_compute_instance_settings,
             idle_time_before_shutdown=idle_time_before_shutdown,
+            enable_node_public_ip=self.enable_node_public_ip,
         )
-        compute_instance_prop.schedules = (
-            self.schedules._to_rest_object() if self.schedules else None
-        )
-        compute_instance_prop.setup_scripts = (
-            self.setup_scripts._to_rest_object() if self.setup_scripts else None
-        )
+        compute_instance_prop.schedules = self.schedules._to_rest_object() if self.schedules else None
+        compute_instance_prop.setup_scripts = self.setup_scripts._to_rest_object() if self.setup_scripts else None
+        if self.custom_applications:
+            validate_custom_applications(self.custom_applications)
+            compute_instance_prop.custom_services = []
+            for app in self.custom_applications:
+                compute_instance_prop.custom_services.append(app._to_rest_object())
         compute_instance = CIRest(
             description=self.description,
             compute_type=self.type,
@@ -274,9 +311,8 @@ class ComputeInstance(Compute):
         return ComputeResource(
             location=self.location,
             properties=compute_instance,
-            identity=(
-                self.identity._to_compute_rest_object() if self.identity else None
-            ),
+            identity=(self.identity._to_compute_rest_object() if self.identity else None),
+            tags=self.tags,
         )
 
     def _to_dict(self) -> Dict:
@@ -323,13 +359,21 @@ class ComputeInstance(Compute):
             network_settings = NetworkSettings(
                 subnet=prop.properties.subnet.id if prop.properties.subnet else None,
                 public_ip_address=prop.properties.connectivity_endpoints.public_ip_address
-                if prop.properties.connectivity_endpoints
-                and prop.properties.connectivity_endpoints.public_ip_address
+                if prop.properties.connectivity_endpoints and prop.properties.connectivity_endpoints.public_ip_address
                 else None,
                 private_ip_address=prop.properties.connectivity_endpoints.private_ip_address
-                if prop.properties.connectivity_endpoints
-                and prop.properties.connectivity_endpoints.private_ip_address
+                if prop.properties.connectivity_endpoints and prop.properties.connectivity_endpoints.private_ip_address
                 else None,
+            )
+        os_image_metadata = None
+        if prop.properties and prop.properties.os_image_metadata:
+            metadata = prop.properties.os_image_metadata
+            os_image_metadata = ImageMetadata(
+                is_latest_os_image_version=metadata.is_latest_os_image_version
+                if metadata.is_latest_os_image_version is not None
+                else None,
+                current_image_version=metadata.current_image_version if metadata.current_image_version else None,
+                latest_image_version=metadata.latest_image_version if metadata.latest_image_version else None,
             )
 
         idle_time_before_shutdown = None
@@ -341,9 +385,12 @@ class ComputeInstance(Compute):
                 pattern=idle_time_before_shutdown_pattern,
                 string=idle_time_before_shutdown,
             )
-            idle_time_before_shutdown_minutes = (
-                int(idle_time_match[1]) if idle_time_match else None
-            )
+            idle_time_before_shutdown_minutes = int(idle_time_match[1]) if idle_time_match else None
+        custom_applications = None
+        if prop.properties and prop.properties.custom_services:
+            custom_applications = []
+            for app in prop.properties.custom_services:
+                custom_applications.append(CustomApplications._from_rest_object(app))
 
         response = ComputeInstance(
             name=rest_obj.name,
@@ -351,6 +398,7 @@ class ComputeInstance(Compute):
             description=prop.description,
             location=rest_obj.location,
             resource_id=prop.resource_id,
+            tags=rest_obj.tags if rest_obj.tags else None,
             provisioning_state=prop.provisioning_state,
             provisioning_errors=prop.provisioning_errors[0].error.code
             if (prop.provisioning_errors and len(prop.provisioning_errors) > 0)
@@ -367,28 +415,23 @@ class ComputeInstance(Compute):
             create_on_behalf_of=create_on_behalf_of,
             network_settings=network_settings,
             ssh_settings=ssh_settings,
-            ssh_public_access_enabled=_ssh_public_access_to_bool(
-                prop.properties.ssh_settings.ssh_public_access
-            )
-            if (
-                prop.properties
-                and prop.properties.ssh_settings
-                and prop.properties.ssh_settings.ssh_public_access
-            )
+            ssh_public_access_enabled=_ssh_public_access_to_bool(prop.properties.ssh_settings.ssh_public_access)
+            if (prop.properties and prop.properties.ssh_settings and prop.properties.ssh_settings.ssh_public_access)
             else None,
             schedules=ComputeSchedules._from_rest_object(prop.properties.schedules)
-            if prop.properties
-            and prop.properties.schedules
-            and prop.properties.schedules.compute_start_stop
+            if prop.properties and prop.properties.schedules and prop.properties.schedules.compute_start_stop
             else None,
-            identity=IdentityConfiguration._from_compute_rest_object(rest_obj.identity)
-            if rest_obj.identity
-            else None,
+            identity=IdentityConfiguration._from_compute_rest_object(rest_obj.identity) if rest_obj.identity else None,
             setup_scripts=SetupScripts._from_rest_object(prop.properties.setup_scripts)
             if prop.properties and prop.properties.setup_scripts
             else None,
             idle_time_before_shutdown=idle_time_before_shutdown,
             idle_time_before_shutdown_minutes=idle_time_before_shutdown_minutes,
+            os_image_metadata=os_image_metadata,
+            enable_node_public_ip=prop.properties.enable_node_public_ip
+            if (prop.properties and prop.properties.enable_node_public_ip is not None)
+            else True,
+            custom_applications=custom_applications,
         )
         return response
 

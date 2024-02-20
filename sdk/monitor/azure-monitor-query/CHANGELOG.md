@@ -1,6 +1,6 @@
 # Release History
 
-## 1.1.0 (Unreleased)
+## 1.3.0b2 (Unreleased)
 
 ### Features Added
 
@@ -10,7 +10,45 @@
 
 ### Other Changes
 
+## 1.3.0b1 (2023-08-16)
+
+### Features Added
+
+- Added `MetricsBatchQueryClient` to support batch querying metrics from Azure resources. ([#31049](https://github.com/Azure/azure-sdk-for-python/pull/31049))
+
+## 1.2.0 (2023-05-09)
+
+### Features Added
+
+- Add the `query_resource` method to `LogsQueryClient` to allow users to query Azure resources directly without the context of a workspace. ([#29365](https://github.com/Azure/azure-sdk-for-python/pull/29365))
+
+### Bugs Fixed
+
+- Fixed an inconsistent keyword argument name in the `LogsTable` constructor, changing `column_types` to `columns_types`. Note that this is a class that is typically only instantiated internally, and not by users. ([#29076](https://github.com/Azure/azure-sdk-for-python/pull/29076))
+
+### Other Changes
+
+- Improved client configuration logic for non-public Azure clouds where credential scope will be determined based on the configured endpoint. ([#29602](https://github.com/Azure/azure-sdk-for-python/pull/29602))
+
+## 1.1.1 (2023-02-13)
+
+### Bugs Fixed
+
+- Fixed a bug where the incorrect key `time_stamp` (should be `timeStamp`) was used in the creation of `MetricValue` objects (thanks @jamespic).  ([#28777](https://github.com/Azure/azure-sdk-for-python/pull/28777))
+
+## 1.1.0 (2023-02-07)
+
+### Bugs Fixed
+
+* Error details are now propagated inside the `LogsQueryError` object. ([#25137](https://github.com/Azure/azure-sdk-for-python/issues/25137))
+
+### Other Changes
+
 * Python 3.6 is no longer supported. Please use Python version 3.7 or later. For more details, see [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).
+* Removed `msrest` dependency.
+* Bumped minimum dependency on `azure-core` to `>=1.24.0`.
+* Added requirement for `isodate>=0.6.0` (`isodate` was required by `msrest`).
+* Added requirement for `typing-extensions>=4.0.1`.
 
 ## 1.0.3 (2022-07-07)
 

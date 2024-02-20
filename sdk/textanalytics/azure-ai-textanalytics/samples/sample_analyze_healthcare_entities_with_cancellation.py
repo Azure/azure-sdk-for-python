@@ -19,12 +19,10 @@ USAGE:
 """
 
 
-import os
-from azure.core.exceptions import HttpResponseError
-
-
 def sample_analyze_healthcare_entities_with_cancellation() -> None:
     # [START analyze_healthcare_entities_with_cancellation]
+    import os
+    from azure.core.exceptions import HttpResponseError
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics import TextAnalyticsClient
 

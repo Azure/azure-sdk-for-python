@@ -4,11 +4,15 @@
 
 # pylint: disable=protected-access
 
-import functools
 import logging
-from typing import Any, Callable, Dict, Optional, TypeVar, cast
+from typing import Callable, Dict, Optional, TypeVar, cast
 
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+)
 
 T = TypeVar("T")
 module_logger = logging.getLogger(__name__)
@@ -21,9 +25,9 @@ class OperationConfig(object):
     :type object: _type_
     """
 
-    def __init__(self, show_progress: bool) -> None:
-
+    def __init__(self, show_progress: bool, enable_telemetry: bool) -> None:
         self._show_progress = show_progress
+        self._enable_telemetry = enable_telemetry
 
     @property
     def show_progress(self) -> bool:
@@ -34,6 +38,15 @@ class OperationConfig(object):
         """
         return self._show_progress
 
+    @property
+    def enable_telemetry(self) -> bool:
+        """Decide whether to enable telemetry for Jupyter Notebooks - telemetry cannot be enabled for other contexts.
+
+        :return: enable_telemetry
+        :rtype: bool
+        """
+        return self._enable_telemetry
+
 
 class OperationScope(object):
     def __init__(
@@ -42,11 +55,15 @@ class OperationScope(object):
         resource_group_name: str,
         workspace_name: Optional[str],
         registry_name: Optional[str] = None,
+        workspace_id: Optional[str] = None,
+        workspace_location: Optional[str] = None,
     ):
         self._subscription_id = subscription_id
         self._resource_group_name = resource_group_name
         self._workspace_name = workspace_name
         self._registry_name = registry_name
+        self._workspace_id = workspace_id
+        self._workspace_location = workspace_location
 
     @property
     def subscription_id(self) -> str:
@@ -73,22 +90,6 @@ class OperationScope(object):
         self._registry_name = value
 
 
-def workspace_none_check(func: Callable[..., Any]) -> Callable[..., Any]:
-    @functools.wraps(func)  # This is to preserve metadata of func
-    def new_function(self: Any, *args: Any, **kwargs: Any) -> Any:
-        if not self._operation_scope.workspace_name:
-            msg = "Please set the default workspace with MLClient."
-            raise ValidationException(
-                message=msg,
-                target=ErrorTarget.GENERAL,
-                no_personal_data_message=msg,
-                error_category=ErrorCategory.USER_ERROR,
-            )
-        return func(self, *args, **kwargs)
-
-    return new_function
-
-
 class _ScopeDependentOperations(object):
     def __init__(self, operation_scope: OperationScope, operation_config: OperationConfig):
         self._operation_scope = operation_scope
@@ -98,7 +99,6 @@ class _ScopeDependentOperations(object):
         }
 
     @property  # type: ignore
-    @workspace_none_check
     def _workspace_name(self) -> str:
         return cast(str, self._operation_scope.workspace_name)
 
@@ -117,6 +117,10 @@ class _ScopeDependentOperations(object):
     @property
     def _show_progress(self) -> bool:
         return self._operation_config.show_progress
+
+    @property
+    def _enable_telemetry(self) -> bool:
+        return self._operation_config.enable_telemetry
 
 
 class OperationsContainer(object):

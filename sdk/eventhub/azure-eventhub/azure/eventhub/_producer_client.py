@@ -22,6 +22,7 @@ from typing_extensions import Literal
 from ._client_base import ClientBase
 from ._producer import EventHubProducer
 from ._constants import ALL_PARTITIONS
+from ._tracing import TraceAttributes
 from ._common import EventDataBatch, EventData
 from ._buffered_producer import BufferedProducerDispatcher
 from ._utils import set_event_partition_key
@@ -40,6 +41,7 @@ class EventHubProducerClient(
     ClientBase
 ):  # pylint: disable=client-accepts-api-version-keyword
     # pylint: disable=too-many-instance-attributes
+    # pylint: disable=client-method-missing-tracing-decorator
     """The EventHubProducerClient class defines a high level interface for
     sending events to the Azure Event Hubs service.
 
@@ -90,8 +92,9 @@ class EventHubProducerClient(
     :keyword float auth_timeout: The time in seconds to wait for a token to be authorized by the service.
      The default value is 60 seconds. If set to 0, no timeout will be enforced from the client.
     :keyword str user_agent: If specified, this will be added in front of the user agent string.
-    :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs. Default
+    :keyword retry_total: The total number of attempts to redo a failed operation when an error occurs. Default
      value is 3.
+    :paramtype retry_total: int
     :keyword float retry_backoff_factor: A backoff factor to apply between attempts after the second try
      (most errors are resolved immediately by a second try without a delay).
      In fixed mode, retry policy will always sleep for {backoff factor}.
@@ -113,14 +116,24 @@ class EventHubProducerClient(
     :keyword Dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
      Additionally the following keys may also be present: `'username', 'password'`.
-    :keyword str custom_endpoint_address: The custom endpoint address to use for establishing a connection to
+    :keyword custom_endpoint_address: The custom endpoint address to use for establishing a connection to
      the Event Hubs service, allowing network requests to be routed through any application gateways or
      other paths needed for the host environment. Default is None.
      The format would be like "sb://<custom_endpoint_hostname>:<custom_endpoint_port>".
      If port is not specified in the `custom_endpoint_address`, by default port 443 will be used.
-    :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
+    :paramtype custom_endpoint_address: Optional[str]
+    :keyword connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
      authenticate the identity of the connection endpoint.
      Default is None in which case `certifi.where()` will be used.
+    :paramtype connection_verify: Optional[str]
+    :keyword uamqp_transport: Whether to use the `uamqp` library as the underlying transport. The default value is
+     False and the Pure Python AMQP library will be used as the underlying transport.
+    :paramtype uamqp_transport: bool
+    :keyword float socket_timeout: The time in seconds that the underlying socket on the connection should
+     wait when sending and receiving data before timing out. The default value is 0.2 for TransportType.Amqp
+     and 1 for TransportType.AmqpOverWebsocket. If EventHubsConnectionError errors are occurring due to write
+     timing out, a larger than default value may need to be passed in. This is for advanced usage scenarios
+     and ordinarily the default value should be sufficient.
 
     .. admonition:: Example:
 
@@ -247,7 +260,8 @@ class EventHubProducerClient(
                 self._max_message_size_on_link,
                 max_wait_time=self._max_wait_time,
                 max_buffer_length=self._max_buffer_length,
-                executor=self._executor
+                executor=self._executor,
+                amqp_transport=self._amqp_transport,
             )
             self._buffered_producer_dispatcher.enqueue_events(events, **kwargs)
 
@@ -266,13 +280,13 @@ class EventHubProducerClient(
             to_send_batch = self.create_batch(
                 partition_id=partition_id, partition_key=partition_key
             )
-            to_send_batch._load_events( # pylint:disable=protected-access
+            to_send_batch._load_events(  # pylint:disable=protected-access
                 event_data_batch
             )
 
         return (
             to_send_batch,
-            to_send_batch._partition_id,    # pylint:disable=protected-access
+            to_send_batch._partition_id,  # pylint:disable=protected-access
             partition_key,
         )
 
@@ -307,6 +321,7 @@ class EventHubProducerClient(
     def _get_partitions(self):
         # type: () -> None
         if not self._partition_ids:
+            _LOGGER.debug("Populating partition IDs so producers can be started.")
             self._partition_ids = self.get_partition_ids()  # type: ignore
             for p_id in cast(List[str], self._partition_ids):
                 self._producers[p_id] = None
@@ -458,8 +473,9 @@ class EventHubProducerClient(
         :keyword float auth_timeout: The time in seconds to wait for a token to be authorized by the service.
          The default value is 60 seconds. If set to 0, no timeout will be enforced from the client.
         :keyword str user_agent: If specified, this will be added in front of the user agent string.
-        :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
+        :keyword retry_total: The total number of attempts to redo a failed operation when an error occurs.
          Default value is 3.
+        :paramtype retry_total: int
         :keyword float retry_backoff_factor: A backoff factor to apply between attempts after the second try
          (most errors are resolved immediately by a second try without a delay).
          In fixed mode, retry policy will always sleep for {backoff factor}.
@@ -481,14 +497,19 @@ class EventHubProducerClient(
         :keyword Dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
          keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
          Additionally the following keys may also be present: `'username', 'password'`.
-        :keyword str custom_endpoint_address: The custom endpoint address to use for establishing a connection to
+        :keyword custom_endpoint_address: The custom endpoint address to use for establishing a connection to
          the Event Hubs service, allowing network requests to be routed through any application gateways or
          other paths needed for the host environment. Default is None.
          The format would be like "sb://<custom_endpoint_hostname>:<custom_endpoint_port>".
          If port is not specified in the `custom_endpoint_address`, by default port 443 will be used.
-        :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
+        :paramtype custom_endpoint_address: Optional[str]
+        :keyword connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
          authenticate the identity of the connection endpoint.
          Default is None in which case `certifi.where()` will be used.
+        :paramtype connection_verify: Optional[str]
+        :keyword uamqp_transport: Whether to use the `uamqp` library as the underlying transport. The default value is
+         False and the Pure Python AMQP library will be used as the underlying transport.
+        :paramtype uamqp_transport: bool
         :rtype: ~azure.eventhub.EventHubProducerClient
 
         .. admonition:: Example:
@@ -668,7 +689,12 @@ class EventHubProducerClient(
                 )
                 if self._on_success:
                     self._on_success(batch._internal_events, pid)
-            except (KeyError, AttributeError, EventHubError):
+            except (KeyError, AttributeError, EventHubError) as e:
+                _LOGGER.debug(
+                    "Producer for partition ID %s not available: %s. Rebuilding new producer.",
+                    partition_id,
+                    e,
+                )
                 self._start_producer(partition_id, send_timeout)
                 cast(EventHubProducer, self._producers[partition_id]).send(
                     batch, partition_key=pkey, timeout=send_timeout
@@ -698,7 +724,7 @@ class EventHubProducerClient(
          partition_key to only be string type, they might fail to parse the non-string value.**
         :keyword int max_size_in_bytes: The maximum size of bytes data that an EventDataBatch object can hold. By
          default, the value is determined by your Event Hubs tier.
-        :rtype: ~azure.eventhub.EventDataBatch
+        :return: An EventDataBatch object instance
 
         .. admonition:: Example:
 
@@ -708,7 +734,7 @@ class EventHubProducerClient(
                 :language: python
                 :dedent: 4
                 :caption: Create EventDataBatch object within limited size
-
+        :rtype: ~azure.eventhub.EventDataBatch
         """
         if not self._max_message_size_on_link:
             self._get_max_message_size()
@@ -724,13 +750,16 @@ class EventHubProducerClient(
                 )
             )
 
-        event_data_batch = EventDataBatch(
+        return EventDataBatch(
             max_size_in_bytes=(max_size_in_bytes or self._max_message_size_on_link),
             partition_id=partition_id,
-            partition_key=partition_key
+            partition_key=partition_key,
+            amqp_transport=self._amqp_transport,
+            tracing_attributes={
+                TraceAttributes.TRACE_NET_PEER_NAME_ATTRIBUTE: self._address.hostname if self._address else None,
+                TraceAttributes.TRACE_MESSAGING_DESTINATION_ATTRIBUTE: self._address.path if self._address else None
+            }
         )
-
-        return event_data_batch
 
     def get_eventhub_properties(self):
         # type:() -> Dict[str, Any]
@@ -742,7 +771,8 @@ class EventHubProducerClient(
             - `created_at` (UTC datetime.datetime)
             - `partition_ids` (list[str])
 
-        :rtype: Dict[str, Any]
+        :return: A dictionary containing eventhub properties.
+        :rtype: dict[str, any]
         :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
         return super(EventHubProducerClient, self)._get_eventhub_properties()
@@ -751,6 +781,7 @@ class EventHubProducerClient(
         # type:() -> List[str]
         """Get partition IDs of the Event Hub.
 
+        :return: A list of partition IDs.
         :rtype: list[str]
         :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
@@ -772,7 +803,8 @@ class EventHubProducerClient(
 
         :param partition_id: The target partition ID.
         :type partition_id: str
-        :rtype: Dict[str, Any]
+        :return: A dictionary of partition properties.
+        :rtype: dict[str, any]
         :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
         return super(EventHubProducerClient, self)._get_partition_properties(
@@ -800,7 +832,7 @@ class EventHubProducerClient(
 
         :keyword bool flush: Buffered mode only. If set to True, events in the buffer will be sent
          immediately. Default is True.
-        :keyword Optional[float] timeout: Buffered mode only. Timeout to close the producer.
+        :keyword float or None timeout: Buffered mode only. Timeout to close the producer.
          Default is None which means no timeout.
         :rtype: None
         :raises EventHubError: If an error occurred when flushing the buffer if `flush` is set to True or closing the
@@ -825,9 +857,9 @@ class EventHubProducerClient(
                 )
                 self._buffered_producer_dispatcher = None
 
-            for pid in self._producers:
-                if self._producers[pid]:
-                    self._producers[pid].close()  # type: ignore
+            for pid, producer in self._producers.items():
+                if producer:
+                    producer.close()  # type: ignore
                 self._producers[pid] = None
         super(EventHubProducerClient, self)._close()
 

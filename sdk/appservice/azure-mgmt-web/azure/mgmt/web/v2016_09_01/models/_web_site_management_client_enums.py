@@ -11,31 +11,30 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class AccessControlEntryAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Action object.
-    """
+    """Action object."""
 
     PERMIT = "Permit"
     DENY = "Deny"
 
+
 class AutoHealActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Predefined action to be taken.
-    """
+    """Predefined action to be taken."""
 
     RECYCLE = "Recycle"
     LOG_EVENT = "LogEvent"
     CUSTOM_ACTION = "CustomAction"
 
+
 class ComputeModeOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Shared/dedicated workers.
-    """
+    """Shared/dedicated workers."""
 
     SHARED = "Shared"
     DEDICATED = "Dedicated"
     DYNAMIC = "Dynamic"
 
+
 class ConnectionStringType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of database.
-    """
+    """Type of database."""
 
     MY_SQL = "MySql"
     SQL_SERVER = "SQLServer"
@@ -49,21 +48,22 @@ class ConnectionStringType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     REDIS_CACHE = "RedisCache"
     POSTGRE_SQL = "PostgreSQL"
 
+
 class HostingEnvironmentStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Current status of the App Service Environment.
-    """
+    """Current status of the App Service Environment."""
 
     PREPARING = "Preparing"
     READY = "Ready"
     SCALING = "Scaling"
     DELETING = "Deleting"
 
+
 class HostType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Indicates whether the hostname is a standard or repository hostname.
-    """
+    """Indicates whether the hostname is a standard or repository hostname."""
 
     STANDARD = "Standard"
     REPOSITORY = "Repository"
+
 
 class InternalLoadBalancingMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies which endpoints to serve internally in the Virtual Network for the App Service
@@ -74,22 +74,22 @@ class InternalLoadBalancingMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     WEB = "Web"
     PUBLISHING = "Publishing"
 
+
 class ManagedPipelineMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Managed pipeline mode.
-    """
+    """Managed pipeline mode."""
 
     INTEGRATED = "Integrated"
     CLASSIC = "Classic"
 
+
 class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of managed service identity.
-    """
+    """Type of managed service identity."""
 
     SYSTEM_ASSIGNED = "SystemAssigned"
 
+
 class OperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The current status of the operation.
-    """
+    """The current status of the operation."""
 
     IN_PROGRESS = "InProgress"
     FAILED = "Failed"
@@ -97,9 +97,9 @@ class OperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     TIMED_OUT = "TimedOut"
     CREATED = "Created"
 
+
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Provisioning state of the App Service Environment.
-    """
+    """Provisioning state of the App Service Environment."""
 
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
@@ -107,12 +107,13 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     IN_PROGRESS = "InProgress"
     DELETING = "Deleting"
 
+
 class RouteType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of route this is:
     DEFAULT - By default, every app has routes to the local address ranges specified by RFC1918
     INHERITED - Routes inherited from the real Virtual Network routes
     STATIC - Static route set on the app only
-    
+
     These values will be used for syncing an app's routes with those from a Virtual Network.
     """
 
@@ -120,9 +121,9 @@ class RouteType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     INHERITED = "INHERITED"
     STATIC = "STATIC"
 
+
 class ScmType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """SCM type.
-    """
+    """SCM type."""
 
     NONE = "None"
     DROPBOX = "Dropbox"
@@ -138,17 +139,17 @@ class ScmType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ONE_DRIVE = "OneDrive"
     VSO = "VSO"
 
+
 class SiteAvailabilityState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Management information availability state for the app.
-    """
+    """Management information availability state for the app."""
 
     NORMAL = "Normal"
     LIMITED = "Limited"
     DISASTER_RECOVERY_MODE = "DisasterRecoveryMode"
 
+
 class SiteLoadBalancing(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Site load balancing.
-    """
+    """Site load balancing."""
 
     WEIGHTED_ROUND_ROBIN = "WeightedRoundRobin"
     LEAST_REQUESTS = "LeastRequests"
@@ -156,40 +157,40 @@ class SiteLoadBalancing(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     WEIGHTED_TOTAL_TRAFFIC = "WeightedTotalTraffic"
     REQUEST_HASH = "RequestHash"
 
+
 class SslState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """SSL type.
-    """
+    """SSL type."""
 
     DISABLED = "Disabled"
     SNI_ENABLED = "SniEnabled"
     IP_BASED_ENABLED = "IpBasedEnabled"
 
+
 class StatusOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """App Service plan status.
-    """
+    """App Service plan status."""
 
     READY = "Ready"
     PENDING = "Pending"
     CREATING = "Creating"
 
+
 class SupportedTlsVersions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """MinTlsVersion: configures the minimum version of TLS required for SSL requests
-    """
+    """MinTlsVersion: configures the minimum version of TLS required for SSL requests."""
 
     ONE0 = "1.0"
     ONE1 = "1.1"
     ONE2 = "1.2"
 
+
 class UsageState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """State indicating whether the app has exceeded its quota usage. Read-only.
-    """
+    """State indicating whether the app has exceeded its quota usage. Read-only."""
 
     NORMAL = "Normal"
     EXCEEDED = "Exceeded"
 
+
 class WorkerSizeOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Size of the machines.
-    """
+    """Size of the machines."""
 
     DEFAULT = "Default"
     SMALL = "Small"

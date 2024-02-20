@@ -14,7 +14,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.serialization import AzureJSONEncoder
 from azure.ai.formrecognizer.aio import DocumentAnalysisClient
 from azure.ai.formrecognizer import AnalyzeResult
-from azure.ai.formrecognizer._generated.v2022_08_31.models import AnalyzeResultOperation
+from azure.ai.formrecognizer._generated.v2023_07_31.models import AnalyzeResultOperation
 from preparers import FormRecognizerPreparer
 from asynctestcase import AsyncFormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
@@ -464,6 +464,7 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
         assert id_document.fields.get("CountryRegion").value == "USA"
         assert id_document.fields.get("Region").value == "Washington"
 
+    @pytest.mark.skip("Tracking issue: https://github.com/Azure/azure-sdk-for-python/issues/31214")
     @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
@@ -551,6 +552,7 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
         assert w2_document.fields.get("Employee").value.get("Address").value.country_region == None
         assert w2_document.fields.get("Employee").value.get("Address").value.po_box == None
 
+    @pytest.mark.skip("Tracking issue: https://github.com/Azure/azure-sdk-for-python/issues/31214")
     @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
@@ -597,8 +599,10 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
         assert invoice.fields.get("ShippingAddressRecipient").value ==  "Microsoft Delivery"
         assert invoice.fields.get("SubTotal").value.amount ==  100.0
         assert invoice.fields.get("SubTotal").value.symbol ==  "$"
+        assert invoice.fields.get("SubTotal").value.code ==  "USD"
         assert invoice.fields.get("TotalTax").value.amount ==  10.0
         assert invoice.fields.get("TotalTax").value.symbol ==  "$"
+        assert invoice.fields.get("TotalTax").value.code ==  "USD"
         assert invoice.fields.get("VendorName").value ==  "CONTOSO LTD."
         assert invoice.fields.get("VendorAddress").value, "123 456th St New York, NY ==  10001"
         assert invoice.fields.get("VendorAddressRecipient").value ==  "Contoso Headquarters"

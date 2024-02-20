@@ -1,14 +1,84 @@
 ## Release History
 
-### 4.3.1b2 (Unreleased)
+### 4.5.2 (Unreleased)
 
 #### Features Added
+* Added Support for Subpartitioning in Python SDK. See [PR 31121](https://github.com/Azure/azure-sdk-for-python/pull/31121)
 
 #### Breaking Changes
 
 #### Bugs Fixed
 
 #### Other Changes
+* Marked the outdated `diagnostics.py` file for deprecation since we now recommend the use of our `CosmosHttpLoggingPolicy` for diagnostics.
+For more on the `CosmosHttpLoggingPolicy` see our [README](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos#logging-diagnostics).
+
+### 4.5.1 (2023-09-12)
+
+#### Bugs Fixed
+* Fixed bug when query with DISTINCT + OFFSET/LIMIT operators returns unexpected result. See [PR 31925](https://github.com/Azure/azure-sdk-for-python/pull/31925).
+
+#### Other Changes
+* Added additional checks for resource creation using specific characters that cause issues. See [PR 31861](https://github.com/Azure/azure-sdk-for-python/pull/31861).
+
+### 4.5.0 (2023-08-09)
+
+#### Features Added
+* Added support for continuation tokens for streamable cross partition queries. See [PR 31189](https://github.com/Azure/azure-sdk-for-python/pull/31189).
+
+#### Bugs Fixed
+* Fixed bug with async `create_database_if_not_exists` method not working when passing `offer_throughput` as an option. See [PR 31478](https://github.com/Azure/azure-sdk-for-python/pull/31478).
+
+#### Other Changes
+* Renamed `response_continuation_token_limit_in_kb` to `continuation_token_limit` for GA. See [PR 31532](https://github.com/Azure/azure-sdk-for-python/pull/31532).
+
+### 4.4.1b1 (2023-07-25)
+
+#### Features Added
+* Added ability to limit continuation token size when querying for items. See [PR 30731](https://github.com/Azure/azure-sdk-for-python/pull/30731)
+
+#### Bugs Fixed
+* Fixed bug with async patch_item method. See [PR 30804](https://github.com/Azure/azure-sdk-for-python/pull/30804).
+
+### 4.4.0 (2023-06-09)
+
+#### Features Added
+- GA release of Patch API and Delete All Items By Partition Key
+
+### 4.4.0b2 (2023-05-22)
+
+#### Features Added
+* Added conditional patching for Patch operations. See [PR 30455](https://github.com/Azure/azure-sdk-for-python/pull/30455).
+
+#### Bugs Fixed
+* Fixed bug with non english locales causing an error with the RFC 1123 Date Format. See [PR 30125](https://github.com/Azure/azure-sdk-for-python/pull/30125).
+
+#### Other Changes
+* Refactoring of our client `connection_timeout` and `request_timeout` configurations. See [PR 30171](https://github.com/Azure/azure-sdk-for-python/pull/30171).
+
+### 4.4.0b1 (2023-04-11)
+
+#### Features Added
+ - Added **preview** delete all items by partition key functionality. See [PR 29186](https://github.com/Azure/azure-sdk-for-python/pull/29186). For more information on Partition Key Delete, please see [Azure Cosmos DB Partition Key Delete](https://learn.microsoft.com/azure/cosmos-db/nosql/how-to-delete-by-partition-key?tabs=python-example).
+ - Added **preview** partial document update (Patch API) functionality and container methods for patching items with operations. See [PR 29497](https://github.com/Azure/azure-sdk-for-python/pull/29497). For more information on Patch, please see [Azure Cosmos DB Partial Document Update](https://learn.microsoft.com/azure/cosmos-db/partial-document-update).
+
+#### Bugs Fixed
+* Fixed bug in method `create_container_if_not_exists()` of async database client for unexpected kwargs being passed into `read()` method used internally. See [PR 29136](https://github.com/Azure/azure-sdk-for-python/pull/29136).
+* Fixed bug with method `query_items()` of our async container class, where partition key and cross partition headers would both be set when using partition keys. See [PR 29366](https://github.com/Azure/azure-sdk-for-python/pull/29366/).
+* Fixed bug with client not properly surfacing errors for invalid credentials and identities with insufficient permissions. Users running into 'NoneType has no attribute ConsistencyPolicy' errors when initializing their clients will now see proper authentication exceptions. See [PR 29256](https://github.com/Azure/azure-sdk-for-python/pull/29256).
+
+#### Other Changes
+* Removed use of `six` package within the SDK.
+
+### 4.3.1 (2023-02-23)
+
+#### Features Added
+ - Added `correlated_activity_id` for query operations.
+ - Added cross regional retries for Service Unavailable/Request Timeouts for read/Query Plan operations.
+ - GA release of CosmosHttpLoggingPolicy and autoscale feature.
+
+#### Bugs Fixed
+- Bug fix to address queries with VALUE MAX (or any other aggregate) that run into an issue if the query is executed on a container with at least one "empty" partition.
 
 ### 4.3.1b1 (2022-09-19)
 

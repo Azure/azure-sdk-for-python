@@ -39,7 +39,7 @@ from typing import List
 
 
 def path_excluded(path, additional_excludes):
-    return any([excl in path for excl in additional_excludes]) or "tests" in path or is_metapackage(path)
+    return any([excl in path for excl in additional_excludes]) or "tests" in os.path.normpath(path).split(os.sep) or is_metapackage(path)
 
 
 # Metapackages do not have an 'azure' folder within them

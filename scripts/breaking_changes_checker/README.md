@@ -9,15 +9,15 @@ Add your package name to the `RUN_BREAKING_CHANGES_PACKAGES` found [here](https:
 
 ## Run locally with tox
 
-**1) Install tox and tox-monorepo:**
+**1) Install tox:**
 
-`pip install tox tox-monorepo`
+`pip install tox<5`
 
 **2) Run the `breaking` environment.**
 
 Here we run the breaking changes tool against azure-storage-blob, for example:
 
-`C:\azure-sdk-for-python\sdk\storage\azure-storage-blob>tox -c ../../../eng/tox/tox.ini -e breaking`
+`C:\azure-sdk-for-python\sdk\storage\azure-storage-blob>tox run -c ../../../eng/tox/tox.ini --root . -e breaking`
 
 
 ## Ignore a reported breaking change

@@ -29,13 +29,12 @@ def main():
         subscription_id="91d12660-3dec-467a-be2a-213b5544ddc0",
     )
 
-    response = client.iot_dps_resource.begin_delete(
+    client.iot_dps_resource.begin_delete(
         provisioning_service_name="myFirstProvisioningService",
         resource_group_name="myResourceGroup",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/deviceprovisioningservices/resource-manager/Microsoft.Devices/stable/2022-02-05/examples/DPSDelete.json
+# x-ms-original-file: specification/deviceprovisioningservices/resource-manager/Microsoft.Devices/preview/2023-03-01-preview/examples/DPSDelete.json
 if __name__ == "__main__":
     main()

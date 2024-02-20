@@ -121,5 +121,3 @@ async def test_update_checkpoint():
     assert listed_checkpoint[0] == checkpoint
     assert listed_checkpoint[0]["offset"] == "0"
     assert listed_checkpoint[0]["sequencenumber"] == 0
-
-

@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, TYPE_CHECKING
+from typing import Any, Dict, List, Optional, TYPE_CHECKING
 
 from ... import _serialization
 
@@ -51,7 +51,7 @@ class PrivateLinkScopesResource(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -89,7 +89,7 @@ class AzureMonitorPrivateLinkScope(PrivateLinkScopesResource):
     :vartype provisioning_state: str
     :ivar private_endpoint_connections: List of private endpoint connections.
     :vartype private_endpoint_connections:
-     list[~$(python-base-namespace).v2019_10_17.models.PrivateEndpointConnection]
+     list[~azure.mgmt.monitor.v2019_10_17.models.PrivateEndpointConnection]
     """
 
     _validation = {
@@ -114,7 +114,7 @@ class AzureMonitorPrivateLinkScope(PrivateLinkScopesResource):
         },
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -132,7 +132,7 @@ class AzureMonitorPrivateLinkScopeListResult(_serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar value: List of Azure Monitor PrivateLinkScope definitions. Required.
-    :vartype value: list[~$(python-base-namespace).v2019_10_17.models.AzureMonitorPrivateLinkScope]
+    :vartype value: list[~azure.mgmt.monitor.v2019_10_17.models.AzureMonitorPrivateLinkScope]
     :ivar next_link: The URI to get the next set of Azure Monitor PrivateLinkScope definitions if
      too many PrivateLinkScopes where returned in the result set.
     :vartype next_link: str
@@ -148,12 +148,11 @@ class AzureMonitorPrivateLinkScopeListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: List["_models.AzureMonitorPrivateLinkScope"], next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: List["_models.AzureMonitorPrivateLinkScope"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of Azure Monitor PrivateLinkScope definitions. Required.
-        :paramtype value:
-         list[~$(python-base-namespace).v2019_10_17.models.AzureMonitorPrivateLinkScope]
+        :paramtype value: list[~azure.mgmt.monitor.v2019_10_17.models.AzureMonitorPrivateLinkScope]
         :keyword next_link: The URI to get the next set of Azure Monitor PrivateLinkScope definitions
          if too many PrivateLinkScopes where returned in the result set.
         :paramtype next_link: str
@@ -184,7 +183,7 @@ class ErrorAdditionalInfo(_serialization.Model):
         "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.type = None
@@ -205,7 +204,7 @@ class ErrorResponse(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword code: Error code.
         :paramtype code: str
@@ -227,10 +226,9 @@ class ErrorResponseCommon(ErrorResponse):
     :ivar message: Error message indicating why the operation failed.
     :vartype message: str
     :ivar details: The error details.
-    :vartype details: list[~$(python-base-namespace).v2019_10_17.models.ErrorResponseCommon]
+    :vartype details: list[~azure.mgmt.monitor.v2019_10_17.models.ErrorResponseCommon]
     :ivar additional_info: The error additional info.
-    :vartype additional_info:
-     list[~$(python-base-namespace).v2019_10_17.models.ErrorAdditionalInfo]
+    :vartype additional_info: list[~azure.mgmt.monitor.v2019_10_17.models.ErrorAdditionalInfo]
     """
 
     _validation = {
@@ -245,7 +243,7 @@ class ErrorResponseCommon(ErrorResponse):
         "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword code: Error code.
         :paramtype code: str
@@ -271,7 +269,7 @@ class OperationStatus(_serialization.Model):
     :ivar status: The status of the operation.
     :vartype status: str
     :ivar error: The error detail of the operation if any.
-    :vartype error: ~$(python-base-namespace).v2019_10_17.models.ErrorResponseCommon
+    :vartype error: ~azure.mgmt.monitor.v2019_10_17.models.ErrorResponseCommon
     """
 
     _attribute_map = {
@@ -292,8 +290,8 @@ class OperationStatus(_serialization.Model):
         end_time: Optional[datetime.datetime] = None,
         status: Optional[str] = None,
         error: Optional["_models.ErrorResponseCommon"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: The operation Id.
         :paramtype id: str
@@ -306,7 +304,7 @@ class OperationStatus(_serialization.Model):
         :keyword status: The status of the operation.
         :paramtype status: str
         :keyword error: The error detail of the operation if any.
-        :paramtype error: ~$(python-base-namespace).v2019_10_17.models.ErrorResponseCommon
+        :paramtype error: ~azure.mgmt.monitor.v2019_10_17.models.ErrorResponseCommon
         """
         super().__init__(**kwargs)
         self.id = id
@@ -342,7 +340,7 @@ class ProxyResource(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -362,11 +360,11 @@ class PrivateEndpointConnection(ProxyResource):
     :ivar type: Azure resource type.
     :vartype type: str
     :ivar private_endpoint: Private endpoint which the connection belongs to.
-    :vartype private_endpoint: ~$(python-base-namespace).v2019_10_17.models.PrivateEndpointProperty
+    :vartype private_endpoint: ~azure.mgmt.monitor.v2019_10_17.models.PrivateEndpointProperty
     :ivar private_link_service_connection_state: Connection state of the private endpoint
      connection.
     :vartype private_link_service_connection_state:
-     ~$(python-base-namespace).v2019_10_17.models.PrivateLinkServiceConnectionStateProperty
+     ~azure.mgmt.monitor.v2019_10_17.models.PrivateLinkServiceConnectionStateProperty
     :ivar provisioning_state: State of the private endpoint connection.
     :vartype provisioning_state: str
     """
@@ -395,16 +393,15 @@ class PrivateEndpointConnection(ProxyResource):
         *,
         private_endpoint: Optional["_models.PrivateEndpointProperty"] = None,
         private_link_service_connection_state: Optional["_models.PrivateLinkServiceConnectionStateProperty"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword private_endpoint: Private endpoint which the connection belongs to.
-        :paramtype private_endpoint:
-         ~$(python-base-namespace).v2019_10_17.models.PrivateEndpointProperty
+        :paramtype private_endpoint: ~azure.mgmt.monitor.v2019_10_17.models.PrivateEndpointProperty
         :keyword private_link_service_connection_state: Connection state of the private endpoint
          connection.
         :paramtype private_link_service_connection_state:
-         ~$(python-base-namespace).v2019_10_17.models.PrivateLinkServiceConnectionStateProperty
+         ~azure.mgmt.monitor.v2019_10_17.models.PrivateLinkServiceConnectionStateProperty
         """
         super().__init__(**kwargs)
         self.private_endpoint = private_endpoint
@@ -418,7 +415,7 @@ class PrivateEndpointConnectionListResult(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: Array of results.
-    :vartype value: list[~$(python-base-namespace).v2019_10_17.models.PrivateEndpointConnection]
+    :vartype value: list[~azure.mgmt.monitor.v2019_10_17.models.PrivateEndpointConnection]
     :ivar next_link: Link to retrieve next page of results.
     :vartype next_link: str
     """
@@ -433,7 +430,7 @@ class PrivateEndpointConnectionListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -451,7 +448,7 @@ class PrivateEndpointProperty(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: Resource id of the private endpoint.
         :paramtype id: str
@@ -493,7 +490,7 @@ class PrivateLinkResource(ProxyResource):
         "required_members": {"key": "properties.requiredMembers", "type": "[str]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.group_id = None
@@ -506,7 +503,7 @@ class PrivateLinkResourceListResult(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: Array of results.
-    :vartype value: list[~$(python-base-namespace).v2019_10_17.models.PrivateLinkResource]
+    :vartype value: list[~azure.mgmt.monitor.v2019_10_17.models.PrivateLinkResource]
     :ivar next_link: Link to retrieve next page of results.
     :vartype next_link: str
     """
@@ -521,7 +518,7 @@ class PrivateLinkResourceListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -555,7 +552,7 @@ class PrivateLinkServiceConnectionStateProperty(_serialization.Model):
         "actions_required": {"key": "actionsRequired", "type": "str"},
     }
 
-    def __init__(self, *, status: str, description: str, **kwargs):
+    def __init__(self, *, status: str, description: str, **kwargs: Any) -> None:
         """
         :keyword status: The private link service connection status. Required.
         :paramtype status: str
@@ -600,7 +597,7 @@ class ScopedResource(ProxyResource):
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(self, *, linked_resource_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, linked_resource_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword linked_resource_id: The resource id of the scoped Azure monitor resource.
         :paramtype linked_resource_id: str
@@ -616,7 +613,7 @@ class ScopedResourceListResult(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: Array of results.
-    :vartype value: list[~$(python-base-namespace).v2019_10_17.models.ScopedResource]
+    :vartype value: list[~azure.mgmt.monitor.v2019_10_17.models.ScopedResource]
     :ivar next_link: Link to retrieve next page of results.
     :vartype next_link: str
     """
@@ -631,7 +628,7 @@ class ScopedResourceListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -639,7 +636,8 @@ class ScopedResourceListResult(_serialization.Model):
 
 
 class TagsResource(_serialization.Model):
-    """A container holding only the Tags for a resource, allowing the user to update the tags on a PrivateLinkScope instance.
+    """A container holding only the Tags for a resource, allowing the user to update the tags on a
+    PrivateLinkScope instance.
 
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
@@ -649,7 +647,7 @@ class TagsResource(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]

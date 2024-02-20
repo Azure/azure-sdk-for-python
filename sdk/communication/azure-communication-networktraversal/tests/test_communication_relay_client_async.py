@@ -4,36 +4,22 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from azure.core.credentials import AccessToken
+from datetime import datetime, timedelta, timezone
+
 from azure.communication.identity.aio import CommunicationIdentityClient
 from azure.communication.networktraversal import RouteType
 from azure.communication.networktraversal.aio import CommunicationRelayClient
-from _shared.helper import URIIdentityReplacer
-from _shared.testcase import (
-    BodyReplacerProcessor
-)
-from _shared.asynctestcase  import AsyncCommunicationTestCase
+from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils.aio import recorded_by_proxy_async
+
 from _shared.communication_service_preparer import CommunicationPreparer
 from _shared.utils import get_http_logging_policy
-from _shared.utils import parse_connection_str
-from azure.identity.aio import DefaultAzureCredential
-from datetime import datetime, timedelta, timezone
 
-class FakeTokenCredential(object):
-    def __init__(self):
-        self.token = AccessToken("Fake Token", 0)
 
-    def get_token(self, *args):
-        return self.token
-
-class CommunicationRelayClientTestAsync(AsyncCommunicationTestCase):
-    def setUp(self):
-        super(CommunicationRelayClientTestAsync, self).setUp()
-        self.recording_processors.extend([
-            BodyReplacerProcessor(keys=["id", "token", "username", "credential"]),
-            URIIdentityReplacer()])
+class TestCommunicationRelayClientAsync(AzureRecordedTestCase):
 
     @CommunicationPreparer()
+    @recorded_by_proxy_async
     async def test_get_relay_configuration(self, communication_livetest_dynamic_connection_string):
         identity_client = CommunicationIdentityClient.from_connection_string(
             communication_livetest_dynamic_connection_string,
@@ -68,6 +54,7 @@ class CommunicationRelayClientTestAsync(AsyncCommunicationTestCase):
         assert config is not None
     
     @CommunicationPreparer()
+    @recorded_by_proxy_async
     async def test_get_relay_configuration_without_identity(self, communication_livetest_dynamic_connection_string):     
 
         networkTraversalClient = CommunicationRelayClient.from_connection_string(
@@ -94,6 +81,7 @@ class CommunicationRelayClientTestAsync(AsyncCommunicationTestCase):
         assert config is not None
         
     @CommunicationPreparer()
+    @recorded_by_proxy_async
     async def test_get_relay_configuration_with_route_type_nearest(self, communication_livetest_dynamic_connection_string):
         identity_client = CommunicationIdentityClient.from_connection_string(
             communication_livetest_dynamic_connection_string,
@@ -129,6 +117,7 @@ class CommunicationRelayClientTestAsync(AsyncCommunicationTestCase):
         assert config is not None
 
     @CommunicationPreparer()
+    @recorded_by_proxy_async
     async def test_get_relay_configuration_with_route_type_any(self, communication_livetest_dynamic_connection_string):
         identity_client = CommunicationIdentityClient.from_connection_string(
             communication_livetest_dynamic_connection_string,
@@ -164,6 +153,7 @@ class CommunicationRelayClientTestAsync(AsyncCommunicationTestCase):
         assert config is not None
         
     @CommunicationPreparer()
+    @recorded_by_proxy_async
     async def test_get_relay_configuration_with_ttl(self, communication_livetest_dynamic_connection_string):   
 
         networkTraversalClient = CommunicationRelayClient.from_connection_string(

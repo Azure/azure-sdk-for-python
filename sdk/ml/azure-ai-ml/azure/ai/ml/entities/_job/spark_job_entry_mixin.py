@@ -2,13 +2,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-import os
 import re
-from pathlib import Path
 from typing import Dict, Optional, Union
 
-from azure.ai.ml._utils.utils import is_url
-from azure.ai.ml.constants._common import ARM_ID_PREFIX, REGISTRY_URI_FORMAT
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 from .spark_job_entry import SparkJobEntry, SparkJobEntryType
@@ -22,6 +18,10 @@ class SparkJobEntryMixin:
             r"\/codes\/(?P<code_id>[\w,-]+)"  # fmt: skip
         )
     )
+
+    def __init__(self, **kwargs):
+        self._entry = None
+        self.entry = kwargs.get("entry", None)
 
     @property
     def entry(self) -> Optional[SparkJobEntry]:
@@ -39,8 +39,13 @@ class SparkJobEntryMixin:
         self._entry = value
 
     def _validate_entry(self):
+        if self.entry is None:
+            # Entry is a required field for local component and when we load a remote job, component now is an arm_id,
+            # entry is from node level returned from service. Entry is only None when we reference an existing
+            # component with a function and the referenced component is in remote with name and version.
+            return
         if not isinstance(self.entry, SparkJobEntry):
-            msg = "Entry is a required field."
+            msg = f"Unsupported type {type(self.entry)} detected when validate entry, entry should be SparkJobEntry."
             raise ValidationException(
                 message=msg,
                 no_personal_data_message=msg,
@@ -55,44 +60,3 @@ class SparkJobEntryMixin:
                 target=ErrorTarget.SPARK_JOB,
                 error_category=ErrorCategory.USER_ERROR,
             )
-
-    def _validate_entry_exist(self):
-        # validate whether component entry exists to ensure code path is correct, especially when code is default value
-        if self.code is None:
-            return
-        is_remote_code = (
-            self.code.startswith("git+")
-            or self.code.startswith(REGISTRY_URI_FORMAT)
-            or self.code.startswith(ARM_ID_PREFIX)
-            or is_url(self.code)
-            or self.CODE_ID_RE_PATTERN.match(self.code)
-        )
-        if isinstance(self.code, str) and is_remote_code:
-            # skip validate when code is not a local path
-            return
-
-        if not os.path.isabs(self.code):
-            code_path = Path(self.component.base_path) / self.code
-            if code_path.exists():
-                code_path = code_path.resolve().absolute()
-            else:
-                msg = "Code path doesn't exist."
-                raise ValidationException(
-                    message=msg,
-                    no_personal_data_message=msg,
-                    target=ErrorTarget.SPARK_JOB,
-                    error_category=ErrorCategory.USER_ERROR,
-                )
-            entry_path = code_path / self.entry.entry
-        else:
-            entry_path = Path(self.code) / self.entry.entry
-
-        if isinstance(self.entry, SparkJobEntry) and self.entry.entry_type == SparkJobEntryType.SPARK_JOB_FILE_ENTRY:
-            if not entry_path.exists():
-                msg = "Entry doesn't exist."
-                raise ValidationException(
-                    message=msg,
-                    no_personal_data_message=msg,
-                    target=ErrorTarget.SPARK_JOB,
-                    error_category=ErrorCategory.USER_ERROR,
-                )

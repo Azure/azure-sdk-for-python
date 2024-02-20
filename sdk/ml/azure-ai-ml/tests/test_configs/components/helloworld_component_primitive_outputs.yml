@@ -25,10 +25,15 @@ outputs:
   component_out_number:
     description: A ranged number
     type: number
+  component_out_early_available_string:
+    description: A early available string
+    type: string
+    is_control: True
+    early_available: True
 
 command: >-
   echo Hello World
 
 code: "./helloworld_components_with_env"
 
-environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33

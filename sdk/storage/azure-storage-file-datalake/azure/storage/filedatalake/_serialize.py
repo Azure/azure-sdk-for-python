@@ -25,8 +25,14 @@ _SUPPORTED_API_VERSIONS = [
     '2021-02-12',
     '2021-04-10',
     '2021-06-08',
-    '2021-08-06'
-]
+    '2021-08-06',
+    '2021-12-02',
+    '2022-11-02',
+    '2023-01-03',
+    '2023-05-03',
+    '2023-08-03',
+    '2023-11-03',
+]  # This list must be in chronological order!
 
 
 def get_api_version(kwargs):
@@ -34,8 +40,18 @@ def get_api_version(kwargs):
     api_version = kwargs.get('api_version', None)
     if api_version and api_version not in _SUPPORTED_API_VERSIONS:
         versions = '\n'.join(_SUPPORTED_API_VERSIONS)
-        raise ValueError("Unsupported API version '{}'. Please select from:\n{}".format(api_version, versions))
+        raise ValueError(f"Unsupported API version '{api_version}'. Please select from:\n{versions}")
     return api_version or _SUPPORTED_API_VERSIONS[-1]
+
+
+def compare_api_versions(version1: str, version2: str) -> int:
+    v1 = _SUPPORTED_API_VERSIONS.index(version1)
+    v2 = _SUPPORTED_API_VERSIONS.index(version2)
+    if v1 == v2:
+        return 0
+    if v1 < v2:
+        return -1
+    return 1
 
 
 def convert_dfs_url_to_blob_url(dfs_account_url):
@@ -46,15 +62,14 @@ def convert_datetime_to_rfc1123(date):
     weekday = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"][date.weekday()]
     month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep",
              "Oct", "Nov", "Dec"][date.month - 1]
-    return "%s, %02d %s %04d %02d:%02d:%02d GMT" % (weekday, date.day, month,
-                                                    date.year, date.hour, date.minute, date.second)
+    return f"{weekday}, {date.day:02} {month} {date.year:04} {date.hour:02}:{date.minute:02}:{date.second:02} GMT"
 
 
 def add_metadata_headers(metadata=None):
     # type: (Optional[Dict[str, str]]) -> str
     if not metadata:
         return None
-    headers = list()
+    headers = []
     if metadata:
         for key, value in metadata.items():
             headers.append(key + '=')
@@ -118,6 +133,36 @@ def get_lease_id(lease):
     except AttributeError:
         lease_id = lease
     return lease_id
+
+
+def get_lease_action_properties(kwargs: Dict[str, Any]) -> Dict[str, Any]:
+    lease_action = kwargs.pop('lease_action', None)
+    lease_duration = kwargs.pop('lease_duration', None)
+    lease = kwargs.pop('lease', None)
+    try:
+        lease_id = lease.id
+    except AttributeError:
+        lease_id = lease
+
+    proposed_lease_id = None
+    access_conditions = None
+
+    # Acquiring a new lease
+    if lease_action in ['acquire', 'acquire-release']:
+        # Use provided lease id as the new lease id
+        proposed_lease_id = lease_id
+        # Assign a default lease duration if not provided
+        lease_duration = lease_duration or -1
+    else:
+        # Use lease id as access conditions
+        access_conditions = LeaseAccessConditions(lease_id=lease_id) if lease_id else None
+
+    return {
+        'lease_action': lease_action,
+        'lease_duration': lease_duration,
+        'proposed_lease_id': proposed_lease_id,
+        'lease_access_conditions': access_conditions
+    }
 
 
 def get_cpk_info(scheme, kwargs):

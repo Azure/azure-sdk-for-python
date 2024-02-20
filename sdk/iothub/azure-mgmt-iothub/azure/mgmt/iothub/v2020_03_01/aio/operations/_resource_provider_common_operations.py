@@ -13,6 +13,7 @@ from azure.core.exceptions import (
     HttpResponseError,
     ResourceExistsError,
     ResourceNotFoundError,
+    ResourceNotModifiedError,
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
@@ -48,6 +49,7 @@ class ResourceProviderCommonOperations:
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
 
     @distributed_trace_async
     async def get_subscription_quota(self, **kwargs: Any) -> _models.UserSubscriptionQuotaListResult:
@@ -60,14 +62,19 @@ class ResourceProviderCommonOperations:
         :rtype: ~azure.mgmt.iothub.v2020_03_01.models.UserSubscriptionQuotaListResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-03-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.UserSubscriptionQuotaListResult]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2020-03-01"))
+        cls: ClsType[_models.UserSubscriptionQuotaListResult] = kwargs.pop("cls", None)
 
         request = build_get_subscription_quota_request(
             subscription_id=self._config.subscription_id,
@@ -77,10 +84,11 @@ class ResourceProviderCommonOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -97,4 +105,4 @@ class ResourceProviderCommonOperations:
 
         return deserialized
 
-    get_subscription_quota.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Devices/usages"}  # type: ignore
+    get_subscription_quota.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Devices/usages"}

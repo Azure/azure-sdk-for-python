@@ -1,5 +1,102 @@
 # Release History
 
+## 10.2.0b11 (2023-09-27)
+
+### Features Added
+
+  - Added operation group ServersMigrationOperations in `mysql_flexibleservers`
+  - Model BackupAndExportResponse has a new parameter system_data in `mysql_flexibleservers`
+  - Model ErrorResponse has a new parameter error in `mysql_flexibleservers`
+  - Model ProxyResource has a new parameter system_data in `mysql_flexibleservers`
+  - Model Resource has a new parameter system_data in `mysql_flexibleservers`
+  - Model Server has a new parameter import_source_properties in `mysql_flexibleservers`
+  - Model Server has a new parameter private_endpoint_connections in `mysql_flexibleservers`
+  - Model TrackedResource has a new parameter system_data in `mysql_flexibleservers`
+
+### Breaking Changes
+
+  - Model ErrorResponse no longer has parameter additional_info in `mysql_flexibleservers`
+  - Model ErrorResponse no longer has parameter code in `mysql_flexibleservers`
+  - Model ErrorResponse no longer has parameter details in `mysql_flexibleservers`
+  - Model ErrorResponse no longer has parameter message in `mysql_flexibleservers`
+  - Model ErrorResponse no longer has parameter target in `mysql_flexibleservers`
+  - Enum BackupFormat has new value RAW and removes NONE in `mysql_flexibleservers`
+  - Enum SkuTier is renamed to ServerSkuTier in `mysql_flexibleservers`
+  - Model Storage rename parameter iops_tier to tier in `postgresql_flexibleservers`
+
+## 10.2.0b10 (2023-06-08)
+
+### Other Changes
+
+  - Updated auto-generated samples
+
+## 10.2.0b9 (2023-05-26)
+
+### Features Added
+
+  - Added operation group FlexibleServerOperations
+  - Added operation group LogFilesOperations
+  - Added operation group LtrBackupOperationsOperations
+  - Added operation group MigrationsOperations
+  - Added operation group PostgreSQLManagementClientOperationsMixin
+  - Added operation group ServerCapabilitiesOperations
+  - Model DataEncryption has a new parameter geo_backup_encryption_key_status
+  - Model DataEncryption has a new parameter geo_backup_key_uri
+  - Model DataEncryption has a new parameter geo_backup_user_assigned_identity_id
+  - Model DataEncryption has a new parameter primary_encryption_key_status
+  - Model FastProvisioningEditionCapability has a new parameter reason
+  - Model FastProvisioningEditionCapability has a new parameter server_count
+  - Model FastProvisioningEditionCapability has a new parameter status
+  - Model FastProvisioningEditionCapability has a new parameter supported_tier
+  - Model FlexibleServerEditionCapability has a new parameter default_sku_name
+  - Model FlexibleServerEditionCapability has a new parameter reason
+  - Model FlexibleServerEditionCapability has a new parameter supported_server_skus
+  - Model ServerForUpdate has a new parameter network
+  - Model ServerVersionCapability has a new parameter reason
+  - Model Storage has a new parameter auto_grow
+  - Model Storage has a new parameter iops
+  - Model Storage has a new parameter iops_tier
+  - Model StorageEditionCapability has a new parameter default_storage_size_mb
+  - Model StorageEditionCapability has a new parameter reason
+  - Model StorageTierCapability has a new parameter reason
+  - Model UserAssignedIdentity has a new parameter tenant_id
+
+### Breaking Changes
+
+  - Model FlexibleServerEditionCapability no longer has parameter supported_server_versions
+  - Model ServerVersionCapability no longer has parameter supported_vcores
+  - Model StorageTierCapability no longer has parameter is_baseline
+  - Model StorageTierCapability no longer has parameter tier_name
+
+## 10.2.0b8 (2023-05-12)
+
+### Features Added
+
+  - Model ServerForUpdate has a new parameter network
+
+## 10.2.0b7 (2023-04-18)
+
+### Features Added
+
+  - Added operation group BackupAndExportOperations
+
+### Breaking Changes
+
+  - Renamed `SYSTEM_ASSIGNED` to `SYSTEM_MANAGED` in enum `ArmServerKeyType`
+  - Removed `SECONDARY`, `WAL_REPLICA`, `SYNC_REPLICA`, `GEO_SYNC_REPLICA` from enum `ReplicationRole`
+
+## 10.2.0b6 (2023-01-04)
+
+### Features Added
+
+  - Model AuthConfig has a new parameter active_directory_auth
+  - Model AuthConfig has a new parameter password_auth
+
+### Breaking Changes
+
+  - Model AuthConfig no longer has parameter active_directory_auth_enabled
+  - Model AuthConfig no longer has parameter password_auth_enabled
+
 ## 10.2.0b5 (2022-11-14)
 
 ### Features Added

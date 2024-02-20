@@ -38,7 +38,7 @@ def build_get_onboarding_status_request(resource_uri: str, **kwargs: Any) -> Htt
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2018-11-27-preview"))  # type: str
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2018-11-27-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -49,7 +49,7 @@ def build_get_onboarding_status_request(resource_uri: str, **kwargs: Any) -> Htt
         "resourceUri": _SERIALIZER.url("resource_uri", resource_uri, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -66,7 +66,7 @@ class VMInsightsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~$(python-base-namespace).v2018_11_27_preview.MonitorManagementClient`'s
+        :class:`~azure.mgmt.monitor.v2018_11_27_preview.MonitorManagementClient`'s
         :attr:`vm_insights` attribute.
     """
 
@@ -88,7 +88,7 @@ class VMInsightsOperations:
         :type resource_uri: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VMInsightsOnboardingStatus or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2018_11_27_preview.models.VMInsightsOnboardingStatus
+        :rtype: ~azure.mgmt.monitor.v2018_11_27_preview.models.VMInsightsOnboardingStatus
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -102,8 +102,8 @@ class VMInsightsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2018-11-27-preview"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.VMInsightsOnboardingStatus]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2018-11-27-preview"))
+        cls: ClsType[_models.VMInsightsOnboardingStatus] = kwargs.pop("cls", None)
 
         request = build_get_onboarding_status_request(
             resource_uri=resource_uri,
@@ -113,10 +113,11 @@ class VMInsightsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -133,4 +134,6 @@ class VMInsightsOperations:
 
         return deserialized
 
-    get_onboarding_status.metadata = {"url": "/{resourceUri}/providers/Microsoft.Insights/vmInsightsOnboardingStatuses/default"}  # type: ignore
+    get_onboarding_status.metadata = {
+        "url": "/{resourceUri}/providers/Microsoft.Insights/vmInsightsOnboardingStatuses/default"
+    }

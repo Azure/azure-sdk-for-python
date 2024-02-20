@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,15 +8,16 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from .. import _serialization
 
-from ._communication_service_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
-class CheckNameAvailabilityRequest(msrest.serialization.Model):
+class CheckNameAvailabilityRequest(_serialization.Model):
     """The check availability request body.
 
     :ivar name: The name of the resource for which availability needs to be checked.
@@ -25,70 +27,64 @@ class CheckNameAvailabilityRequest(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        type: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[str] = None, type: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: The name of the resource for which availability needs to be checked.
         :paramtype name: str
         :keyword type: The resource type.
         :paramtype type: str
         """
-        super(CheckNameAvailabilityRequest, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.type = type
 
 
-class CheckNameAvailabilityResponse(msrest.serialization.Model):
+class CheckNameAvailabilityResponse(_serialization.Model):
     """The check availability result.
 
     :ivar name_available: Indicates if the resource name is available.
     :vartype name_available: bool
-    :ivar reason: The reason why the given name is not available. Possible values include:
-     "Invalid", "AlreadyExists".
+    :ivar reason: The reason why the given name is not available. Known values are: "Invalid" and
+     "AlreadyExists".
     :vartype reason: str or ~azure.mgmt.communication.models.CheckNameAvailabilityReason
     :ivar message: Detailed reason why the given name is available.
     :vartype message: str
     """
 
     _attribute_map = {
-        'name_available': {'key': 'nameAvailable', 'type': 'bool'},
-        'reason': {'key': 'reason', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "name_available": {"key": "nameAvailable", "type": "bool"},
+        "reason": {"key": "reason", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         name_available: Optional[bool] = None,
-        reason: Optional[Union[str, "CheckNameAvailabilityReason"]] = None,
+        reason: Optional[Union[str, "_models.CheckNameAvailabilityReason"]] = None,
         message: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name_available: Indicates if the resource name is available.
         :paramtype name_available: bool
-        :keyword reason: The reason why the given name is not available. Possible values include:
-         "Invalid", "AlreadyExists".
+        :keyword reason: The reason why the given name is not available. Known values are: "Invalid"
+         and "AlreadyExists".
         :paramtype reason: str or ~azure.mgmt.communication.models.CheckNameAvailabilityReason
         :keyword message: Detailed reason why the given name is available.
         :paramtype message: str
         """
-        super(CheckNameAvailabilityResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name_available = name_available
         self.reason = reason
         self.message = message
 
 
-class CommunicationServiceKeys(msrest.serialization.Model):
+class CommunicationServiceKeys(_serialization.Model):
     """A class representing the access keys of a CommunicationService.
 
     :ivar primary_key: The primary access key.
@@ -104,10 +100,10 @@ class CommunicationServiceKeys(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'primary_key': {'key': 'primaryKey', 'type': 'str'},
-        'secondary_key': {'key': 'secondaryKey', 'type': 'str'},
-        'primary_connection_string': {'key': 'primaryConnectionString', 'type': 'str'},
-        'secondary_connection_string': {'key': 'secondaryConnectionString', 'type': 'str'},
+        "primary_key": {"key": "primaryKey", "type": "str"},
+        "secondary_key": {"key": "secondaryKey", "type": "str"},
+        "primary_connection_string": {"key": "primaryConnectionString", "type": "str"},
+        "secondary_connection_string": {"key": "secondaryConnectionString", "type": "str"},
     }
 
     def __init__(
@@ -117,8 +113,8 @@ class CommunicationServiceKeys(msrest.serialization.Model):
         secondary_key: Optional[str] = None,
         primary_connection_string: Optional[str] = None,
         secondary_connection_string: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword primary_key: The primary access key.
         :paramtype primary_key: str
@@ -131,20 +127,20 @@ class CommunicationServiceKeys(msrest.serialization.Model):
          the secondaryKey.
         :paramtype secondary_connection_string: str
         """
-        super(CommunicationServiceKeys, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.primary_key = primary_key
         self.secondary_key = secondary_key
         self.primary_connection_string = primary_connection_string
         self.secondary_connection_string = secondary_connection_string
 
 
-class Resource(msrest.serialization.Model):
+class Resource(_serialization.Model):
     """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -157,26 +153,22 @@ class Resource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(Resource, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -184,14 +176,15 @@ class Resource(msrest.serialization.Model):
 
 
 class TrackedResource(Resource):
-    """The resource model definition for an Azure Resource Manager tracked top level resource which has 'tags' and a 'location'.
+    """The resource model definition for an Azure Resource Manager tracked top level resource which
+    has 'tags' and a 'location'.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -201,56 +194,50 @@ class TrackedResource(Resource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.communication.models.SystemData
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar location: Required. The geo-location where the resource lives.
+    :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword location: Required. The geo-location where the resource lives.
+        :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
         """
-        super(TrackedResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
         self.location = location
 
 
-class CommunicationServiceResource(TrackedResource):
+class CommunicationServiceResource(TrackedResource):  # pylint: disable=too-many-instance-attributes
     """A class representing a CommunicationService resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -260,13 +247,14 @@ class CommunicationServiceResource(TrackedResource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.communication.models.SystemData
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar location: Required. The geo-location where the resource lives.
+    :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
-    :ivar provisioning_state: Provisioning state of the resource. Possible values include:
-     "Unknown", "Succeeded", "Failed", "Canceled", "Running", "Creating", "Updating", "Deleting",
-     "Moving".
+    :ivar identity: Managed service identity (system assigned and/or user assigned identities).
+    :vartype identity: ~azure.mgmt.communication.models.ManagedServiceIdentity
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Unknown",
+     "Succeeded", "Failed", "Canceled", "Running", "Creating", "Updating", "Deleting", and "Moving".
     :vartype provisioning_state: str or
      ~azure.mgmt.communication.models.CommunicationServicesProvisioningState
     :ivar host_name: FQDN of the CommunicationService instance.
@@ -285,32 +273,33 @@ class CommunicationServiceResource(TrackedResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'location': {'required': True},
-        'provisioning_state': {'readonly': True},
-        'host_name': {'readonly': True},
-        'notification_hub_id': {'readonly': True},
-        'version': {'readonly': True},
-        'immutable_resource_id': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+        "provisioning_state": {"readonly": True},
+        "host_name": {"readonly": True},
+        "notification_hub_id": {"readonly": True},
+        "version": {"readonly": True},
+        "immutable_resource_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'host_name': {'key': 'properties.hostName', 'type': 'str'},
-        'data_location': {'key': 'properties.dataLocation', 'type': 'str'},
-        'notification_hub_id': {'key': 'properties.notificationHubId', 'type': 'str'},
-        'version': {'key': 'properties.version', 'type': 'str'},
-        'immutable_resource_id': {'key': 'properties.immutableResourceId', 'type': 'str'},
-        'linked_domains': {'key': 'properties.linkedDomains', 'type': '[str]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "host_name": {"key": "properties.hostName", "type": "str"},
+        "data_location": {"key": "properties.dataLocation", "type": "str"},
+        "notification_hub_id": {"key": "properties.notificationHubId", "type": "str"},
+        "version": {"key": "properties.version", "type": "str"},
+        "immutable_resource_id": {"key": "properties.immutableResourceId", "type": "str"},
+        "linked_domains": {"key": "properties.linkedDomains", "type": "[str]"},
     }
 
     def __init__(
@@ -318,21 +307,25 @@ class CommunicationServiceResource(TrackedResource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
         data_location: Optional[str] = None,
         linked_domains: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword location: Required. The geo-location where the resource lives.
+        :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
+        :keyword identity: Managed service identity (system assigned and/or user assigned identities).
+        :paramtype identity: ~azure.mgmt.communication.models.ManagedServiceIdentity
         :keyword data_location: The location where the communication service stores its data at rest.
         :paramtype data_location: str
         :keyword linked_domains: List of email Domain resource Ids.
         :paramtype linked_domains: list[str]
         """
-        super(CommunicationServiceResource, self).__init__(tags=tags, location=location, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
+        self.identity = identity
         self.provisioning_state = None
         self.host_name = None
         self.data_location = data_location
@@ -342,7 +335,7 @@ class CommunicationServiceResource(TrackedResource):
         self.linked_domains = linked_domains
 
 
-class CommunicationServiceResourceList(msrest.serialization.Model):
+class CommunicationServiceResourceList(_serialization.Model):
     """Object that includes an array of CommunicationServices and a possible link for next set.
 
     :ivar value: List of CommunicationService.
@@ -353,17 +346,17 @@ class CommunicationServiceResourceList(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[CommunicationServiceResource]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[CommunicationServiceResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["CommunicationServiceResource"]] = None,
+        value: Optional[List["_models.CommunicationServiceResource"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of CommunicationService.
         :paramtype value: list[~azure.mgmt.communication.models.CommunicationServiceResource]
@@ -372,72 +365,72 @@ class CommunicationServiceResourceList(msrest.serialization.Model):
          It's null for now, added for future use.
         :paramtype next_link: str
         """
-        super(CommunicationServiceResourceList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class TaggedResource(msrest.serialization.Model):
+class TaggedResource(_serialization.Model):
     """An ARM resource with that can accept tags.
 
-    :ivar tags: A set of tags. Tags of the service which is a list of key value pairs that describe
-     the resource.
+    :ivar tags: Tags of the service which is a list of key value pairs that describe the resource.
     :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
-        :keyword tags: A set of tags. Tags of the service which is a list of key value pairs that
-         describe the resource.
+        :keyword tags: Tags of the service which is a list of key value pairs that describe the
+         resource.
         :paramtype tags: dict[str, str]
         """
-        super(TaggedResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
 
 
 class CommunicationServiceResourceUpdate(TaggedResource):
     """A class representing update parameters for CommunicationService resource.
 
-    :ivar tags: A set of tags. Tags of the service which is a list of key value pairs that describe
-     the resource.
+    :ivar tags: Tags of the service which is a list of key value pairs that describe the resource.
     :vartype tags: dict[str, str]
+    :ivar identity: Managed service identity (system assigned and/or user assigned identities).
+    :vartype identity: ~azure.mgmt.communication.models.ManagedServiceIdentity
     :ivar linked_domains: List of email Domain resource Ids.
     :vartype linked_domains: list[str]
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'linked_domains': {'key': 'properties.linkedDomains', 'type': '[str]'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
+        "linked_domains": {"key": "properties.linkedDomains", "type": "[str]"},
     }
 
     def __init__(
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
         linked_domains: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword tags: A set of tags. Tags of the service which is a list of key value pairs that
-         describe the resource.
+        :keyword tags: Tags of the service which is a list of key value pairs that describe the
+         resource.
         :paramtype tags: dict[str, str]
+        :keyword identity: Managed service identity (system assigned and/or user assigned identities).
+        :paramtype identity: ~azure.mgmt.communication.models.ManagedServiceIdentity
         :keyword linked_domains: List of email Domain resource Ids.
         :paramtype linked_domains: list[str]
         """
-        super(CommunicationServiceResourceUpdate, self).__init__(tags=tags, **kwargs)
+        super().__init__(tags=tags, **kwargs)
+        self.identity = identity
         self.linked_domains = linked_domains
 
 
-class DnsRecord(msrest.serialization.Model):
+class DnsRecord(_serialization.Model):
     """A class that represents a VerificationStatus record.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -454,33 +447,29 @@ class DnsRecord(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'name': {'readonly': True},
-        'value': {'readonly': True},
-        'ttl': {'readonly': True},
+        "type": {"readonly": True},
+        "name": {"readonly": True},
+        "value": {"readonly": True},
+        "ttl": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
-        'ttl': {'key': 'ttl', 'type': 'int'},
+        "type": {"key": "type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "str"},
+        "ttl": {"key": "ttl", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(DnsRecord, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.type = None
         self.name = None
         self.value = None
         self.ttl = None
 
 
-class DomainPropertiesVerificationRecords(msrest.serialization.Model):
+class DomainPropertiesVerificationRecords(_serialization.Model):
     """List of DnsRecord.
 
     :ivar domain: A class that represents a VerificationStatus record.
@@ -496,23 +485,23 @@ class DomainPropertiesVerificationRecords(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'domain': {'key': 'Domain', 'type': 'DnsRecord'},
-        'spf': {'key': 'SPF', 'type': 'DnsRecord'},
-        'dkim': {'key': 'DKIM', 'type': 'DnsRecord'},
-        'dkim2': {'key': 'DKIM2', 'type': 'DnsRecord'},
-        'dmarc': {'key': 'DMARC', 'type': 'DnsRecord'},
+        "domain": {"key": "Domain", "type": "DnsRecord"},
+        "spf": {"key": "SPF", "type": "DnsRecord"},
+        "dkim": {"key": "DKIM", "type": "DnsRecord"},
+        "dkim2": {"key": "DKIM2", "type": "DnsRecord"},
+        "dmarc": {"key": "DMARC", "type": "DnsRecord"},
     }
 
     def __init__(
         self,
         *,
-        domain: Optional["DnsRecord"] = None,
-        spf: Optional["DnsRecord"] = None,
-        dkim: Optional["DnsRecord"] = None,
-        dkim2: Optional["DnsRecord"] = None,
-        dmarc: Optional["DnsRecord"] = None,
-        **kwargs
-    ):
+        domain: Optional["_models.DnsRecord"] = None,
+        spf: Optional["_models.DnsRecord"] = None,
+        dkim: Optional["_models.DnsRecord"] = None,
+        dkim2: Optional["_models.DnsRecord"] = None,
+        dmarc: Optional["_models.DnsRecord"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword domain: A class that represents a VerificationStatus record.
         :paramtype domain: ~azure.mgmt.communication.models.DnsRecord
@@ -525,7 +514,7 @@ class DomainPropertiesVerificationRecords(msrest.serialization.Model):
         :keyword dmarc: A class that represents a VerificationStatus record.
         :paramtype dmarc: ~azure.mgmt.communication.models.DnsRecord
         """
-        super(DomainPropertiesVerificationRecords, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.domain = domain
         self.spf = spf
         self.dkim = dkim
@@ -533,7 +522,7 @@ class DomainPropertiesVerificationRecords(msrest.serialization.Model):
         self.dmarc = dmarc
 
 
-class DomainPropertiesVerificationStates(msrest.serialization.Model):
+class DomainPropertiesVerificationStates(_serialization.Model):
     """List of VerificationStatusRecord.
 
     :ivar domain: A class that represents a VerificationStatus record.
@@ -549,23 +538,23 @@ class DomainPropertiesVerificationStates(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'domain': {'key': 'Domain', 'type': 'VerificationStatusRecord'},
-        'spf': {'key': 'SPF', 'type': 'VerificationStatusRecord'},
-        'dkim': {'key': 'DKIM', 'type': 'VerificationStatusRecord'},
-        'dkim2': {'key': 'DKIM2', 'type': 'VerificationStatusRecord'},
-        'dmarc': {'key': 'DMARC', 'type': 'VerificationStatusRecord'},
+        "domain": {"key": "Domain", "type": "VerificationStatusRecord"},
+        "spf": {"key": "SPF", "type": "VerificationStatusRecord"},
+        "dkim": {"key": "DKIM", "type": "VerificationStatusRecord"},
+        "dkim2": {"key": "DKIM2", "type": "VerificationStatusRecord"},
+        "dmarc": {"key": "DMARC", "type": "VerificationStatusRecord"},
     }
 
     def __init__(
         self,
         *,
-        domain: Optional["VerificationStatusRecord"] = None,
-        spf: Optional["VerificationStatusRecord"] = None,
-        dkim: Optional["VerificationStatusRecord"] = None,
-        dkim2: Optional["VerificationStatusRecord"] = None,
-        dmarc: Optional["VerificationStatusRecord"] = None,
-        **kwargs
-    ):
+        domain: Optional["_models.VerificationStatusRecord"] = None,
+        spf: Optional["_models.VerificationStatusRecord"] = None,
+        dkim: Optional["_models.VerificationStatusRecord"] = None,
+        dkim2: Optional["_models.VerificationStatusRecord"] = None,
+        dmarc: Optional["_models.VerificationStatusRecord"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword domain: A class that represents a VerificationStatus record.
         :paramtype domain: ~azure.mgmt.communication.models.VerificationStatusRecord
@@ -578,7 +567,7 @@ class DomainPropertiesVerificationStates(msrest.serialization.Model):
         :keyword dmarc: A class that represents a VerificationStatus record.
         :paramtype dmarc: ~azure.mgmt.communication.models.VerificationStatusRecord
         """
-        super(DomainPropertiesVerificationStates, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.domain = domain
         self.spf = spf
         self.dkim = dkim
@@ -586,15 +575,15 @@ class DomainPropertiesVerificationStates(msrest.serialization.Model):
         self.dmarc = dmarc
 
 
-class DomainResource(TrackedResource):
+class DomainResource(TrackedResource):  # pylint: disable=too-many-instance-attributes
     """A class representing a Domains resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -604,13 +593,12 @@ class DomainResource(TrackedResource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.communication.models.SystemData
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar location: Required. The geo-location where the resource lives.
+    :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
-    :ivar provisioning_state: Provisioning state of the resource. Possible values include:
-     "Unknown", "Succeeded", "Failed", "Canceled", "Running", "Creating", "Updating", "Deleting",
-     "Moving".
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Unknown",
+     "Succeeded", "Failed", "Canceled", "Running", "Creating", "Updating", "Deleting", and "Moving".
     :vartype provisioning_state: str or ~azure.mgmt.communication.models.DomainsProvisioningState
     :ivar data_location: The location where the Domains resource data is stored at rest.
     :vartype data_location: str
@@ -620,8 +608,8 @@ class DomainResource(TrackedResource):
     :ivar mail_from_sender_domain: P1 sender domain that is present on the email envelope [RFC
      5321].
     :vartype mail_from_sender_domain: str
-    :ivar domain_management: Describes how a Domains resource is being managed. Possible values
-     include: "AzureManaged", "CustomerManaged", "CustomerManagedInExchangeOnline".
+    :ivar domain_management: Describes how a Domains resource is being managed. Known values are:
+     "AzureManaged", "CustomerManaged", and "CustomerManagedInExchangeOnline".
     :vartype domain_management: str or ~azure.mgmt.communication.models.DomainManagement
     :ivar verification_states: List of VerificationStatusRecord.
     :vartype verification_states:
@@ -629,45 +617,44 @@ class DomainResource(TrackedResource):
     :ivar verification_records: List of DnsRecord.
     :vartype verification_records:
      ~azure.mgmt.communication.models.DomainPropertiesVerificationRecords
-    :ivar valid_sender_usernames: Collection of valid sender usernames. This is a key-value pair
-     where key=username and value=display name.
-    :vartype valid_sender_usernames: dict[str, str]
     :ivar user_engagement_tracking: Describes whether user engagement tracking is enabled or
-     disabled. Possible values include: "Disabled", "Enabled".
+     disabled. Known values are: "Disabled" and "Enabled".
     :vartype user_engagement_tracking: str or
      ~azure.mgmt.communication.models.UserEngagementTracking
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'location': {'required': True},
-        'provisioning_state': {'readonly': True},
-        'data_location': {'readonly': True},
-        'from_sender_domain': {'readonly': True},
-        'mail_from_sender_domain': {'readonly': True},
-        'verification_states': {'readonly': True},
-        'verification_records': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+        "provisioning_state": {"readonly": True},
+        "data_location": {"readonly": True},
+        "from_sender_domain": {"readonly": True},
+        "mail_from_sender_domain": {"readonly": True},
+        "verification_states": {"readonly": True},
+        "verification_records": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'data_location': {'key': 'properties.dataLocation', 'type': 'str'},
-        'from_sender_domain': {'key': 'properties.fromSenderDomain', 'type': 'str'},
-        'mail_from_sender_domain': {'key': 'properties.mailFromSenderDomain', 'type': 'str'},
-        'domain_management': {'key': 'properties.domainManagement', 'type': 'str'},
-        'verification_states': {'key': 'properties.verificationStates', 'type': 'DomainPropertiesVerificationStates'},
-        'verification_records': {'key': 'properties.verificationRecords', 'type': 'DomainPropertiesVerificationRecords'},
-        'valid_sender_usernames': {'key': 'properties.validSenderUsernames', 'type': '{str}'},
-        'user_engagement_tracking': {'key': 'properties.userEngagementTracking', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "data_location": {"key": "properties.dataLocation", "type": "str"},
+        "from_sender_domain": {"key": "properties.fromSenderDomain", "type": "str"},
+        "mail_from_sender_domain": {"key": "properties.mailFromSenderDomain", "type": "str"},
+        "domain_management": {"key": "properties.domainManagement", "type": "str"},
+        "verification_states": {"key": "properties.verificationStates", "type": "DomainPropertiesVerificationStates"},
+        "verification_records": {
+            "key": "properties.verificationRecords",
+            "type": "DomainPropertiesVerificationRecords",
+        },
+        "user_engagement_tracking": {"key": "properties.userEngagementTracking", "type": "str"},
     }
 
     def __init__(
@@ -675,28 +662,24 @@ class DomainResource(TrackedResource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        domain_management: Optional[Union[str, "DomainManagement"]] = None,
-        valid_sender_usernames: Optional[Dict[str, str]] = None,
-        user_engagement_tracking: Optional[Union[str, "UserEngagementTracking"]] = None,
-        **kwargs
-    ):
+        domain_management: Optional[Union[str, "_models.DomainManagement"]] = None,
+        user_engagement_tracking: Optional[Union[str, "_models.UserEngagementTracking"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword location: Required. The geo-location where the resource lives.
+        :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
-        :keyword domain_management: Describes how a Domains resource is being managed. Possible values
-         include: "AzureManaged", "CustomerManaged", "CustomerManagedInExchangeOnline".
+        :keyword domain_management: Describes how a Domains resource is being managed. Known values
+         are: "AzureManaged", "CustomerManaged", and "CustomerManagedInExchangeOnline".
         :paramtype domain_management: str or ~azure.mgmt.communication.models.DomainManagement
-        :keyword valid_sender_usernames: Collection of valid sender usernames. This is a key-value pair
-         where key=username and value=display name.
-        :paramtype valid_sender_usernames: dict[str, str]
         :keyword user_engagement_tracking: Describes whether user engagement tracking is enabled or
-         disabled. Possible values include: "Disabled", "Enabled".
+         disabled. Known values are: "Disabled" and "Enabled".
         :paramtype user_engagement_tracking: str or
          ~azure.mgmt.communication.models.UserEngagementTracking
         """
-        super(DomainResource, self).__init__(tags=tags, location=location, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.provisioning_state = None
         self.data_location = None
         self.from_sender_domain = None
@@ -704,11 +687,10 @@ class DomainResource(TrackedResource):
         self.domain_management = domain_management
         self.verification_states = None
         self.verification_records = None
-        self.valid_sender_usernames = valid_sender_usernames
         self.user_engagement_tracking = user_engagement_tracking
 
 
-class DomainResourceList(msrest.serialization.Model):
+class DomainResourceList(_serialization.Model):
     """Object that includes an array of Domains resource and a possible link for next set.
 
     :ivar value: List of Domains resource.
@@ -719,17 +701,13 @@ class DomainResourceList(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[DomainResource]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[DomainResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["DomainResource"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+        self, *, value: Optional[List["_models.DomainResource"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of Domains resource.
         :paramtype value: list[~azure.mgmt.communication.models.DomainResource]
@@ -738,7 +716,7 @@ class DomainResourceList(msrest.serialization.Model):
          It's null for now, added for future use.
         :paramtype next_link: str
         """
-        super(DomainResourceList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
@@ -750,8 +728,8 @@ class EmailServiceResource(TrackedResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -761,13 +739,12 @@ class EmailServiceResource(TrackedResource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.communication.models.SystemData
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar location: Required. The geo-location where the resource lives.
+    :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
-    :ivar provisioning_state: Provisioning state of the resource. Possible values include:
-     "Unknown", "Succeeded", "Failed", "Canceled", "Running", "Creating", "Updating", "Deleting",
-     "Moving".
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Unknown",
+     "Succeeded", "Failed", "Canceled", "Running", "Creating", "Updating", "Deleting", and "Moving".
     :vartype provisioning_state: str or
      ~azure.mgmt.communication.models.EmailServicesProvisioningState
     :ivar data_location: The location where the email service stores its data at rest.
@@ -775,23 +752,23 @@ class EmailServiceResource(TrackedResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'location': {'required': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'data_location': {'key': 'properties.dataLocation', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "data_location": {"key": "properties.dataLocation", "type": "str"},
     }
 
     def __init__(
@@ -800,22 +777,22 @@ class EmailServiceResource(TrackedResource):
         location: str,
         tags: Optional[Dict[str, str]] = None,
         data_location: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword location: Required. The geo-location where the resource lives.
+        :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
         :keyword data_location: The location where the email service stores its data at rest.
         :paramtype data_location: str
         """
-        super(EmailServiceResource, self).__init__(tags=tags, location=location, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.provisioning_state = None
         self.data_location = data_location
 
 
-class EmailServiceResourceList(msrest.serialization.Model):
+class EmailServiceResourceList(_serialization.Model):
     """Object that includes an array of EmailServices and a possible link for next set.
 
     :ivar value: List of EmailService.
@@ -826,17 +803,17 @@ class EmailServiceResourceList(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[EmailServiceResource]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[EmailServiceResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["EmailServiceResource"]] = None,
+        value: Optional[List["_models.EmailServiceResource"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of EmailService.
         :paramtype value: list[~azure.mgmt.communication.models.EmailServiceResource]
@@ -845,7 +822,7 @@ class EmailServiceResourceList(msrest.serialization.Model):
          It's null for now, added for future use.
         :paramtype next_link: str
         """
-        super(EmailServiceResourceList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
@@ -853,30 +830,24 @@ class EmailServiceResourceList(msrest.serialization.Model):
 class EmailServiceResourceUpdate(TaggedResource):
     """A class representing update parameters for EmailService resource.
 
-    :ivar tags: A set of tags. Tags of the service which is a list of key value pairs that describe
-     the resource.
+    :ivar tags: Tags of the service which is a list of key value pairs that describe the resource.
     :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
-        :keyword tags: A set of tags. Tags of the service which is a list of key value pairs that
-         describe the resource.
+        :keyword tags: Tags of the service which is a list of key value pairs that describe the
+         resource.
         :paramtype tags: dict[str, str]
         """
-        super(EmailServiceResourceUpdate, self).__init__(tags=tags, **kwargs)
+        super().__init__(tags=tags, **kwargs)
 
 
-class ErrorAdditionalInfo(msrest.serialization.Model):
+class ErrorAdditionalInfo(_serialization.Model):
     """The resource management error additional info.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -884,31 +855,27 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: any
+    :vartype info: JSON
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'info': {'readonly': True},
+        "type": {"readonly": True},
+        "info": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'info': {'key': 'info', 'type': 'object'},
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ErrorAdditionalInfo, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.type = None
         self.info = None
 
 
-class ErrorDetail(msrest.serialization.Model):
+class ErrorDetail(_serialization.Model):
     """The error detail.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -926,28 +893,24 @@ class ErrorDetail(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'target': {'readonly': True},
-        'details': {'readonly': True},
-        'additional_info': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorDetail]'},
-        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetail]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ErrorDetail, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.code = None
         self.message = None
         self.target = None
@@ -955,32 +918,28 @@ class ErrorDetail(msrest.serialization.Model):
         self.additional_info = None
 
 
-class ErrorResponse(msrest.serialization.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+class ErrorResponse(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
 
     :ivar error: The error object.
     :vartype error: ~azure.mgmt.communication.models.ErrorDetail
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorDetail'},
+        "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: Optional["ErrorDetail"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
         """
         :keyword error: The error object.
         :paramtype error: ~azure.mgmt.communication.models.ErrorDetail
         """
-        super(ErrorResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.error = error
 
 
-class LinkedNotificationHub(msrest.serialization.Model):
+class LinkedNotificationHub(_serialization.Model):
     """A notification hub that has been linked to the communication service.
 
     :ivar resource_id: The resource ID of the notification hub.
@@ -988,60 +947,113 @@ class LinkedNotificationHub(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
+        "resource_id": {"key": "resourceId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        resource_id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, resource_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword resource_id: The resource ID of the notification hub.
         :paramtype resource_id: str
         """
-        super(LinkedNotificationHub, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.resource_id = resource_id
 
 
-class LinkNotificationHubParameters(msrest.serialization.Model):
+class LinkNotificationHubParameters(_serialization.Model):
     """Description of an Azure Notification Hub to link to the communication service.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar resource_id: Required. The resource ID of the notification hub.
+    :ivar resource_id: The resource ID of the notification hub. Required.
     :vartype resource_id: str
-    :ivar connection_string: Required. Connection string for the notification hub.
+    :ivar connection_string: Connection string for the notification hub. Required.
     :vartype connection_string: str
     """
 
     _validation = {
-        'resource_id': {'required': True},
-        'connection_string': {'required': True},
+        "resource_id": {"required": True},
+        "connection_string": {"required": True},
     }
 
     _attribute_map = {
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'connection_string': {'key': 'connectionString', 'type': 'str'},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "connection_string": {"key": "connectionString", "type": "str"},
+    }
+
+    def __init__(self, *, resource_id: str, connection_string: str, **kwargs: Any) -> None:
+        """
+        :keyword resource_id: The resource ID of the notification hub. Required.
+        :paramtype resource_id: str
+        :keyword connection_string: Connection string for the notification hub. Required.
+        :paramtype connection_string: str
+        """
+        super().__init__(**kwargs)
+        self.resource_id = resource_id
+        self.connection_string = connection_string
+
+
+class ManagedServiceIdentity(_serialization.Model):
+    """Managed service identity (system assigned and/or user assigned identities).
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar principal_id: The service principal ID of the system assigned identity. This property
+     will only be provided for a system assigned identity.
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant ID of the system assigned identity. This property will only be
+     provided for a system assigned identity.
+    :vartype tenant_id: str
+    :ivar type: Type of managed service identity (where both SystemAssigned and UserAssigned types
+     are allowed). Required. Known values are: "None", "SystemAssigned", "UserAssigned", and
+     "SystemAssigned,UserAssigned".
+    :vartype type: str or ~azure.mgmt.communication.models.ManagedServiceIdentityType
+    :ivar user_assigned_identities: The set of user assigned identities associated with the
+     resource. The userAssignedIdentities dictionary keys will be ARM resource ids in the form:
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.
+     The dictionary values can be empty objects ({}) in requests.
+    :vartype user_assigned_identities: dict[str,
+     ~azure.mgmt.communication.models.UserAssignedIdentity]
+    """
+
+    _validation = {
+        "principal_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
+        "type": {"required": True},
+    }
+
+    _attribute_map = {
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "user_assigned_identities": {"key": "userAssignedIdentities", "type": "{UserAssignedIdentity}"},
     }
 
     def __init__(
         self,
         *,
-        resource_id: str,
-        connection_string: str,
-        **kwargs
-    ):
+        type: Union[str, "_models.ManagedServiceIdentityType"],
+        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword resource_id: Required. The resource ID of the notification hub.
-        :paramtype resource_id: str
-        :keyword connection_string: Required. Connection string for the notification hub.
-        :paramtype connection_string: str
+        :keyword type: Type of managed service identity (where both SystemAssigned and UserAssigned
+         types are allowed). Required. Known values are: "None", "SystemAssigned", "UserAssigned", and
+         "SystemAssigned,UserAssigned".
+        :paramtype type: str or ~azure.mgmt.communication.models.ManagedServiceIdentityType
+        :keyword user_assigned_identities: The set of user assigned identities associated with the
+         resource. The userAssignedIdentities dictionary keys will be ARM resource ids in the form:
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.
+         The dictionary values can be empty objects ({}) in requests.
+        :paramtype user_assigned_identities: dict[str,
+         ~azure.mgmt.communication.models.UserAssignedIdentity]
         """
-        super(LinkNotificationHubParameters, self).__init__(**kwargs)
-        self.resource_id = resource_id
-        self.connection_string = connection_string
+        super().__init__(**kwargs)
+        self.principal_id = None
+        self.tenant_id = None
+        self.type = type
+        self.user_assigned_identities = user_assigned_identities
 
 
 class NameAvailabilityParameters(CheckNameAvailabilityRequest):
@@ -1054,27 +1066,21 @@ class NameAvailabilityParameters(CheckNameAvailabilityRequest):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        type: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[str] = None, type: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: The name of the resource for which availability needs to be checked.
         :paramtype name: str
         :keyword type: The resource type.
         :paramtype type: str
         """
-        super(NameAvailabilityParameters, self).__init__(name=name, type=type, **kwargs)
+        super().__init__(name=name, type=type, **kwargs)
 
 
-class Operation(msrest.serialization.Model):
+class Operation(_serialization.Model):
     """Details of a REST API operation, returned from the Resource Provider Operations API.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1088,40 +1094,35 @@ class Operation(msrest.serialization.Model):
     :ivar display: Localized display information for this particular operation.
     :vartype display: ~azure.mgmt.communication.models.OperationDisplay
     :ivar origin: The intended executor of the operation; as in Resource Based Access Control
-     (RBAC) and audit logs UX. Default value is "user,system". Possible values include: "user",
-     "system", "user,system".
+     (RBAC) and audit logs UX. Default value is "user,system". Known values are: "user", "system",
+     and "user,system".
     :vartype origin: str or ~azure.mgmt.communication.models.Origin
     :ivar action_type: Enum. Indicates the action type. "Internal" refers to actions that are for
-     internal only APIs. Possible values include: "Internal".
+     internal only APIs. "Internal"
     :vartype action_type: str or ~azure.mgmt.communication.models.ActionType
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'is_data_action': {'readonly': True},
-        'origin': {'readonly': True},
-        'action_type': {'readonly': True},
+        "name": {"readonly": True},
+        "is_data_action": {"readonly": True},
+        "origin": {"readonly": True},
+        "action_type": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
-        'origin': {'key': 'origin', 'type': 'str'},
-        'action_type': {'key': 'actionType', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "is_data_action": {"key": "isDataAction", "type": "bool"},
+        "display": {"key": "display", "type": "OperationDisplay"},
+        "origin": {"key": "origin", "type": "str"},
+        "action_type": {"key": "actionType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        display: Optional["OperationDisplay"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, display: Optional["_models.OperationDisplay"] = None, **kwargs: Any) -> None:
         """
         :keyword display: Localized display information for this particular operation.
         :paramtype display: ~azure.mgmt.communication.models.OperationDisplay
         """
-        super(Operation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = None
         self.is_data_action = None
         self.display = display
@@ -1129,7 +1130,7 @@ class Operation(msrest.serialization.Model):
         self.action_type = None
 
 
-class OperationDisplay(msrest.serialization.Model):
+class OperationDisplay(_serialization.Model):
     """Localized display information for this particular operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1149,34 +1150,31 @@ class OperationDisplay(msrest.serialization.Model):
     """
 
     _validation = {
-        'provider': {'readonly': True},
-        'resource': {'readonly': True},
-        'operation': {'readonly': True},
-        'description': {'readonly': True},
+        "provider": {"readonly": True},
+        "resource": {"readonly": True},
+        "operation": {"readonly": True},
+        "description": {"readonly": True},
     }
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(OperationDisplay, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.provider = None
         self.resource = None
         self.operation = None
         self.description = None
 
 
-class OperationListResult(msrest.serialization.Model):
-    """A list of REST API operations supported by an Azure Resource Provider. It contains an URL link to get the next set of results.
+class OperationListResult(_serialization.Model):
+    """A list of REST API operations supported by an Azure Resource Provider. It contains an URL link
+    to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1187,109 +1185,233 @@ class OperationListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Operation]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Operation]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(OperationListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class RegenerateKeyParameters(msrest.serialization.Model):
+class ProxyResource(Resource):
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
+    tags and a location.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.communication.models.SystemData
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+
+
+class RegenerateKeyParameters(_serialization.Model):
     """Parameters describes the request to regenerate access keys.
 
     :ivar key_type: The keyType to regenerate. Must be either 'primary' or
-     'secondary'(case-insensitive). Possible values include: "Primary", "Secondary".
+     'secondary'(case-insensitive). Known values are: "Primary" and "Secondary".
     :vartype key_type: str or ~azure.mgmt.communication.models.KeyType
     """
 
     _attribute_map = {
-        'key_type': {'key': 'keyType', 'type': 'str'},
+        "key_type": {"key": "keyType", "type": "str"},
+    }
+
+    def __init__(self, *, key_type: Optional[Union[str, "_models.KeyType"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword key_type: The keyType to regenerate. Must be either 'primary' or
+         'secondary'(case-insensitive). Known values are: "Primary" and "Secondary".
+        :paramtype key_type: str or ~azure.mgmt.communication.models.KeyType
+        """
+        super().__init__(**kwargs)
+        self.key_type = key_type
+
+
+class SenderUsernameResource(ProxyResource):
+    """A class representing a SenderUsername resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.communication.models.SystemData
+    :ivar data_location: The location where the SenderUsername resource data is stored at rest.
+    :vartype data_location: str
+    :ivar username: A sender senderUsername to be used when sending emails.
+    :vartype username: str
+    :ivar display_name: The display name for the senderUsername.
+    :vartype display_name: str
+    :ivar provisioning_state: Provisioning state of the resource. Unknown is the default state for
+     Communication Services. Known values are: "Unknown", "Succeeded", "Failed", "Canceled",
+     "Running", "Creating", "Updating", "Deleting", and "Moving".
+    :vartype provisioning_state: str or ~azure.mgmt.communication.models.ProvisioningState
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "data_location": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "data_location": {"key": "properties.dataLocation", "type": "str"},
+        "username": {"key": "properties.username", "type": "str"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+    }
+
+    def __init__(self, *, username: Optional[str] = None, display_name: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword username: A sender senderUsername to be used when sending emails.
+        :paramtype username: str
+        :keyword display_name: The display name for the senderUsername.
+        :paramtype display_name: str
+        """
+        super().__init__(**kwargs)
+        self.data_location = None
+        self.username = username
+        self.display_name = display_name
+        self.provisioning_state = None
+
+
+class SenderUsernameResourceCollection(_serialization.Model):
+    """A class representing a Domains SenderUsernames collection.
+
+    :ivar value: List of SenderUsernames.
+    :vartype value: list[~azure.mgmt.communication.models.SenderUsernameResource]
+    :ivar next_link: The URL the client should use to fetch the next page (per server side paging).
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[SenderUsernameResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        key_type: Optional[Union[str, "KeyType"]] = None,
-        **kwargs
-    ):
+        value: Optional[List["_models.SenderUsernameResource"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword key_type: The keyType to regenerate. Must be either 'primary' or
-         'secondary'(case-insensitive). Possible values include: "Primary", "Secondary".
-        :paramtype key_type: str or ~azure.mgmt.communication.models.KeyType
+        :keyword value: List of SenderUsernames.
+        :paramtype value: list[~azure.mgmt.communication.models.SenderUsernameResource]
+        :keyword next_link: The URL the client should use to fetch the next page (per server side
+         paging).
+        :paramtype next_link: str
         """
-        super(RegenerateKeyParameters, self).__init__(**kwargs)
-        self.key_type = key_type
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
 
 
-class SystemData(msrest.serialization.Model):
+class SystemData(_serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
     :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Possible values include:
-     "User", "Application", "ManagedIdentity", "Key".
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", and "Key".
     :vartype created_by_type: str or ~azure.mgmt.communication.models.CreatedByType
     :ivar created_at: The timestamp of resource creation (UTC).
     :vartype created_at: ~datetime.datetime
     :ivar last_modified_by: The identity that last modified the resource.
     :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: "User", "Application", "ManagedIdentity", "Key".
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", and "Key".
     :vartype last_modified_by_type: str or ~azure.mgmt.communication.models.CreatedByType
     :ivar last_modified_at: The timestamp of resource last modification (UTC).
     :vartype last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
-        'created_by': {'key': 'createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'createdByType', 'type': 'str'},
-        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
-        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
     }
 
     def __init__(
         self,
         *,
         created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         created_at: Optional[datetime.datetime] = None,
         last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
-        :keyword created_by_type: The type of identity that created the resource. Possible values
-         include: "User", "Application", "ManagedIdentity", "Key".
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", and "Key".
         :paramtype created_by_type: str or ~azure.mgmt.communication.models.CreatedByType
         :keyword created_at: The timestamp of resource creation (UTC).
         :paramtype created_at: ~datetime.datetime
         :keyword last_modified_by: The identity that last modified the resource.
         :paramtype last_modified_by: str
-        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
-         values include: "User", "Application", "ManagedIdentity", "Key".
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", and "Key".
         :paramtype last_modified_by_type: str or ~azure.mgmt.communication.models.CreatedByType
         :keyword last_modified_at: The timestamp of resource last modification (UTC).
         :paramtype last_modified_at: ~datetime.datetime
         """
-        super(SystemData, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
         self.created_at = created_at
@@ -1301,89 +1423,102 @@ class SystemData(msrest.serialization.Model):
 class UpdateDomainRequestParameters(TaggedResource):
     """A class that describes the PATCH request parameters of a Domains resource.
 
-    :ivar tags: A set of tags. Tags of the service which is a list of key value pairs that describe
-     the resource.
+    :ivar tags: Tags of the service which is a list of key value pairs that describe the resource.
     :vartype tags: dict[str, str]
-    :ivar valid_sender_usernames: Collection of valid sender usernames. This is a key-value pair
-     where key=username and value=display name.
-    :vartype valid_sender_usernames: dict[str, str]
     :ivar user_engagement_tracking: Describes whether user engagement tracking is enabled or
-     disabled. Possible values include: "Disabled", "Enabled".
+     disabled. Known values are: "Disabled" and "Enabled".
     :vartype user_engagement_tracking: str or
      ~azure.mgmt.communication.models.UserEngagementTracking
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'valid_sender_usernames': {'key': 'properties.validSenderUsernames', 'type': '{str}'},
-        'user_engagement_tracking': {'key': 'properties.userEngagementTracking', 'type': 'str'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "user_engagement_tracking": {"key": "properties.userEngagementTracking", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
-        valid_sender_usernames: Optional[Dict[str, str]] = None,
-        user_engagement_tracking: Optional[Union[str, "UserEngagementTracking"]] = None,
-        **kwargs
-    ):
+        user_engagement_tracking: Optional[Union[str, "_models.UserEngagementTracking"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword tags: A set of tags. Tags of the service which is a list of key value pairs that
-         describe the resource.
+        :keyword tags: Tags of the service which is a list of key value pairs that describe the
+         resource.
         :paramtype tags: dict[str, str]
-        :keyword valid_sender_usernames: Collection of valid sender usernames. This is a key-value pair
-         where key=username and value=display name.
-        :paramtype valid_sender_usernames: dict[str, str]
         :keyword user_engagement_tracking: Describes whether user engagement tracking is enabled or
-         disabled. Possible values include: "Disabled", "Enabled".
+         disabled. Known values are: "Disabled" and "Enabled".
         :paramtype user_engagement_tracking: str or
          ~azure.mgmt.communication.models.UserEngagementTracking
         """
-        super(UpdateDomainRequestParameters, self).__init__(tags=tags, **kwargs)
-        self.valid_sender_usernames = valid_sender_usernames
+        super().__init__(tags=tags, **kwargs)
         self.user_engagement_tracking = user_engagement_tracking
 
 
-class VerificationParameter(msrest.serialization.Model):
+class UserAssignedIdentity(_serialization.Model):
+    """User assigned identity properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar principal_id: The principal ID of the assigned identity.
+    :vartype principal_id: str
+    :ivar client_id: The client ID of the assigned identity.
+    :vartype client_id: str
+    """
+
+    _validation = {
+        "principal_id": {"readonly": True},
+        "client_id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "principal_id": {"key": "principalId", "type": "str"},
+        "client_id": {"key": "clientId", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.principal_id = None
+        self.client_id = None
+
+
+class VerificationParameter(_serialization.Model):
     """Input parameter for verification APIs.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar verification_type: Required. Type of verification. Possible values include: "Domain",
-     "SPF", "DKIM", "DKIM2", "DMARC".
+    :ivar verification_type: Type of verification. Required. Known values are: "Domain", "SPF",
+     "DKIM", "DKIM2", and "DMARC".
     :vartype verification_type: str or ~azure.mgmt.communication.models.VerificationType
     """
 
     _validation = {
-        'verification_type': {'required': True},
+        "verification_type": {"required": True},
     }
 
     _attribute_map = {
-        'verification_type': {'key': 'verificationType', 'type': 'str'},
+        "verification_type": {"key": "verificationType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        verification_type: Union[str, "VerificationType"],
-        **kwargs
-    ):
+    def __init__(self, *, verification_type: Union[str, "_models.VerificationType"], **kwargs: Any) -> None:
         """
-        :keyword verification_type: Required. Type of verification. Possible values include: "Domain",
-         "SPF", "DKIM", "DKIM2", "DMARC".
+        :keyword verification_type: Type of verification. Required. Known values are: "Domain", "SPF",
+         "DKIM", "DKIM2", and "DMARC".
         :paramtype verification_type: str or ~azure.mgmt.communication.models.VerificationType
         """
-        super(VerificationParameter, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.verification_type = verification_type
 
 
-class VerificationStatusRecord(msrest.serialization.Model):
+class VerificationStatusRecord(_serialization.Model):
     """A class that represents a VerificationStatus record.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar status: Status of the verification operation. Possible values include: "NotStarted",
-     "VerificationRequested", "VerificationInProgress", "VerificationFailed", "Verified",
+    :ivar status: Status of the verification operation. Known values are: "NotStarted",
+     "VerificationRequested", "VerificationInProgress", "VerificationFailed", "Verified", and
      "CancellationRequested".
     :vartype status: str or ~azure.mgmt.communication.models.VerificationStatus
     :ivar error_code: Error code. This property will only be present if the status is
@@ -1392,21 +1527,17 @@ class VerificationStatusRecord(msrest.serialization.Model):
     """
 
     _validation = {
-        'status': {'readonly': True},
-        'error_code': {'readonly': True},
+        "status": {"readonly": True},
+        "error_code": {"readonly": True},
     }
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'error_code': {'key': 'errorCode', 'type': 'str'},
+        "status": {"key": "status", "type": "str"},
+        "error_code": {"key": "errorCode", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(VerificationStatusRecord, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.status = None
         self.error_code = None

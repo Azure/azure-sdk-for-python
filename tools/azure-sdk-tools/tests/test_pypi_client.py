@@ -31,10 +31,6 @@ class TestPyPiClient:
         assert result["info"]["name"] == "azure-core"
         assert result["info"]["release_url"] == "https://pypi.org/project/azure-core/1.8.0/"
 
-    @pytest.mark.skipif(
-        os.environ.get("TF_BUILD", "None") == True,
-        reason=f"This test isn't worth recording and could be flaky. Skipping in CI.",
-    )
     @patch("pypi_tools.pypi.sys")
     def test_package_filter_for_compatibility(self, mock_sys):
         mock_sys.version_info = (2, 7, 0)

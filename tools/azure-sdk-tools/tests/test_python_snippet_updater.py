@@ -1,5 +1,4 @@
 import os
-import sys
 import pytest
 from ci_tools.snippet_update.python_snippet_updater import get_snippet, update_snippet, check_snippets, check_not_up_to_date
 

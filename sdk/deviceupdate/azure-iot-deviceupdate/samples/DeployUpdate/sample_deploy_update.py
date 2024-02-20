@@ -38,12 +38,10 @@ try:
     deployment = {
         "deploymentId": deployment_id,
         "startDateTime": str(datetime.now(timezone.utc)),
-        "update": {
-            "updateId": {
-                "provider": update_provider,
-                "name": update_name,
-                "version": update_version
-            }
+        "updateId": {
+            "provider": update_provider,
+            "name": update_name,
+            "version": update_version
         },
         "groupId": group
     }

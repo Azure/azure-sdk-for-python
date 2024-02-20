@@ -4,24 +4,28 @@
 
 import copy
 import os
+import shutil
 import signal
 import tempfile
 import time
-from typing import Dict, Callable
-from zipfile import ZipFile
+from contextlib import contextmanager
 from io import StringIO
+from pathlib import Path
+from typing import Callable, Dict, List, Optional, Union
+from unittest.mock import patch
+from zipfile import ZipFile
 
 import pydash
 import urllib3
 from azure.core.exceptions import HttpResponseError
+from azure.core.polling import LROPoller
 from devtools_testutils import is_live
 
 from azure.ai.ml import MLClient, load_job
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.entities import Job, PipelineJob
 from azure.ai.ml.operations._job_ops_helper import _wait_before_polling
-from azure.ai.ml.operations._run_history_constants import RunHistoryConstants, JobStatus
-from azure.core.polling import LROPoller
+from azure.ai.ml.operations._run_history_constants import JobStatus, RunHistoryConstants
 
 _PYTEST_TIMEOUT_METHOD = "signal" if hasattr(signal, "SIGALRM") else "thread"  # use signal when os support SIGALRM
 DEFAULT_TASK_TIMEOUT = 30 * 60  # 30mins
@@ -105,6 +109,7 @@ def prepare_dsl_curated(
                     "properties.jobs.*.trial.properties.isAnonymous",
                     "properties.jobs.*.trial.properties.componentSpec._source",
                     "properties.settings",
+                    "properties.jobs.*.trial.properties.properties.client_component_hash",
                 ]
             )
     else:
@@ -231,7 +236,6 @@ def verify_entity_load_and_dump(
     # TODO once dump functionality audit is complete, this testing should be
     # made more robust, like comparing it to the inputted yaml or something.
     if test_dump_file_path is not None:
-
         # test file pointer-based dump
         with tempfile.TemporaryDirectory() as tmpdirname:
             tmpfilename = f"{tmpdirname}/{test_dump_file_path}"
@@ -288,12 +292,25 @@ def assert_job_cancel(
     *,
     experiment_name=None,
     check_before_cancelled: Callable[[Job], bool] = None,
+    skip_cancel=False,
+    wait_for_completion=False,
 ) -> Job:
     created_job = client.jobs.create_or_update(job, experiment_name=experiment_name)
     if check_before_cancelled is not None:
         assert check_before_cancelled(created_job)
+    if skip_cancel is False:
         cancel_job(client, created_job)
+    elif wait_for_completion is True:
+        assert wait_until_done(client, created_job) == JobStatus.COMPLETED, (
+            "Job failed. Please check it on studio for more details: %s" % created_job.studio_url
+        )
     return created_job
+
+
+def submit_and_cancel_new_dsl_pipeline(pipeline_func, client, default_compute="cpu-cluster", **kwargs):
+    pipeline_job: PipelineJob = pipeline_func(**kwargs)
+    pipeline_job.settings.default_compute = default_compute
+    return assert_job_cancel(pipeline_job, client)
 
 
 def wait_until_done(client: MLClient, job: Job, timeout: int = None) -> str:
@@ -318,3 +335,116 @@ def sleep_if_live(seconds):
     """
     if is_live():
         time.sleep(seconds)
+
+
+def parse_local_path(origin_path, base_path=None):
+    """Relative path in LocalPathField will be dumped to absolute path in _to_dict.
+    In e2e tests, it will be uploaded and resolved into an uri before _to_rest_object.
+    However, developers usually directly compare the result of _to_dict/_to_rest_object with a fixed dict.
+    So we provide this function to parse the original value in the same way as LocalPathField serialization
+    to avoid updating test cases after updating LocalPathField serialization logic.
+
+    :param origin_path: The original value filled in LocalPathField
+    :param base_path: The base path of the original value, usually from resource.base_path.
+    Will use current working directory if not provided.
+    """
+    if base_path is None:
+        base_path = Path.cwd()
+    else:
+        base_path = Path(base_path)
+    return (base_path / origin_path).resolve().absolute().as_posix()
+
+
+@contextmanager
+def build_temp_folder(
+    *,
+    source_base_dir: Union[str, os.PathLike] = None,
+    relative_dirs_to_copy: List[str] = None,
+    relative_files_to_copy: List[str] = None,
+    extra_files_to_create: Dict[str, Union[None, bytes, str]] = None,
+) -> str:
+    """Build a temporary folder with files and subfolders copied from source_base_dir.
+    Note that the last part of path to upload will be recorded as part of request url in playback mode, so please avoid
+    directly use returned temp folder as component.code.
+
+    :param source_base_dir: The base directory to copy files from.
+    :type source_base_dir: Union[str, os.PathLike]
+    :param relative_dirs_to_copy: The relative paths of subfolders to copy from source_base_dir.
+    :type relative_dirs_to_copy: List[str]
+    :param relative_files_to_copy: The relative paths of files to copy from source_base_dir.
+    :type relative_files_to_copy: List[str]
+    :param extra_files_to_create: The relative paths of files to create in the temporary folder.
+    The value of each key-value pair is the content of the file.
+    If the value is None, the file will be empty.
+    :type extra_files_to_create: Dict[str, Optional[str]]
+    :return: The path of the temporary folder.
+    :rtype: str
+    """
+    if source_base_dir is None:
+        source_base_dir = Path.cwd()
+    else:
+        source_base_dir = Path(source_base_dir)
+    with tempfile.TemporaryDirectory() as temp_dir:
+        if relative_dirs_to_copy:
+            for dir_name in relative_dirs_to_copy:
+                shutil.copytree(source_base_dir / dir_name, Path(temp_dir) / dir_name)
+        if relative_files_to_copy:
+            for file_name in relative_files_to_copy:
+                shutil.copy(source_base_dir / file_name, Path(temp_dir) / file_name)
+        if extra_files_to_create:
+            for file_name, content in extra_files_to_create.items():
+                target_file = Path(temp_dir) / file_name
+                target_file.parent.mkdir(parents=True, exist_ok=True)
+                if content is None:
+                    target_file.touch()
+                    continue
+                if content is None:
+                    target_file.touch()
+                elif isinstance(content, str):
+                    target_file.write_text(content)
+                elif isinstance(content, bytes):
+                    target_file.write_bytes(content)
+                else:
+                    raise ValueError(f"Unsupported content type {type(content)}")
+
+        yield temp_dir
+
+
+@contextmanager
+def reload_schema_for_nodes_in_pipeline_job(*, revert_after_yield: bool = True):
+    """Reload schema for nodes in pipeline job. This is needed when we want to test private preview features or
+    unregister internal components.
+
+    This method should be called after environment variable is set, so we make it a method instead of a fixture.
+    """
+    # Update the node types in pipeline jobs to include the private preview node types
+    from azure.ai.ml._schema.pipeline import pipeline_job
+
+    declared_fields = pipeline_job.PipelineJobSchema._declared_fields  # pylint: disable=protected-access, no-member
+    original_jobs = declared_fields["jobs"]
+    declared_fields["jobs"] = pipeline_job.PipelineJobsField()
+
+    try:
+        yield
+    finally:
+        if revert_after_yield:
+            declared_fields["jobs"] = original_jobs
+
+
+@contextmanager
+def mock_artifact_download_to_temp_directory():
+    with tempfile.TemporaryDirectory() as temp_dir:
+
+        def mock_get_artifacts(**kwargs):
+            version = kwargs.get("version")
+            artifact = Path(temp_dir) / version
+            if version in ["version_1", "version_3"]:
+                version = "version_1"
+            artifact.mkdir(parents=True, exist_ok=True)
+            (artifact / version).mkdir(exist_ok=True)
+            (artifact / version / "file").touch(exist_ok=True)
+            (artifact / f"file_{version}").touch(exist_ok=True)
+            return str(artifact)
+
+        with patch("azure.ai.ml._utils._artifact_utils.ArtifactCache.get", side_effect=mock_get_artifacts):
+            yield temp_dir

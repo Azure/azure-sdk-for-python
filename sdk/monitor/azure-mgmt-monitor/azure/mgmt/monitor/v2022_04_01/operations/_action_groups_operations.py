@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, cast, overload
-from urllib.parse import parse_qs, urljoin, urlparse
+import urllib.parse
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -44,8 +44,8 @@ def build_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-04-01"))  # type: str
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-04-01"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -61,7 +61,7 @@ def build_create_or_update_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -80,7 +80,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-04-01"))  # type: str
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -96,7 +96,7 @@ def build_get_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -113,7 +113,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-04-01"))  # type: str
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -129,7 +129,7 @@ def build_delete_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -146,8 +146,8 @@ def build_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-04-01"))  # type: str
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-04-01"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -163,7 +163,7 @@ def build_update_request(
         "actionGroupName": _SERIALIZER.url("action_group_name", action_group_name, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -180,8 +180,8 @@ def build_post_test_notifications_request(subscription_id: str, **kwargs: Any) -
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-04-01"))  # type: str
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-04-01"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -192,7 +192,7 @@ def build_post_test_notifications_request(subscription_id: str, **kwargs: Any) -
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -205,14 +205,14 @@ def build_post_test_notifications_request(subscription_id: str, **kwargs: Any) -
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_create_notifications_at_resource_group_level_request(
+def build_create_notifications_at_resource_group_level_request(  # pylint: disable=name-too-long
     resource_group_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-04-01"))  # type: str
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-04-01"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -227,7 +227,7 @@ def build_create_notifications_at_resource_group_level_request(
         ),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -244,7 +244,7 @@ def build_get_test_notifications_request(notification_id: str, subscription_id: 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-04-01"))  # type: str
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -257,7 +257,7 @@ def build_get_test_notifications_request(notification_id: str, subscription_id: 
         "notificationId": _SERIALIZER.url("notification_id", notification_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -268,13 +268,13 @@ def build_get_test_notifications_request(notification_id: str, subscription_id: 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_test_notifications_at_resource_group_level_request(
+def build_get_test_notifications_at_resource_group_level_request(  # pylint: disable=name-too-long
     resource_group_name: str, notification_id: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-04-01"))  # type: str
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -290,7 +290,7 @@ def build_get_test_notifications_at_resource_group_level_request(
         "notificationId": _SERIALIZER.url("notification_id", notification_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -305,7 +305,7 @@ def build_list_by_subscription_id_request(subscription_id: str, **kwargs: Any) -
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-04-01"))  # type: str
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -314,7 +314,7 @@ def build_list_by_subscription_id_request(subscription_id: str, **kwargs: Any) -
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -329,7 +329,7 @@ def build_list_by_resource_group_request(resource_group_name: str, subscription_
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-04-01"))  # type: str
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -344,7 +344,7 @@ def build_list_by_resource_group_request(resource_group_name: str, subscription_
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -361,8 +361,8 @@ def build_enable_receiver_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-04-01"))  # type: str
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-04-01"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -378,7 +378,7 @@ def build_enable_receiver_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -397,7 +397,7 @@ class ActionGroupsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~$(python-base-namespace).v2022_04_01.MonitorManagementClient`'s
+        :class:`~azure.mgmt.monitor.v2022_04_01.MonitorManagementClient`'s
         :attr:`action_groups` attribute.
     """
 
@@ -428,13 +428,13 @@ class ActionGroupsOperations:
         :param action_group_name: The name of the action group. Required.
         :type action_group_name: str
         :param action_group: The action group to create or use for the update. Required.
-        :type action_group: ~$(python-base-namespace).v2022_04_01.models.ActionGroupResource
+        :type action_group: ~azure.mgmt.monitor.v2022_04_01.models.ActionGroupResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ActionGroupResource or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2022_04_01.models.ActionGroupResource
+        :rtype: ~azure.mgmt.monitor.v2022_04_01.models.ActionGroupResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -462,7 +462,7 @@ class ActionGroupsOperations:
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ActionGroupResource or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2022_04_01.models.ActionGroupResource
+        :rtype: ~azure.mgmt.monitor.v2022_04_01.models.ActionGroupResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -481,15 +481,15 @@ class ActionGroupsOperations:
         :type resource_group_name: str
         :param action_group_name: The name of the action group. Required.
         :type action_group_name: str
-        :param action_group: The action group to create or use for the update. Is either a model type
-         or a IO type. Required.
-        :type action_group: ~$(python-base-namespace).v2022_04_01.models.ActionGroupResource or IO
+        :param action_group: The action group to create or use for the update. Is either a
+         ActionGroupResource type or a IO type. Required.
+        :type action_group: ~azure.mgmt.monitor.v2022_04_01.models.ActionGroupResource or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ActionGroupResource or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2022_04_01.models.ActionGroupResource
+        :rtype: ~azure.mgmt.monitor.v2022_04_01.models.ActionGroupResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -503,9 +503,9 @@ class ActionGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-04-01"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ActionGroupResource]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-04-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ActionGroupResource] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -528,10 +528,11 @@ class ActionGroupsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -548,11 +549,13 @@ class ActionGroupsOperations:
             deserialized = self._deserialize("ActionGroupResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
-    create_or_update.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/actionGroups/{actionGroupName}"}  # type: ignore
+    create_or_update.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/actionGroups/{actionGroupName}"
+    }
 
     @distributed_trace
     def get(self, resource_group_name: str, action_group_name: str, **kwargs: Any) -> _models.ActionGroupResource:
@@ -565,7 +568,7 @@ class ActionGroupsOperations:
         :type action_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ActionGroupResource or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2022_04_01.models.ActionGroupResource
+        :rtype: ~azure.mgmt.monitor.v2022_04_01.models.ActionGroupResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -579,8 +582,8 @@ class ActionGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-04-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ActionGroupResource]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-04-01"))
+        cls: ClsType[_models.ActionGroupResource] = kwargs.pop("cls", None)
 
         request = build_get_request(
             resource_group_name=resource_group_name,
@@ -592,10 +595,11 @@ class ActionGroupsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -612,7 +616,9 @@ class ActionGroupsOperations:
 
         return deserialized
 
-    get.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/actionGroups/{actionGroupName}"}  # type: ignore
+    get.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/actionGroups/{actionGroupName}"
+    }
 
     @distributed_trace
     def delete(  # pylint: disable=inconsistent-return-statements
@@ -641,8 +647,8 @@ class ActionGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-04-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-04-01"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_delete_request(
             resource_group_name=resource_group_name,
@@ -654,10 +660,11 @@ class ActionGroupsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -670,7 +677,9 @@ class ActionGroupsOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/actionGroups/{actionGroupName}"}  # type: ignore
+    delete.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/actionGroups/{actionGroupName}"
+    }
 
     @overload
     def update(
@@ -690,13 +699,13 @@ class ActionGroupsOperations:
         :param action_group_name: The name of the action group. Required.
         :type action_group_name: str
         :param action_group_patch: Parameters supplied to the operation. Required.
-        :type action_group_patch: ~$(python-base-namespace).v2022_04_01.models.ActionGroupPatchBody
+        :type action_group_patch: ~azure.mgmt.monitor.v2022_04_01.models.ActionGroupPatchBody
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ActionGroupResource or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2022_04_01.models.ActionGroupResource
+        :rtype: ~azure.mgmt.monitor.v2022_04_01.models.ActionGroupResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -724,7 +733,7 @@ class ActionGroupsOperations:
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ActionGroupResource or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2022_04_01.models.ActionGroupResource
+        :rtype: ~azure.mgmt.monitor.v2022_04_01.models.ActionGroupResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -743,16 +752,15 @@ class ActionGroupsOperations:
         :type resource_group_name: str
         :param action_group_name: The name of the action group. Required.
         :type action_group_name: str
-        :param action_group_patch: Parameters supplied to the operation. Is either a model type or a IO
-         type. Required.
-        :type action_group_patch: ~$(python-base-namespace).v2022_04_01.models.ActionGroupPatchBody or
-         IO
+        :param action_group_patch: Parameters supplied to the operation. Is either a
+         ActionGroupPatchBody type or a IO type. Required.
+        :type action_group_patch: ~azure.mgmt.monitor.v2022_04_01.models.ActionGroupPatchBody or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ActionGroupResource or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2022_04_01.models.ActionGroupResource
+        :rtype: ~azure.mgmt.monitor.v2022_04_01.models.ActionGroupResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -766,9 +774,9 @@ class ActionGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-04-01"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ActionGroupResource]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-04-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ActionGroupResource] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -791,10 +799,11 @@ class ActionGroupsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -811,7 +820,9 @@ class ActionGroupsOperations:
 
         return deserialized
 
-    update.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/actionGroups/{actionGroupName}"}  # type: ignore
+    update.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/actionGroups/{actionGroupName}"
+    }
 
     def _post_test_notifications_initial(
         self, notification_request: Union[_models.NotificationRequestBody, IO], **kwargs: Any
@@ -827,9 +838,9 @@ class ActionGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-04-01"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[_models.TestNotificationDetailsResponse]]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-04-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Optional[_models.TestNotificationDetailsResponse]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -850,10 +861,11 @@ class ActionGroupsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -876,7 +888,9 @@ class ActionGroupsOperations:
 
         return deserialized
 
-    _post_test_notifications_initial.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Insights/createNotifications"}  # type: ignore
+    _post_test_notifications_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Insights/createNotifications"
+    }
 
     @overload
     def begin_post_test_notifications(
@@ -890,8 +904,7 @@ class ActionGroupsOperations:
 
         :param notification_request: The notification request body which includes the contact details.
          Required.
-        :type notification_request:
-         ~$(python-base-namespace).v2022_04_01.models.NotificationRequestBody
+        :type notification_request: ~azure.mgmt.monitor.v2022_04_01.models.NotificationRequestBody
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -906,7 +919,7 @@ class ActionGroupsOperations:
         :return: An instance of LROPoller that returns either TestNotificationDetailsResponse or the
          result of cls(response)
         :rtype:
-         ~azure.core.polling.LROPoller[~$(python-base-namespace).v2022_04_01.models.TestNotificationDetailsResponse]
+         ~azure.core.polling.LROPoller[~azure.mgmt.monitor.v2022_04_01.models.TestNotificationDetailsResponse]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -933,7 +946,7 @@ class ActionGroupsOperations:
         :return: An instance of LROPoller that returns either TestNotificationDetailsResponse or the
          result of cls(response)
         :rtype:
-         ~azure.core.polling.LROPoller[~$(python-base-namespace).v2022_04_01.models.TestNotificationDetailsResponse]
+         ~azure.core.polling.LROPoller[~azure.mgmt.monitor.v2022_04_01.models.TestNotificationDetailsResponse]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -944,9 +957,9 @@ class ActionGroupsOperations:
         """Send test notifications to a set of provided receivers.
 
         :param notification_request: The notification request body which includes the contact details.
-         Is either a model type or a IO type. Required.
-        :type notification_request:
-         ~$(python-base-namespace).v2022_04_01.models.NotificationRequestBody or IO
+         Is either a NotificationRequestBody type or a IO type. Required.
+        :type notification_request: ~azure.mgmt.monitor.v2022_04_01.models.NotificationRequestBody or
+         IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -961,20 +974,20 @@ class ActionGroupsOperations:
         :return: An instance of LROPoller that returns either TestNotificationDetailsResponse or the
          result of cls(response)
         :rtype:
-         ~azure.core.polling.LROPoller[~$(python-base-namespace).v2022_04_01.models.TestNotificationDetailsResponse]
+         ~azure.core.polling.LROPoller[~azure.mgmt.monitor.v2022_04_01.models.TestNotificationDetailsResponse]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-04-01"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.TestNotificationDetailsResponse]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-04-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.TestNotificationDetailsResponse] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._post_test_notifications_initial(  # type: ignore
+            raw_result = self._post_test_notifications_initial(
                 notification_request=notification_request,
                 api_version=api_version,
                 content_type=content_type,
@@ -992,9 +1005,9 @@ class ActionGroupsOperations:
             return deserialized
 
         if polling is True:
-            polling_method = cast(
+            polling_method: PollingMethod = cast(
                 PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
-            )  # type: PollingMethod
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -1006,11 +1019,13 @@ class ActionGroupsOperations:
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_post_test_notifications.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Insights/createNotifications"}  # type: ignore
+    begin_post_test_notifications.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Insights/createNotifications"
+    }
 
-    def _create_notifications_at_resource_group_level_initial(
+    def _create_notifications_at_resource_group_level_initial(  # pylint: disable=name-too-long
         self, resource_group_name: str, notification_request: Union[_models.NotificationRequestBody, IO], **kwargs: Any
     ) -> Optional[_models.TestNotificationDetailsResponse]:
         error_map = {
@@ -1024,9 +1039,9 @@ class ActionGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-04-01"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[_models.TestNotificationDetailsResponse]]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-04-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Optional[_models.TestNotificationDetailsResponse]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -1048,10 +1063,11 @@ class ActionGroupsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1074,10 +1090,12 @@ class ActionGroupsOperations:
 
         return deserialized
 
-    _create_notifications_at_resource_group_level_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/createNotifications"}  # type: ignore
+    _create_notifications_at_resource_group_level_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/createNotifications"
+    }
 
     @overload
-    def begin_create_notifications_at_resource_group_level(
+    def begin_create_notifications_at_resource_group_level(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
         notification_request: _models.NotificationRequestBody,
@@ -1092,8 +1110,7 @@ class ActionGroupsOperations:
         :type resource_group_name: str
         :param notification_request: The notification request body which includes the contact details.
          Required.
-        :type notification_request:
-         ~$(python-base-namespace).v2022_04_01.models.NotificationRequestBody
+        :type notification_request: ~azure.mgmt.monitor.v2022_04_01.models.NotificationRequestBody
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1108,12 +1125,12 @@ class ActionGroupsOperations:
         :return: An instance of LROPoller that returns either TestNotificationDetailsResponse or the
          result of cls(response)
         :rtype:
-         ~azure.core.polling.LROPoller[~$(python-base-namespace).v2022_04_01.models.TestNotificationDetailsResponse]
+         ~azure.core.polling.LROPoller[~azure.mgmt.monitor.v2022_04_01.models.TestNotificationDetailsResponse]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    def begin_create_notifications_at_resource_group_level(
+    def begin_create_notifications_at_resource_group_level(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
         notification_request: IO,
@@ -1143,12 +1160,12 @@ class ActionGroupsOperations:
         :return: An instance of LROPoller that returns either TestNotificationDetailsResponse or the
          result of cls(response)
         :rtype:
-         ~azure.core.polling.LROPoller[~$(python-base-namespace).v2022_04_01.models.TestNotificationDetailsResponse]
+         ~azure.core.polling.LROPoller[~azure.mgmt.monitor.v2022_04_01.models.TestNotificationDetailsResponse]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
-    def begin_create_notifications_at_resource_group_level(
+    def begin_create_notifications_at_resource_group_level(  # pylint: disable=name-too-long
         self, resource_group_name: str, notification_request: Union[_models.NotificationRequestBody, IO], **kwargs: Any
     ) -> LROPoller[_models.TestNotificationDetailsResponse]:
         """Send test notifications to a set of provided receivers.
@@ -1157,9 +1174,9 @@ class ActionGroupsOperations:
          Required.
         :type resource_group_name: str
         :param notification_request: The notification request body which includes the contact details.
-         Is either a model type or a IO type. Required.
-        :type notification_request:
-         ~$(python-base-namespace).v2022_04_01.models.NotificationRequestBody or IO
+         Is either a NotificationRequestBody type or a IO type. Required.
+        :type notification_request: ~azure.mgmt.monitor.v2022_04_01.models.NotificationRequestBody or
+         IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -1174,20 +1191,20 @@ class ActionGroupsOperations:
         :return: An instance of LROPoller that returns either TestNotificationDetailsResponse or the
          result of cls(response)
         :rtype:
-         ~azure.core.polling.LROPoller[~$(python-base-namespace).v2022_04_01.models.TestNotificationDetailsResponse]
+         ~azure.core.polling.LROPoller[~azure.mgmt.monitor.v2022_04_01.models.TestNotificationDetailsResponse]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-04-01"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.TestNotificationDetailsResponse]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-04-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.TestNotificationDetailsResponse] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._create_notifications_at_resource_group_level_initial(  # type: ignore
+            raw_result = self._create_notifications_at_resource_group_level_initial(
                 resource_group_name=resource_group_name,
                 notification_request=notification_request,
                 api_version=api_version,
@@ -1206,9 +1223,9 @@ class ActionGroupsOperations:
             return deserialized
 
         if polling is True:
-            polling_method = cast(
+            polling_method: PollingMethod = cast(
                 PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
-            )  # type: PollingMethod
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -1220,9 +1237,11 @@ class ActionGroupsOperations:
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_create_notifications_at_resource_group_level.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/createNotifications"}  # type: ignore
+    begin_create_notifications_at_resource_group_level.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/createNotifications"
+    }
 
     @distributed_trace
     def get_test_notifications(self, notification_id: str, **kwargs: Any) -> _models.TestNotificationDetailsResponse:
@@ -1232,7 +1251,7 @@ class ActionGroupsOperations:
         :type notification_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TestNotificationDetailsResponse or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2022_04_01.models.TestNotificationDetailsResponse
+        :rtype: ~azure.mgmt.monitor.v2022_04_01.models.TestNotificationDetailsResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -1246,8 +1265,8 @@ class ActionGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-04-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.TestNotificationDetailsResponse]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-04-01"))
+        cls: ClsType[_models.TestNotificationDetailsResponse] = kwargs.pop("cls", None)
 
         request = build_get_test_notifications_request(
             notification_id=notification_id,
@@ -1258,10 +1277,11 @@ class ActionGroupsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1278,10 +1298,12 @@ class ActionGroupsOperations:
 
         return deserialized
 
-    get_test_notifications.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Insights/notificationStatus/{notificationId}"}  # type: ignore
+    get_test_notifications.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Insights/notificationStatus/{notificationId}"
+    }
 
     @distributed_trace
-    def get_test_notifications_at_resource_group_level(
+    def get_test_notifications_at_resource_group_level(  # pylint: disable=name-too-long
         self, resource_group_name: str, notification_id: str, **kwargs: Any
     ) -> _models.TestNotificationDetailsResponse:
         """Get the test notifications by the notification id.
@@ -1293,7 +1315,7 @@ class ActionGroupsOperations:
         :type notification_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TestNotificationDetailsResponse or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2022_04_01.models.TestNotificationDetailsResponse
+        :rtype: ~azure.mgmt.monitor.v2022_04_01.models.TestNotificationDetailsResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -1307,8 +1329,8 @@ class ActionGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-04-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.TestNotificationDetailsResponse]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-04-01"))
+        cls: ClsType[_models.TestNotificationDetailsResponse] = kwargs.pop("cls", None)
 
         request = build_get_test_notifications_at_resource_group_level_request(
             resource_group_name=resource_group_name,
@@ -1320,10 +1342,11 @@ class ActionGroupsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1340,7 +1363,9 @@ class ActionGroupsOperations:
 
         return deserialized
 
-    get_test_notifications_at_resource_group_level.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/notificationStatus/{notificationId}"}  # type: ignore
+    get_test_notifications_at_resource_group_level.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/notificationStatus/{notificationId}"
+    }
 
     @distributed_trace
     def list_by_subscription_id(self, **kwargs: Any) -> Iterable["_models.ActionGroupResource"]:
@@ -1349,14 +1374,14 @@ class ActionGroupsOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ActionGroupResource or the result of cls(response)
         :rtype:
-         ~azure.core.paging.ItemPaged[~$(python-base-namespace).v2022_04_01.models.ActionGroupResource]
+         ~azure.core.paging.ItemPaged[~azure.mgmt.monitor.v2022_04_01.models.ActionGroupResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-04-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ActionGroupList]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-04-01"))
+        cls: ClsType[_models.ActionGroupList] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -1377,16 +1402,23 @@ class ActionGroupsOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -1394,14 +1426,15 @@ class ActionGroupsOperations:
             deserialized = self._deserialize("ActionGroupList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1414,7 +1447,9 @@ class ActionGroupsOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list_by_subscription_id.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Insights/actionGroups"}  # type: ignore
+    list_by_subscription_id.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Insights/actionGroups"
+    }
 
     @distributed_trace
     def list_by_resource_group(
@@ -1428,14 +1463,14 @@ class ActionGroupsOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ActionGroupResource or the result of cls(response)
         :rtype:
-         ~azure.core.paging.ItemPaged[~$(python-base-namespace).v2022_04_01.models.ActionGroupResource]
+         ~azure.core.paging.ItemPaged[~azure.mgmt.monitor.v2022_04_01.models.ActionGroupResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-04-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ActionGroupList]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-04-01"))
+        cls: ClsType[_models.ActionGroupList] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -1457,16 +1492,23 @@ class ActionGroupsOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -1474,14 +1516,15 @@ class ActionGroupsOperations:
             deserialized = self._deserialize("ActionGroupList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1494,7 +1537,9 @@ class ActionGroupsOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list_by_resource_group.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/actionGroups"}  # type: ignore
+    list_by_resource_group.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/actionGroups"
+    }
 
     @overload
     def enable_receiver(  # pylint: disable=inconsistent-return-statements
@@ -1515,7 +1560,7 @@ class ActionGroupsOperations:
         :param action_group_name: The name of the action group. Required.
         :type action_group_name: str
         :param enable_request: The receiver to re-enable. Required.
-        :type enable_request: ~$(python-base-namespace).v2022_04_01.models.EnableRequest
+        :type enable_request: ~azure.mgmt.monitor.v2022_04_01.models.EnableRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1570,9 +1615,9 @@ class ActionGroupsOperations:
         :type resource_group_name: str
         :param action_group_name: The name of the action group. Required.
         :type action_group_name: str
-        :param enable_request: The receiver to re-enable. Is either a model type or a IO type.
+        :param enable_request: The receiver to re-enable. Is either a EnableRequest type or a IO type.
          Required.
-        :type enable_request: ~$(python-base-namespace).v2022_04_01.models.EnableRequest or IO
+        :type enable_request: ~azure.mgmt.monitor.v2022_04_01.models.EnableRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -1592,9 +1637,9 @@ class ActionGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-04-01"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-04-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -1617,10 +1662,11 @@ class ActionGroupsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1633,4 +1679,6 @@ class ActionGroupsOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    enable_receiver.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/actionGroups/{actionGroupName}/subscribe"}  # type: ignore
+    enable_receiver.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/actionGroups/{actionGroupName}/subscribe"
+    }

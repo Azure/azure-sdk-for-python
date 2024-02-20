@@ -1,6 +1,17 @@
 {
     "version": "0.2",
     "ignoreWords": [
-        "orgid"
+        "orgid",
+		"dtmf",
+		"Dtmf",
+		"DTMF",
+        "pstn",
+        "PSTN",
+        "unmuted",
+        "ssml",
+        "Ssml",
+        "SSML",
+        "unassigning",
+        "unassignment"
     ]
 }

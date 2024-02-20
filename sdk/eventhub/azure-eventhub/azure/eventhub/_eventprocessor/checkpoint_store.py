@@ -15,9 +15,12 @@ class CheckpointStore(object):
 
     @abstractmethod
     def list_ownership(
-        self, fully_qualified_namespace, eventhub_name, consumer_group, **kwargs
-    ):
-        # type: (str, str, str, Any) -> Iterable[Dict[str, Any]]
+        self,
+        fully_qualified_namespace: str,
+        eventhub_name: str,
+        consumer_group: str,
+        **kwargs: Any
+    ) -> Iterable[Dict[str, Any]]:
         """Retrieves a complete ownership list from the chosen storage service.
 
         :param str fully_qualified_namespace: The fully qualified namespace that the Event Hub belongs to.
@@ -40,8 +43,11 @@ class CheckpointStore(object):
         """
 
     @abstractmethod
-    def claim_ownership(self, ownership_list, **kwargs):
-        # type: (Iterable[Dict[str, Any]], Any) -> Iterable[Dict[str, Any]]
+    def claim_ownership(
+        self,
+        ownership_list: Iterable[Dict[str, Any]],
+        **kwargs: Any
+        ) -> Iterable[Dict[str, Any]]:
         """Tries to claim ownership for a list of specified partitions.
 
         :param Iterable[Dict[str,Any]] ownership_list: Iterable of dictionaries containing all the ownerships to claim.
@@ -60,8 +66,7 @@ class CheckpointStore(object):
         """
 
     @abstractmethod
-    def update_checkpoint(self, checkpoint, **kwargs):
-        # type: (Dict[str, Optional[Union[str, int]]], Any) -> None
+    def update_checkpoint(self, checkpoint: Dict[str, Optional[Union[str, int]]], **kwargs: Any) -> None:
         """Updates the checkpoint using the given information for the offset, associated partition and
         consumer group in the chosen storage service.
 
@@ -86,9 +91,12 @@ class CheckpointStore(object):
 
     @abstractmethod
     def list_checkpoints(
-        self, fully_qualified_namespace, eventhub_name, consumer_group, **kwargs
-    ):
-        # type: (str, str, str, Any) -> Iterable[Dict[str, Any]]
+        self,
+        fully_qualified_namespace: str,
+        eventhub_name: str,
+        consumer_group: str,
+        **kwargs: Any
+    ) -> Iterable[Dict[str, Any]]:
         """List the updated checkpoints from the chosen storage service.
 
         :param str fully_qualified_namespace: The fully qualified namespace that the Event Hub belongs to.

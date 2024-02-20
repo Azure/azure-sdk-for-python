@@ -53,13 +53,12 @@ import sphinx_rtd_theme
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.autosummary', 'sphinx.ext.doctest',
-              'sphinx.ext.viewcode', 'sphinx.ext.intersphinx', 'sphinx.ext.napoleon']
+              'sphinx.ext.viewcode', 'sphinx.ext.intersphinx', 'sphinx.ext.napoleon',
+              'myst_parser', 'sphinxcontrib.jquery']
 
 intersphinx_mapping = {
     # Dependencies
-    'python': ('https://docs.python.org/3.8', None),
-    'msrestazure': ('http://msrestazure.readthedocs.io/en/latest/', None),
-    'msrest': ('http://msrest.readthedocs.io/en/latest/', None),
+    'python': ('https://docs.python.org/3.11', None),
     'requests': ('https://requests.kennethreitz.org/en/master/', None),
     'aiohttp': ('https://aiohttp.readthedocs.io/en/stable/', None),
     'trio': ('https://trio.readthedocs.io/en/stable/', None),
@@ -73,10 +72,6 @@ autodoc_member_order = 'groupwise'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
-
-source_parsers = {
-   '.md': 'recommonmark.parser.CommonMarkParser',
-}
 
 # The suffix of source filenames.
 source_suffix = ['.rst', '.md']

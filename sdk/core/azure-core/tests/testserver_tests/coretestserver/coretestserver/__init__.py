@@ -6,6 +6,7 @@
 # -------------------------------------------------------------------------
 
 from flask import Flask, Response
+import os
 from .test_routes import (
     basic_api,
     encoding_api,
@@ -29,9 +30,14 @@ app.register_blueprint(multipart_api, url_prefix="/multipart")
 app.register_blueprint(xml_api, url_prefix="/xml")
 app.register_blueprint(headers_api, url_prefix="/headers")
 
-@app.route('/health', methods=['GET'])
+
+@app.route("/health", methods=["GET"])
 def latin_1_charset_utf8():
     return Response(status=200)
 
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    debugArg = True
+    if os.getenv("TF_BUILD", None):
+        debugArg = False
+    app.run(debug=debugArg)

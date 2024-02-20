@@ -3,3 +3,4 @@ package_name = "azure-mgmt-managementgroups"
 package_pprint_name = "Management Groups"
 package_doc_id = ""
 is_stable = false
+title = "ManagementGroupsAPI"

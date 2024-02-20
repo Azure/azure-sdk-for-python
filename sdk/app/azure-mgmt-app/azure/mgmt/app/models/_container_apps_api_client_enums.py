@@ -7,18 +7,17 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AccessMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class AccessMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Access mode for storage
     """
 
     READ_ONLY = "ReadOnly"
     READ_WRITE = "ReadWrite"
 
-class ActiveRevisionsMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ActiveRevisionsMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ActiveRevisionsMode controls how active revisions are handled for the Container app:
     
     
@@ -32,7 +31,7 @@ class ActiveRevisionsMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     MULTIPLE = "multiple"
     SINGLE = "single"
 
-class AppProtocol(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class AppProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Tells Dapr which protocol your application is using. Valid options are http and grpc. Default
     is http
     """
@@ -40,14 +39,14 @@ class AppProtocol(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     HTTP = "http"
     GRPC = "grpc"
 
-class BindingType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class BindingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Custom Domain binding type.
     """
 
     DISABLED = "Disabled"
     SNI_ENABLED = "SniEnabled"
 
-class CertificateProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class CertificateProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Provisioning state of the certificate.
     """
 
@@ -57,7 +56,7 @@ class CertificateProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, 
     DELETE_FAILED = "DeleteFailed"
     PENDING = "Pending"
 
-class ContainerAppProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ContainerAppProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Provisioning state of the Container App.
     """
 
@@ -66,14 +65,14 @@ class ContainerAppProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str,
     FAILED = "Failed"
     CANCELED = "Canceled"
 
-class CookieExpirationConvention(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class CookieExpirationConvention(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The convention used when determining the session cookie's expiration.
     """
 
     FIXED_TIME = "FixedTime"
     IDENTITY_PROVIDER_DERIVED = "IdentityProviderDerived"
 
-class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of identity that created the resource.
     """
 
@@ -82,7 +81,7 @@ class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class DnsVerificationTestResult(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class DnsVerificationTestResult(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """DNS verification test result.
     """
 
@@ -90,7 +89,7 @@ class DnsVerificationTestResult(with_metaclass(CaseInsensitiveEnumMeta, str, Enu
     FAILED = "Failed"
     SKIPPED = "Skipped"
 
-class EnvironmentProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class EnvironmentProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Provisioning state of the Environment.
     """
 
@@ -105,7 +104,7 @@ class EnvironmentProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, 
     UPGRADE_REQUESTED = "UpgradeRequested"
     UPGRADE_FAILED = "UpgradeFailed"
 
-class ForwardProxyConvention(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ForwardProxyConvention(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The convention used to determine the url of the request made.
     """
 
@@ -113,7 +112,7 @@ class ForwardProxyConvention(with_metaclass(CaseInsensitiveEnumMeta, str, Enum))
     STANDARD = "Standard"
     CUSTOM = "Custom"
 
-class IngressTransportMethod(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class IngressTransportMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Ingress transport protocol
     """
 
@@ -121,7 +120,7 @@ class IngressTransportMethod(with_metaclass(CaseInsensitiveEnumMeta, str, Enum))
     HTTP = "http"
     HTTP2 = "http2"
 
-class ManagedServiceIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of managed service identity (where both SystemAssigned and UserAssigned types are
     allowed).
     """
@@ -131,7 +130,7 @@ class ManagedServiceIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, En
     USER_ASSIGNED = "UserAssigned"
     SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
 
-class RevisionHealthState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class RevisionHealthState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Current health State of the revision
     """
 
@@ -139,7 +138,7 @@ class RevisionHealthState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     UNHEALTHY = "Unhealthy"
     NONE = "None"
 
-class RevisionProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class RevisionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Current provisioning State of the revision
     """
 
@@ -149,7 +148,7 @@ class RevisionProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enu
     DEPROVISIONING = "Deprovisioning"
     DEPROVISIONED = "Deprovisioned"
 
-class SourceControlOperationState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class SourceControlOperationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Current provisioning State of the operation
     """
 
@@ -158,14 +157,14 @@ class SourceControlOperationState(with_metaclass(CaseInsensitiveEnumMeta, str, E
     FAILED = "Failed"
     CANCELED = "Canceled"
 
-class StorageType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class StorageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Storage type for the volume. If not provided, use EmptyDir.
     """
 
     AZURE_FILE = "AzureFile"
     EMPTY_DIR = "EmptyDir"
 
-class Type(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class Type(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of probe.
     """
 
@@ -173,7 +172,7 @@ class Type(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     READINESS = "readiness"
     STARTUP = "startup"
 
-class UnauthenticatedClientActionV2(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class UnauthenticatedClientActionV2(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The action to take when an unauthenticated client attempts to access the app.
     """
 

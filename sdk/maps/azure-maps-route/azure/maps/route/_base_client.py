@@ -7,7 +7,7 @@ from typing import Union, Any
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from ._generated import MapsRouteClient as _MapsRouteClient
-from ._version import VERSION
+from ._version import API_VERSION
 
 # To check the credential is either AzureKeyCredential or TokenCredential
 def _authentication_policy(credential):
@@ -34,7 +34,7 @@ class MapsRouteClientBase:
 
         self._maps_client = _MapsRouteClient(
             credential=credential,  # type: ignore
-            api_version=kwargs.pop("api_version", VERSION),
+            api_version=kwargs.pop("api_version", API_VERSION),
             authentication_policy=kwargs.pop("authentication_policy", _authentication_policy(credential)),
             **kwargs
         )

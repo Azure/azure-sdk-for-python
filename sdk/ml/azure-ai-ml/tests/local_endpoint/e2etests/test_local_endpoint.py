@@ -1,6 +1,8 @@
 import random
 
 import pytest
+import platform
+import sys
 
 from azure.ai.ml import MLClient, load_online_deployment, load_online_endpoint
 from azure.ai.ml.entities import OnlineDeployment, OnlineEndpoint
@@ -42,7 +44,10 @@ def request_file() -> str:
 
 @pytest.mark.e2etest
 @pytest.mark.local_endpoint_local_assets
-@pytest.mark.skip()
+@pytest.mark.skipif(
+    platform.python_implementation() == "PyPy" or sys.platform.startswith("darwin"),
+    reason="Skipping for PyPy and macOS as docker installation is not supported and skipped in dev_requirement.txt",
+)
 def test_local_endpoint_mir_e2e(
     endpoint_mir_yaml: str,
     mir_endpoint_name: str,
@@ -51,7 +56,7 @@ def test_local_endpoint_mir_e2e(
 ) -> None:
     endpoint = load_online_endpoint(endpoint_mir_yaml)
     endpoint.name = mir_endpoint_name
-    client.online_endpoints.begin_create_or_update(endpoint=endpoint, no_wait=False, local=True)
+    client.online_endpoints.begin_create_or_update(endpoint=endpoint, local=True)
 
     get_obj = client.online_endpoints.get(name=mir_endpoint_name, local=True)
     assert get_obj is not None
@@ -135,7 +140,7 @@ def test_local_deployment_mir_e2e_byoc_sklearn(
     # register_env(
     #     name="sklearn-env",
     #     version="1",
-    #     image="mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04",
+    #     image="mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04",
     #     conda_file="tests/test_configs/deployments/model-1/environment/conda.yml",
     #     client=client,
     # )
@@ -218,7 +223,7 @@ def test_local_deployment_mir_e2e_registered_artifacts(
         register_env(
             name="sklearn-env",
             version="1",
-            image="mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04",
+            image="mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04",
             conda_file=conda_env_to_register,
             client=client,
         )

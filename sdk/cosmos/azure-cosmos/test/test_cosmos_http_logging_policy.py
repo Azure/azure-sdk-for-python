@@ -82,7 +82,7 @@ class TestCosmosHttpLogger(unittest.TestCase):
 
     def test_default_http_logging_policy(self):
         # Test if we can log into from creating a database
-        test_db = self.client_default.create_database(id="database_test")
+        self.client_default.create_database(id="database_test")
         assert all(m.levelname == 'INFO' for m in self.mock_handler_default.messages)
         messages_request = self.mock_handler_default.messages[0].message.split("\n")
         messages_response = self.mock_handler_default.messages[1].message.split("\n")
@@ -99,36 +99,36 @@ class TestCosmosHttpLogger(unittest.TestCase):
 
     def test_cosmos_http_logging_policy(self):
         # Test if we can log into from creating a database
-        test_db = self.client_diagnostic.create_database(id="database_test")
+        self.client_diagnostic.create_database(id="database_test")
         assert all(m.levelname == 'INFO' for m in self.mock_handler_diagnostic.messages)
-        messages_request = self.mock_handler_diagnostic.messages[2].message.split("\n")
-        messages_response = self.mock_handler_diagnostic.messages[3].message.split("\n")
+        messages_request = self.mock_handler_diagnostic.messages[3].message.split("\n")
+        messages_response = self.mock_handler_diagnostic.messages[4].message.split("\n")
+        elapsed_time = self.mock_handler_diagnostic.messages[2].message.split("\n")
         assert "/dbs" in messages_request[0]
         assert messages_request[1] == "Request method: 'POST'"
         assert 'Request headers:' in messages_request[2]
         assert messages_request[13] == 'A body is sent with the request'
         assert messages_response[0] == 'Response status: 201'
-        assert messages_response[1] == 'Response status reason: Created'
-        assert "Elapsed Time:" in messages_response[2]
-        assert "Response headers" in messages_response[3]
+        assert "Elapsed time in seconds:" in elapsed_time[0]
+        assert "Response headers" in messages_response[1]
 
         self.mock_handler_diagnostic.reset()
         # now test in case of an error
         try:
-            test_db_error = self.client_diagnostic.create_database(id="database_test")
+            self.client_diagnostic.create_database(id="database_test")
         except:
             pass
         assert all(m.levelname == 'INFO' for m in self.mock_handler_diagnostic.messages)
         messages_request = self.mock_handler_diagnostic.messages[0].message.split("\n")
         messages_response = self.mock_handler_diagnostic.messages[1].message.split("\n")
+        elapsed_time = self.mock_handler_diagnostic.messages[2].message.split("\n")
         assert "/dbs" in messages_request[0]
         assert messages_request[1] == "Request method: 'POST'"
         assert 'Request headers:' in messages_request[2]
         assert messages_request[13] == 'A body is sent with the request'
         assert messages_response[0] == 'Response status: 409'
-        assert messages_response[1] == 'Response status reason: Conflict'
-        assert "Elapsed Time:" in messages_response[2]
-        assert "Response headers" in messages_response[14]
+        assert "Elapsed time in seconds:" in elapsed_time[0]
+        assert "Response headers" in messages_response[1]
 
         # delete database
         self.client_diagnostic.delete_database("database_test")

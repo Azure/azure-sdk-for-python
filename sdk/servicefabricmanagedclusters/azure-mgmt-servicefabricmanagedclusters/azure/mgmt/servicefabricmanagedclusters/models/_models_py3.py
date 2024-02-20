@@ -13,13 +13,14 @@ from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from .. import models as _models
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
@@ -52,14 +53,15 @@ class ScalingMechanism(_serialization.Model):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.kind = None  # type: Optional[str]
+        self.kind: Optional[str] = None
 
 
 class AddRemoveIncrementalNamedPartitionScalingMechanism(ScalingMechanism):
-    """Represents a scaling mechanism for adding or removing named partitions of a stateless service. Partition names are in the format '0','1'...'N-1'.
+    """Represents a scaling mechanism for adding or removing named partitions of a stateless service.
+    Partition names are in the format '0','1'...'N-1'.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -90,7 +92,9 @@ class AddRemoveIncrementalNamedPartitionScalingMechanism(ScalingMechanism):
         "scale_increment": {"key": "scaleIncrement", "type": "int"},
     }
 
-    def __init__(self, *, min_partition_count: int, max_partition_count: int, scale_increment: int, **kwargs):
+    def __init__(
+        self, *, min_partition_count: int, max_partition_count: int, scale_increment: int, **kwargs: Any
+    ) -> None:
         """
         :keyword min_partition_count: Minimum number of named partitions of the service. Required.
         :paramtype min_partition_count: int
@@ -101,14 +105,15 @@ class AddRemoveIncrementalNamedPartitionScalingMechanism(ScalingMechanism):
         :paramtype scale_increment: int
         """
         super().__init__(**kwargs)
-        self.kind = "AddRemoveIncrementalNamedPartition"  # type: str
+        self.kind: str = "AddRemoveIncrementalNamedPartition"
         self.min_partition_count = min_partition_count
         self.max_partition_count = max_partition_count
         self.scale_increment = scale_increment
 
 
 class ApplicationHealthPolicy(_serialization.Model):
-    """Defines a health policy used to evaluate the health of an application or one of its children entities.
+    """Defines a health policy used to evaluate the health of an application or one of its children
+    entities.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -159,8 +164,8 @@ class ApplicationHealthPolicy(_serialization.Model):
         max_percent_unhealthy_deployed_applications: int,
         default_service_type_health_policy: Optional["_models.ServiceTypeHealthPolicy"] = None,
         service_type_health_policy_map: Optional[Dict[str, "_models.ServiceTypeHealthPolicy"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword consider_warning_as_error: Indicates whether warnings are treated with the same
          severity as errors. Required.
@@ -225,7 +230,7 @@ class ProxyResource(_serialization.Model):
         "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: Resource location depends on the parent resource.
         :paramtype location: str
@@ -311,8 +316,8 @@ class ApplicationResource(ProxyResource):  # pylint: disable=too-many-instance-a
         parameters: Optional[Dict[str, str]] = None,
         upgrade_policy: Optional["_models.ApplicationUpgradePolicy"] = None,
         managed_identities: Optional[List["_models.ApplicationUserAssignedIdentity"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location depends on the parent resource.
         :paramtype location: str
@@ -363,7 +368,7 @@ class ApplicationResourceList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.ApplicationResource"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.ApplicationResource"]] = None, **kwargs: Any) -> None:
         """
         :keyword value:
         :paramtype value: list[~azure.mgmt.servicefabricmanagedclusters.models.ApplicationResource]
@@ -413,7 +418,7 @@ class ApplicationTypeResource(ProxyResource):
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: Resource location depends on the parent resource.
         :paramtype location: str
@@ -444,7 +449,7 @@ class ApplicationTypeResourceList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.ApplicationTypeResource"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.ApplicationTypeResource"]] = None, **kwargs: Any) -> None:
         """
         :keyword value:
         :paramtype value: list[~azure.mgmt.servicefabricmanagedclusters.models.ApplicationTypeResource]
@@ -465,7 +470,7 @@ class ApplicationTypeUpdateParameters(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Application type update parameters.
         :paramtype tags: dict[str, str]
@@ -523,8 +528,8 @@ class ApplicationTypeVersionResource(ProxyResource):
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         app_package_url: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location depends on the parent resource.
         :paramtype location: str
@@ -539,7 +544,8 @@ class ApplicationTypeVersionResource(ProxyResource):
 
 
 class ApplicationTypeVersionResourceList(_serialization.Model):
-    """The list of application type version resources for the specified application type name resource.
+    """The list of application type version resources for the specified application type name
+    resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -560,7 +566,9 @@ class ApplicationTypeVersionResourceList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.ApplicationTypeVersionResource"]] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.ApplicationTypeVersionResource"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value:
         :paramtype value:
@@ -572,7 +580,8 @@ class ApplicationTypeVersionResourceList(_serialization.Model):
 
 
 class ApplicationTypeVersionsCleanupPolicy(_serialization.Model):
-    """The policy used to clean up unused versions. When the policy is not specified explicitly, the default unused application versions to keep will be 3.
+    """The policy used to clean up unused versions. When the policy is not specified explicitly, the
+    default unused application versions to keep will be 3.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -589,7 +598,7 @@ class ApplicationTypeVersionsCleanupPolicy(_serialization.Model):
         "max_unused_versions_to_keep": {"key": "maxUnusedVersionsToKeep", "type": "int"},
     }
 
-    def __init__(self, *, max_unused_versions_to_keep: int, **kwargs):
+    def __init__(self, *, max_unused_versions_to_keep: int, **kwargs: Any) -> None:
         """
         :keyword max_unused_versions_to_keep: Number of unused versions per application type to keep.
          Required.
@@ -610,7 +619,7 @@ class ApplicationTypeVersionUpdateParameters(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Application type version update parameters.
         :paramtype tags: dict[str, str]
@@ -630,7 +639,7 @@ class ApplicationUpdateParameters(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Application update parameters.
         :paramtype tags: dict[str, str]
@@ -696,8 +705,8 @@ class ApplicationUpgradePolicy(_serialization.Model):
         upgrade_mode: Optional[Union[str, "_models.RollingUpgradeMode"]] = None,
         upgrade_replica_set_check_timeout: Optional[int] = None,
         recreate_application: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword application_health_policy: Defines a health policy used to evaluate the health of an
          application or one of its children entities.
@@ -760,7 +769,7 @@ class ApplicationUserAssignedIdentity(_serialization.Model):
         "principal_id": {"key": "principalId", "type": "str"},
     }
 
-    def __init__(self, *, name: str, principal_id: str, **kwargs):
+    def __init__(self, *, name: str, principal_id: str, **kwargs: Any) -> None:
         """
         :keyword name: The friendly name of user assigned identity. Required.
         :paramtype name: str
@@ -799,8 +808,8 @@ class AvailableOperationDisplay(_serialization.Model):
         resource: Optional[str] = None,
         operation: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider: The name of the provider.
         :paramtype provider: str
@@ -846,10 +855,10 @@ class ScalingTrigger(_serialization.Model):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.kind = None  # type: Optional[str]
+        self.kind: Optional[str] = None
 
 
 class AveragePartitionLoadScalingTrigger(ScalingTrigger):
@@ -896,8 +905,8 @@ class AveragePartitionLoadScalingTrigger(ScalingTrigger):
         lower_load_threshold: float,
         upper_load_threshold: float,
         scale_interval: str,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword metric_name: The name of the metric for which usage should be tracked. Required.
         :paramtype metric_name: str
@@ -912,7 +921,7 @@ class AveragePartitionLoadScalingTrigger(ScalingTrigger):
         :paramtype scale_interval: str
         """
         super().__init__(**kwargs)
-        self.kind = "AveragePartitionLoadTrigger"  # type: str
+        self.kind: str = "AveragePartitionLoadTrigger"
         self.metric_name = metric_name
         self.lower_load_threshold = lower_load_threshold
         self.upper_load_threshold = upper_load_threshold
@@ -971,8 +980,8 @@ class AverageServiceLoadScalingTrigger(ScalingTrigger):
         upper_load_threshold: float,
         scale_interval: str,
         use_only_primary_load: bool,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword metric_name: The name of the metric for which usage should be tracked. Required.
         :paramtype metric_name: str
@@ -992,7 +1001,7 @@ class AverageServiceLoadScalingTrigger(ScalingTrigger):
         :paramtype use_only_primary_load: bool
         """
         super().__init__(**kwargs)
-        self.kind = "AverageServiceLoadTrigger"  # type: str
+        self.kind: str = "AverageServiceLoadTrigger"
         self.metric_name = metric_name
         self.lower_load_threshold = lower_load_threshold
         self.upper_load_threshold = upper_load_threshold
@@ -1023,8 +1032,8 @@ class AzureActiveDirectory(_serialization.Model):
         tenant_id: Optional[str] = None,
         cluster_application: Optional[str] = None,
         client_application: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tenant_id: Azure active directory tenant id.
         :paramtype tenant_id: str
@@ -1074,8 +1083,8 @@ class ClientCertificate(_serialization.Model):
         thumbprint: Optional[str] = None,
         common_name: Optional[str] = None,
         issuer_thumbprint: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword is_admin: Indicates if the client certificate has admin access to the cluster. Non
          admin clients can perform only read only operations on the cluster. Required.
@@ -1116,7 +1125,7 @@ class EndpointRangeDescription(_serialization.Model):
         "end_port": {"key": "endPort", "type": "int"},
     }
 
-    def __init__(self, *, start_port: int, end_port: int, **kwargs):
+    def __init__(self, *, start_port: int, end_port: int, **kwargs: Any) -> None:
         """
         :keyword start_port: Starting port of a range of ports. Required.
         :paramtype start_port: int
@@ -1139,7 +1148,7 @@ class ErrorModel(_serialization.Model):
         "error": {"key": "error", "type": "ErrorModelError"},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorModelError"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.ErrorModelError"] = None, **kwargs: Any) -> None:
         """
         :keyword error: The error details.
         :paramtype error: ~azure.mgmt.servicefabricmanagedclusters.models.ErrorModelError
@@ -1162,7 +1171,7 @@ class ErrorModelError(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword code: The error code.
         :paramtype code: str
@@ -1209,8 +1218,8 @@ class FrontendConfiguration(_serialization.Model):
         load_balancer_backend_address_pool_id: Optional[str] = None,
         load_balancer_inbound_nat_pool_id: Optional[str] = None,
         application_gateway_backend_address_pool_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword ip_address_type: The IP address type of this frontend configuration. If omitted the
          default value is IPv4. Known values are: "IPv4" and "IPv6".
@@ -1259,7 +1268,7 @@ class IPTag(_serialization.Model):
         "tag": {"key": "tag", "type": "str"},
     }
 
-    def __init__(self, *, ip_tag_type: str, tag: str, **kwargs):
+    def __init__(self, *, ip_tag_type: str, tag: str, **kwargs: Any) -> None:
         """
         :keyword ip_tag_type: The IP tag type. Required.
         :paramtype ip_tag_type: str
@@ -1325,8 +1334,8 @@ class LoadBalancingRule(_serialization.Model):
         probe_port: Optional[int] = None,
         probe_request_path: Optional[str] = None,
         load_distribution: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword frontend_port: The port for the external endpoint. Port numbers for each rule must be
          unique within the Load Balancer. Acceptable values are between 1 and 65534. Required.
@@ -1393,8 +1402,8 @@ class LongRunningOperationResult(_serialization.Model):
         percent_complete: Optional[float] = None,
         status: Optional[str] = None,
         error: Optional["_models.ErrorModelError"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the operation.
         :paramtype name: str
@@ -1419,7 +1428,8 @@ class LongRunningOperationResult(_serialization.Model):
 
 
 class ManagedAzResiliencyStatus(_serialization.Model):
-    """Describes the result of the request to list Managed VM Sizes for Service Fabric Managed Clusters.
+    """Describes the result of the request to list Managed VM Sizes for Service Fabric Managed
+    Clusters.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1439,7 +1449,9 @@ class ManagedAzResiliencyStatus(_serialization.Model):
         "is_cluster_zone_resilient": {"key": "isClusterZoneResilient", "type": "bool"},
     }
 
-    def __init__(self, *, base_resource_status: Optional[List["_models.ResourceAzStatus"]] = None, **kwargs):
+    def __init__(
+        self, *, base_resource_status: Optional[List["_models.ResourceAzStatus"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword base_resource_status: List of Managed VM Sizes for Service Fabric Managed Clusters.
         :paramtype base_resource_status:
@@ -1492,7 +1504,7 @@ class Resource(_serialization.Model):
         "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: Azure resource location. Required.
         :paramtype location: str
@@ -1510,7 +1522,7 @@ class Resource(_serialization.Model):
 
 
 class ManagedCluster(Resource):  # pylint: disable=too-many-instance-attributes
-    """The manged cluster resource.
+    """The managed cluster resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1530,7 +1542,7 @@ class ManagedCluster(Resource):  # pylint: disable=too-many-instance-attributes
     :vartype etag: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
     :vartype system_data: ~azure.mgmt.servicefabricmanagedclusters.models.SystemData
-    :ivar sku: The sku of the managed cluster.
+    :ivar sku: The sku of the managed cluster. Required.
     :vartype sku: ~azure.mgmt.servicefabricmanagedclusters.models.Sku
     :ivar dns_name: The cluster dns name.
     :vartype dns_name: str
@@ -1627,6 +1639,14 @@ class ManagedCluster(Resource):  # pylint: disable=too-many-instance-attributes
     :ivar service_endpoints: Service endpoints for subnets in the cluster.
     :vartype service_endpoints:
      list[~azure.mgmt.servicefabricmanagedclusters.models.ServiceEndpoint]
+    :ivar zonal_update_mode: Indicates the update mode for Cross Az clusters. Known values are:
+     "Standard" and "Fast".
+    :vartype zonal_update_mode: str or
+     ~azure.mgmt.servicefabricmanagedclusters.models.ZonalUpdateMode
+    :ivar use_custom_vnet: For new clusters, this parameter indicates that it uses Bring your own
+     VNet, but the subnet is specified at node type level; and for such clusters, the subnetId
+     property is required for node types.
+    :vartype use_custom_vnet: bool
     """
 
     _validation = {
@@ -1636,6 +1656,7 @@ class ManagedCluster(Resource):  # pylint: disable=too-many-instance-attributes
         "location": {"required": True},
         "etag": {"readonly": True},
         "system_data": {"readonly": True},
+        "sku": {"required": True},
         "fqdn": {"readonly": True},
         "ipv4_address": {"readonly": True},
         "cluster_id": {"readonly": True},
@@ -1688,14 +1709,16 @@ class ManagedCluster(Resource):  # pylint: disable=too-many-instance-attributes
         "enable_service_public_ip": {"key": "properties.enableServicePublicIP", "type": "bool"},
         "auxiliary_subnets": {"key": "properties.auxiliarySubnets", "type": "[Subnet]"},
         "service_endpoints": {"key": "properties.serviceEndpoints", "type": "[ServiceEndpoint]"},
+        "zonal_update_mode": {"key": "properties.zonalUpdateMode", "type": "str"},
+        "use_custom_vnet": {"key": "properties.useCustomVnet", "type": "bool"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         location: str,
+        sku: "_models.Sku",
         tags: Optional[Dict[str, str]] = None,
-        sku: Optional["_models.Sku"] = None,
         dns_name: Optional[str] = None,
         client_connection_port: int = 19000,
         http_gateway_connection_port: int = 19080,
@@ -1720,14 +1743,16 @@ class ManagedCluster(Resource):  # pylint: disable=too-many-instance-attributes
         enable_service_public_ip: Optional[bool] = None,
         auxiliary_subnets: Optional[List["_models.Subnet"]] = None,
         service_endpoints: Optional[List["_models.ServiceEndpoint"]] = None,
-        **kwargs
-    ):
+        zonal_update_mode: Optional[Union[str, "_models.ZonalUpdateMode"]] = None,
+        use_custom_vnet: Optional[bool] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Azure resource location. Required.
         :paramtype location: str
         :keyword tags: Azure resource tags.
         :paramtype tags: dict[str, str]
-        :keyword sku: The sku of the managed cluster.
+        :keyword sku: The sku of the managed cluster. Required.
         :paramtype sku: ~azure.mgmt.servicefabricmanagedclusters.models.Sku
         :keyword dns_name: The cluster dns name.
         :paramtype dns_name: str
@@ -1805,6 +1830,14 @@ class ManagedCluster(Resource):  # pylint: disable=too-many-instance-attributes
         :keyword service_endpoints: Service endpoints for subnets in the cluster.
         :paramtype service_endpoints:
          list[~azure.mgmt.servicefabricmanagedclusters.models.ServiceEndpoint]
+        :keyword zonal_update_mode: Indicates the update mode for Cross Az clusters. Known values are:
+         "Standard" and "Fast".
+        :paramtype zonal_update_mode: str or
+         ~azure.mgmt.servicefabricmanagedclusters.models.ZonalUpdateMode
+        :keyword use_custom_vnet: For new clusters, this parameter indicates that it uses Bring your
+         own VNet, but the subnet is specified at node type level; and for such clusters, the subnetId
+         property is required for node types.
+        :paramtype use_custom_vnet: bool
         """
         super().__init__(location=location, tags=tags, **kwargs)
         self.sku = sku
@@ -1839,6 +1872,8 @@ class ManagedCluster(Resource):  # pylint: disable=too-many-instance-attributes
         self.enable_service_public_ip = enable_service_public_ip
         self.auxiliary_subnets = auxiliary_subnets
         self.service_endpoints = service_endpoints
+        self.zonal_update_mode = zonal_update_mode
+        self.use_custom_vnet = use_custom_vnet
 
 
 class ManagedClusterCodeVersionResult(_serialization.Model):
@@ -1876,8 +1911,8 @@ class ManagedClusterCodeVersionResult(_serialization.Model):
         cluster_code_version: Optional[str] = None,
         support_expiry_utc: Optional[str] = None,
         os_type: Optional[Union[str, "_models.OsType"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: The identification of the result.
         :paramtype id: str
@@ -1916,8 +1951,8 @@ class ManagedClusterListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.ManagedCluster"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.ManagedCluster"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value:
         :paramtype value: list[~azure.mgmt.servicefabricmanagedclusters.models.ManagedCluster]
@@ -1940,7 +1975,7 @@ class ManagedClusterUpdateParameters(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Managed cluster update parameters.
         :paramtype tags: dict[str, str]
@@ -1987,8 +2022,8 @@ class ManagedIdentity(_serialization.Model):
         *,
         type: Optional[Union[str, "_models.ManagedIdentityType"]] = None,
         user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: The type of managed identity for the resource. Known values are: "None",
          "SystemAssigned", "UserAssigned", and "SystemAssigned, UserAssigned".
@@ -2038,7 +2073,7 @@ class ManagedProxyResource(_serialization.Model):
         "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Azure resource tags.
         :paramtype tags: dict[str, str]
@@ -2080,7 +2115,7 @@ class ManagedVMSize(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.properties = None
@@ -2090,7 +2125,8 @@ class ManagedVMSize(_serialization.Model):
 
 
 class ManagedVMSizesResult(_serialization.Model):
-    """Describes the result of the request to list Managed VM Sizes for Service Fabric Managed Clusters.
+    """Describes the result of the request to list Managed VM Sizes for Service Fabric Managed
+    Clusters.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -2109,7 +2145,7 @@ class ManagedVMSizesResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.ManagedVMSize"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.ManagedVMSize"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of Managed VM Sizes for Service Fabric Managed Clusters.
         :paramtype value: list[~azure.mgmt.servicefabricmanagedclusters.models.ManagedVMSize]
@@ -2149,10 +2185,10 @@ class Partition(_serialization.Model):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.partition_scheme = None  # type: Optional[str]
+        self.partition_scheme: Optional[str] = None
 
 
 class NamedPartitionScheme(Partition):
@@ -2178,13 +2214,13 @@ class NamedPartitionScheme(Partition):
         "names": {"key": "names", "type": "[str]"},
     }
 
-    def __init__(self, *, names: List[str], **kwargs):
+    def __init__(self, *, names: List[str], **kwargs: Any) -> None:
         """
         :keyword names: Array for the names of the partitions. Required.
         :paramtype names: list[str]
         """
         super().__init__(**kwargs)
-        self.partition_scheme = "Named"  # type: str
+        self.partition_scheme: str = "Named"
         self.names = names
 
 
@@ -2278,8 +2314,8 @@ class NetworkSecurityRule(_serialization.Model):  # pylint: disable=too-many-ins
         destination_address_prefix: Optional[str] = None,
         source_port_range: Optional[str] = None,
         destination_port_range: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Network security rule name. Required.
         :paramtype name: str
@@ -2341,7 +2377,8 @@ class NetworkSecurityRule(_serialization.Model):  # pylint: disable=too-many-ins
 
 
 class NodeType(ManagedProxyResource):  # pylint: disable=too-many-instance-attributes
-    """Describes a node type in the cluster, each node type represents sub set of nodes in the cluster.
+    """Describes a node type in the cluster, each node type represents sub set of nodes in the
+    cluster.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -2477,6 +2514,24 @@ class NodeType(ManagedProxyResource):  # pylint: disable=too-many-instance-attri
     :ivar vm_image_resource_id: Indicates the resource id of the vm image. This parameter is used
      for custom vm image.
     :vartype vm_image_resource_id: str
+    :ivar subnet_id: Indicates the resource id of the subnet for the node type.
+    :vartype subnet_id: str
+    :ivar vm_setup_actions: Specifies the actions to be performed on the vms before bootstrapping
+     the service fabric runtime.
+    :vartype vm_setup_actions: list[str or
+     ~azure.mgmt.servicefabricmanagedclusters.models.VmSetupAction]
+    :ivar security_type: Specifies the security type of the nodeType. Only TrustedLaunch is
+     currently supported. "TrustedLaunch"
+    :vartype security_type: str or ~azure.mgmt.servicefabricmanagedclusters.models.SecurityType
+    :ivar secure_boot_enabled: Specifies whether secure boot should be enabled on the nodeType. Can
+     only be used with TrustedLaunch SecurityType.
+    :vartype secure_boot_enabled: bool
+    :ivar enable_node_public_ip: Specifies whether each node is allocated its own public IP
+     address. This is only supported on secondary node types with custom Load Balancers.
+    :vartype enable_node_public_ip: bool
+    :ivar vm_shared_gallery_image_id: Indicates the resource id of the vm shared galleries image.
+     This parameter is used for custom vm image.
+    :vartype vm_shared_gallery_image_id: str
     """
 
     _validation = {
@@ -2531,6 +2586,12 @@ class NodeType(ManagedProxyResource):  # pylint: disable=too-many-instance-attri
         "spot_restore_timeout": {"key": "properties.spotRestoreTimeout", "type": "str"},
         "eviction_policy": {"key": "properties.evictionPolicy", "type": "str"},
         "vm_image_resource_id": {"key": "properties.vmImageResourceId", "type": "str"},
+        "subnet_id": {"key": "properties.subnetId", "type": "str"},
+        "vm_setup_actions": {"key": "properties.vmSetupActions", "type": "[str]"},
+        "security_type": {"key": "properties.securityType", "type": "str"},
+        "secure_boot_enabled": {"key": "properties.secureBootEnabled", "type": "bool"},
+        "enable_node_public_ip": {"key": "properties.enableNodePublicIP", "type": "bool"},
+        "vm_shared_gallery_image_id": {"key": "properties.VmSharedGalleryImageId", "type": "str"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -2572,8 +2633,14 @@ class NodeType(ManagedProxyResource):  # pylint: disable=too-many-instance-attri
         spot_restore_timeout: Optional[str] = None,
         eviction_policy: Union[str, "_models.EvictionPolicyType"] = "Delete",
         vm_image_resource_id: Optional[str] = None,
-        **kwargs
-    ):
+        subnet_id: Optional[str] = None,
+        vm_setup_actions: Optional[List[Union[str, "_models.VmSetupAction"]]] = None,
+        security_type: Optional[Union[str, "_models.SecurityType"]] = None,
+        secure_boot_enabled: Optional[bool] = None,
+        enable_node_public_ip: Optional[bool] = None,
+        vm_shared_gallery_image_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Azure resource tags.
         :paramtype tags: dict[str, str]
@@ -2695,6 +2762,24 @@ class NodeType(ManagedProxyResource):  # pylint: disable=too-many-instance-attri
         :keyword vm_image_resource_id: Indicates the resource id of the vm image. This parameter is
          used for custom vm image.
         :paramtype vm_image_resource_id: str
+        :keyword subnet_id: Indicates the resource id of the subnet for the node type.
+        :paramtype subnet_id: str
+        :keyword vm_setup_actions: Specifies the actions to be performed on the vms before
+         bootstrapping the service fabric runtime.
+        :paramtype vm_setup_actions: list[str or
+         ~azure.mgmt.servicefabricmanagedclusters.models.VmSetupAction]
+        :keyword security_type: Specifies the security type of the nodeType. Only TrustedLaunch is
+         currently supported. "TrustedLaunch"
+        :paramtype security_type: str or ~azure.mgmt.servicefabricmanagedclusters.models.SecurityType
+        :keyword secure_boot_enabled: Specifies whether secure boot should be enabled on the nodeType.
+         Can only be used with TrustedLaunch SecurityType.
+        :paramtype secure_boot_enabled: bool
+        :keyword enable_node_public_ip: Specifies whether each node is allocated its own public IP
+         address. This is only supported on secondary node types with custom Load Balancers.
+        :paramtype enable_node_public_ip: bool
+        :keyword vm_shared_gallery_image_id: Indicates the resource id of the vm shared galleries
+         image. This parameter is used for custom vm image.
+        :paramtype vm_shared_gallery_image_id: str
         """
         super().__init__(tags=tags, **kwargs)
         self.sku = sku
@@ -2733,38 +2818,54 @@ class NodeType(ManagedProxyResource):  # pylint: disable=too-many-instance-attri
         self.spot_restore_timeout = spot_restore_timeout
         self.eviction_policy = eviction_policy
         self.vm_image_resource_id = vm_image_resource_id
+        self.subnet_id = subnet_id
+        self.vm_setup_actions = vm_setup_actions
+        self.security_type = security_type
+        self.secure_boot_enabled = secure_boot_enabled
+        self.enable_node_public_ip = enable_node_public_ip
+        self.vm_shared_gallery_image_id = vm_shared_gallery_image_id
 
 
 class NodeTypeActionParameters(_serialization.Model):
-    """Parameters for Node type action.
+    """Parameters for Node type action. If nodes are not specified on the parameters, the operation
+    will be performed in all nodes of the node type one upgrade domain at a time.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar nodes: List of node names from the node type. Required.
+    :ivar nodes: List of node names from the node type.
     :vartype nodes: list[str]
     :ivar force: Force the action to go through.
     :vartype force: bool
+    :ivar update_type: Specifies the way the operation will be performed. Known values are:
+     "Default" and "ByUpgradeDomain".
+    :vartype update_type: str or ~azure.mgmt.servicefabricmanagedclusters.models.UpdateType
     """
-
-    _validation = {
-        "nodes": {"required": True},
-    }
 
     _attribute_map = {
         "nodes": {"key": "nodes", "type": "[str]"},
         "force": {"key": "force", "type": "bool"},
+        "update_type": {"key": "updateType", "type": "str"},
     }
 
-    def __init__(self, *, nodes: List[str], force: Optional[bool] = None, **kwargs):
+    def __init__(
+        self,
+        *,
+        nodes: Optional[List[str]] = None,
+        force: Optional[bool] = None,
+        update_type: Optional[Union[str, "_models.UpdateType"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword nodes: List of node names from the node type. Required.
+        :keyword nodes: List of node names from the node type.
         :paramtype nodes: list[str]
         :keyword force: Force the action to go through.
         :paramtype force: bool
+        :keyword update_type: Specifies the way the operation will be performed. Known values are:
+         "Default" and "ByUpgradeDomain".
+        :paramtype update_type: str or ~azure.mgmt.servicefabricmanagedclusters.models.UpdateType
         """
         super().__init__(**kwargs)
         self.nodes = nodes
         self.force = force
+        self.update_type = update_type
 
 
 class NodeTypeAvailableSku(_serialization.Model):
@@ -2793,7 +2894,7 @@ class NodeTypeAvailableSku(_serialization.Model):
         "capacity": {"key": "capacity", "type": "NodeTypeSkuCapacity"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.resource_type = None
@@ -2815,7 +2916,9 @@ class NodeTypeListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.NodeType"]] = None, next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.NodeType"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of node types.
         :paramtype value: list[~azure.mgmt.servicefabricmanagedclusters.models.NodeType]
@@ -2842,8 +2945,12 @@ class NodeTypeListSkuResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.NodeTypeAvailableSku"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.NodeTypeAvailableSku"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of available node type SKUs.
         :paramtype value: list[~azure.mgmt.servicefabricmanagedclusters.models.NodeTypeAvailableSku]
@@ -2882,7 +2989,7 @@ class NodeTypeSku(_serialization.Model):
         "capacity": {"key": "capacity", "type": "int"},
     }
 
-    def __init__(self, *, capacity: int, name: Optional[str] = None, tier: Optional[str] = None, **kwargs):
+    def __init__(self, *, capacity: int, name: Optional[str] = None, tier: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: The sku name. :code:`<br />`:code:`<br />`Name is internally generated and is
          used in auto-scale scenarios.:code:`<br />` Property does not allow to be changed to other
@@ -2932,7 +3039,7 @@ class NodeTypeSkuCapacity(_serialization.Model):
         "scale_type": {"key": "scaleType", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.minimum = None
@@ -2963,7 +3070,7 @@ class NodeTypeSupportedSku(_serialization.Model):
         "tier": {"key": "tier", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.name = None
@@ -2984,7 +3091,9 @@ class NodeTypeUpdateParameters(_serialization.Model):
         "sku": {"key": "sku", "type": "NodeTypeSku"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, sku: Optional["_models.NodeTypeSku"] = None, **kwargs):
+    def __init__(
+        self, *, tags: Optional[Dict[str, str]] = None, sku: Optional["_models.NodeTypeSku"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Node type update parameters.
         :paramtype tags: dict[str, str]
@@ -3016,7 +3125,7 @@ class OperationListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.OperationResult"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.OperationResult"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of operations supported by the Service Fabric resource provider.
         :paramtype value: list[~azure.mgmt.servicefabricmanagedclusters.models.OperationResult]
@@ -3057,8 +3166,8 @@ class OperationResult(_serialization.Model):
         display: Optional["_models.AvailableOperationDisplay"] = None,
         origin: Optional[str] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the operation.
         :paramtype name: str
@@ -3111,7 +3220,9 @@ class PartitionInstanceCountScaleMechanism(ScalingMechanism):
         "scale_increment": {"key": "scaleIncrement", "type": "int"},
     }
 
-    def __init__(self, *, min_instance_count: int, max_instance_count: int, scale_increment: int, **kwargs):
+    def __init__(
+        self, *, min_instance_count: int, max_instance_count: int, scale_increment: int, **kwargs: Any
+    ) -> None:
         """
         :keyword min_instance_count: Minimum number of instances of the partition. Required.
         :paramtype min_instance_count: int
@@ -3122,7 +3233,7 @@ class PartitionInstanceCountScaleMechanism(ScalingMechanism):
         :paramtype scale_increment: int
         """
         super().__init__(**kwargs)
-        self.kind = "ScalePartitionInstanceCount"  # type: str
+        self.kind: str = "ScalePartitionInstanceCount"
         self.min_instance_count = min_instance_count
         self.max_instance_count = max_instance_count
         self.scale_increment = scale_increment
@@ -3153,7 +3264,7 @@ class ResourceAzStatus(_serialization.Model):
         "is_zone_resilient": {"key": "isZoneResilient", "type": "bool"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.resource_name = None
@@ -3221,8 +3332,8 @@ class RollingUpgradeMonitoringPolicy(_serialization.Model):
         health_check_retry_timeout: str,
         upgrade_timeout: str,
         upgrade_domain_timeout: str,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword failure_action: The compensating action to perform when a Monitored upgrade encounters
          monitoring policy or health policy violations. Invalid indicates the failure action is invalid.
@@ -3282,8 +3393,8 @@ class ScalingPolicy(_serialization.Model):
     }
 
     def __init__(
-        self, *, scaling_mechanism: "_models.ScalingMechanism", scaling_trigger: "_models.ScalingTrigger", **kwargs
-    ):
+        self, *, scaling_mechanism: "_models.ScalingMechanism", scaling_trigger: "_models.ScalingTrigger", **kwargs: Any
+    ) -> None:
         """
         :keyword scaling_mechanism: Specifies the mechanism associated with this scaling policy.
          Required.
@@ -3321,7 +3432,9 @@ class ServiceCorrelation(_serialization.Model):
         "service_name": {"key": "serviceName", "type": "str"},
     }
 
-    def __init__(self, *, scheme: Union[str, "_models.ServiceCorrelationScheme"], service_name: str, **kwargs):
+    def __init__(
+        self, *, scheme: Union[str, "_models.ServiceCorrelationScheme"], service_name: str, **kwargs: Any
+    ) -> None:
         """
         :keyword scheme: The ServiceCorrelationScheme which describes the relationship between this
          service and the service specified via ServiceName. Required. Known values are:
@@ -3357,7 +3470,7 @@ class ServiceEndpoint(_serialization.Model):
         "locations": {"key": "locations", "type": "[str]"},
     }
 
-    def __init__(self, *, service: str, locations: Optional[List[str]] = None, **kwargs):
+    def __init__(self, *, service: str, locations: Optional[List[str]] = None, **kwargs: Any) -> None:
         """
         :keyword service: The type of the endpoint service. Required.
         :paramtype service: str
@@ -3412,8 +3525,8 @@ class ServiceLoadMetric(_serialization.Model):
         primary_default_load: Optional[int] = None,
         secondary_default_load: Optional[int] = None,
         default_load: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the metric. If the service chooses to report load during runtime,
          the load metric name should match the name that is specified in Name exactly. Note that metric
@@ -3476,14 +3589,16 @@ class ServicePlacementPolicy(_serialization.Model):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = None  # type: Optional[str]
+        self.type: Optional[str] = None
 
 
 class ServicePlacementInvalidDomainPolicy(ServicePlacementPolicy):
-    """Describes the policy to be used for placement of a Service Fabric service where a particular fault or upgrade domain should not be used for placement of the instances or replicas of that service.
+    """Describes the policy to be used for placement of a Service Fabric service where a particular
+    fault or upgrade domain should not be used for placement of the instances or replicas of that
+    service.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -3506,13 +3621,13 @@ class ServicePlacementInvalidDomainPolicy(ServicePlacementPolicy):
         "domain_name": {"key": "domainName", "type": "str"},
     }
 
-    def __init__(self, *, domain_name: str, **kwargs):
+    def __init__(self, *, domain_name: str, **kwargs: Any) -> None:
         """
         :keyword domain_name: The name of the domain that should not be used for placement. Required.
         :paramtype domain_name: str
         """
         super().__init__(**kwargs)
-        self.type = "InvalidDomain"  # type: str
+        self.type: str = "InvalidDomain"
         self.domain_name = domain_name
 
 
@@ -3536,10 +3651,10 @@ class ServicePlacementNonPartiallyPlaceServicePolicy(ServicePlacementPolicy):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = "NonPartiallyPlaceService"  # type: str
+        self.type: str = "NonPartiallyPlaceService"
 
 
 class ServicePlacementPreferPrimaryDomainPolicy(ServicePlacementPolicy):
@@ -3547,46 +3662,13 @@ class ServicePlacementPreferPrimaryDomainPolicy(ServicePlacementPolicy):
     Primary replicas should optimally be placed in a particular domain.
 
     This placement policy is usually used with fault domains in scenarios where the Service Fabric
-    cluster is geographically distributed in order to indicate that a service's primary replica should
-    be located in a particular fault domain, which in geo-distributed scenarios usually aligns with regional
-    or datacenter boundaries. Note that since this is an optimization it is possible that the Primary replica
+    cluster is geographically distributed in order to indicate that a service's primary replica
+    should
+    be located in a particular fault domain, which in geo-distributed scenarios usually aligns with
+    regional
+    or datacenter boundaries. Note that since this is an optimization it is possible that the
+    Primary replica
     may not end up located in this domain due to failures, capacity limits, or other constraints.
-
-        All required parameters must be populated in order to send to Azure.
-
-        :ivar type: The type of placement policy for a service fabric service. Following are the
-         possible values. Required. Known values are: "InvalidDomain", "RequiredDomain",
-         "PreferredPrimaryDomain", "RequiredDomainDistribution", and "NonPartiallyPlaceService".
-        :vartype type: str or
-         ~azure.mgmt.servicefabricmanagedclusters.models.ServicePlacementPolicyType
-        :ivar domain_name: The name of the domain that should used for placement as per this policy.
-         Required.
-        :vartype domain_name: str
-    """
-
-    _validation = {
-        "type": {"required": True},
-        "domain_name": {"required": True},
-    }
-
-    _attribute_map = {
-        "type": {"key": "type", "type": "str"},
-        "domain_name": {"key": "domainName", "type": "str"},
-    }
-
-    def __init__(self, *, domain_name: str, **kwargs):
-        """
-        :keyword domain_name: The name of the domain that should used for placement as per this policy.
-         Required.
-        :paramtype domain_name: str
-        """
-        super().__init__(**kwargs)
-        self.type = "PreferredPrimaryDomain"  # type: str
-        self.domain_name = domain_name
-
-
-class ServicePlacementRequiredDomainPolicy(ServicePlacementPolicy):
-    """Describes the policy to be used for placement of a Service Fabric service where the instances or replicas of that service must be placed in a particular domain.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -3610,38 +3692,31 @@ class ServicePlacementRequiredDomainPolicy(ServicePlacementPolicy):
         "domain_name": {"key": "domainName", "type": "str"},
     }
 
-    def __init__(self, *, domain_name: str, **kwargs):
+    def __init__(self, *, domain_name: str, **kwargs: Any) -> None:
         """
         :keyword domain_name: The name of the domain that should used for placement as per this policy.
          Required.
         :paramtype domain_name: str
         """
         super().__init__(**kwargs)
-        self.type = "RequiredDomain"  # type: str
+        self.type: str = "PreferredPrimaryDomain"
         self.domain_name = domain_name
 
 
-class ServicePlacementRequireDomainDistributionPolicy(ServicePlacementPolicy):
-    """Describes the policy to be used for placement of a Service Fabric service where two replicas
-    from the same partition should never be placed in the same fault or upgrade domain.
+class ServicePlacementRequiredDomainPolicy(ServicePlacementPolicy):
+    """Describes the policy to be used for placement of a Service Fabric service where the instances
+    or replicas of that service must be placed in a particular domain.
 
-    While this is not common it can expose the service to an increased risk of concurrent failures
-    due to unplanned outages or other cases of subsequent/concurrent failures. As an example, consider
-    a case where replicas are deployed across different data center, with one replica per location.
-    In the event that one of the datacenters goes offline, normally the replica that was placed in that
-    datacenter will be packed into one of the remaining datacenters. If this is not desirable then this
-    policy should be set.
+    All required parameters must be populated in order to send to Azure.
 
-        All required parameters must be populated in order to send to Azure.
-
-        :ivar type: The type of placement policy for a service fabric service. Following are the
-         possible values. Required. Known values are: "InvalidDomain", "RequiredDomain",
-         "PreferredPrimaryDomain", "RequiredDomainDistribution", and "NonPartiallyPlaceService".
-        :vartype type: str or
-         ~azure.mgmt.servicefabricmanagedclusters.models.ServicePlacementPolicyType
-        :ivar domain_name: The name of the domain that should used for placement as per this policy.
-         Required.
-        :vartype domain_name: str
+    :ivar type: The type of placement policy for a service fabric service. Following are the
+     possible values. Required. Known values are: "InvalidDomain", "RequiredDomain",
+     "PreferredPrimaryDomain", "RequiredDomainDistribution", and "NonPartiallyPlaceService".
+    :vartype type: str or
+     ~azure.mgmt.servicefabricmanagedclusters.models.ServicePlacementPolicyType
+    :ivar domain_name: The name of the domain that should used for placement as per this policy.
+     Required.
+    :vartype domain_name: str
     """
 
     _validation = {
@@ -3654,14 +3729,61 @@ class ServicePlacementRequireDomainDistributionPolicy(ServicePlacementPolicy):
         "domain_name": {"key": "domainName", "type": "str"},
     }
 
-    def __init__(self, *, domain_name: str, **kwargs):
+    def __init__(self, *, domain_name: str, **kwargs: Any) -> None:
         """
         :keyword domain_name: The name of the domain that should used for placement as per this policy.
          Required.
         :paramtype domain_name: str
         """
         super().__init__(**kwargs)
-        self.type = "RequiredDomainDistribution"  # type: str
+        self.type: str = "RequiredDomain"
+        self.domain_name = domain_name
+
+
+class ServicePlacementRequireDomainDistributionPolicy(ServicePlacementPolicy):
+    """Describes the policy to be used for placement of a Service Fabric service where two replicas
+    from the same partition should never be placed in the same fault or upgrade domain.
+
+    While this is not common it can expose the service to an increased risk of concurrent failures
+    due to unplanned outages or other cases of subsequent/concurrent failures. As an example,
+    consider
+    a case where replicas are deployed across different data center, with one replica per location.
+    In the event that one of the datacenters goes offline, normally the replica that was placed in
+    that
+    datacenter will be packed into one of the remaining datacenters. If this is not desirable then
+    this
+    policy should be set.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar type: The type of placement policy for a service fabric service. Following are the
+     possible values. Required. Known values are: "InvalidDomain", "RequiredDomain",
+     "PreferredPrimaryDomain", "RequiredDomainDistribution", and "NonPartiallyPlaceService".
+    :vartype type: str or
+     ~azure.mgmt.servicefabricmanagedclusters.models.ServicePlacementPolicyType
+    :ivar domain_name: The name of the domain that should used for placement as per this policy.
+     Required.
+    :vartype domain_name: str
+    """
+
+    _validation = {
+        "type": {"required": True},
+        "domain_name": {"required": True},
+    }
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+        "domain_name": {"key": "domainName", "type": "str"},
+    }
+
+    def __init__(self, *, domain_name: str, **kwargs: Any) -> None:
+        """
+        :keyword domain_name: The name of the domain that should used for placement as per this policy.
+         Required.
+        :paramtype domain_name: str
+        """
+        super().__init__(**kwargs)
+        self.type: str = "RequiredDomainDistribution"
         self.domain_name = domain_name
 
 
@@ -3709,8 +3831,8 @@ class ServiceResource(ProxyResource):
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         properties: Optional["_models.ServiceResourceProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location depends on the parent resource.
         :paramtype location: str
@@ -3744,7 +3866,7 @@ class ServiceResourceList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.ServiceResource"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.ServiceResource"]] = None, **kwargs: Any) -> None:
         """
         :keyword value:
         :paramtype value: list[~azure.mgmt.servicefabricmanagedclusters.models.ServiceResource]
@@ -3799,8 +3921,8 @@ class ServiceResourcePropertiesBase(_serialization.Model):
         service_placement_policies: Optional[List["_models.ServicePlacementPolicy"]] = None,
         default_move_cost: Optional[Union[str, "_models.MoveCost"]] = None,
         scaling_policies: Optional[List["_models.ScalingPolicy"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword placement_constraints: The placement constraints as a string. Placement constraints
          are boolean expressions on node properties and allow for restricting a service to particular
@@ -3881,6 +4003,14 @@ class ServiceResourceProperties(ServiceResourcePropertiesBase):  # pylint: disab
      are: "SharedProcess" and "ExclusiveProcess".
     :vartype service_package_activation_mode: str or
      ~azure.mgmt.servicefabricmanagedclusters.models.ServicePackageActivationMode
+    :ivar service_dns_name: Dns name used for the service. If this is specified, then the DNS name
+     can be used to return the IP addresses of service endpoints for application layer protocols
+     (e.g., HTTP).
+     When updating serviceDnsName, old name may be temporarily resolvable. However, rely on new
+     name.
+     When removing serviceDnsName, removed name may temporarily be resolvable. Do not rely on the
+     name being unresolvable.
+    :vartype service_dns_name: str
     """
 
     _validation = {
@@ -3902,6 +4032,7 @@ class ServiceResourceProperties(ServiceResourcePropertiesBase):  # pylint: disab
         "service_type_name": {"key": "serviceTypeName", "type": "str"},
         "partition_description": {"key": "partitionDescription", "type": "Partition"},
         "service_package_activation_mode": {"key": "servicePackageActivationMode", "type": "str"},
+        "service_dns_name": {"key": "serviceDnsName", "type": "str"},
     }
 
     _subtype_map = {
@@ -3920,8 +4051,9 @@ class ServiceResourceProperties(ServiceResourcePropertiesBase):  # pylint: disab
         default_move_cost: Optional[Union[str, "_models.MoveCost"]] = None,
         scaling_policies: Optional[List["_models.ScalingPolicy"]] = None,
         service_package_activation_mode: Optional[Union[str, "_models.ServicePackageActivationMode"]] = None,
-        **kwargs
-    ):
+        service_dns_name: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword placement_constraints: The placement constraints as a string. Placement constraints
          are boolean expressions on node properties and allow for restricting a service to particular
@@ -3954,6 +4086,14 @@ class ServiceResourceProperties(ServiceResourcePropertiesBase):  # pylint: disab
          values are: "SharedProcess" and "ExclusiveProcess".
         :paramtype service_package_activation_mode: str or
          ~azure.mgmt.servicefabricmanagedclusters.models.ServicePackageActivationMode
+        :keyword service_dns_name: Dns name used for the service. If this is specified, then the DNS
+         name can be used to return the IP addresses of service endpoints for application layer
+         protocols (e.g., HTTP).
+         When updating serviceDnsName, old name may be temporarily resolvable. However, rely on new
+         name.
+         When removing serviceDnsName, removed name may temporarily be resolvable. Do not rely on the
+         name being unresolvable.
+        :paramtype service_dns_name: str
         """
         super().__init__(
             placement_constraints=placement_constraints,
@@ -3965,14 +4105,16 @@ class ServiceResourceProperties(ServiceResourcePropertiesBase):  # pylint: disab
             **kwargs
         )
         self.provisioning_state = None
-        self.service_kind = None  # type: Optional[str]
+        self.service_kind: Optional[str] = None
         self.service_type_name = service_type_name
         self.partition_description = partition_description
         self.service_package_activation_mode = service_package_activation_mode
+        self.service_dns_name = service_dns_name
 
 
 class ServiceTypeHealthPolicy(_serialization.Model):
-    """Represents the health policy used to evaluate the health of services belonging to a service type.
+    """Represents the health policy used to evaluate the health of services belonging to a service
+    type.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -4034,8 +4176,8 @@ class ServiceTypeHealthPolicy(_serialization.Model):
         max_percent_unhealthy_services: int,
         max_percent_unhealthy_partitions_per_service: int,
         max_percent_unhealthy_replicas_per_partition: int,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword max_percent_unhealthy_services: The maximum allowed percentage of unhealthy services.
 
@@ -4087,7 +4229,7 @@ class ServiceUpdateParameters(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Service update parameters.
         :paramtype tags: dict[str, str]
@@ -4117,7 +4259,7 @@ class SettingsParameterDescription(_serialization.Model):
         "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(self, *, name: str, value: str, **kwargs):
+    def __init__(self, *, name: str, value: str, **kwargs: Any) -> None:
         """
         :keyword name: The parameter name of fabric setting. Required.
         :paramtype name: str
@@ -4151,7 +4293,7 @@ class SettingsSectionDescription(_serialization.Model):
         "parameters": {"key": "parameters", "type": "[SettingsParameterDescription]"},
     }
 
-    def __init__(self, *, name: str, parameters: List["_models.SettingsParameterDescription"], **kwargs):
+    def __init__(self, *, name: str, parameters: List["_models.SettingsParameterDescription"], **kwargs: Any) -> None:
         """
         :keyword name: The section name of the fabric settings. Required.
         :paramtype name: str
@@ -4183,10 +4325,10 @@ class SingletonPartitionScheme(Partition):
         "partition_scheme": {"key": "partitionScheme", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.partition_scheme = "Singleton"  # type: str
+        self.partition_scheme: str = "Singleton"
 
 
 class Sku(_serialization.Model):
@@ -4206,7 +4348,7 @@ class Sku(_serialization.Model):
         "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(self, *, name: Union[str, "_models.SkuName"], **kwargs):
+    def __init__(self, *, name: Union[str, "_models.SkuName"], **kwargs: Any) -> None:
         """
         :keyword name: Sku Name. Required. Known values are: "Basic" and "Standard".
         :paramtype name: str or ~azure.mgmt.servicefabricmanagedclusters.models.SkuName
@@ -4258,6 +4400,14 @@ class StatefulServiceProperties(ServiceResourceProperties):  # pylint: disable=t
      are: "SharedProcess" and "ExclusiveProcess".
     :vartype service_package_activation_mode: str or
      ~azure.mgmt.servicefabricmanagedclusters.models.ServicePackageActivationMode
+    :ivar service_dns_name: Dns name used for the service. If this is specified, then the DNS name
+     can be used to return the IP addresses of service endpoints for application layer protocols
+     (e.g., HTTP).
+     When updating serviceDnsName, old name may be temporarily resolvable. However, rely on new
+     name.
+     When removing serviceDnsName, removed name may temporarily be resolvable. Do not rely on the
+     name being unresolvable.
+    :vartype service_dns_name: str
     :ivar has_persisted_state: A flag indicating whether this is a persistent service which stores
      states on the local disk. If it is then the value of this property is true, if not it is false.
     :vartype has_persisted_state: bool
@@ -4300,6 +4450,7 @@ class StatefulServiceProperties(ServiceResourceProperties):  # pylint: disable=t
         "service_type_name": {"key": "serviceTypeName", "type": "str"},
         "partition_description": {"key": "partitionDescription", "type": "Partition"},
         "service_package_activation_mode": {"key": "servicePackageActivationMode", "type": "str"},
+        "service_dns_name": {"key": "serviceDnsName", "type": "str"},
         "has_persisted_state": {"key": "hasPersistedState", "type": "bool"},
         "target_replica_set_size": {"key": "targetReplicaSetSize", "type": "int"},
         "min_replica_set_size": {"key": "minReplicaSetSize", "type": "int"},
@@ -4321,6 +4472,7 @@ class StatefulServiceProperties(ServiceResourceProperties):  # pylint: disable=t
         default_move_cost: Optional[Union[str, "_models.MoveCost"]] = None,
         scaling_policies: Optional[List["_models.ScalingPolicy"]] = None,
         service_package_activation_mode: Optional[Union[str, "_models.ServicePackageActivationMode"]] = None,
+        service_dns_name: Optional[str] = None,
         has_persisted_state: Optional[bool] = None,
         target_replica_set_size: Optional[int] = None,
         min_replica_set_size: Optional[int] = None,
@@ -4328,8 +4480,8 @@ class StatefulServiceProperties(ServiceResourceProperties):  # pylint: disable=t
         quorum_loss_wait_duration: Optional[str] = None,
         stand_by_replica_keep_duration: Optional[str] = None,
         service_placement_time_limit: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword placement_constraints: The placement constraints as a string. Placement constraints
          are boolean expressions on node properties and allow for restricting a service to particular
@@ -4362,6 +4514,14 @@ class StatefulServiceProperties(ServiceResourceProperties):  # pylint: disable=t
          values are: "SharedProcess" and "ExclusiveProcess".
         :paramtype service_package_activation_mode: str or
          ~azure.mgmt.servicefabricmanagedclusters.models.ServicePackageActivationMode
+        :keyword service_dns_name: Dns name used for the service. If this is specified, then the DNS
+         name can be used to return the IP addresses of service endpoints for application layer
+         protocols (e.g., HTTP).
+         When updating serviceDnsName, old name may be temporarily resolvable. However, rely on new
+         name.
+         When removing serviceDnsName, removed name may temporarily be resolvable. Do not rely on the
+         name being unresolvable.
+        :paramtype service_dns_name: str
         :keyword has_persisted_state: A flag indicating whether this is a persistent service which
          stores states on the local disk. If it is then the value of this property is true, if not it is
          false.
@@ -4393,9 +4553,10 @@ class StatefulServiceProperties(ServiceResourceProperties):  # pylint: disable=t
             service_type_name=service_type_name,
             partition_description=partition_description,
             service_package_activation_mode=service_package_activation_mode,
+            service_dns_name=service_dns_name,
             **kwargs
         )
-        self.service_kind = "Stateful"  # type: str
+        self.service_kind: str = "Stateful"
         self.has_persisted_state = has_persisted_state
         self.target_replica_set_size = target_replica_set_size
         self.min_replica_set_size = min_replica_set_size
@@ -4448,6 +4609,14 @@ class StatelessServiceProperties(ServiceResourceProperties):  # pylint: disable=
      are: "SharedProcess" and "ExclusiveProcess".
     :vartype service_package_activation_mode: str or
      ~azure.mgmt.servicefabricmanagedclusters.models.ServicePackageActivationMode
+    :ivar service_dns_name: Dns name used for the service. If this is specified, then the DNS name
+     can be used to return the IP addresses of service endpoints for application layer protocols
+     (e.g., HTTP).
+     When updating serviceDnsName, old name may be temporarily resolvable. However, rely on new
+     name.
+     When removing serviceDnsName, removed name may temporarily be resolvable. Do not rely on the
+     name being unresolvable.
+    :vartype service_dns_name: str
     :ivar instance_count: The instance count. Required.
     :vartype instance_count: int
     :ivar min_instance_count: MinInstanceCount is the minimum number of instances that must be up
@@ -4486,6 +4655,7 @@ class StatelessServiceProperties(ServiceResourceProperties):  # pylint: disable=
         "service_type_name": {"key": "serviceTypeName", "type": "str"},
         "partition_description": {"key": "partitionDescription", "type": "Partition"},
         "service_package_activation_mode": {"key": "servicePackageActivationMode", "type": "str"},
+        "service_dns_name": {"key": "serviceDnsName", "type": "str"},
         "instance_count": {"key": "instanceCount", "type": "int"},
         "min_instance_count": {"key": "minInstanceCount", "type": "int"},
         "min_instance_percentage": {"key": "minInstancePercentage", "type": "int"},
@@ -4504,10 +4674,11 @@ class StatelessServiceProperties(ServiceResourceProperties):  # pylint: disable=
         default_move_cost: Optional[Union[str, "_models.MoveCost"]] = None,
         scaling_policies: Optional[List["_models.ScalingPolicy"]] = None,
         service_package_activation_mode: Optional[Union[str, "_models.ServicePackageActivationMode"]] = None,
+        service_dns_name: Optional[str] = None,
         min_instance_count: Optional[int] = None,
         min_instance_percentage: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword placement_constraints: The placement constraints as a string. Placement constraints
          are boolean expressions on node properties and allow for restricting a service to particular
@@ -4540,6 +4711,14 @@ class StatelessServiceProperties(ServiceResourceProperties):  # pylint: disable=
          values are: "SharedProcess" and "ExclusiveProcess".
         :paramtype service_package_activation_mode: str or
          ~azure.mgmt.servicefabricmanagedclusters.models.ServicePackageActivationMode
+        :keyword service_dns_name: Dns name used for the service. If this is specified, then the DNS
+         name can be used to return the IP addresses of service endpoints for application layer
+         protocols (e.g., HTTP).
+         When updating serviceDnsName, old name may be temporarily resolvable. However, rely on new
+         name.
+         When removing serviceDnsName, removed name may temporarily be resolvable. Do not rely on the
+         name being unresolvable.
+        :paramtype service_dns_name: str
         :keyword instance_count: The instance count. Required.
         :paramtype instance_count: int
         :keyword min_instance_count: MinInstanceCount is the minimum number of instances that must be
@@ -4567,9 +4746,10 @@ class StatelessServiceProperties(ServiceResourceProperties):  # pylint: disable=
             service_type_name=service_type_name,
             partition_description=partition_description,
             service_package_activation_mode=service_package_activation_mode,
+            service_dns_name=service_dns_name,
             **kwargs
         )
-        self.service_kind = "Stateless"  # type: str
+        self.service_kind: str = "Stateless"
         self.instance_count = instance_count
         self.min_instance_count = min_instance_count
         self.min_instance_percentage = min_instance_percentage
@@ -4617,8 +4797,8 @@ class Subnet(_serialization.Model):
         private_endpoint_network_policies: Optional[Union[str, "_models.PrivateEndpointNetworkPolicies"]] = None,
         private_link_service_network_policies: Optional[Union[str, "_models.PrivateLinkServiceNetworkPolicies"]] = None,
         network_security_group_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Subnet name. Required.
         :paramtype name: str
@@ -4655,7 +4835,7 @@ class SubResource(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: Azure resource identifier.
         :paramtype id: str
@@ -4699,8 +4879,8 @@ class SystemData(_serialization.Model):
         last_modified_by: Optional[str] = None,
         last_modified_by_type: Optional[str] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
@@ -4725,7 +4905,8 @@ class SystemData(_serialization.Model):
 
 
 class UniformInt64RangePartitionScheme(Partition):
-    """Describes a partitioning scheme where an integer range is allocated evenly across a number of partitions.
+    """Describes a partitioning scheme where an integer range is allocated evenly across a number of
+    partitions.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -4757,7 +4938,7 @@ class UniformInt64RangePartitionScheme(Partition):
         "high_key": {"key": "highKey", "type": "int"},
     }
 
-    def __init__(self, *, count: int, low_key: int, high_key: int, **kwargs):
+    def __init__(self, *, count: int, low_key: int, high_key: int, **kwargs: Any) -> None:
         """
         :keyword count: The number of partitions. Required.
         :paramtype count: int
@@ -4769,7 +4950,7 @@ class UniformInt64RangePartitionScheme(Partition):
         :paramtype high_key: int
         """
         super().__init__(**kwargs)
-        self.partition_scheme = "UniformInt64Range"  # type: str
+        self.partition_scheme: str = "UniformInt64Range"
         self.count = count
         self.low_key = low_key
         self.high_key = high_key
@@ -4796,7 +4977,7 @@ class UserAssignedIdentity(_serialization.Model):
         "client_id": {"key": "clientId", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.principal_id = None
@@ -4804,7 +4985,8 @@ class UserAssignedIdentity(_serialization.Model):
 
 
 class VaultCertificate(_serialization.Model):
-    """Describes a single certificate reference in a Key Vault, and where the certificate should reside on the VM.
+    """Describes a single certificate reference in a Key Vault, and where the certificate should
+    reside on the VM.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -4836,7 +5018,7 @@ class VaultCertificate(_serialization.Model):
         "certificate_store": {"key": "certificateStore", "type": "str"},
     }
 
-    def __init__(self, *, certificate_url: str, certificate_store: str, **kwargs):
+    def __init__(self, *, certificate_url: str, certificate_store: str, **kwargs: Any) -> None:
         """
         :keyword certificate_url: This is the URL of a certificate that has been uploaded to Key Vault
          as a secret. For adding a secret to the Key Vault, see `Add a key or secret to the key vault
@@ -4885,8 +5067,12 @@ class VaultSecretGroup(_serialization.Model):
     }
 
     def __init__(
-        self, *, source_vault: "_models.SubResource", vault_certificates: List["_models.VaultCertificate"], **kwargs
-    ):
+        self,
+        *,
+        source_vault: "_models.SubResource",
+        vault_certificates: List["_models.VaultCertificate"],
+        **kwargs: Any
+    ) -> None:
         """
         :keyword source_vault: The relative URL of the Key Vault containing all of the certificates in
          VaultCertificates. Required.
@@ -4914,7 +5100,7 @@ class VmManagedIdentity(_serialization.Model):
         "user_assigned_identities": {"key": "userAssignedIdentities", "type": "[str]"},
     }
 
-    def __init__(self, *, user_assigned_identities: Optional[List[str]] = None, **kwargs):
+    def __init__(self, *, user_assigned_identities: Optional[List[str]] = None, **kwargs: Any) -> None:
         """
         :keyword user_assigned_identities: The list of user identities associated with the virtual
          machine scale set under the node type. Each entry will be an ARM resource ids in the form:
@@ -4942,7 +5128,7 @@ class VMSize(_serialization.Model):
         "size": {"key": "size", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.size = None
@@ -4988,8 +5174,8 @@ class VmssDataDisk(_serialization.Model):
         disk_size_gb: int,
         disk_type: Union[str, "_models.DiskType"] = "StandardSSD_LRS",
         disk_letter: str,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword lun: Specifies the logical unit number of the data disk. This value is used to
          identify data disks within the VM and therefore must be unique for each data disk attached to a
@@ -5084,8 +5270,8 @@ class VMSSExtension(_serialization.Model):  # pylint: disable=too-many-instance-
         force_update_tag: Optional[str] = None,
         provision_after_extensions: Optional[List[str]] = None,
         enable_automatic_upgrade: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the extension. Required.
         :paramtype name: str

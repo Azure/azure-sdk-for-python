@@ -7,20 +7,27 @@ import os
 
 from azure.core.pipeline.transport import HttpRequest
 
+from ._AzureMLSparkOnBehalfOfCredential import _AzureMLSparkOnBehalfOfCredential
 from .._internal.managed_identity_base import ManagedIdentityBase
 from .._internal.managed_identity_client import ManagedIdentityClient
 
 
 class AzureMLOnBehalfOfCredential(object):
+    # pylint: disable=line-too-long
     """Authenticates a user via the on-behalf-of flow.
 
     This credential can only be used on `Azure Machine Learning Compute.
-    <https://docs.microsoft.com/en-us/azure/machine-learning/concept-compute-target#azure-machine-learning-compute-managed>`_
-    during job execution when user request to run job during its identity.
+    <https://docs.microsoft.com/azure/machine-learning/concept-compute-target#azure-machine-learning-compute-managed>`_ during job execution when user request to
+    run job during its identity.
     """
+    # pylint: enable=line-too-long
 
     def __init__(self, **kwargs):
-        self._credential = _AzureMLOnBehalfOfCredential(**kwargs)
+        provider_type = os.environ.get("AZUREML_DATAPREP_TOKEN_PROVIDER")
+        if provider_type == "sparkobo":  # cspell:disable-line
+            self._credential = _AzureMLSparkOnBehalfOfCredential(**kwargs)
+        else:
+            self._credential = _AzureMLOnBehalfOfCredential(**kwargs)
 
     def get_token(self, *scopes, **kwargs):
         """Request an access token for `scopes`.

@@ -15,7 +15,6 @@ import unittest
 
 import pytest
 import requests
-import six
 import os
 
 import azure.mgmt.batch
@@ -44,8 +43,8 @@ SECRET_FIELDS = ["primary", "secondary"]
 
 def get_redacted_key(key):
     redacted_value = "redacted"
-    digest = hashlib.sha256(six.ensure_binary(key)).digest()
-    redacted_value += six.ensure_str(binascii.hexlify(digest))[:6]
+    digest = hashlib.sha256(key.encode("utf-8")).digest()
+    redacted_value += (binascii.hexlify(digest).encode("utf-8"))[:6]
     return redacted_value
 
 
@@ -205,7 +204,7 @@ class TestMgmtBatch(AzureMgmtRecordedTestCase):
 
     @pytest.mark.skipif(os.getenv('AZURE_TEST_RUN_LIVE') not in ('yes', 'true'), reason='only run live test')
     @ResourceGroupPreparer(location=AZURE_LOCATION)
-    @StorageAccountPreparer(name_prefix='batch', location=AZURE_LOCATION)
+    @StorageAccountPreparer(name_prefix='batchx', location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_mgmt_batch_applications(self, resource_group, location, storage_account, storage_account_key):
         # Test Create Account with Auto-Storage 

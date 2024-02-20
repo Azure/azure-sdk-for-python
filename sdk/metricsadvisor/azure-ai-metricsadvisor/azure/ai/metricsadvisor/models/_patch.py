@@ -239,6 +239,18 @@ class DataFeedSchema:
 class DataFeed(generated_models.DataFeed):  # pylint:disable=too-many-instance-attributes
     """Represents a data feed.
 
+    :param str name: Data feed name.
+    :param schema: Data feed schema
+    :type schema: ~azure.ai.metricsadvisor.models.DataFeedSchema
+    :param source: Data feed source.
+    :type source: Union[AzureApplicationInsightsDataFeedSource, AzureBlobDataFeedSource, AzureCosmosDbDataFeedSource,
+        AzureDataExplorerDataFeedSource, AzureDataLakeStorageGen2DataFeedSource, AzureTableDataFeedSource,
+        AzureEventHubsDataFeedSource, InfluxDbDataFeedSource, MySqlDataFeedSource, PostgreSqlDataFeedSource,
+        SqlServerDataFeedSource, MongoDbDataFeedSource, AzureLogAnalyticsDataFeedSource]
+    :param granularity: Granularity of the time series.
+    :type granularity: ~azure.ai.metricsadvisor.models.DataFeedGranularity
+    :param ingestion_settings: Data feed ingestion settings.
+    :type ingestion_settings: ~azure.ai.metricsadvisor.models.DataFeedIngestionSettings
     :ivar ~datetime.datetime created_time: Data feed created time.
     :ivar granularity: Granularity of the time series.
     :vartype granularity: ~azure.ai.metricsadvisor.models.DataFeedGranularity
@@ -769,6 +781,11 @@ class AnomalyDetectionConfiguration(generated_models.AnomalyDetectionConfigurati
 class DataFeedSource(dict):
     """DataFeedSource base class
 
+    :param data_source_type: Required. data source type.Constant filled by server.  Possible values
+     include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
+     "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
+     "MongoDB", "MySql", "PostgreSql", "SqlServer".
+    :type data_source_type: str or ~azure.ai.metricsadvisor.models.DatasourceType
     :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
      include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
      "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
@@ -1284,9 +1301,9 @@ class AzureLogAnalyticsDataFeedSource(generated_models.AzureLogAnalyticsDataFeed
         client_id = None
         client_secret = None
         if authentication_type == "Basic":
-            tenant_id = kwargs.get("tenant_id", None)
-            client_id = kwargs.get("client_id", None)
-            client_secret = kwargs.get("client_secret", None)
+            tenant_id = kwargs.pop("tenant_id", None)
+            client_id = kwargs.pop("client_id", None)
+            client_secret = kwargs.pop("client_secret", None)
         super().__init__(
             tenant_id=tenant_id,
             client_id=client_id,
@@ -1933,8 +1950,8 @@ class IncidentRootCause(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param dimension_key: dimension specified for series group.
-    :type dimension_key: dict[str, str]
+    :ivar dimension_key: dimension specified for series group.
+    :vartype dimension_key: dict[str, str]
     :ivar path: drilling down path from query anomaly to root cause.
     :vartype path: list[str]
     :ivar score: score.
@@ -1982,6 +1999,11 @@ class MetricFeedback(dict):
 
     All required parameters must be populated in order to send to Azure.
 
+    :param feedback_type: Required. feedback type.Constant filled by server.  Possible values
+     include: "Anomaly", "ChangePoint", "Period", "Comment".
+    :type feedback_type: str or ~azure.ai.metricsadvisor.models.FeedbackType
+    :param str metric_id: Required. metric unique id.
+    :param dict[str, str] dimension_key: Required. metric dimension filter.
     :ivar feedback_type: Required. feedback type.Constant filled by server.  Possible values
      include: "Anomaly", "ChangePoint", "Period", "Comment".
     :vartype feedback_type: str or ~azure.ai.metricsadvisor.models.FeedbackType
@@ -2626,10 +2648,14 @@ class DatasourceServicePrincipalInKeyVault(  # type: ignore
 class DetectionAnomalyFilterCondition(msrest.serialization.Model):
     """DetectionAnomalyFilterCondition.
 
-    :param series_group_key: dimension filter.
-    :type series_group_key: dict[str, str]
-    :param severity_filter:
-    :type severity_filter: ~azure.ai.metricsadvisor.models.SeverityFilterCondition
+    :keyword series_group_key: dimension filter.
+    :paramtype series_group_key: dict[str, str]
+    :keyword severity_filter:
+    :paramtype severity_filter: ~azure.ai.metricsadvisor.models.SeverityFilterCondition
+    :ivar series_group_key: dimension filter.
+    :vartype series_group_key: dict[str, str]
+    :ivar severity_filter:
+    :vartype severity_filter: ~azure.ai.metricsadvisor.models.SeverityFilterCondition
     """
 
     _attribute_map = {
@@ -3022,8 +3048,8 @@ class SeriesIdentity(msrest.serialization.Model):
     """SeriesIdentity.
 
     All required parameters must be populated in order to send to Azure.
-    :param dimension: Required. dimension specified for series.
-    :type dimension: dict[str, str]
+    :keyword dimension: Required. dimension specified for series.
+    :paramtype dimension: dict[str, str]
     """
 
     _validation = {
@@ -3058,20 +3084,20 @@ class MetricFeedbackFilter(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param metric_id: Required. filter feedbacks by metric id.
-    :type metric_id: str
-    :param dimension_filter:
-    :type dimension_filter: ~azure.ai.metricsadvisor.models.FeedbackDimensionFilter
-    :param feedback_type: filter feedbacks by type. Possible values include: "Anomaly",
+    :keyword metric_id: Required. filter feedbacks by metric id.
+    :paramtype metric_id: str
+    :keyword dimension_filter:
+    :paramtype dimension_filter: ~azure.ai.metricsadvisor.models.FeedbackDimensionFilter
+    :keyword feedback_type: filter feedbacks by type. Possible values include: "Anomaly",
      "ChangePoint", "Period", "Comment".
-    :type feedback_type: str or ~azure.ai.metricsadvisor.models.FeedbackType
-    :param start_time: start time filter under chosen time mode.
-    :type start_time: ~datetime.datetime
-    :param end_time: end time filter under chosen time mode.
-    :type end_time: ~datetime.datetime
-    :param time_mode: time mode to filter feedback. Possible values include: "MetricTimestamp",
+    :paramtype feedback_type: str or ~azure.ai.metricsadvisor.models.FeedbackType
+    :keyword start_time: start time filter under chosen time mode.
+    :paramtype start_time: ~datetime.datetime
+    :keyword end_time: end time filter under chosen time mode.
+    :paramtype end_time: ~datetime.datetime
+    :keyword time_mode: time mode to filter feedback. Possible values include: "MetricTimestamp",
      "FeedbackCreatedTime".
-    :type time_mode: str or ~azure.ai.metricsadvisor.models.FeedbackQueryTimeMode
+    :paramtype time_mode: str or ~azure.ai.metricsadvisor.models.FeedbackQueryTimeMode
     """
 
     _validation = {
@@ -3109,10 +3135,11 @@ class MetricFeedbackFilter(msrest.serialization.Model):
 
 class ErrorCode(msrest.serialization.Model):
     """ErrorCode.
-    :param message:
-    :type message: str
-    :param code:
-    :type code: str
+
+    :keyword message:
+    :paramtype message: str
+    :keyword code:
+    :paramtype code: str
     """
 
     _attribute_map = {

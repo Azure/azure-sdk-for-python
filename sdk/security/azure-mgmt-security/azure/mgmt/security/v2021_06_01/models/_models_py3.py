@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
@@ -41,7 +41,7 @@ class Resource(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -86,10 +86,10 @@ class Setting(Resource):
 
     _subtype_map = {"kind": {"AlertSyncSettings": "AlertSyncSettings", "DataExportSettings": "DataExportSettings"}}
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.kind = None  # type: Optional[str]
+        self.kind: Optional[str] = None
 
 
 class AlertSyncSettings(Setting):
@@ -127,13 +127,13 @@ class AlertSyncSettings(Setting):
         "enabled": {"key": "properties.enabled", "type": "bool"},
     }
 
-    def __init__(self, *, enabled: Optional[bool] = None, **kwargs):
+    def __init__(self, *, enabled: Optional[bool] = None, **kwargs: Any) -> None:
         """
         :keyword enabled: Is the alert sync setting enabled.
         :paramtype enabled: bool
         """
         super().__init__(**kwargs)
-        self.kind = "AlertSyncSettings"  # type: str
+        self.kind: str = "AlertSyncSettings"
         self.enabled = enabled
 
 
@@ -154,7 +154,7 @@ class AssessmentLinks(_serialization.Model):
         "azure_portal_uri": {"key": "azurePortalUri", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.azure_portal_uri = None
@@ -190,8 +190,8 @@ class AssessmentStatus(_serialization.Model):
         code: Union[str, "_models.AssessmentStatusCode"],
         cause: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword code: Programmatic code for the status of the assessment. Required. Known values are:
          "Healthy", "Unhealthy", and "NotApplicable".
@@ -249,8 +249,8 @@ class AssessmentStatusResponse(AssessmentStatus):
         code: Union[str, "_models.AssessmentStatusCode"],
         cause: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword code: Programmatic code for the status of the assessment. Required. Known values are:
          "Healthy", "Unhealthy", and "NotApplicable".
@@ -288,10 +288,10 @@ class ResourceDetails(_serialization.Model):
 
     _subtype_map = {"source": {"Azure": "AzureResourceDetails", "OnPremise": "OnPremiseResourceDetails"}}
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.source = None  # type: Optional[str]
+        self.source: Optional[str] = None
 
 
 class AzureResourceDetails(ResourceDetails):
@@ -318,10 +318,10 @@ class AzureResourceDetails(ResourceDetails):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.source = "Azure"  # type: str
+        self.source: str = "Azure"
         self.id = None
 
 
@@ -358,7 +358,7 @@ class CloudErrorBody(_serialization.Model):
         "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -403,13 +403,13 @@ class DataExportSettings(Setting):
         "enabled": {"key": "properties.enabled", "type": "bool"},
     }
 
-    def __init__(self, *, enabled: Optional[bool] = None, **kwargs):
+    def __init__(self, *, enabled: Optional[bool] = None, **kwargs: Any) -> None:
         """
         :keyword enabled: Is the data export setting enabled.
         :paramtype enabled: bool
         """
         super().__init__(**kwargs)
-        self.kind = "DataExportSettings"  # type: str
+        self.kind: str = "DataExportSettings"
         self.enabled = enabled
 
 
@@ -434,7 +434,7 @@ class ErrorAdditionalInfo(_serialization.Model):
         "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.type = None
@@ -480,7 +480,9 @@ class OnPremiseResourceDetails(ResourceDetails):
 
     _subtype_map = {"source": {"OnPremiseSql": "OnPremiseSqlResourceDetails"}}
 
-    def __init__(self, *, workspace_id: str, vmuuid: str, source_computer_id: str, machine_name: str, **kwargs):
+    def __init__(
+        self, *, workspace_id: str, vmuuid: str, source_computer_id: str, machine_name: str, **kwargs: Any
+    ) -> None:
         """
         :keyword workspace_id: Azure resource Id of the workspace the machine is attached to. Required.
         :paramtype workspace_id: str
@@ -492,7 +494,7 @@ class OnPremiseResourceDetails(ResourceDetails):
         :paramtype machine_name: str
         """
         super().__init__(**kwargs)
-        self.source = "OnPremise"  # type: str
+        self.source: str = "OnPremise"
         self.workspace_id = workspace_id
         self.vmuuid = vmuuid
         self.source_computer_id = source_computer_id
@@ -550,8 +552,8 @@ class OnPremiseSqlResourceDetails(OnPremiseResourceDetails):
         machine_name: str,
         server_name: str,
         database_name: str,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword workspace_id: Azure resource Id of the workspace the machine is attached to. Required.
         :paramtype workspace_id: str
@@ -573,7 +575,7 @@ class OnPremiseSqlResourceDetails(OnPremiseResourceDetails):
             machine_name=machine_name,
             **kwargs
         )
-        self.source = "OnPremiseSql"  # type: str
+        self.source: str = "OnPremiseSql"
         self.server_name = server_name
         self.database_name = database_name
 
@@ -634,8 +636,8 @@ class SecurityAssessment(Resource):
         metadata: Optional["_models.SecurityAssessmentMetadataProperties"] = None,
         partners_data: Optional["_models.SecurityAssessmentPartnerData"] = None,
         status: Optional["_models.AssessmentStatus"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword resource_details: Details of the resource that was assessed.
         :paramtype resource_details: ~azure.mgmt.security.v2021_06_01.models.ResourceDetails
@@ -680,7 +682,7 @@ class SecurityAssessmentList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -772,8 +774,8 @@ class SecurityAssessmentMetadata(Resource):  # pylint: disable=too-many-instance
         preview: Optional[bool] = None,
         assessment_type: Optional[Union[str, "_models.AssessmentType"]] = None,
         partner_data: Optional["_models.SecurityAssessmentMetadataPartnerData"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword display_name: User friendly display name of the assessment.
         :paramtype display_name: str
@@ -846,7 +848,7 @@ class SecurityAssessmentMetadataPartnerData(_serialization.Model):
         "secret": {"key": "secret", "type": "str"},
     }
 
-    def __init__(self, *, partner_name: str, secret: str, product_name: Optional[str] = None, **kwargs):
+    def __init__(self, *, partner_name: str, secret: str, product_name: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword partner_name: Name of the company of the partner. Required.
         :paramtype partner_name: str
@@ -940,8 +942,8 @@ class SecurityAssessmentMetadataProperties(_serialization.Model):  # pylint: dis
         threats: Optional[List[Union[str, "_models.Threats"]]] = None,
         preview: Optional[bool] = None,
         partner_data: Optional["_models.SecurityAssessmentMetadataPartnerData"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword display_name: User friendly display name of the assessment. Required.
         :paramtype display_name: str
@@ -1087,8 +1089,8 @@ class SecurityAssessmentMetadataPropertiesResponse(
         planned_deprecation_date: Optional[str] = None,
         tactics: Optional[List[Union[str, "_models.Tactics"]]] = None,
         techniques: Optional[List[Union[str, "_models.Techniques"]]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword display_name: User friendly display name of the assessment. Required.
         :paramtype display_name: str
@@ -1171,7 +1173,7 @@ class SecurityAssessmentMetadataPropertiesResponsePublishDates(_serialization.Mo
         "public": {"key": "public", "type": "str"},
     }
 
-    def __init__(self, *, public: str, ga: Optional[str] = None, **kwargs):
+    def __init__(self, *, public: str, ga: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword ga:
         :paramtype ga: str
@@ -1289,8 +1291,8 @@ class SecurityAssessmentMetadataResponse(Resource):  # pylint: disable=too-many-
         planned_deprecation_date: Optional[str] = None,
         tactics: Optional[List[Union[str, "_models.Tactics"]]] = None,
         techniques: Optional[List[Union[str, "_models.Techniques"]]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword display_name: User friendly display name of the assessment.
         :paramtype display_name: str
@@ -1373,7 +1375,7 @@ class SecurityAssessmentMetadataResponseList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -1401,7 +1403,7 @@ class SecurityAssessmentPartnerData(_serialization.Model):
         "secret": {"key": "secret", "type": "str"},
     }
 
-    def __init__(self, *, partner_name: str, secret: str, **kwargs):
+    def __init__(self, *, partner_name: str, secret: str, **kwargs: Any) -> None:
         """
         :keyword partner_name: Name of the company of the partner. Required.
         :paramtype partner_name: str
@@ -1456,8 +1458,8 @@ class SecurityAssessmentPropertiesBase(_serialization.Model):
         additional_data: Optional[Dict[str, str]] = None,
         metadata: Optional["_models.SecurityAssessmentMetadataProperties"] = None,
         partners_data: Optional["_models.SecurityAssessmentPartnerData"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword resource_details: Details of the resource that was assessed. Required.
         :paramtype resource_details: ~azure.mgmt.security.v2021_06_01.models.ResourceDetails
@@ -1526,8 +1528,8 @@ class SecurityAssessmentProperties(SecurityAssessmentPropertiesBase):
         additional_data: Optional[Dict[str, str]] = None,
         metadata: Optional["_models.SecurityAssessmentMetadataProperties"] = None,
         partners_data: Optional["_models.SecurityAssessmentPartnerData"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword resource_details: Details of the resource that was assessed. Required.
         :paramtype resource_details: ~azure.mgmt.security.v2021_06_01.models.ResourceDetails
@@ -1599,8 +1601,8 @@ class SecurityAssessmentPropertiesResponse(SecurityAssessmentPropertiesBase):
         additional_data: Optional[Dict[str, str]] = None,
         metadata: Optional["_models.SecurityAssessmentMetadataProperties"] = None,
         partners_data: Optional["_models.SecurityAssessmentPartnerData"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword resource_details: Details of the resource that was assessed. Required.
         :paramtype resource_details: ~azure.mgmt.security.v2021_06_01.models.ResourceDetails
@@ -1680,8 +1682,8 @@ class SecurityAssessmentResponse(Resource):
         metadata: Optional["_models.SecurityAssessmentMetadataProperties"] = None,
         partners_data: Optional["_models.SecurityAssessmentPartnerData"] = None,
         status: Optional["_models.AssessmentStatusResponse"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword resource_details: Details of the resource that was assessed.
         :paramtype resource_details: ~azure.mgmt.security.v2021_06_01.models.ResourceDetails
@@ -1725,7 +1727,7 @@ class SettingsList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Setting"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.Setting"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The settings list.
         :paramtype value: list[~azure.mgmt.security.v2021_06_01.models.Setting]

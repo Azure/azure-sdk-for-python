@@ -40,6 +40,7 @@ setup(
     author="Microsoft Corporation",
     author_email="azuresdkengsysadmins@microsoft.com",
     url="https://github.com/Azure/azure-sdk-for-python",
+    keywords="azure, azure sdk",
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Programming Language :: Python",
@@ -49,13 +50,13 @@ setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
         "License :: OSI Approved :: MIT License",
     ],
     zip_safe=False,
     include_package_data=True,
     packages=find_packages(
         exclude=[
-            "samples",
             "tests",
             # Exclude packages that will be covered by PEP420 or nspkg
             "azure",
@@ -67,7 +68,7 @@ setup(
         # NOTE: To avoid breaking changes in a major version bump, all dependencies should pin an upper bound if possible.
         "pyyaml<7.0.0,>=5.1.0",
         "msrest>=0.6.18",
-        "azure-core<2.0.0,>=1.8.0, !=1.22.0",
+        "azure-core<2.0.0,>=1.23.0",
         "azure-mgmt-core<2.0.0,>=1.3.0",
         "marshmallow<4.0.0,>=3.5",
         "jsonschema<5.0.0,>=4.0.0",
@@ -80,7 +81,7 @@ setup(
         "azure-storage-blob<13.0.0,>=12.10.0",
         "azure-storage-file-share<13.0.0",
         "azure-storage-file-datalake<13.0.0",
-        "pydash<6.0.0",
+        "pydash<7.0.6,>=6.0.0",
         "isodate",
         "azure-common<2.0.0,>=1.1",
         "typing-extensions<5.0.0",

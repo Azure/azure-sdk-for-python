@@ -2,11 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-try:
-    from unittest import mock
-except ImportError:
-    import mock
-
+from unittest import mock
 import pytest
 from azure.search.documents import (
     SearchIndexingBufferedSender,
@@ -17,7 +13,8 @@ from azure.search.documents.models import IndexingResult
 
 CREDENTIAL = AzureKeyCredential(key="test_api_key")
 
-class TestSearchBatchingClient(object):
+
+class TestSearchBatchingClient:
     def test_search_indexing_buffered_sender_kwargs(self):
         with SearchIndexingBufferedSender("endpoint", "index name", CREDENTIAL, window=100) as client:
             assert client._batch_action_count == 512
@@ -43,7 +40,6 @@ class TestSearchBatchingClient(object):
                 client._index_documents_batch.enqueue_actions(action)
             assert len(client.actions) == 7
 
-
     @mock.patch(
         "azure.search.documents._search_indexing_buffered_sender.SearchIndexingBufferedSender._process_if_needed"
     )
@@ -53,10 +49,7 @@ class TestSearchBatchingClient(object):
             client.delete_documents(["delete1", "delete2"])
         assert mock_process_if_needed.called
 
-
-    @mock.patch(
-        "azure.search.documents._search_indexing_buffered_sender.SearchIndexingBufferedSender._cleanup"
-    )
+    @mock.patch("azure.search.documents._search_indexing_buffered_sender.SearchIndexingBufferedSender._cleanup")
     def test_context_manager(self, mock_cleanup):
         with SearchIndexingBufferedSender("endpoint", "index name", CREDENTIAL, auto_flush=False) as client:
             client.upload_documents(["upload1"])
@@ -65,22 +58,28 @@ class TestSearchBatchingClient(object):
 
     def test_flush(self):
         DOCUMENT = {
-            'Category': 'Hotel',
-            'HotelId': '1000',
-            'Rating': 4.0,
-            'Rooms': [],
-            'HotelName': 'Azure Inn',
+            "category": "Hotel",
+            "hotelId": "1000",
+            "rating": 4.0,
+            "rooms": [],
+            "hotelName": "Azure Inn",
         }
-        with mock.patch.object(SearchIndexingBufferedSender, "_index_documents_actions", side_effect=HttpResponseError("Error")):
+        with mock.patch.object(
+            SearchIndexingBufferedSender,
+            "_index_documents_actions",
+            side_effect=HttpResponseError("Error"),
+        ):
             with SearchIndexingBufferedSender("endpoint", "index name", CREDENTIAL, auto_flush=False) as client:
-                client._index_key = "HotelId"
+                client._index_key = "hotelId"
                 client.upload_documents([DOCUMENT])
                 client.flush()
                 assert len(client.actions) == 0
 
     def test_callback_new(self):
         on_new = mock.Mock()
-        with SearchIndexingBufferedSender("endpoint", "index name", CREDENTIAL, auto_flush=False, on_new=on_new) as client:
+        with SearchIndexingBufferedSender(
+            "endpoint", "index name", CREDENTIAL, auto_flush=False, on_new=on_new
+        ) as client:
             client.upload_documents(["upload1"])
             assert on_new.called
 
@@ -88,18 +87,16 @@ class TestSearchBatchingClient(object):
         def mock_fail_index_documents(actions, timeout=86400):
             if len(actions) > 0:
                 result = IndexingResult()
-                result.key = actions[0].additional_properties.get('id')
+                result.key = actions[0].additional_properties.get("id")
                 result.status_code = 400
                 result.succeeded = False
                 self.uploaded = self.uploaded + len(actions) - 1
                 return [result]
 
         on_error = mock.Mock()
-        with SearchIndexingBufferedSender("endpoint",
-                                               "index name",
-                                               CREDENTIAL,
-                                               auto_flush=False,
-                                               on_error=on_error) as client:
+        with SearchIndexingBufferedSender(
+            "endpoint", "index name", CREDENTIAL, auto_flush=False, on_error=on_error
+        ) as client:
             client._index_documents_actions = mock_fail_index_documents
             client._index_key = "id"
             client.upload_documents({"id": 0})
@@ -109,9 +106,10 @@ class TestSearchBatchingClient(object):
     def test_callback_error_on_timeout(self):
         def mock_fail_index_documents(actions, timeout=86400):
             import time
+
             if len(actions) > 0:
                 result = IndexingResult()
-                result.key = actions[0].additional_properties.get('id')
+                result.key = actions[0].additional_properties.get("id")
                 result.status_code = 400
                 result.succeeded = False
                 self.uploaded = self.uploaded + len(actions) - 1
@@ -119,14 +117,12 @@ class TestSearchBatchingClient(object):
                 return [result]
 
         on_error = mock.Mock()
-        with SearchIndexingBufferedSender("endpoint",
-                                               "index name",
-                                               CREDENTIAL,
-                                               auto_flush=False,
-                                               on_error=on_error) as client:
+        with SearchIndexingBufferedSender(
+            "endpoint", "index name", CREDENTIAL, auto_flush=False, on_error=on_error
+        ) as client:
             client._index_documents_actions = mock_fail_index_documents
             client._index_key = "id"
-            client.upload_documents([{"id": 0},{"id": 1}])
+            client.upload_documents([{"id": 0}, {"id": 1}])
             with pytest.raises(ServiceResponseTimeoutError):
                 client.flush(timeout=-1)
             assert on_error.call_count == 2
@@ -135,19 +131,21 @@ class TestSearchBatchingClient(object):
         def mock_successful_index_documents(actions, timeout=86400):
             if len(actions) > 0:
                 result = IndexingResult()
-                result.key = actions[0].additional_properties.get('id')
+                result.key = actions[0].additional_properties.get("id")
                 result.status_code = 200
                 result.succeeded = True
                 return [result]
 
         on_progress = mock.Mock()
         on_remove = mock.Mock()
-        with SearchIndexingBufferedSender("endpoint",
-                                               "index name",
-                                               CREDENTIAL,
-                                               auto_flush=False,
-                                               on_progress=on_progress,
-                                               on_remove=on_remove) as client:
+        with SearchIndexingBufferedSender(
+            "endpoint",
+            "index name",
+            CREDENTIAL,
+            auto_flush=False,
+            on_progress=on_progress,
+            on_remove=on_remove,
+        ) as client:
             client._index_documents_actions = mock_successful_index_documents
             client._index_key = "id"
             client.upload_documents({"id": 0})

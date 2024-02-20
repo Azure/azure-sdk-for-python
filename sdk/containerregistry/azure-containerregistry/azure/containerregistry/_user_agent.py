@@ -6,4 +6,4 @@
 
 from ._version import VERSION
 
-USER_AGENT = "azure-containerregistry/{}".format(VERSION)
+USER_AGENT = f"azure-containerregistry/{VERSION}"

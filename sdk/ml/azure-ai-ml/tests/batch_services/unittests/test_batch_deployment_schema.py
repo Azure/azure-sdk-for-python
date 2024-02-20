@@ -20,14 +20,14 @@ def load_batch_deployment_entity_from_yaml(path: str, context={}) -> BatchDeploy
 
 
 @pytest.mark.unittest
-@pytest.mark.production_experience_test
+@pytest.mark.production_experiences_test
 class TestBatchDeploymentSchema:
     def test_serialize_batch_deployment(self) -> None:
         test_path = "./tests/test_configs/deployments/batch/batch_deployment_1.yaml"
         batch_deployment_entity = load_batch_deployment_entity_from_yaml(test_path)
 
         assert batch_deployment_entity
-        assert batch_deployment_entity.environment == "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"
+        assert batch_deployment_entity.environment == "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
         assert batch_deployment_entity.compute == "cpu-cluster"
         assert batch_deployment_entity.output_action == BatchDeploymentOutputAction.APPEND_ROW
         assert batch_deployment_entity.output_file_name == "append_row.txt"

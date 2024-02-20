@@ -1,0 +1,253 @@
+{% set branch    = env.get('SYSTEM_PULLREQUEST_SOURCEBRANCH') if env.get('SYSTEM_PULLREQUEST_SOURCEBRANCH') else env.get('BUILD_SOURCEBRANCHNAME') %}
+{% set build     = env.get('BUILD_BUILDNUMBER') %}
+{% set build_url = '%s%s/_build/results?buildId=%s' % (env.get('SYSTEM_TEAMFOUNDATIONCOLLECTIONURI'), env.get('SYSTEM_TEAMPROJECT'), env.get('BUILD_BUILDID')) %}
+{% set commit    = env.get('BUILD_SOURCEVERSION') %}
+{% set isfork    = env.get('SYSTEM_PULLREQUEST_ISFORK') == 'True' %}
+{% set rel_url   = env.get('RELEASE_RELEASEWEBURL') %}
+{% set release   = env.get('RELEASE_RELEASENAME') %}
+{% set repo      = env.get('BUILD_REPOSITORY_NAME') if isfork else ('Azure/' + repo_name) %}
+{% macro pluralize(num, singular, plural) -%}
+{% if num == 1 %}{{ singular }}{% else %}{{ plural }}{% endif %}
+{%- endmacro %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{ repo_name|capitalize }} Dependency Report</title>
+    <meta charset="UTF-8"/>
+    <style>
+      body {
+          font-family: Verdana, sans-serif;
+          font-size: 14px;
+          text-size-adjust: none;
+      }
+      table {
+          border-spacing: 0px;
+          width: 65%;
+          font-size: 14px;
+      }
+      table.condensed tr td {
+          padding: 7px 15px;
+      }
+      th, td {
+          padding: 15px;
+          border-bottom: 1px solid #ddd;
+          vertical-align:top;
+      }
+      tr:nth-child(even) {
+          background-color: #f2f2f2;
+      }
+      th {
+          background-color: #2E7CAF;
+          color: white;
+          font-weight: 300;
+          text-align: left;
+      }
+      th a {
+        color: white;
+      }
+      th.incompatible {
+        background-color: #FF0000;
+      }
+      td.version {
+          width: 75px;
+      }
+      .tooltip {
+          position: relative;
+          display: inline-block;
+          border-bottom: 1px dotted black;
+      }
+      .tooltip .tooltiptext {
+          visibility: hidden;
+          background-color: black;
+          color: #fff;
+          white-space: nowrap;
+          text-align: left;
+          padding: 5px;
+          font-size: 14px;
+          position: absolute;
+          z-index: 1;
+          margin-top: 7px;
+          top: 100%;
+          left: 0%;
+      }
+      .tooltip .tooltiptext::after {
+          content: " ";
+          position: absolute;
+          bottom: 100%;  /* At the top of the tooltip */
+          left: 5%;
+          margin-left: -5px;
+          border-width: 5px;
+          border-style: solid;
+          border-color: transparent transparent black transparent;
+      }
+      .tooltip:hover .tooltiptext {
+          visibility: visible;
+      }
+
+      .success {
+          color: #00CC00;
+      }
+      .fail {
+          color: #CC0000;
+      }
+
+      .dep_type {
+          border: 1px solid gray;
+          border-radius: 2px;
+          background: lightgray;
+          font-size: 10px;
+          padding: 1px 2px;
+      }
+
+      @media only screen and (max-width: 1350px) {
+          body, table {
+              font-size: 25px;
+          }
+          table {
+              width: 95%;
+          }
+          td.version {
+              width: 35px;
+          }
+      }
+    </style>
+  </head>
+  <body>
+    <center>
+      <h1>{{ repo_name|capitalize }} Dependency Report</h1>
+      <h3>
+        Generated at {{ curtime.replace(microsecond=0).isoformat() }}Z
+        {% if release %}
+        for release <a href="{{ rel_url }}">{{ release }}</a>
+        {% elif build %}
+        for build <a href="{{ build_url }}">{{ build }}</a>
+        {% if branch %}
+        <br/>from branch <a href="https://github.com/{{ repo }}/tree/{{ branch }}">{{ branch }}</a>
+        {% if isfork %}
+        in repo <a href="https://github.com/{{ repo }}">{{ repo }}</a>
+        {% endif %}
+        {% endif %}
+        {% if commit %}
+        (<a href="https://github.com/{{ repo }}/commit/{{ commit }}">{{ commit[:7] }}</a>)
+        {% endif %}
+        {% endif %}
+      </h3>
+      <p>
+        {{ dependencies|length - external|length }} internal and {{ external|length }} external package <a href="#dependencies">{{ pluralize(dependencies|length,'dependency</a> was','dependencies</a> were') }} analyzed to determine if any packages declare irreconcilable dependency versions.<br/>
+        {% if incompatible %}
+        <strong>{{ incompatible|length }} incompatible package dependency {{ pluralize(incompatible|length,'version was','versions were') }} discovered.</strong><br/><br/>
+        {% else %}
+        No incompatible package dependency versions were discovered.<br/><br/>
+        {% endif %}
+        {% if known_reqs %}
+        {{ known_reqs|length }} {{ pluralize(known_reqs|length,'dependency was','dependencies were') }} discovered in the <a href="#lockfile">Shared Requirements</a>.<br/>
+        {% if new_reqs %}
+        <strong>{{ new_reqs|length }} {{ pluralize(new_reqs|length,'dependency is','dependencies are') }} missing from the shared requirements.</strong><br/>
+        {% endif %}
+        {% if not new_reqs %}
+        All declared dependencies were validated against those in the shared requirements file.<br/>
+        {% endif %}
+        {% else %}
+        <strong>No shared requirements file present in the repo, known requirements could not be validated.</strong><br/>
+        {% endif %}
+        <br/>This report scanned {{ packages|length }} <a href="#packages">{{ pluralize(packages|length,'package','packages') }}</a>.
+      </p>
+      <a name="dependencies"/>
+      {% for dep_name in ordered_deps %}
+      <a name="dep_{{ dep_name }}"/>
+      <table>
+        <thead>
+          {% if loop.index == 1 %}
+          <tr><th colspan="2"><strong>Dependencies Discovered in Packages</strong></th></tr>
+          {% endif %}
+          <tr>
+          {% if dep_name in external %}
+          {% set dep_type = "external" %}
+          {% else %}
+          {% set dep_type = "internal" %}
+          {% endif %}
+          {% if dep_name in incompatible %}
+          {% set dep_type = "incompatible " + dep_type %}
+          {% endif %}
+          <th colspan="2" class="{{ dep_type }}"><strong>{{ dep_type|title }} Dependency:</strong> {{ dep_name }}</th></tr>
+        </thead>
+        <tbody>
+        {% for requirement, packages in dependencies[dep_name]|dictsort %}
+        <tr>
+          <td class="version">{{ requirement if requirement else '(empty)' }}</td>
+          <td>
+            {% for package_name in packages|sort %}
+            {{ package_name }}
+            {% endfor %}
+          </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+      <br/>
+      {% endfor %}
+      <br/><br/><hr/><br/><br/>
+      <a name="lockfile"/>
+      <table class="condensed">
+        <thead>
+          <tr><th colspan="3"><strong>Known Dependencies</strong></th></tr>
+          {% if known_reqs %}
+          <tr><th>Dependency</th></tr>
+          {% endif %}
+        </thead>
+        <tbody>
+        {% for name in known_reqs|sort %}
+        <tr>
+          <td><a href="#dep_{{ name }}">{{ name }}</a></td>
+        </tr>
+        {% endfor %}
+        {% if not known_reqs %}
+        <tr><td colspan="2">Unable to open shared_requirements.txt, shared requirements have not been validated</td></tr>
+        {% endif %}
+        </tbody>
+      </table>
+      {% if new_reqs %}
+      <br/>
+      {% for name in new_reqs|sort %}
+      <table class="condensed">
+        <thead>
+          {% if loop.index == 1 %}
+          <tr><th colspan="2" class="incompatible"><strong>Dependencies Missing from Shared Requirements</strong></th></tr>
+          {% endif %}
+          <tr><th colspan="2" class="incompatible"><strong>Missing Dependency:</strong> <a href="#dep_{{ name }}">{{ name }}</a></th></tr>
+        </thead>
+        <tbody>
+        {% for requirement, packages in dependencies[name]|dictsort %}
+        <tr>
+          <td class="version">{{ requirement if requirement else '(empty)' }}</td>
+          <td>
+            {% for package_name in packages|sort %}
+            {{ package_name }}<br/>
+            {% endfor %}
+          </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+      {% endfor %}
+      {% endif %}
+      <br/><br/><hr/><br/><br/>
+      <a name="packages"/>
+      <table class="condensed">
+        <thead>
+          <tr><th colspan="3"><strong>Packages Scanned for this Report</strong></th></tr>
+          <tr><th>Package Analyzed</th><th>Package Version</th><th>Package Source</th></tr>
+        </thead>
+        <tbody>
+        {% for name, info in packages|dictsort %}
+        <tr>
+          <td>{{ name }}</td>
+          <td>{{ info.version }}</td>
+          <td>{{ info.source }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </center>
+  </body>
+</html>

@@ -5,10 +5,11 @@
 # pylint: disable=arguments-renamed
 
 import logging
+from typing import Optional
 
-from azure.ai.ml._restclient.v2021_10_01.models import BatchRetrySettings as RestBatchRetrySettings
-from azure.ai.ml._restclient.v2021_10_01.models import OnlineRequestSettings as RestOnlineRequestSettings
-from azure.ai.ml._restclient.v2021_10_01.models import ProbeSettings as RestProbeSettings
+from azure.ai.ml._restclient.v2022_05_01.models import BatchRetrySettings as RestBatchRetrySettings
+from azure.ai.ml._restclient.v2022_05_01.models import OnlineRequestSettings as RestOnlineRequestSettings
+from azure.ai.ml._restclient.v2022_05_01.models import ProbeSettings as RestProbeSettings
 from azure.ai.ml._utils.utils import (
     from_iso_duration_format,
     from_iso_duration_format_ms,
@@ -24,12 +25,12 @@ class BatchRetrySettings(RestTranslatableMixin):
     """Retry settings for batch deployment.
 
     :param max_retries: Number of retries in failure, defaults to 3
-    :type max_retries: int, optional
+    :type max_retries: int
     :param timeout: Timeout in seconds, defaults to 30
-    :type timeout: int, optional
+    :type timeout: int
     """
 
-    def __init__(self, *, max_retries: int = None, timeout: int = None):
+    def __init__(self, *, max_retries: Optional[int] = None, timeout: Optional[int] = None):
         self.max_retries = max_retries
         self.timeout = timeout
 
@@ -41,7 +42,6 @@ class BatchRetrySettings(RestTranslatableMixin):
 
     @classmethod
     def _from_rest_object(cls, settings: RestBatchRetrySettings) -> "BatchRetrySettings":
-
         return (
             BatchRetrySettings(
                 max_retries=settings.max_retries,
@@ -61,18 +61,18 @@ class OnlineRequestSettings(RestTranslatableMixin):
     """Request Settings entity.
 
     :param request_timeout_ms: defaults to 5000
-    :type request_timeout_ms: int, optional
+    :type request_timeout_ms: int
     :param max_concurrent_requests_per_instance: defaults to 1
-    :type max_concurrent_requests_per_instance: int, optional
+    :type max_concurrent_requests_per_instance: int
     :param max_queue_wait_ms: defaults to 500
-    :type max_queue_wait_ms: int, optional
+    :type max_queue_wait_ms: int
     """
 
     def __init__(
         self,
-        max_concurrent_requests_per_instance: int = None,
-        request_timeout_ms: int = None,
-        max_queue_wait_ms: int = None,
+        max_concurrent_requests_per_instance: Optional[int] = None,
+        request_timeout_ms: Optional[int] = None,
+        max_queue_wait_ms: Optional[int] = None,
     ):
         self.request_timeout_ms = request_timeout_ms
         self.max_concurrent_requests_per_instance = max_concurrent_requests_per_instance
@@ -95,7 +95,6 @@ class OnlineRequestSettings(RestTranslatableMixin):
 
     @classmethod
     def _from_rest_object(cls, settings: RestOnlineRequestSettings) -> "OnlineRequestSettings":
-
         return (
             OnlineRequestSettings(
                 request_timeout_ms=from_iso_duration_format_ms(settings.request_timeout),
@@ -126,24 +125,24 @@ class ProbeSettings(RestTranslatableMixin):
     def __init__(
         self,
         *,
-        failure_threshold: int = None,
-        success_threshold: int = None,
-        timeout: int = None,
-        period: int = None,
-        initial_delay: int = None,
+        failure_threshold: Optional[int] = None,
+        success_threshold: Optional[int] = None,
+        timeout: Optional[int] = None,
+        period: Optional[int] = None,
+        initial_delay: Optional[int] = None,
     ):
         """Settings on how to probe an endpoint.
 
         :param failure_threshold: Threshold for probe failures, defaults to 30
-        :type failure_threshold: int, optional
+        :type failure_threshold: int
         :param success_threshold: Threshold for probe success, defaults to 1
-        :type success_threshold: int, optional
+        :type success_threshold: int
         :param timeout: timeout in seconds, defaults to 2
-        :type timeout: int, optional
+        :type timeout: int
         :param period: [description], defaults to 10
-        :type period: int, optional
+        :type period: int
         :param initial_delay: How to to wait for the first probe, defaults to 10
-        :type initial_delay: int, optional
+        :type initial_delay: int
         """
 
         self.failure_threshold = failure_threshold

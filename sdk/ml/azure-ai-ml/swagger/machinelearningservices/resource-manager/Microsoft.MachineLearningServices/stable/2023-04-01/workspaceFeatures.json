@@ -1,0 +1,114 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "title": "Azure Machine Learning Services",
+      "version": "2023-04-01"
+    },
+    "host": "management.azure.com",
+    "schemes": [
+      "https"
+    ],
+    "consumes": [
+      "application/json"
+    ],
+    "produces": [
+      "application/json"
+    ],
+    "paths": {
+      "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/features": {
+        "get": {
+          "tags": [
+            "Workspaces"
+          ],
+          "description": "Lists all enabled features for a workspace",
+          "operationId": "WorkspaceFeatures_List",
+          "x-ms-examples": {
+            "List Workspace features": {
+              "$ref": "./examples/WorkspaceFeature/list.json"
+            }
+          },
+          "parameters": [
+            {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+            },
+            {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+            },
+            {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+            },
+            {
+              "$ref": "machineLearningServices.json#/parameters/WorkspaceNameParameter"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "The request was successful; the request was well-formed and received properly.",
+              "schema": {
+                "$ref": "#/definitions/ListAmlUserFeatureResult"
+              }
+            },
+            "default": {
+              "description": "Error response describing why the operation failed",
+              "schema": {
+                "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+              }
+            }
+          },
+          "x-ms-pageable": {
+            "nextLinkName": "nextLink"
+          }
+        }
+      }
+    },
+    "definitions": {
+      "AmlUserFeature": {
+        "description": "Features enabled for a workspace",
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "Specifies the feature ID",
+            "type": "string"
+          },
+          "displayName": {
+            "description": "Specifies the feature name ",
+            "type": "string"
+          },
+          "description": {
+            "description": "Describes the feature for user experience",
+            "type": "string"
+          }
+        }
+      },
+      "ListAmlUserFeatureResult": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "readOnly": true,
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/AmlUserFeature"
+            },
+            "description": "The list of AML user facing features."
+          },
+          "nextLink": {
+            "readOnly": true,
+            "type": "string",
+            "description": "The URI to fetch the next page of AML user features information. Call ListNext() with this to fetch the next page of AML user features information."
+          }
+        },
+        "description": "The List Aml user feature operation response."
+      }
+    },
+    "securityDefinitions": {
+      "azure_auth": {
+        "type": "oauth2",
+        "flow": "implicit",
+        "authorizationUrl": "https://login.microsoftonline.com/common/oauth2/authorize",
+        "scopes": {
+          "user_impersonation": "impersonate your user account"
+        },
+        "description": "Azure Active Directory OAuth2 Flow."
+      }
+    }
+  }

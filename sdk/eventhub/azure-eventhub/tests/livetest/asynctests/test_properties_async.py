@@ -12,9 +12,10 @@ from azure.eventhub.exceptions import AuthenticationError, ConnectError, EventHu
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_get_properties(live_eventhub):
+async def test_get_properties(live_eventhub, uamqp_transport):
     client = EventHubConsumerClient(live_eventhub['hostname'], live_eventhub['event_hub'], '$default',
-        EventHubSharedKeyCredential(live_eventhub['key_name'], live_eventhub['access_key'])
+        EventHubSharedKeyCredential(live_eventhub['key_name'], live_eventhub['access_key']),
+        uamqp_transport=uamqp_transport
     )
     async with client:
         properties = await client.get_eventhub_properties()
@@ -22,16 +23,18 @@ async def test_get_properties(live_eventhub):
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_get_properties_with_auth_error_async(live_eventhub):
+async def test_get_properties_with_auth_error_async(live_eventhub, uamqp_transport):
     client = EventHubConsumerClient(live_eventhub['hostname'], live_eventhub['event_hub'], '$default',
-        EventHubSharedKeyCredential(live_eventhub['key_name'], "AaBbCcDdEeFf=")
+        EventHubSharedKeyCredential(live_eventhub['key_name'], "AaBbCcDdEeFf="),
+        uamqp_transport=uamqp_transport
     )
     async with client:
         with pytest.raises(AuthenticationError) as e:
             await client.get_eventhub_properties()
 
     client = EventHubConsumerClient(live_eventhub['hostname'], live_eventhub['event_hub'], '$default',
-        EventHubSharedKeyCredential("invalid", live_eventhub['access_key'])
+        EventHubSharedKeyCredential("invalid", live_eventhub['access_key']),
+        uamqp_transport=uamqp_transport
     )
     async with client:
         with pytest.raises(AuthenticationError) as e:
@@ -39,26 +42,29 @@ async def test_get_properties_with_auth_error_async(live_eventhub):
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_get_properties_with_connect_error(live_eventhub):
+async def test_get_properties_with_connect_error(live_eventhub, uamqp_transport):
     client = EventHubConsumerClient(live_eventhub['hostname'], "invalid", '$default',
-        EventHubSharedKeyCredential(live_eventhub['key_name'], live_eventhub['access_key'])
+        EventHubSharedKeyCredential(live_eventhub['key_name'], live_eventhub['access_key']),
+        uamqp_transport=uamqp_transport
     )
     async with client:
         with pytest.raises(ConnectError) as e:
             await client.get_eventhub_properties()
 
     client = EventHubConsumerClient("invalid.servicebus.windows.net", live_eventhub['event_hub'], '$default',
-        EventHubSharedKeyCredential(live_eventhub['key_name'], live_eventhub['access_key'])
+        EventHubSharedKeyCredential(live_eventhub['key_name'], live_eventhub['access_key']),
+        uamqp_transport=uamqp_transport
     )
     async with client:
-        with pytest.raises(EventHubError) as e:  # This can be either ConnectError or ConnectionLostError
+        with pytest.raises(ConnectError) as e:
             await client.get_eventhub_properties()
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_get_partition_ids(live_eventhub):
+async def test_get_partition_ids(live_eventhub, uamqp_transport):
     client = EventHubConsumerClient(live_eventhub['hostname'], live_eventhub['event_hub'], '$default',
-        EventHubSharedKeyCredential(live_eventhub['key_name'], live_eventhub['access_key'])
+        EventHubSharedKeyCredential(live_eventhub['key_name'], live_eventhub['access_key']),
+        uamqp_transport=uamqp_transport
     )
     async with client:
         partition_ids = await client.get_partition_ids()
@@ -67,9 +73,10 @@ async def test_get_partition_ids(live_eventhub):
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_get_partition_properties(live_eventhub):
+async def test_get_partition_properties(live_eventhub, uamqp_transport):
     client = EventHubProducerClient(live_eventhub['hostname'], live_eventhub['event_hub'],
-        EventHubSharedKeyCredential(live_eventhub['key_name'], live_eventhub['access_key'])
+        EventHubSharedKeyCredential(live_eventhub['key_name'], live_eventhub['access_key']),
+        uamqp_transport=uamqp_transport
     )
     async with client:
         properties = await client.get_partition_properties('0')

@@ -53,7 +53,9 @@ class SchemaProperties(object):
     def __repr__(self):
         return (
             f"SchemaProperties(id={self.id}, format={self.format}, "
-            f"group_name={self.group_name}, name={self.name}, version={self.version})"[:1024]
+            f"group_name={self.group_name}, name={self.name}, version={self.version})"[
+                :1024
+            ]
         )
 
 

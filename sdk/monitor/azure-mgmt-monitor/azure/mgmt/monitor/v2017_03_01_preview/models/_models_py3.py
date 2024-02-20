@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional, TYPE_CHECKING
+from typing import Any, Dict, List, Optional, TYPE_CHECKING
 
 from ... import _serialization
 
@@ -38,7 +38,9 @@ class ActivityLogAlertActionGroup(_serialization.Model):
         "webhook_properties": {"key": "webhookProperties", "type": "{str}"},
     }
 
-    def __init__(self, *, action_group_id: str, webhook_properties: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(
+        self, *, action_group_id: str, webhook_properties: Optional[Dict[str, str]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword action_group_id: The resourceId of the action group. This cannot be null or empty.
          Required.
@@ -57,18 +59,20 @@ class ActivityLogAlertActionList(_serialization.Model):
 
     :ivar action_groups: The list of activity log alerts.
     :vartype action_groups:
-     list[~$(python-base-namespace).v2017_03_01_preview.models.ActivityLogAlertActionGroup]
+     list[~azure.mgmt.monitor.v2017_03_01_preview.models.ActivityLogAlertActionGroup]
     """
 
     _attribute_map = {
         "action_groups": {"key": "actionGroups", "type": "[ActivityLogAlertActionGroup]"},
     }
 
-    def __init__(self, *, action_groups: Optional[List["_models.ActivityLogAlertActionGroup"]] = None, **kwargs):
+    def __init__(
+        self, *, action_groups: Optional[List["_models.ActivityLogAlertActionGroup"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword action_groups: The list of activity log alerts.
         :paramtype action_groups:
-         list[~$(python-base-namespace).v2017_03_01_preview.models.ActivityLogAlertActionGroup]
+         list[~azure.mgmt.monitor.v2017_03_01_preview.models.ActivityLogAlertActionGroup]
         """
         super().__init__(**kwargs)
         self.action_groups = action_groups
@@ -81,7 +85,7 @@ class ActivityLogAlertAllOfCondition(_serialization.Model):
 
     :ivar all_of: The list of activity log alert conditions. Required.
     :vartype all_of:
-     list[~$(python-base-namespace).v2017_03_01_preview.models.ActivityLogAlertLeafCondition]
+     list[~azure.mgmt.monitor.v2017_03_01_preview.models.ActivityLogAlertLeafCondition]
     """
 
     _validation = {
@@ -92,11 +96,11 @@ class ActivityLogAlertAllOfCondition(_serialization.Model):
         "all_of": {"key": "allOf", "type": "[ActivityLogAlertLeafCondition]"},
     }
 
-    def __init__(self, *, all_of: List["_models.ActivityLogAlertLeafCondition"], **kwargs):
+    def __init__(self, *, all_of: List["_models.ActivityLogAlertLeafCondition"], **kwargs: Any) -> None:
         """
         :keyword all_of: The list of activity log alert conditions. Required.
         :paramtype all_of:
-         list[~$(python-base-namespace).v2017_03_01_preview.models.ActivityLogAlertLeafCondition]
+         list[~azure.mgmt.monitor.v2017_03_01_preview.models.ActivityLogAlertLeafCondition]
         """
         super().__init__(**kwargs)
         self.all_of = all_of
@@ -127,7 +131,7 @@ class ActivityLogAlertLeafCondition(_serialization.Model):
         "equals": {"key": "equals", "type": "str"},
     }
 
-    def __init__(self, *, field: str, equals: str, **kwargs):
+    def __init__(self, *, field: str, equals: str, **kwargs: Any) -> None:
         """
         :keyword field: The name of the field that this condition will examine. The possible values for
          this field are (case-insensitive): 'resourceId', 'category', 'caller', 'level',
@@ -147,19 +151,17 @@ class ActivityLogAlertList(_serialization.Model):
     """A list of activity log alerts.
 
     :ivar value: The list of activity log alerts.
-    :vartype value:
-     list[~$(python-base-namespace).v2017_03_01_preview.models.ActivityLogAlertResource]
+    :vartype value: list[~azure.mgmt.monitor.v2017_03_01_preview.models.ActivityLogAlertResource]
     """
 
     _attribute_map = {
         "value": {"key": "value", "type": "[ActivityLogAlertResource]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.ActivityLogAlertResource"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.ActivityLogAlertResource"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of activity log alerts.
-        :paramtype value:
-         list[~$(python-base-namespace).v2017_03_01_preview.models.ActivityLogAlertResource]
+        :paramtype value: list[~azure.mgmt.monitor.v2017_03_01_preview.models.ActivityLogAlertResource]
         """
         super().__init__(**kwargs)
         self.value = value
@@ -199,7 +201,7 @@ class Resource(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -240,10 +242,9 @@ class ActivityLogAlertResource(Resource):
     :vartype enabled: bool
     :ivar condition: The condition that will cause this alert to activate.
     :vartype condition:
-     ~$(python-base-namespace).v2017_03_01_preview.models.ActivityLogAlertAllOfCondition
+     ~azure.mgmt.monitor.v2017_03_01_preview.models.ActivityLogAlertAllOfCondition
     :ivar actions: The actions that will activate when the condition is met.
-    :vartype actions:
-     ~$(python-base-namespace).v2017_03_01_preview.models.ActivityLogAlertActionList
+    :vartype actions: ~azure.mgmt.monitor.v2017_03_01_preview.models.ActivityLogAlertActionList
     :ivar description: A description of this activity log alert.
     :vartype description: str
     """
@@ -278,8 +279,8 @@ class ActivityLogAlertResource(Resource):
         condition: Optional["_models.ActivityLogAlertAllOfCondition"] = None,
         actions: Optional["_models.ActivityLogAlertActionList"] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -294,10 +295,9 @@ class ActivityLogAlertResource(Resource):
         :paramtype enabled: bool
         :keyword condition: The condition that will cause this alert to activate.
         :paramtype condition:
-         ~$(python-base-namespace).v2017_03_01_preview.models.ActivityLogAlertAllOfCondition
+         ~azure.mgmt.monitor.v2017_03_01_preview.models.ActivityLogAlertAllOfCondition
         :keyword actions: The actions that will activate when the condition is met.
-        :paramtype actions:
-         ~$(python-base-namespace).v2017_03_01_preview.models.ActivityLogAlertActionList
+        :paramtype actions: ~azure.mgmt.monitor.v2017_03_01_preview.models.ActivityLogAlertActionList
         :keyword description: A description of this activity log alert.
         :paramtype description: str
         """
@@ -347,7 +347,9 @@ class ActivityLogAlertResourcePatch(Resource):
         "enabled": {"key": "properties.enabled", "type": "bool"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, enabled: bool = True, **kwargs):
+    def __init__(
+        self, *, location: str, tags: Optional[Dict[str, str]] = None, enabled: bool = True, **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -375,7 +377,7 @@ class ErrorResponse(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword code: Error code.
         :paramtype code: str

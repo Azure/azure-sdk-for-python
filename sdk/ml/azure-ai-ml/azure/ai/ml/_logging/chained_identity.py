@@ -5,7 +5,7 @@
 import logging
 import os
 from contextlib import ContextDecorator
-from typing import Any
+from typing import Any, Optional
 
 START_MSG = "[START]"
 STOP_MSG = "[STOP]"
@@ -14,12 +14,11 @@ _PRINT_STACK = os.environ.get("_AZUREML_TRACE_STACK", False)
 
 
 class ChainedIdentity(object):
-    """A mixin that provides structured, chained logging for objects and
-    contexts."""
+    """A mixin that provides structured, chained logging for objects and contexts."""
 
     DELIM = "#"
 
-    def __init__(self, _ident: str = None, _parent_logger: logging.Logger = None, **kwargs):
+    def __init__(self, _ident: Optional[str] = None, _parent_logger: Optional[logging.Logger] = None, **kwargs):
         """Internal class used to improve logging information.
 
         :param _ident: Identity of the object
@@ -36,7 +35,9 @@ class ChainedIdentity(object):
         try:
             super(ChainedIdentity, self).__init__(**kwargs)
         except TypeError as type_error:
-            raise TypeError("{}. Found key word arguments: {}.".format(",".join(type_error.args), kwargs.keys()))
+            raise TypeError(
+                "{}. Found key word arguments: {}.".format(",".join(type_error.args), kwargs.keys())
+            ) from type_error
 
     @property
     def identity(self) -> str:

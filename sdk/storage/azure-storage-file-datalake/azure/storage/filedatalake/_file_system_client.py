@@ -8,12 +8,12 @@ import functools
 from typing import Any, Dict, Optional, Union, TYPE_CHECKING
 from urllib.parse import urlparse, quote, unquote
 
-import six
 from typing_extensions import Self
 
 from azure.core.pipeline import Pipeline
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
+from azure.core.tracing.decorator import distributed_trace
 from azure.storage.blob import ContainerClient
 from ._shared.base_client import TransportWrapper, StorageAccountHostsMixin, parse_query, parse_connection_str
 from ._serialize import convert_dfs_url_to_blob_url, get_api_version
@@ -62,6 +62,9 @@ class FileSystemClient(StorageAccountHostsMixin):
     :keyword str api_version:
         The Storage API version to use for requests. Default value is the most recent service version that is
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
+    :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
+        authentication. Only has an effect when credential is of type TokenCredential. The value could be
+        https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
 
     .. admonition:: Example:
 
@@ -81,13 +84,13 @@ class FileSystemClient(StorageAccountHostsMixin):
         try:
             if not account_url.lower().startswith('http'):
                 account_url = "https://" + account_url
-        except AttributeError:
-            raise ValueError("account URL must be a string.")
+        except AttributeError as exc:
+            raise ValueError("account URL must be a string.") from exc
         parsed_url = urlparse(account_url.rstrip('/'))
         if not file_system_name:
             raise ValueError("Please specify a file system name.")
         if not parsed_url.netloc:
-            raise ValueError("Invalid URL: {}".format(account_url))
+            raise ValueError(f"Invalid URL: {account_url}")
 
         blob_account_url = convert_dfs_url_to_blob_url(account_url)
         # TODO: add self.account_url to base_client and remove _blob_account_url
@@ -121,16 +124,13 @@ class FileSystemClient(StorageAccountHostsMixin):
 
     def _format_url(self, hostname):
         file_system_name = self.file_system_name
-        if isinstance(file_system_name, six.text_type):
+        if isinstance(file_system_name, str):
             file_system_name = file_system_name.encode('UTF-8')
-        return "{}://{}/{}{}".format(
-            self.scheme,
-            hostname,
-            quote(file_system_name),
-            self._query_str)
+        return f"{self.scheme}://{hostname}/{quote(file_system_name)}{self._query_str}"
 
     def __exit__(self, *args):
         self._container_client.close()
+        self._datalake_client_for_blob_operation.close()
         super(FileSystemClient, self).__exit__(*args)
 
     def close(self):
@@ -138,7 +138,6 @@ class FileSystemClient(StorageAccountHostsMixin):
         """ This method is to close the sockets opened by the client.
         It need not be used when using with a context manager.
         """
-        self._container_client.close()
         self.__exit__()
 
     @classmethod
@@ -164,6 +163,10 @@ class FileSystemClient(StorageAccountHostsMixin):
             Credentials provided here will take precedence over those in the connection string.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
+        :paramtype credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
+            authentication. Only has an effect when credential is of type TokenCredential. The value could be
+            https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
         :return a FileSystemClient
         :rtype ~azure.storage.filedatalake.FileSystemClient
 
@@ -180,6 +183,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         return cls(
             account_url, file_system_name=file_system_name, credential=credential, **kwargs)
 
+    @distributed_trace
     def acquire_lease(
         self, lease_duration=-1,  # type: int
         lease_id=None,  # type: Optional[str]
@@ -217,7 +221,11 @@ class FileSystemClient(StorageAccountHostsMixin):
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_.
         :returns: A DataLakeLeaseClient object, that can be run in a context manager.
         :rtype: ~azure.storage.filedatalake.DataLakeLeaseClient
 
@@ -234,6 +242,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         lease.acquire(lease_duration=lease_duration, **kwargs)
         return lease
 
+    @distributed_trace
     def create_file_system(self, metadata=None,  # type: Optional[Dict[str, str]]
                            public_access=None,  # type: Optional[PublicAccess]
                            **kwargs):
@@ -259,7 +268,11 @@ class FileSystemClient(StorageAccountHostsMixin):
 
         :paramtype encryption_scope_options: dict or ~azure.storage.filedatalake.EncryptionScopeOptions
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_.
         :returns: A dictionary of response headers.
         :rtype: Dict[str, Union[str, datetime]]
 
@@ -278,14 +291,20 @@ class FileSystemClient(StorageAccountHostsMixin):
                                                        container_encryption_scope=encryption_scope_options,
                                                        **kwargs)
 
+    @distributed_trace
     def exists(self, **kwargs):
         # type: (**Any) -> bool
         """
         Returns True if a file system exists and returns False otherwise.
 
         :kwarg int timeout:
-            The timeout parameter is expressed in seconds.
-        :returns: boolean
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_.
+        :returns: True if a file system exists, False otherwise.
+        :rtype: bool
         """
         return self._container_client.exists(**kwargs)
 
@@ -302,17 +321,22 @@ class FileSystemClient(StorageAccountHostsMixin):
             matches the active lease ID of the source filesystem.
         :paramtype lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_.
         :rtype: ~azure.storage.filedatalake.FileSystemClient
         """
         self._container_client._rename_container(new_name, **kwargs)   # pylint: disable=protected-access
         #TODO: self._raw_credential would not work with SAS tokens
         renamed_file_system = FileSystemClient(
-                "{}://{}".format(self.scheme, self.primary_hostname), file_system_name=new_name,
+                f"{self.scheme}://{self.primary_hostname}", file_system_name=new_name,
                 credential=self._raw_credential, api_version=self.api_version, _configuration=self._config,
                 _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts)
         return renamed_file_system
 
+    @distributed_trace
     def delete_file_system(self, **kwargs):
         # type: (Any) -> None
         """Marks the specified file system for deletion.
@@ -342,7 +366,11 @@ class FileSystemClient(StorageAccountHostsMixin):
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_.
         :rtype: None
 
         .. admonition:: Example:
@@ -356,6 +384,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         """
         self._container_client.delete_container(**kwargs)
 
+    @distributed_trace
     def get_file_system_properties(self, **kwargs):
         # type: (Any) -> FileSystemProperties
         """Returns all user-defined metadata and system properties for the specified
@@ -365,7 +394,11 @@ class FileSystemClient(StorageAccountHostsMixin):
             If specified, get_file_system_properties only succeeds if the
             file system's lease is active and matches this ID.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_.
         :return: Properties for the specified file system within a file system object.
         :rtype: ~azure.storage.filedatalake.FileSystemProperties
 
@@ -381,6 +414,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         container_properties = self._container_client.get_container_properties(**kwargs)
         return FileSystemProperties._convert_from_container_props(container_properties)  # pylint: disable=protected-access
 
+    @distributed_trace
     def set_file_system_metadata(  # type: ignore
         self, metadata,  # type: Dict[str, str]
         **kwargs
@@ -416,8 +450,13 @@ class FileSystemClient(StorageAccountHostsMixin):
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_.
         :returns: filesystem-updated property dict (Etag and last modified).
+        :rtype: Dict[str, str]
 
         .. admonition:: Example:
 
@@ -430,6 +469,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         """
         return self._container_client.set_container_metadata(metadata=metadata, **kwargs)
 
+    @distributed_trace
     def set_file_system_access_policy(
             self, signed_identifiers,  # type: Dict[str, AccessPolicy]
             public_access=None,  # type: Optional[Union[str, PublicAccess]]
@@ -463,13 +503,18 @@ class FileSystemClient(StorageAccountHostsMixin):
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_.
         :returns: File System-updated property dict (Etag and last modified).
         :rtype: dict[str, str or ~datetime.datetime]
         """
         return self._container_client.set_container_access_policy(signed_identifiers,
                                                                   public_access=public_access, **kwargs)
 
+    @distributed_trace
     def get_file_system_access_policy(self, **kwargs):
         # type: (Any) -> Dict[str, Any]
         """Gets the permissions for the specified file system.
@@ -480,7 +525,11 @@ class FileSystemClient(StorageAccountHostsMixin):
             file system's lease is active and matches this ID.
         :paramtype lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_.
         :returns: Access policy information in a dict.
         :rtype: dict[str, Any]
         """
@@ -490,6 +539,7 @@ class FileSystemClient(StorageAccountHostsMixin):
             'signed_identifiers': access_policy['signed_identifiers']
         }
 
+    @distributed_trace
     def get_paths(self, path=None, # type: Optional[str]
                   recursive=True,  # type: Optional[bool]
                   max_results=None,  # type: Optional[int]
@@ -501,6 +551,7 @@ class FileSystemClient(StorageAccountHostsMixin):
 
         :param str path:
             Filters the results to return only paths under the specified path.
+        :param Optional[bool] recursive: Optional. Set True for recursive, False for iterative.
         :param int max_results: An optional value that specifies the maximum
             number of items to return per page. If omitted or greater than 5,000, the
             response will include up to 5,000 items per page.
@@ -515,7 +566,11 @@ class FileSystemClient(StorageAccountHostsMixin):
             unique friendly names.
         :type upn: bool
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_.
         :returns: An iterable (auto-paging) response of PathProperties.
         :rtype: ~azure.core.paging.ItemPaged[~azure.storage.filedatalake.PathProperties]
 
@@ -538,6 +593,7 @@ class FileSystemClient(StorageAccountHostsMixin):
             command, recursive, path=path, max_results=max_results,
             page_iterator_class=PathPropertiesPaged, **kwargs)
 
+    @distributed_trace
     def create_directory(self, directory,  # type: Union[DirectoryProperties, str]
                          metadata=None,  # type: Optional[Dict[str, str]]
                          **kwargs):
@@ -608,7 +664,11 @@ class FileSystemClient(StorageAccountHostsMixin):
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_.
         :return: DataLakeDirectoryClient
 
         .. admonition:: Example:
@@ -624,6 +684,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         directory_client.create_directory(metadata=metadata, **kwargs)
         return directory_client
 
+    @distributed_trace
     def delete_directory(self, directory,  # type: Union[DirectoryProperties, str]
                          **kwargs):
         # type: (...) -> DataLakeDirectoryClient
@@ -656,7 +717,11 @@ class FileSystemClient(StorageAccountHostsMixin):
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_.
         :return: DataLakeDirectoryClient
 
         .. admonition:: Example:
@@ -672,6 +737,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         directory_client.delete_directory(**kwargs)
         return directory_client
 
+    @distributed_trace
     def create_file(self, file,  # type: Union[FileProperties, str]
                     **kwargs):
         # type: (...) -> DataLakeFileClient
@@ -749,7 +815,11 @@ class FileSystemClient(StorageAccountHostsMixin):
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_.
         :return: DataLakeFileClient
 
         .. admonition:: Example:
@@ -765,6 +835,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         file_client.create_file(**kwargs)
         return file_client
 
+    @distributed_trace
     def delete_file(self, file,  # type: Union[FileProperties, str]
                     **kwargs):
         # type: (...) -> DataLakeFileClient
@@ -797,7 +868,11 @@ class FileSystemClient(StorageAccountHostsMixin):
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_.
         :return: DataLakeFileClient
 
         .. admonition:: Example:
@@ -822,7 +897,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         except IndexError:
             url = url_and_token[0] + '/' + quoted_path
 
-        undelete_source = quoted_path + '?deletionid={}'.format(deletion_id) if deletion_id else None
+        undelete_source = quoted_path + f'?deletionid={deletion_id}' if deletion_id else None
 
         return quoted_path, url, undelete_source
 
@@ -841,7 +916,12 @@ class FileSystemClient(StorageAccountHostsMixin):
         :param str deletion_id:
             Specifies the version of the deleted path to restore.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_.
+        :returns: Returns the DataLake client for the restored soft-deleted path.
         :rtype: ~azure.storage.file.datalake.DataLakeDirectoryClient or azure.storage.file.datalake.DataLakeFileClient
         """
         _, url, undelete_source = self._undelete_path_options(deleted_path_name, deletion_id)
@@ -942,6 +1022,7 @@ class FileSystemClient(StorageAccountHostsMixin):
             api_version=self.api_version,
             _hosts=self._hosts, _configuration=self._config, _pipeline=_pipeline)
 
+    @distributed_trace
     def list_deleted_paths(self, **kwargs):
         # type: (Any) -> ItemPaged[DeletedPathProperties]
         """Returns a generator to list the deleted (file or directory) paths under the specified file system.
@@ -957,7 +1038,11 @@ class FileSystemClient(StorageAccountHostsMixin):
             An optional value that specifies the maximum number of items to return per page.
             If omitted or greater than 5,000, the response will include up to 5,000 items per page.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_.
         :returns: An iterable (auto-paging) response of DeletedPathProperties.
         :rtype:
             ~azure.core.paging.ItemPaged[~azure.storage.filedatalake.DeletedPathProperties]

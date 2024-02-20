@@ -3,9 +3,10 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-import azure.cosmos.aio.cosmos_client as cosmos_client
+from azure.cosmos.aio import CosmosClient
 import azure.cosmos.exceptions as exceptions
 from azure.cosmos.partition_key import PartitionKey
+from azure.cosmos import ThroughputProperties
 
 import asyncio
 import config
@@ -54,6 +55,7 @@ MASTER_KEY = config.settings['master_key']
 DATABASE_ID = config.settings['database_id']
 CONTAINER_ID = config.settings['container_id']
 
+
 async def find_container(db, id):
     print('1. Query for Container')
 
@@ -62,19 +64,17 @@ async def find_container(db, id):
     # to cast this object into a list directly will throw an error; instead, iterate over the containers
     # to populate your list using an async for loop like shown here or in the list_containers() method
     query_containers_response = db.query_containers(
-        {
-            "query": "SELECT * FROM r WHERE r.id=@id",
-            "parameters": [
-                { "name":"@id", "value": id }
-            ]
-        }
+        query="SELECT * FROM r WHERE r.id=@id",
+        parameters=[
+            {"name": "@id", "value": id}
+        ]
     )
     containers = [container async for container in query_containers_response]
 
     if len(containers) > 0:
         print('Container with id \'{0}\' was found'.format(id))
     else:
-        print('No container with id \'{0}\' was found'. format(id))
+        print('No container with id \'{0}\' was found'.format(id))
 
     # Alternatively, you can directly iterate over the asynchronous iterator without building a separate
     # list if you don't need the ordering or indexing capabilities
@@ -104,28 +104,33 @@ async def create_container(db, id):
 
     print("\n2.2 Create Container - With custom index policy")
 
-    coll = {
-        "id": id+"_container_custom_index_policy",
-        "indexingPolicy": {
-            "automatic": False
+    try:
+        coll = {
+            "id": id+"_container_custom_index_policy",
+            "indexingPolicy": {
+                "automatic": False
+            }
         }
-    }
 
-    container = await db.create_container_if_not_exists(
-        id=coll['id'],
-        partition_key=partition_key,
-        indexing_policy=coll['indexingPolicy']
-    )
-    properties = await container.read()
-    print('Container with id \'{0}\' created'.format(container.id))
-    print('IndexPolicy Mode - \'{0}\''.format(properties['indexingPolicy']['indexingMode']))
-    print('IndexPolicy Automatic - \'{0}\''.format(properties['indexingPolicy']['automatic']))
+        container = await db.create_container(
+            id=coll['id'],
+            partition_key=partition_key,
+            indexing_policy=coll['indexingPolicy']
+        )
+
+        properties = await container.read()
+        print('Container with id \'{0}\' created'.format(container.id))
+        print('IndexPolicy Mode - \'{0}\''.format(properties['indexingPolicy']['indexingMode']))
+        print('IndexPolicy Automatic - \'{0}\''.format(properties['indexingPolicy']['automatic']))
+
+    except exceptions.CosmosResourceExistsError:
+        print('A container with id \'{0}\' already exists'.format(coll['id']))
 
     print("\n2.3 Create Container - With custom provisioned throughput")
 
     try:
         container = await db.create_container(
-            id=id+"_container_custom_throughput",
+            id=id + "_container_custom_throughput",
             partition_key=partition_key,
             offer_throughput=400
         )
@@ -138,7 +143,7 @@ async def create_container(db, id):
 
     try:
         container = await db.create_container(
-            id= id+"_container_unique_keys",
+            id=id + "_container_unique_keys",
             partition_key=partition_key,
             unique_key_policy={'uniqueKeys': [{'paths': ['/field1/field2', '/field3']}]}
         )
@@ -154,7 +159,7 @@ async def create_container(db, id):
 
     try:
         container = await db.create_container(
-            id=id+"_container_partition_key_v2",
+            id=id + "_container_partition_key_v2",
             partition_key=PartitionKey(path='/id', kind='Hash')
         )
         properties = await container.read()
@@ -168,7 +173,7 @@ async def create_container(db, id):
 
     try:
         container = await db.create_container(
-            id=id+"_container_partition_key_v1",
+            id=id + "_container_partition_key_v1",
             partition_key=PartitionKey(path='/id', kind='Hash', version=1)
         )
         properties = await container.read()
@@ -180,15 +185,15 @@ async def create_container(db, id):
     except Exception:
         print("Skipping this step, account does not have Synapse Link activated")
 
-    print("\n2.7 Create Container - With analytical store enabled") 
-    
+    print("\n2.7 Create Container - With analytical store enabled")
+
     if 'localhost:8081' in HOST:
         print("Skipping step since emulator does not support this yet")
     else:
         try:
             container = await db.create_container(
-                id=id+"_container_analytical_store",
-                partition_key=PartitionKey(path='/id', kind='Hash'),analytical_storage_ttl=-1
+                id=id + "_container_analytical_store",
+                partition_key=PartitionKey(path='/id', kind='Hash'), analytical_storage_ttl=-1
 
             )
             properties = await container.read()
@@ -198,13 +203,14 @@ async def create_container(db, id):
         except exceptions.CosmosResourceExistsError:
             print('A container with id \'_container_analytical_store\' already exists')
         except Exception:
-            print('Creating container with analytical storage can only happen in synapse link activated accounts, skipping step')
+            print(
+                'Creating container with analytical storage can only happen in synapse link activated accounts, skipping step')
 
     print("\n2.8 Create Container - With auto scale settings")
 
     try:
         container = await db.create_container(
-            id=id+"_container_auto_scale_settings",
+            id=id + "_container_auto_scale_settings",
             partition_key=partition_key,
             offer_throughput=ThroughputProperties(auto_scale_max_throughput=5000, auto_scale_increment_percent=0)
         )
@@ -212,7 +218,6 @@ async def create_container(db, id):
 
     except exceptions.CosmosResourceExistsError:
         print('A container with id \'{0}\' already exists'.format(coll['id']))
-
 
 
 async def manage_provisioned_throughput(db, id):
@@ -230,18 +235,23 @@ async def manage_provisioned_throughput(db, id):
         # now use its _self to query for throughput offers
         offer = await container.get_throughput()
 
-        print('Found Offer \'{0}\' for Container \'{1}\' and its throughput is \'{2}\''.format(offer.properties['id'], container.id, offer.properties['content']['offerThroughput']))
+        print('Found Offer \'{0}\' for Container \'{1}\' and its throughput is \'{2}\''.format(offer.properties['id'],
+                                                                                               container.id,
+                                                                                               offer.properties[
+                                                                                                   'content'][
+                                                                                                   'offerThroughput']))
 
     except exceptions.CosmosResourceExistsError:
         print('A container with id \'{0}\' does not exist'.format(id))
 
     print("\n3.2 Change Provisioned Throughput of Container")
 
-    #The Provisioned Throughput of a container controls the throughput allocated to the Container
+    # The Provisioned Throughput of a container controls the throughput allocated to the Container
 
-    #The following code shows how you can change Container's throughput
+    # The following code shows how you can change Container's throughput
     offer = await container.replace_throughput(offer.offer_throughput + 100)
-    print('Replaced Offer. Provisioned Throughput is now \'{0}\''.format(offer.properties['content']['offerThroughput']))
+    print(
+        'Replaced Offer. Provisioned Throughput is now \'{0}\''.format(offer.properties['content']['offerThroughput']))
 
 
 async def read_container(db, id):
@@ -292,8 +302,7 @@ async def delete_container(db, id):
 
 
 async def run_sample():
-
-    async with cosmos_client.CosmosClient(HOST, {'masterKey': MASTER_KEY}) as client:
+    async with CosmosClient(HOST, {'masterKey': MASTER_KEY}) as client:
         try:
             db = await client.create_database_if_not_exists(id=DATABASE_ID)
 
@@ -326,7 +335,7 @@ async def run_sample():
             print('\nrun_sample has caught an error. {0}'.format(e.message))
 
         finally:
-                print("\nrun_sample done")
+            print("\nrun_sample done")
 
 
 if __name__ == '__main__':

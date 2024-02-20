@@ -1,5 +1,3 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -7,6 +5,7 @@
 # --------------------------------------------------------------------------
 
 import platform
+import tempfile
 import uuid
 from os import path, remove, urandom
 
@@ -51,13 +50,6 @@ class TestStorageLargestBlockBlob(StorageRecordedTestCase):
 
         if self.is_live:
             self.bsc.create_container(self.container_name)
-
-    def _teardown(self, file_name):
-        if path.isfile(file_name):
-            try:
-                remove(file_name)
-            except:
-                pass
 
     # --Helpers-----------------------------------------------------------------
     def _get_blob_reference(self):
@@ -212,32 +204,28 @@ class TestStorageLargestBlockBlob(StorageRecordedTestCase):
         self._setup(storage_account_name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        FILE_PATH = 'largest_blob_from_path.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
+        with tempfile.TemporaryFile() as temp_file:
             largeStream = LargeStream(LARGEST_BLOCK_SIZE, 100 * 1024 * 1024)
             chunk = largeStream.read()
             while chunk:
-                stream.write(chunk)
+                temp_file.write(chunk)
                 chunk = largeStream.read()
 
-        # Act
-        with open(FILE_PATH, 'rb') as stream:
-            blob.upload_blob(stream, max_concurrency=2)
+            # Act
+            temp_file.seek(0)
+            blob.upload_blob(temp_file, max_concurrency=2)
 
-        # Assert
-        self._teardown(FILE_PATH)
 
     def test_substream_for_single_thread_upload_large_block(self):
-        FILE_PATH = 'largest_blob_from_path.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
+        with tempfile.TemporaryFile() as temp_file:
             largeStream = LargeStream(LARGE_BLOCK_SIZE, 4 * 1024 * 1024)
             chunk = largeStream.read()
             while chunk:
-                stream.write(chunk)
+                temp_file.write(chunk)
                 chunk = largeStream.read()
 
-        with open(FILE_PATH, 'rb') as stream:
-            substream = SubStream(stream, 0, 2 * 1024 * 1024, None)
+            temp_file.seek(0)
+            substream = SubStream(temp_file, 0, 2 * 1024 * 1024, None)
             # this is to mimic stage large block: SubStream.read() is getting called by http client
             data1 = substream.read(2 * 1024 * 1024)
             substream.read(2 * 1024 * 1024)
@@ -250,7 +238,6 @@ class TestStorageLargestBlockBlob(StorageRecordedTestCase):
             data2 = substream.read(2 * 1024 * 1024)
 
             assert data1 == data2
-        self._teardown(FILE_PATH)
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -263,20 +250,18 @@ class TestStorageLargestBlockBlob(StorageRecordedTestCase):
         self._setup(storage_account_name, storage_account_key, [payload_dropping_policy, credential_policy])
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        FILE_PATH = 'largest_blob_from_path.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
+        with tempfile.TemporaryFile() as temp_file:
             largeStream = LargeStream(LARGEST_BLOCK_SIZE, 100 * 1024 * 1024)
             chunk = largeStream.read()
             while chunk:
-                stream.write(chunk)
+                temp_file.write(chunk)
                 chunk = largeStream.read()
 
-        # Act
-        with open(FILE_PATH, 'rb') as stream:
-            blob.upload_blob(stream, max_concurrency=2)
+            # Act
+            temp_file.seek(0)
+            blob.upload_blob(temp_file, max_concurrency=2)
 
         # Assert
-        self._teardown(FILE_PATH)
         assert payload_dropping_policy.put_block_counter == 1
         assert payload_dropping_policy.put_block_sizes[0] == LARGEST_BLOCK_SIZE
 

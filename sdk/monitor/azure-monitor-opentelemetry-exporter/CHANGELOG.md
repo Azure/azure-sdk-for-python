@@ -1,17 +1,108 @@
 # Release History
 
-## 1.0.0b11 (Unreleased)
+## 1.0.0b18 (Unreleased)
 
 ### Features Added
-
-- Add pre-aggregated standard metrics - requests/duration, dependencies/duration
-    ([#26753](https://github.com/Azure/azure-sdk-for-python/pull/26753))
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
+- Default exception type for blank exceptions
+    ([#32327](https://github.com/Azure/azure-sdk-for-python/pull/32327))
+
 ### Other Changes
+
+## 1.0.0b17 (2023-09-12)
+
+### Bugs Fixed
+
+- Handle missing or empty message data
+    ([#31944](https://github.com/Azure/azure-sdk-for-python/pull/31944))
+
+## 1.0.0b16 (2023-08-30)
+
+### Features Added
+
+- Export OTel Resource
+    ([#31355](https://github.com/Azure/azure-sdk-for-python/pull/31355))
+- Use observed timestamp for log record if timetamp is None
+    ([#31660](https://github.com/Azure/azure-sdk-for-python/pull/31660))
+- Support custom events
+    ([#31883](https://github.com/Azure/azure-sdk-for-python/pull/31883))
+
+### Other Changes
+
+- Unpin Opentelemetry SDK/API.
+    ([#31253](https://github.com/Azure/azure-sdk-for-python/pull/31253))
+
+## 1.0.0b15 (2023-07-17)
+
+### Features Added
+
+- Upgrading to OpenTelemetry SDK/API 1.19.
+    ([#31170](https://github.com/Azure/azure-sdk-for-python/pull/31170))
+
+## 1.0.0b14 (2023-06-09)
+
+### Features Added
+
+- Upgrading to OpenTelemetry SDK/API 1.18.
+    ([#30611](https://github.com/Azure/azure-sdk-for-python/pull/30611))
+
+## 1.0.0b13 (2023-04-11)
+
+### Features Added
+
+- Enable AAD Credentials
+    ([#28888](https://github.com/Azure/azure-sdk-for-python/pull/28888))
+- Upgrading to OpenTelemetry SDK/API 1.17
+    ([#29656](https://github.com/Azure/azure-sdk-for-python/pull/29656))
+- Updating sdkVersion prefix according to new spec. Using agents folder for marker.
+    ([#29730](https://github.com/Azure/azure-sdk-for-python/pull/29730))
+
+## 1.0.0b12 (2023-02-06)
+
+### Features Added
+
+- Add sdkVersion prefix during App Service attach
+    ([#28637](https://github.com/Azure/azure-sdk-for-python/pull/28637))
+- Correcting sdkVersion prefix
+    ([#29227](https://github.com/Azure/azure-sdk-for-python/pull/29227))
+
+### Bugs Fixed
+
+- Update success criteria for requests
+    ([#28486](https://github.com/Azure/azure-sdk-for-python/pull/28486))
+
+### Other Changes
+
+- Loosen instrumentation key validation strictness
+    ([#28316](https://github.com/Azure/azure-sdk-for-python/pull/28316))
+- Disable storage for statsbeat if storage is disabled for exporter
+    ([#28322](https://github.com/Azure/azure-sdk-for-python/pull/28322))
+- Add UK to eu statsbeats
+    ([#28379](https://github.com/Azure/azure-sdk-for-python/pull/28379))
+- Update to opentelemetry api/sdk v1.15
+    ([#28499](https://github.com/Azure/azure-sdk-for-python/pull/28499))
+- Update logging samples import paths to opentelemetry api/sdk v1.15
+    ([#28646](https://github.com/Azure/azure-sdk-for-python/pull/28646))
+
+## 1.0.0b11 (2022-12-15)
+
+### Features Added
+
+- Add pre-aggregated standard metrics - requests/duration, dependencies/duration
+    ([#26753](https://github.com/Azure/azure-sdk-for-python/pull/26753))
+- Add azure-sdk usage to instrumentations statsbeat
+    ([#27756](https://github.com/Azure/azure-sdk-for-python/pull/27756))
+
+### Bugs Fixed
+
+- Pinning OpenTelemetry SDK and API to between 1.12 and 1.14 to avoid bug from change in module path. Reverting [#27913]
+    ([#27958](https://github.com/Azure/azure-sdk-for-python/pull/27958))
+- Pass along sampleRate in SpanEvents from Span
+    ([#27629](https://github.com/Azure/azure-sdk-for-python/pull/27629))
 
 ## 1.0.0b10 (2022-11-10)
 

@@ -12,7 +12,7 @@ from typing import Any, Awaitable
 from azure.core import AsyncPipelineClient
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
-from .. import models
+from .. import models as _models
 from ..._serialization import Deserializer, Serializer
 from ._configuration import KeyVaultClientConfiguration
 from .operations import KeyVaultClientOperationsMixin
@@ -30,9 +30,9 @@ class KeyVaultClient(KeyVaultClientOperationsMixin):  # pylint: disable=client-a
     def __init__(self, **kwargs: Any) -> None:  # pylint: disable=missing-client-constructor-parameter-credential
         _endpoint = "{vaultBaseUrl}"
         self._config = KeyVaultClientConfiguration(**kwargs)
-        self._client = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
+        self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
@@ -66,5 +66,5 @@ class KeyVaultClient(KeyVaultClientOperationsMixin):  # pylint: disable=client-a
         await self._client.__aenter__()
         return self
 
-    async def __aexit__(self, *exc_details) -> None:
+    async def __aexit__(self, *exc_details: Any) -> None:
         await self._client.__aexit__(*exc_details)

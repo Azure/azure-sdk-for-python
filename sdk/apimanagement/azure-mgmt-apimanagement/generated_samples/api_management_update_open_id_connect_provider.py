@@ -34,11 +34,13 @@ def main():
         service_name="apimService1",
         opid="templateOpenIdConnect2",
         if_match="*",
-        parameters={"properties": {"clientSecret": "updatedsecret"}},
+        parameters={
+            "properties": {"clientSecret": "updatedsecret", "useInApiDocumentation": True, "useInTestConsole": False}
+        },
     )
     print(response)
 
 
-# x-ms-original-file: specification/apimanagement/resource-manager/Microsoft.ApiManagement/stable/2021-08-01/examples/ApiManagementUpdateOpenIdConnectProvider.json
+# x-ms-original-file: specification/apimanagement/resource-manager/Microsoft.ApiManagement/stable/2022-08-01/examples/ApiManagementUpdateOpenIdConnectProvider.json
 if __name__ == "__main__":
     main()

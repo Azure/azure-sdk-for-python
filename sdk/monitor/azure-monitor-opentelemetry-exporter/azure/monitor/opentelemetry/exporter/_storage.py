@@ -37,17 +37,18 @@ class LocalFileBlob:
 
     def get(self):
         try:
-            with open(self.fullpath, "r") as file:
+            with open(self.fullpath, "r", encoding="utf-8") as file:
                 return tuple(
                     json.loads(line.strip()) for line in file.readlines()
                 )
         except Exception:
             pass  # keep silent
+        return None
 
     def put(self, data, lease_period=0):
         try:
             fullpath = self.fullpath + ".tmp"
-            with open(fullpath, "w") as file:
+            with open(fullpath, "w", encoding="utf-8") as file:
                 for item in data:
                     file.write(json.dumps(item))
                     # The official Python doc: Do not use os.linesep as a line
@@ -61,6 +62,7 @@ class LocalFileBlob:
             return self
         except Exception:
             pass  # keep silent
+        return None
 
     def lease(self, period):
         timestamp = _now() + _seconds(period)
@@ -202,7 +204,7 @@ class LocalFileStorage:
                         size += os.path.getsize(path)
                     except OSError:
                         logger.error(
-                            "Path %s does not exist or is " "inaccessible.",
+                            "Path %s does not exist or is inaccessible.",
                             path,
                         )
                         continue

@@ -7,6 +7,7 @@
 String = "Edm.String"
 Int32 = "Edm.Int32"
 Int64 = "Edm.Int64"
+Single = "Edm.Single"
 Double = "Edm.Double"
 Boolean = "Edm.Boolean"
 DateTimeOffset = "Edm.DateTimeOffset"
@@ -14,6 +15,5 @@ GeographyPoint = "Edm.GeographyPoint"
 ComplexType = "Edm.ComplexType"
 
 
-def Collection(typ):
-    # type (str) -> str
+def Collection(typ: str) -> str:
     return "Collection({})".format(typ)

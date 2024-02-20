@@ -13,13 +13,14 @@ from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from .. import models as _models
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
@@ -31,7 +32,7 @@ class Column(_serialization.Model):
     :ivar name: Column name. Required.
     :vartype name: str
     :ivar type: Column data type. Required. Known values are: "string", "integer", "number",
-     "boolean", and "object".
+     "boolean", "object", and "datetime".
     :vartype type: str or ~azure.mgmt.resourcegraph.models.ColumnDataType
     """
 
@@ -50,7 +51,7 @@ class Column(_serialization.Model):
         :keyword name: Column name. Required.
         :paramtype name: str
         :keyword type: Column data type. Required. Known values are: "string", "integer", "number",
-         "boolean", and "object".
+         "boolean", "object", and "datetime".
         :paramtype type: str or ~azure.mgmt.resourcegraph.models.ColumnDataType
         """
         super().__init__(**kwargs)
@@ -238,7 +239,7 @@ class Facet(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.expression = expression
-        self.result_type = None  # type: Optional[str]
+        self.result_type: Optional[str] = None
 
 
 class FacetError(Facet):
@@ -274,7 +275,7 @@ class FacetError(Facet):
         :paramtype errors: list[~azure.mgmt.resourcegraph.models.ErrorDetails]
         """
         super().__init__(expression=expression, **kwargs)
-        self.result_type = "FacetError"  # type: str
+        self.result_type: str = "FacetError"
         self.errors = errors
 
 
@@ -413,7 +414,7 @@ class FacetResult(Facet):
         :paramtype data: JSON
         """
         super().__init__(expression=expression, **kwargs)
-        self.result_type = "FacetResult"  # type: str
+        self.result_type: str = "FacetResult"
         self.total_records = total_records
         self.count = count
         self.data = data
@@ -606,6 +607,11 @@ class QueryRequestOptions(_serialization.Model):
      decide whether to allow partial scopes for result in case the number of subscriptions exceed
      allowed limits.
     :vartype allow_partial_scopes: bool
+    :ivar authorization_scope_filter: Defines what level of authorization resources should be
+     returned based on the which subscriptions and management groups are passed as scopes. Known
+     values are: "AtScopeAndBelow", "AtScopeAndAbove", "AtScopeExact", and "AtScopeAboveAndBelow".
+    :vartype authorization_scope_filter: str or
+     ~azure.mgmt.resourcegraph.models.AuthorizationScopeFilter
     """
 
     _validation = {
@@ -619,6 +625,7 @@ class QueryRequestOptions(_serialization.Model):
         "skip": {"key": "$skip", "type": "int"},
         "result_format": {"key": "resultFormat", "type": "str"},
         "allow_partial_scopes": {"key": "allowPartialScopes", "type": "bool"},
+        "authorization_scope_filter": {"key": "authorizationScopeFilter", "type": "str"},
     }
 
     def __init__(
@@ -627,8 +634,9 @@ class QueryRequestOptions(_serialization.Model):
         skip_token: Optional[str] = None,
         top: Optional[int] = None,
         skip: Optional[int] = None,
-        result_format: Union[str, "_models.ResultFormat"] = "objectArray",
+        result_format: Optional[Union[str, "_models.ResultFormat"]] = None,
         allow_partial_scopes: bool = False,
+        authorization_scope_filter: Union[str, "_models.AuthorizationScopeFilter"] = "AtScopeAndBelow",
         **kwargs
     ):
         """
@@ -648,6 +656,11 @@ class QueryRequestOptions(_serialization.Model):
          decide whether to allow partial scopes for result in case the number of subscriptions exceed
          allowed limits.
         :paramtype allow_partial_scopes: bool
+        :keyword authorization_scope_filter: Defines what level of authorization resources should be
+         returned based on the which subscriptions and management groups are passed as scopes. Known
+         values are: "AtScopeAndBelow", "AtScopeAndAbove", "AtScopeExact", and "AtScopeAboveAndBelow".
+        :paramtype authorization_scope_filter: str or
+         ~azure.mgmt.resourcegraph.models.AuthorizationScopeFilter
         """
         super().__init__(**kwargs)
         self.skip_token = skip_token
@@ -655,6 +668,7 @@ class QueryRequestOptions(_serialization.Model):
         self.skip = skip
         self.result_format = result_format
         self.allow_partial_scopes = allow_partial_scopes
+        self.authorization_scope_filter = authorization_scope_filter
 
 
 class QueryResponse(_serialization.Model):
@@ -1221,23 +1235,24 @@ class ResourcePropertyChange(_serialization.Model):
 
 
 class ResourcesHistoryRequest(_serialization.Model):
-    """ResourcesHistoryRequest.
+    """Describes a history request to be executed.
 
-    :ivar subscriptions:
+    :ivar subscriptions: Azure subscriptions against which to execute the query.
     :vartype subscriptions: list[str]
-    :ivar query:
+    :ivar query: The resources query.
     :vartype query: str
-    :ivar options:
+    :ivar options: The history request evaluation options.
     :vartype options: ~azure.mgmt.resourcegraph.models.ResourcesHistoryRequestOptions
-    :ivar management_group_id:
-    :vartype management_group_id: str
+    :ivar management_groups: Azure management groups against which to execute the query. Example: [
+     'mg1', 'mg2' ].
+    :vartype management_groups: list[str]
     """
 
     _attribute_map = {
         "subscriptions": {"key": "subscriptions", "type": "[str]"},
         "query": {"key": "query", "type": "str"},
         "options": {"key": "options", "type": "ResourcesHistoryRequestOptions"},
-        "management_group_id": {"key": "managementGroupId", "type": "str"},
+        "management_groups": {"key": "managementGroups", "type": "[str]"},
     }
 
     def __init__(
@@ -1246,42 +1261,50 @@ class ResourcesHistoryRequest(_serialization.Model):
         subscriptions: Optional[List[str]] = None,
         query: Optional[str] = None,
         options: Optional["_models.ResourcesHistoryRequestOptions"] = None,
-        management_group_id: Optional[str] = None,
+        management_groups: Optional[List[str]] = None,
         **kwargs
     ):
         """
-        :keyword subscriptions:
+        :keyword subscriptions: Azure subscriptions against which to execute the query.
         :paramtype subscriptions: list[str]
-        :keyword query:
+        :keyword query: The resources query.
         :paramtype query: str
-        :keyword options:
+        :keyword options: The history request evaluation options.
         :paramtype options: ~azure.mgmt.resourcegraph.models.ResourcesHistoryRequestOptions
-        :keyword management_group_id:
-        :paramtype management_group_id: str
+        :keyword management_groups: Azure management groups against which to execute the query.
+         Example: [ 'mg1', 'mg2' ].
+        :paramtype management_groups: list[str]
         """
         super().__init__(**kwargs)
         self.subscriptions = subscriptions
         self.query = query
         self.options = options
-        self.management_group_id = management_group_id
+        self.management_groups = management_groups
 
 
 class ResourcesHistoryRequestOptions(_serialization.Model):
-    """ResourcesHistoryRequestOptions.
+    """The options for history request evaluation.
 
-    :ivar interval: An interval in time specifying the date and time for the inclusive start and
-     exclusive end, i.e. ``[start, end)``.
+    :ivar interval: The time interval used to fetch history.
     :vartype interval: ~azure.mgmt.resourcegraph.models.DateTimeInterval
-    :ivar top:
+    :ivar top: The maximum number of rows that the query should return. Overrides the page size
+     when ``$skipToken`` property is present.
     :vartype top: int
-    :ivar skip:
+    :ivar skip: The number of rows to skip from the beginning of the results. Overrides the next
+     page offset when ``$skipToken`` property is present.
     :vartype skip: int
-    :ivar skip_token:
+    :ivar skip_token: Continuation token for pagination, capturing the next page size and offset,
+     as well as the context of the query.
     :vartype skip_token: str
-    :ivar result_format: Known values are: "table" and "objectArray".
-    :vartype result_format: str or
-     ~azure.mgmt.resourcegraph.models.ResourcesHistoryRequestOptionsResultFormat
+    :ivar result_format: Defines in which format query result returned. Known values are: "table"
+     and "objectArray".
+    :vartype result_format: str or ~azure.mgmt.resourcegraph.models.ResultFormat
     """
+
+    _validation = {
+        "top": {"maximum": 1000, "minimum": 1},
+        "skip": {"minimum": 0},
+    }
 
     _attribute_map = {
         "interval": {"key": "interval", "type": "DateTimeInterval"},
@@ -1298,22 +1321,24 @@ class ResourcesHistoryRequestOptions(_serialization.Model):
         top: Optional[int] = None,
         skip: Optional[int] = None,
         skip_token: Optional[str] = None,
-        result_format: Optional[Union[str, "_models.ResourcesHistoryRequestOptionsResultFormat"]] = None,
+        result_format: Optional[Union[str, "_models.ResultFormat"]] = None,
         **kwargs
     ):
         """
-        :keyword interval: An interval in time specifying the date and time for the inclusive start and
-         exclusive end, i.e. ``[start, end)``.
+        :keyword interval: The time interval used to fetch history.
         :paramtype interval: ~azure.mgmt.resourcegraph.models.DateTimeInterval
-        :keyword top:
+        :keyword top: The maximum number of rows that the query should return. Overrides the page size
+         when ``$skipToken`` property is present.
         :paramtype top: int
-        :keyword skip:
+        :keyword skip: The number of rows to skip from the beginning of the results. Overrides the next
+         page offset when ``$skipToken`` property is present.
         :paramtype skip: int
-        :keyword skip_token:
+        :keyword skip_token: Continuation token for pagination, capturing the next page size and
+         offset, as well as the context of the query.
         :paramtype skip_token: str
-        :keyword result_format: Known values are: "table" and "objectArray".
-        :paramtype result_format: str or
-         ~azure.mgmt.resourcegraph.models.ResourcesHistoryRequestOptionsResultFormat
+        :keyword result_format: Defines in which format query result returned. Known values are:
+         "table" and "objectArray".
+        :paramtype result_format: str or ~azure.mgmt.resourcegraph.models.ResultFormat
         """
         super().__init__(**kwargs)
         self.interval = interval

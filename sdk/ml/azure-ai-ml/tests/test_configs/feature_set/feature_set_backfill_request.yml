@@ -1,0 +1,20 @@
+$schema: http://azureml/sdk-2-0/FeatureSetBackfill.json
+
+name: customer_transactions
+version: "1"
+feature_window:
+    feature_window_start: "2023-08-01T00:00:00z"
+    feature_window_end: "2023-09-06T00:00:00z"
+description: "September backfill run for feature set customer_transactions:1"
+resource:
+    instance_type: Standard_E8S_V3
+spark_conf:
+    spark.driver.cores: "1"
+    spark.driver.memory: "2g"
+    spark.executor.cores: "2"
+    spark.executor.memory: "2g"
+    spark.executor.instances: "4"
+job_id: "1"
+data_status: ["Pending"]
+tags:
+    foo: "bar"

@@ -29,13 +29,13 @@ from ...operations._cognitive_services_management_client_operations import (
     build_check_domain_availability_request,
     build_check_sku_availability_request,
 )
-from .._vendor import MixinABC
+from .._vendor import CognitiveServicesManagementClientMixinABC
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class CognitiveServicesManagementClientOperationsMixin(MixinABC):
+class CognitiveServicesManagementClientOperationsMixin(CognitiveServicesManagementClientMixinABC):
     @distributed_trace_async
     async def check_sku_availability(
         self, location: str, skus: List[str], kind: str, type: str, **kwargs: Any
@@ -66,9 +66,9 @@ class CognitiveServicesManagementClientOperationsMixin(MixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SkuAvailabilityListResult]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
+        cls: ClsType[_models.SkuAvailabilityListResult] = kwargs.pop("cls", None)
 
         _parameters = _models.CheckSkuAvailabilityParameter(kind=kind, skus=skus, type=type)
         _json = self._serialize.body(_parameters, "CheckSkuAvailabilityParameter")
@@ -84,10 +84,11 @@ class CognitiveServicesManagementClientOperationsMixin(MixinABC):
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -104,7 +105,9 @@ class CognitiveServicesManagementClientOperationsMixin(MixinABC):
 
         return deserialized
 
-    check_sku_availability.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.CognitiveServices/locations/{location}/checkSkuAvailability"}  # type: ignore
+    check_sku_availability.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.CognitiveServices/locations/{location}/checkSkuAvailability"
+    }
 
     @distributed_trace_async
     async def check_domain_availability(
@@ -134,9 +137,9 @@ class CognitiveServicesManagementClientOperationsMixin(MixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DomainAvailability]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
+        cls: ClsType[_models.DomainAvailability] = kwargs.pop("cls", None)
 
         _parameters = _models.CheckDomainAvailabilityParameter(kind=kind, subdomain_name=subdomain_name, type=type)
         _json = self._serialize.body(_parameters, "CheckDomainAvailabilityParameter")
@@ -151,10 +154,11 @@ class CognitiveServicesManagementClientOperationsMixin(MixinABC):
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -171,4 +175,6 @@ class CognitiveServicesManagementClientOperationsMixin(MixinABC):
 
         return deserialized
 
-    check_domain_availability.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.CognitiveServices/checkDomainAvailability"}  # type: ignore
+    check_domain_availability.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.CognitiveServices/checkDomainAvailability"
+    }

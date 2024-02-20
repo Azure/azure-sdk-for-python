@@ -7,9 +7,13 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import List, Optional
+from typing import Any, List, Optional, TYPE_CHECKING
 
 from ... import _serialization
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
 class ErrorResponse(_serialization.Model):
@@ -26,7 +30,7 @@ class ErrorResponse(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword code: Error code.
         :paramtype code: str
@@ -66,7 +70,7 @@ class ManagementGroupProxyOnlyResource(_serialization.Model):
         "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(self, *, location: Optional[str] = None, **kwargs):
+    def __init__(self, *, location: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword location: Location of the resource.
         :paramtype location: str
@@ -103,8 +107,7 @@ class ManagementGroupDiagnosticSettingsResource(ManagementGroupProxyOnlyResource
      will be selected.
     :vartype event_hub_name: str
     :ivar logs: The list of logs settings.
-    :vartype logs:
-     list[~$(python-base-namespace).v2020_01_01_preview.models.ManagementGroupLogSettings]
+    :vartype logs: list[~azure.mgmt.monitor.v2020_01_01_preview.models.ManagementGroupLogSettings]
     :ivar workspace_id: The full ARM resource ID of the Log Analytics workspace to which you would
      like to send Diagnostic Logs. Example:
      /subscriptions/4b9e8510-67ab-4e9a-95a9-e2f1e570ea9c/resourceGroups/insights-integration/providers/Microsoft.OperationalInsights/workspaces/viruela2.
@@ -140,8 +143,8 @@ class ManagementGroupDiagnosticSettingsResource(ManagementGroupProxyOnlyResource
         event_hub_name: Optional[str] = None,
         logs: Optional[List["_models.ManagementGroupLogSettings"]] = None,
         workspace_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Location of the resource.
         :paramtype location: str
@@ -158,7 +161,7 @@ class ManagementGroupDiagnosticSettingsResource(ManagementGroupProxyOnlyResource
         :paramtype event_hub_name: str
         :keyword logs: The list of logs settings.
         :paramtype logs:
-         list[~$(python-base-namespace).v2020_01_01_preview.models.ManagementGroupLogSettings]
+         list[~azure.mgmt.monitor.v2020_01_01_preview.models.ManagementGroupLogSettings]
         :keyword workspace_id: The full ARM resource ID of the Log Analytics workspace to which you
          would like to send Diagnostic Logs. Example:
          /subscriptions/4b9e8510-67ab-4e9a-95a9-e2f1e570ea9c/resourceGroups/insights-integration/providers/Microsoft.OperationalInsights/workspaces/viruela2.
@@ -178,18 +181,20 @@ class ManagementGroupDiagnosticSettingsResourceCollection(_serialization.Model):
 
     :ivar value: The collection of management group diagnostic settings resources.
     :vartype value:
-     list[~$(python-base-namespace).v2020_01_01_preview.models.ManagementGroupDiagnosticSettingsResource]
+     list[~azure.mgmt.monitor.v2020_01_01_preview.models.ManagementGroupDiagnosticSettingsResource]
     """
 
     _attribute_map = {
         "value": {"key": "value", "type": "[ManagementGroupDiagnosticSettingsResource]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.ManagementGroupDiagnosticSettingsResource"]] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.ManagementGroupDiagnosticSettingsResource"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The collection of management group diagnostic settings resources.
         :paramtype value:
-         list[~$(python-base-namespace).v2020_01_01_preview.models.ManagementGroupDiagnosticSettingsResource]
+         list[~azure.mgmt.monitor.v2020_01_01_preview.models.ManagementGroupDiagnosticSettingsResource]
         """
         super().__init__(**kwargs)
         self.value = value
@@ -217,7 +222,7 @@ class ManagementGroupLogSettings(_serialization.Model):
         "enabled": {"key": "enabled", "type": "bool"},
     }
 
-    def __init__(self, *, category: str, enabled: bool, **kwargs):
+    def __init__(self, *, category: str, enabled: bool, **kwargs: Any) -> None:
         """
         :keyword category: Name of a Management Group Diagnostic Log category for a resource type this
          setting is applied to. Required.

@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -8,15 +9,14 @@
 
 from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from .. import _serialization
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    import __init__ as _models
+    from .. import models as _models
 
 
-class AddDataLakeStoreParameters(msrest.serialization.Model):
+class AddDataLakeStoreParameters(_serialization.Model):
     """The parameters used to add a new Data Lake Store account.
 
     :ivar suffix: The optional suffix for the Data Lake Store account.
@@ -24,150 +24,126 @@ class AddDataLakeStoreParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'suffix': {'key': 'properties.suffix', 'type': 'str'},
+        "suffix": {"key": "properties.suffix", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        suffix: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, suffix: Optional[str] = None, **kwargs):
         """
         :keyword suffix: The optional suffix for the Data Lake Store account.
         :paramtype suffix: str
         """
-        super(AddDataLakeStoreParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.suffix = suffix
 
 
-class AddDataLakeStoreWithAccountParameters(msrest.serialization.Model):
+class AddDataLakeStoreWithAccountParameters(_serialization.Model):
     """The parameters used to add a new Data Lake Store account while creating a new Data Lake Analytics account.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The unique name of the Data Lake Store account to add.
+    :ivar name: The unique name of the Data Lake Store account to add. Required.
     :vartype name: str
     :ivar suffix: The optional suffix for the Data Lake Store account.
     :vartype suffix: str
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'suffix': {'key': 'properties.suffix', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "suffix": {"key": "properties.suffix", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        suffix: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: str, suffix: Optional[str] = None, **kwargs):
         """
-        :keyword name: Required. The unique name of the Data Lake Store account to add.
+        :keyword name: The unique name of the Data Lake Store account to add. Required.
         :paramtype name: str
         :keyword suffix: The optional suffix for the Data Lake Store account.
         :paramtype suffix: str
         """
-        super(AddDataLakeStoreWithAccountParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.suffix = suffix
 
 
-class AddStorageAccountParameters(msrest.serialization.Model):
+class AddStorageAccountParameters(_serialization.Model):
     """The parameters used to add a new Azure Storage account.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar access_key: Required. The access key associated with this Azure Storage account that will
-     be used to connect to it.
+    :ivar access_key: The access key associated with this Azure Storage account that will be used
+     to connect to it. Required.
     :vartype access_key: str
     :ivar suffix: The optional suffix for the storage account.
     :vartype suffix: str
     """
 
     _validation = {
-        'access_key': {'required': True},
+        "access_key": {"required": True},
     }
 
     _attribute_map = {
-        'access_key': {'key': 'properties.accessKey', 'type': 'str'},
-        'suffix': {'key': 'properties.suffix', 'type': 'str'},
+        "access_key": {"key": "properties.accessKey", "type": "str"},
+        "suffix": {"key": "properties.suffix", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        access_key: str,
-        suffix: Optional[str] = "azuredatalakestore.net",
-        **kwargs
-    ):
+    def __init__(self, *, access_key: str, suffix: str = "azuredatalakestore.net", **kwargs):
         """
-        :keyword access_key: Required. The access key associated with this Azure Storage account that
-         will be used to connect to it.
+        :keyword access_key: The access key associated with this Azure Storage account that will be
+         used to connect to it. Required.
         :paramtype access_key: str
         :keyword suffix: The optional suffix for the storage account.
         :paramtype suffix: str
         """
-        super(AddStorageAccountParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.access_key = access_key
         self.suffix = suffix
 
 
-class AddStorageAccountWithAccountParameters(msrest.serialization.Model):
+class AddStorageAccountWithAccountParameters(_serialization.Model):
     """The parameters used to add a new Azure Storage account while creating a new Data Lake Analytics account.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The unique name of the Azure Storage account to add.
+    :ivar name: The unique name of the Azure Storage account to add. Required.
     :vartype name: str
-    :ivar access_key: Required. The access key associated with this Azure Storage account that will
-     be used to connect to it.
+    :ivar access_key: The access key associated with this Azure Storage account that will be used
+     to connect to it. Required.
     :vartype access_key: str
     :ivar suffix: The optional suffix for the storage account.
     :vartype suffix: str
     """
 
     _validation = {
-        'name': {'required': True},
-        'access_key': {'required': True},
+        "name": {"required": True},
+        "access_key": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'access_key': {'key': 'properties.accessKey', 'type': 'str'},
-        'suffix': {'key': 'properties.suffix', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "access_key": {"key": "properties.accessKey", "type": "str"},
+        "suffix": {"key": "properties.suffix", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        access_key: str,
-        suffix: Optional[str] = "azuredatalakestore.net",
-        **kwargs
-    ):
+    def __init__(self, *, name: str, access_key: str, suffix: str = "azuredatalakestore.net", **kwargs):
         """
-        :keyword name: Required. The unique name of the Azure Storage account to add.
+        :keyword name: The unique name of the Azure Storage account to add. Required.
         :paramtype name: str
-        :keyword access_key: Required. The access key associated with this Azure Storage account that
-         will be used to connect to it.
+        :keyword access_key: The access key associated with this Azure Storage account that will be
+         used to connect to it. Required.
         :paramtype access_key: str
         :keyword suffix: The optional suffix for the storage account.
         :paramtype suffix: str
         """
-        super(AddStorageAccountWithAccountParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.access_key = access_key
         self.suffix = suffix
 
 
-class CapabilityInformation(msrest.serialization.Model):
+class CapabilityInformation(_serialization.Model):
     """Subscription-level properties and limits for Data Lake Analytics.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -175,7 +151,7 @@ class CapabilityInformation(msrest.serialization.Model):
     :ivar subscription_id: The subscription credentials that uniquely identifies the subscription.
     :vartype subscription_id: str
     :ivar state: The subscription state. Known values are: "Registered", "Suspended", "Deleted",
-     "Unregistered", "Warned".
+     "Unregistered", and "Warned".
     :vartype state: str or ~azure.mgmt.datalake.analytics.account.models.SubscriptionState
     :ivar max_account_count: The maximum supported number of accounts under this subscription.
     :vartype max_account_count: int
@@ -186,28 +162,24 @@ class CapabilityInformation(msrest.serialization.Model):
     """
 
     _validation = {
-        'subscription_id': {'readonly': True},
-        'state': {'readonly': True},
-        'max_account_count': {'readonly': True},
-        'account_count': {'readonly': True},
-        'migration_state': {'readonly': True},
+        "subscription_id": {"readonly": True},
+        "state": {"readonly": True},
+        "max_account_count": {"readonly": True},
+        "account_count": {"readonly": True},
+        "migration_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
-        'state': {'key': 'state', 'type': 'str'},
-        'max_account_count': {'key': 'maxAccountCount', 'type': 'int'},
-        'account_count': {'key': 'accountCount', 'type': 'int'},
-        'migration_state': {'key': 'migrationState', 'type': 'bool'},
+        "subscription_id": {"key": "subscriptionId", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "max_account_count": {"key": "maxAccountCount", "type": "int"},
+        "account_count": {"key": "accountCount", "type": "int"},
+        "migration_state": {"key": "migrationState", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(CapabilityInformation, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.subscription_id = None
         self.state = None
         self.max_account_count = None
@@ -215,48 +187,44 @@ class CapabilityInformation(msrest.serialization.Model):
         self.migration_state = None
 
 
-class CheckNameAvailabilityParameters(msrest.serialization.Model):
+class CheckNameAvailabilityParameters(_serialization.Model):
     """Data Lake Analytics account name availability check parameters.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The Data Lake Analytics name to check availability for.
+    :ivar name: The Data Lake Analytics name to check availability for. Required.
     :vartype name: str
     :ivar type: The resource type. Note: This should not be set by the user, as the constant value
-     is Microsoft.DataLakeAnalytics/accounts. Has constant value:
-     "Microsoft.DataLakeAnalytics/accounts".
-    :vartype type: str
+     is Microsoft.DataLakeAnalytics/accounts. Required. "Microsoft.DataLakeAnalytics/accounts"
+    :vartype type: str or
+     ~azure.mgmt.datalake.analytics.account.models.CheckNameAvailabilityParametersType
     """
 
     _validation = {
-        'name': {'required': True},
-        'type': {'required': True, 'constant': True},
+        "name": {"required": True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    type = "Microsoft.DataLakeAnalytics/accounts"
-
-    def __init__(
-        self,
-        *,
-        name: str,
-        **kwargs
-    ):
+    def __init__(self, *, name: str, type: Union[str, "_models.CheckNameAvailabilityParametersType"], **kwargs):
         """
-        :keyword name: Required. The Data Lake Analytics name to check availability for.
+        :keyword name: The Data Lake Analytics name to check availability for. Required.
         :paramtype name: str
+        :keyword type: The resource type. Note: This should not be set by the user, as the constant
+         value is Microsoft.DataLakeAnalytics/accounts. Required. "Microsoft.DataLakeAnalytics/accounts"
+        :paramtype type: str or
+         ~azure.mgmt.datalake.analytics.account.models.CheckNameAvailabilityParametersType
         """
-        super(CheckNameAvailabilityParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
+        self.type = type
 
 
-class SubResource(msrest.serialization.Model):
+class SubResource(_serialization.Model):
     """The resource model definition for a nested resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -270,24 +238,20 @@ class SubResource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(SubResource, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -307,7 +271,7 @@ class ComputePolicy(SubResource):
     :ivar object_id: The AAD object identifier for the entity to create a policy for.
     :vartype object_id: str
     :ivar object_type: The type of AAD object the object identifier refers to. Known values are:
-     "User", "Group", "ServicePrincipal".
+     "User", "Group", and "ServicePrincipal".
     :vartype object_type: str or ~azure.mgmt.datalake.analytics.account.models.AADObjectType
     :ivar max_degree_of_parallelism_per_job: The maximum degree of parallelism per job this user
      can use to submit jobs.
@@ -317,39 +281,35 @@ class ComputePolicy(SubResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'object_id': {'readonly': True},
-        'object_type': {'readonly': True},
-        'max_degree_of_parallelism_per_job': {'readonly': True, 'minimum': 1},
-        'min_priority_per_job': {'readonly': True, 'minimum': 1},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "object_id": {"readonly": True},
+        "object_type": {"readonly": True},
+        "max_degree_of_parallelism_per_job": {"readonly": True, "minimum": 1},
+        "min_priority_per_job": {"readonly": True, "minimum": 1},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'object_id': {'key': 'properties.objectId', 'type': 'str'},
-        'object_type': {'key': 'properties.objectType', 'type': 'str'},
-        'max_degree_of_parallelism_per_job': {'key': 'properties.maxDegreeOfParallelismPerJob', 'type': 'int'},
-        'min_priority_per_job': {'key': 'properties.minPriorityPerJob', 'type': 'int'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "object_id": {"key": "properties.objectId", "type": "str"},
+        "object_type": {"key": "properties.objectType", "type": "str"},
+        "max_degree_of_parallelism_per_job": {"key": "properties.maxDegreeOfParallelismPerJob", "type": "int"},
+        "min_priority_per_job": {"key": "properties.minPriorityPerJob", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ComputePolicy, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.object_id = None
         self.object_type = None
         self.max_degree_of_parallelism_per_job = None
         self.min_priority_per_job = None
 
 
-class ComputePolicyListResult(msrest.serialization.Model):
+class ComputePolicyListResult(_serialization.Model):
     """The list of compute policies in the account.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -361,37 +321,33 @@ class ComputePolicyListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ComputePolicy]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ComputePolicy]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ComputePolicyListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class CreateComputePolicyWithAccountParameters(msrest.serialization.Model):
+class CreateComputePolicyWithAccountParameters(_serialization.Model):
     """The parameters used to create a new compute policy while creating a new Data Lake Analytics account.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The unique name of the compute policy to create.
+    :ivar name: The unique name of the compute policy to create. Required.
     :vartype name: str
-    :ivar object_id: Required. The AAD object identifier for the entity to create a policy for.
+    :ivar object_id: The AAD object identifier for the entity to create a policy for. Required.
     :vartype object_id: str
-    :ivar object_type: Required. The type of AAD object the object identifier refers to. Known
-     values are: "User", "Group", "ServicePrincipal".
+    :ivar object_type: The type of AAD object the object identifier refers to. Required. Known
+     values are: "User", "Group", and "ServicePrincipal".
     :vartype object_type: str or ~azure.mgmt.datalake.analytics.account.models.AADObjectType
     :ivar max_degree_of_parallelism_per_job: The maximum degree of parallelism per job this user
      can use to submit jobs. This property, the min priority per job property, or both must be
@@ -403,19 +359,19 @@ class CreateComputePolicyWithAccountParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
-        'object_id': {'required': True},
-        'object_type': {'required': True},
-        'max_degree_of_parallelism_per_job': {'minimum': 1},
-        'min_priority_per_job': {'minimum': 1},
+        "name": {"required": True},
+        "object_id": {"required": True},
+        "object_type": {"required": True},
+        "max_degree_of_parallelism_per_job": {"minimum": 1},
+        "min_priority_per_job": {"minimum": 1},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'object_id': {'key': 'properties.objectId', 'type': 'str'},
-        'object_type': {'key': 'properties.objectType', 'type': 'str'},
-        'max_degree_of_parallelism_per_job': {'key': 'properties.maxDegreeOfParallelismPerJob', 'type': 'int'},
-        'min_priority_per_job': {'key': 'properties.minPriorityPerJob', 'type': 'int'},
+        "name": {"key": "name", "type": "str"},
+        "object_id": {"key": "properties.objectId", "type": "str"},
+        "object_type": {"key": "properties.objectType", "type": "str"},
+        "max_degree_of_parallelism_per_job": {"key": "properties.maxDegreeOfParallelismPerJob", "type": "int"},
+        "min_priority_per_job": {"key": "properties.minPriorityPerJob", "type": "int"},
     }
 
     def __init__(
@@ -429,12 +385,12 @@ class CreateComputePolicyWithAccountParameters(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword name: Required. The unique name of the compute policy to create.
+        :keyword name: The unique name of the compute policy to create. Required.
         :paramtype name: str
-        :keyword object_id: Required. The AAD object identifier for the entity to create a policy for.
+        :keyword object_id: The AAD object identifier for the entity to create a policy for. Required.
         :paramtype object_id: str
-        :keyword object_type: Required. The type of AAD object the object identifier refers to. Known
-         values are: "User", "Group", "ServicePrincipal".
+        :keyword object_type: The type of AAD object the object identifier refers to. Required. Known
+         values are: "User", "Group", and "ServicePrincipal".
         :paramtype object_type: str or ~azure.mgmt.datalake.analytics.account.models.AADObjectType
         :keyword max_degree_of_parallelism_per_job: The maximum degree of parallelism per job this user
          can use to submit jobs. This property, the min priority per job property, or both must be
@@ -444,7 +400,7 @@ class CreateComputePolicyWithAccountParameters(msrest.serialization.Model):
          This property, the max degree of parallelism per job property, or both must be passed.
         :paramtype min_priority_per_job: int
         """
-        super(CreateComputePolicyWithAccountParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.object_id = object_id
         self.object_type = object_type
@@ -452,20 +408,20 @@ class CreateComputePolicyWithAccountParameters(msrest.serialization.Model):
         self.min_priority_per_job = min_priority_per_job
 
 
-class CreateDataLakeAnalyticsAccountParameters(msrest.serialization.Model):
+class CreateDataLakeAnalyticsAccountParameters(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """The parameters to use for creating a Data Lake Analytics account.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar location: Required. The resource location.
+    :ivar location: The resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. The resource tags.
+    :ivar tags: The resource tags.
     :vartype tags: dict[str, str]
-    :ivar default_data_lake_store_account: Required. The default Data Lake Store account associated
-     with this account.
+    :ivar default_data_lake_store_account: The default Data Lake Store account associated with this
+     account. Required.
     :vartype default_data_lake_store_account: str
-    :ivar data_lake_store_accounts: Required. The list of Data Lake Store accounts associated with
-     this account.
+    :ivar data_lake_store_accounts: The list of Data Lake Store accounts associated with this
+     account. Required.
     :vartype data_lake_store_accounts:
      list[~azure.mgmt.datalake.analytics.account.models.AddDataLakeStoreWithAccountParameters]
     :ivar storage_accounts: The list of Azure Blob Storage accounts associated with this account.
@@ -478,17 +434,17 @@ class CreateDataLakeAnalyticsAccountParameters(msrest.serialization.Model):
     :vartype firewall_rules:
      list[~azure.mgmt.datalake.analytics.account.models.CreateFirewallRuleWithAccountParameters]
     :ivar firewall_state: The current state of the IP address firewall for this account. Known
-     values are: "Enabled", "Disabled".
+     values are: "Enabled" and "Disabled".
     :vartype firewall_state: str or ~azure.mgmt.datalake.analytics.account.models.FirewallState
     :ivar firewall_allow_azure_ips: The current state of allowing or disallowing IPs originating
      within Azure through the firewall. If the firewall is disabled, this is not enforced. Known
-     values are: "Enabled", "Disabled".
+     values are: "Enabled" and "Disabled".
     :vartype firewall_allow_azure_ips: str or
      ~azure.mgmt.datalake.analytics.account.models.FirewallAllowAzureIpsState
     :ivar new_tier: The commitment tier for the next month. Known values are: "Consumption",
      "Commitment_100AUHours", "Commitment_500AUHours", "Commitment_1000AUHours",
      "Commitment_5000AUHours", "Commitment_10000AUHours", "Commitment_50000AUHours",
-     "Commitment_100000AUHours", "Commitment_500000AUHours".
+     "Commitment_100000AUHours", and "Commitment_500000AUHours".
     :vartype new_tier: str or ~azure.mgmt.datalake.analytics.account.models.TierType
     :ivar max_job_count: The maximum supported jobs running under the account at the same time.
     :vartype max_job_count: int
@@ -504,32 +460,35 @@ class CreateDataLakeAnalyticsAccountParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'location': {'required': True},
-        'default_data_lake_store_account': {'required': True},
-        'data_lake_store_accounts': {'required': True},
-        'max_job_count': {'minimum': 1},
-        'max_degree_of_parallelism': {'minimum': 1},
-        'max_degree_of_parallelism_per_job': {'minimum': 1},
-        'min_priority_per_job': {'minimum': 1},
-        'query_store_retention': {'maximum': 180, 'minimum': 1},
+        "location": {"required": True},
+        "default_data_lake_store_account": {"required": True},
+        "data_lake_store_accounts": {"required": True},
+        "max_job_count": {"minimum": 1},
+        "max_degree_of_parallelism": {"minimum": 1},
+        "max_degree_of_parallelism_per_job": {"minimum": 1},
+        "min_priority_per_job": {"minimum": 1},
+        "query_store_retention": {"maximum": 180, "minimum": 1},
     }
 
     _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'default_data_lake_store_account': {'key': 'properties.defaultDataLakeStoreAccount', 'type': 'str'},
-        'data_lake_store_accounts': {'key': 'properties.dataLakeStoreAccounts', 'type': '[AddDataLakeStoreWithAccountParameters]'},
-        'storage_accounts': {'key': 'properties.storageAccounts', 'type': '[AddStorageAccountWithAccountParameters]'},
-        'compute_policies': {'key': 'properties.computePolicies', 'type': '[CreateComputePolicyWithAccountParameters]'},
-        'firewall_rules': {'key': 'properties.firewallRules', 'type': '[CreateFirewallRuleWithAccountParameters]'},
-        'firewall_state': {'key': 'properties.firewallState', 'type': 'str'},
-        'firewall_allow_azure_ips': {'key': 'properties.firewallAllowAzureIps', 'type': 'str'},
-        'new_tier': {'key': 'properties.newTier', 'type': 'str'},
-        'max_job_count': {'key': 'properties.maxJobCount', 'type': 'int'},
-        'max_degree_of_parallelism': {'key': 'properties.maxDegreeOfParallelism', 'type': 'int'},
-        'max_degree_of_parallelism_per_job': {'key': 'properties.maxDegreeOfParallelismPerJob', 'type': 'int'},
-        'min_priority_per_job': {'key': 'properties.minPriorityPerJob', 'type': 'int'},
-        'query_store_retention': {'key': 'properties.queryStoreRetention', 'type': 'int'},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "default_data_lake_store_account": {"key": "properties.defaultDataLakeStoreAccount", "type": "str"},
+        "data_lake_store_accounts": {
+            "key": "properties.dataLakeStoreAccounts",
+            "type": "[AddDataLakeStoreWithAccountParameters]",
+        },
+        "storage_accounts": {"key": "properties.storageAccounts", "type": "[AddStorageAccountWithAccountParameters]"},
+        "compute_policies": {"key": "properties.computePolicies", "type": "[CreateComputePolicyWithAccountParameters]"},
+        "firewall_rules": {"key": "properties.firewallRules", "type": "[CreateFirewallRuleWithAccountParameters]"},
+        "firewall_state": {"key": "properties.firewallState", "type": "str"},
+        "firewall_allow_azure_ips": {"key": "properties.firewallAllowAzureIps", "type": "str"},
+        "new_tier": {"key": "properties.newTier", "type": "str"},
+        "max_job_count": {"key": "properties.maxJobCount", "type": "int"},
+        "max_degree_of_parallelism": {"key": "properties.maxDegreeOfParallelism", "type": "int"},
+        "max_degree_of_parallelism_per_job": {"key": "properties.maxDegreeOfParallelismPerJob", "type": "int"},
+        "min_priority_per_job": {"key": "properties.minPriorityPerJob", "type": "int"},
+        "query_store_retention": {"key": "properties.queryStoreRetention", "type": "int"},
     }
 
     def __init__(
@@ -545,23 +504,23 @@ class CreateDataLakeAnalyticsAccountParameters(msrest.serialization.Model):
         firewall_state: Optional[Union[str, "_models.FirewallState"]] = None,
         firewall_allow_azure_ips: Optional[Union[str, "_models.FirewallAllowAzureIpsState"]] = None,
         new_tier: Optional[Union[str, "_models.TierType"]] = None,
-        max_job_count: Optional[int] = 3,
-        max_degree_of_parallelism: Optional[int] = 30,
-        max_degree_of_parallelism_per_job: Optional[int] = 32,
+        max_job_count: int = 3,
+        max_degree_of_parallelism: int = 30,
+        max_degree_of_parallelism_per_job: int = 32,
         min_priority_per_job: Optional[int] = None,
-        query_store_retention: Optional[int] = 30,
+        query_store_retention: int = 30,
         **kwargs
     ):
         """
-        :keyword location: Required. The resource location.
+        :keyword location: The resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. The resource tags.
+        :keyword tags: The resource tags.
         :paramtype tags: dict[str, str]
-        :keyword default_data_lake_store_account: Required. The default Data Lake Store account
-         associated with this account.
+        :keyword default_data_lake_store_account: The default Data Lake Store account associated with
+         this account. Required.
         :paramtype default_data_lake_store_account: str
-        :keyword data_lake_store_accounts: Required. The list of Data Lake Store accounts associated
-         with this account.
+        :keyword data_lake_store_accounts: The list of Data Lake Store accounts associated with this
+         account. Required.
         :paramtype data_lake_store_accounts:
          list[~azure.mgmt.datalake.analytics.account.models.AddDataLakeStoreWithAccountParameters]
         :keyword storage_accounts: The list of Azure Blob Storage accounts associated with this
@@ -575,17 +534,17 @@ class CreateDataLakeAnalyticsAccountParameters(msrest.serialization.Model):
         :paramtype firewall_rules:
          list[~azure.mgmt.datalake.analytics.account.models.CreateFirewallRuleWithAccountParameters]
         :keyword firewall_state: The current state of the IP address firewall for this account. Known
-         values are: "Enabled", "Disabled".
+         values are: "Enabled" and "Disabled".
         :paramtype firewall_state: str or ~azure.mgmt.datalake.analytics.account.models.FirewallState
         :keyword firewall_allow_azure_ips: The current state of allowing or disallowing IPs originating
          within Azure through the firewall. If the firewall is disabled, this is not enforced. Known
-         values are: "Enabled", "Disabled".
+         values are: "Enabled" and "Disabled".
         :paramtype firewall_allow_azure_ips: str or
          ~azure.mgmt.datalake.analytics.account.models.FirewallAllowAzureIpsState
         :keyword new_tier: The commitment tier for the next month. Known values are: "Consumption",
          "Commitment_100AUHours", "Commitment_500AUHours", "Commitment_1000AUHours",
          "Commitment_5000AUHours", "Commitment_10000AUHours", "Commitment_50000AUHours",
-         "Commitment_100000AUHours", "Commitment_500000AUHours".
+         "Commitment_100000AUHours", and "Commitment_500000AUHours".
         :paramtype new_tier: str or ~azure.mgmt.datalake.analytics.account.models.TierType
         :keyword max_job_count: The maximum supported jobs running under the account at the same time.
         :paramtype max_job_count: int
@@ -600,7 +559,7 @@ class CreateDataLakeAnalyticsAccountParameters(msrest.serialization.Model):
         :keyword query_store_retention: The number of days that job metadata is retained.
         :paramtype query_store_retention: int
         """
-        super(CreateDataLakeAnalyticsAccountParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.location = location
         self.tags = tags
         self.default_data_lake_store_account = default_data_lake_store_account
@@ -618,66 +577,59 @@ class CreateDataLakeAnalyticsAccountParameters(msrest.serialization.Model):
         self.query_store_retention = query_store_retention
 
 
-class CreateFirewallRuleWithAccountParameters(msrest.serialization.Model):
+class CreateFirewallRuleWithAccountParameters(_serialization.Model):
     """The parameters used to create a new firewall rule while creating a new Data Lake Analytics account.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The unique name of the firewall rule to create.
+    :ivar name: The unique name of the firewall rule to create. Required.
     :vartype name: str
-    :ivar start_ip_address: Required. The start IP address for the firewall rule. This can be
-     either ipv4 or ipv6. Start and End should be in the same protocol.
+    :ivar start_ip_address: The start IP address for the firewall rule. This can be either ipv4 or
+     ipv6. Start and End should be in the same protocol. Required.
     :vartype start_ip_address: str
-    :ivar end_ip_address: Required. The end IP address for the firewall rule. This can be either
-     ipv4 or ipv6. Start and End should be in the same protocol.
+    :ivar end_ip_address: The end IP address for the firewall rule. This can be either ipv4 or
+     ipv6. Start and End should be in the same protocol. Required.
     :vartype end_ip_address: str
     """
 
     _validation = {
-        'name': {'required': True},
-        'start_ip_address': {'required': True},
-        'end_ip_address': {'required': True},
+        "name": {"required": True},
+        "start_ip_address": {"required": True},
+        "end_ip_address": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'start_ip_address': {'key': 'properties.startIpAddress', 'type': 'str'},
-        'end_ip_address': {'key': 'properties.endIpAddress', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "start_ip_address": {"key": "properties.startIpAddress", "type": "str"},
+        "end_ip_address": {"key": "properties.endIpAddress", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        start_ip_address: str,
-        end_ip_address: str,
-        **kwargs
-    ):
+    def __init__(self, *, name: str, start_ip_address: str, end_ip_address: str, **kwargs):
         """
-        :keyword name: Required. The unique name of the firewall rule to create.
+        :keyword name: The unique name of the firewall rule to create. Required.
         :paramtype name: str
-        :keyword start_ip_address: Required. The start IP address for the firewall rule. This can be
-         either ipv4 or ipv6. Start and End should be in the same protocol.
+        :keyword start_ip_address: The start IP address for the firewall rule. This can be either ipv4
+         or ipv6. Start and End should be in the same protocol. Required.
         :paramtype start_ip_address: str
-        :keyword end_ip_address: Required. The end IP address for the firewall rule. This can be either
-         ipv4 or ipv6. Start and End should be in the same protocol.
+        :keyword end_ip_address: The end IP address for the firewall rule. This can be either ipv4 or
+         ipv6. Start and End should be in the same protocol. Required.
         :paramtype end_ip_address: str
         """
-        super(CreateFirewallRuleWithAccountParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.start_ip_address = start_ip_address
         self.end_ip_address = end_ip_address
 
 
-class CreateOrUpdateComputePolicyParameters(msrest.serialization.Model):
+class CreateOrUpdateComputePolicyParameters(_serialization.Model):
     """The parameters used to create a new compute policy.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar object_id: Required. The AAD object identifier for the entity to create a policy for.
+    :ivar object_id: The AAD object identifier for the entity to create a policy for. Required.
     :vartype object_id: str
-    :ivar object_type: Required. The type of AAD object the object identifier refers to. Known
-     values are: "User", "Group", "ServicePrincipal".
+    :ivar object_type: The type of AAD object the object identifier refers to. Required. Known
+     values are: "User", "Group", and "ServicePrincipal".
     :vartype object_type: str or ~azure.mgmt.datalake.analytics.account.models.AADObjectType
     :ivar max_degree_of_parallelism_per_job: The maximum degree of parallelism per job this user
      can use to submit jobs. This property, the min priority per job property, or both must be
@@ -689,17 +641,17 @@ class CreateOrUpdateComputePolicyParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'object_id': {'required': True},
-        'object_type': {'required': True},
-        'max_degree_of_parallelism_per_job': {'minimum': 1},
-        'min_priority_per_job': {'minimum': 1},
+        "object_id": {"required": True},
+        "object_type": {"required": True},
+        "max_degree_of_parallelism_per_job": {"minimum": 1},
+        "min_priority_per_job": {"minimum": 1},
     }
 
     _attribute_map = {
-        'object_id': {'key': 'properties.objectId', 'type': 'str'},
-        'object_type': {'key': 'properties.objectType', 'type': 'str'},
-        'max_degree_of_parallelism_per_job': {'key': 'properties.maxDegreeOfParallelismPerJob', 'type': 'int'},
-        'min_priority_per_job': {'key': 'properties.minPriorityPerJob', 'type': 'int'},
+        "object_id": {"key": "properties.objectId", "type": "str"},
+        "object_type": {"key": "properties.objectType", "type": "str"},
+        "max_degree_of_parallelism_per_job": {"key": "properties.maxDegreeOfParallelismPerJob", "type": "int"},
+        "min_priority_per_job": {"key": "properties.minPriorityPerJob", "type": "int"},
     }
 
     def __init__(
@@ -712,10 +664,10 @@ class CreateOrUpdateComputePolicyParameters(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword object_id: Required. The AAD object identifier for the entity to create a policy for.
+        :keyword object_id: The AAD object identifier for the entity to create a policy for. Required.
         :paramtype object_id: str
-        :keyword object_type: Required. The type of AAD object the object identifier refers to. Known
-         values are: "User", "Group", "ServicePrincipal".
+        :keyword object_type: The type of AAD object the object identifier refers to. Required. Known
+         values are: "User", "Group", and "ServicePrincipal".
         :paramtype object_type: str or ~azure.mgmt.datalake.analytics.account.models.AADObjectType
         :keyword max_degree_of_parallelism_per_job: The maximum degree of parallelism per job this user
          can use to submit jobs. This property, the min priority per job property, or both must be
@@ -725,57 +677,51 @@ class CreateOrUpdateComputePolicyParameters(msrest.serialization.Model):
          This property, the max degree of parallelism per job property, or both must be passed.
         :paramtype min_priority_per_job: int
         """
-        super(CreateOrUpdateComputePolicyParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.object_id = object_id
         self.object_type = object_type
         self.max_degree_of_parallelism_per_job = max_degree_of_parallelism_per_job
         self.min_priority_per_job = min_priority_per_job
 
 
-class CreateOrUpdateFirewallRuleParameters(msrest.serialization.Model):
+class CreateOrUpdateFirewallRuleParameters(_serialization.Model):
     """The parameters used to create a new firewall rule.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar start_ip_address: Required. The start IP address for the firewall rule. This can be
-     either ipv4 or ipv6. Start and End should be in the same protocol.
+    :ivar start_ip_address: The start IP address for the firewall rule. This can be either ipv4 or
+     ipv6. Start and End should be in the same protocol. Required.
     :vartype start_ip_address: str
-    :ivar end_ip_address: Required. The end IP address for the firewall rule. This can be either
-     ipv4 or ipv6. Start and End should be in the same protocol.
+    :ivar end_ip_address: The end IP address for the firewall rule. This can be either ipv4 or
+     ipv6. Start and End should be in the same protocol. Required.
     :vartype end_ip_address: str
     """
 
     _validation = {
-        'start_ip_address': {'required': True},
-        'end_ip_address': {'required': True},
+        "start_ip_address": {"required": True},
+        "end_ip_address": {"required": True},
     }
 
     _attribute_map = {
-        'start_ip_address': {'key': 'properties.startIpAddress', 'type': 'str'},
-        'end_ip_address': {'key': 'properties.endIpAddress', 'type': 'str'},
+        "start_ip_address": {"key": "properties.startIpAddress", "type": "str"},
+        "end_ip_address": {"key": "properties.endIpAddress", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        start_ip_address: str,
-        end_ip_address: str,
-        **kwargs
-    ):
+    def __init__(self, *, start_ip_address: str, end_ip_address: str, **kwargs):
         """
-        :keyword start_ip_address: Required. The start IP address for the firewall rule. This can be
-         either ipv4 or ipv6. Start and End should be in the same protocol.
+        :keyword start_ip_address: The start IP address for the firewall rule. This can be either ipv4
+         or ipv6. Start and End should be in the same protocol. Required.
         :paramtype start_ip_address: str
-        :keyword end_ip_address: Required. The end IP address for the firewall rule. This can be either
-         ipv4 or ipv6. Start and End should be in the same protocol.
+        :keyword end_ip_address: The end IP address for the firewall rule. This can be either ipv4 or
+         ipv6. Start and End should be in the same protocol. Required.
         :paramtype end_ip_address: str
         """
-        super(CreateOrUpdateFirewallRuleParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.start_ip_address = start_ip_address
         self.end_ip_address = end_ip_address
 
 
-class Resource(msrest.serialization.Model):
+class Resource(_serialization.Model):
     """The resource model definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -788,33 +734,29 @@ class Resource(msrest.serialization.Model):
     :vartype type: str
     :ivar location: The resource location.
     :vartype location: str
-    :ivar tags: A set of tags. The resource tags.
+    :ivar tags: The resource tags.
     :vartype tags: dict[str, str]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'readonly': True},
-        'tags': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"readonly": True},
+        "tags": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(Resource, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -822,7 +764,7 @@ class Resource(msrest.serialization.Model):
         self.tags = None
 
 
-class DataLakeAnalyticsAccount(Resource):
+class DataLakeAnalyticsAccount(Resource):  # pylint: disable=too-many-instance-attributes
     """A Data Lake Analytics account object, containing all information associated with the named Data Lake Analytics account.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -835,16 +777,16 @@ class DataLakeAnalyticsAccount(Resource):
     :vartype type: str
     :ivar location: The resource location.
     :vartype location: str
-    :ivar tags: A set of tags. The resource tags.
+    :ivar tags: The resource tags.
     :vartype tags: dict[str, str]
     :ivar account_id: The unique identifier associated with this Data Lake Analytics account.
     :vartype account_id: str
     :ivar provisioning_state: The provisioning status of the Data Lake Analytics account. Known
      values are: "Failed", "Creating", "Running", "Succeeded", "Patching", "Suspending", "Resuming",
-     "Deleting", "Deleted", "Undeleting", "Canceled".
+     "Deleting", "Deleted", "Undeleting", and "Canceled".
     :vartype provisioning_state: str or
      ~azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccountStatus
-    :ivar state: The state of the Data Lake Analytics account. Known values are: "Active",
+    :ivar state: The state of the Data Lake Analytics account. Known values are: "Active" and
      "Suspended".
     :vartype state: str or
      ~azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccountState
@@ -881,22 +823,22 @@ class DataLakeAnalyticsAccount(Resource):
     :ivar firewall_rules: The list of firewall rules associated with this account.
     :vartype firewall_rules: list[~azure.mgmt.datalake.analytics.account.models.FirewallRule]
     :ivar firewall_state: The current state of the IP address firewall for this account. Known
-     values are: "Enabled", "Disabled".
+     values are: "Enabled" and "Disabled".
     :vartype firewall_state: str or ~azure.mgmt.datalake.analytics.account.models.FirewallState
     :ivar firewall_allow_azure_ips: The current state of allowing or disallowing IPs originating
      within Azure through the firewall. If the firewall is disabled, this is not enforced. Known
-     values are: "Enabled", "Disabled".
+     values are: "Enabled" and "Disabled".
     :vartype firewall_allow_azure_ips: str or
      ~azure.mgmt.datalake.analytics.account.models.FirewallAllowAzureIpsState
     :ivar new_tier: The commitment tier for the next month. Known values are: "Consumption",
      "Commitment_100AUHours", "Commitment_500AUHours", "Commitment_1000AUHours",
      "Commitment_5000AUHours", "Commitment_10000AUHours", "Commitment_50000AUHours",
-     "Commitment_100000AUHours", "Commitment_500000AUHours".
+     "Commitment_100000AUHours", and "Commitment_500000AUHours".
     :vartype new_tier: str or ~azure.mgmt.datalake.analytics.account.models.TierType
     :ivar current_tier: The commitment tier in use for the current month. Known values are:
      "Consumption", "Commitment_100AUHours", "Commitment_500AUHours", "Commitment_1000AUHours",
      "Commitment_5000AUHours", "Commitment_10000AUHours", "Commitment_50000AUHours",
-     "Commitment_100000AUHours", "Commitment_500000AUHours".
+     "Commitment_100000AUHours", and "Commitment_500000AUHours".
     :vartype current_tier: str or ~azure.mgmt.datalake.analytics.account.models.TierType
     :ivar max_job_count: The maximum supported jobs running under the account at the same time.
     :vartype max_job_count: int
@@ -927,94 +869,100 @@ class DataLakeAnalyticsAccount(Resource):
     :ivar query_store_retention: The number of days that job metadata is retained.
     :vartype query_store_retention: int
     :ivar debug_data_access_level: The current state of the DebugDataAccessLevel for this account.
-     Known values are: "All", "Customer", "None".
+     Known values are: "All", "Customer", and "None".
     :vartype debug_data_access_level: str or
      ~azure.mgmt.datalake.analytics.account.models.DebugDataAccessLevel
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'readonly': True},
-        'tags': {'readonly': True},
-        'account_id': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'state': {'readonly': True},
-        'creation_time': {'readonly': True},
-        'last_modified_time': {'readonly': True},
-        'endpoint': {'readonly': True},
-        'default_data_lake_store_account_type': {'readonly': True},
-        'default_data_lake_store_account': {'readonly': True},
-        'data_lake_store_accounts': {'readonly': True},
-        'storage_accounts': {'readonly': True},
-        'compute_policies': {'readonly': True},
-        'hive_metastores': {'readonly': True},
-        'virtual_network_rules': {'readonly': True},
-        'firewall_rules': {'readonly': True},
-        'current_tier': {'readonly': True},
-        'max_job_count': {'minimum': 1},
-        'max_active_job_count_per_user': {'readonly': True},
-        'max_queued_job_count_per_user': {'readonly': True},
-        'max_job_running_time_in_min': {'readonly': True},
-        'system_max_job_count': {'readonly': True},
-        'max_degree_of_parallelism': {'minimum': 1},
-        'system_max_degree_of_parallelism': {'readonly': True},
-        'max_degree_of_parallelism_per_job': {'minimum': 1},
-        'min_priority_per_job': {'readonly': True, 'minimum': 1},
-        'query_store_retention': {'maximum': 180, 'minimum': 1},
-        'debug_data_access_level': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"readonly": True},
+        "tags": {"readonly": True},
+        "account_id": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "state": {"readonly": True},
+        "creation_time": {"readonly": True},
+        "last_modified_time": {"readonly": True},
+        "endpoint": {"readonly": True},
+        "default_data_lake_store_account_type": {"readonly": True},
+        "default_data_lake_store_account": {"readonly": True},
+        "data_lake_store_accounts": {"readonly": True},
+        "storage_accounts": {"readonly": True},
+        "compute_policies": {"readonly": True},
+        "hive_metastores": {"readonly": True},
+        "virtual_network_rules": {"readonly": True},
+        "firewall_rules": {"readonly": True},
+        "current_tier": {"readonly": True},
+        "max_job_count": {"minimum": 1},
+        "max_active_job_count_per_user": {"readonly": True},
+        "max_queued_job_count_per_user": {"readonly": True},
+        "max_job_running_time_in_min": {"readonly": True},
+        "system_max_job_count": {"readonly": True},
+        "max_degree_of_parallelism": {"minimum": 1},
+        "system_max_degree_of_parallelism": {"readonly": True},
+        "max_degree_of_parallelism_per_job": {"minimum": 1},
+        "min_priority_per_job": {"readonly": True, "minimum": 1},
+        "query_store_retention": {"maximum": 180, "minimum": 1},
+        "debug_data_access_level": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'account_id': {'key': 'properties.accountId', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'state': {'key': 'properties.state', 'type': 'str'},
-        'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
-        'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
-        'endpoint': {'key': 'properties.endpoint', 'type': 'str'},
-        'default_data_lake_store_account_type': {'key': 'properties.defaultDataLakeStoreAccountType', 'type': 'str'},
-        'default_data_lake_store_account': {'key': 'properties.defaultDataLakeStoreAccount', 'type': 'str'},
-        'data_lake_store_accounts': {'key': 'properties.dataLakeStoreAccounts', 'type': '[DataLakeStoreAccountInformation]'},
-        'public_data_lake_store_accounts': {'key': 'properties.publicDataLakeStoreAccounts', 'type': '[DataLakeStoreAccountInformation]'},
-        'storage_accounts': {'key': 'properties.storageAccounts', 'type': '[StorageAccountInformation]'},
-        'compute_policies': {'key': 'properties.computePolicies', 'type': '[ComputePolicy]'},
-        'hive_metastores': {'key': 'properties.hiveMetastores', 'type': '[HiveMetastore]'},
-        'virtual_network_rules': {'key': 'properties.virtualNetworkRules', 'type': '[VirtualNetworkRule]'},
-        'firewall_rules': {'key': 'properties.firewallRules', 'type': '[FirewallRule]'},
-        'firewall_state': {'key': 'properties.firewallState', 'type': 'str'},
-        'firewall_allow_azure_ips': {'key': 'properties.firewallAllowAzureIps', 'type': 'str'},
-        'new_tier': {'key': 'properties.newTier', 'type': 'str'},
-        'current_tier': {'key': 'properties.currentTier', 'type': 'str'},
-        'max_job_count': {'key': 'properties.maxJobCount', 'type': 'int'},
-        'max_active_job_count_per_user': {'key': 'properties.maxActiveJobCountPerUser', 'type': 'int'},
-        'max_queued_job_count_per_user': {'key': 'properties.maxQueuedJobCountPerUser', 'type': 'int'},
-        'max_job_running_time_in_min': {'key': 'properties.maxJobRunningTimeInMin', 'type': 'int'},
-        'system_max_job_count': {'key': 'properties.systemMaxJobCount', 'type': 'int'},
-        'max_degree_of_parallelism': {'key': 'properties.maxDegreeOfParallelism', 'type': 'int'},
-        'system_max_degree_of_parallelism': {'key': 'properties.systemMaxDegreeOfParallelism', 'type': 'int'},
-        'max_degree_of_parallelism_per_job': {'key': 'properties.maxDegreeOfParallelismPerJob', 'type': 'int'},
-        'min_priority_per_job': {'key': 'properties.minPriorityPerJob', 'type': 'int'},
-        'query_store_retention': {'key': 'properties.queryStoreRetention', 'type': 'int'},
-        'debug_data_access_level': {'key': 'properties.debugDataAccessLevel', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "account_id": {"key": "properties.accountId", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "state": {"key": "properties.state", "type": "str"},
+        "creation_time": {"key": "properties.creationTime", "type": "iso-8601"},
+        "last_modified_time": {"key": "properties.lastModifiedTime", "type": "iso-8601"},
+        "endpoint": {"key": "properties.endpoint", "type": "str"},
+        "default_data_lake_store_account_type": {"key": "properties.defaultDataLakeStoreAccountType", "type": "str"},
+        "default_data_lake_store_account": {"key": "properties.defaultDataLakeStoreAccount", "type": "str"},
+        "data_lake_store_accounts": {
+            "key": "properties.dataLakeStoreAccounts",
+            "type": "[DataLakeStoreAccountInformation]",
+        },
+        "public_data_lake_store_accounts": {
+            "key": "properties.publicDataLakeStoreAccounts",
+            "type": "[DataLakeStoreAccountInformation]",
+        },
+        "storage_accounts": {"key": "properties.storageAccounts", "type": "[StorageAccountInformation]"},
+        "compute_policies": {"key": "properties.computePolicies", "type": "[ComputePolicy]"},
+        "hive_metastores": {"key": "properties.hiveMetastores", "type": "[HiveMetastore]"},
+        "virtual_network_rules": {"key": "properties.virtualNetworkRules", "type": "[VirtualNetworkRule]"},
+        "firewall_rules": {"key": "properties.firewallRules", "type": "[FirewallRule]"},
+        "firewall_state": {"key": "properties.firewallState", "type": "str"},
+        "firewall_allow_azure_ips": {"key": "properties.firewallAllowAzureIps", "type": "str"},
+        "new_tier": {"key": "properties.newTier", "type": "str"},
+        "current_tier": {"key": "properties.currentTier", "type": "str"},
+        "max_job_count": {"key": "properties.maxJobCount", "type": "int"},
+        "max_active_job_count_per_user": {"key": "properties.maxActiveJobCountPerUser", "type": "int"},
+        "max_queued_job_count_per_user": {"key": "properties.maxQueuedJobCountPerUser", "type": "int"},
+        "max_job_running_time_in_min": {"key": "properties.maxJobRunningTimeInMin", "type": "int"},
+        "system_max_job_count": {"key": "properties.systemMaxJobCount", "type": "int"},
+        "max_degree_of_parallelism": {"key": "properties.maxDegreeOfParallelism", "type": "int"},
+        "system_max_degree_of_parallelism": {"key": "properties.systemMaxDegreeOfParallelism", "type": "int"},
+        "max_degree_of_parallelism_per_job": {"key": "properties.maxDegreeOfParallelismPerJob", "type": "int"},
+        "min_priority_per_job": {"key": "properties.minPriorityPerJob", "type": "int"},
+        "query_store_retention": {"key": "properties.queryStoreRetention", "type": "int"},
+        "debug_data_access_level": {"key": "properties.debugDataAccessLevel", "type": "str"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         public_data_lake_store_accounts: Optional[List["_models.DataLakeStoreAccountInformation"]] = None,
         firewall_state: Optional[Union[str, "_models.FirewallState"]] = None,
         firewall_allow_azure_ips: Optional[Union[str, "_models.FirewallAllowAzureIpsState"]] = None,
         new_tier: Optional[Union[str, "_models.TierType"]] = None,
-        max_job_count: Optional[int] = 3,
-        max_degree_of_parallelism: Optional[int] = 30,
+        max_job_count: int = 3,
+        max_degree_of_parallelism: int = 30,
         max_degree_of_parallelism_per_job: Optional[int] = None,
-        query_store_retention: Optional[int] = 30,
+        query_store_retention: int = 30,
         **kwargs
     ):
         """
@@ -1023,17 +971,17 @@ class DataLakeAnalyticsAccount(Resource):
         :paramtype public_data_lake_store_accounts:
          list[~azure.mgmt.datalake.analytics.account.models.DataLakeStoreAccountInformation]
         :keyword firewall_state: The current state of the IP address firewall for this account. Known
-         values are: "Enabled", "Disabled".
+         values are: "Enabled" and "Disabled".
         :paramtype firewall_state: str or ~azure.mgmt.datalake.analytics.account.models.FirewallState
         :keyword firewall_allow_azure_ips: The current state of allowing or disallowing IPs originating
          within Azure through the firewall. If the firewall is disabled, this is not enforced. Known
-         values are: "Enabled", "Disabled".
+         values are: "Enabled" and "Disabled".
         :paramtype firewall_allow_azure_ips: str or
          ~azure.mgmt.datalake.analytics.account.models.FirewallAllowAzureIpsState
         :keyword new_tier: The commitment tier for the next month. Known values are: "Consumption",
          "Commitment_100AUHours", "Commitment_500AUHours", "Commitment_1000AUHours",
          "Commitment_5000AUHours", "Commitment_10000AUHours", "Commitment_50000AUHours",
-         "Commitment_100000AUHours", "Commitment_500000AUHours".
+         "Commitment_100000AUHours", and "Commitment_500000AUHours".
         :paramtype new_tier: str or ~azure.mgmt.datalake.analytics.account.models.TierType
         :keyword max_job_count: The maximum supported jobs running under the account at the same time.
         :paramtype max_job_count: int
@@ -1046,7 +994,7 @@ class DataLakeAnalyticsAccount(Resource):
         :keyword query_store_retention: The number of days that job metadata is retained.
         :paramtype query_store_retention: int
         """
-        super(DataLakeAnalyticsAccount, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.account_id = None
         self.provisioning_state = None
         self.state = None
@@ -1079,7 +1027,7 @@ class DataLakeAnalyticsAccount(Resource):
         self.debug_data_access_level = None
 
 
-class DataLakeAnalyticsAccountBasic(Resource):
+class DataLakeAnalyticsAccountBasic(Resource):  # pylint: disable=too-many-instance-attributes
     """A Data Lake Analytics account object, containing all information associated with the named Data Lake Analytics account.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1092,16 +1040,16 @@ class DataLakeAnalyticsAccountBasic(Resource):
     :vartype type: str
     :ivar location: The resource location.
     :vartype location: str
-    :ivar tags: A set of tags. The resource tags.
+    :ivar tags: The resource tags.
     :vartype tags: dict[str, str]
     :ivar account_id: The unique identifier associated with this Data Lake Analytics account.
     :vartype account_id: str
     :ivar provisioning_state: The provisioning status of the Data Lake Analytics account. Known
      values are: "Failed", "Creating", "Running", "Succeeded", "Patching", "Suspending", "Resuming",
-     "Deleting", "Deleted", "Undeleting", "Canceled".
+     "Deleting", "Deleted", "Undeleting", and "Canceled".
     :vartype provisioning_state: str or
      ~azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccountStatus
-    :ivar state: The state of the Data Lake Analytics account. Known values are: "Active",
+    :ivar state: The state of the Data Lake Analytics account. Known values are: "Active" and
      "Suspended".
     :vartype state: str or
      ~azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccountState
@@ -1114,40 +1062,36 @@ class DataLakeAnalyticsAccountBasic(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'readonly': True},
-        'tags': {'readonly': True},
-        'account_id': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'state': {'readonly': True},
-        'creation_time': {'readonly': True},
-        'last_modified_time': {'readonly': True},
-        'endpoint': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"readonly": True},
+        "tags": {"readonly": True},
+        "account_id": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "state": {"readonly": True},
+        "creation_time": {"readonly": True},
+        "last_modified_time": {"readonly": True},
+        "endpoint": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'account_id': {'key': 'properties.accountId', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'state': {'key': 'properties.state', 'type': 'str'},
-        'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
-        'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
-        'endpoint': {'key': 'properties.endpoint', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "account_id": {"key": "properties.accountId", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "state": {"key": "properties.state", "type": "str"},
+        "creation_time": {"key": "properties.creationTime", "type": "iso-8601"},
+        "last_modified_time": {"key": "properties.lastModifiedTime", "type": "iso-8601"},
+        "endpoint": {"key": "properties.endpoint", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(DataLakeAnalyticsAccountBasic, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.account_id = None
         self.provisioning_state = None
         self.state = None
@@ -1156,7 +1100,7 @@ class DataLakeAnalyticsAccountBasic(Resource):
         self.endpoint = None
 
 
-class DataLakeAnalyticsAccountListResult(msrest.serialization.Model):
+class DataLakeAnalyticsAccountListResult(_serialization.Model):
     """Data Lake Analytics account list information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1171,30 +1115,26 @@ class DataLakeAnalyticsAccountListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'count': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "count": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[DataLakeAnalyticsAccountBasic]'},
-        'count': {'key': 'count', 'type': 'int'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[DataLakeAnalyticsAccountBasic]"},
+        "count": {"key": "count", "type": "int"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(DataLakeAnalyticsAccountListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.count = None
         self.next_link = None
 
 
-class DataLakeAnalyticsAccountPropertiesBasic(msrest.serialization.Model):
+class DataLakeAnalyticsAccountPropertiesBasic(_serialization.Model):
     """The basic account specific properties that are associated with an underlying Data Lake Analytics account.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1203,10 +1143,10 @@ class DataLakeAnalyticsAccountPropertiesBasic(msrest.serialization.Model):
     :vartype account_id: str
     :ivar provisioning_state: The provisioning status of the Data Lake Analytics account. Known
      values are: "Failed", "Creating", "Running", "Succeeded", "Patching", "Suspending", "Resuming",
-     "Deleting", "Deleted", "Undeleting", "Canceled".
+     "Deleting", "Deleted", "Undeleting", and "Canceled".
     :vartype provisioning_state: str or
      ~azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccountStatus
-    :ivar state: The state of the Data Lake Analytics account. Known values are: "Active",
+    :ivar state: The state of the Data Lake Analytics account. Known values are: "Active" and
      "Suspended".
     :vartype state: str or
      ~azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccountState
@@ -1219,30 +1159,26 @@ class DataLakeAnalyticsAccountPropertiesBasic(msrest.serialization.Model):
     """
 
     _validation = {
-        'account_id': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'state': {'readonly': True},
-        'creation_time': {'readonly': True},
-        'last_modified_time': {'readonly': True},
-        'endpoint': {'readonly': True},
+        "account_id": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "state": {"readonly": True},
+        "creation_time": {"readonly": True},
+        "last_modified_time": {"readonly": True},
+        "endpoint": {"readonly": True},
     }
 
     _attribute_map = {
-        'account_id': {'key': 'accountId', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'state': {'key': 'state', 'type': 'str'},
-        'creation_time': {'key': 'creationTime', 'type': 'iso-8601'},
-        'last_modified_time': {'key': 'lastModifiedTime', 'type': 'iso-8601'},
-        'endpoint': {'key': 'endpoint', 'type': 'str'},
+        "account_id": {"key": "accountId", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "creation_time": {"key": "creationTime", "type": "iso-8601"},
+        "last_modified_time": {"key": "lastModifiedTime", "type": "iso-8601"},
+        "endpoint": {"key": "endpoint", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(DataLakeAnalyticsAccountPropertiesBasic, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.account_id = None
         self.provisioning_state = None
         self.state = None
@@ -1251,7 +1187,9 @@ class DataLakeAnalyticsAccountPropertiesBasic(msrest.serialization.Model):
         self.endpoint = None
 
 
-class DataLakeAnalyticsAccountProperties(DataLakeAnalyticsAccountPropertiesBasic):
+class DataLakeAnalyticsAccountProperties(
+    DataLakeAnalyticsAccountPropertiesBasic
+):  # pylint: disable=too-many-instance-attributes
     """The account specific properties that are associated with an underlying Data Lake Analytics account. Returned only when retrieving a specific account.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1260,10 +1198,10 @@ class DataLakeAnalyticsAccountProperties(DataLakeAnalyticsAccountPropertiesBasic
     :vartype account_id: str
     :ivar provisioning_state: The provisioning status of the Data Lake Analytics account. Known
      values are: "Failed", "Creating", "Running", "Succeeded", "Patching", "Suspending", "Resuming",
-     "Deleting", "Deleted", "Undeleting", "Canceled".
+     "Deleting", "Deleted", "Undeleting", and "Canceled".
     :vartype provisioning_state: str or
      ~azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccountStatus
-    :ivar state: The state of the Data Lake Analytics account. Known values are: "Active",
+    :ivar state: The state of the Data Lake Analytics account. Known values are: "Active" and
      "Suspended".
     :vartype state: str or
      ~azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccountState
@@ -1300,22 +1238,22 @@ class DataLakeAnalyticsAccountProperties(DataLakeAnalyticsAccountPropertiesBasic
     :ivar firewall_rules: The list of firewall rules associated with this account.
     :vartype firewall_rules: list[~azure.mgmt.datalake.analytics.account.models.FirewallRule]
     :ivar firewall_state: The current state of the IP address firewall for this account. Known
-     values are: "Enabled", "Disabled".
+     values are: "Enabled" and "Disabled".
     :vartype firewall_state: str or ~azure.mgmt.datalake.analytics.account.models.FirewallState
     :ivar firewall_allow_azure_ips: The current state of allowing or disallowing IPs originating
      within Azure through the firewall. If the firewall is disabled, this is not enforced. Known
-     values are: "Enabled", "Disabled".
+     values are: "Enabled" and "Disabled".
     :vartype firewall_allow_azure_ips: str or
      ~azure.mgmt.datalake.analytics.account.models.FirewallAllowAzureIpsState
     :ivar new_tier: The commitment tier for the next month. Known values are: "Consumption",
      "Commitment_100AUHours", "Commitment_500AUHours", "Commitment_1000AUHours",
      "Commitment_5000AUHours", "Commitment_10000AUHours", "Commitment_50000AUHours",
-     "Commitment_100000AUHours", "Commitment_500000AUHours".
+     "Commitment_100000AUHours", and "Commitment_500000AUHours".
     :vartype new_tier: str or ~azure.mgmt.datalake.analytics.account.models.TierType
     :ivar current_tier: The commitment tier in use for the current month. Known values are:
      "Consumption", "Commitment_100AUHours", "Commitment_500AUHours", "Commitment_1000AUHours",
      "Commitment_5000AUHours", "Commitment_10000AUHours", "Commitment_50000AUHours",
-     "Commitment_100000AUHours", "Commitment_500000AUHours".
+     "Commitment_100000AUHours", and "Commitment_500000AUHours".
     :vartype current_tier: str or ~azure.mgmt.datalake.analytics.account.models.TierType
     :ivar max_job_count: The maximum supported jobs running under the account at the same time.
     :vartype max_job_count: int
@@ -1346,84 +1284,87 @@ class DataLakeAnalyticsAccountProperties(DataLakeAnalyticsAccountPropertiesBasic
     :ivar query_store_retention: The number of days that job metadata is retained.
     :vartype query_store_retention: int
     :ivar debug_data_access_level: The current state of the DebugDataAccessLevel for this account.
-     Known values are: "All", "Customer", "None".
+     Known values are: "All", "Customer", and "None".
     :vartype debug_data_access_level: str or
      ~azure.mgmt.datalake.analytics.account.models.DebugDataAccessLevel
     """
 
     _validation = {
-        'account_id': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'state': {'readonly': True},
-        'creation_time': {'readonly': True},
-        'last_modified_time': {'readonly': True},
-        'endpoint': {'readonly': True},
-        'default_data_lake_store_account_type': {'readonly': True},
-        'default_data_lake_store_account': {'readonly': True},
-        'data_lake_store_accounts': {'readonly': True},
-        'storage_accounts': {'readonly': True},
-        'compute_policies': {'readonly': True},
-        'hive_metastores': {'readonly': True},
-        'virtual_network_rules': {'readonly': True},
-        'firewall_rules': {'readonly': True},
-        'current_tier': {'readonly': True},
-        'max_job_count': {'minimum': 1},
-        'max_active_job_count_per_user': {'readonly': True},
-        'max_queued_job_count_per_user': {'readonly': True},
-        'max_job_running_time_in_min': {'readonly': True},
-        'system_max_job_count': {'readonly': True},
-        'max_degree_of_parallelism': {'minimum': 1},
-        'system_max_degree_of_parallelism': {'readonly': True},
-        'max_degree_of_parallelism_per_job': {'minimum': 1},
-        'min_priority_per_job': {'readonly': True, 'minimum': 1},
-        'query_store_retention': {'maximum': 180, 'minimum': 1},
-        'debug_data_access_level': {'readonly': True},
+        "account_id": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "state": {"readonly": True},
+        "creation_time": {"readonly": True},
+        "last_modified_time": {"readonly": True},
+        "endpoint": {"readonly": True},
+        "default_data_lake_store_account_type": {"readonly": True},
+        "default_data_lake_store_account": {"readonly": True},
+        "data_lake_store_accounts": {"readonly": True},
+        "storage_accounts": {"readonly": True},
+        "compute_policies": {"readonly": True},
+        "hive_metastores": {"readonly": True},
+        "virtual_network_rules": {"readonly": True},
+        "firewall_rules": {"readonly": True},
+        "current_tier": {"readonly": True},
+        "max_job_count": {"minimum": 1},
+        "max_active_job_count_per_user": {"readonly": True},
+        "max_queued_job_count_per_user": {"readonly": True},
+        "max_job_running_time_in_min": {"readonly": True},
+        "system_max_job_count": {"readonly": True},
+        "max_degree_of_parallelism": {"minimum": 1},
+        "system_max_degree_of_parallelism": {"readonly": True},
+        "max_degree_of_parallelism_per_job": {"minimum": 1},
+        "min_priority_per_job": {"readonly": True, "minimum": 1},
+        "query_store_retention": {"maximum": 180, "minimum": 1},
+        "debug_data_access_level": {"readonly": True},
     }
 
     _attribute_map = {
-        'account_id': {'key': 'accountId', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'state': {'key': 'state', 'type': 'str'},
-        'creation_time': {'key': 'creationTime', 'type': 'iso-8601'},
-        'last_modified_time': {'key': 'lastModifiedTime', 'type': 'iso-8601'},
-        'endpoint': {'key': 'endpoint', 'type': 'str'},
-        'default_data_lake_store_account_type': {'key': 'defaultDataLakeStoreAccountType', 'type': 'str'},
-        'default_data_lake_store_account': {'key': 'defaultDataLakeStoreAccount', 'type': 'str'},
-        'data_lake_store_accounts': {'key': 'dataLakeStoreAccounts', 'type': '[DataLakeStoreAccountInformation]'},
-        'public_data_lake_store_accounts': {'key': 'publicDataLakeStoreAccounts', 'type': '[DataLakeStoreAccountInformation]'},
-        'storage_accounts': {'key': 'storageAccounts', 'type': '[StorageAccountInformation]'},
-        'compute_policies': {'key': 'computePolicies', 'type': '[ComputePolicy]'},
-        'hive_metastores': {'key': 'hiveMetastores', 'type': '[HiveMetastore]'},
-        'virtual_network_rules': {'key': 'virtualNetworkRules', 'type': '[VirtualNetworkRule]'},
-        'firewall_rules': {'key': 'firewallRules', 'type': '[FirewallRule]'},
-        'firewall_state': {'key': 'firewallState', 'type': 'str'},
-        'firewall_allow_azure_ips': {'key': 'firewallAllowAzureIps', 'type': 'str'},
-        'new_tier': {'key': 'newTier', 'type': 'str'},
-        'current_tier': {'key': 'currentTier', 'type': 'str'},
-        'max_job_count': {'key': 'maxJobCount', 'type': 'int'},
-        'max_active_job_count_per_user': {'key': 'maxActiveJobCountPerUser', 'type': 'int'},
-        'max_queued_job_count_per_user': {'key': 'maxQueuedJobCountPerUser', 'type': 'int'},
-        'max_job_running_time_in_min': {'key': 'maxJobRunningTimeInMin', 'type': 'int'},
-        'system_max_job_count': {'key': 'systemMaxJobCount', 'type': 'int'},
-        'max_degree_of_parallelism': {'key': 'maxDegreeOfParallelism', 'type': 'int'},
-        'system_max_degree_of_parallelism': {'key': 'systemMaxDegreeOfParallelism', 'type': 'int'},
-        'max_degree_of_parallelism_per_job': {'key': 'maxDegreeOfParallelismPerJob', 'type': 'int'},
-        'min_priority_per_job': {'key': 'minPriorityPerJob', 'type': 'int'},
-        'query_store_retention': {'key': 'queryStoreRetention', 'type': 'int'},
-        'debug_data_access_level': {'key': 'debugDataAccessLevel', 'type': 'str'},
+        "account_id": {"key": "accountId", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "creation_time": {"key": "creationTime", "type": "iso-8601"},
+        "last_modified_time": {"key": "lastModifiedTime", "type": "iso-8601"},
+        "endpoint": {"key": "endpoint", "type": "str"},
+        "default_data_lake_store_account_type": {"key": "defaultDataLakeStoreAccountType", "type": "str"},
+        "default_data_lake_store_account": {"key": "defaultDataLakeStoreAccount", "type": "str"},
+        "data_lake_store_accounts": {"key": "dataLakeStoreAccounts", "type": "[DataLakeStoreAccountInformation]"},
+        "public_data_lake_store_accounts": {
+            "key": "publicDataLakeStoreAccounts",
+            "type": "[DataLakeStoreAccountInformation]",
+        },
+        "storage_accounts": {"key": "storageAccounts", "type": "[StorageAccountInformation]"},
+        "compute_policies": {"key": "computePolicies", "type": "[ComputePolicy]"},
+        "hive_metastores": {"key": "hiveMetastores", "type": "[HiveMetastore]"},
+        "virtual_network_rules": {"key": "virtualNetworkRules", "type": "[VirtualNetworkRule]"},
+        "firewall_rules": {"key": "firewallRules", "type": "[FirewallRule]"},
+        "firewall_state": {"key": "firewallState", "type": "str"},
+        "firewall_allow_azure_ips": {"key": "firewallAllowAzureIps", "type": "str"},
+        "new_tier": {"key": "newTier", "type": "str"},
+        "current_tier": {"key": "currentTier", "type": "str"},
+        "max_job_count": {"key": "maxJobCount", "type": "int"},
+        "max_active_job_count_per_user": {"key": "maxActiveJobCountPerUser", "type": "int"},
+        "max_queued_job_count_per_user": {"key": "maxQueuedJobCountPerUser", "type": "int"},
+        "max_job_running_time_in_min": {"key": "maxJobRunningTimeInMin", "type": "int"},
+        "system_max_job_count": {"key": "systemMaxJobCount", "type": "int"},
+        "max_degree_of_parallelism": {"key": "maxDegreeOfParallelism", "type": "int"},
+        "system_max_degree_of_parallelism": {"key": "systemMaxDegreeOfParallelism", "type": "int"},
+        "max_degree_of_parallelism_per_job": {"key": "maxDegreeOfParallelismPerJob", "type": "int"},
+        "min_priority_per_job": {"key": "minPriorityPerJob", "type": "int"},
+        "query_store_retention": {"key": "queryStoreRetention", "type": "int"},
+        "debug_data_access_level": {"key": "debugDataAccessLevel", "type": "str"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         public_data_lake_store_accounts: Optional[List["_models.DataLakeStoreAccountInformation"]] = None,
         firewall_state: Optional[Union[str, "_models.FirewallState"]] = None,
         firewall_allow_azure_ips: Optional[Union[str, "_models.FirewallAllowAzureIpsState"]] = None,
         new_tier: Optional[Union[str, "_models.TierType"]] = None,
-        max_job_count: Optional[int] = 3,
-        max_degree_of_parallelism: Optional[int] = 30,
+        max_job_count: int = 3,
+        max_degree_of_parallelism: int = 30,
         max_degree_of_parallelism_per_job: Optional[int] = None,
-        query_store_retention: Optional[int] = 30,
+        query_store_retention: int = 30,
         **kwargs
     ):
         """
@@ -1432,17 +1373,17 @@ class DataLakeAnalyticsAccountProperties(DataLakeAnalyticsAccountPropertiesBasic
         :paramtype public_data_lake_store_accounts:
          list[~azure.mgmt.datalake.analytics.account.models.DataLakeStoreAccountInformation]
         :keyword firewall_state: The current state of the IP address firewall for this account. Known
-         values are: "Enabled", "Disabled".
+         values are: "Enabled" and "Disabled".
         :paramtype firewall_state: str or ~azure.mgmt.datalake.analytics.account.models.FirewallState
         :keyword firewall_allow_azure_ips: The current state of allowing or disallowing IPs originating
          within Azure through the firewall. If the firewall is disabled, this is not enforced. Known
-         values are: "Enabled", "Disabled".
+         values are: "Enabled" and "Disabled".
         :paramtype firewall_allow_azure_ips: str or
          ~azure.mgmt.datalake.analytics.account.models.FirewallAllowAzureIpsState
         :keyword new_tier: The commitment tier for the next month. Known values are: "Consumption",
          "Commitment_100AUHours", "Commitment_500AUHours", "Commitment_1000AUHours",
          "Commitment_5000AUHours", "Commitment_10000AUHours", "Commitment_50000AUHours",
-         "Commitment_100000AUHours", "Commitment_500000AUHours".
+         "Commitment_100000AUHours", and "Commitment_500000AUHours".
         :paramtype new_tier: str or ~azure.mgmt.datalake.analytics.account.models.TierType
         :keyword max_job_count: The maximum supported jobs running under the account at the same time.
         :paramtype max_job_count: int
@@ -1455,7 +1396,7 @@ class DataLakeAnalyticsAccountProperties(DataLakeAnalyticsAccountPropertiesBasic
         :keyword query_store_retention: The number of days that job metadata is retained.
         :paramtype query_store_retention: int
         """
-        super(DataLakeAnalyticsAccountProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.default_data_lake_store_account_type = None
         self.default_data_lake_store_account = None
         self.data_lake_store_accounts = None
@@ -1498,30 +1439,26 @@ class DataLakeStoreAccountInformation(SubResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'suffix': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "suffix": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'suffix': {'key': 'properties.suffix', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "suffix": {"key": "properties.suffix", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(DataLakeStoreAccountInformation, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.suffix = None
 
 
-class DataLakeStoreAccountInformationListResult(msrest.serialization.Model):
+class DataLakeStoreAccountInformationListResult(_serialization.Model):
     """Data Lake Store account list information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1534,27 +1471,23 @@ class DataLakeStoreAccountInformationListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[DataLakeStoreAccountInformation]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[DataLakeStoreAccountInformation]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(DataLakeStoreAccountInformationListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class ErrorAdditionalInfo(msrest.serialization.Model):
+class ErrorAdditionalInfo(_serialization.Model):
     """The resource management error additional info.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1562,31 +1495,27 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: any
+    :vartype info: JSON
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'info': {'readonly': True},
+        "type": {"readonly": True},
+        "info": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'info': {'key': 'info', 'type': 'object'},
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ErrorAdditionalInfo, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.type = None
         self.info = None
 
 
-class ErrorDetail(msrest.serialization.Model):
+class ErrorDetail(_serialization.Model):
     """The error detail.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1605,28 +1534,24 @@ class ErrorDetail(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'target': {'readonly': True},
-        'details': {'readonly': True},
-        'additional_info': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorDetail]'},
-        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetail]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ErrorDetail, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.code = None
         self.message = None
         self.target = None
@@ -1634,7 +1559,7 @@ class ErrorDetail(msrest.serialization.Model):
         self.additional_info = None
 
 
-class ErrorResponse(msrest.serialization.Model):
+class ErrorResponse(_serialization.Model):
     """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
 
     :ivar error: The error object.
@@ -1642,20 +1567,15 @@ class ErrorResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorDetail'},
+        "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: Optional["_models.ErrorDetail"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs):
         """
         :keyword error: The error object.
         :paramtype error: ~azure.mgmt.datalake.analytics.account.models.ErrorDetail
         """
-        super(ErrorResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.error = error
 
 
@@ -1679,33 +1599,29 @@ class FirewallRule(SubResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'start_ip_address': {'readonly': True},
-        'end_ip_address': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "start_ip_address": {"readonly": True},
+        "end_ip_address": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'start_ip_address': {'key': 'properties.startIpAddress', 'type': 'str'},
-        'end_ip_address': {'key': 'properties.endIpAddress', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "start_ip_address": {"key": "properties.startIpAddress", "type": "str"},
+        "end_ip_address": {"key": "properties.endIpAddress", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(FirewallRule, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.start_ip_address = None
         self.end_ip_address = None
 
 
-class FirewallRuleListResult(msrest.serialization.Model):
+class FirewallRuleListResult(_serialization.Model):
     """Data Lake Analytics firewall rule list information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1717,22 +1633,18 @@ class FirewallRuleListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[FirewallRule]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[FirewallRule]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(FirewallRuleListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
@@ -1759,42 +1671,38 @@ class HiveMetastore(SubResource):
     :ivar password: The password for the Hive MetaStore.
     :vartype password: str
     :ivar nested_resource_provisioning_state: The current state of the NestedResource. Known values
-     are: "Succeeded", "Canceled", "Failed".
+     are: "Succeeded", "Canceled", and "Failed".
     :vartype nested_resource_provisioning_state: str or
      ~azure.mgmt.datalake.analytics.account.models.NestedResourceProvisioningState
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'server_uri': {'readonly': True},
-        'database_name': {'readonly': True},
-        'runtime_version': {'readonly': True},
-        'user_name': {'readonly': True},
-        'password': {'readonly': True},
-        'nested_resource_provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "server_uri": {"readonly": True},
+        "database_name": {"readonly": True},
+        "runtime_version": {"readonly": True},
+        "user_name": {"readonly": True},
+        "password": {"readonly": True},
+        "nested_resource_provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'server_uri': {'key': 'properties.serverUri', 'type': 'str'},
-        'database_name': {'key': 'properties.databaseName', 'type': 'str'},
-        'runtime_version': {'key': 'properties.runtimeVersion', 'type': 'str'},
-        'user_name': {'key': 'properties.userName', 'type': 'str'},
-        'password': {'key': 'properties.password', 'type': 'str'},
-        'nested_resource_provisioning_state': {'key': 'properties.nestedResourceProvisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "server_uri": {"key": "properties.serverUri", "type": "str"},
+        "database_name": {"key": "properties.databaseName", "type": "str"},
+        "runtime_version": {"key": "properties.runtimeVersion", "type": "str"},
+        "user_name": {"key": "properties.userName", "type": "str"},
+        "password": {"key": "properties.password", "type": "str"},
+        "nested_resource_provisioning_state": {"key": "properties.nestedResourceProvisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(HiveMetastore, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.server_uri = None
         self.database_name = None
         self.runtime_version = None
@@ -1803,7 +1711,7 @@ class HiveMetastore(SubResource):
         self.nested_resource_provisioning_state = None
 
 
-class HiveMetastoreListResult(msrest.serialization.Model):
+class HiveMetastoreListResult(_serialization.Model):
     """Data Lake Analytics HiveMetastore list information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1815,27 +1723,23 @@ class HiveMetastoreListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[HiveMetastore]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[HiveMetastore]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(HiveMetastoreListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class NameAvailabilityInformation(msrest.serialization.Model):
+class NameAvailabilityInformation(_serialization.Model):
     """Data Lake Analytics account name availability result information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1852,30 +1756,26 @@ class NameAvailabilityInformation(msrest.serialization.Model):
     """
 
     _validation = {
-        'name_available': {'readonly': True},
-        'reason': {'readonly': True},
-        'message': {'readonly': True},
+        "name_available": {"readonly": True},
+        "reason": {"readonly": True},
+        "message": {"readonly": True},
     }
 
     _attribute_map = {
-        'name_available': {'key': 'nameAvailable', 'type': 'bool'},
-        'reason': {'key': 'reason', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "name_available": {"key": "nameAvailable", "type": "bool"},
+        "reason": {"key": "reason", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(NameAvailabilityInformation, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.name_available = None
         self.reason = None
         self.message = None
 
 
-class Operation(msrest.serialization.Model):
+class Operation(_serialization.Model):
     """An available operation for Data Lake Analytics.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1886,39 +1786,35 @@ class Operation(msrest.serialization.Model):
     :vartype display: ~azure.mgmt.datalake.analytics.account.models.OperationDisplay
     :ivar properties: The OperationMetaPropertyInfo for the operation.
     :vartype properties: ~azure.mgmt.datalake.analytics.account.models.OperationMetaPropertyInfo
-    :ivar origin: The intended executor of the operation. Known values are: "user", "system",
+    :ivar origin: The intended executor of the operation. Known values are: "user", "system", and
      "user,system".
     :vartype origin: str or ~azure.mgmt.datalake.analytics.account.models.OperationOrigin
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'display': {'readonly': True},
-        'properties': {'readonly': True},
-        'origin': {'readonly': True},
+        "name": {"readonly": True},
+        "display": {"readonly": True},
+        "properties": {"readonly": True},
+        "origin": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
-        'properties': {'key': 'properties', 'type': 'OperationMetaPropertyInfo'},
-        'origin': {'key': 'origin', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "display": {"key": "display", "type": "OperationDisplay"},
+        "properties": {"key": "properties", "type": "OperationMetaPropertyInfo"},
+        "origin": {"key": "origin", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(Operation, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.name = None
         self.display = None
         self.properties = None
         self.origin = None
 
 
-class OperationDisplay(msrest.serialization.Model):
+class OperationDisplay(_serialization.Model):
     """The display information for a particular operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1934,33 +1830,29 @@ class OperationDisplay(msrest.serialization.Model):
     """
 
     _validation = {
-        'provider': {'readonly': True},
-        'resource': {'readonly': True},
-        'operation': {'readonly': True},
-        'description': {'readonly': True},
+        "provider": {"readonly": True},
+        "resource": {"readonly": True},
+        "operation": {"readonly": True},
+        "description": {"readonly": True},
     }
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(OperationDisplay, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.provider = None
         self.resource = None
         self.operation = None
         self.description = None
 
 
-class OperationListResult(msrest.serialization.Model):
+class OperationListResult(_serialization.Model):
     """The list of available operations for Data Lake Analytics.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1972,27 +1864,23 @@ class OperationListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Operation]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Operation]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(OperationListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class OperationMetaLogSpecification(msrest.serialization.Model):
+class OperationMetaLogSpecification(_serialization.Model):
     """OperationMetaLogSpecification.
 
     :ivar name: The name for OperationMetaLogSpecification.
@@ -2004,9 +1892,9 @@ class OperationMetaLogSpecification(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'blob_duration': {'key': 'blobDuration', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "blob_duration": {"key": "blobDuration", "type": "str"},
     }
 
     def __init__(
@@ -2025,13 +1913,13 @@ class OperationMetaLogSpecification(msrest.serialization.Model):
         :keyword blob_duration: The blobDuration for OperationMetaLogSpecification.
         :paramtype blob_duration: str
         """
-        super(OperationMetaLogSpecification, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.display_name = display_name
         self.blob_duration = blob_duration
 
 
-class OperationMetaMetricAvailabilitiesSpecification(msrest.serialization.Model):
+class OperationMetaMetricAvailabilitiesSpecification(_serialization.Model):
     """OperationMetaMetricAvailabilitiesSpecification.
 
     :ivar time_grain: The timegrain for OperationMetaMetricAvailabilitiesSpecification.
@@ -2041,29 +1929,23 @@ class OperationMetaMetricAvailabilitiesSpecification(msrest.serialization.Model)
     """
 
     _attribute_map = {
-        'time_grain': {'key': 'timeGrain', 'type': 'str'},
-        'blob_duration': {'key': 'blobDuration', 'type': 'str'},
+        "time_grain": {"key": "timeGrain", "type": "str"},
+        "blob_duration": {"key": "blobDuration", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        time_grain: Optional[str] = None,
-        blob_duration: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, time_grain: Optional[str] = None, blob_duration: Optional[str] = None, **kwargs):
         """
         :keyword time_grain: The timegrain for OperationMetaMetricAvailabilitiesSpecification.
         :paramtype time_grain: str
         :keyword blob_duration: The blobDuration for OperationMetaMetricAvailabilitiesSpecification.
         :paramtype blob_duration: str
         """
-        super(OperationMetaMetricAvailabilitiesSpecification, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.time_grain = time_grain
         self.blob_duration = blob_duration
 
 
-class OperationMetaMetricSpecification(msrest.serialization.Model):
+class OperationMetaMetricSpecification(_serialization.Model):
     """OperationMetaMetricSpecification.
 
     :ivar name: The name for OperationMetaMetricSpecification.
@@ -2082,12 +1964,12 @@ class OperationMetaMetricSpecification(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display_description': {'key': 'displayDescription', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'unit': {'key': 'unit', 'type': 'str'},
-        'aggregation_type': {'key': 'aggregationType', 'type': 'str'},
-        'availabilities': {'key': 'availabilities', 'type': '[OperationMetaMetricAvailabilitiesSpecification]'},
+        "name": {"key": "name", "type": "str"},
+        "display_description": {"key": "displayDescription", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "unit": {"key": "unit", "type": "str"},
+        "aggregation_type": {"key": "aggregationType", "type": "str"},
+        "availabilities": {"key": "availabilities", "type": "[OperationMetaMetricAvailabilitiesSpecification]"},
     }
 
     def __init__(
@@ -2116,7 +1998,7 @@ class OperationMetaMetricSpecification(msrest.serialization.Model):
         :paramtype availabilities:
          list[~azure.mgmt.datalake.analytics.account.models.OperationMetaMetricAvailabilitiesSpecification]
         """
-        super(OperationMetaMetricSpecification, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.display_description = display_description
         self.display_name = display_name
@@ -2125,7 +2007,7 @@ class OperationMetaMetricSpecification(msrest.serialization.Model):
         self.availabilities = availabilities
 
 
-class OperationMetaPropertyInfo(msrest.serialization.Model):
+class OperationMetaPropertyInfo(_serialization.Model):
     """OperationMetaPropertyInfo.
 
     :ivar service_specification: The operations OperationMetaServiceSpecification.
@@ -2134,25 +2016,22 @@ class OperationMetaPropertyInfo(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'service_specification': {'key': 'serviceSpecification', 'type': 'OperationMetaServiceSpecification'},
+        "service_specification": {"key": "serviceSpecification", "type": "OperationMetaServiceSpecification"},
     }
 
     def __init__(
-        self,
-        *,
-        service_specification: Optional["_models.OperationMetaServiceSpecification"] = None,
-        **kwargs
+        self, *, service_specification: Optional["_models.OperationMetaServiceSpecification"] = None, **kwargs
     ):
         """
         :keyword service_specification: The operations OperationMetaServiceSpecification.
         :paramtype service_specification:
          ~azure.mgmt.datalake.analytics.account.models.OperationMetaServiceSpecification
         """
-        super(OperationMetaPropertyInfo, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.service_specification = service_specification
 
 
-class OperationMetaServiceSpecification(msrest.serialization.Model):
+class OperationMetaServiceSpecification(_serialization.Model):
     """OperationMetaServiceSpecification.
 
     :ivar metric_specifications: The metricSpecifications for OperationMetaServiceSpecification.
@@ -2164,8 +2043,8 @@ class OperationMetaServiceSpecification(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'metric_specifications': {'key': 'metricSpecifications', 'type': '[OperationMetaMetricSpecification]'},
-        'log_specifications': {'key': 'logSpecifications', 'type': '[OperationMetaLogSpecification]'},
+        "metric_specifications": {"key": "metricSpecifications", "type": "[OperationMetaMetricSpecification]"},
+        "log_specifications": {"key": "logSpecifications", "type": "[OperationMetaLogSpecification]"},
     }
 
     def __init__(
@@ -2183,12 +2062,12 @@ class OperationMetaServiceSpecification(msrest.serialization.Model):
         :paramtype log_specifications:
          list[~azure.mgmt.datalake.analytics.account.models.OperationMetaLogSpecification]
         """
-        super(OperationMetaServiceSpecification, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.metric_specifications = metric_specifications
         self.log_specifications = log_specifications
 
 
-class SasTokenInformation(msrest.serialization.Model):
+class SasTokenInformation(_serialization.Model):
     """SAS token information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2198,24 +2077,20 @@ class SasTokenInformation(msrest.serialization.Model):
     """
 
     _validation = {
-        'access_token': {'readonly': True},
+        "access_token": {"readonly": True},
     }
 
     _attribute_map = {
-        'access_token': {'key': 'accessToken', 'type': 'str'},
+        "access_token": {"key": "accessToken", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(SasTokenInformation, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.access_token = None
 
 
-class SasTokenInformationListResult(msrest.serialization.Model):
+class SasTokenInformationListResult(_serialization.Model):
     """The SAS response that contains the storage account, container and associated SAS token for connection use.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2227,22 +2102,18 @@ class SasTokenInformationListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SasTokenInformation]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[SasTokenInformation]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(SasTokenInformationListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
@@ -2263,30 +2134,26 @@ class StorageAccountInformation(SubResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'suffix': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "suffix": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'suffix': {'key': 'properties.suffix', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "suffix": {"key": "properties.suffix", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(StorageAccountInformation, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.suffix = None
 
 
-class StorageAccountInformationListResult(msrest.serialization.Model):
+class StorageAccountInformationListResult(_serialization.Model):
     """Azure Storage account list information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2298,22 +2165,18 @@ class StorageAccountInformationListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[StorageAccountInformation]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[StorageAccountInformation]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(StorageAccountInformationListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
@@ -2334,30 +2197,26 @@ class StorageContainer(SubResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'last_modified_time': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "last_modified_time": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "last_modified_time": {"key": "properties.lastModifiedTime", "type": "iso-8601"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(StorageContainer, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.last_modified_time = None
 
 
-class StorageContainerListResult(msrest.serialization.Model):
+class StorageContainerListResult(_serialization.Model):
     """The list of blob containers associated with the storage account attached to the Data Lake Analytics account.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2369,33 +2228,29 @@ class StorageContainerListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[StorageContainer]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[StorageContainer]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(StorageContainerListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class UpdateComputePolicyParameters(msrest.serialization.Model):
+class UpdateComputePolicyParameters(_serialization.Model):
     """The parameters used to update a compute policy.
 
     :ivar object_id: The AAD object identifier for the entity to create a policy for.
     :vartype object_id: str
     :ivar object_type: The type of AAD object the object identifier refers to. Known values are:
-     "User", "Group", "ServicePrincipal".
+     "User", "Group", and "ServicePrincipal".
     :vartype object_type: str or ~azure.mgmt.datalake.analytics.account.models.AADObjectType
     :ivar max_degree_of_parallelism_per_job: The maximum degree of parallelism per job this user
      can use to submit jobs. This property, the min priority per job property, or both must be
@@ -2407,15 +2262,15 @@ class UpdateComputePolicyParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'max_degree_of_parallelism_per_job': {'minimum': 1},
-        'min_priority_per_job': {'minimum': 1},
+        "max_degree_of_parallelism_per_job": {"minimum": 1},
+        "min_priority_per_job": {"minimum": 1},
     }
 
     _attribute_map = {
-        'object_id': {'key': 'properties.objectId', 'type': 'str'},
-        'object_type': {'key': 'properties.objectType', 'type': 'str'},
-        'max_degree_of_parallelism_per_job': {'key': 'properties.maxDegreeOfParallelismPerJob', 'type': 'int'},
-        'min_priority_per_job': {'key': 'properties.minPriorityPerJob', 'type': 'int'},
+        "object_id": {"key": "properties.objectId", "type": "str"},
+        "object_type": {"key": "properties.objectType", "type": "str"},
+        "max_degree_of_parallelism_per_job": {"key": "properties.maxDegreeOfParallelismPerJob", "type": "int"},
+        "min_priority_per_job": {"key": "properties.minPriorityPerJob", "type": "int"},
     }
 
     def __init__(
@@ -2431,7 +2286,7 @@ class UpdateComputePolicyParameters(msrest.serialization.Model):
         :keyword object_id: The AAD object identifier for the entity to create a policy for.
         :paramtype object_id: str
         :keyword object_type: The type of AAD object the object identifier refers to. Known values are:
-         "User", "Group", "ServicePrincipal".
+         "User", "Group", and "ServicePrincipal".
         :paramtype object_type: str or ~azure.mgmt.datalake.analytics.account.models.AADObjectType
         :keyword max_degree_of_parallelism_per_job: The maximum degree of parallelism per job this user
          can use to submit jobs. This property, the min priority per job property, or both must be
@@ -2441,24 +2296,24 @@ class UpdateComputePolicyParameters(msrest.serialization.Model):
          This property, the max degree of parallelism per job property, or both must be passed.
         :paramtype min_priority_per_job: int
         """
-        super(UpdateComputePolicyParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.object_id = object_id
         self.object_type = object_type
         self.max_degree_of_parallelism_per_job = max_degree_of_parallelism_per_job
         self.min_priority_per_job = min_priority_per_job
 
 
-class UpdateComputePolicyWithAccountParameters(msrest.serialization.Model):
+class UpdateComputePolicyWithAccountParameters(_serialization.Model):
     """The parameters used to update a compute policy while updating a Data Lake Analytics account.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The unique name of the compute policy to update.
+    :ivar name: The unique name of the compute policy to update. Required.
     :vartype name: str
     :ivar object_id: The AAD object identifier for the entity to create a policy for.
     :vartype object_id: str
     :ivar object_type: The type of AAD object the object identifier refers to. Known values are:
-     "User", "Group", "ServicePrincipal".
+     "User", "Group", and "ServicePrincipal".
     :vartype object_type: str or ~azure.mgmt.datalake.analytics.account.models.AADObjectType
     :ivar max_degree_of_parallelism_per_job: The maximum degree of parallelism per job this user
      can use to submit jobs. This property, the min priority per job property, or both must be
@@ -2470,17 +2325,17 @@ class UpdateComputePolicyWithAccountParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
-        'max_degree_of_parallelism_per_job': {'minimum': 1},
-        'min_priority_per_job': {'minimum': 1},
+        "name": {"required": True},
+        "max_degree_of_parallelism_per_job": {"minimum": 1},
+        "min_priority_per_job": {"minimum": 1},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'object_id': {'key': 'properties.objectId', 'type': 'str'},
-        'object_type': {'key': 'properties.objectType', 'type': 'str'},
-        'max_degree_of_parallelism_per_job': {'key': 'properties.maxDegreeOfParallelismPerJob', 'type': 'int'},
-        'min_priority_per_job': {'key': 'properties.minPriorityPerJob', 'type': 'int'},
+        "name": {"key": "name", "type": "str"},
+        "object_id": {"key": "properties.objectId", "type": "str"},
+        "object_type": {"key": "properties.objectType", "type": "str"},
+        "max_degree_of_parallelism_per_job": {"key": "properties.maxDegreeOfParallelismPerJob", "type": "int"},
+        "min_priority_per_job": {"key": "properties.minPriorityPerJob", "type": "int"},
     }
 
     def __init__(
@@ -2494,12 +2349,12 @@ class UpdateComputePolicyWithAccountParameters(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword name: Required. The unique name of the compute policy to update.
+        :keyword name: The unique name of the compute policy to update. Required.
         :paramtype name: str
         :keyword object_id: The AAD object identifier for the entity to create a policy for.
         :paramtype object_id: str
         :keyword object_type: The type of AAD object the object identifier refers to. Known values are:
-         "User", "Group", "ServicePrincipal".
+         "User", "Group", and "ServicePrincipal".
         :paramtype object_type: str or ~azure.mgmt.datalake.analytics.account.models.AADObjectType
         :keyword max_degree_of_parallelism_per_job: The maximum degree of parallelism per job this user
          can use to submit jobs. This property, the min priority per job property, or both must be
@@ -2509,7 +2364,7 @@ class UpdateComputePolicyWithAccountParameters(msrest.serialization.Model):
          This property, the max degree of parallelism per job property, or both must be passed.
         :paramtype min_priority_per_job: int
         """
-        super(UpdateComputePolicyWithAccountParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.object_id = object_id
         self.object_type = object_type
@@ -2517,10 +2372,10 @@ class UpdateComputePolicyWithAccountParameters(msrest.serialization.Model):
         self.min_priority_per_job = min_priority_per_job
 
 
-class UpdateDataLakeAnalyticsAccountParameters(msrest.serialization.Model):
+class UpdateDataLakeAnalyticsAccountParameters(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """The parameters that can be used to update an existing Data Lake Analytics account.
 
-    :ivar tags: A set of tags. The resource tags.
+    :ivar tags: The resource tags.
     :vartype tags: dict[str, str]
     :ivar data_lake_store_accounts: The list of Data Lake Store accounts associated with this
      account.
@@ -2537,17 +2392,17 @@ class UpdateDataLakeAnalyticsAccountParameters(msrest.serialization.Model):
      list[~azure.mgmt.datalake.analytics.account.models.UpdateFirewallRuleWithAccountParameters]
     :ivar firewall_state: The current state of the IP address firewall for this account. Disabling
      the firewall does not remove existing rules, they will just be ignored until the firewall is
-     re-enabled. Known values are: "Enabled", "Disabled".
+     re-enabled. Known values are: "Enabled" and "Disabled".
     :vartype firewall_state: str or ~azure.mgmt.datalake.analytics.account.models.FirewallState
     :ivar firewall_allow_azure_ips: The current state of allowing or disallowing IPs originating
      within Azure through the firewall. If the firewall is disabled, this is not enforced. Known
-     values are: "Enabled", "Disabled".
+     values are: "Enabled" and "Disabled".
     :vartype firewall_allow_azure_ips: str or
      ~azure.mgmt.datalake.analytics.account.models.FirewallAllowAzureIpsState
     :ivar new_tier: The commitment tier to use for next month. Known values are: "Consumption",
      "Commitment_100AUHours", "Commitment_500AUHours", "Commitment_1000AUHours",
      "Commitment_5000AUHours", "Commitment_10000AUHours", "Commitment_50000AUHours",
-     "Commitment_100000AUHours", "Commitment_500000AUHours".
+     "Commitment_100000AUHours", and "Commitment_500000AUHours".
     :vartype new_tier: str or ~azure.mgmt.datalake.analytics.account.models.TierType
     :ivar max_job_count: The maximum supported jobs running under the account at the same time.
     :vartype max_job_count: int
@@ -2563,27 +2418,33 @@ class UpdateDataLakeAnalyticsAccountParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'max_job_count': {'minimum': 1},
-        'max_degree_of_parallelism': {'minimum': 1},
-        'max_degree_of_parallelism_per_job': {'minimum': 1},
-        'min_priority_per_job': {'minimum': 1},
-        'query_store_retention': {'maximum': 180, 'minimum': 1},
+        "max_job_count": {"minimum": 1},
+        "max_degree_of_parallelism": {"minimum": 1},
+        "max_degree_of_parallelism_per_job": {"minimum": 1},
+        "min_priority_per_job": {"minimum": 1},
+        "query_store_retention": {"maximum": 180, "minimum": 1},
     }
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'data_lake_store_accounts': {'key': 'properties.dataLakeStoreAccounts', 'type': '[UpdateDataLakeStoreWithAccountParameters]'},
-        'storage_accounts': {'key': 'properties.storageAccounts', 'type': '[UpdateStorageAccountWithAccountParameters]'},
-        'compute_policies': {'key': 'properties.computePolicies', 'type': '[UpdateComputePolicyWithAccountParameters]'},
-        'firewall_rules': {'key': 'properties.firewallRules', 'type': '[UpdateFirewallRuleWithAccountParameters]'},
-        'firewall_state': {'key': 'properties.firewallState', 'type': 'str'},
-        'firewall_allow_azure_ips': {'key': 'properties.firewallAllowAzureIps', 'type': 'str'},
-        'new_tier': {'key': 'properties.newTier', 'type': 'str'},
-        'max_job_count': {'key': 'properties.maxJobCount', 'type': 'int'},
-        'max_degree_of_parallelism': {'key': 'properties.maxDegreeOfParallelism', 'type': 'int'},
-        'max_degree_of_parallelism_per_job': {'key': 'properties.maxDegreeOfParallelismPerJob', 'type': 'int'},
-        'min_priority_per_job': {'key': 'properties.minPriorityPerJob', 'type': 'int'},
-        'query_store_retention': {'key': 'properties.queryStoreRetention', 'type': 'int'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "data_lake_store_accounts": {
+            "key": "properties.dataLakeStoreAccounts",
+            "type": "[UpdateDataLakeStoreWithAccountParameters]",
+        },
+        "storage_accounts": {
+            "key": "properties.storageAccounts",
+            "type": "[UpdateStorageAccountWithAccountParameters]",
+        },
+        "compute_policies": {"key": "properties.computePolicies", "type": "[UpdateComputePolicyWithAccountParameters]"},
+        "firewall_rules": {"key": "properties.firewallRules", "type": "[UpdateFirewallRuleWithAccountParameters]"},
+        "firewall_state": {"key": "properties.firewallState", "type": "str"},
+        "firewall_allow_azure_ips": {"key": "properties.firewallAllowAzureIps", "type": "str"},
+        "new_tier": {"key": "properties.newTier", "type": "str"},
+        "max_job_count": {"key": "properties.maxJobCount", "type": "int"},
+        "max_degree_of_parallelism": {"key": "properties.maxDegreeOfParallelism", "type": "int"},
+        "max_degree_of_parallelism_per_job": {"key": "properties.maxDegreeOfParallelismPerJob", "type": "int"},
+        "min_priority_per_job": {"key": "properties.minPriorityPerJob", "type": "int"},
+        "query_store_retention": {"key": "properties.queryStoreRetention", "type": "int"},
     }
 
     def __init__(
@@ -2605,7 +2466,7 @@ class UpdateDataLakeAnalyticsAccountParameters(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. The resource tags.
+        :keyword tags: The resource tags.
         :paramtype tags: dict[str, str]
         :keyword data_lake_store_accounts: The list of Data Lake Store accounts associated with this
          account.
@@ -2623,17 +2484,17 @@ class UpdateDataLakeAnalyticsAccountParameters(msrest.serialization.Model):
          list[~azure.mgmt.datalake.analytics.account.models.UpdateFirewallRuleWithAccountParameters]
         :keyword firewall_state: The current state of the IP address firewall for this account.
          Disabling the firewall does not remove existing rules, they will just be ignored until the
-         firewall is re-enabled. Known values are: "Enabled", "Disabled".
+         firewall is re-enabled. Known values are: "Enabled" and "Disabled".
         :paramtype firewall_state: str or ~azure.mgmt.datalake.analytics.account.models.FirewallState
         :keyword firewall_allow_azure_ips: The current state of allowing or disallowing IPs originating
          within Azure through the firewall. If the firewall is disabled, this is not enforced. Known
-         values are: "Enabled", "Disabled".
+         values are: "Enabled" and "Disabled".
         :paramtype firewall_allow_azure_ips: str or
          ~azure.mgmt.datalake.analytics.account.models.FirewallAllowAzureIpsState
         :keyword new_tier: The commitment tier to use for next month. Known values are: "Consumption",
          "Commitment_100AUHours", "Commitment_500AUHours", "Commitment_1000AUHours",
          "Commitment_5000AUHours", "Commitment_10000AUHours", "Commitment_50000AUHours",
-         "Commitment_100000AUHours", "Commitment_500000AUHours".
+         "Commitment_100000AUHours", and "Commitment_500000AUHours".
         :paramtype new_tier: str or ~azure.mgmt.datalake.analytics.account.models.TierType
         :keyword max_job_count: The maximum supported jobs running under the account at the same time.
         :paramtype max_job_count: int
@@ -2648,7 +2509,7 @@ class UpdateDataLakeAnalyticsAccountParameters(msrest.serialization.Model):
         :keyword query_store_retention: The number of days that job metadata is retained.
         :paramtype query_store_retention: int
         """
-        super(UpdateDataLakeAnalyticsAccountParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
         self.data_lake_store_accounts = data_lake_store_accounts
         self.storage_accounts = storage_accounts
@@ -2664,45 +2525,39 @@ class UpdateDataLakeAnalyticsAccountParameters(msrest.serialization.Model):
         self.query_store_retention = query_store_retention
 
 
-class UpdateDataLakeStoreWithAccountParameters(msrest.serialization.Model):
+class UpdateDataLakeStoreWithAccountParameters(_serialization.Model):
     """The parameters used to update a Data Lake Store account while updating a Data Lake Analytics account.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The unique name of the Data Lake Store account to update.
+    :ivar name: The unique name of the Data Lake Store account to update. Required.
     :vartype name: str
     :ivar suffix: The optional suffix for the Data Lake Store account.
     :vartype suffix: str
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'suffix': {'key': 'properties.suffix', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "suffix": {"key": "properties.suffix", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        suffix: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: str, suffix: Optional[str] = None, **kwargs):
         """
-        :keyword name: Required. The unique name of the Data Lake Store account to update.
+        :keyword name: The unique name of the Data Lake Store account to update. Required.
         :paramtype name: str
         :keyword suffix: The optional suffix for the Data Lake Store account.
         :paramtype suffix: str
         """
-        super(UpdateDataLakeStoreWithAccountParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.suffix = suffix
 
 
-class UpdateFirewallRuleParameters(msrest.serialization.Model):
+class UpdateFirewallRuleParameters(_serialization.Model):
     """The parameters used to update a firewall rule.
 
     :ivar start_ip_address: The start IP address for the firewall rule. This can be either ipv4 or
@@ -2714,17 +2569,11 @@ class UpdateFirewallRuleParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'start_ip_address': {'key': 'properties.startIpAddress', 'type': 'str'},
-        'end_ip_address': {'key': 'properties.endIpAddress', 'type': 'str'},
+        "start_ip_address": {"key": "properties.startIpAddress", "type": "str"},
+        "end_ip_address": {"key": "properties.endIpAddress", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        start_ip_address: Optional[str] = None,
-        end_ip_address: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, start_ip_address: Optional[str] = None, end_ip_address: Optional[str] = None, **kwargs):
         """
         :keyword start_ip_address: The start IP address for the firewall rule. This can be either ipv4
          or ipv6. Start and End should be in the same protocol.
@@ -2733,17 +2582,17 @@ class UpdateFirewallRuleParameters(msrest.serialization.Model):
          ipv6. Start and End should be in the same protocol.
         :paramtype end_ip_address: str
         """
-        super(UpdateFirewallRuleParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.start_ip_address = start_ip_address
         self.end_ip_address = end_ip_address
 
 
-class UpdateFirewallRuleWithAccountParameters(msrest.serialization.Model):
+class UpdateFirewallRuleWithAccountParameters(_serialization.Model):
     """The parameters used to update a firewall rule while updating a Data Lake Analytics account.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The unique name of the firewall rule to update.
+    :ivar name: The unique name of the firewall rule to update. Required.
     :vartype name: str
     :ivar start_ip_address: The start IP address for the firewall rule. This can be either ipv4 or
      ipv6. Start and End should be in the same protocol.
@@ -2754,25 +2603,20 @@ class UpdateFirewallRuleWithAccountParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'start_ip_address': {'key': 'properties.startIpAddress', 'type': 'str'},
-        'end_ip_address': {'key': 'properties.endIpAddress', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "start_ip_address": {"key": "properties.startIpAddress", "type": "str"},
+        "end_ip_address": {"key": "properties.endIpAddress", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        name: str,
-        start_ip_address: Optional[str] = None,
-        end_ip_address: Optional[str] = None,
-        **kwargs
+        self, *, name: str, start_ip_address: Optional[str] = None, end_ip_address: Optional[str] = None, **kwargs
     ):
         """
-        :keyword name: Required. The unique name of the firewall rule to update.
+        :keyword name: The unique name of the firewall rule to update. Required.
         :paramtype name: str
         :keyword start_ip_address: The start IP address for the firewall rule. This can be either ipv4
          or ipv6. Start and End should be in the same protocol.
@@ -2781,13 +2625,13 @@ class UpdateFirewallRuleWithAccountParameters(msrest.serialization.Model):
          ipv6. Start and End should be in the same protocol.
         :paramtype end_ip_address: str
         """
-        super(UpdateFirewallRuleWithAccountParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.start_ip_address = start_ip_address
         self.end_ip_address = end_ip_address
 
 
-class UpdateStorageAccountParameters(msrest.serialization.Model):
+class UpdateStorageAccountParameters(_serialization.Model):
     """The parameters used to update an Azure Storage account.
 
     :ivar access_key: The updated access key associated with this Azure Storage account that will
@@ -2798,17 +2642,11 @@ class UpdateStorageAccountParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'access_key': {'key': 'properties.accessKey', 'type': 'str'},
-        'suffix': {'key': 'properties.suffix', 'type': 'str'},
+        "access_key": {"key": "properties.accessKey", "type": "str"},
+        "suffix": {"key": "properties.suffix", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        access_key: Optional[str] = None,
-        suffix: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, access_key: Optional[str] = None, suffix: Optional[str] = None, **kwargs):
         """
         :keyword access_key: The updated access key associated with this Azure Storage account that
          will be used to connect to it.
@@ -2816,17 +2654,17 @@ class UpdateStorageAccountParameters(msrest.serialization.Model):
         :keyword suffix: The optional suffix for the storage account.
         :paramtype suffix: str
         """
-        super(UpdateStorageAccountParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.access_key = access_key
         self.suffix = suffix
 
 
-class UpdateStorageAccountWithAccountParameters(msrest.serialization.Model):
+class UpdateStorageAccountWithAccountParameters(_serialization.Model):
     """The parameters used to update an Azure Storage account while updating a Data Lake Analytics account.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The unique name of the Azure Storage account to update.
+    :ivar name: The unique name of the Azure Storage account to update. Required.
     :vartype name: str
     :ivar access_key: The updated access key associated with this Azure Storage account that will
      be used to connect to it.
@@ -2836,25 +2674,18 @@ class UpdateStorageAccountWithAccountParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'access_key': {'key': 'properties.accessKey', 'type': 'str'},
-        'suffix': {'key': 'properties.suffix', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "access_key": {"key": "properties.accessKey", "type": "str"},
+        "suffix": {"key": "properties.suffix", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        access_key: Optional[str] = None,
-        suffix: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: str, access_key: Optional[str] = None, suffix: Optional[str] = None, **kwargs):
         """
-        :keyword name: Required. The unique name of the Azure Storage account to update.
+        :keyword name: The unique name of the Azure Storage account to update. Required.
         :paramtype name: str
         :keyword access_key: The updated access key associated with this Azure Storage account that
          will be used to connect to it.
@@ -2862,7 +2693,7 @@ class UpdateStorageAccountWithAccountParameters(msrest.serialization.Model):
         :keyword suffix: The optional suffix for the storage account.
         :paramtype suffix: str
         """
-        super(UpdateStorageAccountWithAccountParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.access_key = access_key
         self.suffix = suffix
@@ -2882,39 +2713,35 @@ class VirtualNetworkRule(SubResource):
     :ivar subnet_id: The resource identifier for the subnet.
     :vartype subnet_id: str
     :ivar virtual_network_rule_state: The current state of the VirtualNetwork Rule. Known values
-     are: "Active", "NetworkSourceDeleted", "Failed".
+     are: "Active", "NetworkSourceDeleted", and "Failed".
     :vartype virtual_network_rule_state: str or
      ~azure.mgmt.datalake.analytics.account.models.VirtualNetworkRuleState
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'subnet_id': {'readonly': True},
-        'virtual_network_rule_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "subnet_id": {"readonly": True},
+        "virtual_network_rule_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'subnet_id': {'key': 'properties.subnetId', 'type': 'str'},
-        'virtual_network_rule_state': {'key': 'properties.virtualNetworkRuleState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "subnet_id": {"key": "properties.subnetId", "type": "str"},
+        "virtual_network_rule_state": {"key": "properties.virtualNetworkRuleState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(VirtualNetworkRule, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.subnet_id = None
         self.virtual_network_rule_state = None
 
 
-class VirtualNetworkRuleListResult(msrest.serialization.Model):
+class VirtualNetworkRuleListResult(_serialization.Model):
     """Data Lake Analytics VirtualNetwork rule list information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2926,21 +2753,17 @@ class VirtualNetworkRuleListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[VirtualNetworkRule]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[VirtualNetworkRule]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(VirtualNetworkRuleListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None

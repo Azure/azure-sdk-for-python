@@ -7,51 +7,59 @@
 # --------------------------------------------------------------------------
 
 from ._container_apps_auth_configs_operations import ContainerAppsAuthConfigsOperations
-from ._container_apps_operations import ContainerAppsOperations
-from ._container_apps_revisions_operations import ContainerAppsRevisionsOperations
-from ._container_apps_revision_replicas_operations import ContainerAppsRevisionReplicasOperations
-from ._dapr_components_operations import DaprComponentsOperations
-from ._container_apps_diagnostics_operations import ContainerAppsDiagnosticsOperations
-from ._managed_environment_diagnostics_operations import ManagedEnvironmentDiagnosticsOperations
-from ._managed_environments_diagnostics_operations import ManagedEnvironmentsDiagnosticsOperations
-from ._operations import Operations
-from ._managed_environments_operations import ManagedEnvironmentsOperations
-from ._certificates_operations import CertificatesOperations
-from ._namespaces_operations import NamespacesOperations
-from ._managed_environments_storages_operations import ManagedEnvironmentsStoragesOperations
-from ._container_apps_source_controls_operations import ContainerAppsSourceControlsOperations
+from ._available_workload_profiles_operations import AvailableWorkloadProfilesOperations
+from ._billing_meters_operations import BillingMetersOperations
 from ._connected_environments_operations import ConnectedEnvironmentsOperations
 from ._connected_environments_certificates_operations import ConnectedEnvironmentsCertificatesOperations
 from ._connected_environments_dapr_components_operations import ConnectedEnvironmentsDaprComponentsOperations
 from ._connected_environments_storages_operations import ConnectedEnvironmentsStoragesOperations
-from ._available_workload_profiles_operations import AvailableWorkloadProfilesOperations
-from ._billing_meters_operations import BillingMetersOperations
+from ._container_apps_operations import ContainerAppsOperations
+from ._container_apps_revisions_operations import ContainerAppsRevisionsOperations
+from ._container_apps_revision_replicas_operations import ContainerAppsRevisionReplicasOperations
+from ._container_apps_diagnostics_operations import ContainerAppsDiagnosticsOperations
+from ._managed_environment_diagnostics_operations import ManagedEnvironmentDiagnosticsOperations
+from ._managed_environments_diagnostics_operations import ManagedEnvironmentsDiagnosticsOperations
+from ._operations import Operations
+from ._jobs_operations import JobsOperations
+from ._jobs_executions_operations import JobsExecutionsOperations
+from ._container_apps_api_client_operations import ContainerAppsAPIClientOperationsMixin
+from ._managed_environments_operations import ManagedEnvironmentsOperations
+from ._certificates_operations import CertificatesOperations
+from ._managed_certificates_operations import ManagedCertificatesOperations
+from ._namespaces_operations import NamespacesOperations
+from ._dapr_components_operations import DaprComponentsOperations
+from ._managed_environments_storages_operations import ManagedEnvironmentsStoragesOperations
+from ._container_apps_source_controls_operations import ContainerAppsSourceControlsOperations
 
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "ContainerAppsAuthConfigsOperations",
-    "ContainerAppsOperations",
-    "ContainerAppsRevisionsOperations",
-    "ContainerAppsRevisionReplicasOperations",
-    "DaprComponentsOperations",
-    "ContainerAppsDiagnosticsOperations",
-    "ManagedEnvironmentDiagnosticsOperations",
-    "ManagedEnvironmentsDiagnosticsOperations",
-    "Operations",
-    "ManagedEnvironmentsOperations",
-    "CertificatesOperations",
-    "NamespacesOperations",
-    "ManagedEnvironmentsStoragesOperations",
-    "ContainerAppsSourceControlsOperations",
+    "AvailableWorkloadProfilesOperations",
+    "BillingMetersOperations",
     "ConnectedEnvironmentsOperations",
     "ConnectedEnvironmentsCertificatesOperations",
     "ConnectedEnvironmentsDaprComponentsOperations",
     "ConnectedEnvironmentsStoragesOperations",
-    "AvailableWorkloadProfilesOperations",
-    "BillingMetersOperations",
+    "ContainerAppsOperations",
+    "ContainerAppsRevisionsOperations",
+    "ContainerAppsRevisionReplicasOperations",
+    "ContainerAppsDiagnosticsOperations",
+    "ManagedEnvironmentDiagnosticsOperations",
+    "ManagedEnvironmentsDiagnosticsOperations",
+    "Operations",
+    "JobsOperations",
+    "JobsExecutionsOperations",
+    "ContainerAppsAPIClientOperationsMixin",
+    "ManagedEnvironmentsOperations",
+    "CertificatesOperations",
+    "ManagedCertificatesOperations",
+    "NamespacesOperations",
+    "DaprComponentsOperations",
+    "ManagedEnvironmentsStoragesOperations",
+    "ContainerAppsSourceControlsOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

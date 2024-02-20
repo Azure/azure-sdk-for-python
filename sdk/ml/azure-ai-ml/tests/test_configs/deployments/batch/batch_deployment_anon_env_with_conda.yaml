@@ -9,7 +9,7 @@ code_configuration:
   scoring_script: ./main.py
 environment:
   conda_file: environment_files/environment.yml
-  image: mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04
+  image: mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04
 retry_settings: #optional
   max_retries: 3
   timeout: 30

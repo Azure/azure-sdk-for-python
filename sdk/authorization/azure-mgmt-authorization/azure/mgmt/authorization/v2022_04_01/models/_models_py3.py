@@ -12,13 +12,14 @@ from typing import Any, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from .. import models as _models
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
@@ -56,8 +57,8 @@ class ApprovalSettings(_serialization.Model):
         is_requestor_justification_required: Optional[bool] = None,
         approval_mode: Optional[Union[str, "_models.ApprovalMode"]] = None,
         approval_stages: Optional[List["_models.ApprovalStage"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword is_approval_required: Determines whether approval is required or not.
         :paramtype is_approval_required: bool
@@ -119,8 +120,8 @@ class ApprovalStage(_serialization.Model):
         primary_approvers: Optional[List["_models.UserSet"]] = None,
         is_escalation_enabled: Optional[bool] = None,
         escalation_approvers: Optional[List["_models.UserSet"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword approval_stage_time_out_in_days: The time in days when approval request would be timed
          out.
@@ -177,12 +178,31 @@ class DenyAssignment(_serialization.Model):  # pylint: disable=too-many-instance
     :ivar is_system_protected: Specifies whether this deny assignment was created by Azure and
      cannot be edited or deleted.
     :vartype is_system_protected: bool
+    :ivar condition: The conditions on the deny assignment. This limits the resources it can be
+     assigned to. e.g.:
+     @Resource[Microsoft.Storage/storageAccounts/blobServices/containers:ContainerName]
+     StringEqualsIgnoreCase 'foo_storage_container'.
+    :vartype condition: str
+    :ivar condition_version: Version of the condition.
+    :vartype condition_version: str
+    :ivar created_on: Time it was created.
+    :vartype created_on: ~datetime.datetime
+    :ivar updated_on: Time it was updated.
+    :vartype updated_on: ~datetime.datetime
+    :ivar created_by: Id of the user who created the assignment.
+    :vartype created_by: str
+    :ivar updated_by: Id of the user who updated the assignment.
+    :vartype updated_by: str
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "created_on": {"readonly": True},
+        "updated_on": {"readonly": True},
+        "created_by": {"readonly": True},
+        "updated_by": {"readonly": True},
     }
 
     _attribute_map = {
@@ -197,6 +217,12 @@ class DenyAssignment(_serialization.Model):  # pylint: disable=too-many-instance
         "principals": {"key": "properties.principals", "type": "[Principal]"},
         "exclude_principals": {"key": "properties.excludePrincipals", "type": "[Principal]"},
         "is_system_protected": {"key": "properties.isSystemProtected", "type": "bool"},
+        "condition": {"key": "properties.condition", "type": "str"},
+        "condition_version": {"key": "properties.conditionVersion", "type": "str"},
+        "created_on": {"key": "properties.createdOn", "type": "iso-8601"},
+        "updated_on": {"key": "properties.updatedOn", "type": "iso-8601"},
+        "created_by": {"key": "properties.createdBy", "type": "str"},
+        "updated_by": {"key": "properties.updatedBy", "type": "str"},
     }
 
     def __init__(
@@ -210,8 +236,10 @@ class DenyAssignment(_serialization.Model):  # pylint: disable=too-many-instance
         principals: Optional[List["_models.Principal"]] = None,
         exclude_principals: Optional[List["_models.Principal"]] = None,
         is_system_protected: Optional[bool] = None,
-        **kwargs
-    ):
+        condition: Optional[str] = None,
+        condition_version: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword deny_assignment_name: The display name of the deny assignment.
         :paramtype deny_assignment_name: str
@@ -232,6 +260,13 @@ class DenyAssignment(_serialization.Model):  # pylint: disable=too-many-instance
         :keyword is_system_protected: Specifies whether this deny assignment was created by Azure and
          cannot be edited or deleted.
         :paramtype is_system_protected: bool
+        :keyword condition: The conditions on the deny assignment. This limits the resources it can be
+         assigned to. e.g.:
+         @Resource[Microsoft.Storage/storageAccounts/blobServices/containers:ContainerName]
+         StringEqualsIgnoreCase 'foo_storage_container'.
+        :paramtype condition: str
+        :keyword condition_version: Version of the condition.
+        :paramtype condition_version: str
         """
         super().__init__(**kwargs)
         self.id = None
@@ -245,6 +280,12 @@ class DenyAssignment(_serialization.Model):  # pylint: disable=too-many-instance
         self.principals = principals
         self.exclude_principals = exclude_principals
         self.is_system_protected = is_system_protected
+        self.condition = condition
+        self.condition_version = condition_version
+        self.created_on = None
+        self.updated_on = None
+        self.created_by = None
+        self.updated_by = None
 
 
 class DenyAssignmentFilter(_serialization.Model):
@@ -272,8 +313,8 @@ class DenyAssignmentFilter(_serialization.Model):
         deny_assignment_name: Optional[str] = None,
         principal_id: Optional[str] = None,
         gdpr_export_principal_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword deny_assignment_name: Return deny assignment with specified name.
         :paramtype deny_assignment_name: str
@@ -305,8 +346,8 @@ class DenyAssignmentListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.DenyAssignment"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.DenyAssignment"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: Deny assignment list.
         :paramtype value: list[~azure.mgmt.authorization.v2022_04_01.models.DenyAssignment]
@@ -355,8 +396,8 @@ class DenyAssignmentPermission(_serialization.Model):
         not_data_actions: Optional[List[str]] = None,
         condition: Optional[str] = None,
         condition_version: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword actions: Actions to which the deny assignment does not grant access.
         :paramtype actions: list[str]
@@ -403,7 +444,7 @@ class ErrorAdditionalInfo(_serialization.Model):
         "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.type = None
@@ -444,7 +485,7 @@ class ErrorDetail(_serialization.Model):
         "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -455,7 +496,8 @@ class ErrorDetail(_serialization.Model):
 
 
 class ErrorResponse(_serialization.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
 
     :ivar error: The error object.
     :vartype error: ~azure.mgmt.authorization.v2022_04_01.models.ErrorDetail
@@ -465,7 +507,7 @@ class ErrorResponse(_serialization.Model):
         "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
         """
         :keyword error: The error object.
         :paramtype error: ~azure.mgmt.authorization.v2022_04_01.models.ErrorDetail
@@ -501,8 +543,8 @@ class Permission(_serialization.Model):
         not_actions: Optional[List[str]] = None,
         data_actions: Optional[List[str]] = None,
         not_data_actions: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword actions: Allowed actions.
         :paramtype actions: list[str]
@@ -535,8 +577,8 @@ class PermissionGetResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.Permission"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.Permission"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: An array of permissions.
         :paramtype value: list[~azure.mgmt.authorization.v2022_04_01.models.Permission]
@@ -575,8 +617,8 @@ class Principal(_serialization.Model):
         display_name: Optional[str] = None,
         type: Optional[str] = None,
         email: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: The id of the principal made changes.
         :paramtype id: str
@@ -629,8 +671,8 @@ class ProviderOperation(_serialization.Model):
         origin: Optional[str] = None,
         properties: Optional[JSON] = None,
         is_data_action: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The operation name.
         :paramtype name: str
@@ -689,8 +731,8 @@ class ProviderOperationsMetadata(_serialization.Model):
         display_name: Optional[str] = None,
         resource_types: Optional[List["_models.ResourceType"]] = None,
         operations: Optional[List["_models.ProviderOperation"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: The provider id.
         :paramtype id: str
@@ -733,8 +775,8 @@ class ProviderOperationsMetadataListResult(_serialization.Model):
         *,
         value: Optional[List["_models.ProviderOperationsMetadata"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of providers.
         :paramtype value: list[~azure.mgmt.authorization.v2022_04_01.models.ProviderOperationsMetadata]
@@ -769,8 +811,8 @@ class ResourceType(_serialization.Model):
         name: Optional[str] = None,
         display_name: Optional[str] = None,
         operations: Optional[List["_models.ProviderOperation"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The resource type name.
         :paramtype name: str
@@ -868,8 +910,8 @@ class RoleAssignment(_serialization.Model):  # pylint: disable=too-many-instance
         condition: Optional[str] = None,
         condition_version: Optional[str] = None,
         delegated_managed_identity_resource_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword role_definition_id: The role definition ID.
         :paramtype role_definition_id: str
@@ -984,8 +1026,8 @@ class RoleAssignmentCreateParameters(_serialization.Model):  # pylint: disable=t
         condition: Optional[str] = None,
         condition_version: Optional[str] = None,
         delegated_managed_identity_resource_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword role_definition_id: The role definition ID. Required.
         :paramtype role_definition_id: str
@@ -1033,7 +1075,7 @@ class RoleAssignmentFilter(_serialization.Model):
         "principal_id": {"key": "principalId", "type": "str"},
     }
 
-    def __init__(self, *, principal_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, principal_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword principal_id: Returns role assignment of the specific principal.
         :paramtype principal_id: str
@@ -1062,7 +1104,7 @@ class RoleAssignmentListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.RoleAssignment"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.RoleAssignment"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: Role assignment list.
         :paramtype value: list[~azure.mgmt.authorization.v2022_04_01.models.RoleAssignment]
@@ -1072,7 +1114,7 @@ class RoleAssignmentListResult(_serialization.Model):
         self.next_link = None
 
 
-class RoleDefinition(_serialization.Model):
+class RoleDefinition(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Role definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1093,12 +1135,24 @@ class RoleDefinition(_serialization.Model):
     :vartype permissions: list[~azure.mgmt.authorization.v2022_04_01.models.Permission]
     :ivar assignable_scopes: Role definition assignable scopes.
     :vartype assignable_scopes: list[str]
+    :ivar created_on: Time it was created.
+    :vartype created_on: ~datetime.datetime
+    :ivar updated_on: Time it was updated.
+    :vartype updated_on: ~datetime.datetime
+    :ivar created_by: Id of the user who created the assignment.
+    :vartype created_by: str
+    :ivar updated_by: Id of the user who updated the assignment.
+    :vartype updated_by: str
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "created_on": {"readonly": True},
+        "updated_on": {"readonly": True},
+        "created_by": {"readonly": True},
+        "updated_by": {"readonly": True},
     }
 
     _attribute_map = {
@@ -1110,6 +1164,10 @@ class RoleDefinition(_serialization.Model):
         "role_type": {"key": "properties.type", "type": "str"},
         "permissions": {"key": "properties.permissions", "type": "[Permission]"},
         "assignable_scopes": {"key": "properties.assignableScopes", "type": "[str]"},
+        "created_on": {"key": "properties.createdOn", "type": "iso-8601"},
+        "updated_on": {"key": "properties.updatedOn", "type": "iso-8601"},
+        "created_by": {"key": "properties.createdBy", "type": "str"},
+        "updated_by": {"key": "properties.updatedBy", "type": "str"},
     }
 
     def __init__(
@@ -1120,8 +1178,8 @@ class RoleDefinition(_serialization.Model):
         role_type: Optional[str] = None,
         permissions: Optional[List["_models.Permission"]] = None,
         assignable_scopes: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword role_name: The role name.
         :paramtype role_name: str
@@ -1143,6 +1201,10 @@ class RoleDefinition(_serialization.Model):
         self.role_type = role_type
         self.permissions = permissions
         self.assignable_scopes = assignable_scopes
+        self.created_on = None
+        self.updated_on = None
+        self.created_by = None
+        self.updated_by = None
 
 
 class RoleDefinitionFilter(_serialization.Model):
@@ -1159,7 +1221,7 @@ class RoleDefinitionFilter(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, *, role_name: Optional[str] = None, type: Optional[str] = None, **kwargs):
+    def __init__(self, *, role_name: Optional[str] = None, type: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword role_name: Returns role definition with the specific name.
         :paramtype role_name: str
@@ -1186,8 +1248,8 @@ class RoleDefinitionListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.RoleDefinition"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.RoleDefinition"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: Role definition list.
         :paramtype value: list[~azure.mgmt.authorization.v2022_04_01.models.RoleDefinition]
@@ -1246,8 +1308,8 @@ class RoleManagementPolicyRule(_serialization.Model):
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         target: Optional["_models.RoleManagementPolicyRuleTarget"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: The id of the rule.
         :paramtype id: str
@@ -1256,7 +1318,7 @@ class RoleManagementPolicyRule(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.id = id
-        self.rule_type = None  # type: Optional[str]
+        self.rule_type: Optional[str] = None
         self.target = target
 
 
@@ -1296,8 +1358,8 @@ class RoleManagementPolicyApprovalRule(RoleManagementPolicyRule):
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         target: Optional["_models.RoleManagementPolicyRuleTarget"] = None,
         setting: Optional["_models.ApprovalSettings"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: The id of the rule.
         :paramtype id: str
@@ -1307,7 +1369,7 @@ class RoleManagementPolicyApprovalRule(RoleManagementPolicyRule):
         :paramtype setting: ~azure.mgmt.authorization.v2022_04_01.models.ApprovalSettings
         """
         super().__init__(id=id, target=target, **kwargs)
-        self.rule_type = "RoleManagementPolicyApprovalRule"  # type: str
+        self.rule_type: str = "RoleManagementPolicyApprovalRule"
         self.setting = setting
 
 
@@ -1351,8 +1413,8 @@ class RoleManagementPolicyAuthenticationContextRule(RoleManagementPolicyRule):
         target: Optional["_models.RoleManagementPolicyRuleTarget"] = None,
         is_enabled: Optional[bool] = None,
         claim_value: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: The id of the rule.
         :paramtype id: str
@@ -1364,7 +1426,7 @@ class RoleManagementPolicyAuthenticationContextRule(RoleManagementPolicyRule):
         :paramtype claim_value: str
         """
         super().__init__(id=id, target=target, **kwargs)
-        self.rule_type = "RoleManagementPolicyAuthenticationContextRule"  # type: str
+        self.rule_type: str = "RoleManagementPolicyAuthenticationContextRule"
         self.is_enabled = is_enabled
         self.claim_value = claim_value
 
@@ -1406,8 +1468,8 @@ class RoleManagementPolicyEnablementRule(RoleManagementPolicyRule):
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         target: Optional["_models.RoleManagementPolicyRuleTarget"] = None,
         enabled_rules: Optional[List[Union[str, "_models.EnablementRules"]]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: The id of the rule.
         :paramtype id: str
@@ -1418,7 +1480,7 @@ class RoleManagementPolicyEnablementRule(RoleManagementPolicyRule):
          ~azure.mgmt.authorization.v2022_04_01.models.EnablementRules]
         """
         super().__init__(id=id, target=target, **kwargs)
-        self.rule_type = "RoleManagementPolicyEnablementRule"  # type: str
+        self.rule_type: str = "RoleManagementPolicyEnablementRule"
         self.enabled_rules = enabled_rules
 
 
@@ -1462,8 +1524,8 @@ class RoleManagementPolicyExpirationRule(RoleManagementPolicyRule):
         target: Optional["_models.RoleManagementPolicyRuleTarget"] = None,
         is_expiration_required: Optional[bool] = None,
         maximum_duration: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: The id of the rule.
         :paramtype id: str
@@ -1475,7 +1537,7 @@ class RoleManagementPolicyExpirationRule(RoleManagementPolicyRule):
         :paramtype maximum_duration: str
         """
         super().__init__(id=id, target=target, **kwargs)
-        self.rule_type = "RoleManagementPolicyExpirationRule"  # type: str
+        self.rule_type: str = "RoleManagementPolicyExpirationRule"
         self.is_expiration_required = is_expiration_required
         self.maximum_duration = maximum_duration
 
@@ -1537,8 +1599,8 @@ class RoleManagementPolicyNotificationRule(RoleManagementPolicyRule):
         recipient_type: Optional[Union[str, "_models.RecipientType"]] = None,
         notification_recipients: Optional[List[str]] = None,
         is_default_recipients_enabled: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: The id of the rule.
         :paramtype id: str
@@ -1561,7 +1623,7 @@ class RoleManagementPolicyNotificationRule(RoleManagementPolicyRule):
         :paramtype is_default_recipients_enabled: bool
         """
         super().__init__(id=id, target=target, **kwargs)
-        self.rule_type = "RoleManagementPolicyNotificationRule"  # type: str
+        self.rule_type: str = "RoleManagementPolicyNotificationRule"
         self.notification_type = notification_type
         self.notification_level = notification_level
         self.recipient_type = recipient_type
@@ -1604,8 +1666,8 @@ class RoleManagementPolicyRuleTarget(_serialization.Model):
         target_objects: Optional[List[str]] = None,
         inheritable_settings: Optional[List[str]] = None,
         enforced_settings: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword caller: The caller of the setting.
         :paramtype caller: str
@@ -1656,8 +1718,8 @@ class UserSet(_serialization.Model):
         is_backup: Optional[bool] = None,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword user_type: The type of user. Known values are: "User" and "Group".
         :paramtype user_type: str or ~azure.mgmt.authorization.v2022_04_01.models.UserType
@@ -1695,7 +1757,7 @@ class ValidationResponse(_serialization.Model):
         "error_info": {"key": "errorInfo", "type": "ValidationResponseErrorInfo"},
     }
 
-    def __init__(self, *, error_info: Optional["_models.ValidationResponseErrorInfo"] = None, **kwargs):
+    def __init__(self, *, error_info: Optional["_models.ValidationResponseErrorInfo"] = None, **kwargs: Any) -> None:
         """
         :keyword error_info: Failed validation result details.
         :paramtype error_info: ~azure.mgmt.authorization.v2022_04_01.models.ValidationResponseErrorInfo
@@ -1726,7 +1788,7 @@ class ValidationResponseErrorInfo(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None

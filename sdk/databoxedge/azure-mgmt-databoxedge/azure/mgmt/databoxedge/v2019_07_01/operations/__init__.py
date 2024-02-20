@@ -20,18 +20,24 @@ from ._storage_account_credentials_operations import StorageAccountCredentialsOp
 from ._triggers_operations import TriggersOperations
 from ._users_operations import UsersOperations
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'Operations',
-    'DevicesOperations',
-    'AlertsOperations',
-    'BandwidthSchedulesOperations',
-    'JobsOperations',
-    'NodesOperations',
-    'OperationsStatusOperations',
-    'OrdersOperations',
-    'RolesOperations',
-    'SharesOperations',
-    'StorageAccountCredentialsOperations',
-    'TriggersOperations',
-    'UsersOperations',
+    "Operations",
+    "DevicesOperations",
+    "AlertsOperations",
+    "BandwidthSchedulesOperations",
+    "JobsOperations",
+    "NodesOperations",
+    "OperationsStatusOperations",
+    "OrdersOperations",
+    "RolesOperations",
+    "SharesOperations",
+    "StorageAccountCredentialsOperations",
+    "TriggersOperations",
+    "UsersOperations",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

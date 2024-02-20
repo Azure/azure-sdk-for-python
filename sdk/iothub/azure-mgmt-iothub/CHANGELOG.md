@@ -1,5 +1,30 @@
 # Release History
 
+## 3.0.0 (2023-09-19)
+
+### Features Added
+
+  - Model RoutingEndpoints has a new parameter cosmos_db_sql_containers
+
+### Breaking Changes
+
+  - Model RoutingCosmosDBSqlApiProperties has a new required parameter container_name
+  - Model RoutingCosmosDBSqlApiProperties no longer has parameter collection_name
+  - Model RoutingEndpoints no longer has parameter cosmos_db_sql_collections
+
+## 2.4.0 (2023-04-20)
+
+### Features Added
+
+  - Model IotHubProperties has a new parameter ip_version
+
+## 2.4.0b1 (2023-02-15)
+
+### Other Changes
+
+  - Added generated samples in github repo
+  - Drop support for python<3.7.0
+
 ## 2.3.0 (2022-09-02)
 
 ### Features Added

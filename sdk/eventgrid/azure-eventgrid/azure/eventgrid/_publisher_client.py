@@ -40,7 +40,7 @@ from ._helpers import (
     _cloud_event_to_generated,
     _from_cncf_events,
 )
-from ._generated._event_grid_publisher_client import (
+from ._generated import (
     EventGridPublisherClient as EventGridPublisherClientImpl,
 )
 from ._policies import CloudEventDistributedTracingPolicy
@@ -54,13 +54,17 @@ if TYPE_CHECKING:
         TokenCredential,
     )
 
+    from cloudevents.http.event import CloudEvent as CNCFCloudEvent
+
 SendType = Union[
     CloudEvent,
     EventGridEvent,
     Dict,
+    "CNCFCloudEvent",
     List[CloudEvent],
     List[EventGridEvent],
     List[Dict],
+    List["CNCFCloudEvent"],
 ]
 
 ListEventType = Union[List[CloudEvent], List[EventGridEvent], List[Dict]]

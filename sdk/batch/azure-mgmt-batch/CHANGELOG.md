@@ -1,5 +1,29 @@
 # Release History
 
+## 17.1.0 (2023-07-21)
+
+### Features Added
+
+  - Model NetworkConfiguration has a new parameter enable_accelerated_networking
+  - Model VMExtension has a new parameter enable_automatic_upgrade
+  - Model ContainerConfiguration allows two possible values: `dockerCompatible` and `criCompatible` instead of fixed value `dockerCompatible`
+
+## 17.0.0 (2022-11-23)
+
+### Features Added
+
+  - Model NetworkConfiguration has a new parameter dynamic_vnet_assignment_scope
+  - Model Pool has a new parameter current_node_communication_mode
+  - Model Pool has a new parameter target_node_communication_mode
+  - Model PrivateLinkServiceConnectionState has a new parameter actions_required
+
+### Breaking Changes
+
+  - Model CIFSMountConfiguration has a new required parameter user_name
+  - Model CIFSMountConfiguration no longer has parameter username
+  - Model NetworkConfiguration no longer has parameter dynamic_v_net_assignment_scope
+  - Model PrivateLinkServiceConnectionState no longer has parameter action_required
+
 ## 16.2.0 (2022-06-06)
 
 **Features**

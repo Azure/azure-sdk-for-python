@@ -111,7 +111,7 @@ class _QueryExecutionDistinctUnorderedEndpointComponent(_QueryExecutionEndpointC
 
     def make_hash(self, value):
         if isinstance(value, (set, tuple, list)):
-            return tuple([self.make_hash(v) for v in value])
+            return tuple([self.make_hash(v) for v in value])  # pylint: disable=consider-using-generator
         if not isinstance(value, dict):
             if isinstance(value, numbers.Number):
                 return float(value)
@@ -193,7 +193,10 @@ class _QueryExecutionAggregateEndpointComponent(_QueryExecutionEndpointComponent
             for item in res:
                 for operator in self._local_aggregators:
                     if isinstance(item, dict) and item:
-                        operator.aggregate(item["item"])
+                        try:
+                            operator.aggregate(item["item"])
+                        except KeyError:
+                            pass
                     elif isinstance(item, numbers.Number):
                         operator.aggregate(item)
         if self._results is None:

@@ -5,6 +5,8 @@
 
 import logging
 from pathlib import Path
+import os
+from typing import Dict
 
 from azure.ai.ml.constants._endpoint import LocalEndpointConstants
 
@@ -79,12 +81,14 @@ class AzureMlImageContext(object):
                     }
                 }
             )
-            self._environment[
-                LocalEndpointConstants.ENVVAR_KEY_AML_APP_ROOT
-            ] = docker_code_mount_path  # ie. /var/azureml-app/onlinescoring
-            self._environment[
-                LocalEndpointConstants.ENVVAR_KEY_AZUREML_ENTRY_SCRIPT
-            ] = yaml_code_scoring_script_file_name  # ie. score.py
+            # Set the directory containing scoring script as AML_APP_ROOT/working directory
+            # ie. /var/azureml-app/onlinescoring
+            self._environment[LocalEndpointConstants.ENVVAR_KEY_AML_APP_ROOT] = os.path.join(
+                docker_code_mount_path, os.path.dirname(yaml_code_scoring_script_file_name)
+            )
+            self._environment[LocalEndpointConstants.ENVVAR_KEY_AZUREML_ENTRY_SCRIPT] = Path(
+                yaml_code_scoring_script_file_name
+            ).name  # ie. score.py
 
         self.ports = {"5001/tcp": 5001}
 
@@ -92,7 +96,8 @@ class AzureMlImageContext(object):
     def docker_azureml_app_path(self) -> str:
         """Returns the app path inside the local endpoint container.
 
-        :return: str
+        :return: The app path
+        :rtype: str
         """
         return self._docker_azureml_app_path
 
@@ -100,24 +105,26 @@ class AzureMlImageContext(object):
     def docker_conda_file_name(self) -> str:
         """Returns the name of the conda file to copy into docker image.
 
-        :return: str
+        :return: The conda file name
+        :rtype: str
         """
-        return self._docker_conda_file_name # pylint: disable=no-member
+        return self._docker_conda_file_name  # pylint: disable=no-member
 
     @property
-    def volumes(self) -> dict:
-        """Returns the volumes to mount when running the Azure ML Image
-        locally.
+    def volumes(self) -> Dict[str, Dict[str, Dict[str, str]]]:
+        """Returns the volumes to mount when running the Azure ML Image locally.
 
-        :return: dict
+        :return: The dict of volumes
+        :rtype: Dict[str, Dict[str, Dict[str, str]]]
         """
         return self._volumes
 
     @property
-    def environment(self) -> dict:
-        """Returns the environment variables to set when running the Azure ML
-        Image locally.
+    def environment(self) -> Dict[str, str]:
+        """Returns the environment variables to set when running the Azure ML Image locally.
 
-        :return: dict
+
+        :return: A dict of environment variable names to values
+        :rtype: Dict[str, str]
         """
         return self._environment

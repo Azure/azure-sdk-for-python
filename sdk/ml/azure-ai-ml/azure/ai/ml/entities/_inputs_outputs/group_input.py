@@ -8,11 +8,20 @@ from azure.ai.ml.constants._component import IOConstants
 from azure.ai.ml.exceptions import ErrorTarget, UserErrorException, ValidationException
 
 from .input import Input
-from .utils import is_parameter_group
+from .output import Output
+from .utils import is_group
 
 
 class GroupInput(Input):
-    def __init__(self, values: dict, _group_class):
+    """Define a group input object.
+
+    :param values: The values of the group input.
+    :type values: dict
+    :param _group_class: The class representing the group.
+    :type _group_class: Any
+    """
+
+    def __init__(self, values: dict, _group_class) -> None:
         super().__init__(type=IOConstants.GROUP_TYPE_NAME)
         self.assert_group_value_valid(values)
         self.values = values
@@ -34,12 +43,25 @@ class GroupInput(Input):
 
         return isinstance(obj, _GroupAttrDict)
 
+    def __getattr__(self, item):
+        try:
+            return super().__getattr__(item)
+        except AttributeError:
+            # TODO: why values is not a dict in some cases?
+            if isinstance(self.values, dict) and item in self.values:
+                return self.values[item]
+            raise
+
     def _create_default(self):
         from .._job.pipeline._io import PipelineInput
 
         default_dict = {}
         # Note: no top-level group names at this time.
         for k, v in self.values.items():
+            # skip create default for outputs or port inputs
+            if isinstance(v, Output):
+                continue
+
             # Create PipelineInput object if not subgroup
             if not isinstance(v, GroupInput):
                 default_dict[k] = PipelineInput(name=k, data=v.default, meta=v)
@@ -51,26 +73,38 @@ class GroupInput(Input):
 
     @classmethod
     def assert_group_value_valid(cls, values):
-        """Check if all value in group is _Param type with unique name."""
+        """Check if all values in the group are supported types.
+
+        :param values: The values of the group.
+        :type values: dict
+        :raises ValueError: If a value in the group is not a supported type or if a parameter name is duplicated.
+        :raises UserErrorException: If a value in the group has an unsupported type.
+        """
         names = set()
         msg = (
-            f"Parameter {{!r}} with type {{!r}} is not supported in parameter group. "
-            f"Supported types are: {list(IOConstants.PRIMITIVE_STR_2_TYPE.keys())}"
+            f"Parameter {{!r}} with type {{!r}} is not supported in group. "
+            f"Supported types are: {list(IOConstants.INPUT_TYPE_COMBINATION.keys())}"
         )
         for key, value in values.items():
-            if not isinstance(value, Input):
+            if not isinstance(value, (Input, Output)):
                 raise ValueError(msg.format(key, type(value).__name__))
             if value.type is None:
                 # Skip check for parameter translated from pipeline job (lost type)
                 continue
-            if value.type not in IOConstants.PRIMITIVE_STR_2_TYPE and not isinstance(value, GroupInput):
+            if value.type not in IOConstants.INPUT_TYPE_COMBINATION and not isinstance(value, GroupInput):
                 raise UserErrorException(msg.format(key, value.type))
             if key in names:
-                raise ValueError(f"Duplicate parameter name {value.name!r} found in ParameterGroup values.")
+                raise ValueError(f"Duplicate parameter name {value.name!r} found in Group values.")
             names.add(key)
 
     def flatten(self, group_parameter_name):
-        """Flatten and return all parameters."""
+        """Flatten the group and return all parameters.
+
+        :param group_parameter_name: The name of the group parameter.
+        :type group_parameter_name: str
+        :return: A dictionary of flattened parameters.
+        :rtype: dict
+        """
         all_parameters = {}
         group_parameter_name = group_parameter_name if group_parameter_name else ""
         for key, value in self.values.items():
@@ -81,15 +115,23 @@ class GroupInput(Input):
                 all_parameters[flattened_name] = value
         return all_parameters
 
-    def _to_dict(self, remove_name=True) -> dict:
-        attr_dict = super()._to_dict(remove_name)
+    def _to_dict(self) -> dict:
+        attr_dict = super()._to_dict()
         attr_dict["values"] = {k: v._to_dict() for k, v in self.values.items()}  # pylint: disable=protected-access
         return attr_dict
 
     @staticmethod
     def custom_class_value_to_attr_dict(value, group_names=None):
-        """Convert custom parameter group class object to GroupAttrDict."""
-        if not is_parameter_group(value):
+        """Convert a custom parameter group class object to GroupAttrDict.
+
+        :param value: The value to convert.
+        :type value: any
+        :param group_names: The names of the parent groups.
+        :type group_names: list
+        :return: The converted value as a GroupAttrDict.
+        :rtype: GroupAttrDict or any
+        """
+        if not is_group(value):
             return value
         group_definition = getattr(value, IOConstants.GROUP_ATTR_NAME)
         group_names = [*group_names] if group_names else []
@@ -97,7 +139,7 @@ class GroupInput(Input):
         from .._job.pipeline._io import PipelineInput
 
         for k, v in value.__dict__.items():
-            if is_parameter_group(v):
+            if is_group(v):
                 attr_dict[k] = GroupInput.custom_class_value_to_attr_dict(v, [*group_names, k])
                 continue
             data = v.value if isinstance(v, PyEnum) else v
@@ -109,7 +151,12 @@ class GroupInput(Input):
 
     @staticmethod
     def validate_conflict_keys(keys):
-        """Validate conflict keys like {'a.b.c': 1, 'a.b': 1}."""
+        """Validate conflicting keys in a flattened input dictionary, like {'a.b.c': 1, 'a.b': 1}.
+
+        :param keys: The keys to validate.
+        :type keys: list
+        :raises ValidationException: If conflicting keys are found.
+        """
         conflict_msg = "Conflict parameter key '%s' and '%s'."
 
         def _group_count(s):
@@ -135,7 +182,13 @@ class GroupInput(Input):
 
     @staticmethod
     def restore_flattened_inputs(inputs):
-        """Restore flattened inputs to structured groups."""
+        """Restore flattened inputs to structured groups.
+
+        :param inputs: The flattened input dictionary.
+        :type inputs: dict
+        :return: The restored structured inputs.
+        :rtype: dict
+        """
         GroupInput.validate_conflict_keys(inputs.keys())
         restored_inputs = {}
         group_inputs = {}
@@ -173,12 +226,12 @@ class GroupInput(Input):
     def _update_default(self, default_value=None):  # pylint: disable=protected-access
         default_cls = type(default_value)
 
-        # Assert '__parameter_group__' must in the class of default value
+        # Assert '__dsl_group__' must in the class of default value
         if self._is_group_attr_dict(default_value):
             self.default = default_value
             self.optional = False
             return
-        if default_value and not is_parameter_group(default_cls):
+        if default_value and not is_group(default_cls):
             raise ValueError(f"Default value must be instance of parameter group, got {default_cls}.")
         if hasattr(default_value, "__dict__"):
             # Convert default value with customer type to _AttrDict

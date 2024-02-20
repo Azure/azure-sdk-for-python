@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
@@ -41,7 +41,7 @@ class Resource(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -78,7 +78,7 @@ class AutoProvisioningSetting(Resource):
         "auto_provision": {"key": "properties.autoProvision", "type": "str"},
     }
 
-    def __init__(self, *, auto_provision: Optional[Union[str, "_models.AutoProvision"]] = None, **kwargs):
+    def __init__(self, *, auto_provision: Optional[Union[str, "_models.AutoProvision"]] = None, **kwargs: Any) -> None:
         """
         :keyword auto_provision: Describes what kind of security agent provisioning action to take.
          Known values are: "On" and "Off".
@@ -108,7 +108,7 @@ class AutoProvisioningSettingList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.AutoProvisioningSetting"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.AutoProvisioningSetting"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of all the auto provisioning settings.
         :paramtype value: list[~azure.mgmt.security.v2017_08_01_preview.models.AutoProvisioningSetting]
@@ -152,7 +152,7 @@ class CloudErrorBody(_serialization.Model):
         "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -202,7 +202,7 @@ class Compliance(Resource):
         "assessment_result": {"key": "properties.assessmentResult", "type": "[ComplianceSegment]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.assessment_timestamp_utc_date = None
@@ -230,7 +230,7 @@ class ComplianceList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Compliance"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.Compliance"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of Compliance objects.
         :paramtype value: list[~azure.mgmt.security.v2017_08_01_preview.models.Compliance]
@@ -262,7 +262,7 @@ class ComplianceSegment(_serialization.Model):
         "percentage": {"key": "percentage", "type": "float"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.segment_type = None
@@ -290,7 +290,7 @@ class ErrorAdditionalInfo(_serialization.Model):
         "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.type = None
@@ -324,8 +324,8 @@ class InformationProtectionKeyword(_serialization.Model):
         custom: Optional[bool] = None,
         can_be_numeric: Optional[bool] = None,
         excluded: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword pattern: The keyword pattern.
         :paramtype pattern: str
@@ -388,8 +388,8 @@ class InformationProtectionPolicy(Resource):
         *,
         labels: Optional[Dict[str, "_models.SensitivityLabel"]] = None,
         information_types: Optional[Dict[str, "_models.InformationType"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword labels: Dictionary of sensitivity labels.
         :paramtype labels: dict[str, ~azure.mgmt.security.v2017_08_01_preview.models.SensitivityLabel]
@@ -425,7 +425,7 @@ class InformationProtectionPolicyList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.InformationProtectionPolicy"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.InformationProtectionPolicy"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of information protection policies.
         :paramtype value:
@@ -477,8 +477,8 @@ class InformationType(_serialization.Model):
         enabled: Optional[bool] = None,
         custom: Optional[bool] = None,
         keywords: Optional[List["_models.InformationProtectionKeyword"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword display_name: The name of the information type.
         :paramtype display_name: str
@@ -555,8 +555,8 @@ class SecurityContact(Resource):
         phone: Optional[str] = None,
         alert_notifications: Optional[Union[str, "_models.AlertNotifications"]] = None,
         alerts_to_admins: Optional[Union[str, "_models.AlertsToAdmins"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword email: The email of this security contact.
         :paramtype email: str
@@ -599,7 +599,7 @@ class SecurityContactList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -638,8 +638,8 @@ class SensitivityLabel(_serialization.Model):
         rank: Optional[Union[str, "_models.Rank"]] = None,
         order: Optional[int] = None,
         enabled: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword display_name: The name of the sensitivity label.
         :paramtype display_name: str
@@ -693,7 +693,7 @@ class WorkspaceSetting(Resource):
         "scope": {"key": "properties.scope", "type": "str"},
     }
 
-    def __init__(self, *, workspace_id: Optional[str] = None, scope: Optional[str] = None, **kwargs):
+    def __init__(self, *, workspace_id: Optional[str] = None, scope: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword workspace_id: The full Azure ID of the workspace to save the data in.
         :paramtype workspace_id: str
@@ -729,7 +729,7 @@ class WorkspaceSettingList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.WorkspaceSetting"], **kwargs):
+    def __init__(self, *, value: List["_models.WorkspaceSetting"], **kwargs: Any) -> None:
         """
         :keyword value: List of workspace settings. Required.
         :paramtype value: list[~azure.mgmt.security.v2017_08_01_preview.models.WorkspaceSetting]

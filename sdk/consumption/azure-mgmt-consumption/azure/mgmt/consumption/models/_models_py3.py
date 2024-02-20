@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -9,15 +10,14 @@
 import datetime
 from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from .. import _serialization
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    import __init__ as _models
+    from .. import models as _models
 
 
-class Amount(msrest.serialization.Model):
+class Amount(_serialization.Model):
     """The amount plus currency .
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -29,22 +29,18 @@ class Amount(msrest.serialization.Model):
     """
 
     _validation = {
-        'currency': {'readonly': True},
-        'value': {'readonly': True},
+        "currency": {"readonly": True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'currency': {'key': 'currency', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'float'},
+        "currency": {"key": "currency", "type": "str"},
+        "value": {"key": "value", "type": "float"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(Amount, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.currency = None
         self.value = None
 
@@ -65,31 +61,27 @@ class AmountWithExchangeRate(Amount):
     """
 
     _validation = {
-        'currency': {'readonly': True},
-        'value': {'readonly': True},
-        'exchange_rate': {'readonly': True},
-        'exchange_rate_month': {'readonly': True},
+        "currency": {"readonly": True},
+        "value": {"readonly": True},
+        "exchange_rate": {"readonly": True},
+        "exchange_rate_month": {"readonly": True},
     }
 
     _attribute_map = {
-        'currency': {'key': 'currency', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'float'},
-        'exchange_rate': {'key': 'exchangeRate', 'type': 'float'},
-        'exchange_rate_month': {'key': 'exchangeRateMonth', 'type': 'int'},
+        "currency": {"key": "currency", "type": "str"},
+        "value": {"key": "value", "type": "float"},
+        "exchange_rate": {"key": "exchangeRate", "type": "float"},
+        "exchange_rate_month": {"key": "exchangeRateMonth", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(AmountWithExchangeRate, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.exchange_rate = None
         self.exchange_rate_month = None
 
 
-class Resource(msrest.serialization.Model):
+class Resource(_serialization.Model):
     """The Resource model definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -102,33 +94,29 @@ class Resource(msrest.serialization.Model):
     :vartype type: str
     :ivar etag: The etag for the resource.
     :vartype etag: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'tags': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "tags": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(Resource, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -136,7 +124,7 @@ class Resource(msrest.serialization.Model):
         self.tags = None
 
 
-class Balance(Resource):
+class Balance(Resource):  # pylint: disable=too-many-instance-attributes
     """A balance resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -149,7 +137,7 @@ class Balance(Resource):
     :vartype type: str
     :ivar etag: The etag for the resource.
     :vartype etag: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar currency: The ISO currency in which the meter is charged, for example, USD.
     :vartype currency: str
@@ -174,7 +162,8 @@ class Balance(Resource):
     :vartype total_usage: float
     :ivar azure_marketplace_service_charges: Total charges for Azure Marketplace.
     :vartype azure_marketplace_service_charges: float
-    :ivar billing_frequency: The billing frequency. Known values are: "Month", "Quarter", "Year".
+    :ivar billing_frequency: The billing frequency. Known values are: "Month", "Quarter", and
+     "Year".
     :vartype billing_frequency: str or ~azure.mgmt.consumption.models.BillingFrequency
     :ivar price_hidden: Price is hidden or not.
     :vartype price_hidden: bool
@@ -187,62 +176,63 @@ class Balance(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'tags': {'readonly': True},
-        'currency': {'readonly': True},
-        'beginning_balance': {'readonly': True},
-        'ending_balance': {'readonly': True},
-        'new_purchases': {'readonly': True},
-        'adjustments': {'readonly': True},
-        'utilized': {'readonly': True},
-        'service_overage': {'readonly': True},
-        'charges_billed_separately': {'readonly': True},
-        'total_overage': {'readonly': True},
-        'total_usage': {'readonly': True},
-        'azure_marketplace_service_charges': {'readonly': True},
-        'price_hidden': {'readonly': True},
-        'new_purchases_details': {'readonly': True},
-        'adjustment_details': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "tags": {"readonly": True},
+        "currency": {"readonly": True},
+        "beginning_balance": {"readonly": True},
+        "ending_balance": {"readonly": True},
+        "new_purchases": {"readonly": True},
+        "adjustments": {"readonly": True},
+        "utilized": {"readonly": True},
+        "service_overage": {"readonly": True},
+        "charges_billed_separately": {"readonly": True},
+        "total_overage": {"readonly": True},
+        "total_usage": {"readonly": True},
+        "azure_marketplace_service_charges": {"readonly": True},
+        "price_hidden": {"readonly": True},
+        "new_purchases_details": {"readonly": True},
+        "adjustment_details": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'currency': {'key': 'properties.currency', 'type': 'str'},
-        'beginning_balance': {'key': 'properties.beginningBalance', 'type': 'float'},
-        'ending_balance': {'key': 'properties.endingBalance', 'type': 'float'},
-        'new_purchases': {'key': 'properties.newPurchases', 'type': 'float'},
-        'adjustments': {'key': 'properties.adjustments', 'type': 'float'},
-        'utilized': {'key': 'properties.utilized', 'type': 'float'},
-        'service_overage': {'key': 'properties.serviceOverage', 'type': 'float'},
-        'charges_billed_separately': {'key': 'properties.chargesBilledSeparately', 'type': 'float'},
-        'total_overage': {'key': 'properties.totalOverage', 'type': 'float'},
-        'total_usage': {'key': 'properties.totalUsage', 'type': 'float'},
-        'azure_marketplace_service_charges': {'key': 'properties.azureMarketplaceServiceCharges', 'type': 'float'},
-        'billing_frequency': {'key': 'properties.billingFrequency', 'type': 'str'},
-        'price_hidden': {'key': 'properties.priceHidden', 'type': 'bool'},
-        'new_purchases_details': {'key': 'properties.newPurchasesDetails', 'type': '[BalancePropertiesNewPurchasesDetailsItem]'},
-        'adjustment_details': {'key': 'properties.adjustmentDetails', 'type': '[BalancePropertiesAdjustmentDetailsItem]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "currency": {"key": "properties.currency", "type": "str"},
+        "beginning_balance": {"key": "properties.beginningBalance", "type": "float"},
+        "ending_balance": {"key": "properties.endingBalance", "type": "float"},
+        "new_purchases": {"key": "properties.newPurchases", "type": "float"},
+        "adjustments": {"key": "properties.adjustments", "type": "float"},
+        "utilized": {"key": "properties.utilized", "type": "float"},
+        "service_overage": {"key": "properties.serviceOverage", "type": "float"},
+        "charges_billed_separately": {"key": "properties.chargesBilledSeparately", "type": "float"},
+        "total_overage": {"key": "properties.totalOverage", "type": "float"},
+        "total_usage": {"key": "properties.totalUsage", "type": "float"},
+        "azure_marketplace_service_charges": {"key": "properties.azureMarketplaceServiceCharges", "type": "float"},
+        "billing_frequency": {"key": "properties.billingFrequency", "type": "str"},
+        "price_hidden": {"key": "properties.priceHidden", "type": "bool"},
+        "new_purchases_details": {
+            "key": "properties.newPurchasesDetails",
+            "type": "[BalancePropertiesNewPurchasesDetailsItem]",
+        },
+        "adjustment_details": {
+            "key": "properties.adjustmentDetails",
+            "type": "[BalancePropertiesAdjustmentDetailsItem]",
+        },
     }
 
-    def __init__(
-        self,
-        *,
-        billing_frequency: Optional[Union[str, "_models.BillingFrequency"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, billing_frequency: Optional[Union[str, "_models.BillingFrequency"]] = None, **kwargs):
         """
-        :keyword billing_frequency: The billing frequency. Known values are: "Month", "Quarter",
+        :keyword billing_frequency: The billing frequency. Known values are: "Month", "Quarter", and
          "Year".
         :paramtype billing_frequency: str or ~azure.mgmt.consumption.models.BillingFrequency
         """
-        super(Balance, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.currency = None
         self.beginning_balance = None
         self.ending_balance = None
@@ -260,7 +250,7 @@ class Balance(Resource):
         self.adjustment_details = None
 
 
-class BalancePropertiesAdjustmentDetailsItem(msrest.serialization.Model):
+class BalancePropertiesAdjustmentDetailsItem(_serialization.Model):
     """BalancePropertiesAdjustmentDetailsItem.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -272,27 +262,23 @@ class BalancePropertiesAdjustmentDetailsItem(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'value': {'readonly': True},
+        "name": {"readonly": True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'float'},
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "float"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(BalancePropertiesAdjustmentDetailsItem, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.name = None
         self.value = None
 
 
-class BalancePropertiesNewPurchasesDetailsItem(msrest.serialization.Model):
+class BalancePropertiesNewPurchasesDetailsItem(_serialization.Model):
     """BalancePropertiesNewPurchasesDetailsItem.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -304,27 +290,23 @@ class BalancePropertiesNewPurchasesDetailsItem(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'value': {'readonly': True},
+        "name": {"readonly": True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'float'},
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "float"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(BalancePropertiesNewPurchasesDetailsItem, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.name = None
         self.value = None
 
 
-class ProxyResource(msrest.serialization.Model):
+class ProxyResource(_serialization.Model):
     """The Resource model definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -341,37 +323,32 @@ class ProxyResource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'e_tag': {'key': 'eTag', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "e_tag": {"key": "eTag", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        e_tag: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, e_tag: Optional[str] = None, **kwargs):
         """
         :keyword e_tag: eTag of the resource. To handle concurrent update scenario, this field will be
          used to determine whether the user is updating the latest version or not.
         :paramtype e_tag: str
         """
-        super(ProxyResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
         self.e_tag = e_tag
 
 
-class Budget(ProxyResource):
+class Budget(ProxyResource):  # pylint: disable=too-many-instance-attributes
     """A budget resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -385,15 +362,14 @@ class Budget(ProxyResource):
     :ivar e_tag: eTag of the resource. To handle concurrent update scenario, this field will be
      used to determine whether the user is updating the latest version or not.
     :vartype e_tag: str
-    :ivar category: The category of the budget, whether the budget tracks cost or usage. Known
-     values are: "Cost".
+    :ivar category: The category of the budget, whether the budget tracks cost or usage. "Cost"
     :vartype category: str or ~azure.mgmt.consumption.models.CategoryType
     :ivar amount: The total amount of cost to track with the budget.
     :vartype amount: float
     :ivar time_grain: The time covered by a budget. Tracking of the amount will be reset based on
      the time grain. BillingMonth, BillingQuarter, and BillingAnnual are only supported by WD
      customers. Known values are: "Monthly", "Quarterly", "Annually", "BillingMonth",
-     "BillingQuarter", "BillingAnnual".
+     "BillingQuarter", and "BillingAnnual".
     :vartype time_grain: str or ~azure.mgmt.consumption.models.TimeGrainType
     :ivar time_period: Has start and end date of the budget. The start date must be first of the
      month and should be less than the end date. Budget start date must be on or after June 1, 2017.
@@ -412,26 +388,26 @@ class Budget(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'current_spend': {'readonly': True},
-        'forecast_spend': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "current_spend": {"readonly": True},
+        "forecast_spend": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'e_tag': {'key': 'eTag', 'type': 'str'},
-        'category': {'key': 'properties.category', 'type': 'str'},
-        'amount': {'key': 'properties.amount', 'type': 'float'},
-        'time_grain': {'key': 'properties.timeGrain', 'type': 'str'},
-        'time_period': {'key': 'properties.timePeriod', 'type': 'BudgetTimePeriod'},
-        'filter': {'key': 'properties.filter', 'type': 'BudgetFilter'},
-        'current_spend': {'key': 'properties.currentSpend', 'type': 'CurrentSpend'},
-        'notifications': {'key': 'properties.notifications', 'type': '{Notification}'},
-        'forecast_spend': {'key': 'properties.forecastSpend', 'type': 'ForecastSpend'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "e_tag": {"key": "eTag", "type": "str"},
+        "category": {"key": "properties.category", "type": "str"},
+        "amount": {"key": "properties.amount", "type": "float"},
+        "time_grain": {"key": "properties.timeGrain", "type": "str"},
+        "time_period": {"key": "properties.timePeriod", "type": "BudgetTimePeriod"},
+        "filter": {"key": "properties.filter", "type": "BudgetFilter"},
+        "current_spend": {"key": "properties.currentSpend", "type": "CurrentSpend"},
+        "notifications": {"key": "properties.notifications", "type": "{Notification}"},
+        "forecast_spend": {"key": "properties.forecastSpend", "type": "ForecastSpend"},
     }
 
     def __init__(
@@ -442,7 +418,7 @@ class Budget(ProxyResource):
         amount: Optional[float] = None,
         time_grain: Optional[Union[str, "_models.TimeGrainType"]] = None,
         time_period: Optional["_models.BudgetTimePeriod"] = None,
-        filter: Optional["_models.BudgetFilter"] = None,
+        filter: Optional["_models.BudgetFilter"] = None,  # pylint: disable=redefined-builtin
         notifications: Optional[Dict[str, "_models.Notification"]] = None,
         **kwargs
     ):
@@ -450,15 +426,14 @@ class Budget(ProxyResource):
         :keyword e_tag: eTag of the resource. To handle concurrent update scenario, this field will be
          used to determine whether the user is updating the latest version or not.
         :paramtype e_tag: str
-        :keyword category: The category of the budget, whether the budget tracks cost or usage. Known
-         values are: "Cost".
+        :keyword category: The category of the budget, whether the budget tracks cost or usage. "Cost"
         :paramtype category: str or ~azure.mgmt.consumption.models.CategoryType
         :keyword amount: The total amount of cost to track with the budget.
         :paramtype amount: float
         :keyword time_grain: The time covered by a budget. Tracking of the amount will be reset based
          on the time grain. BillingMonth, BillingQuarter, and BillingAnnual are only supported by WD
          customers. Known values are: "Monthly", "Quarterly", "Annually", "BillingMonth",
-         "BillingQuarter", "BillingAnnual".
+         "BillingQuarter", and "BillingAnnual".
         :paramtype time_grain: str or ~azure.mgmt.consumption.models.TimeGrainType
         :keyword time_period: Has start and end date of the budget. The start date must be first of the
          month and should be less than the end date. Budget start date must be on or after June 1, 2017.
@@ -471,7 +446,7 @@ class Budget(ProxyResource):
          up to five notifications.
         :paramtype notifications: dict[str, ~azure.mgmt.consumption.models.Notification]
         """
-        super(Budget, self).__init__(e_tag=e_tag, **kwargs)
+        super().__init__(e_tag=e_tag, **kwargs)
         self.category = category
         self.amount = amount
         self.time_grain = time_grain
@@ -482,68 +457,61 @@ class Budget(ProxyResource):
         self.forecast_spend = None
 
 
-class BudgetComparisonExpression(msrest.serialization.Model):
+class BudgetComparisonExpression(_serialization.Model):
     """The comparison expression to be used in the budgets.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the column to use in comparison.
+    :ivar name: The name of the column to use in comparison. Required.
     :vartype name: str
-    :ivar operator: Required. The operator to use for comparison. Known values are: "In".
+    :ivar operator: The operator to use for comparison. Required. "In"
     :vartype operator: str or ~azure.mgmt.consumption.models.BudgetOperatorType
-    :ivar values: Required. Array of values to use for comparison.
+    :ivar values: Array of values to use for comparison. Required.
     :vartype values: list[str]
     """
 
     _validation = {
-        'name': {'required': True},
-        'operator': {'required': True},
-        'values': {'required': True},
+        "name": {"required": True},
+        "operator": {"required": True},
+        "values": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'operator': {'key': 'operator', 'type': 'str'},
-        'values': {'key': 'values', 'type': '[str]'},
+        "name": {"key": "name", "type": "str"},
+        "operator": {"key": "operator", "type": "str"},
+        "values": {"key": "values", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        operator: Union[str, "_models.BudgetOperatorType"],
-        values: List[str],
-        **kwargs
-    ):
+    def __init__(self, *, name: str, operator: Union[str, "_models.BudgetOperatorType"], values: List[str], **kwargs):
         """
-        :keyword name: Required. The name of the column to use in comparison.
+        :keyword name: The name of the column to use in comparison. Required.
         :paramtype name: str
-        :keyword operator: Required. The operator to use for comparison. Known values are: "In".
+        :keyword operator: The operator to use for comparison. Required. "In"
         :paramtype operator: str or ~azure.mgmt.consumption.models.BudgetOperatorType
-        :keyword values: Required. Array of values to use for comparison.
+        :keyword values: Array of values to use for comparison. Required.
         :paramtype values: list[str]
         """
-        super(BudgetComparisonExpression, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.operator = operator
         self.values = values
 
 
-class BudgetFilter(msrest.serialization.Model):
+class BudgetFilter(_serialization.Model):
     """May be used to filter budgets by resource group, resource, or meter.
 
     :ivar and_property: The logical "AND" expression. Must have at least 2 items.
     :vartype and_property: list[~azure.mgmt.consumption.models.BudgetFilterProperties]
     :ivar dimensions: Has comparison expression for a dimension.
     :vartype dimensions: ~azure.mgmt.consumption.models.BudgetComparisonExpression
-    :ivar tags: A set of tags. Has comparison expression for a tag.
+    :ivar tags: Has comparison expression for a tag.
     :vartype tags: ~azure.mgmt.consumption.models.BudgetComparisonExpression
     """
 
     _attribute_map = {
-        'and_property': {'key': 'and', 'type': '[BudgetFilterProperties]'},
-        'dimensions': {'key': 'dimensions', 'type': 'BudgetComparisonExpression'},
-        'tags': {'key': 'tags', 'type': 'BudgetComparisonExpression'},
+        "and_property": {"key": "and", "type": "[BudgetFilterProperties]"},
+        "dimensions": {"key": "dimensions", "type": "BudgetComparisonExpression"},
+        "tags": {"key": "tags", "type": "BudgetComparisonExpression"},
     }
 
     def __init__(
@@ -559,27 +527,27 @@ class BudgetFilter(msrest.serialization.Model):
         :paramtype and_property: list[~azure.mgmt.consumption.models.BudgetFilterProperties]
         :keyword dimensions: Has comparison expression for a dimension.
         :paramtype dimensions: ~azure.mgmt.consumption.models.BudgetComparisonExpression
-        :keyword tags: A set of tags. Has comparison expression for a tag.
+        :keyword tags: Has comparison expression for a tag.
         :paramtype tags: ~azure.mgmt.consumption.models.BudgetComparisonExpression
         """
-        super(BudgetFilter, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.and_property = and_property
         self.dimensions = dimensions
         self.tags = tags
 
 
-class BudgetFilterProperties(msrest.serialization.Model):
+class BudgetFilterProperties(_serialization.Model):
     """The Dimensions or Tags to filter a budget by.
 
     :ivar dimensions: Has comparison expression for a dimension.
     :vartype dimensions: ~azure.mgmt.consumption.models.BudgetComparisonExpression
-    :ivar tags: A set of tags. Has comparison expression for a tag.
+    :ivar tags: Has comparison expression for a tag.
     :vartype tags: ~azure.mgmt.consumption.models.BudgetComparisonExpression
     """
 
     _attribute_map = {
-        'dimensions': {'key': 'dimensions', 'type': 'BudgetComparisonExpression'},
-        'tags': {'key': 'tags', 'type': 'BudgetComparisonExpression'},
+        "dimensions": {"key": "dimensions", "type": "BudgetComparisonExpression"},
+        "tags": {"key": "tags", "type": "BudgetComparisonExpression"},
     }
 
     def __init__(
@@ -592,15 +560,15 @@ class BudgetFilterProperties(msrest.serialization.Model):
         """
         :keyword dimensions: Has comparison expression for a dimension.
         :paramtype dimensions: ~azure.mgmt.consumption.models.BudgetComparisonExpression
-        :keyword tags: A set of tags. Has comparison expression for a tag.
+        :keyword tags: Has comparison expression for a tag.
         :paramtype tags: ~azure.mgmt.consumption.models.BudgetComparisonExpression
         """
-        super(BudgetFilterProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.dimensions = dimensions
         self.tags = tags
 
 
-class BudgetsListResult(msrest.serialization.Model):
+class BudgetsListResult(_serialization.Model):
     """Result of listing budgets. It contains a list of available budgets in the scope provided.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -612,32 +580,28 @@ class BudgetsListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Budget]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Budget]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(BudgetsListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class BudgetTimePeriod(msrest.serialization.Model):
+class BudgetTimePeriod(_serialization.Model):
     """The start and end date for a budget.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar start_date: Required. The start date for the budget.
+    :ivar start_date: The start date for the budget. Required.
     :vartype start_date: ~datetime.datetime
     :ivar end_date: The end date for the budget. If not provided, we default this to 10 years from
      the start date.
@@ -645,34 +609,28 @@ class BudgetTimePeriod(msrest.serialization.Model):
     """
 
     _validation = {
-        'start_date': {'required': True},
+        "start_date": {"required": True},
     }
 
     _attribute_map = {
-        'start_date': {'key': 'startDate', 'type': 'iso-8601'},
-        'end_date': {'key': 'endDate', 'type': 'iso-8601'},
+        "start_date": {"key": "startDate", "type": "iso-8601"},
+        "end_date": {"key": "endDate", "type": "iso-8601"},
     }
 
-    def __init__(
-        self,
-        *,
-        start_date: datetime.datetime,
-        end_date: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+    def __init__(self, *, start_date: datetime.datetime, end_date: Optional[datetime.datetime] = None, **kwargs):
         """
-        :keyword start_date: Required. The start date for the budget.
+        :keyword start_date: The start date for the budget. Required.
         :paramtype start_date: ~datetime.datetime
         :keyword end_date: The end date for the budget. If not provided, we default this to 10 years
          from the start date.
         :paramtype end_date: ~datetime.datetime
         """
-        super(BudgetTimePeriod, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.start_date = start_date
         self.end_date = end_date
 
 
-class ChargesListResult(msrest.serialization.Model):
+class ChargesListResult(_serialization.Model):
     """Result of listing charge summary.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -682,82 +640,71 @@ class ChargesListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ChargeSummary]'},
+        "value": {"key": "value", "type": "[ChargeSummary]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ChargesListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
 
 
-class ChargeSummary(ProxyResource):
+class ChargeSummary(Resource):
     """A charge summary resource.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: LegacyChargeSummary, ModernChargeSummary.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    LegacyChargeSummary, ModernChargeSummary
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Resource Id.
+    :ivar id: The full qualified ARM ID of an event.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The ID that uniquely identifies an event.
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar e_tag: eTag of the resource. To handle concurrent update scenario, this field will be
-     used to determine whether the user is updating the latest version or not.
-    :vartype e_tag: str
-    :ivar kind: Required. Specifies the kind of charge summary.Constant filled by server. Known
-     values are: "legacy", "modern".
+    :ivar etag: The etag for the resource.
+    :vartype etag: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar kind: Specifies the kind of charge summary. Required. Known values are: "legacy" and
+     "modern".
     :vartype kind: str or ~azure.mgmt.consumption.models.ChargeSummaryKind
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'kind': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "tags": {"readonly": True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'e_tag': {'key': 'eTag', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "kind": {"key": "kind", "type": "str"},
     }
 
-    _subtype_map = {
-        'kind': {'legacy': 'LegacyChargeSummary', 'modern': 'ModernChargeSummary'}
-    }
+    _subtype_map = {"kind": {"legacy": "LegacyChargeSummary", "modern": "ModernChargeSummary"}}
 
-    def __init__(
-        self,
-        *,
-        e_tag: Optional[str] = None,
-        **kwargs
-    ):
-        """
-        :keyword e_tag: eTag of the resource. To handle concurrent update scenario, this field will be
-         used to determine whether the user is updating the latest version or not.
-        :paramtype e_tag: str
-        """
-        super(ChargeSummary, self).__init__(e_tag=e_tag, **kwargs)
-        self.kind = 'ChargeSummary'  # type: str
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.kind: Optional[str] = None
 
 
-class CreditBalanceSummary(msrest.serialization.Model):
+class CreditBalanceSummary(_serialization.Model):
     """Summary of credit balances.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -772,44 +719,42 @@ class CreditBalanceSummary(msrest.serialization.Model):
     """
 
     _validation = {
-        'estimated_balance': {'readonly': True},
-        'current_balance': {'readonly': True},
-        'estimated_balance_in_billing_currency': {'readonly': True},
+        "estimated_balance": {"readonly": True},
+        "current_balance": {"readonly": True},
+        "estimated_balance_in_billing_currency": {"readonly": True},
     }
 
     _attribute_map = {
-        'estimated_balance': {'key': 'estimatedBalance', 'type': 'Amount'},
-        'current_balance': {'key': 'currentBalance', 'type': 'Amount'},
-        'estimated_balance_in_billing_currency': {'key': 'estimatedBalanceInBillingCurrency', 'type': 'AmountWithExchangeRate'},
+        "estimated_balance": {"key": "estimatedBalance", "type": "Amount"},
+        "current_balance": {"key": "currentBalance", "type": "Amount"},
+        "estimated_balance_in_billing_currency": {
+            "key": "estimatedBalanceInBillingCurrency",
+            "type": "AmountWithExchangeRate",
+        },
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(CreditBalanceSummary, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.estimated_balance = None
         self.current_balance = None
         self.estimated_balance_in_billing_currency = None
 
 
-class CreditSummary(Resource):
+class CreditSummary(ProxyResource):  # pylint: disable=too-many-instance-attributes
     """A credit summary resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: The full qualified ARM ID of an event.
+    :ivar id: Resource Id.
     :vartype id: str
-    :ivar name: The ID that uniquely identifies an event.
+    :ivar name: Resource name.
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar etag: The etag for the resource.
-    :vartype etag: str
-    :ivar tags: A set of tags. Resource tags.
-    :vartype tags: dict[str, str]
+    :ivar e_tag: eTag of the resource. To handle concurrent update scenario, this field will be
+     used to determine whether the user is updating the latest version or not.
+    :vartype e_tag: str
     :ivar balance_summary: Summary of balances associated with this credit summary.
     :vartype balance_summary: ~azure.mgmt.consumption.models.CreditBalanceSummary
     :ivar pending_credit_adjustments: Pending credit adjustments.
@@ -824,49 +769,46 @@ class CreditSummary(Resource):
     :vartype billing_currency: str
     :ivar reseller: Credit's reseller.
     :vartype reseller: ~azure.mgmt.consumption.models.Reseller
-    :ivar e_tag: The eTag for the resource.
-    :vartype e_tag: str
+    :ivar e_tag_properties_e_tag: The eTag for the resource.
+    :vartype e_tag_properties_e_tag: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'tags': {'readonly': True},
-        'balance_summary': {'readonly': True},
-        'pending_credit_adjustments': {'readonly': True},
-        'expired_credit': {'readonly': True},
-        'pending_eligible_charges': {'readonly': True},
-        'credit_currency': {'readonly': True},
-        'billing_currency': {'readonly': True},
-        'reseller': {'readonly': True},
-        'e_tag': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "balance_summary": {"readonly": True},
+        "pending_credit_adjustments": {"readonly": True},
+        "expired_credit": {"readonly": True},
+        "pending_eligible_charges": {"readonly": True},
+        "credit_currency": {"readonly": True},
+        "billing_currency": {"readonly": True},
+        "reseller": {"readonly": True},
+        "e_tag_properties_e_tag": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'balance_summary': {'key': 'properties.balanceSummary', 'type': 'CreditBalanceSummary'},
-        'pending_credit_adjustments': {'key': 'properties.pendingCreditAdjustments', 'type': 'Amount'},
-        'expired_credit': {'key': 'properties.expiredCredit', 'type': 'Amount'},
-        'pending_eligible_charges': {'key': 'properties.pendingEligibleCharges', 'type': 'Amount'},
-        'credit_currency': {'key': 'properties.creditCurrency', 'type': 'str'},
-        'billing_currency': {'key': 'properties.billingCurrency', 'type': 'str'},
-        'reseller': {'key': 'properties.reseller', 'type': 'Reseller'},
-        'e_tag': {'key': 'properties.eTag', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "e_tag": {"key": "eTag", "type": "str"},
+        "balance_summary": {"key": "properties.balanceSummary", "type": "CreditBalanceSummary"},
+        "pending_credit_adjustments": {"key": "properties.pendingCreditAdjustments", "type": "Amount"},
+        "expired_credit": {"key": "properties.expiredCredit", "type": "Amount"},
+        "pending_eligible_charges": {"key": "properties.pendingEligibleCharges", "type": "Amount"},
+        "credit_currency": {"key": "properties.creditCurrency", "type": "str"},
+        "billing_currency": {"key": "properties.billingCurrency", "type": "str"},
+        "reseller": {"key": "properties.reseller", "type": "Reseller"},
+        "e_tag_properties_e_tag": {"key": "properties.eTag", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, *, e_tag: Optional[str] = None, **kwargs):
         """
+        :keyword e_tag: eTag of the resource. To handle concurrent update scenario, this field will be
+         used to determine whether the user is updating the latest version or not.
+        :paramtype e_tag: str
         """
-        super(CreditSummary, self).__init__(**kwargs)
+        super().__init__(e_tag=e_tag, **kwargs)
         self.balance_summary = None
         self.pending_credit_adjustments = None
         self.expired_credit = None
@@ -874,10 +816,10 @@ class CreditSummary(Resource):
         self.credit_currency = None
         self.billing_currency = None
         self.reseller = None
-        self.e_tag = None
+        self.e_tag_properties_e_tag = None
 
 
-class CurrentSpend(msrest.serialization.Model):
+class CurrentSpend(_serialization.Model):
     """The current amount of cost which is being tracked for a budget.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -889,27 +831,23 @@ class CurrentSpend(msrest.serialization.Model):
     """
 
     _validation = {
-        'amount': {'readonly': True},
-        'unit': {'readonly': True},
+        "amount": {"readonly": True},
+        "unit": {"readonly": True},
     }
 
     _attribute_map = {
-        'amount': {'key': 'amount', 'type': 'float'},
-        'unit': {'key': 'unit', 'type': 'str'},
+        "amount": {"key": "amount", "type": "float"},
+        "unit": {"key": "unit", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(CurrentSpend, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.amount = None
         self.unit = None
 
 
-class DownloadProperties(msrest.serialization.Model):
+class DownloadProperties(_serialization.Model):
     """The properties of the price sheet download.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -921,27 +859,23 @@ class DownloadProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'download_url': {'readonly': True},
-        'valid_till': {'readonly': True},
+        "download_url": {"readonly": True},
+        "valid_till": {"readonly": True},
     }
 
     _attribute_map = {
-        'download_url': {'key': 'downloadUrl', 'type': 'str'},
-        'valid_till': {'key': 'validTill', 'type': 'str'},
+        "download_url": {"key": "downloadUrl", "type": "str"},
+        "valid_till": {"key": "validTill", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(DownloadProperties, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.download_url = None
         self.valid_till = None
 
 
-class ErrorDetails(msrest.serialization.Model):
+class ErrorDetails(_serialization.Model):
     """The details of the error.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -953,61 +887,52 @@ class ErrorDetails(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ErrorDetails, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.code = None
         self.message = None
 
 
-class ErrorResponse(msrest.serialization.Model):
-    """Error response indicates that the service is not able to process the incoming request. The reason is provided in the error message. 
+class ErrorResponse(_serialization.Model):
+    """Error response indicates that the service is not able to process the incoming request. The reason is provided in the error message.
 
-Some Error responses: 
+    Some Error responses:
 
 
-* 
-  429 TooManyRequests - Request is throttled. Retry after waiting for the time specified in the "x-ms-ratelimit-microsoft.consumption-retry-after" header. 
+    *
+      429 TooManyRequests - Request is throttled. Retry after waiting for the time specified in the "x-ms-ratelimit-microsoft.consumption-retry-after" header.
 
-* 
-  503 ServiceUnavailable - Service is temporarily unavailable. Retry after waiting for the time specified in the "Retry-After" header.
+    *
+      503 ServiceUnavailable - Service is temporarily unavailable. Retry after waiting for the time specified in the "Retry-After" header.
 
-    :ivar error: The details of the error.
-    :vartype error: ~azure.mgmt.consumption.models.ErrorDetails
+        :ivar error: The details of the error.
+        :vartype error: ~azure.mgmt.consumption.models.ErrorDetails
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorDetails'},
+        "error": {"key": "error", "type": "ErrorDetails"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: Optional["_models.ErrorDetails"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, error: Optional["_models.ErrorDetails"] = None, **kwargs):
         """
         :keyword error: The details of the error.
         :paramtype error: ~azure.mgmt.consumption.models.ErrorDetails
         """
-        super(ErrorResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.error = error
 
 
-class Events(msrest.serialization.Model):
+class Events(_serialization.Model):
     """Result of listing event summary.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1019,27 +944,23 @@ class Events(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[EventSummary]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[EventSummary]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(Events, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class EventSummary(ProxyResource):
+class EventSummary(ProxyResource):  # pylint: disable=too-many-instance-attributes
     """An event summary resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1072,7 +993,7 @@ class EventSummary(ProxyResource):
     :vartype closed_balance: ~azure.mgmt.consumption.models.Amount
     :ivar event_type: Identifies the type of the event. Known values are: "SettledCharges",
      "PendingCharges", "PendingAdjustments", "PendingNewCredit", "PendingExpiredCredit", "UnKnown",
-     "NewCredit", "CreditExpired".
+     "NewCredit", and "CreditExpired".
     :vartype event_type: str or ~azure.mgmt.consumption.models.EventType
     :ivar invoice_number: The number which uniquely identifies the invoice on which the event was
      billed. This will be empty for unbilled events.
@@ -1117,69 +1038,77 @@ class EventSummary(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'transaction_date': {'readonly': True},
-        'description': {'readonly': True},
-        'new_credit': {'readonly': True},
-        'adjustments': {'readonly': True},
-        'credit_expired': {'readonly': True},
-        'charges': {'readonly': True},
-        'closed_balance': {'readonly': True},
-        'invoice_number': {'readonly': True},
-        'billing_profile_id': {'readonly': True},
-        'billing_profile_display_name': {'readonly': True},
-        'lot_id': {'readonly': True},
-        'lot_source': {'readonly': True},
-        'canceled_credit': {'readonly': True},
-        'credit_currency': {'readonly': True},
-        'billing_currency': {'readonly': True},
-        'reseller': {'readonly': True},
-        'credit_expired_in_billing_currency': {'readonly': True},
-        'new_credit_in_billing_currency': {'readonly': True},
-        'adjustments_in_billing_currency': {'readonly': True},
-        'charges_in_billing_currency': {'readonly': True},
-        'closed_balance_in_billing_currency': {'readonly': True},
-        'e_tag_properties_e_tag': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "transaction_date": {"readonly": True},
+        "description": {"readonly": True},
+        "new_credit": {"readonly": True},
+        "adjustments": {"readonly": True},
+        "credit_expired": {"readonly": True},
+        "charges": {"readonly": True},
+        "closed_balance": {"readonly": True},
+        "invoice_number": {"readonly": True},
+        "billing_profile_id": {"readonly": True},
+        "billing_profile_display_name": {"readonly": True},
+        "lot_id": {"readonly": True},
+        "lot_source": {"readonly": True},
+        "canceled_credit": {"readonly": True},
+        "credit_currency": {"readonly": True},
+        "billing_currency": {"readonly": True},
+        "reseller": {"readonly": True},
+        "credit_expired_in_billing_currency": {"readonly": True},
+        "new_credit_in_billing_currency": {"readonly": True},
+        "adjustments_in_billing_currency": {"readonly": True},
+        "charges_in_billing_currency": {"readonly": True},
+        "closed_balance_in_billing_currency": {"readonly": True},
+        "e_tag_properties_e_tag": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'e_tag': {'key': 'eTag', 'type': 'str'},
-        'transaction_date': {'key': 'properties.transactionDate', 'type': 'iso-8601'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'new_credit': {'key': 'properties.newCredit', 'type': 'Amount'},
-        'adjustments': {'key': 'properties.adjustments', 'type': 'Amount'},
-        'credit_expired': {'key': 'properties.creditExpired', 'type': 'Amount'},
-        'charges': {'key': 'properties.charges', 'type': 'Amount'},
-        'closed_balance': {'key': 'properties.closedBalance', 'type': 'Amount'},
-        'event_type': {'key': 'properties.eventType', 'type': 'str'},
-        'invoice_number': {'key': 'properties.invoiceNumber', 'type': 'str'},
-        'billing_profile_id': {'key': 'properties.billingProfileId', 'type': 'str'},
-        'billing_profile_display_name': {'key': 'properties.billingProfileDisplayName', 'type': 'str'},
-        'lot_id': {'key': 'properties.lotId', 'type': 'str'},
-        'lot_source': {'key': 'properties.lotSource', 'type': 'str'},
-        'canceled_credit': {'key': 'properties.canceledCredit', 'type': 'Amount'},
-        'credit_currency': {'key': 'properties.creditCurrency', 'type': 'str'},
-        'billing_currency': {'key': 'properties.billingCurrency', 'type': 'str'},
-        'reseller': {'key': 'properties.reseller', 'type': 'Reseller'},
-        'credit_expired_in_billing_currency': {'key': 'properties.creditExpiredInBillingCurrency', 'type': 'AmountWithExchangeRate'},
-        'new_credit_in_billing_currency': {'key': 'properties.newCreditInBillingCurrency', 'type': 'AmountWithExchangeRate'},
-        'adjustments_in_billing_currency': {'key': 'properties.adjustmentsInBillingCurrency', 'type': 'AmountWithExchangeRate'},
-        'charges_in_billing_currency': {'key': 'properties.chargesInBillingCurrency', 'type': 'AmountWithExchangeRate'},
-        'closed_balance_in_billing_currency': {'key': 'properties.closedBalanceInBillingCurrency', 'type': 'AmountWithExchangeRate'},
-        'e_tag_properties_e_tag': {'key': 'properties.eTag', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "e_tag": {"key": "eTag", "type": "str"},
+        "transaction_date": {"key": "properties.transactionDate", "type": "iso-8601"},
+        "description": {"key": "properties.description", "type": "str"},
+        "new_credit": {"key": "properties.newCredit", "type": "Amount"},
+        "adjustments": {"key": "properties.adjustments", "type": "Amount"},
+        "credit_expired": {"key": "properties.creditExpired", "type": "Amount"},
+        "charges": {"key": "properties.charges", "type": "Amount"},
+        "closed_balance": {"key": "properties.closedBalance", "type": "Amount"},
+        "event_type": {"key": "properties.eventType", "type": "str"},
+        "invoice_number": {"key": "properties.invoiceNumber", "type": "str"},
+        "billing_profile_id": {"key": "properties.billingProfileId", "type": "str"},
+        "billing_profile_display_name": {"key": "properties.billingProfileDisplayName", "type": "str"},
+        "lot_id": {"key": "properties.lotId", "type": "str"},
+        "lot_source": {"key": "properties.lotSource", "type": "str"},
+        "canceled_credit": {"key": "properties.canceledCredit", "type": "Amount"},
+        "credit_currency": {"key": "properties.creditCurrency", "type": "str"},
+        "billing_currency": {"key": "properties.billingCurrency", "type": "str"},
+        "reseller": {"key": "properties.reseller", "type": "Reseller"},
+        "credit_expired_in_billing_currency": {
+            "key": "properties.creditExpiredInBillingCurrency",
+            "type": "AmountWithExchangeRate",
+        },
+        "new_credit_in_billing_currency": {
+            "key": "properties.newCreditInBillingCurrency",
+            "type": "AmountWithExchangeRate",
+        },
+        "adjustments_in_billing_currency": {
+            "key": "properties.adjustmentsInBillingCurrency",
+            "type": "AmountWithExchangeRate",
+        },
+        "charges_in_billing_currency": {"key": "properties.chargesInBillingCurrency", "type": "AmountWithExchangeRate"},
+        "closed_balance_in_billing_currency": {
+            "key": "properties.closedBalanceInBillingCurrency",
+            "type": "AmountWithExchangeRate",
+        },
+        "e_tag_properties_e_tag": {"key": "properties.eTag", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        e_tag: Optional[str] = None,
-        event_type: Optional[Union[str, "_models.EventType"]] = None,
-        **kwargs
+    def __init__(  # pylint: disable=too-many-locals
+        self, *, e_tag: Optional[str] = None, event_type: Optional[Union[str, "_models.EventType"]] = None, **kwargs
     ):
         """
         :keyword e_tag: eTag of the resource. To handle concurrent update scenario, this field will be
@@ -1187,10 +1116,10 @@ class EventSummary(ProxyResource):
         :paramtype e_tag: str
         :keyword event_type: Identifies the type of the event. Known values are: "SettledCharges",
          "PendingCharges", "PendingAdjustments", "PendingNewCredit", "PendingExpiredCredit", "UnKnown",
-         "NewCredit", "CreditExpired".
+         "NewCredit", and "CreditExpired".
         :paramtype event_type: str or ~azure.mgmt.consumption.models.EventType
         """
-        super(EventSummary, self).__init__(e_tag=e_tag, **kwargs)
+        super().__init__(e_tag=e_tag, **kwargs)
         self.transaction_date = None
         self.description = None
         self.new_credit = None
@@ -1216,7 +1145,7 @@ class EventSummary(ProxyResource):
         self.e_tag_properties_e_tag = None
 
 
-class ForecastSpend(msrest.serialization.Model):
+class ForecastSpend(_serialization.Model):
     """The forecasted cost which is being tracked for a budget.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1229,27 +1158,23 @@ class ForecastSpend(msrest.serialization.Model):
     """
 
     _validation = {
-        'amount': {'readonly': True},
-        'unit': {'readonly': True},
+        "amount": {"readonly": True},
+        "unit": {"readonly": True},
     }
 
     _attribute_map = {
-        'amount': {'key': 'amount', 'type': 'float'},
-        'unit': {'key': 'unit', 'type': 'str'},
+        "amount": {"key": "amount", "type": "float"},
+        "unit": {"key": "unit", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ForecastSpend, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.amount = None
         self.unit = None
 
 
-class HighCasedErrorDetails(msrest.serialization.Model):
+class HighCasedErrorDetails(_serialization.Model):
     """The details of the error.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1261,78 +1186,70 @@ class HighCasedErrorDetails(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(HighCasedErrorDetails, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.code = None
         self.message = None
 
 
-class HighCasedErrorResponse(msrest.serialization.Model):
-    """Error response indicates that the service is not able to process the incoming request. The reason is provided in the error message. 
+class HighCasedErrorResponse(_serialization.Model):
+    """Error response indicates that the service is not able to process the incoming request. The reason is provided in the error message.
 
-Some Error responses: 
+    Some Error responses:
 
 
-* 
-  429 TooManyRequests - Request is throttled. Retry after waiting for the time specified in the "x-ms-ratelimit-microsoft.consumption-retry-after" header. 
+    *
+      429 TooManyRequests - Request is throttled. Retry after waiting for the time specified in the "x-ms-ratelimit-microsoft.consumption-retry-after" header.
 
-* 
-  503 ServiceUnavailable - Service is temporarily unavailable. Retry after waiting for the time specified in the "Retry-After" header.
+    *
+      503 ServiceUnavailable - Service is temporarily unavailable. Retry after waiting for the time specified in the "Retry-After" header.
 
-    :ivar error: The details of the error.
-    :vartype error: ~azure.mgmt.consumption.models.HighCasedErrorDetails
+        :ivar error: The details of the error.
+        :vartype error: ~azure.mgmt.consumption.models.HighCasedErrorDetails
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'HighCasedErrorDetails'},
+        "error": {"key": "error", "type": "HighCasedErrorDetails"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: Optional["_models.HighCasedErrorDetails"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, error: Optional["_models.HighCasedErrorDetails"] = None, **kwargs):
         """
         :keyword error: The details of the error.
         :paramtype error: ~azure.mgmt.consumption.models.HighCasedErrorDetails
         """
-        super(HighCasedErrorResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.error = error
 
 
-class LegacyChargeSummary(ChargeSummary):
+class LegacyChargeSummary(ChargeSummary):  # pylint: disable=too-many-instance-attributes
     """Legacy charge summary.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Resource Id.
+    :ivar id: The full qualified ARM ID of an event.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The ID that uniquely identifies an event.
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar e_tag: eTag of the resource. To handle concurrent update scenario, this field will be
-     used to determine whether the user is updating the latest version or not.
-    :vartype e_tag: str
-    :ivar kind: Required. Specifies the kind of charge summary.Constant filled by server. Known
-     values are: "legacy", "modern".
+    :ivar etag: The etag for the resource.
+    :vartype etag: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar kind: Specifies the kind of charge summary. Required. Known values are: "legacy" and
+     "modern".
     :vartype kind: str or ~azure.mgmt.consumption.models.ChargeSummaryKind
     :ivar billing_period_id: The id of the billing period resource that the charge belongs to.
     :vartype billing_period_id: str
@@ -1344,64 +1261,58 @@ class LegacyChargeSummary(ChargeSummary):
     :vartype azure_charges: float
     :ivar charges_billed_separately: Charges Billed separately.
     :vartype charges_billed_separately: float
-    :ivar marketplace_charges: Marketplace Charges.
-    :vartype marketplace_charges: float
+    :ivar azure_marketplace_charges: Marketplace Charges.
+    :vartype azure_marketplace_charges: float
     :ivar currency: Currency Code.
     :vartype currency: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'kind': {'required': True},
-        'billing_period_id': {'readonly': True},
-        'usage_start': {'readonly': True},
-        'usage_end': {'readonly': True},
-        'azure_charges': {'readonly': True},
-        'charges_billed_separately': {'readonly': True},
-        'marketplace_charges': {'readonly': True},
-        'currency': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "tags": {"readonly": True},
+        "kind": {"required": True},
+        "billing_period_id": {"readonly": True},
+        "usage_start": {"readonly": True},
+        "usage_end": {"readonly": True},
+        "azure_charges": {"readonly": True},
+        "charges_billed_separately": {"readonly": True},
+        "azure_marketplace_charges": {"readonly": True},
+        "currency": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'e_tag': {'key': 'eTag', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'billing_period_id': {'key': 'properties.billingPeriodId', 'type': 'str'},
-        'usage_start': {'key': 'properties.usageStart', 'type': 'str'},
-        'usage_end': {'key': 'properties.usageEnd', 'type': 'str'},
-        'azure_charges': {'key': 'properties.azureCharges', 'type': 'float'},
-        'charges_billed_separately': {'key': 'properties.chargesBilledSeparately', 'type': 'float'},
-        'marketplace_charges': {'key': 'properties.marketplaceCharges', 'type': 'float'},
-        'currency': {'key': 'properties.currency', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "kind": {"key": "kind", "type": "str"},
+        "billing_period_id": {"key": "properties.billingPeriodId", "type": "str"},
+        "usage_start": {"key": "properties.usageStart", "type": "str"},
+        "usage_end": {"key": "properties.usageEnd", "type": "str"},
+        "azure_charges": {"key": "properties.azureCharges", "type": "float"},
+        "charges_billed_separately": {"key": "properties.chargesBilledSeparately", "type": "float"},
+        "azure_marketplace_charges": {"key": "properties.azureMarketplaceCharges", "type": "float"},
+        "currency": {"key": "properties.currency", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        e_tag: Optional[str] = None,
-        **kwargs
-    ):
-        """
-        :keyword e_tag: eTag of the resource. To handle concurrent update scenario, this field will be
-         used to determine whether the user is updating the latest version or not.
-        :paramtype e_tag: str
-        """
-        super(LegacyChargeSummary, self).__init__(e_tag=e_tag, **kwargs)
-        self.kind = 'legacy'  # type: str
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.kind: str = "legacy"
         self.billing_period_id = None
         self.usage_start = None
         self.usage_end = None
         self.azure_charges = None
         self.charges_billed_separately = None
-        self.marketplace_charges = None
+        self.azure_marketplace_charges = None
         self.currency = None
 
 
-class ResourceAttributes(msrest.serialization.Model):
+class ResourceAttributes(_serialization.Model):
     """The Resource model definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1413,22 +1324,18 @@ class ResourceAttributes(msrest.serialization.Model):
     """
 
     _validation = {
-        'location': {'readonly': True},
-        'sku': {'readonly': True},
+        "location": {"readonly": True},
+        "sku": {"readonly": True},
     }
 
     _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'str'},
+        "location": {"key": "location", "type": "str"},
+        "sku": {"key": "sku", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ResourceAttributes, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.location = None
         self.sku = None
 
@@ -1436,8 +1343,8 @@ class ResourceAttributes(msrest.serialization.Model):
 class ReservationRecommendation(Resource, ResourceAttributes):
     """A reservation recommendation resource.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: LegacyReservationRecommendation, ModernReservationRecommendation.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    LegacyReservationRecommendation, ModernReservationRecommendation
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1455,49 +1362,43 @@ class ReservationRecommendation(Resource, ResourceAttributes):
     :vartype type: str
     :ivar etag: The etag for the resource.
     :vartype etag: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar kind: Required. Specifies the kind of reservation recommendation.Constant filled by
-     server. Known values are: "legacy", "modern".
+    :ivar kind: Specifies the kind of reservation recommendation. Required. Known values are:
+     "legacy" and "modern".
     :vartype kind: str or ~azure.mgmt.consumption.models.ReservationRecommendationKind
     """
 
     _validation = {
-        'location': {'readonly': True},
-        'sku': {'readonly': True},
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'tags': {'readonly': True},
-        'kind': {'required': True},
+        "location": {"readonly": True},
+        "sku": {"readonly": True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "tags": {"readonly": True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'kind': {'key': 'kind', 'type': 'str'},
+        "location": {"key": "location", "type": "str"},
+        "sku": {"key": "sku", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "kind": {"key": "kind", "type": "str"},
     }
 
-    _subtype_map = {
-        'kind': {'legacy': 'LegacyReservationRecommendation', 'modern': 'ModernReservationRecommendation'}
-    }
+    _subtype_map = {"kind": {"legacy": "LegacyReservationRecommendation", "modern": "ModernReservationRecommendation"}}
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ReservationRecommendation, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.location = None
         self.sku = None
-        self.kind = 'ReservationRecommendation'  # type: str
+        self.kind: Optional[str] = None
         self.id = None
         self.name = None
         self.type = None
@@ -1505,7 +1406,7 @@ class ReservationRecommendation(Resource, ResourceAttributes):
         self.tags = None
 
 
-class LegacyReservationRecommendation(ReservationRecommendation):
+class LegacyReservationRecommendation(ReservationRecommendation):  # pylint: disable=too-many-instance-attributes
     """Legacy reservation recommendation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1524,10 +1425,10 @@ class LegacyReservationRecommendation(ReservationRecommendation):
     :vartype type: str
     :ivar etag: The etag for the resource.
     :vartype etag: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar kind: Required. Specifies the kind of reservation recommendation.Constant filled by
-     server. Known values are: "legacy", "modern".
+    :ivar kind: Specifies the kind of reservation recommendation. Required. Known values are:
+     "legacy" and "modern".
     :vartype kind: str or ~azure.mgmt.consumption.models.ReservationRecommendationKind
     :ivar look_back_period: The number of days of usage to look back for recommendation.
     :vartype look_back_period: str
@@ -1555,72 +1456,68 @@ class LegacyReservationRecommendation(ReservationRecommendation):
     :vartype net_savings: float
     :ivar first_usage_date: The usage date for looking back.
     :vartype first_usage_date: ~datetime.datetime
-    :ivar scope: Required. Shared or single recommendation.Constant filled by server.
+    :ivar scope: Shared or single recommendation. Required.
     :vartype scope: str
     :ivar sku_properties: List of sku properties.
     :vartype sku_properties: list[~azure.mgmt.consumption.models.SkuProperty]
     """
 
     _validation = {
-        'location': {'readonly': True},
-        'sku': {'readonly': True},
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'tags': {'readonly': True},
-        'kind': {'required': True},
-        'look_back_period': {'readonly': True},
-        'instance_flexibility_ratio': {'readonly': True},
-        'instance_flexibility_group': {'readonly': True},
-        'normalized_size': {'readonly': True},
-        'recommended_quantity_normalized': {'readonly': True},
-        'meter_id': {'readonly': True},
-        'resource_type': {'readonly': True},
-        'term': {'readonly': True},
-        'cost_with_no_reserved_instances': {'readonly': True},
-        'recommended_quantity': {'readonly': True},
-        'total_cost_with_reserved_instances': {'readonly': True},
-        'net_savings': {'readonly': True},
-        'first_usage_date': {'readonly': True},
-        'scope': {'required': True},
-        'sku_properties': {'readonly': True},
+        "location": {"readonly": True},
+        "sku": {"readonly": True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "tags": {"readonly": True},
+        "kind": {"required": True},
+        "look_back_period": {"readonly": True},
+        "instance_flexibility_ratio": {"readonly": True},
+        "instance_flexibility_group": {"readonly": True},
+        "normalized_size": {"readonly": True},
+        "recommended_quantity_normalized": {"readonly": True},
+        "meter_id": {"readonly": True},
+        "resource_type": {"readonly": True},
+        "term": {"readonly": True},
+        "cost_with_no_reserved_instances": {"readonly": True},
+        "recommended_quantity": {"readonly": True},
+        "total_cost_with_reserved_instances": {"readonly": True},
+        "net_savings": {"readonly": True},
+        "first_usage_date": {"readonly": True},
+        "scope": {"required": True},
+        "sku_properties": {"readonly": True},
     }
 
     _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'look_back_period': {'key': 'properties.lookBackPeriod', 'type': 'str'},
-        'instance_flexibility_ratio': {'key': 'properties.instanceFlexibilityRatio', 'type': 'float'},
-        'instance_flexibility_group': {'key': 'properties.instanceFlexibilityGroup', 'type': 'str'},
-        'normalized_size': {'key': 'properties.normalizedSize', 'type': 'str'},
-        'recommended_quantity_normalized': {'key': 'properties.recommendedQuantityNormalized', 'type': 'float'},
-        'meter_id': {'key': 'properties.meterId', 'type': 'str'},
-        'resource_type': {'key': 'properties.resourceType', 'type': 'str'},
-        'term': {'key': 'properties.term', 'type': 'str'},
-        'cost_with_no_reserved_instances': {'key': 'properties.costWithNoReservedInstances', 'type': 'float'},
-        'recommended_quantity': {'key': 'properties.recommendedQuantity', 'type': 'float'},
-        'total_cost_with_reserved_instances': {'key': 'properties.totalCostWithReservedInstances', 'type': 'float'},
-        'net_savings': {'key': 'properties.netSavings', 'type': 'float'},
-        'first_usage_date': {'key': 'properties.firstUsageDate', 'type': 'iso-8601'},
-        'scope': {'key': 'properties.scope', 'type': 'str'},
-        'sku_properties': {'key': 'properties.skuProperties', 'type': '[SkuProperty]'},
+        "location": {"key": "location", "type": "str"},
+        "sku": {"key": "sku", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "kind": {"key": "kind", "type": "str"},
+        "look_back_period": {"key": "properties.lookBackPeriod", "type": "str"},
+        "instance_flexibility_ratio": {"key": "properties.instanceFlexibilityRatio", "type": "float"},
+        "instance_flexibility_group": {"key": "properties.instanceFlexibilityGroup", "type": "str"},
+        "normalized_size": {"key": "properties.normalizedSize", "type": "str"},
+        "recommended_quantity_normalized": {"key": "properties.recommendedQuantityNormalized", "type": "float"},
+        "meter_id": {"key": "properties.meterId", "type": "str"},
+        "resource_type": {"key": "properties.resourceType", "type": "str"},
+        "term": {"key": "properties.term", "type": "str"},
+        "cost_with_no_reserved_instances": {"key": "properties.costWithNoReservedInstances", "type": "float"},
+        "recommended_quantity": {"key": "properties.recommendedQuantity", "type": "float"},
+        "total_cost_with_reserved_instances": {"key": "properties.totalCostWithReservedInstances", "type": "float"},
+        "net_savings": {"key": "properties.netSavings", "type": "float"},
+        "first_usage_date": {"key": "properties.firstUsageDate", "type": "iso-8601"},
+        "scope": {"key": "properties.scope", "type": "str"},
+        "sku_properties": {"key": "properties.skuProperties", "type": "[SkuProperty]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(LegacyReservationRecommendation, self).__init__(**kwargs)
-        self.kind = 'legacy'  # type: str
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.kind: str = "legacy"
         self.look_back_period = None
         self.instance_flexibility_ratio = None
         self.instance_flexibility_group = None
@@ -1634,15 +1531,16 @@ class LegacyReservationRecommendation(ReservationRecommendation):
         self.total_cost_with_reserved_instances = None
         self.net_savings = None
         self.first_usage_date = None
-        self.scope = 'legacy'  # type: str
+        self.scope: str = "legacy"
         self.sku_properties = None
 
 
-class LegacyReservationRecommendationProperties(msrest.serialization.Model):
+class LegacyReservationRecommendationProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """The properties of the reservation recommendation.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: LegacySharedScopeReservationRecommendationProperties, LegacySingleScopeReservationRecommendationProperties.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    LegacySharedScopeReservationRecommendationProperties,
+    LegacySingleScopeReservationRecommendationProperties
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1674,59 +1572,58 @@ class LegacyReservationRecommendationProperties(msrest.serialization.Model):
     :vartype net_savings: float
     :ivar first_usage_date: The usage date for looking back.
     :vartype first_usage_date: ~datetime.datetime
-    :ivar scope: Required. Shared or single recommendation.Constant filled by server.
+    :ivar scope: Shared or single recommendation. Required.
     :vartype scope: str
     :ivar sku_properties: List of sku properties.
     :vartype sku_properties: list[~azure.mgmt.consumption.models.SkuProperty]
     """
 
     _validation = {
-        'look_back_period': {'readonly': True},
-        'instance_flexibility_ratio': {'readonly': True},
-        'instance_flexibility_group': {'readonly': True},
-        'normalized_size': {'readonly': True},
-        'recommended_quantity_normalized': {'readonly': True},
-        'meter_id': {'readonly': True},
-        'resource_type': {'readonly': True},
-        'term': {'readonly': True},
-        'cost_with_no_reserved_instances': {'readonly': True},
-        'recommended_quantity': {'readonly': True},
-        'total_cost_with_reserved_instances': {'readonly': True},
-        'net_savings': {'readonly': True},
-        'first_usage_date': {'readonly': True},
-        'scope': {'required': True},
-        'sku_properties': {'readonly': True},
+        "look_back_period": {"readonly": True},
+        "instance_flexibility_ratio": {"readonly": True},
+        "instance_flexibility_group": {"readonly": True},
+        "normalized_size": {"readonly": True},
+        "recommended_quantity_normalized": {"readonly": True},
+        "meter_id": {"readonly": True},
+        "resource_type": {"readonly": True},
+        "term": {"readonly": True},
+        "cost_with_no_reserved_instances": {"readonly": True},
+        "recommended_quantity": {"readonly": True},
+        "total_cost_with_reserved_instances": {"readonly": True},
+        "net_savings": {"readonly": True},
+        "first_usage_date": {"readonly": True},
+        "scope": {"required": True},
+        "sku_properties": {"readonly": True},
     }
 
     _attribute_map = {
-        'look_back_period': {'key': 'lookBackPeriod', 'type': 'str'},
-        'instance_flexibility_ratio': {'key': 'instanceFlexibilityRatio', 'type': 'float'},
-        'instance_flexibility_group': {'key': 'instanceFlexibilityGroup', 'type': 'str'},
-        'normalized_size': {'key': 'normalizedSize', 'type': 'str'},
-        'recommended_quantity_normalized': {'key': 'recommendedQuantityNormalized', 'type': 'float'},
-        'meter_id': {'key': 'meterId', 'type': 'str'},
-        'resource_type': {'key': 'resourceType', 'type': 'str'},
-        'term': {'key': 'term', 'type': 'str'},
-        'cost_with_no_reserved_instances': {'key': 'costWithNoReservedInstances', 'type': 'float'},
-        'recommended_quantity': {'key': 'recommendedQuantity', 'type': 'float'},
-        'total_cost_with_reserved_instances': {'key': 'totalCostWithReservedInstances', 'type': 'float'},
-        'net_savings': {'key': 'netSavings', 'type': 'float'},
-        'first_usage_date': {'key': 'firstUsageDate', 'type': 'iso-8601'},
-        'scope': {'key': 'scope', 'type': 'str'},
-        'sku_properties': {'key': 'skuProperties', 'type': '[SkuProperty]'},
+        "look_back_period": {"key": "lookBackPeriod", "type": "str"},
+        "instance_flexibility_ratio": {"key": "instanceFlexibilityRatio", "type": "float"},
+        "instance_flexibility_group": {"key": "instanceFlexibilityGroup", "type": "str"},
+        "normalized_size": {"key": "normalizedSize", "type": "str"},
+        "recommended_quantity_normalized": {"key": "recommendedQuantityNormalized", "type": "float"},
+        "meter_id": {"key": "meterId", "type": "str"},
+        "resource_type": {"key": "resourceType", "type": "str"},
+        "term": {"key": "term", "type": "str"},
+        "cost_with_no_reserved_instances": {"key": "costWithNoReservedInstances", "type": "float"},
+        "recommended_quantity": {"key": "recommendedQuantity", "type": "float"},
+        "total_cost_with_reserved_instances": {"key": "totalCostWithReservedInstances", "type": "float"},
+        "net_savings": {"key": "netSavings", "type": "float"},
+        "first_usage_date": {"key": "firstUsageDate", "type": "iso-8601"},
+        "scope": {"key": "scope", "type": "str"},
+        "sku_properties": {"key": "skuProperties", "type": "[SkuProperty]"},
     }
 
     _subtype_map = {
-        'scope': {'Shared': 'LegacySharedScopeReservationRecommendationProperties', 'Single': 'LegacySingleScopeReservationRecommendationProperties'}
+        "scope": {
+            "Shared": "LegacySharedScopeReservationRecommendationProperties",
+            "Single": "LegacySingleScopeReservationRecommendationProperties",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(LegacyReservationRecommendationProperties, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.look_back_period = None
         self.instance_flexibility_ratio = None
         self.instance_flexibility_group = None
@@ -1740,11 +1637,11 @@ class LegacyReservationRecommendationProperties(msrest.serialization.Model):
         self.total_cost_with_reserved_instances = None
         self.net_savings = None
         self.first_usage_date = None
-        self.scope = None  # type: Optional[str]
+        self.scope: Optional[str] = None
         self.sku_properties = None
 
 
-class ReservationTransactionResource(msrest.serialization.Model):
+class ReservationTransactionResource(_serialization.Model):
     """The Resource model definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1755,38 +1652,34 @@ class ReservationTransactionResource(msrest.serialization.Model):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: list[str]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'tags': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "tags": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '[str]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ReservationTransactionResource, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
         self.tags = None
 
 
-class ReservationTransaction(ReservationTransactionResource):
+class ReservationTransaction(ReservationTransactionResource):  # pylint: disable=too-many-instance-attributes
     """Reservation transaction resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1797,7 +1690,7 @@ class ReservationTransaction(ReservationTransactionResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: list[str]
     :ivar event_date: The date of the transaction.
     :vartype event_date: ~datetime.datetime
@@ -1808,7 +1701,7 @@ class ReservationTransaction(ReservationTransactionResource):
     :vartype reservation_order_id: str
     :ivar description: The description of the transaction.
     :vartype description: str
-    :ivar event_type: The type of the transaction (Purchase, Cancel, etc.).
+    :ivar event_type: The type of the transaction (Purchase, Cancel or Refund).
     :vartype event_type: str
     :ivar quantity: The quantity of the transaction.
     :vartype quantity: float
@@ -1853,72 +1746,68 @@ class ReservationTransaction(ReservationTransactionResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'tags': {'readonly': True},
-        'event_date': {'readonly': True},
-        'reservation_order_id': {'readonly': True},
-        'description': {'readonly': True},
-        'event_type': {'readonly': True},
-        'quantity': {'readonly': True},
-        'amount': {'readonly': True},
-        'currency': {'readonly': True},
-        'reservation_order_name': {'readonly': True},
-        'purchasing_enrollment': {'readonly': True},
-        'purchasing_subscription_guid': {'readonly': True},
-        'purchasing_subscription_name': {'readonly': True},
-        'arm_sku_name': {'readonly': True},
-        'term': {'readonly': True},
-        'region': {'readonly': True},
-        'account_name': {'readonly': True},
-        'account_owner_email': {'readonly': True},
-        'department_name': {'readonly': True},
-        'cost_center': {'readonly': True},
-        'current_enrollment': {'readonly': True},
-        'billing_frequency': {'readonly': True},
-        'billing_month': {'readonly': True},
-        'monetary_commitment': {'readonly': True},
-        'overage': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "tags": {"readonly": True},
+        "event_date": {"readonly": True},
+        "reservation_order_id": {"readonly": True},
+        "description": {"readonly": True},
+        "event_type": {"readonly": True},
+        "quantity": {"readonly": True},
+        "amount": {"readonly": True},
+        "currency": {"readonly": True},
+        "reservation_order_name": {"readonly": True},
+        "purchasing_enrollment": {"readonly": True},
+        "purchasing_subscription_guid": {"readonly": True},
+        "purchasing_subscription_name": {"readonly": True},
+        "arm_sku_name": {"readonly": True},
+        "term": {"readonly": True},
+        "region": {"readonly": True},
+        "account_name": {"readonly": True},
+        "account_owner_email": {"readonly": True},
+        "department_name": {"readonly": True},
+        "cost_center": {"readonly": True},
+        "current_enrollment": {"readonly": True},
+        "billing_frequency": {"readonly": True},
+        "billing_month": {"readonly": True},
+        "monetary_commitment": {"readonly": True},
+        "overage": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '[str]'},
-        'event_date': {'key': 'properties.eventDate', 'type': 'iso-8601'},
-        'reservation_order_id': {'key': 'properties.reservationOrderId', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'event_type': {'key': 'properties.eventType', 'type': 'str'},
-        'quantity': {'key': 'properties.quantity', 'type': 'float'},
-        'amount': {'key': 'properties.amount', 'type': 'float'},
-        'currency': {'key': 'properties.currency', 'type': 'str'},
-        'reservation_order_name': {'key': 'properties.reservationOrderName', 'type': 'str'},
-        'purchasing_enrollment': {'key': 'properties.purchasingEnrollment', 'type': 'str'},
-        'purchasing_subscription_guid': {'key': 'properties.purchasingSubscriptionGuid', 'type': 'str'},
-        'purchasing_subscription_name': {'key': 'properties.purchasingSubscriptionName', 'type': 'str'},
-        'arm_sku_name': {'key': 'properties.armSkuName', 'type': 'str'},
-        'term': {'key': 'properties.term', 'type': 'str'},
-        'region': {'key': 'properties.region', 'type': 'str'},
-        'account_name': {'key': 'properties.accountName', 'type': 'str'},
-        'account_owner_email': {'key': 'properties.accountOwnerEmail', 'type': 'str'},
-        'department_name': {'key': 'properties.departmentName', 'type': 'str'},
-        'cost_center': {'key': 'properties.costCenter', 'type': 'str'},
-        'current_enrollment': {'key': 'properties.currentEnrollment', 'type': 'str'},
-        'billing_frequency': {'key': 'properties.billingFrequency', 'type': 'str'},
-        'billing_month': {'key': 'properties.billingMonth', 'type': 'int'},
-        'monetary_commitment': {'key': 'properties.monetaryCommitment', 'type': 'float'},
-        'overage': {'key': 'properties.overage', 'type': 'float'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "[str]"},
+        "event_date": {"key": "properties.eventDate", "type": "iso-8601"},
+        "reservation_order_id": {"key": "properties.reservationOrderId", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "event_type": {"key": "properties.eventType", "type": "str"},
+        "quantity": {"key": "properties.quantity", "type": "float"},
+        "amount": {"key": "properties.amount", "type": "float"},
+        "currency": {"key": "properties.currency", "type": "str"},
+        "reservation_order_name": {"key": "properties.reservationOrderName", "type": "str"},
+        "purchasing_enrollment": {"key": "properties.purchasingEnrollment", "type": "str"},
+        "purchasing_subscription_guid": {"key": "properties.purchasingSubscriptionGuid", "type": "str"},
+        "purchasing_subscription_name": {"key": "properties.purchasingSubscriptionName", "type": "str"},
+        "arm_sku_name": {"key": "properties.armSkuName", "type": "str"},
+        "term": {"key": "properties.term", "type": "str"},
+        "region": {"key": "properties.region", "type": "str"},
+        "account_name": {"key": "properties.accountName", "type": "str"},
+        "account_owner_email": {"key": "properties.accountOwnerEmail", "type": "str"},
+        "department_name": {"key": "properties.departmentName", "type": "str"},
+        "cost_center": {"key": "properties.costCenter", "type": "str"},
+        "current_enrollment": {"key": "properties.currentEnrollment", "type": "str"},
+        "billing_frequency": {"key": "properties.billingFrequency", "type": "str"},
+        "billing_month": {"key": "properties.billingMonth", "type": "int"},
+        "monetary_commitment": {"key": "properties.monetaryCommitment", "type": "float"},
+        "overage": {"key": "properties.overage", "type": "float"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ReservationTransaction, self).__init__(**kwargs)
+    def __init__(self, **kwargs):  # pylint: disable=too-many-locals
+        """ """
+        super().__init__(**kwargs)
         self.event_date = None
         self.reservation_order_id = None
         self.description = None
@@ -1944,7 +1833,7 @@ class ReservationTransaction(ReservationTransactionResource):
         self.overage = None
 
 
-class LegacyReservationTransaction(ReservationTransaction):
+class LegacyReservationTransaction(ReservationTransaction):  # pylint: disable=too-many-instance-attributes
     """Legacy Reservation transaction resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1955,7 +1844,7 @@ class LegacyReservationTransaction(ReservationTransaction):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: list[str]
     :ivar event_date: The date of the transaction.
     :vartype event_date: ~datetime.datetime
@@ -1966,7 +1855,7 @@ class LegacyReservationTransaction(ReservationTransaction):
     :vartype reservation_order_id: str
     :ivar description: The description of the transaction.
     :vartype description: str
-    :ivar event_type: The type of the transaction (Purchase, Cancel, etc.).
+    :ivar event_type: The type of the transaction (Purchase, Cancel or Refund).
     :vartype event_type: str
     :ivar quantity: The quantity of the transaction.
     :vartype quantity: float
@@ -2011,75 +1900,73 @@ class LegacyReservationTransaction(ReservationTransaction):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'tags': {'readonly': True},
-        'event_date': {'readonly': True},
-        'reservation_order_id': {'readonly': True},
-        'description': {'readonly': True},
-        'event_type': {'readonly': True},
-        'quantity': {'readonly': True},
-        'amount': {'readonly': True},
-        'currency': {'readonly': True},
-        'reservation_order_name': {'readonly': True},
-        'purchasing_enrollment': {'readonly': True},
-        'purchasing_subscription_guid': {'readonly': True},
-        'purchasing_subscription_name': {'readonly': True},
-        'arm_sku_name': {'readonly': True},
-        'term': {'readonly': True},
-        'region': {'readonly': True},
-        'account_name': {'readonly': True},
-        'account_owner_email': {'readonly': True},
-        'department_name': {'readonly': True},
-        'cost_center': {'readonly': True},
-        'current_enrollment': {'readonly': True},
-        'billing_frequency': {'readonly': True},
-        'billing_month': {'readonly': True},
-        'monetary_commitment': {'readonly': True},
-        'overage': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "tags": {"readonly": True},
+        "event_date": {"readonly": True},
+        "reservation_order_id": {"readonly": True},
+        "description": {"readonly": True},
+        "event_type": {"readonly": True},
+        "quantity": {"readonly": True},
+        "amount": {"readonly": True},
+        "currency": {"readonly": True},
+        "reservation_order_name": {"readonly": True},
+        "purchasing_enrollment": {"readonly": True},
+        "purchasing_subscription_guid": {"readonly": True},
+        "purchasing_subscription_name": {"readonly": True},
+        "arm_sku_name": {"readonly": True},
+        "term": {"readonly": True},
+        "region": {"readonly": True},
+        "account_name": {"readonly": True},
+        "account_owner_email": {"readonly": True},
+        "department_name": {"readonly": True},
+        "cost_center": {"readonly": True},
+        "current_enrollment": {"readonly": True},
+        "billing_frequency": {"readonly": True},
+        "billing_month": {"readonly": True},
+        "monetary_commitment": {"readonly": True},
+        "overage": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '[str]'},
-        'event_date': {'key': 'properties.eventDate', 'type': 'iso-8601'},
-        'reservation_order_id': {'key': 'properties.reservationOrderId', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'event_type': {'key': 'properties.eventType', 'type': 'str'},
-        'quantity': {'key': 'properties.quantity', 'type': 'float'},
-        'amount': {'key': 'properties.amount', 'type': 'float'},
-        'currency': {'key': 'properties.currency', 'type': 'str'},
-        'reservation_order_name': {'key': 'properties.reservationOrderName', 'type': 'str'},
-        'purchasing_enrollment': {'key': 'properties.purchasingEnrollment', 'type': 'str'},
-        'purchasing_subscription_guid': {'key': 'properties.purchasingSubscriptionGuid', 'type': 'str'},
-        'purchasing_subscription_name': {'key': 'properties.purchasingSubscriptionName', 'type': 'str'},
-        'arm_sku_name': {'key': 'properties.armSkuName', 'type': 'str'},
-        'term': {'key': 'properties.term', 'type': 'str'},
-        'region': {'key': 'properties.region', 'type': 'str'},
-        'account_name': {'key': 'properties.accountName', 'type': 'str'},
-        'account_owner_email': {'key': 'properties.accountOwnerEmail', 'type': 'str'},
-        'department_name': {'key': 'properties.departmentName', 'type': 'str'},
-        'cost_center': {'key': 'properties.costCenter', 'type': 'str'},
-        'current_enrollment': {'key': 'properties.currentEnrollment', 'type': 'str'},
-        'billing_frequency': {'key': 'properties.billingFrequency', 'type': 'str'},
-        'billing_month': {'key': 'properties.billingMonth', 'type': 'int'},
-        'monetary_commitment': {'key': 'properties.monetaryCommitment', 'type': 'float'},
-        'overage': {'key': 'properties.overage', 'type': 'float'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "[str]"},
+        "event_date": {"key": "properties.eventDate", "type": "iso-8601"},
+        "reservation_order_id": {"key": "properties.reservationOrderId", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "event_type": {"key": "properties.eventType", "type": "str"},
+        "quantity": {"key": "properties.quantity", "type": "float"},
+        "amount": {"key": "properties.amount", "type": "float"},
+        "currency": {"key": "properties.currency", "type": "str"},
+        "reservation_order_name": {"key": "properties.reservationOrderName", "type": "str"},
+        "purchasing_enrollment": {"key": "properties.purchasingEnrollment", "type": "str"},
+        "purchasing_subscription_guid": {"key": "properties.purchasingSubscriptionGuid", "type": "str"},
+        "purchasing_subscription_name": {"key": "properties.purchasingSubscriptionName", "type": "str"},
+        "arm_sku_name": {"key": "properties.armSkuName", "type": "str"},
+        "term": {"key": "properties.term", "type": "str"},
+        "region": {"key": "properties.region", "type": "str"},
+        "account_name": {"key": "properties.accountName", "type": "str"},
+        "account_owner_email": {"key": "properties.accountOwnerEmail", "type": "str"},
+        "department_name": {"key": "properties.departmentName", "type": "str"},
+        "cost_center": {"key": "properties.costCenter", "type": "str"},
+        "current_enrollment": {"key": "properties.currentEnrollment", "type": "str"},
+        "billing_frequency": {"key": "properties.billingFrequency", "type": "str"},
+        "billing_month": {"key": "properties.billingMonth", "type": "int"},
+        "monetary_commitment": {"key": "properties.monetaryCommitment", "type": "float"},
+        "overage": {"key": "properties.overage", "type": "float"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(LegacyReservationTransaction, self).__init__(**kwargs)
+    def __init__(self, **kwargs):  # pylint: disable=too-many-locals
+        """ """
+        super().__init__(**kwargs)
 
 
-class LegacySharedScopeReservationRecommendationProperties(LegacyReservationRecommendationProperties):
+class LegacySharedScopeReservationRecommendationProperties(
+    LegacyReservationRecommendationProperties
+):  # pylint: disable=too-many-instance-attributes
     """The properties of the legacy reservation recommendation for shared scope.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2112,59 +1999,57 @@ class LegacySharedScopeReservationRecommendationProperties(LegacyReservationReco
     :vartype net_savings: float
     :ivar first_usage_date: The usage date for looking back.
     :vartype first_usage_date: ~datetime.datetime
-    :ivar scope: Required. Shared or single recommendation.Constant filled by server.
+    :ivar scope: Shared or single recommendation. Required.
     :vartype scope: str
     :ivar sku_properties: List of sku properties.
     :vartype sku_properties: list[~azure.mgmt.consumption.models.SkuProperty]
     """
 
     _validation = {
-        'look_back_period': {'readonly': True},
-        'instance_flexibility_ratio': {'readonly': True},
-        'instance_flexibility_group': {'readonly': True},
-        'normalized_size': {'readonly': True},
-        'recommended_quantity_normalized': {'readonly': True},
-        'meter_id': {'readonly': True},
-        'resource_type': {'readonly': True},
-        'term': {'readonly': True},
-        'cost_with_no_reserved_instances': {'readonly': True},
-        'recommended_quantity': {'readonly': True},
-        'total_cost_with_reserved_instances': {'readonly': True},
-        'net_savings': {'readonly': True},
-        'first_usage_date': {'readonly': True},
-        'scope': {'required': True},
-        'sku_properties': {'readonly': True},
+        "look_back_period": {"readonly": True},
+        "instance_flexibility_ratio": {"readonly": True},
+        "instance_flexibility_group": {"readonly": True},
+        "normalized_size": {"readonly": True},
+        "recommended_quantity_normalized": {"readonly": True},
+        "meter_id": {"readonly": True},
+        "resource_type": {"readonly": True},
+        "term": {"readonly": True},
+        "cost_with_no_reserved_instances": {"readonly": True},
+        "recommended_quantity": {"readonly": True},
+        "total_cost_with_reserved_instances": {"readonly": True},
+        "net_savings": {"readonly": True},
+        "first_usage_date": {"readonly": True},
+        "scope": {"required": True},
+        "sku_properties": {"readonly": True},
     }
 
     _attribute_map = {
-        'look_back_period': {'key': 'lookBackPeriod', 'type': 'str'},
-        'instance_flexibility_ratio': {'key': 'instanceFlexibilityRatio', 'type': 'float'},
-        'instance_flexibility_group': {'key': 'instanceFlexibilityGroup', 'type': 'str'},
-        'normalized_size': {'key': 'normalizedSize', 'type': 'str'},
-        'recommended_quantity_normalized': {'key': 'recommendedQuantityNormalized', 'type': 'float'},
-        'meter_id': {'key': 'meterId', 'type': 'str'},
-        'resource_type': {'key': 'resourceType', 'type': 'str'},
-        'term': {'key': 'term', 'type': 'str'},
-        'cost_with_no_reserved_instances': {'key': 'costWithNoReservedInstances', 'type': 'float'},
-        'recommended_quantity': {'key': 'recommendedQuantity', 'type': 'float'},
-        'total_cost_with_reserved_instances': {'key': 'totalCostWithReservedInstances', 'type': 'float'},
-        'net_savings': {'key': 'netSavings', 'type': 'float'},
-        'first_usage_date': {'key': 'firstUsageDate', 'type': 'iso-8601'},
-        'scope': {'key': 'scope', 'type': 'str'},
-        'sku_properties': {'key': 'skuProperties', 'type': '[SkuProperty]'},
+        "look_back_period": {"key": "lookBackPeriod", "type": "str"},
+        "instance_flexibility_ratio": {"key": "instanceFlexibilityRatio", "type": "float"},
+        "instance_flexibility_group": {"key": "instanceFlexibilityGroup", "type": "str"},
+        "normalized_size": {"key": "normalizedSize", "type": "str"},
+        "recommended_quantity_normalized": {"key": "recommendedQuantityNormalized", "type": "float"},
+        "meter_id": {"key": "meterId", "type": "str"},
+        "resource_type": {"key": "resourceType", "type": "str"},
+        "term": {"key": "term", "type": "str"},
+        "cost_with_no_reserved_instances": {"key": "costWithNoReservedInstances", "type": "float"},
+        "recommended_quantity": {"key": "recommendedQuantity", "type": "float"},
+        "total_cost_with_reserved_instances": {"key": "totalCostWithReservedInstances", "type": "float"},
+        "net_savings": {"key": "netSavings", "type": "float"},
+        "first_usage_date": {"key": "firstUsageDate", "type": "iso-8601"},
+        "scope": {"key": "scope", "type": "str"},
+        "sku_properties": {"key": "skuProperties", "type": "[SkuProperty]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(LegacySharedScopeReservationRecommendationProperties, self).__init__(**kwargs)
-        self.scope = 'Shared'  # type: str
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.scope: str = "Shared"
 
 
-class LegacySingleScopeReservationRecommendationProperties(LegacyReservationRecommendationProperties):
+class LegacySingleScopeReservationRecommendationProperties(
+    LegacyReservationRecommendationProperties
+):  # pylint: disable=too-many-instance-attributes
     """The properties of the legacy reservation recommendation for single scope.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2197,7 +2082,7 @@ class LegacySingleScopeReservationRecommendationProperties(LegacyReservationReco
     :vartype net_savings: float
     :ivar first_usage_date: The usage date for looking back.
     :vartype first_usage_date: ~datetime.datetime
-    :ivar scope: Required. Shared or single recommendation.Constant filled by server.
+    :ivar scope: Shared or single recommendation. Required.
     :vartype scope: str
     :ivar sku_properties: List of sku properties.
     :vartype sku_properties: list[~azure.mgmt.consumption.models.SkuProperty]
@@ -2206,59 +2091,55 @@ class LegacySingleScopeReservationRecommendationProperties(LegacyReservationReco
     """
 
     _validation = {
-        'look_back_period': {'readonly': True},
-        'instance_flexibility_ratio': {'readonly': True},
-        'instance_flexibility_group': {'readonly': True},
-        'normalized_size': {'readonly': True},
-        'recommended_quantity_normalized': {'readonly': True},
-        'meter_id': {'readonly': True},
-        'resource_type': {'readonly': True},
-        'term': {'readonly': True},
-        'cost_with_no_reserved_instances': {'readonly': True},
-        'recommended_quantity': {'readonly': True},
-        'total_cost_with_reserved_instances': {'readonly': True},
-        'net_savings': {'readonly': True},
-        'first_usage_date': {'readonly': True},
-        'scope': {'required': True},
-        'sku_properties': {'readonly': True},
-        'subscription_id': {'readonly': True},
+        "look_back_period": {"readonly": True},
+        "instance_flexibility_ratio": {"readonly": True},
+        "instance_flexibility_group": {"readonly": True},
+        "normalized_size": {"readonly": True},
+        "recommended_quantity_normalized": {"readonly": True},
+        "meter_id": {"readonly": True},
+        "resource_type": {"readonly": True},
+        "term": {"readonly": True},
+        "cost_with_no_reserved_instances": {"readonly": True},
+        "recommended_quantity": {"readonly": True},
+        "total_cost_with_reserved_instances": {"readonly": True},
+        "net_savings": {"readonly": True},
+        "first_usage_date": {"readonly": True},
+        "scope": {"required": True},
+        "sku_properties": {"readonly": True},
+        "subscription_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'look_back_period': {'key': 'lookBackPeriod', 'type': 'str'},
-        'instance_flexibility_ratio': {'key': 'instanceFlexibilityRatio', 'type': 'float'},
-        'instance_flexibility_group': {'key': 'instanceFlexibilityGroup', 'type': 'str'},
-        'normalized_size': {'key': 'normalizedSize', 'type': 'str'},
-        'recommended_quantity_normalized': {'key': 'recommendedQuantityNormalized', 'type': 'float'},
-        'meter_id': {'key': 'meterId', 'type': 'str'},
-        'resource_type': {'key': 'resourceType', 'type': 'str'},
-        'term': {'key': 'term', 'type': 'str'},
-        'cost_with_no_reserved_instances': {'key': 'costWithNoReservedInstances', 'type': 'float'},
-        'recommended_quantity': {'key': 'recommendedQuantity', 'type': 'float'},
-        'total_cost_with_reserved_instances': {'key': 'totalCostWithReservedInstances', 'type': 'float'},
-        'net_savings': {'key': 'netSavings', 'type': 'float'},
-        'first_usage_date': {'key': 'firstUsageDate', 'type': 'iso-8601'},
-        'scope': {'key': 'scope', 'type': 'str'},
-        'sku_properties': {'key': 'skuProperties', 'type': '[SkuProperty]'},
-        'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
+        "look_back_period": {"key": "lookBackPeriod", "type": "str"},
+        "instance_flexibility_ratio": {"key": "instanceFlexibilityRatio", "type": "float"},
+        "instance_flexibility_group": {"key": "instanceFlexibilityGroup", "type": "str"},
+        "normalized_size": {"key": "normalizedSize", "type": "str"},
+        "recommended_quantity_normalized": {"key": "recommendedQuantityNormalized", "type": "float"},
+        "meter_id": {"key": "meterId", "type": "str"},
+        "resource_type": {"key": "resourceType", "type": "str"},
+        "term": {"key": "term", "type": "str"},
+        "cost_with_no_reserved_instances": {"key": "costWithNoReservedInstances", "type": "float"},
+        "recommended_quantity": {"key": "recommendedQuantity", "type": "float"},
+        "total_cost_with_reserved_instances": {"key": "totalCostWithReservedInstances", "type": "float"},
+        "net_savings": {"key": "netSavings", "type": "float"},
+        "first_usage_date": {"key": "firstUsageDate", "type": "iso-8601"},
+        "scope": {"key": "scope", "type": "str"},
+        "sku_properties": {"key": "skuProperties", "type": "[SkuProperty]"},
+        "subscription_id": {"key": "subscriptionId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(LegacySingleScopeReservationRecommendationProperties, self).__init__(**kwargs)
-        self.scope = 'Single'  # type: str
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.scope: str = "Single"
         self.subscription_id = None
 
 
 class UsageDetail(Resource):
     """An usage detail resource.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: LegacyUsageDetail, ModernUsageDetail.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    LegacyUsageDetail, ModernUsageDetail
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -2272,46 +2153,40 @@ class UsageDetail(Resource):
     :vartype type: str
     :ivar etag: The etag for the resource.
     :vartype etag: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar kind: Required. Specifies the kind of usage details.Constant filled by server. Known
-     values are: "legacy", "modern".
+    :ivar kind: Specifies the kind of usage details. Required. Known values are: "legacy" and
+     "modern".
     :vartype kind: str or ~azure.mgmt.consumption.models.UsageDetailsKind
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'tags': {'readonly': True},
-        'kind': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "tags": {"readonly": True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'kind': {'key': 'kind', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "kind": {"key": "kind", "type": "str"},
     }
 
-    _subtype_map = {
-        'kind': {'legacy': 'LegacyUsageDetail', 'modern': 'ModernUsageDetail'}
-    }
+    _subtype_map = {"kind": {"legacy": "LegacyUsageDetail", "modern": "ModernUsageDetail"}}
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(UsageDetail, self).__init__(**kwargs)
-        self.kind = 'UsageDetail'  # type: str
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.kind: Optional[str] = None
 
 
-class LegacyUsageDetail(UsageDetail):
+class LegacyUsageDetail(UsageDetail):  # pylint: disable=too-many-instance-attributes
     """Legacy usage detail.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2326,10 +2201,10 @@ class LegacyUsageDetail(UsageDetail):
     :vartype type: str
     :ivar etag: The etag for the resource.
     :vartype etag: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar kind: Required. Specifies the kind of usage details.Constant filled by server. Known
-     values are: "legacy", "modern".
+    :ivar kind: Specifies the kind of usage details. Required. Known values are: "legacy" and
+     "modern".
     :vartype kind: str or ~azure.mgmt.consumption.models.UsageDetailsKind
     :ivar billing_account_id: Billing Account identifier.
     :vartype billing_account_id: str
@@ -2439,128 +2314,124 @@ class LegacyUsageDetail(UsageDetail):
     :ivar benefit_name: Name of the applicable benefit.
     :vartype benefit_name: str
     :ivar pricing_model: Identifier that indicates how the meter is priced. Known values are: "On
-     Demand", "Reservation", "Spot".
+     Demand", "Reservation", and "Spot".
     :vartype pricing_model: str or ~azure.mgmt.consumption.models.PricingModelType
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'tags': {'readonly': True},
-        'kind': {'required': True},
-        'billing_account_id': {'readonly': True},
-        'billing_account_name': {'readonly': True},
-        'billing_period_start_date': {'readonly': True},
-        'billing_period_end_date': {'readonly': True},
-        'billing_profile_id': {'readonly': True},
-        'billing_profile_name': {'readonly': True},
-        'account_owner_id': {'readonly': True},
-        'account_name': {'readonly': True},
-        'subscription_id': {'readonly': True},
-        'subscription_name': {'readonly': True},
-        'date': {'readonly': True},
-        'product': {'readonly': True},
-        'part_number': {'readonly': True},
-        'meter_id': {'readonly': True},
-        'meter_details': {'readonly': True},
-        'quantity': {'readonly': True},
-        'effective_price': {'readonly': True},
-        'cost': {'readonly': True},
-        'unit_price': {'readonly': True},
-        'billing_currency': {'readonly': True},
-        'resource_location': {'readonly': True},
-        'consumed_service': {'readonly': True},
-        'resource_id': {'readonly': True},
-        'resource_name': {'readonly': True},
-        'service_info1': {'readonly': True},
-        'service_info2': {'readonly': True},
-        'additional_info': {'readonly': True},
-        'invoice_section': {'readonly': True},
-        'cost_center': {'readonly': True},
-        'resource_group': {'readonly': True},
-        'reservation_id': {'readonly': True},
-        'reservation_name': {'readonly': True},
-        'product_order_id': {'readonly': True},
-        'product_order_name': {'readonly': True},
-        'offer_id': {'readonly': True},
-        'is_azure_credit_eligible': {'readonly': True},
-        'term': {'readonly': True},
-        'publisher_name': {'readonly': True},
-        'publisher_type': {'readonly': True},
-        'plan_name': {'readonly': True},
-        'charge_type': {'readonly': True},
-        'frequency': {'readonly': True},
-        'pay_g_price': {'readonly': True},
-        'benefit_id': {'readonly': True},
-        'benefit_name': {'readonly': True},
-        'pricing_model': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "tags": {"readonly": True},
+        "kind": {"required": True},
+        "billing_account_id": {"readonly": True},
+        "billing_account_name": {"readonly": True},
+        "billing_period_start_date": {"readonly": True},
+        "billing_period_end_date": {"readonly": True},
+        "billing_profile_id": {"readonly": True},
+        "billing_profile_name": {"readonly": True},
+        "account_owner_id": {"readonly": True},
+        "account_name": {"readonly": True},
+        "subscription_id": {"readonly": True},
+        "subscription_name": {"readonly": True},
+        "date": {"readonly": True},
+        "product": {"readonly": True},
+        "part_number": {"readonly": True},
+        "meter_id": {"readonly": True},
+        "meter_details": {"readonly": True},
+        "quantity": {"readonly": True},
+        "effective_price": {"readonly": True},
+        "cost": {"readonly": True},
+        "unit_price": {"readonly": True},
+        "billing_currency": {"readonly": True},
+        "resource_location": {"readonly": True},
+        "consumed_service": {"readonly": True},
+        "resource_id": {"readonly": True},
+        "resource_name": {"readonly": True},
+        "service_info1": {"readonly": True},
+        "service_info2": {"readonly": True},
+        "additional_info": {"readonly": True},
+        "invoice_section": {"readonly": True},
+        "cost_center": {"readonly": True},
+        "resource_group": {"readonly": True},
+        "reservation_id": {"readonly": True},
+        "reservation_name": {"readonly": True},
+        "product_order_id": {"readonly": True},
+        "product_order_name": {"readonly": True},
+        "offer_id": {"readonly": True},
+        "is_azure_credit_eligible": {"readonly": True},
+        "term": {"readonly": True},
+        "publisher_name": {"readonly": True},
+        "publisher_type": {"readonly": True},
+        "plan_name": {"readonly": True},
+        "charge_type": {"readonly": True},
+        "frequency": {"readonly": True},
+        "pay_g_price": {"readonly": True},
+        "benefit_id": {"readonly": True},
+        "benefit_name": {"readonly": True},
+        "pricing_model": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'billing_account_id': {'key': 'properties.billingAccountId', 'type': 'str'},
-        'billing_account_name': {'key': 'properties.billingAccountName', 'type': 'str'},
-        'billing_period_start_date': {'key': 'properties.billingPeriodStartDate', 'type': 'iso-8601'},
-        'billing_period_end_date': {'key': 'properties.billingPeriodEndDate', 'type': 'iso-8601'},
-        'billing_profile_id': {'key': 'properties.billingProfileId', 'type': 'str'},
-        'billing_profile_name': {'key': 'properties.billingProfileName', 'type': 'str'},
-        'account_owner_id': {'key': 'properties.accountOwnerId', 'type': 'str'},
-        'account_name': {'key': 'properties.accountName', 'type': 'str'},
-        'subscription_id': {'key': 'properties.subscriptionId', 'type': 'str'},
-        'subscription_name': {'key': 'properties.subscriptionName', 'type': 'str'},
-        'date': {'key': 'properties.date', 'type': 'iso-8601'},
-        'product': {'key': 'properties.product', 'type': 'str'},
-        'part_number': {'key': 'properties.partNumber', 'type': 'str'},
-        'meter_id': {'key': 'properties.meterId', 'type': 'str'},
-        'meter_details': {'key': 'properties.meterDetails', 'type': 'MeterDetailsResponse'},
-        'quantity': {'key': 'properties.quantity', 'type': 'float'},
-        'effective_price': {'key': 'properties.effectivePrice', 'type': 'float'},
-        'cost': {'key': 'properties.cost', 'type': 'float'},
-        'unit_price': {'key': 'properties.unitPrice', 'type': 'float'},
-        'billing_currency': {'key': 'properties.billingCurrency', 'type': 'str'},
-        'resource_location': {'key': 'properties.resourceLocation', 'type': 'str'},
-        'consumed_service': {'key': 'properties.consumedService', 'type': 'str'},
-        'resource_id': {'key': 'properties.resourceId', 'type': 'str'},
-        'resource_name': {'key': 'properties.resourceName', 'type': 'str'},
-        'service_info1': {'key': 'properties.serviceInfo1', 'type': 'str'},
-        'service_info2': {'key': 'properties.serviceInfo2', 'type': 'str'},
-        'additional_info': {'key': 'properties.additionalInfo', 'type': 'str'},
-        'invoice_section': {'key': 'properties.invoiceSection', 'type': 'str'},
-        'cost_center': {'key': 'properties.costCenter', 'type': 'str'},
-        'resource_group': {'key': 'properties.resourceGroup', 'type': 'str'},
-        'reservation_id': {'key': 'properties.reservationId', 'type': 'str'},
-        'reservation_name': {'key': 'properties.reservationName', 'type': 'str'},
-        'product_order_id': {'key': 'properties.productOrderId', 'type': 'str'},
-        'product_order_name': {'key': 'properties.productOrderName', 'type': 'str'},
-        'offer_id': {'key': 'properties.offerId', 'type': 'str'},
-        'is_azure_credit_eligible': {'key': 'properties.isAzureCreditEligible', 'type': 'bool'},
-        'term': {'key': 'properties.term', 'type': 'str'},
-        'publisher_name': {'key': 'properties.publisherName', 'type': 'str'},
-        'publisher_type': {'key': 'properties.publisherType', 'type': 'str'},
-        'plan_name': {'key': 'properties.planName', 'type': 'str'},
-        'charge_type': {'key': 'properties.chargeType', 'type': 'str'},
-        'frequency': {'key': 'properties.frequency', 'type': 'str'},
-        'pay_g_price': {'key': 'properties.payGPrice', 'type': 'float'},
-        'benefit_id': {'key': 'properties.benefitId', 'type': 'str'},
-        'benefit_name': {'key': 'properties.benefitName', 'type': 'str'},
-        'pricing_model': {'key': 'properties.pricingModel', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "kind": {"key": "kind", "type": "str"},
+        "billing_account_id": {"key": "properties.billingAccountId", "type": "str"},
+        "billing_account_name": {"key": "properties.billingAccountName", "type": "str"},
+        "billing_period_start_date": {"key": "properties.billingPeriodStartDate", "type": "iso-8601"},
+        "billing_period_end_date": {"key": "properties.billingPeriodEndDate", "type": "iso-8601"},
+        "billing_profile_id": {"key": "properties.billingProfileId", "type": "str"},
+        "billing_profile_name": {"key": "properties.billingProfileName", "type": "str"},
+        "account_owner_id": {"key": "properties.accountOwnerId", "type": "str"},
+        "account_name": {"key": "properties.accountName", "type": "str"},
+        "subscription_id": {"key": "properties.subscriptionId", "type": "str"},
+        "subscription_name": {"key": "properties.subscriptionName", "type": "str"},
+        "date": {"key": "properties.date", "type": "iso-8601"},
+        "product": {"key": "properties.product", "type": "str"},
+        "part_number": {"key": "properties.partNumber", "type": "str"},
+        "meter_id": {"key": "properties.meterId", "type": "str"},
+        "meter_details": {"key": "properties.meterDetails", "type": "MeterDetailsResponse"},
+        "quantity": {"key": "properties.quantity", "type": "float"},
+        "effective_price": {"key": "properties.effectivePrice", "type": "float"},
+        "cost": {"key": "properties.cost", "type": "float"},
+        "unit_price": {"key": "properties.unitPrice", "type": "float"},
+        "billing_currency": {"key": "properties.billingCurrency", "type": "str"},
+        "resource_location": {"key": "properties.resourceLocation", "type": "str"},
+        "consumed_service": {"key": "properties.consumedService", "type": "str"},
+        "resource_id": {"key": "properties.resourceId", "type": "str"},
+        "resource_name": {"key": "properties.resourceName", "type": "str"},
+        "service_info1": {"key": "properties.serviceInfo1", "type": "str"},
+        "service_info2": {"key": "properties.serviceInfo2", "type": "str"},
+        "additional_info": {"key": "properties.additionalInfo", "type": "str"},
+        "invoice_section": {"key": "properties.invoiceSection", "type": "str"},
+        "cost_center": {"key": "properties.costCenter", "type": "str"},
+        "resource_group": {"key": "properties.resourceGroup", "type": "str"},
+        "reservation_id": {"key": "properties.reservationId", "type": "str"},
+        "reservation_name": {"key": "properties.reservationName", "type": "str"},
+        "product_order_id": {"key": "properties.productOrderId", "type": "str"},
+        "product_order_name": {"key": "properties.productOrderName", "type": "str"},
+        "offer_id": {"key": "properties.offerId", "type": "str"},
+        "is_azure_credit_eligible": {"key": "properties.isAzureCreditEligible", "type": "bool"},
+        "term": {"key": "properties.term", "type": "str"},
+        "publisher_name": {"key": "properties.publisherName", "type": "str"},
+        "publisher_type": {"key": "properties.publisherType", "type": "str"},
+        "plan_name": {"key": "properties.planName", "type": "str"},
+        "charge_type": {"key": "properties.chargeType", "type": "str"},
+        "frequency": {"key": "properties.frequency", "type": "str"},
+        "pay_g_price": {"key": "properties.payGPrice", "type": "float"},
+        "benefit_id": {"key": "properties.benefitId", "type": "str"},
+        "benefit_name": {"key": "properties.benefitName", "type": "str"},
+        "pricing_model": {"key": "properties.pricingModel", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(LegacyUsageDetail, self).__init__(**kwargs)
-        self.kind = 'legacy'  # type: str
+    def __init__(self, **kwargs):  # pylint: disable=too-many-locals
+        """ """
+        super().__init__(**kwargs)
+        self.kind: str = "legacy"
         self.billing_account_id = None
         self.billing_account_name = None
         self.billing_period_start_date = None
@@ -2609,7 +2480,7 @@ class LegacyUsageDetail(UsageDetail):
         self.pricing_model = None
 
 
-class Lots(msrest.serialization.Model):
+class Lots(_serialization.Model):
     """Result of listing lot summary.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2621,27 +2492,23 @@ class Lots(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[LotSummary]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[LotSummary]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(Lots, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class LotSummary(ProxyResource):
+class LotSummary(ProxyResource):  # pylint: disable=too-many-instance-attributes
     """A lot summary resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2660,7 +2527,7 @@ class LotSummary(ProxyResource):
     :ivar closed_balance: The balance as of the last invoice.
     :vartype closed_balance: ~azure.mgmt.consumption.models.Amount
     :ivar source: The source of the lot. Known values are: "PurchasedCredit", "PromotionalCredit",
-     "ConsumptionCommitment".
+     and "ConsumptionCommitment".
     :vartype source: str or ~azure.mgmt.consumption.models.LotSource
     :ivar start_date: The date when the lot became effective.
     :vartype start_date: ~datetime.datetime
@@ -2672,7 +2539,7 @@ class LotSummary(ProxyResource):
     :ivar purchased_date: The date when the lot was added.
     :vartype purchased_date: ~datetime.datetime
     :ivar status: The status of the lot. Known values are: "None", "Active", "Inactive", "Expired",
-     "Complete", "Canceled".
+     "Complete", and "Canceled".
     :vartype status: str or ~azure.mgmt.consumption.models.Status
     :ivar credit_currency: The currency of the lot.
     :vartype credit_currency: str
@@ -2692,58 +2559,59 @@ class LotSummary(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'original_amount': {'readonly': True},
-        'closed_balance': {'readonly': True},
-        'source': {'readonly': True},
-        'start_date': {'readonly': True},
-        'expiration_date': {'readonly': True},
-        'po_number': {'readonly': True},
-        'purchased_date': {'readonly': True},
-        'status': {'readonly': True},
-        'credit_currency': {'readonly': True},
-        'billing_currency': {'readonly': True},
-        'original_amount_in_billing_currency': {'readonly': True},
-        'closed_balance_in_billing_currency': {'readonly': True},
-        'reseller': {'readonly': True},
-        'e_tag_properties_e_tag': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "original_amount": {"readonly": True},
+        "closed_balance": {"readonly": True},
+        "source": {"readonly": True},
+        "start_date": {"readonly": True},
+        "expiration_date": {"readonly": True},
+        "po_number": {"readonly": True},
+        "purchased_date": {"readonly": True},
+        "status": {"readonly": True},
+        "credit_currency": {"readonly": True},
+        "billing_currency": {"readonly": True},
+        "original_amount_in_billing_currency": {"readonly": True},
+        "closed_balance_in_billing_currency": {"readonly": True},
+        "reseller": {"readonly": True},
+        "e_tag_properties_e_tag": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'e_tag': {'key': 'eTag', 'type': 'str'},
-        'original_amount': {'key': 'properties.originalAmount', 'type': 'Amount'},
-        'closed_balance': {'key': 'properties.closedBalance', 'type': 'Amount'},
-        'source': {'key': 'properties.source', 'type': 'str'},
-        'start_date': {'key': 'properties.startDate', 'type': 'iso-8601'},
-        'expiration_date': {'key': 'properties.expirationDate', 'type': 'iso-8601'},
-        'po_number': {'key': 'properties.poNumber', 'type': 'str'},
-        'purchased_date': {'key': 'properties.purchasedDate', 'type': 'iso-8601'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'credit_currency': {'key': 'properties.creditCurrency', 'type': 'str'},
-        'billing_currency': {'key': 'properties.billingCurrency', 'type': 'str'},
-        'original_amount_in_billing_currency': {'key': 'properties.originalAmountInBillingCurrency', 'type': 'AmountWithExchangeRate'},
-        'closed_balance_in_billing_currency': {'key': 'properties.closedBalanceInBillingCurrency', 'type': 'AmountWithExchangeRate'},
-        'reseller': {'key': 'properties.reseller', 'type': 'Reseller'},
-        'e_tag_properties_e_tag': {'key': 'properties.eTag', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "e_tag": {"key": "eTag", "type": "str"},
+        "original_amount": {"key": "properties.originalAmount", "type": "Amount"},
+        "closed_balance": {"key": "properties.closedBalance", "type": "Amount"},
+        "source": {"key": "properties.source", "type": "str"},
+        "start_date": {"key": "properties.startDate", "type": "iso-8601"},
+        "expiration_date": {"key": "properties.expirationDate", "type": "iso-8601"},
+        "po_number": {"key": "properties.poNumber", "type": "str"},
+        "purchased_date": {"key": "properties.purchasedDate", "type": "iso-8601"},
+        "status": {"key": "properties.status", "type": "str"},
+        "credit_currency": {"key": "properties.creditCurrency", "type": "str"},
+        "billing_currency": {"key": "properties.billingCurrency", "type": "str"},
+        "original_amount_in_billing_currency": {
+            "key": "properties.originalAmountInBillingCurrency",
+            "type": "AmountWithExchangeRate",
+        },
+        "closed_balance_in_billing_currency": {
+            "key": "properties.closedBalanceInBillingCurrency",
+            "type": "AmountWithExchangeRate",
+        },
+        "reseller": {"key": "properties.reseller", "type": "Reseller"},
+        "e_tag_properties_e_tag": {"key": "properties.eTag", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        e_tag: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, e_tag: Optional[str] = None, **kwargs):
         """
         :keyword e_tag: eTag of the resource. To handle concurrent update scenario, this field will be
          used to determine whether the user is updating the latest version or not.
         :paramtype e_tag: str
         """
-        super(LotSummary, self).__init__(e_tag=e_tag, **kwargs)
+        super().__init__(e_tag=e_tag, **kwargs)
         self.original_amount = None
         self.closed_balance = None
         self.source = None
@@ -2760,7 +2628,7 @@ class LotSummary(ProxyResource):
         self.e_tag_properties_e_tag = None
 
 
-class ManagementGroupAggregatedCostResult(Resource):
+class ManagementGroupAggregatedCostResult(Resource):  # pylint: disable=too-many-instance-attributes
     """A management group aggregated cost resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2773,7 +2641,7 @@ class ManagementGroupAggregatedCostResult(Resource):
     :vartype type: str
     :ivar etag: The etag for the resource.
     :vartype etag: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar billing_period_id: The id of the billing period resource that the aggregated cost belongs
      to.
@@ -2801,36 +2669,36 @@ class ManagementGroupAggregatedCostResult(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'tags': {'readonly': True},
-        'billing_period_id': {'readonly': True},
-        'usage_start': {'readonly': True},
-        'usage_end': {'readonly': True},
-        'azure_charges': {'readonly': True},
-        'marketplace_charges': {'readonly': True},
-        'charges_billed_separately': {'readonly': True},
-        'currency': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "tags": {"readonly": True},
+        "billing_period_id": {"readonly": True},
+        "usage_start": {"readonly": True},
+        "usage_end": {"readonly": True},
+        "azure_charges": {"readonly": True},
+        "marketplace_charges": {"readonly": True},
+        "charges_billed_separately": {"readonly": True},
+        "currency": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'billing_period_id': {'key': 'properties.billingPeriodId', 'type': 'str'},
-        'usage_start': {'key': 'properties.usageStart', 'type': 'iso-8601'},
-        'usage_end': {'key': 'properties.usageEnd', 'type': 'iso-8601'},
-        'azure_charges': {'key': 'properties.azureCharges', 'type': 'float'},
-        'marketplace_charges': {'key': 'properties.marketplaceCharges', 'type': 'float'},
-        'charges_billed_separately': {'key': 'properties.chargesBilledSeparately', 'type': 'float'},
-        'currency': {'key': 'properties.currency', 'type': 'str'},
-        'children': {'key': 'properties.children', 'type': '[ManagementGroupAggregatedCostResult]'},
-        'included_subscriptions': {'key': 'properties.includedSubscriptions', 'type': '[str]'},
-        'excluded_subscriptions': {'key': 'properties.excludedSubscriptions', 'type': '[str]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "billing_period_id": {"key": "properties.billingPeriodId", "type": "str"},
+        "usage_start": {"key": "properties.usageStart", "type": "iso-8601"},
+        "usage_end": {"key": "properties.usageEnd", "type": "iso-8601"},
+        "azure_charges": {"key": "properties.azureCharges", "type": "float"},
+        "marketplace_charges": {"key": "properties.marketplaceCharges", "type": "float"},
+        "charges_billed_separately": {"key": "properties.chargesBilledSeparately", "type": "float"},
+        "currency": {"key": "properties.currency", "type": "str"},
+        "children": {"key": "properties.children", "type": "[ManagementGroupAggregatedCostResult]"},
+        "included_subscriptions": {"key": "properties.includedSubscriptions", "type": "[str]"},
+        "excluded_subscriptions": {"key": "properties.excludedSubscriptions", "type": "[str]"},
     }
 
     def __init__(
@@ -2851,7 +2719,7 @@ class ManagementGroupAggregatedCostResult(Resource):
          aggregated cost.
         :paramtype excluded_subscriptions: list[str]
         """
-        super(ManagementGroupAggregatedCostResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.billing_period_id = None
         self.usage_start = None
         self.usage_end = None
@@ -2864,7 +2732,7 @@ class ManagementGroupAggregatedCostResult(Resource):
         self.excluded_subscriptions = excluded_subscriptions
 
 
-class Marketplace(Resource):
+class Marketplace(Resource):  # pylint: disable=too-many-instance-attributes
     """A marketplace resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2877,7 +2745,7 @@ class Marketplace(Resource):
     :vartype type: str
     :ivar etag: The etag for the resource.
     :vartype etag: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar billing_period_id: The id of the billing period resource that the usage belongs to.
     :vartype billing_period_id: str
@@ -2936,80 +2804,76 @@ class Marketplace(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'tags': {'readonly': True},
-        'billing_period_id': {'readonly': True},
-        'usage_start': {'readonly': True},
-        'usage_end': {'readonly': True},
-        'resource_rate': {'readonly': True},
-        'offer_name': {'readonly': True},
-        'resource_group': {'readonly': True},
-        'additional_info': {'readonly': True},
-        'order_number': {'readonly': True},
-        'instance_name': {'readonly': True},
-        'instance_id': {'readonly': True},
-        'currency': {'readonly': True},
-        'consumed_quantity': {'readonly': True},
-        'unit_of_measure': {'readonly': True},
-        'pretax_cost': {'readonly': True},
-        'is_estimated': {'readonly': True},
-        'meter_id': {'readonly': True},
-        'subscription_guid': {'readonly': True},
-        'subscription_name': {'readonly': True},
-        'account_name': {'readonly': True},
-        'department_name': {'readonly': True},
-        'consumed_service': {'readonly': True},
-        'cost_center': {'readonly': True},
-        'additional_properties': {'readonly': True},
-        'publisher_name': {'readonly': True},
-        'plan_name': {'readonly': True},
-        'is_recurring_charge': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "tags": {"readonly": True},
+        "billing_period_id": {"readonly": True},
+        "usage_start": {"readonly": True},
+        "usage_end": {"readonly": True},
+        "resource_rate": {"readonly": True},
+        "offer_name": {"readonly": True},
+        "resource_group": {"readonly": True},
+        "additional_info": {"readonly": True},
+        "order_number": {"readonly": True},
+        "instance_name": {"readonly": True},
+        "instance_id": {"readonly": True},
+        "currency": {"readonly": True},
+        "consumed_quantity": {"readonly": True},
+        "unit_of_measure": {"readonly": True},
+        "pretax_cost": {"readonly": True},
+        "is_estimated": {"readonly": True},
+        "meter_id": {"readonly": True},
+        "subscription_guid": {"readonly": True},
+        "subscription_name": {"readonly": True},
+        "account_name": {"readonly": True},
+        "department_name": {"readonly": True},
+        "consumed_service": {"readonly": True},
+        "cost_center": {"readonly": True},
+        "additional_properties": {"readonly": True},
+        "publisher_name": {"readonly": True},
+        "plan_name": {"readonly": True},
+        "is_recurring_charge": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'billing_period_id': {'key': 'properties.billingPeriodId', 'type': 'str'},
-        'usage_start': {'key': 'properties.usageStart', 'type': 'iso-8601'},
-        'usage_end': {'key': 'properties.usageEnd', 'type': 'iso-8601'},
-        'resource_rate': {'key': 'properties.resourceRate', 'type': 'float'},
-        'offer_name': {'key': 'properties.offerName', 'type': 'str'},
-        'resource_group': {'key': 'properties.resourceGroup', 'type': 'str'},
-        'additional_info': {'key': 'properties.additionalInfo', 'type': 'str'},
-        'order_number': {'key': 'properties.orderNumber', 'type': 'str'},
-        'instance_name': {'key': 'properties.instanceName', 'type': 'str'},
-        'instance_id': {'key': 'properties.instanceId', 'type': 'str'},
-        'currency': {'key': 'properties.currency', 'type': 'str'},
-        'consumed_quantity': {'key': 'properties.consumedQuantity', 'type': 'float'},
-        'unit_of_measure': {'key': 'properties.unitOfMeasure', 'type': 'str'},
-        'pretax_cost': {'key': 'properties.pretaxCost', 'type': 'float'},
-        'is_estimated': {'key': 'properties.isEstimated', 'type': 'bool'},
-        'meter_id': {'key': 'properties.meterId', 'type': 'str'},
-        'subscription_guid': {'key': 'properties.subscriptionGuid', 'type': 'str'},
-        'subscription_name': {'key': 'properties.subscriptionName', 'type': 'str'},
-        'account_name': {'key': 'properties.accountName', 'type': 'str'},
-        'department_name': {'key': 'properties.departmentName', 'type': 'str'},
-        'consumed_service': {'key': 'properties.consumedService', 'type': 'str'},
-        'cost_center': {'key': 'properties.costCenter', 'type': 'str'},
-        'additional_properties': {'key': 'properties.additionalProperties', 'type': 'str'},
-        'publisher_name': {'key': 'properties.publisherName', 'type': 'str'},
-        'plan_name': {'key': 'properties.planName', 'type': 'str'},
-        'is_recurring_charge': {'key': 'properties.isRecurringCharge', 'type': 'bool'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "billing_period_id": {"key": "properties.billingPeriodId", "type": "str"},
+        "usage_start": {"key": "properties.usageStart", "type": "iso-8601"},
+        "usage_end": {"key": "properties.usageEnd", "type": "iso-8601"},
+        "resource_rate": {"key": "properties.resourceRate", "type": "float"},
+        "offer_name": {"key": "properties.offerName", "type": "str"},
+        "resource_group": {"key": "properties.resourceGroup", "type": "str"},
+        "additional_info": {"key": "properties.additionalInfo", "type": "str"},
+        "order_number": {"key": "properties.orderNumber", "type": "str"},
+        "instance_name": {"key": "properties.instanceName", "type": "str"},
+        "instance_id": {"key": "properties.instanceId", "type": "str"},
+        "currency": {"key": "properties.currency", "type": "str"},
+        "consumed_quantity": {"key": "properties.consumedQuantity", "type": "float"},
+        "unit_of_measure": {"key": "properties.unitOfMeasure", "type": "str"},
+        "pretax_cost": {"key": "properties.pretaxCost", "type": "float"},
+        "is_estimated": {"key": "properties.isEstimated", "type": "bool"},
+        "meter_id": {"key": "properties.meterId", "type": "str"},
+        "subscription_guid": {"key": "properties.subscriptionGuid", "type": "str"},
+        "subscription_name": {"key": "properties.subscriptionName", "type": "str"},
+        "account_name": {"key": "properties.accountName", "type": "str"},
+        "department_name": {"key": "properties.departmentName", "type": "str"},
+        "consumed_service": {"key": "properties.consumedService", "type": "str"},
+        "cost_center": {"key": "properties.costCenter", "type": "str"},
+        "additional_properties": {"key": "properties.additionalProperties", "type": "str"},
+        "publisher_name": {"key": "properties.publisherName", "type": "str"},
+        "plan_name": {"key": "properties.planName", "type": "str"},
+        "is_recurring_charge": {"key": "properties.isRecurringCharge", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(Marketplace, self).__init__(**kwargs)
+    def __init__(self, **kwargs):  # pylint: disable=too-many-locals
+        """ """
+        super().__init__(**kwargs)
         self.billing_period_id = None
         self.usage_start = None
         self.usage_end = None
@@ -3038,7 +2902,7 @@ class Marketplace(Resource):
         self.is_recurring_charge = None
 
 
-class MarketplacesListResult(msrest.serialization.Model):
+class MarketplacesListResult(_serialization.Model):
     """Result of listing marketplaces. It contains a list of available marketplaces in reverse chronological order by billing period.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3050,27 +2914,23 @@ class MarketplacesListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Marketplace]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Marketplace]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(MarketplacesListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class MeterDetails(msrest.serialization.Model):
+class MeterDetails(_serialization.Model):
     """The properties of the meter detail.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3099,36 +2959,32 @@ class MeterDetails(msrest.serialization.Model):
     """
 
     _validation = {
-        'meter_name': {'readonly': True},
-        'meter_category': {'readonly': True},
-        'meter_sub_category': {'readonly': True},
-        'unit': {'readonly': True},
-        'meter_location': {'readonly': True},
-        'total_included_quantity': {'readonly': True},
-        'pretax_standard_rate': {'readonly': True},
-        'service_name': {'readonly': True},
-        'service_tier': {'readonly': True},
+        "meter_name": {"readonly": True},
+        "meter_category": {"readonly": True},
+        "meter_sub_category": {"readonly": True},
+        "unit": {"readonly": True},
+        "meter_location": {"readonly": True},
+        "total_included_quantity": {"readonly": True},
+        "pretax_standard_rate": {"readonly": True},
+        "service_name": {"readonly": True},
+        "service_tier": {"readonly": True},
     }
 
     _attribute_map = {
-        'meter_name': {'key': 'meterName', 'type': 'str'},
-        'meter_category': {'key': 'meterCategory', 'type': 'str'},
-        'meter_sub_category': {'key': 'meterSubCategory', 'type': 'str'},
-        'unit': {'key': 'unit', 'type': 'str'},
-        'meter_location': {'key': 'meterLocation', 'type': 'str'},
-        'total_included_quantity': {'key': 'totalIncludedQuantity', 'type': 'float'},
-        'pretax_standard_rate': {'key': 'pretaxStandardRate', 'type': 'float'},
-        'service_name': {'key': 'serviceName', 'type': 'str'},
-        'service_tier': {'key': 'serviceTier', 'type': 'str'},
+        "meter_name": {"key": "meterName", "type": "str"},
+        "meter_category": {"key": "meterCategory", "type": "str"},
+        "meter_sub_category": {"key": "meterSubCategory", "type": "str"},
+        "unit": {"key": "unit", "type": "str"},
+        "meter_location": {"key": "meterLocation", "type": "str"},
+        "total_included_quantity": {"key": "totalIncludedQuantity", "type": "float"},
+        "pretax_standard_rate": {"key": "pretaxStandardRate", "type": "float"},
+        "service_name": {"key": "serviceName", "type": "str"},
+        "service_tier": {"key": "serviceTier", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(MeterDetails, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.meter_name = None
         self.meter_category = None
         self.meter_sub_category = None
@@ -3140,7 +2996,7 @@ class MeterDetails(msrest.serialization.Model):
         self.service_tier = None
 
 
-class MeterDetailsResponse(msrest.serialization.Model):
+class MeterDetailsResponse(_serialization.Model):
     """The properties of the meter detail.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3161,28 +3017,24 @@ class MeterDetailsResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        'meter_name': {'readonly': True},
-        'meter_category': {'readonly': True},
-        'meter_sub_category': {'readonly': True},
-        'unit_of_measure': {'readonly': True},
-        'service_family': {'readonly': True},
+        "meter_name": {"readonly": True},
+        "meter_category": {"readonly": True},
+        "meter_sub_category": {"readonly": True},
+        "unit_of_measure": {"readonly": True},
+        "service_family": {"readonly": True},
     }
 
     _attribute_map = {
-        'meter_name': {'key': 'meterName', 'type': 'str'},
-        'meter_category': {'key': 'meterCategory', 'type': 'str'},
-        'meter_sub_category': {'key': 'meterSubCategory', 'type': 'str'},
-        'unit_of_measure': {'key': 'unitOfMeasure', 'type': 'str'},
-        'service_family': {'key': 'serviceFamily', 'type': 'str'},
+        "meter_name": {"key": "meterName", "type": "str"},
+        "meter_category": {"key": "meterCategory", "type": "str"},
+        "meter_sub_category": {"key": "meterSubCategory", "type": "str"},
+        "unit_of_measure": {"key": "unitOfMeasure", "type": "str"},
+        "service_family": {"key": "serviceFamily", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(MeterDetailsResponse, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.meter_name = None
         self.meter_category = None
         self.meter_sub_category = None
@@ -3190,24 +3042,25 @@ class MeterDetailsResponse(msrest.serialization.Model):
         self.service_family = None
 
 
-class ModernChargeSummary(ChargeSummary):
+class ModernChargeSummary(ChargeSummary):  # pylint: disable=too-many-instance-attributes
     """Modern charge summary.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Resource Id.
+    :ivar id: The full qualified ARM ID of an event.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The ID that uniquely identifies an event.
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar e_tag: eTag of the resource. To handle concurrent update scenario, this field will be
-     used to determine whether the user is updating the latest version or not.
-    :vartype e_tag: str
-    :ivar kind: Required. Specifies the kind of charge summary.Constant filled by server. Known
-     values are: "legacy", "modern".
+    :ivar etag: The etag for the resource.
+    :vartype etag: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar kind: Specifies the kind of charge summary. Required. Known values are: "legacy" and
+     "modern".
     :vartype kind: str or ~azure.mgmt.consumption.models.ChargeSummaryKind
     :ivar billing_period_id: The id of the billing period resource that the charge belongs to.
     :vartype billing_period_id: str
@@ -3234,55 +3087,49 @@ class ModernChargeSummary(ChargeSummary):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'kind': {'required': True},
-        'billing_period_id': {'readonly': True},
-        'usage_start': {'readonly': True},
-        'usage_end': {'readonly': True},
-        'azure_charges': {'readonly': True},
-        'charges_billed_separately': {'readonly': True},
-        'marketplace_charges': {'readonly': True},
-        'billing_account_id': {'readonly': True},
-        'billing_profile_id': {'readonly': True},
-        'invoice_section_id': {'readonly': True},
-        'customer_id': {'readonly': True},
-        'is_invoiced': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "tags": {"readonly": True},
+        "kind": {"required": True},
+        "billing_period_id": {"readonly": True},
+        "usage_start": {"readonly": True},
+        "usage_end": {"readonly": True},
+        "azure_charges": {"readonly": True},
+        "charges_billed_separately": {"readonly": True},
+        "marketplace_charges": {"readonly": True},
+        "billing_account_id": {"readonly": True},
+        "billing_profile_id": {"readonly": True},
+        "invoice_section_id": {"readonly": True},
+        "customer_id": {"readonly": True},
+        "is_invoiced": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'e_tag': {'key': 'eTag', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'billing_period_id': {'key': 'properties.billingPeriodId', 'type': 'str'},
-        'usage_start': {'key': 'properties.usageStart', 'type': 'str'},
-        'usage_end': {'key': 'properties.usageEnd', 'type': 'str'},
-        'azure_charges': {'key': 'properties.azureCharges', 'type': 'Amount'},
-        'charges_billed_separately': {'key': 'properties.chargesBilledSeparately', 'type': 'Amount'},
-        'marketplace_charges': {'key': 'properties.marketplaceCharges', 'type': 'Amount'},
-        'billing_account_id': {'key': 'properties.billingAccountId', 'type': 'str'},
-        'billing_profile_id': {'key': 'properties.billingProfileId', 'type': 'str'},
-        'invoice_section_id': {'key': 'properties.invoiceSectionId', 'type': 'str'},
-        'customer_id': {'key': 'properties.customerId', 'type': 'str'},
-        'is_invoiced': {'key': 'properties.isInvoiced', 'type': 'bool'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "kind": {"key": "kind", "type": "str"},
+        "billing_period_id": {"key": "properties.billingPeriodId", "type": "str"},
+        "usage_start": {"key": "properties.usageStart", "type": "str"},
+        "usage_end": {"key": "properties.usageEnd", "type": "str"},
+        "azure_charges": {"key": "properties.azureCharges", "type": "Amount"},
+        "charges_billed_separately": {"key": "properties.chargesBilledSeparately", "type": "Amount"},
+        "marketplace_charges": {"key": "properties.marketplaceCharges", "type": "Amount"},
+        "billing_account_id": {"key": "properties.billingAccountId", "type": "str"},
+        "billing_profile_id": {"key": "properties.billingProfileId", "type": "str"},
+        "invoice_section_id": {"key": "properties.invoiceSectionId", "type": "str"},
+        "customer_id": {"key": "properties.customerId", "type": "str"},
+        "is_invoiced": {"key": "properties.isInvoiced", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        e_tag: Optional[str] = None,
-        **kwargs
-    ):
-        """
-        :keyword e_tag: eTag of the resource. To handle concurrent update scenario, this field will be
-         used to determine whether the user is updating the latest version or not.
-        :paramtype e_tag: str
-        """
-        super(ModernChargeSummary, self).__init__(e_tag=e_tag, **kwargs)
-        self.kind = 'modern'  # type: str
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.kind: str = "modern"
         self.billing_period_id = None
         self.usage_start = None
         self.usage_end = None
@@ -3296,7 +3143,7 @@ class ModernChargeSummary(ChargeSummary):
         self.is_invoiced = None
 
 
-class ModernReservationRecommendation(ReservationRecommendation):
+class ModernReservationRecommendation(ReservationRecommendation):  # pylint: disable=too-many-instance-attributes
     """Modern reservation recommendation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3315,10 +3162,10 @@ class ModernReservationRecommendation(ReservationRecommendation):
     :vartype type: str
     :ivar etag: The etag for the resource.
     :vartype etag: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar kind: Required. Specifies the kind of reservation recommendation.Constant filled by
-     server. Known values are: "legacy", "modern".
+    :ivar kind: Specifies the kind of reservation recommendation. Required. Known values are:
+     "legacy" and "modern".
     :vartype kind: str or ~azure.mgmt.consumption.models.ReservationRecommendationKind
     :ivar location_properties_location: Resource Location.
     :vartype location_properties_location: str
@@ -3340,13 +3187,15 @@ class ModernReservationRecommendation(ReservationRecommendation):
     :vartype cost_with_no_reserved_instances: ~azure.mgmt.consumption.models.Amount
     :ivar recommended_quantity: Recommended quality for reserved instances.
     :vartype recommended_quantity: float
+    :ivar resource_type: Resource type.
+    :vartype resource_type: str
     :ivar total_cost_with_reserved_instances: The total amount of cost with reserved instances.
     :vartype total_cost_with_reserved_instances: ~azure.mgmt.consumption.models.Amount
     :ivar net_savings: Total estimated savings with reserved instances.
     :vartype net_savings: ~azure.mgmt.consumption.models.Amount
     :ivar first_usage_date: The usage date for looking back.
     :vartype first_usage_date: ~datetime.datetime
-    :ivar scope: Shared or single recommendation.
+    :ivar scope: Shared or single recommendation. Required.
     :vartype scope: str
     :ivar sku_properties: List of sku properties.
     :vartype sku_properties: list[~azure.mgmt.consumption.models.SkuProperty]
@@ -3355,67 +3204,65 @@ class ModernReservationRecommendation(ReservationRecommendation):
     """
 
     _validation = {
-        'location': {'readonly': True},
-        'sku': {'readonly': True},
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'tags': {'readonly': True},
-        'kind': {'required': True},
-        'location_properties_location': {'readonly': True},
-        'look_back_period': {'readonly': True},
-        'instance_flexibility_ratio': {'readonly': True},
-        'instance_flexibility_group': {'readonly': True},
-        'normalized_size': {'readonly': True},
-        'recommended_quantity_normalized': {'readonly': True},
-        'meter_id': {'readonly': True},
-        'term': {'readonly': True},
-        'cost_with_no_reserved_instances': {'readonly': True},
-        'recommended_quantity': {'readonly': True},
-        'total_cost_with_reserved_instances': {'readonly': True},
-        'net_savings': {'readonly': True},
-        'first_usage_date': {'readonly': True},
-        'scope': {'readonly': True},
-        'sku_properties': {'readonly': True},
-        'sku_name': {'readonly': True},
+        "location": {"readonly": True},
+        "sku": {"readonly": True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "tags": {"readonly": True},
+        "kind": {"required": True},
+        "location_properties_location": {"readonly": True},
+        "look_back_period": {"readonly": True},
+        "instance_flexibility_ratio": {"readonly": True},
+        "instance_flexibility_group": {"readonly": True},
+        "normalized_size": {"readonly": True},
+        "recommended_quantity_normalized": {"readonly": True},
+        "meter_id": {"readonly": True},
+        "term": {"readonly": True},
+        "cost_with_no_reserved_instances": {"readonly": True},
+        "recommended_quantity": {"readonly": True},
+        "resource_type": {"readonly": True},
+        "total_cost_with_reserved_instances": {"readonly": True},
+        "net_savings": {"readonly": True},
+        "first_usage_date": {"readonly": True},
+        "scope": {"required": True},
+        "sku_properties": {"readonly": True},
+        "sku_name": {"readonly": True},
     }
 
     _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'location_properties_location': {'key': 'properties.location', 'type': 'str'},
-        'look_back_period': {'key': 'properties.lookBackPeriod', 'type': 'int'},
-        'instance_flexibility_ratio': {'key': 'properties.instanceFlexibilityRatio', 'type': 'float'},
-        'instance_flexibility_group': {'key': 'properties.instanceFlexibilityGroup', 'type': 'str'},
-        'normalized_size': {'key': 'properties.normalizedSize', 'type': 'str'},
-        'recommended_quantity_normalized': {'key': 'properties.recommendedQuantityNormalized', 'type': 'float'},
-        'meter_id': {'key': 'properties.meterId', 'type': 'str'},
-        'term': {'key': 'properties.term', 'type': 'str'},
-        'cost_with_no_reserved_instances': {'key': 'properties.costWithNoReservedInstances', 'type': 'Amount'},
-        'recommended_quantity': {'key': 'properties.recommendedQuantity', 'type': 'float'},
-        'total_cost_with_reserved_instances': {'key': 'properties.totalCostWithReservedInstances', 'type': 'Amount'},
-        'net_savings': {'key': 'properties.netSavings', 'type': 'Amount'},
-        'first_usage_date': {'key': 'properties.firstUsageDate', 'type': 'iso-8601'},
-        'scope': {'key': 'properties.scope', 'type': 'str'},
-        'sku_properties': {'key': 'properties.skuProperties', 'type': '[SkuProperty]'},
-        'sku_name': {'key': 'properties.skuName', 'type': 'str'},
+        "location": {"key": "location", "type": "str"},
+        "sku": {"key": "sku", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "kind": {"key": "kind", "type": "str"},
+        "location_properties_location": {"key": "properties.location", "type": "str"},
+        "look_back_period": {"key": "properties.lookBackPeriod", "type": "int"},
+        "instance_flexibility_ratio": {"key": "properties.instanceFlexibilityRatio", "type": "float"},
+        "instance_flexibility_group": {"key": "properties.instanceFlexibilityGroup", "type": "str"},
+        "normalized_size": {"key": "properties.normalizedSize", "type": "str"},
+        "recommended_quantity_normalized": {"key": "properties.recommendedQuantityNormalized", "type": "float"},
+        "meter_id": {"key": "properties.meterId", "type": "str"},
+        "term": {"key": "properties.term", "type": "str"},
+        "cost_with_no_reserved_instances": {"key": "properties.costWithNoReservedInstances", "type": "Amount"},
+        "recommended_quantity": {"key": "properties.recommendedQuantity", "type": "float"},
+        "resource_type": {"key": "properties.resourceType", "type": "str"},
+        "total_cost_with_reserved_instances": {"key": "properties.totalCostWithReservedInstances", "type": "Amount"},
+        "net_savings": {"key": "properties.netSavings", "type": "Amount"},
+        "first_usage_date": {"key": "properties.firstUsageDate", "type": "iso-8601"},
+        "scope": {"key": "properties.scope", "type": "str"},
+        "sku_properties": {"key": "properties.skuProperties", "type": "[SkuProperty]"},
+        "sku_name": {"key": "properties.skuName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ModernReservationRecommendation, self).__init__(**kwargs)
-        self.kind = 'modern'  # type: str
+    def __init__(self, **kwargs):  # pylint: disable=too-many-locals
+        """ """
+        super().__init__(**kwargs)
+        self.kind: str = "modern"
         self.location_properties_location = None
         self.look_back_period = None
         self.instance_flexibility_ratio = None
@@ -3426,15 +3273,132 @@ class ModernReservationRecommendation(ReservationRecommendation):
         self.term = None
         self.cost_with_no_reserved_instances = None
         self.recommended_quantity = None
+        self.resource_type = None
         self.total_cost_with_reserved_instances = None
         self.net_savings = None
         self.first_usage_date = None
-        self.scope = None
+        self.scope: str = "modern"
         self.sku_properties = None
         self.sku_name = None
 
 
-class ModernReservationTransaction(ReservationTransactionResource):
+class ModernReservationRecommendationProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+    """The properties of the reservation recommendation.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ModernSharedScopeReservationRecommendationProperties,
+    ModernSingleScopeReservationRecommendationProperties
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar location: Resource Location.
+    :vartype location: str
+    :ivar look_back_period: The number of days of usage to look back for recommendation.
+    :vartype look_back_period: int
+    :ivar instance_flexibility_ratio: The instance Flexibility Ratio.
+    :vartype instance_flexibility_ratio: float
+    :ivar instance_flexibility_group: The instance Flexibility Group.
+    :vartype instance_flexibility_group: str
+    :ivar normalized_size: The normalized Size.
+    :vartype normalized_size: str
+    :ivar recommended_quantity_normalized: The recommended Quantity Normalized.
+    :vartype recommended_quantity_normalized: float
+    :ivar meter_id: The meter id (GUID).
+    :vartype meter_id: str
+    :ivar term: RI recommendations in one or three year terms.
+    :vartype term: str
+    :ivar cost_with_no_reserved_instances: The total amount of cost without reserved instances.
+    :vartype cost_with_no_reserved_instances: ~azure.mgmt.consumption.models.Amount
+    :ivar recommended_quantity: Recommended quality for reserved instances.
+    :vartype recommended_quantity: float
+    :ivar resource_type: Resource type.
+    :vartype resource_type: str
+    :ivar total_cost_with_reserved_instances: The total amount of cost with reserved instances.
+    :vartype total_cost_with_reserved_instances: ~azure.mgmt.consumption.models.Amount
+    :ivar net_savings: Total estimated savings with reserved instances.
+    :vartype net_savings: ~azure.mgmt.consumption.models.Amount
+    :ivar first_usage_date: The usage date for looking back.
+    :vartype first_usage_date: ~datetime.datetime
+    :ivar scope: Shared or single recommendation. Required.
+    :vartype scope: str
+    :ivar sku_properties: List of sku properties.
+    :vartype sku_properties: list[~azure.mgmt.consumption.models.SkuProperty]
+    :ivar sku_name: This is the ARM Sku name.
+    :vartype sku_name: str
+    """
+
+    _validation = {
+        "location": {"readonly": True},
+        "look_back_period": {"readonly": True},
+        "instance_flexibility_ratio": {"readonly": True},
+        "instance_flexibility_group": {"readonly": True},
+        "normalized_size": {"readonly": True},
+        "recommended_quantity_normalized": {"readonly": True},
+        "meter_id": {"readonly": True},
+        "term": {"readonly": True},
+        "cost_with_no_reserved_instances": {"readonly": True},
+        "recommended_quantity": {"readonly": True},
+        "resource_type": {"readonly": True},
+        "total_cost_with_reserved_instances": {"readonly": True},
+        "net_savings": {"readonly": True},
+        "first_usage_date": {"readonly": True},
+        "scope": {"required": True},
+        "sku_properties": {"readonly": True},
+        "sku_name": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "location": {"key": "location", "type": "str"},
+        "look_back_period": {"key": "lookBackPeriod", "type": "int"},
+        "instance_flexibility_ratio": {"key": "instanceFlexibilityRatio", "type": "float"},
+        "instance_flexibility_group": {"key": "instanceFlexibilityGroup", "type": "str"},
+        "normalized_size": {"key": "normalizedSize", "type": "str"},
+        "recommended_quantity_normalized": {"key": "recommendedQuantityNormalized", "type": "float"},
+        "meter_id": {"key": "meterId", "type": "str"},
+        "term": {"key": "term", "type": "str"},
+        "cost_with_no_reserved_instances": {"key": "costWithNoReservedInstances", "type": "Amount"},
+        "recommended_quantity": {"key": "recommendedQuantity", "type": "float"},
+        "resource_type": {"key": "resourceType", "type": "str"},
+        "total_cost_with_reserved_instances": {"key": "totalCostWithReservedInstances", "type": "Amount"},
+        "net_savings": {"key": "netSavings", "type": "Amount"},
+        "first_usage_date": {"key": "firstUsageDate", "type": "iso-8601"},
+        "scope": {"key": "scope", "type": "str"},
+        "sku_properties": {"key": "skuProperties", "type": "[SkuProperty]"},
+        "sku_name": {"key": "skuName", "type": "str"},
+    }
+
+    _subtype_map = {
+        "scope": {
+            "Shared": "ModernSharedScopeReservationRecommendationProperties",
+            "Single": "ModernSingleScopeReservationRecommendationProperties",
+        }
+    }
+
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.location = None
+        self.look_back_period = None
+        self.instance_flexibility_ratio = None
+        self.instance_flexibility_group = None
+        self.normalized_size = None
+        self.recommended_quantity_normalized = None
+        self.meter_id = None
+        self.term = None
+        self.cost_with_no_reserved_instances = None
+        self.recommended_quantity = None
+        self.resource_type = None
+        self.total_cost_with_reserved_instances = None
+        self.net_savings = None
+        self.first_usage_date = None
+        self.scope: Optional[str] = None
+        self.sku_properties = None
+        self.sku_name = None
+
+
+class ModernReservationTransaction(ReservationTransactionResource):  # pylint: disable=too-many-instance-attributes
     """Modern Reservation transaction resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3445,7 +3409,7 @@ class ModernReservationTransaction(ReservationTransactionResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: list[str]
     :ivar amount: The charge of the transaction.
     :vartype amount: float
@@ -3464,7 +3428,7 @@ class ModernReservationTransaction(ReservationTransactionResource):
     :vartype description: str
     :ivar event_date: The date of the transaction.
     :vartype event_date: ~datetime.datetime
-    :ivar event_type: The type of the transaction (Purchase, Cancel, etc.).
+    :ivar event_type: The type of the transaction (Purchase, Cancel or Refund).
     :vartype event_type: str
     :ivar invoice: Invoice Number.
     :vartype invoice: str
@@ -3494,66 +3458,62 @@ class ModernReservationTransaction(ReservationTransactionResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'tags': {'readonly': True},
-        'amount': {'readonly': True},
-        'arm_sku_name': {'readonly': True},
-        'billing_frequency': {'readonly': True},
-        'billing_profile_id': {'readonly': True},
-        'billing_profile_name': {'readonly': True},
-        'currency': {'readonly': True},
-        'description': {'readonly': True},
-        'event_date': {'readonly': True},
-        'event_type': {'readonly': True},
-        'invoice': {'readonly': True},
-        'invoice_id': {'readonly': True},
-        'invoice_section_id': {'readonly': True},
-        'invoice_section_name': {'readonly': True},
-        'purchasing_subscription_guid': {'readonly': True},
-        'purchasing_subscription_name': {'readonly': True},
-        'quantity': {'readonly': True},
-        'region': {'readonly': True},
-        'reservation_order_id': {'readonly': True},
-        'reservation_order_name': {'readonly': True},
-        'term': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "tags": {"readonly": True},
+        "amount": {"readonly": True},
+        "arm_sku_name": {"readonly": True},
+        "billing_frequency": {"readonly": True},
+        "billing_profile_id": {"readonly": True},
+        "billing_profile_name": {"readonly": True},
+        "currency": {"readonly": True},
+        "description": {"readonly": True},
+        "event_date": {"readonly": True},
+        "event_type": {"readonly": True},
+        "invoice": {"readonly": True},
+        "invoice_id": {"readonly": True},
+        "invoice_section_id": {"readonly": True},
+        "invoice_section_name": {"readonly": True},
+        "purchasing_subscription_guid": {"readonly": True},
+        "purchasing_subscription_name": {"readonly": True},
+        "quantity": {"readonly": True},
+        "region": {"readonly": True},
+        "reservation_order_id": {"readonly": True},
+        "reservation_order_name": {"readonly": True},
+        "term": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '[str]'},
-        'amount': {'key': 'properties.amount', 'type': 'float'},
-        'arm_sku_name': {'key': 'properties.armSkuName', 'type': 'str'},
-        'billing_frequency': {'key': 'properties.billingFrequency', 'type': 'str'},
-        'billing_profile_id': {'key': 'properties.billingProfileId', 'type': 'str'},
-        'billing_profile_name': {'key': 'properties.billingProfileName', 'type': 'str'},
-        'currency': {'key': 'properties.currency', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'event_date': {'key': 'properties.eventDate', 'type': 'iso-8601'},
-        'event_type': {'key': 'properties.eventType', 'type': 'str'},
-        'invoice': {'key': 'properties.invoice', 'type': 'str'},
-        'invoice_id': {'key': 'properties.invoiceId', 'type': 'str'},
-        'invoice_section_id': {'key': 'properties.invoiceSectionId', 'type': 'str'},
-        'invoice_section_name': {'key': 'properties.invoiceSectionName', 'type': 'str'},
-        'purchasing_subscription_guid': {'key': 'properties.purchasingSubscriptionGuid', 'type': 'str'},
-        'purchasing_subscription_name': {'key': 'properties.purchasingSubscriptionName', 'type': 'str'},
-        'quantity': {'key': 'properties.quantity', 'type': 'float'},
-        'region': {'key': 'properties.region', 'type': 'str'},
-        'reservation_order_id': {'key': 'properties.reservationOrderId', 'type': 'str'},
-        'reservation_order_name': {'key': 'properties.reservationOrderName', 'type': 'str'},
-        'term': {'key': 'properties.term', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "[str]"},
+        "amount": {"key": "properties.amount", "type": "float"},
+        "arm_sku_name": {"key": "properties.armSkuName", "type": "str"},
+        "billing_frequency": {"key": "properties.billingFrequency", "type": "str"},
+        "billing_profile_id": {"key": "properties.billingProfileId", "type": "str"},
+        "billing_profile_name": {"key": "properties.billingProfileName", "type": "str"},
+        "currency": {"key": "properties.currency", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "event_date": {"key": "properties.eventDate", "type": "iso-8601"},
+        "event_type": {"key": "properties.eventType", "type": "str"},
+        "invoice": {"key": "properties.invoice", "type": "str"},
+        "invoice_id": {"key": "properties.invoiceId", "type": "str"},
+        "invoice_section_id": {"key": "properties.invoiceSectionId", "type": "str"},
+        "invoice_section_name": {"key": "properties.invoiceSectionName", "type": "str"},
+        "purchasing_subscription_guid": {"key": "properties.purchasingSubscriptionGuid", "type": "str"},
+        "purchasing_subscription_name": {"key": "properties.purchasingSubscriptionName", "type": "str"},
+        "quantity": {"key": "properties.quantity", "type": "float"},
+        "region": {"key": "properties.region", "type": "str"},
+        "reservation_order_id": {"key": "properties.reservationOrderId", "type": "str"},
+        "reservation_order_name": {"key": "properties.reservationOrderName", "type": "str"},
+        "term": {"key": "properties.term", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ModernReservationTransaction, self).__init__(**kwargs)
+    def __init__(self, **kwargs):  # pylint: disable=too-many-locals
+        """ """
+        super().__init__(**kwargs)
         self.amount = None
         self.arm_sku_name = None
         self.billing_frequency = None
@@ -3576,7 +3536,7 @@ class ModernReservationTransaction(ReservationTransactionResource):
         self.term = None
 
 
-class ModernReservationTransactionsListResult(msrest.serialization.Model):
+class ModernReservationTransactionsListResult(_serialization.Model):
     """Result of listing reservation recommendations.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3588,27 +3548,210 @@ class ModernReservationTransactionsListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ModernReservationTransaction]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ModernReservationTransaction]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ModernReservationTransactionsListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class ModernUsageDetail(UsageDetail):
+class ModernSharedScopeReservationRecommendationProperties(
+    ModernReservationRecommendationProperties
+):  # pylint: disable=too-many-instance-attributes
+    """The properties of the modern reservation recommendation for shared scope.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar location: Resource Location.
+    :vartype location: str
+    :ivar look_back_period: The number of days of usage to look back for recommendation.
+    :vartype look_back_period: int
+    :ivar instance_flexibility_ratio: The instance Flexibility Ratio.
+    :vartype instance_flexibility_ratio: float
+    :ivar instance_flexibility_group: The instance Flexibility Group.
+    :vartype instance_flexibility_group: str
+    :ivar normalized_size: The normalized Size.
+    :vartype normalized_size: str
+    :ivar recommended_quantity_normalized: The recommended Quantity Normalized.
+    :vartype recommended_quantity_normalized: float
+    :ivar meter_id: The meter id (GUID).
+    :vartype meter_id: str
+    :ivar term: RI recommendations in one or three year terms.
+    :vartype term: str
+    :ivar cost_with_no_reserved_instances: The total amount of cost without reserved instances.
+    :vartype cost_with_no_reserved_instances: ~azure.mgmt.consumption.models.Amount
+    :ivar recommended_quantity: Recommended quality for reserved instances.
+    :vartype recommended_quantity: float
+    :ivar resource_type: Resource type.
+    :vartype resource_type: str
+    :ivar total_cost_with_reserved_instances: The total amount of cost with reserved instances.
+    :vartype total_cost_with_reserved_instances: ~azure.mgmt.consumption.models.Amount
+    :ivar net_savings: Total estimated savings with reserved instances.
+    :vartype net_savings: ~azure.mgmt.consumption.models.Amount
+    :ivar first_usage_date: The usage date for looking back.
+    :vartype first_usage_date: ~datetime.datetime
+    :ivar scope: Shared or single recommendation. Required.
+    :vartype scope: str
+    :ivar sku_properties: List of sku properties.
+    :vartype sku_properties: list[~azure.mgmt.consumption.models.SkuProperty]
+    :ivar sku_name: This is the ARM Sku name.
+    :vartype sku_name: str
+    """
+
+    _validation = {
+        "location": {"readonly": True},
+        "look_back_period": {"readonly": True},
+        "instance_flexibility_ratio": {"readonly": True},
+        "instance_flexibility_group": {"readonly": True},
+        "normalized_size": {"readonly": True},
+        "recommended_quantity_normalized": {"readonly": True},
+        "meter_id": {"readonly": True},
+        "term": {"readonly": True},
+        "cost_with_no_reserved_instances": {"readonly": True},
+        "recommended_quantity": {"readonly": True},
+        "resource_type": {"readonly": True},
+        "total_cost_with_reserved_instances": {"readonly": True},
+        "net_savings": {"readonly": True},
+        "first_usage_date": {"readonly": True},
+        "scope": {"required": True},
+        "sku_properties": {"readonly": True},
+        "sku_name": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "location": {"key": "location", "type": "str"},
+        "look_back_period": {"key": "lookBackPeriod", "type": "int"},
+        "instance_flexibility_ratio": {"key": "instanceFlexibilityRatio", "type": "float"},
+        "instance_flexibility_group": {"key": "instanceFlexibilityGroup", "type": "str"},
+        "normalized_size": {"key": "normalizedSize", "type": "str"},
+        "recommended_quantity_normalized": {"key": "recommendedQuantityNormalized", "type": "float"},
+        "meter_id": {"key": "meterId", "type": "str"},
+        "term": {"key": "term", "type": "str"},
+        "cost_with_no_reserved_instances": {"key": "costWithNoReservedInstances", "type": "Amount"},
+        "recommended_quantity": {"key": "recommendedQuantity", "type": "float"},
+        "resource_type": {"key": "resourceType", "type": "str"},
+        "total_cost_with_reserved_instances": {"key": "totalCostWithReservedInstances", "type": "Amount"},
+        "net_savings": {"key": "netSavings", "type": "Amount"},
+        "first_usage_date": {"key": "firstUsageDate", "type": "iso-8601"},
+        "scope": {"key": "scope", "type": "str"},
+        "sku_properties": {"key": "skuProperties", "type": "[SkuProperty]"},
+        "sku_name": {"key": "skuName", "type": "str"},
+    }
+
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.scope: str = "Shared"
+
+
+class ModernSingleScopeReservationRecommendationProperties(
+    ModernReservationRecommendationProperties
+):  # pylint: disable=too-many-instance-attributes
+    """The properties of the modern reservation recommendation for single scope.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar location: Resource Location.
+    :vartype location: str
+    :ivar look_back_period: The number of days of usage to look back for recommendation.
+    :vartype look_back_period: int
+    :ivar instance_flexibility_ratio: The instance Flexibility Ratio.
+    :vartype instance_flexibility_ratio: float
+    :ivar instance_flexibility_group: The instance Flexibility Group.
+    :vartype instance_flexibility_group: str
+    :ivar normalized_size: The normalized Size.
+    :vartype normalized_size: str
+    :ivar recommended_quantity_normalized: The recommended Quantity Normalized.
+    :vartype recommended_quantity_normalized: float
+    :ivar meter_id: The meter id (GUID).
+    :vartype meter_id: str
+    :ivar term: RI recommendations in one or three year terms.
+    :vartype term: str
+    :ivar cost_with_no_reserved_instances: The total amount of cost without reserved instances.
+    :vartype cost_with_no_reserved_instances: ~azure.mgmt.consumption.models.Amount
+    :ivar recommended_quantity: Recommended quality for reserved instances.
+    :vartype recommended_quantity: float
+    :ivar resource_type: Resource type.
+    :vartype resource_type: str
+    :ivar total_cost_with_reserved_instances: The total amount of cost with reserved instances.
+    :vartype total_cost_with_reserved_instances: ~azure.mgmt.consumption.models.Amount
+    :ivar net_savings: Total estimated savings with reserved instances.
+    :vartype net_savings: ~azure.mgmt.consumption.models.Amount
+    :ivar first_usage_date: The usage date for looking back.
+    :vartype first_usage_date: ~datetime.datetime
+    :ivar scope: Shared or single recommendation. Required.
+    :vartype scope: str
+    :ivar sku_properties: List of sku properties.
+    :vartype sku_properties: list[~azure.mgmt.consumption.models.SkuProperty]
+    :ivar sku_name: This is the ARM Sku name.
+    :vartype sku_name: str
+    :ivar subscription_id: Subscription ID associated with single scoped recommendation.
+    :vartype subscription_id: str
+    """
+
+    _validation = {
+        "location": {"readonly": True},
+        "look_back_period": {"readonly": True},
+        "instance_flexibility_ratio": {"readonly": True},
+        "instance_flexibility_group": {"readonly": True},
+        "normalized_size": {"readonly": True},
+        "recommended_quantity_normalized": {"readonly": True},
+        "meter_id": {"readonly": True},
+        "term": {"readonly": True},
+        "cost_with_no_reserved_instances": {"readonly": True},
+        "recommended_quantity": {"readonly": True},
+        "resource_type": {"readonly": True},
+        "total_cost_with_reserved_instances": {"readonly": True},
+        "net_savings": {"readonly": True},
+        "first_usage_date": {"readonly": True},
+        "scope": {"required": True},
+        "sku_properties": {"readonly": True},
+        "sku_name": {"readonly": True},
+        "subscription_id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "location": {"key": "location", "type": "str"},
+        "look_back_period": {"key": "lookBackPeriod", "type": "int"},
+        "instance_flexibility_ratio": {"key": "instanceFlexibilityRatio", "type": "float"},
+        "instance_flexibility_group": {"key": "instanceFlexibilityGroup", "type": "str"},
+        "normalized_size": {"key": "normalizedSize", "type": "str"},
+        "recommended_quantity_normalized": {"key": "recommendedQuantityNormalized", "type": "float"},
+        "meter_id": {"key": "meterId", "type": "str"},
+        "term": {"key": "term", "type": "str"},
+        "cost_with_no_reserved_instances": {"key": "costWithNoReservedInstances", "type": "Amount"},
+        "recommended_quantity": {"key": "recommendedQuantity", "type": "float"},
+        "resource_type": {"key": "resourceType", "type": "str"},
+        "total_cost_with_reserved_instances": {"key": "totalCostWithReservedInstances", "type": "Amount"},
+        "net_savings": {"key": "netSavings", "type": "Amount"},
+        "first_usage_date": {"key": "firstUsageDate", "type": "iso-8601"},
+        "scope": {"key": "scope", "type": "str"},
+        "sku_properties": {"key": "skuProperties", "type": "[SkuProperty]"},
+        "sku_name": {"key": "skuName", "type": "str"},
+        "subscription_id": {"key": "subscriptionId", "type": "str"},
+    }
+
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.scope: str = "Single"
+        self.subscription_id = None
+
+
+class ModernUsageDetail(UsageDetail):  # pylint: disable=too-many-instance-attributes
     """Modern usage detail.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3623,17 +3766,17 @@ class ModernUsageDetail(UsageDetail):
     :vartype type: str
     :ivar etag: The etag for the resource.
     :vartype etag: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar kind: Required. Specifies the kind of usage details.Constant filled by server. Known
-     values are: "legacy", "modern".
+    :ivar kind: Specifies the kind of usage details. Required. Known values are: "legacy" and
+     "modern".
     :vartype kind: str or ~azure.mgmt.consumption.models.UsageDetailsKind
     :ivar billing_account_id: Billing Account identifier.
     :vartype billing_account_id: str
     :ivar effective_price: Effective Price that's charged for the usage.
     :vartype effective_price: float
     :ivar pricing_model: Identifier that indicates how the meter is priced. Known values are: "On
-     Demand", "Reservation", "Spot".
+     Demand", "Reservation", and "Spot".
     :vartype pricing_model: str or ~azure.mgmt.consumption.models.PricingModelType
     :ivar billing_account_name: Name of the Billing Account.
     :vartype billing_account_name: str
@@ -3822,175 +3965,171 @@ class ModernUsageDetail(UsageDetail):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'tags': {'readonly': True},
-        'kind': {'required': True},
-        'billing_account_id': {'readonly': True},
-        'effective_price': {'readonly': True},
-        'pricing_model': {'readonly': True},
-        'billing_account_name': {'readonly': True},
-        'billing_period_start_date': {'readonly': True},
-        'billing_period_end_date': {'readonly': True},
-        'billing_profile_id': {'readonly': True},
-        'billing_profile_name': {'readonly': True},
-        'subscription_guid': {'readonly': True},
-        'subscription_name': {'readonly': True},
-        'date': {'readonly': True},
-        'product': {'readonly': True},
-        'meter_id': {'readonly': True},
-        'meter_name': {'readonly': True},
-        'meter_region': {'readonly': True},
-        'meter_category': {'readonly': True},
-        'meter_sub_category': {'readonly': True},
-        'service_family': {'readonly': True},
-        'quantity': {'readonly': True},
-        'unit_of_measure': {'readonly': True},
-        'instance_name': {'readonly': True},
-        'cost_in_usd': {'readonly': True},
-        'unit_price': {'readonly': True},
-        'billing_currency_code': {'readonly': True},
-        'resource_location': {'readonly': True},
-        'consumed_service': {'readonly': True},
-        'service_info1': {'readonly': True},
-        'service_info2': {'readonly': True},
-        'additional_info': {'readonly': True},
-        'invoice_section_id': {'readonly': True},
-        'invoice_section_name': {'readonly': True},
-        'cost_center': {'readonly': True},
-        'resource_group': {'readonly': True},
-        'reservation_id': {'readonly': True},
-        'reservation_name': {'readonly': True},
-        'product_order_id': {'readonly': True},
-        'product_order_name': {'readonly': True},
-        'is_azure_credit_eligible': {'readonly': True},
-        'term': {'readonly': True},
-        'publisher_name': {'readonly': True},
-        'publisher_type': {'readonly': True},
-        'charge_type': {'readonly': True},
-        'frequency': {'readonly': True},
-        'cost_in_billing_currency': {'readonly': True},
-        'cost_in_pricing_currency': {'readonly': True},
-        'exchange_rate': {'readonly': True},
-        'exchange_rate_date': {'readonly': True},
-        'invoice_id': {'readonly': True},
-        'previous_invoice_id': {'readonly': True},
-        'pricing_currency_code': {'readonly': True},
-        'product_identifier': {'readonly': True},
-        'resource_location_normalized': {'readonly': True},
-        'service_period_start_date': {'readonly': True},
-        'service_period_end_date': {'readonly': True},
-        'customer_tenant_id': {'readonly': True},
-        'customer_name': {'readonly': True},
-        'partner_tenant_id': {'readonly': True},
-        'partner_name': {'readonly': True},
-        'reseller_mpn_id': {'readonly': True},
-        'reseller_name': {'readonly': True},
-        'publisher_id': {'readonly': True},
-        'market_price': {'readonly': True},
-        'exchange_rate_pricing_to_billing': {'readonly': True},
-        'payg_cost_in_billing_currency': {'readonly': True},
-        'payg_cost_in_usd': {'readonly': True},
-        'partner_earned_credit_rate': {'readonly': True},
-        'partner_earned_credit_applied': {'readonly': True},
-        'pay_g_price': {'readonly': True},
-        'benefit_id': {'readonly': True},
-        'benefit_name': {'readonly': True},
-        'provider': {'readonly': True},
-        'cost_allocation_rule_name': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "tags": {"readonly": True},
+        "kind": {"required": True},
+        "billing_account_id": {"readonly": True},
+        "effective_price": {"readonly": True},
+        "pricing_model": {"readonly": True},
+        "billing_account_name": {"readonly": True},
+        "billing_period_start_date": {"readonly": True},
+        "billing_period_end_date": {"readonly": True},
+        "billing_profile_id": {"readonly": True},
+        "billing_profile_name": {"readonly": True},
+        "subscription_guid": {"readonly": True},
+        "subscription_name": {"readonly": True},
+        "date": {"readonly": True},
+        "product": {"readonly": True},
+        "meter_id": {"readonly": True},
+        "meter_name": {"readonly": True},
+        "meter_region": {"readonly": True},
+        "meter_category": {"readonly": True},
+        "meter_sub_category": {"readonly": True},
+        "service_family": {"readonly": True},
+        "quantity": {"readonly": True},
+        "unit_of_measure": {"readonly": True},
+        "instance_name": {"readonly": True},
+        "cost_in_usd": {"readonly": True},
+        "unit_price": {"readonly": True},
+        "billing_currency_code": {"readonly": True},
+        "resource_location": {"readonly": True},
+        "consumed_service": {"readonly": True},
+        "service_info1": {"readonly": True},
+        "service_info2": {"readonly": True},
+        "additional_info": {"readonly": True},
+        "invoice_section_id": {"readonly": True},
+        "invoice_section_name": {"readonly": True},
+        "cost_center": {"readonly": True},
+        "resource_group": {"readonly": True},
+        "reservation_id": {"readonly": True},
+        "reservation_name": {"readonly": True},
+        "product_order_id": {"readonly": True},
+        "product_order_name": {"readonly": True},
+        "is_azure_credit_eligible": {"readonly": True},
+        "term": {"readonly": True},
+        "publisher_name": {"readonly": True},
+        "publisher_type": {"readonly": True},
+        "charge_type": {"readonly": True},
+        "frequency": {"readonly": True},
+        "cost_in_billing_currency": {"readonly": True},
+        "cost_in_pricing_currency": {"readonly": True},
+        "exchange_rate": {"readonly": True},
+        "exchange_rate_date": {"readonly": True},
+        "invoice_id": {"readonly": True},
+        "previous_invoice_id": {"readonly": True},
+        "pricing_currency_code": {"readonly": True},
+        "product_identifier": {"readonly": True},
+        "resource_location_normalized": {"readonly": True},
+        "service_period_start_date": {"readonly": True},
+        "service_period_end_date": {"readonly": True},
+        "customer_tenant_id": {"readonly": True},
+        "customer_name": {"readonly": True},
+        "partner_tenant_id": {"readonly": True},
+        "partner_name": {"readonly": True},
+        "reseller_mpn_id": {"readonly": True},
+        "reseller_name": {"readonly": True},
+        "publisher_id": {"readonly": True},
+        "market_price": {"readonly": True},
+        "exchange_rate_pricing_to_billing": {"readonly": True},
+        "payg_cost_in_billing_currency": {"readonly": True},
+        "payg_cost_in_usd": {"readonly": True},
+        "partner_earned_credit_rate": {"readonly": True},
+        "partner_earned_credit_applied": {"readonly": True},
+        "pay_g_price": {"readonly": True},
+        "benefit_id": {"readonly": True},
+        "benefit_name": {"readonly": True},
+        "provider": {"readonly": True},
+        "cost_allocation_rule_name": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'billing_account_id': {'key': 'properties.billingAccountId', 'type': 'str'},
-        'effective_price': {'key': 'properties.effectivePrice', 'type': 'float'},
-        'pricing_model': {'key': 'properties.pricingModel', 'type': 'str'},
-        'billing_account_name': {'key': 'properties.billingAccountName', 'type': 'str'},
-        'billing_period_start_date': {'key': 'properties.billingPeriodStartDate', 'type': 'iso-8601'},
-        'billing_period_end_date': {'key': 'properties.billingPeriodEndDate', 'type': 'iso-8601'},
-        'billing_profile_id': {'key': 'properties.billingProfileId', 'type': 'str'},
-        'billing_profile_name': {'key': 'properties.billingProfileName', 'type': 'str'},
-        'subscription_guid': {'key': 'properties.subscriptionGuid', 'type': 'str'},
-        'subscription_name': {'key': 'properties.subscriptionName', 'type': 'str'},
-        'date': {'key': 'properties.date', 'type': 'iso-8601'},
-        'product': {'key': 'properties.product', 'type': 'str'},
-        'meter_id': {'key': 'properties.meterId', 'type': 'str'},
-        'meter_name': {'key': 'properties.meterName', 'type': 'str'},
-        'meter_region': {'key': 'properties.meterRegion', 'type': 'str'},
-        'meter_category': {'key': 'properties.meterCategory', 'type': 'str'},
-        'meter_sub_category': {'key': 'properties.meterSubCategory', 'type': 'str'},
-        'service_family': {'key': 'properties.serviceFamily', 'type': 'str'},
-        'quantity': {'key': 'properties.quantity', 'type': 'float'},
-        'unit_of_measure': {'key': 'properties.unitOfMeasure', 'type': 'str'},
-        'instance_name': {'key': 'properties.instanceName', 'type': 'str'},
-        'cost_in_usd': {'key': 'properties.costInUSD', 'type': 'float'},
-        'unit_price': {'key': 'properties.unitPrice', 'type': 'float'},
-        'billing_currency_code': {'key': 'properties.billingCurrencyCode', 'type': 'str'},
-        'resource_location': {'key': 'properties.resourceLocation', 'type': 'str'},
-        'consumed_service': {'key': 'properties.consumedService', 'type': 'str'},
-        'service_info1': {'key': 'properties.serviceInfo1', 'type': 'str'},
-        'service_info2': {'key': 'properties.serviceInfo2', 'type': 'str'},
-        'additional_info': {'key': 'properties.additionalInfo', 'type': 'str'},
-        'invoice_section_id': {'key': 'properties.invoiceSectionId', 'type': 'str'},
-        'invoice_section_name': {'key': 'properties.invoiceSectionName', 'type': 'str'},
-        'cost_center': {'key': 'properties.costCenter', 'type': 'str'},
-        'resource_group': {'key': 'properties.resourceGroup', 'type': 'str'},
-        'reservation_id': {'key': 'properties.reservationId', 'type': 'str'},
-        'reservation_name': {'key': 'properties.reservationName', 'type': 'str'},
-        'product_order_id': {'key': 'properties.productOrderId', 'type': 'str'},
-        'product_order_name': {'key': 'properties.productOrderName', 'type': 'str'},
-        'is_azure_credit_eligible': {'key': 'properties.isAzureCreditEligible', 'type': 'bool'},
-        'term': {'key': 'properties.term', 'type': 'str'},
-        'publisher_name': {'key': 'properties.publisherName', 'type': 'str'},
-        'publisher_type': {'key': 'properties.publisherType', 'type': 'str'},
-        'charge_type': {'key': 'properties.chargeType', 'type': 'str'},
-        'frequency': {'key': 'properties.frequency', 'type': 'str'},
-        'cost_in_billing_currency': {'key': 'properties.costInBillingCurrency', 'type': 'float'},
-        'cost_in_pricing_currency': {'key': 'properties.costInPricingCurrency', 'type': 'float'},
-        'exchange_rate': {'key': 'properties.exchangeRate', 'type': 'str'},
-        'exchange_rate_date': {'key': 'properties.exchangeRateDate', 'type': 'iso-8601'},
-        'invoice_id': {'key': 'properties.invoiceId', 'type': 'str'},
-        'previous_invoice_id': {'key': 'properties.previousInvoiceId', 'type': 'str'},
-        'pricing_currency_code': {'key': 'properties.pricingCurrencyCode', 'type': 'str'},
-        'product_identifier': {'key': 'properties.productIdentifier', 'type': 'str'},
-        'resource_location_normalized': {'key': 'properties.resourceLocationNormalized', 'type': 'str'},
-        'service_period_start_date': {'key': 'properties.servicePeriodStartDate', 'type': 'iso-8601'},
-        'service_period_end_date': {'key': 'properties.servicePeriodEndDate', 'type': 'iso-8601'},
-        'customer_tenant_id': {'key': 'properties.customerTenantId', 'type': 'str'},
-        'customer_name': {'key': 'properties.customerName', 'type': 'str'},
-        'partner_tenant_id': {'key': 'properties.partnerTenantId', 'type': 'str'},
-        'partner_name': {'key': 'properties.partnerName', 'type': 'str'},
-        'reseller_mpn_id': {'key': 'properties.resellerMpnId', 'type': 'str'},
-        'reseller_name': {'key': 'properties.resellerName', 'type': 'str'},
-        'publisher_id': {'key': 'properties.publisherId', 'type': 'str'},
-        'market_price': {'key': 'properties.marketPrice', 'type': 'float'},
-        'exchange_rate_pricing_to_billing': {'key': 'properties.exchangeRatePricingToBilling', 'type': 'float'},
-        'payg_cost_in_billing_currency': {'key': 'properties.paygCostInBillingCurrency', 'type': 'float'},
-        'payg_cost_in_usd': {'key': 'properties.paygCostInUSD', 'type': 'float'},
-        'partner_earned_credit_rate': {'key': 'properties.partnerEarnedCreditRate', 'type': 'float'},
-        'partner_earned_credit_applied': {'key': 'properties.partnerEarnedCreditApplied', 'type': 'str'},
-        'pay_g_price': {'key': 'properties.payGPrice', 'type': 'float'},
-        'benefit_id': {'key': 'properties.benefitId', 'type': 'str'},
-        'benefit_name': {'key': 'properties.benefitName', 'type': 'str'},
-        'provider': {'key': 'properties.provider', 'type': 'str'},
-        'cost_allocation_rule_name': {'key': 'properties.costAllocationRuleName', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "kind": {"key": "kind", "type": "str"},
+        "billing_account_id": {"key": "properties.billingAccountId", "type": "str"},
+        "effective_price": {"key": "properties.effectivePrice", "type": "float"},
+        "pricing_model": {"key": "properties.pricingModel", "type": "str"},
+        "billing_account_name": {"key": "properties.billingAccountName", "type": "str"},
+        "billing_period_start_date": {"key": "properties.billingPeriodStartDate", "type": "iso-8601"},
+        "billing_period_end_date": {"key": "properties.billingPeriodEndDate", "type": "iso-8601"},
+        "billing_profile_id": {"key": "properties.billingProfileId", "type": "str"},
+        "billing_profile_name": {"key": "properties.billingProfileName", "type": "str"},
+        "subscription_guid": {"key": "properties.subscriptionGuid", "type": "str"},
+        "subscription_name": {"key": "properties.subscriptionName", "type": "str"},
+        "date": {"key": "properties.date", "type": "iso-8601"},
+        "product": {"key": "properties.product", "type": "str"},
+        "meter_id": {"key": "properties.meterId", "type": "str"},
+        "meter_name": {"key": "properties.meterName", "type": "str"},
+        "meter_region": {"key": "properties.meterRegion", "type": "str"},
+        "meter_category": {"key": "properties.meterCategory", "type": "str"},
+        "meter_sub_category": {"key": "properties.meterSubCategory", "type": "str"},
+        "service_family": {"key": "properties.serviceFamily", "type": "str"},
+        "quantity": {"key": "properties.quantity", "type": "float"},
+        "unit_of_measure": {"key": "properties.unitOfMeasure", "type": "str"},
+        "instance_name": {"key": "properties.instanceName", "type": "str"},
+        "cost_in_usd": {"key": "properties.costInUSD", "type": "float"},
+        "unit_price": {"key": "properties.unitPrice", "type": "float"},
+        "billing_currency_code": {"key": "properties.billingCurrencyCode", "type": "str"},
+        "resource_location": {"key": "properties.resourceLocation", "type": "str"},
+        "consumed_service": {"key": "properties.consumedService", "type": "str"},
+        "service_info1": {"key": "properties.serviceInfo1", "type": "str"},
+        "service_info2": {"key": "properties.serviceInfo2", "type": "str"},
+        "additional_info": {"key": "properties.additionalInfo", "type": "str"},
+        "invoice_section_id": {"key": "properties.invoiceSectionId", "type": "str"},
+        "invoice_section_name": {"key": "properties.invoiceSectionName", "type": "str"},
+        "cost_center": {"key": "properties.costCenter", "type": "str"},
+        "resource_group": {"key": "properties.resourceGroup", "type": "str"},
+        "reservation_id": {"key": "properties.reservationId", "type": "str"},
+        "reservation_name": {"key": "properties.reservationName", "type": "str"},
+        "product_order_id": {"key": "properties.productOrderId", "type": "str"},
+        "product_order_name": {"key": "properties.productOrderName", "type": "str"},
+        "is_azure_credit_eligible": {"key": "properties.isAzureCreditEligible", "type": "bool"},
+        "term": {"key": "properties.term", "type": "str"},
+        "publisher_name": {"key": "properties.publisherName", "type": "str"},
+        "publisher_type": {"key": "properties.publisherType", "type": "str"},
+        "charge_type": {"key": "properties.chargeType", "type": "str"},
+        "frequency": {"key": "properties.frequency", "type": "str"},
+        "cost_in_billing_currency": {"key": "properties.costInBillingCurrency", "type": "float"},
+        "cost_in_pricing_currency": {"key": "properties.costInPricingCurrency", "type": "float"},
+        "exchange_rate": {"key": "properties.exchangeRate", "type": "str"},
+        "exchange_rate_date": {"key": "properties.exchangeRateDate", "type": "iso-8601"},
+        "invoice_id": {"key": "properties.invoiceId", "type": "str"},
+        "previous_invoice_id": {"key": "properties.previousInvoiceId", "type": "str"},
+        "pricing_currency_code": {"key": "properties.pricingCurrencyCode", "type": "str"},
+        "product_identifier": {"key": "properties.productIdentifier", "type": "str"},
+        "resource_location_normalized": {"key": "properties.resourceLocationNormalized", "type": "str"},
+        "service_period_start_date": {"key": "properties.servicePeriodStartDate", "type": "iso-8601"},
+        "service_period_end_date": {"key": "properties.servicePeriodEndDate", "type": "iso-8601"},
+        "customer_tenant_id": {"key": "properties.customerTenantId", "type": "str"},
+        "customer_name": {"key": "properties.customerName", "type": "str"},
+        "partner_tenant_id": {"key": "properties.partnerTenantId", "type": "str"},
+        "partner_name": {"key": "properties.partnerName", "type": "str"},
+        "reseller_mpn_id": {"key": "properties.resellerMpnId", "type": "str"},
+        "reseller_name": {"key": "properties.resellerName", "type": "str"},
+        "publisher_id": {"key": "properties.publisherId", "type": "str"},
+        "market_price": {"key": "properties.marketPrice", "type": "float"},
+        "exchange_rate_pricing_to_billing": {"key": "properties.exchangeRatePricingToBilling", "type": "float"},
+        "payg_cost_in_billing_currency": {"key": "properties.paygCostInBillingCurrency", "type": "float"},
+        "payg_cost_in_usd": {"key": "properties.paygCostInUSD", "type": "float"},
+        "partner_earned_credit_rate": {"key": "properties.partnerEarnedCreditRate", "type": "float"},
+        "partner_earned_credit_applied": {"key": "properties.partnerEarnedCreditApplied", "type": "str"},
+        "pay_g_price": {"key": "properties.payGPrice", "type": "float"},
+        "benefit_id": {"key": "properties.benefitId", "type": "str"},
+        "benefit_name": {"key": "properties.benefitName", "type": "str"},
+        "provider": {"key": "properties.provider", "type": "str"},
+        "cost_allocation_rule_name": {"key": "properties.costAllocationRuleName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ModernUsageDetail, self).__init__(**kwargs)
-        self.kind = 'modern'  # type: str
+    def __init__(self, **kwargs):  # pylint: disable=too-many-locals
+        """ """
+        super().__init__(**kwargs)
+        self.kind: str = "modern"
         self.billing_account_id = None
         self.effective_price = None
         self.pricing_model = None
@@ -4065,23 +4204,23 @@ class ModernUsageDetail(UsageDetail):
         self.cost_allocation_rule_name = None
 
 
-class Notification(msrest.serialization.Model):
+class Notification(_serialization.Model):
     """The notification associated with a budget.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar enabled: Required. The notification is enabled or not.
+    :ivar enabled: The notification is enabled or not. Required.
     :vartype enabled: bool
-    :ivar operator: Required. The comparison operator. Known values are: "EqualTo", "GreaterThan",
-     "GreaterThanOrEqualTo".
+    :ivar operator: The comparison operator. Required. Known values are: "EqualTo", "GreaterThan",
+     and "GreaterThanOrEqualTo".
     :vartype operator: str or ~azure.mgmt.consumption.models.OperatorType
-    :ivar threshold: Required. Threshold value associated with a notification. Notification is sent
-     when the cost exceeded the threshold. It is always percent and has to be between 0 and 1000.
+    :ivar threshold: Threshold value associated with a notification. Notification is sent when the
+     cost exceeded the threshold. It is always percent and has to be between 0 and 1000. Required.
     :vartype threshold: float
-    :ivar contact_emails: Required. Email addresses to send the budget notification to when the
-     threshold is exceeded. Must have at least one contact email or contact group specified at the
-     Subscription or Resource Group scopes. All other scopes must have at least one contact email
-     specified.
+    :ivar contact_emails: Email addresses to send the budget notification to when the threshold is
+     exceeded. Must have at least one contact email or contact group specified at the Subscription
+     or Resource Group scopes. All other scopes must have at least one contact email specified.
+     Required.
     :vartype contact_emails: list[str]
     :ivar contact_roles: Contact roles to send the budget notification to when the threshold is
      exceeded.
@@ -4090,33 +4229,32 @@ class Notification(msrest.serialization.Model):
      exceeded. Must be provided as a fully qualified Azure resource id. Only supported at
      Subscription or Resource Group scopes.
     :vartype contact_groups: list[str]
-    :ivar threshold_type: The type of threshold. Known values are: "Actual", "Forecasted". Default
-     value: "Actual".
+    :ivar threshold_type: The type of threshold. Known values are: "Actual" and "Forecasted".
     :vartype threshold_type: str or ~azure.mgmt.consumption.models.ThresholdType
     :ivar locale: Language in which the recipient will receive the notification. Known values are:
      "en-us", "ja-jp", "zh-cn", "de-de", "es-es", "fr-fr", "it-it", "ko-kr", "pt-br", "ru-ru",
-     "zh-tw", "cs-cz", "pl-pl", "tr-tr", "da-dk", "en-gb", "hu-hu", "nb-no", "nl-nl", "pt-pt",
+     "zh-tw", "cs-cz", "pl-pl", "tr-tr", "da-dk", "en-gb", "hu-hu", "nb-no", "nl-nl", "pt-pt", and
      "sv-se".
     :vartype locale: str or ~azure.mgmt.consumption.models.CultureCode
     """
 
     _validation = {
-        'enabled': {'required': True},
-        'operator': {'required': True},
-        'threshold': {'required': True},
-        'contact_emails': {'required': True, 'max_items': 50, 'min_items': 0},
-        'contact_groups': {'max_items': 50, 'min_items': 0},
+        "enabled": {"required": True},
+        "operator": {"required": True},
+        "threshold": {"required": True},
+        "contact_emails": {"required": True, "max_items": 50, "min_items": 0},
+        "contact_groups": {"max_items": 50, "min_items": 0},
     }
 
     _attribute_map = {
-        'enabled': {'key': 'enabled', 'type': 'bool'},
-        'operator': {'key': 'operator', 'type': 'str'},
-        'threshold': {'key': 'threshold', 'type': 'float'},
-        'contact_emails': {'key': 'contactEmails', 'type': '[str]'},
-        'contact_roles': {'key': 'contactRoles', 'type': '[str]'},
-        'contact_groups': {'key': 'contactGroups', 'type': '[str]'},
-        'threshold_type': {'key': 'thresholdType', 'type': 'str'},
-        'locale': {'key': 'locale', 'type': 'str'},
+        "enabled": {"key": "enabled", "type": "bool"},
+        "operator": {"key": "operator", "type": "str"},
+        "threshold": {"key": "threshold", "type": "float"},
+        "contact_emails": {"key": "contactEmails", "type": "[str]"},
+        "contact_roles": {"key": "contactRoles", "type": "[str]"},
+        "contact_groups": {"key": "contactGroups", "type": "[str]"},
+        "threshold_type": {"key": "thresholdType", "type": "str"},
+        "locale": {"key": "locale", "type": "str"},
     }
 
     def __init__(
@@ -4128,24 +4266,24 @@ class Notification(msrest.serialization.Model):
         contact_emails: List[str],
         contact_roles: Optional[List[str]] = None,
         contact_groups: Optional[List[str]] = None,
-        threshold_type: Optional[Union[str, "_models.ThresholdType"]] = "Actual",
+        threshold_type: Union[str, "_models.ThresholdType"] = "Actual",
         locale: Optional[Union[str, "_models.CultureCode"]] = None,
         **kwargs
     ):
         """
-        :keyword enabled: Required. The notification is enabled or not.
+        :keyword enabled: The notification is enabled or not. Required.
         :paramtype enabled: bool
-        :keyword operator: Required. The comparison operator. Known values are: "EqualTo",
-         "GreaterThan", "GreaterThanOrEqualTo".
+        :keyword operator: The comparison operator. Required. Known values are: "EqualTo",
+         "GreaterThan", and "GreaterThanOrEqualTo".
         :paramtype operator: str or ~azure.mgmt.consumption.models.OperatorType
-        :keyword threshold: Required. Threshold value associated with a notification. Notification is
-         sent when the cost exceeded the threshold. It is always percent and has to be between 0 and
-         1000.
+        :keyword threshold: Threshold value associated with a notification. Notification is sent when
+         the cost exceeded the threshold. It is always percent and has to be between 0 and 1000.
+         Required.
         :paramtype threshold: float
-        :keyword contact_emails: Required. Email addresses to send the budget notification to when the
-         threshold is exceeded. Must have at least one contact email or contact group specified at the
+        :keyword contact_emails: Email addresses to send the budget notification to when the threshold
+         is exceeded. Must have at least one contact email or contact group specified at the
          Subscription or Resource Group scopes. All other scopes must have at least one contact email
-         specified.
+         specified. Required.
         :paramtype contact_emails: list[str]
         :keyword contact_roles: Contact roles to send the budget notification to when the threshold is
          exceeded.
@@ -4154,16 +4292,15 @@ class Notification(msrest.serialization.Model):
          exceeded. Must be provided as a fully qualified Azure resource id. Only supported at
          Subscription or Resource Group scopes.
         :paramtype contact_groups: list[str]
-        :keyword threshold_type: The type of threshold. Known values are: "Actual", "Forecasted".
-         Default value: "Actual".
+        :keyword threshold_type: The type of threshold. Known values are: "Actual" and "Forecasted".
         :paramtype threshold_type: str or ~azure.mgmt.consumption.models.ThresholdType
         :keyword locale: Language in which the recipient will receive the notification. Known values
          are: "en-us", "ja-jp", "zh-cn", "de-de", "es-es", "fr-fr", "it-it", "ko-kr", "pt-br", "ru-ru",
-         "zh-tw", "cs-cz", "pl-pl", "tr-tr", "da-dk", "en-gb", "hu-hu", "nb-no", "nl-nl", "pt-pt",
+         "zh-tw", "cs-cz", "pl-pl", "tr-tr", "da-dk", "en-gb", "hu-hu", "nb-no", "nl-nl", "pt-pt", and
          "sv-se".
         :paramtype locale: str or ~azure.mgmt.consumption.models.CultureCode
         """
-        super(Notification, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.enabled = enabled
         self.operator = operator
         self.threshold = threshold
@@ -4174,7 +4311,7 @@ class Notification(msrest.serialization.Model):
         self.locale = locale
 
 
-class Operation(msrest.serialization.Model):
+class Operation(_serialization.Model):
     """A Consumption REST API operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4188,33 +4325,28 @@ class Operation(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "display": {"key": "display", "type": "OperationDisplay"},
     }
 
-    def __init__(
-        self,
-        *,
-        display: Optional["_models.OperationDisplay"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, display: Optional["_models.OperationDisplay"] = None, **kwargs):
         """
         :keyword display: The object that represents the operation.
         :paramtype display: ~azure.mgmt.consumption.models.OperationDisplay
         """
-        super(Operation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.display = display
 
 
-class OperationDisplay(msrest.serialization.Model):
+class OperationDisplay(_serialization.Model):
     """The object that represents the operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4230,33 +4362,29 @@ class OperationDisplay(msrest.serialization.Model):
     """
 
     _validation = {
-        'provider': {'readonly': True},
-        'resource': {'readonly': True},
-        'operation': {'readonly': True},
-        'description': {'readonly': True},
+        "provider": {"readonly": True},
+        "resource": {"readonly": True},
+        "operation": {"readonly": True},
+        "description": {"readonly": True},
     }
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(OperationDisplay, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.provider = None
         self.resource = None
         self.operation = None
         self.description = None
 
 
-class OperationListResult(msrest.serialization.Model):
+class OperationListResult(_serialization.Model):
     """Result of listing consumption operations. It contains a list of operations and a URL link to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4269,27 +4397,23 @@ class OperationListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Operation]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Operation]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(OperationListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class PriceSheetProperties(msrest.serialization.Model):
+class PriceSheetProperties(_serialization.Model):
     """The properties of the price sheet.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4316,36 +4440,32 @@ class PriceSheetProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'billing_period_id': {'readonly': True},
-        'meter_id': {'readonly': True},
-        'meter_details': {'readonly': True},
-        'unit_of_measure': {'readonly': True},
-        'included_quantity': {'readonly': True},
-        'part_number': {'readonly': True},
-        'unit_price': {'readonly': True},
-        'currency_code': {'readonly': True},
-        'offer_id': {'readonly': True},
+        "billing_period_id": {"readonly": True},
+        "meter_id": {"readonly": True},
+        "meter_details": {"readonly": True},
+        "unit_of_measure": {"readonly": True},
+        "included_quantity": {"readonly": True},
+        "part_number": {"readonly": True},
+        "unit_price": {"readonly": True},
+        "currency_code": {"readonly": True},
+        "offer_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'billing_period_id': {'key': 'billingPeriodId', 'type': 'str'},
-        'meter_id': {'key': 'meterId', 'type': 'str'},
-        'meter_details': {'key': 'meterDetails', 'type': 'MeterDetails'},
-        'unit_of_measure': {'key': 'unitOfMeasure', 'type': 'str'},
-        'included_quantity': {'key': 'includedQuantity', 'type': 'float'},
-        'part_number': {'key': 'partNumber', 'type': 'str'},
-        'unit_price': {'key': 'unitPrice', 'type': 'float'},
-        'currency_code': {'key': 'currencyCode', 'type': 'str'},
-        'offer_id': {'key': 'offerId', 'type': 'str'},
+        "billing_period_id": {"key": "billingPeriodId", "type": "str"},
+        "meter_id": {"key": "meterId", "type": "str"},
+        "meter_details": {"key": "meterDetails", "type": "MeterDetails"},
+        "unit_of_measure": {"key": "unitOfMeasure", "type": "str"},
+        "included_quantity": {"key": "includedQuantity", "type": "float"},
+        "part_number": {"key": "partNumber", "type": "str"},
+        "unit_price": {"key": "unitPrice", "type": "float"},
+        "currency_code": {"key": "currencyCode", "type": "str"},
+        "offer_id": {"key": "offerId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(PriceSheetProperties, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.billing_period_id = None
         self.meter_id = None
         self.meter_details = None
@@ -4370,7 +4490,7 @@ class PriceSheetResult(Resource):
     :vartype type: str
     :ivar etag: The etag for the resource.
     :vartype etag: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar pricesheets: Price sheet.
     :vartype pricesheets: list[~azure.mgmt.consumption.models.PriceSheetProperties]
@@ -4381,40 +4501,36 @@ class PriceSheetResult(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'tags': {'readonly': True},
-        'pricesheets': {'readonly': True},
-        'next_link': {'readonly': True},
-        'download': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "tags": {"readonly": True},
+        "pricesheets": {"readonly": True},
+        "next_link": {"readonly": True},
+        "download": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'pricesheets': {'key': 'properties.pricesheets', 'type': '[PriceSheetProperties]'},
-        'next_link': {'key': 'properties.nextLink', 'type': 'str'},
-        'download': {'key': 'properties.download', 'type': 'MeterDetails'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "pricesheets": {"key": "properties.pricesheets", "type": "[PriceSheetProperties]"},
+        "next_link": {"key": "properties.nextLink", "type": "str"},
+        "download": {"key": "properties.download", "type": "MeterDetails"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(PriceSheetResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.pricesheets = None
         self.next_link = None
         self.download = None
 
 
-class Reseller(msrest.serialization.Model):
+class Reseller(_serialization.Model):
     """The reseller properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4426,27 +4542,23 @@ class Reseller(msrest.serialization.Model):
     """
 
     _validation = {
-        'reseller_id': {'readonly': True},
-        'reseller_description': {'readonly': True},
+        "reseller_id": {"readonly": True},
+        "reseller_description": {"readonly": True},
     }
 
     _attribute_map = {
-        'reseller_id': {'key': 'resellerId', 'type': 'str'},
-        'reseller_description': {'key': 'resellerDescription', 'type': 'str'},
+        "reseller_id": {"key": "resellerId", "type": "str"},
+        "reseller_description": {"key": "resellerDescription", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(Reseller, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.reseller_id = None
         self.reseller_description = None
 
 
-class ReservationDetail(Resource):
+class ReservationDetail(Resource):  # pylint: disable=too-many-instance-attributes
     """reservation detail resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4459,7 +4571,7 @@ class ReservationDetail(Resource):
     :vartype type: str
     :ivar etag: The etag for the resource.
     :vartype etag: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar reservation_order_id: The reservation order ID is the identifier for a reservation
      purchase. Each reservation order ID represents a single purchase transaction. A reservation
@@ -4496,50 +4608,46 @@ class ReservationDetail(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'tags': {'readonly': True},
-        'reservation_order_id': {'readonly': True},
-        'instance_flexibility_ratio': {'readonly': True},
-        'instance_flexibility_group': {'readonly': True},
-        'reservation_id': {'readonly': True},
-        'sku_name': {'readonly': True},
-        'reserved_hours': {'readonly': True},
-        'usage_date': {'readonly': True},
-        'used_hours': {'readonly': True},
-        'instance_id': {'readonly': True},
-        'total_reserved_quantity': {'readonly': True},
-        'kind': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "tags": {"readonly": True},
+        "reservation_order_id": {"readonly": True},
+        "instance_flexibility_ratio": {"readonly": True},
+        "instance_flexibility_group": {"readonly": True},
+        "reservation_id": {"readonly": True},
+        "sku_name": {"readonly": True},
+        "reserved_hours": {"readonly": True},
+        "usage_date": {"readonly": True},
+        "used_hours": {"readonly": True},
+        "instance_id": {"readonly": True},
+        "total_reserved_quantity": {"readonly": True},
+        "kind": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'reservation_order_id': {'key': 'properties.reservationOrderId', 'type': 'str'},
-        'instance_flexibility_ratio': {'key': 'properties.instanceFlexibilityRatio', 'type': 'str'},
-        'instance_flexibility_group': {'key': 'properties.instanceFlexibilityGroup', 'type': 'str'},
-        'reservation_id': {'key': 'properties.reservationId', 'type': 'str'},
-        'sku_name': {'key': 'properties.skuName', 'type': 'str'},
-        'reserved_hours': {'key': 'properties.reservedHours', 'type': 'float'},
-        'usage_date': {'key': 'properties.usageDate', 'type': 'iso-8601'},
-        'used_hours': {'key': 'properties.usedHours', 'type': 'float'},
-        'instance_id': {'key': 'properties.instanceId', 'type': 'str'},
-        'total_reserved_quantity': {'key': 'properties.totalReservedQuantity', 'type': 'float'},
-        'kind': {'key': 'properties.kind', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "reservation_order_id": {"key": "properties.reservationOrderId", "type": "str"},
+        "instance_flexibility_ratio": {"key": "properties.instanceFlexibilityRatio", "type": "str"},
+        "instance_flexibility_group": {"key": "properties.instanceFlexibilityGroup", "type": "str"},
+        "reservation_id": {"key": "properties.reservationId", "type": "str"},
+        "sku_name": {"key": "properties.skuName", "type": "str"},
+        "reserved_hours": {"key": "properties.reservedHours", "type": "float"},
+        "usage_date": {"key": "properties.usageDate", "type": "iso-8601"},
+        "used_hours": {"key": "properties.usedHours", "type": "float"},
+        "instance_id": {"key": "properties.instanceId", "type": "str"},
+        "total_reserved_quantity": {"key": "properties.totalReservedQuantity", "type": "float"},
+        "kind": {"key": "properties.kind", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ReservationDetail, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.reservation_order_id = None
         self.instance_flexibility_ratio = None
         self.instance_flexibility_group = None
@@ -4553,7 +4661,7 @@ class ReservationDetail(Resource):
         self.kind = None
 
 
-class ReservationDetailsListResult(msrest.serialization.Model):
+class ReservationDetailsListResult(_serialization.Model):
     """Result of listing reservation details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4565,79 +4673,72 @@ class ReservationDetailsListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ReservationDetail]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ReservationDetail]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ReservationDetailsListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class ReservationRecommendationDetailsCalculatedSavingsProperties(msrest.serialization.Model):
-    """Details of estimated savings.
+class ReservationRecommendationDetailsCalculatedSavingsProperties(_serialization.Model):
+    """Details of estimated savings. The costs and savings are estimated for the term.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar on_demand_cost: The cost without reservation.
+    :ivar on_demand_cost: The cost without reservation. Includes hardware and software cost.
     :vartype on_demand_cost: float
-    :ivar overage_cost: The difference between total reservation cost and reservation cost.
+    :ivar overage_cost: Hardware and software cost of the resources not covered by the reservation.
     :vartype overage_cost: float
     :ivar quantity: The quantity for calculated savings.
     :vartype quantity: float
-    :ivar reservation_cost: The exact cost of the estimated usage using reservation.
+    :ivar reservation_cost: Hardware cost of the resources covered by the reservation.
     :vartype reservation_cost: float
-    :ivar total_reservation_cost: The cost of the suggested quantity.
+    :ivar total_reservation_cost: Reservation cost + software cost of the resources covered by the
+     reservation + overage cost.
     :vartype total_reservation_cost: float
     :ivar reserved_unit_count: The number of reserved units used to calculate savings. Always 1 for
      virtual machines.
     :vartype reserved_unit_count: float
-    :ivar savings: The amount saved by purchasing the recommended quantity of reservation.
+    :ivar savings: The amount saved by purchasing the recommended quantity of reservation. This is
+     equal to onDemandCost - totalReservationCost.
     :vartype savings: float
     """
 
     _validation = {
-        'on_demand_cost': {'readonly': True},
-        'overage_cost': {'readonly': True},
-        'quantity': {'readonly': True},
-        'reservation_cost': {'readonly': True},
-        'total_reservation_cost': {'readonly': True},
-        'savings': {'readonly': True},
+        "on_demand_cost": {"readonly": True},
+        "overage_cost": {"readonly": True},
+        "quantity": {"readonly": True},
+        "reservation_cost": {"readonly": True},
+        "total_reservation_cost": {"readonly": True},
+        "savings": {"readonly": True},
     }
 
     _attribute_map = {
-        'on_demand_cost': {'key': 'onDemandCost', 'type': 'float'},
-        'overage_cost': {'key': 'overageCost', 'type': 'float'},
-        'quantity': {'key': 'quantity', 'type': 'float'},
-        'reservation_cost': {'key': 'reservationCost', 'type': 'float'},
-        'total_reservation_cost': {'key': 'totalReservationCost', 'type': 'float'},
-        'reserved_unit_count': {'key': 'reservedUnitCount', 'type': 'float'},
-        'savings': {'key': 'savings', 'type': 'float'},
+        "on_demand_cost": {"key": "onDemandCost", "type": "float"},
+        "overage_cost": {"key": "overageCost", "type": "float"},
+        "quantity": {"key": "quantity", "type": "float"},
+        "reservation_cost": {"key": "reservationCost", "type": "float"},
+        "total_reservation_cost": {"key": "totalReservationCost", "type": "float"},
+        "reserved_unit_count": {"key": "reservedUnitCount", "type": "float"},
+        "savings": {"key": "savings", "type": "float"},
     }
 
-    def __init__(
-        self,
-        *,
-        reserved_unit_count: Optional[float] = None,
-        **kwargs
-    ):
+    def __init__(self, *, reserved_unit_count: Optional[float] = None, **kwargs):
         """
         :keyword reserved_unit_count: The number of reserved units used to calculate savings. Always 1
          for virtual machines.
         :paramtype reserved_unit_count: float
         """
-        super(ReservationRecommendationDetailsCalculatedSavingsProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.on_demand_cost = None
         self.overage_cost = None
         self.quantity = None
@@ -4647,7 +4748,7 @@ class ReservationRecommendationDetailsCalculatedSavingsProperties(msrest.seriali
         self.savings = None
 
 
-class ReservationRecommendationDetailsModel(Resource):
+class ReservationRecommendationDetailsModel(Resource):  # pylint: disable=too-many-instance-attributes
     """Reservation recommendation details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4660,7 +4761,7 @@ class ReservationRecommendationDetailsModel(Resource):
     :vartype type: str
     :ivar etag: The etag for the resource.
     :vartype etag: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: Resource Location.
     :vartype location: str
@@ -4683,49 +4784,43 @@ class ReservationRecommendationDetailsModel(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'tags': {'readonly': True},
-        'currency': {'readonly': True},
-        'resource': {'readonly': True},
-        'resource_group': {'readonly': True},
-        'savings': {'readonly': True},
-        'scope': {'readonly': True},
-        'usage': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "tags": {"readonly": True},
+        "currency": {"readonly": True},
+        "resource": {"readonly": True},
+        "resource_group": {"readonly": True},
+        "savings": {"readonly": True},
+        "scope": {"readonly": True},
+        "usage": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'str'},
-        'currency': {'key': 'properties.currency', 'type': 'str'},
-        'resource': {'key': 'properties.resource', 'type': 'ReservationRecommendationDetailsResourceProperties'},
-        'resource_group': {'key': 'properties.resourceGroup', 'type': 'str'},
-        'savings': {'key': 'properties.savings', 'type': 'ReservationRecommendationDetailsSavingsProperties'},
-        'scope': {'key': 'properties.scope', 'type': 'str'},
-        'usage': {'key': 'properties.usage', 'type': 'ReservationRecommendationDetailsUsageProperties'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "sku": {"key": "sku", "type": "str"},
+        "currency": {"key": "properties.currency", "type": "str"},
+        "resource": {"key": "properties.resource", "type": "ReservationRecommendationDetailsResourceProperties"},
+        "resource_group": {"key": "properties.resourceGroup", "type": "str"},
+        "savings": {"key": "properties.savings", "type": "ReservationRecommendationDetailsSavingsProperties"},
+        "scope": {"key": "properties.scope", "type": "str"},
+        "usage": {"key": "properties.usage", "type": "ReservationRecommendationDetailsUsageProperties"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: Optional[str] = None,
-        sku: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, location: Optional[str] = None, sku: Optional[str] = None, **kwargs):
         """
         :keyword location: Resource Location.
         :paramtype location: str
         :keyword sku: Resource sku.
         :paramtype sku: str
         """
-        super(ReservationRecommendationDetailsModel, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.location = location
         self.sku = sku
         self.currency = None
@@ -4736,50 +4831,47 @@ class ReservationRecommendationDetailsModel(Resource):
         self.usage = None
 
 
-class ReservationRecommendationDetailsResourceProperties(msrest.serialization.Model):
+class ReservationRecommendationDetailsResourceProperties(_serialization.Model):
     """Details of the resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar applied_scopes: List of subscriptions for which the reservation is applied.
     :vartype applied_scopes: list[str]
-    :ivar on_demand_rate: On demand rate of the resource.
+    :ivar on_demand_rate: Hourly on-demand rate of the resource. Includes only hardware rate i.e,
+     software rate is not included.
     :vartype on_demand_rate: float
     :ivar product: Azure product ex: Standard_E8s_v3 etc.
     :vartype product: str
     :ivar region: Azure resource region ex:EastUS, WestUS etc.
     :vartype region: str
-    :ivar reservation_rate: Reservation rate of the resource.
+    :ivar reservation_rate: Hourly reservation rate of the resource. Varies based on the term.
     :vartype reservation_rate: float
     :ivar resource_type: The azure resource type.
     :vartype resource_type: str
     """
 
     _validation = {
-        'applied_scopes': {'readonly': True},
-        'on_demand_rate': {'readonly': True},
-        'product': {'readonly': True},
-        'region': {'readonly': True},
-        'reservation_rate': {'readonly': True},
-        'resource_type': {'readonly': True},
+        "applied_scopes": {"readonly": True},
+        "on_demand_rate": {"readonly": True},
+        "product": {"readonly": True},
+        "region": {"readonly": True},
+        "reservation_rate": {"readonly": True},
+        "resource_type": {"readonly": True},
     }
 
     _attribute_map = {
-        'applied_scopes': {'key': 'appliedScopes', 'type': '[str]'},
-        'on_demand_rate': {'key': 'onDemandRate', 'type': 'float'},
-        'product': {'key': 'product', 'type': 'str'},
-        'region': {'key': 'region', 'type': 'str'},
-        'reservation_rate': {'key': 'reservationRate', 'type': 'float'},
-        'resource_type': {'key': 'resourceType', 'type': 'str'},
+        "applied_scopes": {"key": "appliedScopes", "type": "[str]"},
+        "on_demand_rate": {"key": "onDemandRate", "type": "float"},
+        "product": {"key": "product", "type": "str"},
+        "region": {"key": "region", "type": "str"},
+        "reservation_rate": {"key": "reservationRate", "type": "float"},
+        "resource_type": {"key": "resourceType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ReservationRecommendationDetailsResourceProperties, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.applied_scopes = None
         self.on_demand_rate = None
         self.product = None
@@ -4788,7 +4880,7 @@ class ReservationRecommendationDetailsResourceProperties(msrest.serialization.Mo
         self.resource_type = None
 
 
-class ReservationRecommendationDetailsSavingsProperties(msrest.serialization.Model):
+class ReservationRecommendationDetailsSavingsProperties(_serialization.Model):
     """Details of the estimated savings.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4810,26 +4902,31 @@ class ReservationRecommendationDetailsSavingsProperties(msrest.serialization.Mod
     """
 
     _validation = {
-        'look_back_period': {'readonly': True},
-        'recommended_quantity': {'readonly': True},
-        'reservation_order_term': {'readonly': True},
-        'savings_type': {'readonly': True},
-        'unit_of_measure': {'readonly': True},
+        "look_back_period": {"readonly": True},
+        "recommended_quantity": {"readonly": True},
+        "reservation_order_term": {"readonly": True},
+        "savings_type": {"readonly": True},
+        "unit_of_measure": {"readonly": True},
     }
 
     _attribute_map = {
-        'calculated_savings': {'key': 'calculatedSavings', 'type': '[ReservationRecommendationDetailsCalculatedSavingsProperties]'},
-        'look_back_period': {'key': 'lookBackPeriod', 'type': 'int'},
-        'recommended_quantity': {'key': 'recommendedQuantity', 'type': 'float'},
-        'reservation_order_term': {'key': 'reservationOrderTerm', 'type': 'str'},
-        'savings_type': {'key': 'savingsType', 'type': 'str'},
-        'unit_of_measure': {'key': 'unitOfMeasure', 'type': 'str'},
+        "calculated_savings": {
+            "key": "calculatedSavings",
+            "type": "[ReservationRecommendationDetailsCalculatedSavingsProperties]",
+        },
+        "look_back_period": {"key": "lookBackPeriod", "type": "int"},
+        "recommended_quantity": {"key": "recommendedQuantity", "type": "float"},
+        "reservation_order_term": {"key": "reservationOrderTerm", "type": "str"},
+        "savings_type": {"key": "savingsType", "type": "str"},
+        "unit_of_measure": {"key": "unitOfMeasure", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        calculated_savings: Optional[List["_models.ReservationRecommendationDetailsCalculatedSavingsProperties"]] = None,
+        calculated_savings: Optional[
+            List["_models.ReservationRecommendationDetailsCalculatedSavingsProperties"]
+        ] = None,
         **kwargs
     ):
         """
@@ -4837,7 +4934,7 @@ class ReservationRecommendationDetailsSavingsProperties(msrest.serialization.Mod
         :paramtype calculated_savings:
          list[~azure.mgmt.consumption.models.ReservationRecommendationDetailsCalculatedSavingsProperties]
         """
-        super(ReservationRecommendationDetailsSavingsProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.calculated_savings = calculated_savings
         self.look_back_period = None
         self.recommended_quantity = None
@@ -4846,7 +4943,7 @@ class ReservationRecommendationDetailsSavingsProperties(msrest.serialization.Mod
         self.unit_of_measure = None
 
 
-class ReservationRecommendationDetailsUsageProperties(msrest.serialization.Model):
+class ReservationRecommendationDetailsUsageProperties(_serialization.Model):
     """Details about historical usage data that has been used for computing the recommendation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4867,28 +4964,24 @@ class ReservationRecommendationDetailsUsageProperties(msrest.serialization.Model
     """
 
     _validation = {
-        'first_consumption_date': {'readonly': True},
-        'last_consumption_date': {'readonly': True},
-        'look_back_unit_type': {'readonly': True},
-        'usage_data': {'readonly': True},
-        'usage_grain': {'readonly': True},
+        "first_consumption_date": {"readonly": True},
+        "last_consumption_date": {"readonly": True},
+        "look_back_unit_type": {"readonly": True},
+        "usage_data": {"readonly": True},
+        "usage_grain": {"readonly": True},
     }
 
     _attribute_map = {
-        'first_consumption_date': {'key': 'firstConsumptionDate', 'type': 'str'},
-        'last_consumption_date': {'key': 'lastConsumptionDate', 'type': 'str'},
-        'look_back_unit_type': {'key': 'lookBackUnitType', 'type': 'str'},
-        'usage_data': {'key': 'usageData', 'type': '[float]'},
-        'usage_grain': {'key': 'usageGrain', 'type': 'str'},
+        "first_consumption_date": {"key": "firstConsumptionDate", "type": "str"},
+        "last_consumption_date": {"key": "lastConsumptionDate", "type": "str"},
+        "look_back_unit_type": {"key": "lookBackUnitType", "type": "str"},
+        "usage_data": {"key": "usageData", "type": "[float]"},
+        "usage_grain": {"key": "usageGrain", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ReservationRecommendationDetailsUsageProperties, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.first_consumption_date = None
         self.last_consumption_date = None
         self.look_back_unit_type = None
@@ -4896,7 +4989,7 @@ class ReservationRecommendationDetailsUsageProperties(msrest.serialization.Model
         self.usage_grain = None
 
 
-class ReservationRecommendationsListResult(msrest.serialization.Model):
+class ReservationRecommendationsListResult(_serialization.Model):
     """Result of listing reservation recommendations.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4910,30 +5003,26 @@ class ReservationRecommendationsListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
-        'previous_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
+        "previous_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ReservationRecommendation]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'previous_link': {'key': 'previousLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ReservationRecommendation]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "previous_link": {"key": "previousLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ReservationRecommendationsListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
         self.previous_link = None
 
 
-class ReservationSummariesListResult(msrest.serialization.Model):
+class ReservationSummariesListResult(_serialization.Model):
     """Result of listing reservation summaries.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4945,27 +5034,23 @@ class ReservationSummariesListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ReservationSummary]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ReservationSummary]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ReservationSummariesListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class ReservationSummary(Resource):
+class ReservationSummary(Resource):  # pylint: disable=too-many-instance-attributes
     """reservation summary resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4978,7 +5063,7 @@ class ReservationSummary(Resource):
     :vartype type: str
     :ivar etag: The etag for the resource.
     :vartype etag: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar reservation_order_id: The reservation order ID is the identifier for a reservation
      purchase. Each reservation order ID represents a single purchase transaction. A reservation
@@ -5027,58 +5112,54 @@ class ReservationSummary(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'tags': {'readonly': True},
-        'reservation_order_id': {'readonly': True},
-        'reservation_id': {'readonly': True},
-        'sku_name': {'readonly': True},
-        'reserved_hours': {'readonly': True},
-        'usage_date': {'readonly': True},
-        'used_hours': {'readonly': True},
-        'min_utilization_percentage': {'readonly': True},
-        'avg_utilization_percentage': {'readonly': True},
-        'max_utilization_percentage': {'readonly': True},
-        'kind': {'readonly': True},
-        'purchased_quantity': {'readonly': True},
-        'remaining_quantity': {'readonly': True},
-        'total_reserved_quantity': {'readonly': True},
-        'used_quantity': {'readonly': True},
-        'utilized_percentage': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "tags": {"readonly": True},
+        "reservation_order_id": {"readonly": True},
+        "reservation_id": {"readonly": True},
+        "sku_name": {"readonly": True},
+        "reserved_hours": {"readonly": True},
+        "usage_date": {"readonly": True},
+        "used_hours": {"readonly": True},
+        "min_utilization_percentage": {"readonly": True},
+        "avg_utilization_percentage": {"readonly": True},
+        "max_utilization_percentage": {"readonly": True},
+        "kind": {"readonly": True},
+        "purchased_quantity": {"readonly": True},
+        "remaining_quantity": {"readonly": True},
+        "total_reserved_quantity": {"readonly": True},
+        "used_quantity": {"readonly": True},
+        "utilized_percentage": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'reservation_order_id': {'key': 'properties.reservationOrderId', 'type': 'str'},
-        'reservation_id': {'key': 'properties.reservationId', 'type': 'str'},
-        'sku_name': {'key': 'properties.skuName', 'type': 'str'},
-        'reserved_hours': {'key': 'properties.reservedHours', 'type': 'float'},
-        'usage_date': {'key': 'properties.usageDate', 'type': 'iso-8601'},
-        'used_hours': {'key': 'properties.usedHours', 'type': 'float'},
-        'min_utilization_percentage': {'key': 'properties.minUtilizationPercentage', 'type': 'float'},
-        'avg_utilization_percentage': {'key': 'properties.avgUtilizationPercentage', 'type': 'float'},
-        'max_utilization_percentage': {'key': 'properties.maxUtilizationPercentage', 'type': 'float'},
-        'kind': {'key': 'properties.kind', 'type': 'str'},
-        'purchased_quantity': {'key': 'properties.purchasedQuantity', 'type': 'float'},
-        'remaining_quantity': {'key': 'properties.remainingQuantity', 'type': 'float'},
-        'total_reserved_quantity': {'key': 'properties.totalReservedQuantity', 'type': 'float'},
-        'used_quantity': {'key': 'properties.usedQuantity', 'type': 'float'},
-        'utilized_percentage': {'key': 'properties.utilizedPercentage', 'type': 'float'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "reservation_order_id": {"key": "properties.reservationOrderId", "type": "str"},
+        "reservation_id": {"key": "properties.reservationId", "type": "str"},
+        "sku_name": {"key": "properties.skuName", "type": "str"},
+        "reserved_hours": {"key": "properties.reservedHours", "type": "float"},
+        "usage_date": {"key": "properties.usageDate", "type": "iso-8601"},
+        "used_hours": {"key": "properties.usedHours", "type": "float"},
+        "min_utilization_percentage": {"key": "properties.minUtilizationPercentage", "type": "float"},
+        "avg_utilization_percentage": {"key": "properties.avgUtilizationPercentage", "type": "float"},
+        "max_utilization_percentage": {"key": "properties.maxUtilizationPercentage", "type": "float"},
+        "kind": {"key": "properties.kind", "type": "str"},
+        "purchased_quantity": {"key": "properties.purchasedQuantity", "type": "float"},
+        "remaining_quantity": {"key": "properties.remainingQuantity", "type": "float"},
+        "total_reserved_quantity": {"key": "properties.totalReservedQuantity", "type": "float"},
+        "used_quantity": {"key": "properties.usedQuantity", "type": "float"},
+        "utilized_percentage": {"key": "properties.utilizedPercentage", "type": "float"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ReservationSummary, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.reservation_order_id = None
         self.reservation_id = None
         self.sku_name = None
@@ -5096,7 +5177,7 @@ class ReservationSummary(Resource):
         self.utilized_percentage = None
 
 
-class ReservationTransactionsListResult(msrest.serialization.Model):
+class ReservationTransactionsListResult(_serialization.Model):
     """Result of listing reservation recommendations.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5108,27 +5189,23 @@ class ReservationTransactionsListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ReservationTransaction]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ReservationTransaction]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ReservationTransactionsListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class SkuProperty(msrest.serialization.Model):
+class SkuProperty(_serialization.Model):
     """The Sku property.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5140,27 +5217,23 @@ class SkuProperty(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'value': {'readonly': True},
+        "name": {"readonly": True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(SkuProperty, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.name = None
         self.value = None
 
 
-class Tag(msrest.serialization.Model):
+class Tag(_serialization.Model):
     """The tag resource.
 
     :ivar key: Tag key.
@@ -5170,24 +5243,18 @@ class Tag(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'key': {'key': 'key', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[str]'},
+        "key": {"key": "key", "type": "str"},
+        "value": {"key": "value", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        key: Optional[str] = None,
-        value: Optional[List[str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, key: Optional[str] = None, value: Optional[List[str]] = None, **kwargs):
         """
         :keyword key: Tag key.
         :paramtype key: str
         :keyword value: Tag values.
         :paramtype value: list[str]
         """
-        super(Tag, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.key = key
         self.value = value
 
@@ -5206,7 +5273,7 @@ class TagsResult(ProxyResource):
     :ivar e_tag: eTag of the resource. To handle concurrent update scenario, this field will be
      used to determine whether the user is updating the latest version or not.
     :vartype e_tag: str
-    :ivar tags: A set of tags. A list of Tag.
+    :ivar tags: A list of Tag.
     :vartype tags: list[~azure.mgmt.consumption.models.Tag]
     :ivar next_link: The link (url) to the next page of results.
     :vartype next_link: str
@@ -5215,44 +5282,38 @@ class TagsResult(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'next_link': {'readonly': True},
-        'previous_link': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "next_link": {"readonly": True},
+        "previous_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'e_tag': {'key': 'eTag', 'type': 'str'},
-        'tags': {'key': 'properties.tags', 'type': '[Tag]'},
-        'next_link': {'key': 'properties.nextLink', 'type': 'str'},
-        'previous_link': {'key': 'properties.previousLink', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "e_tag": {"key": "eTag", "type": "str"},
+        "tags": {"key": "properties.tags", "type": "[Tag]"},
+        "next_link": {"key": "properties.nextLink", "type": "str"},
+        "previous_link": {"key": "properties.previousLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        e_tag: Optional[str] = None,
-        tags: Optional[List["_models.Tag"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, e_tag: Optional[str] = None, tags: Optional[List["_models.Tag"]] = None, **kwargs):
         """
         :keyword e_tag: eTag of the resource. To handle concurrent update scenario, this field will be
          used to determine whether the user is updating the latest version or not.
         :paramtype e_tag: str
-        :keyword tags: A set of tags. A list of Tag.
+        :keyword tags: A list of Tag.
         :paramtype tags: list[~azure.mgmt.consumption.models.Tag]
         """
-        super(TagsResult, self).__init__(e_tag=e_tag, **kwargs)
+        super().__init__(e_tag=e_tag, **kwargs)
         self.tags = tags
         self.next_link = None
         self.previous_link = None
 
 
-class UsageDetailsListResult(msrest.serialization.Model):
+class UsageDetailsListResult(_serialization.Model):
     """Result of listing usage details. It contains a list of available usage details in reverse chronological order by billing period.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5264,21 +5325,17 @@ class UsageDetailsListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[UsageDetail]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[UsageDetail]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(UsageDetailsListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None

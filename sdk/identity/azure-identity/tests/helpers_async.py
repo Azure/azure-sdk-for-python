@@ -15,6 +15,7 @@ def await_test(fn):
     def wrapper(*args, **kwargs):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(fn(*args, **kwargs))
+
     return wrapper
 
 

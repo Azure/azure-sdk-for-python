@@ -11,12 +11,14 @@ from azure.ai.ml.operations import DatastoreOperations
 
 @pytest.fixture
 def mock_datastore_operation(
-    mock_workspace_scope: OperationScope, mock_operation_config: OperationConfig, mock_aml_services_2022_05_01: Mock
+    mock_workspace_scope: OperationScope,
+    mock_operation_config: OperationConfig,
+    mock_aml_services_2023_04_01_preview: Mock,
 ) -> DatastoreOperations:
     yield DatastoreOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
-        serviceclient_2022_05_01=mock_aml_services_2022_05_01,
+        serviceclient_2023_04_01_preview=mock_aml_services_2023_04_01_preview,
     )
 
 
@@ -29,22 +31,16 @@ class TestDatastoreOperations:
         mock_datastore_operation._operation.list.assert_called_once()
         mock_datastore_operation._operation.list_secrets.assert_not_called()
 
-    def test_delete(
-        self, mock_from_rest, mock_datastore_operation: DatastoreOperations
-    ) -> None:
+    def test_delete(self, mock_from_rest, mock_datastore_operation: DatastoreOperations) -> None:
         mock_datastore_operation.delete("random_name")
         mock_datastore_operation._operation.delete.assert_called_once()
 
-    def test_get_no_secrets(
-        self, mock_from_rest, mock_datastore_operation: DatastoreOperations
-    ) -> None:
+    def test_get_no_secrets(self, mock_from_rest, mock_datastore_operation: DatastoreOperations) -> None:
         mock_datastore_operation.get("random_name")
         mock_datastore_operation._operation.get.assert_called_once()
         mock_datastore_operation._operation.list_secrets.assert_not_called()
 
-    def test_get_no_secrets_with_secrets(
-        self, mock_from_rest, mock_datastore_operation: DatastoreOperations
-    ) -> None:
+    def test_get_no_secrets_with_secrets(self, mock_from_rest, mock_datastore_operation: DatastoreOperations) -> None:
         mock_datastore_operation.get("random_name", include_secrets=True)
         mock_datastore_operation._operation.get.assert_called_once()
         mock_datastore_operation._operation.list_secrets.assert_called_once()
@@ -56,6 +52,9 @@ class TestDatastoreOperations:
             "file_store.yml",
             "adls_gen1.yml",
             "adls_gen2.yml",
+            "one_lake.yml",
+            "one_lake_auth_url_back_compat.yml",
+            "credential_less_one_lake.yml",
             # disable until preview release
             # "hdfs_kerberos_pw.yml",
             # "hdfs_kerberos_keytab.yml",

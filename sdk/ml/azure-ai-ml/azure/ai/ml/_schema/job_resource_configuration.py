@@ -8,6 +8,7 @@ from .resource_configuration import ResourceConfigurationSchema
 
 
 class JobResourceConfigurationSchema(ResourceConfigurationSchema):
+    locations = fields.List(fields.Str())
     shm_size = fields.Str(
         metadata={
             "description": (
@@ -17,6 +18,9 @@ class JobResourceConfigurationSchema(ResourceConfigurationSchema):
                 "`b` (bytes), `k` (kilobytes), `m` (megabytes), or `g` (gigabytes)."
             )
         }
+    )
+    max_instance_count = fields.Int(
+        metadata={"description": "The maximum number of instances to make available to this job."}
     )
     docker_args = fields.Str(metadata={"description": "arguments to pass to the Docker run command."})
 

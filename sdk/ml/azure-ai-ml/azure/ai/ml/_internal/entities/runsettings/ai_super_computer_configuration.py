@@ -2,12 +2,29 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Dict, List
+from typing import Dict, List, Optional
 
-from azure.ai.ml.entities._job.job_resource_configuration import BaseProperty
+from ....entities._job.job_resource_configuration import BaseProperty
 
 
-class AISuperComputerStorageReferenceConfiguration(BaseProperty):
+class PascalCaseProperty(BaseProperty):
+    _KEY_MAPPING = {}
+
+    def items(self):
+        result = []
+        for key, value in super().items():
+            if key.lower() in self._KEY_MAPPING:
+                key = self._KEY_MAPPING[key.lower()]
+            result.append((key, value))
+        return result
+
+
+class AISuperComputerStorageReferenceConfiguration(PascalCaseProperty):  # pylint: disable=name-too-long
+    _KEY_MAPPING = {
+        "container_name": "ContainerName",
+        "relative_path": "RelativePath",
+    }
+
     def __init__(
         self,
         container_name: str,
@@ -25,13 +42,20 @@ class AISuperComputerStorageReferenceConfiguration(BaseProperty):
         self.relative_path = relative_path
 
 
-class AISuperComputerScalePolicy(BaseProperty):
+class AISuperComputerScalePolicy(PascalCaseProperty):
+    _KEY_MAPPING = {
+        "auto_scale_instance_type_count_set": "AutoScaleInstanceTypeCountSet",
+        "auto_scale_interval_in_sec": "AutoScaleIntervalInSec",
+        "max_instance_type_count": "MaxInstanceTypeCount",
+        "min_instance_type_count": "MinInstanceTypeCount",
+    }
+
     def __init__(
         self,
-        auto_scale_instance_type_count_set: List[int] = None,
-        auto_scale_interval_in_sec: int = None,
-        max_instance_type_count: int = None,
-        min_instance_type_count: int = None,
+        auto_scale_instance_type_count_set: Optional[List[int]] = None,
+        auto_scale_interval_in_sec: Optional[int] = None,
+        max_instance_type_count: Optional[int] = None,
+        min_instance_type_count: Optional[int] = None,
         **kwargs,
     ):
         """
@@ -57,28 +81,48 @@ class AISuperComputerScalePolicy(BaseProperty):
         self.min_instance_type_count = min_instance_type_count
 
 
-class AISuperComputerConfiguration(BaseProperty):  # pylint: disable=too-many-instance-attributes
+class AISuperComputerConfiguration(PascalCaseProperty):  # pylint: disable=too-many-instance-attributes
     """A class to manage AI Super Computer Configuration."""
+
+    _KEY_MAPPING = {
+        "instance_type": "InstanceType",
+        "instance_types": "InstanceTypes",
+        "image_version": "ImageVersion",
+        "location": "Location",
+        "locations": "Locations",
+        "ai_super_computer_storage_data": "AISuperComputerStorageData",
+        "interactive": "Interactive",
+        "scale_policy": "ScalePolicy",
+        "virtual_cluster_arm_id": "VirtualClusterArmId",
+        "tensorboard_log_directory": "TensorboardLogDirectory",
+        "ssh_public_key": "SSHPublicKey",
+        "ssh_public_keys": "SSHPublicKeys",
+        "enable_azml_int": "EnableAzmlInt",
+        "priority": "Priority",
+        "sla_tier": "SLATier",
+        "suspend_on_idle_time_hours": "SuspendOnIdleTimeHours",
+        "user_alias": "UserAlias",
+    }
 
     def __init__(
         self,
-        instance_type: str = None,
-        instance_types: List[str] = None,
-        image_version: str = None,
-        location: str = None,
-        locations: List[str] = None,
-        ai_super_computer_storage_data: Dict[str, AISuperComputerStorageReferenceConfiguration] = None,
-        interactive: bool = None,
-        scale_policy: AISuperComputerScalePolicy = None,
-        virtual_cluster_arm_id: str = None,
-        tensorboard_log_directory: str = None,
-        ssh_public_key: str = None,
-        ssh_public_keys: List[str] = None,
-        enable_azml_int: bool = None,
-        priority: str = None,
-        sla_tier: str = None,
-        suspend_on_idle_time_hours: int = None,
-        user_alias: str = None,
+        instance_type: Optional[str] = None,
+        instance_types: Optional[List[str]] = None,
+        image_version: Optional[str] = None,
+        location: Optional[str] = None,
+        locations: Optional[List[str]] = None,
+        ai_super_computer_storage_data: Optional[Dict[str, AISuperComputerStorageReferenceConfiguration]] = None,
+        interactive: Optional[bool] = None,
+        scale_policy: Optional[AISuperComputerScalePolicy] = None,
+        virtual_cluster_arm_id: Optional[str] = None,
+        tensorboard_log_directory: Optional[str] = None,
+        ssh_public_key: Optional[str] = None,
+        ssh_public_keys: Optional[List[str]] = None,
+        enable_azml_int: Optional[bool] = None,
+        priority: Optional[str] = None,
+        sla_tier: Optional[str] = None,
+        suspend_on_idle_time_hours: Optional[int] = None,
+        user_alias: Optional[str] = None,
         **kwargs,
     ):
         """

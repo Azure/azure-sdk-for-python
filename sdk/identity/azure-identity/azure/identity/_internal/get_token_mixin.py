@@ -5,38 +5,47 @@
 import abc
 import logging
 import time
-from typing import TYPE_CHECKING, Any, Optional
+from typing import Any, Optional
 
+from azure.core.credentials import AccessToken
 from .utils import within_credential_chain
 from .._constants import DEFAULT_REFRESH_OFFSET, DEFAULT_TOKEN_REFRESH_RETRY_DELAY
 
-if TYPE_CHECKING:
-    from azure.core.credentials import AccessToken
-
-ABC = abc.ABC
 _LOGGER = logging.getLogger(__name__)
 
 
-class GetTokenMixin(ABC):
-    def __init__(self, *args, **kwargs):
-        # type: (*Any, **Any) -> None
+class GetTokenMixin(abc.ABC):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         self._last_request_time = 0
 
         # https://github.com/python/mypy/issues/5887
         super(GetTokenMixin, self).__init__(*args, **kwargs)  # type: ignore
 
     @abc.abstractmethod
-    def _acquire_token_silently(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> Optional[AccessToken]
-        """Attempt to acquire an access token from a cache or by redeeming a refresh token"""
+    def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:
+        """Attempt to acquire an access token from a cache or by redeeming a refresh token.
+
+        :param str scopes: desired scopes for the access token. This method requires at least one scope.
+            For more information about scopes, see
+            https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
+
+        :return: An access token with the desired scopes if successful; otherwise, None.
+        :rtype: ~azure.core.credentials.AccessToken or None
+        """
 
     @abc.abstractmethod
-    def _request_token(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> AccessToken
-        """Request an access token from the STS"""
+    def _request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
+        """Request an access token from the STS.
 
-    def _should_refresh(self, token):
-        # type: (AccessToken) -> bool
+        :param str scopes: desired scopes for the access token. This method requires at least one scope.
+            For more information about scopes, see
+            https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
+
+        :return: An access token with the desired scopes.
+        :rtype: ~azure.core.credentials.AccessToken
+        """
+
+    def _should_refresh(self, token: AccessToken) -> bool:
         now = int(time.time())
         if token.expires_on - now > DEFAULT_REFRESH_OFFSET:
             return False
@@ -44,17 +53,24 @@ class GetTokenMixin(ABC):
             return False
         return True
 
-    def get_token(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> AccessToken
+    def get_token(
+        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
+    ) -> AccessToken:
         """Request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
+            For more information about scopes, see
+            https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
+        :keyword str claims: additional claims required in the token, such as those returned in a resource provider's
+            claims challenge following an authorization failure.
         :keyword str tenant_id: optional tenant to include in the token request.
+        :keyword bool enable_cae: indicates whether to enable Continuous Access Evaluation (CAE) for the requested
+            token. Defaults to False.
 
-        :rtype: :class:`azure.core.credentials.AccessToken`
-
+        :return: An access token with the desired scopes.
+        :rtype: ~azure.core.credentials.AccessToken
         :raises CredentialUnavailableError: the credential is unable to attempt authentication because it lacks
             required data, state, or platform support
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
@@ -64,14 +80,14 @@ class GetTokenMixin(ABC):
             raise ValueError('"get_token" requires at least one scope')
 
         try:
-            token = self._acquire_token_silently(*scopes, **kwargs)
+            token = self._acquire_token_silently(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
             if not token:
                 self._last_request_time = int(time.time())
-                token = self._request_token(*scopes, **kwargs)
+                token = self._request_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
             elif self._should_refresh(token):
                 try:
                     self._last_request_time = int(time.time())
-                    token = self._request_token(*scopes, **kwargs)
+                    token = self._request_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
                 except Exception:  # pylint:disable=broad-except
                     pass
             _LOGGER.log(

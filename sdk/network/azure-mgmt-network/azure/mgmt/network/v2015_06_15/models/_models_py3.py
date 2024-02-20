@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
@@ -17,7 +17,8 @@ if TYPE_CHECKING:
 
 
 class AddressSpace(_serialization.Model):
-    """AddressSpace contains an array of IP address ranges that can be used by subnets of the virtual network.
+    """AddressSpace contains an array of IP address ranges that can be used by subnets of the virtual
+    network.
 
     :ivar address_prefixes: A list of address blocks reserved for this virtual network in CIDR
      notation.
@@ -28,7 +29,7 @@ class AddressSpace(_serialization.Model):
         "address_prefixes": {"key": "addressPrefixes", "type": "[str]"},
     }
 
-    def __init__(self, *, address_prefixes: Optional[List[str]] = None, **kwargs):
+    def __init__(self, *, address_prefixes: Optional[List[str]] = None, **kwargs: Any) -> None:
         """
         :keyword address_prefixes: A list of address blocks reserved for this virtual network in CIDR
          notation.
@@ -74,8 +75,8 @@ class Resource(_serialization.Model):
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource Identifier.
         :paramtype id: str
@@ -217,8 +218,8 @@ class ApplicationGateway(Resource):  # pylint: disable=too-many-instance-attribu
         request_routing_rules: Optional[List["_models.ApplicationGatewayRequestRoutingRule"]] = None,
         resource_guid: Optional[str] = None,
         provisioning_state: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource Identifier.
         :paramtype id: str
@@ -298,7 +299,7 @@ class ApplicationGatewayBackendAddress(_serialization.Model):
         "ip_address": {"key": "ipAddress", "type": "str"},
     }
 
-    def __init__(self, *, fqdn: Optional[str] = None, ip_address: Optional[str] = None, **kwargs):
+    def __init__(self, *, fqdn: Optional[str] = None, ip_address: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword fqdn: Fully qualified domain name (FQDN).
         :paramtype fqdn: str
@@ -321,7 +322,7 @@ class SubResource(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: Resource Identifier.
         :paramtype id: str
@@ -372,8 +373,8 @@ class ApplicationGatewayBackendAddressPool(SubResource):
         backend_ip_configurations: Optional[List["_models.NetworkInterfaceIPConfiguration"]] = None,
         backend_addresses: Optional[List["_models.ApplicationGatewayBackendAddress"]] = None,
         provisioning_state: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource Identifier.
         :paramtype id: str
@@ -455,8 +456,8 @@ class ApplicationGatewayBackendHttpSettings(SubResource):
         request_timeout: Optional[int] = None,
         probe: Optional["_models.SubResource"] = None,
         provisioning_state: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource Identifier.
         :paramtype id: str
@@ -542,8 +543,8 @@ class ApplicationGatewayFrontendIPConfiguration(SubResource):
         subnet: Optional["_models.SubResource"] = None,
         public_ip_address: Optional["_models.SubResource"] = None,
         provisioning_state: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource Identifier.
         :paramtype id: str
@@ -609,8 +610,8 @@ class ApplicationGatewayFrontendPort(SubResource):
         etag: Optional[str] = None,
         port: Optional[int] = None,
         provisioning_state: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource Identifier.
         :paramtype id: str
@@ -687,8 +688,8 @@ class ApplicationGatewayHttpListener(SubResource):
         ssl_certificate: Optional["_models.SubResource"] = None,
         require_server_name_indication: Optional[bool] = None,
         provisioning_state: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource Identifier.
         :paramtype id: str
@@ -729,7 +730,8 @@ class ApplicationGatewayHttpListener(SubResource):
 
 
 class ApplicationGatewayIPConfiguration(SubResource):
-    """IP configuration of an application gateway. Currently 1 public and 1 private IP configuration is allowed.
+    """IP configuration of an application gateway. Currently 1 public and 1 private IP configuration
+    is allowed.
 
     :ivar id: Resource Identifier.
     :vartype id: str
@@ -762,8 +764,8 @@ class ApplicationGatewayIPConfiguration(SubResource):
         etag: Optional[str] = None,
         subnet: Optional["_models.SubResource"] = None,
         provisioning_state: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource Identifier.
         :paramtype id: str
@@ -801,8 +803,12 @@ class ApplicationGatewayListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.ApplicationGateway"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.ApplicationGateway"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of an application gateways in a resource group.
         :paramtype value: list[~azure.mgmt.network.v2015_06_15.models.ApplicationGateway]
@@ -855,8 +861,8 @@ class ApplicationGatewayPathRule(SubResource):
         backend_address_pool: Optional["_models.SubResource"] = None,
         backend_http_settings: Optional["_models.SubResource"] = None,
         provisioning_state: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource Identifier.
         :paramtype id: str
@@ -943,8 +949,8 @@ class ApplicationGatewayProbe(SubResource):
         timeout: Optional[int] = None,
         unhealthy_threshold: Optional[int] = None,
         provisioning_state: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource Identifier.
         :paramtype id: str
@@ -1038,8 +1044,8 @@ class ApplicationGatewayRequestRoutingRule(SubResource):
         http_listener: Optional["_models.SubResource"] = None,
         url_path_map: Optional["_models.SubResource"] = None,
         provisioning_state: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource Identifier.
         :paramtype id: str
@@ -1100,8 +1106,8 @@ class ApplicationGatewaySku(_serialization.Model):
         name: Optional[Union[str, "_models.ApplicationGatewaySkuName"]] = None,
         tier: Optional[Union[str, "_models.ApplicationGatewayTier"]] = None,
         capacity: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Name of an application gateway SKU. Possible values are: 'Standard_Small',
          'Standard_Medium', 'Standard_Large', 'WAF_Medium', and 'WAF_Large'. Known values are:
@@ -1160,8 +1166,8 @@ class ApplicationGatewaySslCertificate(SubResource):
         password: Optional[str] = None,
         public_cert_data: Optional[str] = None,
         provisioning_state: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource Identifier.
         :paramtype id: str
@@ -1231,8 +1237,8 @@ class ApplicationGatewayUrlPathMap(SubResource):
         default_backend_http_settings: Optional["_models.SubResource"] = None,
         path_rules: Optional[List["_models.ApplicationGatewayPathRule"]] = None,
         provisioning_state: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource Identifier.
         :paramtype id: str
@@ -1261,7 +1267,8 @@ class ApplicationGatewayUrlPathMap(SubResource):
 
 
 class AuthorizationListResult(_serialization.Model):
-    """Response for ListAuthorizations API service call retrieves all authorizations that belongs to an ExpressRouteCircuit.
+    """Response for ListAuthorizations API service call retrieves all authorizations that belongs to
+    an ExpressRouteCircuit.
 
     :ivar value: The authorizations in an ExpressRoute Circuit.
     :vartype value: list[~azure.mgmt.network.v2015_06_15.models.ExpressRouteCircuitAuthorization]
@@ -1279,8 +1286,8 @@ class AuthorizationListResult(_serialization.Model):
         *,
         value: Optional[List["_models.ExpressRouteCircuitAuthorization"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The authorizations in an ExpressRoute Circuit.
         :paramtype value: list[~azure.mgmt.network.v2015_06_15.models.ExpressRouteCircuitAuthorization]
@@ -1293,7 +1300,12 @@ class AuthorizationListResult(_serialization.Model):
 
 
 class AzureAsyncOperationResult(_serialization.Model):
-    """The response body contains the status of the specified asynchronous operation, indicating whether it has succeeded, is in progress, or has failed. Note that this status is distinct from the HTTP status code returned for the Get Operation Status operation itself. If the asynchronous operation succeeded, the response body includes the HTTP status code for the successful request. If the asynchronous operation failed, the response body includes the HTTP status code for the failed request and error information regarding the failure.
+    """The response body contains the status of the specified asynchronous operation, indicating
+    whether it has succeeded, is in progress, or has failed. Note that this status is distinct from
+    the HTTP status code returned for the Get Operation Status operation itself. If the
+    asynchronous operation succeeded, the response body includes the HTTP status code for the
+    successful request. If the asynchronous operation failed, the response body includes the HTTP
+    status code for the failed request and error information regarding the failure.
 
     :ivar status: Status of the Azure async operation. Possible values are: 'InProgress',
      'Succeeded', and 'Failed'. Known values are: "InProgress", "Succeeded", and "Failed".
@@ -1312,8 +1324,8 @@ class AzureAsyncOperationResult(_serialization.Model):
         *,
         status: Optional[Union[str, "_models.NetworkOperationStatus"]] = None,
         error: Optional["_models.Error"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword status: Status of the Azure async operation. Possible values are: 'InProgress',
          'Succeeded', and 'Failed'. Known values are: "InProgress", "Succeeded", and "Failed".
@@ -1377,8 +1389,8 @@ class BackendAddressPool(SubResource):
         backend_ip_configurations: Optional[List["_models.NetworkInterfaceIPConfiguration"]] = None,
         outbound_nat_rule: Optional["_models.SubResource"] = None,
         provisioning_state: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource Identifier.
         :paramtype id: str
@@ -1430,8 +1442,8 @@ class BgpSettings(_serialization.Model):
         asn: Optional[int] = None,
         bgp_peering_address: Optional[str] = None,
         peer_weight: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword asn: Gets or sets this BGP speaker's ASN.
         :paramtype asn: int
@@ -1458,7 +1470,7 @@ class ConnectionResetSharedKey(_serialization.Model):
         "key_length": {"key": "keyLength", "type": "int"},
     }
 
-    def __init__(self, *, key_length: Optional[int] = None, **kwargs):
+    def __init__(self, *, key_length: Optional[int] = None, **kwargs: Any) -> None:
         """
         :keyword key_length: The virtual network connection reset shared key length.
         :paramtype key_length: int
@@ -1478,7 +1490,7 @@ class ConnectionSharedKey(_serialization.Model):
         "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: The virtual network connection shared key value.
         :paramtype value: str
@@ -1498,7 +1510,7 @@ class ConnectionSharedKeyResult(_serialization.Model):
         "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: The virtual network connection shared key value.
         :paramtype value: str
@@ -1508,7 +1520,8 @@ class ConnectionSharedKeyResult(_serialization.Model):
 
 
 class DhcpOptions(_serialization.Model):
-    """DhcpOptions contains an array of DNS servers available to VMs deployed in the virtual network. Standard DHCP option for a subnet overrides VNET DHCP options.
+    """DhcpOptions contains an array of DNS servers available to VMs deployed in the virtual network.
+    Standard DHCP option for a subnet overrides VNET DHCP options.
 
     :ivar dns_servers: The list of DNS servers IP addresses.
     :vartype dns_servers: list[str]
@@ -1518,7 +1531,7 @@ class DhcpOptions(_serialization.Model):
         "dns_servers": {"key": "dnsServers", "type": "[str]"},
     }
 
-    def __init__(self, *, dns_servers: Optional[List[str]] = None, **kwargs):
+    def __init__(self, *, dns_servers: Optional[List[str]] = None, **kwargs: Any) -> None:
         """
         :keyword dns_servers: The list of DNS servers IP addresses.
         :paramtype dns_servers: list[str]
@@ -1538,7 +1551,7 @@ class DnsNameAvailabilityResult(_serialization.Model):
         "available": {"key": "available", "type": "bool"},
     }
 
-    def __init__(self, *, available: Optional[bool] = None, **kwargs):
+    def __init__(self, *, available: Optional[bool] = None, **kwargs: Any) -> None:
         """
         :keyword available: Domain availability (True/False).
         :paramtype available: bool
@@ -1578,8 +1591,8 @@ class Error(_serialization.Model):
         target: Optional[str] = None,
         details: Optional[List["_models.ErrorDetails"]] = None,
         inner_error: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword code:
         :paramtype code: str
@@ -1618,8 +1631,8 @@ class ErrorDetails(_serialization.Model):
     }
 
     def __init__(
-        self, *, code: Optional[str] = None, target: Optional[str] = None, message: Optional[str] = None, **kwargs
-    ):
+        self, *, code: Optional[str] = None, target: Optional[str] = None, message: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword code:
         :paramtype code: str
@@ -1720,8 +1733,8 @@ class ExpressRouteCircuit(Resource):  # pylint: disable=too-many-instance-attrib
         service_provider_notes: Optional[str] = None,
         service_provider_properties: Optional["_models.ExpressRouteCircuitServiceProviderProperties"] = None,
         provisioning_state: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource Identifier.
         :paramtype id: str
@@ -1784,7 +1797,7 @@ class ExpressRouteCircuitArpTable(_serialization.Model):
         "mac_address": {"key": "macAddress", "type": "str"},
     }
 
-    def __init__(self, *, ip_address: Optional[str] = None, mac_address: Optional[str] = None, **kwargs):
+    def __init__(self, *, ip_address: Optional[str] = None, mac_address: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword ip_address: The IP address.
         :paramtype ip_address: str
@@ -1835,8 +1848,8 @@ class ExpressRouteCircuitAuthorization(SubResource):
         authorization_key: Optional[str] = None,
         authorization_use_status: Optional[Union[str, "_models.AuthorizationUseStatus"]] = None,
         provisioning_state: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource Identifier.
         :paramtype id: str
@@ -1878,8 +1891,12 @@ class ExpressRouteCircuitListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.ExpressRouteCircuit"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.ExpressRouteCircuit"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: A list of ExpressRouteCircuits in a resource group.
         :paramtype value: list[~azure.mgmt.network.v2015_06_15.models.ExpressRouteCircuit]
@@ -1976,8 +1993,8 @@ class ExpressRouteCircuitPeering(SubResource):  # pylint: disable=too-many-insta
         microsoft_peering_config: Optional["_models.ExpressRouteCircuitPeeringConfig"] = None,
         stats: Optional["_models.ExpressRouteCircuitStats"] = None,
         provisioning_state: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource Identifier.
         :paramtype id: str
@@ -2069,8 +2086,8 @@ class ExpressRouteCircuitPeeringConfig(_serialization.Model):
         ] = None,
         customer_asn: Optional[int] = None,
         routing_registry_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword advertised_public_prefixes: The reference of AdvertisedPublicPrefixes.
         :paramtype advertised_public_prefixes: list[str]
@@ -2092,7 +2109,8 @@ class ExpressRouteCircuitPeeringConfig(_serialization.Model):
 
 
 class ExpressRouteCircuitPeeringListResult(_serialization.Model):
-    """Response for ListPeering API service call retrieves all peerings that belong to an ExpressRouteCircuit.
+    """Response for ListPeering API service call retrieves all peerings that belong to an
+    ExpressRouteCircuit.
 
     :ivar value: The peerings in an express route circuit.
     :vartype value: list[~azure.mgmt.network.v2015_06_15.models.ExpressRouteCircuitPeering]
@@ -2110,8 +2128,8 @@ class ExpressRouteCircuitPeeringListResult(_serialization.Model):
         *,
         value: Optional[List["_models.ExpressRouteCircuitPeering"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The peerings in an express route circuit.
         :paramtype value: list[~azure.mgmt.network.v2015_06_15.models.ExpressRouteCircuitPeering]
@@ -2157,8 +2175,8 @@ class ExpressRouteCircuitRoutesTable(_serialization.Model):
         address_prefix: Optional[str] = None,
         next_hop_ip: Optional[str] = None,
         as_path: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword address_prefix: Gets AddressPrefix.
         :paramtype address_prefix: str
@@ -2196,8 +2214,8 @@ class ExpressRouteCircuitsArpTableListResult(_serialization.Model):
         *,
         value: Optional[List["_models.ExpressRouteCircuitArpTable"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: Gets list of the ARP table.
         :paramtype value: list[~azure.mgmt.network.v2015_06_15.models.ExpressRouteCircuitArpTable]
@@ -2232,8 +2250,8 @@ class ExpressRouteCircuitServiceProviderProperties(_serialization.Model):
         service_provider_name: Optional[str] = None,
         peering_location: Optional[str] = None,
         bandwidth_in_mbps: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword service_provider_name: The serviceProviderName.
         :paramtype service_provider_name: str
@@ -2273,8 +2291,8 @@ class ExpressRouteCircuitSku(_serialization.Model):
         name: Optional[str] = None,
         tier: Optional[Union[str, "_models.ExpressRouteCircuitSkuTier"]] = None,
         family: Optional[Union[str, "_models.ExpressRouteCircuitSkuFamily"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the SKU.
         :paramtype name: str
@@ -2310,8 +2328,8 @@ class ExpressRouteCircuitsRoutesTableListResult(_serialization.Model):
         *,
         value: Optional[List["_models.ExpressRouteCircuitRoutesTable"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of routes table.
         :paramtype value: list[~azure.mgmt.network.v2015_06_15.models.ExpressRouteCircuitRoutesTable]
@@ -2342,8 +2360,8 @@ class ExpressRouteCircuitsStatsListResult(_serialization.Model):
         *,
         value: Optional[List["_models.ExpressRouteCircuitStats"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: Gets List of Stats.
         :paramtype value: list[~azure.mgmt.network.v2015_06_15.models.ExpressRouteCircuitStats]
@@ -2369,7 +2387,7 @@ class ExpressRouteCircuitStats(_serialization.Model):
         "bytes_out": {"key": "bytesOut", "type": "int"},
     }
 
-    def __init__(self, *, bytes_in: Optional[int] = None, bytes_out: Optional[int] = None, **kwargs):
+    def __init__(self, *, bytes_in: Optional[int] = None, bytes_out: Optional[int] = None, **kwargs: Any) -> None:
         """
         :keyword bytes_in: Gets BytesIn of the peering.
         :paramtype bytes_in: int
@@ -2433,8 +2451,8 @@ class ExpressRouteServiceProvider(Resource):
         peering_locations: Optional[List[str]] = None,
         bandwidths_offered: Optional[List["_models.ExpressRouteServiceProviderBandwidthsOffered"]] = None,
         provisioning_state: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource Identifier.
         :paramtype id: str
@@ -2470,7 +2488,7 @@ class ExpressRouteServiceProviderBandwidthsOffered(_serialization.Model):
         "value_in_mbps": {"key": "valueInMbps", "type": "int"},
     }
 
-    def __init__(self, *, offer_name: Optional[str] = None, value_in_mbps: Optional[int] = None, **kwargs):
+    def __init__(self, *, offer_name: Optional[str] = None, value_in_mbps: Optional[int] = None, **kwargs: Any) -> None:
         """
         :keyword offer_name: The OfferName.
         :paramtype offer_name: str
@@ -2501,8 +2519,8 @@ class ExpressRouteServiceProviderListResult(_serialization.Model):
         *,
         value: Optional[List["_models.ExpressRouteServiceProvider"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: A list of ExpressRouteResourceProvider resources.
         :paramtype value: list[~azure.mgmt.network.v2015_06_15.models.ExpressRouteServiceProvider]
@@ -2577,8 +2595,8 @@ class FrontendIPConfiguration(SubResource):  # pylint: disable=too-many-instance
         subnet: Optional["_models.Subnet"] = None,
         public_ip_address: Optional["_models.PublicIPAddress"] = None,
         provisioning_state: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource Identifier.
         :paramtype id: str
@@ -2678,8 +2696,8 @@ class InboundNatPool(SubResource):
         frontend_port_range_end: Optional[int] = None,
         backend_port: Optional[int] = None,
         provisioning_state: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource Identifier.
         :paramtype id: str
@@ -2790,8 +2808,8 @@ class InboundNatRule(SubResource):  # pylint: disable=too-many-instance-attribut
         idle_timeout_in_minutes: Optional[int] = None,
         enable_floating_ip: Optional[bool] = None,
         provisioning_state: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource Identifier.
         :paramtype id: str
@@ -2889,8 +2907,8 @@ class IPConfiguration(SubResource):
         subnet: Optional["_models.Subnet"] = None,
         public_ip_address: Optional["_models.PublicIPAddress"] = None,
         provisioning_state: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource Identifier.
         :paramtype id: str
@@ -3016,8 +3034,8 @@ class LoadBalancer(Resource):  # pylint: disable=too-many-instance-attributes
         outbound_nat_rules: Optional[List["_models.OutboundNatRule"]] = None,
         resource_guid: Optional[str] = None,
         provisioning_state: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource Identifier.
         :paramtype id: str
@@ -3089,8 +3107,8 @@ class LoadBalancerListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.LoadBalancer"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.LoadBalancer"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: A list of load balancers in a resource group.
         :paramtype value: list[~azure.mgmt.network.v2015_06_15.models.LoadBalancer]
@@ -3178,8 +3196,8 @@ class LoadBalancingRule(SubResource):  # pylint: disable=too-many-instance-attri
         idle_timeout_in_minutes: Optional[int] = None,
         enable_floating_ip: Optional[bool] = None,
         provisioning_state: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource Identifier.
         :paramtype id: str
@@ -3297,8 +3315,8 @@ class LocalNetworkGateway(Resource):  # pylint: disable=too-many-instance-attrib
         bgp_settings: Optional["_models.BgpSettings"] = None,
         resource_guid: Optional[str] = None,
         provisioning_state: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource Identifier.
         :paramtype id: str
@@ -3344,8 +3362,12 @@ class LocalNetworkGatewayListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.LocalNetworkGateway"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.LocalNetworkGateway"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: A list of local network gateways that exists in a resource group.
         :paramtype value: list[~azure.mgmt.network.v2015_06_15.models.LocalNetworkGateway]
@@ -3436,8 +3458,8 @@ class NetworkInterface(Resource):  # pylint: disable=too-many-instance-attribute
         enable_ip_forwarding: Optional[bool] = None,
         resource_guid: Optional[str] = None,
         provisioning_state: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource Identifier.
         :paramtype id: str
@@ -3515,8 +3537,8 @@ class NetworkInterfaceDnsSettings(_serialization.Model):
         applied_dns_servers: Optional[List[str]] = None,
         internal_dns_name_label: Optional[str] = None,
         internal_fqdn: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword dns_servers: List of DNS servers IP addresses. Use 'AzureProvidedDNS' to switch to
          azure provided DNS resolution. 'AzureProvidedDNS' value cannot be combined with other IPs, it
@@ -3607,8 +3629,8 @@ class NetworkInterfaceIPConfiguration(SubResource):  # pylint: disable=too-many-
         primary: Optional[bool] = None,
         public_ip_address: Optional["_models.PublicIPAddress"] = None,
         provisioning_state: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource Identifier.
         :paramtype id: str
@@ -3667,8 +3689,12 @@ class NetworkInterfaceListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.NetworkInterface"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.NetworkInterface"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: A list of network interfaces in a resource group.
         :paramtype value: list[~azure.mgmt.network.v2015_06_15.models.NetworkInterface]
@@ -3745,8 +3771,8 @@ class NetworkSecurityGroup(Resource):  # pylint: disable=too-many-instance-attri
         subnets: Optional[List["_models.Subnet"]] = None,
         resource_guid: Optional[str] = None,
         provisioning_state: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource Identifier.
         :paramtype id: str
@@ -3795,8 +3821,12 @@ class NetworkSecurityGroupListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.NetworkSecurityGroup"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.NetworkSecurityGroup"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: A list of NetworkSecurityGroup resources.
         :paramtype value: list[~azure.mgmt.network.v2015_06_15.models.NetworkSecurityGroup]
@@ -3850,8 +3880,8 @@ class OutboundNatRule(SubResource):
         frontend_ip_configurations: Optional[List["_models.SubResource"]] = None,
         backend_address_pool: Optional["_models.SubResource"] = None,
         provisioning_state: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource Identifier.
         :paramtype id: str
@@ -3943,8 +3973,8 @@ class Probe(SubResource):
         number_of_probes: Optional[int] = None,
         request_path: Optional[str] = None,
         provisioning_state: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource Identifier.
         :paramtype id: str
@@ -4062,8 +4092,8 @@ class PublicIPAddress(Resource):  # pylint: disable=too-many-instance-attributes
         idle_timeout_in_minutes: Optional[int] = None,
         resource_guid: Optional[str] = None,
         provisioning_state: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource Identifier.
         :paramtype id: str
@@ -4131,8 +4161,8 @@ class PublicIPAddressDnsSettings(_serialization.Model):
         domain_name_label: Optional[str] = None,
         fqdn: Optional[str] = None,
         reverse_fqdn: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword domain_name_label: Gets or sets the Domain name label.The concatenation of the domain
          name label and the regionalized DNS zone make up the fully qualified domain name associated
@@ -4168,8 +4198,8 @@ class PublicIPAddressListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.PublicIPAddress"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.PublicIPAddress"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: A list of public IP addresses that exists in a resource group.
         :paramtype value: list[~azure.mgmt.network.v2015_06_15.models.PublicIPAddress]
@@ -4225,8 +4255,8 @@ class Route(SubResource):
         next_hop_type: Optional[Union[str, "_models.RouteNextHopType"]] = None,
         next_hop_ip_address: Optional[str] = None,
         provisioning_state: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource Identifier.
         :paramtype id: str
@@ -4271,7 +4301,9 @@ class RouteListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Route"]] = None, next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.Route"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: Gets a list of routes in a resource group.
         :paramtype value: list[~azure.mgmt.network.v2015_06_15.models.Route]
@@ -4336,8 +4368,8 @@ class RouteTable(Resource):
         routes: Optional[List["_models.Route"]] = None,
         subnets: Optional[List["_models.Subnet"]] = None,
         provisioning_state: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource Identifier.
         :paramtype id: str
@@ -4377,8 +4409,8 @@ class RouteTableListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.RouteTable"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.RouteTable"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: Gets a list of route tables in a resource group.
         :paramtype value: list[~azure.mgmt.network.v2015_06_15.models.RouteTable]
@@ -4467,8 +4499,8 @@ class SecurityRule(SubResource):  # pylint: disable=too-many-instance-attributes
         priority: Optional[int] = None,
         direction: Optional[Union[str, "_models.SecurityRuleDirection"]] = None,
         provisioning_state: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource Identifier.
         :paramtype id: str
@@ -4527,7 +4559,8 @@ class SecurityRule(SubResource):  # pylint: disable=too-many-instance-attributes
 
 
 class SecurityRuleListResult(_serialization.Model):
-    """Response for ListSecurityRule API service call. Retrieves all security rules that belongs to a network security group.
+    """Response for ListSecurityRule API service call. Retrieves all security rules that belongs to a
+    network security group.
 
     :ivar value: The security rules in a network security group.
     :vartype value: list[~azure.mgmt.network.v2015_06_15.models.SecurityRule]
@@ -4541,8 +4574,8 @@ class SecurityRuleListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.SecurityRule"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.SecurityRule"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The security rules in a network security group.
         :paramtype value: list[~azure.mgmt.network.v2015_06_15.models.SecurityRule]
@@ -4599,8 +4632,8 @@ class Subnet(SubResource):
         route_table: Optional["_models.RouteTable"] = None,
         ip_configurations: Optional[List["_models.IPConfiguration"]] = None,
         provisioning_state: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource Identifier.
         :paramtype id: str
@@ -4632,7 +4665,8 @@ class Subnet(SubResource):
 
 
 class SubnetListResult(_serialization.Model):
-    """Response for ListSubnets API service callRetrieves all subnet that belongs to a virtual network.
+    """Response for ListSubnets API service callRetrieves all subnet that belongs to a virtual
+    network.
 
     :ivar value: The subnets in a virtual network.
     :vartype value: list[~azure.mgmt.network.v2015_06_15.models.Subnet]
@@ -4645,7 +4679,9 @@ class SubnetListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Subnet"]] = None, next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.Subnet"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The subnets in a virtual network.
         :paramtype value: list[~azure.mgmt.network.v2015_06_15.models.Subnet]
@@ -4693,8 +4729,8 @@ class Usage(_serialization.Model):
         current_value: int,
         limit: int,
         name: "_models.UsageName",
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword unit: An enum describing the unit of measurement. Required. "Count"
         :paramtype unit: str or ~azure.mgmt.network.v2015_06_15.models.UsageUnit
@@ -4726,7 +4762,7 @@ class UsageName(_serialization.Model):
         "localized_value": {"key": "localizedValue", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[str] = None, localized_value: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: Optional[str] = None, localized_value: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: A string describing the resource name.
         :paramtype value: str
@@ -4752,7 +4788,9 @@ class UsagesListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Usage"]] = None, next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.Usage"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list network resource usages.
         :paramtype value: list[~azure.mgmt.network.v2015_06_15.models.Usage]
@@ -4827,8 +4865,8 @@ class VirtualNetwork(Resource):  # pylint: disable=too-many-instance-attributes
         subnets: Optional[List["_models.Subnet"]] = None,
         resource_guid: Optional[str] = None,
         provisioning_state: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource Identifier.
         :paramtype id: str
@@ -4950,8 +4988,8 @@ class VirtualNetworkGateway(Resource):  # pylint: disable=too-many-instance-attr
         bgp_settings: Optional["_models.BgpSettings"] = None,
         resource_guid: Optional[str] = None,
         provisioning_state: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource Identifier.
         :paramtype id: str
@@ -5110,8 +5148,8 @@ class VirtualNetworkGatewayConnection(Resource):  # pylint: disable=too-many-ins
         enable_bgp: Optional[bool] = None,
         resource_guid: Optional[str] = None,
         provisioning_state: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource Identifier.
         :paramtype id: str
@@ -5198,8 +5236,8 @@ class VirtualNetworkGatewayConnectionListResult(_serialization.Model):
         *,
         value: Optional[List["_models.VirtualNetworkGatewayConnection"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: Gets a list of VirtualNetworkGatewayConnection resources that exists in a
          resource group.
@@ -5259,8 +5297,8 @@ class VirtualNetworkGatewayIPConfiguration(SubResource):
         subnet: Optional["_models.SubResource"] = None,
         public_ip_address: Optional["_models.SubResource"] = None,
         provisioning_state: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource Identifier.
         :paramtype id: str
@@ -5312,8 +5350,8 @@ class VirtualNetworkGatewayListResult(_serialization.Model):
         *,
         value: Optional[List["_models.VirtualNetworkGateway"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: Gets a list of VirtualNetworkGateway resources that exists in a resource group.
         :paramtype value: list[~azure.mgmt.network.v2015_06_15.models.VirtualNetworkGateway]
@@ -5350,8 +5388,8 @@ class VirtualNetworkGatewaySku(_serialization.Model):
         name: Optional[Union[str, "_models.VirtualNetworkGatewaySkuName"]] = None,
         tier: Optional[Union[str, "_models.VirtualNetworkGatewaySkuTier"]] = None,
         capacity: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Gateway sku name -Basic/HighPerformance/Standard. Known values are: "Basic",
          "HighPerformance", and "Standard".
@@ -5383,8 +5421,8 @@ class VirtualNetworkListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.VirtualNetwork"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.VirtualNetwork"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: Gets a list of VirtualNetwork resources in a resource group.
         :paramtype value: list[~azure.mgmt.network.v2015_06_15.models.VirtualNetwork]
@@ -5425,8 +5463,8 @@ class VpnClientConfiguration(_serialization.Model):
         vpn_client_address_pool: Optional["_models.AddressSpace"] = None,
         vpn_client_root_certificates: Optional[List["_models.VpnClientRootCertificate"]] = None,
         vpn_client_revoked_certificates: Optional[List["_models.VpnClientRevokedCertificate"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword vpn_client_address_pool: Gets or sets the reference of the Address space resource
          which represents Address space for P2S VpnClient.
@@ -5459,8 +5497,8 @@ class VpnClientParameters(_serialization.Model):
     }
 
     def __init__(
-        self, *, processor_architecture: Optional[Union[str, "_models.ProcessorArchitecture"]] = None, **kwargs
-    ):
+        self, *, processor_architecture: Optional[Union[str, "_models.ProcessorArchitecture"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword processor_architecture: VPN client Processor Architecture. Possible values are:
          'AMD64' and 'X86'. Known values are: "Amd64" and "X86".
@@ -5504,8 +5542,8 @@ class VpnClientRevokedCertificate(SubResource):
         etag: Optional[str] = None,
         thumbprint: Optional[str] = None,
         provisioning_state: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource Identifier.
         :paramtype id: str
@@ -5560,8 +5598,8 @@ class VpnClientRootCertificate(SubResource):
         etag: Optional[str] = None,
         public_cert_data: Optional[str] = None,
         provisioning_state: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource Identifier.
         :paramtype id: str

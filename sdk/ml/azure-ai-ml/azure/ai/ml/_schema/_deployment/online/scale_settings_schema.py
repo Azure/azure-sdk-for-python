@@ -2,14 +2,14 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=unused-argument,no-self-use
+# pylint: disable=unused-argument
 
 import logging
 from typing import Any
 
 from marshmallow import fields, post_load
 
-from azure.ai.ml._restclient.v2021_10_01.models import ScaleType
+from azure.ai.ml._restclient.v2022_10_01.models import ScaleType
 from azure.ai.ml._schema.core.fields import StringTransformedEnum
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 from azure.ai.ml._utils.utils import camel_to_snake

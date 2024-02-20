@@ -1,5 +1,18 @@
 # Release History
 
+## 1.1.0 (2023-06-16)
+
+### Features Added
+
+  - Added operation ProfilesOperations.check_traffic_manager_name_availability_v2
+  - Model Endpoint has a new parameter always_serve
+
+## 1.1.0b1 (2022-11-17)
+
+### Features Added
+
+  - Model Endpoint has a new parameter always_serve
+
 ## 1.0.0 (2022-01-19)
 
 **Features**

@@ -9,30 +9,24 @@
 from ._models_py3 import ErrorResponse
 from ._models_py3 import PolicyAssignment
 from ._models_py3 import PolicyAssignmentListResult
-from ._models_py3 import PolicyDefinition
-from ._models_py3 import PolicyDefinitionListResult
 from ._models_py3 import PolicyDefinitionReference
 from ._models_py3 import PolicySetDefinition
 from ._models_py3 import PolicySetDefinitionListResult
 from ._models_py3 import PolicySku
 
-from ._policy_client_enums import PolicyMode
 from ._policy_client_enums import PolicyType
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "ErrorResponse",
     "PolicyAssignment",
     "PolicyAssignmentListResult",
-    "PolicyDefinition",
-    "PolicyDefinitionListResult",
     "PolicyDefinitionReference",
     "PolicySetDefinition",
     "PolicySetDefinitionListResult",
     "PolicySku",
-    "PolicyMode",
     "PolicyType",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])

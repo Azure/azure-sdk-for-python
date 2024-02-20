@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-import azure.cosmos.aio.cosmos_client as cosmos_client
+from azure.cosmos.aio import CosmosClient
 import azure.cosmos.exceptions as exceptions
 import azure.cosmos.documents as documents
 import azure.cosmos.partition_key as partition_key
@@ -64,7 +64,7 @@ async def read_change_feed(container):
 
 
 async def run_sample():
-    async with cosmos_client.CosmosClient(HOST, MASTER_KEY) as client:
+    async with CosmosClient(HOST, MASTER_KEY) as client:
         try:
             # setup database for this sample
             try:

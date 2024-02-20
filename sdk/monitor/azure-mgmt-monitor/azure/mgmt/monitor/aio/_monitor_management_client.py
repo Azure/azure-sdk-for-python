@@ -53,20 +53,21 @@ class MonitorManagementClient(MultiApiClientMixin, _SDKClient):
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
-    DEFAULT_API_VERSION = '2022-10-01'
+    DEFAULT_API_VERSION = '2023-01-01'
     _PROFILE_TAG = "azure.mgmt.monitor.MonitorManagementClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
             None: DEFAULT_API_VERSION,
-            'action_groups': '2022-06-01',
             'activity_log_alerts': '2020-10-01',
             'activity_logs': '2015-04-01',
             'alert_rule_incidents': '2016-03-01',
             'alert_rules': '2016-03-01',
+            'autoscale_settings': '2022-10-01',
+            'azure_monitor_workspaces': '2021-06-03-preview',
             'baselines': '2019-03-01',
-            'data_collection_endpoints': '2021-04-01',
-            'data_collection_rule_associations': '2021-04-01',
-            'data_collection_rules': '2021-04-01',
+            'data_collection_endpoints': '2022-06-01',
+            'data_collection_rule_associations': '2022-06-01',
+            'data_collection_rules': '2022-06-01',
             'diagnostic_settings': '2021-05-01-preview',
             'diagnostic_settings_category': '2021-05-01-preview',
             'event_categories': '2015-04-01',
@@ -76,10 +77,12 @@ class MonitorManagementClient(MultiApiClientMixin, _SDKClient):
             'management_group_diagnostic_settings': '2021-05-01-preview',
             'metric_alerts': '2018-03-01',
             'metric_alerts_status': '2018-03-01',
-            'metric_definitions': '2018-01-01',
+            'metric_definitions': '2021-05-01',
             'metric_namespaces': '2017-12-01-preview',
-            'metrics': '2018-01-01',
-            'operations': '2015-07-01',
+            'metrics': '2021-05-01',
+            'monitor_operations': '2021-06-03-preview',
+            'operations': '2021-05-01',
+            'predictive_metric': '2022-10-01',
             'private_endpoint_connections': '2019-10-17-preview',
             'private_link_resources': '2019-10-17-preview',
             'private_link_scope_operation_status': '2019-10-17-preview',
@@ -101,7 +104,7 @@ class MonitorManagementClient(MultiApiClientMixin, _SDKClient):
         api_version: Optional[str] = None,
         base_url: str = "https://management.azure.com",
         profile: KnownProfiles = KnownProfiles.default,
-        **kwargs  # type: Any
+        **kwargs: Any
     ) -> None:
         self._config = MonitorManagementClientConfiguration(credential, subscription_id, **kwargs)
         self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
@@ -140,12 +143,18 @@ class MonitorManagementClient(MultiApiClientMixin, _SDKClient):
            * 2020-05-01-preview: :mod:`v2020_05_01_preview.models<azure.mgmt.monitor.v2020_05_01_preview.models>`
            * 2020-10-01: :mod:`v2020_10_01.models<azure.mgmt.monitor.v2020_10_01.models>`
            * 2021-04-01: :mod:`v2021_04_01.models<azure.mgmt.monitor.v2021_04_01.models>`
+           * 2021-05-01: :mod:`v2021_05_01.models<azure.mgmt.monitor.v2021_05_01.models>`
            * 2021-05-01-preview: :mod:`v2021_05_01_preview.models<azure.mgmt.monitor.v2021_05_01_preview.models>`
+           * 2021-06-03-preview: :mod:`v2021_06_03_preview.models<azure.mgmt.monitor.v2021_06_03_preview.models>`
+           * 2021-07-01-preview: :mod:`v2021_07_01_preview.models<azure.mgmt.monitor.v2021_07_01_preview.models>`
            * 2021-09-01: :mod:`v2021_09_01.models<azure.mgmt.monitor.v2021_09_01.models>`
            * 2021-09-01-preview: :mod:`v2022_02_01_preview.models<azure.mgmt.monitor.v2022_02_01_preview.models>`
            * 2022-04-01: :mod:`v2022_04_01.models<azure.mgmt.monitor.v2022_04_01.models>`
            * 2022-06-01: :mod:`v2022_06_01.models<azure.mgmt.monitor.v2022_06_01.models>`
+           * 2022-08-01-preview: :mod:`v2022_08_01_preview.models<azure.mgmt.monitor.v2022_08_01_preview.models>`
            * 2022-10-01: :mod:`v2022_10_01.models<azure.mgmt.monitor.v2022_10_01.models>`
+           * 2023-01-01: :mod:`v2023_01_01.models<azure.mgmt.monitor.v2023_01_01.models>`
+           * 2023-03-01-preview: :mod:`v2023_03_01_preview.models<azure.mgmt.monitor.v2023_03_01_preview.models>`
         """
         if api_version == '2015-04-01':
             from ..v2015_04_01 import models
@@ -213,8 +222,17 @@ class MonitorManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2021-04-01':
             from ..v2021_04_01 import models
             return models
+        elif api_version == '2021-05-01':
+            from ..v2021_05_01 import models
+            return models
         elif api_version == '2021-05-01-preview':
             from ..v2021_05_01_preview import models
+            return models
+        elif api_version == '2021-06-03-preview':
+            from ..v2021_06_03_preview import models
+            return models
+        elif api_version == '2021-07-01-preview':
+            from ..v2021_07_01_preview import models
             return models
         elif api_version == '2021-09-01':
             from ..v2021_09_01 import models
@@ -228,8 +246,17 @@ class MonitorManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2022-06-01':
             from ..v2022_06_01 import models
             return models
+        elif api_version == '2022-08-01-preview':
+            from ..v2022_08_01_preview import models
+            return models
         elif api_version == '2022-10-01':
             from ..v2022_10_01 import models
+            return models
+        elif api_version == '2023-01-01':
+            from ..v2023_01_01 import models
+            return models
+        elif api_version == '2023-03-01-preview':
+            from ..v2023_03_01_preview import models
             return models
         raise ValueError("API version {} is not available".format(api_version))
 
@@ -245,6 +272,7 @@ class MonitorManagementClient(MultiApiClientMixin, _SDKClient):
            * 2021-09-01: :class:`ActionGroupsOperations<azure.mgmt.monitor.v2021_09_01.aio.operations.ActionGroupsOperations>`
            * 2022-04-01: :class:`ActionGroupsOperations<azure.mgmt.monitor.v2022_04_01.aio.operations.ActionGroupsOperations>`
            * 2022-06-01: :class:`ActionGroupsOperations<azure.mgmt.monitor.v2022_06_01.aio.operations.ActionGroupsOperations>`
+           * 2023-01-01: :class:`ActionGroupsOperations<azure.mgmt.monitor.v2023_01_01.aio.operations.ActionGroupsOperations>`
         """
         api_version = self._get_api_version('action_groups')
         if api_version == '2017-04-01':
@@ -263,6 +291,8 @@ class MonitorManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2022_04_01.aio.operations import ActionGroupsOperations as OperationClass
         elif api_version == '2022-06-01':
             from ..v2022_06_01.aio.operations import ActionGroupsOperations as OperationClass
+        elif api_version == '2023-01-01':
+            from ..v2023_01_01.aio.operations import ActionGroupsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'action_groups'".format(api_version))
         self._config.api_version = api_version
@@ -357,6 +387,20 @@ class MonitorManagementClient(MultiApiClientMixin, _SDKClient):
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
+    def azure_monitor_workspaces(self):
+        """Instance depends on the API version:
+
+           * 2021-06-03-preview: :class:`AzureMonitorWorkspacesOperations<azure.mgmt.monitor.v2021_06_03_preview.aio.operations.AzureMonitorWorkspacesOperations>`
+        """
+        api_version = self._get_api_version('azure_monitor_workspaces')
+        if api_version == '2021-06-03-preview':
+            from ..v2021_06_03_preview.aio.operations import AzureMonitorWorkspacesOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'azure_monitor_workspaces'".format(api_version))
+        self._config.api_version = api_version
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
     def baselines(self):
         """Instance depends on the API version:
 
@@ -379,12 +423,15 @@ class MonitorManagementClient(MultiApiClientMixin, _SDKClient):
 
            * 2021-04-01: :class:`DataCollectionEndpointsOperations<azure.mgmt.monitor.v2021_04_01.aio.operations.DataCollectionEndpointsOperations>`
            * 2021-09-01-preview: :class:`DataCollectionEndpointsOperations<azure.mgmt.monitor.v2022_02_01_preview.aio.operations.DataCollectionEndpointsOperations>`
+           * 2022-06-01: :class:`DataCollectionEndpointsOperations<azure.mgmt.monitor.v2022_06_01.aio.operations.DataCollectionEndpointsOperations>`
         """
         api_version = self._get_api_version('data_collection_endpoints')
         if api_version == '2021-04-01':
             from ..v2021_04_01.aio.operations import DataCollectionEndpointsOperations as OperationClass
         elif api_version == '2021-09-01-preview':
             from ..v2022_02_01_preview.aio.operations import DataCollectionEndpointsOperations as OperationClass
+        elif api_version == '2022-06-01':
+            from ..v2022_06_01.aio.operations import DataCollectionEndpointsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'data_collection_endpoints'".format(api_version))
         self._config.api_version = api_version
@@ -397,6 +444,7 @@ class MonitorManagementClient(MultiApiClientMixin, _SDKClient):
            * 2019-11-01-preview: :class:`DataCollectionRuleAssociationsOperations<azure.mgmt.monitor.v2019_11_01_preview.aio.operations.DataCollectionRuleAssociationsOperations>`
            * 2021-04-01: :class:`DataCollectionRuleAssociationsOperations<azure.mgmt.monitor.v2021_04_01.aio.operations.DataCollectionRuleAssociationsOperations>`
            * 2021-09-01-preview: :class:`DataCollectionRuleAssociationsOperations<azure.mgmt.monitor.v2022_02_01_preview.aio.operations.DataCollectionRuleAssociationsOperations>`
+           * 2022-06-01: :class:`DataCollectionRuleAssociationsOperations<azure.mgmt.monitor.v2022_06_01.aio.operations.DataCollectionRuleAssociationsOperations>`
         """
         api_version = self._get_api_version('data_collection_rule_associations')
         if api_version == '2019-11-01-preview':
@@ -405,6 +453,8 @@ class MonitorManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2021_04_01.aio.operations import DataCollectionRuleAssociationsOperations as OperationClass
         elif api_version == '2021-09-01-preview':
             from ..v2022_02_01_preview.aio.operations import DataCollectionRuleAssociationsOperations as OperationClass
+        elif api_version == '2022-06-01':
+            from ..v2022_06_01.aio.operations import DataCollectionRuleAssociationsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'data_collection_rule_associations'".format(api_version))
         self._config.api_version = api_version
@@ -417,6 +467,7 @@ class MonitorManagementClient(MultiApiClientMixin, _SDKClient):
            * 2019-11-01-preview: :class:`DataCollectionRulesOperations<azure.mgmt.monitor.v2019_11_01_preview.aio.operations.DataCollectionRulesOperations>`
            * 2021-04-01: :class:`DataCollectionRulesOperations<azure.mgmt.monitor.v2021_04_01.aio.operations.DataCollectionRulesOperations>`
            * 2021-09-01-preview: :class:`DataCollectionRulesOperations<azure.mgmt.monitor.v2022_02_01_preview.aio.operations.DataCollectionRulesOperations>`
+           * 2022-06-01: :class:`DataCollectionRulesOperations<azure.mgmt.monitor.v2022_06_01.aio.operations.DataCollectionRulesOperations>`
         """
         api_version = self._get_api_version('data_collection_rules')
         if api_version == '2019-11-01-preview':
@@ -425,6 +476,8 @@ class MonitorManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2021_04_01.aio.operations import DataCollectionRulesOperations as OperationClass
         elif api_version == '2021-09-01-preview':
             from ..v2022_02_01_preview.aio.operations import DataCollectionRulesOperations as OperationClass
+        elif api_version == '2022-06-01':
+            from ..v2022_06_01.aio.operations import DataCollectionRulesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'data_collection_rules'".format(api_version))
         self._config.api_version = api_version
@@ -573,6 +626,7 @@ class MonitorManagementClient(MultiApiClientMixin, _SDKClient):
            * 2016-03-01: :class:`MetricDefinitionsOperations<azure.mgmt.monitor.v2016_03_01.aio.operations.MetricDefinitionsOperations>`
            * 2017-05-01-preview: :class:`MetricDefinitionsOperations<azure.mgmt.monitor.v2017_05_01_preview.aio.operations.MetricDefinitionsOperations>`
            * 2018-01-01: :class:`MetricDefinitionsOperations<azure.mgmt.monitor.v2018_01_01.aio.operations.MetricDefinitionsOperations>`
+           * 2021-05-01: :class:`MetricDefinitionsOperations<azure.mgmt.monitor.v2021_05_01.aio.operations.MetricDefinitionsOperations>`
         """
         api_version = self._get_api_version('metric_definitions')
         if api_version == '2015-07-01':
@@ -583,6 +637,8 @@ class MonitorManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2017_05_01_preview.aio.operations import MetricDefinitionsOperations as OperationClass
         elif api_version == '2018-01-01':
             from ..v2018_01_01.aio.operations import MetricDefinitionsOperations as OperationClass
+        elif api_version == '2021-05-01':
+            from ..v2021_05_01.aio.operations import MetricDefinitionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'metric_definitions'".format(api_version))
         self._config.api_version = api_version
@@ -609,6 +665,7 @@ class MonitorManagementClient(MultiApiClientMixin, _SDKClient):
            * 2016-09-01: :class:`MetricsOperations<azure.mgmt.monitor.v2016_09_01.aio.operations.MetricsOperations>`
            * 2017-05-01-preview: :class:`MetricsOperations<azure.mgmt.monitor.v2017_05_01_preview.aio.operations.MetricsOperations>`
            * 2018-01-01: :class:`MetricsOperations<azure.mgmt.monitor.v2018_01_01.aio.operations.MetricsOperations>`
+           * 2021-05-01: :class:`MetricsOperations<azure.mgmt.monitor.v2021_05_01.aio.operations.MetricsOperations>`
         """
         api_version = self._get_api_version('metrics')
         if api_version == '2016-09-01':
@@ -617,8 +674,24 @@ class MonitorManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2017_05_01_preview.aio.operations import MetricsOperations as OperationClass
         elif api_version == '2018-01-01':
             from ..v2018_01_01.aio.operations import MetricsOperations as OperationClass
+        elif api_version == '2021-05-01':
+            from ..v2021_05_01.aio.operations import MetricsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'metrics'".format(api_version))
+        self._config.api_version = api_version
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def monitor_operations(self):
+        """Instance depends on the API version:
+
+           * 2021-06-03-preview: :class:`MonitorOperationsOperations<azure.mgmt.monitor.v2021_06_03_preview.aio.operations.MonitorOperationsOperations>`
+        """
+        api_version = self._get_api_version('monitor_operations')
+        if api_version == '2021-06-03-preview':
+            from ..v2021_06_03_preview.aio.operations import MonitorOperationsOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'monitor_operations'".format(api_version))
         self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
@@ -628,12 +701,15 @@ class MonitorManagementClient(MultiApiClientMixin, _SDKClient):
 
            * 2015-04-01: :class:`Operations<azure.mgmt.monitor.v2015_04_01.aio.operations.Operations>`
            * 2015-07-01: :class:`Operations<azure.mgmt.monitor.v2015_07_01.aio.operations.Operations>`
+           * 2021-05-01: :class:`Operations<azure.mgmt.monitor.v2021_05_01.aio.operations.Operations>`
         """
         api_version = self._get_api_version('operations')
         if api_version == '2015-04-01':
             from ..v2015_04_01.aio.operations import Operations as OperationClass
         elif api_version == '2015-07-01':
             from ..v2015_07_01.aio.operations import Operations as OperationClass
+        elif api_version == '2021-05-01':
+            from ..v2021_05_01.aio.operations import Operations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'operations'".format(api_version))
         self._config.api_version = api_version
@@ -661,10 +737,13 @@ class MonitorManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2019-10-17-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.monitor.v2019_10_17.aio.operations.PrivateEndpointConnectionsOperations>`
+           * 2021-07-01-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.monitor.v2021_07_01_preview.aio.operations.PrivateEndpointConnectionsOperations>`
         """
         api_version = self._get_api_version('private_endpoint_connections')
         if api_version == '2019-10-17-preview':
             from ..v2019_10_17.aio.operations import PrivateEndpointConnectionsOperations as OperationClass
+        elif api_version == '2021-07-01-preview':
+            from ..v2021_07_01_preview.aio.operations import PrivateEndpointConnectionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'private_endpoint_connections'".format(api_version))
         self._config.api_version = api_version
@@ -675,10 +754,13 @@ class MonitorManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2019-10-17-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.monitor.v2019_10_17.aio.operations.PrivateLinkResourcesOperations>`
+           * 2021-07-01-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.monitor.v2021_07_01_preview.aio.operations.PrivateLinkResourcesOperations>`
         """
         api_version = self._get_api_version('private_link_resources')
         if api_version == '2019-10-17-preview':
             from ..v2019_10_17.aio.operations import PrivateLinkResourcesOperations as OperationClass
+        elif api_version == '2021-07-01-preview':
+            from ..v2021_07_01_preview.aio.operations import PrivateLinkResourcesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'private_link_resources'".format(api_version))
         self._config.api_version = api_version
@@ -689,10 +771,13 @@ class MonitorManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2019-10-17-preview: :class:`PrivateLinkScopeOperationStatusOperations<azure.mgmt.monitor.v2019_10_17.aio.operations.PrivateLinkScopeOperationStatusOperations>`
+           * 2021-07-01-preview: :class:`PrivateLinkScopeOperationStatusOperations<azure.mgmt.monitor.v2021_07_01_preview.aio.operations.PrivateLinkScopeOperationStatusOperations>`
         """
         api_version = self._get_api_version('private_link_scope_operation_status')
         if api_version == '2019-10-17-preview':
             from ..v2019_10_17.aio.operations import PrivateLinkScopeOperationStatusOperations as OperationClass
+        elif api_version == '2021-07-01-preview':
+            from ..v2021_07_01_preview.aio.operations import PrivateLinkScopeOperationStatusOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'private_link_scope_operation_status'".format(api_version))
         self._config.api_version = api_version
@@ -703,10 +788,13 @@ class MonitorManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2019-10-17-preview: :class:`PrivateLinkScopedResourcesOperations<azure.mgmt.monitor.v2019_10_17.aio.operations.PrivateLinkScopedResourcesOperations>`
+           * 2021-07-01-preview: :class:`PrivateLinkScopedResourcesOperations<azure.mgmt.monitor.v2021_07_01_preview.aio.operations.PrivateLinkScopedResourcesOperations>`
         """
         api_version = self._get_api_version('private_link_scoped_resources')
         if api_version == '2019-10-17-preview':
             from ..v2019_10_17.aio.operations import PrivateLinkScopedResourcesOperations as OperationClass
+        elif api_version == '2021-07-01-preview':
+            from ..v2021_07_01_preview.aio.operations import PrivateLinkScopedResourcesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'private_link_scoped_resources'".format(api_version))
         self._config.api_version = api_version
@@ -717,10 +805,13 @@ class MonitorManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2019-10-17-preview: :class:`PrivateLinkScopesOperations<azure.mgmt.monitor.v2019_10_17.aio.operations.PrivateLinkScopesOperations>`
+           * 2021-07-01-preview: :class:`PrivateLinkScopesOperations<azure.mgmt.monitor.v2021_07_01_preview.aio.operations.PrivateLinkScopesOperations>`
         """
         api_version = self._get_api_version('private_link_scopes')
         if api_version == '2019-10-17-preview':
             from ..v2019_10_17.aio.operations import PrivateLinkScopesOperations as OperationClass
+        elif api_version == '2021-07-01-preview':
+            from ..v2021_07_01_preview.aio.operations import PrivateLinkScopesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'private_link_scopes'".format(api_version))
         self._config.api_version = api_version
@@ -732,12 +823,15 @@ class MonitorManagementClient(MultiApiClientMixin, _SDKClient):
 
            * 2018-04-16: :class:`ScheduledQueryRulesOperations<azure.mgmt.monitor.v2018_04_16.aio.operations.ScheduledQueryRulesOperations>`
            * 2020-05-01-preview: :class:`ScheduledQueryRulesOperations<azure.mgmt.monitor.v2020_05_01_preview.aio.operations.ScheduledQueryRulesOperations>`
+           * 2022-08-01-preview: :class:`ScheduledQueryRulesOperations<azure.mgmt.monitor.v2022_08_01_preview.aio.operations.ScheduledQueryRulesOperations>`
         """
         api_version = self._get_api_version('scheduled_query_rules')
         if api_version == '2018-04-16':
             from ..v2018_04_16.aio.operations import ScheduledQueryRulesOperations as OperationClass
         elif api_version == '2020-05-01-preview':
             from ..v2020_05_01_preview.aio.operations import ScheduledQueryRulesOperations as OperationClass
+        elif api_version == '2022-08-01-preview':
+            from ..v2022_08_01_preview.aio.operations import ScheduledQueryRulesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'scheduled_query_rules'".format(api_version))
         self._config.api_version = api_version
@@ -774,6 +868,20 @@ class MonitorManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2021_05_01_preview.aio.operations import SubscriptionDiagnosticSettingsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'subscription_diagnostic_settings'".format(api_version))
+        self._config.api_version = api_version
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def tenant_action_groups(self):
+        """Instance depends on the API version:
+
+           * 2023-03-01-preview: :class:`TenantActionGroupsOperations<azure.mgmt.monitor.v2023_03_01_preview.aio.operations.TenantActionGroupsOperations>`
+        """
+        api_version = self._get_api_version('tenant_action_groups')
+        if api_version == '2023-03-01-preview':
+            from ..v2023_03_01_preview.aio.operations import TenantActionGroupsOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'tenant_action_groups'".format(api_version))
         self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 

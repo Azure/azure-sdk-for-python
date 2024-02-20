@@ -36,7 +36,7 @@ class IotHubClientConfiguration(Configuration):  # pylint: disable=too-many-inst
 
     def __init__(self, credential: "AsyncTokenCredential", subscription_id: str, **kwargs: Any) -> None:
         super(IotHubClientConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop("api_version", "2021-03-03-preview")  # type: str
+        api_version: str = kwargs.pop("api_version", "2021-03-03-preview")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")

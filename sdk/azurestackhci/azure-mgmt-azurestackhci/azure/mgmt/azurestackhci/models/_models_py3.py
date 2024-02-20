@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,86 +8,27 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Any, Dict, List, Optional, Union
+import sys
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from .. import _serialization
 
-from ._azure_stack_hci_client_enums import *
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 
-
-class ArcConnectivityProperties(msrest.serialization.Model):
-    """Connectivity related configuration required by arc server.
-
-    :ivar enabled: True indicates ARC connectivity is enabled.
-    :vartype enabled: bool
-    """
-
-    _attribute_map = {
-        'enabled': {'key': 'enabled', 'type': 'bool'},
-    }
-
-    def __init__(
-        self,
-        *,
-        enabled: Optional[bool] = None,
-        **kwargs
-    ):
-        """
-        :keyword enabled: True indicates ARC connectivity is enabled.
-        :paramtype enabled: bool
-        """
-        super(ArcConnectivityProperties, self).__init__(**kwargs)
-        self.enabled = enabled
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
-class ArcIdentityResponse(msrest.serialization.Model):
-    """ArcIdentity details.
-
-    :ivar arc_application_client_id:
-    :vartype arc_application_client_id: str
-    :ivar arc_application_tenant_id:
-    :vartype arc_application_tenant_id: str
-    :ivar arc_service_principal_object_id:
-    :vartype arc_service_principal_object_id: str
-    :ivar arc_application_object_id:
-    :vartype arc_application_object_id: str
-    """
-
-    _attribute_map = {
-        'arc_application_client_id': {'key': 'properties.arcApplicationClientId', 'type': 'str'},
-        'arc_application_tenant_id': {'key': 'properties.arcApplicationTenantId', 'type': 'str'},
-        'arc_service_principal_object_id': {'key': 'properties.arcServicePrincipalObjectId', 'type': 'str'},
-        'arc_application_object_id': {'key': 'properties.arcApplicationObjectId', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        arc_application_client_id: Optional[str] = None,
-        arc_application_tenant_id: Optional[str] = None,
-        arc_service_principal_object_id: Optional[str] = None,
-        arc_application_object_id: Optional[str] = None,
-        **kwargs
-    ):
-        """
-        :keyword arc_application_client_id:
-        :paramtype arc_application_client_id: str
-        :keyword arc_application_tenant_id:
-        :paramtype arc_application_tenant_id: str
-        :keyword arc_service_principal_object_id:
-        :paramtype arc_service_principal_object_id: str
-        :keyword arc_application_object_id:
-        :paramtype arc_application_object_id: str
-        """
-        super(ArcIdentityResponse, self).__init__(**kwargs)
-        self.arc_application_client_id = arc_application_client_id
-        self.arc_application_tenant_id = arc_application_tenant_id
-        self.arc_service_principal_object_id = arc_service_principal_object_id
-        self.arc_application_object_id = arc_application_object_id
-
-
-class Resource(msrest.serialization.Model):
+class Resource(_serialization.Model):
     """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -102,24 +44,20 @@ class Resource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(Resource, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -141,27 +79,23 @@ class ProxyResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ProxyResource, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
 
 
-class ArcSetting(ProxyResource):
+class ArcSetting(ProxyResource):  # pylint: disable=too-many-instance-attributes
     """ArcSetting details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -174,132 +108,93 @@ class ArcSetting(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar provisioning_state: Provisioning state of the ArcSetting proxy resource. Possible values
-     include: "Succeeded", "Failed", "Canceled", "Accepted", "Provisioning".
+    :ivar provisioning_state: Provisioning state of the ArcSetting proxy resource. Known values
+     are: "Succeeded", "Failed", "Canceled", "Accepted", and "Provisioning".
     :vartype provisioning_state: str or ~azure.mgmt.azurestackhci.models.ProvisioningState
     :ivar arc_instance_resource_group: The resource group that hosts the Arc agents, ie. Hybrid
      Compute Machine resources.
     :vartype arc_instance_resource_group: str
-    :ivar arc_application_client_id: App id of arc AAD identity.
-    :vartype arc_application_client_id: str
-    :ivar arc_application_tenant_id: Tenant id of arc AAD identity.
-    :vartype arc_application_tenant_id: str
-    :ivar arc_service_principal_object_id: Object id of arc AAD service principal.
-    :vartype arc_service_principal_object_id: str
-    :ivar arc_application_object_id: Object id of arc AAD identity.
-    :vartype arc_application_object_id: str
-    :ivar aggregate_state: Aggregate state of Arc agent across the nodes in this HCI cluster.
-     Possible values include: "NotSpecified", "Error", "Succeeded", "Canceled", "Failed",
-     "Connected", "Disconnected", "Deleted", "Creating", "Updating", "Deleting", "Moving",
-     "PartiallySucceeded", "PartiallyConnected", "InProgress".
+    :ivar aggregate_state: Aggregate state of Arc agent across the nodes in this HCI cluster. Known
+     values are: "NotSpecified", "Error", "Succeeded", "Canceled", "Failed", "Connected",
+     "Disconnected", "Deleted", "Creating", "Updating", "Deleting", "Moving", "PartiallySucceeded",
+     "PartiallyConnected", and "InProgress".
     :vartype aggregate_state: str or ~azure.mgmt.azurestackhci.models.ArcSettingAggregateState
     :ivar per_node_details: State of Arc agent in each of the nodes.
     :vartype per_node_details: list[~azure.mgmt.azurestackhci.models.PerNodeState]
-    :ivar connectivity_properties: contains connectivity related configuration for ARC resources.
-    :vartype connectivity_properties: any
     :ivar created_by: The identity that created the resource.
     :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Possible values include:
-     "User", "Application", "ManagedIdentity", "Key".
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", and "Key".
     :vartype created_by_type: str or ~azure.mgmt.azurestackhci.models.CreatedByType
     :ivar created_at: The timestamp of resource creation (UTC).
     :vartype created_at: ~datetime.datetime
     :ivar last_modified_by: The identity that last modified the resource.
     :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: "User", "Application", "ManagedIdentity", "Key".
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", and "Key".
     :vartype last_modified_by_type: str or ~azure.mgmt.azurestackhci.models.CreatedByType
     :ivar last_modified_at: The timestamp of resource last modification (UTC).
     :vartype last_modified_at: ~datetime.datetime
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'aggregate_state': {'readonly': True},
-        'per_node_details': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "arc_instance_resource_group": {"readonly": True},
+        "aggregate_state": {"readonly": True},
+        "per_node_details": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'arc_instance_resource_group': {'key': 'properties.arcInstanceResourceGroup', 'type': 'str'},
-        'arc_application_client_id': {'key': 'properties.arcApplicationClientId', 'type': 'str'},
-        'arc_application_tenant_id': {'key': 'properties.arcApplicationTenantId', 'type': 'str'},
-        'arc_service_principal_object_id': {'key': 'properties.arcServicePrincipalObjectId', 'type': 'str'},
-        'arc_application_object_id': {'key': 'properties.arcApplicationObjectId', 'type': 'str'},
-        'aggregate_state': {'key': 'properties.aggregateState', 'type': 'str'},
-        'per_node_details': {'key': 'properties.perNodeDetails', 'type': '[PerNodeState]'},
-        'connectivity_properties': {'key': 'properties.connectivityProperties', 'type': 'object'},
-        'created_by': {'key': 'systemData.createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'systemData.createdByType', 'type': 'str'},
-        'created_at': {'key': 'systemData.createdAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'systemData.lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'systemData.lastModifiedByType', 'type': 'str'},
-        'last_modified_at': {'key': 'systemData.lastModifiedAt', 'type': 'iso-8601'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "arc_instance_resource_group": {"key": "properties.arcInstanceResourceGroup", "type": "str"},
+        "aggregate_state": {"key": "properties.aggregateState", "type": "str"},
+        "per_node_details": {"key": "properties.perNodeDetails", "type": "[PerNodeState]"},
+        "created_by": {"key": "systemData.createdBy", "type": "str"},
+        "created_by_type": {"key": "systemData.createdByType", "type": "str"},
+        "created_at": {"key": "systemData.createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "systemData.lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "systemData.lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "systemData.lastModifiedAt", "type": "iso-8601"},
     }
 
     def __init__(
         self,
         *,
-        arc_instance_resource_group: Optional[str] = None,
-        arc_application_client_id: Optional[str] = None,
-        arc_application_tenant_id: Optional[str] = None,
-        arc_service_principal_object_id: Optional[str] = None,
-        arc_application_object_id: Optional[str] = None,
-        connectivity_properties: Optional[Any] = None,
         created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         created_at: Optional[datetime.datetime] = None,
         last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
         """
-        :keyword arc_instance_resource_group: The resource group that hosts the Arc agents, ie. Hybrid
-         Compute Machine resources.
-        :paramtype arc_instance_resource_group: str
-        :keyword arc_application_client_id: App id of arc AAD identity.
-        :paramtype arc_application_client_id: str
-        :keyword arc_application_tenant_id: Tenant id of arc AAD identity.
-        :paramtype arc_application_tenant_id: str
-        :keyword arc_service_principal_object_id: Object id of arc AAD service principal.
-        :paramtype arc_service_principal_object_id: str
-        :keyword arc_application_object_id: Object id of arc AAD identity.
-        :paramtype arc_application_object_id: str
-        :keyword connectivity_properties: contains connectivity related configuration for ARC
-         resources.
-        :paramtype connectivity_properties: any
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
-        :keyword created_by_type: The type of identity that created the resource. Possible values
-         include: "User", "Application", "ManagedIdentity", "Key".
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", and "Key".
         :paramtype created_by_type: str or ~azure.mgmt.azurestackhci.models.CreatedByType
         :keyword created_at: The timestamp of resource creation (UTC).
         :paramtype created_at: ~datetime.datetime
         :keyword last_modified_by: The identity that last modified the resource.
         :paramtype last_modified_by: str
-        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
-         values include: "User", "Application", "ManagedIdentity", "Key".
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", and "Key".
         :paramtype last_modified_by_type: str or ~azure.mgmt.azurestackhci.models.CreatedByType
         :keyword last_modified_at: The timestamp of resource last modification (UTC).
         :paramtype last_modified_at: ~datetime.datetime
         """
-        super(ArcSetting, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.provisioning_state = None
-        self.arc_instance_resource_group = arc_instance_resource_group
-        self.arc_application_client_id = arc_application_client_id
-        self.arc_application_tenant_id = arc_application_tenant_id
-        self.arc_service_principal_object_id = arc_service_principal_object_id
-        self.arc_application_object_id = arc_application_object_id
+        self.arc_instance_resource_group = None
         self.aggregate_state = None
         self.per_node_details = None
-        self.connectivity_properties = connectivity_properties
         self.created_by = created_by
         self.created_by_type = created_by_type
         self.created_at = created_at
@@ -308,7 +203,7 @@ class ArcSetting(ProxyResource):
         self.last_modified_at = last_modified_at
 
 
-class ArcSettingList(msrest.serialization.Model):
+class ArcSettingList(_serialization.Model):
     """List of ArcSetting proxy resources for the HCI cluster.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -320,57 +215,20 @@ class ArcSettingList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ArcSetting]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ArcSetting]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ArcSettingList, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
-
-
-class ArcSettingsPatch(msrest.serialization.Model):
-    """ArcSetting details to update.
-
-    :ivar tags: A set of tags. Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar connectivity_properties: contains connectivity related configuration for ARC resources.
-    :vartype connectivity_properties: any
-    """
-
-    _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'connectivity_properties': {'key': 'properties.connectivityProperties', 'type': 'object'},
-    }
-
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        connectivity_properties: Optional[Any] = None,
-        **kwargs
-    ):
-        """
-        :keyword tags: A set of tags. Resource tags.
-        :paramtype tags: dict[str, str]
-        :keyword connectivity_properties: contains connectivity related configuration for ARC
-         resources.
-        :paramtype connectivity_properties: any
-        """
-        super(ArcSettingsPatch, self).__init__(**kwargs)
-        self.tags = tags
-        self.connectivity_properties = connectivity_properties
 
 
 class TrackedResource(Resource):
@@ -388,46 +246,40 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar location: Required. The geo-location where the resource lives.
+    :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword location: Required. The geo-location where the resource lives.
+        :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
         """
-        super(TrackedResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
         self.location = location
 
 
-class Cluster(TrackedResource):
+class Cluster(TrackedResource):  # pylint: disable=too-many-instance-attributes
     """Cluster details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -442,15 +294,15 @@ class Cluster(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar location: Required. The geo-location where the resource lives.
+    :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
-    :ivar provisioning_state: Provisioning state. Possible values include: "Succeeded", "Failed",
-     "Canceled", "Accepted", "Provisioning".
+    :ivar provisioning_state: Provisioning state. Known values are: "Succeeded", "Failed",
+     "Canceled", "Accepted", and "Provisioning".
     :vartype provisioning_state: str or ~azure.mgmt.azurestackhci.models.ProvisioningState
-    :ivar status: Status of the cluster agent. Possible values include: "NotYetRegistered",
-     "ConnectedRecently", "NotConnectedRecently", "Disconnected", "Error".
+    :ivar status: Status of the cluster agent. Known values are: "NotYetRegistered",
+     "ConnectedRecently", "NotConnectedRecently", "Disconnected", and "Error".
     :vartype status: str or ~azure.mgmt.azurestackhci.models.Status
     :ivar cloud_id: Unique, immutable resource id.
     :vartype cloud_id: str
@@ -460,10 +312,6 @@ class Cluster(TrackedResource):
     :vartype aad_client_id: str
     :ivar aad_tenant_id: Tenant id of cluster AAD identity.
     :vartype aad_tenant_id: str
-    :ivar aad_application_object_id: Object id of cluster AAD identity.
-    :vartype aad_application_object_id: str
-    :ivar aad_service_principal_object_id: Id of cluster identity service principal.
-    :vartype aad_service_principal_object_id: str
     :ivar desired_properties: Desired properties of the cluster.
     :vartype desired_properties: ~azure.mgmt.azurestackhci.models.ClusterDesiredProperties
     :ivar reported_properties: Properties reported by cluster agent.
@@ -478,72 +326,66 @@ class Cluster(TrackedResource):
     :vartype last_sync_timestamp: ~datetime.datetime
     :ivar last_billing_timestamp: Most recent billing meter timestamp.
     :vartype last_billing_timestamp: ~datetime.datetime
-    :ivar service_endpoint: Region specific DataPath Endpoint of the cluster.
-    :vartype service_endpoint: str
     :ivar created_by: The identity that created the resource.
     :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Possible values include:
-     "User", "Application", "ManagedIdentity", "Key".
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", and "Key".
     :vartype created_by_type: str or ~azure.mgmt.azurestackhci.models.CreatedByType
     :ivar created_at: The timestamp of resource creation (UTC).
     :vartype created_at: ~datetime.datetime
     :ivar last_modified_by: The identity that last modified the resource.
     :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: "User", "Application", "ManagedIdentity", "Key".
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", and "Key".
     :vartype last_modified_by_type: str or ~azure.mgmt.azurestackhci.models.CreatedByType
     :ivar last_modified_at: The timestamp of resource last modification (UTC).
     :vartype last_modified_at: ~datetime.datetime
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'provisioning_state': {'readonly': True},
-        'status': {'readonly': True},
-        'cloud_id': {'readonly': True},
-        'reported_properties': {'readonly': True},
-        'trial_days_remaining': {'readonly': True},
-        'billing_model': {'readonly': True},
-        'registration_timestamp': {'readonly': True},
-        'last_sync_timestamp': {'readonly': True},
-        'last_billing_timestamp': {'readonly': True},
-        'service_endpoint': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "provisioning_state": {"readonly": True},
+        "status": {"readonly": True},
+        "cloud_id": {"readonly": True},
+        "reported_properties": {"readonly": True},
+        "trial_days_remaining": {"readonly": True},
+        "billing_model": {"readonly": True},
+        "registration_timestamp": {"readonly": True},
+        "last_sync_timestamp": {"readonly": True},
+        "last_billing_timestamp": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'cloud_id': {'key': 'properties.cloudId', 'type': 'str'},
-        'cloud_management_endpoint': {'key': 'properties.cloudManagementEndpoint', 'type': 'str'},
-        'aad_client_id': {'key': 'properties.aadClientId', 'type': 'str'},
-        'aad_tenant_id': {'key': 'properties.aadTenantId', 'type': 'str'},
-        'aad_application_object_id': {'key': 'properties.aadApplicationObjectId', 'type': 'str'},
-        'aad_service_principal_object_id': {'key': 'properties.aadServicePrincipalObjectId', 'type': 'str'},
-        'desired_properties': {'key': 'properties.desiredProperties', 'type': 'ClusterDesiredProperties'},
-        'reported_properties': {'key': 'properties.reportedProperties', 'type': 'ClusterReportedProperties'},
-        'trial_days_remaining': {'key': 'properties.trialDaysRemaining', 'type': 'float'},
-        'billing_model': {'key': 'properties.billingModel', 'type': 'str'},
-        'registration_timestamp': {'key': 'properties.registrationTimestamp', 'type': 'iso-8601'},
-        'last_sync_timestamp': {'key': 'properties.lastSyncTimestamp', 'type': 'iso-8601'},
-        'last_billing_timestamp': {'key': 'properties.lastBillingTimestamp', 'type': 'iso-8601'},
-        'service_endpoint': {'key': 'properties.serviceEndpoint', 'type': 'str'},
-        'created_by': {'key': 'systemData.createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'systemData.createdByType', 'type': 'str'},
-        'created_at': {'key': 'systemData.createdAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'systemData.lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'systemData.lastModifiedByType', 'type': 'str'},
-        'last_modified_at': {'key': 'systemData.lastModifiedAt', 'type': 'iso-8601'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "status": {"key": "properties.status", "type": "str"},
+        "cloud_id": {"key": "properties.cloudId", "type": "str"},
+        "cloud_management_endpoint": {"key": "properties.cloudManagementEndpoint", "type": "str"},
+        "aad_client_id": {"key": "properties.aadClientId", "type": "str"},
+        "aad_tenant_id": {"key": "properties.aadTenantId", "type": "str"},
+        "desired_properties": {"key": "properties.desiredProperties", "type": "ClusterDesiredProperties"},
+        "reported_properties": {"key": "properties.reportedProperties", "type": "ClusterReportedProperties"},
+        "trial_days_remaining": {"key": "properties.trialDaysRemaining", "type": "float"},
+        "billing_model": {"key": "properties.billingModel", "type": "str"},
+        "registration_timestamp": {"key": "properties.registrationTimestamp", "type": "iso-8601"},
+        "last_sync_timestamp": {"key": "properties.lastSyncTimestamp", "type": "iso-8601"},
+        "last_billing_timestamp": {"key": "properties.lastBillingTimestamp", "type": "iso-8601"},
+        "created_by": {"key": "systemData.createdBy", "type": "str"},
+        "created_by_type": {"key": "systemData.createdByType", "type": "str"},
+        "created_at": {"key": "systemData.createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "systemData.lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "systemData.lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "systemData.lastModifiedAt", "type": "iso-8601"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         location: str,
@@ -551,21 +393,19 @@ class Cluster(TrackedResource):
         cloud_management_endpoint: Optional[str] = None,
         aad_client_id: Optional[str] = None,
         aad_tenant_id: Optional[str] = None,
-        aad_application_object_id: Optional[str] = None,
-        aad_service_principal_object_id: Optional[str] = None,
-        desired_properties: Optional["ClusterDesiredProperties"] = None,
+        desired_properties: Optional["_models.ClusterDesiredProperties"] = None,
         created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         created_at: Optional[datetime.datetime] = None,
         last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword location: Required. The geo-location where the resource lives.
+        :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
         :keyword cloud_management_endpoint: Endpoint configured for management from the Azure portal.
         :paramtype cloud_management_endpoint: str
@@ -573,36 +413,30 @@ class Cluster(TrackedResource):
         :paramtype aad_client_id: str
         :keyword aad_tenant_id: Tenant id of cluster AAD identity.
         :paramtype aad_tenant_id: str
-        :keyword aad_application_object_id: Object id of cluster AAD identity.
-        :paramtype aad_application_object_id: str
-        :keyword aad_service_principal_object_id: Id of cluster identity service principal.
-        :paramtype aad_service_principal_object_id: str
         :keyword desired_properties: Desired properties of the cluster.
         :paramtype desired_properties: ~azure.mgmt.azurestackhci.models.ClusterDesiredProperties
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
-        :keyword created_by_type: The type of identity that created the resource. Possible values
-         include: "User", "Application", "ManagedIdentity", "Key".
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", and "Key".
         :paramtype created_by_type: str or ~azure.mgmt.azurestackhci.models.CreatedByType
         :keyword created_at: The timestamp of resource creation (UTC).
         :paramtype created_at: ~datetime.datetime
         :keyword last_modified_by: The identity that last modified the resource.
         :paramtype last_modified_by: str
-        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
-         values include: "User", "Application", "ManagedIdentity", "Key".
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", and "Key".
         :paramtype last_modified_by_type: str or ~azure.mgmt.azurestackhci.models.CreatedByType
         :keyword last_modified_at: The timestamp of resource last modification (UTC).
         :paramtype last_modified_at: ~datetime.datetime
         """
-        super(Cluster, self).__init__(tags=tags, location=location, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.provisioning_state = None
         self.status = None
         self.cloud_id = None
         self.cloud_management_endpoint = cloud_management_endpoint
         self.aad_client_id = aad_client_id
         self.aad_tenant_id = aad_tenant_id
-        self.aad_application_object_id = aad_application_object_id
-        self.aad_service_principal_object_id = aad_service_principal_object_id
         self.desired_properties = desired_properties
         self.reported_properties = None
         self.trial_days_remaining = None
@@ -610,7 +444,6 @@ class Cluster(TrackedResource):
         self.registration_timestamp = None
         self.last_sync_timestamp = None
         self.last_billing_timestamp = None
-        self.service_endpoint = None
         self.created_by = created_by
         self.created_by_type = created_by_type
         self.created_at = created_at
@@ -619,91 +452,45 @@ class Cluster(TrackedResource):
         self.last_modified_at = last_modified_at
 
 
-class ClusterDesiredProperties(msrest.serialization.Model):
+class ClusterDesiredProperties(_serialization.Model):
     """Desired properties of the cluster.
 
-    :ivar windows_server_subscription: Desired state of Windows Server Subscription. Possible
-     values include: "Disabled", "Enabled".
+    :ivar windows_server_subscription: Desired state of Windows Server Subscription. Known values
+     are: "Disabled" and "Enabled".
     :vartype windows_server_subscription: str or
      ~azure.mgmt.azurestackhci.models.WindowsServerSubscription
-    :ivar diagnostic_level: Desired level of diagnostic data emitted by the cluster. Possible
-     values include: "Off", "Basic", "Enhanced".
+    :ivar diagnostic_level: Desired level of diagnostic data emitted by the cluster. Known values
+     are: "Off", "Basic", and "Enhanced".
     :vartype diagnostic_level: str or ~azure.mgmt.azurestackhci.models.DiagnosticLevel
     """
 
     _attribute_map = {
-        'windows_server_subscription': {'key': 'windowsServerSubscription', 'type': 'str'},
-        'diagnostic_level': {'key': 'diagnosticLevel', 'type': 'str'},
+        "windows_server_subscription": {"key": "windowsServerSubscription", "type": "str"},
+        "diagnostic_level": {"key": "diagnosticLevel", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        windows_server_subscription: Optional[Union[str, "WindowsServerSubscription"]] = None,
-        diagnostic_level: Optional[Union[str, "DiagnosticLevel"]] = None,
+        windows_server_subscription: Optional[Union[str, "_models.WindowsServerSubscription"]] = None,
+        diagnostic_level: Optional[Union[str, "_models.DiagnosticLevel"]] = None,
         **kwargs
     ):
         """
-        :keyword windows_server_subscription: Desired state of Windows Server Subscription. Possible
-         values include: "Disabled", "Enabled".
+        :keyword windows_server_subscription: Desired state of Windows Server Subscription. Known
+         values are: "Disabled" and "Enabled".
         :paramtype windows_server_subscription: str or
          ~azure.mgmt.azurestackhci.models.WindowsServerSubscription
-        :keyword diagnostic_level: Desired level of diagnostic data emitted by the cluster. Possible
-         values include: "Off", "Basic", "Enhanced".
+        :keyword diagnostic_level: Desired level of diagnostic data emitted by the cluster. Known
+         values are: "Off", "Basic", and "Enhanced".
         :paramtype diagnostic_level: str or ~azure.mgmt.azurestackhci.models.DiagnosticLevel
         """
-        super(ClusterDesiredProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.windows_server_subscription = windows_server_subscription
         self.diagnostic_level = diagnostic_level
 
 
-class ClusterIdentityResponse(msrest.serialization.Model):
-    """Cluster Identity details.
-
-    :ivar aad_client_id:
-    :vartype aad_client_id: str
-    :ivar aad_tenant_id:
-    :vartype aad_tenant_id: str
-    :ivar aad_service_principal_object_id:
-    :vartype aad_service_principal_object_id: str
-    :ivar aad_application_object_id:
-    :vartype aad_application_object_id: str
-    """
-
-    _attribute_map = {
-        'aad_client_id': {'key': 'properties.aadClientId', 'type': 'str'},
-        'aad_tenant_id': {'key': 'properties.aadTenantId', 'type': 'str'},
-        'aad_service_principal_object_id': {'key': 'properties.aadServicePrincipalObjectId', 'type': 'str'},
-        'aad_application_object_id': {'key': 'properties.aadApplicationObjectId', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        aad_client_id: Optional[str] = None,
-        aad_tenant_id: Optional[str] = None,
-        aad_service_principal_object_id: Optional[str] = None,
-        aad_application_object_id: Optional[str] = None,
-        **kwargs
-    ):
-        """
-        :keyword aad_client_id:
-        :paramtype aad_client_id: str
-        :keyword aad_tenant_id:
-        :paramtype aad_tenant_id: str
-        :keyword aad_service_principal_object_id:
-        :paramtype aad_service_principal_object_id: str
-        :keyword aad_application_object_id:
-        :paramtype aad_application_object_id: str
-        """
-        super(ClusterIdentityResponse, self).__init__(**kwargs)
-        self.aad_client_id = aad_client_id
-        self.aad_tenant_id = aad_tenant_id
-        self.aad_service_principal_object_id = aad_service_principal_object_id
-        self.aad_application_object_id = aad_application_object_id
-
-
-class ClusterList(msrest.serialization.Model):
+class ClusterList(_serialization.Model):
     """List of clusters.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -715,30 +502,25 @@ class ClusterList(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Cluster]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Cluster]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["Cluster"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.Cluster"]] = None, **kwargs):
         """
         :keyword value: List of clusters.
         :paramtype value: list[~azure.mgmt.azurestackhci.models.Cluster]
         """
-        super(ClusterList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
 
-class ClusterNode(msrest.serialization.Model):
+class ClusterNode(_serialization.Model):
     """Cluster node details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -747,8 +529,8 @@ class ClusterNode(msrest.serialization.Model):
     :vartype name: str
     :ivar id: Id of the node in the cluster.
     :vartype id: float
-    :ivar windows_server_subscription: State of Windows Server Subscription. Possible values
-     include: "Disabled", "Enabled".
+    :ivar windows_server_subscription: State of Windows Server Subscription. Known values are:
+     "Disabled" and "Enabled".
     :vartype windows_server_subscription: str or
      ~azure.mgmt.azurestackhci.models.WindowsServerSubscription
     :ivar manufacturer: Manufacturer of the cluster node hardware.
@@ -768,38 +550,34 @@ class ClusterNode(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'id': {'readonly': True},
-        'windows_server_subscription': {'readonly': True},
-        'manufacturer': {'readonly': True},
-        'model': {'readonly': True},
-        'os_name': {'readonly': True},
-        'os_version': {'readonly': True},
-        'serial_number': {'readonly': True},
-        'core_count': {'readonly': True},
-        'memory_in_gi_b': {'readonly': True},
+        "name": {"readonly": True},
+        "id": {"readonly": True},
+        "windows_server_subscription": {"readonly": True},
+        "manufacturer": {"readonly": True},
+        "model": {"readonly": True},
+        "os_name": {"readonly": True},
+        "os_version": {"readonly": True},
+        "serial_number": {"readonly": True},
+        "core_count": {"readonly": True},
+        "memory_in_gi_b": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'float'},
-        'windows_server_subscription': {'key': 'windowsServerSubscription', 'type': 'str'},
-        'manufacturer': {'key': 'manufacturer', 'type': 'str'},
-        'model': {'key': 'model', 'type': 'str'},
-        'os_name': {'key': 'osName', 'type': 'str'},
-        'os_version': {'key': 'osVersion', 'type': 'str'},
-        'serial_number': {'key': 'serialNumber', 'type': 'str'},
-        'core_count': {'key': 'coreCount', 'type': 'float'},
-        'memory_in_gi_b': {'key': 'memoryInGiB', 'type': 'float'},
+        "name": {"key": "name", "type": "str"},
+        "id": {"key": "id", "type": "float"},
+        "windows_server_subscription": {"key": "windowsServerSubscription", "type": "str"},
+        "manufacturer": {"key": "manufacturer", "type": "str"},
+        "model": {"key": "model", "type": "str"},
+        "os_name": {"key": "osName", "type": "str"},
+        "os_version": {"key": "osVersion", "type": "str"},
+        "serial_number": {"key": "serialNumber", "type": "str"},
+        "core_count": {"key": "coreCount", "type": "float"},
+        "memory_in_gi_b": {"key": "memoryInGiB", "type": "float"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ClusterNode, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.name = None
         self.id = None
         self.windows_server_subscription = None
@@ -812,10 +590,10 @@ class ClusterNode(msrest.serialization.Model):
         self.memory_in_gi_b = None
 
 
-class ClusterPatch(msrest.serialization.Model):
+class ClusterPatch(_serialization.Model):
     """Cluster details to update.
 
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar cloud_management_endpoint: Endpoint configured for management from the Azure portal.
     :vartype cloud_management_endpoint: str
@@ -828,11 +606,11 @@ class ClusterPatch(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'cloud_management_endpoint': {'key': 'properties.cloudManagementEndpoint', 'type': 'str'},
-        'aad_client_id': {'key': 'properties.aadClientId', 'type': 'str'},
-        'aad_tenant_id': {'key': 'properties.aadTenantId', 'type': 'str'},
-        'desired_properties': {'key': 'properties.desiredProperties', 'type': 'ClusterDesiredProperties'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "cloud_management_endpoint": {"key": "properties.cloudManagementEndpoint", "type": "str"},
+        "aad_client_id": {"key": "properties.aadClientId", "type": "str"},
+        "aad_tenant_id": {"key": "properties.aadTenantId", "type": "str"},
+        "desired_properties": {"key": "properties.desiredProperties", "type": "ClusterDesiredProperties"},
     }
 
     def __init__(
@@ -842,11 +620,11 @@ class ClusterPatch(msrest.serialization.Model):
         cloud_management_endpoint: Optional[str] = None,
         aad_client_id: Optional[str] = None,
         aad_tenant_id: Optional[str] = None,
-        desired_properties: Optional["ClusterDesiredProperties"] = None,
+        desired_properties: Optional["_models.ClusterDesiredProperties"] = None,
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword cloud_management_endpoint: Endpoint configured for management from the Azure portal.
         :paramtype cloud_management_endpoint: str
@@ -857,7 +635,7 @@ class ClusterPatch(msrest.serialization.Model):
         :keyword desired_properties: Desired properties of the cluster.
         :paramtype desired_properties: ~azure.mgmt.azurestackhci.models.ClusterDesiredProperties
         """
-        super(ClusterPatch, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
         self.cloud_management_endpoint = cloud_management_endpoint
         self.aad_client_id = aad_client_id
@@ -865,7 +643,7 @@ class ClusterPatch(msrest.serialization.Model):
         self.desired_properties = desired_properties
 
 
-class ClusterReportedProperties(msrest.serialization.Model):
+class ClusterReportedProperties(_serialization.Model):
     """Properties reported by cluster agent.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -880,45 +658,40 @@ class ClusterReportedProperties(msrest.serialization.Model):
     :vartype nodes: list[~azure.mgmt.azurestackhci.models.ClusterNode]
     :ivar last_updated: Last time the cluster reported the data.
     :vartype last_updated: ~datetime.datetime
-    :ivar imds_attestation: IMDS attestation status of the cluster. Possible values include:
-     "Disabled", "Enabled".
+    :ivar imds_attestation: IMDS attestation status of the cluster. Known values are: "Disabled"
+     and "Enabled".
     :vartype imds_attestation: str or ~azure.mgmt.azurestackhci.models.ImdsAttestation
-    :ivar diagnostic_level: Level of diagnostic data emitted by the cluster. Possible values
-     include: "Off", "Basic", "Enhanced".
+    :ivar diagnostic_level: Level of diagnostic data emitted by the cluster. Known values are:
+     "Off", "Basic", and "Enhanced".
     :vartype diagnostic_level: str or ~azure.mgmt.azurestackhci.models.DiagnosticLevel
     """
 
     _validation = {
-        'cluster_name': {'readonly': True},
-        'cluster_id': {'readonly': True},
-        'cluster_version': {'readonly': True},
-        'nodes': {'readonly': True},
-        'last_updated': {'readonly': True},
-        'imds_attestation': {'readonly': True},
+        "cluster_name": {"readonly": True},
+        "cluster_id": {"readonly": True},
+        "cluster_version": {"readonly": True},
+        "nodes": {"readonly": True},
+        "last_updated": {"readonly": True},
+        "imds_attestation": {"readonly": True},
     }
 
     _attribute_map = {
-        'cluster_name': {'key': 'clusterName', 'type': 'str'},
-        'cluster_id': {'key': 'clusterId', 'type': 'str'},
-        'cluster_version': {'key': 'clusterVersion', 'type': 'str'},
-        'nodes': {'key': 'nodes', 'type': '[ClusterNode]'},
-        'last_updated': {'key': 'lastUpdated', 'type': 'iso-8601'},
-        'imds_attestation': {'key': 'imdsAttestation', 'type': 'str'},
-        'diagnostic_level': {'key': 'diagnosticLevel', 'type': 'str'},
+        "cluster_name": {"key": "clusterName", "type": "str"},
+        "cluster_id": {"key": "clusterId", "type": "str"},
+        "cluster_version": {"key": "clusterVersion", "type": "str"},
+        "nodes": {"key": "nodes", "type": "[ClusterNode]"},
+        "last_updated": {"key": "lastUpdated", "type": "iso-8601"},
+        "imds_attestation": {"key": "imdsAttestation", "type": "str"},
+        "diagnostic_level": {"key": "diagnosticLevel", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        diagnostic_level: Optional[Union[str, "DiagnosticLevel"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, diagnostic_level: Optional[Union[str, "_models.DiagnosticLevel"]] = None, **kwargs):
         """
-        :keyword diagnostic_level: Level of diagnostic data emitted by the cluster. Possible values
-         include: "Off", "Basic", "Enhanced".
+        :keyword diagnostic_level: Level of diagnostic data emitted by the cluster. Known values are:
+         "Off", "Basic", and "Enhanced".
         :paramtype diagnostic_level: str or ~azure.mgmt.azurestackhci.models.DiagnosticLevel
         """
-        super(ClusterReportedProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.cluster_name = None
         self.cluster_id = None
         self.cluster_version = None
@@ -928,7 +701,78 @@ class ClusterReportedProperties(msrest.serialization.Model):
         self.diagnostic_level = diagnostic_level
 
 
-class ErrorAdditionalInfo(msrest.serialization.Model):
+class ComponentsL15GkaSchemasVirtualnetworkspropertiesPropertiesSubnetsItemsPropertiesRoutetable(_serialization.Model):
+    """RouteTable for the subnet.
+
+    :ivar id: Etag - Gets a unique read-only string that changes whenever the resource is updated.
+    :vartype id: str
+    :ivar name: Name - READ-ONLY; Resource name.
+    :vartype name: str
+    :ivar type: Type - READ-ONLY; Resource type.
+    :vartype type: str
+    :ivar routes: Routes - Collection of routes contained within a route table.
+    :vartype routes:
+     list[~azure.mgmt.azurestackhci.models.VirtualnetworksPropertiesSubnetsPropertiesItemsItem]
+    """
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "routes": {"key": "properties.routes", "type": "[VirtualnetworksPropertiesSubnetsPropertiesItemsItem]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        name: Optional[str] = None,
+        type: Optional[str] = None,
+        routes: Optional[List["_models.VirtualnetworksPropertiesSubnetsPropertiesItemsItem"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword id: Etag - Gets a unique read-only string that changes whenever the resource is
+         updated.
+        :paramtype id: str
+        :keyword name: Name - READ-ONLY; Resource name.
+        :paramtype name: str
+        :keyword type: Type - READ-ONLY; Resource type.
+        :paramtype type: str
+        :keyword routes: Routes - Collection of routes contained within a route table.
+        :paramtype routes:
+         list[~azure.mgmt.azurestackhci.models.VirtualnetworksPropertiesSubnetsPropertiesItemsItem]
+        """
+        super().__init__(**kwargs)
+        self.id = id
+        self.name = name
+        self.type = type
+        self.routes = routes
+
+
+class ComponentsVqks9HSchemasVirtualnetworkspropertiesPropertiesSubnetsItemsPropertiesIpconfigurationreferencesItems(
+    _serialization.Model
+):
+    """IPConfigurationReference - Describes a IPConfiguration under the virtual network.
+
+    :ivar id: IPConfigurationID.
+    :vartype id: str
+    """
+
+    _attribute_map = {
+        "id": {"key": "ID", "type": "str"},
+    }
+
+    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
+        """
+        :keyword id: IPConfigurationID.
+        :paramtype id: str
+        """
+        super().__init__(**kwargs)
+        self.id = id
+
+
+class ErrorAdditionalInfo(_serialization.Model):
     """The resource management error additional info.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -936,31 +780,27 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: any
+    :vartype info: JSON
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'info': {'readonly': True},
+        "type": {"readonly": True},
+        "info": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'info': {'key': 'info', 'type': 'object'},
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ErrorAdditionalInfo, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.type = None
         self.info = None
 
 
-class ErrorDetail(msrest.serialization.Model):
+class ErrorDetail(_serialization.Model):
     """The error detail.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -978,28 +818,24 @@ class ErrorDetail(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'target': {'readonly': True},
-        'details': {'readonly': True},
-        'additional_info': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorDetail]'},
-        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetail]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ErrorDetail, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.code = None
         self.message = None
         self.target = None
@@ -1007,7 +843,7 @@ class ErrorDetail(msrest.serialization.Model):
         self.additional_info = None
 
 
-class ErrorResponse(msrest.serialization.Model):
+class ErrorResponse(_serialization.Model):
     """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
 
     :ivar error: The error object.
@@ -1015,24 +851,51 @@ class ErrorResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorDetail'},
+        "error": {"key": "error", "type": "ErrorDetail"},
+    }
+
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs):
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.azurestackhci.models.ErrorDetail
+        """
+        super().__init__(**kwargs)
+        self.error = error
+
+
+class ExtendedLocation(_serialization.Model):
+    """The complex type of the extended location.
+
+    :ivar name: The name of the extended location.
+    :vartype name: str
+    :ivar type: The type of the extended location. "CustomLocation"
+    :vartype type: str or ~azure.mgmt.azurestackhci.models.ExtendedLocationTypes
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        error: Optional["ErrorDetail"] = None,
+        name: Optional[str] = None,
+        type: Optional[Union[str, "_models.ExtendedLocationTypes"]] = None,
         **kwargs
     ):
         """
-        :keyword error: The error object.
-        :paramtype error: ~azure.mgmt.azurestackhci.models.ErrorDetail
+        :keyword name: The name of the extended location.
+        :paramtype name: str
+        :keyword type: The type of the extended location. "CustomLocation"
+        :paramtype type: str or ~azure.mgmt.azurestackhci.models.ExtendedLocationTypes
         """
-        super(ErrorResponse, self).__init__(**kwargs)
-        self.error = error
+        super().__init__(**kwargs)
+        self.name = name
+        self.type = type
 
 
-class Extension(ProxyResource):
+class Extension(ProxyResource):  # pylint: disable=too-many-instance-attributes
     """Details of a particular extension in HCI Cluster.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1045,13 +908,13 @@ class Extension(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar provisioning_state: Provisioning state of the Extension proxy resource. Possible values
-     include: "Succeeded", "Failed", "Canceled", "Accepted", "Provisioning".
+    :ivar provisioning_state: Provisioning state of the Extension proxy resource. Known values are:
+     "Succeeded", "Failed", "Canceled", "Accepted", and "Provisioning".
     :vartype provisioning_state: str or ~azure.mgmt.azurestackhci.models.ProvisioningState
     :ivar aggregate_state: Aggregate state of Arc Extensions across the nodes in this HCI cluster.
-     Possible values include: "NotSpecified", "Error", "Succeeded", "Canceled", "Failed",
-     "Connected", "Disconnected", "Deleted", "Creating", "Updating", "Deleting", "Moving",
-     "PartiallySucceeded", "PartiallyConnected", "InProgress".
+     Known values are: "NotSpecified", "Error", "Succeeded", "Canceled", "Failed", "Connected",
+     "Disconnected", "Deleted", "Creating", "Updating", "Deleting", "Moving", "PartiallySucceeded",
+     "PartiallyConnected", and "InProgress".
     :vartype aggregate_state: str or ~azure.mgmt.azurestackhci.models.ExtensionAggregateState
     :ivar per_node_extension_details: State of Arc Extension in each of the nodes.
     :vartype per_node_extension_details:
@@ -1071,54 +934,54 @@ class Extension(ProxyResource):
      upgrade minor versions unless redeployed, even with this property set to true.
     :vartype auto_upgrade_minor_version: bool
     :ivar settings: Json formatted public settings for the extension.
-    :vartype settings: any
+    :vartype settings: JSON
     :ivar protected_settings: Protected settings (may contain secrets).
-    :vartype protected_settings: any
+    :vartype protected_settings: JSON
     :ivar created_by: The identity that created the resource.
     :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Possible values include:
-     "User", "Application", "ManagedIdentity", "Key".
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", and "Key".
     :vartype created_by_type: str or ~azure.mgmt.azurestackhci.models.CreatedByType
     :ivar created_at: The timestamp of resource creation (UTC).
     :vartype created_at: ~datetime.datetime
     :ivar last_modified_by: The identity that last modified the resource.
     :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: "User", "Application", "ManagedIdentity", "Key".
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", and "Key".
     :vartype last_modified_by_type: str or ~azure.mgmt.azurestackhci.models.CreatedByType
     :ivar last_modified_at: The timestamp of resource last modification (UTC).
     :vartype last_modified_at: ~datetime.datetime
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'aggregate_state': {'readonly': True},
-        'per_node_extension_details': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "aggregate_state": {"readonly": True},
+        "per_node_extension_details": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'aggregate_state': {'key': 'properties.aggregateState', 'type': 'str'},
-        'per_node_extension_details': {'key': 'properties.perNodeExtensionDetails', 'type': '[PerNodeExtensionState]'},
-        'force_update_tag': {'key': 'properties.extensionParameters.forceUpdateTag', 'type': 'str'},
-        'publisher': {'key': 'properties.extensionParameters.publisher', 'type': 'str'},
-        'type_properties_extension_parameters_type': {'key': 'properties.extensionParameters.type', 'type': 'str'},
-        'type_handler_version': {'key': 'properties.extensionParameters.typeHandlerVersion', 'type': 'str'},
-        'auto_upgrade_minor_version': {'key': 'properties.extensionParameters.autoUpgradeMinorVersion', 'type': 'bool'},
-        'settings': {'key': 'properties.extensionParameters.settings', 'type': 'object'},
-        'protected_settings': {'key': 'properties.extensionParameters.protectedSettings', 'type': 'object'},
-        'created_by': {'key': 'systemData.createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'systemData.createdByType', 'type': 'str'},
-        'created_at': {'key': 'systemData.createdAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'systemData.lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'systemData.lastModifiedByType', 'type': 'str'},
-        'last_modified_at': {'key': 'systemData.lastModifiedAt', 'type': 'iso-8601'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "aggregate_state": {"key": "properties.aggregateState", "type": "str"},
+        "per_node_extension_details": {"key": "properties.perNodeExtensionDetails", "type": "[PerNodeExtensionState]"},
+        "force_update_tag": {"key": "properties.extensionParameters.forceUpdateTag", "type": "str"},
+        "publisher": {"key": "properties.extensionParameters.publisher", "type": "str"},
+        "type_properties_extension_parameters_type": {"key": "properties.extensionParameters.type", "type": "str"},
+        "type_handler_version": {"key": "properties.extensionParameters.typeHandlerVersion", "type": "str"},
+        "auto_upgrade_minor_version": {"key": "properties.extensionParameters.autoUpgradeMinorVersion", "type": "bool"},
+        "settings": {"key": "properties.extensionParameters.settings", "type": "object"},
+        "protected_settings": {"key": "properties.extensionParameters.protectedSettings", "type": "object"},
+        "created_by": {"key": "systemData.createdBy", "type": "str"},
+        "created_by_type": {"key": "systemData.createdByType", "type": "str"},
+        "created_at": {"key": "systemData.createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "systemData.lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "systemData.lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "systemData.lastModifiedAt", "type": "iso-8601"},
     }
 
     def __init__(
@@ -1129,13 +992,13 @@ class Extension(ProxyResource):
         type_properties_extension_parameters_type: Optional[str] = None,
         type_handler_version: Optional[str] = None,
         auto_upgrade_minor_version: Optional[bool] = None,
-        settings: Optional[Any] = None,
-        protected_settings: Optional[Any] = None,
+        settings: Optional[JSON] = None,
+        protected_settings: Optional[JSON] = None,
         created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         created_at: Optional[datetime.datetime] = None,
         last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
@@ -1155,25 +1018,25 @@ class Extension(ProxyResource):
          upgrade minor versions unless redeployed, even with this property set to true.
         :paramtype auto_upgrade_minor_version: bool
         :keyword settings: Json formatted public settings for the extension.
-        :paramtype settings: any
+        :paramtype settings: JSON
         :keyword protected_settings: Protected settings (may contain secrets).
-        :paramtype protected_settings: any
+        :paramtype protected_settings: JSON
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
-        :keyword created_by_type: The type of identity that created the resource. Possible values
-         include: "User", "Application", "ManagedIdentity", "Key".
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", and "Key".
         :paramtype created_by_type: str or ~azure.mgmt.azurestackhci.models.CreatedByType
         :keyword created_at: The timestamp of resource creation (UTC).
         :paramtype created_at: ~datetime.datetime
         :keyword last_modified_by: The identity that last modified the resource.
         :paramtype last_modified_by: str
-        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
-         values include: "User", "Application", "ManagedIdentity", "Key".
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", and "Key".
         :paramtype last_modified_by_type: str or ~azure.mgmt.azurestackhci.models.CreatedByType
         :keyword last_modified_at: The timestamp of resource last modification (UTC).
         :paramtype last_modified_at: ~datetime.datetime
         """
-        super(Extension, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.provisioning_state = None
         self.aggregate_state = None
         self.per_node_extension_details = None
@@ -1192,7 +1055,7 @@ class Extension(ProxyResource):
         self.last_modified_at = last_modified_at
 
 
-class ExtensionList(msrest.serialization.Model):
+class ExtensionList(_serialization.Model):
     """List of Extensions in HCI cluster.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1204,27 +1067,1986 @@ class ExtensionList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Extension]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Extension]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ExtensionList, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class Operation(msrest.serialization.Model):
+class GalleryDiskImage(_serialization.Model):
+    """This is the disk image base class.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar size_in_mb: This property indicates the size of the VHD to be created.
+    :vartype size_in_mb: int
+    """
+
+    _validation = {
+        "size_in_mb": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "size_in_mb": {"key": "sizeInMB", "type": "int"},
+    }
+
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.size_in_mb = None
+
+
+class GalleryImageIdentifier(_serialization.Model):
+    """This is the gallery image definition identifier.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar publisher: The name of the gallery image definition publisher. Required.
+    :vartype publisher: str
+    :ivar offer: The name of the gallery image definition offer. Required.
+    :vartype offer: str
+    :ivar sku: The name of the gallery image definition SKU. Required.
+    :vartype sku: str
+    """
+
+    _validation = {
+        "publisher": {"required": True},
+        "offer": {"required": True},
+        "sku": {"required": True},
+    }
+
+    _attribute_map = {
+        "publisher": {"key": "publisher", "type": "str"},
+        "offer": {"key": "offer", "type": "str"},
+        "sku": {"key": "sku", "type": "str"},
+    }
+
+    def __init__(self, *, publisher: str, offer: str, sku: str, **kwargs):
+        """
+        :keyword publisher: The name of the gallery image definition publisher. Required.
+        :paramtype publisher: str
+        :keyword offer: The name of the gallery image definition offer. Required.
+        :paramtype offer: str
+        :keyword sku: The name of the gallery image definition SKU. Required.
+        :paramtype sku: str
+        """
+        super().__init__(**kwargs)
+        self.publisher = publisher
+        self.offer = offer
+        self.sku = sku
+
+
+class Galleryimages(TrackedResource):  # pylint: disable=too-many-instance-attributes
+    """The gallery image resource definition.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar extended_location: The extendedLocation of the resource.
+    :vartype extended_location: ~azure.mgmt.azurestackhci.models.ExtendedLocation
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.azurestackhci.models.SystemData
+    :ivar container_name: Container Name for storage container.
+    :vartype container_name: str
+    :ivar image_path: location of the image the gallery image should be created from.
+    :vartype image_path: str
+    :ivar os_type: operating system type that the gallery image uses. Expected to be linux or
+     windows. Known values are: "Windows" and "Linux".
+    :vartype os_type: str or ~azure.mgmt.azurestackhci.models.OperatingSystemTypes
+    :ivar cloud_init_data_source: Datasource for the gallery image when provisioning with
+     cloud-init (Azure or NoCloud). Known values are: "NoCloud" and "Azure".
+    :vartype cloud_init_data_source: str or ~azure.mgmt.azurestackhci.models.CloudInitDataSource
+    :ivar hyper_v_generation: The hypervisor generation of the Virtual Machine [V1, V2]. Known
+     values are: "V1" and "V2".
+    :vartype hyper_v_generation: str or ~azure.mgmt.azurestackhci.models.HyperVGeneration
+    :ivar identifier: This is the gallery image definition identifier.
+    :vartype identifier: ~azure.mgmt.azurestackhci.models.GalleryImageIdentifier
+    :ivar version: Specifies information about the gallery image version that you want to create or
+     update.
+    :vartype version: ~azure.mgmt.azurestackhci.models.GalleryImageVersion
+    :ivar provisioning_state: Provisioning state of the gallery image. Known values are:
+     "Succeeded", "Failed", "InProgress", "Accepted", "Deleting", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.azurestackhci.models.ProvisioningStateEnum
+    :ivar resource_name: name of the object to be used in moc.
+    :vartype resource_name: str
+    :ivar status: GalleryImageStatus defines the observed state of galleryimages.
+    :vartype status: ~azure.mgmt.azurestackhci.models.GalleryImageStatus
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "status": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "container_name": {"key": "properties.containerName", "type": "str"},
+        "image_path": {"key": "properties.imagePath", "type": "str"},
+        "os_type": {"key": "properties.osType", "type": "str"},
+        "cloud_init_data_source": {"key": "properties.cloudInitDataSource", "type": "str"},
+        "hyper_v_generation": {"key": "properties.hyperVGeneration", "type": "str"},
+        "identifier": {"key": "properties.identifier", "type": "GalleryImageIdentifier"},
+        "version": {"key": "properties.version", "type": "GalleryImageVersion"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "resource_name": {"key": "properties.resourceName", "type": "str"},
+        "status": {"key": "properties.status", "type": "GalleryImageStatus"},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[Dict[str, str]] = None,
+        extended_location: Optional["_models.ExtendedLocation"] = None,
+        container_name: Optional[str] = None,
+        image_path: Optional[str] = None,
+        os_type: Optional[Union[str, "_models.OperatingSystemTypes"]] = None,
+        cloud_init_data_source: Optional[Union[str, "_models.CloudInitDataSource"]] = None,
+        hyper_v_generation: Optional[Union[str, "_models.HyperVGeneration"]] = None,
+        identifier: Optional["_models.GalleryImageIdentifier"] = None,
+        version: Optional["_models.GalleryImageVersion"] = None,
+        resource_name: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        :keyword extended_location: The extendedLocation of the resource.
+        :paramtype extended_location: ~azure.mgmt.azurestackhci.models.ExtendedLocation
+        :keyword container_name: Container Name for storage container.
+        :paramtype container_name: str
+        :keyword image_path: location of the image the gallery image should be created from.
+        :paramtype image_path: str
+        :keyword os_type: operating system type that the gallery image uses. Expected to be linux or
+         windows. Known values are: "Windows" and "Linux".
+        :paramtype os_type: str or ~azure.mgmt.azurestackhci.models.OperatingSystemTypes
+        :keyword cloud_init_data_source: Datasource for the gallery image when provisioning with
+         cloud-init (Azure or NoCloud). Known values are: "NoCloud" and "Azure".
+        :paramtype cloud_init_data_source: str or ~azure.mgmt.azurestackhci.models.CloudInitDataSource
+        :keyword hyper_v_generation: The hypervisor generation of the Virtual Machine [V1, V2]. Known
+         values are: "V1" and "V2".
+        :paramtype hyper_v_generation: str or ~azure.mgmt.azurestackhci.models.HyperVGeneration
+        :keyword identifier: This is the gallery image definition identifier.
+        :paramtype identifier: ~azure.mgmt.azurestackhci.models.GalleryImageIdentifier
+        :keyword version: Specifies information about the gallery image version that you want to create
+         or update.
+        :paramtype version: ~azure.mgmt.azurestackhci.models.GalleryImageVersion
+        :keyword resource_name: name of the object to be used in moc.
+        :paramtype resource_name: str
+        """
+        super().__init__(tags=tags, location=location, **kwargs)
+        self.extended_location = extended_location
+        self.system_data = None
+        self.container_name = container_name
+        self.image_path = image_path
+        self.os_type = os_type
+        self.cloud_init_data_source = cloud_init_data_source
+        self.hyper_v_generation = hyper_v_generation
+        self.identifier = identifier
+        self.version = version
+        self.provisioning_state = None
+        self.resource_name = resource_name
+        self.status = None
+
+
+class GalleryimagesListResult(_serialization.Model):
+    """List of galleryimages.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value:
+    :vartype value: list[~azure.mgmt.azurestackhci.models.Galleryimages]
+    :ivar next_link: Link to the next set of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "next_link": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[Galleryimages]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, *, value: Optional[List["_models.Galleryimages"]] = None, **kwargs):
+        """
+        :keyword value:
+        :paramtype value: list[~azure.mgmt.azurestackhci.models.Galleryimages]
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = None
+
+
+class GalleryimagesPatch(_serialization.Model):
+    """The gallery image resource patch definition.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    _attribute_map = {
+        "tags": {"key": "tags", "type": "{str}"},
+    }
+
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(**kwargs)
+        self.tags = tags
+
+
+class GalleryImageStatus(_serialization.Model):
+    """GalleryImageStatus defines the observed state of galleryimages.
+
+    :ivar error_code: Gallery image provisioning error code.
+    :vartype error_code: str
+    :ivar error_message: Descriptive error message.
+    :vartype error_message: str
+    :ivar provisioning_status: The provisioning status of the gallery image.
+    :vartype provisioning_status:
+     ~azure.mgmt.azurestackhci.models.GalleryImageStatusProvisioningStatus
+    :ivar download_status: The download status of the gallery image.
+    :vartype download_status: ~azure.mgmt.azurestackhci.models.GalleryImageStatusDownloadStatus
+    :ivar progress_percentage: The progress of the operation in percentage.
+    :vartype progress_percentage: int
+    """
+
+    _attribute_map = {
+        "error_code": {"key": "errorCode", "type": "str"},
+        "error_message": {"key": "errorMessage", "type": "str"},
+        "provisioning_status": {"key": "provisioningStatus", "type": "GalleryImageStatusProvisioningStatus"},
+        "download_status": {"key": "downloadStatus", "type": "GalleryImageStatusDownloadStatus"},
+        "progress_percentage": {"key": "progressPercentage", "type": "int"},
+    }
+
+    def __init__(
+        self,
+        *,
+        error_code: Optional[str] = None,
+        error_message: Optional[str] = None,
+        provisioning_status: Optional["_models.GalleryImageStatusProvisioningStatus"] = None,
+        download_status: Optional["_models.GalleryImageStatusDownloadStatus"] = None,
+        progress_percentage: Optional[int] = None,
+        **kwargs
+    ):
+        """
+        :keyword error_code: Gallery image provisioning error code.
+        :paramtype error_code: str
+        :keyword error_message: Descriptive error message.
+        :paramtype error_message: str
+        :keyword provisioning_status: The provisioning status of the gallery image.
+        :paramtype provisioning_status:
+         ~azure.mgmt.azurestackhci.models.GalleryImageStatusProvisioningStatus
+        :keyword download_status: The download status of the gallery image.
+        :paramtype download_status: ~azure.mgmt.azurestackhci.models.GalleryImageStatusDownloadStatus
+        :keyword progress_percentage: The progress of the operation in percentage.
+        :paramtype progress_percentage: int
+        """
+        super().__init__(**kwargs)
+        self.error_code = error_code
+        self.error_message = error_message
+        self.provisioning_status = provisioning_status
+        self.download_status = download_status
+        self.progress_percentage = progress_percentage
+
+
+class GalleryImageStatusDownloadStatus(_serialization.Model):
+    """The download status of the gallery image.
+
+    :ivar download_size_in_mb: The downloaded sized of the image in MB.
+    :vartype download_size_in_mb: int
+    """
+
+    _attribute_map = {
+        "download_size_in_mb": {"key": "downloadSizeInMB", "type": "int"},
+    }
+
+    def __init__(self, *, download_size_in_mb: Optional[int] = None, **kwargs):
+        """
+        :keyword download_size_in_mb: The downloaded sized of the image in MB.
+        :paramtype download_size_in_mb: int
+        """
+        super().__init__(**kwargs)
+        self.download_size_in_mb = download_size_in_mb
+
+
+class GalleryImageStatusProvisioningStatus(_serialization.Model):
+    """The provisioning status of the gallery image.
+
+    :ivar operation_id: The ID of the operation performed on the gallery image.
+    :vartype operation_id: str
+    :ivar status: The status of the operation performed on the gallery image [Succeeded, Failed,
+     InProgress]. Known values are: "Succeeded", "Failed", and "InProgress".
+    :vartype status: str or ~azure.mgmt.azurestackhci.models.ProvisioningStatusEnum
+    """
+
+    _attribute_map = {
+        "operation_id": {"key": "operationId", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        operation_id: Optional[str] = None,
+        status: Optional[Union[str, "_models.ProvisioningStatusEnum"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword operation_id: The ID of the operation performed on the gallery image.
+        :paramtype operation_id: str
+        :keyword status: The status of the operation performed on the gallery image [Succeeded, Failed,
+         InProgress]. Known values are: "Succeeded", "Failed", and "InProgress".
+        :paramtype status: str or ~azure.mgmt.azurestackhci.models.ProvisioningStatusEnum
+        """
+        super().__init__(**kwargs)
+        self.operation_id = operation_id
+        self.status = status
+
+
+class GalleryImageVersion(_serialization.Model):
+    """Specifies information about the gallery image version that you want to create or update.
+
+    :ivar name: This is the version of the gallery image.
+    :vartype name: str
+    :ivar storage_profile: This is the storage profile of a Gallery Image Version.
+    :vartype storage_profile: ~azure.mgmt.azurestackhci.models.GalleryImageVersionStorageProfile
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "storage_profile": {"key": "properties.storageProfile", "type": "GalleryImageVersionStorageProfile"},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        storage_profile: Optional["_models.GalleryImageVersionStorageProfile"] = None,
+        **kwargs
+    ):
+        """
+        :keyword name: This is the version of the gallery image.
+        :paramtype name: str
+        :keyword storage_profile: This is the storage profile of a Gallery Image Version.
+        :paramtype storage_profile: ~azure.mgmt.azurestackhci.models.GalleryImageVersionStorageProfile
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.storage_profile = storage_profile
+
+
+class GalleryImageVersionStorageProfile(_serialization.Model):
+    """This is the storage profile of a Gallery Image Version.
+
+    :ivar os_disk_image: This is the OS disk image.
+    :vartype os_disk_image: ~azure.mgmt.azurestackhci.models.GalleryOSDiskImage
+    """
+
+    _attribute_map = {
+        "os_disk_image": {"key": "osDiskImage", "type": "GalleryOSDiskImage"},
+    }
+
+    def __init__(self, *, os_disk_image: Optional["_models.GalleryOSDiskImage"] = None, **kwargs):
+        """
+        :keyword os_disk_image: This is the OS disk image.
+        :paramtype os_disk_image: ~azure.mgmt.azurestackhci.models.GalleryOSDiskImage
+        """
+        super().__init__(**kwargs)
+        self.os_disk_image = os_disk_image
+
+
+class GalleryOSDiskImage(GalleryDiskImage):
+    """This is the OS disk image.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar size_in_mb: This property indicates the size of the VHD to be created.
+    :vartype size_in_mb: int
+    """
+
+    _validation = {
+        "size_in_mb": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "size_in_mb": {"key": "sizeInMB", "type": "int"},
+    }
+
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+
+
+class GuestAgent(ProxyResource):
+    """Defines the GuestAgent.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: The system data.
+    :vartype system_data: ~azure.mgmt.azurestackhci.models.SystemData
+    :ivar credentials: Username / Password Credentials to provision guest agent.
+    :vartype credentials: ~azure.mgmt.azurestackhci.models.GuestCredential
+    :ivar http_proxy_config: HTTP Proxy configuration for the VM.
+    :vartype http_proxy_config: ~azure.mgmt.azurestackhci.models.HttpProxyConfiguration
+    :ivar provisioning_action: The guest agent provisioning action. Known values are: "install",
+     "uninstall", and "repair".
+    :vartype provisioning_action: str or ~azure.mgmt.azurestackhci.models.ProvisioningAction
+    :ivar status: The guest agent status.
+    :vartype status: str
+    :ivar provisioning_state: The provisioning state.
+    :vartype provisioning_state: str
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "status": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "credentials": {"key": "properties.credentials", "type": "GuestCredential"},
+        "http_proxy_config": {"key": "properties.httpProxyConfig", "type": "HttpProxyConfiguration"},
+        "provisioning_action": {"key": "properties.provisioningAction", "type": "str"},
+        "status": {"key": "properties.status", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        credentials: Optional["_models.GuestCredential"] = None,
+        http_proxy_config: Optional["_models.HttpProxyConfiguration"] = None,
+        provisioning_action: Optional[Union[str, "_models.ProvisioningAction"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword credentials: Username / Password Credentials to provision guest agent.
+        :paramtype credentials: ~azure.mgmt.azurestackhci.models.GuestCredential
+        :keyword http_proxy_config: HTTP Proxy configuration for the VM.
+        :paramtype http_proxy_config: ~azure.mgmt.azurestackhci.models.HttpProxyConfiguration
+        :keyword provisioning_action: The guest agent provisioning action. Known values are: "install",
+         "uninstall", and "repair".
+        :paramtype provisioning_action: str or ~azure.mgmt.azurestackhci.models.ProvisioningAction
+        """
+        super().__init__(**kwargs)
+        self.system_data = None
+        self.credentials = credentials
+        self.http_proxy_config = http_proxy_config
+        self.provisioning_action = provisioning_action
+        self.status = None
+        self.provisioning_state = None
+
+
+class GuestAgentList(_serialization.Model):
+    """List of GuestAgent.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar next_link: Url to follow for getting next page of GuestAgent.
+    :vartype next_link: str
+    :ivar value: Array of GuestAgent. Required.
+    :vartype value: list[~azure.mgmt.azurestackhci.models.GuestAgent]
+    """
+
+    _validation = {
+        "value": {"required": True},
+    }
+
+    _attribute_map = {
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[GuestAgent]"},
+    }
+
+    def __init__(self, *, value: List["_models.GuestAgent"], next_link: Optional[str] = None, **kwargs):
+        """
+        :keyword next_link: Url to follow for getting next page of GuestAgent.
+        :paramtype next_link: str
+        :keyword value: Array of GuestAgent. Required.
+        :paramtype value: list[~azure.mgmt.azurestackhci.models.GuestAgent]
+        """
+        super().__init__(**kwargs)
+        self.next_link = next_link
+        self.value = value
+
+
+class GuestAgentProfile(_serialization.Model):
+    """Defines the resource properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar vm_uuid: Specifies the VM's unique SMBIOS ID.
+    :vartype vm_uuid: str
+    :ivar status: The status of the hybrid machine agent. Known values are: "Connected",
+     "Disconnected", and "Error".
+    :vartype status: str or ~azure.mgmt.azurestackhci.models.StatusTypes
+    :ivar last_status_change: The time of the last status change.
+    :vartype last_status_change: ~datetime.datetime
+    :ivar agent_version: The hybrid machine agent full version.
+    :vartype agent_version: str
+    :ivar error_details: Details about the error state.
+    :vartype error_details: list[~azure.mgmt.azurestackhci.models.ErrorDetail]
+    """
+
+    _validation = {
+        "vm_uuid": {"readonly": True},
+        "status": {"readonly": True},
+        "last_status_change": {"readonly": True},
+        "agent_version": {"readonly": True},
+        "error_details": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "vm_uuid": {"key": "vmUuid", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "last_status_change": {"key": "lastStatusChange", "type": "iso-8601"},
+        "agent_version": {"key": "agentVersion", "type": "str"},
+        "error_details": {"key": "errorDetails", "type": "[ErrorDetail]"},
+    }
+
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.vm_uuid = None
+        self.status = None
+        self.last_status_change = None
+        self.agent_version = None
+        self.error_details = None
+
+
+class GuestCredential(_serialization.Model):
+    """Username / Password Credentials to connect to guest.
+
+    :ivar username: The username to connect with the guest.
+    :vartype username: str
+    :ivar password: The password to connect with the guest.
+    :vartype password: str
+    """
+
+    _attribute_map = {
+        "username": {"key": "username", "type": "str"},
+        "password": {"key": "password", "type": "str"},
+    }
+
+    def __init__(self, *, username: Optional[str] = None, password: Optional[str] = None, **kwargs):
+        """
+        :keyword username: The username to connect with the guest.
+        :paramtype username: str
+        :keyword password: The password to connect with the guest.
+        :paramtype password: str
+        """
+        super().__init__(**kwargs)
+        self.username = username
+        self.password = password
+
+
+class HardwareProfileUpdate(_serialization.Model):
+    """HardwareProfile - Specifies the hardware settings for the virtual machine.
+
+    :ivar vm_size: Known values are: "Default", "Standard_A2_v2", "Standard_A4_v2",
+     "Standard_D2s_v3", "Standard_D4s_v3", "Standard_D8s_v3", "Standard_D16s_v3",
+     "Standard_D32s_v3", "Standard_DS2_v2", "Standard_DS3_v2", "Standard_DS4_v2", "Standard_DS5_v2",
+     "Standard_DS13_v2", "Standard_K8S_v1", "Standard_K8S2_v1", "Standard_K8S3_v1",
+     "Standard_K8S4_v1", "Standard_NK6", "Standard_NK12", "Standard_NV6", "Standard_NV12",
+     "Standard_K8S5_v1", and "Custom".
+    :vartype vm_size: str or ~azure.mgmt.azurestackhci.models.VmSizeEnum
+    :ivar processors: number of processors for the virtual machine.
+    :vartype processors: int
+    :ivar memory_gb: RAM in gb for the virtual machine.
+    :vartype memory_gb: int
+    """
+
+    _attribute_map = {
+        "vm_size": {"key": "vmSize", "type": "str"},
+        "processors": {"key": "processors", "type": "int"},
+        "memory_gb": {"key": "memoryGB", "type": "int"},
+    }
+
+    def __init__(
+        self,
+        *,
+        vm_size: Optional[Union[str, "_models.VmSizeEnum"]] = None,
+        processors: Optional[int] = None,
+        memory_gb: Optional[int] = None,
+        **kwargs
+    ):
+        """
+        :keyword vm_size: Known values are: "Default", "Standard_A2_v2", "Standard_A4_v2",
+         "Standard_D2s_v3", "Standard_D4s_v3", "Standard_D8s_v3", "Standard_D16s_v3",
+         "Standard_D32s_v3", "Standard_DS2_v2", "Standard_DS3_v2", "Standard_DS4_v2", "Standard_DS5_v2",
+         "Standard_DS13_v2", "Standard_K8S_v1", "Standard_K8S2_v1", "Standard_K8S3_v1",
+         "Standard_K8S4_v1", "Standard_NK6", "Standard_NK12", "Standard_NV6", "Standard_NV12",
+         "Standard_K8S5_v1", and "Custom".
+        :paramtype vm_size: str or ~azure.mgmt.azurestackhci.models.VmSizeEnum
+        :keyword processors: number of processors for the virtual machine.
+        :paramtype processors: int
+        :keyword memory_gb: RAM in gb for the virtual machine.
+        :paramtype memory_gb: int
+        """
+        super().__init__(**kwargs)
+        self.vm_size = vm_size
+        self.processors = processors
+        self.memory_gb = memory_gb
+
+
+class HttpProxyConfiguration(_serialization.Model):
+    """HTTP Proxy configuration for the VM.
+
+    :ivar https_proxy: The httpsProxy url.
+    :vartype https_proxy: str
+    """
+
+    _attribute_map = {
+        "https_proxy": {"key": "httpsProxy", "type": "str"},
+    }
+
+    def __init__(self, *, https_proxy: Optional[str] = None, **kwargs):
+        """
+        :keyword https_proxy: The httpsProxy url.
+        :paramtype https_proxy: str
+        """
+        super().__init__(**kwargs)
+        self.https_proxy = https_proxy
+
+
+class HybridIdentityMetadata(ProxyResource):
+    """Defines the HybridIdentityMetadata.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: The system data.
+    :vartype system_data: ~azure.mgmt.azurestackhci.models.SystemData
+    :ivar resource_uid: The unique identifier for the resource.
+    :vartype resource_uid: str
+    :ivar public_key: The Public Key.
+    :vartype public_key: str
+    :ivar identity: Identity for the resource.
+    :vartype identity: ~azure.mgmt.azurestackhci.models.Identity
+    :ivar provisioning_state: The provisioning state.
+    :vartype provisioning_state: str
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "identity": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "resource_uid": {"key": "properties.resourceUid", "type": "str"},
+        "public_key": {"key": "properties.publicKey", "type": "str"},
+        "identity": {"key": "properties.identity", "type": "Identity"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+    }
+
+    def __init__(self, *, resource_uid: Optional[str] = None, public_key: Optional[str] = None, **kwargs):
+        """
+        :keyword resource_uid: The unique identifier for the resource.
+        :paramtype resource_uid: str
+        :keyword public_key: The Public Key.
+        :paramtype public_key: str
+        """
+        super().__init__(**kwargs)
+        self.system_data = None
+        self.resource_uid = resource_uid
+        self.public_key = public_key
+        self.identity = None
+        self.provisioning_state = None
+
+
+class HybridIdentityMetadataList(_serialization.Model):
+    """List of HybridIdentityMetadata.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar next_link: Url to follow for getting next page of HybridIdentityMetadata.
+    :vartype next_link: str
+    :ivar value: Array of HybridIdentityMetadata. Required.
+    :vartype value: list[~azure.mgmt.azurestackhci.models.HybridIdentityMetadata]
+    """
+
+    _validation = {
+        "value": {"required": True},
+    }
+
+    _attribute_map = {
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[HybridIdentityMetadata]"},
+    }
+
+    def __init__(self, *, value: List["_models.HybridIdentityMetadata"], next_link: Optional[str] = None, **kwargs):
+        """
+        :keyword next_link: Url to follow for getting next page of HybridIdentityMetadata.
+        :paramtype next_link: str
+        :keyword value: Array of HybridIdentityMetadata. Required.
+        :paramtype value: list[~azure.mgmt.azurestackhci.models.HybridIdentityMetadata]
+        """
+        super().__init__(**kwargs)
+        self.next_link = next_link
+        self.value = value
+
+
+class Identity(_serialization.Model):
+    """Identity for the resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar principal_id: The principal ID of resource identity.
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant ID of resource.
+    :vartype tenant_id: str
+    :ivar type: The identity type. Default value is "SystemAssigned".
+    :vartype type: str
+    """
+
+    _validation = {
+        "principal_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+    }
+
+    def __init__(self, *, type: Optional[Literal["SystemAssigned"]] = None, **kwargs):
+        """
+        :keyword type: The identity type. Default value is "SystemAssigned".
+        :paramtype type: str
+        """
+        super().__init__(**kwargs)
+        self.principal_id = None
+        self.tenant_id = None
+        self.type = type
+
+
+class InterfaceDNSSettings(_serialization.Model):
+    """InterfaceDNSSettings.
+
+    :ivar dns_servers: List of DNS server IP Addresses for the interface.
+    :vartype dns_servers: list[str]
+    """
+
+    _attribute_map = {
+        "dns_servers": {"key": "dnsServers", "type": "[str]"},
+    }
+
+    def __init__(self, *, dns_servers: Optional[List[str]] = None, **kwargs):
+        """
+        :keyword dns_servers: List of DNS server IP Addresses for the interface.
+        :paramtype dns_servers: list[str]
+        """
+        super().__init__(**kwargs)
+        self.dns_servers = dns_servers
+
+
+class IpConfiguration(_serialization.Model):
+    """InterfaceIPConfiguration iPConfiguration in a network interface.
+
+    :ivar name: Name - The name of the resource that is unique within a resource group. This name
+     can be used to access the resource.
+    :vartype name: str
+    :ivar properties: InterfaceIPConfigurationPropertiesFormat properties of IP configuration.
+    :vartype properties: ~azure.mgmt.azurestackhci.models.IpConfigurationProperties
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "properties": {"key": "properties", "type": "IpConfigurationProperties"},
+    }
+
+    def __init__(
+        self, *, name: Optional[str] = None, properties: Optional["_models.IpConfigurationProperties"] = None, **kwargs
+    ):
+        """
+        :keyword name: Name - The name of the resource that is unique within a resource group. This
+         name can be used to access the resource.
+        :paramtype name: str
+        :keyword properties: InterfaceIPConfigurationPropertiesFormat properties of IP configuration.
+        :paramtype properties: ~azure.mgmt.azurestackhci.models.IpConfigurationProperties
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.properties = properties
+
+
+class IpConfigurationProperties(_serialization.Model):
+    """InterfaceIPConfigurationPropertiesFormat properties of IP configuration.
+
+    :ivar gateway: Gateway for network interface.
+    :vartype gateway: str
+    :ivar prefix_length: prefixLength for network interface.
+    :vartype prefix_length: str
+    :ivar private_ip_address: PrivateIPAddress - Private IP address of the IP configuration.
+    :vartype private_ip_address: str
+    :ivar private_ip_allocation_method: PrivateIPAllocationMethod - The private IP address
+     allocation method. Possible values include: 'Static', 'Dynamic'. Known values are: "Dynamic"
+     and "Static".
+    :vartype private_ip_allocation_method: str or
+     ~azure.mgmt.azurestackhci.models.PrivateIPAllocationMethodEnum
+    :ivar subnet: Subnet - Name of Subnet bound to the IP configuration.
+    :vartype subnet: ~azure.mgmt.azurestackhci.models.IpConfigurationPropertiesSubnet
+    """
+
+    _attribute_map = {
+        "gateway": {"key": "gateway", "type": "str"},
+        "prefix_length": {"key": "prefixLength", "type": "str"},
+        "private_ip_address": {"key": "privateIPAddress", "type": "str"},
+        "private_ip_allocation_method": {"key": "privateIPAllocationMethod", "type": "str"},
+        "subnet": {"key": "subnet", "type": "IpConfigurationPropertiesSubnet"},
+    }
+
+    def __init__(
+        self,
+        *,
+        gateway: Optional[str] = None,
+        prefix_length: Optional[str] = None,
+        private_ip_address: Optional[str] = None,
+        private_ip_allocation_method: Optional[Union[str, "_models.PrivateIPAllocationMethodEnum"]] = None,
+        subnet: Optional["_models.IpConfigurationPropertiesSubnet"] = None,
+        **kwargs
+    ):
+        """
+        :keyword gateway: Gateway for network interface.
+        :paramtype gateway: str
+        :keyword prefix_length: prefixLength for network interface.
+        :paramtype prefix_length: str
+        :keyword private_ip_address: PrivateIPAddress - Private IP address of the IP configuration.
+        :paramtype private_ip_address: str
+        :keyword private_ip_allocation_method: PrivateIPAllocationMethod - The private IP address
+         allocation method. Possible values include: 'Static', 'Dynamic'. Known values are: "Dynamic"
+         and "Static".
+        :paramtype private_ip_allocation_method: str or
+         ~azure.mgmt.azurestackhci.models.PrivateIPAllocationMethodEnum
+        :keyword subnet: Subnet - Name of Subnet bound to the IP configuration.
+        :paramtype subnet: ~azure.mgmt.azurestackhci.models.IpConfigurationPropertiesSubnet
+        """
+        super().__init__(**kwargs)
+        self.gateway = gateway
+        self.prefix_length = prefix_length
+        self.private_ip_address = private_ip_address
+        self.private_ip_allocation_method = private_ip_allocation_method
+        self.subnet = subnet
+
+
+class IpConfigurationPropertiesSubnet(_serialization.Model):
+    """Subnet - Name of Subnet bound to the IP configuration.
+
+    :ivar id: ID - The ARM resource id in the form of
+     /subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/...
+    :vartype id: str
+    """
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+    }
+
+    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
+        """
+        :keyword id: ID - The ARM resource id in the form of
+         /subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/...
+        :paramtype id: str
+        """
+        super().__init__(**kwargs)
+        self.id = id
+
+
+class IPPool(_serialization.Model):
+    """IPPool.
+
+    :ivar ip_pool_type: ip pool type. Known values are: "vm" and "vippool".
+    :vartype ip_pool_type: str or ~azure.mgmt.azurestackhci.models.IPPoolTypeEnum
+    :ivar start: start of the ip address pool.
+    :vartype start: str
+    :ivar end: end of the ip address pool.
+    :vartype end: str
+    :ivar info:
+    :vartype info: ~azure.mgmt.azurestackhci.models.IPPoolInfo
+    """
+
+    _attribute_map = {
+        "ip_pool_type": {"key": "ipPoolType", "type": "str"},
+        "start": {"key": "start", "type": "str"},
+        "end": {"key": "end", "type": "str"},
+        "info": {"key": "info", "type": "IPPoolInfo"},
+    }
+
+    def __init__(
+        self,
+        *,
+        ip_pool_type: Optional[Union[str, "_models.IPPoolTypeEnum"]] = None,
+        start: Optional[str] = None,
+        end: Optional[str] = None,
+        info: Optional["_models.IPPoolInfo"] = None,
+        **kwargs
+    ):
+        """
+        :keyword ip_pool_type: ip pool type. Known values are: "vm" and "vippool".
+        :paramtype ip_pool_type: str or ~azure.mgmt.azurestackhci.models.IPPoolTypeEnum
+        :keyword start: start of the ip address pool.
+        :paramtype start: str
+        :keyword end: end of the ip address pool.
+        :paramtype end: str
+        :keyword info:
+        :paramtype info: ~azure.mgmt.azurestackhci.models.IPPoolInfo
+        """
+        super().__init__(**kwargs)
+        self.ip_pool_type = ip_pool_type
+        self.start = start
+        self.end = end
+        self.info = info
+
+
+class IPPoolInfo(_serialization.Model):
+    """IPPoolInfo.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar used: no. of ip addresses allocated from the ip pool.
+    :vartype used: str
+    :ivar available: no. of ip addresses available in the ip pool.
+    :vartype available: str
+    """
+
+    _validation = {
+        "used": {"readonly": True},
+        "available": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "used": {"key": "used", "type": "str"},
+        "available": {"key": "available", "type": "str"},
+    }
+
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.used = None
+        self.available = None
+
+
+class MachineExtension(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+    """Describes a Machine Extension.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar location: The geo-location where the resource lives.
+    :vartype location: str
+    :ivar system_data: The system data.
+    :vartype system_data: ~azure.mgmt.azurestackhci.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar id: Fully qualified resource ID for the resource.
+    :vartype id: str
+    :ivar type: The type of the resource.
+    :vartype type: str
+    :ivar force_update_tag: How the extension handler should be forced to update even if the
+     extension configuration has not changed.
+    :vartype force_update_tag: str
+    :ivar publisher: The name of the extension handler publisher.
+    :vartype publisher: str
+    :ivar type_properties_type: Specifies the type of the extension; an example is
+     "CustomScriptExtension".
+    :vartype type_properties_type: str
+    :ivar type_handler_version: Specifies the version of the script handler.
+    :vartype type_handler_version: str
+    :ivar auto_upgrade_minor_version: Indicates whether the extension should use a newer minor
+     version if one is available at deployment time. Once deployed, however, the extension will not
+     upgrade minor versions unless redeployed, even with this property set to true.
+    :vartype auto_upgrade_minor_version: bool
+    :ivar settings: Json formatted public settings for the extension.
+    :vartype settings: JSON
+    :ivar protected_settings: The extension can contain either protectedSettings or
+     protectedSettingsFromKeyVault or no protected settings at all.
+    :vartype protected_settings: JSON
+    :ivar provisioning_state: The provisioning state, which only appears in the response.
+    :vartype provisioning_state: str
+    :ivar instance_view: The machine extension instance view.
+    :vartype instance_view: ~azure.mgmt.azurestackhci.models.MachineExtensionPropertiesInstanceView
+    """
+
+    _validation = {
+        "system_data": {"readonly": True},
+        "name": {"readonly": True},
+        "id": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "name": {"key": "name", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "force_update_tag": {"key": "properties.forceUpdateTag", "type": "str"},
+        "publisher": {"key": "properties.publisher", "type": "str"},
+        "type_properties_type": {"key": "properties.type", "type": "str"},
+        "type_handler_version": {"key": "properties.typeHandlerVersion", "type": "str"},
+        "auto_upgrade_minor_version": {"key": "properties.autoUpgradeMinorVersion", "type": "bool"},
+        "settings": {"key": "properties.settings", "type": "object"},
+        "protected_settings": {"key": "properties.protectedSettings", "type": "object"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "instance_view": {"key": "properties.instanceView", "type": "MachineExtensionPropertiesInstanceView"},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: Optional[str] = None,
+        tags: Optional[Dict[str, str]] = None,
+        force_update_tag: Optional[str] = None,
+        publisher: Optional[str] = None,
+        type_properties_type: Optional[str] = None,
+        type_handler_version: Optional[str] = None,
+        auto_upgrade_minor_version: Optional[bool] = None,
+        settings: Optional[JSON] = None,
+        protected_settings: Optional[JSON] = None,
+        instance_view: Optional["_models.MachineExtensionPropertiesInstanceView"] = None,
+        **kwargs
+    ):
+        """
+        :keyword location: The geo-location where the resource lives.
+        :paramtype location: str
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword force_update_tag: How the extension handler should be forced to update even if the
+         extension configuration has not changed.
+        :paramtype force_update_tag: str
+        :keyword publisher: The name of the extension handler publisher.
+        :paramtype publisher: str
+        :keyword type_properties_type: Specifies the type of the extension; an example is
+         "CustomScriptExtension".
+        :paramtype type_properties_type: str
+        :keyword type_handler_version: Specifies the version of the script handler.
+        :paramtype type_handler_version: str
+        :keyword auto_upgrade_minor_version: Indicates whether the extension should use a newer minor
+         version if one is available at deployment time. Once deployed, however, the extension will not
+         upgrade minor versions unless redeployed, even with this property set to true.
+        :paramtype auto_upgrade_minor_version: bool
+        :keyword settings: Json formatted public settings for the extension.
+        :paramtype settings: JSON
+        :keyword protected_settings: The extension can contain either protectedSettings or
+         protectedSettingsFromKeyVault or no protected settings at all.
+        :paramtype protected_settings: JSON
+        :keyword instance_view: The machine extension instance view.
+        :paramtype instance_view:
+         ~azure.mgmt.azurestackhci.models.MachineExtensionPropertiesInstanceView
+        """
+        super().__init__(**kwargs)
+        self.location = location
+        self.system_data = None
+        self.tags = tags
+        self.name = None
+        self.id = None
+        self.type = None
+        self.force_update_tag = force_update_tag
+        self.publisher = publisher
+        self.type_properties_type = type_properties_type
+        self.type_handler_version = type_handler_version
+        self.auto_upgrade_minor_version = auto_upgrade_minor_version
+        self.settings = settings
+        self.protected_settings = protected_settings
+        self.provisioning_state = None
+        self.instance_view = instance_view
+
+
+class MachineExtensionInstanceView(_serialization.Model):
+    """Describes the Machine Extension Instance View.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: The machine extension name.
+    :vartype name: str
+    :ivar type: Specifies the type of the extension; an example is "CustomScriptExtension".
+    :vartype type: str
+    :ivar type_handler_version: Specifies the version of the script handler.
+    :vartype type_handler_version: str
+    :ivar status: Instance view status.
+    :vartype status: ~azure.mgmt.azurestackhci.models.MachineExtensionInstanceViewStatus
+    """
+
+    _validation = {
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "type_handler_version": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "type_handler_version": {"key": "typeHandlerVersion", "type": "str"},
+        "status": {"key": "status", "type": "MachineExtensionInstanceViewStatus"},
+    }
+
+    def __init__(self, *, status: Optional["_models.MachineExtensionInstanceViewStatus"] = None, **kwargs):
+        """
+        :keyword status: Instance view status.
+        :paramtype status: ~azure.mgmt.azurestackhci.models.MachineExtensionInstanceViewStatus
+        """
+        super().__init__(**kwargs)
+        self.name = None
+        self.type = None
+        self.type_handler_version = None
+        self.status = status
+
+
+class MachineExtensionInstanceViewStatus(_serialization.Model):
+    """Instance view status.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The status code.
+    :vartype code: str
+    :ivar level: The level code. Known values are: "Info", "Warning", and "Error".
+    :vartype level: str or ~azure.mgmt.azurestackhci.models.StatusLevelTypes
+    :ivar display_status: The short localizable label for the status.
+    :vartype display_status: str
+    :ivar message: The detailed status message, including for alerts and error messages.
+    :vartype message: str
+    :ivar time: The time of the status.
+    :vartype time: ~datetime.datetime
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "level": {"readonly": True},
+        "display_status": {"readonly": True},
+        "message": {"readonly": True},
+        "time": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "level": {"key": "level", "type": "str"},
+        "display_status": {"key": "displayStatus", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "time": {"key": "time", "type": "iso-8601"},
+    }
+
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.code = None
+        self.level = None
+        self.display_status = None
+        self.message = None
+        self.time = None
+
+
+class MachineExtensionPropertiesInstanceView(MachineExtensionInstanceView):
+    """The machine extension instance view.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: The machine extension name.
+    :vartype name: str
+    :ivar type: Specifies the type of the extension; an example is "CustomScriptExtension".
+    :vartype type: str
+    :ivar type_handler_version: Specifies the version of the script handler.
+    :vartype type_handler_version: str
+    :ivar status: Instance view status.
+    :vartype status: ~azure.mgmt.azurestackhci.models.MachineExtensionInstanceViewStatus
+    """
+
+    _validation = {
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "type_handler_version": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "type_handler_version": {"key": "typeHandlerVersion", "type": "str"},
+        "status": {"key": "status", "type": "MachineExtensionInstanceViewStatus"},
+    }
+
+    def __init__(self, *, status: Optional["_models.MachineExtensionInstanceViewStatus"] = None, **kwargs):
+        """
+        :keyword status: Instance view status.
+        :paramtype status: ~azure.mgmt.azurestackhci.models.MachineExtensionInstanceViewStatus
+        """
+        super().__init__(status=status, **kwargs)
+
+
+class MachineExtensionsListResult(_serialization.Model):
+    """Describes the Machine Extensions List Result.
+
+    :ivar value: The list of extensions.
+    :vartype value: list[~azure.mgmt.azurestackhci.models.MachineExtension]
+    :ivar next_link: The uri to fetch the next page of machine extensions. Call ListNext() with
+     this to fetch the next page of extensions.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[MachineExtension]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: Optional[List["_models.MachineExtension"]] = None, next_link: Optional[str] = None, **kwargs
+    ):
+        """
+        :keyword value: The list of extensions.
+        :paramtype value: list[~azure.mgmt.azurestackhci.models.MachineExtension]
+        :keyword next_link: The uri to fetch the next page of machine extensions. Call ListNext() with
+         this to fetch the next page of extensions.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class ResourcePatch(_serialization.Model):
+    """Object containing updates for patch operations.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    _attribute_map = {
+        "tags": {"key": "tags", "type": "{str}"},
+    }
+
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(**kwargs)
+        self.tags = tags
+
+
+class MachineExtensionUpdate(ResourcePatch):
+    """Describes a Machine Extension Update.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar force_update_tag: How the extension handler should be forced to update even if the
+     extension configuration has not changed.
+    :vartype force_update_tag: str
+    :ivar publisher: The name of the extension handler publisher.
+    :vartype publisher: str
+    :ivar type: Specifies the type of the extension; an example is "CustomScriptExtension".
+    :vartype type: str
+    :ivar type_handler_version: Specifies the version of the script handler.
+    :vartype type_handler_version: str
+    :ivar auto_upgrade_minor_version: Indicates whether the extension should use a newer minor
+     version if one is available at deployment time. Once deployed, however, the extension will not
+     upgrade minor versions unless redeployed, even with this property set to true.
+    :vartype auto_upgrade_minor_version: bool
+    :ivar settings: Json formatted public settings for the extension.
+    :vartype settings: JSON
+    :ivar protected_settings: The extension can contain either protectedSettings or
+     protectedSettingsFromKeyVault or no protected settings at all.
+    :vartype protected_settings: JSON
+    """
+
+    _attribute_map = {
+        "tags": {"key": "tags", "type": "{str}"},
+        "force_update_tag": {"key": "properties.forceUpdateTag", "type": "str"},
+        "publisher": {"key": "properties.publisher", "type": "str"},
+        "type": {"key": "properties.type", "type": "str"},
+        "type_handler_version": {"key": "properties.typeHandlerVersion", "type": "str"},
+        "auto_upgrade_minor_version": {"key": "properties.autoUpgradeMinorVersion", "type": "bool"},
+        "settings": {"key": "properties.settings", "type": "object"},
+        "protected_settings": {"key": "properties.protectedSettings", "type": "object"},
+    }
+
+    def __init__(
+        self,
+        *,
+        tags: Optional[Dict[str, str]] = None,
+        force_update_tag: Optional[str] = None,
+        publisher: Optional[str] = None,
+        type: Optional[str] = None,
+        type_handler_version: Optional[str] = None,
+        auto_upgrade_minor_version: Optional[bool] = None,
+        settings: Optional[JSON] = None,
+        protected_settings: Optional[JSON] = None,
+        **kwargs
+    ):
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword force_update_tag: How the extension handler should be forced to update even if the
+         extension configuration has not changed.
+        :paramtype force_update_tag: str
+        :keyword publisher: The name of the extension handler publisher.
+        :paramtype publisher: str
+        :keyword type: Specifies the type of the extension; an example is "CustomScriptExtension".
+        :paramtype type: str
+        :keyword type_handler_version: Specifies the version of the script handler.
+        :paramtype type_handler_version: str
+        :keyword auto_upgrade_minor_version: Indicates whether the extension should use a newer minor
+         version if one is available at deployment time. Once deployed, however, the extension will not
+         upgrade minor versions unless redeployed, even with this property set to true.
+        :paramtype auto_upgrade_minor_version: bool
+        :keyword settings: Json formatted public settings for the extension.
+        :paramtype settings: JSON
+        :keyword protected_settings: The extension can contain either protectedSettings or
+         protectedSettingsFromKeyVault or no protected settings at all.
+        :paramtype protected_settings: JSON
+        """
+        super().__init__(tags=tags, **kwargs)
+        self.force_update_tag = force_update_tag
+        self.publisher = publisher
+        self.type = type
+        self.type_handler_version = type_handler_version
+        self.auto_upgrade_minor_version = auto_upgrade_minor_version
+        self.settings = settings
+        self.protected_settings = protected_settings
+
+
+class Marketplacegalleryimages(TrackedResource):  # pylint: disable=too-many-instance-attributes
+    """The marketplace gallery image resource definition.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar extended_location: The extendedLocation of the resource.
+    :vartype extended_location: ~azure.mgmt.azurestackhci.models.ExtendedLocation
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.azurestackhci.models.SystemData
+    :ivar container_name: Container Name for storage container.
+    :vartype container_name: str
+    :ivar os_type: operating system type that the gallery image uses. Expected to be linux or
+     windows. Known values are: "Windows" and "Linux".
+    :vartype os_type: str or ~azure.mgmt.azurestackhci.models.OperatingSystemTypes
+    :ivar cloud_init_data_source: Datasource for the gallery image when provisioning with
+     cloud-init [Azure, NoCloud]. Known values are: "NoCloud" and "Azure".
+    :vartype cloud_init_data_source: str or ~azure.mgmt.azurestackhci.models.CloudInitDataSource
+    :ivar hyper_v_generation: The hypervisor generation of the Virtual Machine [V1, V2]. Known
+     values are: "V1" and "V2".
+    :vartype hyper_v_generation: str or ~azure.mgmt.azurestackhci.models.HyperVGeneration
+    :ivar identifier: This is the gallery image definition identifier.
+    :vartype identifier: ~azure.mgmt.azurestackhci.models.GalleryImageIdentifier
+    :ivar version: Specifies information about the gallery image version that you want to create or
+     update.
+    :vartype version: ~azure.mgmt.azurestackhci.models.GalleryImageVersion
+    :ivar provisioning_state: Provisioning state of the gallery image. Known values are:
+     "Succeeded", "Failed", "InProgress", "Accepted", "Deleting", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.azurestackhci.models.ProvisioningStateEnum
+    :ivar resource_name: name of the object to be used in moc.
+    :vartype resource_name: str
+    :ivar status: MarketplaceGalleryImageStatus defines the observed state of
+     marketplacegalleryimages.
+    :vartype status: ~azure.mgmt.azurestackhci.models.MarketplaceGalleryImageStatus
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "status": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "container_name": {"key": "properties.containerName", "type": "str"},
+        "os_type": {"key": "properties.osType", "type": "str"},
+        "cloud_init_data_source": {"key": "properties.cloudInitDataSource", "type": "str"},
+        "hyper_v_generation": {"key": "properties.hyperVGeneration", "type": "str"},
+        "identifier": {"key": "properties.identifier", "type": "GalleryImageIdentifier"},
+        "version": {"key": "properties.version", "type": "GalleryImageVersion"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "resource_name": {"key": "properties.resourceName", "type": "str"},
+        "status": {"key": "properties.status", "type": "MarketplaceGalleryImageStatus"},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[Dict[str, str]] = None,
+        extended_location: Optional["_models.ExtendedLocation"] = None,
+        container_name: Optional[str] = None,
+        os_type: Optional[Union[str, "_models.OperatingSystemTypes"]] = None,
+        cloud_init_data_source: Optional[Union[str, "_models.CloudInitDataSource"]] = None,
+        hyper_v_generation: Optional[Union[str, "_models.HyperVGeneration"]] = None,
+        identifier: Optional["_models.GalleryImageIdentifier"] = None,
+        version: Optional["_models.GalleryImageVersion"] = None,
+        resource_name: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        :keyword extended_location: The extendedLocation of the resource.
+        :paramtype extended_location: ~azure.mgmt.azurestackhci.models.ExtendedLocation
+        :keyword container_name: Container Name for storage container.
+        :paramtype container_name: str
+        :keyword os_type: operating system type that the gallery image uses. Expected to be linux or
+         windows. Known values are: "Windows" and "Linux".
+        :paramtype os_type: str or ~azure.mgmt.azurestackhci.models.OperatingSystemTypes
+        :keyword cloud_init_data_source: Datasource for the gallery image when provisioning with
+         cloud-init [Azure, NoCloud]. Known values are: "NoCloud" and "Azure".
+        :paramtype cloud_init_data_source: str or ~azure.mgmt.azurestackhci.models.CloudInitDataSource
+        :keyword hyper_v_generation: The hypervisor generation of the Virtual Machine [V1, V2]. Known
+         values are: "V1" and "V2".
+        :paramtype hyper_v_generation: str or ~azure.mgmt.azurestackhci.models.HyperVGeneration
+        :keyword identifier: This is the gallery image definition identifier.
+        :paramtype identifier: ~azure.mgmt.azurestackhci.models.GalleryImageIdentifier
+        :keyword version: Specifies information about the gallery image version that you want to create
+         or update.
+        :paramtype version: ~azure.mgmt.azurestackhci.models.GalleryImageVersion
+        :keyword resource_name: name of the object to be used in moc.
+        :paramtype resource_name: str
+        """
+        super().__init__(tags=tags, location=location, **kwargs)
+        self.extended_location = extended_location
+        self.system_data = None
+        self.container_name = container_name
+        self.os_type = os_type
+        self.cloud_init_data_source = cloud_init_data_source
+        self.hyper_v_generation = hyper_v_generation
+        self.identifier = identifier
+        self.version = version
+        self.provisioning_state = None
+        self.resource_name = resource_name
+        self.status = None
+
+
+class MarketplacegalleryimagesListResult(_serialization.Model):
+    """List of marketplacegalleryimages.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: The itemed list of marketplacegalleryimages.
+    :vartype value: list[~azure.mgmt.azurestackhci.models.Marketplacegalleryimages]
+    :ivar next_link: Link to the next set of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "next_link": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[Marketplacegalleryimages]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, *, value: Optional[List["_models.Marketplacegalleryimages"]] = None, **kwargs):
+        """
+        :keyword value: The itemed list of marketplacegalleryimages.
+        :paramtype value: list[~azure.mgmt.azurestackhci.models.Marketplacegalleryimages]
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = None
+
+
+class MarketplacegalleryimagesPatch(_serialization.Model):
+    """The marketplace gallery image resource patch definition.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    _attribute_map = {
+        "tags": {"key": "tags", "type": "{str}"},
+    }
+
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(**kwargs)
+        self.tags = tags
+
+
+class MarketplaceGalleryImageStatus(_serialization.Model):
+    """MarketplaceGalleryImageStatus defines the observed state of marketplacegalleryimages.
+
+    :ivar error_code: Marketplace gallery image provisioning error code.
+    :vartype error_code: str
+    :ivar error_message: Descriptive error message.
+    :vartype error_message: str
+    :ivar provisioning_status: The provisioning status of the marketplace gallery image.
+    :vartype provisioning_status:
+     ~azure.mgmt.azurestackhci.models.MarketplaceGalleryImageStatusProvisioningStatus
+    :ivar download_status: The download status of the marketplace gallery image.
+    :vartype download_status:
+     ~azure.mgmt.azurestackhci.models.MarketplaceGalleryImageStatusDownloadStatus
+    :ivar progress_percentage: The progress of the operation in percentage.
+    :vartype progress_percentage: int
+    """
+
+    _attribute_map = {
+        "error_code": {"key": "errorCode", "type": "str"},
+        "error_message": {"key": "errorMessage", "type": "str"},
+        "provisioning_status": {"key": "provisioningStatus", "type": "MarketplaceGalleryImageStatusProvisioningStatus"},
+        "download_status": {"key": "downloadStatus", "type": "MarketplaceGalleryImageStatusDownloadStatus"},
+        "progress_percentage": {"key": "progressPercentage", "type": "int"},
+    }
+
+    def __init__(
+        self,
+        *,
+        error_code: Optional[str] = None,
+        error_message: Optional[str] = None,
+        provisioning_status: Optional["_models.MarketplaceGalleryImageStatusProvisioningStatus"] = None,
+        download_status: Optional["_models.MarketplaceGalleryImageStatusDownloadStatus"] = None,
+        progress_percentage: Optional[int] = None,
+        **kwargs
+    ):
+        """
+        :keyword error_code: Marketplace gallery image provisioning error code.
+        :paramtype error_code: str
+        :keyword error_message: Descriptive error message.
+        :paramtype error_message: str
+        :keyword provisioning_status: The provisioning status of the marketplace gallery image.
+        :paramtype provisioning_status:
+         ~azure.mgmt.azurestackhci.models.MarketplaceGalleryImageStatusProvisioningStatus
+        :keyword download_status: The download status of the marketplace gallery image.
+        :paramtype download_status:
+         ~azure.mgmt.azurestackhci.models.MarketplaceGalleryImageStatusDownloadStatus
+        :keyword progress_percentage: The progress of the operation in percentage.
+        :paramtype progress_percentage: int
+        """
+        super().__init__(**kwargs)
+        self.error_code = error_code
+        self.error_message = error_message
+        self.provisioning_status = provisioning_status
+        self.download_status = download_status
+        self.progress_percentage = progress_percentage
+
+
+class MarketplaceGalleryImageStatusDownloadStatus(_serialization.Model):
+    """The download status of the marketplace gallery image.
+
+    :ivar download_size_in_mb: The downloaded sized of the image in MB.
+    :vartype download_size_in_mb: int
+    """
+
+    _attribute_map = {
+        "download_size_in_mb": {"key": "downloadSizeInMB", "type": "int"},
+    }
+
+    def __init__(self, *, download_size_in_mb: Optional[int] = None, **kwargs):
+        """
+        :keyword download_size_in_mb: The downloaded sized of the image in MB.
+        :paramtype download_size_in_mb: int
+        """
+        super().__init__(**kwargs)
+        self.download_size_in_mb = download_size_in_mb
+
+
+class MarketplaceGalleryImageStatusProvisioningStatus(_serialization.Model):
+    """The provisioning status of the marketplace gallery image.
+
+    :ivar operation_id: The ID of the operation performed on the marketplace gallery image.
+    :vartype operation_id: str
+    :ivar status: The status of the operation performed on the marketplace gallery image
+     [Succeeded, Failed, InProgress]. Known values are: "Succeeded", "Failed", and "InProgress".
+    :vartype status: str or ~azure.mgmt.azurestackhci.models.ProvisioningStatusEnum
+    """
+
+    _attribute_map = {
+        "operation_id": {"key": "operationId", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        operation_id: Optional[str] = None,
+        status: Optional[Union[str, "_models.ProvisioningStatusEnum"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword operation_id: The ID of the operation performed on the marketplace gallery image.
+        :paramtype operation_id: str
+        :keyword status: The status of the operation performed on the marketplace gallery image
+         [Succeeded, Failed, InProgress]. Known values are: "Succeeded", "Failed", and "InProgress".
+        :paramtype status: str or ~azure.mgmt.azurestackhci.models.ProvisioningStatusEnum
+        """
+        super().__init__(**kwargs)
+        self.operation_id = operation_id
+        self.status = status
+
+
+class Networkinterfaces(TrackedResource):  # pylint: disable=too-many-instance-attributes
+    """The network interface resource definition.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar extended_location: The extendedLocation of the resource.
+    :vartype extended_location: ~azure.mgmt.azurestackhci.models.ExtendedLocation
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.azurestackhci.models.SystemData
+    :ivar ip_configurations: IPConfigurations - A list of IPConfigurations of the network
+     interface.
+    :vartype ip_configurations: list[~azure.mgmt.azurestackhci.models.IpConfiguration]
+    :ivar mac_address: MacAddress - The MAC address of the network interface.
+    :vartype mac_address: str
+    :ivar dns_settings: DNS Settings for the interface.
+    :vartype dns_settings: ~azure.mgmt.azurestackhci.models.InterfaceDNSSettings
+    :ivar provisioning_state: Provisioning state of the gallery image. Known values are:
+     "Succeeded", "Failed", "InProgress", "Accepted", "Deleting", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.azurestackhci.models.ProvisioningStateEnum
+    :ivar resource_name: name of the object to be used in moc.
+    :vartype resource_name: str
+    :ivar status: NetworkInterfaceStatus defines the observed state of network interfaces.
+    :vartype status: ~azure.mgmt.azurestackhci.models.NetworkInterfaceStatus
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "status": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "ip_configurations": {"key": "properties.ipConfigurations", "type": "[IpConfiguration]"},
+        "mac_address": {"key": "properties.macAddress", "type": "str"},
+        "dns_settings": {"key": "properties.dnsSettings", "type": "InterfaceDNSSettings"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "resource_name": {"key": "properties.resourceName", "type": "str"},
+        "status": {"key": "properties.status", "type": "NetworkInterfaceStatus"},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[Dict[str, str]] = None,
+        extended_location: Optional["_models.ExtendedLocation"] = None,
+        ip_configurations: Optional[List["_models.IpConfiguration"]] = None,
+        mac_address: Optional[str] = None,
+        dns_settings: Optional["_models.InterfaceDNSSettings"] = None,
+        resource_name: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        :keyword extended_location: The extendedLocation of the resource.
+        :paramtype extended_location: ~azure.mgmt.azurestackhci.models.ExtendedLocation
+        :keyword ip_configurations: IPConfigurations - A list of IPConfigurations of the network
+         interface.
+        :paramtype ip_configurations: list[~azure.mgmt.azurestackhci.models.IpConfiguration]
+        :keyword mac_address: MacAddress - The MAC address of the network interface.
+        :paramtype mac_address: str
+        :keyword dns_settings: DNS Settings for the interface.
+        :paramtype dns_settings: ~azure.mgmt.azurestackhci.models.InterfaceDNSSettings
+        :keyword resource_name: name of the object to be used in moc.
+        :paramtype resource_name: str
+        """
+        super().__init__(tags=tags, location=location, **kwargs)
+        self.extended_location = extended_location
+        self.system_data = None
+        self.ip_configurations = ip_configurations
+        self.mac_address = mac_address
+        self.dns_settings = dns_settings
+        self.provisioning_state = None
+        self.resource_name = resource_name
+        self.status = None
+
+
+class NetworkinterfacesListResult(_serialization.Model):
+    """NetworkinterfacesListResult.
+
+    :ivar value:
+    :vartype value: list[~azure.mgmt.azurestackhci.models.Networkinterfaces]
+    :ivar next_link:
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[Networkinterfaces]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: Optional[List["_models.Networkinterfaces"]] = None, next_link: Optional[str] = None, **kwargs
+    ):
+        """
+        :keyword value:
+        :paramtype value: list[~azure.mgmt.azurestackhci.models.Networkinterfaces]
+        :keyword next_link:
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class NetworkinterfacesPatch(_serialization.Model):
+    """The network interface resource patch definition.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    _attribute_map = {
+        "tags": {"key": "tags", "type": "{str}"},
+    }
+
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(**kwargs)
+        self.tags = tags
+
+
+class NetworkInterfaceStatus(_serialization.Model):
+    """NetworkInterfaceStatus defines the observed state of network interfaces.
+
+    :ivar error_code: NetworkInterface provisioning error code.
+    :vartype error_code: str
+    :ivar error_message: Descriptive error message.
+    :vartype error_message: str
+    :ivar provisioning_status: The provisioning status of the network interface.
+    :vartype provisioning_status:
+     ~azure.mgmt.azurestackhci.models.NetworkInterfaceStatusProvisioningStatus
+    """
+
+    _attribute_map = {
+        "error_code": {"key": "errorCode", "type": "str"},
+        "error_message": {"key": "errorMessage", "type": "str"},
+        "provisioning_status": {"key": "provisioningStatus", "type": "NetworkInterfaceStatusProvisioningStatus"},
+    }
+
+    def __init__(
+        self,
+        *,
+        error_code: Optional[str] = None,
+        error_message: Optional[str] = None,
+        provisioning_status: Optional["_models.NetworkInterfaceStatusProvisioningStatus"] = None,
+        **kwargs
+    ):
+        """
+        :keyword error_code: NetworkInterface provisioning error code.
+        :paramtype error_code: str
+        :keyword error_message: Descriptive error message.
+        :paramtype error_message: str
+        :keyword provisioning_status: The provisioning status of the network interface.
+        :paramtype provisioning_status:
+         ~azure.mgmt.azurestackhci.models.NetworkInterfaceStatusProvisioningStatus
+        """
+        super().__init__(**kwargs)
+        self.error_code = error_code
+        self.error_message = error_message
+        self.provisioning_status = provisioning_status
+
+
+class NetworkInterfaceStatusProvisioningStatus(_serialization.Model):
+    """The provisioning status of the network interface.
+
+    :ivar operation_id: The ID of the operation performed on the network interface.
+    :vartype operation_id: str
+    :ivar status: The status of the operation performed on the network interface [Succeeded,
+     Failed, InProgress]. Known values are: "Succeeded", "Failed", and "InProgress".
+    :vartype status: str or ~azure.mgmt.azurestackhci.models.ProvisioningStatusEnum
+    """
+
+    _attribute_map = {
+        "operation_id": {"key": "operationId", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        operation_id: Optional[str] = None,
+        status: Optional[Union[str, "_models.ProvisioningStatusEnum"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword operation_id: The ID of the operation performed on the network interface.
+        :paramtype operation_id: str
+        :keyword status: The status of the operation performed on the network interface [Succeeded,
+         Failed, InProgress]. Known values are: "Succeeded", "Failed", and "InProgress".
+        :paramtype status: str or ~azure.mgmt.azurestackhci.models.ProvisioningStatusEnum
+        """
+        super().__init__(**kwargs)
+        self.operation_id = operation_id
+        self.status = status
+
+
+class NetworkProfileUpdate(_serialization.Model):
+    """NetworkProfile - describes the network update configuration the virtual machine.
+
+    :ivar network_interfaces: NetworkInterfaces - list of network interfaces to be attached to the
+     virtual machine.
+    :vartype network_interfaces:
+     list[~azure.mgmt.azurestackhci.models.NetworkProfileUpdateNetworkInterfacesItem]
+    """
+
+    _attribute_map = {
+        "network_interfaces": {"key": "networkInterfaces", "type": "[NetworkProfileUpdateNetworkInterfacesItem]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        network_interfaces: Optional[List["_models.NetworkProfileUpdateNetworkInterfacesItem"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword network_interfaces: NetworkInterfaces - list of network interfaces to be attached to
+         the virtual machine.
+        :paramtype network_interfaces:
+         list[~azure.mgmt.azurestackhci.models.NetworkProfileUpdateNetworkInterfacesItem]
+        """
+        super().__init__(**kwargs)
+        self.network_interfaces = network_interfaces
+
+
+class NetworkProfileUpdateNetworkInterfacesItem(_serialization.Model):
+    """NetworkProfileUpdateNetworkInterfacesItem.
+
+    :ivar id: ID - Resource ID of the network interface.
+    :vartype id: str
+    """
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+    }
+
+    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
+        """
+        :keyword id: ID - Resource ID of the network interface.
+        :paramtype id: str
+        """
+        super().__init__(**kwargs)
+        self.id = id
+
+
+class Operation(_serialization.Model):
     """Details of a REST API operation, returned from the Resource Provider Operations API.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1238,40 +3060,35 @@ class Operation(msrest.serialization.Model):
     :ivar display: Localized display information for this particular operation.
     :vartype display: ~azure.mgmt.azurestackhci.models.OperationDisplay
     :ivar origin: The intended executor of the operation; as in Resource Based Access Control
-     (RBAC) and audit logs UX. Default value is "user,system". Possible values include: "user",
-     "system", "user,system".
+     (RBAC) and audit logs UX. Default value is "user,system". Known values are: "user", "system",
+     and "user,system".
     :vartype origin: str or ~azure.mgmt.azurestackhci.models.Origin
     :ivar action_type: Enum. Indicates the action type. "Internal" refers to actions that are for
-     internal only APIs. Possible values include: "Internal".
+     internal only APIs. "Internal"
     :vartype action_type: str or ~azure.mgmt.azurestackhci.models.ActionType
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'is_data_action': {'readonly': True},
-        'origin': {'readonly': True},
-        'action_type': {'readonly': True},
+        "name": {"readonly": True},
+        "is_data_action": {"readonly": True},
+        "origin": {"readonly": True},
+        "action_type": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
-        'origin': {'key': 'origin', 'type': 'str'},
-        'action_type': {'key': 'actionType', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "is_data_action": {"key": "isDataAction", "type": "bool"},
+        "display": {"key": "display", "type": "OperationDisplay"},
+        "origin": {"key": "origin", "type": "str"},
+        "action_type": {"key": "actionType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        display: Optional["OperationDisplay"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, display: Optional["_models.OperationDisplay"] = None, **kwargs):
         """
         :keyword display: Localized display information for this particular operation.
         :paramtype display: ~azure.mgmt.azurestackhci.models.OperationDisplay
         """
-        super(Operation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = None
         self.is_data_action = None
         self.display = display
@@ -1279,7 +3096,7 @@ class Operation(msrest.serialization.Model):
         self.action_type = None
 
 
-class OperationDisplay(msrest.serialization.Model):
+class OperationDisplay(_serialization.Model):
     """Localized display information for this particular operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1299,33 +3116,29 @@ class OperationDisplay(msrest.serialization.Model):
     """
 
     _validation = {
-        'provider': {'readonly': True},
-        'resource': {'readonly': True},
-        'operation': {'readonly': True},
-        'description': {'readonly': True},
+        "provider": {"readonly": True},
+        "resource": {"readonly": True},
+        "operation": {"readonly": True},
+        "description": {"readonly": True},
     }
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(OperationDisplay, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.provider = None
         self.resource = None
         self.operation = None
         self.description = None
 
 
-class OperationListResult(msrest.serialization.Model):
+class OperationListResult(_serialization.Model):
     """A list of REST API operations supported by an Azure Resource Provider. It contains an URL link to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1337,73 +3150,23 @@ class OperationListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Operation]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Operation]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(OperationListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class PasswordCredential(msrest.serialization.Model):
-    """PasswordCredential.
-
-    :ivar secret_text:
-    :vartype secret_text: str
-    :ivar key_id:
-    :vartype key_id: str
-    :ivar start_date_time:
-    :vartype start_date_time: ~datetime.datetime
-    :ivar end_date_time:
-    :vartype end_date_time: ~datetime.datetime
-    """
-
-    _attribute_map = {
-        'secret_text': {'key': 'secretText', 'type': 'str'},
-        'key_id': {'key': 'keyId', 'type': 'str'},
-        'start_date_time': {'key': 'startDateTime', 'type': 'iso-8601'},
-        'end_date_time': {'key': 'endDateTime', 'type': 'iso-8601'},
-    }
-
-    def __init__(
-        self,
-        *,
-        secret_text: Optional[str] = None,
-        key_id: Optional[str] = None,
-        start_date_time: Optional[datetime.datetime] = None,
-        end_date_time: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
-        """
-        :keyword secret_text:
-        :paramtype secret_text: str
-        :keyword key_id:
-        :paramtype key_id: str
-        :keyword start_date_time:
-        :paramtype start_date_time: ~datetime.datetime
-        :keyword end_date_time:
-        :paramtype end_date_time: ~datetime.datetime
-        """
-        super(PasswordCredential, self).__init__(**kwargs)
-        self.secret_text = secret_text
-        self.key_id = key_id
-        self.start_date_time = start_date_time
-        self.end_date_time = end_date_time
-
-
-class PerNodeExtensionState(msrest.serialization.Model):
+class PerNodeExtensionState(_serialization.Model):
     """Status of Arc Extension for a particular node in HCI Cluster.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1412,37 +3175,33 @@ class PerNodeExtensionState(msrest.serialization.Model):
     :vartype name: str
     :ivar extension: Fully qualified resource ID for the particular Arc Extension on this node.
     :vartype extension: str
-    :ivar state: State of Arc Extension in this node. Possible values include: "NotSpecified",
-     "Error", "Succeeded", "Canceled", "Failed", "Connected", "Disconnected", "Deleted", "Creating",
-     "Updating", "Deleting", "Moving".
+    :ivar state: State of Arc Extension in this node. Known values are: "NotSpecified", "Error",
+     "Succeeded", "Canceled", "Failed", "Connected", "Disconnected", "Deleted", "Creating",
+     "Updating", "Deleting", and "Moving".
     :vartype state: str or ~azure.mgmt.azurestackhci.models.NodeExtensionState
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'extension': {'readonly': True},
-        'state': {'readonly': True},
+        "name": {"readonly": True},
+        "extension": {"readonly": True},
+        "state": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'extension': {'key': 'extension', 'type': 'str'},
-        'state': {'key': 'state', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "extension": {"key": "extension", "type": "str"},
+        "state": {"key": "state", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(PerNodeExtensionState, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.name = None
         self.extension = None
         self.state = None
 
 
-class PerNodeState(msrest.serialization.Model):
+class PerNodeState(_serialization.Model):
     """Status of Arc agent for a particular node in HCI Cluster.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1451,81 +3210,1987 @@ class PerNodeState(msrest.serialization.Model):
     :vartype name: str
     :ivar arc_instance: Fully qualified resource ID for the Arc agent of this node.
     :vartype arc_instance: str
-    :ivar state: State of Arc agent in this node. Possible values include: "NotSpecified", "Error",
+    :ivar state: State of Arc agent in this node. Known values are: "NotSpecified", "Error",
      "Succeeded", "Canceled", "Failed", "Connected", "Disconnected", "Deleted", "Creating",
-     "Updating", "Deleting", "Moving".
+     "Updating", "Deleting", and "Moving".
     :vartype state: str or ~azure.mgmt.azurestackhci.models.NodeArcState
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'arc_instance': {'readonly': True},
-        'state': {'readonly': True},
+        "name": {"readonly": True},
+        "arc_instance": {"readonly": True},
+        "state": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'arc_instance': {'key': 'arcInstance', 'type': 'str'},
-        'state': {'key': 'state', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "arc_instance": {"key": "arcInstance", "type": "str"},
+        "state": {"key": "state", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(PerNodeState, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.name = None
         self.arc_instance = None
         self.state = None
 
 
-class RawCertificateData(msrest.serialization.Model):
-    """RawCertificateData.
+class Storagecontainers(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+    """The storage container resource definition.
 
-    :ivar certificates:
-    :vartype certificates: list[str]
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource Name.
+    :vartype name: str
+    :ivar type: Resource Type.
+    :vartype type: str
+    :ivar location: The resource location. Required.
+    :vartype location: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.azurestackhci.models.SystemData
+    :ivar extended_location:
+    :vartype extended_location: ~azure.mgmt.azurestackhci.models.StoragecontainersExtendedLocation
+    :ivar path: Path of the storage container on the disk.
+    :vartype path: str
+    :ivar provisioning_state:
+    :vartype provisioning_state: str
+    :ivar resource_name: name of the object to be used in moc.
+    :vartype resource_name: str
+    :ivar available_size_mb: Amount of space available on the disk in MB.
+    :vartype available_size_mb: int
+    :ivar container_size_mb: Total size of the disk in MB.
+    :vartype container_size_mb: int
+    :ivar status: storageContainerStatus defines the observed state of storagecontainers.
+    :vartype status: ~azure.mgmt.azurestackhci.models.StorageContainerStatus
     """
 
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "system_data": {"readonly": True},
+        "available_size_mb": {"readonly": True},
+        "container_size_mb": {"readonly": True},
+        "status": {"readonly": True},
+    }
+
     _attribute_map = {
-        'certificates': {'key': 'certificates', 'type': '[str]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "extended_location": {"key": "extendedLocation", "type": "StoragecontainersExtendedLocation"},
+        "path": {"key": "properties.path", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "resource_name": {"key": "properties.resourceName", "type": "str"},
+        "available_size_mb": {"key": "properties.availableSizeMB", "type": "int"},
+        "container_size_mb": {"key": "properties.containerSizeMB", "type": "int"},
+        "status": {"key": "properties.status", "type": "StorageContainerStatus"},
     }
 
     def __init__(
         self,
         *,
-        certificates: Optional[List[str]] = None,
+        location: str,
+        tags: Optional[Dict[str, str]] = None,
+        extended_location: Optional["_models.StoragecontainersExtendedLocation"] = None,
+        path: Optional[str] = None,
+        provisioning_state: Optional[str] = None,
+        resource_name: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword certificates:
-        :paramtype certificates: list[str]
+        :keyword location: The resource location. Required.
+        :paramtype location: str
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword extended_location:
+        :paramtype extended_location:
+         ~azure.mgmt.azurestackhci.models.StoragecontainersExtendedLocation
+        :keyword path: Path of the storage container on the disk.
+        :paramtype path: str
+        :keyword provisioning_state:
+        :paramtype provisioning_state: str
+        :keyword resource_name: name of the object to be used in moc.
+        :paramtype resource_name: str
         """
-        super(RawCertificateData, self).__init__(**kwargs)
-        self.certificates = certificates
+        super().__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.location = location
+        self.tags = tags
+        self.system_data = None
+        self.extended_location = extended_location
+        self.path = path
+        self.provisioning_state = provisioning_state
+        self.resource_name = resource_name
+        self.available_size_mb = None
+        self.container_size_mb = None
+        self.status = None
 
 
-class UploadCertificateRequest(msrest.serialization.Model):
-    """UploadCertificateRequest.
+class StoragecontainersExtendedLocation(_serialization.Model):
+    """StoragecontainersExtendedLocation.
 
-    :ivar properties:
-    :vartype properties: ~azure.mgmt.azurestackhci.models.RawCertificateData
+    :ivar type: The extended location type.
+    :vartype type: str
+    :ivar name: The extended location name.
+    :vartype name: str
     """
 
     _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'RawCertificateData'},
+        "type": {"key": "type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+    }
+
+    def __init__(self, *, type: Optional[str] = None, name: Optional[str] = None, **kwargs):
+        """
+        :keyword type: The extended location type.
+        :paramtype type: str
+        :keyword name: The extended location name.
+        :paramtype name: str
+        """
+        super().__init__(**kwargs)
+        self.type = type
+        self.name = name
+
+
+class StoragecontainersListResult(_serialization.Model):
+    """StoragecontainersListResult.
+
+    :ivar value:
+    :vartype value: list[~azure.mgmt.azurestackhci.models.Storagecontainers]
+    :ivar next_link:
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[Storagecontainers]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: Optional[List["_models.Storagecontainers"]] = None, next_link: Optional[str] = None, **kwargs
+    ):
+        """
+        :keyword value:
+        :paramtype value: list[~azure.mgmt.azurestackhci.models.Storagecontainers]
+        :keyword next_link:
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class StoragecontainersPatch(_serialization.Model):
+    """The storage container resource patch definition.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    _attribute_map = {
+        "tags": {"key": "tags", "type": "{str}"},
+    }
+
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(**kwargs)
+        self.tags = tags
+
+
+class StorageContainerStatus(_serialization.Model):
+    """storageContainerStatus defines the observed state of storagecontainers.
+
+    :ivar error_code: StorageContainer provisioning error code.
+    :vartype error_code: str
+    :ivar error_message: Descriptive error message.
+    :vartype error_message: str
+    :ivar available_size_mb: Amount of space available on the disk in MB.
+    :vartype available_size_mb: int
+    :ivar container_size_mb: Total size of the disk in MB.
+    :vartype container_size_mb: int
+    :ivar provisioning_status: The provisioning status of the storage container.
+    :vartype provisioning_status:
+     ~azure.mgmt.azurestackhci.models.StorageContainerStatusProvisioningStatus
+    """
+
+    _attribute_map = {
+        "error_code": {"key": "errorCode", "type": "str"},
+        "error_message": {"key": "errorMessage", "type": "str"},
+        "available_size_mb": {"key": "availableSizeMB", "type": "int"},
+        "container_size_mb": {"key": "containerSizeMB", "type": "int"},
+        "provisioning_status": {"key": "provisioningStatus", "type": "StorageContainerStatusProvisioningStatus"},
     }
 
     def __init__(
         self,
         *,
-        properties: Optional["RawCertificateData"] = None,
+        error_code: Optional[str] = None,
+        error_message: Optional[str] = None,
+        available_size_mb: Optional[int] = None,
+        container_size_mb: Optional[int] = None,
+        provisioning_status: Optional["_models.StorageContainerStatusProvisioningStatus"] = None,
         **kwargs
     ):
         """
-        :keyword properties:
-        :paramtype properties: ~azure.mgmt.azurestackhci.models.RawCertificateData
+        :keyword error_code: StorageContainer provisioning error code.
+        :paramtype error_code: str
+        :keyword error_message: Descriptive error message.
+        :paramtype error_message: str
+        :keyword available_size_mb: Amount of space available on the disk in MB.
+        :paramtype available_size_mb: int
+        :keyword container_size_mb: Total size of the disk in MB.
+        :paramtype container_size_mb: int
+        :keyword provisioning_status: The provisioning status of the storage container.
+        :paramtype provisioning_status:
+         ~azure.mgmt.azurestackhci.models.StorageContainerStatusProvisioningStatus
         """
-        super(UploadCertificateRequest, self).__init__(**kwargs)
+        super().__init__(**kwargs)
+        self.error_code = error_code
+        self.error_message = error_message
+        self.available_size_mb = available_size_mb
+        self.container_size_mb = container_size_mb
+        self.provisioning_status = provisioning_status
+
+
+class StorageContainerStatusProvisioningStatus(_serialization.Model):
+    """The provisioning status of the storage container.
+
+    :ivar operation_id: The ID of the operation performed on the storage container.
+    :vartype operation_id: str
+    :ivar status: The status of the operation performed on the storage container [Succeeded,
+     Failed, InProgress]. Known values are: "Succeeded", "Failed", and "InProgress".
+    :vartype status: str or ~azure.mgmt.azurestackhci.models.ProvisioningStatusEnum
+    """
+
+    _attribute_map = {
+        "operation_id": {"key": "operationId", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        operation_id: Optional[str] = None,
+        status: Optional[Union[str, "_models.ProvisioningStatusEnum"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword operation_id: The ID of the operation performed on the storage container.
+        :paramtype operation_id: str
+        :keyword status: The status of the operation performed on the storage container [Succeeded,
+         Failed, InProgress]. Known values are: "Succeeded", "Failed", and "InProgress".
+        :paramtype status: str or ~azure.mgmt.azurestackhci.models.ProvisioningStatusEnum
+        """
+        super().__init__(**kwargs)
+        self.operation_id = operation_id
+        self.status = status
+
+
+class StorageProfileUpdate(_serialization.Model):
+    """StorageProfileUpdate.
+
+    :ivar data_disks: adds data disks to the virtual machine for the update call.
+    :vartype data_disks: list[~azure.mgmt.azurestackhci.models.StorageProfileUpdateDataDisksItem]
+    """
+
+    _attribute_map = {
+        "data_disks": {"key": "dataDisks", "type": "[StorageProfileUpdateDataDisksItem]"},
+    }
+
+    def __init__(self, *, data_disks: Optional[List["_models.StorageProfileUpdateDataDisksItem"]] = None, **kwargs):
+        """
+        :keyword data_disks: adds data disks to the virtual machine for the update call.
+        :paramtype data_disks: list[~azure.mgmt.azurestackhci.models.StorageProfileUpdateDataDisksItem]
+        """
+        super().__init__(**kwargs)
+        self.data_disks = data_disks
+
+
+class StorageProfileUpdateDataDisksItem(_serialization.Model):
+    """StorageProfileUpdateDataDisksItem.
+
+    :ivar name:
+    :vartype name: str
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+    }
+
+    def __init__(self, *, name: Optional[str] = None, **kwargs):
+        """
+        :keyword name:
+        :paramtype name: str
+        """
+        super().__init__(**kwargs)
+        self.name = name
+
+
+class SystemData(_serialization.Model):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", and "Key".
+    :vartype created_by_type: str or ~azure.mgmt.azurestackhci.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", and "Key".
+    :vartype last_modified_by_type: str or ~azure.mgmt.azurestackhci.models.CreatedByType
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
+    }
+
+    def __init__(
+        self,
+        *,
+        created_by: Optional[str] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
+        created_at: Optional[datetime.datetime] = None,
+        last_modified_by: Optional[str] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
+        last_modified_at: Optional[datetime.datetime] = None,
+        **kwargs
+    ):
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype created_by_type: str or ~azure.mgmt.azurestackhci.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype last_modified_by_type: str or ~azure.mgmt.azurestackhci.models.CreatedByType
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
+        self.created_by = created_by
+        self.created_by_type = created_by_type
+        self.created_at = created_at
+        self.last_modified_by = last_modified_by
+        self.last_modified_by_type = last_modified_by_type
+        self.last_modified_at = last_modified_at
+
+
+class Virtualharddisks(TrackedResource):  # pylint: disable=too-many-instance-attributes
+    """The virtual hard disk resource definition.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar extended_location: The extendedLocation of the resource.
+    :vartype extended_location: ~azure.mgmt.azurestackhci.models.ExtendedLocation
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.azurestackhci.models.SystemData
+    :ivar block_size_bytes:
+    :vartype block_size_bytes: int
+    :ivar disk_size_bytes: diskSizeBytes - size of the disk in GB.
+    :vartype disk_size_bytes: int
+    :ivar dynamic: Boolean for enabling dynamic sizing on the virtual hard disk.
+    :vartype dynamic: bool
+    :ivar logical_sector_bytes:
+    :vartype logical_sector_bytes: int
+    :ivar physical_sector_bytes:
+    :vartype physical_sector_bytes: int
+    :ivar hyper_v_generation: The hypervisor generation of the Virtual Machine [V1, V2]. Known
+     values are: "V1" and "V2".
+    :vartype hyper_v_generation: str or ~azure.mgmt.azurestackhci.models.HyperVGeneration
+    :ivar disk_file_format: The format of the actual VHD file [vhd, vhdx]. Known values are: "vhdx"
+     and "vhd".
+    :vartype disk_file_format: str or ~azure.mgmt.azurestackhci.models.DiskFileFormat
+    :ivar provisioning_state: Provisioning state of the gallery image. Known values are:
+     "Succeeded", "Failed", "InProgress", "Accepted", "Deleting", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.azurestackhci.models.ProvisioningStateEnum
+    :ivar container_id: Storage ContainerID of the storage container to be used for VHD.
+    :vartype container_id: str
+    :ivar resource_name: name of the object to be used in moc.
+    :vartype resource_name: str
+    :ivar status: VirtualHardDiskStatus defines the observed state of virtualharddisks.
+    :vartype status: ~azure.mgmt.azurestackhci.models.VirtualHardDiskStatus
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "status": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "block_size_bytes": {"key": "properties.blockSizeBytes", "type": "int"},
+        "disk_size_bytes": {"key": "properties.diskSizeBytes", "type": "int"},
+        "dynamic": {"key": "properties.dynamic", "type": "bool"},
+        "logical_sector_bytes": {"key": "properties.logicalSectorBytes", "type": "int"},
+        "physical_sector_bytes": {"key": "properties.physicalSectorBytes", "type": "int"},
+        "hyper_v_generation": {"key": "properties.hyperVGeneration", "type": "str"},
+        "disk_file_format": {"key": "properties.diskFileFormat", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "container_id": {"key": "properties.containerId", "type": "str"},
+        "resource_name": {"key": "properties.resourceName", "type": "str"},
+        "status": {"key": "properties.status", "type": "VirtualHardDiskStatus"},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[Dict[str, str]] = None,
+        extended_location: Optional["_models.ExtendedLocation"] = None,
+        block_size_bytes: Optional[int] = None,
+        disk_size_bytes: Optional[int] = None,
+        dynamic: Optional[bool] = None,
+        logical_sector_bytes: Optional[int] = None,
+        physical_sector_bytes: Optional[int] = None,
+        hyper_v_generation: Optional[Union[str, "_models.HyperVGeneration"]] = None,
+        disk_file_format: Optional[Union[str, "_models.DiskFileFormat"]] = None,
+        container_id: Optional[str] = None,
+        resource_name: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        :keyword extended_location: The extendedLocation of the resource.
+        :paramtype extended_location: ~azure.mgmt.azurestackhci.models.ExtendedLocation
+        :keyword block_size_bytes:
+        :paramtype block_size_bytes: int
+        :keyword disk_size_bytes: diskSizeBytes - size of the disk in GB.
+        :paramtype disk_size_bytes: int
+        :keyword dynamic: Boolean for enabling dynamic sizing on the virtual hard disk.
+        :paramtype dynamic: bool
+        :keyword logical_sector_bytes:
+        :paramtype logical_sector_bytes: int
+        :keyword physical_sector_bytes:
+        :paramtype physical_sector_bytes: int
+        :keyword hyper_v_generation: The hypervisor generation of the Virtual Machine [V1, V2]. Known
+         values are: "V1" and "V2".
+        :paramtype hyper_v_generation: str or ~azure.mgmt.azurestackhci.models.HyperVGeneration
+        :keyword disk_file_format: The format of the actual VHD file [vhd, vhdx]. Known values are:
+         "vhdx" and "vhd".
+        :paramtype disk_file_format: str or ~azure.mgmt.azurestackhci.models.DiskFileFormat
+        :keyword container_id: Storage ContainerID of the storage container to be used for VHD.
+        :paramtype container_id: str
+        :keyword resource_name: name of the object to be used in moc.
+        :paramtype resource_name: str
+        """
+        super().__init__(tags=tags, location=location, **kwargs)
+        self.extended_location = extended_location
+        self.system_data = None
+        self.block_size_bytes = block_size_bytes
+        self.disk_size_bytes = disk_size_bytes
+        self.dynamic = dynamic
+        self.logical_sector_bytes = logical_sector_bytes
+        self.physical_sector_bytes = physical_sector_bytes
+        self.hyper_v_generation = hyper_v_generation
+        self.disk_file_format = disk_file_format
+        self.provisioning_state = None
+        self.container_id = container_id
+        self.resource_name = resource_name
+        self.status = None
+
+
+class VirtualharddisksListResult(_serialization.Model):
+    """VirtualharddisksListResult.
+
+    :ivar value:
+    :vartype value: list[~azure.mgmt.azurestackhci.models.Virtualharddisks]
+    :ivar next_link:
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[Virtualharddisks]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: Optional[List["_models.Virtualharddisks"]] = None, next_link: Optional[str] = None, **kwargs
+    ):
+        """
+        :keyword value:
+        :paramtype value: list[~azure.mgmt.azurestackhci.models.Virtualharddisks]
+        :keyword next_link:
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class VirtualharddisksPatch(_serialization.Model):
+    """The virtual hard disk resource patch definition.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    _attribute_map = {
+        "tags": {"key": "tags", "type": "{str}"},
+    }
+
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(**kwargs)
+        self.tags = tags
+
+
+class VirtualHardDiskStatus(_serialization.Model):
+    """VirtualHardDiskStatus defines the observed state of virtualharddisks.
+
+    :ivar error_code: VirtualHardDisk provisioning error code.
+    :vartype error_code: str
+    :ivar error_message: Descriptive error message.
+    :vartype error_message: str
+    :ivar provisioning_status: The provisioning status of the virtual hard disk.
+    :vartype provisioning_status:
+     ~azure.mgmt.azurestackhci.models.VirtualHardDiskStatusProvisioningStatus
+    """
+
+    _attribute_map = {
+        "error_code": {"key": "errorCode", "type": "str"},
+        "error_message": {"key": "errorMessage", "type": "str"},
+        "provisioning_status": {"key": "provisioningStatus", "type": "VirtualHardDiskStatusProvisioningStatus"},
+    }
+
+    def __init__(
+        self,
+        *,
+        error_code: Optional[str] = None,
+        error_message: Optional[str] = None,
+        provisioning_status: Optional["_models.VirtualHardDiskStatusProvisioningStatus"] = None,
+        **kwargs
+    ):
+        """
+        :keyword error_code: VirtualHardDisk provisioning error code.
+        :paramtype error_code: str
+        :keyword error_message: Descriptive error message.
+        :paramtype error_message: str
+        :keyword provisioning_status: The provisioning status of the virtual hard disk.
+        :paramtype provisioning_status:
+         ~azure.mgmt.azurestackhci.models.VirtualHardDiskStatusProvisioningStatus
+        """
+        super().__init__(**kwargs)
+        self.error_code = error_code
+        self.error_message = error_message
+        self.provisioning_status = provisioning_status
+
+
+class VirtualHardDiskStatusProvisioningStatus(_serialization.Model):
+    """The provisioning status of the virtual hard disk.
+
+    :ivar operation_id: The ID of the operation performed on the virtual hard disk.
+    :vartype operation_id: str
+    :ivar status: The status of the operation performed on the virtual hard disk [Succeeded,
+     Failed, InProgress]. Known values are: "Succeeded", "Failed", and "InProgress".
+    :vartype status: str or ~azure.mgmt.azurestackhci.models.ProvisioningStatusEnum
+    """
+
+    _attribute_map = {
+        "operation_id": {"key": "operationId", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        operation_id: Optional[str] = None,
+        status: Optional[Union[str, "_models.ProvisioningStatusEnum"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword operation_id: The ID of the operation performed on the virtual hard disk.
+        :paramtype operation_id: str
+        :keyword status: The status of the operation performed on the virtual hard disk [Succeeded,
+         Failed, InProgress]. Known values are: "Succeeded", "Failed", and "InProgress".
+        :paramtype status: str or ~azure.mgmt.azurestackhci.models.ProvisioningStatusEnum
+        """
+        super().__init__(**kwargs)
+        self.operation_id = operation_id
+        self.status = status
+
+
+class Virtualmachines(TrackedResource):  # pylint: disable=too-many-instance-attributes
+    """The virtual machine resource definition.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar extended_location: The extendedLocation of the resource.
+    :vartype extended_location: ~azure.mgmt.azurestackhci.models.ExtendedLocation
+    :ivar identity: Identity for the resource.
+    :vartype identity: ~azure.mgmt.azurestackhci.models.Identity
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.azurestackhci.models.SystemData
+    :ivar hardware_profile: HardwareProfile - Specifies the hardware settings for the virtual
+     machine.
+    :vartype hardware_profile:
+     ~azure.mgmt.azurestackhci.models.VirtualmachinesPropertiesHardwareProfile
+    :ivar network_profile: NetworkProfile - describes the network configuration the virtual
+     machine.
+    :vartype network_profile:
+     ~azure.mgmt.azurestackhci.models.VirtualmachinesPropertiesNetworkProfile
+    :ivar os_profile: OsProfile - describes the configuration of the operating system and sets
+     login data.
+    :vartype os_profile: ~azure.mgmt.azurestackhci.models.VirtualmachinesPropertiesOsProfile
+    :ivar resource_name: name of the object to be used in moc.
+    :vartype resource_name: str
+    :ivar security_profile: SecurityProfile - Specifies the security settings for the virtual
+     machine.
+    :vartype security_profile:
+     ~azure.mgmt.azurestackhci.models.VirtualmachinesPropertiesSecurityProfile
+    :ivar storage_profile: StorageProfile - contains information about the disks and storage
+     information for the virtual machine.
+    :vartype storage_profile:
+     ~azure.mgmt.azurestackhci.models.VirtualmachinesPropertiesStorageProfile
+    :ivar provisioning_state: Provisioning state of the gallery image. Known values are:
+     "Succeeded", "Failed", "InProgress", "Accepted", "Deleting", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.azurestackhci.models.ProvisioningStateEnum
+    :ivar status: VirtualMachineStatus defines the observed state of virtualmachines.
+    :vartype status: ~azure.mgmt.azurestackhci.models.VirtualMachineStatus
+    :ivar guest_agent_profile: Guest agent status properties.
+    :vartype guest_agent_profile: ~azure.mgmt.azurestackhci.models.GuestAgentProfile
+    :ivar vm_id: Unique identifier for the vm resource.
+    :vartype vm_id: str
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "status": {"readonly": True},
+        "vm_id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
+        "identity": {"key": "identity", "type": "Identity"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "hardware_profile": {"key": "properties.hardwareProfile", "type": "VirtualmachinesPropertiesHardwareProfile"},
+        "network_profile": {"key": "properties.networkProfile", "type": "VirtualmachinesPropertiesNetworkProfile"},
+        "os_profile": {"key": "properties.osProfile", "type": "VirtualmachinesPropertiesOsProfile"},
+        "resource_name": {"key": "properties.resourceName", "type": "str"},
+        "security_profile": {"key": "properties.securityProfile", "type": "VirtualmachinesPropertiesSecurityProfile"},
+        "storage_profile": {"key": "properties.storageProfile", "type": "VirtualmachinesPropertiesStorageProfile"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "status": {"key": "properties.status", "type": "VirtualMachineStatus"},
+        "guest_agent_profile": {"key": "properties.guestAgentProfile", "type": "GuestAgentProfile"},
+        "vm_id": {"key": "properties.vmId", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[Dict[str, str]] = None,
+        extended_location: Optional["_models.ExtendedLocation"] = None,
+        identity: Optional["_models.Identity"] = None,
+        hardware_profile: Optional["_models.VirtualmachinesPropertiesHardwareProfile"] = None,
+        network_profile: Optional["_models.VirtualmachinesPropertiesNetworkProfile"] = None,
+        os_profile: Optional["_models.VirtualmachinesPropertiesOsProfile"] = None,
+        resource_name: Optional[str] = None,
+        security_profile: Optional["_models.VirtualmachinesPropertiesSecurityProfile"] = None,
+        storage_profile: Optional["_models.VirtualmachinesPropertiesStorageProfile"] = None,
+        guest_agent_profile: Optional["_models.GuestAgentProfile"] = None,
+        **kwargs
+    ):
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        :keyword extended_location: The extendedLocation of the resource.
+        :paramtype extended_location: ~azure.mgmt.azurestackhci.models.ExtendedLocation
+        :keyword identity: Identity for the resource.
+        :paramtype identity: ~azure.mgmt.azurestackhci.models.Identity
+        :keyword hardware_profile: HardwareProfile - Specifies the hardware settings for the virtual
+         machine.
+        :paramtype hardware_profile:
+         ~azure.mgmt.azurestackhci.models.VirtualmachinesPropertiesHardwareProfile
+        :keyword network_profile: NetworkProfile - describes the network configuration the virtual
+         machine.
+        :paramtype network_profile:
+         ~azure.mgmt.azurestackhci.models.VirtualmachinesPropertiesNetworkProfile
+        :keyword os_profile: OsProfile - describes the configuration of the operating system and sets
+         login data.
+        :paramtype os_profile: ~azure.mgmt.azurestackhci.models.VirtualmachinesPropertiesOsProfile
+        :keyword resource_name: name of the object to be used in moc.
+        :paramtype resource_name: str
+        :keyword security_profile: SecurityProfile - Specifies the security settings for the virtual
+         machine.
+        :paramtype security_profile:
+         ~azure.mgmt.azurestackhci.models.VirtualmachinesPropertiesSecurityProfile
+        :keyword storage_profile: StorageProfile - contains information about the disks and storage
+         information for the virtual machine.
+        :paramtype storage_profile:
+         ~azure.mgmt.azurestackhci.models.VirtualmachinesPropertiesStorageProfile
+        :keyword guest_agent_profile: Guest agent status properties.
+        :paramtype guest_agent_profile: ~azure.mgmt.azurestackhci.models.GuestAgentProfile
+        """
+        super().__init__(tags=tags, location=location, **kwargs)
+        self.extended_location = extended_location
+        self.identity = identity
+        self.system_data = None
+        self.hardware_profile = hardware_profile
+        self.network_profile = network_profile
+        self.os_profile = os_profile
+        self.resource_name = resource_name
+        self.security_profile = security_profile
+        self.storage_profile = storage_profile
+        self.provisioning_state = None
+        self.status = None
+        self.guest_agent_profile = guest_agent_profile
+        self.vm_id = None
+
+
+class VirtualmachinesListResult(_serialization.Model):
+    """VirtualmachinesListResult.
+
+    :ivar value:
+    :vartype value: list[~azure.mgmt.azurestackhci.models.Virtualmachines]
+    :ivar next_link:
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[Virtualmachines]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: Optional[List["_models.Virtualmachines"]] = None, next_link: Optional[str] = None, **kwargs
+    ):
+        """
+        :keyword value:
+        :paramtype value: list[~azure.mgmt.azurestackhci.models.Virtualmachines]
+        :keyword next_link:
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class VirtualmachinesPatch(_serialization.Model):
+    """The virtual machine resource patch definition.
+
+    :ivar properties: Defines the resource properties for the update.
+    :vartype properties: ~azure.mgmt.azurestackhci.models.VirtualMachineUpdateProperties
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    _attribute_map = {
+        "properties": {"key": "properties", "type": "VirtualMachineUpdateProperties"},
+        "tags": {"key": "tags", "type": "{str}"},
+    }
+
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.VirtualMachineUpdateProperties"] = None,
+        tags: Optional[Dict[str, str]] = None,
+        **kwargs
+    ):
+        """
+        :keyword properties: Defines the resource properties for the update.
+        :paramtype properties: ~azure.mgmt.azurestackhci.models.VirtualMachineUpdateProperties
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(**kwargs)
         self.properties = properties
+        self.tags = tags
+
+
+class VirtualmachinesPropertiesHardwareProfile(_serialization.Model):
+    """HardwareProfile - Specifies the hardware settings for the virtual machine.
+
+    :ivar vm_size:
+    :vartype vm_size: str
+    :ivar processors: number of processors for the virtual machine.
+    :vartype processors: int
+    :ivar memory_gb: RAM in gb for the virtual machine.
+    :vartype memory_gb: int
+    :ivar dynamic_memory_config:
+    :vartype dynamic_memory_config:
+     ~azure.mgmt.azurestackhci.models.VirtualmachinesPropertiesHardwareProfileDynamicMemoryConfig
+    """
+
+    _attribute_map = {
+        "vm_size": {"key": "vmSize", "type": "str"},
+        "processors": {"key": "processors", "type": "int"},
+        "memory_gb": {"key": "memoryGB", "type": "int"},
+        "dynamic_memory_config": {
+            "key": "dynamicMemoryConfig",
+            "type": "VirtualmachinesPropertiesHardwareProfileDynamicMemoryConfig",
+        },
+    }
+
+    def __init__(
+        self,
+        *,
+        vm_size: Optional[str] = None,
+        processors: Optional[int] = None,
+        memory_gb: Optional[int] = None,
+        dynamic_memory_config: Optional["_models.VirtualmachinesPropertiesHardwareProfileDynamicMemoryConfig"] = None,
+        **kwargs
+    ):
+        """
+        :keyword vm_size:
+        :paramtype vm_size: str
+        :keyword processors: number of processors for the virtual machine.
+        :paramtype processors: int
+        :keyword memory_gb: RAM in gb for the virtual machine.
+        :paramtype memory_gb: int
+        :keyword dynamic_memory_config:
+        :paramtype dynamic_memory_config:
+         ~azure.mgmt.azurestackhci.models.VirtualmachinesPropertiesHardwareProfileDynamicMemoryConfig
+        """
+        super().__init__(**kwargs)
+        self.vm_size = vm_size
+        self.processors = processors
+        self.memory_gb = memory_gb
+        self.dynamic_memory_config = dynamic_memory_config
+
+
+class VirtualmachinesPropertiesHardwareProfileDynamicMemoryConfig(_serialization.Model):
+    """VirtualmachinesPropertiesHardwareProfileDynamicMemoryConfig.
+
+    :ivar maximum_memory_gb:
+    :vartype maximum_memory_gb: int
+    :ivar minimum_memory_gb:
+    :vartype minimum_memory_gb: int
+    :ivar target_memory_buffer:
+    :vartype target_memory_buffer: int
+    """
+
+    _attribute_map = {
+        "maximum_memory_gb": {"key": "maximumMemoryGB", "type": "int"},
+        "minimum_memory_gb": {"key": "minimumMemoryGB", "type": "int"},
+        "target_memory_buffer": {"key": "targetMemoryBuffer", "type": "int"},
+    }
+
+    def __init__(
+        self,
+        *,
+        maximum_memory_gb: Optional[int] = None,
+        minimum_memory_gb: Optional[int] = None,
+        target_memory_buffer: Optional[int] = None,
+        **kwargs
+    ):
+        """
+        :keyword maximum_memory_gb:
+        :paramtype maximum_memory_gb: int
+        :keyword minimum_memory_gb:
+        :paramtype minimum_memory_gb: int
+        :keyword target_memory_buffer:
+        :paramtype target_memory_buffer: int
+        """
+        super().__init__(**kwargs)
+        self.maximum_memory_gb = maximum_memory_gb
+        self.minimum_memory_gb = minimum_memory_gb
+        self.target_memory_buffer = target_memory_buffer
+
+
+class VirtualmachinesPropertiesNetworkProfile(_serialization.Model):
+    """NetworkProfile - describes the network configuration the virtual machine.
+
+    :ivar network_interfaces: NetworkInterfaces - list of network interfaces to be attached to the
+     virtual machine.
+    :vartype network_interfaces:
+     list[~azure.mgmt.azurestackhci.models.VirtualmachinesPropertiesNetworkProfileNetworkInterfacesItem]
+    """
+
+    _attribute_map = {
+        "network_interfaces": {
+            "key": "networkInterfaces",
+            "type": "[VirtualmachinesPropertiesNetworkProfileNetworkInterfacesItem]",
+        },
+    }
+
+    def __init__(
+        self,
+        *,
+        network_interfaces: Optional[
+            List["_models.VirtualmachinesPropertiesNetworkProfileNetworkInterfacesItem"]
+        ] = None,
+        **kwargs
+    ):
+        """
+        :keyword network_interfaces: NetworkInterfaces - list of network interfaces to be attached to
+         the virtual machine.
+        :paramtype network_interfaces:
+         list[~azure.mgmt.azurestackhci.models.VirtualmachinesPropertiesNetworkProfileNetworkInterfacesItem]
+        """
+        super().__init__(**kwargs)
+        self.network_interfaces = network_interfaces
+
+
+class VirtualmachinesPropertiesNetworkProfileNetworkInterfacesItem(_serialization.Model):
+    """VirtualmachinesPropertiesNetworkProfileNetworkInterfacesItem.
+
+    :ivar id: ID - Resource Id of the network interface.
+    :vartype id: str
+    """
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+    }
+
+    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
+        """
+        :keyword id: ID - Resource Id of the network interface.
+        :paramtype id: str
+        """
+        super().__init__(**kwargs)
+        self.id = id
+
+
+class VirtualmachinesPropertiesOsProfile(_serialization.Model):
+    """OsProfile - describes the configuration of the operating system and sets login data.
+
+    :ivar admin_password: AdminPassword - admin password.
+    :vartype admin_password: str
+    :ivar admin_username: AdminUsername - admin username.
+    :vartype admin_username: str
+    :ivar computer_name: ComputerName - name of the compute.
+    :vartype computer_name: str
+    :ivar linux_configuration: LinuxConfiguration - linux specific configuration values for the
+     virtual machine.
+    :vartype linux_configuration:
+     ~azure.mgmt.azurestackhci.models.VirtualmachinesPropertiesOsProfileLinuxConfiguration
+    :ivar os_type: OsType - string specifying whether the OS is Linux or Windows. Known values are:
+     "Linux" and "Windows".
+    :vartype os_type: str or ~azure.mgmt.azurestackhci.models.OsTypeEnum
+    :ivar windows_configuration: Windows Configuration for the virtual machine.
+    :vartype windows_configuration:
+     ~azure.mgmt.azurestackhci.models.VirtualmachinesPropertiesOsProfileWindowsConfiguration
+    """
+
+    _attribute_map = {
+        "admin_password": {"key": "adminPassword", "type": "str"},
+        "admin_username": {"key": "adminUsername", "type": "str"},
+        "computer_name": {"key": "computerName", "type": "str"},
+        "linux_configuration": {
+            "key": "linuxConfiguration",
+            "type": "VirtualmachinesPropertiesOsProfileLinuxConfiguration",
+        },
+        "os_type": {"key": "osType", "type": "str"},
+        "windows_configuration": {
+            "key": "windowsConfiguration",
+            "type": "VirtualmachinesPropertiesOsProfileWindowsConfiguration",
+        },
+    }
+
+    def __init__(
+        self,
+        *,
+        admin_password: Optional[str] = None,
+        admin_username: Optional[str] = None,
+        computer_name: Optional[str] = None,
+        linux_configuration: Optional["_models.VirtualmachinesPropertiesOsProfileLinuxConfiguration"] = None,
+        os_type: Optional[Union[str, "_models.OsTypeEnum"]] = None,
+        windows_configuration: Optional["_models.VirtualmachinesPropertiesOsProfileWindowsConfiguration"] = None,
+        **kwargs
+    ):
+        """
+        :keyword admin_password: AdminPassword - admin password.
+        :paramtype admin_password: str
+        :keyword admin_username: AdminUsername - admin username.
+        :paramtype admin_username: str
+        :keyword computer_name: ComputerName - name of the compute.
+        :paramtype computer_name: str
+        :keyword linux_configuration: LinuxConfiguration - linux specific configuration values for the
+         virtual machine.
+        :paramtype linux_configuration:
+         ~azure.mgmt.azurestackhci.models.VirtualmachinesPropertiesOsProfileLinuxConfiguration
+        :keyword os_type: OsType - string specifying whether the OS is Linux or Windows. Known values
+         are: "Linux" and "Windows".
+        :paramtype os_type: str or ~azure.mgmt.azurestackhci.models.OsTypeEnum
+        :keyword windows_configuration: Windows Configuration for the virtual machine.
+        :paramtype windows_configuration:
+         ~azure.mgmt.azurestackhci.models.VirtualmachinesPropertiesOsProfileWindowsConfiguration
+        """
+        super().__init__(**kwargs)
+        self.admin_password = admin_password
+        self.admin_username = admin_username
+        self.computer_name = computer_name
+        self.linux_configuration = linux_configuration
+        self.os_type = os_type
+        self.windows_configuration = windows_configuration
+
+
+class VirtualmachinesPropertiesOsProfileLinuxConfiguration(_serialization.Model):
+    """LinuxConfiguration - linux specific configuration values for the virtual machine.
+
+    :ivar disable_password_authentication: DisablePasswordAuthentication - whether password
+     authentication should be disabled.
+    :vartype disable_password_authentication: bool
+    :ivar ssh: SSH - contains settings related to ssh configuration.
+    :vartype ssh:
+     ~azure.mgmt.azurestackhci.models.VirtualmachinesPropertiesOsProfileLinuxConfigurationSsh
+    :ivar provision_vm_agent: Used to indicate whether Arc for Servers agent onboarding should be
+     triggered during the virtual machine creation process.
+    :vartype provision_vm_agent: bool
+    """
+
+    _attribute_map = {
+        "disable_password_authentication": {"key": "disablePasswordAuthentication", "type": "bool"},
+        "ssh": {"key": "ssh", "type": "VirtualmachinesPropertiesOsProfileLinuxConfigurationSsh"},
+        "provision_vm_agent": {"key": "provisionVMAgent", "type": "bool"},
+    }
+
+    def __init__(
+        self,
+        *,
+        disable_password_authentication: Optional[bool] = None,
+        ssh: Optional["_models.VirtualmachinesPropertiesOsProfileLinuxConfigurationSsh"] = None,
+        provision_vm_agent: Optional[bool] = None,
+        **kwargs
+    ):
+        """
+        :keyword disable_password_authentication: DisablePasswordAuthentication - whether password
+         authentication should be disabled.
+        :paramtype disable_password_authentication: bool
+        :keyword ssh: SSH - contains settings related to ssh configuration.
+        :paramtype ssh:
+         ~azure.mgmt.azurestackhci.models.VirtualmachinesPropertiesOsProfileLinuxConfigurationSsh
+        :keyword provision_vm_agent: Used to indicate whether Arc for Servers agent onboarding should
+         be triggered during the virtual machine creation process.
+        :paramtype provision_vm_agent: bool
+        """
+        super().__init__(**kwargs)
+        self.disable_password_authentication = disable_password_authentication
+        self.ssh = ssh
+        self.provision_vm_agent = provision_vm_agent
+
+
+class VirtualmachinesPropertiesOsProfileLinuxConfigurationSsh(_serialization.Model):
+    """SSH - contains settings related to ssh configuration.
+
+    :ivar public_keys: PublicKeys - The list of SSH public keys used to authenticate with linux
+     based VMs.
+    :vartype public_keys:
+     list[~azure.mgmt.azurestackhci.models.VirtualmachinesPropertiesOsProfileLinuxConfigurationSshPublicKeysItem]
+    """
+
+    _attribute_map = {
+        "public_keys": {
+            "key": "publicKeys",
+            "type": "[VirtualmachinesPropertiesOsProfileLinuxConfigurationSshPublicKeysItem]",
+        },
+    }
+
+    def __init__(
+        self,
+        *,
+        public_keys: Optional[
+            List["_models.VirtualmachinesPropertiesOsProfileLinuxConfigurationSshPublicKeysItem"]
+        ] = None,
+        **kwargs
+    ):
+        """
+        :keyword public_keys: PublicKeys - The list of SSH public keys used to authenticate with linux
+         based VMs.
+        :paramtype public_keys:
+         list[~azure.mgmt.azurestackhci.models.VirtualmachinesPropertiesOsProfileLinuxConfigurationSshPublicKeysItem]
+        """
+        super().__init__(**kwargs)
+        self.public_keys = public_keys
+
+
+class VirtualmachinesPropertiesOsProfileLinuxConfigurationSshPublicKeysItem(_serialization.Model):
+    """VirtualmachinesPropertiesOsProfileLinuxConfigurationSshPublicKeysItem.
+
+    :ivar key_data: KeyData - SSH public key certificate used to authenticate with the VM through
+     ssh. The key needs to be at least 2048-bit and in ssh-rsa format. :code:`<br>`:code:`<br>` For
+     creating ssh keys, see `Create SSH keys on Linux and Mac for Li      nux VMs in Azure
+     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-mac-create-ssh-keys?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_.
+    :vartype key_data: str
+    :ivar path: Path - Specifies the full path on the created VM where ssh public key is stored. If
+     the file already exists, the specified key is appended to the file. Example:
+     /home/user/.ssh/authorized_keys.
+    :vartype path: str
+    """
+
+    _attribute_map = {
+        "key_data": {"key": "keyData", "type": "str"},
+        "path": {"key": "path", "type": "str"},
+    }
+
+    def __init__(self, *, key_data: Optional[str] = None, path: Optional[str] = None, **kwargs):
+        """
+        :keyword key_data: KeyData - SSH public key certificate used to authenticate with the VM
+         through ssh. The key needs to be at least 2048-bit and in ssh-rsa format.
+         :code:`<br>`:code:`<br>` For creating ssh keys, see `Create SSH keys on Linux and Mac for Li
+         nux VMs in Azure
+         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-mac-create-ssh-keys?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_.
+        :paramtype key_data: str
+        :keyword path: Path - Specifies the full path on the created VM where ssh public key is stored.
+         If the file already exists, the specified key is appended to the file. Example:
+         /home/user/.ssh/authorized_keys.
+        :paramtype path: str
+        """
+        super().__init__(**kwargs)
+        self.key_data = key_data
+        self.path = path
+
+
+class VirtualmachinesPropertiesOsProfileWindowsConfiguration(_serialization.Model):
+    """Windows Configuration for the virtual machine.
+
+    :ivar enable_automatic_updates: Whether to EnableAutomaticUpdates on the machine.
+    :vartype enable_automatic_updates: bool
+    :ivar ssh: SSH Configuration.
+    :vartype ssh:
+     ~azure.mgmt.azurestackhci.models.VirtualmachinesPropertiesOsProfileWindowsConfigurationSsh
+    :ivar time_zone: TimeZone for the virtual machine.
+    :vartype time_zone: str
+    :ivar provision_vm_agent: Used to indicate whether Arc for Servers agent onboarding should be
+     triggered during the virtual machine creation process.
+    :vartype provision_vm_agent: bool
+    """
+
+    _attribute_map = {
+        "enable_automatic_updates": {"key": "enableAutomaticUpdates", "type": "bool"},
+        "ssh": {"key": "ssh", "type": "VirtualmachinesPropertiesOsProfileWindowsConfigurationSsh"},
+        "time_zone": {"key": "timeZone", "type": "str"},
+        "provision_vm_agent": {"key": "provisionVMAgent", "type": "bool"},
+    }
+
+    def __init__(
+        self,
+        *,
+        enable_automatic_updates: Optional[bool] = None,
+        ssh: Optional["_models.VirtualmachinesPropertiesOsProfileWindowsConfigurationSsh"] = None,
+        time_zone: Optional[str] = None,
+        provision_vm_agent: Optional[bool] = None,
+        **kwargs
+    ):
+        """
+        :keyword enable_automatic_updates: Whether to EnableAutomaticUpdates on the machine.
+        :paramtype enable_automatic_updates: bool
+        :keyword ssh: SSH Configuration.
+        :paramtype ssh:
+         ~azure.mgmt.azurestackhci.models.VirtualmachinesPropertiesOsProfileWindowsConfigurationSsh
+        :keyword time_zone: TimeZone for the virtual machine.
+        :paramtype time_zone: str
+        :keyword provision_vm_agent: Used to indicate whether Arc for Servers agent onboarding should
+         be triggered during the virtual machine creation process.
+        :paramtype provision_vm_agent: bool
+        """
+        super().__init__(**kwargs)
+        self.enable_automatic_updates = enable_automatic_updates
+        self.ssh = ssh
+        self.time_zone = time_zone
+        self.provision_vm_agent = provision_vm_agent
+
+
+class VirtualmachinesPropertiesOsProfileWindowsConfigurationSsh(_serialization.Model):
+    """SSH Configuration.
+
+    :ivar public_keys: PublicKeys - The list of SSH public keys used to authenticate with linux
+     based VMs.
+    :vartype public_keys:
+     list[~azure.mgmt.azurestackhci.models.VirtualmachinesPropertiesOsProfileWindowsConfigurationSshPublicKeysItem]
+    """
+
+    _attribute_map = {
+        "public_keys": {
+            "key": "publicKeys",
+            "type": "[VirtualmachinesPropertiesOsProfileWindowsConfigurationSshPublicKeysItem]",
+        },
+    }
+
+    def __init__(
+        self,
+        *,
+        public_keys: Optional[
+            List["_models.VirtualmachinesPropertiesOsProfileWindowsConfigurationSshPublicKeysItem"]
+        ] = None,
+        **kwargs
+    ):
+        """
+        :keyword public_keys: PublicKeys - The list of SSH public keys used to authenticate with linux
+         based VMs.
+        :paramtype public_keys:
+         list[~azure.mgmt.azurestackhci.models.VirtualmachinesPropertiesOsProfileWindowsConfigurationSshPublicKeysItem]
+        """
+        super().__init__(**kwargs)
+        self.public_keys = public_keys
+
+
+class VirtualmachinesPropertiesOsProfileWindowsConfigurationSshPublicKeysItem(_serialization.Model):
+    """VirtualmachinesPropertiesOsProfileWindowsConfigurationSshPublicKeysItem.
+
+    :ivar key_data: KeyData - SSH public key certificate used to authenticate with the VM through
+     ssh. The key needs to be at least 2048-bit and in ssh-rsa format. :code:`<br>`:code:`<br>` For
+     creating ssh keys, see `Create SSH keys on Linux and Mac for Li      nux VMs in Azure
+     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-mac-create-ssh-keys?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_.
+    :vartype key_data: str
+    :ivar path: Path - Specifies the full path on the created VM where ssh public key is stored. If
+     the file already exists, the specified key is appended to the file. Example:
+     /home/user/.ssh/authorized_keys.
+    :vartype path: str
+    """
+
+    _attribute_map = {
+        "key_data": {"key": "keyData", "type": "str"},
+        "path": {"key": "path", "type": "str"},
+    }
+
+    def __init__(self, *, key_data: Optional[str] = None, path: Optional[str] = None, **kwargs):
+        """
+        :keyword key_data: KeyData - SSH public key certificate used to authenticate with the VM
+         through ssh. The key needs to be at least 2048-bit and in ssh-rsa format.
+         :code:`<br>`:code:`<br>` For creating ssh keys, see `Create SSH keys on Linux and Mac for Li
+         nux VMs in Azure
+         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-mac-create-ssh-keys?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_.
+        :paramtype key_data: str
+        :keyword path: Path - Specifies the full path on the created VM where ssh public key is stored.
+         If the file already exists, the specified key is appended to the file. Example:
+         /home/user/.ssh/authorized_keys.
+        :paramtype path: str
+        """
+        super().__init__(**kwargs)
+        self.key_data = key_data
+        self.path = path
+
+
+class VirtualmachinesPropertiesSecurityProfile(_serialization.Model):
+    """SecurityProfile - Specifies the security settings for the virtual machine.
+
+    :ivar enable_tpm:
+    :vartype enable_tpm: bool
+    :ivar uefi_settings:
+    :vartype uefi_settings:
+     ~azure.mgmt.azurestackhci.models.VirtualmachinesPropertiesSecurityProfileUefiSettings
+    """
+
+    _attribute_map = {
+        "enable_tpm": {"key": "enableTPM", "type": "bool"},
+        "uefi_settings": {"key": "uefiSettings", "type": "VirtualmachinesPropertiesSecurityProfileUefiSettings"},
+    }
+
+    def __init__(
+        self,
+        *,
+        enable_tpm: Optional[bool] = None,
+        uefi_settings: Optional["_models.VirtualmachinesPropertiesSecurityProfileUefiSettings"] = None,
+        **kwargs
+    ):
+        """
+        :keyword enable_tpm:
+        :paramtype enable_tpm: bool
+        :keyword uefi_settings:
+        :paramtype uefi_settings:
+         ~azure.mgmt.azurestackhci.models.VirtualmachinesPropertiesSecurityProfileUefiSettings
+        """
+        super().__init__(**kwargs)
+        self.enable_tpm = enable_tpm
+        self.uefi_settings = uefi_settings
+
+
+class VirtualmachinesPropertiesSecurityProfileUefiSettings(_serialization.Model):
+    """VirtualmachinesPropertiesSecurityProfileUefiSettings.
+
+    :ivar secure_boot_enabled: Specifies whether secure boot should be enabled on the virtual
+     machine.
+    :vartype secure_boot_enabled: bool
+    """
+
+    _attribute_map = {
+        "secure_boot_enabled": {"key": "secureBootEnabled", "type": "bool"},
+    }
+
+    def __init__(self, *, secure_boot_enabled: Optional[bool] = None, **kwargs):
+        """
+        :keyword secure_boot_enabled: Specifies whether secure boot should be enabled on the virtual
+         machine.
+        :paramtype secure_boot_enabled: bool
+        """
+        super().__init__(**kwargs)
+        self.secure_boot_enabled = secure_boot_enabled
+
+
+class VirtualmachinesPropertiesStorageProfile(_serialization.Model):
+    """StorageProfile - contains information about the disks and storage information for the virtual machine.
+
+    :ivar data_disks: adds data disks to the virtual machine.
+    :vartype data_disks:
+     list[~azure.mgmt.azurestackhci.models.VirtualmachinesPropertiesStorageProfileDataDisksItem]
+    :ivar image_reference: Which Image to use for the virtual machine.
+    :vartype image_reference:
+     ~azure.mgmt.azurestackhci.models.VirtualmachinesPropertiesStorageProfileImageReference
+    :ivar os_disk: VHD to attach as OS disk.
+    :vartype os_disk:
+     ~azure.mgmt.azurestackhci.models.VirtualmachinesPropertiesStorageProfileOsDisk
+    :ivar vm_config_container_name: Name of the storage container that hosts the VM configuration
+     file.
+    :vartype vm_config_container_name: str
+    """
+
+    _attribute_map = {
+        "data_disks": {"key": "dataDisks", "type": "[VirtualmachinesPropertiesStorageProfileDataDisksItem]"},
+        "image_reference": {"key": "imageReference", "type": "VirtualmachinesPropertiesStorageProfileImageReference"},
+        "os_disk": {"key": "osDisk", "type": "VirtualmachinesPropertiesStorageProfileOsDisk"},
+        "vm_config_container_name": {"key": "vmConfigContainerName", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        data_disks: Optional[List["_models.VirtualmachinesPropertiesStorageProfileDataDisksItem"]] = None,
+        image_reference: Optional["_models.VirtualmachinesPropertiesStorageProfileImageReference"] = None,
+        os_disk: Optional["_models.VirtualmachinesPropertiesStorageProfileOsDisk"] = None,
+        vm_config_container_name: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword data_disks: adds data disks to the virtual machine.
+        :paramtype data_disks:
+         list[~azure.mgmt.azurestackhci.models.VirtualmachinesPropertiesStorageProfileDataDisksItem]
+        :keyword image_reference: Which Image to use for the virtual machine.
+        :paramtype image_reference:
+         ~azure.mgmt.azurestackhci.models.VirtualmachinesPropertiesStorageProfileImageReference
+        :keyword os_disk: VHD to attach as OS disk.
+        :paramtype os_disk:
+         ~azure.mgmt.azurestackhci.models.VirtualmachinesPropertiesStorageProfileOsDisk
+        :keyword vm_config_container_name: Name of the storage container that hosts the VM
+         configuration file.
+        :paramtype vm_config_container_name: str
+        """
+        super().__init__(**kwargs)
+        self.data_disks = data_disks
+        self.image_reference = image_reference
+        self.os_disk = os_disk
+        self.vm_config_container_name = vm_config_container_name
+
+
+class VirtualmachinesPropertiesStorageProfileDataDisksItem(_serialization.Model):
+    """VirtualmachinesPropertiesStorageProfileDataDisksItem.
+
+    :ivar name:
+    :vartype name: str
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+    }
+
+    def __init__(self, *, name: Optional[str] = None, **kwargs):
+        """
+        :keyword name:
+        :paramtype name: str
+        """
+        super().__init__(**kwargs)
+        self.name = name
+
+
+class VirtualmachinesPropertiesStorageProfileImageReference(_serialization.Model):
+    """Which Image to use for the virtual machine.
+
+    :ivar name: Name - Name of the image.
+    :vartype name: str
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+    }
+
+    def __init__(self, *, name: Optional[str] = None, **kwargs):
+        """
+        :keyword name: Name - Name of the image.
+        :paramtype name: str
+        """
+        super().__init__(**kwargs)
+        self.name = name
+
+
+class VirtualmachinesPropertiesStorageProfileOsDisk(_serialization.Model):
+    """VHD to attach as OS disk.
+
+    :ivar id: Specifies the virtual hard disk's ID.
+    :vartype id: str
+    """
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+    }
+
+    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
+        """
+        :keyword id: Specifies the virtual hard disk's ID.
+        :paramtype id: str
+        """
+        super().__init__(**kwargs)
+        self.id = id
+
+
+class VirtualMachineStatus(_serialization.Model):
+    """VirtualMachineStatus defines the observed state of virtualmachines.
+
+    :ivar error_code: VirtualMachine provisioning error code.
+    :vartype error_code: str
+    :ivar error_message: Descriptive error message.
+    :vartype error_message: str
+    :ivar power_state: The power state of the virtual machine. Known values are: "Deallocated",
+     "Deallocating", "Running", "Starting", "Stopped", "Stopping", and "Unknown".
+    :vartype power_state: str or ~azure.mgmt.azurestackhci.models.PowerStateEnum
+    :ivar provisioning_status: The provisioning status of the virtual machine.
+    :vartype provisioning_status:
+     ~azure.mgmt.azurestackhci.models.VirtualMachineStatusProvisioningStatus
+    """
+
+    _attribute_map = {
+        "error_code": {"key": "errorCode", "type": "str"},
+        "error_message": {"key": "errorMessage", "type": "str"},
+        "power_state": {"key": "powerState", "type": "str"},
+        "provisioning_status": {"key": "provisioningStatus", "type": "VirtualMachineStatusProvisioningStatus"},
+    }
+
+    def __init__(
+        self,
+        *,
+        error_code: Optional[str] = None,
+        error_message: Optional[str] = None,
+        power_state: Optional[Union[str, "_models.PowerStateEnum"]] = None,
+        provisioning_status: Optional["_models.VirtualMachineStatusProvisioningStatus"] = None,
+        **kwargs
+    ):
+        """
+        :keyword error_code: VirtualMachine provisioning error code.
+        :paramtype error_code: str
+        :keyword error_message: Descriptive error message.
+        :paramtype error_message: str
+        :keyword power_state: The power state of the virtual machine. Known values are: "Deallocated",
+         "Deallocating", "Running", "Starting", "Stopped", "Stopping", and "Unknown".
+        :paramtype power_state: str or ~azure.mgmt.azurestackhci.models.PowerStateEnum
+        :keyword provisioning_status: The provisioning status of the virtual machine.
+        :paramtype provisioning_status:
+         ~azure.mgmt.azurestackhci.models.VirtualMachineStatusProvisioningStatus
+        """
+        super().__init__(**kwargs)
+        self.error_code = error_code
+        self.error_message = error_message
+        self.power_state = power_state
+        self.provisioning_status = provisioning_status
+
+
+class VirtualMachineStatusProvisioningStatus(_serialization.Model):
+    """The provisioning status of the virtual machine.
+
+    :ivar operation_id: The ID of the operation performed on the virtual machine.
+    :vartype operation_id: str
+    :ivar status: The status of the operation performed on the virtual machine [Succeeded, Failed,
+     InProgress]. Known values are: "Succeeded", "Failed", and "InProgress".
+    :vartype status: str or ~azure.mgmt.azurestackhci.models.ProvisioningStatusEnum
+    """
+
+    _attribute_map = {
+        "operation_id": {"key": "operationId", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        operation_id: Optional[str] = None,
+        status: Optional[Union[str, "_models.ProvisioningStatusEnum"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword operation_id: The ID of the operation performed on the virtual machine.
+        :paramtype operation_id: str
+        :keyword status: The status of the operation performed on the virtual machine [Succeeded,
+         Failed, InProgress]. Known values are: "Succeeded", "Failed", and "InProgress".
+        :paramtype status: str or ~azure.mgmt.azurestackhci.models.ProvisioningStatusEnum
+        """
+        super().__init__(**kwargs)
+        self.operation_id = operation_id
+        self.status = status
+
+
+class VirtualMachineUpdateProperties(_serialization.Model):
+    """Defines the resource properties for the update.
+
+    :ivar hardware_profile: HardwareProfile - Specifies the hardware settings for the virtual
+     machine.
+    :vartype hardware_profile: ~azure.mgmt.azurestackhci.models.HardwareProfileUpdate
+    :ivar storage_profile:
+    :vartype storage_profile: ~azure.mgmt.azurestackhci.models.StorageProfileUpdate
+    :ivar network_profile: NetworkProfile - describes the network update configuration the virtual
+     machine.
+    :vartype network_profile: ~azure.mgmt.azurestackhci.models.NetworkProfileUpdate
+    """
+
+    _attribute_map = {
+        "hardware_profile": {"key": "hardwareProfile", "type": "HardwareProfileUpdate"},
+        "storage_profile": {"key": "storageProfile", "type": "StorageProfileUpdate"},
+        "network_profile": {"key": "networkProfile", "type": "NetworkProfileUpdate"},
+    }
+
+    def __init__(
+        self,
+        *,
+        hardware_profile: Optional["_models.HardwareProfileUpdate"] = None,
+        storage_profile: Optional["_models.StorageProfileUpdate"] = None,
+        network_profile: Optional["_models.NetworkProfileUpdate"] = None,
+        **kwargs
+    ):
+        """
+        :keyword hardware_profile: HardwareProfile - Specifies the hardware settings for the virtual
+         machine.
+        :paramtype hardware_profile: ~azure.mgmt.azurestackhci.models.HardwareProfileUpdate
+        :keyword storage_profile:
+        :paramtype storage_profile: ~azure.mgmt.azurestackhci.models.StorageProfileUpdate
+        :keyword network_profile: NetworkProfile - describes the network update configuration the
+         virtual machine.
+        :paramtype network_profile: ~azure.mgmt.azurestackhci.models.NetworkProfileUpdate
+        """
+        super().__init__(**kwargs)
+        self.hardware_profile = hardware_profile
+        self.storage_profile = storage_profile
+        self.network_profile = network_profile
+
+
+class Virtualnetworks(TrackedResource):  # pylint: disable=too-many-instance-attributes
+    """The virtual network resource definition.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar extended_location: The extendedLocation of the resource.
+    :vartype extended_location: ~azure.mgmt.azurestackhci.models.ExtendedLocation
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.azurestackhci.models.SystemData
+    :ivar network_type: Type of the network. Known values are: "NAT", "Transparent", "L2Bridge",
+     "L2Tunnel", "ICS", "Private", "Overlay", "Internal", and "Mirrored".
+    :vartype network_type: str or ~azure.mgmt.azurestackhci.models.NetworkTypeEnum
+    :ivar subnets: Subnet - list of subnets under the virtual network.
+    :vartype subnets: list[~azure.mgmt.azurestackhci.models.VirtualnetworksPropertiesSubnetsItem]
+    :ivar provisioning_state: Provisioning state of the gallery image. Known values are:
+     "Succeeded", "Failed", "InProgress", "Accepted", "Deleting", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.azurestackhci.models.ProvisioningStateEnum
+    :ivar resource_name: name of the object to be used in moc.
+    :vartype resource_name: str
+    :ivar status: VirtualNetworkStatus defines the observed state of virtual networks.
+    :vartype status: ~azure.mgmt.azurestackhci.models.VirtualNetworkStatus
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "status": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "network_type": {"key": "properties.networkType", "type": "str"},
+        "subnets": {"key": "properties.subnets", "type": "[VirtualnetworksPropertiesSubnetsItem]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "resource_name": {"key": "properties.resourceName", "type": "str"},
+        "status": {"key": "properties.status", "type": "VirtualNetworkStatus"},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[Dict[str, str]] = None,
+        extended_location: Optional["_models.ExtendedLocation"] = None,
+        network_type: Optional[Union[str, "_models.NetworkTypeEnum"]] = None,
+        subnets: Optional[List["_models.VirtualnetworksPropertiesSubnetsItem"]] = None,
+        resource_name: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        :keyword extended_location: The extendedLocation of the resource.
+        :paramtype extended_location: ~azure.mgmt.azurestackhci.models.ExtendedLocation
+        :keyword network_type: Type of the network. Known values are: "NAT", "Transparent", "L2Bridge",
+         "L2Tunnel", "ICS", "Private", "Overlay", "Internal", and "Mirrored".
+        :paramtype network_type: str or ~azure.mgmt.azurestackhci.models.NetworkTypeEnum
+        :keyword subnets: Subnet - list of subnets under the virtual network.
+        :paramtype subnets: list[~azure.mgmt.azurestackhci.models.VirtualnetworksPropertiesSubnetsItem]
+        :keyword resource_name: name of the object to be used in moc.
+        :paramtype resource_name: str
+        """
+        super().__init__(tags=tags, location=location, **kwargs)
+        self.extended_location = extended_location
+        self.system_data = None
+        self.network_type = network_type
+        self.subnets = subnets
+        self.provisioning_state = None
+        self.resource_name = resource_name
+        self.status = None
+
+
+class VirtualnetworksListResult(_serialization.Model):
+    """VirtualnetworksListResult.
+
+    :ivar value:
+    :vartype value: list[~azure.mgmt.azurestackhci.models.Virtualnetworks]
+    :ivar next_link:
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[Virtualnetworks]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: Optional[List["_models.Virtualnetworks"]] = None, next_link: Optional[str] = None, **kwargs
+    ):
+        """
+        :keyword value:
+        :paramtype value: list[~azure.mgmt.azurestackhci.models.Virtualnetworks]
+        :keyword next_link:
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class VirtualnetworksPatch(_serialization.Model):
+    """The virtual network resource patch definition.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    _attribute_map = {
+        "tags": {"key": "tags", "type": "{str}"},
+    }
+
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(**kwargs)
+        self.tags = tags
+
+
+class VirtualnetworksPropertiesSubnetsItem(_serialization.Model):
+    """Subnet subnet in a virtual network resource.
+
+    :ivar name: Name - The name of the resource that is unique within a resource group. This name
+     can be used to access the resource.
+    :vartype name: str
+    :ivar address_prefix: Cidr for this subnet - IPv4, IPv6.
+    :vartype address_prefix: str
+    :ivar address_prefixes: AddressPrefixes - List of address prefixes for the subnet.
+    :vartype address_prefixes: list[str]
+    :ivar ip_allocation_method: IPAllocationMethod - The IP address allocation method. Possible
+     values include: 'Static', 'Dynamic'. Known values are: "Dynamic" and "Static".
+    :vartype ip_allocation_method: str or ~azure.mgmt.azurestackhci.models.IpAllocationMethodEnum
+    :ivar ip_configuration_references: IPConfigurationReferences - list of
+     IPConfigurationReferences.
+    :vartype ip_configuration_references:
+     list[~azure.mgmt.azurestackhci.models.ComponentsVqks9HSchemasVirtualnetworkspropertiesPropertiesSubnetsItemsPropertiesIpconfigurationreferencesItems]
+    :ivar route_table: RouteTable for the subnet.
+    :vartype route_table:
+     ~azure.mgmt.azurestackhci.models.ComponentsL15GkaSchemasVirtualnetworkspropertiesPropertiesSubnetsItemsPropertiesRoutetable
+    :ivar ip_pools: network associated pool of IP Addresses.
+    :vartype ip_pools: list[~azure.mgmt.azurestackhci.models.IPPool]
+    :ivar vlan: Vlan to use for the subnet.
+    :vartype vlan: int
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "address_prefix": {"key": "properties.addressPrefix", "type": "str"},
+        "address_prefixes": {"key": "properties.addressPrefixes", "type": "[str]"},
+        "ip_allocation_method": {"key": "properties.ipAllocationMethod", "type": "str"},
+        "ip_configuration_references": {
+            "key": "properties.ipConfigurationReferences",
+            "type": "[ComponentsVqks9HSchemasVirtualnetworkspropertiesPropertiesSubnetsItemsPropertiesIpconfigurationreferencesItems]",
+        },
+        "route_table": {
+            "key": "properties.routeTable",
+            "type": "ComponentsL15GkaSchemasVirtualnetworkspropertiesPropertiesSubnetsItemsPropertiesRoutetable",
+        },
+        "ip_pools": {"key": "properties.ipPools", "type": "[IPPool]"},
+        "vlan": {"key": "properties.vlan", "type": "int"},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        address_prefix: Optional[str] = None,
+        address_prefixes: Optional[List[str]] = None,
+        ip_allocation_method: Optional[Union[str, "_models.IpAllocationMethodEnum"]] = None,
+        ip_configuration_references: Optional[
+            List[
+                "_models.ComponentsVqks9HSchemasVirtualnetworkspropertiesPropertiesSubnetsItemsPropertiesIpconfigurationreferencesItems"
+            ]
+        ] = None,
+        route_table: Optional[
+            "_models.ComponentsL15GkaSchemasVirtualnetworkspropertiesPropertiesSubnetsItemsPropertiesRoutetable"
+        ] = None,
+        ip_pools: Optional[List["_models.IPPool"]] = None,
+        vlan: Optional[int] = None,
+        **kwargs
+    ):
+        """
+        :keyword name: Name - The name of the resource that is unique within a resource group. This
+         name can be used to access the resource.
+        :paramtype name: str
+        :keyword address_prefix: Cidr for this subnet - IPv4, IPv6.
+        :paramtype address_prefix: str
+        :keyword address_prefixes: AddressPrefixes - List of address prefixes for the subnet.
+        :paramtype address_prefixes: list[str]
+        :keyword ip_allocation_method: IPAllocationMethod - The IP address allocation method. Possible
+         values include: 'Static', 'Dynamic'. Known values are: "Dynamic" and "Static".
+        :paramtype ip_allocation_method: str or ~azure.mgmt.azurestackhci.models.IpAllocationMethodEnum
+        :keyword ip_configuration_references: IPConfigurationReferences - list of
+         IPConfigurationReferences.
+        :paramtype ip_configuration_references:
+         list[~azure.mgmt.azurestackhci.models.ComponentsVqks9HSchemasVirtualnetworkspropertiesPropertiesSubnetsItemsPropertiesIpconfigurationreferencesItems]
+        :keyword route_table: RouteTable for the subnet.
+        :paramtype route_table:
+         ~azure.mgmt.azurestackhci.models.ComponentsL15GkaSchemasVirtualnetworkspropertiesPropertiesSubnetsItemsPropertiesRoutetable
+        :keyword ip_pools: network associated pool of IP Addresses.
+        :paramtype ip_pools: list[~azure.mgmt.azurestackhci.models.IPPool]
+        :keyword vlan: Vlan to use for the subnet.
+        :paramtype vlan: int
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.address_prefix = address_prefix
+        self.address_prefixes = address_prefixes
+        self.ip_allocation_method = ip_allocation_method
+        self.ip_configuration_references = ip_configuration_references
+        self.route_table = route_table
+        self.ip_pools = ip_pools
+        self.vlan = vlan
+
+
+class VirtualnetworksPropertiesSubnetsPropertiesItemsItem(_serialization.Model):
+    """Route is associated with a subnet.
+
+    :ivar name: Name - name of the subnet.
+    :vartype name: str
+    :ivar address_prefix: AddressPrefix - The destination CIDR to which the route applies.
+    :vartype address_prefix: str
+    :ivar next_hop_ip_address: NextHopIPAddress - The IP address packets should be forwarded to.
+     Next hop values are only allowed in routes where the next hop type is VirtualAppliance.
+    :vartype next_hop_ip_address: str
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "address_prefix": {"key": "properties.addressPrefix", "type": "str"},
+        "next_hop_ip_address": {"key": "properties.nextHopIpAddress", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        address_prefix: Optional[str] = None,
+        next_hop_ip_address: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword name: Name - name of the subnet.
+        :paramtype name: str
+        :keyword address_prefix: AddressPrefix - The destination CIDR to which the route applies.
+        :paramtype address_prefix: str
+        :keyword next_hop_ip_address: NextHopIPAddress - The IP address packets should be forwarded to.
+         Next hop values are only allowed in routes where the next hop type is VirtualAppliance.
+        :paramtype next_hop_ip_address: str
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.address_prefix = address_prefix
+        self.next_hop_ip_address = next_hop_ip_address
+
+
+class VirtualNetworkStatus(_serialization.Model):
+    """VirtualNetworkStatus defines the observed state of virtual networks.
+
+    :ivar error_code: VirtualNetwork provisioning error code.
+    :vartype error_code: str
+    :ivar error_message: Descriptive error message.
+    :vartype error_message: str
+    :ivar provisioning_status: The provisioning status of the virtual network.
+    :vartype provisioning_status:
+     ~azure.mgmt.azurestackhci.models.VirtualNetworkStatusProvisioningStatus
+    """
+
+    _attribute_map = {
+        "error_code": {"key": "errorCode", "type": "str"},
+        "error_message": {"key": "errorMessage", "type": "str"},
+        "provisioning_status": {"key": "provisioningStatus", "type": "VirtualNetworkStatusProvisioningStatus"},
+    }
+
+    def __init__(
+        self,
+        *,
+        error_code: Optional[str] = None,
+        error_message: Optional[str] = None,
+        provisioning_status: Optional["_models.VirtualNetworkStatusProvisioningStatus"] = None,
+        **kwargs
+    ):
+        """
+        :keyword error_code: VirtualNetwork provisioning error code.
+        :paramtype error_code: str
+        :keyword error_message: Descriptive error message.
+        :paramtype error_message: str
+        :keyword provisioning_status: The provisioning status of the virtual network.
+        :paramtype provisioning_status:
+         ~azure.mgmt.azurestackhci.models.VirtualNetworkStatusProvisioningStatus
+        """
+        super().__init__(**kwargs)
+        self.error_code = error_code
+        self.error_message = error_message
+        self.provisioning_status = provisioning_status
+
+
+class VirtualNetworkStatusProvisioningStatus(_serialization.Model):
+    """The provisioning status of the virtual network.
+
+    :ivar operation_id: The ID of the operation performed on the virtual network.
+    :vartype operation_id: str
+    :ivar status: The status of the operation performed on the virtual network [Succeeded, Failed,
+     InProgress]. Known values are: "Succeeded", "Failed", and "InProgress".
+    :vartype status: str or ~azure.mgmt.azurestackhci.models.ProvisioningStatusEnum
+    """
+
+    _attribute_map = {
+        "operation_id": {"key": "operationId", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        operation_id: Optional[str] = None,
+        status: Optional[Union[str, "_models.ProvisioningStatusEnum"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword operation_id: The ID of the operation performed on the virtual network.
+        :paramtype operation_id: str
+        :keyword status: The status of the operation performed on the virtual network [Succeeded,
+         Failed, InProgress]. Known values are: "Succeeded", "Failed", and "InProgress".
+        :paramtype status: str or ~azure.mgmt.azurestackhci.models.ProvisioningStatusEnum
+        """
+        super().__init__(**kwargs)
+        self.operation_id = operation_id
+        self.status = status

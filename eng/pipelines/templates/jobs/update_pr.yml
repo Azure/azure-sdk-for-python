@@ -23,7 +23,7 @@ steps:
     python3 -m pip install -e "git+https://github.com/Azure/azure-sdk-for-python#subdirectory=tools/azure-sdk-tools&egg=azure-sdk-tools"
   displayName: 'Install Azure SDK tools'
 
-- script: python3  -m packaging_tools.update_pr -v --pr-number $(System.PullRequest.PullRequestNumber) --repo $(Build.Repository.Name)
+- script: python3 -m packaging_tools.update_pr -v --pr-number $(System.PullRequest.PullRequestNumber) --repo $(Build.Repository.Name)
   displayName: 'Update packaging of PR'
   env:
     GH_TOKEN: $(azuresdk-github-pat)

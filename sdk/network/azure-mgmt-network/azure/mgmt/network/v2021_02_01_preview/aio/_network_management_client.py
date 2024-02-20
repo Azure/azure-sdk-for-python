@@ -12,7 +12,7 @@ from typing import Any, Awaitable, TYPE_CHECKING
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
 
-from .. import models
+from .. import models as _models
 from ..._serialization import Deserializer, Serializer
 from ._configuration import NetworkManagementClientConfiguration
 from .operations import (
@@ -34,8 +34,6 @@ from .operations import (
     NspAccessRulesReconcileOperations,
     NspAssociationReconcileOperations,
     NspAssociationsOperations,
-    NspLinkReconcileOperations,
-    NspLinkReferenceReconcileOperations,
     NspLinkReferencesOperations,
     NspLinksOperations,
     NspProfilesOperations,
@@ -130,15 +128,9 @@ class NetworkManagementClient:  # pylint: disable=client-accepts-api-version-key
      azure.mgmt.network.v2021_02_01_preview.aio.operations.NspAccessRulesReconcileOperations
     :ivar nsp_links: NspLinksOperations operations
     :vartype nsp_links: azure.mgmt.network.v2021_02_01_preview.aio.operations.NspLinksOperations
-    :ivar nsp_link_reconcile: NspLinkReconcileOperations operations
-    :vartype nsp_link_reconcile:
-     azure.mgmt.network.v2021_02_01_preview.aio.operations.NspLinkReconcileOperations
     :ivar nsp_link_references: NspLinkReferencesOperations operations
     :vartype nsp_link_references:
      azure.mgmt.network.v2021_02_01_preview.aio.operations.NspLinkReferencesOperations
-    :ivar nsp_link_reference_reconcile: NspLinkReferenceReconcileOperations operations
-    :vartype nsp_link_reference_reconcile:
-     azure.mgmt.network.v2021_02_01_preview.aio.operations.NspLinkReferenceReconcileOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The subscription credentials which uniquely identify the Microsoft
@@ -163,83 +155,89 @@ class NetworkManagementClient:  # pylint: disable=client-accepts-api-version-key
         self._config = NetworkManagementClientConfiguration(
             credential=credential, subscription_id=subscription_id, **kwargs
         )
-        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
         self.network_managers = NetworkManagersOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-02-01-preview"
         )
         self.network_manager_commits = NetworkManagerCommitsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-02-01-preview"
         )
         self.network_manager_deployment_status = NetworkManagerDeploymentStatusOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-02-01-preview"
         )
         self.effective_virtual_networks = EffectiveVirtualNetworksOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-02-01-preview"
         )
         self.active_connectivity_configurations = ActiveConnectivityConfigurationsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-02-01-preview"
         )
         self.active_security_admin_rules = ActiveSecurityAdminRulesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-02-01-preview"
         )
         self.active_security_user_rules = ActiveSecurityUserRulesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-02-01-preview"
         )
         self.connectivity_configurations = ConnectivityConfigurationsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-02-01-preview"
         )
         self.effective_connectivity_configurations = EffectiveConnectivityConfigurationsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-02-01-preview"
         )
         self.network_manager_effective_security_admin_rules = NetworkManagerEffectiveSecurityAdminRulesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-02-01-preview"
         )
-        self.network_groups = NetworkGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.network_groups = NetworkGroupsOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2021-02-01-preview"
+        )
         self.security_user_configurations = SecurityUserConfigurationsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-02-01-preview"
         )
         self.user_rule_collections = UserRuleCollectionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-02-01-preview"
         )
-        self.user_rules = UserRulesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.user_rules = UserRulesOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2021-02-01-preview"
+        )
         self.security_admin_configurations = SecurityAdminConfigurationsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-02-01-preview"
         )
         self.admin_rule_collections = AdminRuleCollectionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-02-01-preview"
         )
-        self.admin_rules = AdminRulesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.admin_rules = AdminRulesOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2021-02-01-preview"
+        )
         self.network_security_perimeters = NetworkSecurityPerimetersOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-02-01-preview"
         )
-        self.nsp_profiles = NspProfilesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.nsp_access_rules = NspAccessRulesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.nsp_profiles = NspProfilesOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2021-02-01-preview"
+        )
+        self.nsp_access_rules = NspAccessRulesOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2021-02-01-preview"
+        )
         self.nsp_associations = NspAssociationsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-02-01-preview"
         )
         self.nsp_association_reconcile = NspAssociationReconcileOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-02-01-preview"
         )
         self.perimeter_associable_resource_types = PerimeterAssociableResourceTypesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-02-01-preview"
         )
         self.nsp_access_rules_reconcile = NspAccessRulesReconcileOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-02-01-preview"
         )
-        self.nsp_links = NspLinksOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.nsp_link_reconcile = NspLinkReconcileOperations(
-            self._client, self._config, self._serialize, self._deserialize
+        self.nsp_links = NspLinksOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2021-02-01-preview"
         )
         self.nsp_link_references = NspLinkReferencesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.nsp_link_reference_reconcile = NspLinkReferenceReconcileOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-02-01-preview"
         )
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
@@ -271,5 +269,5 @@ class NetworkManagementClient:  # pylint: disable=client-accepts-api-version-key
         await self._client.__aenter__()
         return self
 
-    async def __aexit__(self, *exc_details) -> None:
+    async def __aexit__(self, *exc_details: Any) -> None:
         await self._client.__aexit__(*exc_details)

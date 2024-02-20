@@ -9,24 +9,39 @@
 from copy import deepcopy
 from typing import Any, TYPE_CHECKING
 
-from msrest import Deserializer, Serializer
-
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.mgmt.core import ARMPipelineClient
 
-from . import models
+from . import models as _models
 from ._configuration import StorageCacheManagementClientConfiguration
-from .operations import AscOperationsOperations, AscUsagesOperations, CachesOperations, Operations, SkusOperations, StorageTargetOperations, StorageTargetsOperations, UsageModelsOperations
+from ._serialization import Deserializer, Serializer
+from .operations import (
+    AmlFilesystemsOperations,
+    AscOperationsOperations,
+    AscUsagesOperations,
+    CachesOperations,
+    Operations,
+    SkusOperations,
+    StorageCacheManagementClientOperationsMixin,
+    StorageTargetOperations,
+    StorageTargetsOperations,
+    UsageModelsOperations,
+)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
-class StorageCacheManagementClient:    # pylint: disable=too-many-instance-attributes
-    """A Storage Cache provides scalable caching service for NAS clients, serving data from either
-    NFSv3 or Blob at-rest storage (referred to as "Storage Targets"). These operations allow you to
-    manage Caches.
 
+class StorageCacheManagementClient(
+    StorageCacheManagementClientOperationsMixin
+):  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+    """Azure Managed Lustre provides a fully managed Lustre® file system, integrated with Blob
+    storage, for use on demand. These operations create and manage Azure Managed Lustre file
+    systems.
+
+    :ivar aml_filesystems: AmlFilesystemsOperations operations
+    :vartype aml_filesystems: azure.mgmt.storagecache.operations.AmlFilesystemsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.storagecache.operations.Operations
     :ivar skus: SkusOperations operations
@@ -43,14 +58,13 @@ class StorageCacheManagementClient:    # pylint: disable=too-many-instance-attri
     :vartype storage_targets: azure.mgmt.storagecache.operations.StorageTargetsOperations
     :ivar storage_target: StorageTargetOperations operations
     :vartype storage_target: azure.mgmt.storagecache.operations.StorageTargetOperations
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: Subscription credentials which uniquely identify Microsoft Azure
-     subscription. The subscription ID forms part of the URI for every service call.
+    :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2022-05-01". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2023-05-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -64,44 +78,26 @@ class StorageCacheManagementClient:    # pylint: disable=too-many-instance-attri
         base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
-        self._config = StorageCacheManagementClientConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
-        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._config = StorageCacheManagementClientConfiguration(
+            credential=credential, subscription_id=subscription_id, **kwargs
+        )
+        self._client: ARMPipelineClient = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.operations = Operations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.skus = SkusOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.usage_models = UsageModelsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.asc_operations = AscOperationsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.asc_usages = AscUsagesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.caches = CachesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.storage_targets = StorageTargetsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.storage_target = StorageTargetOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.aml_filesystems = AmlFilesystemsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.skus = SkusOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.usage_models = UsageModelsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.asc_operations = AscOperationsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.asc_usages = AscUsagesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.caches = CachesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.storage_targets = StorageTargetsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.storage_target = StorageTargetOperations(self._client, self._config, self._serialize, self._deserialize)
 
-
-    def _send_request(
-        self,
-        request: HttpRequest,
-        **kwargs: Any
-    ) -> HttpResponse:
+    def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -110,7 +106,7 @@ class StorageCacheManagementClient:    # pylint: disable=too-many-instance-attri
         >>> response = client._send_request(request)
         <HttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest
@@ -123,15 +119,12 @@ class StorageCacheManagementClient:    # pylint: disable=too-many-instance-attri
         request_copy.url = self._client.format_url(request_copy.url)
         return self._client.send_request(request_copy, **kwargs)
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         self._client.close()
 
-    def __enter__(self):
-        # type: () -> StorageCacheManagementClient
+    def __enter__(self) -> "StorageCacheManagementClient":
         self._client.__enter__()
         return self
 
-    def __exit__(self, *exc_details):
-        # type: (Any) -> None
+    def __exit__(self, *exc_details: Any) -> None:
         self._client.__exit__(*exc_details)

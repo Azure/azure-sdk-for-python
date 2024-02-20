@@ -4,16 +4,17 @@
 # --------------------------------------------------------------------------------------------
 
 from functools import lru_cache
-from typing import BinaryIO, Union, TypeVar, cast
+from typing import BinaryIO, Union, cast, IO, Dict, Any, Mapping, TYPE_CHECKING
 from io import BytesIO
 import avro  # type: ignore
 from avro.io import DatumWriter, DatumReader, BinaryDecoder, BinaryEncoder  # type: ignore
-
 from ._abstract_avro_encoder import (  # pylint: disable=import-error
     AbstractAvroObjectEncoder,
+    AvroDataReader
 )
 
-ObjectType = TypeVar("ObjectType")
+if TYPE_CHECKING:
+    from avro import schema
 
 
 class ApacheAvroObjectEncoder(AbstractAvroObjectEncoder):
@@ -24,7 +25,7 @@ class ApacheAvroObjectEncoder(AbstractAvroObjectEncoder):
         self._writer_codec = codec
 
     @lru_cache(maxsize=128)
-    def parse_schema(self, schema):  # pylint: disable=no-self-use
+    def parse_schema(self, schema):
         return avro.schema.parse(schema)
 
     def get_schema_fullname(self, schema):
@@ -32,30 +33,29 @@ class ApacheAvroObjectEncoder(AbstractAvroObjectEncoder):
         return parsed_schema.fullname
 
     @lru_cache(maxsize=128)
-    def get_schema_writer(self, schema):  # pylint: disable=no-self-use
+    def get_schema_writer(self, schema):
         schema = self.parse_schema(schema)
         return DatumWriter(schema)
 
     @lru_cache(maxsize=128)
     def get_schema_reader(
         self, schema, readers_schema=None
-    ):  # pylint: disable=no-self-use
+    ):
         schema = self.parse_schema(schema)
         if readers_schema:
             readers_schema = self.parse_schema(readers_schema)
         return DatumReader(writers_schema=schema, readers_schema=readers_schema)
 
-    # pylint: disable=no-self-use
     def encode(
         self,
-        content,  # type: ObjectType
-        schema,  # type: Union[str, bytes, avro.schema.Schema]
+        content: Mapping[str, Any],
+        schema: Union[str, bytes, "schema.Schema"],
     ) -> bytes:
         """Convert the provided value to it's binary representation and write it to the stream.
         Schema must be a Avro RecordSchema:
         https://avro.apache.org/docs/1.10.0/gettingstartedpython.html#Defining+a+schema
-        :param content: An object to encode
-        :type content: ObjectType
+        :param content: A mapping to encode
+        :type content: mapping[str, any]
         :param schema: An Avro RecordSchema
         :type schema: str
         :returns: Encoded bytes
@@ -72,29 +72,26 @@ class ApacheAvroObjectEncoder(AbstractAvroObjectEncoder):
             encoded_content = stream.getvalue()
         return encoded_content
 
-    # pylint: disable=no-self-use
     def decode(
         self,
-        content,  # type: Union[bytes, BinaryIO]
-        reader,  # type: DatumReader
-    ) -> ObjectType:
+        content: Union[bytes, BinaryIO],
+        reader: AvroDataReader,
+    ) -> Dict[str, Any]:
         """Read the binary representation into a specific type.
         Return type will be ignored, since the schema is deduced from the provided bytes.
         :param content: A stream of bytes or bytes directly
         :type content: BinaryIO or bytes
-        :param schema: An Avro RecordSchema
-        :type schema: str
-        :keyword readers_schema: An optional reader's schema as defined by the Apache Avro specification.
-        :paramtype readers_schema: str or None
-        :returns: An instantiated object
-        :rtype: ObjectType
+        :param reader: The Apache Avro data reader.
+        :type reader: DatumReader
+        :returns: The content dict.
+        :rtype: dict[str, any]
         """
         if not hasattr(content, "read"):
             content = cast(bytes, content)
             content = BytesIO(content)
 
         with content:  # type: ignore
-            bin_decoder = BinaryDecoder(content)
-            decoded_content = reader.read(bin_decoder)
+            bin_decoder = BinaryDecoder(cast(IO[bytes], content))
+            decoded_content = cast(Dict[str, Any], reader.read(bin_decoder))
 
         return decoded_content

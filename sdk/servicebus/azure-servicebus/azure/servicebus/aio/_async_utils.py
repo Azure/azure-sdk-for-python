@@ -10,8 +10,6 @@ import asyncio
 import logging
 import functools
 
-from uamqp import authentication
-
 from .._common.constants import JWT_TOKEN_SCOPE, TOKEN_TYPE_JWT, TOKEN_TYPE_SASTOKEN
 
 
@@ -47,33 +45,20 @@ async def create_authentication(client):
     except AttributeError:
         token_type = TOKEN_TYPE_JWT
     if token_type == TOKEN_TYPE_SASTOKEN:
-        auth = authentication.JWTTokenAsync(
+        return (await client._amqp_transport.create_token_auth_async(
             client._auth_uri,
-            client._auth_uri,
-            functools.partial(client._credential.get_token, client._auth_uri),
+            get_token=functools.partial(client._credential.get_token, client._auth_uri),
             token_type=token_type,
-            timeout=client._config.auth_timeout,
-            http_proxy=client._config.http_proxy,
-            transport_type=client._config.transport_type,
-            custom_endpoint_hostname=client._config.custom_endpoint_hostname,
-            port=client._config.connection_port,
-            verify=client._config.connection_verify
-        )
-        await auth.update_token()
-        return auth
-    return authentication.JWTTokenAsync(
-        client._auth_uri,
-        client._auth_uri,
-        functools.partial(client._credential.get_token, JWT_TOKEN_SCOPE),
-        token_type=token_type,
-        timeout=client._config.auth_timeout,
-        http_proxy=client._config.http_proxy,
-        transport_type=client._config.transport_type,
-        refresh_window=300,
-        custom_endpoint_hostname=client._config.custom_endpoint_hostname,
-        port=client._config.connection_port,
-        verify=client._config.connection_verify
-    )
+            config=client._config,
+            update_token=True
+        ))
+    return (await client._amqp_transport.create_token_auth_async(
+            client._auth_uri,
+            get_token=functools.partial(client._credential.get_token, JWT_TOKEN_SCOPE),
+            token_type=token_type,
+            config=client._config,
+            update_token=False,
+        ))
 
 
 def get_dict_with_loop_if_needed(loop):

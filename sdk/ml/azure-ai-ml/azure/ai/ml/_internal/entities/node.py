@@ -4,24 +4,22 @@
 # pylint: disable=protected-access
 
 from enum import Enum
-from typing import Dict, List, Union
+from typing import Dict, List, Optional, Union
 
 from marshmallow import Schema
 
-from azure.ai.ml import Input, Output
-from azure.ai.ml._schema import PathAwareSchema
-from azure.ai.ml.constants import JobType
-from azure.ai.ml.entities import Component, Job
-from azure.ai.ml.entities._builders import BaseNode
-from azure.ai.ml.entities._job.pipeline._io import NodeInput, NodeOutput, PipelineInput
-from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
-
+from ... import Input, Output
+from ..._schema import PathAwareSchema
+from ...constants import JobType
+from ...entities import Component, Job
+from ...entities._builders import BaseNode
+from ...entities._job.pipeline._io import NodeInput, NodeOutput, PipelineInput
+from ...entities._util import convert_ordered_dict_to_dict
 from .._schema.component import NodeType
 
 
 class InternalBaseNode(BaseNode):
-    """Base class for node of internal components in pipeline. Can be
-    instantiated directly.
+    """Base class for node of internal components in pipeline. Can be instantiated directly.
 
     :param type: Type of pipeline node
     :type type: str
@@ -42,23 +40,25 @@ class InternalBaseNode(BaseNode):
         *,
         type: str = JobType.COMPONENT,  # pylint: disable=redefined-builtin
         component: Union[Component, str],
-        inputs: Dict[
-            str,
-            Union[
-                PipelineInput,
-                NodeOutput,
-                Input,
+        inputs: Optional[
+            Dict[
                 str,
-                bool,
-                int,
-                float,
-                Enum,
-                "Input",
-            ],
+                Union[
+                    PipelineInput,
+                    NodeOutput,
+                    Input,
+                    str,
+                    bool,
+                    int,
+                    float,
+                    Enum,
+                    "Input",
+                ],
+            ]
         ] = None,
-        outputs: Dict[str, Union[str, Output, "Output"]] = None,
-        properties: Dict = None,
-        compute: str = None,
+        outputs: Optional[Dict[str, Union[str, Output, "Output"]]] = None,
+        properties: Optional[Dict] = None,
+        compute: Optional[str] = None,
         **kwargs,
     ):
         kwargs.pop("type", None)
@@ -77,10 +77,10 @@ class InternalBaseNode(BaseNode):
     def _skip_required_compute_missing_validation(self) -> bool:
         return True
 
-    def _to_node(self, context: Dict = None, **kwargs) -> BaseNode:
+    def _to_node(self, context: Optional[Dict] = None, **kwargs) -> BaseNode:
         return self
 
-    def _to_component(self, context: Dict = None, **kwargs) -> Component:
+    def _to_component(self, context: Optional[Dict] = None, **kwargs) -> Component:
         return self.component
 
     def _to_job(self) -> Job:
@@ -124,10 +124,10 @@ class InternalBaseNode(BaseNode):
 
         base_dict.update(
             convert_ordered_dict_to_dict(
-                dict(
-                    componentId=self._get_component_id(),
-                    type=self.type,
-                )
+                {
+                    "componentId": self._get_component_id(),
+                    "type": self.type,
+                }
             )
         )
         return base_dict
@@ -157,7 +157,11 @@ class HDInsight(InternalBaseNode):
 
     @property
     def compute_name(self) -> str:
-        """Name of the compute to be used."""
+        """Name of the compute to be used.
+
+        :return: Compute name
+        :rtype: str
+        """
         return self._compute_name
 
     @compute_name.setter
@@ -166,7 +170,11 @@ class HDInsight(InternalBaseNode):
 
     @property
     def queue(self) -> str:
-        """The name of the YARN queue to which submitted."""
+        """The name of the YARN queue to which submitted.
+
+        :return: YARN queue name
+        :rtype: str
+        """
         return self._queue
 
     @queue.setter
@@ -175,9 +183,13 @@ class HDInsight(InternalBaseNode):
 
     @property
     def driver_memory(self) -> str:
-        """Amount of memory to use for the driver process. It's the same format as JVM memory
-        strings. Use lower-case suffixes, e.g. k, m, g, t, and p, for kilobyte, megabyte, gigabyte
-        and terabyte respectively. Example values are 10k, 10m and 10g.
+        """Amount of memory to use for the driver process.
+
+        It's the same format as JVM memory strings. Use lower-case suffixes, e.g. k, m, g, t, and p, for kilobyte,
+        megabyte, gigabyte and terabyte respectively. Example values are 10k, 10m and 10g.
+
+        :return: Amount of memory to use for the driver process
+        :rtype: str
         """
         return self._driver_memory
 
@@ -187,7 +199,11 @@ class HDInsight(InternalBaseNode):
 
     @property
     def driver_cores(self) -> int:
-        """Number of cores to use for the driver process."""
+        """Number of cores to use for the driver process.
+
+        :return: Number of cores to use for the driver process.
+        :rtype: int
+        """
         return self._driver_cores
 
     @driver_cores.setter
@@ -196,9 +212,13 @@ class HDInsight(InternalBaseNode):
 
     @property
     def executor_memory(self) -> str:
-        """Amount of memory to use per executor process. It's the same format as JVM memory strings.
-        Use lower-case suffixes, e.g. k, m, g, t, and p, for kilobyte, megabyte, gigabyte
-        and terabyte respectively. Example values are 10k, 10m and 10g.
+        """Amount of memory to use per executor process.
+
+        It's the same format as JVM memory strings. Use lower-case suffixes, e.g. k, m, g, t, and p, for kilobyte,
+        megabyte, gigabyte and terabyte respectively. Example values are 10k, 10m and 10g.
+
+        :return: The executor memory
+        :rtype: str
         """
         return self._executor_memory
 
@@ -208,7 +228,11 @@ class HDInsight(InternalBaseNode):
 
     @property
     def executor_cores(self) -> int:
-        """Number of cores to use for each executor."""
+        """Number of cores to use for each executor.
+
+        :return: The number of cores to use for each executor
+        :rtype: int
+        """
         return self._executor_cores
 
     @executor_cores.setter
@@ -217,7 +241,11 @@ class HDInsight(InternalBaseNode):
 
     @property
     def number_executors(self) -> int:
-        """Number of executors to launch for this session."""
+        """Number of executors to launch for this session.
+
+        :return: The number of executors to launch
+        :rtype: int
+        """
         return self._number_executors
 
     @number_executors.setter
@@ -226,7 +254,11 @@ class HDInsight(InternalBaseNode):
 
     @property
     def conf(self) -> Union[dict, str]:
-        """Spark configuration properties."""
+        """Spark configuration properties.
+
+        :return: The spark configuration properties.
+        :rtype: Union[dict, str]
+        """
         return self._conf
 
     @conf.setter
@@ -235,7 +267,11 @@ class HDInsight(InternalBaseNode):
 
     @property
     def hdinsight_spark_job_name(self) -> str:
-        """The name of this session."""
+        """
+
+        :return: The name of this session
+        :rtype: str
+        """
         return self._hdinsight_spark_job_name
 
     @hdinsight_spark_job_name.setter

@@ -4,6 +4,7 @@
 # ------------------------------------
 import asyncio
 import os
+
 from azure.keyvault.certificates import CertificatePolicy
 from azure.keyvault.certificates.aio import CertificateClient
 from azure.identity.aio import DefaultAzureCredential
@@ -50,26 +51,26 @@ async def run_sample():
         certificate_name=storage_cert_name, policy=CertificatePolicy.get_default()
     )
 
-    print("Certificate with name '{0}' was created.".format(bank_certificate.name))
-    print("Certificate with name '{0}' was created.".format(storage_certificate.name))
+    print(f"Certificate with name '{bank_certificate.name}' was created.")
+    print(f"Certificate with name '{storage_certificate.name}' was created.")
 
     # The storage account was closed, need to delete its credentials from the Key Vault.
     print("\n.. Delete a Certificate")
     deleted_bank_certificate = await client.delete_certificate(bank_cert_name)
+    assert deleted_bank_certificate.name
     # To ensure certificate is deleted on the server side.
     await asyncio.sleep(30)
 
     print(
-        "Certificate with name '{0}' was deleted on date {1}.".format(
-            deleted_bank_certificate.name, deleted_bank_certificate.deleted_on
-        )
+        f"Certificate with name '{deleted_bank_certificate.name}' was deleted on date "
+        f"{deleted_bank_certificate.deleted_on}."
     )
 
     # We accidentally deleted the bank account certificate. Let's recover it.
     # A deleted certificate can only be recovered if the Key Vault is soft-delete enabled.
     print("\n.. Recover Deleted Certificate")
     recovered_bank_certificate = await client.recover_deleted_certificate(deleted_bank_certificate.name)
-    print("Recovered Certificate with name '{0}'.".format(recovered_bank_certificate.name))
+    print(f"Recovered Certificate with name '{recovered_bank_certificate.name}'.")
 
     # Let's delete storage account now.
     # If the keyvault is soft-delete enabled, then for permanent deletion deleted certificate needs to be purged.

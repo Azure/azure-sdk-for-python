@@ -6,35 +6,38 @@
 from enum import Enum
 from typing import Any, Dict, Union, NamedTuple
 
+from azure.core import CaseInsensitiveEnumMeta
+
 
 class TableEntity(dict):
     """
     An Entity dictionary with additional metadata
 
     """
+
     _metadata = {}  # type: Dict[str, Any]
 
     @property
-    def metadata(self):
-        # type: () -> Dict[str, Any]
-        """Resets metadata to be a part of the entity
+    def metadata(self) -> Dict[str, Any]:
+        """Resets metadata to be a part of the entity.
+
         :return Dict of entity metadata
-        :rtype: Dict[str, Any]
+        :rtype: dict[str, Any]
         """
         return self._metadata
 
 
-class EdmType(str, Enum): # pylint: disable=enum-must-inherit-case-insensitive-enum-meta
+class EdmType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
     Used by :class:`~.EntityProperty` to represent the type of the entity property
     to be stored by the Table service.
     """
 
     BINARY = "Edm.Binary"
-    """ Represents byte data. This type will be inferred for Python bytes.. """
+    """ Represents byte data. This type will be inferred for Python bytes. """
 
     INT64 = "Edm.Int64"
-    """ Represents a number between -(2^31) and 2^31. This is the default type for Python numbers. """
+    """ Represents a number between -(2^31) and 2^31. Must be specified or numbers will default to INT32. """
 
     GUID = "Edm.Guid"
     """ Represents a GUID. This type will be inferred for uuid.UUID. """
@@ -46,7 +49,7 @@ class EdmType(str, Enum): # pylint: disable=enum-must-inherit-case-insensitive-e
     """ Represents a string. This type will be inferred for Python strings. """
 
     INT32 = "Edm.Int32"
-    """ Represents a number between -(2^15) and 2^15. Must be specified or numbers will default to INT64. """
+    """ Represents a number between -(2^15) and 2^15. This is the default type for Python numbers. """
 
     DOUBLE = "Edm.Double"
     """ Represents a double. This type will be inferred for Python floating point numbers. """
@@ -69,5 +72,5 @@ the below with both create STRING typed properties on the entity::
 :param value:
 :type value: Any
 :param edm_type: Type of the value
-:type edm_type: str or :class:`~azure.data.tables.EdmType`
+:type edm_type: str or ~azure.data.tables.EdmType
 """

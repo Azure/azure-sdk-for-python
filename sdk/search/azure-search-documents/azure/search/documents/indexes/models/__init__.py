@@ -39,6 +39,9 @@ from .._generated.models import (
     AnalyzeResult,
     AnalyzedTokenInfo,
     AsciiFoldingTokenFilter,
+    AzureOpenAIEmbeddingSkill,
+    AzureOpenAIParameters,
+    AzureOpenAIVectorizer,
     BM25Similarity,
     CharFilter,
     CjkBigramTokenFilter,
@@ -50,6 +53,8 @@ from .._generated.models import (
     ConditionalSkill,
     CorsOptions,
     CustomEntityLookupSkill,
+    CustomVectorizer,
+    CustomVectorizerParameters,
     DefaultCognitiveServicesAccount,
     CustomEntityLookupSkillLanguage,
     CustomNormalizer,
@@ -65,17 +70,22 @@ from .._generated.models import (
     EntityCategory,
     EntityLinkingSkill,
     EntityRecognitionSkillLanguage,
+    ExhaustiveKnnVectorSearchAlgorithmConfiguration,
+    ExhaustiveKnnParameters,
     FieldMapping,
     FieldMappingFunction,
     FreshnessScoringFunction,
     FreshnessScoringParameters,
     GetIndexStatisticsResult,
+    HnswParameters,
     ImageAnalysisSkill,
     ImageAnalysisSkillLanguage,
     ImageDetail,
     IndexingSchedule,
     IndexingParameters,
+    IndexingParametersConfiguration,
     IndexerExecutionStatus,
+    IndexProjectionMode,
     IndexerStatus,
     InputFieldMappingEntry,
     KeepTokenFilter,
@@ -123,6 +133,9 @@ from .._generated.models import (
     SearchIndexerDataUserAssignedIdentity,
     SearchIndexerDataSourceType,
     SearchIndexerError,
+    SearchIndexerIndexProjections,
+    SearchIndexerIndexProjectionSelector,
+    SearchIndexerIndexProjectionsParameters,
     SearchIndexerKnowledgeStore,
     SearchIndexerKnowledgeStoreFileProjectionSelector,
     SearchIndexerKnowledgeStoreObjectProjectionSelector,
@@ -168,7 +181,15 @@ from .._generated.models import (
     UaxUrlEmailTokenizer,
     UniqueTokenFilter,
     WebApiSkill,
+    VectorSearch,
+    VectorSearchAlgorithmConfiguration,
+    VectorSearchAlgorithmKind,
+    VectorSearchAlgorithmMetric,
+    VectorSearchProfile,
+    VectorSearchVectorizer,
+    VectorSearchVectorizerKind,
     VisualFeature,
+    HnswVectorSearchAlgorithmConfiguration,
     WordDelimiterTokenFilter,
 )
 from ._models import (
@@ -188,28 +209,33 @@ from ._models import (
 
 SearchFieldDataType = _edm
 
+
 class KeywordTokenizer(KeywordTokenizerV2):
     pass
+
 
 class PathHierarchyTokenizer(PathHierarchyTokenizerV2):
     pass
 
+
 class SimilarityAlgorithm(Similarity):
     pass
+
 
 class SearchSuggester(Suggester):
     pass
 
 
-
-
 __all__ = (
     "SearchAlias",
-    "AzureMachineLearningSkill",
     "AnalyzeTextOptions",
     "AnalyzeResult",
     "AnalyzedTokenInfo",
     "AsciiFoldingTokenFilter",
+    "AzureOpenAIEmbeddingSkill",
+    "AzureOpenAIParameters",
+    "AzureOpenAIVectorizer",
+    "AzureMachineLearningSkill",
     "BM25Similarity",
     "CharFilter",
     "CjkBigramTokenFilter",
@@ -223,6 +249,8 @@ __all__ = (
     "CorsOptions",
     "CustomAnalyzer",
     "CustomEntityLookupSkill",
+    "CustomVectorizer",
+    "CustomVectorizerParameters",
     "DefaultCognitiveServicesAccount",
     "CustomEntityLookupSkillLanguage",
     "CustomNormalizer",
@@ -240,17 +268,22 @@ __all__ = (
     "EntityRecognitionSkill",
     "EntityRecognitionSkillLanguage",
     "EntityRecognitionSkillVersion",
+    "ExhaustiveKnnVectorSearchAlgorithmConfiguration",
+    "ExhaustiveKnnParameters",
     "FieldMapping",
     "FieldMappingFunction",
     "FreshnessScoringFunction",
     "FreshnessScoringParameters",
     "GetIndexStatisticsResult",
+    "HnswParameters",
     "ImageAnalysisSkill",
     "ImageAnalysisSkillLanguage",
     "ImageDetail",
     "IndexingSchedule",
     "IndexingParameters",
+    "IndexingParametersConfiguration",
     "IndexerExecutionStatus",
+    "IndexProjectionMode",
     "IndexerStatus",
     "InputFieldMappingEntry",
     "KeepTokenFilter",
@@ -307,6 +340,9 @@ __all__ = (
     "SearchIndexerDataSourceConnection",
     "SearchIndexerDataSourceType",
     "SearchIndexerError",
+    "SearchIndexerIndexProjections",
+    "SearchIndexerIndexProjectionSelector",
+    "SearchIndexerIndexProjectionsParameters",
     "SearchIndexerKnowledgeStore",
     "SearchIndexerKnowledgeStoreFileProjectionSelector",
     "SearchIndexerKnowledgeStoreObjectProjectionSelector",
@@ -355,7 +391,16 @@ __all__ = (
     "TruncateTokenFilter",
     "UaxUrlEmailTokenizer",
     "UniqueTokenFilter",
+    "VectorSearch",
+    "VectorSearchAlgorithmConfiguration",
+    "VectorSearchAlgorithmKind",
+    "VectorSearchAlgorithmMetric",
+    "VectorSearchProfile",
+    "VectorSearch",
+    "VectorSearchVectorizer",
+    "VectorSearchVectorizerKind",
     "VisualFeature",
+    "HnswVectorSearchAlgorithmConfiguration",
     "WebApiSkill",
     "WordDelimiterTokenFilter",
     "SearchFieldDataType",

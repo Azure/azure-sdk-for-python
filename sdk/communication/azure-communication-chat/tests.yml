@@ -19,3 +19,5 @@ stages:
               - $(sub-config-communication-int-test-resources-common)
               - $(sub-config-communication-int-test-resources-python)
       Clouds: Public,Int
+      TestResourceDirectories:
+        - communication/test-resources/

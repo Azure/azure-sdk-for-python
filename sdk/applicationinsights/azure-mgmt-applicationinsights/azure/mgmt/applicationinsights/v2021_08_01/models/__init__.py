@@ -20,32 +20,34 @@ from ._models_py3 import WorkbookResourceIdentity
 from ._models_py3 import WorkbookUpdateParameters
 from ._models_py3 import WorkbooksListResult
 
-
-from ._application_insights_management_client_enums import (
-    CategoryType,
-    CreatedByType,
-    Kind,
-    ManagedServiceIdentityType,
-    SharedTypeKind,
-)
+from ._application_insights_management_client_enums import CategoryType
+from ._application_insights_management_client_enums import CreatedByType
+from ._application_insights_management_client_enums import Kind
+from ._application_insights_management_client_enums import ManagedServiceIdentityType
+from ._application_insights_management_client_enums import SharedTypeKind
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'ManagedServiceIdentity',
-    'Resource',
-    'SystemData',
-    'TrackedResource',
-    'UserAssignedIdentity',
-    'Workbook',
-    'WorkbookError',
-    'WorkbookErrorDefinition',
-    'WorkbookInnerErrorTrace',
-    'WorkbookResource',
-    'WorkbookResourceIdentity',
-    'WorkbookUpdateParameters',
-    'WorkbooksListResult',
-    'CategoryType',
-    'CreatedByType',
-    'Kind',
-    'ManagedServiceIdentityType',
-    'SharedTypeKind',
+    "ManagedServiceIdentity",
+    "Resource",
+    "SystemData",
+    "TrackedResource",
+    "UserAssignedIdentity",
+    "Workbook",
+    "WorkbookError",
+    "WorkbookErrorDefinition",
+    "WorkbookInnerErrorTrace",
+    "WorkbookResource",
+    "WorkbookResourceIdentity",
+    "WorkbookUpdateParameters",
+    "WorkbooksListResult",
+    "CategoryType",
+    "CreatedByType",
+    "Kind",
+    "ManagedServiceIdentityType",
+    "SharedTypeKind",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

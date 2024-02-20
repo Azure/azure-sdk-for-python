@@ -30,7 +30,10 @@ def _int_to_bytes(i):
 
 def _bstr_to_b64url(bstr):
     """Serialize bytes into base-64 string.
-    :param str: Object to be serialized.
+
+    :param bytes bstr: Object to be serialized.
+
+    :returns: The base-64 URL encoded string.
     :rtype: str
     """
     encoded = b64encode(bstr).decode()
@@ -39,16 +42,23 @@ def _bstr_to_b64url(bstr):
 
 def _str_to_b64url(s):
     """Serialize str into base-64 string.
-    :param str: Object to be serialized.
+
+    :param str s: Object to be serialized.
+
+    :returns: The base-64 URL encoded string.
     :rtype: str
     """
     return _bstr_to_b64url(s.encode(encoding="utf8"))
 
 
 def _b64_to_bstr(b64str):
-    """Deserialize base64 encoded string into string.
+    """Deserialize base-64 encoded string into string.
+
     :param str b64str: response string to be deserialized.
-    :rtype: bytearray
+
+    :returns: The decoded bytes.
+    :rtype: bytes
+
     :raises: TypeError if string format invalid.
     """
     padding = "=" * (3 - (len(b64str) + 3) % 4)
@@ -58,21 +68,32 @@ def _b64_to_bstr(b64str):
 
 
 def _b64_to_str(b64str):
-    """Deserialize base64 encoded string into string.
+    """Deserialize base-64 encoded string into string.
+
     :param str b64str: response string to be deserialized.
+
+    :returns: The decoded string.
     :rtype: str
+
     :raises: TypeError if string format invalid.
     """
     return _b64_to_bstr(b64str).decode("utf8")
 
 
 def _int_to_fixed_length_bigendian_bytes(i, length):
-    """Convert an integer to a bigendian byte string left-padded with zeroes to a fixed length."""
+    """Convert an integer to a bigendian byte string left-padded with zeroes to a fixed length.
+
+    :param int i: The integer to convert.
+    :param int length: The length of the desired byte string.
+
+    :returns: A bigendian byte string of length `length`, representing integer `i`.
+    :rtype: bytes
+    """
 
     b = _int_to_bytes(i)
 
     if len(b) > length:
-        raise ValueError("{} is too large to be represented by {} bytes".format(i, length))
+        raise ValueError(f"{i} is too large to be represented by {length} bytes")
 
     if len(b) < length:
         b = (b"\0" * (length - len(b))) + b
@@ -85,7 +106,9 @@ def ecdsa_to_asn1_der(signature):
 
     :param bytes signature: ECDSA signature encoded according to RFC 7518, i.e. the concatenated big-endian bytes of
       two integers (as produced by Key Vault)
-    :return: signature, ASN.1 DER encoded (as expected by ``cryptography``)
+
+    :returns: signature, ASN.1 DER encoded (as expected by ``cryptography``)
+    :rtype: bytes
     """
     mid = len(signature) // 2
     r = _bytes_to_int(signature[:mid])
@@ -98,7 +121,9 @@ def asn1_der_to_ecdsa(signature, algorithm):
 
     :param bytes signature: an ASN.1 DER encoded ECDSA signature (as produced by ``cryptography``)
     :param _Ecdsa algorithm: signing algorithm which produced ``signature``
-    :return: signature encoded according to RFC 7518 (as expected by Key Vault)
+
+    :returns: signature encoded according to RFC 7518 (as expected by Key Vault)
+    :rtype: bytes
     """
     r, s = utils.decode_dss_signature(signature)
     r_bytes = _int_to_fixed_length_bigendian_bytes(r, algorithm.coordinate_length)

@@ -41,6 +41,13 @@ class ActiveRevisionsMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SINGLE = "Single"
 
 
+class Affinity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Sticky Session Affinity."""
+
+    STICKY = "sticky"
+    NONE = "none"
+
+
 class Applicability(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """indicates whether the profile is default for the location."""
 
@@ -62,14 +69,6 @@ class BindingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     DISABLED = "Disabled"
     SNI_ENABLED = "SniEnabled"
-
-
-class Category(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Used to map workload profile types to billing meter."""
-
-    PREMIUM_SKU_GENERAL_PURPOSE = "PremiumSkuGeneralPurpose"
-    PREMIUM_SKU_MEMORY_OPTIMIZED = "PremiumSkuMemoryOptimized"
-    PREMIUM_SKU_COMPUTE_OPTIMIZED = "PremiumSkuComputeOptimized"
 
 
 class CertificateProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -102,6 +101,14 @@ class ConnectedEnvironmentProvisioningState(str, Enum, metaclass=CaseInsensitive
     SCHEDULED_FOR_DELETE = "ScheduledForDelete"
 
 
+class ContainerAppContainerRunningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Current running state of the container."""
+
+    RUNNING = "Running"
+    TERMINATED = "Terminated"
+    WAITING = "Waiting"
+
+
 class ContainerAppProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Provisioning state of the Container App."""
 
@@ -110,6 +117,14 @@ class ContainerAppProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta
     FAILED = "Failed"
     CANCELED = "Canceled"
     DELETING = "Deleting"
+
+
+class ContainerAppReplicaRunningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Current running state of the replica."""
+
+    RUNNING = "Running"
+    NOT_RUNNING = "NotRunning"
+    UNKNOWN = "Unknown"
 
 
 class CookieExpirationConvention(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -165,6 +180,17 @@ class ForwardProxyConvention(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CUSTOM = "Custom"
 
 
+class IngressClientCertificateMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Client certificate mode for mTLS authentication. Ignore indicates server drops client
+    certificate on forwarding. Accept indicates server forwards client certificate but does not
+    require a client certificate. Require indicates server requires a client certificate.
+    """
+
+    IGNORE = "ignore"
+    ACCEPT = "accept"
+    REQUIRE = "require"
+
+
 class IngressTransportMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Ingress transport protocol."""
 
@@ -172,6 +198,28 @@ class IngressTransportMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     HTTP = "http"
     HTTP2 = "http2"
     TCP = "tcp"
+
+
+class JobExecutionRunningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Current running State of the job."""
+
+    RUNNING = "Running"
+    PROCESSING = "Processing"
+    STOPPED = "Stopped"
+    DEGRADED = "Degraded"
+    FAILED = "Failed"
+    UNKNOWN = "Unknown"
+    SUCCEEDED = "Succeeded"
+
+
+class JobProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of the Container Apps Job."""
+
+    IN_PROGRESS = "InProgress"
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    CANCELED = "Canceled"
+    DELETING = "Deleting"
 
 
 class LogLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -185,11 +233,12 @@ class LogLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ERROR = "error"
 
 
-class ManagedEnvironmentOutBoundType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Outbound type for the cluster."""
+class ManagedCertificateDomainControlValidation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Selected type of domain control validation for managed certificates."""
 
-    LOAD_BALANCER = "LoadBalancer"
-    USER_DEFINED_ROUTING = "UserDefinedRouting"
+    CNAME = "CNAME"
+    HTTP = "HTTP"
+    TXT = "TXT"
 
 
 class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -221,20 +270,22 @@ class RevisionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DEPROVISIONED = "Deprovisioned"
 
 
+class RevisionRunningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Current running state of the revision."""
+
+    RUNNING = "Running"
+    PROCESSING = "Processing"
+    STOPPED = "Stopped"
+    DEGRADED = "Degraded"
+    FAILED = "Failed"
+    UNKNOWN = "Unknown"
+
+
 class Scheme(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Scheme to use for connecting to the host. Defaults to HTTP."""
 
     HTTP = "HTTP"
     HTTPS = "HTTPS"
-
-
-class SkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Name of the Sku."""
-
-    #: Consumption SKU of Managed Environment.
-    CONSUMPTION = "Consumption"
-    #: Premium SKU of Managed Environment.
-    PREMIUM = "Premium"
 
 
 class SourceControlOperationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -251,6 +302,15 @@ class StorageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     AZURE_FILE = "AzureFile"
     EMPTY_DIR = "EmptyDir"
+    SECRET = "Secret"
+
+
+class TriggerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Trigger type of the job."""
+
+    SCHEDULE = "Schedule"
+    EVENT = "Event"
+    MANUAL = "Manual"
 
 
 class Type(str, Enum, metaclass=CaseInsensitiveEnumMeta):

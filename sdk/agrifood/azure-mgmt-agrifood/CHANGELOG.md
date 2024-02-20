@@ -1,5 +1,20 @@
 # Release History
 
+## 1.0.0b3 (2022-12-26)
+
+### Features Added
+
+  - Added operation ExtensionsOperations.create_or_update
+  - Added operation group SolutionsDiscoverabilityOperations
+  - Added operation group SolutionsOperations
+  - Model Extension has a new parameter additional_api_properties
+  - Model PrivateEndpointConnection has a new parameter group_ids
+
+### Breaking Changes
+
+  - Removed operation ExtensionsOperations.create
+  - Removed operation ExtensionsOperations.update
+
 ## 1.0.0b2 (2022-09-02)
 
 ### Features Added

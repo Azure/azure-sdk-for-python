@@ -1,0 +1,7 @@
+include *.md
+recursive-include tests *.py
+recursive-include samples *.py *.md
+include LICENSE
+include azure/__init__.py
+include azure/iot/__init__.py
+include azure/iot/deviceprovisioning/py.typed

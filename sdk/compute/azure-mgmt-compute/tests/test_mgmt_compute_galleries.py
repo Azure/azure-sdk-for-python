@@ -134,7 +134,7 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
           "location": AZURE_LOCATION,
           "os_type": "Windows",
           "os_state": "Generalized",
-          "hyper_vgeneration": "V1",
+          "hyper_v_generation": "V1",
           "identifier": {
             "publisher": "myPublisherName",
             "offer": "myOfferName",
@@ -238,7 +238,7 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
         BODY = {
           "os_type": "Windows",
           "os_state": "Generalized",
-          "hyper_vgeneration": "V1",
+          "hyper_v_generation": "V1",
           "identifier": {
             "publisher": "myPublisherName",
             "offer": "myOfferName",

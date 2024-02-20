@@ -4,33 +4,34 @@
 
 # pylint: disable=protected-access
 
-from typing import Any, Callable, Tuple, Dict
+from typing import Any, Callable, Dict, Optional, Tuple
 
 from marshmallow import Schema
 
-from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData
-from azure.ai.ml._utils.utils import is_internal_components_enabled
-from azure.ai.ml.constants._common import (
-    AZUREML_INTERNAL_COMPONENTS_ENV_VAR,
-    AZUREML_INTERNAL_COMPONENTS_SCHEMA_PREFIX, SOURCE_PATH_CONTEXT_KEY,
+from ..._restclient.v2022_10_01.models import ComponentVersion
+from ..._utils.utils import is_internal_component_data
+from ...constants._common import SOURCE_PATH_CONTEXT_KEY
+from ...constants._component import DataTransferTaskType, NodeType
+from ...entities._component.automl_component import AutoMLComponent
+from ...entities._component.command_component import CommandComponent
+from ...entities._component.component import Component
+from ...entities._component.datatransfer_component import (
+    DataTransferCopyComponent,
+    DataTransferExportComponent,
+    DataTransferImportComponent,
 )
-from azure.ai.ml.constants._component import NodeType
-from azure.ai.ml.entities._component.automl_component import AutoMLComponent
-from azure.ai.ml.entities._component.command_component import CommandComponent
-from azure.ai.ml.entities._component.component import Component
-from azure.ai.ml.entities._component.import_component import ImportComponent
-from azure.ai.ml.entities._component.parallel_component import ParallelComponent
-from azure.ai.ml.entities._component.pipeline_component import PipelineComponent
-from azure.ai.ml.entities._component.spark_component import SparkComponent
-from azure.ai.ml.entities._util import extract_label
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
+from ...entities._component.import_component import ImportComponent
+from ...entities._component.parallel_component import ParallelComponent
+from ...entities._component.pipeline_component import PipelineComponent
+from ...entities._component.spark_component import SparkComponent
+from ...entities._util import get_type_from_spec
+from .flow import FlowComponent
 
 
 class _ComponentFactory:
-    """A class to create component instances from yaml dict or rest objects
-    without hard-coded type check."""
+    """A class to create component instances from yaml dict or rest objects without hard-coded type check."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._create_instance_funcs = {}
         self._create_schema_funcs = {}
 
@@ -64,36 +65,50 @@ class _ComponentFactory:
             create_instance_func=lambda: SparkComponent.__new__(SparkComponent),
             create_schema_func=SparkComponent._create_schema_for_validation,
         )
+        self.register_type(
+            _type="_".join([NodeType.DATA_TRANSFER, DataTransferTaskType.COPY_DATA]),
+            create_instance_func=lambda: DataTransferCopyComponent.__new__(DataTransferCopyComponent),
+            create_schema_func=DataTransferCopyComponent._create_schema_for_validation,
+        )
+
+        self.register_type(
+            _type="_".join([NodeType.DATA_TRANSFER, DataTransferTaskType.IMPORT_DATA]),
+            create_instance_func=lambda: DataTransferImportComponent.__new__(DataTransferImportComponent),
+            create_schema_func=DataTransferImportComponent._create_schema_for_validation,
+        )
+
+        self.register_type(
+            _type="_".join([NodeType.DATA_TRANSFER, DataTransferTaskType.EXPORT_DATA]),
+            create_instance_func=lambda: DataTransferExportComponent.__new__(DataTransferExportComponent),
+            create_schema_func=DataTransferExportComponent._create_schema_for_validation,
+        )
+
+        self.register_type(
+            _type=NodeType.FLOW_PARALLEL,
+            create_instance_func=lambda: FlowComponent.__new__(FlowComponent),
+            create_schema_func=FlowComponent._create_schema_for_validation,
+        )
 
     def get_create_funcs(
-        self, _type: str, *, schema: str = None
+        self, yaml_spec: dict, for_load=False
     ) -> Tuple[Callable[..., Component], Callable[[Any], Schema]]:
-        """Get registered functions to create instance & its corresponding
-        schema for the given type."""
+        """Get registered functions to create an instance and its corresponding schema for the given type.
 
-        from azure.ai.ml._utils.utils import try_enable_internal_components
+        :param yaml_spec: The YAML specification.
+        :type yaml_spec: dict
+        :param for_load: Whether the function is called for loading a component. Defaults to False.
+        :type for_load: bool
+        :return: A tuple containing the create_instance_func and create_schema_func.
+        :rtype: tuple
+        """
 
-        try_enable_internal_components()
+        _type = get_type_from_spec(yaml_spec, valid_keys=self._create_instance_funcs)
+        # SparkComponent and InternalSparkComponent share the same type name, but they are different types.
+        if for_load and is_internal_component_data(yaml_spec, raise_if_not_enabled=True) and _type == NodeType.SPARK:
+            from azure.ai.ml._internal._schema.node import NodeType as InternalNodeType
 
-        _type, _ = extract_label(_type)
-        if _type not in self._create_instance_funcs:
-            if (
-                schema
-                and not is_internal_components_enabled()
-                and schema.startswith(AZUREML_INTERNAL_COMPONENTS_SCHEMA_PREFIX)
-            ):
-                msg = (
-                    f"Internal components is a private feature in v2, please set environment variable "
-                    f"{AZUREML_INTERNAL_COMPONENTS_ENV_VAR} to true to use it."
-                )
-            else:
-                msg = f"Unsupported component type: {_type}."
-            raise ValidationException(
-                message=msg,
-                target=ErrorTarget.COMPONENT,
-                no_personal_data_message=msg,
-                error_category=ErrorCategory.USER_ERROR,
-            )
+            _type = InternalNodeType.SPARK
+
         create_instance_func = self._create_instance_funcs[_type]
         create_schema_func = self._create_schema_funcs[_type]
         return create_instance_func, create_schema_func
@@ -106,24 +121,28 @@ class _ComponentFactory:
     ):
         """Register a new component type.
 
-        param _type: the type name of the component. type _type: str
-        param create_instance_func: a function to create an instance of
-        the component. type create_instance_func: Callable[...,
-        Component] param create_schema_func: a function to create a
-        schema for the component. type create_schema_func:
-        Callable[[Any], Schema]
+        :param _type: The type name of the component.
+        :type _type: str
+        :param create_instance_func: A function to create an instance of the component.
+        :type create_instance_func: Callable[..., ~azure.ai.ml.entities.Component]
+        :param create_schema_func: A function to create a schema for the component.
+        :type create_schema_func: Callable[[Any], Schema]
         """
         self._create_instance_funcs[_type] = create_instance_func
         self._create_schema_funcs[_type] = create_schema_func
 
     @classmethod
-    def load_from_dict(cls, *, data: Dict, context: Dict, _type: str = None, **kwargs) -> Component:
-        """Load a component from a yaml dict.
+    def load_from_dict(cls, *, data: Dict, context: Dict, _type: Optional[str] = None, **kwargs) -> Component:
+        """Load a component from a YAML dict.
 
-        param data: the yaml dict. type data: Dict param context: the
-        context of the yaml dict. type context: Dict param _type: the
-        type name of the component. When None, it will be inferred from
-        the yaml dict. type _type: str
+        :keyword data: The YAML dict.
+        :paramtype data: dict
+        :keyword context: The context of the YAML dict.
+        :paramtype context: dict
+        :keyword _type: The type name of the component. When None, it will be inferred from the YAML dict.
+        :paramtype _type: str
+        :return: The loaded component.
+        :rtype: ~azure.ai.ml.entities.Component
         """
 
         return Component._load(
@@ -134,12 +153,15 @@ class _ComponentFactory:
         )
 
     @classmethod
-    def load_from_rest(cls, *, obj: ComponentVersionData, _type: str = None) -> Component:
-        """Load a component from a rest object.
+    def load_from_rest(cls, *, obj: ComponentVersion, _type: Optional[str] = None) -> Component:
+        """Load a component from a REST object.
 
-        param obj: the rest object. type obj: ComponentVersionData param
-        _type: the type name of the component. When None, it will be
-        inferred from the rest object. type _type: str
+        :keyword obj: The REST object.
+        :paramtype obj: ComponentVersion
+        :keyword _type: The type name of the component. When None, it will be inferred from the REST object.
+        :paramtype _type: str
+        :return: The loaded component.
+        :rtype: ~azure.ai.ml.entities.Component
         """
         if _type is not None:
             obj.properties.component_spec["type"] = _type

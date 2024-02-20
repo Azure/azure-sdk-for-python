@@ -3,13 +3,11 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=no-self-use
 
-import asyncio
+import inspect
 from io import SEEK_SET, UnsupportedOperation
 from typing import TypeVar, TYPE_CHECKING
 
-import six
 from azure.core.exceptions import ResourceModifiedError, HttpResponseError
 
 from .._shared.response_handlers import process_storage_error, return_response_headers
@@ -71,11 +69,10 @@ async def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statem
         # Do single put if the size is smaller than config.max_single_put_size
         if adjusted_count is not None and (adjusted_count <= blob_settings.max_single_put_size):
             try:
-                if asyncio.iscoroutinefunction(data.read):
-                    data = await data.read(length)
-                else:
-                    data = data.read(length)
-                if not isinstance(data, six.binary_type):
+                data = data.read(length)
+                if inspect.isawaitable(data):
+                    data = await data
+                if not isinstance(data, bytes):
                     raise TypeError('Blob data should be of type bytes.')
             except AttributeError:
                 pass
@@ -196,8 +193,8 @@ async def upload_page_blob(
         if length is None or length < 0:
             raise ValueError("A content length must be specified for a Page Blob.")
         if length % 512 != 0:
-            raise ValueError("Invalid page blob size: {0}. "
-                             "The size must be aligned to a 512-byte boundary.".format(length))
+            raise ValueError(f"Invalid page blob size: {length}. "
+                             "The size must be aligned to a 512-byte boundary.")
         tier = None
         if kwargs.get('premium_page_blob_tier'):
             premium_page_blob_tier = kwargs.pop('premium_page_blob_tier')
@@ -305,9 +302,9 @@ async def upload_append_blob(  # pylint: disable=unused-argument
                 try:
                     # attempt to rewind the body to the initial position
                     stream.seek(0, SEEK_SET)
-                except UnsupportedOperation:
+                except UnsupportedOperation as exc:
                     # if body is not seekable, then retry would not work
-                    raise error
+                    raise error from exc
             await client.create(
                 content_length=0,
                 blob_http_headers=blob_headers,

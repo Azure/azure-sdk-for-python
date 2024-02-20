@@ -7,9 +7,13 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import List, Optional
+from typing import Any, List, Optional, TYPE_CHECKING
 
 from ... import _serialization
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
 class CloudErrorBody(_serialization.Model):
@@ -46,7 +50,7 @@ class CloudErrorBody(_serialization.Model):
         "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -77,7 +81,7 @@ class ErrorAdditionalInfo(_serialization.Model):
         "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.type = None
@@ -109,7 +113,7 @@ class Resource(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -155,8 +159,8 @@ class MdeOnboardingData(Resource):
         *,
         onboarding_package_windows: Optional[bytes] = None,
         onboarding_package_linux: Optional[bytes] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword onboarding_package_windows: The onboarding package used to onboard Windows machines to
          MDE, coded in base64. This can also be used for onboarding using the dedicated VM Extension.
@@ -182,7 +186,7 @@ class MdeOnboardingDataList(_serialization.Model):
         "value": {"key": "value", "type": "[MdeOnboardingData]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.MdeOnboardingData"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.MdeOnboardingData"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of the resources of the configuration or data needed to onboard the
          machine to MDE.

@@ -35,10 +35,17 @@ from .._generated.models import (
     QueryLanguage,
     QuerySpellerType,
     QueryType,
+    RawVectorQuery,
     ScoringStatistics,
-    SearchMode
+    SearchMode,
+    SemanticErrorHandling,
+    QueryDebugMode,
+    VectorFilterMode,
+    VectorQuery,
+    VectorQueryKind,
+    VectorizableTextQuery,
 )
-from .._search_client import odata
+from .._utils import odata
 
 
 __all__ = (
@@ -53,6 +60,13 @@ __all__ = (
     "QueryLanguage",
     "QuerySpellerType",
     "QueryType",
+    "RawVectorQuery",
     "ScoringStatistics",
     "SearchMode",
+    "SemanticErrorHandling",
+    "QueryDebugMode",
+    "VectorFilterMode",
+    "VectorQuery",
+    "VectorQueryKind",
+    "VectorizableTextQuery",
 )

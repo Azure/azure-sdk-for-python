@@ -50,8 +50,6 @@ class _QueryExecutionContextBase(object):
 
     def _get_initial_continuation(self):
         if "continuation" in self._options:
-            if "enableCrossPartitionQuery" in self._options:
-                raise ValueError("continuation tokens are not supported for cross-partition queries.")
             return self._options["continuation"]
         return None
 
@@ -83,7 +81,10 @@ class _QueryExecutionContextBase(object):
         raise NotImplementedError
 
     def __iter__(self):
-        """Returns itself as an iterator"""
+        """Returns itself as an iterator
+        :returns: Query as an iterator.
+        :rtype: Iterator
+        """
         return self
 
     def __next__(self):
@@ -109,11 +110,12 @@ class _QueryExecutionContextBase(object):
     def _fetch_items_helper_no_retries(self, fetch_function):
         """Fetches more items and doesn't retry on failure
 
+        :param Callable fetch_function: The function that fetches the items.
         :return: List of fetched items.
         :rtype: list
         """
         fetched_items = []
-        # Continues pages till finds a non empty page or all results are exhausted
+        # Continues pages till finds a non-empty page or all results are exhausted
         while self._continuation or not self._has_started:
             if not self._has_started:
                 self._has_started = True

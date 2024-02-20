@@ -22,9 +22,10 @@ USAGE:
 
 import os
 
-service_endpoint = os.getenv("AZURE_SEARCH_SERVICE_ENDPOINT")
-index_name = os.getenv("AZURE_SEARCH_INDEX_NAME")
-key = os.getenv("AZURE_SEARCH_API_KEY")
+service_endpoint = os.environ["AZURE_SEARCH_SERVICE_ENDPOINT"]
+index_name = os.environ["AZURE_SEARCH_INDEX_NAME"]
+key = os.environ["AZURE_SEARCH_API_KEY"]
+
 
 def simple_text_query():
     # [START simple_query]
@@ -37,8 +38,9 @@ def simple_text_query():
 
     print("Hotels containing 'spa' in the name (or other fields):")
     for result in results:
-        print("    Name: {} (rating {})".format(result["HotelName"], result["Rating"]))
+        print("    Name: {} (rating {})".format(result["hotelName"], result["rating"]))
     # [END simple_query]
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     simple_text_query()

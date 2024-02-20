@@ -30,48 +30,50 @@ from ._models_py3 import WebTestPropertiesValidationRules
 from ._models_py3 import WebTestPropertiesValidationRulesContentValidation
 from ._models_py3 import WebtestsResource
 
-
-from ._application_insights_management_client_enums import (
-    ApplicationType,
-    FlowType,
-    IngestionMode,
-    PublicNetworkAccessType,
-    PurgeState,
-    RequestSource,
-    WebTestKind,
-    WebTestKindEnum,
-)
+from ._application_insights_management_client_enums import ApplicationType
+from ._application_insights_management_client_enums import FlowType
+from ._application_insights_management_client_enums import IngestionMode
+from ._application_insights_management_client_enums import PublicNetworkAccessType
+from ._application_insights_management_client_enums import PurgeState
+from ._application_insights_management_client_enums import RequestSource
+from ._application_insights_management_client_enums import WebTestKind
+from ._application_insights_management_client_enums import WebTestKindEnum
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'ApplicationInsightsComponent',
-    'ApplicationInsightsComponentListResult',
-    'ApplicationInsightsComponentProactiveDetectionConfiguration',
-    'ApplicationInsightsComponentProactiveDetectionConfigurationPropertiesRuleDefinitions',
-    'ComponentPurgeBody',
-    'ComponentPurgeBodyFilters',
-    'ComponentPurgeResponse',
-    'ComponentPurgeStatusResponse',
-    'ComponentsResource',
-    'HeaderField',
-    'Operation',
-    'OperationInfo',
-    'OperationsListResult',
-    'PrivateLinkScopedResource',
-    'TagsResource',
-    'WebTest',
-    'WebTestGeolocation',
-    'WebTestListResult',
-    'WebTestPropertiesConfiguration',
-    'WebTestPropertiesRequest',
-    'WebTestPropertiesValidationRules',
-    'WebTestPropertiesValidationRulesContentValidation',
-    'WebtestsResource',
-    'ApplicationType',
-    'FlowType',
-    'IngestionMode',
-    'PublicNetworkAccessType',
-    'PurgeState',
-    'RequestSource',
-    'WebTestKind',
-    'WebTestKindEnum',
+    "ApplicationInsightsComponent",
+    "ApplicationInsightsComponentListResult",
+    "ApplicationInsightsComponentProactiveDetectionConfiguration",
+    "ApplicationInsightsComponentProactiveDetectionConfigurationPropertiesRuleDefinitions",
+    "ComponentPurgeBody",
+    "ComponentPurgeBodyFilters",
+    "ComponentPurgeResponse",
+    "ComponentPurgeStatusResponse",
+    "ComponentsResource",
+    "HeaderField",
+    "Operation",
+    "OperationInfo",
+    "OperationsListResult",
+    "PrivateLinkScopedResource",
+    "TagsResource",
+    "WebTest",
+    "WebTestGeolocation",
+    "WebTestListResult",
+    "WebTestPropertiesConfiguration",
+    "WebTestPropertiesRequest",
+    "WebTestPropertiesValidationRules",
+    "WebTestPropertiesValidationRulesContentValidation",
+    "WebtestsResource",
+    "ApplicationType",
+    "FlowType",
+    "IngestionMode",
+    "PublicNetworkAccessType",
+    "PurgeState",
+    "RequestSource",
+    "WebTestKind",
+    "WebTestKindEnum",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

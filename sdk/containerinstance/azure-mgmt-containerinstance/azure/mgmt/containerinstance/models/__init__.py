@@ -13,6 +13,7 @@ from ._models_py3 import Capabilities
 from ._models_py3 import CapabilitiesCapabilities
 from ._models_py3 import CapabilitiesListResult
 from ._models_py3 import CloudErrorBody
+from ._models_py3 import ConfidentialComputeProperties
 from ._models_py3 import Container
 from ._models_py3 import ContainerAttachResponse
 from ._models_py3 import ContainerExec
@@ -31,6 +32,7 @@ from ._models_py3 import ContainerPort
 from ._models_py3 import ContainerProbe
 from ._models_py3 import ContainerPropertiesInstanceView
 from ._models_py3 import ContainerState
+from ._models_py3 import DeploymentExtensionSpec
 from ._models_py3 import DnsConfiguration
 from ._models_py3 import EncryptionProperties
 from ._models_py3 import EnvironmentVariable
@@ -52,6 +54,8 @@ from ._models_py3 import Resource
 from ._models_py3 import ResourceLimits
 from ._models_py3 import ResourceRequests
 from ._models_py3 import ResourceRequirements
+from ._models_py3 import SecurityContextCapabilitiesDefinition
+from ._models_py3 import SecurityContextDefinition
 from ._models_py3 import Usage
 from ._models_py3 import UsageListResult
 from ._models_py3 import UsageName
@@ -61,6 +65,7 @@ from ._models_py3 import VolumeMount
 
 from ._container_instance_management_client_enums import ContainerGroupIpAddressType
 from ._container_instance_management_client_enums import ContainerGroupNetworkProtocol
+from ._container_instance_management_client_enums import ContainerGroupPriority
 from ._container_instance_management_client_enums import ContainerGroupRestartPolicy
 from ._container_instance_management_client_enums import ContainerGroupSku
 from ._container_instance_management_client_enums import ContainerInstanceOperationsOrigin
@@ -72,7 +77,7 @@ from ._container_instance_management_client_enums import OperatingSystemTypes
 from ._container_instance_management_client_enums import ResourceIdentityType
 from ._container_instance_management_client_enums import Scheme
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
@@ -83,6 +88,7 @@ __all__ = [
     "CapabilitiesCapabilities",
     "CapabilitiesListResult",
     "CloudErrorBody",
+    "ConfidentialComputeProperties",
     "Container",
     "ContainerAttachResponse",
     "ContainerExec",
@@ -101,6 +107,7 @@ __all__ = [
     "ContainerProbe",
     "ContainerPropertiesInstanceView",
     "ContainerState",
+    "DeploymentExtensionSpec",
     "DnsConfiguration",
     "EncryptionProperties",
     "EnvironmentVariable",
@@ -122,6 +129,8 @@ __all__ = [
     "ResourceLimits",
     "ResourceRequests",
     "ResourceRequirements",
+    "SecurityContextCapabilitiesDefinition",
+    "SecurityContextDefinition",
     "Usage",
     "UsageListResult",
     "UsageName",
@@ -130,6 +139,7 @@ __all__ = [
     "VolumeMount",
     "ContainerGroupIpAddressType",
     "ContainerGroupNetworkProtocol",
+    "ContainerGroupPriority",
     "ContainerGroupRestartPolicy",
     "ContainerGroupSku",
     "ContainerInstanceOperationsOrigin",

@@ -2,6 +2,7 @@ from functools import partial
 from pathlib import Path
 
 import pytest
+
 from azure.ai.ml import dsl, load_component, load_job
 from azure.ai.ml.entities import PipelineJob
 
@@ -176,3 +177,10 @@ class TestInitFinalizeJob:
         assert valid_pipeline._validate().passed
         assert valid_pipeline.settings.on_init == "init_job"
         assert valid_pipeline.settings.on_finalize == "finalize_job"
+
+    def test_init_finalize_with_group(self) -> None:
+        from test_configs.dsl_pipeline.pipeline_component_with_group.pipeline import pipeline_job
+
+        assert pipeline_job._validate().passed
+        assert pipeline_job.settings.on_init == "init_job"
+        assert pipeline_job.settings.on_finalize == "finalize_job"

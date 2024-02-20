@@ -5,81 +5,82 @@
 # pylint: disable=protected-access
 
 import copy
+import json
 import logging
 import re
-import json
 from enum import Enum
-from typing import Dict, List, Union
+from typing import Dict, List, Optional, Union
 
 from marshmallow import Schema
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
-from azure.ai.ml.constants._common import ARM_ID_PREFIX
-from azure.ai.ml.constants._component import NodeType
-from azure.ai.ml.entities._component.component import Component
-from azure.ai.ml.entities._component.parallel_component import ParallelComponent
-from azure.ai.ml.entities._inputs_outputs import Input, Output
-from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
-from azure.ai.ml.entities._job.parallel.parallel_job import ParallelJob
-from azure.ai.ml.entities._job.parallel.parallel_task import ParallelTask
-from azure.ai.ml.entities._job.parallel.retry_settings import RetrySettings
-
 from ..._schema import PathAwareSchema
-from .._job.pipeline._io import NodeOutput
+from ...constants._common import ARM_ID_PREFIX
+from ...constants._component import NodeType
+from .._component.component import Component
+from .._component.flow import FlowComponent
+from .._component.parallel_component import ParallelComponent
+from .._inputs_outputs import Input, Output
+from .._job.job_resource_configuration import JobResourceConfiguration
+from .._job.parallel.parallel_job import ParallelJob
+from .._job.parallel.parallel_task import ParallelTask
+from .._job.parallel.retry_settings import RetrySettings
+from .._job.pipeline._io import NodeOutput, NodeWithGroupInputMixin
 from .._util import convert_ordered_dict_to_dict, get_rest_dict_for_node_attrs, validate_attribute_type
 from .base_node import BaseNode
 
 module_logger = logging.getLogger(__name__)
 
 
-class Parallel(BaseNode):
-    """Base class for parallel node, used for parallel component version
-    consumption.
+class Parallel(BaseNode, NodeWithGroupInputMixin):
+    """Base class for parallel node, used for parallel component version consumption.
 
     You should not instantiate this class directly. Instead, you should
     create from builder function: parallel.
 
     :param component: Id or instance of the parallel component/job to be run for the step
-    :type component: parallelComponent
-    :param name: Name of the parallel.
+    :type component: ~azure.ai.ml.entities._component.parallel_component.parallelComponent
+    :param name: Name of the parallel
     :type name: str
-    :param description: Description of the commad.
+    :param description: Description of the commad
     :type description: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
+    :param tags: Tag dictionary. Tags can be added, removed, and updated
     :type tags: dict[str, str]
-    :param properties: The job property dictionary.
+    :param properties: The job property dictionary
     :type properties: dict[str, str]
-    :param display_name: Display name of the job.
+    :param display_name: Display name of the job
     :type display_name: str
-    :param retry_settings: parallel job run failed retry
+    :param retry_settings: Parallel job run failed retry
     :type retry_settings: BatchRetrySettings
     :param logging_level: A string of the logging level name
     :type logging_level: str
-    :param max_concurrency_per_instance: The max parallellism that each compute instance has.
+    :param max_concurrency_per_instance: The max parallellism that each compute instance has
     :type max_concurrency_per_instance: int
-    :param error_threshold: The number of item processing failures should be ignored.
+    :param error_threshold: The number of item processing failures should be ignored
     :type error_threshold: int
-    :param mini_batch_error_threshold: The number of mini batch processing failures should be ignored.
+    :param mini_batch_error_threshold: The number of mini batch processing failures should be ignored
     :type mini_batch_error_threshold: int
-    :param task: The parallel task.
+    :param task: The parallel task
     :type task: ParallelTask
-    :param mini_batch_size: For FileDataset input, this field is the number of files a user script can process
-        in one run() call. For TabularDataset input, this field is the approximate size of data the user script
-        can process in one run() call. Example values are 1024, 1024KB, 10MB, and 1GB.
-        (optional, default value is 10 files for FileDataset and 1MB for TabularDataset.) This value could be set
-        through PipelineParameter
+    :param mini_batch_size: For FileDataset input, this field is the number of files
+                            a user script can process in one run() call.
+                            For TabularDataset input, this field is the approximate size of data
+                            the user script can process in one run() call.
+                            Example values are 1024, 1024KB, 10MB, and 1GB. (optional, default value is 10 files
+                            for FileDataset and 1MB for TabularDataset.)
+                            This value could be set through PipelineParameter
     :type mini_batch_size: str
-    :param partition_keys: The keys used to partition dataset into mini-batches.
-        If specified, the data with the same key will be partitioned into the same mini-batch.
-        If both partition_keys and mini_batch_size are specified, the partition keys will take effect.
-        The input(s) must be partitioned dataset(s),
-        and the partition_keys must be a subset of the keys of every input dataset for this to work.
+    :param partition_keys: The keys used to partition dataset into mini-batches. If specified,
+                           the data with the same key will be partitioned into the same mini-batch.
+                           If both partition_keys and mini_batch_size are specified,
+                           the partition keys will take effect.
+                           The input(s) must be partitioned dataset(s),
+                           and the partition_keys must be a subset of the keys of every input dataset for this to work.
     :type partition_keys: List
-    :param input_data: The input data.
+    :param input_data: The input data
     :type input_data: str
-    :param inputs: Inputs of the component/job.
+    :param inputs: Inputs of the component/job
     :type inputs: dict
-    :param outputs: Outputs of the component/job.
+    :param outputs: Outputs of the component/job
     :type outputs: dict
     """
 
@@ -88,47 +89,62 @@ class Parallel(BaseNode):
         self,
         *,
         component: Union[ParallelComponent, str],
-        compute: str = None,
-        inputs: Dict[
-            str,
-            Union[
-                NodeOutput,
-                Input,
+        compute: Optional[str] = None,
+        inputs: Optional[
+            Dict[
                 str,
-                bool,
-                int,
-                float,
-                Enum,
-                "Input",
-            ],
+                Union[
+                    NodeOutput,
+                    Input,
+                    str,
+                    bool,
+                    int,
+                    float,
+                    Enum,
+                    "Input",
+                ],
+            ]
         ] = None,
-        outputs: Dict[str, Union[str, Output, "Output"]] = None,
-        retry_settings: Dict[str, Union[RetrySettings, str]] = None,
-        logging_level: str = None,
-        max_concurrency_per_instance: int = None,
-        error_threshold: int = None,
-        mini_batch_error_threshold: int = None,
-        input_data: str = None,
-        task: Dict[str, Union[ParallelTask, str]] = None,
-        partition_keys: List = None,
-        mini_batch_size: int = None,
-        resources: JobResourceConfiguration = None,
-        environment_variables: Dict = None,
+        outputs: Optional[Dict[str, Union[str, Output, "Output"]]] = None,
+        retry_settings: Optional[Dict[str, Union[RetrySettings, str]]] = None,
+        logging_level: Optional[str] = None,
+        max_concurrency_per_instance: Optional[int] = None,
+        error_threshold: Optional[int] = None,
+        mini_batch_error_threshold: Optional[int] = None,
+        input_data: Optional[str] = None,
+        task: Optional[Dict[str, Union[ParallelTask, str]]] = None,
+        partition_keys: Optional[List] = None,
+        mini_batch_size: Optional[int] = None,
+        resources: Optional[JobResourceConfiguration] = None,
+        environment_variables: Optional[Dict] = None,
         **kwargs,
-    ):
+    ) -> None:
         # validate init params are valid type
         validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
         kwargs.pop("type", None)
 
-        BaseNode.__init__(
-            self,
-            type=NodeType.PARALLEL,
-            component=component,
-            inputs=inputs,
-            outputs=outputs,
-            compute=compute,
-            **kwargs,
-        )
+        if isinstance(component, FlowComponent):
+            # make input definition fit actual inputs for flow component
+            with component._inputs._fit_inputs(inputs):  # pylint: disable=protected-access
+                BaseNode.__init__(
+                    self,
+                    type=NodeType.PARALLEL,
+                    component=component,
+                    inputs=inputs,
+                    outputs=outputs,
+                    compute=compute,
+                    **kwargs,
+                )
+        else:
+            BaseNode.__init__(
+                self,
+                type=NodeType.PARALLEL,
+                component=component,
+                inputs=inputs,
+                outputs=outputs,
+                compute=compute,
+                **kwargs,
+            )
         # init mark for _AttrDict
         self._init = True
 
@@ -142,7 +158,7 @@ class Parallel(BaseNode):
 
             try:
                 mini_batch_size = int(mini_batch_size)
-            except ValueError:
+            except ValueError as e:
                 unit = mini_batch_size[-2:].lower()
                 if unit == "kb":
                     mini_batch_size = int(mini_batch_size[0:-2]) * 1024
@@ -151,7 +167,7 @@ class Parallel(BaseNode):
                 elif unit == "gb":
                     mini_batch_size = int(mini_batch_size[0:-2]) * 1024 * 1024 * 1024
                 else:
-                    raise ValueError("mini_batch_size unit must be kb, mb or gb")
+                    raise ValueError("mini_batch_size unit must be kb, mb or gb") from e
 
         self.mini_batch_size = mini_batch_size
         self.partition_keys = partition_keys
@@ -165,7 +181,7 @@ class Parallel(BaseNode):
         self.environment_variables = {} if environment_variables is None else environment_variables
 
         if isinstance(self.component, ParallelComponent):
-            self.resources = self.resources or self.component.resources
+            self.resources = self.resources or copy.deepcopy(self.component.resources)
             self.input_data = self.input_data or self.component.input_data
             self.max_concurrency_per_instance = (
                 self.max_concurrency_per_instance or self.component.max_concurrency_per_instance
@@ -174,7 +190,7 @@ class Parallel(BaseNode):
                 self.mini_batch_error_threshold or self.component.mini_batch_error_threshold
             )
             self.mini_batch_size = self.mini_batch_size or self.component.mini_batch_size
-            self.partition_keys = self.partition_keys or self.component.partition_keys
+            self.partition_keys = self.partition_keys or copy.deepcopy(self.component.partition_keys)
 
             if not self.task:
                 self.task = self.component.task
@@ -189,34 +205,69 @@ class Parallel(BaseNode):
 
     @property
     def retry_settings(self) -> RetrySettings:
+        """Get the retry settings for the parallel job.
+
+        :return: The retry settings for the parallel job.
+        :rtype: ~azure.ai.ml.entities._job.parallel.retry_settings.RetrySettings
+        """
         return self._retry_settings
 
     @retry_settings.setter
     def retry_settings(self, value):
+        """Set the retry settings for the parallel job.
+
+        :param value: The retry settings for the parallel job.
+        :type value: ~azure.ai.ml.entities._job.parallel.retry_settings.RetrySettings or dict
+        """
         if isinstance(value, dict):
             value = RetrySettings(**value)
         self._retry_settings = value
 
     @property
     def resources(self) -> JobResourceConfiguration:
+        """Get the resource configuration for the parallel job.
+
+        :return: The resource configuration for the parallel job.
+        :rtype: ~azure.ai.ml.entities._job.job_resource_configuration.JobResourceConfiguration
+        """
         return self._resources
 
     @resources.setter
     def resources(self, value):
+        """Set the resource configuration for the parallel job.
+
+        :param value: The resource configuration for the parallel job.
+        :type value: ~azure.ai.ml.entities._job.job_resource_configuration.JobResourceConfiguration or dict
+        """
         if isinstance(value, dict):
             value = JobResourceConfiguration(**value)
         self._resources = value
 
     @property
     def component(self) -> Union[str, ParallelComponent]:
+        """Get the component of the parallel job.
+
+        :return: The component of the parallel job.
+        :rtype: str or ~azure.ai.ml.entities._component.parallel_component.ParallelComponent
+        """
         return self._component
 
     @property
     def task(self) -> ParallelTask:
+        """Get the parallel task.
+
+        :return: The parallel task.
+        :rtype: ~azure.ai.ml.entities._job.parallel.parallel_task.ParallelTask
+        """
         return self._task
 
     @task.setter
     def task(self, value):
+        """Set the parallel task.
+
+        :param value: The parallel task.
+        :type value: ~azure.ai.ml.entities._job.parallel.parallel_task.ParallelTask or dict
+        """
         # base path should be reset if task is set via sdk
         self._base_path = None
         if isinstance(value, dict):
@@ -231,14 +282,26 @@ class Parallel(BaseNode):
     def set_resources(
         self,
         *,
-        instance_type: Union[str, List[str]] = None,
-        instance_count: int = None,
-        properties: Dict = None,
-        docker_args: str = None,
-        shm_size: str = None,
+        instance_type: Optional[Union[str, List[str]]] = None,
+        instance_count: Optional[int] = None,
+        properties: Optional[Dict] = None,
+        docker_args: Optional[str] = None,
+        shm_size: Optional[str] = None,
         **kwargs,  # pylint: disable=unused-argument
     ):
-        """Set resources for Parallel."""
+        """Set the resources for the parallel job.
+
+        :keyword instance_type: The instance type or a list of instance types used as supported by the compute target.
+        :paramtype instance_type: str or list[str]
+        :keyword instance_count: The number of instances or nodes used by the compute target.
+        :paramtype instance_count: int
+        :keyword properties: The property dictionary for the resources.
+        :paramtype properties: dict
+        :keyword docker_args: Extra arguments to pass to the Docker run command.
+        :paramtype docker_args: str
+        :keyword shm_size: Size of the Docker container's shared memory block.
+        :paramtype shm_size: str
+        """
         if self.resources is None:
             self.resources = JobResourceConfiguration()
 
@@ -260,14 +323,14 @@ class Parallel(BaseNode):
     @classmethod
     def _attr_type_map(cls) -> dict:
         return {
-            "component": (str, ParallelComponent),
+            "component": (str, ParallelComponent, FlowComponent),
             "retry_settings": (dict, RetrySettings),
             "resources": (dict, JobResourceConfiguration),
             "task": (dict, ParallelTask),
             "logging_level": str,
-            "max_concurrency_per_instance": int,
-            "error_threshold": int,
-            "mini_batch_error_threshold": int,
+            "max_concurrency_per_instance": (str, int),
+            "error_threshold": (str, int),
+            "mini_batch_error_threshold": (str, int),
             "environment_variables": dict,
         }
 
@@ -324,15 +387,16 @@ class Parallel(BaseNode):
         rest_obj = super(Parallel, self)._to_rest_object(**kwargs)
         rest_obj.update(
             convert_ordered_dict_to_dict(
-                dict(
-                    componentId=self._get_component_id(),
-                    retry_settings=get_rest_dict_for_node_attrs(self.retry_settings),
-                    logging_level=self.logging_level,
-                    mini_batch_size=self.mini_batch_size,
-                    partition_keys=json.dumps(self.partition_keys)
-                        if self.partition_keys is not None else self.partition_keys,
-                    resources=get_rest_dict_for_node_attrs(self.resources),
-                )
+                {
+                    "componentId": self._get_component_id(),
+                    "retry_settings": get_rest_dict_for_node_attrs(self.retry_settings),
+                    "logging_level": self.logging_level,
+                    "mini_batch_size": self.mini_batch_size,
+                    "partition_keys": json.dumps(self.partition_keys)
+                    if self.partition_keys is not None
+                    else self.partition_keys,
+                    "resources": get_rest_dict_for_node_attrs(self.resources),
+                }
             )
         )
         return rest_obj
@@ -355,8 +419,7 @@ class Parallel(BaseNode):
                 obj["task"].environment = task_env[len(ARM_ID_PREFIX) :]
 
         if "resources" in obj and obj["resources"]:
-            resources = RestJobResourceConfiguration.from_dict(obj["resources"])
-            obj["resources"] = JobResourceConfiguration._from_rest_object(resources)
+            obj["resources"] = JobResourceConfiguration._from_rest_object(obj["resources"])
 
         if "partition_keys" in obj and obj["partition_keys"]:
             obj["partition_keys"] = json.dumps(obj["partition_keys"])
@@ -377,14 +440,19 @@ class Parallel(BaseNode):
 
         return ParallelSchema(context=context)
 
+    # pylint: disable-next=docstring-missing-param
     def __call__(self, *args, **kwargs) -> "Parallel":
-        """Call Parallel as a function will return a new instance each time."""
+        """Call Parallel as a function will return a new instance each time.
+
+        :return: A Parallel node
+        :rtype: Parallel
+        """
         if isinstance(self._component, Component):
             # call this to validate inputs
             node = self._component(*args, **kwargs)
             # merge inputs
             for name, original_input in self.inputs.items():
-                if name not in kwargs.keys():
+                if name not in kwargs:
                     # use setattr here to make sure owner of input won't change
                     setattr(node.inputs, name, original_input._data)
                 # get outputs

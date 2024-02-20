@@ -14,7 +14,9 @@ from ._private_endpoint_connections_operations import PrivateEndpointConnections
 from ._private_link_resources_operations import PrivateLinkResourcesOperations
 from ._private_link_hub_private_link_resources_operations import PrivateLinkHubPrivateLinkResourcesOperations
 from ._private_link_hubs_operations import PrivateLinkHubsOperations
-from ._private_endpoint_connections_private_link_hub_operations import PrivateEndpointConnectionsPrivateLinkHubOperations
+from ._private_endpoint_connections_private_link_hub_operations import (
+    PrivateEndpointConnectionsPrivateLinkHubOperations,
+)
 from ._sql_pools_operations import SqlPoolsOperations
 from ._sql_pool_metadata_sync_configs_operations import SqlPoolMetadataSyncConfigsOperations
 from ._sql_pool_operation_results_operations import SqlPoolOperationResultsOperations
@@ -37,25 +39,43 @@ from ._sql_pool_connection_policies_operations import SqlPoolConnectionPoliciesO
 from ._sql_pool_vulnerability_assessments_operations import SqlPoolVulnerabilityAssessmentsOperations
 from ._sql_pool_vulnerability_assessment_scans_operations import SqlPoolVulnerabilityAssessmentScansOperations
 from ._sql_pool_security_alert_policies_operations import SqlPoolSecurityAlertPoliciesOperations
-from ._sql_pool_vulnerability_assessment_rule_baselines_operations import SqlPoolVulnerabilityAssessmentRuleBaselinesOperations
+from ._sql_pool_vulnerability_assessment_rule_baselines_operations import (
+    SqlPoolVulnerabilityAssessmentRuleBaselinesOperations,
+)
 from ._extended_sql_pool_blob_auditing_policies_operations import ExtendedSqlPoolBlobAuditingPoliciesOperations
 from ._data_masking_policies_operations import DataMaskingPoliciesOperations
 from ._data_masking_rules_operations import DataMaskingRulesOperations
 from ._sql_pool_columns_operations import SqlPoolColumnsOperations
 from ._sql_pool_workload_group_operations import SqlPoolWorkloadGroupOperations
 from ._sql_pool_workload_classifier_operations import SqlPoolWorkloadClassifierOperations
-from ._workspace_managed_sql_server_blob_auditing_policies_operations import WorkspaceManagedSqlServerBlobAuditingPoliciesOperations
-from ._workspace_managed_sql_server_extended_blob_auditing_policies_operations import WorkspaceManagedSqlServerExtendedBlobAuditingPoliciesOperations
-from ._workspace_managed_sql_server_security_alert_policy_operations import WorkspaceManagedSqlServerSecurityAlertPolicyOperations
-from ._workspace_managed_sql_server_vulnerability_assessments_operations import WorkspaceManagedSqlServerVulnerabilityAssessmentsOperations
-from ._workspace_managed_sql_server_encryption_protector_operations import WorkspaceManagedSqlServerEncryptionProtectorOperations
+from ._workspace_managed_sql_server_blob_auditing_policies_operations import (
+    WorkspaceManagedSqlServerBlobAuditingPoliciesOperations,
+)
+from ._workspace_managed_sql_server_extended_blob_auditing_policies_operations import (
+    WorkspaceManagedSqlServerExtendedBlobAuditingPoliciesOperations,
+)
+from ._workspace_managed_sql_server_security_alert_policy_operations import (
+    WorkspaceManagedSqlServerSecurityAlertPolicyOperations,
+)
+from ._workspace_managed_sql_server_vulnerability_assessments_operations import (
+    WorkspaceManagedSqlServerVulnerabilityAssessmentsOperations,
+)
+from ._workspace_managed_sql_server_encryption_protector_operations import (
+    WorkspaceManagedSqlServerEncryptionProtectorOperations,
+)
 from ._workspace_managed_sql_server_usages_operations import WorkspaceManagedSqlServerUsagesOperations
-from ._workspace_managed_sql_server_recoverable_sql_pools_operations import WorkspaceManagedSqlServerRecoverableSqlPoolsOperations
-from ._workspace_managed_sql_server_dedicated_sql_minimal_tls_settings_operations import WorkspaceManagedSqlServerDedicatedSQLMinimalTlsSettingsOperations
+from ._workspace_managed_sql_server_recoverable_sql_pools_operations import (
+    WorkspaceManagedSqlServerRecoverableSqlPoolsOperations,
+)
+from ._workspace_managed_sql_server_dedicated_sql_minimal_tls_settings_operations import (
+    WorkspaceManagedSqlServerDedicatedSQLMinimalTlsSettingsOperations,
+)
 from ._workspaces_operations import WorkspacesOperations
 from ._workspace_aad_admins_operations import WorkspaceAadAdminsOperations
 from ._workspace_sql_aad_admins_operations import WorkspaceSqlAadAdminsOperations
-from ._workspace_managed_identity_sql_control_settings_operations import WorkspaceManagedIdentitySqlControlSettingsOperations
+from ._workspace_managed_identity_sql_control_settings_operations import (
+    WorkspaceManagedIdentitySqlControlSettingsOperations,
+)
 from ._restorable_dropped_sql_pools_operations import RestorableDroppedSqlPoolsOperations
 from ._big_data_pools_operations import BigDataPoolsOperations
 from ._library_operations import LibraryOperations
@@ -69,6 +89,7 @@ from ._integration_runtime_connection_infos_operations import IntegrationRuntime
 from ._integration_runtime_auth_keys_operations import IntegrationRuntimeAuthKeysOperations
 from ._integration_runtime_monitoring_data_operations import IntegrationRuntimeMonitoringDataOperations
 from ._integration_runtime_status_operations import IntegrationRuntimeStatusOperations
+from ._get_operations import GetOperations
 from ._spark_configuration_operations import SparkConfigurationOperations
 from ._spark_configurations_operations import SparkConfigurationsOperations
 from ._kusto_operations_operations import KustoOperationsOperations
@@ -79,79 +100,88 @@ from ._kusto_pool_databases_operations import KustoPoolDatabasesOperations
 from ._kusto_pool_data_connections_operations import KustoPoolDataConnectionsOperations
 from ._kusto_pool_principal_assignments_operations import KustoPoolPrincipalAssignmentsOperations
 from ._kusto_pool_database_principal_assignments_operations import KustoPoolDatabasePrincipalAssignmentsOperations
+from ._kusto_pool_private_link_resources_operations import KustoPoolPrivateLinkResourcesOperations
+
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'AzureADOnlyAuthenticationsOperations',
-    'Operations',
-    'IpFirewallRulesOperations',
-    'KeysOperations',
-    'PrivateEndpointConnectionsOperations',
-    'PrivateLinkResourcesOperations',
-    'PrivateLinkHubPrivateLinkResourcesOperations',
-    'PrivateLinkHubsOperations',
-    'PrivateEndpointConnectionsPrivateLinkHubOperations',
-    'SqlPoolsOperations',
-    'SqlPoolMetadataSyncConfigsOperations',
-    'SqlPoolOperationResultsOperations',
-    'SqlPoolGeoBackupPoliciesOperations',
-    'SqlPoolDataWarehouseUserActivitiesOperations',
-    'SqlPoolRestorePointsOperations',
-    'SqlPoolReplicationLinksOperations',
-    'SqlPoolMaintenanceWindowsOperations',
-    'SqlPoolMaintenanceWindowOptionsOperations',
-    'SqlPoolTransparentDataEncryptionsOperations',
-    'SqlPoolBlobAuditingPoliciesOperations',
-    'SqlPoolOperationsOperations',
-    'SqlPoolUsagesOperations',
-    'SqlPoolSensitivityLabelsOperations',
-    'SqlPoolRecommendedSensitivityLabelsOperations',
-    'SqlPoolSchemasOperations',
-    'SqlPoolTablesOperations',
-    'SqlPoolTableColumnsOperations',
-    'SqlPoolConnectionPoliciesOperations',
-    'SqlPoolVulnerabilityAssessmentsOperations',
-    'SqlPoolVulnerabilityAssessmentScansOperations',
-    'SqlPoolSecurityAlertPoliciesOperations',
-    'SqlPoolVulnerabilityAssessmentRuleBaselinesOperations',
-    'ExtendedSqlPoolBlobAuditingPoliciesOperations',
-    'DataMaskingPoliciesOperations',
-    'DataMaskingRulesOperations',
-    'SqlPoolColumnsOperations',
-    'SqlPoolWorkloadGroupOperations',
-    'SqlPoolWorkloadClassifierOperations',
-    'WorkspaceManagedSqlServerBlobAuditingPoliciesOperations',
-    'WorkspaceManagedSqlServerExtendedBlobAuditingPoliciesOperations',
-    'WorkspaceManagedSqlServerSecurityAlertPolicyOperations',
-    'WorkspaceManagedSqlServerVulnerabilityAssessmentsOperations',
-    'WorkspaceManagedSqlServerEncryptionProtectorOperations',
-    'WorkspaceManagedSqlServerUsagesOperations',
-    'WorkspaceManagedSqlServerRecoverableSqlPoolsOperations',
-    'WorkspaceManagedSqlServerDedicatedSQLMinimalTlsSettingsOperations',
-    'WorkspacesOperations',
-    'WorkspaceAadAdminsOperations',
-    'WorkspaceSqlAadAdminsOperations',
-    'WorkspaceManagedIdentitySqlControlSettingsOperations',
-    'RestorableDroppedSqlPoolsOperations',
-    'BigDataPoolsOperations',
-    'LibraryOperations',
-    'LibrariesOperations',
-    'IntegrationRuntimesOperations',
-    'IntegrationRuntimeNodeIpAddressOperations',
-    'IntegrationRuntimeObjectMetadataOperations',
-    'IntegrationRuntimeNodesOperations',
-    'IntegrationRuntimeCredentialsOperations',
-    'IntegrationRuntimeConnectionInfosOperations',
-    'IntegrationRuntimeAuthKeysOperations',
-    'IntegrationRuntimeMonitoringDataOperations',
-    'IntegrationRuntimeStatusOperations',
-    'SparkConfigurationOperations',
-    'SparkConfigurationsOperations',
-    'KustoOperationsOperations',
-    'KustoPoolsOperations',
-    'KustoPoolChildResourceOperations',
-    'KustoPoolAttachedDatabaseConfigurationsOperations',
-    'KustoPoolDatabasesOperations',
-    'KustoPoolDataConnectionsOperations',
-    'KustoPoolPrincipalAssignmentsOperations',
-    'KustoPoolDatabasePrincipalAssignmentsOperations',
+    "AzureADOnlyAuthenticationsOperations",
+    "Operations",
+    "IpFirewallRulesOperations",
+    "KeysOperations",
+    "PrivateEndpointConnectionsOperations",
+    "PrivateLinkResourcesOperations",
+    "PrivateLinkHubPrivateLinkResourcesOperations",
+    "PrivateLinkHubsOperations",
+    "PrivateEndpointConnectionsPrivateLinkHubOperations",
+    "SqlPoolsOperations",
+    "SqlPoolMetadataSyncConfigsOperations",
+    "SqlPoolOperationResultsOperations",
+    "SqlPoolGeoBackupPoliciesOperations",
+    "SqlPoolDataWarehouseUserActivitiesOperations",
+    "SqlPoolRestorePointsOperations",
+    "SqlPoolReplicationLinksOperations",
+    "SqlPoolMaintenanceWindowsOperations",
+    "SqlPoolMaintenanceWindowOptionsOperations",
+    "SqlPoolTransparentDataEncryptionsOperations",
+    "SqlPoolBlobAuditingPoliciesOperations",
+    "SqlPoolOperationsOperations",
+    "SqlPoolUsagesOperations",
+    "SqlPoolSensitivityLabelsOperations",
+    "SqlPoolRecommendedSensitivityLabelsOperations",
+    "SqlPoolSchemasOperations",
+    "SqlPoolTablesOperations",
+    "SqlPoolTableColumnsOperations",
+    "SqlPoolConnectionPoliciesOperations",
+    "SqlPoolVulnerabilityAssessmentsOperations",
+    "SqlPoolVulnerabilityAssessmentScansOperations",
+    "SqlPoolSecurityAlertPoliciesOperations",
+    "SqlPoolVulnerabilityAssessmentRuleBaselinesOperations",
+    "ExtendedSqlPoolBlobAuditingPoliciesOperations",
+    "DataMaskingPoliciesOperations",
+    "DataMaskingRulesOperations",
+    "SqlPoolColumnsOperations",
+    "SqlPoolWorkloadGroupOperations",
+    "SqlPoolWorkloadClassifierOperations",
+    "WorkspaceManagedSqlServerBlobAuditingPoliciesOperations",
+    "WorkspaceManagedSqlServerExtendedBlobAuditingPoliciesOperations",
+    "WorkspaceManagedSqlServerSecurityAlertPolicyOperations",
+    "WorkspaceManagedSqlServerVulnerabilityAssessmentsOperations",
+    "WorkspaceManagedSqlServerEncryptionProtectorOperations",
+    "WorkspaceManagedSqlServerUsagesOperations",
+    "WorkspaceManagedSqlServerRecoverableSqlPoolsOperations",
+    "WorkspaceManagedSqlServerDedicatedSQLMinimalTlsSettingsOperations",
+    "WorkspacesOperations",
+    "WorkspaceAadAdminsOperations",
+    "WorkspaceSqlAadAdminsOperations",
+    "WorkspaceManagedIdentitySqlControlSettingsOperations",
+    "RestorableDroppedSqlPoolsOperations",
+    "BigDataPoolsOperations",
+    "LibraryOperations",
+    "LibrariesOperations",
+    "IntegrationRuntimesOperations",
+    "IntegrationRuntimeNodeIpAddressOperations",
+    "IntegrationRuntimeObjectMetadataOperations",
+    "IntegrationRuntimeNodesOperations",
+    "IntegrationRuntimeCredentialsOperations",
+    "IntegrationRuntimeConnectionInfosOperations",
+    "IntegrationRuntimeAuthKeysOperations",
+    "IntegrationRuntimeMonitoringDataOperations",
+    "IntegrationRuntimeStatusOperations",
+    "GetOperations",
+    "SparkConfigurationOperations",
+    "SparkConfigurationsOperations",
+    "KustoOperationsOperations",
+    "KustoPoolsOperations",
+    "KustoPoolChildResourceOperations",
+    "KustoPoolAttachedDatabaseConfigurationsOperations",
+    "KustoPoolDatabasesOperations",
+    "KustoPoolDataConnectionsOperations",
+    "KustoPoolPrincipalAssignmentsOperations",
+    "KustoPoolDatabasePrincipalAssignmentsOperations",
+    "KustoPoolPrivateLinkResourcesOperations",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

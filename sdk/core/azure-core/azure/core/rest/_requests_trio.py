@@ -23,20 +23,17 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import trio
+import trio  # pylint: disable=networking-import-outside-azure-core-transport
 from ._http_response_impl_async import AsyncHttpResponseImpl
 from ._requests_basic import _RestRequestsTransportResponseBase
 from ..pipeline.transport._requests_trio import TrioStreamDownloadGenerator
 
-class RestTrioRequestsTransportResponse(AsyncHttpResponseImpl, _RestRequestsTransportResponseBase): # type: ignore
-    """Asynchronous streaming of data from the response.
-    """
+
+class RestTrioRequestsTransportResponse(AsyncHttpResponseImpl, _RestRequestsTransportResponseBase):  # type: ignore
+    """Asynchronous streaming of data from the response."""
 
     def __init__(self, **kwargs):
-        super().__init__(
-            stream_download_generator=TrioStreamDownloadGenerator,
-            **kwargs
-        )
+        super().__init__(stream_download_generator=TrioStreamDownloadGenerator, **kwargs)
 
     async def close(self) -> None:
         if not self.is_closed:

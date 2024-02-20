@@ -6,14 +6,8 @@
 
 import logging
 import re
-import sys
 from typing import List, Tuple
-
-try:
-    from urllib.parse import urlparse, unquote
-except ImportError:
-    from urlparse import urlparse  # type: ignore
-    from urllib2 import unquote  # type: ignore
+from urllib.parse import unquote, urlparse
 
 try:
     from yarl import URL
@@ -21,7 +15,7 @@ except ImportError:
     pass
 
 try:
-    from azure.core.pipeline.transport import AioHttpTransport
+    from azure.core.pipeline.transport import AioHttpTransport  # pylint: disable=non-abstract-transport-import
 except ImportError:
     AioHttpTransport = None
 
@@ -38,14 +32,7 @@ def _wrap_exception(ex, desired_type):
     msg = ""
     if ex.args:
         msg = ex.args[0]
-    if sys.version_info >= (3,):
-        # Automatic chaining in Python 3 means we keep the trace
-        return desired_type(msg)
-    # There isn't a good solution in 2 for keeping the stack trace
-    # in general, or that will not result in an error in 3
-    # However, we can keep the previous error type and message
-    # TODO: In the future we will log the trace
-    return desired_type('{}: {}'.format(ex.__class__.__name__, msg))
+    return desired_type(msg)
 
 # This method attempts to emulate the sorting done by the service
 def _storage_header_sort(input_headers: List[Tuple[str, str]]) -> List[Tuple[str, str]]:
@@ -53,7 +40,7 @@ def _storage_header_sort(input_headers: List[Tuple[str, str]]) -> List[Tuple[str
     custom_weights = "-!#$%&*.^_|~+\"\'(),/`~0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]abcdefghijklmnopqrstuvwxyz{}"
 
     # Build dict of tuples and list of keys
-    header_dict = dict()
+    header_dict = {}
     header_keys = []
     for k, v in input_headers:
         header_dict[k] = v
@@ -62,8 +49,8 @@ def _storage_header_sort(input_headers: List[Tuple[str, str]]) -> List[Tuple[str
     # Sort according to custom defined weights
     try:
         header_keys = sorted(header_keys, key=lambda word: [custom_weights.index(c) for c in word])
-    except ValueError:
-        raise ValueError("Illegal character encountered when sorting headers.")
+    except ValueError as exc:
+        raise ValueError("Illegal character encountered when sorting headers.") from exc
 
     # Build list of sorted tuples
     sorted_headers = []
@@ -80,7 +67,6 @@ class AzureSigningError(ClientAuthenticationError):
     """
 
 
-# pylint: disable=no-self-use
 class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
 
     def __init__(self, account_name, account_key):
@@ -145,7 +131,7 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
         except Exception as ex:
             # Wrap any error that occurred as signing error
             # Doing so will clarify/locate the source of problem
-            raise _wrap_exception(ex, AzureSigningError)
+            raise _wrap_exception(ex, AzureSigningError) from ex
 
     def on_request(self, request):
         string_to_sign = \

@@ -6,6 +6,4 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "1.0.0b1"
-
-SDK_MONIKER = "communication-email/{}".format(VERSION)  # type: str
+VERSION = "1.0.0"

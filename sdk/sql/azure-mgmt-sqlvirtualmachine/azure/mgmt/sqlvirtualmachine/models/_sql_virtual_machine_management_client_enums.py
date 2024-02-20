@@ -136,6 +136,7 @@ class LeastPrivilegeMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SQL IaaS Agent least privilege mode."""
 
     ENABLED = "Enabled"
+    NOT_SET = "NotSet"
 
 
 class OperationOrigin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -213,3 +214,9 @@ class StorageWorkloadType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     GENERAL = "GENERAL"
     OLTP = "OLTP"
     DW = "DW"
+
+
+class TroubleshootingScenario(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """SQL VM troubleshooting scenario."""
+
+    UNHEALTHY_REPLICA = "UnhealthyReplica"

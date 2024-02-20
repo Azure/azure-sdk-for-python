@@ -6,27 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class AttestationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AttestationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     #: Intel Software Guard eXtensions.
     SGX_ENCLAVE = "SgxEnclave"
@@ -35,7 +19,7 @@ class AttestationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: Edge TPM Virtualization Based Security.
     TPM = "Tpm"
 
-class CertificateModification(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class CertificateModification(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The result of the operation
     """
 
@@ -45,7 +29,7 @@ class CertificateModification(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
     #: certificates.
     IS_ABSENT = "IsAbsent"
 
-class DataType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class DataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the type of the data encoded contained within the "data" field of a "RuntimeData" or
     "InitTimeData" object
     """
@@ -56,7 +40,7 @@ class DataType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: MAA.
     JSON = "JSON"
 
-class PolicyModification(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PolicyModification(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The result of the operation
     """
 

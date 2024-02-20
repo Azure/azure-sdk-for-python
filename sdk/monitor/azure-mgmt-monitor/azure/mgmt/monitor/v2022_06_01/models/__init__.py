@@ -14,23 +14,116 @@ from ._models_py3 import ArmRoleReceiver
 from ._models_py3 import AutomationRunbookReceiver
 from ._models_py3 import AzureAppPushReceiver
 from ._models_py3 import AzureFunctionReceiver
+from ._models_py3 import AzureMonitorMetricsDestination
 from ._models_py3 import AzureResource
+from ._models_py3 import ColumnDefinition
+from ._models_py3 import ConfigurationAccessEndpointSpec
 from ._models_py3 import Context
+from ._models_py3 import DataCollectionEndpoint
+from ._models_py3 import DataCollectionEndpointConfigurationAccess
+from ._models_py3 import DataCollectionEndpointFailoverConfiguration
+from ._models_py3 import DataCollectionEndpointLogsIngestion
+from ._models_py3 import DataCollectionEndpointMetadata
+from ._models_py3 import DataCollectionEndpointMetricsIngestion
+from ._models_py3 import DataCollectionEndpointNetworkAcls
+from ._models_py3 import DataCollectionEndpointResource
+from ._models_py3 import DataCollectionEndpointResourceIdentity
+from ._models_py3 import DataCollectionEndpointResourceListResult
+from ._models_py3 import DataCollectionEndpointResourceProperties
+from ._models_py3 import DataCollectionEndpointResourceSystemData
+from ._models_py3 import DataCollectionRule
+from ._models_py3 import DataCollectionRuleAssociation
+from ._models_py3 import DataCollectionRuleAssociationMetadata
+from ._models_py3 import DataCollectionRuleAssociationProxyOnlyResource
+from ._models_py3 import DataCollectionRuleAssociationProxyOnlyResourceListResult
+from ._models_py3 import DataCollectionRuleAssociationProxyOnlyResourceProperties
+from ._models_py3 import DataCollectionRuleAssociationProxyOnlyResourceSystemData
+from ._models_py3 import DataCollectionRuleDataSources
+from ._models_py3 import DataCollectionRuleDestinations
+from ._models_py3 import DataCollectionRuleMetadata
+from ._models_py3 import DataCollectionRuleResource
+from ._models_py3 import DataCollectionRuleResourceIdentity
+from ._models_py3 import DataCollectionRuleResourceListResult
+from ._models_py3 import DataCollectionRuleResourceProperties
+from ._models_py3 import DataCollectionRuleResourceSystemData
+from ._models_py3 import DataFlow
+from ._models_py3 import DataImportSources
+from ._models_py3 import DataImportSourcesEventHub
+from ._models_py3 import DataSourcesSpec
+from ._models_py3 import DataSourcesSpecDataImports
+from ._models_py3 import DestinationsSpec
+from ._models_py3 import DestinationsSpecAzureMonitorMetrics
 from ._models_py3 import EmailReceiver
 from ._models_py3 import EnableRequest
+from ._models_py3 import ErrorAdditionalInfo
+from ._models_py3 import ErrorDetail
 from ._models_py3 import ErrorResponse
+from ._models_py3 import ErrorResponseCommonV2
+from ._models_py3 import EventHubDataSource
+from ._models_py3 import EventHubDestination
+from ._models_py3 import EventHubDirectDestination
 from ._models_py3 import EventHubReceiver
+from ._models_py3 import ExtensionDataSource
+from ._models_py3 import FailoverConfigurationSpec
+from ._models_py3 import IisLogsDataSource
 from ._models_py3 import ItsmReceiver
+from ._models_py3 import LocationSpec
+from ._models_py3 import LogAnalyticsDestination
+from ._models_py3 import LogFileSettings
+from ._models_py3 import LogFileSettingsText
+from ._models_py3 import LogFileTextSettings
+from ._models_py3 import LogFilesDataSource
+from ._models_py3 import LogFilesDataSourceSettings
 from ._models_py3 import LogicAppReceiver
+from ._models_py3 import LogsIngestionEndpointSpec
+from ._models_py3 import ManagedServiceIdentity
+from ._models_py3 import Metadata
+from ._models_py3 import MetricsIngestionEndpointSpec
+from ._models_py3 import MonitoringAccountDestination
+from ._models_py3 import NetworkRuleSet
 from ._models_py3 import NotificationRequestBody
+from ._models_py3 import PerfCounterDataSource
+from ._models_py3 import PlatformTelemetryDataSource
+from ._models_py3 import PrivateLinkScopedResource
+from ._models_py3 import PrometheusForwarderDataSource
+from ._models_py3 import ResourceForUpdate
+from ._models_py3 import ResourceForUpdateIdentity
 from ._models_py3 import SmsReceiver
+from ._models_py3 import StorageBlobDestination
+from ._models_py3 import StorageTableDestination
+from ._models_py3 import StreamDeclaration
+from ._models_py3 import SyslogDataSource
+from ._models_py3 import SystemData
 from ._models_py3 import TestNotificationDetailsResponse
+from ._models_py3 import UserAssignedIdentity
 from ._models_py3 import VoiceReceiver
 from ._models_py3 import WebhookReceiver
+from ._models_py3 import WindowsEventLogDataSource
+from ._models_py3 import WindowsFirewallLogsDataSource
 
+from ._monitor_management_client_enums import CreatedByType
+from ._monitor_management_client_enums import KnownColumnDefinitionType
+from ._monitor_management_client_enums import KnownDataCollectionEndpointProvisioningState
+from ._monitor_management_client_enums import KnownDataCollectionEndpointResourceKind
+from ._monitor_management_client_enums import KnownDataCollectionRuleAssociationProvisioningState
+from ._monitor_management_client_enums import KnownDataCollectionRuleProvisioningState
+from ._monitor_management_client_enums import KnownDataCollectionRuleResourceKind
+from ._monitor_management_client_enums import KnownDataFlowStreams
+from ._monitor_management_client_enums import KnownExtensionDataSourceStreams
+from ._monitor_management_client_enums import KnownLocationSpecProvisioningStatus
+from ._monitor_management_client_enums import KnownLogFileTextSettingsRecordStartTimestampFormat
+from ._monitor_management_client_enums import KnownLogFilesDataSourceFormat
+from ._monitor_management_client_enums import KnownPerfCounterDataSourceStreams
+from ._monitor_management_client_enums import KnownPrometheusForwarderDataSourceStreams
+from ._monitor_management_client_enums import KnownPublicNetworkAccessOptions
+from ._monitor_management_client_enums import KnownSyslogDataSourceFacilityNames
+from ._monitor_management_client_enums import KnownSyslogDataSourceLogLevels
+from ._monitor_management_client_enums import KnownSyslogDataSourceStreams
+from ._monitor_management_client_enums import KnownWindowsEventLogDataSourceStreams
+from ._monitor_management_client_enums import ManagedServiceIdentityType
 from ._monitor_management_client_enums import ReceiverStatus
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
@@ -42,19 +135,112 @@ __all__ = [
     "AutomationRunbookReceiver",
     "AzureAppPushReceiver",
     "AzureFunctionReceiver",
+    "AzureMonitorMetricsDestination",
     "AzureResource",
+    "ColumnDefinition",
+    "ConfigurationAccessEndpointSpec",
     "Context",
+    "DataCollectionEndpoint",
+    "DataCollectionEndpointConfigurationAccess",
+    "DataCollectionEndpointFailoverConfiguration",
+    "DataCollectionEndpointLogsIngestion",
+    "DataCollectionEndpointMetadata",
+    "DataCollectionEndpointMetricsIngestion",
+    "DataCollectionEndpointNetworkAcls",
+    "DataCollectionEndpointResource",
+    "DataCollectionEndpointResourceIdentity",
+    "DataCollectionEndpointResourceListResult",
+    "DataCollectionEndpointResourceProperties",
+    "DataCollectionEndpointResourceSystemData",
+    "DataCollectionRule",
+    "DataCollectionRuleAssociation",
+    "DataCollectionRuleAssociationMetadata",
+    "DataCollectionRuleAssociationProxyOnlyResource",
+    "DataCollectionRuleAssociationProxyOnlyResourceListResult",
+    "DataCollectionRuleAssociationProxyOnlyResourceProperties",
+    "DataCollectionRuleAssociationProxyOnlyResourceSystemData",
+    "DataCollectionRuleDataSources",
+    "DataCollectionRuleDestinations",
+    "DataCollectionRuleMetadata",
+    "DataCollectionRuleResource",
+    "DataCollectionRuleResourceIdentity",
+    "DataCollectionRuleResourceListResult",
+    "DataCollectionRuleResourceProperties",
+    "DataCollectionRuleResourceSystemData",
+    "DataFlow",
+    "DataImportSources",
+    "DataImportSourcesEventHub",
+    "DataSourcesSpec",
+    "DataSourcesSpecDataImports",
+    "DestinationsSpec",
+    "DestinationsSpecAzureMonitorMetrics",
     "EmailReceiver",
     "EnableRequest",
+    "ErrorAdditionalInfo",
+    "ErrorDetail",
     "ErrorResponse",
+    "ErrorResponseCommonV2",
+    "EventHubDataSource",
+    "EventHubDestination",
+    "EventHubDirectDestination",
     "EventHubReceiver",
+    "ExtensionDataSource",
+    "FailoverConfigurationSpec",
+    "IisLogsDataSource",
     "ItsmReceiver",
+    "LocationSpec",
+    "LogAnalyticsDestination",
+    "LogFileSettings",
+    "LogFileSettingsText",
+    "LogFileTextSettings",
+    "LogFilesDataSource",
+    "LogFilesDataSourceSettings",
     "LogicAppReceiver",
+    "LogsIngestionEndpointSpec",
+    "ManagedServiceIdentity",
+    "Metadata",
+    "MetricsIngestionEndpointSpec",
+    "MonitoringAccountDestination",
+    "NetworkRuleSet",
     "NotificationRequestBody",
+    "PerfCounterDataSource",
+    "PlatformTelemetryDataSource",
+    "PrivateLinkScopedResource",
+    "PrometheusForwarderDataSource",
+    "ResourceForUpdate",
+    "ResourceForUpdateIdentity",
     "SmsReceiver",
+    "StorageBlobDestination",
+    "StorageTableDestination",
+    "StreamDeclaration",
+    "SyslogDataSource",
+    "SystemData",
     "TestNotificationDetailsResponse",
+    "UserAssignedIdentity",
     "VoiceReceiver",
     "WebhookReceiver",
+    "WindowsEventLogDataSource",
+    "WindowsFirewallLogsDataSource",
+    "CreatedByType",
+    "KnownColumnDefinitionType",
+    "KnownDataCollectionEndpointProvisioningState",
+    "KnownDataCollectionEndpointResourceKind",
+    "KnownDataCollectionRuleAssociationProvisioningState",
+    "KnownDataCollectionRuleProvisioningState",
+    "KnownDataCollectionRuleResourceKind",
+    "KnownDataFlowStreams",
+    "KnownExtensionDataSourceStreams",
+    "KnownLocationSpecProvisioningStatus",
+    "KnownLogFileTextSettingsRecordStartTimestampFormat",
+    "KnownLogFilesDataSourceFormat",
+    "KnownPerfCounterDataSourceStreams",
+    "KnownPrometheusForwarderDataSourceStreams",
+    "KnownPublicNetworkAccessOptions",
+    "KnownSyslogDataSourceFacilityNames",
+    "KnownSyslogDataSourceLogLevels",
+    "KnownSyslogDataSourceStreams",
+    "KnownWindowsEventLogDataSourceStreams",
+    "ManagedServiceIdentityType",
     "ReceiverStatus",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])

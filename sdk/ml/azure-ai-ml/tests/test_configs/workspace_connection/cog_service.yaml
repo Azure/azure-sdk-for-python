@@ -1,0 +1,10 @@
+name: test_ws_conn_cog_service
+type: cognitive_service
+target: dummy
+metadata:
+  Kind: dummy
+  ApiVersion: dummy
+credentials:
+  type: username_password
+  username: dummy
+  password: dummy

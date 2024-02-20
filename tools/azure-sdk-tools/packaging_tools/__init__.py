@@ -38,6 +38,8 @@ def build_config(config: Dict[str, Any]) -> Dict[str, str]:
     package_parts = result["package_nspkg"][: -len("-nspkg")].split("-")
     result["nspkg_names"] = [".".join(package_parts[: i + 1]) for i in range(len(package_parts))]
     result["init_names"] = ["/".join(package_parts[: i + 1]) + "/__init__.py" for i in range(len(package_parts))]
+    exclude_folders = result.pop("exclude_folders", "")
+    result["exclude_folders"] = [item.strip() for item in exclude_folders.split(",") if item.strip()]
 
     # Return result
     return result
@@ -85,7 +87,7 @@ def build_packaging_by_package_name(package_name: str, output_folder: str, build
         _LOGGER.info(f"Package {package_name} has no auto-packaging update enabled")
         return
 
-    env = Environment(loader=PackageLoader("packaging_tools", "templates"), keep_trailing_newline=True)
+    env = Environment(loader=PackageLoader("packaging_tools", "templates/packaging_files"), keep_trailing_newline=True)
     conf = build_config(conf)
 
     for template_name in env.list_templates():

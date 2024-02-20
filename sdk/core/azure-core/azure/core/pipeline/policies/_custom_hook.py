@@ -23,42 +23,48 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+from typing import TypeVar, Any
 from azure.core.pipeline import PipelineRequest, PipelineResponse
+from azure.core.pipeline.transport import HttpResponse as LegacyHttpResponse, HttpRequest as LegacyHttpRequest
+from azure.core.rest import HttpResponse, HttpRequest
 from ._base import SansIOHTTPPolicy
 
-class CustomHookPolicy(SansIOHTTPPolicy):
+HTTPResponseType = TypeVar("HTTPResponseType", HttpResponse, LegacyHttpResponse)
+HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
+
+
+class CustomHookPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
     """A simple policy that enable the given callback
     with the response.
 
     :keyword callback raw_request_hook: Callback function. Will be invoked on request.
     :keyword callback raw_response_hook: Callback function. Will be invoked on response.
     """
-    def __init__(self, **kwargs): # pylint: disable=unused-argument,super-init-not-called
-        self._request_callback = kwargs.get('raw_request_hook')
-        self._response_callback = kwargs.get('raw_response_hook')
 
-    def on_request(self, request): # pylint: disable=arguments-differ
-        # type: (PipelineRequest) -> None
+    def __init__(self, **kwargs: Any):  # pylint: disable=unused-argument,super-init-not-called
+        self._request_callback = kwargs.get("raw_request_hook")
+        self._response_callback = kwargs.get("raw_response_hook")
+
+    def on_request(self, request: PipelineRequest[HTTPRequestType]) -> None:
         """This is executed before sending the request to the next policy.
 
         :param request: The PipelineRequest object.
         :type request: ~azure.core.pipeline.PipelineRequest
         """
-        request_callback = request.context.options.pop('raw_request_hook', None)
+        request_callback = request.context.options.pop("raw_request_hook", None)
         if request_callback:
             request.context["raw_request_hook"] = request_callback
             request_callback(request)
         elif self._request_callback:
             self._request_callback(request)
 
-        response_callback = request.context.options.pop('raw_response_hook', None)
+        response_callback = request.context.options.pop("raw_response_hook", None)
         if response_callback:
             request.context["raw_response_hook"] = response_callback
 
-
-
-    def on_response(self, request, response): # pylint: disable=arguments-differ
-        # type: (PipelineRequest, PipelineResponse) -> None
+    def on_response(
+        self, request: PipelineRequest[HTTPRequestType], response: PipelineResponse[HTTPRequestType, HTTPResponseType]
+    ) -> None:
         """This is executed after the request comes back from the policy.
 
         :param request: The PipelineRequest object.

@@ -24,20 +24,17 @@ if TYPE_CHECKING:
 class ConversationAuthoringClient(
     ConversationAuthoringClientOperationsMixin
 ):  # pylint: disable=client-accepts-api-version-keyword
-    """The language service API is a suite of natural language processing (NLP) skills built with
-    best-in-class Microsoft machine learning algorithms. The API can be used to analyze
-    unstructured text for tasks such as sentiment analysis, key phrase extraction, language
-    detection and question answering. Further documentation can be found in :code:`<a
-    href="https://docs.microsoft.com/en-us/azure/cognitive-services/language-service/overview">
-    https://docs.microsoft.com/en-us/azure/cognitive-services/language-service/overview</a>`.
+    """The language service conversations API is a suite of natural language processing (NLP) skills
+    that can be used to analyze structured conversations (textual or spoken). Further documentation
+    can be found in https://docs.microsoft.com/azure/cognitive-services/language-service/overview.
 
     :param endpoint: Supported Cognitive Services endpoint (e.g.,
      https://:code:`<resource-name>`.cognitiveservices.azure.com). Required.
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: Api Version. Default value is "2022-10-01-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2023-04-01". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -46,7 +43,7 @@ class ConversationAuthoringClient(
     def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
         _endpoint = "{Endpoint}/language"
         self._config = ConversationAuthoringClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
-        self._client = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
+        self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
@@ -85,5 +82,5 @@ class ConversationAuthoringClient(
         await self._client.__aenter__()
         return self
 
-    async def __aexit__(self, *exc_details) -> None:
+    async def __aexit__(self, *exc_details: Any) -> None:
         await self._client.__aexit__(*exc_details)

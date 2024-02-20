@@ -38,7 +38,7 @@ async def test_error_reporting():
         functools.partial(client.obtain_token_by_refresh_token, ("scope",), "refresh token"),
     ]
 
-    # exceptions raised for AAD errors should contain AAD's error description
+    # exceptions raised for Microsoft Entra errors should contain Microsoft Entra's error description
     for fn in fns:
         with pytest.raises(ClientAuthenticationError) as ex:
             await fn()
@@ -46,6 +46,7 @@ async def test_error_reporting():
         assert error_name in message and error_description in message
         assert transport.send.call_count == 1
         transport.send.reset_mock()
+
 
 @pytest.mark.skip(reason="Adding body to HttpResponseError str. Not an issue bc we don't automatically log errors")
 async def test_exceptions_do_not_expose_secrets():
@@ -74,10 +75,10 @@ async def test_exceptions_do_not_expose_secrets():
             assert transport.send.call_count == 1
             transport.send.reset_mock()
 
-    # AAD errors shouldn't provoke exceptions exposing secrets
+    # Microsoft Entra errors shouldn't provoke exceptions exposing secrets
     await assert_secrets_not_exposed()
 
-    # neither should unexpected AAD responses
+    # neither should unexpected Microsoft Entra responses
     del body["error"]
     await assert_secrets_not_exposed()
 
@@ -186,7 +187,7 @@ async def test_request_url(authority):
 
 
 async def test_evicts_invalid_refresh_token():
-    """when AAD rejects a refresh token, the client should evict that token from its cache"""
+    """when Microsoft Entra ID rejects a refresh token, the client should evict that token from its cache"""
 
     tenant_id = "tenant-id"
     client_id = "client-id"
@@ -310,7 +311,7 @@ async def test_multitenant_cache():
     assert client_b.get_cached_access_token([scope]) is None
 
     # but C allows multitenant auth and should therefore return the token from tenant_a when appropriate
-    client_c = AadClient(tenant_id=tenant_c, additionally_allowed_tenants=['*'], **common_args)
+    client_c = AadClient(tenant_id=tenant_c, additionally_allowed_tenants=["*"], **common_args)
     assert client_c.get_cached_access_token([scope]) is None
     token = client_c.get_cached_access_token([scope], tenant_id=tenant_a)
     assert token.token == expected_token

@@ -2,8 +2,7 @@ import uuid
 import time
 from multiprocessing.pool import ThreadPool
 import json
-import azure.cosmos.exceptions as exceptions
-from azure.cosmos.http_constants import StatusCodes
+from azure.cosmos import exceptions, PartitionKey
 
 class ConflictWorker(object):
     def __init__(self, database_name, basic_collection_name, manual_collection_name, lww_collection_name, udp_collection_name):
@@ -24,44 +23,19 @@ class ConflictWorker(object):
 
     def initialize_async(self):
         create_client = self.clients[0]
-        database = None
-        try:
-            database = create_client.ReadDatabase("dbs/" + self.database_name)
-        except exceptions.CosmosResourceNotFoundError:
-            print("database not found, needs to be created.")
+        database = create_client.create_database_if_not_exists(self.database_name)
 
-        if not database:
-            database = {'id': self.database_name}
-            database = create_client.CreateDatabase(database)
+        basic_collection = self.create_document_collection(database, self.basic_collection_name, None)
 
-        basic_collection = {'id': self.basic_collection_name}
-        basic = self.try_create_document_collection(create_client, database, basic_collection)
+        manual_resolution_policy = {'mode': 'Custom'}
+        manual_collection = self.create_document_collection(database, self.manual_collection_name, manual_resolution_policy)
 
-        manual_collection = {
-                            'id': self.manual_collection_name,
-                            'conflictResolutionPolicy': {
-                                 'mode': 'Custom'
-                                }
-                            }
-        manual_collection = self.try_create_document_collection(create_client, database, manual_collection)
+        lww_conflict_resolution_policy = {'mode': 'LastWriterWins', 'conflictResolutionPath': '/regionId'}
 
-        lww_collection = {
-                        'id': self.lww_collection_name,
-                        'conflictResolutionPolicy': {
-                            'mode': 'LastWriterWins',
-                            'conflictResolutionPath': '/regionId'
-                            }
-                        }
-        lww_collection = self.try_create_document_collection(create_client, database, lww_collection)
+        lww_collection = self.create_document_collection(database, self.lww_collection_name, lww_conflict_resolution_policy)
 
-        udp_collection = {
-                        'id': self.udp_collection_name,
-                        'conflictResolutionPolicy': {
-                            'mode': 'Custom',
-                            'conflictResolutionProcedure': 'dbs/' + self.database_name + "/colls/" + self.udp_collection_name + '/sprocs/resolver'
-                            }
-                        }
-        udp_collection = self.try_create_document_collection(create_client, database, udp_collection)
+        udp_custom_resolution_policy = {'mode': 'Custom' }
+        udp_collection = self.create_document_collection(database,self.udp_collection_name, udp_custom_resolution_policy)
 
         lww_sproc = {'id':'resolver',
                     'body': "function resolver(incomingRecord, existingRecord, isTombstone, conflictingRecords) {\r\n" +
@@ -118,22 +92,13 @@ class ConflictWorker(object):
                 "}"
                 }
         try:
-            lww_sproc = create_client.CreateStoredProcedure("dbs/" + self.database_name+ "/colls/" + self.udp_collection_name, lww_sproc)
+            udp_collection.scripts.create_stored_procedure(lww_sproc)
         except exceptions.CosmosResourceExistsError:
             return
 
-    def try_create_document_collection (self, client, database, collection):
-        read_collection = None
-        try:
-            read_collection = client.ReadContainer("dbs/" + database['id'] + "/colls/" + collection['id'])
-        except exceptions.CosmosResourceNotFoundError:
-            print("collection not found, needs to be created.")
-
-        if read_collection == None:
-            collection['partitionKey'] = {'paths': ['/id'],'kind': 'Hash'}
-            read_collection = client.CreateContainer(database['_self'], collection)
-            print("sleeping for 5 seconds to allow collection create to propagate.")
-            time.sleep(5)
+    def create_document_collection (self, database, collection_id, conflict_resolution_policy):
+        read_collection = database.create_container_if_not_exists(id=collection_id, partition_key=PartitionKey(path="/id"),
+                                                                  conflict_resolution_policy=conflict_resolution_policy)
         return read_collection
 
     def run_manual_conflict_async(self):
@@ -175,8 +140,8 @@ class ConflictWorker(object):
             pool = ThreadPool(processes = len(self.clients))
             insert_document_futures = []
             for client in self.clients:
-                conflict_document = {'id': id, 'regionId': i, 'regionEndpoint': client.ReadEndpoint}
-                insert_document_future = pool.apply_async(self.try_insert_document, (client, self.manual_collection_link, conflict_document))
+                conflict_document = {'id': id, 'regionId': i, 'regionEndpoint': client.client_connection.ReadEndpoint}
+                insert_document_future = pool.apply_async(self.try_insert_document, (client, self.manual_collection_name, conflict_document))
                 insert_document_futures.append(insert_document_future)
                 i += 1
 
@@ -202,19 +167,21 @@ class ConflictWorker(object):
     def run_update_conflict_on_manual_async(self):
         while True:
             id = str(uuid.uuid4())
-            conflict_document_for_insertion = {'id': id, 'regionId': 0, 'regionEndpoint': self.clients[0].ReadEndpoint}
-            conflict_document_for_insertion = self.try_insert_document(self.clients[0], self.manual_collection_link, conflict_document_for_insertion)
+            conflict_document_for_insertion = {'id': id, 'regionId': 0, 'regionEndpoint': self.clients[0].client_connection.ReadEndpoint}
+            conflict_document_for_insertion = self.try_insert_document(self.clients[0], self.manual_collection_name, conflict_document_for_insertion)
             time.sleep(1) #1 Second for write to sync.
 
             print("1) Performing conflicting update across %d regions on %s" % (len(self.clients), self.manual_collection_link))
 
             i = 0
-            options = {'accessCondition': {'condition': 'IfMatch', 'type': conflict_document_for_insertion['_etag']}}
+            access_condition = {'condition': 'IfMatch', 'type': conflict_document_for_insertion['_etag']}
             pool = ThreadPool(processes = len(self.clients))
             update_document_futures = []
             for client in self.clients:
-                conflict_document = {'id': id, 'regionId': i, 'regionEndpoint': client.ReadEndpoint}
-                update_document_future = pool.apply_async(self.try_update_document, (client, self.manual_collection_link, conflict_document, options))
+                database = client.get_database_client(self.database_name)
+                container = database.get_container_client(self.manual_collection_name)
+                conflict_document = {'id': id, 'regionId': i, 'regionEndpoint': client.client_connection.ReadEndpoint}
+                update_document_future = pool.apply_async(self.try_update_document, (container, conflict_document, access_condition))
                 update_document_futures.append(update_document_future)
                 i += 1
 
@@ -240,21 +207,23 @@ class ConflictWorker(object):
     def run_delete_conflict_on_manual_async(self):
         while True:
             id = str(uuid.uuid4())
-            conflict_document_for_insertion = {'id': id, 'regionId': 0, 'regionEndpoint': self.clients[0].ReadEndpoint}
-            conflict_document_for_insertion = self.try_insert_document(self.clients[0], self.manual_collection_link, conflict_document_for_insertion)
+            conflict_document_for_insertion = {'id': id, 'regionId': 0, 'regionEndpoint': self.clients[0].client_connection.ReadEndpoint}
+            conflict_document_for_insertion = self.try_insert_document(self.clients[0], self.manual_collection_name, conflict_document_for_insertion)
             time.sleep(1) #1 Second for write to sync.
 
             print("1) Performing conflicting delete across %d regions on %s" % (len(self.clients), self.manual_collection_link))
 
             i = 0
-            options = {'accessCondition': {'condition': 'IfMatch', 'type': conflict_document_for_insertion['_etag']}}
+            access_condition = {'condition': 'IfMatch', 'type': conflict_document_for_insertion['_etag']}
             pool = ThreadPool(processes = len(self.clients))
             delete_document_futures = []
             for client in self.clients:
+                database = client.get_database_client(self.database_name)
+                container = database.get_container_client(self.manual_collection_name)
                 conflict_document = conflict_document_for_insertion.copy()
                 conflict_document['regionId'] = i
-                conflict_document['regionEndpoint'] = client.ReadEndpoint
-                delete_document_future = pool.apply_async(self.try_delete_document, (client, self.manual_collection_link, conflict_document, options))
+                conflict_document['regionEndpoint'] = client.client_connection.ReadEndpoint
+                delete_document_future = pool.apply_async(self.try_delete_document, (container, conflict_document, access_condition))
                 delete_document_futures.append(delete_document_future)
                 i += 1
 
@@ -286,8 +255,8 @@ class ConflictWorker(object):
             pool = ThreadPool(processes = len(self.clients))
             insert_document_futures = []
             for client in self.clients:
-                conflict_document = {'id': id, 'regionId': i, 'regionEndpoint': client.ReadEndpoint}
-                insert_document_future = pool.apply_async(self.try_insert_document, (client, self.lww_collection_link, conflict_document))
+                conflict_document = {'id': id, 'regionId': i, 'regionEndpoint': client.client_connection.ReadEndpoint}
+                insert_document_future = pool.apply_async(self.try_insert_document, (client, self.lww_collection_name, conflict_document))
                 insert_document_futures.append(insert_document_future)
                 i += 1
 
@@ -308,19 +277,21 @@ class ConflictWorker(object):
     def run_update_conflict_on_LWW_async(self):
         while True:
             id = str(uuid.uuid4())
-            conflict_document_for_insertion = {'id': id, 'regionId': 0, 'regionEndpoint': self.clients[0].ReadEndpoint}
-            conflict_document_for_insertion = self.try_insert_document(self.clients[0], self.lww_collection_link, conflict_document_for_insertion)
+            conflict_document_for_insertion = {'id': id, 'regionId': 0, 'regionEndpoint': self.clients[0].client_connection.ReadEndpoint}
+            conflict_document_for_insertion = self.try_insert_document(self.clients[0], self.lww_collection_name, conflict_document_for_insertion)
             time.sleep(1) #1 Second for write to sync.
 
             print("1) Performing conflicting update across %d regions on %s" % (len(self.clients), self.lww_collection_link))
 
             i = 0
-            options = {'accessCondition': {'condition': 'IfMatch', 'type': conflict_document_for_insertion['_etag']}}
+            access_condition = {'condition': 'IfMatch', 'type': conflict_document_for_insertion['_etag']}
             pool = ThreadPool(processes = len(self.clients))
             update_document_futures = []
             for client in self.clients:
-                conflict_document = {'id': id, 'regionId': i, 'regionEndpoint': client.ReadEndpoint}
-                update_document_future = pool.apply_async(self.try_update_document, (client, self.lww_collection_link, conflict_document, options))
+                database = client.get_database_client(self.database_name)
+                container = database.get_container_client(self.lww_collection_name)
+                conflict_document = {'id': id, 'regionId': i, 'regionEndpoint': client.client_connection.ReadEndpoint}
+                update_document_future = pool.apply_async(self.try_update_document, (container, conflict_document, access_condition))
                 update_document_futures.append(update_document_future)
                 i += 1
 
@@ -341,19 +312,21 @@ class ConflictWorker(object):
     def run_delete_conflict_on_LWW_async(self):
         while True:
             id = str(uuid.uuid4())
-            conflict_document_for_insertion = {'id': id, 'regionId': 0, 'regionEndpoint': self.clients[0].ReadEndpoint}
-            conflict_document_for_insertion = self.try_insert_document(self.clients[0], self.lww_collection_link, conflict_document_for_insertion)
+            conflict_document_for_insertion = {'id': id, 'regionId': 0, 'regionEndpoint': self.clients[0].client_connection.ReadEndpoint}
+            conflict_document_for_insertion = self.try_insert_document(self.clients[0], self.lww_collection_name, conflict_document_for_insertion)
             time.sleep(1) #1 Second for write to sync.
 
             print("1) Performing conflicting update/delete across 3 regions on %s" % self.lww_collection_link)
 
             i = 0
-            options = {'accessCondition': {'condition': 'IfMatch', 'type': conflict_document_for_insertion['_etag']}}
+            access_condition = {'condition': 'IfMatch', 'type': conflict_document_for_insertion['_etag']}
             pool = ThreadPool(processes = len(self.clients))
             delete_document_futures = []
             for client in self.clients:
-                conflict_document = {'id': id, 'regionId': i, 'regionEndpoint': client.ReadEndpoint}
-                delete_document_future = pool.apply_async(self.try_update_or_delete_document, (client, self.lww_collection_link, conflict_document, options))
+                database = client.get_database_client(self.database_name)
+                container = database.get_container_client(self.lww_collection_name)
+                conflict_document = {'id': id, 'regionId': i, 'regionEndpoint': client.client_connection.ReadEndpoint}
+                delete_document_future = pool.apply_async(self.try_update_or_delete_document, (container, conflict_document, access_condition))
                 delete_document_futures.append(delete_document_future)
                 i += 1
 
@@ -381,8 +354,8 @@ class ConflictWorker(object):
             pool = ThreadPool(processes = len(self.clients))
             insert_document_futures = []
             for client in self.clients:
-                conflict_document = {'id': id, 'regionId': i, 'regionEndpoint': client.ReadEndpoint}
-                insert_document_future = pool.apply_async(self.try_insert_document, (client, self.udp_collection_link, conflict_document))
+                conflict_document = {'id': id, 'regionId': i, 'regionEndpoint': client.client_connection.ReadEndpoint}
+                insert_document_future = pool.apply_async(self.try_insert_document, (client, self.udp_collection_name, conflict_document))
                 insert_document_futures.append(insert_document_future)
                 i += 1
 
@@ -404,19 +377,21 @@ class ConflictWorker(object):
     def run_update_conflict_on_UDP_async(self):
         while True:
             id = str(uuid.uuid4())
-            conflict_document_for_insertion = {'id': id, 'regionId': 0, 'regionEndpoint': self.clients[0].ReadEndpoint}
-            conflict_document_for_insertion = self.try_insert_document(self.clients[0], self.udp_collection_link, conflict_document_for_insertion)
+            conflict_document_for_insertion = {'id': id, 'regionId': 0, 'regionEndpoint': self.clients[0].client_connection.ReadEndpoint}
+            conflict_document_for_insertion = self.try_insert_document(self.clients[0], self.udp_collection_name, conflict_document_for_insertion)
             time.sleep(1) #1 Second for write to sync.
 
             print("1) Performing conflicting update across %d regions on %s" % (len(self.clients), self.udp_collection_link))
 
             i = 0
-            options = {'accessCondition': {'condition': 'IfMatch', 'type': conflict_document_for_insertion['_etag']}}
+            access_condition = {'condition': 'IfMatch', 'type': conflict_document_for_insertion['_etag']}
             pool = ThreadPool(processes = len(self.clients))
             update_document_futures = []
             for client in self.clients:
-                conflict_document = {'id': id, 'regionId': i, 'regionEndpoint': client.ReadEndpoint}
-                update_document_future = pool.apply_async(self.try_update_document, (client, self.udp_collection_link, conflict_document, options))
+                database = client.get_database_client(self.database_name)
+                container = database.get_container_client(self.udp_collection_name)
+                conflict_document = {'id': id, 'regionId': i, 'regionEndpoint': client.client_connection.ReadEndpoint}
+                update_document_future = pool.apply_async(self.try_update_document, (container, conflict_document, access_condition))
                 update_document_futures.append(update_document_future)
                 i += 1
 
@@ -438,19 +413,21 @@ class ConflictWorker(object):
     def run_delete_conflict_on_UDP_async(self):
         while True:
             id = str(uuid.uuid4())
-            conflict_document_for_insertion = {'id': id, 'regionId': 0, 'regionEndpoint': self.clients[0].ReadEndpoint}
-            conflict_document_for_insertion = self.try_insert_document(self.clients[0], self.udp_collection_link, conflict_document_for_insertion)
+            conflict_document_for_insertion = {'id': id, 'regionId': 0, 'regionEndpoint': self.clients[0].client_connection.ReadEndpoint}
+            conflict_document_for_insertion = self.try_insert_document(self.clients[0], self.udp_collection_name, conflict_document_for_insertion)
             time.sleep(1) #1 Second for write to sync.
 
             print("1) Performing conflicting update/delete across 3 regions on %s" % self.udp_collection_link)
 
             i = 0
-            options = {'accessCondition': {'condition': 'IfMatch', 'type': conflict_document_for_insertion['_etag']}}
+            access_condition = {'condition': 'IfMatch', 'type': conflict_document_for_insertion['_etag']}
             pool = ThreadPool(processes = len(self.clients))
             delete_document_futures = []
             for client in self.clients:
-                conflict_document = {'id': id, 'regionId': i, 'regionEndpoint': client.ReadEndpoint}
-                delete_document_future = pool.apply_async(self.try_update_or_delete_document, (client, self.udp_collection_link, conflict_document, options))
+                database = client.get_database_client(self.database_name)
+                container = database.get_container_client(self.udp_collection_name)
+                conflict_document = {'id': id, 'regionId': i, 'regionEndpoint': client.client_connection.ReadEndpoint}
+                delete_document_future = pool.apply_async(self.try_update_or_delete_document, (container, conflict_document, access_condition))
                 delete_document_futures.append(delete_document_future)
                 i += 1
 
@@ -470,35 +447,36 @@ class ConflictWorker(object):
             else:
                 print("Retrying update/delete to induce conflicts")
 
-    def try_insert_document(self, client, collection_uri, document):
+    def try_insert_document(self, client, collection_name, document):
         try:
-            return client.CreateItem(collection_uri, document)
+            database = client.get_database_client(self.database_name)
+            container = database.get_container_client(collection_name)
+            return container.create_item(document)
         except exceptions.CosmosResourceExistsError:
+            print("Error found trying to insert document.")
             return None
 
-    def try_update_document(self, client, collection_uri, document, options):
+    def try_update_document(self, container, document, access_condition):
         try:
-            options['partitionKey'] = document['id']
-            return client.ReplaceItem(collection_uri + "/docs/" + document['id'], document, options)
+            return container.replace_item(document['id'], document, access_condition=access_condition)
         except (exceptions.CosmosResourceNotFoundError, exceptions.CosmosAccessConditionFailedError):
             # Lost synchronously or no document yet. No conflict is induced.
             return None
 
-    def try_delete_document(self, client, collection_uri, document, options):
+    def try_delete_document(self, container, document, access_condition):
         try:
-            options['partitionKey'] = document['id']
-            client.DeleteItem(collection_uri + "/docs/" + document['id'], options)
+            container.delete_item(document['id'], document['id'], access_condition=access_condition)
             return document
         except (exceptions.CosmosResourceNotFoundError, exceptions.CosmosAccessConditionFailedError):
             #Lost synchronously. No conflict is induced.
             return None
 
-    def try_update_or_delete_document(self, client, collection_uri, conflict_document, options):
+    def try_update_or_delete_document(self, container, conflict_document, access_condition):
         if int(conflict_document['regionId']) % 2 == 1:
             #We delete from region 1, even though region 2 always win.
-            return self.try_delete_document(client, collection_uri, conflict_document, options)
+            return self.try_delete_document(container, conflict_document, access_condition)
         else:
-            return self.try_update_document(client, collection_uri, conflict_document, options)
+            return self.try_update_document(container, conflict_document, access_condition)
 
     def validate_manual_conflict_async(self, clients, conflict_document):
 
@@ -510,8 +488,10 @@ class ConflictWorker(object):
             self.delete_conflict_async(conflict_document)
 
     def validate_manual_conflict_async_internal(self, client, conflict_document):
+        database = client.get_database_client(self.database_name)
+        container = database.get_container_client(self.manual_collection_name)
         while True:
-            conflicts_iterator = iter(client.ReadConflicts(self.manual_collection_link))
+            conflicts_iterator = iter(container.list_conflicts())
             conflict = next(conflicts_iterator, None)
             while conflict:
                 if conflict['operationType'] != 'delete':
@@ -521,34 +501,34 @@ class ConflictWorker(object):
                         if ((conflict_document['_rid'] == conflict_document_content['_rid']) and
                             (conflict_document['_etag'] == conflict_document_content['_etag'])):
                             print("Document from Region %d lost conflict @ %s" %
-                                  (int(conflict_document['regionId']), client.ReadEndpoint))
+                                  (int(conflict_document['regionId']), client.client_connection.ReadEndpoint))
                             return True
                         else:
                             #Checking whether this is the winner.
-                            options = {'partitionKey': conflict_document['id']}
-                            winner_document = client.ReadItem(conflict_document['_self'], options)
+                            winner_document = container.read_item(conflict_document['id'], conflict_document['id'])
                             print("Document from Region %d won the conflict @ %s" %
-                                  (int(winner_document['regionId']), client.ReadEndpoint))
+                                  (int(winner_document['regionId']), client.client_connection.ReadEndpoint))
                             return False
                 else:
                     if conflict['resourceId'] == conflict_document['_rid']:
-                        print("Delete conflict found @ %s" % client.ReadEndpoint)
+                        print("Delete conflict found @ %s" % client.client_connection.ReadEndpoint)
                         return False
                 conflict = next(conflicts_iterator, None)
 
             self.trace_error("Document %s is not found in conflict feed @ %s, retrying" %
-                             (conflict_document['id'], client.ReadEndpoint))
+                             (conflict_document['id'], client.client_connection.ReadEndpoint))
 
             time.sleep(0.5)
 
     def delete_conflict_async(self, conflict_document):
         del_client = self.clients[0]
-        conflicts_iterator = iter(del_client.ReadConflicts(self.manual_collection_link))
+        database = del_client.get_database_client(self.database_name)
+        container = database.get_container_client(self.manual_collection_name)
+        conflicts_iterator = iter(container.list_conflicts())
         conflict = next(conflicts_iterator, None)
 
         while conflict:
             conflict_content = json.loads(conflict['content'])
-            options = {'partitionKey': conflict_content['id']}
 
             if conflict['operationType'] != 'delete':
                 if ((conflict_content['_rid'] == conflict_document['_rid']) and
@@ -556,12 +536,12 @@ class ConflictWorker(object):
                     print("Deleting manual conflict %s from region %d" %
                           (conflict['resourceId'],
                            int(conflict_content['regionId'])))
-                    del_client.DeleteConflict(conflict['_self'], options)
+                    container.delete_conflict(conflict['id'], conflict_content['id'])
             elif conflict['resourceId'] == conflict_document['_rid']:
                 print("Deleting manual conflict %s from region %d" %
                       (conflict['resourceId'],
                        int(conflict_document['regionId'])))
-                del_client.DeleteConflict(conflict['_self'], options)
+                container.delete_conflict(conflict['id'], conflict_content['id'])
             conflict = next(conflicts_iterator, None)
 
     def validate_LWW_async(self, clients, conflict_document, has_delete_conflict):
@@ -569,7 +549,9 @@ class ConflictWorker(object):
             self.validate_LWW_async_internal(client, conflict_document, has_delete_conflict)
 
     def validate_LWW_async_internal(self, client, conflict_document, has_delete_conflict):
-        conflicts_iterator =iter(client.ReadConflicts(self.lww_collection_link))
+        database = client.get_database_client(self.database_name)
+        container = database.get_container_client(self.lww_collection_name)
+        conflicts_iterator = iter(container.list_conflicts())
 
         conflict = next(conflicts_iterator, None)
         conflict_count = 0
@@ -584,19 +566,17 @@ class ConflictWorker(object):
         if has_delete_conflict:
             while True:
                 try:
-                    options = {'partitionKey': conflict_document[0]['id']}
-                    client.ReadItem(conflict_document[0]['_self'], options)
-
+                    container.read_item(conflict_document[0]['id'], conflict_document[0]['id'])
                     self.trace_error("Delete conflict for document %s didn't win @ %s" %
-                                     (conflict_document[0]['id'], client.ReadEndpoint))
+                                     (conflict_document[0]['id'], client.client_connection.ReadEndpoint))
 
                     time.sleep(0.5)
                 except exceptions.CosmosResourceNotFoundError:
-                    print("Delete conflict won @ %s" % client.ReadEndpoint)
+                    print("Delete conflict won @ %s" % client.client_connection.ReadEndpoint)
                     return
                 except exceptions.CosmosHttpResponseError:
                     self.trace_error("Delete conflict for document %s didn't win @ %s" %
-                                    (conflict_document[0]['id'], client.ReadEndpoint))
+                                    (conflict_document[0]['id'], client.client_connection.ReadEndpoint))
 
                     time.sleep(0.5)
 
@@ -610,21 +590,20 @@ class ConflictWorker(object):
 
         while True:
             try:
-                options = {'partitionKey': winner_document['id']}
-                existing_document = client.ReadItem(winner_document['_self'], options)
+                existing_document = container.read_item(winner_document['id'], winner_document['id'])
 
                 if int(existing_document['regionId']) == int(winner_document['regionId']):
                     print("Winner document from region %d found at %s" %
-                          (int(existing_document['regionId']), client.ReadEndpoint))
+                          (int(existing_document['regionId']), client.client_connection.ReadEndpoint))
                     break
                 else:
                     self.trace_error("Winning document version from region %d is not found @ %s, retrying..." %
-                                     (int(winner_document["regionId"]), client.WriteEndpoint))
+                                     (int(winner_document["regionId"]), client.client_connection.WriteEndpoint))
 
                     time.sleep(0.5)
             except exceptions.AzureError as e:
                 self.trace_error("Winner document from region %d is not found @ %s, retrying..." %
-                                (int(winner_document["regionId"]), client.WriteEndpoint))
+                                (int(winner_document["regionId"]), client.client_connection.WriteEndpoint))
 
                 time.sleep(0.5)
 
@@ -633,7 +612,9 @@ class ConflictWorker(object):
             self.validate_UDP_async_internal(client, conflict_document, has_delete_conflict)
 
     def validate_UDP_async_internal(self, client, conflict_document, has_delete_conflict):
-        conflicts_iterator = iter(client.ReadConflicts(self.udp_collection_link))
+        database = client.get_database_client(self.database_name)
+        container = database.get_container_client(self.udp_collection_name)
+        conflicts_iterator = iter(container.list_conflicts())
 
         conflict = next(conflicts_iterator, None)
         conflict_count = 0
@@ -648,19 +629,18 @@ class ConflictWorker(object):
         if has_delete_conflict:
             while True:
                 try:
-                    options = {'partitionKey': conflict_document[0]['id']}
-                    client.ReadItem(conflict_document[0]['_self'], options)
+                    container.read_item(conflict_document[0]['id'], conflict_document[0]['id'])
 
                     self.trace_error("Delete conflict for document %s didn't win @ %s" %
-                                     (conflict_document[0]['id'], client.ReadEndpoint))
+                                     (conflict_document[0]['id'], client.client_connection.ReadEndpoint))
 
                     time.sleep(0.5)
                 except exceptions.CosmosResourceNotFoundError:
-                    print("Delete conflict won @ %s" % client.ReadEndpoint)
+                    print("Delete conflict won @ %s" % client.client_connection.ReadEndpoint)
                     return
                 except exceptions.CosmosHttpResponseError:
                     self.trace_error("Delete conflict for document %s didn't win @ %s" %
-                                    (conflict_document[0]['id'], client.ReadEndpoint))
+                                    (conflict_document[0]['id'], client.client_connection.ReadEndpoint))
                     time.sleep(0.5)
 
         winner_document = None
@@ -673,21 +653,20 @@ class ConflictWorker(object):
 
         while True:
             try:
-                options = {'partitionKey': winner_document['id']}
-                existing_document = client.ReadItem(self.udp_collection_link + "/docs/" + winner_document['id'], options)
+                existing_document = container.read_item(winner_document['id'], winner_document['id'])
 
                 if int(existing_document['regionId']) == int(winner_document['regionId']):
                     print("Winner document from region %d found at %s" %
-                          (int(existing_document["regionId"]), client.ReadEndpoint))
+                          (int(existing_document["regionId"]), client.client_connection.ReadEndpoint))
                     break
                 else:
                     self.trace_error("Winning document version from region %d is not found @ %s, retrying..." %
-                                     (int(winner_document['regionId']), client.WriteEndpoint))
+                                     (int(winner_document['regionId']), client.client_connection.WriteEndpoint))
 
                     time.sleep(0.5)
             except exceptions.AzureError:
                 self.trace_error("Winner document from region %d is not found @ %s, retrying..." %
-                                 (int(winner_document['regionId']), client.WriteEndpoint))
+                                 (int(winner_document['regionId']), client.client_connection.WriteEndpoint))
                 time.sleep(0.5)
 
     def trace_error(self, message):

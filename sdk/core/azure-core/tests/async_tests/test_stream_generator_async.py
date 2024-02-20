@@ -14,6 +14,7 @@ from unittest import mock
 import pytest
 from utils import request_and_responses_product, ASYNC_HTTP_RESPONSES, create_http_response
 
+
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_request,http_response", request_and_responses_product(ASYNC_HTTP_RESPONSES))
 async def test_connection_error_response(http_request, http_response):
@@ -32,18 +33,20 @@ async def test_connection_error_response(http_request, http_response):
 
         async def __aexit__(self, exc_type, exc_val, exc_tb):
             pass
+
         async def close(self):
             pass
+
         async def open(self):
             pass
 
         async def send(self, request, **kwargs):
-            request = http_request('GET', 'http://localhost/')
+            request = http_request("GET", "http://localhost/")
             response = create_http_response(http_response, request, None)
             response.status_code = 200
             return response
 
-    class MockContent():
+    class MockContent:
         def __init__(self):
             self._first = True
 
@@ -53,7 +56,7 @@ async def test_connection_error_response(http_request, http_response):
                 raise ConnectionError
             return None
 
-    class MockInternalResponse():
+    class MockInternalResponse:
         def __init__(self):
             self.headers = {}
             self.content = MockContent()
@@ -65,14 +68,15 @@ async def test_connection_error_response(http_request, http_response):
         async def __call__(self, *args, **kwargs):
             return super(AsyncMock, self).__call__(*args, **kwargs)
 
-    http_request = http_request('GET', 'http://localhost/')
+    http_request = http_request("GET", "http://localhost/")
     pipeline = AsyncPipeline(MockTransport())
     http_response = create_http_response(http_response, http_request, None)
     http_response.internal_response = MockInternalResponse()
     stream = AioHttpStreamDownloadGenerator(pipeline, http_response, decompress=False)
-    with mock.patch('asyncio.sleep', new_callable=AsyncMock):
+    with mock.patch("asyncio.sleep", new_callable=AsyncMock):
         with pytest.raises(ConnectionError):
             await stream.__anext__()
+
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_response", ASYNC_HTTP_RESPONSES)

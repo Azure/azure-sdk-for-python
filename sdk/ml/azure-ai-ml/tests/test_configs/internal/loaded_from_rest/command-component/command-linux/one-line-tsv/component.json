@@ -1,0 +1,31 @@
+{
+  "version": "0.0.1",
+  "$schema": "https://componentsdk.azureedge.net/jsonschema/CommandComponent.json",
+  "display_name": "Generate One Line Tsv",
+  "is_deterministic": true,
+  "inputs": {
+    "content": {
+      "type": "string",
+      "optional": false
+    },
+    "tsv_file": {
+      "type": "string",
+      "optional": false,
+      "default": "output.tsv"
+    }
+  },
+  "outputs": {
+    "output_dir": {
+      "type": "path",
+      "datastore_mode": "Upload"
+    }
+  },
+  "type": "CommandComponent",
+  "environment": {
+    "os": "Linux",
+    "name": "AzureML-Designer"
+  },
+  "successful_return_code": "Zero",
+  "command": "echo {inputs.content} > {outputs.output_dir}/{inputs.tsv_file}",
+  "_source": "REMOTE.WORKSPACE.COMPONENT"
+}

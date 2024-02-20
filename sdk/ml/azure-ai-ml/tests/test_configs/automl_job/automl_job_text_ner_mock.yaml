@@ -39,7 +39,7 @@ training_parameters:
 search_space:
   - model_name:
       type: choice
-      values: [bert_base_cased, bert_base_uncased]
+      values: [bert-base-cased, bert-base-uncased]
     learning_rate:
       type: uniform
       min_value: 0.000005
@@ -50,7 +50,7 @@ search_space:
 
   - model_name:
       type: choice
-      values: [roberta_base, roberta_large]
+      values: [roberta-base, roberta-large]
     learning_rate:
       type: uniform
       min_value: 0.000002

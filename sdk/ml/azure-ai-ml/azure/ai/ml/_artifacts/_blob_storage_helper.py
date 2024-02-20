@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes,client-method-missing-type-annotations,missing-client-constructor-parameter-kwargs
+# pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes,client-method-missing-type-annotations,missing-client-constructor-parameter-kwargs,logging-format-interpolation
 
 import logging
 import os
@@ -10,8 +10,9 @@ import sys
 import time
 import uuid
 from pathlib import Path, PurePosixPath
-from typing import TYPE_CHECKING, Dict, List
+from typing import TYPE_CHECKING, Dict, List, Optional, Union
 
+from typing_extensions import Literal
 from colorama import Fore
 
 from azure.ai.ml._artifacts._constants import (
@@ -31,6 +32,7 @@ from azure.ai.ml._utils._asset_utils import (
     upload_directory,
     upload_file,
 )
+from azure.ai.ml._azure_environments import _get_cloud_details
 from azure.ai.ml.constants._common import STORAGE_AUTH_MISMATCH_ERROR
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MlException, ValidationException
 from azure.core.exceptions import ResourceNotFoundError
@@ -43,7 +45,8 @@ module_logger = logging.getLogger(__name__)
 
 
 class BlobStorageClient:
-    def __init__(self, credential: str, account_url: str, container_name: str = None):
+    def __init__(self, credential: str, account_url: str, container_name: Optional[str] = None):
+        self.account_name = account_url.split(".")[0].split("//")[1]
         self.service_client = BlobServiceClient(account_url=account_url, credential=credential)
         self.upload_to_root_container = None
         if container_name:
@@ -66,10 +69,26 @@ class BlobStorageClient:
         name: str,
         version: str,
         ignore_file: IgnoreFile = IgnoreFile(None),
-        asset_hash: str = None,
+        asset_hash: Optional[str] = None,
         show_progress: bool = True,
-    ) -> Dict[str, str]:
-        """Upload a file or directory to a path inside the container."""
+    ) -> Dict[Literal["remote path", "name", "version", "indicator file"], str]:
+        """Upload a file or directory to a path inside the container.
+
+        :param source: The path to either a file or directory to upload
+        :type source: str
+        :param name: The asset name
+        :type name: str
+        :param version: The asset version
+        :type version: str
+        :param ignore_file: The IgnoreFile that specifies which files, if any, to ignore when uploading files
+        :type ignore_file: IgnoreFile
+        :param asset_hash: The asset hash
+        :type asset_hash: Optional[str]
+        :param show_progress: Whether to show progress on the console. Defaults to True.
+        :type show_progress: bool
+        :return: A dictionary containing info of the uploaded artifact
+        :rtype: Dict[Literal["remote path", "name", "version", "indicator file"], str]
+        """
         if name and version is None:
             version = str(uuid.uuid4())  # placeholder for auto-increment artifacts
 
@@ -88,10 +107,13 @@ class BlobStorageClient:
             msg = Fore.GREEN + f"Uploading {formatted_path}"
 
             # warn if large file (> 100 MB)
-            file_size, _ = get_directory_size(source)
+            file_size, _ = get_directory_size(source, ignore_file=ignore_file)
             file_size_in_mb = file_size / 10**6
+            cloud = _get_cloud_details()
+            cloud_endpoint = cloud["storage_endpoint"]  # make sure proper cloud endpoint is used
+            full_storage_url = f"https://{self.account_name}.blob.{cloud_endpoint}/{self.container}/{dest}"
             if file_size_in_mb > 100:
-                module_logger.warning(FILE_SIZE_WARNING)
+                module_logger.warning(FILE_SIZE_WARNING.format(source=source, destination=full_storage_url))
 
             # start upload
             if os.path.isdir(source):
@@ -137,11 +159,9 @@ class BlobStorageClient:
     def check_blob_exists(self) -> None:
         """Throw error if blob already exists.
 
-        Check if blob already exists in container by checking the
-        metadata for existence and confirmation data. If confirmation
-        data is missing, blob does not exist or was only partially
-        uploaded and the partial upload will be overwritten with a
-        complete upload.
+        Check if blob already exists in container by checking the metadata for existence and confirmation data. If
+        confirmation data is missing, blob does not exist or was only partially uploaded and the partial upload will be
+        overwritten with a complete upload.
         """
 
         try:
@@ -189,7 +209,7 @@ class BlobStorageClient:
                     no_personal_data_message=msg,
                     target=ErrorTarget.ARTIFACT,
                     error_category=ErrorCategory.USER_ERROR,
-                )
+                ) from e
             raise e
 
     def _set_confirmation_metadata(self, name: str, version: str) -> None:
@@ -200,18 +220,21 @@ class BlobStorageClient:
     def download(
         self,
         starts_with: str,
-        destination: str = Path.home(),
+        destination: Union[str, os.PathLike] = Path.home(),
         max_concurrency: int = MAX_CONCURRENCY,
     ) -> None:
-        """Downloads all blobs inside a specified container to the destination
-        folder.
+        """Downloads all blobs inside a specified container to the destination folder.
 
         :param starts_with: Indicates the blob name starts with to search.
+        :type starts_with: str
         :param destination: Indicates path to download in local
+        :type destination: Union[str, os.PathLike[str]]
         :param max_concurrency: Indicates concurrent connections to download a blob.
+        :type max_concurrency: int
         """
         try:
             my_list = list(self.container_client.list_blobs(name_starts_with=starts_with, include="metadata"))
+            download_size_in_mb = 0
             for item in my_list:
                 blob_name = item.name[len(starts_with) :].lstrip("/") or Path(starts_with).name
                 target_path = Path(destination, blob_name).resolve()
@@ -221,6 +244,16 @@ class BlobStorageClient:
                     continue
 
                 blob_content = self.container_client.download_blob(item)
+
+                # check if total size of download has exceeded 100 MB
+                # make sure proper cloud endpoint is used
+                cloud = _get_cloud_details()
+                cloud_endpoint = cloud["storage_endpoint"]
+                full_storage_url = f"https://{self.account_name}.blob.{cloud_endpoint}/{self.container}/{starts_with}"
+                download_size_in_mb += blob_content.size / 10**6
+                if download_size_in_mb > 100:
+                    module_logger.warning(FILE_SIZE_WARNING.format(source=full_storage_url, destination=destination))
+
                 blob_content = blob_content.content_as_bytes(max_concurrency)
                 target_path.parent.mkdir(parents=True, exist_ok=True)
                 with target_path.open("wb") as file:
@@ -235,20 +268,22 @@ class BlobStorageClient:
                 target=ErrorTarget.ARTIFACT,
                 error_category=ErrorCategory.USER_ERROR,
                 error=e,
-            )
+            ) from e
 
     def list(self, starts_with: str) -> List[str]:
         """Lists all blob names in the specified container.
 
         :param starts_with: Indicates the blob name starts with to search.
+        :type starts_with: str
         :return: the list of blob paths in container
+        :rtype: List[str]
         """
         blobs = self.container_client.list_blobs(name_starts_with=starts_with)
         return [blob.name for blob in blobs]
 
-    def exists(self, blobpath: str, delimeter: str = "/") -> bool:
-        """Returns whether there exists a blob named `blobpath`, or if there
-        exists a virtual directory given path delimeter `delimeter`
+    def exists(self, blobpath: str, delimiter: str = "/") -> bool:
+        """Returns whether there exists a blob named `blobpath`, or if there exists a virtual directory given path
+        delimeter `delimeter`
 
            e.g:
                 Given blob store with blobs
@@ -263,16 +298,17 @@ class BlobStorageClient:
 
         :param str blobpath: prefix matched against blob names
         :param str delimiter: The path delimeter (defaults to /)
-        :return bool: True if file or virtual directory exists, False otherwise
+        :return: True if file or virtual directory exists, False otherwise
+        :rtype: bool
         """
         if self.container_client.get_blob_client(blobpath).exists():
             return True
 
-        ensure_delimeter = delimeter if not blobpath.endswith(delimeter) else ""
+        ensure_delimeter = delimiter if not blobpath.endswith(delimiter) else ""
 
         # Virtual directory only exists if there is atleast one blob with it
         result = next(
-            self.container_client.walk_blobs(name_starts_with=blobpath + ensure_delimeter, delimiter=delimeter),
+            self.container_client.walk_blobs(name_starts_with=blobpath + ensure_delimeter, delimiter=delimiter),
             None,
         )
         return result is not None
@@ -286,7 +322,8 @@ def _blob_is_hdi_folder(blob: "BlobProperties") -> bool:
     specifying that it is actually a folder.
 
     :param BlobProperties blob: Blob to check
-    :return bool: True if blob represents a folder, False otherwise
+    :return: True if blob represents a folder, False otherwise
+    :rtype: bool
     """
 
     # Metadata isn't always a populated field, and may need to be explicitly

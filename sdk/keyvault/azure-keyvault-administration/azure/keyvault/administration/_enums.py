@@ -87,7 +87,7 @@ class KeyVaultDataAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     RANDOM_NUMBERS_GENERATE = "Microsoft.KeyVault/managedHsm/rng/action"
 
 
-class SettingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class KeyVaultSettingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type specifier of the setting value."""
 
     BOOLEAN = "boolean"

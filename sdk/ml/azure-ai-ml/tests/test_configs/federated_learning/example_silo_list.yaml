@@ -1,0 +1,9 @@
+silos:
+- compute: "some_compute"
+  datastore: "some_datastore"
+- compute: "some_compute2"
+  datastore: "some_datastore2"
+  inputs: 
+    "test_uri":
+      path: "some_path"
+      type: uri_folder

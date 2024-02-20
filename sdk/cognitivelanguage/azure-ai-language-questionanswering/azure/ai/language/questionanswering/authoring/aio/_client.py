@@ -18,15 +18,12 @@ from ._configuration import AuthoringClientConfiguration
 from ._operations import AuthoringClientOperationsMixin
 
 
-class AuthoringClient(
-    AuthoringClientOperationsMixin
-):  # pylint: disable=client-accepts-api-version-keyword
+class AuthoringClient(AuthoringClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
     """The language service API is a suite of natural language processing (NLP) skills built with
-    best-in-class Microsoft machine learning algorithms.  The API can be used to analyze
+    best-in-class Microsoft machine learning algorithms. The API can be used to analyze
     unstructured text for tasks such as sentiment analysis, key phrase extraction, language
-    detection and question answering. Further documentation can be found in :code:`<a
-    href="https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview">
-    https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview</a>`.
+    detection and question answering. Further documentation can be found in
+    https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview.
 
     :param endpoint: Supported Cognitive Services endpoint (e.g.,
      https://:code:`<resource-name>`.api.cognitiveservices.azure.com). Required.
@@ -43,7 +40,7 @@ class AuthoringClient(
     def __init__(self, endpoint: str, credential: AzureKeyCredential, **kwargs: Any) -> None:
         _endpoint = "{Endpoint}/language"
         self._config = AuthoringClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
-        self._client = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
+        self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
@@ -82,5 +79,5 @@ class AuthoringClient(
         await self._client.__aenter__()
         return self
 
-    async def __aexit__(self, *exc_details) -> None:
+    async def __aexit__(self, *exc_details: Any) -> None:
         await self._client.__aexit__(*exc_details)

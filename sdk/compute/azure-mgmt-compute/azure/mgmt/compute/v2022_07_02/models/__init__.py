@@ -56,6 +56,7 @@ from ._models_py3 import SourceVault
 from ._models_py3 import SubResource
 from ._models_py3 import SubResourceReadOnly
 from ._models_py3 import SupportedCapabilities
+from ._models_py3 import SystemData
 from ._models_py3 import UserAssignedIdentitiesValue
 
 from ._compute_management_client_enums import AccessLevel
@@ -78,7 +79,7 @@ from ._compute_management_client_enums import PrivateEndpointServiceConnectionSt
 from ._compute_management_client_enums import PublicNetworkAccess
 from ._compute_management_client_enums import SnapshotStorageAccountTypes
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
@@ -132,6 +133,7 @@ __all__ = [
     "SubResource",
     "SubResourceReadOnly",
     "SupportedCapabilities",
+    "SystemData",
     "UserAssignedIdentitiesValue",
     "AccessLevel",
     "Architecture",

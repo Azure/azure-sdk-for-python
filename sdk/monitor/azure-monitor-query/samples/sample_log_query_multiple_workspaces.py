@@ -12,34 +12,35 @@ USAGE:
     2) SECONDARY_WORKSPACE_ID - An additional workspace.
 
 This example uses DefaultAzureCredential, which requests a token from Azure Active Directory.
-For more information on DefaultAzureCredential, see https://docs.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python#defaultazurecredential.
+For more information on DefaultAzureCredential, see https://learn.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python#defaultazurecredential.
 
 **Note** - Although this example uses pandas to print the response, it's optional and
 isn't a required package for querying. Alternatively, native Python can be used as well.
 """
-import os
-import pandas as pd
 from datetime import timedelta
-from azure.monitor.query import LogsQueryClient
+import os
+
 from azure.core.exceptions import HttpResponseError
 from azure.identity import DefaultAzureCredential
+from azure.monitor.query import LogsQueryClient
+import pandas as pd
 
-credential  = DefaultAzureCredential()
 
+credential = DefaultAzureCredential()
 client = LogsQueryClient(credential)
 
-query= """AppRequests | take 5"""
+query = "AppRequests | take 5"
 
 try:
     response = client.query_workspace(
-        os.environ['LOGS_WORKSPACE_ID'],
+        os.environ["LOGS_WORKSPACE_ID"],
         query,
         timespan=timedelta(days=1),
-        additional_workspaces=[os.environ['SECONDARY_WORKSPACE_ID']]
-        )
+        additional_workspaces=[os.environ["SECONDARY_WORKSPACE_ID"]],
+    )
     for table in response:
         df = pd.DataFrame(data=table.rows, columns=table.columns)
         print(df)
 except HttpResponseError as err:
     print("something fatal happened")
-    print (err)
+    print(err)

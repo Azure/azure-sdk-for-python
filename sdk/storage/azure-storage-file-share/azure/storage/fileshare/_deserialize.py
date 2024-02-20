@@ -2,8 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-# --------------------------------------------------------------------------
-# pylint: disable=no-self-use
+# --------------------------------------------------------------------------_
 from typing import (  # pylint: disable=unused-import
     Tuple, Dict, List,
     TYPE_CHECKING
@@ -52,19 +51,12 @@ def deserialize_file_stream(response, obj, headers):
     return response.http_response.location_mode, obj
 
 
+# Extracts out file permission
 def deserialize_permission(response, obj, headers):  # pylint: disable=unused-argument
-    '''
-    Extracts out file permission
-    '''
-
     return obj.permission
 
-
+# Extracts out file permission key
 def deserialize_permission_key(response, obj, headers):  # pylint: disable=unused-argument
-    '''
-    Extracts out file permission key
-    '''
-
     if response is None or headers is None:
         return None
     return headers.get('x-ms-file-permission-key', None)

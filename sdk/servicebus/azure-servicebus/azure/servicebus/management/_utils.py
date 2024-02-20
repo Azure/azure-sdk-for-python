@@ -6,10 +6,8 @@ from datetime import datetime, timedelta
 from typing import TYPE_CHECKING, cast, Union, Mapping, Type, Any, Optional
 from xml.etree.ElementTree import ElementTree, SubElement, QName
 import isodate
-import six
 
 from . import _constants as constants
-from ._api_version import DEFAULT_VERSION
 from ._handle_response_error import _handle_response_error
 
 if TYPE_CHECKING:
@@ -50,6 +48,12 @@ def extract_rule_data_template(feed_class, convert, feed_element):
     doesn't work for this special part.
     After autorest is enhanced, this method can be removed.
     Refer to autorest issue https://github.com/Azure/autorest/issues/3535
+
+    :param any feed_class: The class of the feed.
+    :param any convert: The function to convert the XML entry element and the rule instance.
+    :param any feed_element: The XML entry element.
+    :return: The next link and the iterator of the entities.
+    :rtype: tuple[str, iterator[RuleProperties]]
     """
     deserialized = feed_class.deserialize(feed_element)
     next_link = None
@@ -82,21 +86,22 @@ def get_next_template(list_func, *args, **kwargs):
     azure.core.async_paging.AsyncItemPaged will call `extract_data_template` and use the returned
     XML ElementTree to call a partial function created from `extrat_data_template`.
 
+    :param callable list_func: The function to list entities.
+    :param any args: The arguments.
+    :return: The XML ElementTree.
+    :rtype: ElementTree
+
     """
     start_index = kwargs.pop("start_index", 0)
     max_page_size = kwargs.pop("max_page_size", 100)
-    api_version = kwargs.pop("api_version", DEFAULT_VERSION)
     if args[0]:
         queries = urlparse.parse_qs(urlparse.urlparse(args[0]).query)
         start_index = int(queries[constants.LIST_OP_SKIP][0])
         max_page_size = int(queries[constants.LIST_OP_TOP][0])
-        api_version = queries[constants.API_VERSION_PARAM_NAME][0]
     with _handle_response_error():
         feed_element = cast(
             ElementTree,
-            list_func(
-                skip=start_index, top=max_page_size, api_version=api_version, **kwargs
-            ),
+            list_func(skip=start_index, top=max_page_size, **kwargs),
         )
     return feed_element
 
@@ -123,9 +128,9 @@ def serialize_value_type(value):
         value, bool
     ):  # Attention: bool is subclass of int. So put bool ahead of int
         return "boolean", str(value).lower()
-    if isinstance(value, six.string_types):
+    if isinstance(value, str):
         return "string", value
-    if isinstance(value, six.integer_types):
+    if isinstance(value, int):
         return "int" if value <= constants.INT32_MAX_VALUE else "long", str(value)
     if isinstance(value, datetime):
         return "dateTime", isodate.datetime_isoformat(value)
@@ -180,6 +185,9 @@ def deserialize_rule_key_values(entry_ele, rule_description):
 
     After autorest is enhanced, this method can be removed.
     Refer to autorest issue https://github.com/Azure/autorest/issues/3535
+
+    :param any entry_ele: The xml Element that contains the rule's filter and action.
+    :param any rule_description: The rule_description that contains the rule's filter and action.
     """
     content = entry_ele.find(constants.ATOM_CONTENT_TAG)
     if content:
@@ -265,6 +273,9 @@ def serialize_rule_key_values(entry_ele, rule_descripiton):
 
     After autorest is enhanced, this method can be removed.
     Refer to autorest issue https://github.com/Azure/autorest/issues/3535
+
+    :param any entry_ele: The xml Element that contains the rule's filter and action.
+    :param any rule_descripiton: The rule_description that contains the rule's filter and action.
     """
     content = entry_ele.find(constants.ATOM_CONTENT_TAG)
     if content:
@@ -355,6 +366,7 @@ def create_properties_from_dict_if_needed(properties, sb_resource_type):
     :param properties: A properties object or its dict representation.
     :type properties: Mapping or PropertiesType
     :param type sb_resource_type: The type of properties object.
+    :return: A properties object.
     :rtype: PropertiesType
     """
     if isinstance(properties, sb_resource_type):
@@ -368,4 +380,4 @@ def create_properties_from_dict_if_needed(properties, sb_resource_type):
             "Update input must be an instance of {}, or a mapping representing one.".format(
                 sb_resource_type.__name__
             )
-        )
+        ) from None

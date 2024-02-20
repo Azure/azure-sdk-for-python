@@ -16,9 +16,9 @@ if TYPE_CHECKING:
     from typing import Any, FrozenSet
 
 class Key(object, metaclass=ABCMeta):
-    _supported_encryption_algorithms = frozenset([])  # type: FrozenSet[Any]
-    _supported_key_wrap_algorithms = frozenset([])  # type: FrozenSet[Any]
-    _supported_signature_algorithms = frozenset([])  # type: FrozenSet[Any]
+    _supported_encryption_algorithms: 'FrozenSet[Any]' = frozenset([])
+    _supported_key_wrap_algorithms: 'FrozenSet[Any]' = frozenset([])
+    _supported_signature_algorithms: 'FrozenSet[Any]' = frozenset([])
 
     def __init__(self):
         self._kid = None
@@ -95,6 +95,6 @@ class Key(object, metaclass=ABCMeta):
             algorithm = Algorithm.resolve(algorithm)
 
         if not algorithm or not supported_algorithms or algorithm.name() not in supported_algorithms:
-            raise ValueError("unsupported algorithm '{}'".format(algorithm))
+            raise ValueError(f"unsupported algorithm '{algorithm}'")
 
         return algorithm

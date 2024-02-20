@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 from typing import TYPE_CHECKING
 
-import msrest.serialization
+from .._generated import _serialization
 from ._edm import Collection, ComplexType, String
 from .._generated.models import (
     SearchField as _SearchField,
@@ -20,12 +20,12 @@ from ._models import (
 )
 
 if TYPE_CHECKING:
-    from typing import Any, Dict, List
+    from typing import Any, Dict
 
 __all__ = ("ComplexField", "SearchableField", "SimpleField")
 
 
-class SearchField(msrest.serialization.Model):
+class SearchField(_serialization.Model):
     # pylint: disable=too-many-instance-attributes
     """Represents a field in an index definition, which describes the name, data type, and search behavior of a field.
 
@@ -166,6 +166,9 @@ class SearchField(msrest.serialization.Model):
     :keyword fields: A list of sub-fields if this is a field of type Edm.ComplexType or
      Collection(Edm.ComplexType). Must be null or empty for simple fields.
     :paramtype fields: list[~azure.search.documents.models.SearchField]
+    :keyword int vector_search_dimensions: The dimensionality of the vector field.
+    :keyword str vector_search_profile: The name of the vector search profile that specifies the algorithm
+     and vectorizer to use when searching the vector field.
     """
 
     _validation = {
@@ -188,6 +191,11 @@ class SearchField(msrest.serialization.Model):
         "normalizer_name": {"key": "normalizerName", "type": "str"},
         "synonym_map_names": {"key": "synonymMapNames", "type": "[str]"},
         "fields": {"key": "fields", "type": "[SearchField]"},
+        "vector_search_dimensions": {"key": "vectorSearchDimensions", "type": "int"},
+        "vector_search_profile": {
+            "key": "vectorSearchProfile",
+            "type": "str",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -206,8 +214,10 @@ class SearchField(msrest.serialization.Model):
         self.normalizer_name = kwargs.get("normalizer_name", None)
         self.synonym_map_names = kwargs.get("synonym_map_names", None)
         self.fields = kwargs.get("fields", None)
+        self.vector_search_dimensions = kwargs.get("vector_search_dimensions", None)
+        self.vector_search_profile = kwargs.get("vector_search_profile", None)
 
-    def _to_generated(self):
+    def _to_generated(self) -> _SearchField:
         fields = [pack_search_field(x) for x in self.fields] if self.fields else None
         retrievable = not self.hidden if self.hidden is not None else None
         return _SearchField(
@@ -225,6 +235,8 @@ class SearchField(msrest.serialization.Model):
             normalizer=self.normalizer_name,
             synonym_maps=self.synonym_map_names,
             fields=fields,
+            dimensions=self.vector_search_dimensions,
+            vector_search_profile=self.vector_search_profile,
         )
 
     @classmethod
@@ -232,16 +244,8 @@ class SearchField(msrest.serialization.Model):
         if not search_field:
             return None
         # pylint:disable=protected-access
-        fields = (
-            [SearchField._from_generated(x) for x in search_field.fields]
-            if search_field.fields
-            else None
-        )
-        hidden = (
-            not search_field.retrievable
-            if search_field.retrievable is not None
-            else None
-        )
+        fields = [SearchField._from_generated(x) for x in search_field.fields] if search_field.fields else None
+        hidden = not search_field.retrievable if search_field.retrievable is not None else None
         try:
             normalizer = search_field.normalizer_name
         except AttributeError:
@@ -261,6 +265,8 @@ class SearchField(msrest.serialization.Model):
             normalizer_name=normalizer,
             synonym_map_names=search_field.synonym_maps,
             fields=fields,
+            vector_search_dimensions=search_field.dimensions,
+            vector_search_profile=search_field.vector_search_profile,
         )
 
 
@@ -359,7 +365,7 @@ def SearchableField(**kw):
     :paramtype filterable: bool
     :keyword sortable: A value indicating whether to enable the field to be referenced in $orderby
      expressions. By default Azure Cognitive Search sorts results by score, but in many experiences
-     users will want to sort by fields in the documents.  The default is true False.
+     users will want to sort by fields in the documents.  The default is False.
     :paramtype sortable: bool
     :keyword facetable: A value indicating whether to enable the field to be referenced in facet
      queries. Typically used in a presentation of search results that includes hit count by category
@@ -479,7 +485,7 @@ def ComplexField(**kw):
     return SearchField(**result)
 
 
-class SearchIndex(msrest.serialization.Model):
+class SearchIndex(_serialization.Model):
     # pylint: disable=too-many-instance-attributes
     """Represents a search index definition, which describes the fields and search behavior of an index.
 
@@ -526,6 +532,8 @@ class SearchIndex(msrest.serialization.Model):
     :paramtype similarity: ~azure.search.documents.indexes.models.SimilarityAlgorithm
     :keyword semantic_settings: Defines parameters for a search index that influence semantic capabilities.
     :paramtype semantic_settings: ~azure.search.documents.indexes.models.SemanticSettings
+    :keyword vector_search: Defines parameters for a search index that influence scoring in a vector space.
+    :paramtype vector_search: ~azure.search.documents.indexes.models.VectorSearch
     :keyword e_tag: The ETag of the index.
     :paramtype e_tag: str
     """
@@ -553,6 +561,7 @@ class SearchIndex(msrest.serialization.Model):
         },
         "similarity": {"key": "similarity", "type": "SimilarityAlgorithm"},
         "semantic_settings": {"key": "semantic", "type": "SemanticSettings"},
+        "vector_search": {"key": "vectorSearch", "type": "VectorSearch"},
         "e_tag": {"key": "@odata\\.etag", "type": "str"},
     }
 
@@ -572,20 +581,17 @@ class SearchIndex(msrest.serialization.Model):
         self.encryption_key = kwargs.get("encryption_key", None)
         self.similarity = kwargs.get("similarity", None)
         self.semantic_settings = kwargs.get("semantic_settings", None)
+        self.vector_search = kwargs.get("vector_search", None)
         self.e_tag = kwargs.get("e_tag", None)
 
-    def _to_generated(self):
+    def _to_generated(self) -> _SearchIndex:
         if self.analyzers:
-            analyzers = [
-                pack_analyzer(x) for x in self.analyzers  # type: ignore
-            ]  # mypy: ignore
+            analyzers = [pack_analyzer(x) for x in self.analyzers]  # type: ignore  # mypy: ignore
         else:
             analyzers = None
         if self.tokenizers:
             tokenizers = [
-                x._to_generated()  # pylint:disable=protected-access
-                if isinstance(x, PatternTokenizer)
-                else x
+                x._to_generated() if isinstance(x, PatternTokenizer) else x  # pylint:disable=protected-access
                 for x in self.tokenizers
             ]
         else:
@@ -593,7 +599,7 @@ class SearchIndex(msrest.serialization.Model):
         if self.fields:
             fields = [pack_search_field(x) for x in self.fields]
         else:
-            fields = None
+            fields = []
         return _SearchIndex(
             name=self.name,
             fields=fields,
@@ -607,22 +613,17 @@ class SearchIndex(msrest.serialization.Model):
             char_filters=self.char_filters,
             normalizers=self.normalizers,
             # pylint:disable=protected-access
-            encryption_key=self.encryption_key._to_generated()
-            if self.encryption_key
-            else None,
+            encryption_key=self.encryption_key._to_generated() if self.encryption_key else None,
             similarity=self.similarity,
             semantic_settings=self.semantic_settings,
             e_tag=self.e_tag,
+            vector_search=self.vector_search,
         )
 
     @classmethod
-    def _from_generated(cls, search_index):
-        if not search_index:
-            return None
+    def _from_generated(cls, search_index) -> "SearchIndex":
         if search_index.analyzers:
-            analyzers = [
-                unpack_analyzer(x) for x in search_index.analyzers  # type: ignore
-            ]
+            analyzers = [unpack_analyzer(x) for x in search_index.analyzers]  # type: ignore
         else:
             analyzers = None
         if search_index.tokenizers:
@@ -635,9 +636,7 @@ class SearchIndex(msrest.serialization.Model):
         else:
             tokenizers = None
         if search_index.fields:
-            fields = [
-                SearchField._from_generated(x) for x in search_index.fields  # pylint:disable=protected-access
-            ]
+            fields = [SearchField._from_generated(x) for x in search_index.fields]  # pylint:disable=protected-access
         else:
             fields = None
         try:
@@ -657,22 +656,20 @@ class SearchIndex(msrest.serialization.Model):
             char_filters=search_index.char_filters,
             normalizers=normalizers,
             # pylint:disable=protected-access
-            encryption_key=SearchResourceEncryptionKey._from_generated(
-                search_index.encryption_key
-            ),
+            encryption_key=SearchResourceEncryptionKey._from_generated(search_index.encryption_key),
             similarity=search_index.similarity,
             semantic_settings=search_index.semantic_settings,
             e_tag=search_index.e_tag,
+            vector_search=search_index.vector_search,
         )
 
 
-def pack_search_field(search_field):
-    # type: (SearchField) -> _SearchField
-    if not search_field:
-        return None
+def pack_search_field(search_field: SearchField) -> _SearchField:
     if isinstance(search_field, dict):
         name = search_field.get("name")
+        assert name is not None  # Hint for mypy
         field_type = search_field.get("type")
+        assert field_type is not None  # Hint for mypy
         key = search_field.get("key")
         hidden = search_field.get("hidden")
         searchable = search_field.get("searchable")
@@ -686,6 +683,8 @@ def pack_search_field(search_field):
         synonym_map_names = search_field.get("synonym_map_names")
         fields = search_field.get("fields")
         fields = [pack_search_field(x) for x in fields] if fields else None
+        vector_search_dimensions = search_field.get("vector_search_dimensions")
+        vector_search_profile = search_field.get("vector_search_profile")
         return _SearchField(
             name=name,
             type=field_type,
@@ -701,5 +700,7 @@ def pack_search_field(search_field):
             normalizer=normalizer,
             synonym_maps=synonym_map_names,
             fields=fields,
+            vector_search_dimensions=vector_search_dimensions,
+            vector_search_profile=vector_search_profile,
         )
     return search_field._to_generated()  # pylint:disable=protected-access

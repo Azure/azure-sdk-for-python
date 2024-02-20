@@ -35,6 +35,7 @@ missing_variables = [
     if var not in os.environ
 ]
 
+
 class TestObo(RecordedTestCase):
     def load_settings(self):
         if is_live():
@@ -70,7 +71,9 @@ class TestObo(RecordedTestCase):
             client_id, self.obo_settings["username"], self.obo_settings["password"], tenant_id=tenant_id
         )
         assertion = user_credential.get_token(self.obo_settings["scope"]).token
-        credential = OnBehalfOfCredential(tenant_id, client_id, client_secret=self.obo_settings["client_secret"], user_assertion=assertion)
+        credential = OnBehalfOfCredential(
+            tenant_id, client_id, client_secret=self.obo_settings["client_secret"], user_assertion=assertion
+        )
         credential.get_token(self.obo_settings["scope"])
 
     @pytest.mark.manual
@@ -85,7 +88,9 @@ class TestObo(RecordedTestCase):
             client_id, self.obo_settings["username"], self.obo_settings["password"], tenant_id=tenant_id
         )
         assertion = user_credential.get_token(self.obo_settings["scope"]).token
-        credential = OnBehalfOfCredential(tenant_id, client_id, client_certificate=self.obo_settings["cert_bytes"], user_assertion=assertion)
+        credential = OnBehalfOfCredential(
+            tenant_id, client_id, client_certificate=self.obo_settings["cert_bytes"], user_assertion=assertion
+        )
         credential.get_token(self.obo_settings["scope"])
 
 
@@ -95,7 +100,10 @@ def test_multitenant_authentication():
     second_tenant = "second-tenant"
     second_token = first_token * 2
 
-    def send(request, **_):
+    def send(request, **kwargs):
+        # ensure the `claims` and `tenant_id` keywords from credential's `get_token` method don't make it to transport
+        assert "claims" not in kwargs
+        assert "tenant_id" not in kwargs
         assert request.headers["User-Agent"].startswith(USER_AGENT)
         parsed = urlparse(request.url)
         tenant = parsed.path.split("/")[1]
@@ -113,7 +121,7 @@ def test_multitenant_authentication():
         client_secret="secret",
         user_assertion="assertion",
         transport=transport,
-        additionally_allowed_tenants=['*']
+        additionally_allowed_tenants=["*"],
     )
     token = credential.get_token("scope")
     assert token.token == first_token
@@ -142,7 +150,9 @@ def test_authority(authority):
         return_value=Mock(acquire_token_on_behalf_of=lambda *_, **__: {"access_token": "**", "expires_in": 42})
     )
 
-    credential = OnBehalfOfCredential(tenant_id, "client-id", client_secret="secret", user_assertion="assertion", authority=authority)
+    credential = OnBehalfOfCredential(
+        tenant_id, "client-id", client_secret="secret", user_assertion="assertion", authority=authority
+    )
     with patch("msal.ConfidentialClientApplication", mock_ctor):
         # must call get_token because the credential constructs the MSAL application lazily
         credential.get_token("scope")
@@ -176,7 +186,9 @@ def test_tenant_id_validation():
 
 def test_no_scopes():
     """The credential should raise ValueError when get_token is called with no scopes"""
-    credential = OnBehalfOfCredential("tenant-id", "client-id", client_secret="client-secret", user_assertion="assertion")
+    credential = OnBehalfOfCredential(
+        "tenant-id", "client-id", client_secret="client-secret", user_assertion="assertion"
+    )
     with pytest.raises(ValueError):
         credential.get_token()
 
@@ -184,7 +196,10 @@ def test_no_scopes():
 def test_policies_configurable():
     policy = Mock(spec_set=SansIOHTTPPolicy, on_request=Mock(), on_exception=lambda _: False)
 
-    def send(request, **_):
+    def send(request, **kwargs):
+        # ensure the `claims` and `tenant_id` keywords from credential's `get_token` method don't make it to transport
+        assert "claims" not in kwargs
+        assert "tenant_id" not in kwargs
         parsed = urlparse(request.url)
         tenant = parsed.path.split("/")[1]
         if "/oauth2/v2.0/token" not in parsed.path:
@@ -202,10 +217,12 @@ def test_policies_configurable():
     credential.get_token("scope")
     assert policy.on_request.called
 
+
 def test_no_user_assertion():
     """The credential should raise ValueError when ctoring with no user_assertion"""
     with pytest.raises(TypeError):
         credential = OnBehalfOfCredential("tenant-id", "client-id", client_secret="client-secret")
+
 
 def test_no_client_credential():
     """The credential should raise ValueError when ctoring with no client_secret or client_certificate"""

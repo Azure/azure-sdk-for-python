@@ -14,12 +14,11 @@ from search_service_preparer import SearchEnvVarPreparer, search_decorator
 
 
 class TestClientTestAsync(AzureRecordedTestCase):
-
     @SearchEnvVarPreparer()
     @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
     @recorded_by_proxy_async
     async def test_search_client(self, endpoint, api_key, index_name):
-        client = SearchClient(endpoint, index_name, api_key)
+        client = SearchClient(endpoint, index_name, api_key, retry_backoff_factor=60)
         async with client:
             await self._test_get_search_simple(client)
             await self._test_get_search_simple_with_top(client)
@@ -58,21 +57,21 @@ class TestClientTestAsync(AzureRecordedTestCase):
         results = []
         select = ["hotelName", "category", "description"]
         async for x in await client.search(
-                search_text="WiFi",
-                filter="category eq 'Budget'",
-                select=",".join(select),
-                order_by="hotelName desc"
+            search_text="WiFi",
+            filter="category eq 'Budget'",
+            select=",".join(select),
+            order_by="hotelName desc",
         ):
             results.append(x)
-        assert [x["hotelName"] for x in results] == sorted(
-            [x["hotelName"] for x in results], reverse=True
-        )
+        assert [x["hotelName"] for x in results] == sorted([x["hotelName"] for x in results], reverse=True)
         expected = {
             "category",
             "hotelName",
             "description",
             "@search.score",
+            "@search.reranker_score",
             "@search.highlights",
+            "@search.captions",
         }
         assert all(set(x) == expected for x in results)
         assert all(x["category"] == "Budget" for x in results)
@@ -81,21 +80,21 @@ class TestClientTestAsync(AzureRecordedTestCase):
         results = []
         select = ["hotelName", "category", "description"]
         async for x in await client.search(
-                search_text="WiFi",
-                filter="category eq 'Budget'",
-                select=select,
-                order_by="hotelName desc"
+            search_text="WiFi",
+            filter="category eq 'Budget'",
+            select=select,
+            order_by="hotelName desc",
         ):
             results.append(x)
-        assert [x["hotelName"] for x in results] == sorted(
-            [x["hotelName"] for x in results], reverse=True
-        )
+        assert [x["hotelName"] for x in results] == sorted([x["hotelName"] for x in results], reverse=True)
         expected = {
             "category",
             "hotelName",
             "description",
             "@search.score",
+            "@search.reranker_score",
             "@search.highlights",
+            "@search.captions",
         }
         assert all(set(x) == expected for x in results)
         assert all(x["category"] == "Budget" for x in results)
@@ -118,19 +117,12 @@ class TestClientTestAsync(AzureRecordedTestCase):
 
     async def _test_get_search_facets_none(self, client):
         select = ("hotelName", "category", "description")
-        results = await client.search(
-            search_text="WiFi",
-            select=",".join(select)
-        )
+        results = await client.search(search_text="WiFi", select=",".join(select))
         assert await results.get_facets() is None
 
     async def _test_get_search_facets_result(self, client):
         select = ("hotelName", "category", "description")
-        results = await client.search(
-            search_text="WiFi",
-            facets=["category"],
-            select=",".join(select)
-        )
+        results = await client.search(search_text="WiFi", facets=["category"], select=",".join(select))
         assert await results.get_facets() == {
             "category": [
                 {"value": "Budget", "count": 4},
@@ -159,7 +151,6 @@ class TestClientTestAsync(AzureRecordedTestCase):
 
     async def _test_get_search_simple_large(self, client):
         results = []
-        async for x in await client.search(search_text = ''):
+        async for x in await client.search(search_text=""):
             results.append(x)
         assert len(results) == 60
-            

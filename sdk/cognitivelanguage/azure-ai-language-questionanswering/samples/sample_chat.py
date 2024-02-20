@@ -47,31 +47,38 @@ def sample_chit_chat():
             project_name=knowledge_base_project,
             deployment_name="test"
         )
-        best_candidate = [a for a in output.answers if a.confidence > 0.7][0]
-        print(u"Q: {}".format(first_question))
-        print(u"A: {}".format(best_candidate.answer))
+        if output.answers:
+            best_candidate = [a for a in output.answers if a.confidence and a.confidence > 0.7][0]
+            print(u"Q: {}".format(first_question))
+            print(u"A: {}".format(best_candidate.answer))
+        else:
+            print(f"No answers returned from question '{first_question}'")
+            return
 
-        followup_question = "How long it takes to charge Surface?"
+        if best_candidate.qna_id:
+            followup_question = "How long it takes to charge Surface?"
 
-        output = client.get_answers(
-            question=followup_question,
-            top=3,
-            confidence_threshold=0.2,
-            answer_context=qna.KnowledgeBaseAnswerContext(
-                previous_question=first_question,
-                previous_qna_id=best_candidate.qna_id
-            ),
-            short_answer_options=qna.ShortAnswerOptions(
+            output = client.get_answers(
+                question=followup_question,
+                top=3,
                 confidence_threshold=0.2,
-                top=1
-            ),
-            include_unstructured_sources=True,
-            project_name=knowledge_base_project,
-            deployment_name="test"
-        )
-        print(u"Q: {}".format(followup_question))
-        print(u"A: {}".format(output.answers[0].answer))
-
+                answer_context=qna.KnowledgeBaseAnswerContext(
+                    previous_question=first_question,
+                    previous_qna_id=best_candidate.qna_id
+                ),
+                short_answer_options=qna.ShortAnswerOptions(
+                    confidence_threshold=0.2,
+                    top=1
+                ),
+                include_unstructured_sources=True,
+                project_name=knowledge_base_project,
+                deployment_name="test"
+            )
+            if output.answers:
+                print(u"Q: {}".format(followup_question))
+                print(u"A: {}".format(output.answers[0].answer))
+            else:
+                print(f"No answers returned from question '{followup_question}'")
     # [END chit_chat]
 
 

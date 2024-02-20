@@ -1,0 +1,18 @@
+$schema:  http://azureml/sdk-2-0/Schedule.json
+name: schedule_data_import
+display_name: Schedule data import
+description: Schedule data import
+
+trigger:
+  type: cron
+  expression: "15 10 * * 1"
+  time_zone: "Pacific Standard Time" # optional - default will be UTC
+
+import_data:
+  type: mltable
+  name: my_azuresqldb_asset
+  path: azureml://datastores/workspaceblobstore/paths/{name}
+  source:
+    type: database
+    query: select * from region
+    connection: azureml:my_azuresqldb_connection

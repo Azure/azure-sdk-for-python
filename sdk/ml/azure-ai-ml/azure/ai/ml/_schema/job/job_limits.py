@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=unused-argument,no-self-use
+# pylint: disable=unused-argument
 
 from marshmallow import fields, post_load, validate
 
@@ -39,5 +39,7 @@ class SweepJobLimitsSchema(metaclass=PatchedSchemaMeta):
 
 class DoWhileLimitsSchema(metaclass=PatchedSchemaMeta):
     max_iteration_count = fields.Int(
-        metadata={"description": "The max iteration for do_while loop."}, validate=validate.Range(min=1, max=1000)
+        metadata={"description": "The max iteration for do_while loop."},
+        validate=validate.Range(min=1, max=1000),
+        required=True,
     )

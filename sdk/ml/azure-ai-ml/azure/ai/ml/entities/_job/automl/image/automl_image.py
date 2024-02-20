@@ -3,9 +3,9 @@
 # ---------------------------------------------------------
 
 from abc import ABC
-from typing import Dict, Union
+from typing import Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import LogVerbosity, SamplingAlgorithmType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import LogVerbosity, SamplingAlgorithmType
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl.automl_vertical import AutoMLVertical
@@ -24,8 +24,8 @@ class AutoMLImage(AutoMLVertical, ABC):
         self,
         *,
         task_type: str,
-        limits: ImageLimitSettings = None,
-        sweep: ImageSweepSettings = None,
+        limits: Optional[ImageLimitSettings] = None,
+        sweep: Optional[ImageSweepSettings] = None,
         **kwargs,
     ) -> None:
         self.log_verbosity = kwargs.pop("log_verbosity", LogVerbosity.INFO)
@@ -94,8 +94,8 @@ class AutoMLImage(AutoMLVertical, ABC):
         *,
         training_data: Input,
         target_column_name: str,
-        validation_data: Input = None,
-        validation_data_size: float = None,
+        validation_data: Optional[Input] = None,
+        validation_data_size: Optional[float] = None,
     ) -> None:
         self.target_column_name = self.target_column_name if target_column_name is None else target_column_name
         self.training_data = self.training_data if training_data is None else training_data
@@ -105,14 +105,14 @@ class AutoMLImage(AutoMLVertical, ABC):
     def set_limits(
         self,
         *,
-        max_concurrent_trials: int = None,
-        max_trials: int = None,
-        timeout_minutes: int = None,
+        max_concurrent_trials: Optional[int] = None,
+        max_trials: Optional[int] = None,
+        timeout_minutes: Optional[int] = None,
     ) -> None:
         """Limit settings for all AutoML Image Verticals.
 
-        :param timeout_minutes: AutoML job timeout.
-        :type timeout_minutes: ~datetime.timedelta
+        :keyword timeout_minutes: AutoML job timeout.
+        :paramtype timeout_minutes: ~datetime.timedelta
         """
         self._limits = self._limits or ImageLimitSettings()
         self._limits.max_concurrent_trials = (
@@ -127,20 +127,20 @@ class AutoMLImage(AutoMLVertical, ABC):
         sampling_algorithm: Union[
             str, SamplingAlgorithmType.RANDOM, SamplingAlgorithmType.GRID, SamplingAlgorithmType.BAYESIAN
         ],
-        early_termination: Union[BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy] = None,
+        early_termination: Optional[Union[BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy]] = None,
     ) -> None:
         """Sweep settings for all AutoML Image Verticals.
 
-        :param sampling_algorithm: Required. [Required] Type of the hyperparameter sampling
-         algorithms. Possible values include: "Grid", "Random", "Bayesian".
+        :keyword sampling_algorithm: Required. [Required] Type of the hyperparameter sampling
+            algorithms. Possible values include: "Grid", "Random", "Bayesian".
         :type sampling_algorithm: Union[str, ~azure.mgmt.machinelearningservices.models.SamplingAlgorithmType.RANDOM,
-        ~azure.mgmt.machinelearningservices.models.SamplingAlgorithmType.GRID,
-        ~azure.mgmt.machinelearningservices.models.SamplingAlgorithmType.BAYESIAN]
-        :param early_termination: Type of early termination policy.
-        :type early_termination: Union[
-        ~azure.mgmt.machinelearningservices.models.BanditPolicy,
-        ~azure.mgmt.machinelearningservices.models.MedianStoppingPolicy,
-        ~azure.mgmt.machinelearningservices.models.TruncationSelectionPolicy]
+            ~azure.mgmt.machinelearningservices.models.SamplingAlgorithmType.GRID,
+            ~azure.mgmt.machinelearningservices.models.SamplingAlgorithmType.BAYESIAN]
+        :keyword early_termination: Type of early termination policy.
+        :paramtype early_termination: Union[
+            ~azure.mgmt.machinelearningservices.models.BanditPolicy,
+            ~azure.mgmt.machinelearningservices.models.MedianStoppingPolicy,
+            ~azure.mgmt.machinelearningservices.models.TruncationSelectionPolicy]
         """
         if self._sweep:
             self._sweep.sampling_algorithm = sampling_algorithm

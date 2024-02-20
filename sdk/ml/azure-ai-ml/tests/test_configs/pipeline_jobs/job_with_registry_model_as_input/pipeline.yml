@@ -6,7 +6,7 @@ display_name: "e2e_registered_components_with_registry_model_as_pipeline_input"
 
 inputs:
   pipeline_score_model:
-    path: azureml://registries/testFeed/models/iris_model/versions/1
+    path: azureml://registries/sdk-test/models/iris_model/versions/1
     type: mlflow_model
   pipeline_job_test_input:
     path: ./data
@@ -31,7 +31,7 @@ jobs:
     compute: azureml:cpu-cluster
     inputs:
       model_input:
-        path: azureml://registries/testFeed/models/iris_model/versions/1
+        path: azureml://registries/sdk-test/models/iris_model/versions/1
         type: mlflow_model
       test_data: ${{parent.inputs.pipeline_job_test_input}}
     outputs:
@@ -40,7 +40,7 @@ jobs:
 
   score_job_with_registry_component:
     type: command
-    component: azureml://registries/testFeed/components/v2_dsl_score_component/versions/0.0.8
+    component: azureml://registries/sdk-test/components/score_component/versions/2
     compute: azureml:cpu-cluster
     inputs:
       model_input: ${{parent.inputs.pipeline_score_model}}

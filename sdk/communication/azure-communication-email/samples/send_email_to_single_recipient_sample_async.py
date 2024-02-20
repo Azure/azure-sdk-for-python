@@ -14,7 +14,7 @@ DESCRIPTION:
 USAGE:
     python send_email_to_single_recipient_sample_async.py
     Set the environment variable with your own value before running the sample:
-    1) COMMUNICATION_CONNECTION_STRING - the connection string in your ACS resource
+    1) COMMUNICATION_CONNECTION_STRING_EMAIL - the connection string in your ACS resource
     2) SENDER_ADDRESS - the address found in the linked domain that will send the email
     3) RECIPIENT_ADDRESS - the address that will receive the email
 """
@@ -24,12 +24,6 @@ import sys
 import asyncio
 from azure.core.exceptions import HttpResponseError
 from azure.communication.email.aio import EmailClient
-from azure.communication.email import (
-    EmailContent,
-    EmailRecipients,
-    EmailAddress,
-    EmailMessage
-)
 
 sys.path.append("..")
 
@@ -44,27 +38,29 @@ class EmailSingleRecipientSampleAsync(object):
         email_client = EmailClient.from_connection_string(self.connection_string)
 
         # creating the email message
-        content = EmailContent(
-            subject="This is the subject",
-            plain_text="This is the body",
-            html= "<html><h1>This is the body</h1></html>",
-        )
-
-        recipients = EmailRecipients(
-            to=[EmailAddress(email=self.recipient_address, display_name="Customer Name")]
-        )
-
-        message = EmailMessage(
-            sender=self.sender_address,
-            content=content,
-            recipients=recipients
-        )
+        message = {
+            "content": {
+                "subject": "This is the subject",
+                "plainText": "This is the body",
+                "html": "html><h1>This is the body</h1></html>"
+            },
+            "recipients": {
+                "to": [
+                    {
+                        "address": self.recipient_address,
+                        "displayName": "Customer Name"
+                    }
+                ]
+            },
+            "senderAddress": self.sender_address
+        }
 
         async with email_client:
             try:
                 # sending the email message
-                response = await email_client.send(message)
-                print("Message ID: " + response.message_id)
+                poller = await email_client.begin_send(message)
+                response = await poller.result()
+                print("Operation ID: " + response['id'])
             except HttpResponseError as ex:
                 print(ex)
                 pass

@@ -6,67 +6,50 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class AccountType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Type of storage accessed on the storage account.
-    """
+class AccountType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of storage accessed on the storage account."""
 
     GENERAL_PURPOSE_STORAGE = "GeneralPurposeStorage"
     BLOB_STORAGE = "BlobStorage"
 
-class AlertSeverity(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Severity of the alert.
-    """
+
+class AlertSeverity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Severity of the alert."""
 
     INFORMATIONAL = "Informational"
     WARNING = "Warning"
     CRITICAL = "Critical"
 
-class AuthenticationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The authentication type.
-    """
+
+class AuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The authentication type."""
 
     INVALID = "Invalid"
     AZURE_ACTIVE_DIRECTORY = "AzureActiveDirectory"
 
-class AzureContainerDataFormat(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Storage format used for the file represented by the share.
-    """
+
+class AzureContainerDataFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Storage format used for the file represented by the share."""
 
     BLOCK_BLOB = "BlockBlob"
     PAGE_BLOB = "PageBlob"
     AZURE_FILE = "AzureFile"
 
-class ClientPermissionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Type of access to be allowed for the client.
-    """
+
+class ClientPermissionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of access to be allowed for the client."""
 
     NO_ACCESS = "NoAccess"
     READ_ONLY = "ReadOnly"
     READ_WRITE = "ReadWrite"
 
-class ContainerStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Current status of the container.
-    """
+
+class ContainerStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Current status of the container."""
 
     OK = "OK"
     OFFLINE = "Offline"
@@ -74,9 +57,9 @@ class ContainerStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     UPDATING = "Updating"
     NEEDS_ATTENTION = "NeedsAttention"
 
-class DataBoxEdgeDeviceStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The status of the Data Box Edge/Gateway device.
-    """
+
+class DataBoxEdgeDeviceStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of the Data Box Edge/Gateway device."""
 
     READY_TO_SETUP = "ReadyToSetup"
     ONLINE = "Online"
@@ -86,14 +69,16 @@ class DataBoxEdgeDeviceStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
     PARTIALLY_DISCONNECTED = "PartiallyDisconnected"
     MAINTENANCE = "Maintenance"
 
-class DataPolicy(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Data policy of the share.
-    """
+
+class DataPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Data policy of the share."""
 
     CLOUD = "Cloud"
     LOCAL = "Local"
 
-class DayOfWeek(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class DayOfWeek(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """DayOfWeek."""
 
     SUNDAY = "Sunday"
     MONDAY = "Monday"
@@ -103,47 +88,47 @@ class DayOfWeek(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     FRIDAY = "Friday"
     SATURDAY = "Saturday"
 
-class DeviceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of the Data Box Edge/Gateway device.
-    """
+
+class DeviceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the Data Box Edge/Gateway device."""
 
     DATA_BOX_EDGE_DEVICE = "DataBoxEdgeDevice"
 
-class DownloadPhase(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The download phase.
-    """
+
+class DownloadPhase(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The download phase."""
 
     UNKNOWN = "Unknown"
     INITIALIZING = "Initializing"
     DOWNLOADING = "Downloading"
     VERIFYING = "Verifying"
 
-class EncryptionAlgorithm(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The algorithm used to encrypt "Value".
-    """
+
+class EncryptionAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The algorithm used to encrypt "Value"."""
 
     NONE = "None"
     AES256 = "AES256"
     RSAES_PKCS1_V1_5 = "RSAES_PKCS1_v_1_5"
 
-class HostPlatformType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Platform where the Iot runtime is hosted.
-    """
+
+class HostPlatformType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Platform where the Iot runtime is hosted."""
 
     KUBERNETES_CLUSTER = "KubernetesCluster"
     LINUX_VM = "LinuxVM"
 
-class InstallRebootBehavior(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Indicates if updates are available and at least one of the updates needs a reboot.
-    """
+
+class InstallRebootBehavior(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates if updates are available and at least one of the updates needs a reboot."""
 
     NEVER_REBOOTS = "NeverReboots"
     REQUIRES_REBOOT = "RequiresReboot"
     REQUEST_REBOOT = "RequestReboot"
 
-class JobStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The current status of the job.
-    """
+
+class JobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current status of the job."""
 
     INVALID = "Invalid"
     RUNNING = "Running"
@@ -153,9 +138,9 @@ class JobStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     PAUSED = "Paused"
     SCHEDULED = "Scheduled"
 
-class JobType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of the job.
-    """
+
+class JobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the job."""
 
     INVALID = "Invalid"
     SCAN_FOR_UPDATES = "ScanForUpdates"
@@ -164,9 +149,9 @@ class JobType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     REFRESH_SHARE = "RefreshShare"
     REFRESH_CONTAINER = "RefreshContainer"
 
-class MetricAggregationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Metric aggregation type.
-    """
+
+class MetricAggregationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Metric aggregation type."""
 
     NOT_SPECIFIED = "NotSpecified"
     NONE = "None"
@@ -176,16 +161,16 @@ class MetricAggregationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
     TOTAL = "Total"
     COUNT = "Count"
 
-class MetricCategory(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Metric category.
-    """
+
+class MetricCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Metric category."""
 
     CAPACITY = "Capacity"
     TRANSACTION = "Transaction"
 
-class MetricUnit(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Metric units.
-    """
+
+class MetricUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Metric units."""
 
     NOT_SPECIFIED = "NotSpecified"
     PERCENT = "Percent"
@@ -196,52 +181,52 @@ class MetricUnit(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     BYTES_PER_SECOND = "BytesPerSecond"
     COUNT_PER_SECOND = "CountPerSecond"
 
-class MonitoringStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Current monitoring status of the share.
-    """
+
+class MonitoringStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Current monitoring status of the share."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class MountType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Mounting type.
-    """
+
+class MountType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Mounting type."""
 
     VOLUME = "Volume"
     HOST_PATH = "HostPath"
 
-class NetworkAdapterDHCPStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Value indicating whether this adapter has DHCP enabled.
-    """
+
+class NetworkAdapterDHCPStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Value indicating whether this adapter has DHCP enabled."""
 
     DISABLED = "Disabled"
     ENABLED = "Enabled"
 
-class NetworkAdapterRDMAStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Value indicating whether this adapter is RDMA capable.
-    """
+
+class NetworkAdapterRDMAStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Value indicating whether this adapter is RDMA capable."""
 
     INCAPABLE = "Incapable"
     CAPABLE = "Capable"
 
-class NetworkAdapterStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Value indicating whether this adapter is valid.
-    """
+
+class NetworkAdapterStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Value indicating whether this adapter is valid."""
 
     INACTIVE = "Inactive"
     ACTIVE = "Active"
 
-class NetworkGroup(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The network group.
-    """
+
+class NetworkGroup(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The network group."""
 
     NONE = "None"
     NON_RDMA = "NonRDMA"
     RDMA = "RDMA"
 
-class NodeStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The current status of the individual node
-    """
+
+class NodeStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current status of the individual node."""
 
     UNKNOWN = "Unknown"
     UP = "Up"
@@ -249,9 +234,9 @@ class NodeStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     REBOOTING = "Rebooting"
     SHUTTING_DOWN = "ShuttingDown"
 
-class OrderState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Status of the order as per the allowed status types.
-    """
+
+class OrderState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status of the order as per the allowed status types."""
 
     UNTRACKED = "Untracked"
     AWAITING_FULFILMENT = "AwaitingFulfilment"
@@ -268,45 +253,47 @@ class OrderState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SHIPPED_BACK = "ShippedBack"
     COLLECTED_AT_MICROSOFT = "CollectedAtMicrosoft"
 
-class PlatformType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Host OS supported by the IoT role.
-    """
+
+class PlatformType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Host OS supported by the IoT role."""
 
     WINDOWS = "Windows"
     LINUX = "Linux"
 
-class RoleStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Role status.
-    """
+
+class RoleStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Role status."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class RoleTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class RoleTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """RoleTypes."""
 
     IOT = "IOT"
     ASA = "ASA"
     FUNCTIONS = "Functions"
     COGNITIVE = "Cognitive"
 
-class ShareAccessProtocol(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Access protocol to be used by the share.
-    """
+
+class ShareAccessProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Access protocol to be used by the share."""
 
     SMB = "SMB"
     NFS = "NFS"
 
-class ShareAccessType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Type of access to be allowed on the share for this user.
-    """
+
+class ShareAccessType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of access to be allowed on the share for this user."""
 
     CHANGE = "Change"
     READ = "Read"
     CUSTOM = "Custom"
 
-class ShareStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Current status of the share.
-    """
+
+class ShareStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Current status of the share."""
 
     OFFLINE = "Offline"
     UNKNOWN = "Unknown"
@@ -314,16 +301,16 @@ class ShareStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     UPDATING = "Updating"
     NEEDS_ATTENTION = "NeedsAttention"
 
-class SkuAvailability(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Is SKU available
-    """
+
+class SkuAvailability(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Is SKU available."""
 
     AVAILABLE = "Available"
     UNAVAILABLE = "Unavailable"
 
-class SkuName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The Sku name.
-    """
+
+class SkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The Sku name."""
 
     GATEWAY = "Gateway"
     EDGE = "Edge"
@@ -339,43 +326,43 @@ class SkuName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     TCA_SMALL = "TCA_Small"
     GPU = "GPU"
 
-class SkuRestrictionReasonCode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The SKU restriction reason.
-    """
+
+class SkuRestrictionReasonCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The SKU restriction reason."""
 
     NOT_AVAILABLE_FOR_SUBSCRIPTION = "NotAvailableForSubscription"
     QUOTA_ID = "QuotaId"
 
-class SkuSignupOption(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Can the SKU be signed up..
-    """
+
+class SkuSignupOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Can the SKU be signed up.."""
 
     NONE = "None"
     AVAILABLE = "Available"
 
-class SkuTier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The Sku tier.
-    """
+
+class SkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The Sku tier."""
 
     STANDARD = "Standard"
 
-class SkuVersion(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Sku version.
-    """
+
+class SkuVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Sku version."""
 
     STABLE = "Stable"
     PREVIEW = "Preview"
 
-class SSLStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Signifies whether SSL needs to be enabled or not.
-    """
+
+class SSLStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Signifies whether SSL needs to be enabled or not."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class StorageAccountStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Current status of the storage account
-    """
+
+class StorageAccountStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Current status of the storage account."""
 
     OK = "OK"
     OFFLINE = "Offline"
@@ -383,7 +370,9 @@ class StorageAccountStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     UPDATING = "Updating"
     NEEDS_ATTENTION = "NeedsAttention"
 
-class TimeGrain(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class TimeGrain(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """TimeGrain."""
 
     PT1_M = "PT1M"
     PT5_M = "PT5M"
@@ -394,25 +383,25 @@ class TimeGrain(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     PT12_H = "PT12H"
     PT1_D = "PT1D"
 
-class TriggerEventType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Trigger Kind.
-    """
+
+class TriggerEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Trigger Kind."""
 
     FILE_EVENT = "FileEvent"
     PERIODIC_TIMER_EVENT = "PeriodicTimerEvent"
 
-class UpdateOperation(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The current update operation.
-    """
+
+class UpdateOperation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current update operation."""
 
     NONE = "None"
     SCAN = "Scan"
     DOWNLOAD = "Download"
     INSTALL = "Install"
 
-class UpdateOperationStage(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Current stage of the update operation.
-    """
+
+class UpdateOperationStage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Current stage of the update operation."""
 
     UNKNOWN = "Unknown"
     INITIAL = "Initial"
@@ -432,9 +421,9 @@ class UpdateOperationStage(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     RESCAN_COMPLETE = "RescanComplete"
     RESCAN_FAILED = "RescanFailed"
 
-class UserType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Type of the user.
-    """
+
+class UserType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the user."""
 
     SHARE = "Share"
     LOCAL_MANAGEMENT = "LocalManagement"

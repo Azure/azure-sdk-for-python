@@ -37,61 +37,59 @@ from ._models_py3 import TopLevelDomain
 from ._models_py3 import TopLevelDomainAgreementOption
 from ._models_py3 import TopLevelDomainCollection
 
-
-from ._web_site_management_client_enums import (
-    AzureResourceType,
-    CustomHostNameDnsRecordType,
-    DnsType,
-    DomainPatchResourcePropertiesDomainNotRenewableReasonsItem,
-    DomainPropertiesDomainNotRenewableReasonsItem,
-    DomainStatus,
-    DomainType,
-    HostNameType,
-    ProvisioningState,
-)
+from ._web_site_management_client_enums import AzureResourceType
+from ._web_site_management_client_enums import CustomHostNameDnsRecordType
+from ._web_site_management_client_enums import DnsType
+from ._web_site_management_client_enums import DomainPatchResourcePropertiesDomainNotRenewableReasonsItem
+from ._web_site_management_client_enums import DomainPropertiesDomainNotRenewableReasonsItem
+from ._web_site_management_client_enums import DomainStatus
+from ._web_site_management_client_enums import DomainType
+from ._web_site_management_client_enums import HostNameType
+from ._web_site_management_client_enums import ProvisioningState
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'Address',
-    'Contact',
-    'CsmOperationCollection',
-    'CsmOperationDescription',
-    'CsmOperationDescriptionProperties',
-    'CsmOperationDisplay',
-    'Dimension',
-    'Domain',
-    'DomainAvailablilityCheckResult',
-    'DomainCollection',
-    'DomainControlCenterSsoRequest',
-    'DomainOwnershipIdentifier',
-    'DomainOwnershipIdentifierCollection',
-    'DomainPatchResource',
-    'DomainPurchaseConsent',
-    'DomainRecommendationSearchParameters',
-    'ErrorResponse',
-    'HostName',
-    'MetricAvailability',
-    'MetricSpecification',
-    'NameIdentifier',
-    'NameIdentifierCollection',
-    'ProxyOnlyResource',
-    'Resource',
-    'ServiceSpecification',
-    'TldLegalAgreement',
-    'TldLegalAgreementCollection',
-    'TopLevelDomain',
-    'TopLevelDomainAgreementOption',
-    'TopLevelDomainCollection',
-    'AzureResourceType',
-    'CustomHostNameDnsRecordType',
-    'DnsType',
-    'DomainPatchResourcePropertiesDomainNotRenewableReasonsItem',
-    'DomainPropertiesDomainNotRenewableReasonsItem',
-    'DomainStatus',
-    'DomainType',
-    'HostNameType',
-    'ProvisioningState',
+    "Address",
+    "Contact",
+    "CsmOperationCollection",
+    "CsmOperationDescription",
+    "CsmOperationDescriptionProperties",
+    "CsmOperationDisplay",
+    "Dimension",
+    "Domain",
+    "DomainAvailablilityCheckResult",
+    "DomainCollection",
+    "DomainControlCenterSsoRequest",
+    "DomainOwnershipIdentifier",
+    "DomainOwnershipIdentifierCollection",
+    "DomainPatchResource",
+    "DomainPurchaseConsent",
+    "DomainRecommendationSearchParameters",
+    "ErrorResponse",
+    "HostName",
+    "MetricAvailability",
+    "MetricSpecification",
+    "NameIdentifier",
+    "NameIdentifierCollection",
+    "ProxyOnlyResource",
+    "Resource",
+    "ServiceSpecification",
+    "TldLegalAgreement",
+    "TldLegalAgreementCollection",
+    "TopLevelDomain",
+    "TopLevelDomainAgreementOption",
+    "TopLevelDomainCollection",
+    "AzureResourceType",
+    "CustomHostNameDnsRecordType",
+    "DnsType",
+    "DomainPatchResourcePropertiesDomainNotRenewableReasonsItem",
+    "DomainPropertiesDomainNotRenewableReasonsItem",
+    "DomainStatus",
+    "DomainType",
+    "HostNameType",
+    "ProvisioningState",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

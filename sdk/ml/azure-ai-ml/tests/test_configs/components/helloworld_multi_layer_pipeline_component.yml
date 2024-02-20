@@ -1,0 +1,51 @@
+$schema: https://azuremlschemas.azureedge.net/development/pipelineComponent.schema.json
+type: pipeline
+
+name: helloworld_pipeline_component
+display_name: Hello World Pipeline Component
+description: This is the basic pipeline component
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+version: 1
+
+inputs:
+  component_in_number:
+    description: A number for pipeline component
+    type: number
+    default: 10.99
+    optional: True
+  component_in_path:
+    description: A path for pipeline component
+    type: uri_folder
+outputs:
+  nested_output:
+    type: uri_folder
+  nested_output2:
+    type: uri_folder
+
+
+jobs:
+  pipeline_component_1:
+    type: pipeline
+    component: ./helloworld_nested_pipeline_component.yml
+    inputs:
+      component_in_path: ${{parent.inputs.component_in_path}}
+    outputs:
+      component_out_path: ${{parent.outputs.nested_output}}
+
+  pipeline_component_2:
+    type: pipeline
+    component: ./helloworld_pipeline_component.yml
+    inputs:
+      component_in_path: ${{parent.inputs.component_in_path}}
+    outputs:
+      output_path: ${{parent.outputs.nested_output2}}
+
+  command_component:
+    type: command
+    component: ./helloworld_component.yml
+    inputs:
+      component_in_number: ${{parent.inputs.component_in_number}}
+      component_in_path: ${{parent.inputs.component_in_path}}

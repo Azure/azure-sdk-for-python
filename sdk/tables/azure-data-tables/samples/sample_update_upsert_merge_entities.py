@@ -57,7 +57,7 @@ class TableEntitySamples(object):
                 "last_updated": datetime.today(),
                 "product_id": uuid4(),
                 "inventory_count": 42,
-                "barcode": b"135aefg8oj0ld58" # cspell:disable-line
+                "barcode": b"135aefg8oj0ld58",  # cspell:disable-line
             }
             try:
                 # [START create_entity]

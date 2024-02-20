@@ -25,6 +25,13 @@ class CatalogSyncState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CANCELED = "Canceled"
 
 
+class CheckNameAvailabilityReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The reason why the given name is not available."""
+
+    INVALID = "Invalid"
+    ALREADY_EXISTS = "AlreadyExists"
+
+
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of identity that created the resource."""
 
@@ -41,10 +48,8 @@ class DomainJoinType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AZURE_AD_JOIN = "AzureADJoin"
 
 
-class EnableStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Enable or disable status. Indicates whether the property applied to is either enabled or
-    disabled.
-    """
+class EnvironmentTypeEnableStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates whether the environment type is either enabled or disabled."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
@@ -53,12 +58,29 @@ class EnableStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class HealthCheckStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Health check status values."""
 
+    UNKNOWN = "Unknown"
     PENDING = "Pending"
     RUNNING = "Running"
     PASSED = "Passed"
-    FAILED = "Failed"
     WARNING = "Warning"
+    FAILED = "Failed"
+
+
+class HealthStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Health status indicating whether a pool is available to create Dev Boxes."""
+
     UNKNOWN = "Unknown"
+    PENDING = "Pending"
+    HEALTHY = "Healthy"
+    WARNING = "Warning"
+    UNHEALTHY = "Unhealthy"
+
+
+class HibernateSupport(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates whether hibernate is enabled/disabled."""
+
+    DISABLED = "Disabled"
+    ENABLED = "Enabled"
 
 
 class ImageValidationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -105,6 +127,27 @@ class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     USER_SYSTEM = "user,system"
 
 
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of the resource."""
+
+    NOT_SPECIFIED = "NotSpecified"
+    ACCEPTED = "Accepted"
+    RUNNING = "Running"
+    CREATING = "Creating"
+    CREATED = "Created"
+    UPDATING = "Updating"
+    UPDATED = "Updated"
+    DELETING = "Deleting"
+    DELETED = "Deleted"
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    CANCELED = "Canceled"
+    MOVING_RESOURCES = "MovingResources"
+    TRANSIENT_FAILURE = "TransientFailure"
+    ROLLOUT_IN_PROGRESS = "RolloutInProgress"
+    STORAGE_PROVISIONING_FAILED = "StorageProvisioningFailed"
+
+
 class ScheduledFrequency(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The frequency of task execution."""
 
@@ -117,6 +160,15 @@ class ScheduledType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     STOP_DEV_BOX = "StopDevBox"
 
 
+class ScheduleEnableStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Schedule enable or disable status. Indicates whether the schedule applied to is either enabled
+    or disabled.
+    """
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+
+
 class SkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """This field is required to be implemented by the Resource Provider if the service has more than
     one tier, but is not required on a PUT.
@@ -126,6 +178,15 @@ class SkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     BASIC = "Basic"
     STANDARD = "Standard"
     PREMIUM = "Premium"
+
+
+class StopOnDisconnectEnableStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Stop on disconnect enable or disable status. Indicates whether stop on disconnect to is either
+    enabled or disabled.
+    """
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
 
 
 class UsageUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):

@@ -29,20 +29,20 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._operations import (
+    build_feature_list_operations_request,
     build_features_get_request,
     build_features_list_all_request,
     build_features_list_request,
     build_features_register_request,
     build_features_unregister_request,
-    build_list_operations_request,
 )
-from .._vendor import MixinABC
+from .._vendor import FeatureClientMixinABC
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class FeatureClientOperationsMixin(MixinABC):
+class FeatureClientOperationsMixin(FeatureClientMixinABC):
     @distributed_trace
     def list_operations(self, **kwargs: Any) -> AsyncIterable["_models.Operation"]:
         """Lists all of the available Microsoft.Features REST API operations.
@@ -56,8 +56,8 @@ class FeatureClientOperationsMixin(MixinABC):
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2015-12-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.OperationListResult]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2015-12-01"))
+        cls: ClsType[_models.OperationListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -70,14 +70,14 @@ class FeatureClientOperationsMixin(MixinABC):
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_operations_request(
+                request = build_feature_list_operations_request(
                     api_version=api_version,
                     template_url=self.list_operations.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -93,7 +93,7 @@ class FeatureClientOperationsMixin(MixinABC):
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -101,14 +101,15 @@ class FeatureClientOperationsMixin(MixinABC):
             deserialized = self._deserialize("OperationListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -120,7 +121,7 @@ class FeatureClientOperationsMixin(MixinABC):
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list_operations.metadata = {"url": "/providers/Microsoft.Features/operations"}  # type: ignore
+    list_operations.metadata = {"url": "/providers/Microsoft.Features/operations"}
 
 
 class FeaturesOperations:
@@ -155,8 +156,8 @@ class FeaturesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2015-12-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.FeatureOperationsListResult]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2015-12-01"))
+        cls: ClsType[_models.FeatureOperationsListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -177,7 +178,7 @@ class FeaturesOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -193,7 +194,7 @@ class FeaturesOperations:
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -201,14 +202,15 @@ class FeaturesOperations:
             deserialized = self._deserialize("FeatureOperationsListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -220,7 +222,7 @@ class FeaturesOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list_all.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Features/features"}  # type: ignore
+    list_all.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Features/features"}
 
     @distributed_trace
     def list(self, resource_provider_namespace: str, **kwargs: Any) -> AsyncIterable["_models.FeatureResult"]:
@@ -239,8 +241,8 @@ class FeaturesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2015-12-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.FeatureOperationsListResult]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2015-12-01"))
+        cls: ClsType[_models.FeatureOperationsListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -262,7 +264,7 @@ class FeaturesOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -278,7 +280,7 @@ class FeaturesOperations:
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -286,14 +288,15 @@ class FeaturesOperations:
             deserialized = self._deserialize("FeatureOperationsListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -305,7 +308,9 @@ class FeaturesOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Features/providers/{resourceProviderNamespace}/features"}  # type: ignore
+    list.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Features/providers/{resourceProviderNamespace}/features"
+    }
 
     @distributed_trace_async
     async def get(self, resource_provider_namespace: str, feature_name: str, **kwargs: Any) -> _models.FeatureResult:
@@ -331,8 +336,8 @@ class FeaturesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2015-12-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.FeatureResult]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2015-12-01"))
+        cls: ClsType[_models.FeatureResult] = kwargs.pop("cls", None)
 
         request = build_features_get_request(
             resource_provider_namespace=resource_provider_namespace,
@@ -344,10 +349,11 @@ class FeaturesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -363,7 +369,9 @@ class FeaturesOperations:
 
         return deserialized
 
-    get.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Features/providers/{resourceProviderNamespace}/features/{featureName}"}  # type: ignore
+    get.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Features/providers/{resourceProviderNamespace}/features/{featureName}"
+    }
 
     @distributed_trace_async
     async def register(
@@ -391,8 +399,8 @@ class FeaturesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2015-12-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.FeatureResult]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2015-12-01"))
+        cls: ClsType[_models.FeatureResult] = kwargs.pop("cls", None)
 
         request = build_features_register_request(
             resource_provider_namespace=resource_provider_namespace,
@@ -404,10 +412,11 @@ class FeaturesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -423,7 +432,9 @@ class FeaturesOperations:
 
         return deserialized
 
-    register.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Features/providers/{resourceProviderNamespace}/features/{featureName}/register"}  # type: ignore
+    register.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Features/providers/{resourceProviderNamespace}/features/{featureName}/register"
+    }
 
     @distributed_trace_async
     async def unregister(
@@ -451,8 +462,8 @@ class FeaturesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2015-12-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.FeatureResult]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2015-12-01"))
+        cls: ClsType[_models.FeatureResult] = kwargs.pop("cls", None)
 
         request = build_features_unregister_request(
             resource_provider_namespace=resource_provider_namespace,
@@ -464,10 +475,11 @@ class FeaturesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -483,4 +495,6 @@ class FeaturesOperations:
 
         return deserialized
 
-    unregister.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Features/providers/{resourceProviderNamespace}/features/{featureName}/unregister"}  # type: ignore
+    unregister.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Features/providers/{resourceProviderNamespace}/features/{featureName}/unregister"
+    }

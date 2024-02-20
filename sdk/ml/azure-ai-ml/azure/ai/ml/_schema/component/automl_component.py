@@ -11,8 +11,7 @@ from azure.ai.ml.constants import JobType
 class AutoMLComponentSchema(ComponentSchema):
     """AutoMl component schema.
 
-    Only has type & task property with basic component properties. No
-    inputs & outputs are allowed.
+    Only has type & task property with basic component properties. No inputs & outputs are allowed.
     """
 
     type = StringTransformedEnum(required=True, allowed_values=JobType.AUTOML)

@@ -2,12 +2,12 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from pathlib import Path
-from typing import Dict, Union
+from typing import Dict, Optional, Union
 
 from marshmallow import Schema
 
 from azure.ai.ml._schema.component.import_component import ImportComponentSchema
-from azure.ai.ml.constants._common import COMPONENT_TYPE
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, COMPONENT_TYPE
 from azure.ai.ml.constants._component import NodeType
 
 from ..._schema import PathAwareSchema
@@ -29,31 +29,32 @@ class ImportComponent(Component):
     :type tags: dict
     :param display_name: Display name of the component.
     :type display_name: str
-    :param source: input source parameters of the component.
+    :param source: Input source parameters of the component.
     :type source: dict
     :param output: Output of the component.
     :type output: dict
-    :param is_deterministic: Whether the command component is deterministic.
+    :param is_deterministic: Whether the command component is deterministic. Defaults to True.
     :type is_deterministic: bool
+    :param kwargs: Additional parameters for the import component.
     """
 
     def __init__(
         self,
         *,
-        name: str = None,
-        version: str = None,
-        description: str = None,
-        tags: Dict = None,
-        display_name: str = None,
-        source: Dict = None,
-        output: Dict = None,
+        name: Optional[str] = None,
+        version: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional[Dict] = None,
+        display_name: Optional[str] = None,
+        source: Optional[Dict] = None,
+        output: Optional[Dict] = None,
         is_deterministic: bool = True,
         **kwargs,
-    ):
+    ) -> None:
         kwargs[COMPONENT_TYPE] = NodeType.IMPORT
         # Set default base path
-        if "base_path" not in kwargs:
-            kwargs["base_path"] = Path(".")
+        if BASE_PATH_CONTEXT_KEY not in kwargs:
+            kwargs[BASE_PATH_CONTEXT_KEY] = Path(".")
 
         super().__init__(
             name=name,
@@ -71,7 +72,6 @@ class ImportComponent(Component):
         self.output = output
 
     def _to_dict(self) -> Dict:
-        """Dump the import component content into a dictionary."""
         return convert_ordered_dict_to_dict({**self._other_parameter, **super(ImportComponent, self)._to_dict()})
 
     @classmethod

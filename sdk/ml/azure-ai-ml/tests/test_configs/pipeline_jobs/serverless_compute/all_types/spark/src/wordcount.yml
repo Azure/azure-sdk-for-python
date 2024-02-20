@@ -1,0 +1,25 @@
+$schema: http://azureml/sdk-2-0/SparkComponent.json
+name: wordcount_spark_component
+type: spark
+version: 1
+display_name: Aml Spark dataset word count test module
+description: Aml Spark dataset word count test module
+
+entry:
+  file: wordcount.py
+
+inputs:
+  input1:
+    type: uri_file
+    mode: direct
+
+
+args: >-
+  --input1 ${{inputs.input1}}
+
+conf:
+  spark.driver.cores: 1
+  spark.driver.memory: "2g"
+  spark.executor.cores: 2
+  spark.executor.memory: "2g"
+  spark.executor.instances: 4

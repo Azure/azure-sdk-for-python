@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 from asyncio import Lock
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import SansIOHTTPPolicy
@@ -32,33 +32,32 @@ from .._sync_token import SyncToken
 
 
 class AsyncSyncTokenPolicy(SansIOHTTPPolicy):
-    """A simple policy that enable the given callback
-    with the response.
+    """A simple policy that enable the given callback with the response.
+
     :keyword callback raw_response_hook: Callback function. Will be invoked on response.
     """
 
-    def __init__(self, **kwargs):  # pylint: disable=unused-argument
-        # type: (**Any) -> None
+    def __init__(self, **kwargs: Any) -> None:  # pylint: disable=unused-argument
         self._sync_token_header = "Sync-Token"
-        self._sync_tokens = {}  # type: Dict[str, Any]
+        self._sync_tokens: Dict[str, Any] = {}
         self._lock = Lock()
 
-    async def on_request(self, request):  # type: ignore # pylint: disable=arguments-differ, invalid-overridden-method
-        # type: (PipelineRequest) -> None
+    async def on_request(self, request: PipelineRequest) -> None:  # pylint: disable=invalid-overridden-method
         """This is executed before sending the request to the next policy.
+
         :param request: The PipelineRequest object.
         :type request: ~azure.core.pipeline.PipelineRequest
         """
         async with self._lock:
             sync_token_header = ",".join(str(x) for x in self._sync_tokens.values())
             if sync_token_header:
-                request.http_request.headers.update(
-                    {self._sync_token_header: sync_token_header}
-                )
+                request.http_request.headers.update({self._sync_token_header: sync_token_header})
 
-    async def on_response(self, request, response):  # type: ignore # pylint: disable=arguments-differ, invalid-overridden-method
-        # type: (PipelineRequest, PipelineResponse) -> None
+    async def on_response(  # pylint: disable=invalid-overridden-method
+        self, request: PipelineRequest, response: PipelineResponse
+    ) -> None:
         """This is executed after the request comes back from the policy.
+
         :param request: The PipelineRequest object.
         :type request: ~azure.core.pipeline.PipelineRequest
         :param response: The PipelineResponse object.
@@ -74,15 +73,13 @@ class AsyncSyncTokenPolicy(SansIOHTTPPolicy):
             sync_token = SyncToken.from_sync_token_string(sync_token_string)
             await self._update_sync_token(sync_token)
 
-    async def add_token(self, full_raw_tokens):
-        # type: (str) -> None
+    async def add_token(self, full_raw_tokens: str) -> None:
         raw_tokens = full_raw_tokens.split(",")
         for raw_token in raw_tokens:
             sync_token = SyncToken.from_sync_token_string(raw_token)
             await self._update_sync_token(sync_token)
 
-    async def _update_sync_token(self, sync_token):
-        # type: (SyncToken) -> None
+    async def _update_sync_token(self, sync_token: Optional[SyncToken]) -> None:
         if not sync_token:
             return
         async with self._lock:

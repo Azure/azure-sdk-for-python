@@ -62,7 +62,7 @@ class EllipticCurveKey(Key):
 
     @classmethod
     def from_jwk(cls, jwk):
-        if jwk.kty != "EC" and jwk.kty != "EC-HSM":
+        if jwk.kty not in ("EC", "EC-HSM"):
             raise ValueError("The specified key must be of type 'EC' or 'EC-HSM'")
 
         if not jwk.x or not jwk.y:

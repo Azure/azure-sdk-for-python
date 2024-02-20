@@ -4,20 +4,21 @@
 
 import logging
 
-from marshmallow import fields
+from marshmallow import fields, validate
 
 from azure.ai.ml._restclient.v2022_02_01_preview.models import EndpointAuthMode
 from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum
 from azure.ai.ml._schema.core.schema import PathAwareSchema
 from azure.ai.ml._schema.identity import IdentitySchema
 from azure.ai.ml._utils.utils import camel_to_snake
+from azure.ai.ml.constants._endpoint import EndpointConfigurations
 
 module_logger = logging.getLogger(__name__)
 
 
 class EndpointSchema(PathAwareSchema):
     id = fields.Str()
-    name = fields.Str(required=True)
+    name = fields.Str(required=True, validate=validate.Regexp(EndpointConfigurations.NAME_REGEX_PATTERN))
     description = fields.Str(metadata={"description": "Description of the inference endpoint."})
     tags = fields.Dict()
     provisioning_state = fields.Str(metadata={"description": "Provisioning state for the endpoint."})

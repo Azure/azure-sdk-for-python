@@ -12,7 +12,7 @@ from typing import Any, Awaitable, TYPE_CHECKING
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
 
-from .. import models
+from .. import models as _models
 from .._serialization import Deserializer, Serializer
 from ._configuration import SecurityInsightsConfiguration
 from .operations import (
@@ -33,9 +33,12 @@ from .operations import (
     EntityQueryTemplatesOperations,
     EntityRelationsOperations,
     FileImportsOperations,
+    GetOperations,
+    GetRecommendationsOperations,
     IPGeodataOperations,
     IncidentCommentsOperations,
     IncidentRelationsOperations,
+    IncidentTasksOperations,
     IncidentsOperations,
     MetadataOperations,
     OfficeConsentsOperations,
@@ -48,6 +51,7 @@ from .operations import (
     ThreatIntelligenceIndicatorMetricsOperations,
     ThreatIntelligenceIndicatorOperations,
     ThreatIntelligenceIndicatorsOperations,
+    UpdateOperations,
     WatchlistItemsOperations,
     WatchlistsOperations,
 )
@@ -105,6 +109,8 @@ class SecurityInsights:  # pylint: disable=client-accepts-api-version-keyword,to
     :ivar incident_relations: IncidentRelationsOperations operations
     :vartype incident_relations:
      azure.mgmt.securityinsight.aio.operations.IncidentRelationsOperations
+    :ivar incident_tasks: IncidentTasksOperations operations
+    :vartype incident_tasks: azure.mgmt.securityinsight.aio.operations.IncidentTasksOperations
     :ivar metadata: MetadataOperations operations
     :vartype metadata: azure.mgmt.securityinsight.aio.operations.MetadataOperations
     :ivar office_consents: OfficeConsentsOperations operations
@@ -112,6 +118,13 @@ class SecurityInsights:  # pylint: disable=client-accepts-api-version-keyword,to
     :ivar sentinel_onboarding_states: SentinelOnboardingStatesOperations operations
     :vartype sentinel_onboarding_states:
      azure.mgmt.securityinsight.aio.operations.SentinelOnboardingStatesOperations
+    :ivar get_recommendations: GetRecommendationsOperations operations
+    :vartype get_recommendations:
+     azure.mgmt.securityinsight.aio.operations.GetRecommendationsOperations
+    :ivar get: GetOperations operations
+    :vartype get: azure.mgmt.securityinsight.aio.operations.GetOperations
+    :ivar update: UpdateOperations operations
+    :vartype update: azure.mgmt.securityinsight.aio.operations.UpdateOperations
     :ivar security_ml_analytics_settings: SecurityMLAnalyticsSettingsOperations operations
     :vartype security_ml_analytics_settings:
      azure.mgmt.securityinsight.aio.operations.SecurityMLAnalyticsSettingsOperations
@@ -148,7 +161,7 @@ class SecurityInsights:  # pylint: disable=client-accepts-api-version-keyword,to
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2022-09-01-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2022-12-01-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -165,7 +178,7 @@ class SecurityInsights:  # pylint: disable=client-accepts-api-version-keyword,to
         self._config = SecurityInsightsConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
         self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
@@ -206,11 +219,17 @@ class SecurityInsights:  # pylint: disable=client-accepts-api-version-keyword,to
         self.incident_relations = IncidentRelationsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.incident_tasks = IncidentTasksOperations(self._client, self._config, self._serialize, self._deserialize)
         self.metadata = MetadataOperations(self._client, self._config, self._serialize, self._deserialize)
         self.office_consents = OfficeConsentsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.sentinel_onboarding_states = SentinelOnboardingStatesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.get_recommendations = GetRecommendationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.get = GetOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.update = UpdateOperations(self._client, self._config, self._serialize, self._deserialize)
         self.security_ml_analytics_settings = SecurityMLAnalyticsSettingsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )

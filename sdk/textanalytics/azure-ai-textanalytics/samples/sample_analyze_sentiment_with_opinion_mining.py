@@ -42,12 +42,10 @@ OUTPUT:
     Looking at the breakdown, I can see what aspects of my hotel need improvement, and based off of both the number and content of the complaints users have made about my toilets, I need to get that fixed ASAP.
 """
 
-from __future__ import annotations
-import os
-import typing
-
 
 def sample_analyze_sentiment_with_opinion_mining() -> None:
+    import os
+    import typing
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics import TextAnalyticsClient
 
@@ -102,22 +100,23 @@ def sample_analyze_sentiment_with_opinion_mining() -> None:
         "\nIn order to do that, I'm going to extract targets of a negative sentiment. "
         "I'm going to map each of these targets to the mined opinion object we get back to aggregate the reviews by target. "
     )
-    target_to_complaints: dict[str, typing.Any] = {}
+    target_to_complaints: typing.Dict[str, typing.Any] = {}
 
     for document in doc_result:
         for sentence in document.sentences:
-            for mined_opinion in sentence.mined_opinions:
-                target = mined_opinion.target
-                if target.sentiment == 'negative':
-                    target_to_complaints.setdefault(target.text, [])
-                    target_to_complaints[target.text].append(mined_opinion)
+            if sentence.mined_opinions:
+                for mined_opinion in sentence.mined_opinions:
+                    target = mined_opinion.target
+                    if target.sentiment == 'negative':
+                        target_to_complaints.setdefault(target.text, [])
+                        target_to_complaints[target.text].append(mined_opinion)
 
     print("\nLet's now go through the aspects of our hotel people have complained about and see what users have specifically said")
 
-    for target, complaints in target_to_complaints.items():
+    for target_name, complaints in target_to_complaints.items():
         print("Users have made {} complaint(s) about '{}', specifically saying that it's '{}'".format(
             len(complaints),
-            target,
+            target_name,
             "', '".join(
                 [assessment.text for complaint in complaints for assessment in complaint.assessments]
             )

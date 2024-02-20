@@ -3,11 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import time
-
-try:
-    from unittest import mock
-except ImportError:
-    import mock
+from unittest import mock
 
 from azure.core.credentials import AccessToken
 import pytest
@@ -44,12 +40,12 @@ def test_no_cached_token():
     credential = MockCredential()
     token = credential.get_token(SCOPE)
 
-    credential.acquire_token_silently.assert_called_once_with(SCOPE)
-    credential.request_token.assert_called_once_with(SCOPE)
+    credential.acquire_token_silently.assert_called_once_with(SCOPE, claims=None, tenant_id=None)
+    credential.request_token.assert_called_once_with(SCOPE, claims=None, tenant_id=None)
     assert token.token == MockCredential.NEW_TOKEN.token
 
 
-def test_tenant_id():    
+def test_tenant_id():
     credential = MockCredential()
     token = credential.get_token(SCOPE, tenant_id="tenant_id")
 
@@ -65,7 +61,7 @@ def test_token_acquisition_failure():
         with pytest.raises(Exception):
             credential.get_token(SCOPE)
         assert credential.request_token.call_count == i + 1
-        credential.request_token.assert_called_with(SCOPE)
+        credential.request_token.assert_called_with(SCOPE, claims=None, tenant_id=None)
 
 
 def test_expired_token():
@@ -75,8 +71,8 @@ def test_expired_token():
     credential = MockCredential(cached_token=AccessToken(CACHED_TOKEN, now - 1))
     token = credential.get_token(SCOPE)
 
-    credential.acquire_token_silently.assert_called_once_with(SCOPE)
-    credential.request_token.assert_called_once_with(SCOPE)
+    credential.acquire_token_silently.assert_called_once_with(SCOPE, claims=None, tenant_id=None)
+    credential.request_token.assert_called_once_with(SCOPE, claims=None, tenant_id=None)
     assert token.token == MockCredential.NEW_TOKEN.token
 
 
@@ -86,7 +82,7 @@ def test_cached_token_outside_refresh_window():
     credential = MockCredential(cached_token=AccessToken(CACHED_TOKEN, time.time() + DEFAULT_REFRESH_OFFSET + 1))
     token = credential.get_token(SCOPE)
 
-    credential.acquire_token_silently.assert_called_once_with(SCOPE)
+    credential.acquire_token_silently.assert_called_once_with(SCOPE, claims=None, tenant_id=None)
     assert credential.request_token.call_count == 0
     assert token.token == CACHED_TOKEN
 
@@ -97,8 +93,8 @@ def test_cached_token_within_refresh_window():
     credential = MockCredential(cached_token=AccessToken(CACHED_TOKEN, time.time() + DEFAULT_REFRESH_OFFSET - 1))
     token = credential.get_token(SCOPE)
 
-    credential.acquire_token_silently.assert_called_once_with(SCOPE)
-    credential.request_token.assert_called_once_with(SCOPE)
+    credential.acquire_token_silently.assert_called_once_with(SCOPE, claims=None, tenant_id=None)
+    credential.request_token.assert_called_once_with(SCOPE, claims=None, tenant_id=None)
     assert token.token == MockCredential.NEW_TOKEN.token
 
 
@@ -113,5 +109,5 @@ def test_retry_delay():
     for i in range(4):
         token = credential.get_token(SCOPE)
         assert token.token == CACHED_TOKEN
-        credential.acquire_token_silently.assert_called_with(SCOPE)
-        credential.request_token.assert_called_once_with(SCOPE)
+        credential.acquire_token_silently.assert_called_with(SCOPE, claims=None, tenant_id=None)
+        credential.request_token.assert_called_once_with(SCOPE, claims=None, tenant_id=None)

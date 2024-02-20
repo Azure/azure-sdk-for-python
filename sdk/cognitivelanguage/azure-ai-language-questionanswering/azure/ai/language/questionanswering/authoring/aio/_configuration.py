@@ -15,7 +15,7 @@ from azure.core.pipeline import policies
 from .._version import VERSION
 
 
-class AuthoringClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
+class AuthoringClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes,name-too-long
     """Configuration for AuthoringClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -33,7 +33,7 @@ class AuthoringClientConfiguration(Configuration):  # pylint: disable=too-many-i
 
     def __init__(self, endpoint: str, credential: AzureKeyCredential, **kwargs: Any) -> None:
         super(AuthoringClientConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop("api_version", "2021-10-01")  # type: str
+        api_version: str = kwargs.pop("api_version", "2021-10-01")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")

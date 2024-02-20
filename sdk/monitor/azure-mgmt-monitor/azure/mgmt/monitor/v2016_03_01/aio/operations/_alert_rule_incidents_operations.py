@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar
-from urllib.parse import parse_qs, urljoin, urlparse
+import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import (
@@ -40,7 +40,7 @@ class AlertRuleIncidentsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~$(python-base-namespace).v2016_03_01.aio.MonitorManagementClient`'s
+        :class:`~azure.mgmt.monitor.v2016_03_01.aio.MonitorManagementClient`'s
         :attr:`alert_rule_incidents` attribute.
     """
 
@@ -68,7 +68,7 @@ class AlertRuleIncidentsOperations:
         :type incident_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Incident or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2016_03_01.models.Incident
+        :rtype: ~azure.mgmt.monitor.v2016_03_01.models.Incident
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -82,8 +82,8 @@ class AlertRuleIncidentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2016-03-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.Incident]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-03-01"))
+        cls: ClsType[_models.Incident] = kwargs.pop("cls", None)
 
         request = build_get_request(
             resource_group_name=resource_group_name,
@@ -96,10 +96,11 @@ class AlertRuleIncidentsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -116,7 +117,9 @@ class AlertRuleIncidentsOperations:
 
         return deserialized
 
-    get.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/microsoft.insights/alertrules/{ruleName}/incidents/{incidentName}"}  # type: ignore
+    get.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/microsoft.insights/alertrules/{ruleName}/incidents/{incidentName}"
+    }
 
     @distributed_trace
     def list_by_alert_rule(
@@ -132,14 +135,14 @@ class AlertRuleIncidentsOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Incident or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~$(python-base-namespace).v2016_03_01.models.Incident]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.monitor.v2016_03_01.models.Incident]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2016-03-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.IncidentListResult]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-03-01"))
+        cls: ClsType[_models.IncidentListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -162,16 +165,23 @@ class AlertRuleIncidentsOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -179,14 +189,15 @@ class AlertRuleIncidentsOperations:
             deserialized = self._deserialize("IncidentListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -198,4 +209,6 @@ class AlertRuleIncidentsOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list_by_alert_rule.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/microsoft.insights/alertrules/{ruleName}/incidents"}  # type: ignore
+    list_by_alert_rule.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/microsoft.insights/alertrules/{ruleName}/incidents"
+    }

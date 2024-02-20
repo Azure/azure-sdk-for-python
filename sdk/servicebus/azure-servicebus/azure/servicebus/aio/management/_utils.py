@@ -9,7 +9,6 @@ from xml.etree.ElementTree import ElementTree
 import urllib.parse as urlparse
 
 from ...management import _constants as constants
-from ...management._api_version import DEFAULT_VERSION
 from ...management._handle_response_error import _handle_response_error
 
 # This module defines functions get_next_template and extract_data_template.
@@ -81,6 +80,12 @@ async def extract_data_template(feed_class, convert, feed_element):
     azure.core.async_paging.AsyncItemPaged will use the returned next page to call a partial function created
     from `get_next_template` to fetch data of next page.
 
+    :param any feed_class: The class of the model that deserializes the XML ElementTree.
+    :param callable convert: A function that converts the deserialized data into the model instance.
+    :param ElementTree feed_element: The XML ElementTree returned from function `get_next_template`.
+    :return: The link to next page and an iterator of model instances.
+    :rtype: tuple(str, iterator)
+
     """
     deserialized = feed_class.deserialize(feed_element)
     list_of_qd = [convert(x) if convert else x for x in deserialized.entry]
@@ -101,6 +106,12 @@ async def extract_rule_data_template(feed_class, convert, feed_element):
     doesn't work for this special part.
     After autorest is enhanced, this method can be removed.
     Refer to autorest issue https://github.com/Azure/autorest/issues/3535
+
+    :param any feed_class: The class of the feed.
+    :param callable convert: A function that takes an XML element and a model instance and returns the model instance.
+    :param ElementTree feed_element: The XML element to deserialize.
+    :return: A tuple of the next link and the iterator of deserialized entities.
+    :rtype: tuple(str, iterator[~azure.servicebus.management.models.Rule])
     """
     deserialized = feed_class.deserialize(feed_element)
     next_link = None
@@ -126,18 +137,20 @@ async def get_next_template(
     azure.core.async_paging.AsyncItemPaged will call `extract_data_template` and use the returned
     XML ElementTree to call a partial function created from `extrat_data_template`.
 
+    :param callable list_func: The function to call to get the XML data.
+    :param any args: The arguments to pass to the function.
+    :keyword int or None start_index: The index of the first item in the page.
+    :keyword int or None max_page_size: The maximum number of items in the page.
+    :return: The XML ElementTree.
+    :rtype: ElementTree
     """
-    api_version = kwargs.pop("api_version", DEFAULT_VERSION)
     if args[0]:  # It's next link. It's None for the first page.
         queries = urlparse.parse_qs(urlparse.urlparse(args[0]).query)
         start_index = int(queries[constants.LIST_OP_SKIP][0])
         max_page_size = int(queries[constants.LIST_OP_TOP][0])
-        api_version = queries[constants.API_VERSION_PARAM_NAME][0]
     with _handle_response_error():
         feed_element = cast(
             ElementTree,
-            await list_func(
-                skip=start_index, top=max_page_size, api_version=api_version, **kwargs
-            ),
+            await list_func(skip=start_index, top=max_page_size, **kwargs),
         )
     return feed_element

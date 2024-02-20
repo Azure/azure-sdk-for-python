@@ -7,13 +7,24 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 # pylint: disable=too-many-lines
-from typing import Awaitable
 import sys
 import datetime
-from typing import List, Union, Any, IO, AsyncIterator, Optional, AsyncIterable
+from typing import (
+    List,
+    Union,
+    Any,
+    IO,
+    AsyncIterator,
+    Optional,
+    AsyncIterable,
+    Awaitable,
+)
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
-from azure.core.pipeline.policies import AzureKeyCredentialPolicy, AsyncBearerTokenCredentialPolicy
+from azure.core.pipeline.policies import (
+    AzureKeyCredentialPolicy,
+    AsyncBearerTokenCredentialPolicy,
+)
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.rest import AsyncHttpResponse, HttpRequest
@@ -1151,6 +1162,7 @@ class PersonalizerClient:
 
     async def __aexit__(self, *exc_details) -> None:
         await self._client.__aexit__(*exc_details)
+
 
 def patch_sdk():
     """Do not remove from this file.

@@ -9,11 +9,12 @@ import functools
 import json
 import logging
 import os
+from unittest.mock import Mock, patch
 
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
+from azure.core.rest import HttpRequest
 from azure.keyvault.keys import (
-    ApiVersion,
     JsonWebKey,
     KeyReleasePolicy,
     KeyRotationLifetimeAction,
@@ -21,6 +22,7 @@ from azure.keyvault.keys import (
     KeyRotationPolicyAction,
 )
 from azure.keyvault.keys.aio import KeyClient
+from azure.keyvault.keys._shared.client_base import DEFAULT_VERSION
 import pytest
 
 from _shared.test_case_async import KeyVaultTestCase
@@ -33,9 +35,9 @@ from _keys_test_case import KeysTestCase
 
 all_api_versions = get_decorator(is_async=True)
 only_hsm = get_decorator(only_hsm=True, is_async=True)
-only_hsm_7_3 = get_decorator(only_hsm=True, is_async=True, api_versions=[ApiVersion.V7_3])
-only_vault_7_3 = get_decorator(only_vault=True, is_async=True, api_versions=[ApiVersion.V7_3])
-only_7_3 = get_decorator(is_async=True, api_versions=[ApiVersion.V7_3])
+only_hsm_latest = get_decorator(only_hsm=True, is_async=True, api_versions=[DEFAULT_VERSION])
+only_vault_latest = get_decorator(only_vault=True, is_async=True, api_versions=[DEFAULT_VERSION])
+only_latest = get_decorator(is_async=True, api_versions=[DEFAULT_VERSION])
 logging_enabled = get_decorator(is_async=True, logging_enable=True)
 logging_disabled = get_decorator(is_async=True, logging_enable=False)
 
@@ -95,18 +97,18 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
         key = key_attributes.key
         kid = key_attributes.id
         assert key_curve == key.crv
-        assert kid.index(prefix) == 0, "Key Id should start with '{}', but value is '{}'".format(prefix, kid)
-        assert key.kty == kty, "kty should by '{}', but is '{}'".format(key, key.kty)
+        assert kid.index(prefix) == 0, f"Key Id should start with '{prefix}', but value is '{kid}'"
+        assert key.kty == kty, f"kty should by '{key}', but is '{key.kty}'"
         assert key_attributes.properties.created_on and key_attributes.properties.updated_on,"Missing required date attributes."
 
     def _validate_rsa_key_bundle(self, key_attributes, vault, key_name, kty, key_ops):
         prefix = "/".join(s.strip("/") for s in [vault, "keys", key_name])
         key = key_attributes.key
         kid = key_attributes.id
-        assert kid.index(prefix) == 0, "Key Id should start with '{}', but value is '{}'".format(prefix, kid)
-        assert key.kty == kty, "kty should by '{}', but is '{}'".format(key, key.kty)
+        assert kid.index(prefix) == 0, f"Key Id should start with '{prefix}', but value is '{kid}'"
+        assert key.kty == kty, f"kty should by '{key}', but is '{key.kty}'"
         assert key.n and key.e, "Bad RSA public material."
-        assert sorted(key_ops) == sorted(key.key_ops), "keyOps should be '{}', but is '{}'".format(key_ops, key.key_ops)
+        assert sorted(key_ops) == sorted(key.key_ops), f"keyOps should be '{key_ops}', but is '{key.key_ops}'"
         assert key_attributes.properties.created_on and key_attributes.properties.updated_on,"Missing required date attributes."
 
     async def _update_key_properties(self, client, key, release_policy=None):
@@ -139,7 +141,7 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
     async def _import_test_key(self, client, name, hardware_protected=False, **kwargs):
         def _to_bytes(hex):
             if len(hex) % 2:
-                hex = "0{}".format(hex)
+                hex = f"0{hex}"
             return codecs.decode(hex, "hex_codec")
 
         key = JsonWebKey(
@@ -292,7 +294,7 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
 
         # create many keys
         for x in range(max_keys):
-            key_name = self.get_resource_name("key{}".format(x))
+            key_name = self.get_resource_name(f"key{x}")
             key = await self._create_rsa_key(client, key_name, hardware_protected=is_hsm)
             expected[key.name] = key
 
@@ -342,7 +344,7 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
 
         # create keys to delete
         for i in range(LIST_TEST_SIZE):
-            key_name = self.get_resource_name("key{}".format(i))
+            key_name = self.get_resource_name(f"key{i}")
             expected[key_name] = await self._create_rsa_key(client, key_name, hardware_protected=is_hsm)
 
         # delete all keys
@@ -373,7 +375,7 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
         # create keys
         keys = {}
         for i in range(LIST_TEST_SIZE):
-            key_name = self.get_resource_name("key{}".format(i))
+            key_name = self.get_resource_name(f"key{i}")
             keys[key_name] = await self._create_rsa_key(client, key_name, hardware_protected=is_hsm)
 
         # delete them
@@ -402,7 +404,7 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
         assert client is not None
 
         # create keys
-        key_names = [self.get_resource_name("key{}".format(i)) for i in range(LIST_TEST_SIZE)]
+        key_names = [self.get_resource_name(f"key{i}") for i in range(LIST_TEST_SIZE)]
         for key_name in key_names:
             await self._create_rsa_key(client, key_name, hardware_protected=is_hsm)
 
@@ -494,7 +496,7 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
         mock_handler.close()
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_version,is_hsm",only_hsm_7_3)
+    @pytest.mark.parametrize("api_version,is_hsm",only_hsm_latest)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
     async def test_get_random_bytes(self, client, **kwargs):
@@ -511,7 +513,7 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
             generated_random_bytes.append(random_bytes)
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_version,is_hsm",only_7_3)
+    @pytest.mark.parametrize("api_version,is_hsm",only_latest)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
     async def test_key_release(self, client, **kwargs):
@@ -535,7 +537,7 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
         assert release_result.value
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_version,is_hsm",only_hsm_7_3)
+    @pytest.mark.parametrize("api_version,is_hsm",only_hsm_latest)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
     async def test_imported_key_release(self, client, **kwargs):
@@ -556,7 +558,7 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
         assert release_result.value
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_version,is_hsm",only_7_3)
+    @pytest.mark.parametrize("api_version,is_hsm",only_latest)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
     async def test_update_release_policy(self, client, **kwargs):
@@ -602,7 +604,7 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
 
     # Immutable policies aren't currently supported on Managed HSM
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_version,is_hsm",only_vault_7_3)
+    @pytest.mark.parametrize("api_version,is_hsm",only_vault_latest)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
     async def test_immutable_release_policy(self, client, **kwargs):
@@ -640,16 +642,23 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
             await self._update_key_properties(client, key, new_release_policy)
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_version,is_hsm",only_vault_7_3)
+    @pytest.mark.parametrize("api_version,is_hsm",only_latest)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
-    async def test_key_rotation(self, client, **kwargs):
+    async def test_key_rotation(self, client, is_hsm, **kwargs):
         if (not is_public_cloud() and self.is_live):
             pytest.skip("This test is not supported in usgov/china region. Follow up with service team.")
 
         set_bodiless_matcher()
         key_name = self.get_resource_name("rotation-key")
-        key = await self._create_rsa_key(client, key_name)
+        key = await self._create_rsa_key(client, key_name, hardware_protected=is_hsm)
+
+        # MHSM doesn't automatically give keys a default rotation policy, unlike KV
+        if is_hsm:
+            actions = [KeyRotationLifetimeAction(KeyRotationPolicyAction.rotate, time_after_create="P6M")]
+            await client.update_key_rotation_policy(
+                key_name, KeyRotationPolicy(lifetime_actions=actions, expires_in="P1Y")
+            )
         rotated_key = await client.rotate_key(key_name)
 
         # the rotated key should have a new ID, version, and key material (for RSA, n and e fields)
@@ -657,43 +666,48 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
         assert key.properties.version != rotated_key.properties.version
         assert key.key.n != rotated_key.key.n
 
-    @pytest.mark.playback_test_only("Currently fails in live mode because of service regression; will be fixed soon.")
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_version,is_hsm",only_vault_7_3)
+    @pytest.mark.parametrize("api_version,is_hsm",only_latest)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
-    async def test_key_rotation_policy(self, client, **kwargs):
+    async def test_key_rotation_policy(self, client, is_hsm, **kwargs):
         if (not is_public_cloud() and self.is_live):
             pytest.skip("This test is not supported in usgov/china region. Follow up with service team.")
 
         set_bodiless_matcher()
         key_name = self.get_resource_name("rotation-key")
-        await self._create_rsa_key(client, key_name)
+        await self._create_rsa_key(client, key_name, hardware_protected=is_hsm)
 
-        # ensure passing an empty policy with no kwargs doesn't raise an error
-        await client.update_key_rotation_policy(key_name, KeyRotationPolicy())
+        # ensure passing an empty policy with no kwargs doesn't raise an error on KV (MHSM requires an expiry time)
+        if not is_hsm:
+            await client.update_key_rotation_policy(key_name, KeyRotationPolicy())
 
-        # updating a rotation policy with an empty policy and override
+        # updating a rotation policy with an empty policy and override(s)
         actions = [KeyRotationLifetimeAction(KeyRotationPolicyAction.rotate, time_after_create="P2M")]
-        updated_policy = await client.update_key_rotation_policy(
-            key_name, KeyRotationPolicy(), lifetime_actions=actions
-        )
+        if is_hsm:
+            updated_policy = await client.update_key_rotation_policy(
+                key_name, KeyRotationPolicy(), lifetime_actions=actions, expires_in="P6M"
+            )
+            assert updated_policy.expires_in == "P6M"
+        else:  # try a policy without an expiry time (only allowed on KV)
+            updated_policy = await client.update_key_rotation_policy(
+                key_name, KeyRotationPolicy(), lifetime_actions=actions
+            )
+            assert updated_policy.expires_in is None
         fetched_policy = await client.get_key_rotation_policy(key_name)
-        assert updated_policy.expires_in is None
         _assert_rotation_policies_equal(updated_policy, fetched_policy)
 
         updated_policy_actions = None
         for i in range(len(updated_policy.lifetime_actions)):
-            if updated_policy.lifetime_actions[i].action == KeyRotationPolicyAction.rotate:
+            if updated_policy.lifetime_actions[i].action.lower() == KeyRotationPolicyAction.rotate.lower():
                 updated_policy_actions = updated_policy.lifetime_actions[i]
         assert updated_policy_actions, "Specified rotation policy action not found in updated policy"
-        assert updated_policy_actions.action == KeyRotationPolicyAction.rotate
         assert updated_policy_actions.time_after_create == "P2M"
         assert updated_policy_actions.time_before_expiry is None
 
         fetched_policy_actions = None
         for i in range(len(fetched_policy.lifetime_actions)):
-            if fetched_policy.lifetime_actions[i].action == KeyRotationPolicyAction.rotate:
+            if fetched_policy.lifetime_actions[i].action.lower() == KeyRotationPolicyAction.rotate.lower():
                 fetched_policy_actions = fetched_policy.lifetime_actions[i]
         assert fetched_policy_actions, "Specified rotation policy action not found in fetched policy"
         _assert_lifetime_actions_equal(updated_policy_actions, fetched_policy_actions)
@@ -704,32 +718,33 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
 
         new_policy_actions = None
         for i in range(len(new_policy.lifetime_actions)):
-            if new_policy.lifetime_actions[i].action == KeyRotationPolicyAction.rotate:
+            if new_policy.lifetime_actions[i].action.lower() == KeyRotationPolicyAction.rotate.lower():
                 new_policy_actions = new_policy.lifetime_actions[i]
         _assert_lifetime_actions_equal(updated_policy_actions, new_policy_actions)
 
-        # updating with a round-tripped policy and overriding lifetime_actions
-        newest_actions = [KeyRotationLifetimeAction(KeyRotationPolicyAction.notify, time_before_expiry="P60D")]
-        newest_policy = await client.update_key_rotation_policy(
-            key_name, policy=new_policy, lifetime_actions=newest_actions
-        )
-        newest_fetched_policy = await client.get_key_rotation_policy(key_name)
-        assert newest_policy.expires_in == "P90D"
-        _assert_rotation_policies_equal(newest_policy, newest_fetched_policy)
+        # at this time, MHSM doesn't support notify actions
+        if not is_hsm:
+            # updating with a round-tripped policy and overriding lifetime_actions
+            newest_actions = [KeyRotationLifetimeAction(KeyRotationPolicyAction.notify, time_before_expiry="P60D")]
+            newest_policy = await client.update_key_rotation_policy(
+                key_name, policy=new_policy, lifetime_actions=newest_actions
+            )
+            newest_fetched_policy = await client.get_key_rotation_policy(key_name)
+            assert newest_policy.expires_in == "P90D"
+            _assert_rotation_policies_equal(newest_policy, newest_fetched_policy)
 
-        newest_policy_actions = None
-        for i in range(len(newest_policy.lifetime_actions)):
-            if newest_policy.lifetime_actions[i].action == KeyRotationPolicyAction.notify:
-                newest_policy_actions = newest_policy.lifetime_actions[i]
-        assert newest_policy_actions.action == KeyRotationPolicyAction.notify
-        assert newest_policy_actions.time_after_create is None
-        assert newest_policy_actions.time_before_expiry == "P60D"
+            newest_policy_actions = None
+            for i in range(len(newest_policy.lifetime_actions)):
+                if newest_policy.lifetime_actions[i].action.lower() == KeyRotationPolicyAction.notify.lower():
+                    newest_policy_actions = newest_policy.lifetime_actions[i]
+            assert newest_policy_actions.time_after_create is None
+            assert newest_policy_actions.time_before_expiry == "P60D"
 
-        newest_fetched_policy_actions = None
-        for i in range(len(newest_fetched_policy.lifetime_actions)):
-            if newest_fetched_policy.lifetime_actions[i].action == KeyRotationPolicyAction.notify:
-                newest_fetched_policy_actions = newest_fetched_policy.lifetime_actions[i]
-        _assert_lifetime_actions_equal(newest_policy_actions, newest_fetched_policy_actions)
+            newest_fetched_policy_actions = None
+            for i in range(len(newest_fetched_policy.lifetime_actions)):
+                if newest_fetched_policy.lifetime_actions[i].action.lower() == KeyRotationPolicyAction.notify.lower():
+                    newest_fetched_policy_actions = newest_fetched_policy.lifetime_actions[i]
+            _assert_lifetime_actions_equal(newest_policy_actions, newest_fetched_policy_actions)
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
@@ -767,6 +782,42 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
         assert result.key_id == key.id
         assert "RSA-OAEP" == result.algorithm
         assert plaintext == result.plaintext
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("api_version,is_hsm",only_vault_latest)
+    @AsyncKeysClientPreparer()
+    @recorded_by_proxy_async
+    async def test_send_request(self, client, is_hsm, **kwargs):
+        key_name = self.get_resource_name("key-name")
+        key = await self._create_rsa_key(client, key_name)
+
+        # fetch the key we just created
+        request = HttpRequest(
+            method="GET",
+            url=f"keys/{key_name}/{key.properties.version}",
+            headers={"Accept": "application/json"},
+        )
+        response = await client.send_request(request)
+        assert response.json()["key"]["kid"] == key.id
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("api_version,is_hsm", only_vault_latest)
+    @AsyncKeysClientPreparer()
+    @recorded_by_proxy_async
+    async def test_40x_handling(self, client, **kwargs):
+        """Ensure 404 and 409 responses are raised with azure-core exceptions instead of generated KV ones"""
+
+        # Test that 404 is raised correctly by fetching a nonexistent key
+        with pytest.raises(ResourceNotFoundError):
+            await client.get_key("key-that-does-not-exist")
+
+        # Test that 409 is raised correctly (`create_key` shouldn't actually trigger this, but for raising behavior)
+        async def run(*_, **__):
+            return Mock(http_response=Mock(status_code=409))
+        with patch.object(client._client._client._pipeline, "run", run):
+            with pytest.raises(ResourceExistsError):
+                await client.create_key("...", "RSA")
+        await client.close()
 
 
 @pytest.mark.asyncio

@@ -6,7 +6,7 @@ from azure.ai.ml import load_batch_endpoint, load_online_endpoint
 from azure.ai.ml.entities import BatchEndpoint, Endpoint, ManagedOnlineDeployment, OnlineEndpoint
 
 
-@pytest.mark.production_experience_test
+@pytest.mark.production_experiences_test
 @pytest.mark.unittest
 class TestOnlineEndpointYAML:
     SIMPLE_ENDPOINT_WITH_BLUE_BAD = "tests/test_configs/endpoints/online/online_endpoint_create_aks_bad.yml"
@@ -84,7 +84,6 @@ class TestBatchEndpointYAML:
         assert endpoint.defaults["deployment_name"] == "gg"
 
     def test_batch_endpoint_with_deployment_name_promoted_param_and_main_param(self) -> None:
-
         endpoint = BatchEndpoint(
             name="my-batch-endpoint",
             description="this is a sample batch endpoint",
@@ -96,7 +95,6 @@ class TestBatchEndpointYAML:
         assert endpoint.defaults["deployment_name"] == "fff"
 
     def test_batch_endpoint_with_deployment_no_defaults(self) -> None:
-
         endpoint = BatchEndpoint(
             name="my-batch-endpoint",
             description="this is a sample batch endpoint",

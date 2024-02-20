@@ -9,12 +9,20 @@ from azure.core.pipeline.transport import (
 )
 from azure.core.pipeline import Pipeline, PipelineResponse
 from azure.core.pipeline.transport._requests_basic import StreamDownloadGenerator
+
 try:
     from unittest import mock
 except ImportError:
     import mock
 import pytest
-from utils import HTTP_RESPONSES, REQUESTS_TRANSPORT_RESPONSES, create_http_response, create_transport_response, request_and_responses_product
+from utils import (
+    HTTP_RESPONSES,
+    REQUESTS_TRANSPORT_RESPONSES,
+    create_http_response,
+    create_transport_response,
+    request_and_responses_product,
+)
+
 
 @pytest.mark.parametrize("http_request,http_response", request_and_responses_product(HTTP_RESPONSES))
 def test_connection_error_response(http_request, http_response):
@@ -24,13 +32,15 @@ def test_connection_error_response(http_request, http_response):
 
         def __exit__(self, exc_type, exc_val, exc_tb):
             pass
+
         def close(self):
             pass
+
         def open(self):
             pass
 
         def send(self, request, **kwargs):
-            request = http_request('GET', 'http://localhost/')
+            request = http_request("GET", "http://localhost/")
             response = create_http_response(http_response, request, None)
             response.status_code = 200
             return response
@@ -50,21 +60,22 @@ def test_connection_error_response(http_request, http_response):
             while True:
                 yield b"test"
 
-    class MockInternalResponse():
+    class MockInternalResponse:
         def __init__(self):
             self.raw = MockTransport()
 
         def close(self):
             pass
 
-    http_request = http_request('GET', 'http://localhost/')
+    http_request = http_request("GET", "http://localhost/")
     pipeline = Pipeline(MockTransport())
     http_response = create_http_response(http_response, http_request, None)
     http_response.internal_response = MockInternalResponse()
     stream = StreamDownloadGenerator(pipeline, http_response, decompress=False)
-    with mock.patch('time.sleep', return_value=None):
+    with mock.patch("time.sleep", return_value=None):
         with pytest.raises(requests.exceptions.ConnectionError):
             stream.__next__()
+
 
 @pytest.mark.parametrize("http_response", REQUESTS_TRANSPORT_RESPONSES)
 def test_response_streaming_error_behavior(http_response):

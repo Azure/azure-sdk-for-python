@@ -6,36 +6,27 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class DataLakeStoreAccountState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The state of the Data Lake Store account.
+class CheckNameAvailabilityParametersType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The resource type. Note: This should not be set by the user, as the constant value is
+    Microsoft.DataLakeStore/accounts.
     """
+
+    MICROSOFT_DATA_LAKE_STORE_ACCOUNTS = "Microsoft.DataLakeStore/accounts"
+
+
+class DataLakeStoreAccountState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The state of the Data Lake Store account."""
 
     ACTIVE = "Active"
     SUSPENDED = "Suspended"
 
-class DataLakeStoreAccountStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The provisioning status of the Data Lake Store account.
-    """
+
+class DataLakeStoreAccountStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning status of the Data Lake Store account."""
 
     FAILED = "Failed"
     CREATING = "Creating"
@@ -49,7 +40,8 @@ class DataLakeStoreAccountStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, E
     UNDELETING = "Undeleting"
     CANCELED = "Canceled"
 
-class EncryptionConfigType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class EncryptionConfigType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of encryption configuration being used. Currently the only supported types are
     'UserManaged' and 'ServiceManaged'.
     """
@@ -57,21 +49,22 @@ class EncryptionConfigType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     USER_MANAGED = "UserManaged"
     SERVICE_MANAGED = "ServiceManaged"
 
-class EncryptionProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The current state of encryption provisioning for this Data Lake Store account.
-    """
+
+class EncryptionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current state of encryption provisioning for this Data Lake Store account."""
 
     CREATING = "Creating"
     SUCCEEDED = "Succeeded"
 
-class EncryptionState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The current state of encryption for this Data Lake Store account.
-    """
+
+class EncryptionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current state of encryption for this Data Lake Store account."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class FirewallAllowAzureIpsState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class FirewallAllowAzureIpsState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The current state of allowing or disallowing IPs originating within Azure through the firewall.
     If the firewall is disabled, this is not enforced.
     """
@@ -79,24 +72,24 @@ class FirewallAllowAzureIpsState(with_metaclass(_CaseInsensitiveEnumMeta, str, E
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class FirewallState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The current state of the IP address firewall for this Data Lake Store account.
-    """
+
+class FirewallState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current state of the IP address firewall for this Data Lake Store account."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class OperationOrigin(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The intended executor of the operation.
-    """
+
+class OperationOrigin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The intended executor of the operation."""
 
     USER = "user"
     SYSTEM = "system"
     USER_SYSTEM = "user,system"
 
-class SubscriptionState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The subscription state.
-    """
+
+class SubscriptionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The subscription state."""
 
     REGISTERED = "Registered"
     SUSPENDED = "Suspended"
@@ -104,9 +97,9 @@ class SubscriptionState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     UNREGISTERED = "Unregistered"
     WARNED = "Warned"
 
-class TierType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The commitment tier to use for next month.
-    """
+
+class TierType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The commitment tier to use for next month."""
 
     CONSUMPTION = "Consumption"
     COMMITMENT1_TB = "Commitment_1TB"
@@ -116,16 +109,16 @@ class TierType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     COMMITMENT1_PB = "Commitment_1PB"
     COMMITMENT5_PB = "Commitment_5PB"
 
-class TrustedIdProviderState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The current state of the trusted identity provider feature for this Data Lake Store account.
-    """
+
+class TrustedIdProviderState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current state of the trusted identity provider feature for this Data Lake Store account."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class UsageUnit(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Gets the unit of measurement.
-    """
+
+class UsageUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Gets the unit of measurement."""
 
     COUNT = "Count"
     BYTES = "Bytes"

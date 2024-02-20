@@ -16,6 +16,7 @@ from jsonschema.exceptions import best_match
 
 from azure.ai.ml._artifacts._artifact_utilities import get_datastore_info, get_storage_client
 from azure.ai.ml._artifacts._constants import INVALID_MLTABLE_METADATA_SCHEMA_ERROR, INVALID_MLTABLE_METADATA_SCHEMA_MSG
+from azure.ai.ml.constants._common import DefaultOpenEncoding
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 from azure.ai.ml.operations._datastore_operations import DatastoreOperations
 
@@ -55,7 +56,7 @@ def read_remote_mltable_metadata_contents(
             starts_with = datastore_path_uri.path.rstrip("/")
             storage_client.download(f"{starts_with}/MLTable", tmp_dir)
             downloaded_mltable_path = Path(tmp_dir, "MLTable")
-            with open(downloaded_mltable_path, "r") as f:
+            with open(downloaded_mltable_path, "r", encoding=DefaultOpenEncoding.READ) as f:
                 return yaml.safe_load(f)
     return None
 

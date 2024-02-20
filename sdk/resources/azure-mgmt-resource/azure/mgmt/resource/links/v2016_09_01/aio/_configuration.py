@@ -36,7 +36,7 @@ class ManagementLinkClientConfiguration(Configuration):  # pylint: disable=too-m
 
     def __init__(self, credential: "AsyncTokenCredential", subscription_id: str, **kwargs: Any) -> None:
         super(ManagementLinkClientConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop("api_version", "2016-09-01")  # type: str
+        api_version: str = kwargs.pop("api_version", "2016-09-01")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")

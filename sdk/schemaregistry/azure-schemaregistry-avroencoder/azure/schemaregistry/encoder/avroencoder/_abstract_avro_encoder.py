@@ -3,11 +3,29 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from typing import BinaryIO, TypeVar, Union, Any
 from abc import abstractmethod
+from typing import BinaryIO, Dict, Union, Any, Mapping
+from typing_extensions import Protocol
 
-ObjectType = TypeVar("ObjectType")
+class AvroDataReader(Protocol):
+    """
+    An Avro Data Reader.
+    """
+    def __init__(self, writers_schema: Any, readers_schema: Any) -> None:
+        """
+        Data reader used as defined in the Avro specification.
+        :param writers_schema: The writer's schema.
+        :type writers_schema: any
+        :param readers_schema: The reader's schema.
+        :type readers_schema: any
+        """
 
+    def read(self, decoder: Any, **kwargs: Any) -> object:
+        """
+        Reads data using the provided writer's and reader's schema.
+        :param decoder: The binary decoder used for reading.
+        :type decoder: any
+        """
 
 class AbstractAvroObjectEncoder(object):
     """
@@ -17,9 +35,8 @@ class AbstractAvroObjectEncoder(object):
     @abstractmethod
     def get_schema_fullname(
         self,
-        schema,
-    ):
-        # type: (str) -> str
+        schema: str,
+    ) -> str:
         """
         Returns the namespace-qualified name of the provided schema.
         Schema must be a Avro RecordSchema:
@@ -32,15 +49,14 @@ class AbstractAvroObjectEncoder(object):
     @abstractmethod
     def encode(
         self,
-        content,
-        schema,
-    ):
-        # type: (ObjectType, str) -> bytes
+        content: Mapping[str, Any],
+        schema: str,
+    ) -> bytes:
         """Convert the provided value to it's binary representation and write it to the stream.
         Schema must be a Avro RecordSchema:
         https://avro.apache.org/docs/1.10.0/gettingstartedpython.html#Defining+a+schema
-        :param content: An object to encode
-        :type content: ObjectType
+        :param content: A mapping to encode
+        :type content: mapping[str, any]
         :param schema: An Avro RecordSchema
         :type schema: str
         :returns: Encoded bytes
@@ -48,15 +64,13 @@ class AbstractAvroObjectEncoder(object):
         """
 
     @abstractmethod
-    def decode(self, content: Union[bytes, BinaryIO], reader: Any):
+    def decode(self, content: Union[bytes, BinaryIO], reader: AvroDataReader) -> Dict[str, Any]:
         """Read the binary representation into a specific type.
         Return type will be ignored, since the schema is deduced from the provided bytes.
         :param content: A stream of bytes or bytes directly
         :type content: BinaryIO or bytes
-        :param schema: An Avro RecordSchema
-        :type schema: str
-        :keyword readers_schema: An optional reader's schema as defined by the Apache Avro specification.
-        :paramtype readers_schema: str or None
-        :returns: An instantiated object
-        :rtype: ObjectType
+        :param reader: The data reader.
+        :type reader: AvroDataReader
+        :returns: The content dict.
+        :rtype: dict[str, any]
         """

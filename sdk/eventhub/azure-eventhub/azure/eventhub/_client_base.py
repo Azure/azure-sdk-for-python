@@ -11,7 +11,7 @@ import functools
 import collections
 from typing import Any, Dict, Tuple, List, Optional, TYPE_CHECKING, cast, Union
 try:
-    from typing import TypeAlias
+    from typing import TypeAlias    # type: ignore
 except ImportError:
     from typing_extensions import TypeAlias
 from datetime import timedelta
@@ -25,11 +25,15 @@ from azure.core.credentials import (
 from azure.core.utils import parse_connection_string as core_parse_connection_string
 from azure.core.pipeline.policies import RetryMode
 
-
-from ._transport._uamqp_transport import UamqpTransport
+try:
+    from ._transport._uamqp_transport import UamqpTransport
+except ImportError:
+    UamqpTransport = None   # type: ignore
+from ._transport._pyamqp_transport import PyamqpTransport
 from .exceptions import ClientClosedError
 from ._configuration import Configuration
-from ._utils import utc_from_timestamp, parse_sas_credential, generate_sas_token
+from ._utils import utc_from_timestamp, parse_sas_credential
+from ._pyamqp.utils import generate_sas_token
 from ._connection_manager import get_connection_manager
 from ._constants import (
     CONTAINER_PREFIX,
@@ -43,8 +47,14 @@ from ._constants import (
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
-    from uamqp import Message as uamqp_Message
-    from uamqp.authentication import JWTTokenAuth as uamqp_JWTTokenAuth
+    try:
+        from uamqp import Message as uamqp_Message
+        from uamqp.authentication import JWTTokenAuth as uamqp_JWTTokenAuth
+    except ImportError:
+        uamqp_Message = None
+        uamqp_JWTTokenAuth = None
+    from ._pyamqp.message import Message
+    from ._pyamqp.authentication import JWTTokenAuth
 
 _LOGGER = logging.getLogger(__name__)
 _Address = collections.namedtuple("_Address", "hostname path")
@@ -138,17 +148,21 @@ def _parse_conn_str(conn_str, **kwargs):
 def _generate_sas_token(uri, policy, key, expiry=None):
     # type: (str, str, str, Optional[timedelta]) -> AccessToken
     """Create a shared access signature token as a string literal.
-    :returns: SAS token as string literal.
-    :rtype: str
+
+    :param str uri: The resource URI.
+    :param str policy: The name of the shared access policy.
+    :param str key: The shared access key.
+    :param datetime.timedelta or None expiry: The time period that the signature is valid for. Default is 1 hour.
+    :return: An AccessToken.
+    :rtype: ~azure.core.credentials.AccessToken
     """
     if not expiry:
         expiry = timedelta(hours=1)  # Default to 1 hour.
 
     abs_expiry = int(time.time()) + expiry.seconds
 
-    token = generate_sas_token(uri, policy, key, abs_expiry).encode()
+    token = generate_sas_token(uri, policy, key, abs_expiry)
     return AccessToken(token=token, expires_on=abs_expiry)
-
 
 def _build_uri(address, entity):
     # type: (str, Optional[str]) -> str
@@ -165,7 +179,7 @@ def _get_backoff_time(retry_mode, backoff_factor, backoff_max, retried_times):
     if retry_mode == RetryMode.Fixed:
         backoff_value = backoff_factor
     else:
-        backoff_value = backoff_factor * (2**retried_times)
+        backoff_value = backoff_factor * (2 ** retried_times)
     return min(backoff_max, backoff_value)
 
 
@@ -230,6 +244,10 @@ class EventHubSASTokenCredential(object):
         # type: (str, Any) -> AccessToken
         """
         This method is automatically called when token is about to expire.
+
+        :param str scopes: The list of scopes for which the token has access.
+        :return: The access token.
+        :rtype: ~azure.core.credentials.AccessToken
         """
         return AccessToken(self.token, self.expiry)
 
@@ -257,11 +275,16 @@ class EventhubAzureSasTokenCredential(object):
         # type: (str, Any) -> AccessToken
         """
         This method is automatically called when token is about to expire.
+
+        :param str scopes: The scopes for the token request.
+        :return: The access token.
+        :rtype: ~azure.core.credentials.AccessToken
         """
         signature, expiry = parse_sas_credential(self._credential)
         return AccessToken(signature, expiry)
 
 
+# separate TYPE_CHECKING block here for EventHubSharedKeyCredential, o/w mypy raised error even with forward referencing
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
@@ -281,8 +304,10 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         credential: CredentialTypes,
         **kwargs: Any,
     ) -> None:
-        uamqp_transport = kwargs.pop("uamqp_transport", True)
-        self._amqp_transport = kwargs.pop("amqp_transport", UamqpTransport)
+        uamqp_transport = kwargs.pop("uamqp_transport", False)
+        if uamqp_transport and UamqpTransport is None:
+            raise ValueError("To use the uAMQP transport, please install `uamqp>=1.6.0,<2.0.0`.")
+        self._amqp_transport = kwargs.pop("amqp_transport", UamqpTransport if uamqp_transport else PyamqpTransport)
 
         self.eventhub_name = eventhub_name
         if not eventhub_name:
@@ -300,12 +325,15 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         self._auto_reconnect = kwargs.get("auto_reconnect", True)
         self._auth_uri = f"sb://{self._address.hostname}{self._address.path}"
         self._config = Configuration(
-            uamqp_transport=uamqp_transport,
+            amqp_transport=self._amqp_transport,
             hostname=self._address.hostname,
             **kwargs,
         )
         self._debug = self._config.network_tracing
-        self._conn_manager = get_connection_manager(**kwargs)
+        kwargs["custom_endpoint_address"] = self._config.custom_endpoint_address
+        self._conn_manager = get_connection_manager(
+            amqp_transport=self._amqp_transport,
+            **kwargs)
         self._idle_timeout = kwargs.get("idle_timeout", None)
 
     @staticmethod
@@ -322,10 +350,13 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             kwargs["credential"] = EventHubSharedKeyCredential(policy, key)
         return kwargs
 
-    def _create_auth(self) -> uamqp_JWTTokenAuth:
+    def _create_auth(self) -> Union[uamqp_JWTTokenAuth, JWTTokenAuth]:
         """
         Create an ~uamqp.authentication.SASTokenAuth instance
          to authenticate the session.
+
+        :return: The auth for the session.
+        :rtype: JWTTokenAuth or uamqp_JWTTokenAuth
         """
         try:
             # ignore mypy's warning because token_type is Optional
@@ -381,7 +412,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             raise last_exception
 
     def _management_request(
-        self, mgmt_msg: uamqp_Message, op_type: bytes
+        self, mgmt_msg: Union[uamqp_Message, Message], op_type: bytes
     ) -> Any:
         # pylint:disable=assignment-from-none
         retried_times = 0
@@ -401,7 +432,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                 mgmt_msg.application_properties[
                     "security_token"
                 ] = self._amqp_transport.get_updated_token(mgmt_auth)
-                response = self._amqp_transport.mgmt_client_request(
+                status_code, description, response = self._amqp_transport.mgmt_client_request(
                     mgmt_client,
                     mgmt_msg,
                     operation=READ_OPERATION,
@@ -409,18 +440,24 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                     status_code_field=MGMT_STATUS_CODE,
                     description_fields=MGMT_STATUS_DESC,
                 )
-                status_code = int(response.application_properties[MGMT_STATUS_CODE])
-                description = response.application_properties.get(
-                    MGMT_STATUS_DESC
-                )  # type: Optional[Union[str, bytes]]
+                status_code = int(status_code)
                 if description and isinstance(description, bytes):
                     description = description.decode("utf-8")
                 if status_code < 400:
                     return response
                 raise self._amqp_transport.get_error(status_code, description)
             except Exception as exception:  # pylint: disable=broad-except
+                # If optional dependency is not installed, do not retry.
+                if isinstance(exception, ImportError):
+                    raise exception
+                # is_consumer=True passed in here, ALTHOUGH this method is shared by the producer and consumer.
+                # is_consumer will only be checked if FileNotFoundError is raised by self.mgmt_client.open() due to
+                # invalid/non-existent connection_verify filepath. The producer will encounter the FileNotFoundError
+                # when opening the SendClient, so is_consumer=True will not be passed to amqp_transport.handle_exception
+                # there. This is for uamqp exception parity, which raises FileNotFoundError in the consumer and
+                # EventHubError in the producer. TODO: Remove `is_consumer` kwarg when resolving issue #27128.
                 last_exception = self._amqp_transport._handle_exception(  # pylint: disable=protected-access
-                    exception, self
+                    exception, self, is_consumer=True
                 )
                 self._backoff(
                     retried_times=retried_times, last_exception=last_exception
@@ -430,15 +467,9 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                     _LOGGER.info(
                         "%r returns an exception %r", self._container_id, last_exception
                     )
-                    raise last_exception
+                    raise last_exception from None
             finally:
                 mgmt_client.close()
-
-    def _add_span_request_attributes(self, span):
-        span.add_attribute("component", "eventhubs")
-        span.add_attribute("az.namespace", "Microsoft.EventHub")
-        span.add_attribute("message_bus.destination", self._address.path)
-        span.add_attribute("peer.address", self._address.hostname)
 
     def _get_eventhub_properties(self) -> Dict[str, Any]:
         mgmt_msg = self._amqp_transport.build_message(
@@ -540,10 +571,10 @@ class ConsumerProducerMixin(object):
         self._close_handler()
         self._client._conn_manager.reset_connection_if_broken()  # pylint: disable=protected-access
 
-    def _handle_exception(self, exception):
+    def _handle_exception(self, exception, *, is_consumer=False):
         exception = self._amqp_transport.check_timeout_exception(self, exception)
         return self._amqp_transport._handle_exception(  # pylint: disable=protected-access
-            exception, self
+            exception, self, is_consumer=is_consumer
         )
 
     def _do_retryable_operation(self, operation, timeout=None, **kwargs):
@@ -566,6 +597,9 @@ class ConsumerProducerMixin(object):
                     )
                 return operation()
             except Exception as exception:  # pylint:disable=broad-except
+                # If optional dependency is not installed, do not retry.
+                if isinstance(exception, ImportError):
+                    raise exception
                 last_exception = self._handle_exception(exception)
                 self._client._backoff(
                     retried_times=retried_times,
@@ -580,7 +614,7 @@ class ConsumerProducerMixin(object):
                         self._name,
                         last_exception,
                     )
-                    raise last_exception
+                    raise last_exception from None
 
     def close(self):
         # type:() -> None

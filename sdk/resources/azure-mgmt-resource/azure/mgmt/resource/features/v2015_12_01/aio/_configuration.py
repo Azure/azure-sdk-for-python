@@ -36,7 +36,7 @@ class FeatureClientConfiguration(Configuration):  # pylint: disable=too-many-ins
 
     def __init__(self, credential: "AsyncTokenCredential", subscription_id: str, **kwargs: Any) -> None:
         super(FeatureClientConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop("api_version", "2015-12-01")  # type: str
+        api_version: str = kwargs.pop("api_version", "2015-12-01")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")

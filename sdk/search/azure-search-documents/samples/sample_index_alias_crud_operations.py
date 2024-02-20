@@ -22,9 +22,9 @@ USAGE:
 
 import os
 
-service_endpoint = os.getenv("AZURE_SEARCH_SERVICE_ENDPOINT")
-key = os.getenv("AZURE_SEARCH_API_KEY")
-index_name = os.getenv("AZURE_SEARCH_INDEX_NAME")
+service_endpoint = os.environ["AZURE_SEARCH_SERVICE_ENDPOINT"]
+index_name = os.environ["AZURE_SEARCH_INDEX_NAME"]
+key = os.environ["AZURE_SEARCH_API_KEY"]
 alias_name = "motels"
 
 from azure.core.credentials import AzureKeyCredential
@@ -33,26 +33,29 @@ from azure.search.documents.indexes.models import (
     ComplexField,
     CorsOptions,
     ScoringProfile,
-    SearchAlias, 
-    SearchIndex, 
-    SimpleField, 
+    SearchAlias,
+    SearchIndex,
+    SimpleField,
     SearchableField,
-    SearchFieldDataType
+    SearchFieldDataType,
 )
 
 
 client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
 
+
 def create_alias():
     # [START create_alias]
-    alias = SearchAlias(name = alias_name, indexes = [index_name])
+    alias = SearchAlias(name=alias_name, indexes=[index_name])
     result = client.create_alias(alias)
-    # [END create_index]
+    # [END create_alias]
+
 
 def get_alias():
     # [START get_alias]
     result = client.get_alias(alias_name)
     # [END get_alias]
+
 
 def update_alias():
     # [START update_alias]
@@ -62,30 +65,31 @@ def update_alias():
         SimpleField(name="baseRate", type=SearchFieldDataType.Double),
         SearchableField(name="description", type=SearchFieldDataType.String, collection=True),
         SearchableField(name="hotelName", type=SearchFieldDataType.String),
-        ComplexField(name="address", fields=[
-            SimpleField(name="streetAddress", type=SearchFieldDataType.String),
-            SimpleField(name="city", type=SearchFieldDataType.String),
-            SimpleField(name="state", type=SearchFieldDataType.String),
-        ], collection=True)
+        ComplexField(
+            name="address",
+            fields=[
+                SimpleField(name="streetAddress", type=SearchFieldDataType.String),
+                SimpleField(name="city", type=SearchFieldDataType.String),
+                SimpleField(name="state", type=SearchFieldDataType.String),
+            ],
+            collection=True,
+        ),
     ]
     cors_options = CorsOptions(allowed_origins=["*"], max_age_in_seconds=60)
-    scoring_profile = ScoringProfile(
-        name="MyProfile"
-    )
+    scoring_profile = ScoringProfile(name="MyProfile")
     scoring_profiles = []
     scoring_profiles.append(scoring_profile)
     index = SearchIndex(
-        name=new_index_name,
-        fields=fields,
-        scoring_profiles=scoring_profiles,
-        cors_options=cors_options)
+        name=new_index_name, fields=fields, scoring_profiles=scoring_profiles, cors_options=cors_options
+    )
 
     result_index = client.create_or_update_index(index=index)
 
-    alias = SearchAlias(name = alias_name, indexes = [new_index_name])
+    alias = SearchAlias(name=alias_name, indexes=[new_index_name])
     result = client.create_or_update_alias(alias)
 
     # [END update_alias]
+
 
 def delete_alias():
     # [START delete_alias]
@@ -93,7 +97,8 @@ def delete_alias():
     client.delete_alias(alias_name)
     # [END delete_alias]
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     create_alias()
     get_alias()
     update_alias()

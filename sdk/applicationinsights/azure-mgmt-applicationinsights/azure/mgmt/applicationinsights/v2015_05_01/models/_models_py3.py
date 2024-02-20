@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,15 +8,16 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from ... import _serialization
 
-from ._application_insights_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
-class Annotation(msrest.serialization.Model):
+class Annotation(_serialization.Model):
     """Annotation associated with an application insights resource.
 
     :ivar annotation_name: Name of annotation.
@@ -33,12 +35,12 @@ class Annotation(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'annotation_name': {'key': 'AnnotationName', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'event_time': {'key': 'EventTime', 'type': 'iso-8601'},
-        'id': {'key': 'Id', 'type': 'str'},
-        'properties': {'key': 'Properties', 'type': 'str'},
-        'related_annotation': {'key': 'RelatedAnnotation', 'type': 'str'},
+        "annotation_name": {"key": "AnnotationName", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "event_time": {"key": "EventTime", "type": "iso-8601"},
+        "id": {"key": "Id", "type": "str"},
+        "properties": {"key": "Properties", "type": "str"},
+        "related_annotation": {"key": "RelatedAnnotation", "type": "str"},
     }
 
     def __init__(
@@ -47,11 +49,11 @@ class Annotation(msrest.serialization.Model):
         annotation_name: Optional[str] = None,
         category: Optional[str] = None,
         event_time: Optional[datetime.datetime] = None,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         properties: Optional[str] = None,
-        related_annotation: Optional[str] = "null",
-        **kwargs
-    ):
+        related_annotation: str = "null",
+        **kwargs: Any
+    ) -> None:
         """
         :keyword annotation_name: Name of annotation.
         :paramtype annotation_name: str
@@ -66,7 +68,7 @@ class Annotation(msrest.serialization.Model):
         :keyword related_annotation: Related parent annotation if any.
         :paramtype related_annotation: str
         """
-        super(Annotation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.annotation_name = annotation_name
         self.category = category
         self.event_time = event_time
@@ -75,7 +77,7 @@ class Annotation(msrest.serialization.Model):
         self.related_annotation = related_annotation
 
 
-class AnnotationError(msrest.serialization.Model):
+class AnnotationError(_serialization.Model):
     """Error associated with trying to create annotation with Id that already exist.
 
     :ivar code: Error detail code and explanation.
@@ -87,9 +89,9 @@ class AnnotationError(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'innererror': {'key': 'innererror', 'type': 'InnerError'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "innererror": {"key": "innererror", "type": "InnerError"},
     }
 
     def __init__(
@@ -97,9 +99,9 @@ class AnnotationError(msrest.serialization.Model):
         *,
         code: Optional[str] = None,
         message: Optional[str] = None,
-        innererror: Optional["InnerError"] = None,
-        **kwargs
-    ):
+        innererror: Optional["_models.InnerError"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword code: Error detail code and explanation.
         :paramtype code: str
@@ -108,13 +110,13 @@ class AnnotationError(msrest.serialization.Model):
         :keyword innererror: Inner error.
         :paramtype innererror: ~azure.mgmt.applicationinsights.v2015_05_01.models.InnerError
         """
-        super(AnnotationError, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
         self.innererror = innererror
 
 
-class AnnotationsListResult(msrest.serialization.Model):
+class AnnotationsListResult(_serialization.Model):
     """Annotations list result.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -124,24 +126,20 @@ class AnnotationsListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Annotation]'},
+        "value": {"key": "value", "type": "[Annotation]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(AnnotationsListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.value = None
 
 
-class APIKeyRequest(msrest.serialization.Model):
+class APIKeyRequest(_serialization.Model):
     """An Application Insights component API Key creation request definition.
 
     :ivar name: The name of the API Key.
@@ -153,9 +151,9 @@ class APIKeyRequest(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'linked_read_properties': {'key': 'linkedReadProperties', 'type': '[str]'},
-        'linked_write_properties': {'key': 'linkedWriteProperties', 'type': '[str]'},
+        "name": {"key": "name", "type": "str"},
+        "linked_read_properties": {"key": "linkedReadProperties", "type": "[str]"},
+        "linked_write_properties": {"key": "linkedWriteProperties", "type": "[str]"},
     }
 
     def __init__(
@@ -164,8 +162,8 @@ class APIKeyRequest(msrest.serialization.Model):
         name: Optional[str] = None,
         linked_read_properties: Optional[List[str]] = None,
         linked_write_properties: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the API Key.
         :paramtype name: str
@@ -174,13 +172,13 @@ class APIKeyRequest(msrest.serialization.Model):
         :keyword linked_write_properties: The write access rights of this API Key.
         :paramtype linked_write_properties: list[str]
         """
-        super(APIKeyRequest, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.linked_read_properties = linked_read_properties
         self.linked_write_properties = linked_write_properties
 
 
-class ComponentsResource(msrest.serialization.Model):
+class ComponentsResource(_serialization.Model):
     """An azure resource object.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -193,41 +191,35 @@ class ComponentsResource(msrest.serialization.Model):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         """
-        super(ComponentsResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -235,7 +227,7 @@ class ComponentsResource(msrest.serialization.Model):
         self.tags = tags
 
 
-class ApplicationInsightsComponent(ComponentsResource):
+class ApplicationInsightsComponent(ComponentsResource):  # pylint: disable=too-many-instance-attributes
     """An Application Insights component definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -248,30 +240,29 @@ class ApplicationInsightsComponent(ComponentsResource):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar kind: Required. The kind of application that this component refers to, used to customize
-     UI. This value is a freeform string, values should typically be one of the following: web, ios,
-     other, store, java, phone.
+    :ivar kind: The kind of application that this component refers to, used to customize UI. This
+     value is a freeform string, values should typically be one of the following: web, ios, other,
+     store, java, phone. Required.
     :vartype kind: str
     :ivar application_id: The unique ID of your application. This field mirrors the 'Name' field
      and cannot be changed.
     :vartype application_id: str
     :ivar app_id: Application Insights Unique ID for your Application.
     :vartype app_id: str
-    :ivar application_type: Type of application being monitored. Possible values include: "web",
-     "other". Default value: "web".
+    :ivar application_type: Type of application being monitored. Known values are: "web" and
+     "other".
     :vartype application_type: str or
      ~azure.mgmt.applicationinsights.v2015_05_01.models.ApplicationType
     :ivar flow_type: Used by the Application Insights system to determine what kind of flow this
      component was created by. This is to be set to 'Bluefield' when creating/updating a component
-     via the REST API. Possible values include: "Bluefield". Default value: "Bluefield".
+     via the REST API. "Bluefield"
     :vartype flow_type: str or ~azure.mgmt.applicationinsights.v2015_05_01.models.FlowType
     :ivar request_source: Describes what tool created this Application Insights component.
-     Customers using this API should set this to the default 'rest'. Possible values include:
-     "rest". Default value: "rest".
+     Customers using this API should set this to the default 'rest'. "rest"
     :vartype request_source: str or
      ~azure.mgmt.applicationinsights.v2015_05_01.models.RequestSource
     :ivar instrumentation_key: Application Insights Instrumentation key. A read-only value that
@@ -307,94 +298,95 @@ class ApplicationInsightsComponent(ComponentsResource):
     :ivar private_link_scoped_resources: List of linked private link scope resources.
     :vartype private_link_scoped_resources:
      list[~azure.mgmt.applicationinsights.v2015_05_01.models.PrivateLinkScopedResource]
-    :ivar ingestion_mode: Indicates the flow of the ingestion. Possible values include:
-     "ApplicationInsights", "ApplicationInsightsWithDiagnosticSettings", "LogAnalytics". Default
-     value: "ApplicationInsights".
+    :ivar ingestion_mode: Indicates the flow of the ingestion. Known values are:
+     "ApplicationInsights", "ApplicationInsightsWithDiagnosticSettings", and "LogAnalytics".
     :vartype ingestion_mode: str or
      ~azure.mgmt.applicationinsights.v2015_05_01.models.IngestionMode
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'kind': {'required': True},
-        'application_id': {'readonly': True},
-        'app_id': {'readonly': True},
-        'instrumentation_key': {'readonly': True},
-        'creation_date': {'readonly': True},
-        'tenant_id': {'readonly': True},
-        'hockey_app_token': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'connection_string': {'readonly': True},
-        'private_link_scoped_resources': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "kind": {"required": True},
+        "application_id": {"readonly": True},
+        "app_id": {"readonly": True},
+        "instrumentation_key": {"readonly": True},
+        "creation_date": {"readonly": True},
+        "tenant_id": {"readonly": True},
+        "hockey_app_token": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "connection_string": {"readonly": True},
+        "private_link_scoped_resources": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'application_id': {'key': 'properties.ApplicationId', 'type': 'str'},
-        'app_id': {'key': 'properties.AppId', 'type': 'str'},
-        'application_type': {'key': 'properties.Application_Type', 'type': 'str'},
-        'flow_type': {'key': 'properties.Flow_Type', 'type': 'str'},
-        'request_source': {'key': 'properties.Request_Source', 'type': 'str'},
-        'instrumentation_key': {'key': 'properties.InstrumentationKey', 'type': 'str'},
-        'creation_date': {'key': 'properties.CreationDate', 'type': 'iso-8601'},
-        'tenant_id': {'key': 'properties.TenantId', 'type': 'str'},
-        'hockey_app_id': {'key': 'properties.HockeyAppId', 'type': 'str'},
-        'hockey_app_token': {'key': 'properties.HockeyAppToken', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'sampling_percentage': {'key': 'properties.SamplingPercentage', 'type': 'float'},
-        'connection_string': {'key': 'properties.ConnectionString', 'type': 'str'},
-        'retention_in_days': {'key': 'properties.RetentionInDays', 'type': 'int'},
-        'disable_ip_masking': {'key': 'properties.DisableIpMasking', 'type': 'bool'},
-        'immediate_purge_data_on30_days': {'key': 'properties.ImmediatePurgeDataOn30Days', 'type': 'bool'},
-        'private_link_scoped_resources': {'key': 'properties.PrivateLinkScopedResources', 'type': '[PrivateLinkScopedResource]'},
-        'ingestion_mode': {'key': 'properties.IngestionMode', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "kind": {"key": "kind", "type": "str"},
+        "application_id": {"key": "properties.ApplicationId", "type": "str"},
+        "app_id": {"key": "properties.AppId", "type": "str"},
+        "application_type": {"key": "properties.Application_Type", "type": "str"},
+        "flow_type": {"key": "properties.Flow_Type", "type": "str"},
+        "request_source": {"key": "properties.Request_Source", "type": "str"},
+        "instrumentation_key": {"key": "properties.InstrumentationKey", "type": "str"},
+        "creation_date": {"key": "properties.CreationDate", "type": "iso-8601"},
+        "tenant_id": {"key": "properties.TenantId", "type": "str"},
+        "hockey_app_id": {"key": "properties.HockeyAppId", "type": "str"},
+        "hockey_app_token": {"key": "properties.HockeyAppToken", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "sampling_percentage": {"key": "properties.SamplingPercentage", "type": "float"},
+        "connection_string": {"key": "properties.ConnectionString", "type": "str"},
+        "retention_in_days": {"key": "properties.RetentionInDays", "type": "int"},
+        "disable_ip_masking": {"key": "properties.DisableIpMasking", "type": "bool"},
+        "immediate_purge_data_on30_days": {"key": "properties.ImmediatePurgeDataOn30Days", "type": "bool"},
+        "private_link_scoped_resources": {
+            "key": "properties.PrivateLinkScopedResources",
+            "type": "[PrivateLinkScopedResource]",
+        },
+        "ingestion_mode": {"key": "properties.IngestionMode", "type": "str"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         location: str,
         kind: str,
         tags: Optional[Dict[str, str]] = None,
-        application_type: Optional[Union[str, "ApplicationType"]] = "web",
-        flow_type: Optional[Union[str, "FlowType"]] = "Bluefield",
-        request_source: Optional[Union[str, "RequestSource"]] = "rest",
+        application_type: Union[str, "_models.ApplicationType"] = "web",
+        flow_type: Union[str, "_models.FlowType"] = "Bluefield",
+        request_source: Union[str, "_models.RequestSource"] = "rest",
         hockey_app_id: Optional[str] = None,
         sampling_percentage: Optional[float] = None,
-        retention_in_days: Optional[int] = 90,
+        retention_in_days: int = 90,
         disable_ip_masking: Optional[bool] = None,
         immediate_purge_data_on30_days: Optional[bool] = None,
-        ingestion_mode: Optional[Union[str, "IngestionMode"]] = "ApplicationInsights",
-        **kwargs
-    ):
+        ingestion_mode: Union[str, "_models.IngestionMode"] = "ApplicationInsights",
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword kind: Required. The kind of application that this component refers to, used to
-         customize UI. This value is a freeform string, values should typically be one of the following:
-         web, ios, other, store, java, phone.
+        :keyword kind: The kind of application that this component refers to, used to customize UI.
+         This value is a freeform string, values should typically be one of the following: web, ios,
+         other, store, java, phone. Required.
         :paramtype kind: str
-        :keyword application_type: Type of application being monitored. Possible values include: "web",
-         "other". Default value: "web".
+        :keyword application_type: Type of application being monitored. Known values are: "web" and
+         "other".
         :paramtype application_type: str or
          ~azure.mgmt.applicationinsights.v2015_05_01.models.ApplicationType
         :keyword flow_type: Used by the Application Insights system to determine what kind of flow this
          component was created by. This is to be set to 'Bluefield' when creating/updating a component
-         via the REST API. Possible values include: "Bluefield". Default value: "Bluefield".
+         via the REST API. "Bluefield"
         :paramtype flow_type: str or ~azure.mgmt.applicationinsights.v2015_05_01.models.FlowType
         :keyword request_source: Describes what tool created this Application Insights component.
-         Customers using this API should set this to the default 'rest'. Possible values include:
-         "rest". Default value: "rest".
+         Customers using this API should set this to the default 'rest'. "rest"
         :paramtype request_source: str or
          ~azure.mgmt.applicationinsights.v2015_05_01.models.RequestSource
         :keyword hockey_app_id: The unique application ID created when a new application is added to
@@ -409,13 +401,12 @@ class ApplicationInsightsComponent(ComponentsResource):
         :paramtype disable_ip_masking: bool
         :keyword immediate_purge_data_on30_days: Purge data immediately after 30 days.
         :paramtype immediate_purge_data_on30_days: bool
-        :keyword ingestion_mode: Indicates the flow of the ingestion. Possible values include:
-         "ApplicationInsights", "ApplicationInsightsWithDiagnosticSettings", "LogAnalytics". Default
-         value: "ApplicationInsights".
+        :keyword ingestion_mode: Indicates the flow of the ingestion. Known values are:
+         "ApplicationInsights", "ApplicationInsightsWithDiagnosticSettings", and "LogAnalytics".
         :paramtype ingestion_mode: str or
          ~azure.mgmt.applicationinsights.v2015_05_01.models.IngestionMode
         """
-        super(ApplicationInsightsComponent, self).__init__(location=location, tags=tags, **kwargs)
+        super().__init__(location=location, tags=tags, **kwargs)
         self.kind = kind
         self.application_id = None
         self.app_id = None
@@ -437,8 +428,9 @@ class ApplicationInsightsComponent(ComponentsResource):
         self.ingestion_mode = ingestion_mode
 
 
-class ApplicationInsightsComponentAnalyticsItem(msrest.serialization.Model):
-    """Properties that define an Analytics item that is associated to an Application Insights component.
+class ApplicationInsightsComponentAnalyticsItem(_serialization.Model):
+    """Properties that define an Analytics item that is associated to an Application Insights
+    component.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -452,11 +444,11 @@ class ApplicationInsightsComponentAnalyticsItem(msrest.serialization.Model):
      added.
     :vartype version: str
     :ivar scope: Enum indicating if this item definition is owned by a specific user or is shared
-     between all users with access to the Application Insights component. Possible values include:
-     "shared", "user".
+     between all users with access to the Application Insights component. Known values are: "shared"
+     and "user".
     :vartype scope: str or ~azure.mgmt.applicationinsights.v2015_05_01.models.ItemScope
-    :ivar type: Enum indicating the type of the Analytics item. Possible values include: "none",
-     "query", "recent", "function".
+    :ivar type: Enum indicating the type of the Analytics item. Known values are: "none", "query",
+     "recent", and "function".
     :vartype type: str or ~azure.mgmt.applicationinsights.v2015_05_01.models.ItemType
     :ivar time_created: Date and time in UTC when this item was created.
     :vartype time_created: str
@@ -469,34 +461,34 @@ class ApplicationInsightsComponentAnalyticsItem(msrest.serialization.Model):
     """
 
     _validation = {
-        'version': {'readonly': True},
-        'time_created': {'readonly': True},
-        'time_modified': {'readonly': True},
+        "version": {"readonly": True},
+        "time_created": {"readonly": True},
+        "time_modified": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'Id', 'type': 'str'},
-        'name': {'key': 'Name', 'type': 'str'},
-        'content': {'key': 'Content', 'type': 'str'},
-        'version': {'key': 'Version', 'type': 'str'},
-        'scope': {'key': 'Scope', 'type': 'str'},
-        'type': {'key': 'Type', 'type': 'str'},
-        'time_created': {'key': 'TimeCreated', 'type': 'str'},
-        'time_modified': {'key': 'TimeModified', 'type': 'str'},
-        'properties': {'key': 'Properties', 'type': 'ApplicationInsightsComponentAnalyticsItemProperties'},
+        "id": {"key": "Id", "type": "str"},
+        "name": {"key": "Name", "type": "str"},
+        "content": {"key": "Content", "type": "str"},
+        "version": {"key": "Version", "type": "str"},
+        "scope": {"key": "Scope", "type": "str"},
+        "type": {"key": "Type", "type": "str"},
+        "time_created": {"key": "TimeCreated", "type": "str"},
+        "time_modified": {"key": "TimeModified", "type": "str"},
+        "properties": {"key": "Properties", "type": "ApplicationInsightsComponentAnalyticsItemProperties"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         content: Optional[str] = None,
-        scope: Optional[Union[str, "ItemScope"]] = None,
-        type: Optional[Union[str, "ItemType"]] = None,
-        properties: Optional["ApplicationInsightsComponentAnalyticsItemProperties"] = None,
-        **kwargs
-    ):
+        scope: Optional[Union[str, "_models.ItemScope"]] = None,
+        type: Optional[Union[str, "_models.ItemType"]] = None,
+        properties: Optional["_models.ApplicationInsightsComponentAnalyticsItemProperties"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Internally assigned unique id of the item definition.
         :paramtype id: str
@@ -505,18 +497,18 @@ class ApplicationInsightsComponentAnalyticsItem(msrest.serialization.Model):
         :keyword content: The content of this item.
         :paramtype content: str
         :keyword scope: Enum indicating if this item definition is owned by a specific user or is
-         shared between all users with access to the Application Insights component. Possible values
-         include: "shared", "user".
+         shared between all users with access to the Application Insights component. Known values are:
+         "shared" and "user".
         :paramtype scope: str or ~azure.mgmt.applicationinsights.v2015_05_01.models.ItemScope
-        :keyword type: Enum indicating the type of the Analytics item. Possible values include: "none",
-         "query", "recent", "function".
+        :keyword type: Enum indicating the type of the Analytics item. Known values are: "none",
+         "query", "recent", and "function".
         :paramtype type: str or ~azure.mgmt.applicationinsights.v2015_05_01.models.ItemType
         :keyword properties: A set of properties that can be defined in the context of a specific item
          type. Each type may have its own properties.
         :paramtype properties:
          ~azure.mgmt.applicationinsights.v2015_05_01.models.ApplicationInsightsComponentAnalyticsItemProperties
         """
-        super(ApplicationInsightsComponentAnalyticsItem, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
         self.name = name
         self.content = content
@@ -528,32 +520,28 @@ class ApplicationInsightsComponentAnalyticsItem(msrest.serialization.Model):
         self.properties = properties
 
 
-class ApplicationInsightsComponentAnalyticsItemProperties(msrest.serialization.Model):
-    """A set of properties that can be defined in the context of a specific item type. Each type may have its own properties.
+class ApplicationInsightsComponentAnalyticsItemProperties(_serialization.Model):
+    """A set of properties that can be defined in the context of a specific item type. Each type may
+    have its own properties.
 
     :ivar function_alias: A function alias, used when the type of the item is Function.
     :vartype function_alias: str
     """
 
     _attribute_map = {
-        'function_alias': {'key': 'functionAlias', 'type': 'str'},
+        "function_alias": {"key": "functionAlias", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        function_alias: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, function_alias: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword function_alias: A function alias, used when the type of the item is Function.
         :paramtype function_alias: str
         """
-        super(ApplicationInsightsComponentAnalyticsItemProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.function_alias = function_alias
 
 
-class ApplicationInsightsComponentAPIKey(msrest.serialization.Model):
+class ApplicationInsightsComponentAPIKey(_serialization.Model):
     """Properties that define an API key of an Application Insights Component.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -574,17 +562,17 @@ class ApplicationInsightsComponentAPIKey(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'api_key': {'readonly': True},
+        "id": {"readonly": True},
+        "api_key": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'api_key': {'key': 'apiKey', 'type': 'str'},
-        'created_date': {'key': 'createdDate', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'linked_read_properties': {'key': 'linkedReadProperties', 'type': '[str]'},
-        'linked_write_properties': {'key': 'linkedWriteProperties', 'type': '[str]'},
+        "id": {"key": "id", "type": "str"},
+        "api_key": {"key": "apiKey", "type": "str"},
+        "created_date": {"key": "createdDate", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "linked_read_properties": {"key": "linkedReadProperties", "type": "[str]"},
+        "linked_write_properties": {"key": "linkedWriteProperties", "type": "[str]"},
     }
 
     def __init__(
@@ -594,8 +582,8 @@ class ApplicationInsightsComponentAPIKey(msrest.serialization.Model):
         name: Optional[str] = None,
         linked_read_properties: Optional[List[str]] = None,
         linked_write_properties: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword created_date: The create date of this API key.
         :paramtype created_date: str
@@ -606,7 +594,7 @@ class ApplicationInsightsComponentAPIKey(msrest.serialization.Model):
         :keyword linked_write_properties: The write access rights of this API Key.
         :paramtype linked_write_properties: list[str]
         """
-        super(ApplicationInsightsComponentAPIKey, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.api_key = None
         self.created_date = created_date
@@ -615,40 +603,35 @@ class ApplicationInsightsComponentAPIKey(msrest.serialization.Model):
         self.linked_write_properties = linked_write_properties
 
 
-class ApplicationInsightsComponentAPIKeyListResult(msrest.serialization.Model):
+class ApplicationInsightsComponentAPIKeyListResult(_serialization.Model):
     """Describes the list of API Keys of an Application Insights Component.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. List of API Key definitions.
+    :ivar value: List of API Key definitions. Required.
     :vartype value:
      list[~azure.mgmt.applicationinsights.v2015_05_01.models.ApplicationInsightsComponentAPIKey]
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ApplicationInsightsComponentAPIKey]'},
+        "value": {"key": "value", "type": "[ApplicationInsightsComponentAPIKey]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["ApplicationInsightsComponentAPIKey"],
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.ApplicationInsightsComponentAPIKey"], **kwargs: Any) -> None:
         """
-        :keyword value: Required. List of API Key definitions.
+        :keyword value: List of API Key definitions. Required.
         :paramtype value:
          list[~azure.mgmt.applicationinsights.v2015_05_01.models.ApplicationInsightsComponentAPIKey]
         """
-        super(ApplicationInsightsComponentAPIKeyListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
 
 
-class ApplicationInsightsComponentAvailableFeatures(msrest.serialization.Model):
+class ApplicationInsightsComponentAvailableFeatures(_serialization.Model):
     """An Application Insights component available features.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -659,24 +642,20 @@ class ApplicationInsightsComponentAvailableFeatures(msrest.serialization.Model):
     """
 
     _validation = {
-        'result': {'readonly': True},
+        "result": {"readonly": True},
     }
 
     _attribute_map = {
-        'result': {'key': 'Result', 'type': '[ApplicationInsightsComponentFeature]'},
+        "result": {"key": "Result", "type": "[ApplicationInsightsComponentFeature]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ApplicationInsightsComponentAvailableFeatures, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.result = None
 
 
-class ApplicationInsightsComponentBillingFeatures(msrest.serialization.Model):
+class ApplicationInsightsComponentBillingFeatures(_serialization.Model):
     """An Application Insights component billing features.
 
     :ivar data_volume_cap: An Application Insights component daily data volume cap.
@@ -688,17 +667,17 @@ class ApplicationInsightsComponentBillingFeatures(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'data_volume_cap': {'key': 'DataVolumeCap', 'type': 'ApplicationInsightsComponentDataVolumeCap'},
-        'current_billing_features': {'key': 'CurrentBillingFeatures', 'type': '[str]'},
+        "data_volume_cap": {"key": "DataVolumeCap", "type": "ApplicationInsightsComponentDataVolumeCap"},
+        "current_billing_features": {"key": "CurrentBillingFeatures", "type": "[str]"},
     }
 
     def __init__(
         self,
         *,
-        data_volume_cap: Optional["ApplicationInsightsComponentDataVolumeCap"] = None,
+        data_volume_cap: Optional["_models.ApplicationInsightsComponentDataVolumeCap"] = None,
         current_billing_features: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword data_volume_cap: An Application Insights component daily data volume cap.
         :paramtype data_volume_cap:
@@ -707,12 +686,12 @@ class ApplicationInsightsComponentBillingFeatures(msrest.serialization.Model):
          Enterprise plan, this will list both 'Basic' and 'Application Insights Enterprise'.
         :paramtype current_billing_features: list[str]
         """
-        super(ApplicationInsightsComponentBillingFeatures, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.data_volume_cap = data_volume_cap
         self.current_billing_features = current_billing_features
 
 
-class ApplicationInsightsComponentDataVolumeCap(msrest.serialization.Model):
+class ApplicationInsightsComponentDataVolumeCap(_serialization.Model):
     """An Application Insights component daily data volume cap.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -733,17 +712,17 @@ class ApplicationInsightsComponentDataVolumeCap(msrest.serialization.Model):
     """
 
     _validation = {
-        'reset_time': {'readonly': True},
-        'max_history_cap': {'readonly': True},
+        "reset_time": {"readonly": True},
+        "max_history_cap": {"readonly": True},
     }
 
     _attribute_map = {
-        'cap': {'key': 'Cap', 'type': 'float'},
-        'reset_time': {'key': 'ResetTime', 'type': 'int'},
-        'warning_threshold': {'key': 'WarningThreshold', 'type': 'int'},
-        'stop_send_notification_when_hit_threshold': {'key': 'StopSendNotificationWhenHitThreshold', 'type': 'bool'},
-        'stop_send_notification_when_hit_cap': {'key': 'StopSendNotificationWhenHitCap', 'type': 'bool'},
-        'max_history_cap': {'key': 'MaxHistoryCap', 'type': 'float'},
+        "cap": {"key": "Cap", "type": "float"},
+        "reset_time": {"key": "ResetTime", "type": "int"},
+        "warning_threshold": {"key": "WarningThreshold", "type": "int"},
+        "stop_send_notification_when_hit_threshold": {"key": "StopSendNotificationWhenHitThreshold", "type": "bool"},
+        "stop_send_notification_when_hit_cap": {"key": "StopSendNotificationWhenHitCap", "type": "bool"},
+        "max_history_cap": {"key": "MaxHistoryCap", "type": "float"},
     }
 
     def __init__(
@@ -753,8 +732,8 @@ class ApplicationInsightsComponentDataVolumeCap(msrest.serialization.Model):
         warning_threshold: Optional[int] = None,
         stop_send_notification_when_hit_threshold: Optional[bool] = None,
         stop_send_notification_when_hit_cap: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword cap: Daily data volume cap in GB.
         :paramtype cap: float
@@ -766,7 +745,7 @@ class ApplicationInsightsComponentDataVolumeCap(msrest.serialization.Model):
          data volume cap is met.
         :paramtype stop_send_notification_when_hit_cap: bool
         """
-        super(ApplicationInsightsComponentDataVolumeCap, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.cap = cap
         self.reset_time = None
         self.warning_threshold = warning_threshold
@@ -775,7 +754,9 @@ class ApplicationInsightsComponentDataVolumeCap(msrest.serialization.Model):
         self.max_history_cap = None
 
 
-class ApplicationInsightsComponentExportConfiguration(msrest.serialization.Model):
+class ApplicationInsightsComponentExportConfiguration(
+    _serialization.Model
+):  # pylint: disable=too-many-instance-attributes
     """Properties that define a Continuous Export configuration.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -828,54 +809,50 @@ class ApplicationInsightsComponentExportConfiguration(msrest.serialization.Model
     """
 
     _validation = {
-        'export_id': {'readonly': True},
-        'instrumentation_key': {'readonly': True},
-        'application_name': {'readonly': True},
-        'subscription_id': {'readonly': True},
-        'resource_group': {'readonly': True},
-        'destination_storage_subscription_id': {'readonly': True},
-        'destination_storage_location_id': {'readonly': True},
-        'destination_account_id': {'readonly': True},
-        'destination_type': {'readonly': True},
-        'is_user_enabled': {'readonly': True},
-        'last_user_update': {'readonly': True},
-        'export_status': {'readonly': True},
-        'last_success_time': {'readonly': True},
-        'last_gap_time': {'readonly': True},
-        'permanent_error_reason': {'readonly': True},
-        'storage_name': {'readonly': True},
-        'container_name': {'readonly': True},
+        "export_id": {"readonly": True},
+        "instrumentation_key": {"readonly": True},
+        "application_name": {"readonly": True},
+        "subscription_id": {"readonly": True},
+        "resource_group": {"readonly": True},
+        "destination_storage_subscription_id": {"readonly": True},
+        "destination_storage_location_id": {"readonly": True},
+        "destination_account_id": {"readonly": True},
+        "destination_type": {"readonly": True},
+        "is_user_enabled": {"readonly": True},
+        "last_user_update": {"readonly": True},
+        "export_status": {"readonly": True},
+        "last_success_time": {"readonly": True},
+        "last_gap_time": {"readonly": True},
+        "permanent_error_reason": {"readonly": True},
+        "storage_name": {"readonly": True},
+        "container_name": {"readonly": True},
     }
 
     _attribute_map = {
-        'export_id': {'key': 'ExportId', 'type': 'str'},
-        'instrumentation_key': {'key': 'InstrumentationKey', 'type': 'str'},
-        'record_types': {'key': 'RecordTypes', 'type': 'str'},
-        'application_name': {'key': 'ApplicationName', 'type': 'str'},
-        'subscription_id': {'key': 'SubscriptionId', 'type': 'str'},
-        'resource_group': {'key': 'ResourceGroup', 'type': 'str'},
-        'destination_storage_subscription_id': {'key': 'DestinationStorageSubscriptionId', 'type': 'str'},
-        'destination_storage_location_id': {'key': 'DestinationStorageLocationId', 'type': 'str'},
-        'destination_account_id': {'key': 'DestinationAccountId', 'type': 'str'},
-        'destination_type': {'key': 'DestinationType', 'type': 'str'},
-        'is_user_enabled': {'key': 'IsUserEnabled', 'type': 'str'},
-        'last_user_update': {'key': 'LastUserUpdate', 'type': 'str'},
-        'notification_queue_enabled': {'key': 'NotificationQueueEnabled', 'type': 'str'},
-        'export_status': {'key': 'ExportStatus', 'type': 'str'},
-        'last_success_time': {'key': 'LastSuccessTime', 'type': 'str'},
-        'last_gap_time': {'key': 'LastGapTime', 'type': 'str'},
-        'permanent_error_reason': {'key': 'PermanentErrorReason', 'type': 'str'},
-        'storage_name': {'key': 'StorageName', 'type': 'str'},
-        'container_name': {'key': 'ContainerName', 'type': 'str'},
+        "export_id": {"key": "ExportId", "type": "str"},
+        "instrumentation_key": {"key": "InstrumentationKey", "type": "str"},
+        "record_types": {"key": "RecordTypes", "type": "str"},
+        "application_name": {"key": "ApplicationName", "type": "str"},
+        "subscription_id": {"key": "SubscriptionId", "type": "str"},
+        "resource_group": {"key": "ResourceGroup", "type": "str"},
+        "destination_storage_subscription_id": {"key": "DestinationStorageSubscriptionId", "type": "str"},
+        "destination_storage_location_id": {"key": "DestinationStorageLocationId", "type": "str"},
+        "destination_account_id": {"key": "DestinationAccountId", "type": "str"},
+        "destination_type": {"key": "DestinationType", "type": "str"},
+        "is_user_enabled": {"key": "IsUserEnabled", "type": "str"},
+        "last_user_update": {"key": "LastUserUpdate", "type": "str"},
+        "notification_queue_enabled": {"key": "NotificationQueueEnabled", "type": "str"},
+        "export_status": {"key": "ExportStatus", "type": "str"},
+        "last_success_time": {"key": "LastSuccessTime", "type": "str"},
+        "last_gap_time": {"key": "LastGapTime", "type": "str"},
+        "permanent_error_reason": {"key": "PermanentErrorReason", "type": "str"},
+        "storage_name": {"key": "StorageName", "type": "str"},
+        "container_name": {"key": "ContainerName", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        record_types: Optional[str] = None,
-        notification_queue_enabled: Optional[str] = None,
-        **kwargs
-    ):
+        self, *, record_types: Optional[str] = None, notification_queue_enabled: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword record_types: This comma separated list of document types that will be exported. The
          possible values include 'Requests', 'Event', 'Exceptions', 'Metrics', 'PageViews',
@@ -884,7 +861,7 @@ class ApplicationInsightsComponentExportConfiguration(msrest.serialization.Model
         :keyword notification_queue_enabled: Deprecated.
         :paramtype notification_queue_enabled: str
         """
-        super(ApplicationInsightsComponentExportConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.export_id = None
         self.instrumentation_key = None
         self.record_types = record_types
@@ -906,7 +883,7 @@ class ApplicationInsightsComponentExportConfiguration(msrest.serialization.Model
         self.container_name = None
 
 
-class ApplicationInsightsComponentExportRequest(msrest.serialization.Model):
+class ApplicationInsightsComponentExportRequest(_serialization.Model):
     """An Application Insights component Continuous Export configuration request definition.
 
     :ivar record_types: The document types to be exported, as comma separated values. Allowed
@@ -935,15 +912,15 @@ class ApplicationInsightsComponentExportRequest(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'record_types': {'key': 'RecordTypes', 'type': 'str'},
-        'destination_type': {'key': 'DestinationType', 'type': 'str'},
-        'destination_address': {'key': 'DestinationAddress', 'type': 'str'},
-        'is_enabled': {'key': 'IsEnabled', 'type': 'str'},
-        'notification_queue_enabled': {'key': 'NotificationQueueEnabled', 'type': 'str'},
-        'notification_queue_uri': {'key': 'NotificationQueueUri', 'type': 'str'},
-        'destination_storage_subscription_id': {'key': 'DestinationStorageSubscriptionId', 'type': 'str'},
-        'destination_storage_location_id': {'key': 'DestinationStorageLocationId', 'type': 'str'},
-        'destination_account_id': {'key': 'DestinationAccountId', 'type': 'str'},
+        "record_types": {"key": "RecordTypes", "type": "str"},
+        "destination_type": {"key": "DestinationType", "type": "str"},
+        "destination_address": {"key": "DestinationAddress", "type": "str"},
+        "is_enabled": {"key": "IsEnabled", "type": "str"},
+        "notification_queue_enabled": {"key": "NotificationQueueEnabled", "type": "str"},
+        "notification_queue_uri": {"key": "NotificationQueueUri", "type": "str"},
+        "destination_storage_subscription_id": {"key": "DestinationStorageSubscriptionId", "type": "str"},
+        "destination_storage_location_id": {"key": "DestinationStorageLocationId", "type": "str"},
+        "destination_account_id": {"key": "DestinationAccountId", "type": "str"},
     }
 
     def __init__(
@@ -958,8 +935,8 @@ class ApplicationInsightsComponentExportRequest(msrest.serialization.Model):
         destination_storage_subscription_id: Optional[str] = None,
         destination_storage_location_id: Optional[str] = None,
         destination_account_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword record_types: The document types to be exported, as comma separated values. Allowed
          values include 'Requests', 'Event', 'Exceptions', 'Metrics', 'PageViews',
@@ -985,7 +962,7 @@ class ApplicationInsightsComponentExportRequest(msrest.serialization.Model):
         :keyword destination_account_id: The name of destination storage account.
         :paramtype destination_account_id: str
         """
-        super(ApplicationInsightsComponentExportRequest, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.record_types = record_types
         self.destination_type = destination_type
         self.destination_address = destination_address
@@ -997,7 +974,7 @@ class ApplicationInsightsComponentExportRequest(msrest.serialization.Model):
         self.destination_account_id = destination_account_id
 
 
-class ApplicationInsightsComponentFavorite(msrest.serialization.Model):
+class ApplicationInsightsComponentFavorite(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Properties that define a favorite that is associated to an Application Insights component.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1013,16 +990,15 @@ class ApplicationInsightsComponentFavorite(msrest.serialization.Model):
     :ivar favorite_id: Internally assigned unique id of the favorite definition.
     :vartype favorite_id: str
     :ivar favorite_type: Enum indicating if this favorite definition is owned by a specific user or
-     is shared between all users with access to the Application Insights component. Possible values
-     include: "shared", "user".
+     is shared between all users with access to the Application Insights component. Known values
+     are: "shared" and "user".
     :vartype favorite_type: str or ~azure.mgmt.applicationinsights.v2015_05_01.models.FavoriteType
     :ivar source_type: The source of the favorite definition.
     :vartype source_type: str
     :ivar time_modified: Date and time in UTC of the last modification that was made to this
      favorite definition.
     :vartype time_modified: str
-    :ivar tags: A set of tags. A list of 0 or more tags that are associated with this favorite
-     definition.
+    :ivar tags: A list of 0 or more tags that are associated with this favorite definition.
     :vartype tags: list[str]
     :ivar category: Favorite category, as defined by the user at creation time.
     :vartype category: str
@@ -1034,23 +1010,23 @@ class ApplicationInsightsComponentFavorite(msrest.serialization.Model):
     """
 
     _validation = {
-        'favorite_id': {'readonly': True},
-        'time_modified': {'readonly': True},
-        'user_id': {'readonly': True},
+        "favorite_id": {"readonly": True},
+        "time_modified": {"readonly": True},
+        "user_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
-        'config': {'key': 'Config', 'type': 'str'},
-        'version': {'key': 'Version', 'type': 'str'},
-        'favorite_id': {'key': 'FavoriteId', 'type': 'str'},
-        'favorite_type': {'key': 'FavoriteType', 'type': 'str'},
-        'source_type': {'key': 'SourceType', 'type': 'str'},
-        'time_modified': {'key': 'TimeModified', 'type': 'str'},
-        'tags': {'key': 'Tags', 'type': '[str]'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'is_generated_from_template': {'key': 'IsGeneratedFromTemplate', 'type': 'bool'},
-        'user_id': {'key': 'UserId', 'type': 'str'},
+        "name": {"key": "Name", "type": "str"},
+        "config": {"key": "Config", "type": "str"},
+        "version": {"key": "Version", "type": "str"},
+        "favorite_id": {"key": "FavoriteId", "type": "str"},
+        "favorite_type": {"key": "FavoriteType", "type": "str"},
+        "source_type": {"key": "SourceType", "type": "str"},
+        "time_modified": {"key": "TimeModified", "type": "str"},
+        "tags": {"key": "Tags", "type": "[str]"},
+        "category": {"key": "Category", "type": "str"},
+        "is_generated_from_template": {"key": "IsGeneratedFromTemplate", "type": "bool"},
+        "user_id": {"key": "UserId", "type": "str"},
     }
 
     def __init__(
@@ -1059,13 +1035,13 @@ class ApplicationInsightsComponentFavorite(msrest.serialization.Model):
         name: Optional[str] = None,
         config: Optional[str] = None,
         version: Optional[str] = None,
-        favorite_type: Optional[Union[str, "FavoriteType"]] = None,
+        favorite_type: Optional[Union[str, "_models.FavoriteType"]] = None,
         source_type: Optional[str] = None,
         tags: Optional[List[str]] = None,
         category: Optional[str] = None,
         is_generated_from_template: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The user-defined name of the favorite.
         :paramtype name: str
@@ -1077,14 +1053,13 @@ class ApplicationInsightsComponentFavorite(msrest.serialization.Model):
          Search.
         :paramtype version: str
         :keyword favorite_type: Enum indicating if this favorite definition is owned by a specific user
-         or is shared between all users with access to the Application Insights component. Possible
-         values include: "shared", "user".
+         or is shared between all users with access to the Application Insights component. Known values
+         are: "shared" and "user".
         :paramtype favorite_type: str or
          ~azure.mgmt.applicationinsights.v2015_05_01.models.FavoriteType
         :keyword source_type: The source of the favorite definition.
         :paramtype source_type: str
-        :keyword tags: A set of tags. A list of 0 or more tags that are associated with this favorite
-         definition.
+        :keyword tags: A list of 0 or more tags that are associated with this favorite definition.
         :paramtype tags: list[str]
         :keyword category: Favorite category, as defined by the user at creation time.
         :paramtype category: str
@@ -1092,7 +1067,7 @@ class ApplicationInsightsComponentFavorite(msrest.serialization.Model):
          from a template.
         :paramtype is_generated_from_template: bool
         """
-        super(ApplicationInsightsComponentFavorite, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.config = config
         self.version = version
@@ -1106,7 +1081,7 @@ class ApplicationInsightsComponentFavorite(msrest.serialization.Model):
         self.user_id = None
 
 
-class ApplicationInsightsComponentFeature(msrest.serialization.Model):
+class ApplicationInsightsComponentFeature(_serialization.Model):
     """An Application Insights component daily data volume cap status.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1133,36 +1108,32 @@ class ApplicationInsightsComponentFeature(msrest.serialization.Model):
     """
 
     _validation = {
-        'feature_name': {'readonly': True},
-        'meter_id': {'readonly': True},
-        'meter_rate_frequency': {'readonly': True},
-        'resouce_id': {'readonly': True},
-        'is_hidden': {'readonly': True},
-        'capabilities': {'readonly': True},
-        'title': {'readonly': True},
-        'is_main_feature': {'readonly': True},
-        'supported_addon_features': {'readonly': True},
+        "feature_name": {"readonly": True},
+        "meter_id": {"readonly": True},
+        "meter_rate_frequency": {"readonly": True},
+        "resouce_id": {"readonly": True},
+        "is_hidden": {"readonly": True},
+        "capabilities": {"readonly": True},
+        "title": {"readonly": True},
+        "is_main_feature": {"readonly": True},
+        "supported_addon_features": {"readonly": True},
     }
 
     _attribute_map = {
-        'feature_name': {'key': 'FeatureName', 'type': 'str'},
-        'meter_id': {'key': 'MeterId', 'type': 'str'},
-        'meter_rate_frequency': {'key': 'MeterRateFrequency', 'type': 'str'},
-        'resouce_id': {'key': 'ResouceId', 'type': 'str'},
-        'is_hidden': {'key': 'IsHidden', 'type': 'bool'},
-        'capabilities': {'key': 'Capabilities', 'type': '[ApplicationInsightsComponentFeatureCapability]'},
-        'title': {'key': 'Title', 'type': 'str'},
-        'is_main_feature': {'key': 'IsMainFeature', 'type': 'bool'},
-        'supported_addon_features': {'key': 'SupportedAddonFeatures', 'type': 'str'},
+        "feature_name": {"key": "FeatureName", "type": "str"},
+        "meter_id": {"key": "MeterId", "type": "str"},
+        "meter_rate_frequency": {"key": "MeterRateFrequency", "type": "str"},
+        "resouce_id": {"key": "ResouceId", "type": "str"},
+        "is_hidden": {"key": "IsHidden", "type": "bool"},
+        "capabilities": {"key": "Capabilities", "type": "[ApplicationInsightsComponentFeatureCapability]"},
+        "title": {"key": "Title", "type": "str"},
+        "is_main_feature": {"key": "IsMainFeature", "type": "bool"},
+        "supported_addon_features": {"key": "SupportedAddonFeatures", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ApplicationInsightsComponentFeature, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.feature_name = None
         self.meter_id = None
         self.meter_rate_frequency = None
@@ -1174,7 +1145,9 @@ class ApplicationInsightsComponentFeature(msrest.serialization.Model):
         self.supported_addon_features = None
 
 
-class ApplicationInsightsComponentFeatureCapabilities(msrest.serialization.Model):
+class ApplicationInsightsComponentFeatureCapabilities(
+    _serialization.Model
+):  # pylint: disable=too-many-instance-attributes
     """An Application Insights component feature capabilities.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1214,50 +1187,46 @@ class ApplicationInsightsComponentFeatureCapabilities(msrest.serialization.Model
     """
 
     _validation = {
-        'support_export_data': {'readonly': True},
-        'burst_throttle_policy': {'readonly': True},
-        'metadata_class': {'readonly': True},
-        'live_stream_metrics': {'readonly': True},
-        'application_map': {'readonly': True},
-        'work_item_integration': {'readonly': True},
-        'power_bi_integration': {'readonly': True},
-        'open_schema': {'readonly': True},
-        'proactive_detection': {'readonly': True},
-        'analytics_integration': {'readonly': True},
-        'multiple_step_web_test': {'readonly': True},
-        'api_access_level': {'readonly': True},
-        'tracking_type': {'readonly': True},
-        'daily_cap': {'readonly': True},
-        'daily_cap_reset_time': {'readonly': True},
-        'throttle_rate': {'readonly': True},
+        "support_export_data": {"readonly": True},
+        "burst_throttle_policy": {"readonly": True},
+        "metadata_class": {"readonly": True},
+        "live_stream_metrics": {"readonly": True},
+        "application_map": {"readonly": True},
+        "work_item_integration": {"readonly": True},
+        "power_bi_integration": {"readonly": True},
+        "open_schema": {"readonly": True},
+        "proactive_detection": {"readonly": True},
+        "analytics_integration": {"readonly": True},
+        "multiple_step_web_test": {"readonly": True},
+        "api_access_level": {"readonly": True},
+        "tracking_type": {"readonly": True},
+        "daily_cap": {"readonly": True},
+        "daily_cap_reset_time": {"readonly": True},
+        "throttle_rate": {"readonly": True},
     }
 
     _attribute_map = {
-        'support_export_data': {'key': 'SupportExportData', 'type': 'bool'},
-        'burst_throttle_policy': {'key': 'BurstThrottlePolicy', 'type': 'str'},
-        'metadata_class': {'key': 'MetadataClass', 'type': 'str'},
-        'live_stream_metrics': {'key': 'LiveStreamMetrics', 'type': 'bool'},
-        'application_map': {'key': 'ApplicationMap', 'type': 'bool'},
-        'work_item_integration': {'key': 'WorkItemIntegration', 'type': 'bool'},
-        'power_bi_integration': {'key': 'PowerBIIntegration', 'type': 'bool'},
-        'open_schema': {'key': 'OpenSchema', 'type': 'bool'},
-        'proactive_detection': {'key': 'ProactiveDetection', 'type': 'bool'},
-        'analytics_integration': {'key': 'AnalyticsIntegration', 'type': 'bool'},
-        'multiple_step_web_test': {'key': 'MultipleStepWebTest', 'type': 'bool'},
-        'api_access_level': {'key': 'ApiAccessLevel', 'type': 'str'},
-        'tracking_type': {'key': 'TrackingType', 'type': 'str'},
-        'daily_cap': {'key': 'DailyCap', 'type': 'float'},
-        'daily_cap_reset_time': {'key': 'DailyCapResetTime', 'type': 'float'},
-        'throttle_rate': {'key': 'ThrottleRate', 'type': 'float'},
+        "support_export_data": {"key": "SupportExportData", "type": "bool"},
+        "burst_throttle_policy": {"key": "BurstThrottlePolicy", "type": "str"},
+        "metadata_class": {"key": "MetadataClass", "type": "str"},
+        "live_stream_metrics": {"key": "LiveStreamMetrics", "type": "bool"},
+        "application_map": {"key": "ApplicationMap", "type": "bool"},
+        "work_item_integration": {"key": "WorkItemIntegration", "type": "bool"},
+        "power_bi_integration": {"key": "PowerBIIntegration", "type": "bool"},
+        "open_schema": {"key": "OpenSchema", "type": "bool"},
+        "proactive_detection": {"key": "ProactiveDetection", "type": "bool"},
+        "analytics_integration": {"key": "AnalyticsIntegration", "type": "bool"},
+        "multiple_step_web_test": {"key": "MultipleStepWebTest", "type": "bool"},
+        "api_access_level": {"key": "ApiAccessLevel", "type": "str"},
+        "tracking_type": {"key": "TrackingType", "type": "str"},
+        "daily_cap": {"key": "DailyCap", "type": "float"},
+        "daily_cap_reset_time": {"key": "DailyCapResetTime", "type": "float"},
+        "throttle_rate": {"key": "ThrottleRate", "type": "float"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ApplicationInsightsComponentFeatureCapabilities, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.support_export_data = None
         self.burst_throttle_policy = None
         self.metadata_class = None
@@ -1276,7 +1245,7 @@ class ApplicationInsightsComponentFeatureCapabilities(msrest.serialization.Model
         self.throttle_rate = None
 
 
-class ApplicationInsightsComponentFeatureCapability(msrest.serialization.Model):
+class ApplicationInsightsComponentFeatureCapability(_serialization.Model):
     """An Application Insights component feature capability.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1296,30 +1265,26 @@ class ApplicationInsightsComponentFeatureCapability(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'description': {'readonly': True},
-        'value': {'readonly': True},
-        'unit': {'readonly': True},
-        'meter_id': {'readonly': True},
-        'meter_rate_frequency': {'readonly': True},
+        "name": {"readonly": True},
+        "description": {"readonly": True},
+        "value": {"readonly": True},
+        "unit": {"readonly": True},
+        "meter_id": {"readonly": True},
+        "meter_rate_frequency": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
-        'description': {'key': 'Description', 'type': 'str'},
-        'value': {'key': 'Value', 'type': 'str'},
-        'unit': {'key': 'Unit', 'type': 'str'},
-        'meter_id': {'key': 'MeterId', 'type': 'str'},
-        'meter_rate_frequency': {'key': 'MeterRateFrequency', 'type': 'str'},
+        "name": {"key": "Name", "type": "str"},
+        "description": {"key": "Description", "type": "str"},
+        "value": {"key": "Value", "type": "str"},
+        "unit": {"key": "Unit", "type": "str"},
+        "meter_id": {"key": "MeterId", "type": "str"},
+        "meter_rate_frequency": {"key": "MeterRateFrequency", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ApplicationInsightsComponentFeatureCapability, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.name = None
         self.description = None
         self.value = None
@@ -1328,12 +1293,12 @@ class ApplicationInsightsComponentFeatureCapability(msrest.serialization.Model):
         self.meter_rate_frequency = None
 
 
-class ApplicationInsightsComponentListResult(msrest.serialization.Model):
+class ApplicationInsightsComponentListResult(_serialization.Model):
     """Describes the list of Application Insights Resources.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. List of Application Insights component definitions.
+    :ivar value: List of Application Insights component definitions. Required.
     :vartype value:
      list[~azure.mgmt.applicationinsights.v2015_05_01.models.ApplicationInsightsComponent]
     :ivar next_link: The URI to get the next set of Application Insights component definitions if
@@ -1342,35 +1307,31 @@ class ApplicationInsightsComponentListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ApplicationInsightsComponent]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ApplicationInsightsComponent]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: List["ApplicationInsightsComponent"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+        self, *, value: List["_models.ApplicationInsightsComponent"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
-        :keyword value: Required. List of Application Insights component definitions.
+        :keyword value: List of Application Insights component definitions. Required.
         :paramtype value:
          list[~azure.mgmt.applicationinsights.v2015_05_01.models.ApplicationInsightsComponent]
         :keyword next_link: The URI to get the next set of Application Insights component definitions
          if too many components where returned in the result set.
         :paramtype next_link: str
         """
-        super(ApplicationInsightsComponentListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class ApplicationInsightsComponentProactiveDetectionConfiguration(msrest.serialization.Model):
+class ApplicationInsightsComponentProactiveDetectionConfiguration(_serialization.Model):
     """Properties that define a ProactiveDetection configuration.
 
     :ivar name: The rule name.
@@ -1391,12 +1352,15 @@ class ApplicationInsightsComponentProactiveDetectionConfiguration(msrest.seriali
     """
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
-        'enabled': {'key': 'Enabled', 'type': 'bool'},
-        'send_emails_to_subscription_owners': {'key': 'SendEmailsToSubscriptionOwners', 'type': 'bool'},
-        'custom_emails': {'key': 'CustomEmails', 'type': '[str]'},
-        'last_updated_time': {'key': 'LastUpdatedTime', 'type': 'str'},
-        'rule_definitions': {'key': 'RuleDefinitions', 'type': 'ApplicationInsightsComponentProactiveDetectionConfigurationRuleDefinitions'},
+        "name": {"key": "Name", "type": "str"},
+        "enabled": {"key": "Enabled", "type": "bool"},
+        "send_emails_to_subscription_owners": {"key": "SendEmailsToSubscriptionOwners", "type": "bool"},
+        "custom_emails": {"key": "CustomEmails", "type": "[str]"},
+        "last_updated_time": {"key": "LastUpdatedTime", "type": "str"},
+        "rule_definitions": {
+            "key": "RuleDefinitions",
+            "type": "ApplicationInsightsComponentProactiveDetectionConfigurationRuleDefinitions",
+        },
     }
 
     def __init__(
@@ -1407,9 +1371,11 @@ class ApplicationInsightsComponentProactiveDetectionConfiguration(msrest.seriali
         send_emails_to_subscription_owners: Optional[bool] = None,
         custom_emails: Optional[List[str]] = None,
         last_updated_time: Optional[str] = None,
-        rule_definitions: Optional["ApplicationInsightsComponentProactiveDetectionConfigurationRuleDefinitions"] = None,
-        **kwargs
-    ):
+        rule_definitions: Optional[
+            "_models.ApplicationInsightsComponentProactiveDetectionConfigurationRuleDefinitions"
+        ] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The rule name.
         :paramtype name: str
@@ -1427,7 +1393,7 @@ class ApplicationInsightsComponentProactiveDetectionConfiguration(msrest.seriali
         :paramtype rule_definitions:
          ~azure.mgmt.applicationinsights.v2015_05_01.models.ApplicationInsightsComponentProactiveDetectionConfigurationRuleDefinitions
         """
-        super(ApplicationInsightsComponentProactiveDetectionConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.enabled = enabled
         self.send_emails_to_subscription_owners = send_emails_to_subscription_owners
@@ -1436,8 +1402,9 @@ class ApplicationInsightsComponentProactiveDetectionConfiguration(msrest.seriali
         self.rule_definitions = rule_definitions
 
 
-class ApplicationInsightsComponentProactiveDetectionConfigurationRuleDefinitions(msrest.serialization.Model):
-    """Static definitions of the ProactiveDetection configuration rule (same values for all components).
+class ApplicationInsightsComponentProactiveDetectionConfigurationRuleDefinitions(_serialization.Model):
+    """Static definitions of the ProactiveDetection configuration rule (same values for all
+    components).
 
     :ivar name: The rule name.
     :vartype name: str
@@ -1459,14 +1426,14 @@ class ApplicationInsightsComponentProactiveDetectionConfigurationRuleDefinitions
     """
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
-        'display_name': {'key': 'DisplayName', 'type': 'str'},
-        'description': {'key': 'Description', 'type': 'str'},
-        'help_url': {'key': 'HelpUrl', 'type': 'str'},
-        'is_hidden': {'key': 'IsHidden', 'type': 'bool'},
-        'is_enabled_by_default': {'key': 'IsEnabledByDefault', 'type': 'bool'},
-        'is_in_preview': {'key': 'IsInPreview', 'type': 'bool'},
-        'supports_email_notifications': {'key': 'SupportsEmailNotifications', 'type': 'bool'},
+        "name": {"key": "Name", "type": "str"},
+        "display_name": {"key": "DisplayName", "type": "str"},
+        "description": {"key": "Description", "type": "str"},
+        "help_url": {"key": "HelpUrl", "type": "str"},
+        "is_hidden": {"key": "IsHidden", "type": "bool"},
+        "is_enabled_by_default": {"key": "IsEnabledByDefault", "type": "bool"},
+        "is_in_preview": {"key": "IsInPreview", "type": "bool"},
+        "supports_email_notifications": {"key": "SupportsEmailNotifications", "type": "bool"},
     }
 
     def __init__(
@@ -1480,8 +1447,8 @@ class ApplicationInsightsComponentProactiveDetectionConfigurationRuleDefinitions
         is_enabled_by_default: Optional[bool] = None,
         is_in_preview: Optional[bool] = None,
         supports_email_notifications: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The rule name.
         :paramtype name: str
@@ -1501,7 +1468,7 @@ class ApplicationInsightsComponentProactiveDetectionConfigurationRuleDefinitions
          supported for detections for this rule.
         :paramtype supports_email_notifications: bool
         """
-        super(ApplicationInsightsComponentProactiveDetectionConfigurationRuleDefinitions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.display_name = display_name
         self.description = description
@@ -1512,7 +1479,7 @@ class ApplicationInsightsComponentProactiveDetectionConfigurationRuleDefinitions
         self.supports_email_notifications = supports_email_notifications
 
 
-class ApplicationInsightsComponentQuotaStatus(msrest.serialization.Model):
+class ApplicationInsightsComponentQuotaStatus(_serialization.Model):
     """An Application Insights component daily data volume cap status.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1528,30 +1495,26 @@ class ApplicationInsightsComponentQuotaStatus(msrest.serialization.Model):
     """
 
     _validation = {
-        'app_id': {'readonly': True},
-        'should_be_throttled': {'readonly': True},
-        'expiration_time': {'readonly': True},
+        "app_id": {"readonly": True},
+        "should_be_throttled": {"readonly": True},
+        "expiration_time": {"readonly": True},
     }
 
     _attribute_map = {
-        'app_id': {'key': 'AppId', 'type': 'str'},
-        'should_be_throttled': {'key': 'ShouldBeThrottled', 'type': 'bool'},
-        'expiration_time': {'key': 'ExpirationTime', 'type': 'str'},
+        "app_id": {"key": "AppId", "type": "str"},
+        "should_be_throttled": {"key": "ShouldBeThrottled", "type": "bool"},
+        "expiration_time": {"key": "ExpirationTime", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ApplicationInsightsComponentQuotaStatus, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.app_id = None
         self.should_be_throttled = None
         self.expiration_time = None
 
 
-class ApplicationInsightsComponentWebTestLocation(msrest.serialization.Model):
+class ApplicationInsightsComponentWebTestLocation(_serialization.Model):
     """Properties that define a web test location available to an Application Insights Component.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1563,103 +1526,88 @@ class ApplicationInsightsComponentWebTestLocation(msrest.serialization.Model):
     """
 
     _validation = {
-        'display_name': {'readonly': True},
-        'tag': {'readonly': True},
+        "display_name": {"readonly": True},
+        "tag": {"readonly": True},
     }
 
     _attribute_map = {
-        'display_name': {'key': 'DisplayName', 'type': 'str'},
-        'tag': {'key': 'Tag', 'type': 'str'},
+        "display_name": {"key": "DisplayName", "type": "str"},
+        "tag": {"key": "Tag", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ApplicationInsightsComponentWebTestLocation, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.display_name = None
         self.tag = None
 
 
-class ApplicationInsightsWebTestLocationsListResult(msrest.serialization.Model):
+class ApplicationInsightsWebTestLocationsListResult(_serialization.Model):
     """Describes the list of web test locations available to an Application Insights Component.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. List of web test locations.
+    :ivar value: List of web test locations. Required.
     :vartype value:
      list[~azure.mgmt.applicationinsights.v2015_05_01.models.ApplicationInsightsComponentWebTestLocation]
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ApplicationInsightsComponentWebTestLocation]'},
+        "value": {"key": "value", "type": "[ApplicationInsightsComponentWebTestLocation]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["ApplicationInsightsComponentWebTestLocation"],
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.ApplicationInsightsComponentWebTestLocation"], **kwargs: Any) -> None:
         """
-        :keyword value: Required. List of web test locations.
+        :keyword value: List of web test locations. Required.
         :paramtype value:
          list[~azure.mgmt.applicationinsights.v2015_05_01.models.ApplicationInsightsComponentWebTestLocation]
         """
-        super(ApplicationInsightsWebTestLocationsListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
 
 
-class ComponentPurgeBody(msrest.serialization.Model):
+class ComponentPurgeBody(_serialization.Model):
     """Describes the body of a purge request for an App Insights component.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar table: Required. Table from which to purge data.
+    :ivar table: Table from which to purge data. Required.
     :vartype table: str
-    :ivar filters: Required. The set of columns and filters (queries) to run over them to purge the
-     resulting data.
+    :ivar filters: The set of columns and filters (queries) to run over them to purge the resulting
+     data. Required.
     :vartype filters:
      list[~azure.mgmt.applicationinsights.v2015_05_01.models.ComponentPurgeBodyFilters]
     """
 
     _validation = {
-        'table': {'required': True},
-        'filters': {'required': True},
+        "table": {"required": True},
+        "filters": {"required": True},
     }
 
     _attribute_map = {
-        'table': {'key': 'table', 'type': 'str'},
-        'filters': {'key': 'filters', 'type': '[ComponentPurgeBodyFilters]'},
+        "table": {"key": "table", "type": "str"},
+        "filters": {"key": "filters", "type": "[ComponentPurgeBodyFilters]"},
     }
 
-    def __init__(
-        self,
-        *,
-        table: str,
-        filters: List["ComponentPurgeBodyFilters"],
-        **kwargs
-    ):
+    def __init__(self, *, table: str, filters: List["_models.ComponentPurgeBodyFilters"], **kwargs: Any) -> None:
         """
-        :keyword table: Required. Table from which to purge data.
+        :keyword table: Table from which to purge data. Required.
         :paramtype table: str
-        :keyword filters: Required. The set of columns and filters (queries) to run over them to purge
-         the resulting data.
+        :keyword filters: The set of columns and filters (queries) to run over them to purge the
+         resulting data. Required.
         :paramtype filters:
          list[~azure.mgmt.applicationinsights.v2015_05_01.models.ComponentPurgeBodyFilters]
         """
-        super(ComponentPurgeBody, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.table = table
         self.filters = filters
 
 
-class ComponentPurgeBodyFilters(msrest.serialization.Model):
+class ComponentPurgeBodyFilters(_serialization.Model):
     """User-defined filters to return data which will be purged from the table.
 
     :ivar column: The column of the table over which the given query should run.
@@ -1677,10 +1625,10 @@ class ComponentPurgeBodyFilters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'column': {'key': 'column', 'type': 'str'},
-        'operator': {'key': 'operator', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'object'},
-        'key': {'key': 'key', 'type': 'str'},
+        "column": {"key": "column", "type": "str"},
+        "operator": {"key": "operator", "type": "str"},
+        "value": {"key": "value", "type": "object"},
+        "key": {"key": "key", "type": "str"},
     }
 
     def __init__(
@@ -1690,8 +1638,8 @@ class ComponentPurgeBodyFilters(msrest.serialization.Model):
         operator: Optional[str] = None,
         value: Optional[Any] = None,
         key: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword column: The column of the table over which the given query should run.
         :paramtype column: str
@@ -1706,80 +1654,70 @@ class ComponentPurgeBodyFilters(msrest.serialization.Model):
          custom dimension.
         :paramtype key: str
         """
-        super(ComponentPurgeBodyFilters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.column = column
         self.operator = operator
         self.value = value
         self.key = key
 
 
-class ComponentPurgeResponse(msrest.serialization.Model):
+class ComponentPurgeResponse(_serialization.Model):
     """Response containing operationId for a specific purge action.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar operation_id: Required. Id to use when querying for status for a particular purge
-     operation.
+    :ivar operation_id: Id to use when querying for status for a particular purge operation.
+     Required.
     :vartype operation_id: str
     """
 
     _validation = {
-        'operation_id': {'required': True},
+        "operation_id": {"required": True},
     }
 
     _attribute_map = {
-        'operation_id': {'key': 'operationId', 'type': 'str'},
+        "operation_id": {"key": "operationId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        operation_id: str,
-        **kwargs
-    ):
+    def __init__(self, *, operation_id: str, **kwargs: Any) -> None:
         """
-        :keyword operation_id: Required. Id to use when querying for status for a particular purge
-         operation.
+        :keyword operation_id: Id to use when querying for status for a particular purge operation.
+         Required.
         :paramtype operation_id: str
         """
-        super(ComponentPurgeResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.operation_id = operation_id
 
 
-class ComponentPurgeStatusResponse(msrest.serialization.Model):
+class ComponentPurgeStatusResponse(_serialization.Model):
     """Response containing status for a specific purge operation.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar status: Required. Status of the operation represented by the requested Id. Possible
-     values include: "pending", "completed".
+    :ivar status: Status of the operation represented by the requested Id. Required. Known values
+     are: "pending" and "completed".
     :vartype status: str or ~azure.mgmt.applicationinsights.v2015_05_01.models.PurgeState
     """
 
     _validation = {
-        'status': {'required': True},
+        "status": {"required": True},
     }
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
+        "status": {"key": "status", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        status: Union[str, "PurgeState"],
-        **kwargs
-    ):
+    def __init__(self, *, status: Union[str, "_models.PurgeState"], **kwargs: Any) -> None:
         """
-        :keyword status: Required. Status of the operation represented by the requested Id. Possible
-         values include: "pending", "completed".
+        :keyword status: Status of the operation represented by the requested Id. Required. Known
+         values are: "pending" and "completed".
         :paramtype status: str or ~azure.mgmt.applicationinsights.v2015_05_01.models.PurgeState
         """
-        super(ComponentPurgeStatusResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.status = status
 
 
-class ErrorFieldContract(msrest.serialization.Model):
+class ErrorFieldContract(_serialization.Model):
     """Error Field contract.
 
     :ivar code: Property level error code.
@@ -1791,19 +1729,14 @@ class ErrorFieldContract(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        message: Optional[str] = None,
-        target: Optional[str] = None,
-        **kwargs
-    ):
+        self, *, code: Optional[str] = None, message: Optional[str] = None, target: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword code: Property level error code.
         :paramtype code: str
@@ -1812,14 +1745,15 @@ class ErrorFieldContract(msrest.serialization.Model):
         :keyword target: Property name.
         :paramtype target: str
         """
-        super(ErrorFieldContract, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
         self.target = target
 
 
-class ErrorResponse(msrest.serialization.Model):
-    """Error response indicates Insights service is not able to process the incoming request. The reason is provided in the error message.
+class ErrorResponse(_serialization.Model):
+    """Error response indicates Insights service is not able to process the incoming request. The
+    reason is provided in the error message.
 
     :ivar code: Error code.
     :vartype code: str
@@ -1828,29 +1762,23 @@ class ErrorResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        message: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword code: Error code.
         :paramtype code: str
         :keyword message: Error message indicating why the operation failed.
         :paramtype message: str
         """
-        super(ErrorResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
 
 
-class InnerError(msrest.serialization.Model):
+class InnerError(_serialization.Model):
     """Inner error.
 
     :ivar diagnosticcontext: Provides correlation for request.
@@ -1860,29 +1788,25 @@ class InnerError(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'diagnosticcontext': {'key': 'diagnosticcontext', 'type': 'str'},
-        'time': {'key': 'time', 'type': 'iso-8601'},
+        "diagnosticcontext": {"key": "diagnosticcontext", "type": "str"},
+        "time": {"key": "time", "type": "iso-8601"},
     }
 
     def __init__(
-        self,
-        *,
-        diagnosticcontext: Optional[str] = None,
-        time: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        self, *, diagnosticcontext: Optional[str] = None, time: Optional[datetime.datetime] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword diagnosticcontext: Provides correlation for request.
         :paramtype diagnosticcontext: str
         :keyword time: Request time.
         :paramtype time: ~datetime.datetime
         """
-        super(InnerError, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.diagnosticcontext = diagnosticcontext
         self.time = time
 
 
-class LinkProperties(msrest.serialization.Model):
+class LinkProperties(_serialization.Model):
     """Contains a sourceId and workbook resource id to link two resources.
 
     :ivar source_id: The source Azure resource id.
@@ -1894,9 +1818,9 @@ class LinkProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'source_id': {'key': 'sourceId', 'type': 'str'},
-        'target_id': {'key': 'targetId', 'type': 'str'},
-        'category': {'key': 'category', 'type': 'str'},
+        "source_id": {"key": "sourceId", "type": "str"},
+        "target_id": {"key": "targetId", "type": "str"},
+        "category": {"key": "category", "type": "str"},
     }
 
     def __init__(
@@ -1905,8 +1829,8 @@ class LinkProperties(msrest.serialization.Model):
         source_id: Optional[str] = None,
         target_id: Optional[str] = None,
         category: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword source_id: The source Azure resource id.
         :paramtype source_id: str
@@ -1915,13 +1839,13 @@ class LinkProperties(msrest.serialization.Model):
         :keyword category: The category of workbook.
         :paramtype category: str
         """
-        super(LinkProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.source_id = source_id
         self.target_id = target_id
         self.category = category
 
 
-class MyWorkbookResource(msrest.serialization.Model):
+class MyWorkbookResource(_serialization.Model):
     """An azure resource object.
 
     :ivar id: Azure resource Id.
@@ -1932,28 +1856,28 @@ class MyWorkbookResource(msrest.serialization.Model):
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         type: Optional[str] = None,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Azure resource Id.
         :paramtype id: str
@@ -1963,10 +1887,10 @@ class MyWorkbookResource(msrest.serialization.Model):
         :paramtype type: str
         :keyword location: Resource location.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         """
-        super(MyWorkbookResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
         self.name = name
         self.type = type
@@ -1974,7 +1898,7 @@ class MyWorkbookResource(msrest.serialization.Model):
         self.tags = tags
 
 
-class MyWorkbook(MyWorkbookResource):
+class MyWorkbook(MyWorkbookResource):  # pylint: disable=too-many-instance-attributes
     """An Application Insights private workbook definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1987,9 +1911,9 @@ class MyWorkbook(MyWorkbookResource):
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar kind: The kind of workbook. Choices are user and shared. Possible values include: "user",
+    :ivar kind: The kind of workbook. Choices are user and shared. Known values are: "user" and
      "shared".
     :vartype kind: str or ~azure.mgmt.applicationinsights.v2015_05_01.models.SharedTypeKind
     :ivar display_name: The user-defined name of the private workbook.
@@ -2015,44 +1939,44 @@ class MyWorkbook(MyWorkbookResource):
     """
 
     _validation = {
-        'time_modified': {'readonly': True},
-        'user_id': {'readonly': True},
+        "time_modified": {"readonly": True},
+        "user_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'serialized_data': {'key': 'properties.serializedData', 'type': 'str'},
-        'version': {'key': 'properties.version', 'type': 'str'},
-        'time_modified': {'key': 'properties.timeModified', 'type': 'str'},
-        'category': {'key': 'properties.category', 'type': 'str'},
-        'tags_properties_tags': {'key': 'properties.tags', 'type': '[str]'},
-        'user_id': {'key': 'properties.userId', 'type': 'str'},
-        'source_id': {'key': 'properties.sourceId', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "kind": {"key": "kind", "type": "str"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "serialized_data": {"key": "properties.serializedData", "type": "str"},
+        "version": {"key": "properties.version", "type": "str"},
+        "time_modified": {"key": "properties.timeModified", "type": "str"},
+        "category": {"key": "properties.category", "type": "str"},
+        "tags_properties_tags": {"key": "properties.tags", "type": "[str]"},
+        "user_id": {"key": "properties.userId", "type": "str"},
+        "source_id": {"key": "properties.sourceId", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         type: Optional[str] = None,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        kind: Optional[Union[str, "SharedTypeKind"]] = None,
+        kind: Optional[Union[str, "_models.SharedTypeKind"]] = None,
         display_name: Optional[str] = None,
         serialized_data: Optional[str] = None,
         version: Optional[str] = None,
         category: Optional[str] = None,
         tags_properties_tags: Optional[List[str]] = None,
         source_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Azure resource Id.
         :paramtype id: str
@@ -2062,10 +1986,10 @@ class MyWorkbook(MyWorkbookResource):
         :paramtype type: str
         :keyword location: Resource location.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword kind: The kind of workbook. Choices are user and shared. Possible values include:
-         "user", "shared".
+        :keyword kind: The kind of workbook. Choices are user and shared. Known values are: "user" and
+         "shared".
         :paramtype kind: str or ~azure.mgmt.applicationinsights.v2015_05_01.models.SharedTypeKind
         :keyword display_name: The user-defined name of the private workbook.
         :paramtype display_name: str
@@ -2083,7 +2007,7 @@ class MyWorkbook(MyWorkbookResource):
         :keyword source_id: Optional resourceId for a source resource.
         :paramtype source_id: str
         """
-        super(MyWorkbook, self).__init__(id=id, name=name, type=type, location=location, tags=tags, **kwargs)
+        super().__init__(id=id, name=name, type=type, location=location, tags=tags, **kwargs)
         self.kind = kind
         self.display_name = display_name
         self.serialized_data = serialized_data
@@ -2095,7 +2019,7 @@ class MyWorkbook(MyWorkbookResource):
         self.source_id = source_id
 
 
-class MyWorkbookError(msrest.serialization.Model):
+class MyWorkbookError(_serialization.Model):
     """Error message body that will indicate why the operation failed.
 
     :ivar code: Service-defined error code. This code serves as a sub-status for the HTTP error
@@ -2108,9 +2032,9 @@ class MyWorkbookError(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorFieldContract]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorFieldContract]"},
     }
 
     def __init__(
@@ -2118,9 +2042,9 @@ class MyWorkbookError(msrest.serialization.Model):
         *,
         code: Optional[str] = None,
         message: Optional[str] = None,
-        details: Optional[List["ErrorFieldContract"]] = None,
-        **kwargs
-    ):
+        details: Optional[List["_models.ErrorFieldContract"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword code: Service-defined error code. This code serves as a sub-status for the HTTP error
          code specified in the response.
@@ -2130,13 +2054,13 @@ class MyWorkbookError(msrest.serialization.Model):
         :keyword details: The list of invalid fields send in request, in case of validation error.
         :paramtype details: list[~azure.mgmt.applicationinsights.v2015_05_01.models.ErrorFieldContract]
         """
-        super(MyWorkbookError, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
         self.details = details
 
 
-class MyWorkbooksListResult(msrest.serialization.Model):
+class MyWorkbooksListResult(_serialization.Model):
     """Workbook list result.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2146,24 +2070,20 @@ class MyWorkbooksListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[MyWorkbook]'},
+        "value": {"key": "value", "type": "[MyWorkbook]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(MyWorkbooksListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.value = None
 
 
-class Operation(msrest.serialization.Model):
+class Operation(_serialization.Model):
     """CDN REST API operation.
 
     :ivar name: Operation name: {provider}/{resource}/{operation}.
@@ -2173,29 +2093,25 @@ class Operation(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
+        "name": {"key": "name", "type": "str"},
+        "display": {"key": "display", "type": "OperationDisplay"},
     }
 
     def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        display: Optional["OperationDisplay"] = None,
-        **kwargs
-    ):
+        self, *, name: Optional[str] = None, display: Optional["_models.OperationDisplay"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword name: Operation name: {provider}/{resource}/{operation}.
         :paramtype name: str
         :keyword display: The object that represents the operation.
         :paramtype display: ~azure.mgmt.applicationinsights.v2015_05_01.models.OperationDisplay
         """
-        super(Operation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.display = display
 
 
-class OperationDisplay(msrest.serialization.Model):
+class OperationDisplay(_serialization.Model):
     """The object that represents the operation.
 
     :ivar provider: Service provider: Microsoft.Cdn.
@@ -2207,9 +2123,9 @@ class OperationDisplay(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
     }
 
     def __init__(
@@ -2218,8 +2134,8 @@ class OperationDisplay(msrest.serialization.Model):
         provider: Optional[str] = None,
         resource: Optional[str] = None,
         operation: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider: Service provider: Microsoft.Cdn.
         :paramtype provider: str
@@ -2228,14 +2144,15 @@ class OperationDisplay(msrest.serialization.Model):
         :keyword operation: Operation type: Read, write, delete, etc.
         :paramtype operation: str
         """
-        super(OperationDisplay, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.provider = provider
         self.resource = resource
         self.operation = operation
 
 
-class OperationListResult(msrest.serialization.Model):
-    """Result of the request to list CDN operations. It contains a list of operations and a URL link to get the next set of results.
+class OperationListResult(_serialization.Model):
+    """Result of the request to list CDN operations. It contains a list of operations and a URL link
+    to get the next set of results.
 
     :ivar value: List of CDN operations supported by the CDN resource provider.
     :vartype value: list[~azure.mgmt.applicationinsights.v2015_05_01.models.Operation]
@@ -2244,29 +2161,25 @@ class OperationListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Operation]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Operation]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["Operation"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+        self, *, value: Optional[List["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of CDN operations supported by the CDN resource provider.
         :paramtype value: list[~azure.mgmt.applicationinsights.v2015_05_01.models.Operation]
         :keyword next_link: URL to get the next set of operation list results if there are any.
         :paramtype next_link: str
         """
-        super(OperationListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class PrivateLinkScopedResource(msrest.serialization.Model):
+class PrivateLinkScopedResource(_serialization.Model):
     """The private link scope resource reference.
 
     :ivar resource_id: The full resource Id of the private link scope resource.
@@ -2276,54 +2189,44 @@ class PrivateLinkScopedResource(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'resource_id': {'key': 'ResourceId', 'type': 'str'},
-        'scope_id': {'key': 'ScopeId', 'type': 'str'},
+        "resource_id": {"key": "ResourceId", "type": "str"},
+        "scope_id": {"key": "ScopeId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        resource_id: Optional[str] = None,
-        scope_id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, resource_id: Optional[str] = None, scope_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword resource_id: The full resource Id of the private link scope resource.
         :paramtype resource_id: str
         :keyword scope_id: The private link scope unique Identifier.
         :paramtype scope_id: str
         """
-        super(PrivateLinkScopedResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.resource_id = resource_id
         self.scope_id = scope_id
 
 
-class TagsResource(msrest.serialization.Model):
-    """A container holding only the Tags for a resource, allowing the user to update the tags on a WebTest instance.
+class TagsResource(_serialization.Model):
+    """A container holding only the Tags for a resource, allowing the user to update the tags on a
+    WebTest instance.
 
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         """
-        super(TagsResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
 
 
-class WebtestsResource(msrest.serialization.Model):
+class WebtestsResource(_serialization.Model):
     """An azure resource object.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2336,41 +2239,35 @@ class WebtestsResource(msrest.serialization.Model):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         """
-        super(WebtestsResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -2378,7 +2275,7 @@ class WebtestsResource(msrest.serialization.Model):
         self.tags = tags
 
 
-class WebTest(WebtestsResource):
+class WebTest(WebtestsResource):  # pylint: disable=too-many-instance-attributes
     """An Application Insights web test definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2391,12 +2288,12 @@ class WebTest(WebtestsResource):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar kind: The kind of web test that this web test watches. Choices are ping and multistep.
-     Possible values include: "ping", "multistep".
+     Known values are: "ping" and "multistep".
     :vartype kind: str or ~azure.mgmt.applicationinsights.v2015_05_01.models.WebTestKind
     :ivar synthetic_monitor_id: Unique ID of this WebTest. This is typically the same value as the
      Name field.
@@ -2411,8 +2308,8 @@ class WebTest(WebtestsResource):
     :vartype frequency: int
     :ivar timeout: Seconds until this WebTest will timeout and fail. Default value is 30.
     :vartype timeout: int
-    :ivar web_test_kind: The kind of web test this is, valid choices are ping and multistep.
-     Possible values include: "ping", "multistep".
+    :ivar web_test_kind: The kind of web test this is, valid choices are ping and multistep. Known
+     values are: "ping" and "multistep".
     :vartype web_test_kind: str or ~azure.mgmt.applicationinsights.v2015_05_01.models.WebTestKind
     :ivar retry_enabled: Allow for retries should this WebTest fail.
     :vartype retry_enabled: bool
@@ -2429,31 +2326,31 @@ class WebTest(WebtestsResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'synthetic_monitor_id': {'key': 'properties.SyntheticMonitorId', 'type': 'str'},
-        'web_test_name': {'key': 'properties.Name', 'type': 'str'},
-        'description': {'key': 'properties.Description', 'type': 'str'},
-        'enabled': {'key': 'properties.Enabled', 'type': 'bool'},
-        'frequency': {'key': 'properties.Frequency', 'type': 'int'},
-        'timeout': {'key': 'properties.Timeout', 'type': 'int'},
-        'web_test_kind': {'key': 'properties.Kind', 'type': 'str'},
-        'retry_enabled': {'key': 'properties.RetryEnabled', 'type': 'bool'},
-        'locations': {'key': 'properties.Locations', 'type': '[WebTestGeolocation]'},
-        'configuration': {'key': 'properties.Configuration', 'type': 'WebTestPropertiesConfiguration'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "kind": {"key": "kind", "type": "str"},
+        "synthetic_monitor_id": {"key": "properties.SyntheticMonitorId", "type": "str"},
+        "web_test_name": {"key": "properties.Name", "type": "str"},
+        "description": {"key": "properties.Description", "type": "str"},
+        "enabled": {"key": "properties.Enabled", "type": "bool"},
+        "frequency": {"key": "properties.Frequency", "type": "int"},
+        "timeout": {"key": "properties.Timeout", "type": "int"},
+        "web_test_kind": {"key": "properties.Kind", "type": "str"},
+        "retry_enabled": {"key": "properties.RetryEnabled", "type": "bool"},
+        "locations": {"key": "properties.Locations", "type": "[WebTestGeolocation]"},
+        "configuration": {"key": "properties.Configuration", "type": "WebTestPropertiesConfiguration"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -2461,26 +2358,26 @@ class WebTest(WebtestsResource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        kind: Optional[Union[str, "WebTestKind"]] = None,
+        kind: Optional[Union[str, "_models.WebTestKind"]] = None,
         synthetic_monitor_id: Optional[str] = None,
         web_test_name: Optional[str] = None,
         description: Optional[str] = None,
         enabled: Optional[bool] = None,
-        frequency: Optional[int] = 300,
-        timeout: Optional[int] = 30,
-        web_test_kind: Optional[Union[str, "WebTestKind"]] = None,
+        frequency: int = 300,
+        timeout: int = 30,
+        web_test_kind: Optional[Union[str, "_models.WebTestKind"]] = None,
         retry_enabled: Optional[bool] = None,
-        locations: Optional[List["WebTestGeolocation"]] = None,
-        configuration: Optional["WebTestPropertiesConfiguration"] = None,
-        **kwargs
-    ):
+        locations: Optional[List["_models.WebTestGeolocation"]] = None,
+        configuration: Optional["_models.WebTestPropertiesConfiguration"] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword kind: The kind of web test that this web test watches. Choices are ping and multistep.
-         Possible values include: "ping", "multistep".
+         Known values are: "ping" and "multistep".
         :paramtype kind: str or ~azure.mgmt.applicationinsights.v2015_05_01.models.WebTestKind
         :keyword synthetic_monitor_id: Unique ID of this WebTest. This is typically the same value as
          the Name field.
@@ -2497,7 +2394,7 @@ class WebTest(WebtestsResource):
         :keyword timeout: Seconds until this WebTest will timeout and fail. Default value is 30.
         :paramtype timeout: int
         :keyword web_test_kind: The kind of web test this is, valid choices are ping and multistep.
-         Possible values include: "ping", "multistep".
+         Known values are: "ping" and "multistep".
         :paramtype web_test_kind: str or ~azure.mgmt.applicationinsights.v2015_05_01.models.WebTestKind
         :keyword retry_enabled: Allow for retries should this WebTest fail.
         :paramtype retry_enabled: bool
@@ -2509,7 +2406,7 @@ class WebTest(WebtestsResource):
         :paramtype configuration:
          ~azure.mgmt.applicationinsights.v2015_05_01.models.WebTestPropertiesConfiguration
         """
-        super(WebTest, self).__init__(location=location, tags=tags, **kwargs)
+        super().__init__(location=location, tags=tags, **kwargs)
         self.kind = kind
         self.synthetic_monitor_id = synthetic_monitor_id
         self.web_test_name = web_test_name
@@ -2524,37 +2421,33 @@ class WebTest(WebtestsResource):
         self.provisioning_state = None
 
 
-class WebTestGeolocation(msrest.serialization.Model):
-    """Geo-physical location to run a web test from. You must specify one or more locations for the test to run from.
+class WebTestGeolocation(_serialization.Model):
+    """Geo-physical location to run a web test from. You must specify one or more locations for the
+    test to run from.
 
     :ivar location: Location ID for the webtest to run from.
     :vartype location: str
     """
 
     _attribute_map = {
-        'location': {'key': 'Id', 'type': 'str'},
+        "location": {"key": "Id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, location: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword location: Location ID for the webtest to run from.
         :paramtype location: str
         """
-        super(WebTestGeolocation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.location = location
 
 
-class WebTestListResult(msrest.serialization.Model):
+class WebTestListResult(_serialization.Model):
     """A list of 0 or more Application Insights web test definitions.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. Set of Application Insights web test definitions.
+    :ivar value: Set of Application Insights web test definitions. Required.
     :vartype value: list[~azure.mgmt.applicationinsights.v2015_05_01.models.WebTest]
     :ivar next_link: The link to get the next part of the returned list of web tests, should the
      return set be too large for a single request. May be null.
@@ -2562,34 +2455,28 @@ class WebTestListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[WebTest]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[WebTest]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["WebTest"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.WebTest"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
-        :keyword value: Required. Set of Application Insights web test definitions.
+        :keyword value: Set of Application Insights web test definitions. Required.
         :paramtype value: list[~azure.mgmt.applicationinsights.v2015_05_01.models.WebTest]
         :keyword next_link: The link to get the next part of the returned list of web tests, should the
          return set be too large for a single request. May be null.
         :paramtype next_link: str
         """
-        super(WebTestListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class WebTestPropertiesConfiguration(msrest.serialization.Model):
+class WebTestPropertiesConfiguration(_serialization.Model):
     """An XML configuration specification for a WebTest.
 
     :ivar web_test: The XML specification of a WebTest to run against an application.
@@ -2597,24 +2484,19 @@ class WebTestPropertiesConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'web_test': {'key': 'WebTest', 'type': 'str'},
+        "web_test": {"key": "WebTest", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        web_test: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, web_test: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword web_test: The XML specification of a WebTest to run against an application.
         :paramtype web_test: str
         """
-        super(WebTestPropertiesConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.web_test = web_test
 
 
-class WorkbookResource(msrest.serialization.Model):
+class WorkbookResource(_serialization.Model):
     """An azure resource object.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2627,38 +2509,32 @@ class WorkbookResource(msrest.serialization.Model):
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: Resource location.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         """
-        super(WorkbookResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -2666,7 +2542,7 @@ class WorkbookResource(msrest.serialization.Model):
         self.tags = tags
 
 
-class Workbook(WorkbookResource):
+class Workbook(WorkbookResource):  # pylint: disable=too-many-instance-attributes
     """An Application Insights workbook definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2679,9 +2555,9 @@ class Workbook(WorkbookResource):
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar kind: The kind of workbook. Choices are user and shared. Possible values include: "user",
+    :ivar kind: The kind of workbook. Choices are user and shared. Known values are: "user" and
      "shared".
     :vartype kind: str or ~azure.mgmt.applicationinsights.v2015_05_01.models.SharedTypeKind
     :ivar name_properties_name: The user-defined name of the workbook.
@@ -2695,8 +2571,8 @@ class Workbook(WorkbookResource):
     :ivar workbook_id: Internally assigned unique id of the workbook definition.
     :vartype workbook_id: str
     :ivar shared_type_kind: Enum indicating if this workbook definition is owned by a specific user
-     or is shared between all users with access to the Application Insights component. Possible
-     values include: "user", "shared".
+     or is shared between all users with access to the Application Insights component. Known values
+     are: "user" and "shared".
     :vartype shared_type_kind: str or
      ~azure.mgmt.applicationinsights.v2015_05_01.models.SharedTypeKind
     :ivar time_modified: Date and time in UTC of the last modification that was made to this
@@ -2714,29 +2590,29 @@ class Workbook(WorkbookResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'time_modified': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "time_modified": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'name_properties_name': {'key': 'properties.name', 'type': 'str'},
-        'serialized_data': {'key': 'properties.serializedData', 'type': 'str'},
-        'version': {'key': 'properties.version', 'type': 'str'},
-        'workbook_id': {'key': 'properties.workbookId', 'type': 'str'},
-        'shared_type_kind': {'key': 'properties.kind', 'type': 'str'},
-        'time_modified': {'key': 'properties.timeModified', 'type': 'str'},
-        'category': {'key': 'properties.category', 'type': 'str'},
-        'tags_properties_tags': {'key': 'properties.tags', 'type': '[str]'},
-        'user_id': {'key': 'properties.userId', 'type': 'str'},
-        'source_resource_id': {'key': 'properties.sourceResourceId', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "kind": {"key": "kind", "type": "str"},
+        "name_properties_name": {"key": "properties.name", "type": "str"},
+        "serialized_data": {"key": "properties.serializedData", "type": "str"},
+        "version": {"key": "properties.version", "type": "str"},
+        "workbook_id": {"key": "properties.workbookId", "type": "str"},
+        "shared_type_kind": {"key": "properties.kind", "type": "str"},
+        "time_modified": {"key": "properties.timeModified", "type": "str"},
+        "category": {"key": "properties.category", "type": "str"},
+        "tags_properties_tags": {"key": "properties.tags", "type": "[str]"},
+        "user_id": {"key": "properties.userId", "type": "str"},
+        "source_resource_id": {"key": "properties.sourceResourceId", "type": "str"},
     }
 
     def __init__(
@@ -2744,25 +2620,25 @@ class Workbook(WorkbookResource):
         *,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        kind: Optional[Union[str, "SharedTypeKind"]] = None,
+        kind: Optional[Union[str, "_models.SharedTypeKind"]] = None,
         name_properties_name: Optional[str] = None,
         serialized_data: Optional[str] = None,
         version: Optional[str] = None,
         workbook_id: Optional[str] = None,
-        shared_type_kind: Optional[Union[str, "SharedTypeKind"]] = None,
+        shared_type_kind: Optional[Union[str, "_models.SharedTypeKind"]] = None,
         category: Optional[str] = None,
         tags_properties_tags: Optional[List[str]] = None,
         user_id: Optional[str] = None,
         source_resource_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword kind: The kind of workbook. Choices are user and shared. Possible values include:
-         "user", "shared".
+        :keyword kind: The kind of workbook. Choices are user and shared. Known values are: "user" and
+         "shared".
         :paramtype kind: str or ~azure.mgmt.applicationinsights.v2015_05_01.models.SharedTypeKind
         :keyword name_properties_name: The user-defined name of the workbook.
         :paramtype name_properties_name: str
@@ -2775,8 +2651,8 @@ class Workbook(WorkbookResource):
         :keyword workbook_id: Internally assigned unique id of the workbook definition.
         :paramtype workbook_id: str
         :keyword shared_type_kind: Enum indicating if this workbook definition is owned by a specific
-         user or is shared between all users with access to the Application Insights component. Possible
-         values include: "user", "shared".
+         user or is shared between all users with access to the Application Insights component. Known
+         values are: "user" and "shared".
         :paramtype shared_type_kind: str or
          ~azure.mgmt.applicationinsights.v2015_05_01.models.SharedTypeKind
         :keyword category: Workbook category, as defined by the user at creation time.
@@ -2789,7 +2665,7 @@ class Workbook(WorkbookResource):
         :keyword source_resource_id: Optional resourceId for a source resource.
         :paramtype source_resource_id: str
         """
-        super(Workbook, self).__init__(location=location, tags=tags, **kwargs)
+        super().__init__(location=location, tags=tags, **kwargs)
         self.kind = kind
         self.name_properties_name = name_properties_name
         self.serialized_data = serialized_data
@@ -2803,7 +2679,7 @@ class Workbook(WorkbookResource):
         self.source_resource_id = source_resource_id
 
 
-class WorkbookError(msrest.serialization.Model):
+class WorkbookError(_serialization.Model):
     """Error message body that will indicate why the operation failed.
 
     :ivar code: Service-defined error code. This code serves as a sub-status for the HTTP error
@@ -2816,9 +2692,9 @@ class WorkbookError(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorFieldContract]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorFieldContract]"},
     }
 
     def __init__(
@@ -2826,9 +2702,9 @@ class WorkbookError(msrest.serialization.Model):
         *,
         code: Optional[str] = None,
         message: Optional[str] = None,
-        details: Optional[List["ErrorFieldContract"]] = None,
-        **kwargs
-    ):
+        details: Optional[List["_models.ErrorFieldContract"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword code: Service-defined error code. This code serves as a sub-status for the HTTP error
          code specified in the response.
@@ -2838,13 +2714,13 @@ class WorkbookError(msrest.serialization.Model):
         :keyword details: The list of invalid fields send in request, in case of validation error.
         :paramtype details: list[~azure.mgmt.applicationinsights.v2015_05_01.models.ErrorFieldContract]
         """
-        super(WorkbookError, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
         self.details = details
 
 
-class WorkbooksListResult(msrest.serialization.Model):
+class WorkbooksListResult(_serialization.Model):
     """Workbook list result.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2854,24 +2730,20 @@ class WorkbooksListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Workbook]'},
+        "value": {"key": "value", "type": "[Workbook]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(WorkbooksListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.value = None
 
 
-class WorkItemConfiguration(msrest.serialization.Model):
+class WorkItemConfiguration(_serialization.Model):
     """Work item configuration associated with an application insights resource.
 
     :ivar connector_id: Connector identifier where work item is created.
@@ -2887,11 +2759,11 @@ class WorkItemConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'connector_id': {'key': 'ConnectorId', 'type': 'str'},
-        'config_display_name': {'key': 'ConfigDisplayName', 'type': 'str'},
-        'is_default': {'key': 'IsDefault', 'type': 'bool'},
-        'id': {'key': 'Id', 'type': 'str'},
-        'config_properties': {'key': 'ConfigProperties', 'type': 'str'},
+        "connector_id": {"key": "ConnectorId", "type": "str"},
+        "config_display_name": {"key": "ConfigDisplayName", "type": "str"},
+        "is_default": {"key": "IsDefault", "type": "bool"},
+        "id": {"key": "Id", "type": "str"},
+        "config_properties": {"key": "ConfigProperties", "type": "str"},
     }
 
     def __init__(
@@ -2900,10 +2772,10 @@ class WorkItemConfiguration(msrest.serialization.Model):
         connector_id: Optional[str] = None,
         config_display_name: Optional[str] = None,
         is_default: Optional[bool] = None,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         config_properties: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword connector_id: Connector identifier where work item is created.
         :paramtype connector_id: str
@@ -2916,7 +2788,7 @@ class WorkItemConfiguration(msrest.serialization.Model):
         :keyword config_properties: Serialized JSON object for detailed properties.
         :paramtype config_properties: str
         """
-        super(WorkItemConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.connector_id = connector_id
         self.config_display_name = config_display_name
         self.is_default = is_default
@@ -2924,7 +2796,7 @@ class WorkItemConfiguration(msrest.serialization.Model):
         self.config_properties = config_properties
 
 
-class WorkItemConfigurationError(msrest.serialization.Model):
+class WorkItemConfigurationError(_serialization.Model):
     """Error associated with trying to get work item configuration or configurations.
 
     :ivar code: Error detail code and explanation.
@@ -2936,9 +2808,9 @@ class WorkItemConfigurationError(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'innererror': {'key': 'innererror', 'type': 'InnerError'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "innererror": {"key": "innererror", "type": "InnerError"},
     }
 
     def __init__(
@@ -2946,9 +2818,9 @@ class WorkItemConfigurationError(msrest.serialization.Model):
         *,
         code: Optional[str] = None,
         message: Optional[str] = None,
-        innererror: Optional["InnerError"] = None,
-        **kwargs
-    ):
+        innererror: Optional["_models.InnerError"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword code: Error detail code and explanation.
         :paramtype code: str
@@ -2957,13 +2829,13 @@ class WorkItemConfigurationError(msrest.serialization.Model):
         :keyword innererror: Inner error.
         :paramtype innererror: ~azure.mgmt.applicationinsights.v2015_05_01.models.InnerError
         """
-        super(WorkItemConfigurationError, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
         self.innererror = innererror
 
 
-class WorkItemConfigurationsListResult(msrest.serialization.Model):
+class WorkItemConfigurationsListResult(_serialization.Model):
     """Work item configuration list result.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2973,24 +2845,20 @@ class WorkItemConfigurationsListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[WorkItemConfiguration]'},
+        "value": {"key": "value", "type": "[WorkItemConfiguration]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(WorkItemConfigurationsListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.value = None
 
 
-class WorkItemCreateConfiguration(msrest.serialization.Model):
+class WorkItemCreateConfiguration(_serialization.Model):
     """Work item configuration creation payload.
 
     :ivar connector_id: Unique connector id.
@@ -3004,10 +2872,10 @@ class WorkItemCreateConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'connector_id': {'key': 'ConnectorId', 'type': 'str'},
-        'connector_data_configuration': {'key': 'ConnectorDataConfiguration', 'type': 'str'},
-        'validate_only': {'key': 'ValidateOnly', 'type': 'bool'},
-        'work_item_properties': {'key': 'WorkItemProperties', 'type': '{str}'},
+        "connector_id": {"key": "ConnectorId", "type": "str"},
+        "connector_data_configuration": {"key": "ConnectorDataConfiguration", "type": "str"},
+        "validate_only": {"key": "ValidateOnly", "type": "bool"},
+        "work_item_properties": {"key": "WorkItemProperties", "type": "{str}"},
     }
 
     def __init__(
@@ -3017,8 +2885,8 @@ class WorkItemCreateConfiguration(msrest.serialization.Model):
         connector_data_configuration: Optional[str] = None,
         validate_only: Optional[bool] = None,
         work_item_properties: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword connector_id: Unique connector id.
         :paramtype connector_id: str
@@ -3029,7 +2897,7 @@ class WorkItemCreateConfiguration(msrest.serialization.Model):
         :keyword work_item_properties: Custom work item properties.
         :paramtype work_item_properties: dict[str, str]
         """
-        super(WorkItemCreateConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.connector_id = connector_id
         self.connector_data_configuration = connector_data_configuration
         self.validate_only = validate_only

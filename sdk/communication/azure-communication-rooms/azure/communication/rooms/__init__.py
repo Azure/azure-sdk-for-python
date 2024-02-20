@@ -4,24 +4,44 @@
 # license information.
 # --------------------------------------------------------------------------
 from ._rooms_client import RoomsClient
-from ._generated.models._enums import (
-    RoomJoinPolicy,
-    RoleType
-)
 from ._models import (
     CommunicationRoom,
     RoomParticipant,
-    ParticipantsCollection
+    ParticipantRole
+)
+from ._shared.models import (
+    CommunicationIdentifier,
+    CommunicationIdentifierKind,
+    CommunicationCloudEnvironment,
+    CommunicationUserIdentifier,
+    CommunicationUserProperties,
+    PhoneNumberIdentifier,
+    PhoneNumberProperties,
+    UnknownIdentifier,
+    MicrosoftTeamsUserIdentifier,
+    MicrosoftTeamsUserProperties,
+    MicrosoftBotIdentifier,
+    MicrosoftBotProperties
 )
 from ._version import VERSION
 
 __all__ = [
     'CommunicationRoom',
+    'ParticipantRole',
     'RoomsClient',
     'RoomParticipant',
-    'RoomJoinPolicy',
-    'RoleType',
-    'ParticipantsCollection'
+    'CommunicationIdentifier',
+    'CommunicationIdentifierKind',
+    'CommunicationCloudEnvironment',
+    'CommunicationUserIdentifier',
+    'CommunicationUserProperties',
+    'PhoneNumberIdentifier',
+    'PhoneNumberProperties',
+    'UnknownIdentifier',
+    'MicrosoftTeamsUserIdentifier',
+    'MicrosoftTeamsUserProperties',
+    'MicrosoftBotIdentifier',
+    'MicrosoftBotProperties'
 ]
 
 __VERSION__ = VERSION

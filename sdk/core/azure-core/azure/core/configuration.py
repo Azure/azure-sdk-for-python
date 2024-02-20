@@ -23,9 +23,23 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+from __future__ import annotations
+from typing import Union, Optional, Any, Generic, TypeVar, TYPE_CHECKING
+
+HTTPResponseType = TypeVar("HTTPResponseType")
+HTTPRequestType = TypeVar("HTTPRequestType")
+
+if TYPE_CHECKING:
+    from .pipeline.policies import HTTPPolicy, AsyncHTTPPolicy, SansIOHTTPPolicy
+
+    AnyPolicy = Union[
+        HTTPPolicy[HTTPRequestType, HTTPResponseType],
+        AsyncHTTPPolicy[HTTPRequestType, HTTPResponseType],
+        SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType],
+    ]
 
 
-class Configuration(object):
+class Configuration(Generic[HTTPRequestType, HTTPResponseType]):  # pylint: disable=too-many-instance-attributes
     """Provides the home for all of the configurable policies in the pipeline.
 
     A new Configuration object provides no default policies and does not specify in what
@@ -45,6 +59,7 @@ class Configuration(object):
      User-Agent header.
     :ivar authentication_policy: Provides configuration parameters for adding a bearer token Authorization
      header to requests.
+    :ivar request_id_policy: Provides configuration parameters for adding a request id to requests.
     :keyword polling_interval: Polling interval while doing LRO operations, if Retry-After is not set.
 
     .. admonition:: Example:
@@ -56,48 +71,52 @@ class Configuration(object):
             :caption: Creates the service configuration and adds policies.
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         # Headers (sent with every request)
-        self.headers_policy = None
+        self.headers_policy: Optional[AnyPolicy[HTTPRequestType, HTTPResponseType]] = None
 
         # Proxy settings (Currently used to configure transport, could be pipeline policy instead)
-        self.proxy_policy = None
+        self.proxy_policy: Optional[AnyPolicy[HTTPRequestType, HTTPResponseType]] = None
 
         # Redirect configuration
-        self.redirect_policy = None
+        self.redirect_policy: Optional[AnyPolicy[HTTPRequestType, HTTPResponseType]] = None
 
         # Retry configuration
-        self.retry_policy = None
+        self.retry_policy: Optional[AnyPolicy[HTTPRequestType, HTTPResponseType]] = None
 
         # Custom hook configuration
-        self.custom_hook_policy = None
+        self.custom_hook_policy: Optional[AnyPolicy[HTTPRequestType, HTTPResponseType]] = None
 
         # Logger configuration
-        self.logging_policy = None
+        self.logging_policy: Optional[AnyPolicy[HTTPRequestType, HTTPResponseType]] = None
 
         # Http logger configuration
-        self.http_logging_policy = None
+        self.http_logging_policy: Optional[AnyPolicy[HTTPRequestType, HTTPResponseType]] = None
 
         # User Agent configuration
-        self.user_agent_policy = None
+        self.user_agent_policy: Optional[AnyPolicy[HTTPRequestType, HTTPResponseType]] = None
 
         # Authentication configuration
-        self.authentication_policy = None
+        self.authentication_policy: Optional[AnyPolicy[HTTPRequestType, HTTPResponseType]] = None
+
+        # Request ID policy
+        self.request_id_policy: Optional[AnyPolicy[HTTPRequestType, HTTPResponseType]] = None
 
         # Polling interval if no retry-after in polling calls results
-        self.polling_interval = kwargs.get("polling_interval", 30)
+        self.polling_interval: float = kwargs.get("polling_interval", 30)
 
 
-class ConnectionConfiguration(object):
+class ConnectionConfiguration:
     """HTTP transport connection configuration settings.
 
     Common properties that can be configured on all transports. Found in the
     Configuration object.
 
-    :keyword int connection_timeout: A single float in seconds for the connection timeout. Defaults to 300 seconds.
-    :keyword int read_timeout: A single float in seconds for the read timeout. Defaults to 300 seconds.
-    :keyword bool connection_verify: SSL certificate verification. Enabled by default. Set to False to disable,
+    :keyword float connection_timeout: A single float in seconds for the connection timeout. Defaults to 300 seconds.
+    :keyword float read_timeout: A single float in seconds for the read timeout. Defaults to 300 seconds.
+    :keyword connection_verify: SSL certificate verification. Enabled by default. Set to False to disable,
      alternatively can be set to the path to a CA_BUNDLE file or directory with certificates of trusted CAs.
+    :paramtype connection_verify: bool or str
     :keyword str connection_cert: Client-side certificates. You can specify a local cert to use as client side
      certificate, as a single file (containing the private key and the certificate) or as a tuple of both files' paths.
     :keyword int connection_data_block_size: The block size of data sent over the connection. Defaults to 4096 bytes.
@@ -112,9 +131,18 @@ class ConnectionConfiguration(object):
             :caption: Configuring transport connection settings.
     """
 
-    def __init__(self, **kwargs):
-        self.timeout = kwargs.pop('connection_timeout', 300)
-        self.read_timeout = kwargs.pop('read_timeout', 300)
-        self.verify = kwargs.pop('connection_verify', True)
-        self.cert = kwargs.pop('connection_cert', None)
-        self.data_block_size = kwargs.pop('connection_data_block_size', 4096)
+    def __init__(
+        self,  # pylint: disable=unused-argument
+        *,
+        connection_timeout: float = 300,
+        read_timeout: float = 300,
+        connection_verify: Union[bool, str] = True,
+        connection_cert: Optional[str] = None,
+        connection_data_block_size: int = 4096,
+        **kwargs: Any,
+    ) -> None:
+        self.timeout = connection_timeout
+        self.read_timeout = read_timeout
+        self.verify = connection_verify
+        self.cert = connection_cert
+        self.data_block_size = connection_data_block_size

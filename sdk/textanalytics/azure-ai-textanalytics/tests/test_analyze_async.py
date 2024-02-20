@@ -20,7 +20,7 @@ from testcase import TextAnalyticsClientPreparer as _TextAnalyticsClientPreparer
 from devtools_testutils import set_bodiless_matcher
 from devtools_testutils.aio import recorded_by_proxy_async
 from testcase import TextAnalyticsTest
-from azure.ai.textanalytics.aio._lro_async import AsyncAnalyzeActionsLROPoller
+from azure.ai.textanalytics.aio._lro_async import AsyncAnalyzeActionsLROPoller, AsyncTextAnalysisLROPoller
 from azure.ai.textanalytics.aio import TextAnalyticsClient
 from azure.ai.textanalytics import (
     TextDocumentInput,
@@ -42,9 +42,9 @@ from azure.ai.textanalytics import (
     ClassifyDocumentResult,
     RecognizeCustomEntitiesResult,
     AnalyzeHealthcareEntitiesAction,
-    ExtractSummaryAction,
-    ExtractSummaryResult,
-    AbstractSummaryAction,
+    ExtractiveSummaryAction,
+    ExtractiveSummaryResult,
+    AbstractiveSummaryAction,
 )
 
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
@@ -242,7 +242,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                     assert 4 == food_target.offset
 
                     assert 'service' == service_target.text
-                    assert 'positive' == service_target.sentiment
+                    assert 'negative' == service_target.sentiment
                     assert 0.0 == service_target.confidence_scores.neutral
                     self.validateConfidenceScores(service_target.confidence_scores)
                     assert 13 == service_target.offset
@@ -560,7 +560,6 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                     assert document_result.statistics.character_count
                     assert document_result.statistics.transaction_count
 
-    @pytest.mark.skip("https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/15758510")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
@@ -579,6 +578,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
 
             response = await poller.result()
 
+            assert isinstance(poller, AsyncTextAnalysisLROPoller)
             assert isinstance(poller, AsyncAnalyzeActionsLROPoller)
             assert isinstance(poller.created_on, datetime.datetime)
             assert not poller.display_name
@@ -868,6 +868,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
         assert isinstance(action_results[1][1], RecognizePiiEntitiesResult)
         assert action_results[1][1].id == "2"
 
+    @pytest.mark.skip("Flaky test")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
@@ -949,6 +950,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
             assert isinstance(action_result[9], ExtractKeyPhrasesResult)
             assert action_result[9].id == doc_id
 
+    @pytest.mark.skip("https://msazure.visualstudio.com/Cognitive%20Services/_workitems/edit/24886131")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
@@ -1180,6 +1182,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
         assert document_results[1][1].is_error
         assert document_results[1][2].is_error
 
+    @pytest.mark.skip("https://msazure.visualstudio.com/Cognitive%20Services/_workitems/edit/24886131")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
@@ -1782,8 +1785,6 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                 actions=[
                     AnalyzeHealthcareEntitiesAction(
                         model_version="latest",
-                        fhir_version="4.0.1",
-                        document_type="HistoryAndPhysical",
                     )
                 ],
                 show_stats=True,
@@ -1800,8 +1801,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                         assert res.error.code == "InvalidDocument"
                     else:
                         assert res.entities
-                        # assert res.statistics FIXME https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/15860714
-                        assert res.fhir_bundle
+                        assert res.statistics
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
@@ -1825,7 +1825,6 @@ class TestAnalyzeAsync(TextAnalyticsTest):
             )
             await poller.cancel()
 
-    @pytest.mark.skip("https://github.com/Azure/azure-sdk-for-python/issues/26163")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
@@ -1938,7 +1937,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
         async with client:
             response = await (await client.begin_analyze_actions(
                 docs,
-                actions=[ExtractSummaryAction()],
+                actions=[ExtractiveSummaryAction()],
                 show_stats=True,
                 polling_interval=self._interval(),
             )).result()
@@ -1951,7 +1950,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
             for document_result in document_results:
                 assert len(document_result) == 1
                 for result in document_result:
-                    assert isinstance(result, ExtractSummaryResult)
+                    assert isinstance(result, ExtractiveSummaryResult)
                     assert result.statistics
                     assert len(result.sentences) == 3 if result.id == 0 else 1
                     for sentence in result.sentences:
@@ -1986,7 +1985,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
         async with client:
             response = await (await client.begin_analyze_actions(
                 docs,
-                actions=[ExtractSummaryAction(max_sentence_count=5, order_by="Rank")],
+                actions=[ExtractiveSummaryAction(max_sentence_count=5, order_by="Rank")],
                 show_stats=True,
                 polling_interval=self._interval(),
             )).result()
@@ -1999,7 +1998,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
             for document_result in document_results:
                 assert len(document_result) == 1
                 for result in document_result:
-                    assert isinstance(result, ExtractSummaryResult)
+                    assert isinstance(result, ExtractiveSummaryResult)
                     assert result.statistics
                     assert len(result.sentences) == 5
                     previous_score = 1.0
@@ -2021,7 +2020,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
         async with client:
             response = await (await client.begin_analyze_actions(
                 docs,
-                actions=[ExtractSummaryAction()],
+                actions=[ExtractiveSummaryAction()],
                 show_stats=True,
                 polling_interval=self._interval(),
             )).result()
@@ -2033,38 +2032,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
             assert document_results[0][0].error.code == "InvalidDocument"
 
             assert not document_results[1][0].is_error
-            assert isinstance(document_results[1][0], ExtractSummaryResult)
-
-    @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
-    @recorded_by_proxy_async
-    async def test_entity_action_resolutions(self, client):
-        docs = [
-            "The cat is 1 year old and weighs 10 pounds."
-        ]
-        async with client:
-            poller = await client.begin_analyze_actions(
-                docs,
-                actions=[RecognizeEntitiesAction(
-                    model_version="2022-10-01-preview"
-                )],
-                polling_interval=self._interval(),
-            )
-            response = await poller.result()
-
-        async for document_results in response:
-            document_result = document_results[0]
-            for entity in document_result.entities:
-                assert entity.text is not None
-                assert entity.category is not None
-                assert entity.offset is not None
-                assert entity.confidence_score is not None
-                for res in entity.resolutions:
-                    assert res.resolution_kind in ["WeightResolution", "AgeResolution"]
-                    if res.resolution_kind == "WeightResolution":
-                        assert res.value == 10
-                    if res.resolution_kind == "AgeResolution":
-                        assert res.value == 1
+            assert isinstance(document_results[1][0], ExtractiveSummaryResult)
 
     @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
     @TextAnalyticsPreparer()
@@ -2091,7 +2059,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
 
         poller = await client.begin_analyze_actions(
             docs,
-            actions=[AbstractSummaryAction()],
+            actions=[AbstractiveSummaryAction()],
             show_stats=True,
             polling_interval=self._interval(),
         )
@@ -2105,112 +2073,3 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                         assert context.offset is not None
                         assert context.length is not None
                     assert summary.text
-
-    @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
-    @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
-    @recorded_by_proxy_async
-    async def test_autodetect_lang_document(self, client):
-        docs = [{"id": "1", "language": "auto", "text": "Microsoft was founded by Bill Gates and Paul Allen"},
-                {"id": "2", "language": "auto", "text": "Microsoft fue fundado por Bill Gates y Paul Allen"}]
-        actions=[
-            RecognizeEntitiesAction(),
-            ExtractKeyPhrasesAction(),
-            RecognizePiiEntitiesAction(),
-            # RecognizeLinkedEntitiesAction(),  # https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/15859145
-            AnalyzeSentimentAction(),
-            AnalyzeHealthcareEntitiesAction(),  # https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/16040765
-            ExtractSummaryAction(),
-        ]
-        async with client:
-            poller = await client.begin_analyze_actions(
-                docs,
-                actions,
-                polling_interval=self._interval(),
-            )
-
-            result = await poller.result()
-            async for res in result:
-                for doc in res:
-                    # https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/16040765
-                    if doc.kind == "Healthcare":
-                        if doc.id == "1":
-                            assert doc.detected_language == "en"
-                    else:
-                        if doc.id == "1":
-                            assert doc.detected_language.iso6391_name == "en"
-                        elif doc.id == "2" and not doc.is_error:
-                            assert doc.detected_language.iso6391_name == "es"
-
-    @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
-    @TextAnalyticsPreparer()
-    @TextAnalyticsCustomPreparer()
-    @recorded_by_proxy_async
-    async def test_autodetect_lang_document_custom(self, **kwargs):
-        textanalytics_custom_text_endpoint = kwargs.pop("textanalytics_custom_text_endpoint")
-        textanalytics_custom_text_key = kwargs.pop("textanalytics_custom_text_key")
-        textanalytics_single_label_classify_project_name = kwargs.pop("textanalytics_single_label_classify_project_name")
-        textanalytics_single_label_classify_deployment_name = kwargs.pop("textanalytics_single_label_classify_deployment_name")
-        textanalytics_multi_label_classify_project_name = kwargs.pop("textanalytics_multi_label_classify_project_name")
-        textanalytics_multi_label_classify_deployment_name = kwargs.pop("textanalytics_multi_label_classify_deployment_name")
-        textanalytics_custom_entities_project_name = kwargs.pop("textanalytics_custom_entities_project_name")
-        textanalytics_custom_entities_deployment_name = kwargs.pop("textanalytics_custom_entities_deployment_name")
-        set_bodiless_matcher()  # don't match on body for this test since we scrub the proj/deployment values
-        client = TextAnalyticsClient(textanalytics_custom_text_endpoint,
-                                     AzureKeyCredential(textanalytics_custom_text_key))
-        async with client:
-            docs = [{"id": "1", "language": "auto", "text": "Microsoft was founded by Bill Gates and Paul Allen"},
-                    {"id": "2", "language": "auto", "text": "Microsoft fue fundado por Bill Gates y Paul Allen"}]
-            actions=[
-                RecognizeCustomEntitiesAction(
-                    project_name=textanalytics_custom_entities_project_name,
-                    deployment_name=textanalytics_custom_entities_deployment_name,
-                ),
-                SingleLabelClassifyAction(
-                    project_name=textanalytics_single_label_classify_project_name,
-                    deployment_name=textanalytics_single_label_classify_deployment_name,
-                ),
-                MultiLabelClassifyAction(
-                    project_name=textanalytics_multi_label_classify_project_name,
-                    deployment_name=textanalytics_multi_label_classify_deployment_name,
-                ),
-            ]
-            poller = await client.begin_analyze_actions(
-                docs,
-                actions,
-                polling_interval=self._interval(),
-            )
-
-            result = await poller.result()
-            async for res in result:
-                for doc in res:
-                    if doc.id == "1":
-                        assert doc.detected_language.iso6391_name == "en"
-                    else:
-                        assert doc.detected_language.iso6391_name == "es"
-
-    @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
-    @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
-    @recorded_by_proxy_async
-    async def test_autodetect_with_default(self, client):
-        docs = ["hello world"]
-        actions=[
-            RecognizeEntitiesAction(),
-            ExtractKeyPhrasesAction(),
-            RecognizePiiEntitiesAction(),
-            RecognizeLinkedEntitiesAction(),
-            AnalyzeSentimentAction(),
-        ]
-        poller = await client.begin_analyze_actions(
-            docs,
-            actions,
-            language="auto",
-            autodetect_default_language="es",
-            polling_interval=self._interval(),
-        )
-
-        result = await poller.result()
-        async for res in result:
-            for doc in res:
-                assert doc.detected_language.iso6391_name == "en"

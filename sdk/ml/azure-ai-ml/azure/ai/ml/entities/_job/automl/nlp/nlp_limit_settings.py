@@ -2,7 +2,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import NlpVerticalLimitSettings as RestNlpLimitSettings
+from typing import Optional
+
+from azure.ai.ml._restclient.v2023_04_01_preview.models import NlpVerticalLimitSettings as RestNlpLimitSettings
 from azure.ai.ml._utils.utils import from_iso_duration_format_mins, to_iso_duration_format_mins
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
@@ -11,21 +13,30 @@ class NlpLimitSettings(RestTranslatableMixin):
     """Limit settings for all AutoML NLP Verticals.
 
     :param max_concurrent_trials: Maximum number of concurrent AutoML iterations.
-    :type max_concurrent_trials: int, optional
+    :type max_concurrent_trials: int
     :param max_trials: Maximum number of AutoML iterations.
-    :type max_trials: int, optional
+    :type max_trials: int
     :param timeout_minutes: AutoML job timeout.
-    :type timeout_minutes: int, optional
+    :type timeout_minutes: int
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_automl_nlp.py
+                :start-after: [START automl.nlp_limit_settings]
+                :end-before: [END automl.nlp_limit_settings]
+                :language: python
+                :dedent: 8
+                :caption: creating an nlp limit settings
     """
 
     def __init__(
         self,
         *,
-        max_concurrent_trials: int = None,
+        max_concurrent_trials: Optional[int] = None,
         max_trials: int = 1,
         max_nodes: int = 1,
-        timeout_minutes: int = None,
-        trial_timeout_minutes: int = None,
+        timeout_minutes: Optional[int] = None,
+        trial_timeout_minutes: Optional[int] = None,
     ):
         self.max_concurrent_trials = max_concurrent_trials
         self.max_trials = max_trials

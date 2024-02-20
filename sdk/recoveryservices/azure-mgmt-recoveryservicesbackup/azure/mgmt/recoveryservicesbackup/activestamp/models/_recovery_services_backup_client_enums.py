@@ -262,6 +262,7 @@ class HttpStatusCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SERVICE_UNAVAILABLE = "ServiceUnavailable"
     GATEWAY_TIMEOUT = "GatewayTimeout"
     HTTP_VERSION_NOT_SUPPORTED = "HttpVersionNotSupported"
+    CONTINUE_ENUM = "Continue"
 
 
 class IAASVMPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -487,6 +488,7 @@ class ProtectedItemState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PROTECTION_ERROR = "ProtectionError"
     PROTECTION_STOPPED = "ProtectionStopped"
     PROTECTION_PAUSED = "ProtectionPaused"
+    BACKUPS_SUSPENDED = "BackupsSuspended"
 
 
 class ProtectionIntentItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -509,6 +511,7 @@ class ProtectionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PROTECTION_ERROR = "ProtectionError"
     PROTECTION_STOPPED = "ProtectionStopped"
     PROTECTION_PAUSED = "ProtectionPaused"
+    BACKUPS_SUSPENDED = "BackupsSuspended"
 
 
 class ProtectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -652,6 +655,7 @@ class SoftDeleteFeatureState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     INVALID = "Invalid"
     ENABLED = "Enabled"
     DISABLED = "Disabled"
+    ALWAYS_ON = "AlwaysON"
 
 
 class SQLDataDirectoryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -690,6 +694,14 @@ class SupportStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DEFAULT_OFF = "DefaultOFF"
     DEFAULT_ON = "DefaultON"
     NOT_SUPPORTED = "NotSupported"
+
+
+class TargetDiskNetworkAccessOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Network access settings to be used for restored disks."""
+
+    SAME_AS_ON_SOURCE_DISKS = "SameAsOnSourceDisks"
+    ENABLE_PRIVATE_ACCESS_FOR_ALL_DISKS = "EnablePrivateAccessForAllDisks"
+    ENABLE_PUBLIC_ACCESS_FOR_ALL_DISKS = "EnablePublicAccessForAllDisks"
 
 
 class TieringMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -733,6 +745,16 @@ class ValidationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     INVALID = "Invalid"
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
+
+
+class VaultSubResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """GroupId for the PrivateEndpointConnection - AzureBackup, AzureBackup_secondary or
+    AzureSiteRecovery.
+    """
+
+    AZURE_BACKUP = "AzureBackup"
+    AZURE_BACKUP_SECONDARY = "AzureBackup_secondary"
+    AZURE_SITE_RECOVERY = "AzureSiteRecovery"
 
 
 class WeekOfMonth(str, Enum, metaclass=CaseInsensitiveEnumMeta):

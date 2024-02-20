@@ -1,0 +1,38 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
+type: pipeline
+display_name: enumerate Singularity priority value
+experiment_name: Singularity-in-pipeline
+jobs:
+  low_node:
+    command: echo Low
+    environment:
+      image: singularitybase.azurecr.io/base/job/deepspeed/0.4-pytorch-1.7.0-cuda11.0-cudnn8-devel:20221017T152225334
+    resources:
+      instance_type: Singularity.ND40rs_v2
+      properties:
+        singularity:
+          imageVersion: ""
+          slaTier: Basic
+          priority: Low
+  medium_node:
+    command: echo Medium
+    environment:
+      image: singularitybase.azurecr.io/base/job/deepspeed/0.4-pytorch-1.7.0-cuda11.0-cudnn8-devel:20221017T152225334
+    resources:
+      instance_type: Singularity.ND40rs_v2
+      properties:
+        singularity:
+          imageVersion: ""
+          slaTier: Standard
+          priority: Medium
+  high_node:
+    command: echo High
+    environment:
+      image: singularitybase.azurecr.io/base/job/deepspeed/0.4-pytorch-1.7.0-cuda11.0-cudnn8-devel:20221017T152225334
+    resources:
+      instance_type: Singularity.ND40rs_v2
+      properties:
+        singularity:
+          imageVersion: ""
+          slaTier: Premium
+          priority: High

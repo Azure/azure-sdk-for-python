@@ -31,7 +31,8 @@ EXCLUDED_PACKAGE_VERSIONS = {
     'azure-communication-sms': '1.0.0',
     'azure-search-documents': '11.2.0b3',
     'azure-ai-language-questionanswering': '1.0.0b1',
-    'azure-monitor-opentelemetry-exporter': '1.0.0b5'
+    'azure-monitor-opentelemetry-exporter': '1.0.0b5',
+    'azure-ai-ml': '1.2.0'
 }
 
 # This method identifies release tag for latest or oldest released version of a given package

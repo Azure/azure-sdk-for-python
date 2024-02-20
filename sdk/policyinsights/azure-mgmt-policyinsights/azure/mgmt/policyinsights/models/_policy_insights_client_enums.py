@@ -21,6 +21,12 @@ class ComplianceState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     UNKNOWN = "Unknown"
 
 
+class ComponentPolicyStatesResource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ComponentPolicyStatesResource."""
+
+    LATEST = "latest"
+
+
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of identity that created the resource."""
 

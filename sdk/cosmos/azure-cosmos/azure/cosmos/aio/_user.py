@@ -269,9 +269,9 @@ class UserProxy(object):
         :type body: Dict[str, Any]
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the replace failed or the permission
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the replace operation failed or the permission
             with given id does not exist.
-        :returns: A permission object representing the permission after the replace went through.
+        :returns: A permission object representing the permission after the replace operation went through.
         :rtype: ~azure.cosmos.Permission
         """
         request_options = build_options(kwargs)

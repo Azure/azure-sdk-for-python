@@ -14,6 +14,7 @@ from azure.core.tracing.ext.opencensus_span import OpenCensusSpan
 def test_get_span_from_thread():
 
     result = []
+
     def get_span_from_thread(output):
         current_span = OpenCensusSpan.get_current_span()
         output.append(current_span)
@@ -21,10 +22,7 @@ def test_get_span_from_thread():
     tracer = Tracer(sampler=AlwaysOnSampler())
     with tracer.span(name="TestSpan") as span:
 
-        thread = threading.Thread(
-            target=get_span_from_thread,
-            args=(result,)
-        )
+        thread = threading.Thread(target=get_span_from_thread, args=(result,))
         thread.start()
         thread.join()
 

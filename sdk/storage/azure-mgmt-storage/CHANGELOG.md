@@ -1,5 +1,25 @@
 # Release History
 
+## 21.1.0 (2023-08-18)
+
+### Features Added
+
+  - Added operation StorageAccountsOperations.begin_customer_initiated_migration
+  - Added operation StorageAccountsOperations.get_customer_initiated_migration
+  - Model BlobInventoryPolicyFilter has a new parameter creation_time
+  - Model GeoReplicationStats has a new parameter can_planned_failover
+  - Model GeoReplicationStats has a new parameter post_failover_redundancy
+  - Model GeoReplicationStats has a new parameter post_planned_failover_redundancy
+  - Model StorageAccount has a new parameter account_migration_in_progress
+  - Model StorageAccount has a new parameter is_sku_conversion_blocked
+
+## 21.1.0b1 (2023-02-20)
+
+### Other Changes
+
+  - Added generated samples in github repo
+  - Drop support for python<3.7.0
+
 ## 21.0.0 (2022-11-15)
 
 ### Features Added

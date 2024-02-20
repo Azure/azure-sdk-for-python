@@ -37,3 +37,4 @@ pip install azure-identity azure-keyvault-certificates azure-keyvault-secrets
 | custom_credentials.py | demonstrates custom credential implementations using existing access tokens and an MSAL client |
 | key_vault_cert.py | demonstrates authenticating with a Key Vault certificate |
 | user_authentication.py | demonstrates user authentication and token cache persistence API for applications |
+| credential_creation_code_snippets.py | demonstrates how to instantiate various credentials |

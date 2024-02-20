@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, overload
-from urllib.parse import parse_qs, urljoin, urlparse
+import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import (
@@ -47,7 +47,7 @@ class ActivityLogAlertsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~$(python-base-namespace).v2017_03_01_preview.aio.MonitorManagementClient`'s
+        :class:`~azure.mgmt.monitor.v2017_03_01_preview.aio.MonitorManagementClient`'s
         :attr:`activity_log_alerts` attribute.
     """
 
@@ -79,13 +79,13 @@ class ActivityLogAlertsOperations:
         :type activity_log_alert_name: str
         :param activity_log_alert: The activity log alert to create or use for the update. Required.
         :type activity_log_alert:
-         ~$(python-base-namespace).v2017_03_01_preview.models.ActivityLogAlertResource
+         ~azure.mgmt.monitor.v2017_03_01_preview.models.ActivityLogAlertResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ActivityLogAlertResource or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2017_03_01_preview.models.ActivityLogAlertResource
+        :rtype: ~azure.mgmt.monitor.v2017_03_01_preview.models.ActivityLogAlertResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -113,7 +113,7 @@ class ActivityLogAlertsOperations:
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ActivityLogAlertResource or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2017_03_01_preview.models.ActivityLogAlertResource
+        :rtype: ~azure.mgmt.monitor.v2017_03_01_preview.models.ActivityLogAlertResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -133,15 +133,15 @@ class ActivityLogAlertsOperations:
         :param activity_log_alert_name: The name of the activity log alert. Required.
         :type activity_log_alert_name: str
         :param activity_log_alert: The activity log alert to create or use for the update. Is either a
-         model type or a IO type. Required.
+         ActivityLogAlertResource type or a IO type. Required.
         :type activity_log_alert:
-         ~$(python-base-namespace).v2017_03_01_preview.models.ActivityLogAlertResource or IO
+         ~azure.mgmt.monitor.v2017_03_01_preview.models.ActivityLogAlertResource or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ActivityLogAlertResource or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2017_03_01_preview.models.ActivityLogAlertResource
+        :rtype: ~azure.mgmt.monitor.v2017_03_01_preview.models.ActivityLogAlertResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -155,9 +155,9 @@ class ActivityLogAlertsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2017-03-01-preview"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ActivityLogAlertResource]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2017-03-01-preview"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ActivityLogAlertResource] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -180,10 +180,11 @@ class ActivityLogAlertsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -200,11 +201,13 @@ class ActivityLogAlertsOperations:
             deserialized = self._deserialize("ActivityLogAlertResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
-    create_or_update.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/activityLogAlerts/{activityLogAlertName}"}  # type: ignore
+    create_or_update.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/activityLogAlerts/{activityLogAlertName}"
+    }
 
     @distributed_trace_async
     async def get(
@@ -219,7 +222,7 @@ class ActivityLogAlertsOperations:
         :type activity_log_alert_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ActivityLogAlertResource or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2017_03_01_preview.models.ActivityLogAlertResource
+        :rtype: ~azure.mgmt.monitor.v2017_03_01_preview.models.ActivityLogAlertResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -233,8 +236,8 @@ class ActivityLogAlertsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2017-03-01-preview"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ActivityLogAlertResource]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2017-03-01-preview"))
+        cls: ClsType[_models.ActivityLogAlertResource] = kwargs.pop("cls", None)
 
         request = build_get_request(
             resource_group_name=resource_group_name,
@@ -246,10 +249,11 @@ class ActivityLogAlertsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -266,7 +270,9 @@ class ActivityLogAlertsOperations:
 
         return deserialized
 
-    get.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/activityLogAlerts/{activityLogAlertName}"}  # type: ignore
+    get.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/activityLogAlerts/{activityLogAlertName}"
+    }
 
     @distributed_trace_async
     async def delete(  # pylint: disable=inconsistent-return-statements
@@ -295,8 +301,8 @@ class ActivityLogAlertsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2017-03-01-preview"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2017-03-01-preview"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_delete_request(
             resource_group_name=resource_group_name,
@@ -308,10 +314,11 @@ class ActivityLogAlertsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -324,7 +331,9 @@ class ActivityLogAlertsOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/activityLogAlerts/{activityLogAlertName}"}  # type: ignore
+    delete.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/activityLogAlerts/{activityLogAlertName}"
+    }
 
     @overload
     async def update(
@@ -346,13 +355,13 @@ class ActivityLogAlertsOperations:
         :type activity_log_alert_name: str
         :param activity_log_alert_patch: Parameters supplied to the operation. Required.
         :type activity_log_alert_patch:
-         ~$(python-base-namespace).v2017_03_01_preview.models.ActivityLogAlertResourcePatch
+         ~azure.mgmt.monitor.v2017_03_01_preview.models.ActivityLogAlertResourcePatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ActivityLogAlertResource or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2017_03_01_preview.models.ActivityLogAlertResource
+        :rtype: ~azure.mgmt.monitor.v2017_03_01_preview.models.ActivityLogAlertResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -381,7 +390,7 @@ class ActivityLogAlertsOperations:
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ActivityLogAlertResource or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2017_03_01_preview.models.ActivityLogAlertResource
+        :rtype: ~azure.mgmt.monitor.v2017_03_01_preview.models.ActivityLogAlertResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -401,16 +410,16 @@ class ActivityLogAlertsOperations:
         :type resource_group_name: str
         :param activity_log_alert_name: The name of the activity log alert. Required.
         :type activity_log_alert_name: str
-        :param activity_log_alert_patch: Parameters supplied to the operation. Is either a model type
-         or a IO type. Required.
+        :param activity_log_alert_patch: Parameters supplied to the operation. Is either a
+         ActivityLogAlertResourcePatch type or a IO type. Required.
         :type activity_log_alert_patch:
-         ~$(python-base-namespace).v2017_03_01_preview.models.ActivityLogAlertResourcePatch or IO
+         ~azure.mgmt.monitor.v2017_03_01_preview.models.ActivityLogAlertResourcePatch or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ActivityLogAlertResource or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2017_03_01_preview.models.ActivityLogAlertResource
+        :rtype: ~azure.mgmt.monitor.v2017_03_01_preview.models.ActivityLogAlertResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -424,9 +433,9 @@ class ActivityLogAlertsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2017-03-01-preview"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ActivityLogAlertResource]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2017-03-01-preview"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ActivityLogAlertResource] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -449,10 +458,11 @@ class ActivityLogAlertsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -469,7 +479,9 @@ class ActivityLogAlertsOperations:
 
         return deserialized
 
-    update.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/activityLogAlerts/{activityLogAlertName}"}  # type: ignore
+    update.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/activityLogAlerts/{activityLogAlertName}"
+    }
 
     @distributed_trace
     def list_by_subscription_id(self, **kwargs: Any) -> AsyncIterable["_models.ActivityLogAlertResource"]:
@@ -479,14 +491,14 @@ class ActivityLogAlertsOperations:
         :return: An iterator like instance of either ActivityLogAlertResource or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~$(python-base-namespace).v2017_03_01_preview.models.ActivityLogAlertResource]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.monitor.v2017_03_01_preview.models.ActivityLogAlertResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2017-03-01-preview"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ActivityLogAlertList]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2017-03-01-preview"))
+        cls: ClsType[_models.ActivityLogAlertList] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -507,16 +519,23 @@ class ActivityLogAlertsOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -524,14 +543,15 @@ class ActivityLogAlertsOperations:
             deserialized = self._deserialize("ActivityLogAlertList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -544,7 +564,9 @@ class ActivityLogAlertsOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list_by_subscription_id.metadata = {"url": "/subscriptions/{subscriptionId}/providers/microsoft.insights/activityLogAlerts"}  # type: ignore
+    list_by_subscription_id.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/microsoft.insights/activityLogAlerts"
+    }
 
     @distributed_trace
     def list_by_resource_group(
@@ -559,14 +581,14 @@ class ActivityLogAlertsOperations:
         :return: An iterator like instance of either ActivityLogAlertResource or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~$(python-base-namespace).v2017_03_01_preview.models.ActivityLogAlertResource]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.monitor.v2017_03_01_preview.models.ActivityLogAlertResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2017-03-01-preview"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ActivityLogAlertList]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2017-03-01-preview"))
+        cls: ClsType[_models.ActivityLogAlertList] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -588,16 +610,23 @@ class ActivityLogAlertsOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -605,14 +634,15 @@ class ActivityLogAlertsOperations:
             deserialized = self._deserialize("ActivityLogAlertList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -625,4 +655,6 @@ class ActivityLogAlertsOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list_by_resource_group.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/activityLogAlerts"}  # type: ignore
+    list_by_resource_group.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/activityLogAlerts"
+    }

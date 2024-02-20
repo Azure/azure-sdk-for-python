@@ -1,5 +1,8 @@
+from pathlib import Path
+
 import pydash
 import pytest
+from test_utilities.utils import parse_local_path
 
 from azure.ai.ml import load_component
 from azure.ai.ml._utils.utils import load_yaml
@@ -65,6 +68,7 @@ class TestParallelComponentEntity:
             "properties.component_spec.$schema",
             "properties.component_spec.inputs",
             "properties.component_spec._source",
+            "properties.properties.client_component_hash",
         ]
         component_dict = component._to_rest_object().as_dict()
         component_dict = pydash.omit(component_dict, *omit_fields)
@@ -77,12 +81,15 @@ class TestParallelComponentEntity:
         assert component_dict == yaml_component_dict
 
     def test_parallel_component_version_as_a_function_with_inputs(self):
+        yaml_path = "./tests/test_configs/components/helloworld_parallel.yml"
+        yaml_component_version = load_component(source=yaml_path)
         expected_rest_component = {
             "componentId": "fake_component",
             "_source": "YAML.COMPONENT",
             "input_data": "${{inputs.component_in_path}}",
             "inputs": {
-                "component_in_number": {"job_input_type": "literal", "value": "10"},
+                "model": {"job_input_type": "literal", "value": "SVM"},
+                "label": {"job_input_type": "literal", "value": "test"},
                 "component_in_path": {
                     "job_input_type": "literal",
                     "value": "${{parent.inputs.pipeline_input}}",
@@ -93,18 +100,15 @@ class TestParallelComponentEntity:
             "mini_batch_size": 10485760,
             "task": {
                 "append_row_to": "${{outputs.scoring_summary}}",
-                "program_arguments": "--label ${{inputs.label}} --model ${{inputs.model}} "
-                "--output ${{outputs.scored_result}}",
-                "code": "../python",
+                "program_arguments": "--label ${{inputs.label}} --model ${{inputs.model}}",
+                "code": parse_local_path("../python", yaml_component_version.base_path),
                 "entry_script": "score.py",
-                "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+                "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
                 "type": "run_function",
             },
         }
-        yaml_path = "./tests/test_configs/components/helloworld_parallel.yml"
-        yaml_component_version = load_component(source=yaml_path)
         pipeline_input = PipelineInput(name="pipeline_input", owner="pipeline", meta=None)
-        yaml_component = yaml_component_version(component_in_number=10, component_in_path=pipeline_input)
+        yaml_component = yaml_component_version(model="SVM", label="test", component_in_path=pipeline_input)
 
         yaml_component._component = "fake_component"
         rest_yaml_component = yaml_component._to_rest_object()

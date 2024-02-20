@@ -6,6 +6,7 @@ parameters:
   TestPipeline: false
   VerifyAutorest: false
   ValidateFormatting: false
+  GenerateApiReviewForManualOnly: false
 
 # The variable TargetingString is set by template `eng/pipelines/templates/steps/targeting-string-resolve.yml`. This template is invoked from yml files:
 #     eng/pipelines/templates/jobs/ci.tests.yml
@@ -24,6 +25,12 @@ steps:
       ServiceDirectory: "template"
       TestPipeline: ${{ parameters.TestPipeline }}
 
+  - task: PythonScript@0
+    displayName: 'Set Tox Environment Skips'
+    inputs:
+      scriptPath: 'scripts/devops_tasks/set_tox_environment.py'
+      arguments: '--team-project="$(System.TeamProject)" --service="${{ parameters.ServiceDirectory }}"'
+
   - ${{ each artifact in parameters.Artifacts }}:
     - ${{if ne(artifact.skipVerifyChangeLog, 'true')}}:
       - template: /eng/common/pipelines/templates/steps/verify-changelog.yml
@@ -32,13 +39,8 @@ steps:
           ServiceName: ${{parameters.ServiceDirectory}}
           ForRelease: false
 
-  - pwsh: |
-     pip install -r eng/ci_tools.txt $(if($IsWindows) {"--user" })
-    displayName: 'Install Necessary Dependencies'
-    condition: succeededOrFailed()
-
   - script: |
-      pip install "./tools/azure-sdk-tools[build]" -q -I
+      python -m pip install "./tools/azure-sdk-tools[build]" -q -I
       sdk_find_invalid_versions --always-succeed --service=${{parameters.ServiceDirectory}}
     displayName: Find Invalid Versions
     condition: succeededOrFailed()
@@ -78,14 +80,14 @@ steps:
     displayName: 'Verify sdist'
     condition: and(succeededOrFailed(), ne(variables['Skip.VerifySdist'],'true'))
     inputs:
-     scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+     scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
      arguments: '"$(TargetingString)" --service=${{parameters.ServiceDirectory}} --toxenv=verifysdist'
 
   - task: PythonScript@0
     displayName: 'Verify whl'
     condition: and(succeededOrFailed(), ne(variables['Skip.VerifyWhl'],'true'))
     inputs:
-     scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+     scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
      arguments: '"$(TargetingString)" --service=${{parameters.ServiceDirectory}} --toxenv=verifywhl'
 
   - template: run_mypy.yml
@@ -108,10 +110,17 @@ steps:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         ValidateFormatting: ${{ parameters.ValidateFormatting }}
 
+  - task: PythonScript@0
+    displayName: 'Run Keyword Validation Check'
+    inputs:
+      scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
+      arguments: '"$(TargetingString)" --service=${{parameters.ServiceDirectory}} --toxenv=verify_keywords'
+    condition: and(succeededOrFailed(), ne(variables['Skip.KeywordCheck'],'true'))
+
   - task: DownloadPipelineArtifact@2
     condition: succeededOrFailed()
     inputs:
-      artifactName: 'packages'
+      artifactName: 'packages_extended'
       targetPath: $(Build.ArtifactStagingDirectory)
 
   - template: ../steps/run_bandit.yml
@@ -134,10 +143,13 @@ steps:
   - template: /eng/pipelines/templates/steps/create-apireview.yml
     parameters:
       Artifacts: ${{ parameters.Artifacts }}
+      GenerateApiReviewForManualOnly: ${{ parameters.GenerateApiReviewForManualOnly }}
+      ArtifactName: "packages_extended"
 
   - template: /eng/common/pipelines/templates/steps/detect-api-changes.yml
     parameters:
       Artifacts: ${{ parameters.Artifacts }}
+      ArtifactName: "packages_extended"
 
   - template: /eng/common/pipelines/templates/steps/eng-common-workflow-enforcer.yml
 

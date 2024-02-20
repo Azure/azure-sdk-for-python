@@ -23,23 +23,24 @@ USAGE:
 import os
 import asyncio
 
-service_endpoint = os.getenv("AZURE_SEARCH_SERVICE_ENDPOINT")
-index_name = os.getenv("AZURE_SEARCH_INDEX_NAME")
-key = os.getenv("AZURE_SEARCH_API_KEY")
+service_endpoint = os.environ["AZURE_SEARCH_SERVICE_ENDPOINT"]
+index_name = os.environ["AZURE_SEARCH_INDEX_NAME"]
+key = os.environ["AZURE_SEARCH_API_KEY"]
 
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents.aio import SearchClient
 
 search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
 
+
 async def upload_document():
     # [START upload_document_async]
     DOCUMENT = {
-        'Category': 'Hotel',
-        'HotelId': '1000',
-        'Rating': 4.0,
-        'Rooms': [],
-        'HotelName': 'Azure Inn',
+        "category": "Hotel",
+        "hotelId": "1000",
+        "rating": 4.0,
+        "rooms": [],
+        "hotelName": "Azure Inn",
     }
 
     result = await search_client.upload_documents(documents=[DOCUMENT])
@@ -47,19 +48,22 @@ async def upload_document():
     print("Upload of new document succeeded: {}".format(result[0].succeeded))
     # [END upload_document_async]
 
+
 async def merge_document():
     # [START merge_document_async]
-    result = await search_client.upload_documents(documents=[{"HotelId": "1000", "Rating": 4.5}])
+    result = await search_client.upload_documents(documents=[{"hotelId": "1000", "rating": 4.5}])
 
     print("Merge into new document succeeded: {}".format(result[0].succeeded))
     # [END merge_document_async]
 
+
 async def delete_document():
     # [START delete_document_async]
-    result = await search_client.upload_documents(documents=[{"HotelId": "1000"}])
+    result = await search_client.upload_documents(documents=[{"hotelId": "1000"}])
 
     print("Delete new document succeeded: {}".format(result[0].succeeded))
     # [END delete_document_async]
+
 
 async def main():
     await upload_document()
@@ -67,5 +71,6 @@ async def main():
     await delete_document()
     await search_client.close()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(main())

@@ -31,7 +31,7 @@ setup(
     long_description=readme + '\n\n' + changelog,
     long_description_content_type='text/markdown',
     url='https://github.com/Azure/azure-sdk-for-python',
-    keywords="azure, cognitive services, document translation, document translator, translator, translate, translation",
+    keywords="azure, cognitive services, document translation, document translator, translator, translate, translation, azure sdk",
     author='Microsoft Corporation',
     author_email='azpysdkhelp@microsoft.com',
     license='MIT License',
@@ -44,6 +44,7 @@ setup(
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
         'License :: OSI Approved :: MIT License',
     ],
     packages=find_packages(exclude=[
@@ -55,8 +56,8 @@ setup(
     ]),
     python_requires=">=3.7",
     install_requires=[
-        "azure-core<2.0.0,>=1.14.0",
-        "msrest>=0.6.21",
+        "azure-core<2.0.0,>=1.24.0",
+        "isodate<1.0.0,>=0.6.1",
     ],
     project_urls={
         'Bug Reports': 'https://github.com/Azure/azure-sdk-for-python/issues',

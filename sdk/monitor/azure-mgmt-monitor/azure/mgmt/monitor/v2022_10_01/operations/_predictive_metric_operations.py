@@ -50,7 +50,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01"))  # type: str
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -66,7 +66,7 @@ def build_get_request(
         "autoscaleSettingName": _SERIALIZER.url("autoscale_setting_name", autoscale_setting_name, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["timespan"] = _SERIALIZER.query("timespan", timespan, "str")
@@ -88,7 +88,7 @@ class PredictiveMetricOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~$(python-base-namespace).v2022_10_01.MonitorManagementClient`'s
+        :class:`~azure.mgmt.monitor.v2022_10_01.MonitorManagementClient`'s
         :attr:`predictive_metric` attribute.
     """
 
@@ -135,7 +135,7 @@ class PredictiveMetricOperations:
         :type aggregation: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PredictiveResponse or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2022_10_01.models.PredictiveResponse
+        :rtype: ~azure.mgmt.monitor.v2022_10_01.models.PredictiveResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -149,8 +149,8 @@ class PredictiveMetricOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.PredictiveResponse]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01"))
+        cls: ClsType[_models.PredictiveResponse] = kwargs.pop("cls", None)
 
         request = build_get_request(
             resource_group_name=resource_group_name,
@@ -167,10 +167,11 @@ class PredictiveMetricOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -187,4 +188,6 @@ class PredictiveMetricOperations:
 
         return deserialized
 
-    get.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Insights/autoscalesettings/{autoscaleSettingName}/predictiveMetrics"}  # type: ignore
+    get.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Insights/autoscalesettings/{autoscaleSettingName}/predictiveMetrics"
+    }

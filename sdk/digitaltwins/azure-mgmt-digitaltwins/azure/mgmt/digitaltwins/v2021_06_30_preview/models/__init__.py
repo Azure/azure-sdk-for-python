@@ -41,67 +41,69 @@ from ._models_py3 import TimeSeriesDatabaseConnection
 from ._models_py3 import TimeSeriesDatabaseConnectionListResult
 from ._models_py3 import TimeSeriesDatabaseConnectionProperties
 
-
-from ._azure_digital_twins_management_client_enums import (
-    AuthenticationType,
-    ConnectionPropertiesProvisioningState,
-    ConnectionType,
-    CreatedByType,
-    DigitalTwinsIdentityType,
-    EndpointProvisioningState,
-    EndpointType,
-    PrivateLinkServiceConnectionStatus,
-    ProvisioningState,
-    PublicNetworkAccess,
-    Reason,
-    TimeSeriesDatabaseConnectionState,
-)
+from ._azure_digital_twins_management_client_enums import AuthenticationType
+from ._azure_digital_twins_management_client_enums import ConnectionPropertiesProvisioningState
+from ._azure_digital_twins_management_client_enums import ConnectionType
+from ._azure_digital_twins_management_client_enums import CreatedByType
+from ._azure_digital_twins_management_client_enums import DigitalTwinsIdentityType
+from ._azure_digital_twins_management_client_enums import EndpointProvisioningState
+from ._azure_digital_twins_management_client_enums import EndpointType
+from ._azure_digital_twins_management_client_enums import PrivateLinkServiceConnectionStatus
+from ._azure_digital_twins_management_client_enums import ProvisioningState
+from ._azure_digital_twins_management_client_enums import PublicNetworkAccess
+from ._azure_digital_twins_management_client_enums import Reason
+from ._azure_digital_twins_management_client_enums import TimeSeriesDatabaseConnectionState
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'AzureDataExplorerConnectionProperties',
-    'CheckNameRequest',
-    'CheckNameResult',
-    'ConnectionProperties',
-    'ConnectionPropertiesPrivateLinkServiceConnectionState',
-    'ConnectionState',
-    'DigitalTwinsDescription',
-    'DigitalTwinsDescriptionListResult',
-    'DigitalTwinsEndpointResource',
-    'DigitalTwinsEndpointResourceListResult',
-    'DigitalTwinsEndpointResourceProperties',
-    'DigitalTwinsIdentity',
-    'DigitalTwinsPatchDescription',
-    'DigitalTwinsPatchProperties',
-    'DigitalTwinsResource',
-    'ErrorDefinition',
-    'ErrorResponse',
-    'EventGrid',
-    'EventHub',
-    'ExternalResource',
-    'GroupIdInformation',
-    'GroupIdInformationProperties',
-    'GroupIdInformationResponse',
-    'Operation',
-    'OperationDisplay',
-    'OperationListResult',
-    'PrivateEndpoint',
-    'PrivateEndpointConnection',
-    'PrivateEndpointConnectionsResponse',
-    'ServiceBus',
-    'SystemData',
-    'TimeSeriesDatabaseConnection',
-    'TimeSeriesDatabaseConnectionListResult',
-    'TimeSeriesDatabaseConnectionProperties',
-    'AuthenticationType',
-    'ConnectionPropertiesProvisioningState',
-    'ConnectionType',
-    'CreatedByType',
-    'DigitalTwinsIdentityType',
-    'EndpointProvisioningState',
-    'EndpointType',
-    'PrivateLinkServiceConnectionStatus',
-    'ProvisioningState',
-    'PublicNetworkAccess',
-    'Reason',
-    'TimeSeriesDatabaseConnectionState',
+    "AzureDataExplorerConnectionProperties",
+    "CheckNameRequest",
+    "CheckNameResult",
+    "ConnectionProperties",
+    "ConnectionPropertiesPrivateLinkServiceConnectionState",
+    "ConnectionState",
+    "DigitalTwinsDescription",
+    "DigitalTwinsDescriptionListResult",
+    "DigitalTwinsEndpointResource",
+    "DigitalTwinsEndpointResourceListResult",
+    "DigitalTwinsEndpointResourceProperties",
+    "DigitalTwinsIdentity",
+    "DigitalTwinsPatchDescription",
+    "DigitalTwinsPatchProperties",
+    "DigitalTwinsResource",
+    "ErrorDefinition",
+    "ErrorResponse",
+    "EventGrid",
+    "EventHub",
+    "ExternalResource",
+    "GroupIdInformation",
+    "GroupIdInformationProperties",
+    "GroupIdInformationResponse",
+    "Operation",
+    "OperationDisplay",
+    "OperationListResult",
+    "PrivateEndpoint",
+    "PrivateEndpointConnection",
+    "PrivateEndpointConnectionsResponse",
+    "ServiceBus",
+    "SystemData",
+    "TimeSeriesDatabaseConnection",
+    "TimeSeriesDatabaseConnectionListResult",
+    "TimeSeriesDatabaseConnectionProperties",
+    "AuthenticationType",
+    "ConnectionPropertiesProvisioningState",
+    "ConnectionType",
+    "CreatedByType",
+    "DigitalTwinsIdentityType",
+    "EndpointProvisioningState",
+    "EndpointType",
+    "PrivateLinkServiceConnectionStatus",
+    "ProvisioningState",
+    "PublicNetworkAccess",
+    "Reason",
+    "TimeSeriesDatabaseConnectionState",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

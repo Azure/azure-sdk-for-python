@@ -1,4 +1,4 @@
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 #
 # Copyright (c) Microsoft Corporation. All rights reserved.
 #
@@ -22,8 +22,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 #
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 import time
+
 try:
     from unittest import mock
 except ImportError:
@@ -34,9 +35,8 @@ import pytest
 from azure.core import PipelineClient
 from azure.core.exceptions import ServiceResponseError
 from azure.core.polling import *
-from azure.core.polling.base_polling import (
-    LROBasePolling, LocationPolling
-)
+from azure.core.polling.base_polling import LROBasePolling, LocationPolling
+
 # from msrest.serialization import Model
 
 
@@ -75,46 +75,45 @@ def test_no_polling(client):
     no_polling = NoPolling()
 
     initial_response = "initial response"
+
     def deserialization_cb(response):
         assert response == initial_response
-        return "Treated: "+response
+        return "Treated: " + response
 
     no_polling.initialize(client, initial_response, deserialization_cb)
-    no_polling.run() # Should no raise and do nothing
+    no_polling.run()  # Should no raise and do nothing
     assert no_polling.status() == "succeeded"
     assert no_polling.finished()
-    assert no_polling.resource() == "Treated: "+initial_response
+    assert no_polling.resource() == "Treated: " + initial_response
 
     continuation_token = no_polling.get_continuation_token()
     assert isinstance(continuation_token, str)
 
     no_polling_revived_args = NoPolling.from_continuation_token(
-        continuation_token,
-        deserialization_callback=deserialization_cb,
-        client=client
+        continuation_token, deserialization_callback=deserialization_cb, client=client
     )
     no_polling_revived = NoPolling()
     no_polling_revived.initialize(*no_polling_revived_args)
     assert no_polling_revived.status() == "succeeded"
     assert no_polling_revived.finished()
-    assert no_polling_revived.resource() == "Treated: "+initial_response
+    assert no_polling_revived.resource() == "Treated: " + initial_response
+
 
 def test_polling_with_path_format_arguments(client):
-    method = LROBasePolling(
-        timeout=0,
-        path_format_arguments={"host": "host:3000", "accountName": "local"}
-    )
+    method = LROBasePolling(timeout=0, path_format_arguments={"host": "host:3000", "accountName": "local"})
     client._base_url = "http://{accountName}{host}"
 
     method._operation = LocationPolling()
     method._operation._location_url = "/results/1"
     method._client = client
-    assert "http://localhost:3000/results/1" == method._client.format_url(method._operation.get_polling_url(), **method._path_format_arguments)
+    assert "http://localhost:3000/results/1" == method._client.format_url(
+        method._operation.get_polling_url(), **method._path_format_arguments
+    )
 
 
 class PollingTwoSteps(PollingMethod):
-    """An empty poller that returns the deserialized initial response.
-    """
+    """An empty poller that returns the deserialized initial response."""
+
     def __init__(self, sleep=0):
         self._initial_response = None
         self._deserialization_callback = None
@@ -126,10 +125,9 @@ class PollingTwoSteps(PollingMethod):
         self._finished = False
 
     def run(self):
-        """Empty run, no polling.
-        """
+        """Empty run, no polling."""
         self._finished = True
-        time.sleep(self._sleep) # Give me time to add callbacks!
+        time.sleep(self._sleep)  # Give me time to add callbacks!
 
     def status(self):
         """Return the current status as a string.
@@ -153,7 +151,7 @@ class PollingTwoSteps(PollingMethod):
     def from_continuation_token(cls, continuation_token, **kwargs):
         # type(str, Any) -> Tuple
         initial_response = continuation_token
-        deserialization_callback = kwargs['deserialization_callback']
+        deserialization_callback = kwargs["deserialization_callback"]
         return None, initial_response, deserialization_callback
 
 
@@ -165,7 +163,7 @@ def test_poller(client):
     # Same for deserialization_callback, just pass to the polling_method
     def deserialization_callback(response):
         assert response == initial_response
-        return "Treated: "+response
+        return "Treated: " + response
 
     method = NoPolling()
 
@@ -176,7 +174,7 @@ def test_poller(client):
 
     result = poller.result()
     assert poller.done()
-    assert result == "Treated: "+initial_response
+    assert result == "Treated: " + initial_response
     assert poller.status() == "succeeded"
     assert poller.polling_method() is method
     done_cb.assert_called_once_with(method)
@@ -195,7 +193,7 @@ def test_poller(client):
     poller.remove_done_callback(done_cb2)
 
     result = poller.result()
-    assert result == "Treated: "+initial_response
+    assert result == "Treated: " + initial_response
     assert poller.status() == "succeeded"
     done_cb.assert_called_once_with(method)
     done_cb2.assert_not_called()
@@ -213,22 +211,22 @@ def test_poller(client):
         client=client,
         initial_response=initial_response,
         deserialization_callback=deserialization_callback,
-        polling_method=method
+        polling_method=method,
     )
     result = new_poller.result()
-    assert result == "Treated: "+initial_response
+    assert result == "Treated: " + initial_response
     assert new_poller.status() == "succeeded"
 
 
 def test_broken_poller(client):
-
     class NoPollingError(PollingTwoSteps):
         def run(self):
             raise ValueError("Something bad happened")
 
     initial_response = "Initial response"
+
     def deserialization_callback(response):
-        return "Treated: "+response
+        return "Treated: " + response
 
     method = NoPollingError()
     poller = LROPoller(client, initial_response, deserialization_callback, method)
@@ -239,14 +237,14 @@ def test_broken_poller(client):
 
 
 def test_poller_error_continuation(client):
-
     class NoPollingError(PollingTwoSteps):
         def run(self):
             raise ServiceResponseError("Something bad happened")
 
     initial_response = "Initial response"
+
     def deserialization_callback(response):
-        return "Treated: "+response
+        return "Treated: " + response
 
     method = NoPollingError()
     poller = LROPoller(client, initial_response, deserialization_callback, method)

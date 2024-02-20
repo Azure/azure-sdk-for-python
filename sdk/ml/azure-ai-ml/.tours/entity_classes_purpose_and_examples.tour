@@ -1,0 +1,85 @@
+{
+  "$schema": "https://aka.ms/codetour-schema",
+  "title": "AML Entity Classes - The Basics",
+  "steps": [
+    {
+      "directory": "sdk/ml/azure-ai-ml/azure/ai/ml/entities",
+      "description": "This tour explains the purpose of the classes located within the (repo)/sdk/ml/azure-ai-ml/azure/ai/ml/entities directory. These entity classes are local representations of various AML resources, and serve to simplify the user experience of handling resources. We will examine the JobSchedule class and its related code in order to showcase the typical features and expectations of entity classes.",
+      "title": "Introduction"
+    },
+    {
+      "file": "sdk/ml/azure-ai-ml/azure/ai/ml/entities/__init__.py",
+      "description": "Before jumping in, you know that entity classes are one of the publicized features of the AML SDK. As such, new entity classes should usually be added to the entity \\_\\_init\\_\\_.py file to publicize them.",
+      "line": 109,
+      "title": "Entity Publicity"
+    },
+    {
+      "file": "sdk/ml/azure-ai-ml/azure/ai/ml/entities/_schedule/schedule.py",
+      "description": "This is the JobSchedule entity class. Note that it inherits from the `Resource` base class, like all top-level entity classes. As the name suggests, a `JobSchedule` object corresponds to a generic scheduled job in Azure. If you want to know which other resources are supported by the AML SDK/CLI, look at the other classes in the entities folder.\n\nClasses like these have a lot of features, many of which are specific to the resource they're representing. For now, we will examine a couple of functions that are implemented by almost all top-level entity classes: the rest conversion functions.",
+      "line": 31,
+      "title": "Example Class: JobSchedule"
+    },
+    {
+      "file": "sdk/ml/azure-ai-ml/azure/ai/ml/entities/_schedule/schedule.py",
+      "description": "One of the most important features of entity classes is their ability to convert themselves to and from their corresponding autorest representations. Take a look at the function called '_from_rest_object'. Notice the 'RestSchedule' typehint for the input? That class is the autorest equivalent of a JobSchedule, which this function consumes in order to produce a JobSchedule entity class.\n\nAt a glance, this might seem like a tedious level of redirection - after all, why can we not just use the Autorest classes directly? There are multiple reasons for that:\n\n - Implementing our own entity classes gives us much a more stable user-facing API, once which isn't liable to shift if other teams modify the API's we're leveraging.\n - Sometimes, we explicitly want to deviate from the API representation of a resource to achieve various user-friendly tradeoffs. Examples include hiding in-development features that we don't want users easily playing with, simplifying the representation of features to prevent users from easily mis-configuring resources, or simply hiding the awkward structure of the API object.\n \n For more information about the underlying API respresentation. Check out the code tour titled \"TODO WRITE AUTOREST TOUR\"",
+      "line": 210,
+      "title": "Common Function: _from_rest_object"
+    },
+    {
+      "file": "sdk/ml/azure-ai-ml/azure/ai/ml/entities/_schedule/schedule.py",
+      "description": "This is the opposite of the '_from_rest_object' function. It produces a corresponding API-compatible object from the current entity.\n\nNow, with these two functions in mind, let's take a look at how and where they are used.",
+      "line": 248,
+      "title": "Common Function: _to_rest_object"
+    },
+    {
+      "directory": "sdk/ml/azure-ai-ml/azure/ai/ml/operations",
+      "description": "The API conversion steps are generally used by the files in the (repo)/sdk/ml/azure-ai-ml/azure/ai/ml/operations directory. The \\<resource\\>_operations files in this directory contain the actual logic to make and process requests from the Azure API.",
+      "title": "Related Directory: Operations"
+    },
+    {
+      "file": "sdk/ml/azure-ai-ml/azure/ai/ml/operations/_schedule_operations.py",
+      "description": "This is the ScheduleOperations class. It contains functions related to the JobSchedule entity class that we were just looking at. Some key takeaways about these files include:\n\n- The functions in these files are the lowest-level hand-written code that is related to AML API requests.\n- These functions are what SDK users will call in order to perform API operations themselves.\n",
+      "line": 32,
+      "title": "ScheduleOperations"
+    },
+    {
+      "file": "sdk/ml/azure-ai-ml/azure/ai/ml/operations/_schedule_operations.py",
+      "description": "As an example, take a look at the `ScheduleOperations` class's `begin_create_or_update` function. This function performs an API PUT operation, and tries to create a JobSchedule resource in Azure. Notice how it calls `to_rest_object` on the inputted schedule entity object. The resulting autorest schedule object is then inputted to an autorest operation (`self.service_client_begin_create_or_update`). The return value is then processed by a lambda function (defined in the `cls` arg), which calls `JobSchedule._from_rest_object(obj)` to convert the returned value back into a local JobSchedule object for the user to examine.",
+      "line": 160,
+      "selection": {
+        "start": {
+          "line": 32,
+          "character": 7
+        },
+        "end": {
+          "line": 32,
+          "character": 25
+        }
+      },
+      "title": "Example Operation"
+    },
+    {
+      "file": "sdk/ml/azure-ai-ml/azure/ai/ml/entities/_schedule/schedule.py",
+      "description": "Another important feature of entity classes is their ability to be loaded to and from YAML. This is largely achieved by a separate set of classes call schema classes, but some boilerplate is still needed in the corresponding entity classes to achieve this, namely the `_load` and `dump` functions. Though these functions are mostly boilerplate, but you should still be aware of them. They sometimes contain custom logic to help convert between an entity class and its corresponding schema class if they differ.",
+      "line": 93,
+      "title": "Common Functions: _load and dump"
+    },
+    {
+      "file": "sdk/ml/azure-ai-ml/azure/ai/ml/_schema/schedule/schedule.py",
+      "description": "Here is the corresponding schema class for the JobSchedule entity class. This is just for reference - this tour will not be doing a deep dive into how Schema Classes work.",
+      "line": 17,
+      "title": "Schema Class"
+    },
+    {
+      "file": "sdk/ml/azure-ai-ml/tests/schedule/unittests/test_schedule_entity.py",
+      "description": "Entity classes ought to have a set of unit tests devoted to them, especially for their to/from rest logic, as well as any resource-specific logic they may contain.",
+      "line": 17,
+      "title": "Testing"
+    },
+    {
+      "directory": "sdk/ml/azure-ai-ml/azure/ai/ml/entities",
+      "description": "That concludes the code tour of the AML entity classes. Be sure to remember these key takeaways:\n\n- Entity classes serve as local representations of Azure ML resources. They can be created by users directly via the SDK, or are implicitly created by CLI users when calling relevant commands.\n- Entity classes serve as a bridge between users and the REST API implementation of the objects they're working with. This keeps things stable for us developers, and allows us to present users with easier-to-use classes than the underlying API classes.\n- Entity classes have related schema classes to help convert entity objects to and from YAML.\n- Entity classes are common inputs/outputs of their corresponding operation functions. This is also where their rest/conversion functions are used.\n- Entity classes should have a unit test file dedicated to them.\n\nIf you'd like to learn more about entity classes or related systems, consider walking through the following code tours:\n- TODO: reference schema classes code tour when it exists.\n- TODO: reference autorest code tour when it exists\n- TODO: reference entity class edge cases code tour when it exists. ",
+      "title": "Conclusion"
+    }
+  ]
+}

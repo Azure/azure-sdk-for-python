@@ -49,6 +49,7 @@ class AccessReviewHistoryDefinitionInstanceOperations:
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
 
     @distributed_trace_async
     async def generate_download_uri(
@@ -78,8 +79,10 @@ class AccessReviewHistoryDefinitionInstanceOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-12-01-preview"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AccessReviewHistoryInstance]
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2021-12-01-preview")
+        )
+        cls: ClsType[_models.AccessReviewHistoryInstance] = kwargs.pop("cls", None)
 
         request = build_generate_download_uri_request(
             history_definition_id=history_definition_id,
@@ -91,10 +94,11 @@ class AccessReviewHistoryDefinitionInstanceOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -111,4 +115,6 @@ class AccessReviewHistoryDefinitionInstanceOperations:
 
         return deserialized
 
-    generate_download_uri.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/accessReviewHistoryDefinitions/{historyDefinitionId}/instances/{instanceId}/generateDownloadUri"}  # type: ignore
+    generate_download_uri.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/accessReviewHistoryDefinitions/{historyDefinitionId}/instances/{instanceId}/generateDownloadUri"
+    }

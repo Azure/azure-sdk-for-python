@@ -14,6 +14,7 @@ import unittest
 
 import azure.mgmt.web
 from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils.fake_credentials import FAKE_LOGIN_PASSWORD
 
 AZURE_LOCATION = 'eastus'
 
@@ -40,7 +41,7 @@ class MgmtWebSiteTest(AzureMgmtTestCase):
           "host_names": [
             "ServerCert"
           ],
-          "password": "SWsSsd__233$Sdsds#%Sd!"
+          "password": FAKE_LOGIN_PASSWORD  # this may not work -- check when tests are active
         }
         result = self.mgmt_client.certificates.create_or_update(resource_group_name=RESOURCE_GROUP, name=NAME, certificate_envelope=BODY)
 
@@ -68,7 +69,7 @@ class MgmtWebSiteTest(AzureMgmtTestCase):
         # /Certificates/patch/Patch Certificate[patch]
 #--------------------------------------------------------------------------
         BODY = {
-          "password": "SWsSsd__233$Sdsds#%Sd!"
+          "password": FAKE_LOGIN_PASSWORD  # this may not work -- check when tests are active
         }
         result = self.mgmt_client.certificates.update(resource_group_name=RESOURCE_GROUP, name=NAME, certificate_envelope=BODY)
 

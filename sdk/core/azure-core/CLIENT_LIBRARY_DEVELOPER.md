@@ -115,17 +115,17 @@ synchronous_transport = RequestsTransport()
 
 For example if you would like to alter connection pool you can initialise `RequestsTransport` with an instance of `requests.Session`.
 
- ```Python
+ ```python
  import requests
  from azure.core.pipeline.transport import RequestsTransport
  session = requests.Session()
  adapter = requests.adapters.HTTPAdapter(pool_connections=42, pool_maxsize=42)
  session.mount('https://', adapter)
  client = FooServiceClient(endpoint, creds, transport=RequestsTransport(session=session, session_owner=False))
- 
+
  # Here we want to manage the session by ourselves. When we are done with the session, we need to close the session.
  session.close()
- 
+
  # Note: `session_owner` gives the information of ownership of the requests sessions to the transport instance, to authorize it to close on customer's behalf. If you're ok that the client closes your session on your behalf as necessary, you don't need to pass a value.
  ```
 
@@ -496,6 +496,9 @@ from azure.core.pipeline.policies import (
 |  |  | retry_backoff_max | x | x | The maximum back off time. Default value is `120` seconds (2 minutes). |
 |  |  | retry_mode | x | x | Fixed or exponential delay between attempts, default is exponential. |
 |  |  | timeout | x | x | Timeout setting for the operation in seconds, default is `604800s` (7 days). |
+| SensitiveHeaderCleanupPolicy | SansIOHTTPPolicy | | | | |
+|  |  | blocked_redirect_headers | x | | The headers to clean up when redirecting to another domain. |
+|  |  | disable_redirect_cleanup | x | | Opt out cleaning up sensitive headers when redirecting to another domain. |
 
 ### The Pipeline
 
@@ -565,6 +568,8 @@ class TokenCredential(Protocol):
         :keyword str claims: Additional claims required in the token, such as those returned in a resource
             provider's claims challenge following an authorization failure.
         :keyword str tenant_id: Optional tenant to include in the token request.
+        :keyword bool enable_cae: Indicates whether to enable Continuous Access Evaluation (CAE) for the requested
+            token. Defaults to False.
 
         :rtype: AccessToken
         :return: An AccessToken instance containing the token string and its expiration time in Unix time.
@@ -592,7 +597,7 @@ manager, with `__aenter__`, `__aexit__`, and `close` methods.
 
 | Service/Feature | Reason |
 | --- | --- |
-| [Continuous Access Evaluation][cae_doc] | Respond to claim challenges when unexpired tokens have access revoked
+| [Continuous Access Evaluation (CAE)][cae_doc] | Respond to claim challenges when unexpired tokens have access revoked
 
 **`tenant_id`**
 
@@ -600,6 +605,27 @@ manager, with `__aenter__`, `__aexit__`, and `close` methods.
 | --- | --- |
 | Key Vault ([example][kv_tenant_id]) | Request access in a tenant that was discovered as part of an authentication challenge
 
+**`enable_cae`**
+
+| Service/Feature | Reason |
+| --- | --- |
+| [Continuous Access Evaluation (CAE)][cae_doc] | Indicates that handling CAE claim challenges is supported and that a CAE-enabled token should be requested
+
+### BearerTokenCredentialPolicy and AsyncBearerTokenCredentialPolicy
+
+`BearerTokenCredentialPolicy` and `AsyncBearerTokenCredentialPolicy` are HTTP policies that are used to authenticate requests to services that accept bearer tokens in their authorization headers. These credential policies take a `TokenCredential` instance and scopes as parameters in their constructors. The `TokenCredential` instance is used to get an access token for the scopes, and the policy adds the token to the request's authorization header.
+
+Both of these policies also accept an `enable_cae` keyword argument that is passed to the `TokenCredential` instance's `get_token` method if set to `True`. This argument is used to indicate that the requested token should be [CAE-enabled][cae_doc]. If an SDK's service supports CAE, it should set this value to `True` when creating the policy.
+
+```python
+from azure.core.pipeline.policies import BearerTokenCredentialPolicy
+
+authentication_policy = BearerTokenCredentialPolicy(credential, scopes, enable_cae=True)
+```
+
+## Long-running operation (LRO) customization
+
+See [doc/dev/customize_long_running_operation.md](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/customize_long_running_operation.md) for more information.
 
 [cae_doc]: https://docs.microsoft.com/azure/active-directory/conditional-access/concept-continuous-access-evaluation
 [custom_creds_sample]: https://github.com/Azure/azure-sdk-for-python/blob/fc95f8d3d84d076ffea158116ca1bf6912689c70/sdk/identity/azure-identity/samples/custom_credentials.py

@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar
-from urllib.parse import parse_qs, urljoin, urlparse
+import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import (
@@ -55,6 +55,7 @@ class RoleEligibilityScheduleInstancesOperations:
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
 
     @distributed_trace
     def list_for_scope(
@@ -81,8 +82,8 @@ class RoleEligibilityScheduleInstancesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-10-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.RoleEligibilityScheduleInstanceListResult]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2020-10-01"))
+        cls: ClsType[_models.RoleEligibilityScheduleInstanceListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -104,16 +105,23 @@ class RoleEligibilityScheduleInstancesOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -121,14 +129,15 @@ class RoleEligibilityScheduleInstancesOperations:
             deserialized = self._deserialize("RoleEligibilityScheduleInstanceListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -140,7 +149,7 @@ class RoleEligibilityScheduleInstancesOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list_for_scope.metadata = {"url": "/{scope}/providers/Microsoft.Authorization/roleEligibilityScheduleInstances"}  # type: ignore
+    list_for_scope.metadata = {"url": "/{scope}/providers/Microsoft.Authorization/roleEligibilityScheduleInstances"}
 
     @distributed_trace_async
     async def get(
@@ -169,8 +178,8 @@ class RoleEligibilityScheduleInstancesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-10-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.RoleEligibilityScheduleInstance]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2020-10-01"))
+        cls: ClsType[_models.RoleEligibilityScheduleInstance] = kwargs.pop("cls", None)
 
         request = build_get_request(
             scope=scope,
@@ -181,10 +190,11 @@ class RoleEligibilityScheduleInstancesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -200,4 +210,6 @@ class RoleEligibilityScheduleInstancesOperations:
 
         return deserialized
 
-    get.metadata = {"url": "/{scope}/providers/Microsoft.Authorization/roleEligibilityScheduleInstances/{roleEligibilityScheduleInstanceName}"}  # type: ignore
+    get.metadata = {
+        "url": "/{scope}/providers/Microsoft.Authorization/roleEligibilityScheduleInstances/{roleEligibilityScheduleInstanceName}"
+    }

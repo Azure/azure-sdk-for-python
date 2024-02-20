@@ -27,15 +27,7 @@
 
 from ._version import VERSION
 from ._pipeline_client import ARMPipelineClient
+from ._async_pipeline_client import AsyncARMPipelineClient
 
-__all__ = ["ARMPipelineClient"]
+__all__ = ["ARMPipelineClient", "AsyncARMPipelineClient"]
 __version__ = VERSION
-
-try:
-    from ._async_pipeline_client import (  # pylint: disable=unused-import
-        AsyncARMPipelineClient,
-    )
-
-    __all__.extend(["AsyncARMPipelineClient"])
-except (ImportError, SyntaxError):  # Python <= 3.5
-    pass

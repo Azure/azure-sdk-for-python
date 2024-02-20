@@ -57,8 +57,8 @@ class AuthoringClient(AuthoringClientGenerated):
     def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, TokenCredential], **kwargs: Any) -> None:
         try:
             endpoint = endpoint.rstrip("/")
-        except AttributeError:
-            raise ValueError("Parameter 'endpoint' must be a string.")
+        except AttributeError as exc:
+            raise ValueError("Parameter 'endpoint' must be a string.") from exc
         super().__init__(
             endpoint=endpoint,
             credential=credential,  # type: ignore
@@ -68,9 +68,7 @@ class AuthoringClient(AuthoringClientGenerated):
         )
 
 
-__all__: List[str] = [
-    "AuthoringClient"
-]  # Add all objects you want publicly available to users at this package level
+__all__: List[str] = ["AuthoringClient"]  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():

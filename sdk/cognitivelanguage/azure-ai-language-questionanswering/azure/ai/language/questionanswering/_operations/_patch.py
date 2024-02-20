@@ -21,6 +21,7 @@ from ..models import (
     ShortAnswerOptions,
     TextDocument,
 )
+
 JSON = MutableMapping[str, Any]
 
 
@@ -45,7 +46,11 @@ def _validate_text_records(records):
 
 
 def _get_positional_body(*args, **kwargs):
-    """Verify args and kwargs are valid, and then return the positional body, if users passed it in."""
+    """Verify args and kwargs are valid, and then return the positional body, if users passed it in.
+
+    :param args: The arguments passed to the method.
+    :type args: AnswersOptions or dict
+    """
     if len(args) > 1:
         raise TypeError("There can only be one positional argument, which is the POST body of this request.")
     if "options" in kwargs:
@@ -54,7 +59,11 @@ def _get_positional_body(*args, **kwargs):
 
 
 def _verify_qna_id_and_question(query_knowledgebase_options):
-    """For query_knowledge_base we require either `question` or `qna_id`."""
+    """For query_knowledge_base we require either `question` or `qna_id`.
+
+    :param query_knowledgebase_options: The user-passed AnswersOptions or dict
+    :type query_knowledgebase_options: AnswersOptions or dict
+    """
     try:
         qna_id = query_knowledgebase_options.qna_id
         question = query_knowledgebase_options.question
@@ -84,8 +93,8 @@ def _handle_metadata_filter_conversion(options_input):
     try:
         if any(t for t in metadata_input if len(t) != 2):
             raise ValueError("'metadata' must be a sequence of key-value tuples.")
-    except TypeError:
-        raise ValueError("'metadata' must be a sequence of key-value tuples.")
+    except TypeError as exc:
+        raise ValueError("'metadata' must be a sequence of key-value tuples.") from exc
     metadata_modified = [{"key": m[0], "value": m[1]} for m in metadata_input]
     if in_class:
         filters.metadata_filter.metadata = metadata_modified
@@ -113,7 +122,7 @@ def _get_answers_prepare_options(*args: AnswersOptions, **kwargs: Any) -> Tuple[
 
 def _get_answers_from_text_prepare_options(
     *args: AnswersFromTextOptions, **kwargs: Any
-) -> Tuple[AnswersFromTextOptions, Any]:
+) -> Tuple[Union[JSON, AnswersFromTextOptions], Any]:
     default_language = kwargs.pop("language", None)
     options = _get_positional_body(*args, **kwargs) or AnswersFromTextOptions(
         question=kwargs.pop("question"),
@@ -122,9 +131,12 @@ def _get_answers_from_text_prepare_options(
     )
     try:
         options = cast(JSON, options)
+        # pylint: disable=unsubscriptable-object,unsupported-assignment-operation
         options["records"] = _validate_text_records(options["records"])
-        options["language"] = options.get("language", None) or default_language  # pylint: disable=no-member
+        # pylint: disable=no-member,unsupported-assignment-operation
+        options["language"] = options.get("language", None) or default_language
     except TypeError:
+        options = cast(AnswersFromTextOptions, options)
         options.text_documents = _validate_text_records(options.text_documents)
         options.language = options.language or default_language
     return options, kwargs
@@ -253,7 +265,7 @@ class QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientOperationsMi
         options, kwargs = _get_answers_from_text_prepare_options(
             *args, language=kwargs.pop("language", self._default_language), **kwargs  # type: ignore
         )
-        return super().get_answers_from_text(options, **kwargs)
+        return super().get_answers_from_text(options, **kwargs)  # type: ignore
 
 
 __all__: List[str] = [

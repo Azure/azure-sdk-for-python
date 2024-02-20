@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
 
@@ -48,8 +48,8 @@ class AADProperties(_serialization.Model):
         authority: Optional[str] = None,
         audience: Optional[str] = None,
         service_principal_object_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword service_principal_client_id:
         :paramtype service_principal_client_id: str
@@ -111,8 +111,8 @@ class Resource(_serialization.Model):
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         e_tag: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location.
         :paramtype location: str
@@ -175,8 +175,8 @@ class AADPropertiesResource(Resource):
         tags: Optional[Dict[str, str]] = None,
         e_tag: Optional[str] = None,
         properties: Optional["_models.AADProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location.
         :paramtype location: str
@@ -296,8 +296,8 @@ class ProtectedItem(_serialization.Model):  # pylint: disable=too-many-instance-
         is_deferred_delete_schedule_upcoming: Optional[bool] = None,
         is_rehydrate: Optional[bool] = None,
         resource_guard_operation_requests: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword backup_management_type: Type of backup management for the backed up item. Known values
          are: "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql", "AzureStorage",
@@ -344,7 +344,7 @@ class ProtectedItem(_serialization.Model):  # pylint: disable=too-many-instance-
         :paramtype resource_guard_operation_requests: list[str]
         """
         super().__init__(**kwargs)
-        self.protected_item_type = None  # type: Optional[str]
+        self.protected_item_type: Optional[str] = None
         self.backup_management_type = backup_management_type
         self.workload_type = workload_type
         self.container_name = container_name
@@ -488,8 +488,8 @@ class AzureFileshareProtectedItem(ProtectedItem):  # pylint: disable=too-many-in
         last_backup_time: Optional[datetime.datetime] = None,
         kpis_healths: Optional[Dict[str, "_models.KPIResourceHealthDetails"]] = None,
         extended_info: Optional["_models.AzureFileshareProtectedItemExtendedInfo"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword backup_management_type: Type of backup management for the backed up item. Known values
          are: "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql", "AzureStorage",
@@ -574,7 +574,7 @@ class AzureFileshareProtectedItem(ProtectedItem):  # pylint: disable=too-many-in
             resource_guard_operation_requests=resource_guard_operation_requests,
             **kwargs
         )
-        self.protected_item_type = "AzureFileShareProtectedItem"  # type: str
+        self.protected_item_type: str = "AzureFileShareProtectedItem"
         self.friendly_name = friendly_name
         self.protection_status = protection_status
         self.protection_state = protection_state
@@ -623,8 +623,8 @@ class AzureFileshareProtectedItemExtendedInfo(_serialization.Model):
         oldest_recovery_point: Optional[datetime.datetime] = None,
         recovery_point_count: Optional[int] = None,
         policy_state: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword oldest_recovery_point: The oldest backup copy available for this item in the service.
         :paramtype oldest_recovery_point: ~datetime.datetime
@@ -674,10 +674,10 @@ class RecoveryPoint(_serialization.Model):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.object_type = None  # type: Optional[str]
+        self.object_type: Optional[str] = None
 
 
 class AzureFileShareRecoveryPoint(RecoveryPoint):
@@ -717,10 +717,10 @@ class AzureFileShareRecoveryPoint(RecoveryPoint):
         "recovery_point_size_in_gb": {"key": "recoveryPointSizeInGB", "type": "int"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.object_type = "AzureFileShareRecoveryPoint"  # type: str
+        self.object_type: str = "AzureFileShareRecoveryPoint"
         self.recovery_point_type = None
         self.recovery_point_time = None
         self.file_share_snapshot_uri = None
@@ -756,10 +756,10 @@ class RestoreRequest(_serialization.Model):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.object_type = None  # type: Optional[str]
+        self.object_type: Optional[str] = None
 
 
 class AzureFileShareRestoreRequest(RestoreRequest):
@@ -816,8 +816,8 @@ class AzureFileShareRestoreRequest(RestoreRequest):
         restore_request_type: Optional[Union[str, "_models.RestoreRequestType"]] = None,
         restore_file_specs: Optional[List["_models.RestoreFileSpecs"]] = None,
         target_details: Optional["_models.TargetAFSRestoreInfo"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword recovery_type: Type of this recovery. Known values are: "Invalid", "OriginalLocation",
          "AlternateLocation", "RestoreDisks", and "Offline".
@@ -842,7 +842,7 @@ class AzureFileShareRestoreRequest(RestoreRequest):
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.TargetAFSRestoreInfo
         """
         super().__init__(**kwargs)
-        self.object_type = "AzureFileShareRestoreRequest"  # type: str
+        self.object_type: str = "AzureFileShareRestoreRequest"
         self.recovery_type = recovery_type
         self.source_resource_id = source_resource_id
         self.copy_options = copy_options
@@ -1007,8 +1007,8 @@ class AzureIaaSVMProtectedItem(ProtectedItem):  # pylint: disable=too-many-insta
         protected_item_data_id: Optional[str] = None,
         extended_info: Optional["_models.AzureIaaSVMProtectedItemExtendedInfo"] = None,
         extended_properties: Optional["_models.ExtendedProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword backup_management_type: Type of backup management for the backed up item. Known values
          are: "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql", "AzureStorage",
@@ -1104,7 +1104,7 @@ class AzureIaaSVMProtectedItem(ProtectedItem):  # pylint: disable=too-many-insta
             resource_guard_operation_requests=resource_guard_operation_requests,
             **kwargs
         )
-        self.protected_item_type = "AzureIaaSVMProtectedItem"  # type: str
+        self.protected_item_type: str = "AzureIaaSVMProtectedItem"
         self.friendly_name = friendly_name
         self.virtual_machine_id = virtual_machine_id
         self.protection_status = protection_status
@@ -1265,8 +1265,8 @@ class AzureIaaSClassicComputeVMProtectedItem(AzureIaaSVMProtectedItem):  # pylin
         protected_item_data_id: Optional[str] = None,
         extended_info: Optional["_models.AzureIaaSVMProtectedItemExtendedInfo"] = None,
         extended_properties: Optional["_models.ExtendedProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword backup_management_type: Type of backup management for the backed up item. Known values
          are: "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql", "AzureStorage",
@@ -1374,7 +1374,7 @@ class AzureIaaSClassicComputeVMProtectedItem(AzureIaaSVMProtectedItem):  # pylin
             extended_properties=extended_properties,
             **kwargs
         )
-        self.protected_item_type = "Microsoft.ClassicCompute/virtualMachines"  # type: str
+        self.protected_item_type: str = "Microsoft.ClassicCompute/virtualMachines"
 
 
 class AzureIaaSComputeVMProtectedItem(AzureIaaSVMProtectedItem):  # pylint: disable=too-many-instance-attributes
@@ -1523,8 +1523,8 @@ class AzureIaaSComputeVMProtectedItem(AzureIaaSVMProtectedItem):  # pylint: disa
         protected_item_data_id: Optional[str] = None,
         extended_info: Optional["_models.AzureIaaSVMProtectedItemExtendedInfo"] = None,
         extended_properties: Optional["_models.ExtendedProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword backup_management_type: Type of backup management for the backed up item. Known values
          are: "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql", "AzureStorage",
@@ -1632,7 +1632,7 @@ class AzureIaaSComputeVMProtectedItem(AzureIaaSVMProtectedItem):  # pylint: disa
             extended_properties=extended_properties,
             **kwargs
         )
-        self.protected_item_type = "Microsoft.Compute/virtualMachines"  # type: str
+        self.protected_item_type: str = "Microsoft.Compute/virtualMachines"
 
 
 class AzureIaaSVMErrorInfo(_serialization.Model):
@@ -1664,7 +1664,7 @@ class AzureIaaSVMErrorInfo(_serialization.Model):
         "recommendations": {"key": "recommendations", "type": "[str]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.error_code = None
@@ -1702,7 +1702,7 @@ class ResourceHealthDetails(_serialization.Model):
         "recommendations": {"key": "recommendations", "type": "[str]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -1740,7 +1740,7 @@ class AzureIaaSVMHealthDetails(ResourceHealthDetails):
         "recommendations": {"key": "recommendations", "type": "[str]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
 
@@ -1810,8 +1810,8 @@ class Job(_serialization.Model):
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
         activity_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword entity_friendly_name: Friendly name of the entity on which the current job is
          executing.
@@ -1840,7 +1840,7 @@ class Job(_serialization.Model):
         self.start_time = start_time
         self.end_time = end_time
         self.activity_id = activity_id
-        self.job_type = None  # type: Optional[str]
+        self.job_type: Optional[str] = None
 
 
 class AzureIaaSVMJob(Job):  # pylint: disable=too-many-instance-attributes
@@ -1919,8 +1919,8 @@ class AzureIaaSVMJob(Job):  # pylint: disable=too-many-instance-attributes
         error_details: Optional[List["_models.AzureIaaSVMErrorInfo"]] = None,
         virtual_machine_version: Optional[str] = None,
         extended_info: Optional["_models.AzureIaaSVMJobExtendedInfo"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword entity_friendly_name: Friendly name of the entity on which the current job is
          executing.
@@ -1965,7 +1965,7 @@ class AzureIaaSVMJob(Job):  # pylint: disable=too-many-instance-attributes
             activity_id=activity_id,
             **kwargs
         )
-        self.job_type = "AzureIaaSVMJob"  # type: str
+        self.job_type: str = "AzureIaaSVMJob"
         self.duration = duration
         self.actions_info = actions_info
         self.error_details = error_details
@@ -2010,8 +2010,8 @@ class AzureIaaSVMJobExtendedInfo(_serialization.Model):
         progress_percentage: Optional[float] = None,
         estimated_remaining_duration: Optional[str] = None,
         dynamic_error_message: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tasks_list: List of tasks associated with this job.
         :paramtype tasks_list:
@@ -2081,8 +2081,8 @@ class AzureIaaSVMJobTaskDetails(_serialization.Model):
         status: Optional[str] = None,
         progress_percentage: Optional[float] = None,
         task_execution_details: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword task_id: The task display name.
         :paramtype task_id: str
@@ -2137,8 +2137,8 @@ class AzureIaaSVMProtectedItemExtendedInfo(_serialization.Model):
         oldest_recovery_point: Optional[datetime.datetime] = None,
         recovery_point_count: Optional[int] = None,
         policy_inconsistent: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword oldest_recovery_point: The oldest backup copy available for this backup item.
         :paramtype oldest_recovery_point: ~datetime.datetime
@@ -2259,8 +2259,8 @@ class AzureSqlProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance
         protected_item_data_id: Optional[str] = None,
         protection_state: Optional[Union[str, "_models.ProtectedItemState"]] = None,
         extended_info: Optional["_models.AzureSqlProtectedItemExtendedInfo"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword backup_management_type: Type of backup management for the backed up item. Known values
          are: "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql", "AzureStorage",
@@ -2333,7 +2333,7 @@ class AzureSqlProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance
             resource_guard_operation_requests=resource_guard_operation_requests,
             **kwargs
         )
-        self.protected_item_type = "Microsoft.Sql/servers/databases"  # type: str
+        self.protected_item_type: str = "Microsoft.Sql/servers/databases"
         self.protected_item_data_id = protected_item_data_id
         self.protection_state = protection_state
         self.extended_info = extended_info
@@ -2362,8 +2362,8 @@ class AzureSqlProtectedItemExtendedInfo(_serialization.Model):
         oldest_recovery_point: Optional[datetime.datetime] = None,
         recovery_point_count: Optional[int] = None,
         policy_state: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword oldest_recovery_point: The oldest backup copy available for this item in the service.
         :paramtype oldest_recovery_point: ~datetime.datetime
@@ -2402,8 +2402,8 @@ class AzureStorageErrorInfo(_serialization.Model):
         error_code: Optional[int] = None,
         error_string: Optional[str] = None,
         recommendations: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword error_code: Error code.
         :paramtype error_code: int
@@ -2498,8 +2498,8 @@ class AzureStorageJob(Job):  # pylint: disable=too-many-instance-attributes
         storage_account_name: Optional[str] = None,
         storage_account_version: Optional[str] = None,
         extended_info: Optional["_models.AzureStorageJobExtendedInfo"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword entity_friendly_name: Friendly name of the entity on which the current job is
          executing.
@@ -2546,7 +2546,7 @@ class AzureStorageJob(Job):  # pylint: disable=too-many-instance-attributes
             activity_id=activity_id,
             **kwargs
         )
-        self.job_type = "AzureStorageJob"  # type: str
+        self.job_type: str = "AzureStorageJob"
         self.duration = duration
         self.actions_info = actions_info
         self.error_details = error_details
@@ -2579,8 +2579,8 @@ class AzureStorageJobExtendedInfo(_serialization.Model):
         tasks_list: Optional[List["_models.AzureStorageJobTaskDetails"]] = None,
         property_bag: Optional[Dict[str, str]] = None,
         dynamic_error_message: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tasks_list: List of tasks for this job.
         :paramtype tasks_list:
@@ -2610,7 +2610,7 @@ class AzureStorageJobTaskDetails(_serialization.Model):
         "status": {"key": "status", "type": "str"},
     }
 
-    def __init__(self, *, task_id: Optional[str] = None, status: Optional[str] = None, **kwargs):
+    def __init__(self, *, task_id: Optional[str] = None, status: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword task_id: The task display name.
         :paramtype task_id: str
@@ -2786,8 +2786,8 @@ class AzureVmWorkloadProtectedItem(ProtectedItem):  # pylint: disable=too-many-i
         protected_item_health_status: Optional[Union[str, "_models.ProtectedItemHealthStatus"]] = None,
         extended_info: Optional["_models.AzureVmWorkloadProtectedItemExtendedInfo"] = None,
         kpis_healths: Optional[Dict[str, "_models.KPIResourceHealthDetails"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword backup_management_type: Type of backup management for the backed up item. Known values
          are: "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql", "AzureStorage",
@@ -2887,7 +2887,7 @@ class AzureVmWorkloadProtectedItem(ProtectedItem):  # pylint: disable=too-many-i
             resource_guard_operation_requests=resource_guard_operation_requests,
             **kwargs
         )
-        self.protected_item_type = "AzureVmWorkloadProtectedItem"  # type: str
+        self.protected_item_type: str = "AzureVmWorkloadProtectedItem"
         self.friendly_name = friendly_name
         self.server_name = server_name
         self.parent_name = parent_name
@@ -2927,8 +2927,8 @@ class AzureVmWorkloadProtectedItemExtendedInfo(_serialization.Model):
         oldest_recovery_point: Optional[datetime.datetime] = None,
         recovery_point_count: Optional[int] = None,
         policy_state: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword oldest_recovery_point: The oldest backup copy available for this backup item.
         :paramtype oldest_recovery_point: ~datetime.datetime
@@ -3098,8 +3098,8 @@ class AzureVmWorkloadSAPAseDatabaseProtectedItem(
         protected_item_health_status: Optional[Union[str, "_models.ProtectedItemHealthStatus"]] = None,
         extended_info: Optional["_models.AzureVmWorkloadProtectedItemExtendedInfo"] = None,
         kpis_healths: Optional[Dict[str, "_models.KPIResourceHealthDetails"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword backup_management_type: Type of backup management for the backed up item. Known values
          are: "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql", "AzureStorage",
@@ -3212,7 +3212,7 @@ class AzureVmWorkloadSAPAseDatabaseProtectedItem(
             kpis_healths=kpis_healths,
             **kwargs
         )
-        self.protected_item_type = "AzureVmWorkloadSAPAseDatabase"  # type: str
+        self.protected_item_type: str = "AzureVmWorkloadSAPAseDatabase"
 
 
 class AzureVmWorkloadSAPHanaDatabaseProtectedItem(
@@ -3369,8 +3369,8 @@ class AzureVmWorkloadSAPHanaDatabaseProtectedItem(
         protected_item_health_status: Optional[Union[str, "_models.ProtectedItemHealthStatus"]] = None,
         extended_info: Optional["_models.AzureVmWorkloadProtectedItemExtendedInfo"] = None,
         kpis_healths: Optional[Dict[str, "_models.KPIResourceHealthDetails"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword backup_management_type: Type of backup management for the backed up item. Known values
          are: "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql", "AzureStorage",
@@ -3483,7 +3483,7 @@ class AzureVmWorkloadSAPHanaDatabaseProtectedItem(
             kpis_healths=kpis_healths,
             **kwargs
         )
-        self.protected_item_type = "AzureVmWorkloadSAPHanaDatabase"  # type: str
+        self.protected_item_type: str = "AzureVmWorkloadSAPHanaDatabase"
 
 
 class AzureVmWorkloadSQLDatabaseProtectedItem(
@@ -3640,8 +3640,8 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(
         protected_item_health_status: Optional[Union[str, "_models.ProtectedItemHealthStatus"]] = None,
         extended_info: Optional["_models.AzureVmWorkloadProtectedItemExtendedInfo"] = None,
         kpis_healths: Optional[Dict[str, "_models.KPIResourceHealthDetails"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword backup_management_type: Type of backup management for the backed up item. Known values
          are: "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql", "AzureStorage",
@@ -3754,7 +3754,7 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(
             kpis_healths=kpis_healths,
             **kwargs
         )
-        self.protected_item_type = "AzureVmWorkloadSQLDatabase"  # type: str
+        self.protected_item_type: str = "AzureVmWorkloadSQLDatabase"
 
 
 class AzureWorkloadErrorInfo(_serialization.Model):
@@ -3788,8 +3788,8 @@ class AzureWorkloadErrorInfo(_serialization.Model):
         error_title: Optional[str] = None,
         recommendations: Optional[List[str]] = None,
         additional_details: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword error_code: Error code.
         :paramtype error_code: int
@@ -3885,8 +3885,8 @@ class AzureWorkloadJob(Job):  # pylint: disable=too-many-instance-attributes
         actions_info: Optional[List[Union[str, "_models.JobSupportedAction"]]] = None,
         error_details: Optional[List["_models.AzureWorkloadErrorInfo"]] = None,
         extended_info: Optional["_models.AzureWorkloadJobExtendedInfo"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword entity_friendly_name: Friendly name of the entity on which the current job is
          executing.
@@ -3930,7 +3930,7 @@ class AzureWorkloadJob(Job):  # pylint: disable=too-many-instance-attributes
             activity_id=activity_id,
             **kwargs
         )
-        self.job_type = "AzureWorkloadJob"  # type: str
+        self.job_type: str = "AzureWorkloadJob"
         self.workload_type = workload_type
         self.duration = duration
         self.actions_info = actions_info
@@ -3962,8 +3962,8 @@ class AzureWorkloadJobExtendedInfo(_serialization.Model):
         tasks_list: Optional[List["_models.AzureWorkloadJobTaskDetails"]] = None,
         property_bag: Optional[Dict[str, str]] = None,
         dynamic_error_message: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tasks_list: List of tasks for this job.
         :paramtype tasks_list:
@@ -3993,7 +3993,7 @@ class AzureWorkloadJobTaskDetails(_serialization.Model):
         "status": {"key": "status", "type": "str"},
     }
 
-    def __init__(self, *, task_id: Optional[str] = None, status: Optional[str] = None, **kwargs):
+    def __init__(self, *, task_id: Optional[str] = None, status: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword task_id: The task display name.
         :paramtype task_id: str
@@ -4062,8 +4062,8 @@ class AzureWorkloadRecoveryPoint(RecoveryPoint):
         *,
         recovery_point_tier_details: Optional[List["_models.RecoveryPointTierInformation"]] = None,
         recovery_point_move_readiness_info: Optional[Dict[str, "_models.RecoveryPointMoveReadinessInfo"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword recovery_point_tier_details: Recovery point tier information.
         :paramtype recovery_point_tier_details:
@@ -4073,7 +4073,7 @@ class AzureWorkloadRecoveryPoint(RecoveryPoint):
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.RecoveryPointMoveReadinessInfo]
         """
         super().__init__(**kwargs)
-        self.object_type = "AzureWorkloadRecoveryPoint"  # type: str
+        self.object_type: str = "AzureWorkloadRecoveryPoint"
         self.recovery_point_time_in_utc = None
         self.type = None
         self.recovery_point_tier_details = recovery_point_tier_details
@@ -4137,8 +4137,8 @@ class AzureWorkloadPointInTimeRecoveryPoint(AzureWorkloadRecoveryPoint):
         recovery_point_tier_details: Optional[List["_models.RecoveryPointTierInformation"]] = None,
         recovery_point_move_readiness_info: Optional[Dict[str, "_models.RecoveryPointMoveReadinessInfo"]] = None,
         time_ranges: Optional[List["_models.PointInTimeRange"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword recovery_point_tier_details: Recovery point tier information.
         :paramtype recovery_point_tier_details:
@@ -4155,7 +4155,7 @@ class AzureWorkloadPointInTimeRecoveryPoint(AzureWorkloadRecoveryPoint):
             recovery_point_move_readiness_info=recovery_point_move_readiness_info,
             **kwargs
         )
-        self.object_type = "AzureWorkloadPointInTimeRecoveryPoint"  # type: str
+        self.object_type: str = "AzureWorkloadPointInTimeRecoveryPoint"
         self.time_ranges = time_ranges
 
 
@@ -4223,8 +4223,8 @@ class AzureWorkloadRestoreRequest(RestoreRequest):
         target_info: Optional["_models.TargetRestoreInfo"] = None,
         recovery_mode: Optional[Union[str, "_models.RecoveryMode"]] = None,
         target_virtual_machine_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword recovery_type: Type of this recovery. Known values are: "Invalid", "OriginalLocation",
          "AlternateLocation", "RestoreDisks", and "Offline".
@@ -4248,7 +4248,7 @@ class AzureWorkloadRestoreRequest(RestoreRequest):
         :paramtype target_virtual_machine_id: str
         """
         super().__init__(**kwargs)
-        self.object_type = "AzureWorkloadRestoreRequest"  # type: str
+        self.object_type: str = "AzureWorkloadRestoreRequest"
         self.recovery_type = recovery_type
         self.source_resource_id = source_resource_id
         self.property_bag = property_bag
@@ -4313,8 +4313,8 @@ class AzureWorkloadPointInTimeRestoreRequest(AzureWorkloadRestoreRequest):
         recovery_mode: Optional[Union[str, "_models.RecoveryMode"]] = None,
         target_virtual_machine_id: Optional[str] = None,
         point_in_time: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword recovery_type: Type of this recovery. Known values are: "Invalid", "OriginalLocation",
          "AlternateLocation", "RestoreDisks", and "Offline".
@@ -4348,7 +4348,7 @@ class AzureWorkloadPointInTimeRestoreRequest(AzureWorkloadRestoreRequest):
             target_virtual_machine_id=target_virtual_machine_id,
             **kwargs
         )
-        self.object_type = "AzureWorkloadPointInTimeRestoreRequest"  # type: str
+        self.object_type: str = "AzureWorkloadPointInTimeRestoreRequest"
         self.point_in_time = point_in_time
 
 
@@ -4402,8 +4402,8 @@ class AzureWorkloadSAPHanaPointInTimeRecoveryPoint(AzureWorkloadPointInTimeRecov
         recovery_point_tier_details: Optional[List["_models.RecoveryPointTierInformation"]] = None,
         recovery_point_move_readiness_info: Optional[Dict[str, "_models.RecoveryPointMoveReadinessInfo"]] = None,
         time_ranges: Optional[List["_models.PointInTimeRange"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword recovery_point_tier_details: Recovery point tier information.
         :paramtype recovery_point_tier_details:
@@ -4421,7 +4421,7 @@ class AzureWorkloadSAPHanaPointInTimeRecoveryPoint(AzureWorkloadPointInTimeRecov
             time_ranges=time_ranges,
             **kwargs
         )
-        self.object_type = "AzureWorkloadSAPHanaPointInTimeRecoveryPoint"  # type: str
+        self.object_type: str = "AzureWorkloadSAPHanaPointInTimeRecoveryPoint"
 
 
 class AzureWorkloadSAPHanaRestoreRequest(AzureWorkloadRestoreRequest):
@@ -4485,8 +4485,8 @@ class AzureWorkloadSAPHanaRestoreRequest(AzureWorkloadRestoreRequest):
         target_info: Optional["_models.TargetRestoreInfo"] = None,
         recovery_mode: Optional[Union[str, "_models.RecoveryMode"]] = None,
         target_virtual_machine_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword recovery_type: Type of this recovery. Known values are: "Invalid", "OriginalLocation",
          "AlternateLocation", "RestoreDisks", and "Offline".
@@ -4518,7 +4518,7 @@ class AzureWorkloadSAPHanaRestoreRequest(AzureWorkloadRestoreRequest):
             target_virtual_machine_id=target_virtual_machine_id,
             **kwargs
         )
-        self.object_type = "AzureWorkloadSAPHanaRestoreRequest"  # type: str
+        self.object_type: str = "AzureWorkloadSAPHanaRestoreRequest"
 
 
 class AzureWorkloadSAPHanaPointInTimeRestoreRequest(AzureWorkloadSAPHanaRestoreRequest):
@@ -4577,8 +4577,8 @@ class AzureWorkloadSAPHanaPointInTimeRestoreRequest(AzureWorkloadSAPHanaRestoreR
         recovery_mode: Optional[Union[str, "_models.RecoveryMode"]] = None,
         target_virtual_machine_id: Optional[str] = None,
         point_in_time: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword recovery_type: Type of this recovery. Known values are: "Invalid", "OriginalLocation",
          "AlternateLocation", "RestoreDisks", and "Offline".
@@ -4612,7 +4612,7 @@ class AzureWorkloadSAPHanaPointInTimeRestoreRequest(AzureWorkloadSAPHanaRestoreR
             target_virtual_machine_id=target_virtual_machine_id,
             **kwargs
         )
-        self.object_type = "AzureWorkloadSAPHanaPointInTimeRestoreRequest"  # type: str
+        self.object_type: str = "AzureWorkloadSAPHanaPointInTimeRestoreRequest"
         self.point_in_time = point_in_time
 
 
@@ -4661,8 +4661,8 @@ class AzureWorkloadSAPHanaRecoveryPoint(AzureWorkloadRecoveryPoint):
         *,
         recovery_point_tier_details: Optional[List["_models.RecoveryPointTierInformation"]] = None,
         recovery_point_move_readiness_info: Optional[Dict[str, "_models.RecoveryPointMoveReadinessInfo"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword recovery_point_tier_details: Recovery point tier information.
         :paramtype recovery_point_tier_details:
@@ -4676,11 +4676,12 @@ class AzureWorkloadSAPHanaRecoveryPoint(AzureWorkloadRecoveryPoint):
             recovery_point_move_readiness_info=recovery_point_move_readiness_info,
             **kwargs
         )
-        self.object_type = "AzureWorkloadSAPHanaRecoveryPoint"  # type: str
+        self.object_type: str = "AzureWorkloadSAPHanaRecoveryPoint"
 
 
 class AzureWorkloadSQLRecoveryPoint(AzureWorkloadRecoveryPoint):
-    """SQL specific recoverypoint, specifically encapsulates full/diff recoverypoint along with extended info.
+    """SQL specific recoverypoint, specifically encapsulates full/diff recoverypoint along with
+    extended info.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureWorkloadSQLPointInTimeRecoveryPoint
@@ -4739,8 +4740,8 @@ class AzureWorkloadSQLRecoveryPoint(AzureWorkloadRecoveryPoint):
         recovery_point_tier_details: Optional[List["_models.RecoveryPointTierInformation"]] = None,
         recovery_point_move_readiness_info: Optional[Dict[str, "_models.RecoveryPointMoveReadinessInfo"]] = None,
         extended_info: Optional["_models.AzureWorkloadSQLRecoveryPointExtendedInfo"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword recovery_point_tier_details: Recovery point tier information.
         :paramtype recovery_point_tier_details:
@@ -4760,7 +4761,7 @@ class AzureWorkloadSQLRecoveryPoint(AzureWorkloadRecoveryPoint):
             recovery_point_move_readiness_info=recovery_point_move_readiness_info,
             **kwargs
         )
-        self.object_type = "AzureWorkloadSQLRecoveryPoint"  # type: str
+        self.object_type: str = "AzureWorkloadSQLRecoveryPoint"
         self.extended_info = extended_info
 
 
@@ -4822,8 +4823,8 @@ class AzureWorkloadSQLPointInTimeRecoveryPoint(AzureWorkloadSQLRecoveryPoint):
         recovery_point_move_readiness_info: Optional[Dict[str, "_models.RecoveryPointMoveReadinessInfo"]] = None,
         extended_info: Optional["_models.AzureWorkloadSQLRecoveryPointExtendedInfo"] = None,
         time_ranges: Optional[List["_models.PointInTimeRange"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword recovery_point_tier_details: Recovery point tier information.
         :paramtype recovery_point_tier_details:
@@ -4847,7 +4848,7 @@ class AzureWorkloadSQLPointInTimeRecoveryPoint(AzureWorkloadSQLRecoveryPoint):
             extended_info=extended_info,
             **kwargs
         )
-        self.object_type = "AzureWorkloadSQLPointInTimeRecoveryPoint"  # type: str
+        self.object_type: str = "AzureWorkloadSQLPointInTimeRecoveryPoint"
         self.time_ranges = time_ranges
 
 
@@ -4925,8 +4926,8 @@ class AzureWorkloadSQLRestoreRequest(AzureWorkloadRestoreRequest):
         should_use_alternate_target_location: Optional[bool] = None,
         is_non_recoverable: Optional[bool] = None,
         alternate_directory_paths: Optional[List["_models.SQLDataDirectoryMapping"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword recovery_type: Type of this recovery. Known values are: "Invalid", "OriginalLocation",
          "AlternateLocation", "RestoreDisks", and "Offline".
@@ -4967,7 +4968,7 @@ class AzureWorkloadSQLRestoreRequest(AzureWorkloadRestoreRequest):
             target_virtual_machine_id=target_virtual_machine_id,
             **kwargs
         )
-        self.object_type = "AzureWorkloadSQLRestoreRequest"  # type: str
+        self.object_type: str = "AzureWorkloadSQLRestoreRequest"
         self.should_use_alternate_target_location = should_use_alternate_target_location
         self.is_non_recoverable = is_non_recoverable
         self.alternate_directory_paths = alternate_directory_paths
@@ -5046,8 +5047,8 @@ class AzureWorkloadSQLPointInTimeRestoreRequest(
         is_non_recoverable: Optional[bool] = None,
         alternate_directory_paths: Optional[List["_models.SQLDataDirectoryMapping"]] = None,
         point_in_time: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword recovery_type: Type of this recovery. Known values are: "Invalid", "OriginalLocation",
          "AlternateLocation", "RestoreDisks", and "Offline".
@@ -5093,7 +5094,7 @@ class AzureWorkloadSQLPointInTimeRestoreRequest(
             alternate_directory_paths=alternate_directory_paths,
             **kwargs
         )
-        self.object_type = "AzureWorkloadSQLPointInTimeRestoreRequest"  # type: str
+        self.object_type: str = "AzureWorkloadSQLPointInTimeRestoreRequest"
         self.point_in_time = point_in_time
 
 
@@ -5119,7 +5120,7 @@ class AzureWorkloadSQLRecoveryPointExtendedInfo(_serialization.Model):
         "data_directory_paths": {"key": "dataDirectoryPaths", "type": "[SQLDataDirectory]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.data_directory_time_in_utc = None
@@ -5162,8 +5163,8 @@ class BackupManagementUsage(_serialization.Model):
         current_value: Optional[int] = None,
         limit: Optional[int] = None,
         name: Optional["_models.NameInfo"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword unit: Unit of the usage. Known values are: "Count", "Bytes", "Seconds", "Percent",
          "CountPerSecond", and "BytesPerSecond".
@@ -5200,7 +5201,7 @@ class BackupManagementUsageList(_serialization.Model):
         "value": {"key": "value", "type": "[BackupManagementUsage]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.BackupManagementUsage"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.BackupManagementUsage"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of backup management usages for the given vault.
         :paramtype value:
@@ -5243,8 +5244,8 @@ class BackupResourceConfig(_serialization.Model):
         storage_type: Optional[Union[str, "_models.StorageType"]] = None,
         storage_type_state: Optional[Union[str, "_models.StorageTypeState"]] = None,
         cross_region_restore_flag: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword storage_model_type: Storage type. Known values are: "Invalid", "GeoRedundant",
          "LocallyRedundant", "ZoneRedundant", and "ReadAccessGeoZoneRedundant".
@@ -5315,8 +5316,8 @@ class BackupResourceConfigResource(Resource):
         tags: Optional[Dict[str, str]] = None,
         e_tag: Optional[str] = None,
         properties: Optional["_models.BackupResourceConfig"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location.
         :paramtype location: str
@@ -5355,8 +5356,8 @@ class BEKDetails(_serialization.Model):
         secret_url: Optional[str] = None,
         secret_vault_id: Optional[str] = None,
         secret_data: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword secret_url: Secret is BEK.
         :paramtype secret_url: str
@@ -5386,8 +5387,8 @@ class BMSAADPropertiesQueryObject(_serialization.Model):
     }
 
     def __init__(
-        self, *, backup_management_type: Optional[Union[str, "_models.BackupManagementType"]] = None, **kwargs
-    ):
+        self, *, backup_management_type: Optional[Union[str, "_models.BackupManagementType"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword backup_management_type: Backup management type for the backed up item. Known values
          are: "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql", "AzureStorage",
@@ -5411,7 +5412,7 @@ class BMSBackupSummariesQueryObject(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, *, type: Optional[Union[str, "_models.Type"]] = None, **kwargs):
+    def __init__(self, *, type: Optional[Union[str, "_models.Type"]] = None, **kwargs: Any) -> None:
         """
         :keyword type: Backup management type for this container. Known values are: "Invalid",
          "BackupProtectedItemCountSummary", and "BackupProtectionContainerCountSummary".
@@ -5455,8 +5456,8 @@ class BMSRPQueryObject(_serialization.Model):
         restore_point_query_type: Optional[Union[str, "_models.RestorePointQueryType"]] = None,
         extended_info: Optional[bool] = None,
         move_ready_rp_only: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword start_date: Backup copies created after this time.
         :paramtype start_date: ~datetime.datetime
@@ -5516,8 +5517,8 @@ class ClientScriptForConnect(_serialization.Model):
         os_type: Optional[str] = None,
         url: Optional[str] = None,
         script_name_suffix: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword script_content: File content of the client script for file / folder restore.
         :paramtype script_content: str
@@ -5563,8 +5564,8 @@ class CrossRegionRestoreRequest(_serialization.Model):
         *,
         cross_region_restore_access_details: Optional["_models.CrrAccessToken"] = None,
         restore_request: Optional["_models.RestoreRequest"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword cross_region_restore_access_details: Access details for cross region restore.
         :paramtype cross_region_restore_access_details:
@@ -5624,8 +5625,8 @@ class CrossRegionRestoreRequestResource(Resource):
         tags: Optional[Dict[str, str]] = None,
         e_tag: Optional[str] = None,
         properties: Optional["_models.CrossRegionRestoreRequest"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location.
         :paramtype location: str
@@ -5769,8 +5770,8 @@ class CrrAccessToken(_serialization.Model):  # pylint: disable=too-many-instance
         rp_is_managed_virtual_machine: Optional[bool] = None,
         rp_vm_size_description: Optional[str] = None,
         b_ms_active_region: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword access_token_string: Access token used for authentication.
         :paramtype access_token_string: str
@@ -5828,7 +5829,7 @@ class CrrAccessToken(_serialization.Model):  # pylint: disable=too-many-instance
         :paramtype b_ms_active_region: str
         """
         super().__init__(**kwargs)
-        self.object_type = None  # type: Optional[str]
+        self.object_type: Optional[str] = None
         self.access_token_string = access_token_string
         self.subscription_id = subscription_id
         self.resource_group_name = resource_group_name
@@ -5901,8 +5902,8 @@ class CrrAccessTokenResource(Resource):
         tags: Optional[Dict[str, str]] = None,
         e_tag: Optional[str] = None,
         properties: Optional["_models.CrrAccessToken"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location.
         :paramtype location: str
@@ -5931,7 +5932,7 @@ class CrrJobRequest(_serialization.Model):
         "job_name": {"key": "jobName", "type": "str"},
     }
 
-    def __init__(self, *, resource_id: Optional[str] = None, job_name: Optional[str] = None, **kwargs):
+    def __init__(self, *, resource_id: Optional[str] = None, job_name: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword resource_id: Entire ARM resource id of the resource.
         :paramtype resource_id: str
@@ -5988,8 +5989,8 @@ class CrrJobRequestResource(Resource):
         tags: Optional[Dict[str, str]] = None,
         e_tag: Optional[str] = None,
         properties: Optional["_models.CrrJobRequest"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location.
         :paramtype location: str
@@ -6020,8 +6021,8 @@ class DiskExclusionProperties(_serialization.Model):
     }
 
     def __init__(
-        self, *, disk_lun_list: Optional[List[int]] = None, is_inclusion_list: Optional[bool] = None, **kwargs
-    ):
+        self, *, disk_lun_list: Optional[List[int]] = None, is_inclusion_list: Optional[bool] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword disk_lun_list: List of Disks' Logical Unit Numbers (LUN) to be used for VM Protection.
         :paramtype disk_lun_list: list[int]
@@ -6048,7 +6049,7 @@ class DiskInformation(_serialization.Model):
         "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(self, *, lun: Optional[int] = None, name: Optional[str] = None, **kwargs):
+    def __init__(self, *, lun: Optional[int] = None, name: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword lun:
         :paramtype lun: int
@@ -6074,7 +6075,9 @@ class DpmErrorInfo(_serialization.Model):
         "recommendations": {"key": "recommendations", "type": "[str]"},
     }
 
-    def __init__(self, *, error_string: Optional[str] = None, recommendations: Optional[List[str]] = None, **kwargs):
+    def __init__(
+        self, *, error_string: Optional[str] = None, recommendations: Optional[List[str]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword error_string: Localized error string.
         :paramtype error_string: str
@@ -6173,8 +6176,8 @@ class DpmJob(Job):  # pylint: disable=too-many-instance-attributes
         actions_info: Optional[List[Union[str, "_models.JobSupportedAction"]]] = None,
         error_details: Optional[List["_models.DpmErrorInfo"]] = None,
         extended_info: Optional["_models.DpmJobExtendedInfo"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword entity_friendly_name: Friendly name of the entity on which the current job is
          executing.
@@ -6224,7 +6227,7 @@ class DpmJob(Job):  # pylint: disable=too-many-instance-attributes
             activity_id=activity_id,
             **kwargs
         )
-        self.job_type = "DpmJob"  # type: str
+        self.job_type: str = "DpmJob"
         self.duration = duration
         self.dpm_server_name = dpm_server_name
         self.container_name = container_name
@@ -6259,8 +6262,8 @@ class DpmJobExtendedInfo(_serialization.Model):
         tasks_list: Optional[List["_models.DpmJobTaskDetails"]] = None,
         property_bag: Optional[Dict[str, str]] = None,
         dynamic_error_message: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tasks_list: List of tasks associated with this job.
         :paramtype tasks_list:
@@ -6307,8 +6310,8 @@ class DpmJobTaskDetails(_serialization.Model):
         end_time: Optional[datetime.datetime] = None,
         duration: Optional[datetime.timedelta] = None,
         status: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword task_id: The task display name.
         :paramtype task_id: str
@@ -6437,8 +6440,8 @@ class DPMProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance-attr
         backup_engine_name: Optional[str] = None,
         protection_state: Optional[Union[str, "_models.ProtectedItemState"]] = None,
         extended_info: Optional["_models.DPMProtectedItemExtendedInfo"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword backup_management_type: Type of backup management for the backed up item. Known values
          are: "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql", "AzureStorage",
@@ -6512,7 +6515,7 @@ class DPMProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance-attr
             resource_guard_operation_requests=resource_guard_operation_requests,
             **kwargs
         )
-        self.protected_item_type = "DPMProtectedItem"  # type: str
+        self.protected_item_type: str = "DPMProtectedItem"
         self.friendly_name = friendly_name
         self.backup_engine_name = backup_engine_name
         self.protection_state = protection_state
@@ -6586,8 +6589,8 @@ class DPMProtectedItemExtendedInfo(_serialization.Model):  # pylint: disable=too
         protection_group_name: Optional[str] = None,
         disk_storage_used_in_bytes: Optional[str] = None,
         total_disk_storage_size_in_bytes: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword protectable_object_load_path: Attribute to provide information on various DBs.
         :paramtype protectable_object_load_path: dict[str, str]
@@ -6667,8 +6670,8 @@ class EncryptionDetails(_serialization.Model):
         secret_key_url: Optional[str] = None,
         kek_vault_id: Optional[str] = None,
         secret_key_vault_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword encryption_enabled: Identifies whether this backup copy represents an encrypted VM at
          the time of backup.
@@ -6711,7 +6714,7 @@ class ErrorAdditionalInfo(_serialization.Model):
         "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.type = None
@@ -6743,7 +6746,7 @@ class ErrorDetail(_serialization.Model):
         "recommendations": {"key": "recommendations", "type": "[str]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -6763,7 +6766,9 @@ class ExtendedProperties(_serialization.Model):
         "disk_exclusion_properties": {"key": "diskExclusionProperties", "type": "DiskExclusionProperties"},
     }
 
-    def __init__(self, *, disk_exclusion_properties: Optional["_models.DiskExclusionProperties"] = None, **kwargs):
+    def __init__(
+        self, *, disk_exclusion_properties: Optional["_models.DiskExclusionProperties"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword disk_exclusion_properties: Extended Properties for Disk Exclusion.
         :paramtype disk_exclusion_properties:
@@ -6890,8 +6895,8 @@ class GenericProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance-
         protected_item_id: Optional[int] = None,
         source_associations: Optional[Dict[str, str]] = None,
         fabric_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword backup_management_type: Type of backup management for the backed up item. Known values
          are: "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql", "AzureStorage",
@@ -6970,7 +6975,7 @@ class GenericProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance-
             resource_guard_operation_requests=resource_guard_operation_requests,
             **kwargs
         )
-        self.protected_item_type = "GenericProtectedItem"  # type: str
+        self.protected_item_type: str = "GenericProtectedItem"
         self.friendly_name = friendly_name
         self.policy_state = policy_state
         self.protection_state = protection_state
@@ -7016,8 +7021,8 @@ class GenericRecoveryPoint(RecoveryPoint):
         recovery_point_type: Optional[str] = None,
         recovery_point_time: Optional[datetime.datetime] = None,
         recovery_point_additional_info: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword friendly_name: Friendly name of the backup copy.
         :paramtype friendly_name: str
@@ -7030,7 +7035,7 @@ class GenericRecoveryPoint(RecoveryPoint):
         :paramtype recovery_point_additional_info: str
         """
         super().__init__(**kwargs)
-        self.object_type = "GenericRecoveryPoint"  # type: str
+        self.object_type: str = "GenericRecoveryPoint"
         self.friendly_name = friendly_name
         self.recovery_point_type = recovery_point_type
         self.recovery_point_time = recovery_point_time
@@ -7134,8 +7139,8 @@ class IaasVMRecoveryPoint(RecoveryPoint):  # pylint: disable=too-many-instance-a
         recovery_point_disk_configuration: Optional["_models.RecoveryPointDiskConfiguration"] = None,
         zones: Optional[List[str]] = None,
         recovery_point_move_readiness_info: Optional[Dict[str, "_models.RecoveryPointMoveReadinessInfo"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword key_and_secret: Required details for recovering an encrypted VM. Applicable only when
          IsSourceVMEncrypted is true.
@@ -7166,7 +7171,7 @@ class IaasVMRecoveryPoint(RecoveryPoint):  # pylint: disable=too-many-instance-a
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.RecoveryPointMoveReadinessInfo]
         """
         super().__init__(**kwargs)
-        self.object_type = "IaasVMRecoveryPoint"  # type: str
+        self.object_type: str = "IaasVMRecoveryPoint"
         self.recovery_point_type = None
         self.recovery_point_time = None
         self.recovery_point_additional_info = None
@@ -7308,8 +7313,8 @@ class IaasVMRestoreRequest(RestoreRequest):  # pylint: disable=too-many-instance
         zones: Optional[List[str]] = None,
         identity_info: Optional["_models.IdentityInfo"] = None,
         identity_based_restore_details: Optional["_models.IdentityBasedRestoreDetails"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword recovery_point_id: ID of the backup copy to be recovered.
         :paramtype recovery_point_id: str
@@ -7377,7 +7382,7 @@ class IaasVMRestoreRequest(RestoreRequest):  # pylint: disable=too-many-instance
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.IdentityBasedRestoreDetails
         """
         super().__init__(**kwargs)
-        self.object_type = "IaasVMRestoreRequest"  # type: str
+        self.object_type: str = "IaasVMRestoreRequest"
         self.recovery_point_id = recovery_point_id
         self.recovery_type = recovery_type
         self.source_resource_id = source_resource_id
@@ -7414,7 +7419,9 @@ class IdentityBasedRestoreDetails(_serialization.Model):
         "target_storage_account_id": {"key": "targetStorageAccountId", "type": "str"},
     }
 
-    def __init__(self, *, object_type: Optional[str] = None, target_storage_account_id: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, object_type: Optional[str] = None, target_storage_account_id: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword object_type: Gets the class type.
         :paramtype object_type: str
@@ -7447,8 +7454,8 @@ class IdentityInfo(_serialization.Model):
         *,
         is_system_assigned_identity: Optional[bool] = None,
         managed_identity_resource_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword is_system_assigned_identity: To differentiate if the managed identity is system
          assigned or user assigned.
@@ -7474,7 +7481,9 @@ class InstantItemRecoveryTarget(_serialization.Model):
         "client_scripts": {"key": "clientScripts", "type": "[ClientScriptForConnect]"},
     }
 
-    def __init__(self, *, client_scripts: Optional[List["_models.ClientScriptForConnect"]] = None, **kwargs):
+    def __init__(
+        self, *, client_scripts: Optional[List["_models.ClientScriptForConnect"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword client_scripts: List of client scripts.
         :paramtype client_scripts:
@@ -7526,8 +7535,8 @@ class JobQueryObject(_serialization.Model):
         job_id: Optional[str] = None,
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword status: Status of the job. Known values are: "Invalid", "InProgress", "Completed",
          "Failed", "CompletedWithWarnings", "Cancelled", and "Cancelling".
@@ -7603,8 +7612,8 @@ class JobResource(Resource):
         tags: Optional[Dict[str, str]] = None,
         e_tag: Optional[str] = None,
         properties: Optional["_models.Job"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location.
         :paramtype location: str
@@ -7631,7 +7640,7 @@ class ResourceList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword next_link: The uri to fetch the next page of resources. Call ListNext() fetches next
          page of resources.
@@ -7657,8 +7666,8 @@ class JobResourceList(ResourceList):
     }
 
     def __init__(
-        self, *, next_link: Optional[str] = None, value: Optional[List["_models.JobResource"]] = None, **kwargs
-    ):
+        self, *, next_link: Optional[str] = None, value: Optional[List["_models.JobResource"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword next_link: The uri to fetch the next page of resources. Call ListNext() fetches next
          page of resources.
@@ -7693,8 +7702,8 @@ class KEKDetails(_serialization.Model):
         key_url: Optional[str] = None,
         key_vault_id: Optional[str] = None,
         key_backup_data: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword key_url: Key is KEK.
         :paramtype key_url: str
@@ -7720,12 +7729,12 @@ class KeyAndSecretDetails(_serialization.Model):
     #. EncryptionMechanism
        BEK and KEK can potentially have different vault ids.
 
-        :ivar kek_details: KEK is encryption key for BEK.
-        :vartype kek_details: ~azure.mgmt.recoveryservicesbackup.passivestamp.models.KEKDetails
-        :ivar bek_details: BEK is bitlocker encryption key.
-        :vartype bek_details: ~azure.mgmt.recoveryservicesbackup.passivestamp.models.BEKDetails
-        :ivar encryption_mechanism: Encryption mechanism: None/ SinglePass/ DoublePass.
-        :vartype encryption_mechanism: str
+    :ivar kek_details: KEK is encryption key for BEK.
+    :vartype kek_details: ~azure.mgmt.recoveryservicesbackup.passivestamp.models.KEKDetails
+    :ivar bek_details: BEK is bitlocker encryption key.
+    :vartype bek_details: ~azure.mgmt.recoveryservicesbackup.passivestamp.models.BEKDetails
+    :ivar encryption_mechanism: Encryption mechanism: None/ SinglePass/ DoublePass.
+    :vartype encryption_mechanism: str
     """
 
     _attribute_map = {
@@ -7740,8 +7749,8 @@ class KeyAndSecretDetails(_serialization.Model):
         kek_details: Optional["_models.KEKDetails"] = None,
         bek_details: Optional["_models.BEKDetails"] = None,
         encryption_mechanism: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kek_details: KEK is encryption key for BEK.
         :paramtype kek_details: ~azure.mgmt.recoveryservicesbackup.passivestamp.models.KEKDetails
@@ -7779,8 +7788,8 @@ class KPIResourceHealthDetails(_serialization.Model):
         *,
         resource_health_status: Optional[Union[str, "_models.ResourceHealthStatus"]] = None,
         resource_health_details: Optional[List["_models.ResourceHealthDetails"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword resource_health_status: Resource Health Status. Known values are: "Healthy",
          "TransientDegraded", "PersistentDegraded", "TransientUnhealthy", "PersistentUnhealthy", and
@@ -7817,7 +7826,7 @@ class MabErrorInfo(_serialization.Model):
         "recommendations": {"key": "recommendations", "type": "[str]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.error_string = None
@@ -7942,8 +7951,8 @@ class MabFileFolderProtectedItem(ProtectedItem):  # pylint: disable=too-many-ins
         protection_state: Optional[str] = None,
         deferred_delete_sync_time_in_utc: Optional[int] = None,
         extended_info: Optional["_models.MabFileFolderProtectedItemExtendedInfo"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword backup_management_type: Type of backup management for the backed up item. Known values
          are: "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql", "AzureStorage",
@@ -8021,7 +8030,7 @@ class MabFileFolderProtectedItem(ProtectedItem):  # pylint: disable=too-many-ins
             resource_guard_operation_requests=resource_guard_operation_requests,
             **kwargs
         )
-        self.protected_item_type = "MabFileFolderProtectedItem"  # type: str
+        self.protected_item_type: str = "MabFileFolderProtectedItem"
         self.friendly_name = friendly_name
         self.computer_name = computer_name
         self.last_backup_status = last_backup_status
@@ -8054,8 +8063,8 @@ class MabFileFolderProtectedItemExtendedInfo(_serialization.Model):
         last_refreshed_at: Optional[datetime.datetime] = None,
         oldest_recovery_point: Optional[datetime.datetime] = None,
         recovery_point_count: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword last_refreshed_at: Last time when the agent data synced to service.
         :paramtype last_refreshed_at: ~datetime.datetime
@@ -8161,8 +8170,8 @@ class MabJob(Job):  # pylint: disable=too-many-instance-attributes
         workload_type: Optional[Union[str, "_models.WorkloadType"]] = None,
         error_details: Optional[List["_models.MabErrorInfo"]] = None,
         extended_info: Optional["_models.MabJobExtendedInfo"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword entity_friendly_name: Friendly name of the entity on which the current job is
          executing.
@@ -8218,7 +8227,7 @@ class MabJob(Job):  # pylint: disable=too-many-instance-attributes
             activity_id=activity_id,
             **kwargs
         )
-        self.job_type = "MabJob"  # type: str
+        self.job_type: str = "MabJob"
         self.duration = duration
         self.actions_info = actions_info
         self.mab_server_name = mab_server_name
@@ -8252,8 +8261,8 @@ class MabJobExtendedInfo(_serialization.Model):
         tasks_list: Optional[List["_models.MabJobTaskDetails"]] = None,
         property_bag: Optional[Dict[str, str]] = None,
         dynamic_error_message: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tasks_list: List of tasks for this job.
         :paramtype tasks_list:
@@ -8300,8 +8309,8 @@ class MabJobTaskDetails(_serialization.Model):
         end_time: Optional[datetime.datetime] = None,
         duration: Optional[datetime.timedelta] = None,
         status: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword task_id: The task display name.
         :paramtype task_id: str
@@ -8336,7 +8345,7 @@ class NameInfo(_serialization.Model):
         "localized_value": {"key": "localizedValue", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[str] = None, localized_value: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: Optional[str] = None, localized_value: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: Value of usage.
         :paramtype value: str
@@ -8359,7 +8368,7 @@ class NewErrorResponse(_serialization.Model):
         "error": {"key": "error", "type": "NewErrorResponseError"},
     }
 
-    def __init__(self, *, error: Optional["_models.NewErrorResponseError"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.NewErrorResponseError"] = None, **kwargs: Any) -> None:
         """
         :keyword error: The error object.
         :paramtype error: ~azure.mgmt.recoveryservicesbackup.passivestamp.models.NewErrorResponseError
@@ -8402,7 +8411,7 @@ class NewErrorResponseError(_serialization.Model):
         "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -8454,8 +8463,8 @@ class OperationStatus(_serialization.Model):
         end_time: Optional[datetime.datetime] = None,
         error: Optional["_models.OperationStatusError"] = None,
         properties: Optional["_models.OperationStatusExtendedInfo"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: ID of the operation.
         :paramtype id: str
@@ -8499,7 +8508,7 @@ class OperationStatusError(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword code: Error code of the operation failure.
         :paramtype code: str
@@ -8542,10 +8551,10 @@ class OperationStatusExtendedInfo(_serialization.Model):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.object_type = None  # type: Optional[str]
+        self.object_type: Optional[str] = None
 
 
 class OperationStatusJobExtendedInfo(OperationStatusExtendedInfo):
@@ -8569,13 +8578,13 @@ class OperationStatusJobExtendedInfo(OperationStatusExtendedInfo):
         "job_id": {"key": "jobId", "type": "str"},
     }
 
-    def __init__(self, *, job_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, job_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword job_id: ID of the job created for this protected item.
         :paramtype job_id: str
         """
         super().__init__(**kwargs)
-        self.object_type = "OperationStatusJobExtendedInfo"  # type: str
+        self.object_type: str = "OperationStatusJobExtendedInfo"
         self.job_id = job_id
 
 
@@ -8604,8 +8613,8 @@ class OperationStatusJobsExtendedInfo(OperationStatusExtendedInfo):
     }
 
     def __init__(
-        self, *, job_ids: Optional[List[str]] = None, failed_jobs_error: Optional[Dict[str, str]] = None, **kwargs
-    ):
+        self, *, job_ids: Optional[List[str]] = None, failed_jobs_error: Optional[Dict[str, str]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword job_ids: IDs of the jobs created for the protected item.
         :paramtype job_ids: list[str]
@@ -8614,7 +8623,7 @@ class OperationStatusJobsExtendedInfo(OperationStatusExtendedInfo):
         :paramtype failed_jobs_error: dict[str, str]
         """
         super().__init__(**kwargs)
-        self.object_type = "OperationStatusJobsExtendedInfo"  # type: str
+        self.object_type: str = "OperationStatusJobsExtendedInfo"
         self.job_ids = job_ids
         self.failed_jobs_error = failed_jobs_error
 
@@ -8641,14 +8650,14 @@ class OperationStatusProvisionILRExtendedInfo(OperationStatusExtendedInfo):
         "recovery_target": {"key": "recoveryTarget", "type": "InstantItemRecoveryTarget"},
     }
 
-    def __init__(self, *, recovery_target: Optional["_models.InstantItemRecoveryTarget"] = None, **kwargs):
+    def __init__(self, *, recovery_target: Optional["_models.InstantItemRecoveryTarget"] = None, **kwargs: Any) -> None:
         """
         :keyword recovery_target: Target details for file / folder restore.
         :paramtype recovery_target:
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.InstantItemRecoveryTarget
         """
         super().__init__(**kwargs)
-        self.object_type = "OperationStatusProvisionILRExtendedInfo"  # type: str
+        self.object_type: str = "OperationStatusProvisionILRExtendedInfo"
         self.recovery_target = recovery_target
 
 
@@ -8683,8 +8692,8 @@ class OperationStatusRecoveryPointExtendedInfo(OperationStatusExtendedInfo):
         *,
         updated_recovery_point: Optional["_models.RecoveryPoint"] = None,
         deleted_backup_item_version: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword updated_recovery_point: Recovery Point info with updated source snapshot URI.
         :paramtype updated_recovery_point:
@@ -8694,7 +8703,7 @@ class OperationStatusRecoveryPointExtendedInfo(OperationStatusExtendedInfo):
         :paramtype deleted_backup_item_version: str
         """
         super().__init__(**kwargs)
-        self.object_type = "OperationStatusRecoveryPointExtendedInfo"  # type: str
+        self.object_type: str = "OperationStatusRecoveryPointExtendedInfo"
         self.updated_recovery_point = updated_recovery_point
         self.deleted_backup_item_version = deleted_backup_item_version
 
@@ -8714,8 +8723,12 @@ class PointInTimeRange(_serialization.Model):
     }
 
     def __init__(
-        self, *, start_time: Optional[datetime.datetime] = None, end_time: Optional[datetime.datetime] = None, **kwargs
-    ):
+        self,
+        *,
+        start_time: Optional[datetime.datetime] = None,
+        end_time: Optional[datetime.datetime] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword start_time: Start time of the time range for log recovery.
         :paramtype start_time: ~datetime.datetime
@@ -8783,8 +8796,8 @@ class ProtectedItemQueryObject(_serialization.Model):
         friendly_name: Optional[str] = None,
         fabric_name: Optional[str] = None,
         backup_set_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword health_state: Health State for the backed up item. Known values are: "Passed",
          "ActionRequired", "ActionSuggested", and "Invalid".
@@ -8871,8 +8884,8 @@ class ProtectedItemResource(Resource):
         tags: Optional[Dict[str, str]] = None,
         e_tag: Optional[str] = None,
         properties: Optional["_models.ProtectedItem"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location.
         :paramtype location: str
@@ -8908,8 +8921,8 @@ class ProtectedItemResourceList(ResourceList):
         *,
         next_link: Optional[str] = None,
         value: Optional[List["_models.ProtectedItemResource"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword next_link: The uri to fetch the next page of resources. Call ListNext() fetches next
          page of resources.
@@ -8951,8 +8964,8 @@ class RecoveryPointDiskConfiguration(_serialization.Model):
         number_of_disks_attached_to_vm: Optional[int] = None,
         included_disk_list: Optional[List["_models.DiskInformation"]] = None,
         excluded_disk_list: Optional[List["_models.DiskInformation"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword number_of_disks_included_in_backup: Number of disks included in backup.
         :paramtype number_of_disks_included_in_backup: int
@@ -8986,7 +8999,9 @@ class RecoveryPointMoveReadinessInfo(_serialization.Model):
         "additional_info": {"key": "additionalInfo", "type": "str"},
     }
 
-    def __init__(self, *, is_ready_for_move: Optional[bool] = None, additional_info: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, is_ready_for_move: Optional[bool] = None, additional_info: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword is_ready_for_move:
         :paramtype is_ready_for_move: bool
@@ -9043,8 +9058,8 @@ class RecoveryPointResource(Resource):
         tags: Optional[Dict[str, str]] = None,
         e_tag: Optional[str] = None,
         properties: Optional["_models.RecoveryPoint"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location.
         :paramtype location: str
@@ -9080,8 +9095,8 @@ class RecoveryPointResourceList(ResourceList):
         *,
         next_link: Optional[str] = None,
         value: Optional[List["_models.RecoveryPointResource"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword next_link: The uri to fetch the next page of resources. Call ListNext() fetches next
          page of resources.
@@ -9121,8 +9136,8 @@ class RecoveryPointTierInformation(_serialization.Model):
         type: Optional[Union[str, "_models.RecoveryPointTierType"]] = None,
         status: Optional[Union[str, "_models.RecoveryPointTierStatus"]] = None,
         extended_info: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: Recovery point tier type. Known values are: "Invalid", "InstantRP",
          "HardenedRP", and "ArchivedRP".
@@ -9164,8 +9179,8 @@ class RestoreFileSpecs(_serialization.Model):
         path: Optional[str] = None,
         file_spec_type: Optional[str] = None,
         target_folder_path: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword path: Source File/Folder path.
         :paramtype path: str
@@ -9204,8 +9219,8 @@ class SQLDataDirectory(_serialization.Model):
         type: Optional[Union[str, "_models.SQLDataDirectoryType"]] = None,
         path: Optional[str] = None,
         logical_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: Type of data directory mapping. Known values are: "Invalid", "Data", and "Log".
         :paramtype type: str or
@@ -9250,8 +9265,8 @@ class SQLDataDirectoryMapping(_serialization.Model):
         source_logical_name: Optional[str] = None,
         source_path: Optional[str] = None,
         target_path: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword mapping_type: Type of data directory mapping. Known values are: "Invalid", "Data", and
          "Log".
@@ -9285,7 +9300,7 @@ class TargetAFSRestoreInfo(_serialization.Model):
         "target_resource_id": {"key": "targetResourceId", "type": "str"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, target_resource_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, name: Optional[str] = None, target_resource_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: File share name.
         :paramtype name: str
@@ -9327,8 +9342,8 @@ class TargetRestoreInfo(_serialization.Model):
         container_id: Optional[str] = None,
         database_name: Optional[str] = None,
         target_directory_for_file_restore: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword overwrite_option: Can Overwrite if Target DataBase already exists. Known values are:
          "Invalid", "FailOnConflict", and "Overwrite".
@@ -9511,8 +9526,8 @@ class WorkloadCrrAccessToken(CrrAccessToken):  # pylint: disable=too-many-instan
         container_id: Optional[str] = None,
         policy_name: Optional[str] = None,
         policy_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword access_token_string: Access token used for authentication.
         :paramtype access_token_string: str
@@ -9615,7 +9630,7 @@ class WorkloadCrrAccessToken(CrrAccessToken):  # pylint: disable=too-many-instan
             b_ms_active_region=b_ms_active_region,
             **kwargs
         )
-        self.object_type = "WorkloadCrrAccessToken"  # type: str
+        self.object_type: str = "WorkloadCrrAccessToken"
         self.protectable_object_unique_name = protectable_object_unique_name
         self.protectable_object_friendly_name = protectable_object_friendly_name
         self.protectable_object_workload_type = protectable_object_workload_type

@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, overload
-from urllib.parse import parse_qs, urljoin, urlparse
+import urllib.parse
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -40,7 +40,7 @@ def build_get_request(name: str, subscription_id: str, **kwargs: Any) -> HttpReq
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))  # type: str
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -52,7 +52,7 @@ def build_get_request(name: str, subscription_id: str, **kwargs: Any) -> HttpReq
         "name": _SERIALIZER.url("name", name, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -67,8 +67,8 @@ def build_create_or_update_request(name: str, subscription_id: str, **kwargs: An
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))  # type: str
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -80,7 +80,7 @@ def build_create_or_update_request(name: str, subscription_id: str, **kwargs: An
         "name": _SERIALIZER.url("name", name, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -97,7 +97,7 @@ def build_delete_request(name: str, subscription_id: str, **kwargs: Any) -> Http
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))  # type: str
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -109,7 +109,7 @@ def build_delete_request(name: str, subscription_id: str, **kwargs: Any) -> Http
         "name": _SERIALIZER.url("name", name, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -124,7 +124,7 @@ def build_list_request(subscription_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))  # type: str
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -133,7 +133,7 @@ def build_list_request(subscription_id: str, **kwargs: Any) -> HttpRequest:
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -150,7 +150,7 @@ class SubscriptionDiagnosticSettingsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~$(python-base-namespace).v2021_05_01_preview.MonitorManagementClient`'s
+        :class:`~azure.mgmt.monitor.v2021_05_01_preview.MonitorManagementClient`'s
         :attr:`subscription_diagnostic_settings` attribute.
     """
 
@@ -171,8 +171,7 @@ class SubscriptionDiagnosticSettingsOperations:
         :type name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SubscriptionDiagnosticSettingsResource or the result of cls(response)
-        :rtype:
-         ~$(python-base-namespace).v2021_05_01_preview.models.SubscriptionDiagnosticSettingsResource
+        :rtype: ~azure.mgmt.monitor.v2021_05_01_preview.models.SubscriptionDiagnosticSettingsResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -186,8 +185,8 @@ class SubscriptionDiagnosticSettingsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SubscriptionDiagnosticSettingsResource]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))
+        cls: ClsType[_models.SubscriptionDiagnosticSettingsResource] = kwargs.pop("cls", None)
 
         request = build_get_request(
             name=name,
@@ -198,10 +197,11 @@ class SubscriptionDiagnosticSettingsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -218,7 +218,7 @@ class SubscriptionDiagnosticSettingsOperations:
 
         return deserialized
 
-    get.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Insights/diagnosticSettings/{name}"}  # type: ignore
+    get.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Insights/diagnosticSettings/{name}"}
 
     @overload
     def create_or_update(
@@ -235,14 +235,13 @@ class SubscriptionDiagnosticSettingsOperations:
         :type name: str
         :param parameters: Parameters supplied to the operation. Required.
         :type parameters:
-         ~$(python-base-namespace).v2021_05_01_preview.models.SubscriptionDiagnosticSettingsResource
+         ~azure.mgmt.monitor.v2021_05_01_preview.models.SubscriptionDiagnosticSettingsResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SubscriptionDiagnosticSettingsResource or the result of cls(response)
-        :rtype:
-         ~$(python-base-namespace).v2021_05_01_preview.models.SubscriptionDiagnosticSettingsResource
+        :rtype: ~azure.mgmt.monitor.v2021_05_01_preview.models.SubscriptionDiagnosticSettingsResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -261,8 +260,7 @@ class SubscriptionDiagnosticSettingsOperations:
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SubscriptionDiagnosticSettingsResource or the result of cls(response)
-        :rtype:
-         ~$(python-base-namespace).v2021_05_01_preview.models.SubscriptionDiagnosticSettingsResource
+        :rtype: ~azure.mgmt.monitor.v2021_05_01_preview.models.SubscriptionDiagnosticSettingsResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -274,18 +272,16 @@ class SubscriptionDiagnosticSettingsOperations:
 
         :param name: The name of the diagnostic setting. Required.
         :type name: str
-        :param parameters: Parameters supplied to the operation. Is either a model type or a IO type.
-         Required.
+        :param parameters: Parameters supplied to the operation. Is either a
+         SubscriptionDiagnosticSettingsResource type or a IO type. Required.
         :type parameters:
-         ~$(python-base-namespace).v2021_05_01_preview.models.SubscriptionDiagnosticSettingsResource or
-         IO
+         ~azure.mgmt.monitor.v2021_05_01_preview.models.SubscriptionDiagnosticSettingsResource or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SubscriptionDiagnosticSettingsResource or the result of cls(response)
-        :rtype:
-         ~$(python-base-namespace).v2021_05_01_preview.models.SubscriptionDiagnosticSettingsResource
+        :rtype: ~azure.mgmt.monitor.v2021_05_01_preview.models.SubscriptionDiagnosticSettingsResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -299,9 +295,9 @@ class SubscriptionDiagnosticSettingsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SubscriptionDiagnosticSettingsResource]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.SubscriptionDiagnosticSettingsResource] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -323,10 +319,11 @@ class SubscriptionDiagnosticSettingsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -343,7 +340,9 @@ class SubscriptionDiagnosticSettingsOperations:
 
         return deserialized
 
-    create_or_update.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Insights/diagnosticSettings/{name}"}  # type: ignore
+    create_or_update.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Insights/diagnosticSettings/{name}"
+    }
 
     @distributed_trace
     def delete(self, name: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
@@ -367,8 +366,8 @@ class SubscriptionDiagnosticSettingsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_delete_request(
             name=name,
@@ -379,10 +378,11 @@ class SubscriptionDiagnosticSettingsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -395,7 +395,7 @@ class SubscriptionDiagnosticSettingsOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Insights/diagnosticSettings/{name}"}  # type: ignore
+    delete.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Insights/diagnosticSettings/{name}"}
 
     @distributed_trace
     def list(self, **kwargs: Any) -> Iterable["_models.SubscriptionDiagnosticSettingsResource"]:
@@ -405,14 +405,14 @@ class SubscriptionDiagnosticSettingsOperations:
         :return: An iterator like instance of either SubscriptionDiagnosticSettingsResource or the
          result of cls(response)
         :rtype:
-         ~azure.core.paging.ItemPaged[~$(python-base-namespace).v2021_05_01_preview.models.SubscriptionDiagnosticSettingsResource]
+         ~azure.core.paging.ItemPaged[~azure.mgmt.monitor.v2021_05_01_preview.models.SubscriptionDiagnosticSettingsResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SubscriptionDiagnosticSettingsResourceCollection]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))
+        cls: ClsType[_models.SubscriptionDiagnosticSettingsResourceCollection] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -433,16 +433,23 @@ class SubscriptionDiagnosticSettingsOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -450,14 +457,15 @@ class SubscriptionDiagnosticSettingsOperations:
             deserialized = self._deserialize("SubscriptionDiagnosticSettingsResourceCollection", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -470,4 +478,4 @@ class SubscriptionDiagnosticSettingsOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Insights/diagnosticSettings"}  # type: ignore
+    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Insights/diagnosticSettings"}

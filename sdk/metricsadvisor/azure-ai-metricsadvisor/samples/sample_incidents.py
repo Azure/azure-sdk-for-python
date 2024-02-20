@@ -36,9 +36,8 @@ def sample_list_incidents_for_detection_configuration():
     service_endpoint = os.getenv("METRICS_ADVISOR_ENDPOINT")
     subscription_key = os.getenv("METRICS_ADVISOR_SUBSCRIPTION_KEY")
     api_key = os.getenv("METRICS_ADVISOR_API_KEY")
-    # detection_configuration_id = os.getenv("METRICS_ADVISOR_DETECTION_CONFIGURATION_ID")
-    detection_configuration_id = "efaee305-f049-43ec-9f9b-76026d55c14a"
-
+    detection_configuration_id = os.getenv("METRICS_ADVISOR_DETECTION_CONFIGURATION_ID")
+    
     client = MetricsAdvisorClient(service_endpoint,
                                   MetricsAdvisorKeyCredential(subscription_key, api_key))
     results = client.list_incidents(

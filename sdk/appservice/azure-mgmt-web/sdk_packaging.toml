@@ -4,4 +4,5 @@ package_pprint_name = "Web Apps Management"
 package_doc_id = "webapps"
 is_stable = false
 is_arm = true
-sample_link = "appservice"
+sample_link = ""
+title = "WebSiteManagementClient"

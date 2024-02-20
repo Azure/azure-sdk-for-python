@@ -7,6 +7,7 @@ import logging
 from pathlib import Path
 from typing import List, Optional
 
+from azure.ai.ml.constants._common import DefaultOpenEncoding
 from azure.ai.ml.constants._endpoint import LocalEndpointConstants
 
 from .dockerfile_instructions import Cmd, Copy, From, Run, Workdir
@@ -15,8 +16,7 @@ module_logger = logging.getLogger(__name__)
 
 
 class DockerfileResolver(object):
-    """Represents the contents of a Dockerfile and handles writing the
-    Dockerfile to User's system.
+    """Represents the contents of a Dockerfile and handles writing the Dockerfile to User's system.
 
     :param docker_base_image: name of local endpoint
     :type docker_base_image: str
@@ -32,9 +32,9 @@ class DockerfileResolver(object):
         self,
         docker_base_image: str,
         dockerfile: str,
-        docker_conda_file_name: str = None,
-        docker_port: str = None,
-        docker_azureml_app_path: str = None,
+        docker_conda_file_name: Optional[str] = None,
+        docker_port: Optional[str] = None,
+        docker_azureml_app_path: Optional[str] = None,
         install_debugpy: bool = False,
     ):
         """Constructor of a Dockerfile object.
@@ -69,10 +69,10 @@ class DockerfileResolver(object):
         return self._local_dockerfile_path
 
     def __str__(self) -> str:
-        """Override DockerfileResolver str() built-in func to return the
-        Dockerfile contents as a string.
+        """Override DockerfileResolver str() built-in func to return the Dockerfile contents as a string.
 
-        :return: str
+        :return: Dockerfile Contents
+        :rtype: str
         """
         return "" if len(self._instructions) == 0 else "\n".join([str(instr) for instr in self._instructions])
 
@@ -80,6 +80,9 @@ class DockerfileResolver(object):
         """Internal use only.
 
         Constructs the Dockerfile instructions based on properties.
+
+        :param install_debugpy: Whether to install debugpy. Defaults to False.
+        :type install_debugpy: bool
         """
         self._instructions = []
         if self._docker_base_image:
@@ -139,16 +142,15 @@ class DockerfileResolver(object):
                 ]
             )
 
-    def write_file(self, directory_path: str, file_prefix: str = None) -> None:
-        """Writes this Dockerfile to a file in provided directory and file name
-        prefix.
+    def write_file(self, directory_path: str, file_prefix: Optional[str] = None) -> None:
+        """Writes this Dockerfile to a file in provided directory and file name prefix.
 
         :param directory_path: absolute path of local directory to write Dockerfile.
         :type directory_path: str
-        :param name: name of Dockerfile prefix
-        :type name: str
+        :param file_prefix: name of Dockerfile prefix
+        :type file_prefix: str
         """
         file_name = f"{file_prefix}.Dockerfile" if file_prefix else "Dockerfile"
         self._local_dockerfile_path = str(Path(directory_path, file_name).resolve())
-        with open(self._local_dockerfile_path, "w") as f:
+        with open(self._local_dockerfile_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
             f.write(f"{str(self)}\n")

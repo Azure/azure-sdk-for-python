@@ -45,8 +45,8 @@ class HeadersTest(unittest.TestCase):
     def setUpClass(cls):
         cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
         cls.database = cls.client.create_database_if_not_exists(test_config._test_config.TEST_DATABASE_ID)
-        cls.container = cls.database.create_container(id=test_config._test_config.TEST_COLLECTION_MULTI_PARTITION_ID,
-                                                      partition_key=PartitionKey(path="/id"))
+        cls.container = cls.database.create_container_if_not_exists(
+            id=test_config._test_config.TEST_COLLECTION_MULTI_PARTITION_ID, partition_key=PartitionKey(path="/id"))
 
     def side_effect_dedicated_gateway_max_age_thousand(self, *args, **kwargs):
         # Extract request headers from args

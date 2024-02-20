@@ -17,13 +17,16 @@ from azure.core.exceptions import HttpResponseError
 import xml.etree.ElementTree as ET
 from utils import readonly_checks
 
+
 @pytest.fixture
 def send_request(client):
     def _send_request(request):
         response = client.send_request(request, stream=False)
         response.raise_for_status()
         return response
+
     return _send_request
+
 
 def test_response(send_request, port):
     response = send_request(
@@ -52,9 +55,10 @@ def test_response_text(send_request):
     assert response.status_code == 200
     assert response.reason == "OK"
     assert response.text() == "Hello, world!"
-    assert response.headers["Content-Length"] == '13'
-    assert response.headers['Content-Type'] == "text/plain; charset=utf-8"
+    assert response.headers["Content-Length"] == "13"
+    assert response.headers["Content-Type"] == "text/plain; charset=utf-8"
     assert response.content_type == "text/plain; charset=utf-8"
+
 
 def test_response_html(send_request):
     response = send_request(
@@ -63,6 +67,7 @@ def test_response_html(send_request):
     assert response.status_code == 200
     assert response.reason == "OK"
     assert response.text() == "<html><body>Hello, world!</html></body>"
+
 
 def test_raise_for_status(client):
     response = client.send_request(
@@ -85,21 +90,19 @@ def test_raise_for_status(client):
     with pytest.raises(HttpResponseError):
         response.raise_for_status()
 
+
 def test_response_repr(send_request):
-    response = send_request(
-        request=HttpRequest("GET", "/basic/string")
-    )
+    response = send_request(request=HttpRequest("GET", "/basic/string"))
     assert repr(response) == "<HttpResponse: 200 OK, Content-Type: text/plain; charset=utf-8>"
+
 
 def test_response_content_type_encoding(send_request):
     """
     Use the charset encoding in the Content-Type header if possible.
     """
-    response = send_request(
-        request=HttpRequest("GET", "/encoding/latin-1")
-    )
+    response = send_request(request=HttpRequest("GET", "/encoding/latin-1"))
     assert response.content_type == "text/plain; charset=latin-1"
-    assert response.text() == u"Latin 1: ÿ"
+    assert response.text() == "Latin 1: ÿ"
     assert response.encoding == "latin-1"
 
 
@@ -107,11 +110,9 @@ def test_response_autodetect_encoding(send_request):
     """
     Autodetect encoding if there is no Content-Type header.
     """
-    response = send_request(
-        request=HttpRequest("GET", "/encoding/latin-1")
-    )
+    response = send_request(request=HttpRequest("GET", "/encoding/latin-1"))
 
-    assert response.text() == u'Latin 1: ÿ'
+    assert response.text() == "Latin 1: ÿ"
     assert response.encoding == "latin-1"
 
 
@@ -119,12 +120,10 @@ def test_response_fallback_to_autodetect(send_request):
     """
     Fallback to autodetection if we get an invalid charset in the Content-Type header.
     """
-    response = send_request(
-        request=HttpRequest("GET", "/encoding/invalid-codec-name")
-    )
+    response = send_request(request=HttpRequest("GET", "/encoding/invalid-codec-name"))
 
     assert response.headers["Content-Type"] == "text/plain; charset=invalid-codec-name"
-    assert response.text() == u"おはようございます。"
+    assert response.text() == "おはようございます。"
     assert response.encoding is None
 
 
@@ -151,7 +150,7 @@ def test_response_no_charset_with_iso_8859_1_content(send_request):
     response = send_request(
         request=HttpRequest("GET", "/encoding/iso-8859-1"),
     )
-    assert response.text() == u"Accented: �sterreich"
+    assert response.text() == "Accented: �sterreich"
     assert response.encoding is None
 
 
@@ -162,6 +161,7 @@ def test_json(send_request):
     assert response.json() == {"greeting": "hello", "recipient": "world"}
     assert response.encoding is None
 
+
 def test_json_with_specified_encoding(send_request):
     response = send_request(
         request=HttpRequest("GET", "/encoding/json"),
@@ -169,32 +169,35 @@ def test_json_with_specified_encoding(send_request):
     assert response.json() == {"greeting": "hello", "recipient": "world"}
     assert response.encoding == "utf-16"
 
+
 def test_emoji(send_request):
     response = send_request(
         request=HttpRequest("GET", "/encoding/emoji"),
     )
-    assert response.text() == u"👩"
+    assert response.text() == "👩"
+
 
 def test_emoji_family_with_skin_tone_modifier(send_request):
     response = send_request(
         request=HttpRequest("GET", "/encoding/emoji-family-skin-tone-modifier"),
     )
-    assert response.text() == u"👩🏻‍👩🏽‍👧🏾‍👦🏿 SSN: 859-98-0987"
+    assert response.text() == "👩🏻‍👩🏽‍👧🏾‍👦🏿 SSN: 859-98-0987"
+
 
 def test_korean_nfc(send_request):
     response = send_request(
         request=HttpRequest("GET", "/encoding/korean"),
     )
-    assert response.text() == u"아가"
+    assert response.text() == "아가"
+
 
 def test_urlencoded_content(send_request):
     send_request(
         request=HttpRequest(
-            "POST",
-            "/urlencoded/pet/add/1",
-            data={ "pet_type": "dog", "pet_food": "meat", "name": "Fido", "pet_age": 42 }
+            "POST", "/urlencoded/pet/add/1", data={"pet_type": "dog", "pet_food": "meat", "name": "Fido", "pet_age": 42}
         ),
     )
+
 
 def test_multipart_files_content(send_request):
     request = HttpRequest(
@@ -203,6 +206,7 @@ def test_multipart_files_content(send_request):
         files={"fileContent": io.BytesIO(b"<file content>")},
     )
     send_request(request)
+
 
 def test_multipart_data_and_files_content(send_request):
     request = HttpRequest(
@@ -240,6 +244,7 @@ def test_multipart_encode_non_seekable_filelike(send_request):
     )
     send_request(request)
 
+
 def test_get_xml_basic(send_request):
     request = HttpRequest(
         "GET",
@@ -247,11 +252,12 @@ def test_get_xml_basic(send_request):
     )
     response = send_request(request)
     parsed_xml = ET.fromstring(response.text())
-    assert parsed_xml.tag == 'slideshow'
+    assert parsed_xml.tag == "slideshow"
     attributes = parsed_xml.attrib
-    assert attributes['title'] == "Sample Slide Show"
-    assert attributes['date'] == "Date of publication"
-    assert attributes['author'] == "Yours Truly"
+    assert attributes["title"] == "Sample Slide Show"
+    assert attributes["date"] == "Date of publication"
+    assert attributes["author"] == "Yours Truly"
+
 
 def test_put_xml_basic(send_request):
 
@@ -278,6 +284,7 @@ def test_put_xml_basic(send_request):
     )
     send_request(request)
 
+
 def test_send_request_return_pipeline_response(client):
     # we use return_pipeline_response for some cases in autorest
     request = HttpRequest("GET", "/basic/string")
@@ -288,38 +295,42 @@ def test_send_request_return_pipeline_response(client):
     assert response.http_response.text() == "Hello, world!"
     assert hasattr(response.http_request, "content")
 
+
 def test_text_and_encoding(send_request):
     response = send_request(
         request=HttpRequest("GET", "/encoding/emoji"),
     )
-    assert response.content == u"👩".encode("utf-8")
-    assert response.text() == u"👩"
+    assert response.content == "👩".encode("utf-8")
+    assert response.text() == "👩"
 
     # try setting encoding as a property
     response.encoding = "utf-16"
-    assert response.text() == u"鿰ꦑ" == response.content.decode(response.encoding)
+    assert response.text() == "鿰ꦑ" == response.content.decode(response.encoding)
 
     # assert latin-1 changes text decoding without changing encoding property
-    assert response.text("latin-1") == u'ð\x9f\x91©' == response.content.decode("latin-1")
+    assert response.text("latin-1") == "ð\x9f\x91©" == response.content.decode("latin-1")
     assert response.encoding == "utf-16"
+
 
 def test_passing_encoding_to_text(send_request):
     response = send_request(
         request=HttpRequest("GET", "/encoding/emoji"),
     )
-    assert response.content == u"👩".encode("utf-8")
-    assert response.text() == u"👩"
+    assert response.content == "👩".encode("utf-8")
+    assert response.text() == "👩"
 
     # pass in different encoding
-    assert response.text("latin-1") == u'ð\x9f\x91©'
+    assert response.text("latin-1") == "ð\x9f\x91©"
 
     # check response.text() still gets us the old value
-    assert response.text() == u"👩"
+    assert response.text() == "👩"
+
 
 def test_initialize_response_abc():
     with pytest.raises(TypeError) as ex:
         HttpResponse()
     assert "Can't instantiate abstract class" in str(ex)
+
 
 def test_readonly(send_request):
     """Make sure everything that is readonly is readonly"""
@@ -327,4 +338,5 @@ def test_readonly(send_request):
 
     assert isinstance(response, RestRequestsTransportResponse)
     from azure.core.pipeline.transport import RequestsTransportResponse
+
     readonly_checks(response, old_response_class=RequestsTransportResponse)

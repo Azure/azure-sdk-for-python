@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=https://azuremlsdk2.blob.core.windows.net/latest/commandJob.schema.json
 command: echo ${{inputs.test1}}
 type: command
-environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33
 name: "test1"
 compute: "azureml:testCompute"
 experiment_name: mfe-test1

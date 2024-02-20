@@ -1,0 +1,8 @@
+name: testDataAssetfolder
+version: 1
+description: "this is a test data asset with auto delete setting"
+path: azureml://datastores/workspacemanageddatastore/
+
+auto_delete_setting:
+  condition: created_greater_than
+  value: 30d

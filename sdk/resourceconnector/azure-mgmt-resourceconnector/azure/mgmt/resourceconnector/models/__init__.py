@@ -8,12 +8,14 @@
 
 from ._models_py3 import Appliance
 from ._models_py3 import ApplianceCredentialKubeconfig
-from ._models_py3 import ApplianceListClusterCustomerUserCredentialResults
+from ._models_py3 import ApplianceGetTelemetryConfigResult
 from ._models_py3 import ApplianceListCredentialResults
+from ._models_py3 import ApplianceListKeysResults
 from ._models_py3 import ApplianceListResult
 from ._models_py3 import ApplianceOperation
 from ._models_py3 import ApplianceOperationsList
 from ._models_py3 import AppliancePropertiesInfrastructureConfig
+from ._models_py3 import ArtifactProfile
 from ._models_py3 import ErrorAdditionalInfo
 from ._models_py3 import ErrorDetail
 from ._models_py3 import ErrorResponse
@@ -31,51 +33,53 @@ from ._models_py3 import TrackedResource
 from ._models_py3 import UpgradeGraph
 from ._models_py3 import UpgradeGraphProperties
 
-
-from ._appliances_enums import (
-    AccessProfileType,
-    CreatedByType,
-    Distro,
-    Provider,
-    ResourceIdentityType,
-    SSHKeyType,
-    Status,
-)
+from ._resource_connector_mgmt_client_enums import AccessProfileType
+from ._resource_connector_mgmt_client_enums import ArtifactType
+from ._resource_connector_mgmt_client_enums import CreatedByType
+from ._resource_connector_mgmt_client_enums import Distro
+from ._resource_connector_mgmt_client_enums import Provider
+from ._resource_connector_mgmt_client_enums import ResourceIdentityType
+from ._resource_connector_mgmt_client_enums import SSHKeyType
+from ._resource_connector_mgmt_client_enums import Status
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'Appliance',
-    'ApplianceCredentialKubeconfig',
-    'ApplianceListClusterCustomerUserCredentialResults',
-    'ApplianceListCredentialResults',
-    'ApplianceListResult',
-    'ApplianceOperation',
-    'ApplianceOperationsList',
-    'AppliancePropertiesInfrastructureConfig',
-    'ErrorAdditionalInfo',
-    'ErrorDetail',
-    'ErrorResponse',
-    'HybridConnectionConfig',
-    'Identity',
-    'PatchableAppliance',
-    'Resource',
-    'SSHKey',
-    'SupportedVersion',
-    'SupportedVersionCatalogVersion',
-    'SupportedVersionCatalogVersionData',
-    'SupportedVersionMetadata',
-    'SystemData',
-    'TrackedResource',
-    'UpgradeGraph',
-    'UpgradeGraphProperties',
-    'AccessProfileType',
-    'CreatedByType',
-    'Distro',
-    'Provider',
-    'ResourceIdentityType',
-    'SSHKeyType',
-    'Status',
+    "Appliance",
+    "ApplianceCredentialKubeconfig",
+    "ApplianceGetTelemetryConfigResult",
+    "ApplianceListCredentialResults",
+    "ApplianceListKeysResults",
+    "ApplianceListResult",
+    "ApplianceOperation",
+    "ApplianceOperationsList",
+    "AppliancePropertiesInfrastructureConfig",
+    "ArtifactProfile",
+    "ErrorAdditionalInfo",
+    "ErrorDetail",
+    "ErrorResponse",
+    "HybridConnectionConfig",
+    "Identity",
+    "PatchableAppliance",
+    "Resource",
+    "SSHKey",
+    "SupportedVersion",
+    "SupportedVersionCatalogVersion",
+    "SupportedVersionCatalogVersionData",
+    "SupportedVersionMetadata",
+    "SystemData",
+    "TrackedResource",
+    "UpgradeGraph",
+    "UpgradeGraphProperties",
+    "AccessProfileType",
+    "ArtifactType",
+    "CreatedByType",
+    "Distro",
+    "Provider",
+    "ResourceIdentityType",
+    "SSHKeyType",
+    "Status",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

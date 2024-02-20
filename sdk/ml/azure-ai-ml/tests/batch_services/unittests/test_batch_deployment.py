@@ -39,12 +39,12 @@ resources:
 @pytest.fixture
 def mock_workspace_operations(
     mock_workspace_scope: OperationScope,
-    mock_aml_services_2021_10_01: Mock,
+    mock_aml_services_2022_10_01: Mock,
     mock_machinelearning_client: Mock,
 ) -> WorkspaceOperations:
     yield WorkspaceOperations(
         operation_scope=mock_workspace_scope,
-        service_client=mock_aml_services_2021_10_01,
+        service_client=mock_aml_services_2022_10_01,
         all_operations=mock_machinelearning_client._operation_container,
     )
 
@@ -59,11 +59,15 @@ def mock_batch_deployment_operations(
     mock_workspace_scope: OperationScope,
     mock_operation_config: OperationConfig,
     mock_aml_services_2022_05_01: Mock,
+    mock_aml_services_2023_02_01_preview: Mock,
     mock_aml_services_2020_09_01_dataplanepreview: Mock,
     mock_machinelearning_client: Mock,
 ) -> BatchDeploymentOperations:
     mock_machinelearning_client._operation_container.add(AzureMLResourceType.WORKSPACE, mock_workspace_operations)
-    kwargs = {"service_client_09_2020_dataplanepreview": mock_aml_services_2020_09_01_dataplanepreview}
+    kwargs = {
+        "service_client_09_2020_dataplanepreview": mock_aml_services_2020_09_01_dataplanepreview,
+        "service_client_02_2023_preview": mock_aml_services_2023_02_01_preview,
+    }
 
     yield BatchDeploymentOperations(
         operation_scope=mock_workspace_scope,
@@ -76,7 +80,7 @@ def mock_batch_deployment_operations(
 
 
 @pytest.mark.unittest
-@pytest.mark.production_experience_test
+@pytest.mark.production_experiences_test
 class TestBatchDeploymentOperations:
     def test_batch_deployment_create(
         self,

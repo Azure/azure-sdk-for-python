@@ -20,6 +20,7 @@ USAGE:
 """
 
 import asyncio
+import uuid
 
 
 async def sample_export_project():
@@ -49,15 +50,13 @@ async def sample_export_project():
         return exported_project
 
 
-async def sample_import_project(exported_project):
+async def sample_import_project(exported_project, project_name):
     import os
-    import uuid
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.language.conversations.authoring.aio import ConversationAuthoringClient
 
     clu_endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
     clu_key = os.environ["AZURE_CONVERSATIONS_KEY"]
-    project_name = "test_project" + str(uuid.uuid4())
 
     print(f"Importing project as '{project_name}'")
     client = ConversationAuthoringClient(
@@ -140,11 +139,12 @@ async def sample_delete_project(project_name):
 
 
 async def main():
+    project_name = "test_project" + str(uuid.uuid4())
     try:
         print("Exporting project...")
         project = await sample_export_project()
         print("Importing project...")
-        project_name = await sample_import_project(project)
+        project_name = await sample_import_project(project, project_name)
         print("Training model...")
         await sample_train_model(project_name)
         print("Deploying model...")

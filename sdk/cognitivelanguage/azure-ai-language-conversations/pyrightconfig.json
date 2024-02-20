@@ -1,0 +1,10 @@
+{
+  "reportUnnecessaryCast": "warning",
+  "reportUnnecessaryTypeIgnoreComment": "warning",
+  "reportTypeCommentUsage": true,
+  "pythonVersion": "3.10",
+  "reportMissingImports": false,
+  "exclude": [
+    "**/samples/async/sample_authentication_async.py"
+  ]
+}

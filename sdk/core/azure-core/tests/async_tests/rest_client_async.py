@@ -3,15 +3,16 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from typing import Optional, Type
+from types import TracebackType
 from copy import deepcopy
 from azure.core import AsyncPipelineClient
 from azure.core.pipeline import policies
 from azure.core.configuration import Configuration
 
+
 class TestRestClientConfiguration(Configuration):
-    def __init__(
-        self, **kwargs
-    ):
+    def __init__(self, **kwargs):
         # type: (...) -> None
         super(TestRestClientConfiguration, self).__init__(**kwargs)
 
@@ -29,16 +30,12 @@ class TestRestClientConfiguration(Configuration):
         self.redirect_policy = kwargs.get("redirect_policy") or policies.AsyncRedirectPolicy(**kwargs)
         self.authentication_policy = kwargs.get("authentication_policy")
 
-class AsyncTestRestClient(object):
 
+class AsyncTestRestClient(object):
     def __init__(self, port, **kwargs):
         self._config = TestRestClientConfiguration(**kwargs)
 
-        self._client = AsyncPipelineClient(
-            base_url="http://localhost:{}".format(port),
-            config=self._config,
-            **kwargs
-        )
+        self._client = AsyncPipelineClient(base_url="http://localhost:{}".format(port), config=self._config, **kwargs)
 
     def send_request(self, request, **kwargs):
         """Runs the network request through the client's chained policies.
@@ -65,5 +62,10 @@ class AsyncTestRestClient(object):
         await self._client.__aenter__()
         return self
 
-    async def __aexit__(self, *exc_details) -> None:
-        await self._client.__aexit__(*exc_details)
+    async def __aexit__(
+        self,
+        exc_type: Optional[Type[BaseException]] = None,
+        exc_value: Optional[BaseException] = None,
+        traceback: Optional[TracebackType] = None,
+    ) -> None:
+        await self._client.__aexit__(exc_type, exc_value, traceback)

@@ -6,6 +6,7 @@
 
 import pytest
 import functools
+import sys
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.ai.formrecognizer._generated.models import AnalyzeResultOperation
 from azure.ai.formrecognizer.aio import DocumentAnalysisClient

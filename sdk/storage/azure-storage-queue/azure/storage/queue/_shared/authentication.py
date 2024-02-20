@@ -5,13 +5,9 @@
 # --------------------------------------------------------------------------
 
 import logging
+import re
 from typing import List, Tuple
-
-try:
-    from urllib.parse import urlparse, unquote
-except ImportError:
-    from urlparse import urlparse # type: ignore
-    from urllib2 import unquote # type: ignore
+from urllib.parse import unquote, urlparse
 
 try:
     from yarl import URL
@@ -19,7 +15,7 @@ except ImportError:
     pass
 
 try:
-    from azure.core.pipeline.transport import AioHttpTransport
+    from azure.core.pipeline.transport import AioHttpTransport  # pylint: disable=non-abstract-transport-import
 except ImportError:
     AioHttpTransport = None
 
@@ -28,9 +24,7 @@ from azure.core.pipeline.policies import SansIOHTTPPolicy
 
 from . import sign_string
 
-
 logger = logging.getLogger(__name__)
-
 
 
 # wraps a given exception with the desired exception type
@@ -46,7 +40,7 @@ def _storage_header_sort(input_headers: List[Tuple[str, str]]) -> List[Tuple[str
     custom_weights = "-!#$%&*.^_|~+\"\'(),/`~0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]abcdefghijklmnopqrstuvwxyz{}"
 
     # Build dict of tuples and list of keys
-    header_dict = dict()
+    header_dict = {}
     header_keys = []
     for k, v in input_headers:
         header_dict[k] = v
@@ -55,8 +49,8 @@ def _storage_header_sort(input_headers: List[Tuple[str, str]]) -> List[Tuple[str
     # Sort according to custom defined weights
     try:
         header_keys = sorted(header_keys, key=lambda word: [custom_weights.index(c) for c in word])
-    except ValueError:
-        raise ValueError("Illegal character encountered when sorting headers.")
+    except ValueError as exc:
+        raise ValueError("Illegal character encountered when sorting headers.") from exc
 
     # Build list of sorted tuples
     sorted_headers = []
@@ -73,7 +67,6 @@ class AzureSigningError(ClientAuthenticationError):
     """
 
 
-# pylint: disable=no-self-use
 class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
 
     def __init__(self, account_name, account_key):
@@ -138,7 +131,7 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
         except Exception as ex:
             # Wrap any error that occurred as signing error
             # Doing so will clarify/locate the source of problem
-            raise _wrap_exception(ex, AzureSigningError)
+            raise _wrap_exception(ex, AzureSigningError) from ex
 
     def on_request(self, request):
         string_to_sign = \
@@ -156,4 +149,39 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
             self._get_canonicalized_resource_query(request)
 
         self._add_authorization_header(request, string_to_sign)
-        #logger.debug("String_to_sign=%s", string_to_sign)
+        # logger.debug("String_to_sign=%s", string_to_sign)
+
+
+class StorageHttpChallenge(object):
+    def __init__(self, challenge):
+        """ Parses an HTTP WWW-Authentication Bearer challenge from the Storage service. """
+        if not challenge:
+            raise ValueError("Challenge cannot be empty")
+
+        self._parameters = {}
+        self.scheme, trimmed_challenge = challenge.strip().split(" ", 1)
+
+        # name=value pairs either comma or space separated with values possibly being
+        # enclosed in quotes
+        for item in re.split('[, ]', trimmed_challenge):
+            comps = item.split("=")
+            if len(comps) == 2:
+                key = comps[0].strip(' "')
+                value = comps[1].strip(' "')
+                if key:
+                    self._parameters[key] = value
+
+        # Extract and verify required parameters
+        self.authorization_uri = self._parameters.get('authorization_uri')
+        if not self.authorization_uri:
+            raise ValueError("Authorization Uri not found")
+
+        self.resource_id = self._parameters.get('resource_id')
+        if not self.resource_id:
+            raise ValueError("Resource id not found")
+
+        uri_path = urlparse(self.authorization_uri).path.lstrip("/")
+        self.tenant_id = uri_path.split("/")[0]
+
+    def get_value(self, key):
+        return self._parameters.get(key)

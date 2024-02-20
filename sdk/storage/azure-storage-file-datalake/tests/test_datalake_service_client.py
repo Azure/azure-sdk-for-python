@@ -5,9 +5,10 @@
 # --------------------------------------------------------------------------
 
 import pytest
+from unittest.mock import MagicMock
 
 from azure.core.credentials import AzureNamedKeyCredential
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 from azure.storage.filedatalake import (
     AnalyticsLogging,
     CorsRule,
@@ -411,3 +412,90 @@ class TestDatalakeService(StorageRecordedTestCase):
 
         # Assert
         assert props is not None
+
+    @DataLakePreparer()
+    def test_datalake_clients_properly_close(self, **kwargs):
+        account_name = "adlsstorage"
+        account_key = "adlskey"
+
+        self._setup(account_name, account_key)
+        file_system_client = self.dsc.get_file_system_client(file_system='testfs')
+        dir_client = self.dsc.get_directory_client(file_system='testfs', directory='testdir')
+        file_client = dir_client.get_file_client(file='testfile')
+
+        # Mocks
+        self.dsc._blob_service_client.close = MagicMock()
+        self.dsc._client.__exit__ = MagicMock()
+        file_system_client._client.__exit__ = MagicMock()
+        file_system_client._datalake_client_for_blob_operation.close = MagicMock()
+        dir_client._client.__exit__ = MagicMock()
+        dir_client._datalake_client_for_blob_operation.close = MagicMock()
+        file_client._client.__exit__ = MagicMock()
+        file_client._datalake_client_for_blob_operation.close = MagicMock()
+
+        # Act
+        with self.dsc as dsc:
+            pass
+            with file_system_client as fsc:
+                pass
+                with dir_client as dc:
+                    pass
+                    with file_client as fc:
+                        pass
+
+        # Assert
+        self.dsc._blob_service_client.close.assert_called_once()
+        self.dsc._client.__exit__.assert_called_once()
+        file_system_client._client.__exit__.assert_called_once()
+        file_system_client._datalake_client_for_blob_operation.close.assert_called_once()
+        dir_client._client.__exit__.assert_called_once()
+        dir_client._datalake_client_for_blob_operation.close.assert_called_once()
+        file_client._client.__exit__.assert_called_once()
+        file_client._datalake_client_for_blob_operation.close.assert_called_once()
+
+    @DataLakePreparer()
+    @recorded_by_proxy
+    def test_storage_account_audience_service_client(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        # Arrange
+        self._setup(datalake_storage_account_name, datalake_storage_account_key)
+        self.dsc.create_file_system('testfs1')
+
+        # Act
+        token_credential = self.generate_oauth_token()
+        dsc = DataLakeServiceClient(
+            self.account_url(datalake_storage_account_name, "blob"),
+            credential=token_credential,
+            audience=f'https://{datalake_storage_account_name}.blob.core.windows.net/'
+        )
+
+        # Assert
+        response1 = dsc.list_file_systems()
+        response2 = dsc.create_file_system('testfs11')
+        assert response1 is not None
+        assert response2 is not None
+
+    @DataLakePreparer()
+    @recorded_by_proxy
+    def test_bad_audience_service_client(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        # Arrange
+        self._setup(datalake_storage_account_name, datalake_storage_account_key)
+        self.dsc.create_file_system('testfs2')
+
+        # Act
+        token_credential = self.generate_oauth_token()
+        dsc = DataLakeServiceClient(
+            self.account_url(datalake_storage_account_name, "blob"),
+            credential=token_credential,
+            audience=f'https://badaudience.blob.core.windows.net/'
+        )
+
+        # Assert
+        with pytest.raises(ClientAuthenticationError):
+            dsc.list_file_systems()
+            dsc.create_file_system('testfs22')

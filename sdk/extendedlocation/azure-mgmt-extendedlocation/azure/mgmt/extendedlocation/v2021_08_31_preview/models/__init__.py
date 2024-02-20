@@ -31,43 +31,41 @@ from ._models_py3 import ResourceSyncRulePropertiesSelector
 from ._models_py3 import SystemData
 from ._models_py3 import TrackedResource
 
-
-from ._custom_locations_enums import (
-    CreatedByType,
-    HostType,
-    ResourceIdentityType,
-)
+from ._custom_locations_enums import CreatedByType
+from ._custom_locations_enums import HostType
+from ._custom_locations_enums import ResourceIdentityType
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'CustomLocation',
-    'CustomLocationFindTargetResourceGroupProperties',
-    'CustomLocationFindTargetResourceGroupResult',
-    'CustomLocationListResult',
-    'CustomLocationOperation',
-    'CustomLocationOperationsList',
-    'CustomLocationPropertiesAuthentication',
-    'EnabledResourceType',
-    'EnabledResourceTypePropertiesTypesMetadataItem',
-    'EnabledResourceTypesListResult',
-    'ErrorAdditionalInfo',
-    'ErrorDetail',
-    'ErrorResponse',
-    'Identity',
-    'MatchExpressionsProperties',
-    'PatchableCustomLocations',
-    'PatchableResourceSyncRule',
-    'ProxyResource',
-    'Resource',
-    'ResourceSyncRule',
-    'ResourceSyncRuleListResult',
-    'ResourceSyncRulePropertiesSelector',
-    'SystemData',
-    'TrackedResource',
-    'CreatedByType',
-    'HostType',
-    'ResourceIdentityType',
+    "CustomLocation",
+    "CustomLocationFindTargetResourceGroupProperties",
+    "CustomLocationFindTargetResourceGroupResult",
+    "CustomLocationListResult",
+    "CustomLocationOperation",
+    "CustomLocationOperationsList",
+    "CustomLocationPropertiesAuthentication",
+    "EnabledResourceType",
+    "EnabledResourceTypePropertiesTypesMetadataItem",
+    "EnabledResourceTypesListResult",
+    "ErrorAdditionalInfo",
+    "ErrorDetail",
+    "ErrorResponse",
+    "Identity",
+    "MatchExpressionsProperties",
+    "PatchableCustomLocations",
+    "PatchableResourceSyncRule",
+    "ProxyResource",
+    "Resource",
+    "ResourceSyncRule",
+    "ResourceSyncRuleListResult",
+    "ResourceSyncRulePropertiesSelector",
+    "SystemData",
+    "TrackedResource",
+    "CreatedByType",
+    "HostType",
+    "ResourceIdentityType",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

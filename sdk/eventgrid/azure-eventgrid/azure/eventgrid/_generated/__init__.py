@@ -6,11 +6,18 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._event_grid_publisher_client import EventGridPublisherClient
-__all__ = ['EventGridPublisherClient']
+from ._client import EventGridPublisherClient
 
 try:
-    from ._patch import patch_sdk  # type: ignore
-    patch_sdk()
+    from ._patch import __all__ as _patch_all
+    from ._patch import *  # pylint: disable=unused-wildcard-import
 except ImportError:
-    pass
+    _patch_all = []
+from ._patch import patch_sdk as _patch_sdk
+
+__all__ = [
+    "EventGridPublisherClient",
+]
+__all__.extend([p for p in _patch_all if p not in __all__])
+
+_patch_sdk()

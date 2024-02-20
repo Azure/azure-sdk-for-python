@@ -11,25 +11,24 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of identity that created the resource.
-    """
+    """The type of identity that created the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
+
 class DiskMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Defines the different types of disk modes.
-    """
+    """Defines the different types of disk modes."""
 
     PERSISTENT = "persistent"
     INDEPENDENT_PERSISTENT = "independent_persistent"
     INDEPENDENT_NONPERSISTENT = "independent_nonpersistent"
 
+
 class DiskType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Defines the different types of disks.
-    """
+    """Defines the different types of disks."""
 
     FLAT = "flat"
     PMEM = "pmem"
@@ -39,23 +38,23 @@ class DiskType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SESPARSE = "sesparse"
     UNKNOWN = "unknown"
 
+
 class FirmwareType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Firmware type
-    """
+    """Firmware type."""
 
     BIOS = "bios"
     EFI = "efi"
 
+
 class IdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of managed service identity.
-    """
+    """The type of managed service identity."""
 
     NONE = "None"
     SYSTEM_ASSIGNED = "SystemAssigned"
 
+
 class InventoryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The inventory type.
-    """
+    """The inventory type."""
 
     RESOURCE_POOL = "ResourcePool"
     VIRTUAL_MACHINE = "VirtualMachine"
@@ -65,9 +64,9 @@ class InventoryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DATASTORE = "Datastore"
     HOST = "Host"
 
+
 class IPAddressAllocationMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """IP address allocation method.
-    """
+    """IP address allocation method."""
 
     UNSET = "unset"
     DYNAMIC = "dynamic"
@@ -76,9 +75,9 @@ class IPAddressAllocationMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     RANDOM = "random"
     OTHER = "other"
 
+
 class NICType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """NIC type
-    """
+    """NIC type."""
 
     VMXNET3 = "vmxnet3"
     VMXNET2 = "vmxnet2"
@@ -87,32 +86,33 @@ class NICType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     E1000_E = "e1000e"
     PCNET32 = "pcnet32"
 
+
 class OsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Defines the different types of VM guest operating systems.
-    """
+    """Defines the different types of VM guest operating systems."""
 
     WINDOWS = "Windows"
     LINUX = "Linux"
     OTHER = "Other"
 
+
 class OsTypeUM(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The operating system type of the machine.
-    """
+    """The operating system type of the machine."""
 
     WINDOWS = "Windows"
     LINUX = "Linux"
 
+
 class PatchOperationStartedBy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Indicates if operation was triggered by user or by platform.
-    """
+    """Indicates if operation was triggered by user or by platform."""
 
     USER = "User"
     PLATFORM = "Platform"
 
+
 class PatchOperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The overall success or failure status of the operation. It remains "InProgress" until the
     operation completes. At that point it will become "Unknown", "Failed", "Succeeded", or
-    "CompletedWithWarnings."
+    "CompletedWithWarnings.".
     """
 
     UNKNOWN = "Unknown"
@@ -121,9 +121,9 @@ class PatchOperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SUCCEEDED = "Succeeded"
     COMPLETED_WITH_WARNINGS = "CompletedWithWarnings"
 
+
 class PatchServiceUsed(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies the patch service used for the operation.
-    """
+    """Specifies the patch service used for the operation."""
 
     UNKNOWN = "Unknown"
     WU = "WU"
@@ -132,24 +132,24 @@ class PatchServiceUsed(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     APT = "APT"
     ZYPPER = "Zypper"
 
+
 class PowerOnBootOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Defines the options for power on boot.
-    """
+    """Defines the options for power on boot."""
 
     ENABLED = "enabled"
     DISABLED = "disabled"
 
+
 class ProvisioningAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Defines the different types of operations for guest agent.
-    """
+    """Defines the different types of operations for guest agent."""
 
     INSTALL = "install"
     UNINSTALL = "uninstall"
     REPAIR = "repair"
 
+
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The current deployment state of resource.
-    """
+    """The current deployment state of resource."""
 
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
@@ -160,46 +160,50 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ACCEPTED = "Accepted"
     CREATED = "Created"
 
+
 class SCSIControllerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Defines the different types of SCSI controllers.
-    """
+    """Defines the different types of SCSI controllers."""
 
     LSILOGIC = "lsilogic"
     BUSLOGIC = "buslogic"
     PVSCSI = "pvscsi"
     LSILOGICSAS = "lsilogicsas"
 
+
 class StatusLevelTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The level code.
-    """
+    """The level code."""
 
     INFO = "Info"
     WARNING = "Warning"
     ERROR = "Error"
 
+
 class StatusTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The status of the hybrid machine agent.
-    """
+    """The status of the hybrid machine agent."""
 
     CONNECTED = "Connected"
     DISCONNECTED = "Disconnected"
     ERROR = "Error"
 
+
 class VirtualSCSISharing(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Defines the sharing mode for sharing the SCSI bus.
-    """
+    """Defines the sharing mode for sharing the SCSI bus."""
 
     NO_SHARING = "noSharing"
     PHYSICAL_SHARING = "physicalSharing"
     VIRTUAL_SHARING = "virtualSharing"
 
+
 class VMGuestPatchClassificationLinux(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """VMGuestPatchClassificationLinux."""
 
     CRITICAL = "Critical"
     SECURITY = "Security"
     OTHER = "Other"
 
+
 class VMGuestPatchClassificationWindows(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """VMGuestPatchClassificationWindows."""
 
     CRITICAL = "Critical"
     SECURITY = "Security"
@@ -210,17 +214,17 @@ class VMGuestPatchClassificationWindows(str, Enum, metaclass=CaseInsensitiveEnum
     TOOLS = "Tools"
     UPDATES = "Updates"
 
+
 class VMGuestPatchRebootSetting(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Defines when it is acceptable to reboot a VM during a software update operation.
-    """
+    """Defines when it is acceptable to reboot a VM during a software update operation."""
 
     IF_REQUIRED = "IfRequired"
     NEVER = "Never"
     ALWAYS = "Always"
 
+
 class VMGuestPatchRebootStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The reboot state of the VM following completion of the operation.
-    """
+    """The reboot state of the VM following completion of the operation."""
 
     UNKNOWN = "Unknown"
     NOT_NEEDED = "NotNeeded"

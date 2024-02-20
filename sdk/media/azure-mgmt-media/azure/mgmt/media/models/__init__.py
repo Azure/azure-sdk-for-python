@@ -72,6 +72,7 @@ from ._models_py3 import ContentKeyPolicyX509CertificateTokenKey
 from ._models_py3 import CopyAudio
 from ._models_py3 import CopyVideo
 from ._models_py3 import CrossSiteAccessPolicies
+from ._models_py3 import DDAudio
 from ._models_py3 import DashSettings
 from ._models_py3 import DefaultKey
 from ._models_py3 import Deinterlace
@@ -85,6 +86,7 @@ from ._models_py3 import ErrorAdditionalInfo
 from ._models_py3 import ErrorDetail
 from ._models_py3 import ErrorResponse
 from ._models_py3 import FaceDetectorPreset
+from ._models_py3 import Fade
 from ._models_py3 import FilterTrackPropertyCondition
 from ._models_py3 import FilterTrackSelection
 from ._models_py3 import Filters
@@ -285,7 +287,7 @@ from ._azure_media_services_enums import TrackPropertyType
 from ._azure_media_services_enums import VideoSyncMode
 from ._azure_media_services_enums import Visibility
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
@@ -355,6 +357,7 @@ __all__ = [
     "CopyAudio",
     "CopyVideo",
     "CrossSiteAccessPolicies",
+    "DDAudio",
     "DashSettings",
     "DefaultKey",
     "Deinterlace",
@@ -368,6 +371,7 @@ __all__ = [
     "ErrorDetail",
     "ErrorResponse",
     "FaceDetectorPreset",
+    "Fade",
     "FilterTrackPropertyCondition",
     "FilterTrackSelection",
     "Filters",

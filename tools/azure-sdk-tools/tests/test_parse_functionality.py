@@ -6,7 +6,6 @@ from unittest.mock import patch
 
 package_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
-
 def test_parse_require():
     test_scenarios = [
         ("ConfigArgParse>=0.12.0", "configargparse", ">=0.12.0"),
@@ -94,6 +93,7 @@ setup(
         'pytyped': ['py.typed'],
     },
     python_requires=">=3.7",
+    keywords=["azure sdk", "hello world"],
     install_requires=[
         'requests>=2.18.4',
         'six>=1.11.0',
@@ -113,3 +113,9 @@ setup(
     assert result.namespace == "ci_tools"
     assert "pytyped" in result.package_data
     assert result.include_package_data == True
+    assert result.folder == package_root
+    assert len(result.classifiers) > 0
+    assert result.classifiers[0] == "Development Status :: 5 - Production/Stable"
+    assert result.classifiers[5] == "Programming Language :: Python :: 3.8"
+    assert result.keywords[0] == "azure sdk"
+    assert len(result.keywords) == 2

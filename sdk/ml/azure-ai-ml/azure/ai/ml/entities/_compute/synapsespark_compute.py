@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Dict
+from typing import Dict, Optional
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     AutoPauseProperties,
@@ -14,23 +14,37 @@ from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.constants._compute import ComputeType
 from azure.ai.ml.entities import Compute
-from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.entities._credentials import IdentityConfiguration
+from azure.ai.ml.entities._util import load_from_dict
 
 
 class AutoScaleSettings:
-    """Auto scale settings for synapse spark compute"""
+    """Auto-scale settings for Synapse Spark compute.
 
-    def __init__(self, *, min_node_count: int = None, max_node_count: int = None, enabled: bool = None):
-        """Auto scale settings for synapse spark compute
+    :keyword min_node_count: The minimum compute node count.
+    :paramtype min_node_count: Optional[int]
+    :keyword max_node_count: The maximum compute node count.
+    :paramtype max_node_count: Optional[int]
+    :keyword enabled: Specifies if auto-scale is enabled.
+    :paramtype enabled: Optional[bool]
 
-        :param min_node_count: Min node count
-        :type min_node_count: int
-        :param max_node_count: Max node count
-        :type max_node_count: int
-        :param auto_scale_enabled:  Auto scale enabled
-        :type auto_scale_enabled: bool
-        """
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_spark_configurations.py
+            :start-after: [START synapse_spark_compute_configuration]
+            :end-before: [END synapse_spark_compute_configuration]
+            :language: python
+            :dedent: 8
+            :caption: Configuring AutoScaleSettings on SynapseSparkCompute.
+    """
+
+    def __init__(
+        self,
+        *,
+        min_node_count: Optional[int] = None,
+        max_node_count: Optional[int] = None,
+        enabled: Optional[bool] = None,
+    ) -> None:
         self.min_node_count = min_node_count
         self.max_node_count = max_node_count
         self.auto_scale_enabled = enabled
@@ -52,16 +66,24 @@ class AutoScaleSettings:
 
 
 class AutoPauseSettings:
-    """Auto pause settings for synapse spark compute"""
+    """Auto pause settings for Synapse Spark compute.
 
-    def __init__(self, *, delay_in_minutes: int = None, enabled: bool = None):
-        """Auto pause settings for synapse spark compute
+    :keyword delay_in_minutes: The time delay in minutes before pausing cluster.
+    :paramtype delay_in_minutes: Optional[int]
+    :keyword enabled: Specifies if auto-pause is enabled.
+    :paramtype enabled: Optional[bool]
 
-        :param delay_in_minutes: ideal time delay in minutes before pause cluster
-        :type delay_in_minutes: int
-        :param auto_scale_enabled:  Auto pause enabled
-        :type auto_scale_enabled: bool
-        """
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_spark_configurations.py
+            :start-after: [START synapse_spark_compute_configuration]
+            :end-before: [END synapse_spark_compute_configuration]
+            :language: python
+            :dedent: 8
+            :caption: Configuring AutoPauseSettings on SynapseSparkCompute.
+    """
+
+    def __init__(self, *, delay_in_minutes: Optional[int] = None, enabled: Optional[bool] = None) -> None:
         self.delay_in_minutes = delay_in_minutes
         self.auto_pause_enabled = enabled
 
@@ -81,36 +103,58 @@ class AutoPauseSettings:
 
 @experimental
 class SynapseSparkCompute(Compute):
-    """SynapseSpark Compute resource
+    """SynapseSpark Compute resource.
 
-    :param name: Name of the compute
-    :type name: str
-    :param location: The resource location, defaults to None
-    :type location: Optional[str], optional
-    :param description: Description of the resource.
-    :type description: Optional[str], optional
-    :param resource_id: ARM resource id of the underlying compute, defaults to None
-    :type resource_id: Optional[str], optional
-    :param identity:  The identity configuration, identities that are associated with the compute cluster.
-    :type identity: IdentityConfiguration, optional
+    :keyword name: The name of the compute.
+    :paramtype name: str
+    :keyword description: The description of the resource. Defaults to None.
+    :paramtype description: Optional[str]
+    :keyword tags: The set of resource tags defined as key/value pairs. Defaults to None.
+    :paramtype tags: Optional[[dict[str, str]]
+    :keyword node_count: The number of nodes in the compute.
+    :paramtype node_count: Optional[int]
+    :keyword node_family: The node family of the compute.
+    :paramtype node_family: Optional[str]
+    :keyword node_size: The size of the node.
+    :paramtype node_size: Optional[str]
+    :keyword spark_version: The version of Spark to use.
+    :paramtype spark_version: Optional[str]
+    :keyword identity: The configuration of identities that are associated with the compute cluster.
+    :paramtype identity: Optional[~azure.ai.ml.entities.IdentityConfiguration]
+    :keyword scale_settings: The scale settings for the compute.
+    :paramtype scale_settings: Optional[~azure.ai.ml.entities.AutoScaleSettings]
+    :keyword auto_pause_settings: The auto pause settings for the compute.
+    :paramtype auto_pause_settings: Optional[~azure.ai.ml.entities.AutoPauseSettings]
+    :keyword kwargs: Additional keyword arguments passed to the parent class.
+    :paramtype kwargs: Optional[dict]
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_spark_configurations.py
+            :start-after: [START synapse_spark_compute_configuration]
+            :end-before: [END synapse_spark_compute_configuration]
+            :language: python
+            :dedent: 8
+            :caption: Creating Synapse Spark compute.
     """
 
     def __init__(
         self,
         *,
         name: str,
-        description: str = None,
-        node_count: int = None,
-        node_family: str = None,
-        node_size: str = None,
-        spark_version: str = None,
-        identity: IdentityConfiguration = None,
-        scale_settings: AutoScaleSettings = None,
-        auto_pause_settings: AutoPauseSettings = None,
+        description: Optional[str] = None,
+        tags: Optional[Dict[str, str]] = None,
+        node_count: Optional[int] = None,
+        node_family: Optional[str] = None,
+        node_size: Optional[str] = None,
+        spark_version: Optional[str] = None,
+        identity: Optional[IdentityConfiguration] = None,
+        scale_settings: Optional[AutoScaleSettings] = None,
+        auto_pause_settings: Optional[AutoPauseSettings] = None,
         **kwargs,
-    ):
+    ) -> None:
         kwargs[TYPE] = ComputeType.SYNAPSESPARK
-        super().__init__(name=name, description=description, location=kwargs.pop("location", None), **kwargs)
+        super().__init__(name=name, description=description, location=kwargs.pop("location", None), tags=tags, **kwargs)
         self.identity = identity
         self.node_count = node_count
         self.node_family = node_family
@@ -142,6 +186,7 @@ class SynapseSparkCompute(Compute):
             description=prop.description,
             location=rest_obj.location,
             resource_id=prop.resource_id,
+            tags=rest_obj.tags if rest_obj.tags else None,
             created_on=prop.created_on if prop.properties else None,
             node_count=prop.properties.node_count if prop.properties else None,
             node_family=prop.properties.node_size_family if prop.properties else None,
@@ -179,6 +224,9 @@ class SynapseSparkCompute(Compute):
             name=self.name,
             identity=(
                 # pylint: disable=protected-access
-                self.identity._to_compute_rest_object() if self.identity else None
+                self.identity._to_compute_rest_object()
+                if self.identity
+                else None
             ),
+            tags=self.tags,
         )

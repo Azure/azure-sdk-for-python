@@ -1,0 +1,57 @@
+
+$schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
+name: helloworld_train_in_silo
+version: 0.3.0
+display_name: Train (in silo)
+type: command
+description: Component to train a model within a FL silo.
+is_deterministic: true
+
+inputs:
+  train_data:
+    type: uri_folder
+    description: the input training data
+  test_data:
+    type: uri_folder
+    description: the input testing data
+  metrics_prefix:
+    type: string
+    description: Metrics prefix
+    default: Default-prefix
+    optional: true
+  iteration_num:
+    type: integer
+    description: Iteration number
+    default: 1
+    optional: true
+  checkpoint:
+    type: uri_folder
+    description: a given pre-existing checkpoint
+    optional: true
+  lr:
+    type: number
+    description: learning rate
+    default: 0.01
+    optional: true
+  epochs:
+    type: integer
+    description: total number of epochs for local training
+    default: 3
+    optional: true
+  batch_size:
+    type: integer
+    description: batch size
+    default: 64
+    optional: true
+
+outputs:
+  model:
+    type: uri_folder
+    description: the output checkpoint
+
+code: .
+
+command: >-
+  python run.py --train_data ${{inputs.train_data}} --test_data ${{inputs.test_data}} $[[--metrics_prefix ${{inputs.metrics_prefix}}]] $[[--iteration_num ${{inputs.iteration_num}}]] $[[--checkpoint ${{inputs.checkpoint}}]] --model ${{outputs.model}} $[[--lr ${{inputs.lr}}]] $[[--epochs ${{inputs.epochs}}]] $[[--batch_size ${{inputs.batch_size}}]]
+
+environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:30

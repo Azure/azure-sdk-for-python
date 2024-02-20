@@ -1,0 +1,2 @@
+variables:
+  AZURESDK_CONDA_VERSION: '2023.09.01'

@@ -66,10 +66,10 @@ class FeatureClient(FeatureClientOperationsMixin, MultiApiClientMixin, _SDKClien
         self,
         credential: "TokenCredential",
         subscription_id: str,
-        api_version=None, # type: Optional[str]
+        api_version: Optional[str]=None,
         base_url: str = "https://management.azure.com",
-        profile=KnownProfiles.default, # type: KnownProfiles
-        **kwargs  # type: Any
+        profile: KnownProfiles=KnownProfiles.default,
+        **kwargs: Any
     ):
         self._config = FeatureClientConfiguration(credential, subscription_id, **kwargs)
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)

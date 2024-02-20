@@ -134,8 +134,8 @@ class OperationMixinHelpers:
                 self._deserialize(generated_models.MetricAlertConfiguration, m)  # type: ignore  # pylint: disable=no-member
                 for m in response_json["metricAlertingConfigurations"]
             ]
-        except KeyError:
-            raise ValueError(response_json)
+        except KeyError as exc:
+            raise ValueError(response_json) from exc
         deserialized = self._deserialize(  # type: ignore  # pylint: disable=no-member
             generated_models.AnomalyAlertConfiguration, response_json
         )

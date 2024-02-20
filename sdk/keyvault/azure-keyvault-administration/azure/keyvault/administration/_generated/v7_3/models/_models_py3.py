@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import List, Optional, TYPE_CHECKING, Union
+from typing import Any, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
@@ -53,8 +53,8 @@ class Attributes(_serialization.Model):
         enabled: Optional[bool] = None,
         not_before: Optional[datetime.datetime] = None,
         expires: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword enabled: Determines whether the object is enabled.
         :paramtype enabled: bool
@@ -96,7 +96,7 @@ class Error(_serialization.Model):
         "inner_error": {"key": "innererror", "type": "Error"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -144,8 +144,8 @@ class FullBackupOperation(_serialization.Model):
         end_time: Optional[datetime.datetime] = None,
         job_id: Optional[str] = None,
         azure_storage_blob_container_uri: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword status: Status of the backup operation.
         :paramtype status: str
@@ -190,7 +190,7 @@ class KeyVaultError(_serialization.Model):
         "error": {"key": "error", "type": "Error"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.error = None
@@ -225,8 +225,8 @@ class Permission(_serialization.Model):
         not_actions: Optional[List[str]] = None,
         data_actions: Optional[List[Union[str, "_models.DataAction"]]] = None,
         not_data_actions: Optional[List[Union[str, "_models.DataAction"]]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword actions: Action permissions that are granted.
         :paramtype actions: list[str]
@@ -281,8 +281,8 @@ class RestoreOperation(_serialization.Model):
         job_id: Optional[str] = None,
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword status: Status of the restore operation.
         :paramtype status: str
@@ -328,7 +328,9 @@ class RestoreOperationParameters(_serialization.Model):
         "folder_to_restore": {"key": "folderToRestore", "type": "str"},
     }
 
-    def __init__(self, *, sas_token_parameters: "_models.SASTokenParameter", folder_to_restore: str, **kwargs):
+    def __init__(
+        self, *, sas_token_parameters: "_models.SASTokenParameter", folder_to_restore: str, **kwargs: Any
+    ) -> None:
         """
         :keyword sas_token_parameters: Required.
         :paramtype sas_token_parameters: ~azure.keyvault.v7_3.models.SASTokenParameter
@@ -369,7 +371,9 @@ class RoleAssignment(_serialization.Model):
         "properties": {"key": "properties", "type": "RoleAssignmentPropertiesWithScope"},
     }
 
-    def __init__(self, *, properties: Optional["_models.RoleAssignmentPropertiesWithScope"] = None, **kwargs):
+    def __init__(
+        self, *, properties: Optional["_models.RoleAssignmentPropertiesWithScope"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword properties: Role assignment properties.
         :paramtype properties: ~azure.keyvault.v7_3.models.RoleAssignmentPropertiesWithScope
@@ -398,7 +402,7 @@ class RoleAssignmentCreateParameters(_serialization.Model):
         "properties": {"key": "properties", "type": "RoleAssignmentProperties"},
     }
 
-    def __init__(self, *, properties: "_models.RoleAssignmentProperties", **kwargs):
+    def __init__(self, *, properties: "_models.RoleAssignmentProperties", **kwargs: Any) -> None:
         """
         :keyword properties: Role assignment properties. Required.
         :paramtype properties: ~azure.keyvault.v7_3.models.RoleAssignmentProperties
@@ -418,7 +422,7 @@ class RoleAssignmentFilter(_serialization.Model):
         "principal_id": {"key": "principalId", "type": "str"},
     }
 
-    def __init__(self, *, principal_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, principal_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword principal_id: Returns role assignment of the specific principal.
         :paramtype principal_id: str
@@ -442,8 +446,8 @@ class RoleAssignmentListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.RoleAssignment"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.RoleAssignment"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: Role assignment list.
         :paramtype value: list[~azure.keyvault.v7_3.models.RoleAssignment]
@@ -477,7 +481,7 @@ class RoleAssignmentProperties(_serialization.Model):
         "principal_id": {"key": "principalId", "type": "str"},
     }
 
-    def __init__(self, *, role_definition_id: str, principal_id: str, **kwargs):
+    def __init__(self, *, role_definition_id: str, principal_id: str, **kwargs: Any) -> None:
         """
         :keyword role_definition_id: The role definition ID used in the role assignment. Required.
         :paramtype role_definition_id: str
@@ -513,8 +517,8 @@ class RoleAssignmentPropertiesWithScope(_serialization.Model):
         scope: Optional[Union[str, "_models.RoleScope"]] = None,
         role_definition_id: Optional[str] = None,
         principal_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword scope: The role scope. Known values are: "/" and "/keys".
         :paramtype scope: str or ~azure.keyvault.v7_3.models.RoleScope
@@ -577,8 +581,8 @@ class RoleDefinition(_serialization.Model):
         role_type: Optional[Union[str, "_models.RoleType"]] = None,
         permissions: Optional[List["_models.Permission"]] = None,
         assignable_scopes: Optional[List[Union[str, "_models.RoleScope"]]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword role_name: The role name.
         :paramtype role_name: str
@@ -619,7 +623,7 @@ class RoleDefinitionCreateParameters(_serialization.Model):
         "properties": {"key": "properties", "type": "RoleDefinitionProperties"},
     }
 
-    def __init__(self, *, properties: "_models.RoleDefinitionProperties", **kwargs):
+    def __init__(self, *, properties: "_models.RoleDefinitionProperties", **kwargs: Any) -> None:
         """
         :keyword properties: Role definition properties. Required.
         :paramtype properties: ~azure.keyvault.v7_3.models.RoleDefinitionProperties
@@ -639,7 +643,7 @@ class RoleDefinitionFilter(_serialization.Model):
         "role_name": {"key": "roleName", "type": "str"},
     }
 
-    def __init__(self, *, role_name: Optional[str] = None, **kwargs):
+    def __init__(self, *, role_name: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword role_name: Returns role definition with the specific name.
         :paramtype role_name: str
@@ -663,8 +667,8 @@ class RoleDefinitionListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.RoleDefinition"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.RoleDefinition"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: Role definition list.
         :paramtype value: list[~azure.keyvault.v7_3.models.RoleDefinition]
@@ -707,8 +711,8 @@ class RoleDefinitionProperties(_serialization.Model):
         role_type: Optional[Union[str, "_models.RoleType"]] = None,
         permissions: Optional[List["_models.Permission"]] = None,
         assignable_scopes: Optional[List[Union[str, "_models.RoleScope"]]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword role_name: The role name.
         :paramtype role_name: str
@@ -750,7 +754,7 @@ class SASTokenParameter(_serialization.Model):
         "token": {"key": "token", "type": "str"},
     }
 
-    def __init__(self, *, storage_resource_uri: str, token: str, **kwargs):
+    def __init__(self, *, storage_resource_uri: str, token: str, **kwargs: Any) -> None:
         """
         :keyword storage_resource_uri: Azure Blob storage container Uri. Required.
         :paramtype storage_resource_uri: str
@@ -797,8 +801,8 @@ class SelectiveKeyRestoreOperation(_serialization.Model):
         job_id: Optional[str] = None,
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword status: Status of the restore operation.
         :paramtype status: str
@@ -844,7 +848,7 @@ class SelectiveKeyRestoreOperationParameters(_serialization.Model):
         "folder": {"key": "folder", "type": "str"},
     }
 
-    def __init__(self, *, sas_token_parameters: "_models.SASTokenParameter", folder: str, **kwargs):
+    def __init__(self, *, sas_token_parameters: "_models.SASTokenParameter", folder: str, **kwargs: Any) -> None:
         """
         :keyword sas_token_parameters: Required.
         :paramtype sas_token_parameters: ~azure.keyvault.v7_3.models.SASTokenParameter

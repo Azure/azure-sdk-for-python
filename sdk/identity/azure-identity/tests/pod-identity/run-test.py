@@ -57,7 +57,7 @@ helm_install = [
     "aad-pod-identity.azureIdentities.pod-identity-test-identity.clientID={}".format(args.client_id),
     "--set",
     "aad-pod-identity.azureIdentities.pod-identity-test-identity.resourceID={}".format(args.resource_id),
-    "--debug"
+    "--debug",
 ]
 
 print(f"Running command: {' '.join(helm_install)}")

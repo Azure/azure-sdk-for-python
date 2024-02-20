@@ -4,11 +4,12 @@ from enum import Enum, unique
 import json
 import logging
 import os
+from pickle import GET
 import re
 import tempfile
 from pathlib import Path
 
-import requests
+from urllib3 import PoolManager, Retry
 
 from github import Github, UnknownObjectException
 
@@ -25,6 +26,8 @@ CONFIG_FILE = "swagger_to_sdk_config_autorest.json"
 CONFIG_FILE_DPG = "swagger_to_sdk_config_dpg.json"
 
 DEFAULT_COMMIT_MESSAGE = "Generated from {hexsha}"
+
+http_client = PoolManager(retries=Retry(total=3, raise_on_status=False))
 
 
 def build_file_content():
@@ -176,14 +179,14 @@ def read_config_from_github(sdk_id, branch="main", gh_token=None):
     _LOGGER.debug("Will try to download: %s", raw_link)
     _LOGGER.debug("Token is defined: %s", gh_token is not None)
     headers = {"Authorization": "token {}".format(gh_token)} if gh_token else {}
-    response = requests.get(raw_link, headers=headers)
-    if response.status_code != 200:
+    response = http_client.request(method="GET", url=raw_link, headers=headers)
+    if response.status != 200:
         raise ValueError(
             "Unable to download conf file for SDK {} branch {}: status code {}".format(
-                sdk_id, branch, response.status_code
+                sdk_id, branch, response.status
             )
         )
-    return json.loads(response.text)
+    return json.loads(response.data.decode('utf-8'))
 
 
 def extract_conf_from_readmes(swagger_files_in_pr, restapi_git_folder, sdk_git_id, config, force_generation=False):

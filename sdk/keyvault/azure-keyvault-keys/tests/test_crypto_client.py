@@ -6,26 +6,36 @@ import codecs
 import hashlib
 import os
 import time
-from datetime import datetime
+from datetime import datetime, timezone
+from unittest import mock
 
 from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 
-try:
-    from unittest import mock
-except ImportError:
-    import mock
-
+from cryptography.hazmat.primitives.hashes import SHA1, SHA256
+from cryptography.hazmat.primitives.asymmetric.padding import MGF1, OAEP, PKCS1v15
+from cryptography.hazmat.primitives.asymmetric.rsa import (
+    rsa_crt_dmp1,
+    rsa_crt_dmq1,
+    rsa_crt_iqmp,
+    RSAPrivateNumbers,
+    RSAPublicNumbers
+)
+from cryptography.hazmat.primitives.serialization import Encoding, NoEncryption, PrivateFormat, PublicFormat
 import pytest
 from azure.core.exceptions import AzureError, HttpResponseError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure.keyvault.keys import (ApiVersion, JsonWebKey, KeyCurveName, KeyOperation,
-                                 KeyVaultKey)
-from azure.keyvault.keys.crypto import (CryptographyClient,
-                                        EncryptionAlgorithm, KeyWrapAlgorithm,
-                                        SignatureAlgorithm)
-from azure.keyvault.keys.crypto._key_validity import _UTC
-from azure.keyvault.keys.crypto._providers import (
-    NoLocalCryptography, get_local_cryptography_provider)
+from azure.core.rest import HttpRequest
+from azure.keyvault.keys import JsonWebKey, KeyCurveName, KeyOperation, KeyVaultKey
+from azure.keyvault.keys.crypto import (
+    CryptographyClient,
+    EncryptionAlgorithm,
+    KeyWrapAlgorithm,
+    SignatureAlgorithm,
+)
+from azure.keyvault.keys.crypto._providers import NoLocalCryptography, get_local_cryptography_provider
+from azure.keyvault.keys._generated._serialization import Deserializer, Serializer
+from azure.keyvault.keys._generated_models import KeySignParameters
+from azure.keyvault.keys._shared.client_base import DEFAULT_VERSION
 from azure.mgmt.keyvault.models import KeyPermissions, Permissions
 
 from _shared.test_case import KeyVaultTestCase
@@ -36,9 +46,35 @@ from _keys_test_case import KeysTestCase
 NO_GET = Permissions(keys=[p.value for p in KeyPermissions if p.value != "get"])
 
 all_api_versions = get_decorator()
-only_7_4_hsm = get_decorator(only_hsm=True, api_versions=[ApiVersion.V7_4_PREVIEW_1])
 only_hsm = get_decorator(only_hsm=True)
+only_vault_latest = get_decorator(only_vault=True, api_versions=[DEFAULT_VERSION])
 no_get = get_decorator(permissions=NO_GET)
+
+
+def _to_bytes(hex):
+    if len(hex) % 2:
+        hex = f"0{hex}"
+    return codecs.decode(hex, "hex_codec")
+
+
+# RSA key with private components so that the JWK can be used for private operations
+TEST_JWK = {
+    "kty":"RSA",
+    "key_ops":["decrypt", "verify", "unwrapKey"],
+    "n":_to_bytes(
+        "00a0914d00234ac683b21b4c15d5bed887bdc959c2e57af54ae734e8f00720d775d275e455207e3784ceeb60a50a4655dd72a7a94d271e8ee8f7959a669ca6e775bf0e23badae991b4529d978528b4bd90521d32dd2656796ba82b6bbfc7668c8f5eeb5053747fd199319d29a8440d08f4412d527ff9311eda71825920b47b1c46b11ab3e91d7316407e89c7f340f7b85a34042ce51743b27d4718403d34c7b438af6181be05e4d11eb985d38253d7fe9bf53fc2f1b002d22d2d793fa79a504b6ab42d0492804d7071d727a06cf3a8893aa542b1503f832b296371b6707d4dc6e372f8fe67d8ded1c908fde45ce03bc086a71487fa75e43aa0e0679aa0d20efe35"
+    ),
+    "e":_to_bytes("10001"),
+    "p":_to_bytes(
+        "00d1deac8d68ddd2c1fd52d5999655b2cf1565260de5269e43fd2a85f39280e1708ffff0682166cb6106ee5ea5e9ffd9f98d0becc9ff2cda2febc97259215ad84b9051e563e14a051dce438bc6541a24ac4f014cf9732d36ebfc1e61a00d82cbe412090f7793cfbd4b7605be133dfc3991f7e1bed5786f337de5036fc1e2df4cf3"
+    ),
+    "q":_to_bytes(
+        "00c3dc66b641a9b73cd833bc439cd34fc6574465ab5b7e8a92d32595a224d56d911e74624225b48c15a670282a51c40d1dad4bc2e9a3c8dab0c76f10052dfb053bc6ed42c65288a8e8bace7a8881184323f94d7db17ea6dfba651218f931a93b8f738f3d8fd3f6ba218d35b96861a0f584b0ab88ddcf446b9815f4d287d83a3237"
+    ),
+    "d":_to_bytes(
+        "627c7d24668148fe2252c7fa649ea8a5a9ed44d75c766cda42b29b660e99404f0e862d4561a6c95af6a83d213e0a2244b03cd28576473215073785fb067f015da19084ade9f475e08b040a9a2c7ba00253bb8125508c9df140b75161d266be347a5e0f6900fe1d8bbf78ccc25eeb37e0c9d188d6e1fc15169ba4fe12276193d77790d2326928bd60d0d01d6ead8d6ac4861abadceec95358fd6689c50a1671a4a936d2376440a41445501da4e74bfb98f823bd19c45b94eb01d98fc0d2f284507f018ebd929b8180dbe6381fdd434bffb7800aaabdd973d55f9eaf9bb88a6ea7b28c2a80231e72de1ad244826d665582c2362761019de2e9f10cb8bcc2625649"
+    )
+}
 
 
 class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
@@ -70,10 +106,10 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
         prefix = "/".join(s.strip("/") for s in [vault, "keys", key_name])
         key = key_attributes.key
         kid = key_attributes.id
-        assert kid.index(prefix) == 0, "Key Id should start with '{}', but value is '{}'".format(prefix, kid)
-        assert key.kty == kty, "kty should by '{}', but is '{}'".format(key, key.kty)
+        assert kid.index(prefix) == 0, f"Key Id should start with '{prefix}', but value is '{kid}'"
+        assert key.kty == kty, f"kty should by '{key}', but is '{key.kty}'"
         assert key.n and key.e, "Bad RSA public material."
-        assert sorted(key_ops) == sorted(key.key_ops), "keyOps should be '{}', but is '{}'".format(key_ops, key.key_ops)
+        assert sorted(key_ops) == sorted(key.key_ops), f"keyOps should be '{key_ops}', but is '{key.key_ops}'"
         
         assert key_attributes.properties.created_on and key_attributes.properties.updated_on, "Missing required date attributes."
         
@@ -83,16 +119,11 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
         key = key_attributes.key
         kid = key_attributes.id
         assert key_curve == key.crv
-        assert kid.index(prefix) == 0, "Key Id should start with '{}', but value is '{}'".format(prefix, kid)
-        assert key.kty == kty, "kty should by '{}', but is '{}'".format(key, key.kty)
+        assert kid.index(prefix) == 0, f"Key Id should start with '{prefix}', but value is '{kid}'"
+        assert key.kty == kty, f"kty should by '{key}', but is '{key.kty}'"
         assert key_attributes.properties.created_on and key_attributes.properties.updated_on,"Missing required date attributes."
 
     def _import_test_key(self, client, name, hardware_protected=False):
-        def _to_bytes(hex):
-            if len(hex) % 2:
-                hex = "0{}".format(hex)
-            return codecs.decode(hex, "hex_codec")
-
         key = JsonWebKey(
             kty="RSA-HSM" if hardware_protected else "RSA",
             key_ops=["encrypt", "decrypt", "sign", "verify", "wrapKey", "unwrapKey"],
@@ -190,6 +221,37 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
         assert EncryptionAlgorithm.rsa_oaep == result.algorithm
         assert self.plaintext == result.plaintext
 
+    @pytest.mark.parametrize("api_version,is_hsm", only_vault_latest)
+    @KeysClientPreparer()
+    @recorded_by_proxy
+    def test_encrypt_and_decrypt_with_managed_key(self, key_client, **kwargs):
+        set_bodiless_matcher()
+        key_name = self.get_resource_name("keycrypt")
+
+        imported_key = self._import_test_key(key_client, key_name)
+        crypto_client = self.create_crypto_client(imported_key.id, api_version=key_client.api_version)
+
+        # Create a KeyVaultRSAPublicKey that can perform encryption with `cryptography`'s interface
+        public_key = crypto_client.create_rsa_public_key()
+        algorithm = SHA1()
+        mgf = MGF1(algorithm)
+        padding = OAEP(mgf, algorithm, None)
+        ciphertext = public_key.encrypt(self.plaintext, padding)
+
+        # Create a KeyVaultRSAPrivateKey that can perform decryption with `cryptography`'s interface
+        private_key = crypto_client.create_rsa_private_key()
+        plaintext = private_key.decrypt(ciphertext=ciphertext, padding=padding)
+        assert self.plaintext == plaintext
+
+        # Use cryptography library's own implementation to validate ours (as well as our public/private numbers)
+        crypto_public_key = public_key.public_numbers().public_key()
+        crypto_ciphertext = crypto_public_key.encrypt(self.plaintext, padding)
+        # Create a crypto client from private JWK since we can't get the private components from an imported key
+        crypto_client = CryptographyClient.from_jwk(jwk=TEST_JWK)
+        crypto_private_key = crypto_client.create_rsa_private_key().private_numbers().private_key()
+        crypto_plaintext = crypto_private_key.decrypt(ciphertext=crypto_ciphertext, padding=padding)
+        assert crypto_plaintext == plaintext
+
     @pytest.mark.parametrize("api_version,is_hsm", no_get)
     @KeysClientPreparer(permissions=NO_GET)
     @recorded_by_proxy
@@ -211,27 +273,39 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
         assert result.algorithm == SignatureAlgorithm.rs256
         assert verified.is_valid
 
-    @pytest.mark.parametrize("api_version,is_hsm", only_7_4_hsm)
-    @KeysClientPreparer()
+    @pytest.mark.parametrize("api_version,is_hsm", only_vault_latest)
+    @KeysClientPreparer(permissions=NO_GET)
     @recorded_by_proxy
-    def test_sign_and_verify_okp(self, key_client, is_hsm, **kwargs):
+    def test_sign_and_verify_with_managed_key(self, key_client, is_hsm, **kwargs):
         key_name = self.get_resource_name("keysign")
 
-        md = hashlib.sha256()
-        md.update(self.plaintext)
-        digest = md.digest()
+        imported_key = self._import_test_key(key_client, key_name, hardware_protected=is_hsm)
+        crypto_client = self.create_crypto_client(imported_key.id, api_version=key_client.api_version)
 
-        # Local crypto isn't supported for OKP, so operations will be remote even without explicit NO_GET permissions
-        key = key_client.create_okp_key(key_name, curve=KeyCurveName.ed25519)
-        crypto_client = self.create_crypto_client(key.id, api_version=key_client.api_version)
+        # Create a KeyVaultRSAPrivateKey that can perform signing with `cryptography`'s interface
+        private_key = crypto_client.create_rsa_private_key()
+        algorithm = SHA256()
+        padding = PKCS1v15()
+        signature = private_key.sign(self.plaintext, padding, algorithm)
 
-        result = crypto_client.sign(SignatureAlgorithm.eddsa, digest)
-        assert result.key_id == key.id
+        # Create a KeyVaultRSAPublicKey that can perform verifying with `cryptography`'s interface
+        public_key = crypto_client.create_rsa_public_key()
+        public_key.verify(signature, self.plaintext, padding, algorithm)
 
-        verified = crypto_client.verify(result.algorithm, digest, result.signature)
-        assert result.key_id == key.id
-        assert result.algorithm == SignatureAlgorithm.eddsa
-        assert verified.is_valid
+        # Use cryptography library's own implementation to validate ours (as well as our public/private numbers)
+        # Create a crypto client from private JWK since we can't get the private components from an imported key
+        crypto_client = CryptographyClient.from_jwk(jwk=TEST_JWK)
+        private_numbers = crypto_client.create_rsa_private_key().private_numbers()
+        crypto_private_key = private_numbers.private_key()
+        crypto_signature = crypto_private_key.sign(self.plaintext, padding, algorithm)
+
+        # PKCS#1 signing produces deterministic signatures, so we can compare the two signatures we generated
+        # PSS padding is nondeterministic, by comparison
+        assert signature == crypto_signature
+
+        crypto_public_key = private_numbers.public_numbers.public_key()
+        crypto_public_key.verify(crypto_signature, self.plaintext, padding, algorithm)
+        crypto_public_key.verify(signature, self.plaintext, padding, algorithm)
 
     @pytest.mark.parametrize("api_version,is_hsm", no_get)
     @KeysClientPreparer(permissions=NO_GET)
@@ -453,7 +527,7 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
     def test_rsa_verify_local(self, key_client, is_hsm, **kwargs):
         """Sign with Key Vault, verify locally"""
         for size in (2048, 3072, 4096):
-            key_name = self.get_resource_name("rsa-verify-{}".format(size))
+            key_name = self.get_resource_name(f"rsa-verify-{size}")
             key = self._create_rsa_key(key_client, key_name, size=size, hardware_protected=is_hsm)
             crypto_client = self.create_crypto_client(key, api_version=key_client.api_version)
             for signature_algorithm, hash_function in (
@@ -478,7 +552,7 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
     def test_rsa_verify_local_from_jwk(self, key_client, is_hsm, **kwargs):
         """Sign with Key Vault, verify locally"""
         for size in (2048, 3072, 4096):
-            key_name = self.get_resource_name("rsa-verify-{}".format(size))
+            key_name = self.get_resource_name(f"rsa-verify-{size}")
             key = self._create_rsa_key(key_client, key_name, size=size, hardware_protected=is_hsm)
             crypto_client = self.create_crypto_client(key, api_version=key_client.api_version)
             local_client = CryptographyClient.from_jwk(key.key)
@@ -511,7 +585,7 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
         }
 
         for curve, (signature_algorithm, hash_function) in sorted(matrix.items()):
-            key_name = self.get_resource_name("ec-verify-{}".format(curve.value))
+            key_name = self.get_resource_name(f"ec-verify-{curve.value}")
             key = self._create_ec_key(key_client, key_name, curve=curve, hardware_protected=is_hsm)
             crypto_client = self.create_crypto_client(key, api_version=key_client.api_version)
 
@@ -536,7 +610,7 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
         }
 
         for curve, (signature_algorithm, hash_function) in sorted(matrix.items()):
-            key_name = self.get_resource_name("ec-verify-{}".format(curve.value))
+            key_name = self.get_resource_name(f"ec-verify-{curve.value}")
             key = self._create_ec_key(key_client, key_name, curve=curve, hardware_protected=is_hsm)
             crypto_client = self.create_crypto_client(key, api_version=key_client.api_version)
             local_client = CryptographyClient.from_jwk(key.key)
@@ -568,7 +642,7 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
                     assert substring in str(ex.value)
 
         # operations should not succeed with a key whose nbf is in the future
-        the_year_3000 = datetime(3000, 1, 1, tzinfo=_UTC)
+        the_year_3000 = datetime(3000, 1, 1, tzinfo=timezone.utc)
 
         rsa_wrap_algorithms = [algorithm for algorithm in KeyWrapAlgorithm if algorithm.startswith("RSA")]
         rsa_encryption_algorithms = [algorithm for algorithm in EncryptionAlgorithm if algorithm.startswith("RSA")]
@@ -579,14 +653,14 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
         test_operations(not_yet_valid_key, [str(the_year_3000)], rsa_encryption_algorithms, rsa_wrap_algorithms)
 
         # nor should they succeed with a key whose exp has passed
-        the_year_2000 = datetime(2000, 1, 1, tzinfo=_UTC)
+        the_year_2000 = datetime(2000, 1, 1, tzinfo=timezone.utc)
 
         key_name = self.get_resource_name("rsa-expired")
         expired_key = self._create_rsa_key(key_client, key_name, expires_on=the_year_2000, hardware_protected=is_hsm)
         test_operations(expired_key, [str(the_year_2000)], rsa_encryption_algorithms, rsa_wrap_algorithms)
 
         # when exp and nbf are set, error messages should contain both
-        the_year_3001 = datetime(3001, 1, 1, tzinfo=_UTC)
+        the_year_3001 = datetime(3001, 1, 1, tzinfo=timezone.utc)
 
         key_name = self.get_resource_name("rsa-valid")
         valid_key = self._create_rsa_key(
@@ -595,6 +669,38 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
         test_operations(
             valid_key, (str(the_year_3000), str(the_year_3001)), rsa_encryption_algorithms, rsa_wrap_algorithms
         )
+
+    @pytest.mark.parametrize("api_version,is_hsm",only_vault_latest)
+    @KeysClientPreparer()
+    @recorded_by_proxy
+    def test_send_request(self, key_client, is_hsm, **kwargs):
+        key_name = self.get_resource_name("keysign")
+
+        md = hashlib.sha256()
+        md.update(self.plaintext)
+        digest = md.digest()
+
+        imported_key = self._import_test_key(key_client, key_name, hardware_protected=is_hsm)
+        crypto_client = self.create_crypto_client(imported_key.id, api_version=key_client.api_version)
+
+        parameters = KeySignParameters(algorithm=SignatureAlgorithm.rs256, value=digest)
+        json = Serializer().body(parameters, "KeySignParameters")
+
+        # sign using a custom request
+        request = HttpRequest(
+            method="POST",
+            url=f"keys/{key_name}/{imported_key.properties.version}/sign",
+            headers={"Accept": "application/json"},
+            json=json
+        )
+        response = crypto_client.send_request(request)
+        result = response.json()
+        signature = Deserializer().deserialize_base64(result["value"])
+        assert result["kid"] == imported_key.id
+
+        # verify that the operation round-trips
+        verified = crypto_client.verify(SignatureAlgorithm.rs256, digest, signature)
+        assert verified.is_valid
 
 
 def test_custom_hook_policy():
@@ -742,8 +848,7 @@ def test_local_only_mode_no_service_calls():
 def test_local_only_mode_raise():
     """A local-only CryptographyClient should raise an exception if an operation can't be performed locally"""
 
-    jwk = {"kty":"RSA", "key_ops":["decrypt", "verify", "unwrapKey"], "n":b"10011", "e":b"10001"}
-    client = CryptographyClient.from_jwk(jwk=jwk)
+    client = CryptographyClient.from_jwk(jwk=TEST_JWK)
 
     # Algorithm not supported locally
     with pytest.raises(NotImplementedError) as ex:
@@ -764,9 +869,8 @@ def test_local_only_mode_raise():
     assert f"{KeyOperation.verify}" in str(ex.value)
 
     # Algorithm not supported locally, and operation not included in JWK permissions
-    with pytest.raises(NotImplementedError) as ex:
+    with pytest.raises(AzureError) as ex:
         client.sign(SignatureAlgorithm.rs256, b"...")
-    assert f"{SignatureAlgorithm.rs256}" in str(ex.value)
     assert f"{KeyOperation.sign}" in str(ex.value)
 
     # Algorithm not supported locally
@@ -789,7 +893,7 @@ def test_prefers_local_provider():
         spec=KeyVaultKey,
         id="https://localhost/fake/key/version",
         properties=mock.Mock(
-            not_before=datetime(2000, 1, 1, tzinfo=_UTC), expires_on=datetime(3000, 1, 1, tzinfo=_UTC)
+            not_before=datetime(2000, 1, 1, tzinfo=timezone.utc), expires_on=datetime(3000, 1, 1, tzinfo=timezone.utc)
         ),
     )
     client = CryptographyClient(key, mock.Mock())
@@ -857,7 +961,7 @@ def test_encrypt_argument_validation():
         spec=KeyVaultKey,
         id="https://localhost/fake/key/version",
         properties=mock.Mock(
-            not_before=datetime(2000, 1, 1, tzinfo=_UTC), expires_on=datetime(3000, 1, 1, tzinfo=_UTC)
+            not_before=datetime(2000, 1, 1, tzinfo=timezone.utc), expires_on=datetime(3000, 1, 1, tzinfo=timezone.utc)
         ),
     )
     client = CryptographyClient(key, mock.Mock())
@@ -880,7 +984,7 @@ def test_decrypt_argument_validation():
         spec=KeyVaultKey,
         id="https://localhost/fake/key/version",
         properties=mock.Mock(
-            not_before=datetime(2000, 1, 1, tzinfo=_UTC), expires_on=datetime(3000, 1, 1, tzinfo=_UTC)
+            not_before=datetime(2000, 1, 1, tzinfo=timezone.utc), expires_on=datetime(3000, 1, 1, tzinfo=timezone.utc)
         ),
     )
     client = CryptographyClient(key, mock.Mock())
@@ -901,6 +1005,94 @@ def test_decrypt_argument_validation():
     with pytest.raises(ValueError) as ex:
         client.decrypt(EncryptionAlgorithm.a192_cbcpad, b"...")
     assert "iv" in str(ex.value) and "required" in str(ex.value)
+
+
+def test_rsa_public_key_public_numbers():
+    """Verify behavior of KeyVaultRSAPublicKey.public_numbers"""
+
+    client = CryptographyClient.from_jwk(jwk=TEST_JWK)
+    public_key = client.create_rsa_public_key()
+    public_numbers = public_key.public_numbers()
+    assert public_numbers.e == int.from_bytes(TEST_JWK["e"], "big")
+    assert public_numbers.n == int.from_bytes(TEST_JWK["n"], "big")
+
+
+def test_rsa_public_key_equals():
+    """Verify behavior of KeyVaultRSAPublicKey.__eq__ against a JWK and KeyVaultRSAPublicKey instance"""
+
+    client = CryptographyClient.from_jwk(jwk=TEST_JWK)
+    public_key = client.create_rsa_public_key()
+    assert public_key == JsonWebKey(**TEST_JWK)
+    key_dupe = client.create_rsa_public_key()
+    assert public_key == key_dupe
+
+
+def test_rsa_public_key_public_bytes():
+    """Verify behavior of KeyVaultRSAPublicKey.public_bytes"""
+
+    client = CryptographyClient.from_jwk(jwk=TEST_JWK)
+    public_key = client.create_rsa_public_key()
+    public_bytes = public_key.public_bytes(Encoding.PEM, PublicFormat.PKCS1)
+
+    public_numbers = public_key.public_numbers()
+    crypto_public_numbers = RSAPublicNumbers(e=public_numbers.e, n=public_numbers.n)
+    crypto_public_bytes = crypto_public_numbers.public_key().public_bytes(Encoding.PEM, PublicFormat.PKCS1)
+    assert public_bytes ==  crypto_public_bytes
+
+
+def test_rsa_public_key_private_key_size():
+    """Verify that KeyVaultRSAPublicKey.key_size and KeyVaultRSAPrivateKey.key_size are equal for the same key"""
+
+    client = CryptographyClient.from_jwk(jwk=TEST_JWK)
+    public_key = client.create_rsa_public_key()
+    private_key = client.create_rsa_private_key()
+    assert public_key.key_size == private_key.key_size == 2048
+
+
+def test_rsa_private_key_public_key():
+    """Verify behavior of KeyVaultRSAPrivateKey.public_key against a JWK and KeyVaultRSAPublicKey instance"""
+
+    client = CryptographyClient.from_jwk(jwk=TEST_JWK)
+    public_key = client.create_rsa_public_key()
+    private_key = client.create_rsa_private_key()
+    assert private_key.public_key() == public_key
+
+
+def test_rsa_private_key_private_numbers():
+    """Verify behavior of KeyVaultRSAPrivateKey.private_numbers"""
+
+    client = CryptographyClient.from_jwk(jwk=TEST_JWK)
+    private_key = client.create_rsa_private_key()
+    private_numbers = private_key.private_numbers()
+    assert private_numbers.d == int.from_bytes(TEST_JWK["d"], "big")
+    assert private_numbers.p == int.from_bytes(TEST_JWK["p"], "big")
+    assert private_numbers.q == int.from_bytes(TEST_JWK["q"], "big")
+    assert private_numbers.dmp1 == rsa_crt_dmp1(private_numbers.d, private_numbers.p)
+    assert private_numbers.dmq1 == rsa_crt_dmq1(private_numbers.d, private_numbers.q)
+    assert private_numbers.iqmp == rsa_crt_iqmp(private_numbers.p, private_numbers.q)
+
+
+def test_rsa_private_key_private_bytes():
+    """Verify behavior of KeyVaultRSAPrivateKey.private_bytes"""
+
+    client = CryptographyClient.from_jwk(jwk=TEST_JWK)
+    private_key = client.create_rsa_private_key()
+    private_bytes = private_key.private_bytes(Encoding.PEM, PrivateFormat.TraditionalOpenSSL, NoEncryption())
+
+    private_numbers = private_key.private_numbers()
+    crypto_private_numbers = RSAPrivateNumbers(
+        p=private_numbers.p,
+        q=private_numbers.q,
+        d=private_numbers.d,
+        dmp1=private_numbers.dmp1,
+        dmq1=private_numbers.dmq1,
+        iqmp=private_numbers.iqmp,
+        public_numbers=private_numbers.public_numbers,
+    )
+    crypto_private_bytes = crypto_private_numbers.private_key().private_bytes(
+        Encoding.PEM, PrivateFormat.TraditionalOpenSSL, NoEncryption()
+    )
+    assert private_bytes == crypto_private_bytes
 
 
 def test_retain_url_port():

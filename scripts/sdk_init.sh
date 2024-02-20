@@ -1,8 +1,9 @@
 #!/bin/bash
 
-# install python3.8
-apt-get install python3.8
-apt-get install python3.8-venv
+# install python3.10
+add-apt-repository ppa:deadsnakes/ppa
+apt-get install python3.10
+apt-get install python3.10-venv
 
 # init env
 TMPDIR="$(dirname $(dirname $(readlink -f "$0")))/venv"
@@ -14,7 +15,7 @@ export VIRTUAL_ENV
 PATH="$VIRTUAL_ENV/bin:$PATH"
 export PATH
 echo "$PATH"
-python3.8 -m venv $TMPDIR/venv-sdk
+python3.10 -m venv $TMPDIR/venv-sdk
 python -m pip install -U pip
 python scripts/dev_setup.py -p azure-core
 

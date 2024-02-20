@@ -25,21 +25,18 @@
 # --------------------------------------------------------------------------
 """Provide access to settings for globally used Azure configuration values.
 """
-
+from __future__ import annotations
 from collections import namedtuple
 from enum import Enum
 import logging
 import os
 import sys
-from typing import Type, Optional, Dict, Callable, cast, Any, Union, TYPE_CHECKING
+from typing import Type, Optional, Callable, Union, Dict, Any, TypeVar, Tuple, Generic, Mapping, List
 from azure.core.tracing import AbstractSpan
 
-if TYPE_CHECKING:
-    try:
-        # pylint:disable=unused-import
-        from azure.core.tracing.ext.opencensus_span import OpenCensusSpan  # pylint:disable=redefined-outer-name
-    except ImportError:
-        pass
+ValidInputType = TypeVar("ValidInputType")
+ValueType = TypeVar("ValueType")
+
 
 __all__ = ("settings", "Settings")
 
@@ -47,11 +44,12 @@ __all__ = ("settings", "Settings")
 # https://www.python.org/dev/peps/pep-0484/#support-for-singleton-types-in-unions
 class _Unset(Enum):
     token = 0
+
+
 _unset = _Unset.token
 
 
-def convert_bool(value):
-    # type: (Union[str, bool]) -> bool
+def convert_bool(value: Union[str, bool]) -> bool:
     """Convert a string to True or False
 
     If a boolean is passed in, it is returned as-is. Otherwise the function
@@ -61,14 +59,15 @@ def convert_bool(value):
     " "no", "0", "off" -> False
 
     :param value: the value to convert
-    :type value: string
-    :returns: int
+    :type value: str or bool
+    :returns: A boolean value matching the intent of the input
+    :rtype: bool
     :raises ValueError: If conversion to bool fails
 
     """
-    if value in (True, False):
-        return cast(bool, value)
-    val = cast(str, value).lower()
+    if isinstance(value, bool):
+        return value
+    val = value.lower()
     if val in ["yes", "1", "on", "true", "True"]:
         return True
     if val in ["no", "0", "off", "false", "False"]:
@@ -85,8 +84,7 @@ _levels = {
 }
 
 
-def convert_logging(value):
-    # type: (Union[str, int]) -> int
+def convert_logging(value: Union[str, int]) -> int:
     """Convert a string to a Python logging level
 
     If a log level is passed in, it is returned as-is. Otherwise the function
@@ -99,51 +97,81 @@ def convert_logging(value):
     * "debug"
 
     :param value: the value to convert
-    :type value: string
-    :returns: int
+    :type value: str or int
+    :returns: A log level as an int. See the logging module for details.
+    :rtype: int
     :raises ValueError: If conversion to log level fails
 
     """
-    if value in set(_levels.values()):
-        return cast(int, value)
-    val = cast(str, value).upper()
+    if isinstance(value, int):
+        # If it's an int, return it. We don't need to check if it's in _levels, as custom int levels are allowed.
+        # https://docs.python.org/3/library/logging.html#levels
+        return value
+    val = value.upper()
     level = _levels.get(val)
     if not level:
         raise ValueError("Cannot convert {} to log level, valid values are: {}".format(value, ", ".join(_levels)))
     return level
 
 
-def get_opencensus_span():
-    # type: () -> Optional[Type[AbstractSpan]]
-    """Returns the OpenCensusSpan if opencensus is installed else returns None"""
+def _get_opencensus_span() -> Optional[Type[AbstractSpan]]:
+    """Returns the OpenCensusSpan if the opencensus tracing plugin is installed else returns None.
+
+    :rtype: type[AbstractSpan] or None
+    :returns: OpenCensusSpan type or None
+    """
     try:
-        from azure.core.tracing.ext.opencensus_span import OpenCensusSpan  # pylint:disable=redefined-outer-name
+        from azure.core.tracing.ext.opencensus_span import (  # pylint:disable=redefined-outer-name
+            OpenCensusSpan,
+        )
 
         return OpenCensusSpan
     except ImportError:
         return None
 
 
-def get_opencensus_span_if_opencensus_is_imported():
-    # type: () -> Optional[Type[AbstractSpan]]
+def _get_opentelemetry_span() -> Optional[Type[AbstractSpan]]:
+    """Returns the OpenTelemetrySpan if the opentelemetry tracing plugin is installed else returns None.
+
+    :rtype: type[AbstractSpan] or None
+    :returns: OpenTelemetrySpan type or None
+    """
+    try:
+        from azure.core.tracing.ext.opentelemetry_span import (  # pylint:disable=redefined-outer-name
+            OpenTelemetrySpan,
+        )
+
+        return OpenTelemetrySpan
+    except ImportError:
+        return None
+
+
+def _get_opencensus_span_if_opencensus_is_imported() -> Optional[Type[AbstractSpan]]:
     if "opencensus" not in sys.modules:
         return None
-    return get_opencensus_span()
+    return _get_opencensus_span()
 
 
-_tracing_implementation_dict = {
-    "opencensus": get_opencensus_span
-}  # type: Dict[str, Callable[[], Optional[Type[AbstractSpan]]]]
+def _get_opentelemetry_span_if_opentelemetry_is_imported() -> Optional[Type[AbstractSpan]]:
+    if "opentelemetry" not in sys.modules:
+        return None
+    return _get_opentelemetry_span()
 
 
-def convert_tracing_impl(value):
-    # type: (Union[str, Type[AbstractSpan]]) -> Optional[Type[AbstractSpan]]
+_tracing_implementation_dict: Dict[str, Callable[[], Optional[Type[AbstractSpan]]]] = {
+    "opencensus": _get_opencensus_span,
+    "opentelemetry": _get_opentelemetry_span,
+}
+
+
+def convert_tracing_impl(value: Optional[Union[str, Type[AbstractSpan]]]) -> Optional[Type[AbstractSpan]]:
     """Convert a string to AbstractSpan
 
     If a AbstractSpan is passed in, it is returned as-is. Otherwise the function
     understands the following strings, ignoring case:
 
     * "opencensus"
+    * "opentelemetry"
 
     :param value: the value to convert
     :type value: string
@@ -152,16 +180,16 @@ def convert_tracing_impl(value):
 
     """
     if value is None:
-        return get_opencensus_span_if_opencensus_is_imported()
+        return (
+            _get_opencensus_span_if_opencensus_is_imported() or _get_opentelemetry_span_if_opentelemetry_is_imported()
+        )
 
     if not isinstance(value, str):
-        value = cast(Type[AbstractSpan], value)
         return value
 
-    value = cast(str, value)  # mypy clarity
     value = value.lower()
     get_wrapper_class = _tracing_implementation_dict.get(value, lambda: _unset)
-    wrapper_class = get_wrapper_class()  # type: Union[None, _Unset, Type[AbstractSpan]]
+    wrapper_class: Optional[Union[_Unset, Type[AbstractSpan]]] = get_wrapper_class()
     if wrapper_class is _unset:
         raise ValueError(
             "Cannot convert {} to AbstractSpan, valid values are: {}".format(
@@ -171,7 +199,7 @@ def convert_tracing_impl(value):
     return wrapper_class
 
 
-class PrioritizedSetting(object):
+class PrioritizedSetting(Generic[ValidInputType, ValueType]):
     """Return a value for a global setting according to configuration precedence.
 
     The following methods are searched in order for the setting:
@@ -186,42 +214,57 @@ class PrioritizedSetting(object):
 
     The ``env_var`` argument specifies the name of an environment to check for
     setting values, e.g. ``"AZURE_LOG_LEVEL"``.
+    If a ``convert`` function is provided, the result will be converted before being used.
 
     The optional ``system_hook`` can be used to specify a function that will
     attempt to look up a value for the setting from system-wide configurations.
+    If a ``convert`` function is provided, the hook result will be converted before being used.
 
     The optional ``default`` argument specified an implicit default value for
-    the setting that is returned if no other methods provide a value.
+    the setting that is returned if no other methods provide a value. If a ``convert`` function is provided,
+    ``default`` will be converted before being used.
 
     A ``convert`` argument may be provided to convert values before they are
     returned. For instance to concert log levels in environment variables
-    to ``logging`` module values.
+    to ``logging`` module values. If a ``convert`` function is provided, it must support
+    str as valid input type.
 
+    :param str name: the name of the setting
+    :param str env_var: the name of an environment variable to check for the setting
+    :param callable system_hook: a function that will attempt to look up a value for the setting
+    :param default: an implicit default value for the setting
+    :type default: any
+    :param callable convert: a function to convert values before they are returned
     """
 
-    def __init__(self, name, env_var=None, system_hook=None, default=_Unset, convert=None):
+    def __init__(
+        self,
+        name: str,
+        env_var: Optional[str] = None,
+        system_hook: Optional[Callable[[], ValidInputType]] = None,
+        default: Union[ValidInputType, _Unset] = _unset,
+        convert: Optional[Callable[[Union[ValidInputType, str]], ValueType]] = None,
+    ):
 
         self._name = name
         self._env_var = env_var
         self._system_hook = system_hook
         self._default = default
-        self._convert = convert if convert else lambda x: x
-        self._user_value = _Unset
+        noop_convert: Callable[[Any], Any] = lambda x: x
+        self._convert: Callable[[Union[ValidInputType, str]], ValueType] = convert if convert else noop_convert
+        self._user_value: Union[ValidInputType, _Unset] = _unset
 
-    def __repr__(self):
-        # type () -> str
+    def __repr__(self) -> str:
         return "PrioritizedSetting(%r)" % self._name
 
-    def __call__(self, value=None):
-        # type: (Any) -> Any
+    def __call__(self, value: Optional[ValidInputType] = None) -> ValueType:
         """Return the setting value according to the standard precedence.
 
-        :param time: value
-        :type time: str or int or float or None (default: None)
+        :param value: value
+        :type value: str or int or float or None
         :returns: the value of the setting
         :rtype: str or int or float
-        :raises: RuntimeError
-
+        :raises: RuntimeError if no value can be determined
         """
 
         # 4. immediate values
@@ -229,7 +272,7 @@ class PrioritizedSetting(object):
             return self._convert(value)
 
         # 3. previously user-set value
-        if self._user_value is not _Unset:
+        if not isinstance(self._user_value, _Unset):
             return self._convert(self._user_value)
 
         # 2. environment variable
@@ -241,53 +284,49 @@ class PrioritizedSetting(object):
             return self._convert(self._system_hook())
 
         # 0. implicit default
-        if self._default is not _Unset:
+        if not isinstance(self._default, _Unset):
             return self._convert(self._default)
 
         raise RuntimeError("No configured value found for setting %r" % self._name)
 
-    def __get__(self, instance, owner):
+    def __get__(self, instance: Any, owner: Optional[Any] = None) -> PrioritizedSetting[ValidInputType, ValueType]:
         return self
 
-    def __set__(self, instance, value):
+    def __set__(self, instance: Any, value: ValidInputType) -> None:
         self.set_value(value)
 
-    def set_value(self, value):
-        # type: (Any) -> None
+    def set_value(self, value: ValidInputType) -> None:
         """Specify a value for this setting programmatically.
 
         A value set this way takes precedence over all other methods except
         immediate values.
 
-        :param time: a user-set value for this setting
-        :type time: str or int or float
-        :returns: None
-
+        :param value: a user-set value for this setting
+        :type value: str or int or float
         """
         self._user_value = value
 
-    def unset_value(self):
-        # () -> None
+    def unset_value(self) -> None:
         """Unset the previous user value such that the priority is reset."""
-        self._user_value = _Unset
+        self._user_value = _unset
 
     @property
-    def env_var(self):
+    def env_var(self) -> Optional[str]:
         return self._env_var
 
     @property
-    def default(self):
+    def default(self) -> Union[ValidInputType, _Unset]:
         return self._default
 
 
-class Settings(object):
+class Settings:
     """Settings for globally used Azure configuration values.
 
     You probably don't want to create an instance of this class, but call the singleton instance:
 
     .. code-block:: python
 
-        from azure.common.settings import settings
+        from azure.core.settings import settings
         settings.log_level = log_level = logging.DEBUG
 
     The following methods are searched in order for a setting:
@@ -359,42 +398,49 @@ class Settings(object):
 
     """
 
-    def __init__(self):
-        self._defaults_only = False
+    def __init__(self) -> None:
+        self._defaults_only: bool = False
 
     @property
-    def defaults_only(self):
+    def defaults_only(self) -> bool:
         """Whether to ignore environment and system settings and return only base default values.
 
         :rtype: bool
+        :returns: Whether to ignore environment and system settings and return only base default values.
         """
         return self._defaults_only
 
     @defaults_only.setter
-    def defaults_only(self, value):
+    def defaults_only(self, value: bool) -> None:
         self._defaults_only = value
 
     @property
-    def defaults(self):
+    def defaults(self) -> Tuple[Any, ...]:
         """Return implicit default values for all settings, ignoring environment and system.
 
         :rtype: namedtuple
+        :returns: The implicit default values for all settings
         """
         props = {k: v.default for (k, v) in self.__class__.__dict__.items() if isinstance(v, PrioritizedSetting)}
         return self._config(props)
 
     @property
-    def current(self):
+    def current(self) -> Tuple[Any, ...]:
         """Return the current values for all settings.
 
         :rtype: namedtuple
+        :returns: The current values for all settings
         """
         if self.defaults_only:
             return self.defaults
         return self.config()
 
-    def config(self, **kwargs):
-        """ Return the currently computed settings, with values overridden by parameter values.
+    def config(self, **kwargs: Any) -> Tuple[Any, ...]:
+        """Return the currently computed settings, with values overridden by parameter values.
+
+        :keyword dict kwargs: Settings to override
+        :rtype: namedtuple
+        :returns: The current values for all settings, with values overridden by parameter values
 
         Examples:
 
@@ -408,24 +454,37 @@ class Settings(object):
         props.update(kwargs)
         return self._config(props)
 
-    def _config(self, props):  # pylint: disable=no-self-use
-        Config = namedtuple("Config", list(props.keys()))
+    def _config(self, props: Mapping[str, Any]) -> Tuple[Any, ...]:
+        keys: List[str] = list(props.keys())
+        # https://github.com/python/mypy/issues/4414
+        Config = namedtuple("Config", keys)  # type: ignore
         return Config(**props)
 
-    log_level = PrioritizedSetting(
-        "log_level", env_var="AZURE_LOG_LEVEL", convert=convert_logging, default=logging.INFO
+    log_level: PrioritizedSetting[Union[str, int], int] = PrioritizedSetting(
+        "log_level",
+        env_var="AZURE_LOG_LEVEL",
+        convert=convert_logging,
+        default=logging.INFO,
     )
 
-    tracing_enabled = PrioritizedSetting(
-        "tracing_enabled", env_var="AZURE_TRACING_ENABLED", convert=convert_bool, default=False
+    tracing_enabled: PrioritizedSetting[Union[str, bool], bool] = PrioritizedSetting(
+        "tracing_enabled",
+        env_var="AZURE_TRACING_ENABLED",
+        convert=convert_bool,
+        default=False,
     )
 
-    tracing_implementation = PrioritizedSetting(
-        "tracing_implementation", env_var="AZURE_SDK_TRACING_IMPLEMENTATION", convert=convert_tracing_impl, default=None
+    tracing_implementation: PrioritizedSetting[
+        Optional[Union[str, Type[AbstractSpan]]], Optional[Type[AbstractSpan]]
+    ] = PrioritizedSetting(
+        "tracing_implementation",
+        env_var="AZURE_SDK_TRACING_IMPLEMENTATION",
+        convert=convert_tracing_impl,
+        default=None,
     )
 
 
-settings = Settings()
+settings: Settings = Settings()
 """The settings unique instance.
 
 :type settings: Settings

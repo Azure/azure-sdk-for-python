@@ -8,7 +8,19 @@
 # --------------------------------------------------------------------------
 import datetime
 import sys
-from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
+from typing import (
+    Any,
+    AsyncIterable,
+    AsyncIterator,
+    Callable,
+    Dict,
+    IO,
+    Optional,
+    TypeVar,
+    Union,
+    cast,
+    overload,
+)
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -21,8 +33,7 @@ from azure.core.exceptions import (
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import AsyncHttpResponse
-from azure.core.rest import HttpRequest
+from azure.core.rest import HttpRequest, AsyncHttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
@@ -1162,7 +1173,10 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
                 )
                 path_format_arguments = {
                     "Endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                        "self._config.endpoint",
+                        self._config.endpoint,
+                        "str",
+                        skip_quote=True,
                     ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
@@ -1178,11 +1192,16 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "Endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                        "self._config.endpoint",
+                        self._config.endpoint,
+                        "str",
+                        skip_quote=True,
                     ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
@@ -1205,7 +1224,11 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
                 raise HttpResponseError(response=response)
 
             return pipeline_response
@@ -1824,7 +1847,10 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
                 )
                 path_format_arguments = {
                     "Endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                        "self._config.endpoint",
+                        self._config.endpoint,
+                        "str",
+                        skip_quote=True,
                     ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
@@ -1840,11 +1866,16 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "Endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                        "self._config.endpoint",
+                        self._config.endpoint,
+                        "str",
+                        skip_quote=True,
                     ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
@@ -1867,7 +1898,11 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
                 raise HttpResponseError(response=response)
 
             return pipeline_response

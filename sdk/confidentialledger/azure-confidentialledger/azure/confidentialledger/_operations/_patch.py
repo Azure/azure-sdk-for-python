@@ -8,7 +8,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 
 import time
-from typing import Any, IO, Callable, List, Optional, Union, cast
+from typing import Any, Callable, IO, List, Optional, Union, cast
 
 from azure.core.exceptions import ResourceNotFoundError
 from azure.core.polling import PollingMethod, LROPoller, NoPolling
@@ -50,18 +50,24 @@ class BaseStatePollingMethod:
 
         self._deserialization_callback = None
         self._status = "constructed"
-        self._latest_response = {}
+        self._latest_response: JSON = {}
 
         self._retry_not_found = retry_not_found
-        self._received_not_found_exception = False
+        self._not_found_count = 0
 
     def initialize(self, client, initial_response, deserialization_callback):  # pylint: disable=unused-argument
         self._evaluate_response(initial_response)
         self._deserialization_callback = deserialization_callback
 
     def _evaluate_response(self, response: JSON) -> None:
-        self._status = "finished" if response["state"] == self._desired_state else "polling"
+        self._status = "finished" if response.get("state", None) == self._desired_state else "polling"
         self._latest_response = response
+
+    def _give_up_not_found_error(self, exception: ResourceNotFoundError) -> bool:
+        if exception.error is not None and exception.error.code == "InvalidTransactionId":
+            return True
+
+        return False
 
     def status(self) -> str:
         return self._status
@@ -96,13 +102,18 @@ class StatePollingMethod(BaseStatePollingMethod, PollingMethod):
                 try:
                     response = self._operation()
                     self._evaluate_response(response)
-                except ResourceNotFoundError:
-                    # We'll allow one instance of resource not found to account for replication
-                    # delay.
-                    if not self._retry_not_found or self._received_not_found_exception:
-                        raise
+                except ResourceNotFoundError as not_found_exception:
+                    # We'll allow some instances of resource not found to account for replication
+                    # delay if session stickiness is lost.
+                    self._not_found_count += 1
 
-                    self._received_not_found_exception = True
+                    not_retryable = (
+                        not self._retry_not_found or
+                        self._give_up_not_found_error(not_found_exception)
+                    )
+
+                    if not_retryable or self._not_found_count >=3:
+                        raise
 
                 if not self.finished():
                     time.sleep(self._polling_interval_s)
@@ -145,7 +156,7 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
         else:
             polling_method = polling
 
-        return LROPoller(self._client, initial_response, None, polling_method)
+        return LROPoller(self._client, initial_response, lambda x: x, polling_method)
 
     def begin_get_receipt(self, transaction_id: str, **kwargs: Any) -> LROPoller[JSON]:
         """Returns a poller for getting a receipt certifying ledger contents at a particular
@@ -174,7 +185,7 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
         else:
             polling_method = polling
 
-        return LROPoller(self._client, initial_response, None, polling_method)
+        return LROPoller(self._client, initial_response, lambda x: x, polling_method)
 
     def begin_create_ledger_entry(
         self,
@@ -256,14 +267,22 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
         # If this poller was called from begin_create_ledger_entry, we should return the
         # create_ledger_entry response, not the transaction status.
         post_result = kwargs.pop("_create_ledger_entry_response", None)
-        deserialization_callback = lambda x: x if post_result is None else post_result
+        deserialization_callback = lambda x: x if post_result is None else post_result # pylint: disable=unnecessary-lambda-assignment
 
         def operation() -> JSON:
             return super(ConfidentialLedgerClientOperationsMixin, self).get_transaction_status(
                 transaction_id=transaction_id, **kwargs
             )
 
-        initial_response = operation()
+        try:
+            initial_response = operation()
+        except ResourceNotFoundError:
+            if polling is False or polling is None:
+                raise
+
+            # This method allows for temporary resource not found errors, which may occur if session
+            # stickiness is lost and there is replication lag.
+            initial_response = {}
 
         if polling is True:
             polling_method = cast(PollingMethod, StatePollingMethod(operation, "Committed", lro_delay, True))

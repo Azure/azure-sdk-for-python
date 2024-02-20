@@ -12,12 +12,12 @@ from azure.ai.ml.exceptions import VSCodeCommandNotFound
 
 
 class VSCodeClient(object):
-    # pylint: disable=client-method-has-more-than-5-positional-arguments, no-self-use
+    # pylint: disable=client-method-has-more-than-5-positional-arguments
     def create_dev_container_json(
         self,
-        azureml_container, # pylint: disable=unused-argument
-        endpoint_name: str, # pylint: disable=unused-argument
-        deployment_name: str, # pylint: disable=unused-argument
+        azureml_container,  # pylint: disable=unused-argument
+        endpoint_name: str,  # pylint: disable=unused-argument
+        deployment_name: str,  # pylint: disable=unused-argument
         build_directory: str,
         image_name: str,
         environment: dict,
@@ -33,7 +33,6 @@ class VSCodeClient(object):
         devcontainer.write_file(build_directory)
         return devcontainer.local_path
 
-    # pylint: disable=no-self-use
     def invoke_dev_container(self, devcontainer_path: str, app_path: str) -> None:
         hex_encoded_devcontainer_path = _encode_hex(devcontainer_path)
         command = [
@@ -44,10 +43,10 @@ class VSCodeClient(object):
         try:
             run_cli_command(command)
         except Exception as e:
-            output = e.output.decode(encoding="UTF-8") # pylint: disable=no-member
-            raise VSCodeCommandNotFound(output)
+            output = e.output.decode(encoding="UTF-8")  # pylint: disable=no-member
+            raise VSCodeCommandNotFound(output) from e
 
 
 def _encode_hex(path: str):
-    vscode_path = re.sub("\\s+", "", path) # pylint: disable=specify-parameter-names-in-call
+    vscode_path = re.sub("\\s+", "", path)  # pylint: disable=specify-parameter-names-in-call
     return binascii.hexlify(vscode_path.encode()).decode("ascii")

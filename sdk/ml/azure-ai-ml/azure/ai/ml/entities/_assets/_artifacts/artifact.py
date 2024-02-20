@@ -104,7 +104,7 @@ class Artifact(Asset):
 
     def __eq__(self, other) -> bool:
         return (
-            type(self) == type(other) # pylint: disable = unidiomatic-typecheck
+            type(self) == type(other)  # pylint: disable = unidiomatic-typecheck
             and self.name == other.name
             and self.id == other.id
             and self.version == other.version
@@ -120,4 +120,8 @@ class Artifact(Asset):
 
     @abstractmethod
     def _update_path(self, asset_artifact: ArtifactStorageInfo) -> None:
-        """Updates an an artifact with the remote path of a local upload."""
+        """Updates an an artifact with the remote path of a local upload.
+
+        :param asset_artifact: The asset storage info of the artifact
+        :type asset_artifact: ArtifactStorageInfo
+        """

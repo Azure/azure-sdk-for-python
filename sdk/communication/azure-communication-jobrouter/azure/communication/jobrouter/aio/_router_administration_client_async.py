@@ -20,12 +20,9 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.credentials import AzureKeyCredential
 from azure.communication.jobrouter._shared.policy import HMACCredentialsPolicy
-
-from .._shared.utils import parse_connection_str
-
-from .._generated._serialization import Serializer  # pylint:disable=protected-access
 from .._generated.aio import AzureCommunicationJobRouterService
-from .._generated.models import (
+
+from .._models import (
     ClassificationPolicy,
     DistributionPolicy,
     ExceptionPolicy,
@@ -46,20 +43,27 @@ from .._generated.models import (
     RuleEngineWorkerSelectorAttachment,
     PassThroughWorkerSelectorAttachment,
     WeightedAllocationWorkerSelectorAttachment,
-    StaticRule,
-    ExpressionRule,
-    FunctionRule,
-    JobQueue,
-    JobQueueItem,
+    StaticRouterRule,
+    ExpressionRouterRule,
+    FunctionRouterRule,
+    WebhookRouterRule,
+    DirectMapRouterRule,
+    RouterQueue,
+    RouterQueueItem
 )
 
+from .._router_serializer import (
+    _deserialize_from_json, # pylint:disable=protected-access
+    _serialize_to_json, # pylint:disable=protected-access
+    _SERIALIZER, # pylint:disable=protected-access
+)
+
+from .._shared.utils import parse_connection_str
 from .._version import SDK_MONIKER
 from .._api_versions import DEFAULT_VERSION
 
-_SERIALIZER = Serializer()
 
-
-class RouterAdministrationClient(object):  # pylint:disable=too-many-public-methods,too-many-lines
+class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-methods,too-many-lines
     """A client to interact with the AzureCommunicationService JobRouter service.
 
     This client provides operations to create, update, list and delete the following entities: classification policy,
@@ -93,7 +97,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
             if not endpoint.lower().startswith('http'):
                 endpoint = "https://" + endpoint
         except AttributeError:
-            raise ValueError("Host URL must be a string")
+            raise ValueError("Host URL must be a string") # pylint:disable=raise-missing-from
 
         parsed_url = urlparse(endpoint.rstrip('/'))
         if not parsed_url.netloc:
@@ -101,7 +105,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
 
         self._endpoint = endpoint
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
-        self._authentication_policy = HMACCredentialsPolicy(endpoint, credential.key, decode_url=True)
+        self._authentication_policy = HMACCredentialsPolicy(endpoint, credential.key)
         self._client = AzureCommunicationJobRouterService(
             self._endpoint,
             api_version=self._api_version,
@@ -114,13 +118,13 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
             cls,
             conn_str: str,
             **kwargs: Any
-    ) -> "RouterAdministrationClient":
-        """Create RouterClient from a Connection String.
+    ) -> "JobRouterAdministrationClient":
+        """Create JobRouterClient from a Connection String.
 
         :param str conn_str:
             A connection string to an Azure Communication Service resource.
-        :return: Instance of RouterAdministrationClient.
-        :rtype: ~azure.communication.jobrouter.aio.RouterAdministrationClient
+        :return: Instance of JobRouterAdministrationClient.
+        :rtype: ~azure.communication.jobrouter.aio.JobRouterAdministrationClient
 
         .. admonition:: Example:
 
@@ -129,7 +133,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
                 :end-before: [END admin_auth_from_connection_string_async]
                 :language: python
                 :dedent: 8
-                :caption: Authenticating a RouterAdministrationClient from a connection_string
+                :caption: Authenticating a JobRouterAdministrationClient from a connection_string
         """
         endpoint, access_key = parse_connection_str(conn_str)
 
@@ -151,7 +155,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
         :param exception_policy: An instance of exception policy.
         :type exception_policy: ~azure.communication.jobrouter.ExceptionPolicy
 
-        :return: ExceptionPolicy
+        :return: Instance of ExceptionPolicy
         :rtype: ~azure.communication.jobrouter.ExceptionPolicy
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
@@ -162,14 +166,16 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
                 :end-before: [END create_exception_policy_async]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterAdministrationClient to create an exception policy
+                :caption: Use a JobRouterAdministrationClient to create an exception policy
         """
         if not exception_policy_id:
             raise ValueError("exception_policy_id cannot be None.")
 
         return await self._client.job_router_administration.upsert_exception_policy(
             id = exception_policy_id,
-            patch = exception_policy,
+            patch = _serialize_to_json(exception_policy, "ExceptionPolicy"),  # pylint:disable=protected-access
+            # pylint:disable=protected-access,line-too-long
+            cls = lambda http_response, deserialized_json_response, args: _deserialize_from_json("ExceptionPolicy", deserialized_json_response),
             **kwargs
         )
 
@@ -188,7 +194,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
           Please provide either this or individual keyword parameters.
         :type exception_policy: ~azure.communication.jobrouter.ExceptionPolicy
 
-        :return: ExceptionPolicy
+        :return: Instance of ExceptionPolicy
         :rtype: ~azure.communication.jobrouter.ExceptionPolicy
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
@@ -212,7 +218,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
 
         :keyword Optional[str] name: The name of this policy.
 
-        :return: ExceptionPolicy
+        :return: Instance of ExceptionPolicy
         :rtype: ~azure.communication.jobrouter.ExceptionPolicy
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
@@ -242,7 +248,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
           class instance will not be considered if they are also specified in keyword arguments.
         :paramtype exception_policy: Optional[~azure.communication.jobrouter.ExceptionPolicy]
 
-        :return: ExceptionPolicy
+        :return: Instance of ExceptionPolicy
         :rtype: ~azure.communication.jobrouter.ExceptionPolicy
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
@@ -253,7 +259,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
                 :end-before: [END update_exception_policy_async]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterAdministrationClient to update an exception policy
+                :caption: Use a JobRouterAdministrationClient to update an exception policy
         """
         if not exception_policy_id:
             raise ValueError("exception_policy_id cannot be None.")
@@ -269,7 +275,9 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
 
         return await self._client.job_router_administration.upsert_exception_policy(
             id = exception_policy_id,
-            patch = patch,
+            patch = _serialize_to_json(patch, "ExceptionPolicy"),  # pylint:disable=protected-access
+            # pylint:disable=protected-access,line-too-long
+            cls = lambda http_response, deserialized_json_response, arg: _deserialize_from_json("ExceptionPolicy", deserialized_json_response),
             **kwargs
         )
 
@@ -283,7 +291,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
 
         :param str exception_policy_id: Id of the policy.
 
-        :return: ExceptionPolicy
+        :return: Instance of ExceptionPolicy
         :rtype: ~azure.communication.jobrouter.ExceptionPolicy
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
@@ -294,19 +302,23 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
                 :end-before: [END get_exception_policy_async]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterAdministrationClient to get an exception policy
+                :caption: Use a JobRouterAdministrationClient to get an exception policy
         """
         if not exception_policy_id:
             raise ValueError("exception_policy_id cannot be None.")
 
         return await self._client.job_router_administration.get_exception_policy(
             id = exception_policy_id,
+            # pylint:disable=protected-access,line-too-long
+            cls = lambda http_response, deserialized_json_response, arg: _deserialize_from_json("ExceptionPolicy", deserialized_json_response),
             **kwargs
         )
 
     @distributed_trace
     def list_exception_policies(
             self,
+            *,
+            results_per_page: Optional[int] = None,
             **kwargs: Any
     ) -> AsyncItemPaged[ExceptionPolicyItem]:
         """Retrieves existing exception policies.
@@ -324,7 +336,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
                 :end-before: [END list_exception_policies_async]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterAdministrationClient to list exception policies
+                :caption: Use a JobRouterAdministrationClient to list exception policies
 
         .. admonition:: Example:
 
@@ -333,10 +345,8 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
                 :end-before: [END list_exception_policies_batched_async]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterAdministrationClient to list exception policies in batches
+                :caption: Use a JobRouterAdministrationClient to list exception policies in batches
         """
-
-        results_per_page = kwargs.pop("results_per_page", None)
 
         params = {}
         if results_per_page is not None:
@@ -344,6 +354,9 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
 
         return self._client.job_router_administration.list_exception_policies(
             params = params,
+            # pylint:disable=protected-access
+            cls = lambda deserialized_json_array: [_deserialize_from_json("ExceptionPolicyItem", elem) for elem in
+                                                   deserialized_json_array],
             **kwargs
         )
 
@@ -367,7 +380,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
                 :end-before: [END delete_exception_policy_async]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterAdministrationClient to delete an exception policy
+                :caption: Use a JobRouterAdministrationClient to delete an exception policy
         """
 
         if not exception_policy_id:
@@ -396,7 +409,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
         :param distribution_policy: An instance of distribution policy.
         :type distribution_policy: ~azure.communication.jobrouter.DistributionPolicy
 
-        :return: DistributionPolicy
+        :return: Instance of DistributionPolicy
         :rtype: ~azure.communication.jobrouter.DistributionPolicy
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
@@ -407,14 +420,16 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
                 :end-before: [END create_distribution_policy_async]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterAdministrationClient to create a distribution policy
+                :caption: Use a JobRouterAdministrationClient to create a distribution policy
         """
         if not distribution_policy_id:
             raise ValueError("distribution_policy_id cannot be None.")
 
         return await self._client.job_router_administration.upsert_distribution_policy(
             id = distribution_policy_id,
-            patch = distribution_policy,
+            patch = _serialize_to_json(distribution_policy, "DistributionPolicy"),  # pylint:disable=protected-access,
+            # pylint:disable=protected-access,line-too-long
+            cls = lambda http_response, deserialized_json_response, args: _deserialize_from_json("DistributionPolicy", deserialized_json_response),
             **kwargs
         )
 
@@ -433,7 +448,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
           Please provide either this or individual keyword parameters.
         :type distribution_policy: ~azure.communication.jobrouter.DistributionPolicy
 
-        :return: DistributionPolicy
+        :return: Instance of DistributionPolicy
         :rtype: ~azure.communication.jobrouter.DistributionPolicy
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
@@ -444,7 +459,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
             distribution_policy_id: str,
             *,
             name: Optional[str],
-            offer_ttl_seconds: Optional[float],
+            offer_expires_after_seconds: Optional[float],
             mode: Optional[Union[BestWorkerMode, LongestIdleMode, RoundRobinMode]],
             **kwargs: Any
     ) -> DistributionPolicy:
@@ -452,8 +467,8 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
 
         :param str distribution_policy_id: Id of the distribution policy.
 
-        :keyword Optional[float] offer_ttl_seconds: The expiry time of any offers created under this policy will
-          be governed by the offer time to live.
+        :keyword Optional[float] offer_expires_after_seconds: The expiry time of any offers created under this policy
+          will be governed by the offer time to live.
 
         :keyword mode: Specified distribution mode
         :paramtype mode: Optional[Union[~azure.communication.jobrouter.BestWorkerMode,
@@ -461,7 +476,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
 
         :keyword Optional[str] name: The name of this policy.
 
-        :return: DistributionPolicy
+        :return: Instance of DistributionPolicy
         :rtype: ~azure.communication.jobrouter.DistributionPolicy
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
@@ -481,8 +496,8 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
           Please provide either this or individual keyword parameters.
         :type distribution_policy: ~azure.communication.jobrouter.DistributionPolicy
 
-        :keyword Optional[float] offer_ttl_seconds: The expiry time of any offers created under this policy will
-          be governed by the offer time to live.
+        :keyword Optional[float] offer_expires_after_seconds: The expiry time of any offers created under this policy
+          will be governed by the offer time to live.
 
         :keyword mode: Specified distribution mode
         :paramtype mode: Optional[Union[~azure.communication.jobrouter.BestWorkerMode,
@@ -494,7 +509,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
             class instance will not be considered if they are also specified in keyword arguments.
         :paramtype distribution_policy: Optional[~azure.communication.jobrouter.DistributionPolicy]
 
-        :return: DistributionPolicy
+        :return: Instance of DistributionPolicy
         :rtype: ~azure.communication.jobrouter.DistributionPolicy
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
@@ -505,7 +520,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
                 :end-before: [END update_distribution_policy_async]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterAdministrationClient to update a distribution policy
+                :caption: Use a JobRouterAdministrationClient to update a distribution policy
         """
         if not distribution_policy_id:
             raise ValueError("distribution_policy_id cannot be None.")
@@ -516,13 +531,16 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
 
         patch = DistributionPolicy(
             name = kwargs.pop("name", distribution_policy.name),
-            offer_ttl_seconds = kwargs.pop("offer_ttl_seconds", distribution_policy.offer_ttl_seconds),
+            offer_expires_after_seconds = kwargs.pop("offer_expires_after_seconds",
+                                                     distribution_policy.offer_expires_after_seconds),
             mode = kwargs.pop("mode", distribution_policy.mode)
         )
 
         return await self._client.job_router_administration.upsert_distribution_policy(
             id = distribution_policy_id,
-            patch = patch,
+            patch = _serialize_to_json(patch, "DistributionPolicy"),  # pylint:disable=protected-access,
+            # pylint:disable=protected-access,line-too-long
+            cls = lambda http_response, deserialized_json_response, arg: _deserialize_from_json("DistributionPolicy", deserialized_json_response),
             **kwargs
         )
 
@@ -536,7 +554,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
 
         :param str distribution_policy_id: Id of the policy.
 
-        :return: DistributionPolicy
+        :return: Instance of DistributionPolicy
         :rtype: ~azure.communication.jobrouter.DistributionPolicy
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
@@ -547,19 +565,23 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
                 :end-before: [END get_distribution_policy_async]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterAdministrationClient to get a distribution policy
+                :caption: Use a JobRouterAdministrationClient to get a distribution policy
         """
         if not distribution_policy_id:
             raise ValueError("distribution_policy_id cannot be None.")
 
         return await self._client.job_router_administration.get_distribution_policy(
             id = distribution_policy_id,
+            # pylint:disable=protected-access,line-too-long
+            cls = lambda http_response, deserialized_json_response, args: _deserialize_from_json("DistributionPolicy", deserialized_json_response),
             **kwargs
         )
 
     @distributed_trace
     def list_distribution_policies(
             self,
+            *,
+            results_per_page: Optional[int] = None,
             **kwargs: Any
     ) -> AsyncItemPaged[DistributionPolicyItem]:
         """Retrieves existing distribution policies.
@@ -577,7 +599,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
                 :end-before: [END list_distribution_policies_async]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterAdministrationClient to list distribution policies
+                :caption: Use a JobRouterAdministrationClient to list distribution policies
 
         .. admonition:: Example:
 
@@ -586,10 +608,8 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
                 :end-before: [END list_distribution_policies_batched_async]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterAdministrationClient to list distribution policies in batches
+                :caption: Use a JobRouterAdministrationClient to list distribution policies in batches
         """
-
-        results_per_page = kwargs.pop("results_per_page", None)
 
         params = {}
         if results_per_page is not None:
@@ -597,6 +617,9 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
 
         return self._client.job_router_administration.list_distribution_policies(
             params = params,
+            # pylint:disable=protected-access
+            cls = lambda deserialized_json_array: [_deserialize_from_json("DistributionPolicyItem", elem) for elem in
+                                                   deserialized_json_array],
             **kwargs
         )
 
@@ -620,7 +643,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
                 :end-before: [END delete_distribution_policy_async]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterAdministrationClient to delete a distribution policy
+                :caption: Use a JobRouterAdministrationClient to delete a distribution policy
         """
 
         if not distribution_policy_id:
@@ -639,18 +662,18 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
     async def create_queue(
             self,
             queue_id: str,
-            queue: JobQueue,
+            queue: RouterQueue,
             **kwargs: Any
-    ) -> JobQueue:
+    ) -> RouterQueue:
         """Create a job queue
 
         :param str queue_id: Id of the queue.
 
         :param queue: An instance of JobQueue.
-        :type queue: ~azure.communication.jobrouter.JobQueue
+        :type queue: ~azure.communication.jobrouter.RouterQueue
 
-        :return: JobQueue
-        :rtype: ~azure.communication.jobrouter.JobQueue
+        :return: Instance of RouterQueue
+        :rtype: ~azure.communication.jobrouter.RouterQueue
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -660,23 +683,25 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
                 :end-before: [END create_queue_async]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterAdministrationClient to create a queue
+                :caption: Use a JobRouterAdministrationClient to create a queue
         """
         if not queue_id:
             raise ValueError("queue_id cannot be None.")
 
         return await self._client.job_router_administration.upsert_queue(
             id = queue_id,
-            patch = queue,
+            patch = _serialize_to_json(queue, "RouterQueue"),  # pylint:disable=protected-access,
+            # pylint:disable=protected-access,line-too-long
+            cls = lambda http_response, deserialized_json_response, args: _deserialize_from_json("RouterQueue", deserialized_json_response),
             **kwargs)
 
     @overload
     async def update_queue(
             self,
             queue_id: str,
-            queue: JobQueue,
+            queue: RouterQueue,
             **kwargs: Any
-    ) -> JobQueue:
+    ) -> RouterQueue:
         """ Update a job queue
 
         :param str queue_id: Id of the queue.
@@ -685,8 +710,8 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
           Please provide either this or individual keyword parameters.
         :type queue: ~azure.communication.jobrouter.JobQueue
 
-        :return: JobQueue
-        :rtype: ~azure.communication.jobrouter.JobQueue
+        :return: Instance of RouterQueue
+        :rtype: ~azure.communication.jobrouter.RouterQueue
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
 
@@ -700,7 +725,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
             labels: Optional[Dict[str, Union[int, float, str, bool]]],
             exception_policy_id: Optional[str],
             **kwargs: Any
-    ) -> JobQueue:
+    ) -> RouterQueue:
         """ Update a job queue
 
         :param str queue_id: Id of the queue.
@@ -717,8 +742,8 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
         :keyword Optional[str] exception_policy_id: The ID of the exception policy that determines various
           job escalation rules.
 
-        :return: JobQueue
-        :rtype: ~azure.communication.jobrouter.JobQueue
+        :return: Instance of RouterQueue
+        :rtype: ~azure.communication.jobrouter.RouterQueue
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
 
@@ -726,16 +751,16 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
     async def update_queue(
             self,
             queue_id: str,
-            *args: JobQueue,
+            *args: RouterQueue,
             **kwargs: Any
-    ) -> JobQueue:
+    ) -> RouterQueue:
         """Update a job queue
 
         :param str queue_id: Id of the queue.
 
         :param queue: An instance of JobQueue. This is a positional-only parameter.
           Please provide either this or individual keyword parameters.
-        :type queue: ~azure.communication.jobrouter.JobQueue
+        :type queue: ~azure.communication.jobrouter.RouterQueue
 
         :keyword Optional[str] distribution_policy_id: The ID of the distribution policy that will determine
           how a job is distributed to workers.
@@ -747,10 +772,10 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
         :paramtype labels: Optional[Dict[str, Union[int, float, str, bool]]]
 
         :keyword Optional[str] exception_policy_id: The ID of the exception policy that determines various
-        job escalation rules.
+          job escalation rules.
 
-        :return: JobQueue
-        :rtype: ~azure.communication.jobrouter.JobQueue
+        :return: Instance of RouterQueue
+        :rtype: ~azure.communication.jobrouter.RouterQueue
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -760,16 +785,16 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
                 :end-before: [END update_queue_async]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterAdministrationClient to update a queue
+                :caption: Use a JobRouterAdministrationClient to update a queue
         """
         if not queue_id:
             raise ValueError("queue_id cannot be None.")
 
-        queue = JobQueue()
+        queue = RouterQueue()
         if len(args) == 1:
             queue = args[0]
 
-        patch = JobQueue(
+        patch = RouterQueue(
             name = kwargs.pop('name', queue.name),
             distribution_policy_id = kwargs.pop('distribution_policy_id', queue.distribution_policy_id),
             labels = kwargs.pop('labels', queue.labels),
@@ -778,7 +803,9 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
 
         return await self._client.job_router_administration.upsert_queue(
             id = queue_id,
-            patch = patch,
+            patch = _serialize_to_json(patch, "RouterQueue"),  # pylint:disable=protected-access,
+            # pylint:disable=protected-access,line-too-long
+            cls = lambda http_response, deserialized_json_response, arg: _deserialize_from_json("RouterQueue", deserialized_json_response),
             **kwargs)
 
     @distributed_trace_async
@@ -786,13 +813,13 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
             self,
             queue_id: str,
             **kwargs: Any
-    ) -> JobQueue:
+    ) -> RouterQueue:
         """Retrieves an existing queue by Id.
 
         :param str queue_id: Id of the queue.
 
-        :return: JobQueue
-        :rtype: ~azure.communication.jobrouter.JobQueue
+        :return: Instance of RouterQueue
+        :rtype: ~azure.communication.jobrouter.RouterQueue
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -802,27 +829,31 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
                 :end-before: [END get_queue_async]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterAdministrationClient to get a queue
+                :caption: Use a JobRouterAdministrationClient to get a queue
         """
         if not queue_id:
             raise ValueError("queue_id cannot be None.")
 
         return await self._client.job_router_administration.get_queue(
             id = queue_id,
+            # pylint:disable=protected-access,line-too-long
+            cls = lambda http_response, deserialized_json_response, args: _deserialize_from_json("RouterQueue", deserialized_json_response),
             **kwargs
         )
 
     @distributed_trace
     def list_queues(
             self,
+            *,
+            results_per_page: Optional[int] = None,
             **kwargs: Any
-    ) -> AsyncItemPaged[JobQueueItem]:
+    ) -> AsyncItemPaged[RouterQueueItem]:
         """Retrieves existing queues.
 
         :keyword Optional[int] results_per_page: The maximum number of results to be returned per page.
 
-        :return: An iterator like instance of JobQueueItem
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.communication.jobrouter.JobQueueItem]
+        :return: An iterator like instance of RouterQueueItem
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.communication.jobrouter.RouterQueueItem]
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -832,7 +863,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
                 :end-before: [END list_queues_async]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterAdministrationClient to list queues
+                :caption: Use a JobRouterAdministrationClient to list queues
 
         .. admonition:: Example:
 
@@ -841,10 +872,8 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
                 :end-before: [END list_queues_batched_async]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterAdministrationClient to list queues in batches
+                :caption: Use a JobRouterAdministrationClient to list queues in batches
         """
-
-        results_per_page = kwargs.pop("results_per_page", None)
 
         params = {}
         if results_per_page is not None:
@@ -852,6 +881,9 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
 
         return self._client.job_router_administration.list_queues(
             params = params,
+            # pylint:disable=protected-access
+            cls = lambda deserialized_json_array: [_deserialize_from_json("RouterQueueItem", elem) for elem in
+                                                   deserialized_json_array],
             **kwargs
         )
 
@@ -875,7 +907,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
                 :end-before: [END delete_queue_async]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterAdministrationClient to delete a queue
+                :caption: Use a JobRouterAdministrationClient to delete a queue
         """
 
         if not queue_id:
@@ -904,7 +936,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
         :param classification_policy: An instance of Classification policy.
         :type classification_policy: ~azure.communication.jobrouter.ClassificationPolicy
 
-        :return: ClassificationPolicy
+        :return: Instance of ClassificationPolicy
         :rtype: ~azure.communication.jobrouter.ClassificationPolicy
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
@@ -915,7 +947,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
                 :end-before: [END create_classification_policy_async]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterAdministrationClient to create a classification policy
+                :caption: Use a JobRouterAdministrationClient to create a classification policy
         """
 
         if not classification_policy_id:
@@ -923,7 +955,9 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
 
         return await self._client.job_router_administration.upsert_classification_policy(
             id = classification_policy_id,
-            patch = classification_policy,
+            patch = _serialize_to_json(classification_policy, "ClassificationPolicy"),
+            # pylint:disable=protected-access,line-too-long
+            cls = lambda http_response, deserialized_json_response, args: _deserialize_from_json("ClassificationPolicy", deserialized_json_response),
             **kwargs)
 
     @overload
@@ -941,7 +975,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
          parameter. Please provide either this or individual keyword parameters.
         :type classification_policy: ~azure.communication.jobrouter.ClassificationPolicy
 
-        :return: ClassificationPolicy
+        :return: Instance of ClassificationPolicy
         :rtype: ~azure.communication.jobrouter.ClassificationPolicy
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
@@ -954,7 +988,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
             name: Optional[str],
             fallback_queue_id: Optional[str],
             queue_selectors: Optional[List[Union[StaticQueueSelectorAttachment, ConditionalQueueSelectorAttachment, RuleEngineQueueSelectorAttachment, PassThroughQueueSelectorAttachment, WeightedAllocationQueueSelectorAttachment]]],  # pylint: disable=line-too-long
-            prioritization_rule: Optional[Union[StaticRule, ExpressionRule, FunctionRule]],
+            prioritization_rule: Optional[Union[StaticRouterRule, ExpressionRouterRule, FunctionRouterRule, WebhookRouterRule]],  # pylint: disable=line-too-long
             worker_selectors: Optional[List[Union[StaticWorkerSelectorAttachment, ConditionalWorkerSelectorAttachment, RuleEngineWorkerSelectorAttachment, PassThroughWorkerSelectorAttachment, WeightedAllocationWorkerSelectorAttachment]]],  # pylint: disable=line-too-long
             **kwargs: Any
     ) -> ClassificationPolicy:
@@ -975,8 +1009,10 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
           ~azure.communication.jobrouter.WeightedAllocationQueueSelectorAttachment]]]
 
         :keyword prioritization_rule: The rule to determine a priority score for a given job.
-        :paramtype prioritization_rule: Optional[Union[~azure.communication.jobrouter.StaticRule,
-          ~azure.communication.jobrouter.ExpressionRule, ~azure.communication.jobrouter.FunctionRule]]
+        :paramtype prioritization_rule: Optional[Union[~azure.communication.jobrouter.StaticRouterRule,
+          ~azure.communication.jobrouter.ExpressionRouterRule,
+          ~azure.communication.jobrouter.FunctionRouterRule,
+          ~azure.communication.jobrouter.WebhookRouterRule]]
 
         :keyword worker_selectors: The worker label selectors to attach to a given job.
         :paramtype worker_selectors: Optional[List[Union[~azure.communication.jobrouter.StaticWorkerSelectorAttachment,
@@ -985,7 +1021,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
           ~azure.communication.jobrouter.PassThroughWorkerSelectorAttachment,
           ~azure.communication.jobrouter.WeightedAllocationWorkerSelectorAttachment]]]
 
-        :return: ClassificationPolicy
+        :return: Instance of ClassificationPolicy
         :rtype: ~azure.communication.jobrouter.ClassificationPolicy
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
@@ -1018,8 +1054,10 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
           ~azure.communication.jobrouter.WeightedAllocationQueueSelectorAttachment]]]
 
         :keyword prioritization_rule: The rule to determine a priority score for a given job.
-        :paramtype prioritization_rule: Optional[Union[~azure.communication.jobrouter.StaticRule,
-          ~azure.communication.jobrouter.ExpressionRule, ~azure.communication.jobrouter.FunctionRule]]
+        :paramtype prioritization_rule: Optional[Union[~azure.communication.jobrouter.StaticRouterRule,
+          ~azure.communication.jobrouter.ExpressionRouterRule,
+          ~azure.communication.jobrouter.FunctionRouterRule,
+          ~azure.communication.jobrouter.WebhookRouterRule]]
 
         :keyword worker_selectors: The worker label selectors to attach to a given job.
         :paramtype worker_selectors: Optional[List[Union[~azure.communication.jobrouter.StaticWorkerSelectorAttachment,
@@ -1028,7 +1066,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
           ~azure.communication.jobrouter.PassThroughWorkerSelectorAttachment,
           ~azure.communication.jobrouter.WeightedAllocationWorkerSelectorAttachment]]]
 
-        :return: ClassificationPolicy
+        :return: Instance of ClassificationPolicy
         :rtype: ~azure.communication.jobrouter.ClassificationPolicy
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
@@ -1039,7 +1077,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
                 :end-before: [END update_classification_policy_async]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterAdministrationClient to update a classification policy
+                :caption: Use a JobRouterAdministrationClient to update a classification policy
         """
 
         if not classification_policy_id:
@@ -1059,7 +1097,9 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
 
         return await self._client.job_router_administration.upsert_classification_policy(
             id = classification_policy_id,
-            patch = patch,
+            patch = _serialize_to_json(patch, "ClassificationPolicy"),  # pylint:disable=protected-access,
+            # pylint:disable=protected-access,line-too-long
+            cls = lambda http_response, deserialized_json_response, arg: _deserialize_from_json("ClassificationPolicy", deserialized_json_response),
             **kwargs)
 
     @distributed_trace_async
@@ -1072,7 +1112,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
 
         :param str classification_policy_id: The id of classification policy.
 
-        :return: ClassificationPolicy
+        :return: Instance of ClassificationPolicy
         :rtype: ~azure.communication.jobrouter.ClassificationPolicy
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
@@ -1083,18 +1123,22 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
                 :end-before: [END get_classification_policy_async]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterAdministrationClient to get a classification policy
+                :caption: Use a JobRouterAdministrationClient to get a classification policy
         """
         if not classification_policy_id:
             raise ValueError("classification_policy_id cannot be None.")
 
         return await self._client.job_router_administration.get_classification_policy(
             classification_policy_id,
+            # pylint:disable=protected-access,line-too-long
+            cls = lambda http_response, deserialized_json_response, args: _deserialize_from_json("ClassificationPolicy", deserialized_json_response),
             **kwargs)
 
     @distributed_trace
     def list_classification_policies(
             self,
+            *,
+            results_per_page: Optional[int] = None,
             **kwargs: Any
     ) -> AsyncItemPaged[ClassificationPolicyItem]:
         """Retrieves existing classification policies.
@@ -1112,7 +1156,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
                 :end-before: [END list_classification_policies_async]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterAdministrationClient to list classification policies
+                :caption: Use a JobRouterAdministrationClient to list classification policies
 
         .. admonition:: Example:
 
@@ -1121,9 +1165,8 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
                 :end-before: [END list_classification_policies_batched_async]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterAdministrationClient to list classification policies in batches
+                :caption: Use a JobRouterAdministrationClient to list classification policies in batches
         """
-        results_per_page = kwargs.pop("results_per_page", None)
 
         params = {}
         if results_per_page is not None:
@@ -1131,6 +1174,9 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
 
         return self._client.job_router_administration.list_classification_policies(
             params = params,
+            # pylint:disable=protected-access
+            cls = lambda deserialized_json_array: [_deserialize_from_json("ClassificationPolicyItem", elem) for elem in
+                                                   deserialized_json_array],
             **kwargs)
 
     @distributed_trace_async
@@ -1154,7 +1200,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
                 :end-before: [END delete_classification_policy_async]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterAdministrationClient to delete a classification policy
+                :caption: Use a JobRouterAdministrationClient to delete a classification policy
         """
         if not classification_policy_id:
             raise ValueError("classification_policy_id cannot be None.")
@@ -1168,7 +1214,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "RouterAdministrationClient":
+    async def __aenter__(self) -> "JobRouterAdministrationClient":
         await self._client.__aenter__()
         return self
 

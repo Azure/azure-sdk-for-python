@@ -1,11 +1,11 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-
+import copy
 import logging
 import re
 from collections import OrderedDict
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 from marshmallow.exceptions import ValidationError
 
@@ -23,12 +23,12 @@ def validate_arm_str(arm_str: str) -> bool:
     raise ValidationError(f"ARM string {arm_str} is not formatted correctly.")
 
 
-def get_subnet_str(vnet_name: str, subnet: str, sub_id: str = None, rg: str = None) -> str:
+def get_subnet_str(vnet_name: str, subnet: str, sub_id: Optional[str] = None, rg: Optional[str] = None) -> str:
     if vnet_name and not subnet:
         raise ValidationError("Subnet is required when vnet name is specified.")
     try:
-        if validate_arm_str(subnet):
-            return subnet
+        validate_arm_str(subnet)
+        return subnet
     except ValidationError:
         return (
             f"/subscriptions/{sub_id}/resourceGroups/{rg}/"
@@ -61,3 +61,21 @@ def exit_if_registry_assets(data: Dict, caller: str) -> None:
         and data["code_configuration"].code.startswith(startswith)
     ):
         raise ValidationError(f"Registry reference for code_configuration.code is not supported for {caller}")
+
+
+def _resolve_group_inputs_for_component(component, **kwargs):  # pylint: disable=unused-argument
+    # Try resolve object's inputs & outputs and return a resolved new object
+    from azure.ai.ml.entities._inputs_outputs import GroupInput
+
+    result = copy.copy(component)
+
+    flatten_inputs = {}
+    for key, val in result.inputs.items():
+        if isinstance(val, GroupInput):
+            flatten_inputs.update(val.flatten(group_parameter_name=key))
+            continue
+        flatten_inputs[key] = val
+
+    # Flatten group inputs
+    result._inputs = flatten_inputs  # pylint: disable=protected-access
+    return result

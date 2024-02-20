@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 import functools
-from typing import (  # pylint: disable=unused-import
+from typing import (
     Any, Dict, List, Optional, Union,
     TYPE_CHECKING)
 from urllib.parse import urlparse
@@ -70,6 +70,9 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
     :keyword str secondary_hostname:
         The hostname of the secondary endpoint.
+    :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
+        authentication. Only has an effect when credential is of type TokenCredential. The value could be
+        https://storage.azure.com/ (default) or https://<account>.queue.core.windows.net.
 
     .. admonition:: Example:
 
@@ -96,8 +99,8 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         try:
             if not account_url.lower().startswith('http'):
                 account_url = "https://" + account_url
-        except AttributeError:
-            raise ValueError("Account URL must be a string.")
+        except AttributeError as exc:
+            raise ValueError("Account URL must be a string.") from exc
         parsed_url = urlparse(account_url.rstrip('/'))
         if not parsed_url.netloc:
             raise ValueError(f"Invalid URL: {account_url}")
@@ -112,9 +115,6 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         self._configure_encryption(kwargs)
 
     def _format_url(self, hostname):
-        """Format the endpoint URL according to the current location
-        mode hostname.
-        """
         return f"{self.scheme}://{hostname}/{self._query_str}"
 
     @classmethod
@@ -136,6 +136,10 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             Credentials provided here will take precedence over those in the connection string.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
+        :paramtype credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
+        :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
+            authentication. Only has an effect when credential is of type TokenCredential. The value could be
+            https://storage.azure.com/ (default) or https://<account>.queue.core.windows.net.
         :returns: A Queue service client.
         :rtype: ~azure.storage.queue.QueueClient
 
@@ -249,7 +253,6 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         :type cors: list(~azure.storage.queue.CorsRule)
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :rtype: None
 
         .. admonition:: Example:
 
@@ -268,7 +271,7 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             cors=cors
         )
         try:
-            return self._client.service.set_properties(props, timeout=timeout, **kwargs) # type: ignore
+            self._client.service.set_properties(props, timeout=timeout, **kwargs) # type: ignore
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -293,7 +296,11 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             The maximum number of queue names to retrieve per API
             call. If the request does not specify the server will return up to 5,000 items.
         :keyword int timeout:
-            The server timeout, expressed in seconds. This function may make multiple
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-queue
+            #other-client--per-operation-configuration>`_. This function may make multiple
             calls to the service in which case the timeout value specified will be
             applied to each individual call.
         :returns: An iterable (auto-paging) of QueueProperties.
@@ -341,6 +348,7 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         :type metadata: dict(str, str)
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
+        :return: A QueueClient for the newly created Queue.
         :rtype: ~azure.storage.queue.QueueClient
 
         .. admonition:: Example:

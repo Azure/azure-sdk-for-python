@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
@@ -44,8 +44,8 @@ class CheckNameAvailabilityResult(_serialization.Model):
         name_available: Optional[bool] = None,
         reason: Optional[Union[str, "_models.Reason"]] = None,
         message: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name_available: Boolean value that indicates whether the name is available for you to
          use. If true, the name is available. If false, the name has already been taken or is invalid
@@ -85,7 +85,7 @@ class CustomDomain(_serialization.Model):
         "use_sub_domain_name": {"key": "useSubDomainName", "type": "bool"},
     }
 
-    def __init__(self, *, name: str, use_sub_domain_name: Optional[bool] = None, **kwargs):
+    def __init__(self, *, name: str, use_sub_domain_name: Optional[bool] = None, **kwargs: Any) -> None:
         """
         :keyword name: The custom domain name. Name is the CNAME source. Required.
         :paramtype name: str
@@ -125,8 +125,8 @@ class Endpoints(_serialization.Model):
         queue: Optional[str] = None,
         table: Optional[str] = None,
         file: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword blob: The blob endpoint.
         :paramtype blob: str
@@ -175,7 +175,7 @@ class Resource(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: Resource location.
         :paramtype location: str
@@ -282,8 +282,8 @@ class StorageAccount(Resource):  # pylint: disable=too-many-instance-attributes
         creation_time: Optional[datetime.datetime] = None,
         custom_domain: Optional["_models.CustomDomain"] = None,
         secondary_endpoints: Optional["_models.Endpoints"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location.
         :paramtype location: str
@@ -359,7 +359,7 @@ class StorageAccountCheckNameAvailabilityParameters(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, *, name: str, type: str = "Microsoft.Storage/storageAccounts", **kwargs):
+    def __init__(self, *, name: str, type: str = "Microsoft.Storage/storageAccounts", **kwargs: Any) -> None:
         """
         :keyword name: Required.
         :paramtype name: str
@@ -408,8 +408,8 @@ class StorageAccountCreateParameters(_serialization.Model):
         location: str,
         tags: Optional[Dict[str, str]] = None,
         account_type: Optional[Union[str, "_models.AccountType"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: The location of the resource. This will be one of the supported and
          registered Azure Geo Regions (e.g. West US, East US, Southeast Asia, etc.). The geo region of a
@@ -446,7 +446,7 @@ class StorageAccountKeys(_serialization.Model):
         "key2": {"key": "key2", "type": "str"},
     }
 
-    def __init__(self, *, key1: Optional[str] = None, key2: Optional[str] = None, **kwargs):
+    def __init__(self, *, key1: Optional[str] = None, key2: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword key1: The value of key 1.
         :paramtype key1: str
@@ -469,7 +469,7 @@ class StorageAccountListResult(_serialization.Model):
         "value": {"key": "value", "type": "[StorageAccount]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.StorageAccount"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.StorageAccount"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of storage accounts and their properties.
         :paramtype value: list[~azure.mgmt.storage.v2015_06_15.models.StorageAccount]
@@ -495,7 +495,7 @@ class StorageAccountRegenerateKeyParameters(_serialization.Model):
         "key_name": {"key": "keyName", "type": "str"},
     }
 
-    def __init__(self, *, key_name: str, **kwargs):
+    def __init__(self, *, key_name: str, **kwargs: Any) -> None:
         """
         :keyword key_name: Required.
         :paramtype key_name: str
@@ -532,8 +532,8 @@ class StorageAccountUpdateParameters(_serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         account_type: Optional[Union[str, "_models.AccountType"]] = None,
         custom_domain: Optional["_models.CustomDomain"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -592,8 +592,8 @@ class Usage(_serialization.Model):
         current_value: int,
         limit: int,
         name: "_models.UsageName",
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword unit: The unit of measurement. Required. Known values are: "Count", "Bytes",
          "Seconds", "Percent", "CountsPerSecond", and "BytesPerSecond".
@@ -625,7 +625,7 @@ class UsageListResult(_serialization.Model):
         "value": {"key": "value", "type": "[Usage]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Usage"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.Usage"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list Storage Resource Usages.
         :paramtype value: list[~azure.mgmt.storage.v2015_06_15.models.Usage]
@@ -648,7 +648,7 @@ class UsageName(_serialization.Model):
         "localized_value": {"key": "localizedValue", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[str] = None, localized_value: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: Optional[str] = None, localized_value: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: A string describing the resource name.
         :paramtype value: str

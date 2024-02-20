@@ -23,24 +23,23 @@
 # THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-
+from typing import Iterable, MutableSequence, Union
 import pytest
 from azure.core.pipeline import AsyncPipeline
 from azure.core import AsyncPipelineClient
-from azure.core.pipeline.policies import UserAgentPolicy, AsyncRedirectPolicy
-from azure.core.pipeline.transport import HttpRequest
+from azure.core.pipeline.policies import AsyncHTTPPolicy, SansIOHTTPPolicy, UserAgentPolicy, AsyncRedirectPolicy
+from azure.core.rest import HttpRequest, AsyncHttpResponse
 
 import trio
 
 
 @pytest.mark.asyncio
 async def test_example_trio():
-
     async def req():
         request = HttpRequest("GET", "https://bing.com/")
-        policies = [
+        policies: Iterable[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]] = [
             UserAgentPolicy("myuseragent"),
-            AsyncRedirectPolicy()
+            AsyncRedirectPolicy(),
         ]
         # [START trio]
         from azure.core.pipeline.transport import TrioRequestsTransport
@@ -48,17 +47,17 @@ async def test_example_trio():
         async with AsyncPipeline(TrioRequestsTransport(), policies=policies) as pipeline:
             return await pipeline.run(request)
         # [END trio]
+
     response = trio.run(req)
     assert isinstance(response.http_response.status_code, int)
 
 
 @pytest.mark.asyncio
 async def test_example_asyncio():
-
     request = HttpRequest("GET", "https://bing.com")
-    policies = [
+    policies: Iterable[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]] = [
         UserAgentPolicy("myuseragent"),
-        AsyncRedirectPolicy()
+        AsyncRedirectPolicy(),
     ]
     # [START asyncio]
     from azure.core.pipeline.transport import AsyncioRequestsTransport
@@ -66,17 +65,15 @@ async def test_example_asyncio():
     async with AsyncPipeline(AsyncioRequestsTransport(), policies=policies) as pipeline:
         response = await pipeline.run(request)
     # [END asyncio]
-    assert pipeline._transport.session is None
     assert isinstance(response.http_response.status_code, int)
 
 
 @pytest.mark.asyncio
 async def test_example_aiohttp():
-
     request = HttpRequest("GET", "https://bing.com")
-    policies = [
+    policies: Iterable[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]] = [
         UserAgentPolicy("myuseragent"),
-        AsyncRedirectPolicy()
+        AsyncRedirectPolicy(),
     ]
     # [START aiohttp]
     from azure.core.pipeline.transport import AioHttpTransport
@@ -84,7 +81,6 @@ async def test_example_aiohttp():
     async with AsyncPipeline(AioHttpTransport(), policies=policies) as pipeline:
         response = await pipeline.run(request)
     # [END aiohttp]
-    assert pipeline._transport.session is None
     assert isinstance(response.http_response.status_code, int)
 
 
@@ -93,46 +89,44 @@ async def test_example_async_pipeline():
     # [START build_async_pipeline]
     from azure.core.pipeline import AsyncPipeline
     from azure.core.pipeline.policies import AsyncRedirectPolicy, UserAgentPolicy
-    from azure.core.pipeline.transport import AioHttpTransport, HttpRequest
+    from azure.core.pipeline.transport import AioHttpTransport
+    from azure.core.rest import HttpRequest
 
     # example: create request and policies
     request = HttpRequest("GET", "https://bing.com")
-    policies = [
+    policies: Iterable[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]] = [
         UserAgentPolicy("myuseragent"),
-        AsyncRedirectPolicy()
+        AsyncRedirectPolicy(),
     ]
 
     # run the pipeline
     async with AsyncPipeline(transport=AioHttpTransport(), policies=policies) as pipeline:
         response = await pipeline.run(request)
     # [END build_async_pipeline]
-    assert pipeline._transport.session is None
     assert isinstance(response.http_response.status_code, int)
 
 
 @pytest.mark.asyncio
 async def test_example_async_pipeline_client():
-
     url = "https://bing.com"
 
     # [START build_async_pipeline_client]
     from azure.core import AsyncPipelineClient
     from azure.core.pipeline.policies import AsyncRedirectPolicy, UserAgentPolicy
-    from azure.core.pipeline.transport import HttpRequest
+    from azure.core.rest import HttpRequest
 
     # example policies
     request = HttpRequest("GET", url)
-    policies = [
+    policies: Iterable[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]] = [
         UserAgentPolicy("myuseragent"),
         AsyncRedirectPolicy(),
     ]
 
-    async with AsyncPipelineClient(base_url=url, policies=policies) as client:
-        response = await client._pipeline.run(request)
+    async with AsyncPipelineClient[HttpRequest, AsyncHttpResponse](base_url=url, policies=policies) as client:
+        response = await client.send_request(request)
     # [END build_async_pipeline_client]
 
-    assert client._pipeline._transport.session is None
-    assert isinstance(response.http_response.status_code, int)
+    assert isinstance(response.status_code, int)
 
 
 @pytest.mark.asyncio
@@ -155,12 +149,11 @@ async def test_example_async_redirect_policy():
     redirect_policy = AsyncRedirectPolicy.no_redirects()
 
     # It can also be overridden per operation.
-    async with AsyncPipelineClient(base_url=url, policies=[redirect_policy]) as client:
+    async with AsyncPipelineClient[HttpRequest, AsyncHttpResponse](base_url=url, policies=[redirect_policy]) as client:
         response = await client._pipeline.run(request, permit_redirects=True, redirect_max=5)
 
     # [END async_redirect_policy]
 
-    assert client._pipeline._transport.session is None
     assert isinstance(response.http_response.status_code, int)
 
 
@@ -168,7 +161,7 @@ async def test_example_async_redirect_policy():
 async def test_example_async_retry_policy():
     url = "https://bing.com"
     request = HttpRequest("GET", "https://bing.com")
-    policies = [
+    policies: MutableSequence[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]] = [
         UserAgentPolicy("myuseragent"),
         AsyncRedirectPolicy(),
     ]
@@ -212,7 +205,7 @@ async def test_example_async_retry_policy():
 
     # All of these settings can also be configured per operation.
     policies.append(retry_policy)
-    async with AsyncPipelineClient(base_url=url, policies=policies) as client:
+    async with AsyncPipelineClient[HttpRequest, AsyncHttpResponse](base_url=url, policies=policies) as client:
         response = await client._pipeline.run(
             request,
             retry_total=10,
@@ -221,9 +214,8 @@ async def test_example_async_retry_policy():
             retry_status=5,
             retry_backoff_factor=0.5,
             retry_backoff_max=60,
-            retry_on_methods=['GET']
+            retry_on_methods=["GET"],
         )
     # [END async_retry_policy]
 
-    assert client._pipeline._transport.session is None
     assert isinstance(response.http_response.status_code, int)

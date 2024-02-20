@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-import azure.cosmos.aio.cosmos_client as cosmos_client
+from azure.cosmos.aio import CosmosClient
 import azure.cosmos.exceptions as exceptions
 from azure.cosmos.partition_key import PartitionKey
 import azure.cosmos.documents as documents
@@ -118,7 +118,7 @@ async def token_client_query(container, username):
 
 
 async def run_sample():
-    async with cosmos_client.CosmosClient(HOST, MASTER_KEY) as client:
+    async with CosmosClient(HOST, MASTER_KEY) as client:
 
         try:
             try:
@@ -149,7 +149,7 @@ async def run_sample():
             # Use token to connect to database
             # If you initialize the asynchronous client without using 'async with' in your context,
             # make sure to close the client once you're done using it
-            token_client = cosmos_client.CosmosClient(HOST, token)
+            token_client = CosmosClient(HOST, token)
             token_db = token_client.get_database_client(DATABASE_ID)
             token_container = token_db.get_container_client(CONTAINER_ID)
 
@@ -189,7 +189,7 @@ async def run_sample():
 
             # Use token to connect to database
             # If you initialize the asynchronous client without using 'async with' make sure to close it once you're done
-            token_client = cosmos_client.CosmosClient(HOST, read_token)
+            token_client = CosmosClient(HOST, read_token)
             token_db = token_client.get_database_client(DATABASE_ID)
             token_container = token_db.get_container_client(CONTAINER_ID)
 
@@ -225,7 +225,7 @@ async def run_sample():
             await token_client.close()
 
             # Use token to connect to database
-            token_client = cosmos_client.CosmosClient(HOST, item_token)
+            token_client = CosmosClient(HOST, item_token)
             token_db = token_client.get_database_client(DATABASE_ID)
             token_container = token_db.get_container_client(CONTAINER_ID)
 

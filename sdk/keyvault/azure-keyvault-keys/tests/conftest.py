@@ -11,18 +11,30 @@ import pytest
 from devtools_testutils import (add_general_regex_sanitizer,
                                 add_oauth_response_sanitizer, is_live,
                                 test_proxy)
+from azure.keyvault.keys._shared.client_base import DEFAULT_VERSION, ApiVersion
 
 os.environ['PYTHONHASHSEED'] = '0'
+ALL_API_VERSIONS = "--all-api-versions"
+
+def pytest_addoption(parser):
+    parser.addoption(ALL_API_VERSIONS, action="store_true", default=False,
+                     help="Test all api version in live mode. Not applicable in playback mode.")
+
+def pytest_configure(config):
+    if is_live() and not config.getoption(ALL_API_VERSIONS):
+        pytest.api_version = [DEFAULT_VERSION]
+    else:
+        pytest.api_version = ApiVersion
 
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
-    azure_keyvault_url = os.getenv("azure_keyvault_url", "https://vaultname.vault.azure.net")
+    azure_keyvault_url = os.getenv("AZURE_KEYVAULT_URL", "https://vaultname.vault.azure.net")
     azure_keyvault_url = azure_keyvault_url.rstrip("/")
-    keyvault_tenant_id = os.getenv("keyvault_tenant_id", "keyvault_tenant_id")
-    keyvault_subscription_id = os.getenv("keyvault_subscription_id", "keyvault_subscription_id")
-    azure_managedhsm_url = os.environ.get("azure_managedhsm_url","https://managedhsmvaultname.managedhsm.azure.net")
+    keyvault_tenant_id = os.getenv("KEYVAULT_TENANT_ID", "keyvault_tenant_id")
+    keyvault_subscription_id = os.getenv("KEYVAULT_SUBSCRIPTION_ID", "keyvault_subscription_id")
+    azure_managedhsm_url = os.environ.get("AZURE_MANAGEDHSM_URL","https://managedhsmvaultname.managedhsm.azure.net")
     azure_managedhsm_url = azure_managedhsm_url.rstrip("/")
-    azure_attestation_uri = os.environ.get("azure_keyvault_attestation_url","https://fakeattestation.azurewebsites.net")
+    azure_attestation_uri = os.environ.get("AZURE_KEYVAULT_ATTESTATION_URL","https://fakeattestation.azurewebsites.net")
     azure_attestation_uri = azure_attestation_uri.rstrip('/')
 
     add_general_regex_sanitizer(regex=azure_keyvault_url, value="https://vaultname.vault.azure.net")

@@ -38,7 +38,7 @@ def build_list_request(resource_group_name: str, rule_name: str, subscription_id
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2018-03-01"))  # type: str
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2018-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -54,7 +54,7 @@ def build_list_request(resource_group_name: str, rule_name: str, subscription_id
         "ruleName": _SERIALIZER.url("rule_name", rule_name, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -71,7 +71,7 @@ def build_list_by_name_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2018-03-01"))  # type: str
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2018-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -88,7 +88,7 @@ def build_list_by_name_request(
         "statusName": _SERIALIZER.url("status_name", status_name, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -105,7 +105,7 @@ class MetricAlertsStatusOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~$(python-base-namespace).v2018_03_01.MonitorManagementClient`'s
+        :class:`~azure.mgmt.monitor.v2018_03_01.MonitorManagementClient`'s
         :attr:`metric_alerts_status` attribute.
     """
 
@@ -129,7 +129,7 @@ class MetricAlertsStatusOperations:
         :type rule_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: MetricAlertStatusCollection or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2018_03_01.models.MetricAlertStatusCollection
+        :rtype: ~azure.mgmt.monitor.v2018_03_01.models.MetricAlertStatusCollection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -143,8 +143,8 @@ class MetricAlertsStatusOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2018-03-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.MetricAlertStatusCollection]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2018-03-01"))
+        cls: ClsType[_models.MetricAlertStatusCollection] = kwargs.pop("cls", None)
 
         request = build_list_request(
             resource_group_name=resource_group_name,
@@ -156,10 +156,11 @@ class MetricAlertsStatusOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -176,7 +177,9 @@ class MetricAlertsStatusOperations:
 
         return deserialized
 
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/metricAlerts/{ruleName}/status"}  # type: ignore
+    list.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/metricAlerts/{ruleName}/status"
+    }
 
     @distributed_trace
     def list_by_name(
@@ -193,7 +196,7 @@ class MetricAlertsStatusOperations:
         :type status_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: MetricAlertStatusCollection or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2018_03_01.models.MetricAlertStatusCollection
+        :rtype: ~azure.mgmt.monitor.v2018_03_01.models.MetricAlertStatusCollection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -207,8 +210,8 @@ class MetricAlertsStatusOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2018-03-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.MetricAlertStatusCollection]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2018-03-01"))
+        cls: ClsType[_models.MetricAlertStatusCollection] = kwargs.pop("cls", None)
 
         request = build_list_by_name_request(
             resource_group_name=resource_group_name,
@@ -221,10 +224,11 @@ class MetricAlertsStatusOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -241,4 +245,6 @@ class MetricAlertsStatusOperations:
 
         return deserialized
 
-    list_by_name.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/metricAlerts/{ruleName}/status/{statusName}"}  # type: ignore
+    list_by_name.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/metricAlerts/{ruleName}/status/{statusName}"
+    }

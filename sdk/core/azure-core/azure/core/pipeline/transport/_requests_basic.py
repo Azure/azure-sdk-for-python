@@ -24,11 +24,14 @@
 #
 # --------------------------------------------------------------------------
 import logging
-from typing import Iterator, Optional, Any, Union, TypeVar, overload, TYPE_CHECKING
-import urllib3 # type: ignore
-from urllib3.util.retry import Retry # type: ignore
+from typing import Iterator, Optional, Union, TypeVar, overload, cast, TYPE_CHECKING
+from urllib3.util.retry import Retry
 from urllib3.exceptions import (
-    DecodeError as CoreDecodeError, ReadTimeoutError, ProtocolError
+    DecodeError as CoreDecodeError,
+    ReadTimeoutError,
+    ProtocolError,
+    NewConnectionError,
+    ConnectTimeoutError,
 )
 import requests
 
@@ -38,17 +41,16 @@ from azure.core.exceptions import (
     ServiceResponseError,
     IncompleteReadError,
     HttpResponseError,
-    DecodeError
+    DecodeError,
 )
-from . import HttpRequest # pylint: disable=unused-import
+from . import HttpRequest  # pylint: disable=unused-import
 
-from ._base import (
-    HttpTransport,
-    HttpResponse,
-    _HttpResponseBase
-)
+from ._base import HttpTransport, HttpResponse, _HttpResponseBase
 from ._bigger_block_size_http_adapters import BiggerBlockSizeHTTPAdapter
-from .._tools import is_rest as _is_rest, handle_non_stream_rest_response as _handle_non_stream_rest_response
+from .._tools import (
+    is_rest as _is_rest,
+    handle_non_stream_rest_response as _handle_non_stream_rest_response,
+)
 
 if TYPE_CHECKING:
     from ...rest import HttpRequest as RestHttpRequest, HttpResponse as RestHttpResponse
@@ -64,18 +66,19 @@ PipelineType = TypeVar("PipelineType")
 
 _LOGGER = logging.getLogger(__name__)
 
+
 def _read_raw_stream(response, chunk_size=1):
     # Special case for urllib3.
-    if hasattr(response.raw, 'stream'):
+    if hasattr(response.raw, "stream"):
         try:
             for chunk in response.raw.stream(chunk_size, decode_content=False):
                 yield chunk
         except ProtocolError as e:
-            raise ServiceResponseError(e, error=e)
+            raise ServiceResponseError(e, error=e) from e
         except CoreDecodeError as e:
-            raise DecodeError(e, error=e)
+            raise DecodeError(e, error=e) from e
         except ReadTimeoutError as e:
-            raise ServiceRequestError(e, error=e)
+            raise ServiceRequestError(e, error=e) from e
     else:
         # Standard file-like object.
         while True:
@@ -94,26 +97,29 @@ class _RequestsTransportResponseBase(_HttpResponseBase):
 
     :param HttpRequest request: The request.
     :param requests_response: The object returned from the HTTP library.
+    :type requests_response: requests.Response
     :param int block_size: Size in bytes.
     """
+
     def __init__(self, request, requests_response, block_size=None):
         super(_RequestsTransportResponseBase, self).__init__(request, requests_response, block_size=block_size)
         self.status_code = requests_response.status_code
         self.headers = requests_response.headers
         self.reason = requests_response.reason
-        self.content_type = requests_response.headers.get('content-type')
+        self.content_type = requests_response.headers.get("content-type")
 
     def body(self):
         return self.internal_response.content
 
-    def text(self, encoding=None):
-        # type: (Optional[str]) -> str
+    def text(self, encoding: Optional[str] = None) -> str:
         """Return the whole body as a string.
 
         If encoding is not provided, mostly rely on requests auto-detection, except
         for BOM, that requests ignores. If we see a UTF8 BOM, we assumes UTF8 unlike requests.
 
         :param str encoding: The encoding to apply.
+        :rtype: str
+        :return: The body as text.
         """
         if not encoding:
             # There is a few situation where "requests" magic doesn't fit us:
@@ -121,6 +127,7 @@ class _RequestsTransportResponseBase(_HttpResponseBase):
             # - https://github.com/psf/requests/issues/1737
             # - https://github.com/psf/requests/issues/2086
             from codecs import BOM_UTF8
+
             if self.internal_response.content[:3] == BOM_UTF8:
                 encoding = "utf-8-sig"
 
@@ -133,14 +140,17 @@ class _RequestsTransportResponseBase(_HttpResponseBase):
         return self.internal_response.text
 
 
-class StreamDownloadGenerator(object):
+class StreamDownloadGenerator:
     """Generator for streaming response data.
 
     :param pipeline: The pipeline object
+    :type pipeline: ~azure.core.pipeline.Pipeline
     :param response: The response object.
+    :type response: ~azure.core.pipeline.transport.HttpResponse
     :keyword bool decompress: If True which is default, will attempt to decode the body based
         on the *content-encoding* header.
     """
+
     def __init__(self, pipeline, response, **kwargs):
         self.pipeline = pipeline
         self.request = response.request
@@ -154,7 +164,7 @@ class StreamDownloadGenerator(object):
             self.iter_content_func = internal_response.iter_content(self.block_size)
         else:
             self.iter_content_func = _read_raw_stream(internal_response, self.block_size)
-        self.content_length = int(response.headers.get('Content-Length', 0))
+        self.content_length = int(response.headers.get("Content-Length", 0))
 
     def __len__(self):
         return self.content_length
@@ -171,33 +181,39 @@ class StreamDownloadGenerator(object):
             return chunk
         except StopIteration:
             internal_response.close()
-            raise StopIteration()
+            raise StopIteration()  # pylint: disable=raise-missing-from
         except requests.exceptions.StreamConsumedError:
             raise
         except requests.exceptions.ContentDecodingError as err:
-            raise DecodeError(err, error=err)
+            raise DecodeError(err, error=err) from err
         except requests.exceptions.ChunkedEncodingError as err:
             msg = err.__str__()
-            if 'IncompleteRead' in msg:
+            if "IncompleteRead" in msg:
                 _LOGGER.warning("Incomplete download: %s", err)
                 internal_response.close()
-                raise IncompleteReadError(err, error=err)
+                raise IncompleteReadError(err, error=err) from err
             _LOGGER.warning("Unable to stream download: %s", err)
             internal_response.close()
-            raise HttpResponseError(err, error=err)
+            raise HttpResponseError(err, error=err) from err
         except Exception as err:
             _LOGGER.warning("Unable to stream download: %s", err)
             internal_response.close()
             raise
+
     next = __next__  # Python 2 compatibility.
 
 
 class RequestsTransportResponse(HttpResponse, _RequestsTransportResponseBase):
-    """Streaming of data from the response.
-    """
-    def stream_download(self, pipeline, **kwargs):
-        # type: (PipelineType, **Any) -> Iterator[bytes]
-        """Generator for streaming request body data."""
+    """Streaming of data from the response."""
+
+    def stream_download(self, pipeline: PipelineType, **kwargs) -> Iterator[bytes]:
+        """Generator for streaming request body data.
+
+        :param pipeline: The pipeline object
+        :type pipeline: ~azure.core.pipeline.Pipeline
+        :rtype: iterator[bytes]
+        :return: The stream of data
+        """
         return StreamDownloadGenerator(pipeline, self, **kwargs)
 
 
@@ -226,28 +242,29 @@ class RequestsTransport(HttpTransport):
             :caption: Synchronous transport with Requests.
     """
 
-    _protocols = ['http://', 'https://']
+    _protocols = ["http://", "https://"]
 
-    def __init__(self, **kwargs):
-        # type: (Any) -> None
-        self.session = kwargs.get('session', None)
-        self._session_owner = kwargs.get('session_owner', True)
+    def __init__(self, **kwargs) -> None:
+        self.session = kwargs.get("session", None)
+        self._session_owner = kwargs.get("session_owner", True)
+        if not self._session_owner and not self.session:
+            raise ValueError("session_owner cannot be False if no session is provided")
         self.connection_config = ConnectionConfiguration(**kwargs)
-        self._use_env_settings = kwargs.pop('use_env_settings', True)
+        self._use_env_settings = kwargs.pop("use_env_settings", True)
 
-    def __enter__(self):
-        # type: () -> RequestsTransport
+    def __enter__(self) -> "RequestsTransport":
         self.open()
         return self
 
     def __exit__(self, *args):  # pylint: disable=arguments-differ
         self.close()
 
-    def _init_session(self, session):
-        # type: (requests.Session) -> None
+    def _init_session(self, session: requests.Session) -> None:
         """Init session level configuration of requests.
 
         This is initialization I want to do once only on a session.
+
+        :param requests.Session session: The session object.
         """
         session.trust_env = self._use_env_settings
         disable_retries = Retry(total=False, redirect=False, raise_on_status=False)
@@ -259,6 +276,8 @@ class RequestsTransport(HttpTransport):
         if not self.session and self._session_owner:
             self.session = requests.Session()
             self._init_session(self.session)
+        # pyright has trouble to understand that self.session is not None, since we raised at worst in the init
+        self.session = cast(requests.Session, self.session)
 
     def close(self):
         if self._session_owner and self.session:
@@ -267,8 +286,7 @@ class RequestsTransport(HttpTransport):
             self.session = None
 
     @overload
-    def send(self, request, **kwargs):
-        # type: (HttpRequest, Any) -> HttpResponse
+    def send(self, request: HttpRequest, **kwargs) -> HttpResponse:
         """Send a rest request and get back a rest response.
 
         :param request: The request object to be sent.
@@ -282,8 +300,7 @@ class RequestsTransport(HttpTransport):
         """
 
     @overload
-    def send(self, request, **kwargs):
-        # type: (RestHttpRequest, Any) -> RestHttpResponse
+    def send(self, request: "RestHttpRequest", **kwargs) -> "RestHttpResponse":
         """Send an `azure.core.rest` request and get back a rest response.
 
         :param request: The request object to be sent.
@@ -296,7 +313,7 @@ class RequestsTransport(HttpTransport):
         :keyword dict proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
 
-    def send(self, request, **kwargs): # type: ignore
+    def send(self, request: Union[HttpRequest, "RestHttpRequest"], **kwargs) -> Union[HttpResponse, "RestHttpResponse"]:
         """Send request object according to configuration.
 
         :param request: The request object to be sent.
@@ -310,18 +327,18 @@ class RequestsTransport(HttpTransport):
         """
         self.open()
         response = None
-        error = None    # type: Optional[AzureErrorUnion]
+        error: Optional[AzureErrorUnion] = None
 
         try:
-            connection_timeout = kwargs.pop('connection_timeout', self.connection_config.timeout)
+            connection_timeout = kwargs.pop("connection_timeout", self.connection_config.timeout)
 
             if isinstance(connection_timeout, tuple):
-                if 'read_timeout' in kwargs:
-                    raise ValueError('Cannot set tuple connection_timeout and read_timeout together')
+                if "read_timeout" in kwargs:
+                    raise ValueError("Cannot set tuple connection_timeout and read_timeout together")
                 _LOGGER.warning("Tuple timeout setting is deprecated")
                 timeout = connection_timeout
             else:
-                read_timeout = kwargs.pop('read_timeout', self.connection_config.read_timeout)
+                read_timeout = kwargs.pop("read_timeout", self.connection_config.read_timeout)
                 timeout = (connection_timeout, read_timeout)
             response = self.session.request(  # type: ignore
                 request.method,
@@ -329,25 +346,29 @@ class RequestsTransport(HttpTransport):
                 headers=request.headers,
                 data=request.data,
                 files=request.files,
-                verify=kwargs.pop('connection_verify', self.connection_config.verify),
+                verify=kwargs.pop("connection_verify", self.connection_config.verify),
                 timeout=timeout,
-                cert=kwargs.pop('connection_cert', self.connection_config.cert),
+                cert=kwargs.pop("connection_cert", self.connection_config.cert),
                 allow_redirects=False,
-                **kwargs)
+                **kwargs
+            )
             response.raw.enforce_content_length = True
 
-        except (urllib3.exceptions.NewConnectionError, urllib3.exceptions.ConnectTimeoutError) as err:
+        except (
+            NewConnectionError,
+            ConnectTimeoutError,
+        ) as err:
             error = ServiceRequestError(err, error=err)
         except requests.exceptions.ReadTimeout as err:
             error = ServiceResponseError(err, error=err)
         except requests.exceptions.ConnectionError as err:
-            if err.args and isinstance(err.args[0], urllib3.exceptions.ProtocolError):
+            if err.args and isinstance(err.args[0], ProtocolError):
                 error = ServiceResponseError(err, error=err)
             else:
                 error = ServiceRequestError(err, error=err)
         except requests.exceptions.ChunkedEncodingError as err:
             msg = err.__str__()
-            if 'IncompleteRead' in msg:
+            if "IncompleteRead" in msg:
                 _LOGGER.warning("Incomplete download: %s", err)
                 error = IncompleteReadError(err, error=err)
             else:
@@ -360,12 +381,13 @@ class RequestsTransport(HttpTransport):
             raise error
         if _is_rest(request):
             from azure.core.rest._requests_basic import RestRequestsTransportResponse
-            retval = RestRequestsTransportResponse(
+
+            retval: RestHttpResponse = RestRequestsTransportResponse(
                 request=request,
                 internal_response=response,
-                block_size=self.connection_config.data_block_size
+                block_size=self.connection_config.data_block_size,
             )
-            if not kwargs.get('stream'):
+            if not kwargs.get("stream"):
                 _handle_non_stream_rest_response(retval)
             return retval
         return RequestsTransportResponse(request, response, self.connection_config.data_block_size)

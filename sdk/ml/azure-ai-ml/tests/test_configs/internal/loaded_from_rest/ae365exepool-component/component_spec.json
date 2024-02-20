@@ -10,7 +10,8 @@
   "is_deterministic": true,
   "inputs": {
     "DataToLookAt": {
-      "type": "AnyFile"
+      "type": "AnyFile",
+      "optional": false
     },
     "GoldHitRTAData": {
       "type": "AnyFile",
@@ -19,11 +20,13 @@
     "ComplianceCluster": {
       "type": "string",
       "default": "MsResearch-EyesOn-Annotation",
-      "description": "compliance cluster name"
+      "description": "compliance cluster name",
+      "optional": false
     },
     "HeronId": {
       "type": "string",
-      "description": "Heron ID"
+      "description": "Heron ID",
+      "optional": false
     },
     "localoutputfolderEnc": {
       "type": "string",
@@ -38,13 +41,13 @@
     "TimeoutSeconds": {
       "type": "integer",
       "optional": true,
-      "default": 500000,
+      "default": "500000",
       "description": "timeout in seconds"
     },
     "hitappid": {
       "type": "integer",
       "optional": true,
-      "default": 31346,
+      "default": "31346",
       "description": "hitapp id"
     },
     "projectname": {
@@ -68,7 +71,7 @@
     "TaskGroupId": {
       "type": "integer",
       "optional": true,
-      "default": 86891,
+      "default": "86891",
       "description": "task group id"
     },
     "GoldHitRTADataType": {

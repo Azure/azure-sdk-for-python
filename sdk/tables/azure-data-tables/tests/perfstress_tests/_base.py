@@ -5,14 +5,12 @@
 
 import os
 import uuid
-from dateutil.tz import tzutc
-from datetime import datetime
+from datetime import timezone, datetime
 import string
 import random
 
 from azure_devtools.perfstress_tests import PerfStressTest
 
-from azure.core.exceptions import ResourceNotFoundError
 from azure.data.tables import EdmType, EntityProperty
 from azure.data.tables import TableServiceClient as SyncTableServiceClient
 from azure.data.tables.aio import TableServiceClient as AsyncTableServiceClient
@@ -21,27 +19,27 @@ from azure.data.tables.aio import TableServiceClient as AsyncTableServiceClient
 _LETTERS = string.ascii_letters
 
 _FULL_EDM_ENTITY = {
-    'PartitionKey': '',
-    'RowKey': '',
-    'StringTypeProperty': 'StringTypeProperty',
-    'DatetimeTypeProperty': datetime(1970, 10, 4, tzinfo=tzutc()),
-    'GuidTypeProperty': uuid.UUID('c9da6455-213d-42c9-9a79-3e9149a57833'),
-    'BinaryTypeProperty': b'BinaryTypeProperty',
-    'Int64TypeProperty': EntityProperty(2^32+1, EdmType.INT64),
-    'DoubleTypeProperty': 200.23,
-    'IntTypeProperty': 5
+    "PartitionKey": "",
+    "RowKey": "",
+    "StringTypeProperty": "StringTypeProperty",
+    "DatetimeTypeProperty": datetime(1970, 10, 4, tzinfo=timezone.utc),
+    "GuidTypeProperty": uuid.UUID("c9da6455-213d-42c9-9a79-3e9149a57833"),
+    "BinaryTypeProperty": b"BinaryTypeProperty",
+    "Int64TypeProperty": EntityProperty(2 ^ 32 + 1, EdmType.INT64),
+    "DoubleTypeProperty": 200.23,
+    "IntTypeProperty": 5,
 }
 
 _STRING_ENTITY = {
-    'PartitionKey': '',
-    'RowKey': '',
-    'StringTypeProperty1': 'StringTypeProperty',
-    'StringTypeProperty2': '1970-10-04T00:00:00+00:00',
-    'StringTypeProperty3': 'c9da6455-213d-42c9-9a79-3e9149a57833',
-    'StringTypeProperty4': 'BinaryTypeProperty',
-    'StringTypeProperty5': str(2^32 + 1),
-    'StringTypeProperty6': '200.23',
-    'StringTypeProperty7': '5'
+    "PartitionKey": "",
+    "RowKey": "",
+    "StringTypeProperty1": "StringTypeProperty",
+    "StringTypeProperty2": "1970-10-04T00:00:00+00:00",
+    "StringTypeProperty3": "c9da6455-213d-42c9-9a79-3e9149a57833",
+    "StringTypeProperty4": "BinaryTypeProperty",
+    "StringTypeProperty5": str(2 ^ 32 + 1),
+    "StringTypeProperty6": "200.23",
+    "StringTypeProperty7": "5",
 }
 
 
@@ -66,7 +64,7 @@ class _ServiceTest(PerfStressTest):
                 _ServiceTest.service_client = SyncTableServiceClient.from_connection_string(connection_string)
                 _ServiceTest.async_service_client = AsyncTableServiceClient.from_connection_string(connection_string)
             self.service_client = _ServiceTest.service_client
-            self.async_service_client =_ServiceTest.async_service_client
+            self.async_service_client = _ServiceTest.async_service_client
 
     async def close(self):
         await self.async_service_client.close()
@@ -75,12 +73,22 @@ class _ServiceTest(PerfStressTest):
     @staticmethod
     def add_arguments(parser):
         super(_ServiceTest, _ServiceTest).add_arguments(parser)
-        parser.add_argument('--no-client-share', action='store_true', help='Create one ServiceClient per test instance.  Default is to share a single ServiceClient.', default=False)
-        parser.add_argument('--full-edm', action='store_true', help='Whether to use entities that utilize all EDM types for serialization/deserialization, or only strings. Default is False (only strings).', default=False)
+        parser.add_argument(
+            "--no-client-share",
+            action="store_true",
+            help="Create one ServiceClient per test instance.  Default is to share a single ServiceClient.",
+            default=False,
+        )
+        parser.add_argument(
+            "--full-edm",
+            action="store_true",
+            help="Whether to use entities that utilize all EDM types for serialization/deserialization, or only strings. Default is False (only strings).",
+            default=False,
+        )
 
 
 class _TableTest(_ServiceTest):
-    table_name = ''.join(random.choice(_LETTERS) for i in range(30))
+    table_name = "".join(random.choice(_LETTERS) for i in range(30))
 
     def __init__(self, arguments):
         super().__init__(arguments)

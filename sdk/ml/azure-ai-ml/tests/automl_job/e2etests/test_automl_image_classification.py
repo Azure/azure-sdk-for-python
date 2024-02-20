@@ -8,6 +8,7 @@ import os
 from typing import Tuple
 
 import pytest
+from devtools_testutils import AzureRecordedTestCase, is_live
 from test_utilities.utils import assert_final_job_status, get_automl_job_properties
 
 from azure.ai.ml import MLClient, automl
@@ -19,18 +20,12 @@ from azure.ai.ml.entities._job.automl.image import ImageClassificationJob, Image
 from azure.ai.ml.operations._run_history_constants import JobStatus
 from azure.ai.ml.sweep import BanditPolicy, Choice, Uniform
 
-from devtools_testutils import AzureRecordedTestCase, is_live
-
 
 @pytest.mark.automl_test
 @pytest.mark.usefixtures("recorded_test")
-@pytest.mark.skipif(
-    condition=not is_live(),
-    reason="Datasets downloaded by test are too large to record reliably"
-)
+@pytest.mark.skipif(condition=not is_live(), reason="Datasets downloaded by test are too large to record reliably")
 class TestAutoMLImageClassification(AzureRecordedTestCase):
     def _create_jsonl_multiclass(self, client, train_path, val_path):
-
         src_images = "./fridgeObjects/"
         train_validation_ratio = 5
 
@@ -73,8 +68,9 @@ class TestAutoMLImageClassification(AzureRecordedTestCase):
                             train_f.write(json.dumps(json_line) + "\n")
                         index += 1
 
+    @pytest.mark.parametrize("components", [(False), (True)])
     def test_image_classification_multiclass_run(
-        self, image_classification_dataset: Tuple[Input, Input], client: MLClient
+        self, image_classification_dataset: Tuple[Input, Input], client: MLClient, components: bool
     ) -> None:
         # Note: this test launches two jobs in order to avoid calling the dataset fixture more than once. Ideally, it
         # would have sufficed to mark the fixture with session scope, but pytest-xdist breaks this functionality:
@@ -100,42 +96,91 @@ class TestAutoMLImageClassification(AzureRecordedTestCase):
             properties=get_automl_job_properties(),
         )
 
-        # Configure regular sweep job
+        # Configure sweep job
         image_classification_job_sweep = copy.deepcopy(image_classification_job)
         image_classification_job_sweep.set_training_parameters(early_stopping=True, evaluation_frequency=1)
-        image_classification_job_sweep.extend_search_space(
-            [
-                SearchSpace(
-                    model_name=Choice(["vitb16r224"]),
-                    learning_rate=Uniform(0.001, 0.01),
-                    number_of_epochs=Choice([15, 30]),
-                ),
-                SearchSpace(
-                    model_name=Choice(["seresnext"]),
-                    layers_to_freeze=Choice([0, 2]),
-                ),
-            ]
-        )
-        image_classification_job_sweep.set_limits(max_trials=1, max_concurrent_trials=1)
-        image_classification_job_sweep.set_sweep(
-            sampling_algorithm="Random",
-            early_termination=BanditPolicy(evaluation_interval=2, slack_factor=0.2, delay_evaluation=6),
-        )
+        image_classification_job_sweep.set_limits(max_trials=2, max_concurrent_trials=2)
 
-        # Configure AutoMode job
-        image_classification_job_automode = copy.deepcopy(image_classification_job)
-        # TODO: after shipping the AutoMode feature, do not set flag and call `set_limits()` instead of changing
-        # the limits object directly.
-        image_classification_job_automode.properties["enable_automode"] = True
-        image_classification_job_automode.limits.max_trials = 2
-        image_classification_job_automode.limits.max_concurrent_trials = 2
+        if components:
+            # Configure components sweep job search space
+            image_classification_job_sweep.extend_search_space(
+                [
+                    SearchSpace(
+                        model_name=Choice(["microsoft/beit-base-patch16-224"]),
+                        number_of_epochs=Choice([1]),
+                        gradient_accumulation_step=Choice([1]),
+                        learning_rate=Choice([0.005]),
+                    ),
+                    SearchSpace(
+                        model_name=Choice(["seresnext"]),
+                        # model-specific, valid_resize_size should be larger or equal than valid_crop_size
+                        validation_resize_size=Choice([288]),
+                        validation_crop_size=Choice([224]),  # model-specific
+                        training_crop_size=Choice([224]),  # model-specific
+                        number_of_epochs=Choice([1]),
+                    ),
+                ]
+            )
+            image_classification_job_sweep.set_sweep(
+                sampling_algorithm="Grid",
+                early_termination=BanditPolicy(evaluation_interval=2, slack_factor=0.2, delay_evaluation=6),
+            )
 
-        # Trigger regular sweep and then AutoMode job
+            image_classification_job_individual = copy.deepcopy(image_classification_job)
+            image_classification_job_individual.set_training_parameters(
+                model_name="microsoft/beit-base-patch16-224", number_of_epochs=1
+            )
+            image_classification_job_reuse = copy.deepcopy(image_classification_job_individual)
+        else:
+            # Configure runtime sweep job search space
+            image_classification_job_sweep.extend_search_space(
+                [
+                    SearchSpace(
+                        model_name=Choice(["vitb16r224"]),
+                        learning_rate=Uniform(0.005, 0.05),
+                        number_of_epochs=Choice([1]),
+                        gradient_accumulation_step=Choice([1, 2]),
+                    ),
+                    SearchSpace(
+                        model_name=Choice(["seresnext"]),
+                        learning_rate=Uniform(0.005, 0.05),
+                        # model-specific, valid_resize_size should be larger or equal than valid_crop_size
+                        validation_resize_size=Choice([288, 320, 352]),
+                        validation_crop_size=Choice([224, 256]),  # model-specific
+                        training_crop_size=Choice([224, 256]),  # model-specific
+                        number_of_epochs=Choice([1]),
+                    ),
+                ]
+            )
+            image_classification_job_sweep.set_sweep(
+                sampling_algorithm="Random",
+                early_termination=BanditPolicy(evaluation_interval=2, slack_factor=0.2, delay_evaluation=6),
+            )
+
+            # Configure AutoMode job
+            image_classification_job_automode = copy.deepcopy(image_classification_job)
+            image_classification_job_automode.set_limits(max_trials=2, max_concurrent_trials=2)
+
+        # Trigger sweep job and then AutoMode job
         submitted_job_sweep = client.jobs.create_or_update(image_classification_job_sweep)
-        submitted_job_automode = client.jobs.create_or_update(image_classification_job_automode)
+        if components:
+            submitted_job_individual_components = client.jobs.create_or_update(image_classification_job_individual)
+            submitted_job_components_reuse = client.jobs.create_or_update(image_classification_job_reuse)
+        else:
+            submitted_job_automode = client.jobs.create_or_update(image_classification_job_automode)
 
-        # Assert completion of regular sweep job
-        assert_final_job_status(submitted_job_sweep, client, ImageClassificationJob, JobStatus.COMPLETED)
+        # Assert completion of sweep job
+        assert_final_job_status(submitted_job_sweep, client, ImageClassificationJob, JobStatus.COMPLETED, deadline=3600)
 
-        # Assert completion of Automode job
-        assert_final_job_status(submitted_job_automode, client, ImageClassificationJob, JobStatus.COMPLETED)
+        if components:
+            assert_final_job_status(
+                submitted_job_individual_components, client, ImageClassificationJob, JobStatus.COMPLETED, deadline=3600
+            )
+            assert_final_job_status(
+                submitted_job_components_reuse, client, ImageClassificationJob, JobStatus.COMPLETED, deadline=3600
+            )
+        else:
+            # Assert completion of Automode job
+            assert_final_job_status(
+                submitted_job_automode, client, ImageClassificationJob, JobStatus.COMPLETED, deadline=3600
+            )

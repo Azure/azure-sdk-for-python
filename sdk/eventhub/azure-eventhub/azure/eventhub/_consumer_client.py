@@ -34,6 +34,8 @@ _LOGGER = logging.getLogger(__name__)
 class EventHubConsumerClient(
     ClientBase
 ):  # pylint: disable=client-accepts-api-version-keyword
+
+    # pylint: disable=client-method-missing-tracing-decorator
     """The EventHubConsumerClient class defines a high level interface for
     receiving events from the Azure Event Hubs service.
 
@@ -66,7 +68,7 @@ class EventHubConsumerClient(
     :keyword float auth_timeout: The time in seconds to wait for a token to be authorized by the service.
      The default value is 60 seconds. If set to 0, no timeout will be enforced from the client.
     :keyword str user_agent: If specified, this will be added in front of the user agent string.
-    :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
+    :keyword retry_total: The total number of attempts to redo a failed operation when an error occurs.
      Default value is 3. The context of `retry_total` in receiving is special: The `receive` method is implemented
      by a while-loop calling internal receive method in each iteration. In the `receive` case,
      `retry_total` specifies the numbers of retry after error raised by internal receive method in the while-loop.
@@ -74,6 +76,7 @@ class EventHubConsumerClient(
      The failed internal partition consumer will be closed (`on_partition_close` will be called if provided) and
      new internal partition consumer will be created (`on_partition_initialize` will be called if provided) to resume
      receiving.
+    :paramtype retry_total: int
     :keyword float retry_backoff_factor: A backoff factor to apply between attempts after the second try
      (most errors are resolved immediately by a second try without a delay).
      In fixed mode, retry policy will always sleep for {backoff factor}.
@@ -92,7 +95,7 @@ class EventHubConsumerClient(
      If the port 5671 is unavailable/blocked in the network environment, `TransportType.AmqpOverWebsocket` could
      be used instead which uses port 443 for communication.
     :paramtype transport_type: ~azure.eventhub.TransportType
-    :keyword Dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
+    :keyword dict[str, str or int] http_proxy: HTTP proxy settings. This must be a dictionary with the following
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
      Additionally the following keys may also be present: `'username', 'password'`.
     :keyword checkpoint_store: A manager that stores the partition load-balancing and checkpoint data
@@ -100,13 +103,13 @@ class EventHubConsumerClient(
      or a single partition. In the latter case load-balancing does not apply.
      If a checkpoint store is not provided, the checkpoint will be maintained internally
      in memory, and the `EventHubConsumerClient` instance will receive events without load-balancing.
-    :paramtype checkpoint_store: ~azure.eventhub.CheckpointStore
+    :paramtype checkpoint_store: ~azure.eventhub.CheckpointStore or None
     :keyword float load_balancing_interval: When load-balancing kicks in. This is the interval, in seconds,
-     between two load-balancing evaluations. Default is 10 seconds.
+     between two load-balancing evaluations. Default is 30 seconds.
     :keyword float partition_ownership_expiration_interval: A partition ownership will expire after this number
      of seconds. Every load-balancing evaluation will automatically extend the ownership expiration time.
-     Default is 6 * load_balancing_interval, i.e. 60 seconds when using the default load_balancing_interval
-     of 10 seconds.
+     Default is 6 * load_balancing_interval, i.e. 180 seconds when using the default load_balancing_interval
+     of 30 seconds.
     :keyword load_balancing_strategy: When load-balancing kicks in,
      it will use this strategy to claim and balance the partition ownership.
      Use "greedy" or `LoadBalancingStrategy.GREEDY` for the greedy strategy, which, for every
@@ -118,14 +121,24 @@ class EventHubConsumerClient(
      evaluation regardless of the load balancing strategy.
      Greedy strategy is used by default.
     :paramtype load_balancing_strategy: str or ~azure.eventhub.LoadBalancingStrategy
-    :keyword str custom_endpoint_address: The custom endpoint address to use for establishing a connection to
+    :keyword custom_endpoint_address: The custom endpoint address to use for establishing a connection to
      the Event Hubs service, allowing network requests to be routed through any application gateways or
      other paths needed for the host environment. Default is None.
      The format would be like "sb://<custom_endpoint_hostname>:<custom_endpoint_port>".
      If port is not specified in the `custom_endpoint_address`, by default port 443 will be used.
-    :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
+    :paramtype custom_endpoint_address: str or None
+    :keyword connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
      authenticate the identity of the connection endpoint.
      Default is None in which case `certifi.where()` will be used.
+    :paramtype connection_verify: str or None
+    :keyword uamqp_transport: Whether to use the `uamqp` library as the underlying transport. The default value is
+     False and the Pure Python AMQP library will be used as the underlying transport.
+    :paramtype uamqp_transport: bool
+    :keyword float socket_timeout: The time in seconds that the underlying socket on the connection should
+     wait when sending and receiving data before timing out. The default value is 0.2 for TransportType.Amqp
+     and 1 for TransportType.AmqpOverWebsocket. If EventHubsConnectionError errors are occurring due to write
+     timing out, a larger than default value may need to be passed in. This is for advanced usage scenarios
+     and ordinarily the default value should be sufficient.
 
     .. admonition:: Example:
 
@@ -150,7 +163,7 @@ class EventHubConsumerClient(
         self._checkpoint_store = kwargs.pop("checkpoint_store", None)
         self._load_balancing_interval = kwargs.pop("load_balancing_interval", None)
         if self._load_balancing_interval is None:
-            self._load_balancing_interval = 10
+            self._load_balancing_interval = 30
         self._partition_ownership_expiration_interval = kwargs.pop(
             "partition_ownership_expiration_interval", None
         )
@@ -227,7 +240,7 @@ class EventHubConsumerClient(
         :keyword float auth_timeout: The time in seconds to wait for a token to be authorized by the service.
          The default value is 60 seconds. If set to 0, no timeout will be enforced from the client.
         :keyword str user_agent: If specified, this will be added in front of the user agent string.
-        :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
+        :keyword retry_total: The total number of attempts to redo a failed operation when an error occurs.
          Default value is 3. The context of `retry_total` in receiving is special: The `receive` method is implemented
          by a while-loop calling internal receive method in each iteration. In the `receive` case,
          `retry_total` specifies the numbers of retry after error raised by internal receive method in the while-loop.
@@ -235,6 +248,7 @@ class EventHubConsumerClient(
          information. The failed internal partition consumer will be closed (`on_partition_close` will be called
          if provided) and new internal partition consumer will be created (`on_partition_initialize` will be called if
          provided) to resume receiving.
+        :paramtype retry_total: int
         :keyword float retry_backoff_factor: A backoff factor to apply between attempts after the second try
          (most errors are resolved immediately by a second try without a delay).
          In fixed mode, retry policy will always sleep for {backoff factor}.
@@ -253,7 +267,7 @@ class EventHubConsumerClient(
          If the port 5671 is unavailable/blocked in the network environment, `TransportType.AmqpOverWebsocket` could
          be used instead which uses port 443 for communication.
         :paramtype transport_type: ~azure.eventhub.TransportType
-        :keyword Dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
+        :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
          keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
          Additionally the following keys may also be present: `'username', 'password'`.
         :keyword checkpoint_store: A manager that stores the partition load-balancing and checkpoint data
@@ -261,13 +275,13 @@ class EventHubConsumerClient(
          or a single partition. In the latter case load-balancing does not apply.
          If a checkpoint store is not provided, the checkpoint will be maintained internally
          in memory, and the `EventHubConsumerClient` instance will receive events without load-balancing.
-        :paramtype checkpoint_store: ~azure.eventhub.CheckpointStore
+        :paramtype checkpoint_store: ~azure.eventhub.CheckpointStore or None
         :keyword float load_balancing_interval: When load-balancing kicks in. This is the interval, in seconds,
          between two load-balancing evaluations. Default is 10 seconds.
         :keyword float partition_ownership_expiration_interval: A partition ownership will expire after this number
          of seconds. Every load-balancing evaluation will automatically extend the ownership expiration time.
          Default is 6 * load_balancing_interval, i.e. 60 seconds when using the default load_balancing_interval
-         of 10 seconds.
+         of 30 seconds.
         :keyword load_balancing_strategy: When load-balancing kicks in,
          it will use this strategy to claim and balance the partition ownership.
          Use "greedy" or `LoadBalancingStrategy.GREEDY` for the greedy strategy, which, for every
@@ -279,14 +293,19 @@ class EventHubConsumerClient(
          evaluation regardless of the load balancing strategy.
          Greedy strategy is used by default.
         :paramtype load_balancing_strategy: str or ~azure.eventhub.LoadBalancingStrategy
-        :keyword str custom_endpoint_address: The custom endpoint address to use for establishing a connection to
+        :keyword custom_endpoint_address: The custom endpoint address to use for establishing a connection to
          the Event Hubs service, allowing network requests to be routed through any application gateways or
          other paths needed for the host environment. Default is None.
          The format would be like "sb://<custom_endpoint_hostname>:<custom_endpoint_port>".
          If port is not specified in the `custom_endpoint_address`, by default port 443 will be used.
-        :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
+        :paramtype custom_endpoint_address: str or None
+        :keyword connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
          authenticate the identity of the connection endpoint.
          Default is None in which case `certifi.where()` will be used.
+        :paramtype connection_verify: str or None
+        :keyword uamqp_transport: Whether to use the `uamqp` library as the underlying transport. The default value is
+         False and the Pure Python AMQP library will be used as the underlying transport.
+        :paramtype uamqp_transport: bool
         :rtype: ~azure.eventhub.EventHubConsumerClient
 
 
@@ -374,7 +393,7 @@ class EventHubConsumerClient(
          The callback function should be defined like: `on_event(partition_context, event)`.
          For detailed partition context information, please refer to
          :class:`PartitionContext<azure.eventhub.PartitionContext>`.
-        :type on_event: Callable[~azure.eventhub.PartitionContext, Optional[~azure.eventhub.EventData]]
+        :type on_event: callable[~azure.eventhub.PartitionContext, ~azure.eventhub.EventData or None]
         :keyword float max_wait_time: The maximum interval in seconds that the event processor will wait before calling
          the callback. If no events are received within this interval, the `on_event` callback will be called with
          `None`.
@@ -399,12 +418,12 @@ class EventHubConsumerClient(
          value for all partitions. The value type can be str, int or datetime.datetime. Also supported are the
          values "-1" for receiving from the beginning of the stream, and "@latest" for receiving only new events.
          Default value is "@latest".
-        :paramtype starting_position: str, int, datetime.datetime or Dict[str,Any]
+        :paramtype starting_position: str, int, datetime.datetime or dict[str,any]
         :keyword starting_position_inclusive: Determine whether the given starting_position is inclusive(>=) or
          not (>). True for inclusive and False for exclusive. This can be a dict with partition ID as the key and
          bool as the value indicating whether the starting_position for a specific partition is inclusive or not.
          This can also be a single bool value for all starting_position. The default value is False.
-        :paramtype starting_position_inclusive: bool or Dict[str,bool]
+        :paramtype starting_position_inclusive: bool or dict[str,bool]
         :keyword on_error: The callback function that will be called when an error is raised during receiving
          after retry attempts are exhausted, or during the process of load-balancing.
          The callback takes two parameters: `partition_context` which contains partition information
@@ -412,21 +431,21 @@ class EventHubConsumerClient(
          the process of load-balance. The callback should be defined like: `on_error(partition_context, error)`.
          The `on_error` callback will also be called if an unhandled exception is raised during
          the `on_event` callback.
-        :paramtype on_error: Callable[[~azure.eventhub.PartitionContext, Exception]]
+        :paramtype on_error: callable[[~azure.eventhub.PartitionContext, Exception]]
         :keyword on_partition_initialize: The callback function that will be called after a consumer for a certain
          partition finishes initialization. It would also be called when a new internal partition consumer is created
          to take over the receiving process for a failed and closed internal partition consumer.
          The callback takes a single parameter: `partition_context`
          which contains the partition information. The callback should be defined
          like: `on_partition_initialize(partition_context)`.
-        :paramtype on_partition_initialize: Callable[[~azure.eventhub.PartitionContext]]
+        :paramtype on_partition_initialize: callable[[~azure.eventhub.PartitionContext]]
         :keyword on_partition_close: The callback function that will be called after a consumer for a certain
          partition is closed. It would be also called when error is raised during receiving after retry attempts are
          exhausted. The callback takes two parameters: `partition_context` which contains partition
          information and `reason` for the close. The callback should be defined like:
          `on_partition_close(partition_context, reason)`.
          Please refer to :class:`CloseReason<azure.eventhub.CloseReason>` for the various closing reasons.
-        :paramtype on_partition_close: Callable[[~azure.eventhub.PartitionContext, ~azure.eventhub.CloseReason]]
+        :paramtype on_partition_close: callable[[~azure.eventhub.PartitionContext, ~azure.eventhub.CloseReason]]
         :rtype: None
 
         .. admonition:: Example:
@@ -452,7 +471,7 @@ class EventHubConsumerClient(
          after `max_wait_time`.
          For detailed partition context information, please refer to
          :class:`PartitionContext<azure.eventhub.PartitionContext>`.
-        :type on_event_batch: Callable[~azure.eventhub.PartitionContext, List[~azure.eventhub.EventData]]
+        :type on_event_batch: callable[~azure.eventhub.PartitionContext, list[~azure.eventhub.EventData]]
         :keyword int max_batch_size: The maximum number of events in a batch passed to callback `on_event_batch`.
          If the actual received number of events is larger than `max_batch_size`, the received events are divided into
          batches and call the callback for each batch with up to `max_batch_size` events.
@@ -480,12 +499,12 @@ class EventHubConsumerClient(
          value for all partitions. The value type can be str, int or datetime.datetime. Also supported are the
          values "-1" for receiving from the beginning of the stream, and "@latest" for receiving only new events.
          Default value is "@latest".
-        :paramtype starting_position: str, int, datetime.datetime or Dict[str,Any]
+        :paramtype starting_position: str, int, datetime.datetime or dict[str,any]
         :keyword starting_position_inclusive: Determine whether the given starting_position is inclusive(>=) or
          not (>). True for inclusive and False for exclusive. This can be a dict with partition ID as the key and
          bool as the value indicating whether the starting_position for a specific partition is inclusive or not.
          This can also be a single bool value for all starting_position. The default value is False.
-        :paramtype starting_position_inclusive: bool or Dict[str,bool]
+        :paramtype starting_position_inclusive: bool or dict[str,bool]
         :keyword on_error: The callback function that will be called when an error is raised during receiving
          after retry attempts are exhausted, or during the process of load-balancing.
          The callback takes two parameters: `partition_context` which contains partition information
@@ -493,21 +512,21 @@ class EventHubConsumerClient(
          the process of load-balance. The callback should be defined like: `on_error(partition_context, error)`.
          The `on_error` callback will also be called if an unhandled exception is raised during
          the `on_event` callback.
-        :paramtype on_error: Callable[[~azure.eventhub.PartitionContext, Exception]]
+        :paramtype on_error: callable[[~azure.eventhub.PartitionContext, Exception]]
         :keyword on_partition_initialize: The callback function that will be called after a consumer for a certain
          partition finishes initialization. It would also be called when a new internal partition consumer is created
          to take over the receiving process for a failed and closed internal partition consumer.
          The callback takes a single parameter: `partition_context`
          which contains the partition information. The callback should be defined
          like: `on_partition_initialize(partition_context)`.
-        :paramtype on_partition_initialize: Callable[[~azure.eventhub.PartitionContext]]
+        :paramtype on_partition_initialize: callable[[~azure.eventhub.PartitionContext]]
         :keyword on_partition_close: The callback function that will be called after a consumer for a certain
          partition is closed. It would be also called when error is raised during receiving after retry attempts are
          exhausted. The callback takes two parameters: `partition_context` which contains partition
          information and `reason` for the close. The callback should be defined like:
          `on_partition_close(partition_context, reason)`.
          Please refer to :class:`CloseReason<azure.eventhub.CloseReason>` for the various closing reasons.
-        :paramtype on_partition_close: Callable[[~azure.eventhub.PartitionContext, ~azure.eventhub.CloseReason]]
+        :paramtype on_partition_close: callable[[~azure.eventhub.PartitionContext, ~azure.eventhub.CloseReason]]
         :rtype: None
 
         .. admonition:: Example:
@@ -531,7 +550,8 @@ class EventHubConsumerClient(
             - `created_at` (UTC datetime.datetime)
             - `partition_ids` (list[str])
 
-        :rtype: Dict[str, Any]
+        :return: A dictionary containing information about the Event Hub.
+        :rtype: dict[str, any]
         :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
         return super(EventHubConsumerClient, self)._get_eventhub_properties()
@@ -540,6 +560,7 @@ class EventHubConsumerClient(
         # type:() -> List[str]
         """Get partition IDs of the Event Hub.
 
+        :return: A list of partition IDs.
         :rtype: list[str]
         :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
@@ -561,7 +582,8 @@ class EventHubConsumerClient(
 
         :param partition_id: The target partition ID.
         :type partition_id: str
-        :rtype: Dict[str, Any]
+        :return: A dictionary containing partition properties.
+        :rtype: dict[str, any]
         :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
         return super(EventHubConsumerClient, self)._get_partition_properties(

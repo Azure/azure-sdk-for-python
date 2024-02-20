@@ -22,9 +22,10 @@ USAGE:
 
 import os
 
-service_endpoint = os.getenv("AZURE_SEARCH_SERVICE_ENDPOINT")
-index_name = os.getenv("AZURE_SEARCH_INDEX_NAME")
-key = os.getenv("AZURE_SEARCH_API_KEY")
+service_endpoint = os.environ["AZURE_SEARCH_SERVICE_ENDPOINT"]
+index_name = os.environ["AZURE_SEARCH_INDEX_NAME"]
+key = os.environ["AZURE_SEARCH_API_KEY"]
+
 
 def autocomplete_query():
     # [START autocomplete_query]
@@ -40,5 +41,6 @@ def autocomplete_query():
         print("    Completion: {}".format(result["text"]))
     # [END autocomplete_query]
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     autocomplete_query()

@@ -1,0 +1,11 @@
+[packaging]
+package_name = "azure-mgmt-qumulo"
+package_nspkg = "azure-mgmt-nspkg"
+package_pprint_name = "Qumulo Management"
+package_doc_id = ""
+is_stable = false
+is_arm = true
+need_msrestazure = false
+need_azuremgmtcore = true
+sample_link = ""
+title = "QumuloMgmtClient"

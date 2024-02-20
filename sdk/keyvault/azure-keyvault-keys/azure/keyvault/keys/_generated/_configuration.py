@@ -24,9 +24,8 @@ class KeyVaultClientConfiguration(Configuration):
 
     def __init__(
         self,
-        **kwargs  # type: Any
+        **kwargs: Any
     ):
-        # type: (...) -> None
         super(KeyVaultClientConfiguration, self).__init__(**kwargs)
 
         kwargs.setdefault('sdk_moniker', 'azure-keyvault/{}'.format(VERSION))
@@ -34,9 +33,8 @@ class KeyVaultClientConfiguration(Configuration):
 
     def _configure(
         self,
-        **kwargs  # type: Any
+        **kwargs: Any
     ):
-        # type: (...) -> None
         self.user_agent_policy = kwargs.get('user_agent_policy') or policies.UserAgentPolicy(**kwargs)
         self.headers_policy = kwargs.get('headers_policy') or policies.HeadersPolicy(**kwargs)
         self.proxy_policy = kwargs.get('proxy_policy') or policies.ProxyPolicy(**kwargs)

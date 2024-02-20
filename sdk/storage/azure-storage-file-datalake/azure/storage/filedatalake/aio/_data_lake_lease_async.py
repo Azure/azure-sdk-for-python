@@ -9,6 +9,7 @@ from typing import (  # pylint: disable=unused-import
     Union, Optional, Any,
     TypeVar, TYPE_CHECKING
 )
+from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.storage.blob.aio import BlobLeaseClient
 from .._data_lake_lease import DataLakeLeaseClient as DataLakeLeaseClientBase
 
@@ -69,6 +70,7 @@ class DataLakeLeaseClient(DataLakeLeaseClientBase):  # pylint: disable=client-ac
     async def __aexit__(self, *args):
         await self.release()
 
+    @distributed_trace_async
     async def acquire(self, lease_duration=-1, **kwargs):
         # type: (int, Optional[int], **Any) -> None
         """Requests a new lease.
@@ -99,12 +101,17 @@ class DataLakeLeaseClient(DataLakeLeaseClientBase):  # pylint: disable=client-ac
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_.
         :rtype: None
         """
         await self._blob_lease_client.acquire(lease_duration=lease_duration, **kwargs)
         self._update_lease_client_attributes()
 
+    @distributed_trace_async
     async def renew(self, **kwargs):
         # type: (Any) -> None
         """Renews the lease.
@@ -133,12 +140,17 @@ class DataLakeLeaseClient(DataLakeLeaseClientBase):  # pylint: disable=client-ac
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_.
         :return: None
         """
         await self._blob_lease_client.renew(**kwargs)
         self._update_lease_client_attributes()
 
+    @distributed_trace_async
     async def release(self, **kwargs):
         # type: (Any) -> None
         """Release the lease.
@@ -165,12 +177,17 @@ class DataLakeLeaseClient(DataLakeLeaseClientBase):  # pylint: disable=client-ac
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_.
         :return: None
         """
         await self._blob_lease_client.release(**kwargs)
         self._update_lease_client_attributes()
 
+    @distributed_trace_async
     async def change(self, proposed_lease_id, **kwargs):
         # type: (str, Any) -> None
         """Change the lease ID of an active lease.
@@ -196,12 +213,17 @@ class DataLakeLeaseClient(DataLakeLeaseClientBase):  # pylint: disable=client-ac
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_.
         :return: None
         """
         await self._blob_lease_client.change(proposed_lease_id=proposed_lease_id, **kwargs)
         self._update_lease_client_attributes()
 
+    @distributed_trace_async
     async def break_lease(self, lease_break_period=None, **kwargs):
         # type: (Optional[int], Any) -> int
         """Break the lease, if the file system or file has an active lease.
@@ -236,7 +258,11 @@ class DataLakeLeaseClient(DataLakeLeaseClientBase):  # pylint: disable=client-ac
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_.
         :return: Approximate time remaining in the lease period, in seconds.
         :rtype: int
         """

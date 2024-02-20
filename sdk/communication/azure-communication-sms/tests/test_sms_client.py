@@ -15,7 +15,7 @@ class FakeTokenCredential(object):
     def __init__(self):
         self.token = AccessToken("Fake Token", 0)
 
-    def get_token(self, *args):
+    def get_token(self, *args, **kwargs):
         return self.token
 
 class TestSMSClient(unittest.TestCase):
@@ -36,7 +36,7 @@ class TestSMSClient(unittest.TestCase):
                     }
                 ]
             })
-            
+
         sms_client = SmsClient("https://endpoint", FakeTokenCredential(), transport=Mock(send=mock_send))
 
         sms_response = None
@@ -74,7 +74,7 @@ class TestSMSClient(unittest.TestCase):
             message=msg,
             enable_delivery_report=True,
             tag=tag)
-        
+
         send_message_request = mock_send.call_args[0][0]
         self.assertEqual(phone_number, send_message_request.from_property)
         self.assertEqual(phone_number, send_message_request.sms_recipients[0].to)

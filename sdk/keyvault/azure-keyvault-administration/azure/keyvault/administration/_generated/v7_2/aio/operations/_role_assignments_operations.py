@@ -91,8 +91,8 @@ class RoleAssignmentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "7.2"))  # type: Literal["7.2"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.RoleAssignment]
+        api_version: Literal["7.2"] = kwargs.pop("api_version", _params.pop("api-version", "7.2"))
+        cls: ClsType[_models.RoleAssignment] = kwargs.pop("cls", None)
 
         request = build_delete_request(
             scope=scope,
@@ -106,9 +106,9 @@ class RoleAssignmentsOperations:
         path_format_arguments = {
             "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -126,7 +126,7 @@ class RoleAssignmentsOperations:
 
         return deserialized
 
-    delete.metadata = {"url": "/{scope}/providers/Microsoft.Authorization/roleAssignments/{roleAssignmentName}"}  # type: ignore
+    delete.metadata = {"url": "/{scope}/providers/Microsoft.Authorization/roleAssignments/{roleAssignmentName}"}
 
     @overload
     async def create(
@@ -208,8 +208,8 @@ class RoleAssignmentsOperations:
         :param role_assignment_name: The name of the role assignment to create. It can be any valid
          GUID. Required.
         :type role_assignment_name: str
-        :param parameters: Parameters for the role assignment. Is either a model type or a IO type.
-         Required.
+        :param parameters: Parameters for the role assignment. Is either a
+         RoleAssignmentCreateParameters type or a IO type. Required.
         :type parameters: ~azure.keyvault.v7_2.models.RoleAssignmentCreateParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -230,9 +230,9 @@ class RoleAssignmentsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "7.2"))  # type: Literal["7.2"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.RoleAssignment]
+        api_version: Literal["7.2"] = kwargs.pop("api_version", _params.pop("api-version", "7.2"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.RoleAssignment] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -257,9 +257,9 @@ class RoleAssignmentsOperations:
         path_format_arguments = {
             "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -277,7 +277,7 @@ class RoleAssignmentsOperations:
 
         return deserialized
 
-    create.metadata = {"url": "/{scope}/providers/Microsoft.Authorization/roleAssignments/{roleAssignmentName}"}  # type: ignore
+    create.metadata = {"url": "/{scope}/providers/Microsoft.Authorization/roleAssignments/{roleAssignmentName}"}
 
     @distributed_trace_async
     async def get(
@@ -307,8 +307,8 @@ class RoleAssignmentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "7.2"))  # type: Literal["7.2"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.RoleAssignment]
+        api_version: Literal["7.2"] = kwargs.pop("api_version", _params.pop("api-version", "7.2"))
+        cls: ClsType[_models.RoleAssignment] = kwargs.pop("cls", None)
 
         request = build_get_request(
             scope=scope,
@@ -322,9 +322,9 @@ class RoleAssignmentsOperations:
         path_format_arguments = {
             "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -342,7 +342,7 @@ class RoleAssignmentsOperations:
 
         return deserialized
 
-    get.metadata = {"url": "/{scope}/providers/Microsoft.Authorization/roleAssignments/{roleAssignmentName}"}  # type: ignore
+    get.metadata = {"url": "/{scope}/providers/Microsoft.Authorization/roleAssignments/{roleAssignmentName}"}
 
     @distributed_trace
     def list_for_scope(
@@ -366,8 +366,8 @@ class RoleAssignmentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "7.2"))  # type: Literal["7.2"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.RoleAssignmentListResult]
+        api_version: Literal["7.2"] = kwargs.pop("api_version", _params.pop("api-version", "7.2"))
+        cls: ClsType[_models.RoleAssignmentListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -392,7 +392,7 @@ class RoleAssignmentsOperations:
                 path_format_arguments = {
                     "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -411,7 +411,7 @@ class RoleAssignmentsOperations:
                 path_format_arguments = {
                     "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)
                 request.method = "GET"
             return request
 
@@ -419,13 +419,13 @@ class RoleAssignmentsOperations:
             deserialized = self._deserialize("RoleAssignmentListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -439,4 +439,4 @@ class RoleAssignmentsOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list_for_scope.metadata = {"url": "/{scope}/providers/Microsoft.Authorization/roleAssignments"}  # type: ignore
+    list_for_scope.metadata = {"url": "/{scope}/providers/Microsoft.Authorization/roleAssignments"}

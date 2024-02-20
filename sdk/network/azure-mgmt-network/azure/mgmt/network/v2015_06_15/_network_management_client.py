@@ -12,7 +12,7 @@ from typing import Any, TYPE_CHECKING
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.mgmt.core import ARMPipelineClient
 
-from . import models
+from . import models as _models
 from .._serialization import Deserializer, Serializer
 from ._configuration import NetworkManagementClientConfiguration
 from .operations import (
@@ -120,53 +120,59 @@ class NetworkManagementClient(
         self._config = NetworkManagementClientConfiguration(
             credential=credential, subscription_id=subscription_id, **kwargs
         )
-        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client: ARMPipelineClient = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
         self.application_gateways = ApplicationGatewaysOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2015-06-15"
         )
         self.express_route_circuit_authorizations = ExpressRouteCircuitAuthorizationsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2015-06-15"
         )
         self.express_route_circuit_peerings = ExpressRouteCircuitPeeringsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2015-06-15"
         )
         self.express_route_circuits = ExpressRouteCircuitsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2015-06-15"
         )
         self.express_route_service_providers = ExpressRouteServiceProvidersOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2015-06-15"
         )
-        self.load_balancers = LoadBalancersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.load_balancers = LoadBalancersOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2015-06-15"
+        )
         self.network_interfaces = NetworkInterfacesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2015-06-15"
         )
         self.network_security_groups = NetworkSecurityGroupsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2015-06-15"
         )
-        self.security_rules = SecurityRulesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.security_rules = SecurityRulesOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2015-06-15"
+        )
         self.public_ip_addresses = PublicIPAddressesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2015-06-15"
         )
-        self.route_tables = RouteTablesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.routes = RoutesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.usages = UsagesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.route_tables = RouteTablesOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2015-06-15"
+        )
+        self.routes = RoutesOperations(self._client, self._config, self._serialize, self._deserialize, "2015-06-15")
+        self.usages = UsagesOperations(self._client, self._config, self._serialize, self._deserialize, "2015-06-15")
         self.virtual_networks = VirtualNetworksOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2015-06-15"
         )
-        self.subnets = SubnetsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.subnets = SubnetsOperations(self._client, self._config, self._serialize, self._deserialize, "2015-06-15")
         self.virtual_network_gateways = VirtualNetworkGatewaysOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2015-06-15"
         )
         self.virtual_network_gateway_connections = VirtualNetworkGatewayConnectionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2015-06-15"
         )
         self.local_network_gateways = LocalNetworkGatewaysOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2015-06-15"
         )
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
@@ -191,15 +197,12 @@ class NetworkManagementClient(
         request_copy.url = self._client.format_url(request_copy.url)
         return self._client.send_request(request_copy, **kwargs)
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         self._client.close()
 
-    def __enter__(self):
-        # type: () -> NetworkManagementClient
+    def __enter__(self) -> "NetworkManagementClient":
         self._client.__enter__()
         return self
 
-    def __exit__(self, *exc_details):
-        # type: (Any) -> None
+    def __exit__(self, *exc_details: Any) -> None:
         self._client.__exit__(*exc_details)

@@ -1,0 +1,7 @@
+include *.md
+include LICENSE
+include azure/defender/easm/py.typed
+recursive-include tests *.py
+recursive-include samples *.py *.md
+include azure/__init__.py
+include azure/defender/__init__.py

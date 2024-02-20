@@ -189,11 +189,3 @@ class RecordAllDecisionsResult(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     APPROVE = "Approve"
     DENY = "Deny"
-
-
-class SeverityLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Severity level of the alert."""
-
-    LOW = "Low"
-    MEDIUM = "Medium"
-    HIGH = "High"

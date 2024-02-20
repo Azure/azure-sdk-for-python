@@ -19,7 +19,9 @@ Param (
   [Parameter(Mandatory=$True)]
   [string] $repoName,
   [Parameter(Mandatory=$True)]
-  [string] $Language
+  [string] $Language,
+  [Parameter(Mandatory=$False)]
+  [string] $ArtifactName = "packages"
 )
 
 Set-StrictMode -Version 3
@@ -28,7 +30,7 @@ Set-StrictMode -Version 3
 # Submit API review request and return status whether current revision is approved or pending or failed to create review
 function Submit-APIReview($packageArtifactname, $apiLabel, $releaseStatus, $reviewFileName)
 {
-    $params = "buildId=$buildId&artifactName=packages&originalFilePath=$packageArtifactname&reviewFilePath=$reviewFileName"
+    $params = "buildId=$buildId&artifactName=$ArtifactName&originalFilePath=$packageArtifactname&reviewFilePath=$reviewFileName"
     $params += "&label=$apiLabel&repoName=$repoName&packageName=$PackageName&project=internal"
     $uri = "$($APIViewUri)?$params"
     
@@ -99,16 +101,18 @@ function ProcessPackage($PackageName)
                 return 1
             }
 
+            $revisionLabel = "$($pkgInfo.Version) - Source Branch:${SourceBranch}"
             Write-Host "Version: $($version)"
             Write-Host "SDK Type: $($pkgInfo.SdkType)"
             Write-Host "Release Status: $($pkgInfo.ReleaseStatus)"
+            Write-Host "Label: $($revisionLabel)"
 
             # Run create review step only if build is triggered from main branch or if version is GA.
             # This is to avoid invalidating review status by a build triggered from feature branch
             if ( ($SourceBranch -eq $DefaultBranch) -or (-not $version.IsPrerelease))
             {
                 Write-Host "Submitting API Review for package $($pkg)"
-                $respCode = Submit-APIReview -reviewFileName $reviewFileName -packageArtifactname $pkg -apiLabel $($pkgInfo.Version) -releaseStatus $pkgInfo.ReleaseStatus 
+                $respCode = Submit-APIReview -reviewFileName $reviewFileName -packageArtifactname $pkg -apiLabel $revisionLabel -releaseStatus $pkgInfo.ReleaseStatus
                 Write-Host "HTTP Response code: $($respCode)"
                 # HTTP status 200 means API is in approved status
                 if ($respCode -eq '200')

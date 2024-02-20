@@ -1,14 +1,99 @@
 # Release History
 
-## 11.4.0b3 (Unreleased)
+## 11.4.0b12 (Unreleased)
 
 ### Features Added
+
+- Exposed `VectorSearchAlgorithmMetric`, `IndexProjectionMode`, `SearchIndexerIndexProjections`,
+  `SearchIndexerIndexProjectionSelector`, `SearchIndexerIndexProjectionsParameters`
+- Added `index_projections` support for `SearchIndexerSkillset`
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
+
+
+## 11.4.0b11 (2023-10-11)
+
+### Features Added
+
+- Added `vector_filter_mode` support for `Search` method.
+- Exposed `VectorizableTextQuery` in `azure.search.document.models`.
+
+## 11.4.0b10 (2023-10-10)
+
+### Breaking Changes
+
+> These changes do not impact the API of stable versions such as 11.3.0.
+> Only code written against a beta version such as 11.4.0b6 may be affected.
+- Renamed `vector_search_configuration` to `vector_search_profile` in `SearchField`.
+- Renamed `vectors` to `vector_queries` in `Search` method.
+- Renamed `azure.search.documents.models.Vector` to `azure.search.documents.models.VectorQuery`.
+- Stopped supporting api version `V2023_07_01_PREVIEW` anymore.
+
+### Other Changes
+
+- Default to use API version `V2023_10_01_PREVIEW`
+
+## 11.4.0b9 (2023-09-12)
+
+### Bugs Fixed
+
+- Fixed the bug that list type of `order_by` was not correctly handled. #31837
+
+## 11.4.0b8 (2023-08-08)
+
+### Features Added
+
+- Exposed `HnswVectorSearchAlgorithmConfiguration`
+
+### Breaking Changes
+
+> These changes do not impact the API of stable versions such as 11.3.0.
+> Only code written against a beta version such as 11.4.0b6 may be affected.
+- Instead of using `VectorSearchAlgorithmConfiguration`, now you need to use concrete types like `HnswVectorSearchAlgorithmConfiguration`.
+
+## 11.4.0b7 (2023-08-08)
+
+### Features Added
+
+- Added multi-vector search support. Now instead of passing in `vector`, `top_k` and `vector_fields`, search method accepts `vectors` which is a list of `Vector` object.
+
+### Breaking Changes
+
+> These changes do not impact the API of stable versions such as 11.3.0.
+> Only code written against a beta version such as 11.4.0b6 may be affected.
+- Stopped supporting `vector`, `top_k` and `vector_fields` in `SearchClient.search` method.
+
+## 11.4.0b6 (2023-07-11)
+
+### Features Added
+
+- Added `top_k` support for `VectorSearch`.
+
+## 11.4.0b5 (2023-07-11)
+
+### Features Added
+
+- Exposed `azure.search.documents.models.Vector`.
+
+## 11.4.0b4 (2023-07-11)
+
+### Features Added
+
+- Added `VectorSearch` support.
+
+### Breaking Changes
+
+- Deprecated `SentimentSkillV1` and `EntityRecognitionSkillV1`.
+
+## 11.4.0b3 (2023-02-07)
+
+### Features Added
+
+- Added the semantic reranker score and captions on `SearchResult`.(thanks to @LucasVascovici for the contribution)
 
 ## 11.4.0b2 (2022-11-08)
 

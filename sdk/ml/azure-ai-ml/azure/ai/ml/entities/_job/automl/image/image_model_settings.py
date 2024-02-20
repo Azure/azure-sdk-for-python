@@ -2,19 +2,22 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+from typing import Optional
+
 # pylint: disable=R0902,too-many-locals
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    ImageModelSettingsClassification as RestImageModelSettingsClassification,
+)
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    ImageModelSettingsObjectDetection as RestImageModelSettingsObjectDetection,
+)
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     LearningRateScheduler,
     ModelSize,
     StochasticOptimizer,
     ValidationMetricType,
-)
-
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
-    ImageModelSettingsClassification as RestImageModelSettingsClassification,
-)
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
-    ImageModelSettingsObjectDetection as RestImageModelSettingsObjectDetection,
+    LogTrainingMetrics,
+    LogValidationLoss,
 )
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
@@ -111,36 +114,36 @@ class ImageModelDistributionSettings(RestTranslatableMixin):
     def __init__(
         self,
         *,
-        advanced_settings: str = None,
-        ams_gradient: bool = None,
-        beta1: float = None,
-        beta2: float = None,
-        checkpoint_frequency: int = None,
-        checkpoint_run_id: str = None,
-        distributed: bool = None,
-        early_stopping: bool = None,
-        early_stopping_delay: int = None,
-        early_stopping_patience: int = None,
-        enable_onnx_normalization: bool = None,
-        evaluation_frequency: int = None,
-        gradient_accumulation_step: int = None,
-        layers_to_freeze: int = None,
-        learning_rate: float = None,
-        learning_rate_scheduler: LearningRateScheduler = None,
-        model_name: str = None,
-        momentum: float = None,
-        nesterov: bool = None,
-        number_of_epochs: int = None,
-        number_of_workers: int = None,
-        optimizer: StochasticOptimizer = None,
-        random_seed: int = None,
-        step_lr_gamma: float = None,
-        step_lr_step_size: int = None,
-        training_batch_size: int = None,
-        validation_batch_size: int = None,
-        warmup_cosine_lr_cycles: float = None,
-        warmup_cosine_lr_warmup_epochs: int = None,
-        weight_decay: float = None,
+        advanced_settings: Optional[str] = None,
+        ams_gradient: Optional[bool] = None,
+        beta1: Optional[float] = None,
+        beta2: Optional[float] = None,
+        checkpoint_frequency: Optional[int] = None,
+        checkpoint_run_id: Optional[str] = None,
+        distributed: Optional[bool] = None,
+        early_stopping: Optional[bool] = None,
+        early_stopping_delay: Optional[int] = None,
+        early_stopping_patience: Optional[int] = None,
+        enable_onnx_normalization: Optional[bool] = None,
+        evaluation_frequency: Optional[int] = None,
+        gradient_accumulation_step: Optional[int] = None,
+        layers_to_freeze: Optional[int] = None,
+        learning_rate: Optional[float] = None,
+        learning_rate_scheduler: Optional[LearningRateScheduler] = None,
+        model_name: Optional[str] = None,
+        momentum: Optional[float] = None,
+        nesterov: Optional[bool] = None,
+        number_of_epochs: Optional[int] = None,
+        number_of_workers: Optional[int] = None,
+        optimizer: Optional[StochasticOptimizer] = None,
+        random_seed: Optional[int] = None,
+        step_lr_gamma: Optional[float] = None,
+        step_lr_step_size: Optional[int] = None,
+        training_batch_size: Optional[int] = None,
+        validation_batch_size: Optional[int] = None,
+        warmup_cosine_lr_cycles: Optional[float] = None,
+        warmup_cosine_lr_warmup_epochs: Optional[int] = None,
+        weight_decay: Optional[float] = None,
     ):
         self.advanced_settings = advanced_settings
         self.ams_gradient = ams_gradient
@@ -206,8 +209,7 @@ class ImageModelDistributionSettings(RestTranslatableMixin):
             and self.training_batch_size == other.training_batch_size
             and self.validation_batch_size == other.validation_batch_size
             and self.warmup_cosine_lr_cycles == other.warmup_cosine_lr_cycles
-            and self.warmup_cosine_lr_warmup_epochs
-            == other.warmup_cosine_lr_warmup_epochs
+            and self.warmup_cosine_lr_warmup_epochs == other.warmup_cosine_lr_warmup_epochs
             and self.weight_decay == other.weight_decay
         )
 
@@ -317,40 +319,40 @@ class ImageModelSettingsClassification(ImageModelDistributionSettings):
     def __init__(
         self,
         *,
-        advanced_settings: str = None,
-        ams_gradient: bool = None,
-        beta1: float = None,
-        beta2: float = None,
-        checkpoint_frequency: int = None,
-        checkpoint_run_id: str = None,
-        distributed: bool = None,
-        early_stopping: bool = None,
-        early_stopping_delay: int = None,
-        early_stopping_patience: int = None,
-        enable_onnx_normalization: bool = None,
-        evaluation_frequency: int = None,
-        gradient_accumulation_step: int = None,
-        layers_to_freeze: int = None,
-        learning_rate: float = None,
-        learning_rate_scheduler: LearningRateScheduler = None,
-        model_name: str = None,
-        momentum: float = None,
-        nesterov: bool = None,
-        number_of_epochs: int = None,
-        number_of_workers: int = None,
-        optimizer: StochasticOptimizer = None,
-        random_seed: int = None,
-        step_lr_gamma: float = None,
-        step_lr_step_size: int = None,
-        training_batch_size: int = None,
-        validation_batch_size: int = None,
-        warmup_cosine_lr_cycles: float = None,
-        warmup_cosine_lr_warmup_epochs: int = None,
-        weight_decay: float = None,
-        training_crop_size: int = None,
-        validation_crop_size: int = None,
-        validation_resize_size: int = None,
-        weighted_loss: int = None,
+        advanced_settings: Optional[str] = None,
+        ams_gradient: Optional[bool] = None,
+        beta1: Optional[float] = None,
+        beta2: Optional[float] = None,
+        checkpoint_frequency: Optional[int] = None,
+        checkpoint_run_id: Optional[str] = None,
+        distributed: Optional[bool] = None,
+        early_stopping: Optional[bool] = None,
+        early_stopping_delay: Optional[int] = None,
+        early_stopping_patience: Optional[int] = None,
+        enable_onnx_normalization: Optional[bool] = None,
+        evaluation_frequency: Optional[int] = None,
+        gradient_accumulation_step: Optional[int] = None,
+        layers_to_freeze: Optional[int] = None,
+        learning_rate: Optional[float] = None,
+        learning_rate_scheduler: Optional[LearningRateScheduler] = None,
+        model_name: Optional[str] = None,
+        momentum: Optional[float] = None,
+        nesterov: Optional[bool] = None,
+        number_of_epochs: Optional[int] = None,
+        number_of_workers: Optional[int] = None,
+        optimizer: Optional[StochasticOptimizer] = None,
+        random_seed: Optional[int] = None,
+        step_lr_gamma: Optional[float] = None,
+        step_lr_step_size: Optional[int] = None,
+        training_batch_size: Optional[int] = None,
+        validation_batch_size: Optional[int] = None,
+        warmup_cosine_lr_cycles: Optional[float] = None,
+        warmup_cosine_lr_warmup_epochs: Optional[int] = None,
+        weight_decay: Optional[float] = None,
+        training_crop_size: Optional[int] = None,
+        validation_crop_size: Optional[int] = None,
+        validation_resize_size: Optional[int] = None,
+        weighted_loss: Optional[int] = None,
         **kwargs,
     ):
         super(ImageModelSettingsClassification, self).__init__(
@@ -430,9 +432,7 @@ class ImageModelSettingsClassification(ImageModelDistributionSettings):
         )
 
     @classmethod
-    def _from_rest_object(
-        cls, obj: RestImageModelSettingsClassification
-    ) -> "ImageModelSettingsClassification":
+    def _from_rest_object(cls, obj: RestImageModelSettingsClassification) -> "ImageModelSettingsClassification":
         return cls(
             advanced_settings=obj.advanced_settings,
             ams_gradient=obj.ams_gradient,
@@ -626,54 +626,62 @@ class ImageModelSettingsObjectDetection(ImageModelDistributionSettings):
      values include: "None", "Coco", "Voc", "CocoVoc".
     :type validation_metric_type: str or
      ~azure.mgmt.machinelearningservices.models.ValidationMetricType
+    :param log_training_metrics: indicates whether or not to log training metrics
+    :type log_training_metrics: str or
+     ~azure.mgmt.machinelearningservices.models.LogTrainingMetrics
+    :param log_validation_loss: indicates whether or not to log validation loss
+    :type log_validation_loss: str or
+     ~azure.mgmt.machinelearningservices.models.LogValidationLoss
     """
 
     def __init__(
         self,
         *,
-        advanced_settings: str = None,
-        ams_gradient: bool = None,
-        beta1: float = None,
-        beta2: float = None,
-        checkpoint_frequency: int = None,
-        checkpoint_run_id: str = None,
-        distributed: bool = None,
-        early_stopping: bool = None,
-        early_stopping_delay: int = None,
-        early_stopping_patience: int = None,
-        enable_onnx_normalization: bool = None,
-        evaluation_frequency: int = None,
-        gradient_accumulation_step: int = None,
-        layers_to_freeze: int = None,
-        learning_rate: float = None,
-        learning_rate_scheduler: LearningRateScheduler = None,
-        model_name: str = None,
-        momentum: float = None,
-        nesterov: bool = None,
-        number_of_epochs: int = None,
-        number_of_workers: int = None,
-        optimizer: StochasticOptimizer = None,
-        random_seed: int = None,
-        step_lr_gamma: float = None,
-        step_lr_step_size: int = None,
-        training_batch_size: int = None,
-        validation_batch_size: int = None,
-        warmup_cosine_lr_cycles: float = None,
-        warmup_cosine_lr_warmup_epochs: int = None,
-        weight_decay: float = None,
-        box_detections_per_image: int = None,
-        box_score_threshold: float = None,
-        image_size: int = None,
-        max_size: int = None,
-        min_size: int = None,
-        model_size: ModelSize = None,
-        multi_scale: bool = None,
-        nms_iou_threshold: float = None,
-        tile_grid_size: str = None,
-        tile_overlap_ratio: float = None,
-        tile_predictions_nms_threshold: float = None,
-        validation_iou_threshold: float = None,
-        validation_metric_type: ValidationMetricType = None,
+        advanced_settings: Optional[str] = None,
+        ams_gradient: Optional[bool] = None,
+        beta1: Optional[float] = None,
+        beta2: Optional[float] = None,
+        checkpoint_frequency: Optional[int] = None,
+        checkpoint_run_id: Optional[str] = None,
+        distributed: Optional[bool] = None,
+        early_stopping: Optional[bool] = None,
+        early_stopping_delay: Optional[int] = None,
+        early_stopping_patience: Optional[int] = None,
+        enable_onnx_normalization: Optional[bool] = None,
+        evaluation_frequency: Optional[int] = None,
+        gradient_accumulation_step: Optional[int] = None,
+        layers_to_freeze: Optional[int] = None,
+        learning_rate: Optional[float] = None,
+        learning_rate_scheduler: Optional[LearningRateScheduler] = None,
+        model_name: Optional[str] = None,
+        momentum: Optional[float] = None,
+        nesterov: Optional[bool] = None,
+        number_of_epochs: Optional[int] = None,
+        number_of_workers: Optional[int] = None,
+        optimizer: Optional[StochasticOptimizer] = None,
+        random_seed: Optional[int] = None,
+        step_lr_gamma: Optional[float] = None,
+        step_lr_step_size: Optional[int] = None,
+        training_batch_size: Optional[int] = None,
+        validation_batch_size: Optional[int] = None,
+        warmup_cosine_lr_cycles: Optional[float] = None,
+        warmup_cosine_lr_warmup_epochs: Optional[int] = None,
+        weight_decay: Optional[float] = None,
+        box_detections_per_image: Optional[int] = None,
+        box_score_threshold: Optional[float] = None,
+        image_size: Optional[int] = None,
+        max_size: Optional[int] = None,
+        min_size: Optional[int] = None,
+        model_size: Optional[ModelSize] = None,
+        multi_scale: Optional[bool] = None,
+        nms_iou_threshold: Optional[float] = None,
+        tile_grid_size: Optional[str] = None,
+        tile_overlap_ratio: Optional[float] = None,
+        tile_predictions_nms_threshold: Optional[float] = None,
+        validation_iou_threshold: Optional[float] = None,
+        validation_metric_type: Optional[ValidationMetricType] = None,
+        log_training_metrics: Optional[LogTrainingMetrics] = None,
+        log_validation_loss: Optional[LogValidationLoss] = None,
         **kwargs,
     ):
         super(ImageModelSettingsObjectDetection, self).__init__(
@@ -722,6 +730,8 @@ class ImageModelSettingsObjectDetection(ImageModelDistributionSettings):
         self.tile_predictions_nms_threshold = tile_predictions_nms_threshold
         self.validation_iou_threshold = validation_iou_threshold
         self.validation_metric_type = validation_metric_type
+        self.log_training_metrics = log_training_metrics
+        self.log_validation_loss = log_validation_loss
 
     def _to_rest_object(self) -> RestImageModelSettingsObjectDetection:
         return RestImageModelSettingsObjectDetection(
@@ -768,12 +778,12 @@ class ImageModelSettingsObjectDetection(ImageModelDistributionSettings):
             tile_predictions_nms_threshold=self.tile_predictions_nms_threshold,
             validation_iou_threshold=self.validation_iou_threshold,
             validation_metric_type=self.validation_metric_type,
+            log_training_metrics=self.log_training_metrics,
+            log_validation_loss=self.log_validation_loss,
         )
 
     @classmethod
-    def _from_rest_object(
-        cls, obj: RestImageModelSettingsObjectDetection
-    ) -> "ImageModelSettingsObjectDetection":
+    def _from_rest_object(cls, obj: RestImageModelSettingsObjectDetection) -> "ImageModelSettingsObjectDetection":
         return cls(
             advanced_settings=obj.advanced_settings,
             ams_gradient=obj.ams_gradient,
@@ -818,6 +828,8 @@ class ImageModelSettingsObjectDetection(ImageModelDistributionSettings):
             tile_predictions_nms_threshold=obj.tile_predictions_nms_threshold,
             validation_iou_threshold=obj.validation_iou_threshold,
             validation_metric_type=obj.validation_metric_type,
+            log_training_metrics=obj.log_training_metrics,
+            log_validation_loss=obj.log_validation_loss,
         )
 
     def __eq__(self, other: object) -> bool:
@@ -836,10 +848,11 @@ class ImageModelSettingsObjectDetection(ImageModelDistributionSettings):
             and self.nms_iou_threshold == other.nms_iou_threshold
             and self.tile_grid_size == other.tile_grid_size
             and self.tile_overlap_ratio == other.tile_overlap_ratio
-            and self.tile_predictions_nms_threshold
-            == other.tile_predictions_nms_threshold
+            and self.tile_predictions_nms_threshold == other.tile_predictions_nms_threshold
             and self.validation_iou_threshold == other.validation_iou_threshold
             and self.validation_metric_type == other.validation_metric_type
+            and self.log_training_metrics == other.log_training_metrics
+            and self.log_validation_loss == other.log_validation_loss
         )
 
     def __ne__(self, other: object) -> bool:

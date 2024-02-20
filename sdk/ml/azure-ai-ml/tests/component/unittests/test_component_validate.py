@@ -70,16 +70,25 @@ class TestComponentValidate:
             with pytest.raises(ValidationException, match="is not a valid parameter name"):
                 component()
 
+    @pytest.mark.usefixtures("enable_private_preview_schema_features")
+    def test_component_early_available_output_not_set_is_control(self):
+        yaml_file = str(components_dir / "invalid/helloworld_component_early_available_output_not_set_is_control.yml")
+        component = load_component(yaml_file)
+        validation_result = component._validate()
+        assert validation_result.passed
+
     @pytest.mark.parametrize(
         "expected_location,asset_object",
         [
-            (
+            pytest.param(
                 "code",
                 Code(name="AzureML-Code", version="1"),
+                id="code",
             ),
-            (
+            pytest.param(
                 "environment",
                 Environment(name="AzureML-Minimal", version="1"),
+                id="environment",
             ),
         ],
     )
@@ -129,7 +138,11 @@ class TestComponentValidate:
         component: CommandComponent = load_component(component_path)
         component.name = None
         component.command += " & echo ${{inputs.non_existent}} & echo ${{outputs.non_existent}}"
-        validation_result = mock_machinelearning_client.components.validate(component)
+        validation_result = mock_machinelearning_client.components.validate(
+            component,
+            # skip remote validation for unit test as it requires a valid workspace to fetch the location
+            skip_remote_validation=True,
+        )
         assert validation_result.passed is False
         assert validation_result._to_dict() == {
             "errors": [

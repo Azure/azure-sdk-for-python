@@ -7,7 +7,6 @@ import logging
 import pytest
 import datetime
 
-import msrest
 from azure.servicebus.management import ServiceBusAdministrationClient, TopicProperties, ApiVersion
 from azure.servicebus._base_handler import ServiceBusSharedKeyCredential
 from utilities import get_logger
@@ -291,7 +290,7 @@ class TestServiceBusAdministrationClientTopicTests(AzureMgmtRecordedTestCase):
 
             # change the name to a topic with an invalid name exist; should fail.
             topic_description.name = ''
-            with pytest.raises(msrest.exceptions.ValidationError):
+            with pytest.raises(HttpResponseError):
                 mgmt_service.update_topic(topic_description)
             topic_description.name = topic_name
 

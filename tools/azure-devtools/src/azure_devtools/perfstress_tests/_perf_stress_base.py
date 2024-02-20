@@ -5,8 +5,15 @@
 
 import os
 import abc
-import threading
+import multiprocessing
 import argparse
+import pstats
+import cProfile
+from typing import Optional
+
+
+PSTATS_PRINT_DEFAULT_SORT_KEY = pstats.SortKey.TIME
+PSTATS_PRINT_DEFAULT_LINE_COUNT = 36
 
 
 class _PerfTestABC(abc.ABC):
@@ -49,7 +56,7 @@ class _PerfTestABC(abc.ABC):
         """
 
     @abc.abstractmethod
-    async def cleanup(self):
+    async def cleanup(self) -> None:
         """
         Cleanup called once per parallel test instance.
         Used to cleanup state specific to this test instance.
@@ -76,13 +83,13 @@ class _PerfTestABC(abc.ABC):
         """
 
     @abc.abstractmethod
-    def run_all_sync(self, duration: int) -> None:
+    def run_all_sync(self, duration: int, *, run_profiler: bool = False, **kwargs) -> None:
         """
         Run all sync tests, including both warmup and duration.
         """
 
     @abc.abstractmethod
-    async def run_all_async(self, duration: int) -> None:
+    async def run_all_async(self, duration: int, *, run_profiler: bool = False, **kwargs) -> None:
         """
         Run all async tests, including both warmup and duration.
         """
@@ -105,18 +112,19 @@ class _PerfTestABC(abc.ABC):
 class _PerfTestBase(_PerfTestABC):
     """Base class for implementing a python perf test."""
 
-    args = {}
-    _global_parallel_index_lock = threading.Lock()
-    _global_parallel_index = 0
+    args: argparse.Namespace
+    _global_parallel_index_lock = multiprocessing.Lock()
+    _global_parallel_index: int = 0
 
-    def __init__(self, arguments):
+    def __init__(self, arguments: argparse.Namespace):
         self.args = arguments
-        self._completed_operations = 0
-        self._last_completion_time = 0.0
-
-        with _PerfTestBase._global_parallel_index_lock:
-            self._parallel_index = _PerfTestBase._global_parallel_index
-            _PerfTestBase._global_parallel_index += 1
+        self._completed_operations: int = 0
+        self._last_completion_time: float = 0.0
+        self._parallel_index: int = _PerfTestBase._global_parallel_index
+        _PerfTestBase._global_parallel_index += 1
+        self._profile: Optional[cProfile.Profile] = None
+        if self.args.profile:
+            self._profile = cProfile.Profile()
 
     @property
     def completed_operations(self) -> int:
@@ -136,14 +144,14 @@ class _PerfTestBase(_PerfTestABC):
 
     async def global_setup(self) -> None:
         """
-        Setup called once across all parallel test instances.
+        Setup called once per process across all threaded test instances.
         Used to setup state that can be used by all test instances.
         """
         return
 
     async def global_cleanup(self) -> None:
         """
-        Cleanup called once across all parallel test instances.
+        Cleanup called once per process across all threaded test instances.
         Used to cleanup state that can be used by all test instances.
         """
         return
@@ -182,13 +190,13 @@ class _PerfTestBase(_PerfTestABC):
         """
         return
 
-    def run_all_sync(self, duration: int) -> None:
+    def run_all_sync(self, duration: int, *, run_profiler: bool = False, **kwargs) -> None:
         """
         Run all sync tests, including both warmup and duration.
         """
         raise NotImplementedError("run_all_sync must be implemented for {}".format(self.__class__.__name__))
 
-    async def run_all_async(self, duration: int) -> None:
+    async def run_all_async(self, duration: int, *, run_profiler: bool = False, **kwargs) -> None:
         """
         Run all async tests, including both warmup and duration.
         """
@@ -210,3 +218,36 @@ class _PerfTestBase(_PerfTestABC):
         if not value:
             raise ValueError("Undefined environment variable {}".format(variable))
         return value
+
+    def _save_profile(self, sync: str, output_path: Optional[str] = None) -> None:
+        """
+        Dump the profiler data to the file path specified. If no path is specified, use the current working directory.
+        """
+        if self._profile:
+            profile_name = output_path or "{}/cProfile-{}-{}-{}.pstats".format(
+                os.getcwd(),
+                self.__class__.__name__,
+                self._parallel_index,
+                sync)
+            print("Dumping profile data to {}".format(profile_name))
+            self._profile.dump_stats(profile_name)
+        else:
+            print("No profile generated.")
+
+    def _print_profile_stats(
+        self,
+        *,
+        sort_key: pstats.SortKey = PSTATS_PRINT_DEFAULT_SORT_KEY,
+        count: int = PSTATS_PRINT_DEFAULT_LINE_COUNT
+    ) -> None:
+        """Print the profile stats to stdout.
+
+        A sort key can be specified to establish how stats should be sorted, and a line count can also be
+        specified to limit the number of lines printed.
+        """
+        if self._profile:
+            # Increase the precision of the pstats output
+            pstats.f8 = lambda x: f"{x:8.5f}"
+
+            stats = pstats.Stats(self._profile).sort_stats(sort_key)
+            stats.print_stats(count)

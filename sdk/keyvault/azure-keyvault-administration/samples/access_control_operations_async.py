@@ -49,7 +49,7 @@ async def run_sample():
     scope = KeyVaultRoleScope.GLOBAL
     permissions = [KeyVaultPermission(data_actions=[KeyVaultDataAction.CREATE_HSM_KEY])]
     role_definition = await client.set_role_definition(scope=scope, role_name=role_name, permissions=permissions)
-    print("Role definition '{}' created successfully.".format(role_definition.role_name))
+    print(f"Role definition '{role_definition.role_name}' created successfully.")
 
     # Let's update our role definition to allow reading keys, but not allow creating keys.
     # To update an existing definition, pass the name keyword argument to set_role_definition. This is the unique
@@ -65,7 +65,7 @@ async def run_sample():
     updated_definition = await client.set_role_definition(
         scope=scope, name=unique_definition_name, role_name=role_name, permissions=new_permissions
     )
-    print("Role definition '{}' updated successfully.".format(updated_definition.role_name))
+    print(f"Role definition '{updated_definition.role_name}' updated successfully.")
 
     # Now let's create a role assignment to apply our role definition to our service principal.
     # Since we don't provide the name keyword argument to create_role_definition, a unique role assignment name
@@ -73,10 +73,12 @@ async def run_sample():
     print("\n.. Create a role assignment")
     principal_id = os.environ["AZURE_CLIENT_ID"]
     definition_id = updated_definition.id
+    assert definition_id
     role_assignment = await client.create_role_assignment(
         scope=scope, definition_id=definition_id, principal_id=principal_id
     )
-    print("Role assignment created successfully.")
+    assert role_assignment.name
+    print(f"Role assignment {role_assignment.name} created successfully.")
 
     # Let's delete the role assignment.
     print("\n.. Delete a role assignment")

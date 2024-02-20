@@ -14,6 +14,8 @@ try:
     from ._models_py3 import BatchJobResourceArmPaginatedResult
     from ._models_py3 import BatchRetrySettings
     from ._models_py3 import ComputeConfiguration
+    from ._models_py3 import CustomModelJobInput
+    from ._models_py3 import CustomModelJobOutput
     from ._models_py3 import DataVersion
     from ._models_py3 import ErrorDetail
     from ._models_py3 import ErrorResponse
@@ -26,12 +28,19 @@ try:
     from ._models_py3 import JobOutputArtifacts
     from ._models_py3 import JobOutputV2
     from ._models_py3 import LabelClass
+    from ._models_py3 import LiteralJobInput
+    from ._models_py3 import MLFlowModelJobInput
+    from ._models_py3 import MLFlowModelJobOutput
     from ._models_py3 import MLTableJobInput
+    from ._models_py3 import MLTableJobOutput
     from ._models_py3 import Resource
     from ._models_py3 import SystemData
+    from ._models_py3 import TritonModelJobInput
+    from ._models_py3 import TritonModelJobOutput
     from ._models_py3 import UriFileJobInput
     from ._models_py3 import UriFileJobOutput
     from ._models_py3 import UriFolderJobInput
+    from ._models_py3 import UriFolderJobOutput
 except (SyntaxError, ImportError):
     from ._models import AssetJobInput  # type: ignore
     from ._models import AssetJobOutput  # type: ignore
@@ -40,6 +49,8 @@ except (SyntaxError, ImportError):
     from ._models import BatchJobResourceArmPaginatedResult  # type: ignore
     from ._models import BatchRetrySettings  # type: ignore
     from ._models import ComputeConfiguration  # type: ignore
+    from ._models import CustomModelJobInput  # type: ignore
+    from ._models import CustomModelJobOutput  # type: ignore
     from ._models import DataVersion  # type: ignore
     from ._models import ErrorDetail  # type: ignore
     from ._models import ErrorResponse  # type: ignore
@@ -52,12 +63,19 @@ except (SyntaxError, ImportError):
     from ._models import JobOutputArtifacts  # type: ignore
     from ._models import JobOutputV2  # type: ignore
     from ._models import LabelClass  # type: ignore
+    from ._models import LiteralJobInput  # type: ignore
+    from ._models import MLFlowModelJobInput  # type: ignore
+    from ._models import MLFlowModelJobOutput  # type: ignore
     from ._models import MLTableJobInput  # type: ignore
+    from ._models import MLTableJobOutput  # type: ignore
     from ._models import Resource  # type: ignore
     from ._models import SystemData  # type: ignore
+    from ._models import TritonModelJobInput  # type: ignore
+    from ._models import TritonModelJobOutput  # type: ignore
     from ._models import UriFileJobInput  # type: ignore
     from ._models import UriFileJobOutput  # type: ignore
     from ._models import UriFolderJobInput  # type: ignore
+    from ._models import UriFolderJobOutput  # type: ignore
 
 from ._azure_machine_learning_workspaces_enums import (
     BatchLoggingLevel,
@@ -80,6 +98,8 @@ __all__ = [
     'BatchJobResourceArmPaginatedResult',
     'BatchRetrySettings',
     'ComputeConfiguration',
+    'CustomModelJobInput',
+    'CustomModelJobOutput',
     'DataVersion',
     'ErrorDetail',
     'ErrorResponse',
@@ -92,12 +112,19 @@ __all__ = [
     'JobOutputArtifacts',
     'JobOutputV2',
     'LabelClass',
+    'LiteralJobInput',
+    'MLFlowModelJobInput',
+    'MLFlowModelJobOutput',
     'MLTableJobInput',
+    'MLTableJobOutput',
     'Resource',
     'SystemData',
+    'TritonModelJobInput',
+    'TritonModelJobOutput',
     'UriFileJobInput',
     'UriFileJobOutput',
     'UriFolderJobInput',
+    'UriFolderJobOutput',
     'BatchLoggingLevel',
     'CreatedByType',
     'DatasetType',

@@ -3,31 +3,33 @@ from typing import Callable
 from unittest.mock import Mock
 
 import pytest
-import vcr
+from azure.identity import DefaultAzureCredential
 from pytest_mock import MockFixture
 
 from azure.ai.ml import load_compute
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
-from azure.ai.ml.entities import AmlCompute, Compute, ComputeInstance, IdentityConfiguration, \
-    ManagedIdentityConfiguration
+from azure.ai.ml.entities import (
+    AmlCompute,
+    Compute,
+    ComputeInstance,
+    IdentityConfiguration,
+    ManagedIdentityConfiguration,
+)
 from azure.ai.ml.operations import ComputeOperations
-from azure.identity import DefaultAzureCredential
+from azure.ai.ml.operations._local_job_invoker import CommonRuntimeHelper
 
 
 @pytest.fixture
 def mock_compute_operation(
-    mock_workspace_scope: OperationScope, mock_operation_config: OperationConfig, mock_aml_services_2022_10_01_preview: Mock
+    mock_workspace_scope: OperationScope,
+    mock_operation_config: OperationConfig,
+    mock_aml_services_2022_10_01_preview: Mock,
 ) -> ComputeOperations:
     yield ComputeOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
         service_client=mock_aml_services_2022_10_01_preview,
     )
-
-
-class funny:
-    def __init__(self):
-        self.location = "somelocation"
 
 
 @pytest.mark.unittest
@@ -37,17 +39,7 @@ class TestComputeOperation:
         mock_compute_operation.list()
         mock_compute_operation._operation.list.assert_called_once()
 
-    @pytest.mark.skipif(
-        sys.version_info[1] == 11,
-        reason=f"This test is not compatible with Python 3.11, skip in CI.",
-    )
-    def test_create_compute_instance(
-        self, mock_compute_operation: ComputeOperations, mocker: MockFixture
-    ) -> None:
-        mocker.patch(
-            "azure.ai.ml._restclient.v2022_10_01_preview.workspaces.get",
-            return_value=funny(),
-        )
+    def test_create_compute_instance(self, mock_compute_operation: ComputeOperations, mocker: MockFixture) -> None:
         mocker.patch(
             "azure.ai.ml.entities.Compute._from_rest_object",
             return_value=ComputeInstance(name="name", resource_id="test_resource_id"),
@@ -57,14 +49,7 @@ class TestComputeOperation:
         mock_compute_operation.begin_create_or_update(compute=compute)
         mock_compute_operation._operation.begin_create_or_update.assert_called_once()
 
-    @pytest.mark.skipif(
-        sys.version_info[1] == 11,
-        reason=f"This test is not compatible with Python 3.11, skip in CI.",
-    )
-    def test_create_aml_compute(
-        self, mock_compute_operation: ComputeOperations, mocker: MockFixture
-    ) -> None:
-        mocker.patch("azure.ai.ml._restclient.v2022_10_01_preview.workspaces.get", return_value=funny())
+    def test_create_aml_compute(self, mock_compute_operation: ComputeOperations, mocker: MockFixture) -> None:
         compute = load_compute("./tests/test_configs/compute/compute-aml.yaml")
         mock_compute_operation.begin_create_or_update(compute=compute)
         mock_compute_operation._operation.begin_create_or_update.assert_called_once()
@@ -89,9 +74,7 @@ class TestComputeOperation:
         mock_compute_operation.begin_restart("randstr")
         mock_compute_operation._operation.begin_restart.assert_called_once()
 
-    def test_update_aml_compute(
-        self, mock_compute_operation: ComputeOperations, mocker: MockFixture
-    ) -> None:
+    def test_update_aml_compute(self, mock_compute_operation: ComputeOperations, mocker: MockFixture) -> None:
         compute = AmlCompute(
             name="name",
             tags={"key1": "value1", "key2": "value2"},
@@ -116,3 +99,13 @@ class TestComputeOperation:
             action="Detach",
         )
         mock_compute_operation._operation.begin_delete.assert_called_once()
+
+    @pytest.mark.skip(
+        reason="Irrevelant until CommonRuntime re-enabled (2578431)",
+    )
+    def test_local_compute_no_registry_info(self) -> None:
+        # Confirm that we can create a docker client without registry username and password
+        cr_helper = CommonRuntimeHelper("myjobname")
+        registry = {"url": None}
+        docker_client = cr_helper.get_docker_client(registry)
+        assert docker_client is not None

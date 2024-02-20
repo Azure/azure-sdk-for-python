@@ -17,9 +17,9 @@ from _shared.asynctestcase import AsyncCommunicationTestCase
 from azure.communication.jobrouter._shared.utils import parse_connection_str
 from azure.core.exceptions import ResourceNotFoundError
 
-from azure.communication.jobrouter.aio import RouterAdministrationClient
+from azure.communication.jobrouter.aio import JobRouterAdministrationClient
 from azure.communication.jobrouter import (
-    RoundRobinMode, DistributionPolicy, JobQueue,
+    RoundRobinMode, DistributionPolicy, RouterQueue,
 )
 
 queue_labels = {
@@ -36,7 +36,7 @@ class TestJobQueueAsync(AsyncRouterRecordedTestCase):
     async def clean_up(self):
         # delete in live mode
         if not self.is_playback():
-            router_client: RouterAdministrationClient = self.create_admin_client()
+            router_client: JobRouterAdministrationClient = self.create_admin_client()
             async with router_client:
                 if self._testMethodName in self.queue_ids \
                         and any(self.queue_ids[self._testMethodName]):
@@ -52,14 +52,14 @@ class TestJobQueueAsync(AsyncRouterRecordedTestCase):
         return self._testMethodName + "_tst_dp_async"
 
     async def setup_distribution_policy(self):
-        client: RouterAdministrationClient = self.create_admin_client()
+        client: JobRouterAdministrationClient = self.create_admin_client()
 
         async with client:
             distribution_policy_id = self.get_distribution_policy_id()
 
             policy: DistributionPolicy = DistributionPolicy(
                 name = distribution_policy_id,
-                offer_ttl_seconds = 10.0,
+                offer_expires_after_seconds = 10.0,
                 mode = RoundRobinMode(min_concurrent_offers = 1,
                                       max_concurrent_offers = 1)
             )
@@ -82,10 +82,10 @@ class TestJobQueueAsync(AsyncRouterRecordedTestCase):
     @RouterPreparersAsync.after_test_execute_async('clean_up')
     async def test_create_queue(self):
         dp_identifier = "test_create_q_async"
-        router_client: RouterAdministrationClient = self.create_admin_client()
+        router_client: JobRouterAdministrationClient = self.create_admin_client()
 
         async with router_client:
-            job_queue: JobQueue = JobQueue(
+            job_queue: RouterQueue = RouterQueue(
                 name = dp_identifier,
                 labels = queue_labels,
                 distribution_policy_id = self.get_distribution_policy_id()
@@ -115,10 +115,10 @@ class TestJobQueueAsync(AsyncRouterRecordedTestCase):
     @RouterPreparersAsync.after_test_execute_async('clean_up')
     async def test_update_queue(self):
         dp_identifier = "tst_updated_q_async"
-        router_client: RouterAdministrationClient = self.create_admin_client()
+        router_client: JobRouterAdministrationClient = self.create_admin_client()
 
         async with router_client:
-            job_queue: JobQueue = JobQueue(
+            job_queue: RouterQueue = RouterQueue(
                 name = dp_identifier,
                 labels = queue_labels,
                 distribution_policy_id = self.get_distribution_policy_id()
@@ -169,10 +169,10 @@ class TestJobQueueAsync(AsyncRouterRecordedTestCase):
     @RouterPreparersAsync.after_test_execute_async('clean_up')
     async def test_update_queue_w_kwargs(self):
         dp_identifier = "tst_updated_q_w_kwargs_async"
-        router_client: RouterAdministrationClient = self.create_admin_client()
+        router_client: JobRouterAdministrationClient = self.create_admin_client()
 
         async with router_client:
-            job_queue: JobQueue = JobQueue(
+            job_queue: RouterQueue = RouterQueue(
                 name = dp_identifier,
                 labels = queue_labels,
                 distribution_policy_id = self.get_distribution_policy_id()
@@ -222,10 +222,10 @@ class TestJobQueueAsync(AsyncRouterRecordedTestCase):
     @RouterPreparersAsync.after_test_execute_async('clean_up')
     async def test_get_queue(self):
         dp_identifier = "test_get_q_async"
-        router_client: RouterAdministrationClient = self.create_admin_client()
+        router_client: JobRouterAdministrationClient = self.create_admin_client()
 
         async with router_client:
-            job_queue: JobQueue = JobQueue(
+            job_queue: RouterQueue = RouterQueue(
                 name = dp_identifier,
                 labels = queue_labels,
                 distribution_policy_id = self.get_distribution_policy_id()
@@ -266,9 +266,9 @@ class TestJobQueueAsync(AsyncRouterRecordedTestCase):
     @RouterPreparersAsync.after_test_execute_async('clean_up')
     async def test_delete_queue(self):
         dp_identifier = "test_delete_q_async"
-        router_client: RouterAdministrationClient = self.create_admin_client()
+        router_client: JobRouterAdministrationClient = self.create_admin_client()
 
-        job_queue: JobQueue = JobQueue(
+        job_queue: RouterQueue = RouterQueue(
             name = dp_identifier,
             labels = queue_labels,
             distribution_policy_id = self.get_distribution_policy_id()
@@ -299,7 +299,7 @@ class TestJobQueueAsync(AsyncRouterRecordedTestCase):
     @RouterPreparersAsync.before_test_execute_async('setup_distribution_policy')
     @RouterPreparersAsync.after_test_execute_async('clean_up')
     async def test_list_queues(self):
-        router_client: RouterAdministrationClient = self.create_admin_client()
+        router_client: JobRouterAdministrationClient = self.create_admin_client()
         dp_identifiers = ["test_list_q_1_async", "test_list_q_2_async", "test_list_q_3_async"]
         created_q_response = {}
         q_count = len(dp_identifiers)
@@ -307,7 +307,7 @@ class TestJobQueueAsync(AsyncRouterRecordedTestCase):
 
         async with router_client:
             for identifier in dp_identifiers:
-                job_queue: JobQueue = JobQueue(
+                job_queue: RouterQueue = RouterQueue(
                     name = identifier,
                     labels = queue_labels,
                     distribution_policy_id = self.get_distribution_policy_id()
@@ -339,13 +339,13 @@ class TestJobQueueAsync(AsyncRouterRecordedTestCase):
                 assert len(list_of_queues) <= 2
 
                 for q_item in list_of_queues:
-                    response_at_creation = created_q_response.get(q_item.job_queue.id, None)
+                    response_at_creation = created_q_response.get(q_item.queue.id, None)
 
                     if not response_at_creation:
                         continue
 
                     JobQueueValidator.validate_queue(
-                        q_item.job_queue,
+                        q_item.queue,
                         identifier = response_at_creation.id,
                         name = response_at_creation.name,
                         labels = response_at_creation.labels,

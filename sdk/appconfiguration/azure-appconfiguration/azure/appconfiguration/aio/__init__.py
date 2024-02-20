@@ -9,6 +9,6 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._azure_configuration_client_async import AzureAppConfigurationClient
+from ._azure_appconfiguration_client_async import AzureAppConfigurationClient
 
 __all__ = ["AzureAppConfigurationClient"]

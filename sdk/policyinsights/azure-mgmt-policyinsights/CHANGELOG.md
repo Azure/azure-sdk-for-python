@@ -1,5 +1,12 @@
 # Release History
 
+## 1.1.0b4 (2022-12-29)
+
+### Features Added
+
+  - Added operation group ComponentPolicyStatesOperations
+  - Model Operation has a new parameter is_data_action
+
 ## 1.1.0b3 (2022-10-10)
 
 ### Features Added

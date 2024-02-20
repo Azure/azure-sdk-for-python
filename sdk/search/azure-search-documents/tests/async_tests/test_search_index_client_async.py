@@ -5,17 +5,14 @@
 import asyncio
 import functools
 import pytest
-
-try:
-    from unittest import mock
-except ImportError:
-    import mock
+from unittest import mock
 from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.indexes.aio import SearchIndexClient, SearchIndexerClient
 
 CREDENTIAL = AzureKeyCredential(key="test_api_key")
+
 
 def await_prepared_test(test_fn):
     """Synchronous wrapper for async test methods. Used to avoid making changes
@@ -30,7 +27,8 @@ def await_prepared_test(test_fn):
 
     return run
 
-class TestSearchIndexClient(object):
+
+class TestSearchIndexClient:
     def test_index_init(self):
         client = SearchIndexClient("endpoint", CREDENTIAL)
         assert client._headers == {
@@ -54,16 +52,16 @@ class TestSearchIndexClient(object):
     def test_get_search_client(self):
         credential = AzureKeyCredential(key="old_api_key")
         client = SearchIndexClient("endpoint", credential)
-        search_client = client.get_search_client('index')
+        search_client = client.get_search_client("index")
         assert isinstance(search_client, SearchClient)
 
     def test_index_endpoint_https(self):
         credential = AzureKeyCredential(key="old_api_key")
         client = SearchIndexClient("endpoint", credential)
-        assert client._endpoint.startswith('https')
+        assert client._endpoint.startswith("https")
 
         client = SearchIndexClient("https://endpoint", credential)
-        assert client._endpoint.startswith('https')
+        assert client._endpoint.startswith("https")
 
         with pytest.raises(ValueError):
             client = SearchIndexClient("http://endpoint", credential)
@@ -72,7 +70,7 @@ class TestSearchIndexClient(object):
             client = SearchIndexClient(12345, credential)
 
 
-class TestSearchIndexerClient(object):
+class TestSearchIndexerClient:
     def test_indexer_init(self):
         client = SearchIndexerClient("endpoint", CREDENTIAL)
         assert client._headers == {
@@ -96,10 +94,10 @@ class TestSearchIndexerClient(object):
     def test_indexer_endpoint_https(self):
         credential = AzureKeyCredential(key="old_api_key")
         client = SearchIndexerClient("endpoint", credential)
-        assert client._endpoint.startswith('https')
+        assert client._endpoint.startswith("https")
 
         client = SearchIndexerClient("https://endpoint", credential)
-        assert client._endpoint.startswith('https')
+        assert client._endpoint.startswith("https")
 
         with pytest.raises(ValueError):
             client = SearchIndexerClient("http://endpoint", credential)

@@ -4,7 +4,6 @@ display_name: Generate One Line Tsv
 version: 0.0.1
 type: CommandComponent
 is_deterministic: true
-tags: {}
 inputs:
   content:
     type: string

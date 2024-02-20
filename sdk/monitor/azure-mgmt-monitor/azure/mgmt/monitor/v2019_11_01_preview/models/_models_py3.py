@@ -12,13 +12,14 @@ from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from .. import models as _models
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
@@ -35,7 +36,7 @@ class AzureMonitorMetricsDestination(_serialization.Model):
         "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, **kwargs):
+    def __init__(self, *, name: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: A friendly name for the destination.
          This name should be unique across all destinations (regardless of type) within the data
@@ -59,16 +60,16 @@ class DataCollectionRule(_serialization.Model):
      This property is optional and can be omitted if the rule is meant to be used via direct calls
      to the provisioned endpoint.
     :vartype data_sources:
-     ~$(python-base-namespace).v2019_11_01_preview.models.DataCollectionRuleDataSources
+     ~azure.mgmt.monitor.v2019_11_01_preview.models.DataCollectionRuleDataSources
     :ivar destinations: The specification of destinations.
     :vartype destinations:
-     ~$(python-base-namespace).v2019_11_01_preview.models.DataCollectionRuleDestinations
+     ~azure.mgmt.monitor.v2019_11_01_preview.models.DataCollectionRuleDestinations
     :ivar data_flows: The specification of data flows.
-    :vartype data_flows: list[~$(python-base-namespace).v2019_11_01_preview.models.DataFlow]
+    :vartype data_flows: list[~azure.mgmt.monitor.v2019_11_01_preview.models.DataFlow]
     :ivar provisioning_state: The resource provisioning state. Known values are: "Creating",
      "Updating", "Deleting", "Succeeded", and "Failed".
     :vartype provisioning_state: str or
-     ~$(python-base-namespace).v2019_11_01_preview.models.KnownDataCollectionRuleProvisioningState
+     ~azure.mgmt.monitor.v2019_11_01_preview.models.KnownDataCollectionRuleProvisioningState
     """
 
     _validation = {
@@ -92,8 +93,8 @@ class DataCollectionRule(_serialization.Model):
         data_sources: Optional["_models.DataCollectionRuleDataSources"] = None,
         destinations: Optional["_models.DataCollectionRuleDestinations"] = None,
         data_flows: Optional[List["_models.DataFlow"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword description: Description of the data collection rule.
         :paramtype description: str
@@ -101,12 +102,12 @@ class DataCollectionRule(_serialization.Model):
          This property is optional and can be omitted if the rule is meant to be used via direct calls
          to the provisioned endpoint.
         :paramtype data_sources:
-         ~$(python-base-namespace).v2019_11_01_preview.models.DataCollectionRuleDataSources
+         ~azure.mgmt.monitor.v2019_11_01_preview.models.DataCollectionRuleDataSources
         :keyword destinations: The specification of destinations.
         :paramtype destinations:
-         ~$(python-base-namespace).v2019_11_01_preview.models.DataCollectionRuleDestinations
+         ~azure.mgmt.monitor.v2019_11_01_preview.models.DataCollectionRuleDestinations
         :keyword data_flows: The specification of data flows.
-        :paramtype data_flows: list[~$(python-base-namespace).v2019_11_01_preview.models.DataFlow]
+        :paramtype data_flows: list[~azure.mgmt.monitor.v2019_11_01_preview.models.DataFlow]
         """
         super().__init__(**kwargs)
         self.description = description
@@ -130,7 +131,7 @@ class DataCollectionRuleAssociation(_serialization.Model):
     :ivar provisioning_state: The resource provisioning state. Known values are: "Creating",
      "Updating", "Deleting", "Succeeded", and "Failed".
     :vartype provisioning_state: str or
-     ~$(python-base-namespace).v2019_11_01_preview.models.KnownDataCollectionRuleAssociationProvisioningState
+     ~azure.mgmt.monitor.v2019_11_01_preview.models.KnownDataCollectionRuleAssociationProvisioningState
     """
 
     _validation = {
@@ -143,7 +144,9 @@ class DataCollectionRuleAssociation(_serialization.Model):
         "provisioning_state": {"key": "provisioningState", "type": "str"},
     }
 
-    def __init__(self, *, description: Optional[str] = None, data_collection_rule_id: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, description: Optional[str] = None, data_collection_rule_id: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword description: Description of the association.
         :paramtype description: str
@@ -178,7 +181,7 @@ class DataCollectionRuleAssociationProxyOnlyResource(_serialization.Model):
     :ivar provisioning_state: The resource provisioning state. Known values are: "Creating",
      "Updating", "Deleting", "Succeeded", and "Failed".
     :vartype provisioning_state: str or
-     ~$(python-base-namespace).v2019_11_01_preview.models.KnownDataCollectionRuleAssociationProvisioningState
+     ~azure.mgmt.monitor.v2019_11_01_preview.models.KnownDataCollectionRuleAssociationProvisioningState
     """
 
     _validation = {
@@ -199,7 +202,9 @@ class DataCollectionRuleAssociationProxyOnlyResource(_serialization.Model):
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(self, *, description: Optional[str] = None, data_collection_rule_id: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, description: Optional[str] = None, data_collection_rule_id: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword description: Description of the association.
         :paramtype description: str
@@ -224,7 +229,7 @@ class DataCollectionRuleAssociationProxyOnlyResourceListResult(_serialization.Mo
 
     :ivar value: A list of resources. Required.
     :vartype value:
-     list[~$(python-base-namespace).v2019_11_01_preview.models.DataCollectionRuleAssociationProxyOnlyResource]
+     list[~azure.mgmt.monitor.v2019_11_01_preview.models.DataCollectionRuleAssociationProxyOnlyResource]
     :ivar next_link: The URL to use for getting the next set of results.
     :vartype next_link: str
     """
@@ -243,12 +248,12 @@ class DataCollectionRuleAssociationProxyOnlyResourceListResult(_serialization.Mo
         *,
         value: List["_models.DataCollectionRuleAssociationProxyOnlyResource"],
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: A list of resources. Required.
         :paramtype value:
-         list[~$(python-base-namespace).v2019_11_01_preview.models.DataCollectionRuleAssociationProxyOnlyResource]
+         list[~azure.mgmt.monitor.v2019_11_01_preview.models.DataCollectionRuleAssociationProxyOnlyResource]
         :keyword next_link: The URL to use for getting the next set of results.
         :paramtype next_link: str
         """
@@ -270,7 +275,7 @@ class DataCollectionRuleAssociationProxyOnlyResourceProperties(DataCollectionRul
     :ivar provisioning_state: The resource provisioning state. Known values are: "Creating",
      "Updating", "Deleting", "Succeeded", and "Failed".
     :vartype provisioning_state: str or
-     ~$(python-base-namespace).v2019_11_01_preview.models.KnownDataCollectionRuleAssociationProvisioningState
+     ~azure.mgmt.monitor.v2019_11_01_preview.models.KnownDataCollectionRuleAssociationProvisioningState
     """
 
     _validation = {
@@ -283,7 +288,9 @@ class DataCollectionRuleAssociationProxyOnlyResourceProperties(DataCollectionRul
         "provisioning_state": {"key": "provisioningState", "type": "str"},
     }
 
-    def __init__(self, *, description: Optional[str] = None, data_collection_rule_id: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, description: Optional[str] = None, data_collection_rule_id: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword description: Description of the association.
         :paramtype description: str
@@ -299,15 +306,14 @@ class DataSourcesSpec(_serialization.Model):
 
     :ivar performance_counters: The list of performance counter data source configurations.
     :vartype performance_counters:
-     list[~$(python-base-namespace).v2019_11_01_preview.models.PerfCounterDataSource]
+     list[~azure.mgmt.monitor.v2019_11_01_preview.models.PerfCounterDataSource]
     :ivar windows_event_logs: The list of Windows Event Log data source configurations.
     :vartype windows_event_logs:
-     list[~$(python-base-namespace).v2019_11_01_preview.models.WindowsEventLogDataSource]
+     list[~azure.mgmt.monitor.v2019_11_01_preview.models.WindowsEventLogDataSource]
     :ivar syslog: The list of Syslog data source configurations.
-    :vartype syslog: list[~$(python-base-namespace).v2019_11_01_preview.models.SyslogDataSource]
+    :vartype syslog: list[~azure.mgmt.monitor.v2019_11_01_preview.models.SyslogDataSource]
     :ivar extensions: The list of Azure VM extension data source configurations.
-    :vartype extensions:
-     list[~$(python-base-namespace).v2019_11_01_preview.models.ExtensionDataSource]
+    :vartype extensions: list[~azure.mgmt.monitor.v2019_11_01_preview.models.ExtensionDataSource]
     """
 
     _attribute_map = {
@@ -324,20 +330,19 @@ class DataSourcesSpec(_serialization.Model):
         windows_event_logs: Optional[List["_models.WindowsEventLogDataSource"]] = None,
         syslog: Optional[List["_models.SyslogDataSource"]] = None,
         extensions: Optional[List["_models.ExtensionDataSource"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword performance_counters: The list of performance counter data source configurations.
         :paramtype performance_counters:
-         list[~$(python-base-namespace).v2019_11_01_preview.models.PerfCounterDataSource]
+         list[~azure.mgmt.monitor.v2019_11_01_preview.models.PerfCounterDataSource]
         :keyword windows_event_logs: The list of Windows Event Log data source configurations.
         :paramtype windows_event_logs:
-         list[~$(python-base-namespace).v2019_11_01_preview.models.WindowsEventLogDataSource]
+         list[~azure.mgmt.monitor.v2019_11_01_preview.models.WindowsEventLogDataSource]
         :keyword syslog: The list of Syslog data source configurations.
-        :paramtype syslog: list[~$(python-base-namespace).v2019_11_01_preview.models.SyslogDataSource]
+        :paramtype syslog: list[~azure.mgmt.monitor.v2019_11_01_preview.models.SyslogDataSource]
         :keyword extensions: The list of Azure VM extension data source configurations.
-        :paramtype extensions:
-         list[~$(python-base-namespace).v2019_11_01_preview.models.ExtensionDataSource]
+        :paramtype extensions: list[~azure.mgmt.monitor.v2019_11_01_preview.models.ExtensionDataSource]
         """
         super().__init__(**kwargs)
         self.performance_counters = performance_counters
@@ -348,19 +353,19 @@ class DataSourcesSpec(_serialization.Model):
 
 class DataCollectionRuleDataSources(DataSourcesSpec):
     """The specification of data sources.
-    This property is optional and can be omitted if the rule is meant to be used via direct calls to the provisioned endpoint.
+    This property is optional and can be omitted if the rule is meant to be used via direct calls
+    to the provisioned endpoint.
 
-        :ivar performance_counters: The list of performance counter data source configurations.
-        :vartype performance_counters:
-         list[~$(python-base-namespace).v2019_11_01_preview.models.PerfCounterDataSource]
-        :ivar windows_event_logs: The list of Windows Event Log data source configurations.
-        :vartype windows_event_logs:
-         list[~$(python-base-namespace).v2019_11_01_preview.models.WindowsEventLogDataSource]
-        :ivar syslog: The list of Syslog data source configurations.
-        :vartype syslog: list[~$(python-base-namespace).v2019_11_01_preview.models.SyslogDataSource]
-        :ivar extensions: The list of Azure VM extension data source configurations.
-        :vartype extensions:
-         list[~$(python-base-namespace).v2019_11_01_preview.models.ExtensionDataSource]
+    :ivar performance_counters: The list of performance counter data source configurations.
+    :vartype performance_counters:
+     list[~azure.mgmt.monitor.v2019_11_01_preview.models.PerfCounterDataSource]
+    :ivar windows_event_logs: The list of Windows Event Log data source configurations.
+    :vartype windows_event_logs:
+     list[~azure.mgmt.monitor.v2019_11_01_preview.models.WindowsEventLogDataSource]
+    :ivar syslog: The list of Syslog data source configurations.
+    :vartype syslog: list[~azure.mgmt.monitor.v2019_11_01_preview.models.SyslogDataSource]
+    :ivar extensions: The list of Azure VM extension data source configurations.
+    :vartype extensions: list[~azure.mgmt.monitor.v2019_11_01_preview.models.ExtensionDataSource]
     """
 
     _attribute_map = {
@@ -377,20 +382,19 @@ class DataCollectionRuleDataSources(DataSourcesSpec):
         windows_event_logs: Optional[List["_models.WindowsEventLogDataSource"]] = None,
         syslog: Optional[List["_models.SyslogDataSource"]] = None,
         extensions: Optional[List["_models.ExtensionDataSource"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword performance_counters: The list of performance counter data source configurations.
         :paramtype performance_counters:
-         list[~$(python-base-namespace).v2019_11_01_preview.models.PerfCounterDataSource]
+         list[~azure.mgmt.monitor.v2019_11_01_preview.models.PerfCounterDataSource]
         :keyword windows_event_logs: The list of Windows Event Log data source configurations.
         :paramtype windows_event_logs:
-         list[~$(python-base-namespace).v2019_11_01_preview.models.WindowsEventLogDataSource]
+         list[~azure.mgmt.monitor.v2019_11_01_preview.models.WindowsEventLogDataSource]
         :keyword syslog: The list of Syslog data source configurations.
-        :paramtype syslog: list[~$(python-base-namespace).v2019_11_01_preview.models.SyslogDataSource]
+        :paramtype syslog: list[~azure.mgmt.monitor.v2019_11_01_preview.models.SyslogDataSource]
         :keyword extensions: The list of Azure VM extension data source configurations.
-        :paramtype extensions:
-         list[~$(python-base-namespace).v2019_11_01_preview.models.ExtensionDataSource]
+        :paramtype extensions: list[~azure.mgmt.monitor.v2019_11_01_preview.models.ExtensionDataSource]
         """
         super().__init__(
             performance_counters=performance_counters,
@@ -406,10 +410,10 @@ class DestinationsSpec(_serialization.Model):
 
     :ivar log_analytics: List of Log Analytics destinations.
     :vartype log_analytics:
-     list[~$(python-base-namespace).v2019_11_01_preview.models.LogAnalyticsDestination]
+     list[~azure.mgmt.monitor.v2019_11_01_preview.models.LogAnalyticsDestination]
     :ivar azure_monitor_metrics: Azure Monitor Metrics destination.
     :vartype azure_monitor_metrics:
-     ~$(python-base-namespace).v2019_11_01_preview.models.DestinationsSpecAzureMonitorMetrics
+     ~azure.mgmt.monitor.v2019_11_01_preview.models.DestinationsSpecAzureMonitorMetrics
     """
 
     _attribute_map = {
@@ -422,15 +426,15 @@ class DestinationsSpec(_serialization.Model):
         *,
         log_analytics: Optional[List["_models.LogAnalyticsDestination"]] = None,
         azure_monitor_metrics: Optional["_models.DestinationsSpecAzureMonitorMetrics"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword log_analytics: List of Log Analytics destinations.
         :paramtype log_analytics:
-         list[~$(python-base-namespace).v2019_11_01_preview.models.LogAnalyticsDestination]
+         list[~azure.mgmt.monitor.v2019_11_01_preview.models.LogAnalyticsDestination]
         :keyword azure_monitor_metrics: Azure Monitor Metrics destination.
         :paramtype azure_monitor_metrics:
-         ~$(python-base-namespace).v2019_11_01_preview.models.DestinationsSpecAzureMonitorMetrics
+         ~azure.mgmt.monitor.v2019_11_01_preview.models.DestinationsSpecAzureMonitorMetrics
         """
         super().__init__(**kwargs)
         self.log_analytics = log_analytics
@@ -442,10 +446,10 @@ class DataCollectionRuleDestinations(DestinationsSpec):
 
     :ivar log_analytics: List of Log Analytics destinations.
     :vartype log_analytics:
-     list[~$(python-base-namespace).v2019_11_01_preview.models.LogAnalyticsDestination]
+     list[~azure.mgmt.monitor.v2019_11_01_preview.models.LogAnalyticsDestination]
     :ivar azure_monitor_metrics: Azure Monitor Metrics destination.
     :vartype azure_monitor_metrics:
-     ~$(python-base-namespace).v2019_11_01_preview.models.DestinationsSpecAzureMonitorMetrics
+     ~azure.mgmt.monitor.v2019_11_01_preview.models.DestinationsSpecAzureMonitorMetrics
     """
 
     _attribute_map = {
@@ -458,15 +462,15 @@ class DataCollectionRuleDestinations(DestinationsSpec):
         *,
         log_analytics: Optional[List["_models.LogAnalyticsDestination"]] = None,
         azure_monitor_metrics: Optional["_models.DestinationsSpecAzureMonitorMetrics"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword log_analytics: List of Log Analytics destinations.
         :paramtype log_analytics:
-         list[~$(python-base-namespace).v2019_11_01_preview.models.LogAnalyticsDestination]
+         list[~azure.mgmt.monitor.v2019_11_01_preview.models.LogAnalyticsDestination]
         :keyword azure_monitor_metrics: Azure Monitor Metrics destination.
         :paramtype azure_monitor_metrics:
-         ~$(python-base-namespace).v2019_11_01_preview.models.DestinationsSpecAzureMonitorMetrics
+         ~azure.mgmt.monitor.v2019_11_01_preview.models.DestinationsSpecAzureMonitorMetrics
         """
         super().__init__(log_analytics=log_analytics, azure_monitor_metrics=azure_monitor_metrics, **kwargs)
 
@@ -484,7 +488,7 @@ class DataCollectionRuleResource(_serialization.Model):  # pylint: disable=too-m
     :vartype tags: dict[str, str]
     :ivar kind: The kind of the resource. Known values are: "Linux" and "Windows".
     :vartype kind: str or
-     ~$(python-base-namespace).v2019_11_01_preview.models.KnownDataCollectionRuleResourceKind
+     ~azure.mgmt.monitor.v2019_11_01_preview.models.KnownDataCollectionRuleResourceKind
     :ivar id: Fully qualified ID of the resource.
     :vartype id: str
     :ivar name: The name of the resource.
@@ -501,16 +505,16 @@ class DataCollectionRuleResource(_serialization.Model):  # pylint: disable=too-m
      This property is optional and can be omitted if the rule is meant to be used via direct calls
      to the provisioned endpoint.
     :vartype data_sources:
-     ~$(python-base-namespace).v2019_11_01_preview.models.DataCollectionRuleDataSources
+     ~azure.mgmt.monitor.v2019_11_01_preview.models.DataCollectionRuleDataSources
     :ivar destinations: The specification of destinations.
     :vartype destinations:
-     ~$(python-base-namespace).v2019_11_01_preview.models.DataCollectionRuleDestinations
+     ~azure.mgmt.monitor.v2019_11_01_preview.models.DataCollectionRuleDestinations
     :ivar data_flows: The specification of data flows.
-    :vartype data_flows: list[~$(python-base-namespace).v2019_11_01_preview.models.DataFlow]
+    :vartype data_flows: list[~azure.mgmt.monitor.v2019_11_01_preview.models.DataFlow]
     :ivar provisioning_state: The resource provisioning state. Known values are: "Creating",
      "Updating", "Deleting", "Succeeded", and "Failed".
     :vartype provisioning_state: str or
-     ~$(python-base-namespace).v2019_11_01_preview.models.KnownDataCollectionRuleProvisioningState
+     ~azure.mgmt.monitor.v2019_11_01_preview.models.KnownDataCollectionRuleProvisioningState
     """
 
     _validation = {
@@ -549,8 +553,8 @@ class DataCollectionRuleResource(_serialization.Model):  # pylint: disable=too-m
         data_sources: Optional["_models.DataCollectionRuleDataSources"] = None,
         destinations: Optional["_models.DataCollectionRuleDestinations"] = None,
         data_flows: Optional[List["_models.DataFlow"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
@@ -558,19 +562,19 @@ class DataCollectionRuleResource(_serialization.Model):  # pylint: disable=too-m
         :paramtype tags: dict[str, str]
         :keyword kind: The kind of the resource. Known values are: "Linux" and "Windows".
         :paramtype kind: str or
-         ~$(python-base-namespace).v2019_11_01_preview.models.KnownDataCollectionRuleResourceKind
+         ~azure.mgmt.monitor.v2019_11_01_preview.models.KnownDataCollectionRuleResourceKind
         :keyword description: Description of the data collection rule.
         :paramtype description: str
         :keyword data_sources: The specification of data sources.
          This property is optional and can be omitted if the rule is meant to be used via direct calls
          to the provisioned endpoint.
         :paramtype data_sources:
-         ~$(python-base-namespace).v2019_11_01_preview.models.DataCollectionRuleDataSources
+         ~azure.mgmt.monitor.v2019_11_01_preview.models.DataCollectionRuleDataSources
         :keyword destinations: The specification of destinations.
         :paramtype destinations:
-         ~$(python-base-namespace).v2019_11_01_preview.models.DataCollectionRuleDestinations
+         ~azure.mgmt.monitor.v2019_11_01_preview.models.DataCollectionRuleDestinations
         :keyword data_flows: The specification of data flows.
-        :paramtype data_flows: list[~$(python-base-namespace).v2019_11_01_preview.models.DataFlow]
+        :paramtype data_flows: list[~azure.mgmt.monitor.v2019_11_01_preview.models.DataFlow]
         """
         super().__init__(**kwargs)
         self.location = location
@@ -594,8 +598,7 @@ class DataCollectionRuleResourceListResult(_serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar value: A list of resources. Required.
-    :vartype value:
-     list[~$(python-base-namespace).v2019_11_01_preview.models.DataCollectionRuleResource]
+    :vartype value: list[~azure.mgmt.monitor.v2019_11_01_preview.models.DataCollectionRuleResource]
     :ivar next_link: The URL to use for getting the next set of results.
     :vartype next_link: str
     """
@@ -609,11 +612,13 @@ class DataCollectionRuleResourceListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.DataCollectionRuleResource"], next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: List["_models.DataCollectionRuleResource"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: A list of resources. Required.
         :paramtype value:
-         list[~$(python-base-namespace).v2019_11_01_preview.models.DataCollectionRuleResource]
+         list[~azure.mgmt.monitor.v2019_11_01_preview.models.DataCollectionRuleResource]
         :keyword next_link: The URL to use for getting the next set of results.
         :paramtype next_link: str
         """
@@ -635,16 +640,16 @@ class DataCollectionRuleResourceProperties(DataCollectionRule):
      This property is optional and can be omitted if the rule is meant to be used via direct calls
      to the provisioned endpoint.
     :vartype data_sources:
-     ~$(python-base-namespace).v2019_11_01_preview.models.DataCollectionRuleDataSources
+     ~azure.mgmt.monitor.v2019_11_01_preview.models.DataCollectionRuleDataSources
     :ivar destinations: The specification of destinations.
     :vartype destinations:
-     ~$(python-base-namespace).v2019_11_01_preview.models.DataCollectionRuleDestinations
+     ~azure.mgmt.monitor.v2019_11_01_preview.models.DataCollectionRuleDestinations
     :ivar data_flows: The specification of data flows.
-    :vartype data_flows: list[~$(python-base-namespace).v2019_11_01_preview.models.DataFlow]
+    :vartype data_flows: list[~azure.mgmt.monitor.v2019_11_01_preview.models.DataFlow]
     :ivar provisioning_state: The resource provisioning state. Known values are: "Creating",
      "Updating", "Deleting", "Succeeded", and "Failed".
     :vartype provisioning_state: str or
-     ~$(python-base-namespace).v2019_11_01_preview.models.KnownDataCollectionRuleProvisioningState
+     ~azure.mgmt.monitor.v2019_11_01_preview.models.KnownDataCollectionRuleProvisioningState
     """
 
     _validation = {
@@ -668,8 +673,8 @@ class DataCollectionRuleResourceProperties(DataCollectionRule):
         data_sources: Optional["_models.DataCollectionRuleDataSources"] = None,
         destinations: Optional["_models.DataCollectionRuleDestinations"] = None,
         data_flows: Optional[List["_models.DataFlow"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword description: Description of the data collection rule.
         :paramtype description: str
@@ -677,12 +682,12 @@ class DataCollectionRuleResourceProperties(DataCollectionRule):
          This property is optional and can be omitted if the rule is meant to be used via direct calls
          to the provisioned endpoint.
         :paramtype data_sources:
-         ~$(python-base-namespace).v2019_11_01_preview.models.DataCollectionRuleDataSources
+         ~azure.mgmt.monitor.v2019_11_01_preview.models.DataCollectionRuleDataSources
         :keyword destinations: The specification of destinations.
         :paramtype destinations:
-         ~$(python-base-namespace).v2019_11_01_preview.models.DataCollectionRuleDestinations
+         ~azure.mgmt.monitor.v2019_11_01_preview.models.DataCollectionRuleDestinations
         :keyword data_flows: The specification of data flows.
-        :paramtype data_flows: list[~$(python-base-namespace).v2019_11_01_preview.models.DataFlow]
+        :paramtype data_flows: list[~azure.mgmt.monitor.v2019_11_01_preview.models.DataFlow]
         """
         super().__init__(
             description=description,
@@ -698,7 +703,7 @@ class DataFlow(_serialization.Model):
 
     :ivar streams: List of streams for this data flow.
     :vartype streams: list[str or
-     ~$(python-base-namespace).v2019_11_01_preview.models.KnownDataFlowStreams]
+     ~azure.mgmt.monitor.v2019_11_01_preview.models.KnownDataFlowStreams]
     :ivar destinations: List of destinations for this data flow.
     :vartype destinations: list[str]
     """
@@ -713,12 +718,12 @@ class DataFlow(_serialization.Model):
         *,
         streams: Optional[List[Union[str, "_models.KnownDataFlowStreams"]]] = None,
         destinations: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword streams: List of streams for this data flow.
         :paramtype streams: list[str or
-         ~$(python-base-namespace).v2019_11_01_preview.models.KnownDataFlowStreams]
+         ~azure.mgmt.monitor.v2019_11_01_preview.models.KnownDataFlowStreams]
         :keyword destinations: List of destinations for this data flow.
         :paramtype destinations: list[str]
         """
@@ -740,7 +745,7 @@ class DestinationsSpecAzureMonitorMetrics(AzureMonitorMetricsDestination):
         "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, **kwargs):
+    def __init__(self, *, name: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: A friendly name for the destination.
          This name should be unique across all destinations (regardless of type) within the data
@@ -771,7 +776,7 @@ class ErrorAdditionalInfo(_serialization.Model):
         "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.type = None
@@ -790,10 +795,10 @@ class ErrorDetail(_serialization.Model):
     :ivar target: The error target.
     :vartype target: str
     :ivar details: The error details.
-    :vartype details: list[~$(python-base-namespace).v2019_11_01_preview.models.ErrorDetail]
+    :vartype details: list[~azure.mgmt.monitor.v2019_11_01_preview.models.ErrorDetail]
     :ivar additional_info: The error additional info.
     :vartype additional_info:
-     list[~$(python-base-namespace).v2019_11_01_preview.models.ErrorAdditionalInfo]
+     list[~azure.mgmt.monitor.v2019_11_01_preview.models.ErrorAdditionalInfo]
     """
 
     _validation = {
@@ -812,7 +817,7 @@ class ErrorDetail(_serialization.Model):
         "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -823,47 +828,49 @@ class ErrorDetail(_serialization.Model):
 
 
 class ErrorResponse(_serialization.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
 
     :ivar error: The error object.
-    :vartype error: ~$(python-base-namespace).v2019_11_01_preview.models.ErrorDetail
+    :vartype error: ~azure.mgmt.monitor.v2019_11_01_preview.models.ErrorDetail
     """
 
     _attribute_map = {
         "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
         """
         :keyword error: The error object.
-        :paramtype error: ~$(python-base-namespace).v2019_11_01_preview.models.ErrorDetail
+        :paramtype error: ~azure.mgmt.monitor.v2019_11_01_preview.models.ErrorDetail
         """
         super().__init__(**kwargs)
         self.error = error
 
 
 class ExtensionDataSource(_serialization.Model):
-    """Definition of which data will be collected from a separate VM extension that integrates with the Azure Monitor Agent.
+    """Definition of which data will be collected from a separate VM extension that integrates with
+    the Azure Monitor Agent.
     Collected from either Windows and Linux machines, depending on which extension is defined.
 
-        All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to Azure.
 
-        :ivar streams: List of streams that this data source will be sent to.
-         A stream indicates what schema will be used for this data and usually what table in Log
-         Analytics the data will be sent to.
-        :vartype streams: list[str or
-         ~$(python-base-namespace).v2019_11_01_preview.models.KnownExtensionDataSourceStreams]
-        :ivar extension_name: The name of the VM extension. Required.
-        :vartype extension_name: str
-        :ivar extension_settings: The extension settings. The format is specific for particular
-         extension.
-        :vartype extension_settings: JSON
-        :ivar input_data_sources: The list of data sources this extension needs data from.
-        :vartype input_data_sources: list[str]
-        :ivar name: A friendly name for the data source.
-         This name should be unique across all data sources (regardless of type) within the data
-         collection rule.
-        :vartype name: str
+    :ivar streams: List of streams that this data source will be sent to.
+     A stream indicates what schema will be used for this data and usually what table in Log
+     Analytics the data will be sent to.
+    :vartype streams: list[str or
+     ~azure.mgmt.monitor.v2019_11_01_preview.models.KnownExtensionDataSourceStreams]
+    :ivar extension_name: The name of the VM extension. Required.
+    :vartype extension_name: str
+    :ivar extension_settings: The extension settings. The format is specific for particular
+     extension.
+    :vartype extension_settings: JSON
+    :ivar input_data_sources: The list of data sources this extension needs data from.
+    :vartype input_data_sources: list[str]
+    :ivar name: A friendly name for the data source.
+     This name should be unique across all data sources (regardless of type) within the data
+     collection rule.
+    :vartype name: str
     """
 
     _validation = {
@@ -886,14 +893,14 @@ class ExtensionDataSource(_serialization.Model):
         extension_settings: Optional[JSON] = None,
         input_data_sources: Optional[List[str]] = None,
         name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword streams: List of streams that this data source will be sent to.
          A stream indicates what schema will be used for this data and usually what table in Log
          Analytics the data will be sent to.
         :paramtype streams: list[str or
-         ~$(python-base-namespace).v2019_11_01_preview.models.KnownExtensionDataSourceStreams]
+         ~azure.mgmt.monitor.v2019_11_01_preview.models.KnownExtensionDataSourceStreams]
         :keyword extension_name: The name of the VM extension. Required.
         :paramtype extension_name: str
         :keyword extension_settings: The extension settings. The format is specific for particular
@@ -939,7 +946,9 @@ class LogAnalyticsDestination(_serialization.Model):
         "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(self, *, workspace_resource_id: Optional[str] = None, name: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, workspace_resource_id: Optional[str] = None, name: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword workspace_resource_id: The resource ID of the Log Analytics workspace.
         :paramtype workspace_resource_id: str
@@ -955,26 +964,27 @@ class LogAnalyticsDestination(_serialization.Model):
 
 
 class PerfCounterDataSource(_serialization.Model):
-    """Definition of which performance counters will be collected and how they will be collected by this data collection rule.
+    """Definition of which performance counters will be collected and how they will be collected by
+    this data collection rule.
     Collected from both Windows and Linux machines where the counter is present.
 
-        :ivar streams: List of streams that this data source will be sent to.
-         A stream indicates what schema will be used for this data and usually what table in Log
-         Analytics the data will be sent to.
-        :vartype streams: list[str or
-         ~$(python-base-namespace).v2019_11_01_preview.models.KnownPerfCounterDataSourceStreams]
-        :ivar sampling_frequency_in_seconds: The number of seconds between consecutive counter
-         measurements (samples).
-        :vartype sampling_frequency_in_seconds: int
-        :ivar counter_specifiers: A list of specifier names of the performance counters you want to
-         collect.
-         Use a wildcard (*) to collect a counter for all instances.
-         To get a list of performance counters on Windows, run the command 'typeperf'.
-        :vartype counter_specifiers: list[str]
-        :ivar name: A friendly name for the data source.
-         This name should be unique across all data sources (regardless of type) within the data
-         collection rule.
-        :vartype name: str
+    :ivar streams: List of streams that this data source will be sent to.
+     A stream indicates what schema will be used for this data and usually what table in Log
+     Analytics the data will be sent to.
+    :vartype streams: list[str or
+     ~azure.mgmt.monitor.v2019_11_01_preview.models.KnownPerfCounterDataSourceStreams]
+    :ivar sampling_frequency_in_seconds: The number of seconds between consecutive counter
+     measurements (samples).
+    :vartype sampling_frequency_in_seconds: int
+    :ivar counter_specifiers: A list of specifier names of the performance counters you want to
+     collect.
+     Use a wildcard (*) to collect a counter for all instances.
+     To get a list of performance counters on Windows, run the command 'typeperf'.
+    :vartype counter_specifiers: list[str]
+    :ivar name: A friendly name for the data source.
+     This name should be unique across all data sources (regardless of type) within the data
+     collection rule.
+    :vartype name: str
     """
 
     _attribute_map = {
@@ -991,14 +1001,14 @@ class PerfCounterDataSource(_serialization.Model):
         sampling_frequency_in_seconds: Optional[int] = None,
         counter_specifiers: Optional[List[str]] = None,
         name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword streams: List of streams that this data source will be sent to.
          A stream indicates what schema will be used for this data and usually what table in Log
          Analytics the data will be sent to.
         :paramtype streams: list[str or
-         ~$(python-base-namespace).v2019_11_01_preview.models.KnownPerfCounterDataSourceStreams]
+         ~azure.mgmt.monitor.v2019_11_01_preview.models.KnownPerfCounterDataSourceStreams]
         :keyword sampling_frequency_in_seconds: The number of seconds between consecutive counter
          measurements (samples).
         :paramtype sampling_frequency_in_seconds: int
@@ -1030,7 +1040,7 @@ class ResourceForUpdate(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -1043,21 +1053,21 @@ class SyslogDataSource(_serialization.Model):
     """Definition of which syslog data will be collected and how it will be collected.
     Only collected from Linux machines.
 
-        :ivar streams: List of streams that this data source will be sent to.
-         A stream indicates what schema will be used for this data and usually what table in Log
-         Analytics the data will be sent to.
-        :vartype streams: list[str or
-         ~$(python-base-namespace).v2019_11_01_preview.models.KnownSyslogDataSourceStreams]
-        :ivar facility_names: The list of facility names.
-        :vartype facility_names: list[str or
-         ~$(python-base-namespace).v2019_11_01_preview.models.KnownSyslogDataSourceFacilityNames]
-        :ivar log_levels: The log levels to collect.
-        :vartype log_levels: list[str or
-         ~$(python-base-namespace).v2019_11_01_preview.models.KnownSyslogDataSourceLogLevels]
-        :ivar name: A friendly name for the data source.
-         This name should be unique across all data sources (regardless of type) within the data
-         collection rule.
-        :vartype name: str
+    :ivar streams: List of streams that this data source will be sent to.
+     A stream indicates what schema will be used for this data and usually what table in Log
+     Analytics the data will be sent to.
+    :vartype streams: list[str or
+     ~azure.mgmt.monitor.v2019_11_01_preview.models.KnownSyslogDataSourceStreams]
+    :ivar facility_names: The list of facility names.
+    :vartype facility_names: list[str or
+     ~azure.mgmt.monitor.v2019_11_01_preview.models.KnownSyslogDataSourceFacilityNames]
+    :ivar log_levels: The log levels to collect.
+    :vartype log_levels: list[str or
+     ~azure.mgmt.monitor.v2019_11_01_preview.models.KnownSyslogDataSourceLogLevels]
+    :ivar name: A friendly name for the data source.
+     This name should be unique across all data sources (regardless of type) within the data
+     collection rule.
+    :vartype name: str
     """
 
     _attribute_map = {
@@ -1074,20 +1084,20 @@ class SyslogDataSource(_serialization.Model):
         facility_names: Optional[List[Union[str, "_models.KnownSyslogDataSourceFacilityNames"]]] = None,
         log_levels: Optional[List[Union[str, "_models.KnownSyslogDataSourceLogLevels"]]] = None,
         name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword streams: List of streams that this data source will be sent to.
          A stream indicates what schema will be used for this data and usually what table in Log
          Analytics the data will be sent to.
         :paramtype streams: list[str or
-         ~$(python-base-namespace).v2019_11_01_preview.models.KnownSyslogDataSourceStreams]
+         ~azure.mgmt.monitor.v2019_11_01_preview.models.KnownSyslogDataSourceStreams]
         :keyword facility_names: The list of facility names.
         :paramtype facility_names: list[str or
-         ~$(python-base-namespace).v2019_11_01_preview.models.KnownSyslogDataSourceFacilityNames]
+         ~azure.mgmt.monitor.v2019_11_01_preview.models.KnownSyslogDataSourceFacilityNames]
         :keyword log_levels: The log levels to collect.
         :paramtype log_levels: list[str or
-         ~$(python-base-namespace).v2019_11_01_preview.models.KnownSyslogDataSourceLogLevels]
+         ~azure.mgmt.monitor.v2019_11_01_preview.models.KnownSyslogDataSourceLogLevels]
         :keyword name: A friendly name for the data source.
          This name should be unique across all data sources (regardless of type) within the data
          collection rule.
@@ -1104,17 +1114,17 @@ class WindowsEventLogDataSource(_serialization.Model):
     """Definition of which Windows Event Log events will be collected and how they will be collected.
     Only collected from Windows machines.
 
-        :ivar streams: List of streams that this data source will be sent to.
-         A stream indicates what schema will be used for this data and usually what table in Log
-         Analytics the data will be sent to.
-        :vartype streams: list[str or
-         ~$(python-base-namespace).v2019_11_01_preview.models.KnownWindowsEventLogDataSourceStreams]
-        :ivar x_path_queries: A list of Windows Event Log queries in XPATH format.
-        :vartype x_path_queries: list[str]
-        :ivar name: A friendly name for the data source.
-         This name should be unique across all data sources (regardless of type) within the data
-         collection rule.
-        :vartype name: str
+    :ivar streams: List of streams that this data source will be sent to.
+     A stream indicates what schema will be used for this data and usually what table in Log
+     Analytics the data will be sent to.
+    :vartype streams: list[str or
+     ~azure.mgmt.monitor.v2019_11_01_preview.models.KnownWindowsEventLogDataSourceStreams]
+    :ivar x_path_queries: A list of Windows Event Log queries in XPATH format.
+    :vartype x_path_queries: list[str]
+    :ivar name: A friendly name for the data source.
+     This name should be unique across all data sources (regardless of type) within the data
+     collection rule.
+    :vartype name: str
     """
 
     _attribute_map = {
@@ -1129,14 +1139,14 @@ class WindowsEventLogDataSource(_serialization.Model):
         streams: Optional[List[Union[str, "_models.KnownWindowsEventLogDataSourceStreams"]]] = None,
         x_path_queries: Optional[List[str]] = None,
         name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword streams: List of streams that this data source will be sent to.
          A stream indicates what schema will be used for this data and usually what table in Log
          Analytics the data will be sent to.
         :paramtype streams: list[str or
-         ~$(python-base-namespace).v2019_11_01_preview.models.KnownWindowsEventLogDataSourceStreams]
+         ~azure.mgmt.monitor.v2019_11_01_preview.models.KnownWindowsEventLogDataSourceStreams]
         :keyword x_path_queries: A list of Windows Event Log queries in XPATH format.
         :paramtype x_path_queries: list[str]
         :keyword name: A friendly name for the data source.

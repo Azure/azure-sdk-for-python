@@ -97,7 +97,7 @@ from ._my_sql_management_client_enums import SslEnforcementEnum
 from ._my_sql_management_client_enums import StorageAutogrow
 from ._my_sql_management_client_enums import VirtualNetworkRuleState
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [

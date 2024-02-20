@@ -29,14 +29,13 @@ def main():
         subscription_id="11111111-1111-1111-1111-111111111111",
     )
 
-    response = client.private_endpoint_connections.begin_delete(
+    client.private_endpoint_connections.begin_delete(
         resource_group_name="myResourceGroup",
         workspace_name="myWorkspace",
         private_endpoint_connection_name="myWorkspace.23456789-1111-1111-1111-111111111111",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/databricks/resource-manager/Microsoft.Databricks/preview/2022-04-01-preview/examples/PrivateEndpointConnectionsDelete.json
+# x-ms-original-file: specification/databricks/resource-manager/Microsoft.Databricks/stable/2023-02-01/examples/PrivateEndpointConnectionsDelete.json
 if __name__ == "__main__":
     main()

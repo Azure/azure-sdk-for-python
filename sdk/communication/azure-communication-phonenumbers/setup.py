@@ -37,13 +37,14 @@ setup(
     # ensure that these are updated to reflect the package owners' information
     long_description=long_description,
     url='https://github.com/Azure/azure-sdk-for-python',
+    keywords="azure, azure sdk",
     author='Microsoft Corporation',
     author_email='azuresdkengsysadmins@microsoft.com',
 
     license='MIT License',
     # ensure that the development status reflects the status of your package
     classifiers=[
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
 
         'Programming Language :: Python',
         "Programming Language :: Python :: 3 :: Only",

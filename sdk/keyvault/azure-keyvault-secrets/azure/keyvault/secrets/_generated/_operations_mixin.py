@@ -115,7 +115,7 @@ class KeyVaultClientOperationsMixin(object):
         :type secret_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: BackupSecretResult or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_3.models.BackupSecretResult
+        :rtype: ~azure.keyvault.v7_4.models.BackupSecretResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('backup_secret')
@@ -129,6 +129,8 @@ class KeyVaultClientOperationsMixin(object):
             from .v7_2.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.3':
             from .v7_3.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.4':
+            from .v7_4.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'backup_secret'".format(api_version))
         mixin_instance = OperationClass()
@@ -190,8 +192,8 @@ class KeyVaultClientOperationsMixin(object):
         :type vault_base_url: str
         :param certificate_name: The name of the certificate. Required.
         :type certificate_name: str
-        :param parameters: The parameters to create a certificate. Is either a model type or a IO type.
-         Required.
+        :param parameters: The parameters to create a certificate. Is either a
+         CertificateCreateParameters type or a IO type. Required.
         :type parameters: ~azure.keyvault.v2016_10_01.models.CertificateCreateParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -235,8 +237,8 @@ class KeyVaultClientOperationsMixin(object):
         :param key_name: The name for the new key. The system will generate the version name for the
          new key. Required.
         :type key_name: str
-        :param parameters: The parameters to create a key. Is either a model type or a IO type.
-         Required.
+        :param parameters: The parameters to create a key. Is either a KeyCreateParameters type or a IO
+         type. Required.
         :type parameters: ~azure.keyvault.v2016_10_01.models.KeyCreateParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -285,8 +287,8 @@ class KeyVaultClientOperationsMixin(object):
         :type key_name: str
         :param key_version: The version of the key. Required.
         :type key_version: str
-        :param parameters: The parameters for the decryption operation. Is either a model type or a IO
-         type. Required.
+        :param parameters: The parameters for the decryption operation. Is either a
+         KeyOperationsParameters type or a IO type. Required.
         :type parameters: ~azure.keyvault.v2016_10_01.models.KeyOperationsParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -547,7 +549,7 @@ class KeyVaultClientOperationsMixin(object):
         :type secret_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DeletedSecretBundle or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_3.models.DeletedSecretBundle
+        :rtype: ~azure.keyvault.v7_4.models.DeletedSecretBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('delete_secret')
@@ -561,6 +563,8 @@ class KeyVaultClientOperationsMixin(object):
             from .v7_2.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.3':
             from .v7_3.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.4':
+            from .v7_4.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'delete_secret'".format(api_version))
         mixin_instance = OperationClass()
@@ -630,8 +634,8 @@ class KeyVaultClientOperationsMixin(object):
         :type key_name: str
         :param key_version: The version of the key. Required.
         :type key_version: str
-        :param parameters: The parameters for the encryption operation. Is either a model type or a IO
-         type. Required.
+        :param parameters: The parameters for the encryption operation. Is either a
+         KeyOperationsParameters type or a IO type. Required.
         :type parameters: ~azure.keyvault.v2016_10_01.models.KeyOperationsParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -780,8 +784,13 @@ class KeyVaultClientOperationsMixin(object):
 
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net. Required.
         :type vault_base_url: str
-        :param maxresults: Maximum number of results to return in a page. If not specified the service
-         will return up to 25 results. Default value is None.
+        :param maxresults: Specifies the maximum number of results to return in a page. Setting
+         maxresults to a value less than 1 or greater than 25 results in error response code 400 (Bad
+         Request). If there are additional results to return, then the service returns a nextLink
+         containing a skip token for pagination. In certain cases, the service might return fewer
+         results than specified by maxresults (even 0 results) and also return a nextLink. Clients
+         should not make any assumptions on the minimum number of results per page, and should enumerate
+         all pages until the nextLink becomes null. Default value is None.
         :type maxresults: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either CertificateIssuerItem or the result of
@@ -893,8 +902,13 @@ class KeyVaultClientOperationsMixin(object):
         :type vault_base_url: str
         :param certificate_name: The name of the certificate. Required.
         :type certificate_name: str
-        :param maxresults: Maximum number of results to return in a page. If not specified the service
-         will return up to 25 results. Default value is None.
+        :param maxresults: Specifies the maximum number of results to return in a page. Setting
+         maxresults to a value less than 1 or greater than 25 results in error response code 400 (Bad
+         Request). If there are additional results to return, then the service returns a nextLink
+         containing a skip token for pagination. In certain cases, the service might return fewer
+         results than specified by maxresults (even 0 results) and also return a nextLink. Clients
+         should not make any assumptions on the minimum number of results per page, and should enumerate
+         all pages until the nextLink becomes null. Default value is None.
         :type maxresults: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either CertificateItem or the result of cls(response)
@@ -930,8 +944,13 @@ class KeyVaultClientOperationsMixin(object):
 
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net. Required.
         :type vault_base_url: str
-        :param maxresults: Maximum number of results to return in a page. If not specified the service
-         will return up to 25 results. Default value is None.
+        :param maxresults: Specifies the maximum number of results to return in a page. Setting
+         maxresults to a value less than 1 or greater than 25 results in error response code 400 (Bad
+         Request). If there are additional results to return, then the service returns a nextLink
+         containing a skip token for pagination. In certain cases, the service might return fewer
+         results than specified by maxresults (even 0 results) and also return a nextLink. Clients
+         should not make any assumptions on the minimum number of results per page, and should enumerate
+         all pages until the nextLink becomes null. Default value is None.
         :type maxresults: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either CertificateItem or the result of cls(response)
@@ -1006,8 +1025,13 @@ class KeyVaultClientOperationsMixin(object):
 
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net. Required.
         :type vault_base_url: str
-        :param maxresults: Maximum number of results to return in a page. If not specified the service
-         will return up to 25 results. Default value is None.
+        :param maxresults: Specifies the maximum number of results to return in a page. Setting
+         maxresults to a value less than 1 or greater than 25 results in error response code 400 (Bad
+         Request). If there are additional results to return, then the service returns a nextLink
+         containing a skip token for pagination. In certain cases, the service might return fewer
+         results than specified by maxresults (even 0 results) and also return a nextLink. Clients
+         should not make any assumptions on the minimum number of results per page, and should enumerate
+         all pages until the nextLink becomes null. Default value is None.
         :type maxresults: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DeletedCertificateItem or the result of
@@ -1084,8 +1108,13 @@ class KeyVaultClientOperationsMixin(object):
 
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net. Required.
         :type vault_base_url: str
-        :param maxresults: Maximum number of results to return in a page. If not specified the service
-         will return up to 25 results. Default value is None.
+        :param maxresults: Specifies the maximum number of results to return in a page. Setting
+         maxresults to a value less than 1 or greater than 25 results in error response code 400 (Bad
+         Request). If there are additional results to return, then the service returns a nextLink
+         containing a skip token for pagination. In certain cases, the service might return fewer
+         results than specified by maxresults (even 0 results) and also return a nextLink. Clients
+         should not make any assumptions on the minimum number of results per page, and should enumerate
+         all pages until the nextLink becomes null. Default value is None.
         :type maxresults: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DeletedKeyItem or the result of cls(response)
@@ -1161,8 +1190,13 @@ class KeyVaultClientOperationsMixin(object):
         :type vault_base_url: str
         :param storage_account_name: The name of the storage account. Required.
         :type storage_account_name: str
-        :param maxresults: Maximum number of results to return in a page. If not specified the service
-         will return up to 25 results. Default value is None.
+        :param maxresults: Specifies the maximum number of results to return in a page. Setting
+         maxresults to a value less than 1 or greater than 25 results in error response code 400 (Bad
+         Request). If there are additional results to return, then the service returns a nextLink
+         containing a skip token for pagination. In certain cases, the service might return fewer
+         results than specified by maxresults (even 0 results) and also return a nextLink. Clients
+         should not make any assumptions on the minimum number of results per page, and should enumerate
+         all pages until the nextLink becomes null. Default value is None.
         :type maxresults: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DeletedSasDefinitionItem or the result of
@@ -1201,7 +1235,7 @@ class KeyVaultClientOperationsMixin(object):
         :type secret_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DeletedSecretBundle or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_3.models.DeletedSecretBundle
+        :rtype: ~azure.keyvault.v7_4.models.DeletedSecretBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('get_deleted_secret')
@@ -1215,6 +1249,8 @@ class KeyVaultClientOperationsMixin(object):
             from .v7_2.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.3':
             from .v7_3.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.4':
+            from .v7_4.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_deleted_secret'".format(api_version))
         mixin_instance = OperationClass()
@@ -1244,7 +1280,7 @@ class KeyVaultClientOperationsMixin(object):
         :type maxresults: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DeletedSecretItem or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.v7_3.models.DeletedSecretItem]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.v7_4.models.DeletedSecretItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('get_deleted_secrets')
@@ -1258,6 +1294,8 @@ class KeyVaultClientOperationsMixin(object):
             from .v7_2.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.3':
             from .v7_3.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.4':
+            from .v7_4.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_deleted_secrets'".format(api_version))
         mixin_instance = OperationClass()
@@ -1316,8 +1354,13 @@ class KeyVaultClientOperationsMixin(object):
 
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net. Required.
         :type vault_base_url: str
-        :param maxresults: Maximum number of results to return in a page. If not specified the service
-         will return up to 25 results. Default value is None.
+        :param maxresults: Specifies the maximum number of results to return in a page. Setting
+         maxresults to a value less than 1 or greater than 25 results in error response code 400 (Bad
+         Request). If there are additional results to return, then the service returns a nextLink
+         containing a skip token for pagination. In certain cases, the service might return fewer
+         results than specified by maxresults (even 0 results) and also return a nextLink. Clients
+         should not make any assumptions on the minimum number of results per page, and should enumerate
+         all pages until the nextLink becomes null. Default value is None.
         :type maxresults: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DeletedStorageAccountItem or the result of
@@ -1395,8 +1438,13 @@ class KeyVaultClientOperationsMixin(object):
         :type vault_base_url: str
         :param key_name: The name of the key. Required.
         :type key_name: str
-        :param maxresults: Maximum number of results to return in a page. If not specified the service
-         will return up to 25 results. Default value is None.
+        :param maxresults: Specifies the maximum number of results to return in a page. Setting
+         maxresults to a value less than 1 or greater than 25 results in error response code 400 (Bad
+         Request). If there are additional results to return, then the service returns a nextLink
+         containing a skip token for pagination. In certain cases, the service might return fewer
+         results than specified by maxresults (even 0 results) and also return a nextLink. Clients
+         should not make any assumptions on the minimum number of results per page, and should enumerate
+         all pages until the nextLink becomes null. Default value is None.
         :type maxresults: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either KeyItem or the result of cls(response)
@@ -1434,8 +1482,13 @@ class KeyVaultClientOperationsMixin(object):
 
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net. Required.
         :type vault_base_url: str
-        :param maxresults: Maximum number of results to return in a page. If not specified the service
-         will return up to 25 results. Default value is None.
+        :param maxresults: Specifies the maximum number of results to return in a page. Setting
+         maxresults to a value less than 1 or greater than 25 results in error response code 400 (Bad
+         Request). If there are additional results to return, then the service returns a nextLink
+         containing a skip token for pagination. In certain cases, the service might return fewer
+         results than specified by maxresults (even 0 results) and also return a nextLink. Clients
+         should not make any assumptions on the minimum number of results per page, and should enumerate
+         all pages until the nextLink becomes null. Default value is None.
         :type maxresults: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either KeyItem or the result of cls(response)
@@ -1509,8 +1562,13 @@ class KeyVaultClientOperationsMixin(object):
         :type vault_base_url: str
         :param storage_account_name: The name of the storage account. Required.
         :type storage_account_name: str
-        :param maxresults: Maximum number of results to return in a page. If not specified the service
-         will return up to 25 results. Default value is None.
+        :param maxresults: Specifies the maximum number of results to return in a page. Setting
+         maxresults to a value less than 1 or greater than 25 results in error response code 400 (Bad
+         Request). If there are additional results to return, then the service returns a nextLink
+         containing a skip token for pagination. In certain cases, the service might return fewer
+         results than specified by maxresults (even 0 results) and also return a nextLink. Clients
+         should not make any assumptions on the minimum number of results per page, and should enumerate
+         all pages until the nextLink becomes null. Default value is None.
         :type maxresults: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either SasDefinitionItem or the result of cls(response)
@@ -1554,7 +1612,7 @@ class KeyVaultClientOperationsMixin(object):
         :type secret_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SecretBundle or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_3.models.SecretBundle
+        :rtype: ~azure.keyvault.v7_4.models.SecretBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('get_secret')
@@ -1568,6 +1626,8 @@ class KeyVaultClientOperationsMixin(object):
             from .v7_2.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.3':
             from .v7_3.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.4':
+            from .v7_4.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_secret'".format(api_version))
         mixin_instance = OperationClass()
@@ -1600,7 +1660,7 @@ class KeyVaultClientOperationsMixin(object):
         :type maxresults: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either SecretItem or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.v7_3.models.SecretItem]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.v7_4.models.SecretItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('get_secret_versions')
@@ -1614,6 +1674,8 @@ class KeyVaultClientOperationsMixin(object):
             from .v7_2.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.3':
             from .v7_3.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.4':
+            from .v7_4.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_secret_versions'".format(api_version))
         mixin_instance = OperationClass()
@@ -1644,7 +1706,7 @@ class KeyVaultClientOperationsMixin(object):
         :type maxresults: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either SecretItem or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.v7_3.models.SecretItem]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.v7_4.models.SecretItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('get_secrets')
@@ -1658,6 +1720,8 @@ class KeyVaultClientOperationsMixin(object):
             from .v7_2.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.3':
             from .v7_3.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.4':
+            from .v7_4.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_secrets'".format(api_version))
         mixin_instance = OperationClass()
@@ -1714,8 +1778,13 @@ class KeyVaultClientOperationsMixin(object):
 
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net. Required.
         :type vault_base_url: str
-        :param maxresults: Maximum number of results to return in a page. If not specified the service
-         will return up to 25 results. Default value is None.
+        :param maxresults: Specifies the maximum number of results to return in a page. Setting
+         maxresults to a value less than 1 or greater than 25 results in error response code 400 (Bad
+         Request). If there are additional results to return, then the service returns a nextLink
+         containing a skip token for pagination. In certain cases, the service might return fewer
+         results than specified by maxresults (even 0 results) and also return a nextLink. Clients
+         should not make any assumptions on the minimum number of results per page, and should enumerate
+         all pages until the nextLink becomes null. Default value is None.
         :type maxresults: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either StorageAccountItem or the result of cls(response)
@@ -1756,8 +1825,8 @@ class KeyVaultClientOperationsMixin(object):
         :type vault_base_url: str
         :param certificate_name: The name of the certificate. Required.
         :type certificate_name: str
-        :param parameters: The parameters to import the certificate. Is either a model type or a IO
-         type. Required.
+        :param parameters: The parameters to import the certificate. Is either a
+         CertificateImportParameters type or a IO type. Required.
         :type parameters: ~azure.keyvault.v2016_10_01.models.CertificateImportParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1801,8 +1870,8 @@ class KeyVaultClientOperationsMixin(object):
         :type vault_base_url: str
         :param key_name: Name for the imported key. Required.
         :type key_name: str
-        :param parameters: The parameters to import a key. Is either a model type or a IO type.
-         Required.
+        :param parameters: The parameters to import a key. Is either a KeyImportParameters type or a IO
+         type. Required.
         :type parameters: ~azure.keyvault.v2016_10_01.models.KeyImportParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1845,8 +1914,8 @@ class KeyVaultClientOperationsMixin(object):
         :type vault_base_url: str
         :param certificate_name: The name of the certificate. Required.
         :type certificate_name: str
-        :param parameters: The parameters to merge certificate. Is either a model type or a IO type.
-         Required.
+        :param parameters: The parameters to merge certificate. Is either a CertificateMergeParameters
+         type or a IO type. Required.
         :type parameters: ~azure.keyvault.v2016_10_01.models.CertificateMergeParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1978,6 +2047,8 @@ class KeyVaultClientOperationsMixin(object):
             from .v7_2.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.3':
             from .v7_3.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.4':
+            from .v7_4.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'purge_deleted_secret'".format(api_version))
         mixin_instance = OperationClass()
@@ -2155,7 +2226,7 @@ class KeyVaultClientOperationsMixin(object):
         :type secret_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SecretBundle or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_3.models.SecretBundle
+        :rtype: ~azure.keyvault.v7_4.models.SecretBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('recover_deleted_secret')
@@ -2169,6 +2240,8 @@ class KeyVaultClientOperationsMixin(object):
             from .v7_2.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.3':
             from .v7_3.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.4':
+            from .v7_4.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'recover_deleted_secret'".format(api_version))
         mixin_instance = OperationClass()
@@ -2229,8 +2302,8 @@ class KeyVaultClientOperationsMixin(object):
         :type vault_base_url: str
         :param storage_account_name: The name of the storage account. Required.
         :type storage_account_name: str
-        :param parameters: The parameters to regenerate storage account key. Is either a model type or
-         a IO type. Required.
+        :param parameters: The parameters to regenerate storage account key. Is either a
+         StorageAccountRegenerteKeyParameters type or a IO type. Required.
         :type parameters: ~azure.keyvault.v2016_10_01.models.StorageAccountRegenerteKeyParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -2269,8 +2342,8 @@ class KeyVaultClientOperationsMixin(object):
 
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net. Required.
         :type vault_base_url: str
-        :param parameters: The parameters to restore the certificate. Is either a model type or a IO
-         type. Required.
+        :param parameters: The parameters to restore the certificate. Is either a
+         CertificateRestoreParameters type or a IO type. Required.
         :type parameters: ~azure.keyvault.v7_0.models.CertificateRestoreParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -2315,8 +2388,8 @@ class KeyVaultClientOperationsMixin(object):
 
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net. Required.
         :type vault_base_url: str
-        :param parameters: The parameters to restore the key. Is either a model type or a IO type.
-         Required.
+        :param parameters: The parameters to restore the key. Is either a KeyRestoreParameters type or
+         a IO type. Required.
         :type parameters: ~azure.keyvault.v2016_10_01.models.KeyRestoreParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -2355,15 +2428,15 @@ class KeyVaultClientOperationsMixin(object):
 
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net. Required.
         :type vault_base_url: str
-        :param parameters: The parameters to restore the secret. Is either a model type or a IO type.
-         Required.
-        :type parameters: ~azure.keyvault.v7_3.models.SecretRestoreParameters or IO
+        :param parameters: The parameters to restore the secret. Is either a SecretRestoreParameters
+         type or a IO type. Required.
+        :type parameters: ~azure.keyvault.v7_4.models.SecretRestoreParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SecretBundle or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_3.models.SecretBundle
+        :rtype: ~azure.keyvault.v7_4.models.SecretBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('restore_secret')
@@ -2377,6 +2450,8 @@ class KeyVaultClientOperationsMixin(object):
             from .v7_2.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.3':
             from .v7_3.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.4':
+            from .v7_4.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'restore_secret'".format(api_version))
         mixin_instance = OperationClass()
@@ -2401,8 +2476,8 @@ class KeyVaultClientOperationsMixin(object):
 
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net. Required.
         :type vault_base_url: str
-        :param parameters: The parameters to restore the storage account. Is either a model type or a
-         IO type. Required.
+        :param parameters: The parameters to restore the storage account. Is either a
+         StorageRestoreParameters type or a IO type. Required.
         :type parameters: ~azure.keyvault.v7_0.models.StorageRestoreParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -2439,7 +2514,7 @@ class KeyVaultClientOperationsMixin(object):
 
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net. Required.
         :type vault_base_url: str
-        :param contacts: The contacts for the key vault certificate. Is either a model type or a IO
+        :param contacts: The contacts for the key vault certificate. Is either a Contacts type or a IO
          type. Required.
         :type contacts: ~azure.keyvault.v2016_10_01.models.Contacts or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -2482,8 +2557,8 @@ class KeyVaultClientOperationsMixin(object):
         :type vault_base_url: str
         :param issuer_name: The name of the issuer. Required.
         :type issuer_name: str
-        :param parameter: Certificate issuer set parameter. Is either a model type or a IO type.
-         Required.
+        :param parameter: Certificate issuer set parameter. Is either a CertificateIssuerSetParameters
+         type or a IO type. Required.
         :type parameter: ~azure.keyvault.v2016_10_01.models.CertificateIssuerSetParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -2526,8 +2601,8 @@ class KeyVaultClientOperationsMixin(object):
         :type storage_account_name: str
         :param sas_definition_name: The name of the SAS definition. Required.
         :type sas_definition_name: str
-        :param parameters: The parameters to create a SAS definition. Is either a model type or a IO
-         type. Required.
+        :param parameters: The parameters to create a SAS definition. Is either a
+         SasDefinitionCreateParameters type or a IO type. Required.
         :type parameters: ~azure.keyvault.v2016_10_01.models.SasDefinitionCreateParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -2568,17 +2643,19 @@ class KeyVaultClientOperationsMixin(object):
 
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net. Required.
         :type vault_base_url: str
-        :param secret_name: The name of the secret. Required.
+        :param secret_name: The name of the secret. The value you provide may be copied globally for
+         the purpose of running the service. The value provided should not include personally
+         identifiable or sensitive information. Required.
         :type secret_name: str
-        :param parameters: The parameters for setting the secret. Is either a model type or a IO type.
-         Required.
-        :type parameters: ~azure.keyvault.v7_3.models.SecretSetParameters or IO
+        :param parameters: The parameters for setting the secret. Is either a SecretSetParameters type
+         or a IO type. Required.
+        :type parameters: ~azure.keyvault.v7_4.models.SecretSetParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SecretBundle or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_3.models.SecretBundle
+        :rtype: ~azure.keyvault.v7_4.models.SecretBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('set_secret')
@@ -2592,6 +2669,8 @@ class KeyVaultClientOperationsMixin(object):
             from .v7_2.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.3':
             from .v7_3.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.4':
+            from .v7_4.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'set_secret'".format(api_version))
         mixin_instance = OperationClass()
@@ -2616,8 +2695,8 @@ class KeyVaultClientOperationsMixin(object):
         :type vault_base_url: str
         :param storage_account_name: The name of the storage account. Required.
         :type storage_account_name: str
-        :param parameters: The parameters to create a storage account. Is either a model type or a IO
-         type. Required.
+        :param parameters: The parameters to create a storage account. Is either a
+         StorageAccountCreateParameters type or a IO type. Required.
         :type parameters: ~azure.keyvault.v2016_10_01.models.StorageAccountCreateParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -2663,8 +2742,8 @@ class KeyVaultClientOperationsMixin(object):
         :type key_name: str
         :param key_version: The version of the key. Required.
         :type key_version: str
-        :param parameters: The parameters for the signing operation. Is either a model type or a IO
-         type. Required.
+        :param parameters: The parameters for the signing operation. Is either a KeySignParameters type
+         or a IO type. Required.
         :type parameters: ~azure.keyvault.v2016_10_01.models.KeySignParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -2711,8 +2790,8 @@ class KeyVaultClientOperationsMixin(object):
         :type key_name: str
         :param key_version: The version of the key. Required.
         :type key_version: str
-        :param parameters: The parameters for the key operation. Is either a model type or a IO type.
-         Required.
+        :param parameters: The parameters for the key operation. Is either a KeyOperationsParameters
+         type or a IO type. Required.
         :type parameters: ~azure.keyvault.v2016_10_01.models.KeyOperationsParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -2758,8 +2837,8 @@ class KeyVaultClientOperationsMixin(object):
         :type certificate_name: str
         :param certificate_version: The version of the certificate. Required.
         :type certificate_version: str
-        :param parameters: The parameters for certificate update. Is either a model type or a IO type.
-         Required.
+        :param parameters: The parameters for certificate update. Is either a
+         CertificateUpdateParameters type or a IO type. Required.
         :type parameters: ~azure.keyvault.v2016_10_01.models.CertificateUpdateParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -2801,8 +2880,8 @@ class KeyVaultClientOperationsMixin(object):
         :type vault_base_url: str
         :param issuer_name: The name of the issuer. Required.
         :type issuer_name: str
-        :param parameter: Certificate issuer update parameter. Is either a model type or a IO type.
-         Required.
+        :param parameter: Certificate issuer update parameter. Is either a
+         CertificateIssuerUpdateParameters type or a IO type. Required.
         :type parameter: ~azure.keyvault.v2016_10_01.models.CertificateIssuerUpdateParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -2844,8 +2923,8 @@ class KeyVaultClientOperationsMixin(object):
         :type vault_base_url: str
         :param certificate_name: The name of the certificate. Required.
         :type certificate_name: str
-        :param certificate_operation: The certificate operation response. Is either a model type or a
-         IO type. Required.
+        :param certificate_operation: The certificate operation response. Is either a
+         CertificateOperationUpdateParameter type or a IO type. Required.
         :type certificate_operation:
          ~azure.keyvault.v2016_10_01.models.CertificateOperationUpdateParameter or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -2888,8 +2967,8 @@ class KeyVaultClientOperationsMixin(object):
         :type vault_base_url: str
         :param certificate_name: The name of the certificate in the given vault. Required.
         :type certificate_name: str
-        :param certificate_policy: The policy for the certificate. Is either a model type or a IO type.
-         Required.
+        :param certificate_policy: The policy for the certificate. Is either a CertificatePolicy type
+         or a IO type. Required.
         :type certificate_policy: ~azure.keyvault.v2016_10_01.models.CertificatePolicy or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -2936,8 +3015,8 @@ class KeyVaultClientOperationsMixin(object):
         :type key_name: str
         :param key_version: The version of the key to update. Required.
         :type key_version: str
-        :param parameters: The parameters of the key to update. Is either a model type or a IO type.
-         Required.
+        :param parameters: The parameters of the key to update. Is either a KeyUpdateParameters type or
+         a IO type. Required.
         :type parameters: ~azure.keyvault.v2016_10_01.models.KeyUpdateParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -2980,8 +3059,8 @@ class KeyVaultClientOperationsMixin(object):
         :type storage_account_name: str
         :param sas_definition_name: The name of the SAS definition. Required.
         :type sas_definition_name: str
-        :param parameters: The parameters to update a SAS definition. Is either a model type or a IO
-         type. Required.
+        :param parameters: The parameters to update a SAS definition. Is either a
+         SasDefinitionUpdateParameters type or a IO type. Required.
         :type parameters: ~azure.keyvault.v2016_10_01.models.SasDefinitionUpdateParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -3027,15 +3106,15 @@ class KeyVaultClientOperationsMixin(object):
         :type secret_name: str
         :param secret_version: The version of the secret. Required.
         :type secret_version: str
-        :param parameters: The parameters for update secret operation. Is either a model type or a IO
-         type. Required.
-        :type parameters: ~azure.keyvault.v7_3.models.SecretUpdateParameters or IO
+        :param parameters: The parameters for update secret operation. Is either a
+         SecretUpdateParameters type or a IO type. Required.
+        :type parameters: ~azure.keyvault.v7_4.models.SecretUpdateParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SecretBundle or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_3.models.SecretBundle
+        :rtype: ~azure.keyvault.v7_4.models.SecretBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('update_secret')
@@ -3049,6 +3128,8 @@ class KeyVaultClientOperationsMixin(object):
             from .v7_2.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.3':
             from .v7_3.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.4':
+            from .v7_4.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'update_secret'".format(api_version))
         mixin_instance = OperationClass()
@@ -3074,8 +3155,8 @@ class KeyVaultClientOperationsMixin(object):
         :type vault_base_url: str
         :param storage_account_name: The name of the storage account. Required.
         :type storage_account_name: str
-        :param parameters: The parameters to update a storage account. Is either a model type or a IO
-         type. Required.
+        :param parameters: The parameters to update a storage account. Is either a
+         StorageAccountUpdateParameters type or a IO type. Required.
         :type parameters: ~azure.keyvault.v2016_10_01.models.StorageAccountUpdateParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -3123,8 +3204,8 @@ class KeyVaultClientOperationsMixin(object):
         :type key_name: str
         :param key_version: The version of the key. Required.
         :type key_version: str
-        :param parameters: The parameters for verify operations. Is either a model type or a IO type.
-         Required.
+        :param parameters: The parameters for verify operations. Is either a KeyVerifyParameters type
+         or a IO type. Required.
         :type parameters: ~azure.keyvault.v2016_10_01.models.KeyVerifyParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -3173,8 +3254,8 @@ class KeyVaultClientOperationsMixin(object):
         :type key_name: str
         :param key_version: The version of the key. Required.
         :type key_version: str
-        :param parameters: The parameters for wrap operation. Is either a model type or a IO type.
-         Required.
+        :param parameters: The parameters for wrap operation. Is either a KeyOperationsParameters type
+         or a IO type. Required.
         :type parameters: ~azure.keyvault.v2016_10_01.models.KeyOperationsParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

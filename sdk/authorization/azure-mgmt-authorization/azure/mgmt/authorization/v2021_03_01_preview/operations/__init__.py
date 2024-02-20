@@ -21,7 +21,7 @@ from ._access_review_instances_assigned_for_my_approval_operations import (
 from ._access_review_instance_my_decisions_operations import AccessReviewInstanceMyDecisionsOperations
 
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [

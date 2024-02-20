@@ -45,6 +45,8 @@ The following are code samples that show common scenario operations with the Azu
 
 * [multi-master operations](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/MultiMasterOperations) - Example demonstrating multi-master operations.
 
+* [tracing-open-telemetry](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/tracing_open_telemetry.py) - Example demonstrating how to use OpenTelemetry tracing with our SDK.
+
 ## Prerequisites
 * Python 3.6+
 * You must have an [Azure subscription](https://azure.microsoft.com/free/) and an

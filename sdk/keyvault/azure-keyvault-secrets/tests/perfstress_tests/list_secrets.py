@@ -23,7 +23,7 @@ class ListSecretsTest(PerfStressTest):
         vault_url = self.get_from_env("AZURE_KEYVAULT_URL")
         self.client = SecretClient(vault_url, self.credential, **self._client_kwargs)
         self.async_client = AsyncSecretClient(vault_url, self.async_credential, **self._client_kwargs)
-        self.secret_names = ["livekvtestlistperfsecret{}".format(i) for i in range(self.args.count)]
+        self.secret_names = [f"livekvtestlistperfsecret{i}" for i in range(self.args.count)]
 
     async def global_setup(self):
         """The global setup is run only once."""

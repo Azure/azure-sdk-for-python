@@ -21,35 +21,37 @@ from ._models_py3 import TokenListResult
 from ._models_py3 import TokenPassword
 from ._models_py3 import TokenUpdateParameters
 
-
-from ._container_registry_management_client_enums import (
-    CreatedByType,
-    LastModifiedByType,
-    ProvisioningState,
-    TokenCertificateName,
-    TokenPasswordName,
-    TokenStatus,
-)
+from ._container_registry_management_client_enums import CreatedByType
+from ._container_registry_management_client_enums import LastModifiedByType
+from ._container_registry_management_client_enums import ProvisioningState
+from ._container_registry_management_client_enums import TokenCertificateName
+from ._container_registry_management_client_enums import TokenPasswordName
+from ._container_registry_management_client_enums import TokenStatus
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'ActiveDirectoryObject',
-    'GenerateCredentialsParameters',
-    'GenerateCredentialsResult',
-    'ProxyResource',
-    'ScopeMap',
-    'ScopeMapListResult',
-    'ScopeMapUpdateParameters',
-    'SystemData',
-    'Token',
-    'TokenCertificate',
-    'TokenCredentialsProperties',
-    'TokenListResult',
-    'TokenPassword',
-    'TokenUpdateParameters',
-    'CreatedByType',
-    'LastModifiedByType',
-    'ProvisioningState',
-    'TokenCertificateName',
-    'TokenPasswordName',
-    'TokenStatus',
+    "ActiveDirectoryObject",
+    "GenerateCredentialsParameters",
+    "GenerateCredentialsResult",
+    "ProxyResource",
+    "ScopeMap",
+    "ScopeMapListResult",
+    "ScopeMapUpdateParameters",
+    "SystemData",
+    "Token",
+    "TokenCertificate",
+    "TokenCredentialsProperties",
+    "TokenListResult",
+    "TokenPassword",
+    "TokenUpdateParameters",
+    "CreatedByType",
+    "LastModifiedByType",
+    "ProvisioningState",
+    "TokenCertificateName",
+    "TokenPasswordName",
+    "TokenStatus",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

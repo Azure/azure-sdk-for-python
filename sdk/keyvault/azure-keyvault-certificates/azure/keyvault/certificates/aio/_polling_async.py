@@ -5,7 +5,7 @@
 
 import asyncio
 import logging
-from typing import Any, Callable, Union
+from typing import Any, Callable, Optional, Union
 from azure.core.polling import AsyncPollingMethod
 from .._models import KeyVaultCertificate, CertificateOperation
 
@@ -14,15 +14,15 @@ logger = logging.getLogger(__name__)
 
 
 class CreateCertificatePollerAsync(AsyncPollingMethod):
-    def __init__(self, get_certificate_command, interval=5):
-        self._command = None
-        self._resource = None
-        self._pending_certificate_op = None
+    def __init__(self, get_certificate_command: Callable, interval: int = 5) -> None:
+        self._command = None  # type: Optional[Callable]
+        self._resource = None  # type: Optional[Union[CertificateOperation, KeyVaultCertificate]]
+        self._pending_certificate_op = None  # type: Optional[CertificateOperation]
         self._get_certificate_command = get_certificate_command
         self._polling_interval = interval
 
     async def _update_status(self) -> None:
-        self._pending_certificate_op = await self._command()
+        self._pending_certificate_op = await self._command() if self._command else None
 
     def initialize(self, client: Any, initial_response: Any, _: Callable) -> None:
         self._command = client
@@ -34,7 +34,8 @@ class CreateCertificatePollerAsync(AsyncPollingMethod):
                 await self._update_status()
                 if not self.finished():
                     await asyncio.sleep(self._polling_interval)
-            if self._pending_certificate_op.status.lower() == "completed":
+            operation = self._pending_certificate_op
+            if operation and operation.status and operation.status.lower() == "completed":
                 self._resource = await self._get_certificate_command()
             else:
                 self._resource = self._pending_certificate_op
@@ -43,12 +44,13 @@ class CreateCertificatePollerAsync(AsyncPollingMethod):
             raise
 
     def finished(self) -> bool:
-        if self._pending_certificate_op.issuer_name.lower() == "unknown":
+        operation = self._pending_certificate_op
+        if operation and operation.issuer_name and operation.issuer_name.lower() == "unknown":
             return True
-        return self._pending_certificate_op.status.lower() != "inprogress"
+        return self._pending_certificate_op.status.lower() != "inprogress"  # type: ignore
 
     def resource(self) -> Union[KeyVaultCertificate, CertificateOperation]:
-        return self._resource
+        return self._resource  # type: ignore
 
     def status(self) -> str:
-        return self._pending_certificate_op.status.lower()
+        return self._pending_certificate_op.status.lower()  # type: ignore

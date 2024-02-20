@@ -10,8 +10,8 @@ import json
 import logging
 import time
 from typing import Any, Optional
+from urllib.parse import urlparse
 
-import six
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 
@@ -33,8 +33,13 @@ _DEFAULT_AUTHENTICATE_SCOPES = {
 }
 
 
-def _decode_client_info(raw):
-    """Taken from msal.oauth2cli.oidc"""
+def _decode_client_info(raw) -> str:
+    """Decode client info. Taken from msal.oauth2cli.oidc.
+
+    :param str raw: base64-encoded client info
+    :return: decoded client info
+    :rtype: str
+    """
 
     raw += "=" * (-len(raw) % 4)
     raw = str(raw)  # On Python 2.7, argument of urlsafe_b64decode must be str, not unicode.
@@ -42,7 +47,14 @@ def _decode_client_info(raw):
 
 
 def _build_auth_record(response):
-    """Build an AuthenticationRecord from the result of an MSAL ClientApplication token request"""
+    """Build an AuthenticationRecord from the result of an MSAL ClientApplication token request.
+
+    :param response: The result of a token request
+    :type response: dict[str, typing.Any]
+    :return: An AuthenticationRecord
+    :rtype: ~azure.identity.AuthenticationRecord
+    :raises ~azure.core.exceptions.ClientAuthenticationError: If the response doesn't contain expected data
+    """
 
     try:
         id_token = response["id_token_claims"]
@@ -55,12 +67,12 @@ def _build_auth_record(response):
             home_account_id = id_token["sub"]
 
         # "iss" is the URL of the issuing tenant e.g. https://authority/tenant
-        issuer = six.moves.urllib_parse.urlparse(id_token["iss"])
+        issuer = urlparse(id_token["iss"])
 
         # tenant which issued the token, not necessarily user's home tenant
         tenant_id = id_token.get("tid") or issuer.path.strip("/")
 
-        # AAD returns "preferred_username", ADFS returns "upn"
+        # Microsoft Entra ID returns "preferred_username", ADFS returns "upn"
         username = id_token.get("preferred_username") or id_token["upn"]
 
         return AuthenticationRecord(
@@ -74,13 +86,19 @@ def _build_auth_record(response):
         auth_error = ClientAuthenticationError(
             message="Failed to build AuthenticationRecord from unexpected identity token"
         )
-        six.raise_from(auth_error, ex)
+        raise auth_error from ex
 
 
 class InteractiveCredential(MsalCredential, ABC):
-    def __init__(self, **kwargs):
-        self._disable_automatic_authentication = kwargs.pop("disable_automatic_authentication", False)
-        self._auth_record = kwargs.pop("authentication_record", None)  # type: Optional[AuthenticationRecord]
+    def __init__(
+        self,
+        *,
+        authentication_record: Optional[AuthenticationRecord] = None,
+        disable_automatic_authentication: bool = False,
+        **kwargs: Any
+    ) -> None:
+        self._disable_automatic_authentication = disable_automatic_authentication
+        self._auth_record = authentication_record
         if self._auth_record:
             kwargs.pop("client_id", None)  # authentication_record overrides client_id argument
             tenant_id = kwargs.pop("tenant_id", None) or self._auth_record.tenant_id
@@ -93,19 +111,23 @@ class InteractiveCredential(MsalCredential, ABC):
         else:
             super(InteractiveCredential, self).__init__(**kwargs)
 
-    def get_token(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> AccessToken
+    def get_token(
+        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
+    ) -> AccessToken:
         """Request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
+            For more information about scopes, see
+            https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
         :keyword str claims: additional claims required in the token, such as those returned in a resource provider's
-          claims challenge following an authorization failure
+            claims challenge following an authorization failure
         :keyword str tenant_id: optional tenant to include in the token request.
-
-        :rtype: :class:`azure.core.credentials.AccessToken`
-
+        :keyword bool enable_cae: indicates whether to enable Continuous Access Evaluation (CAE) for the requested
+            token. Defaults to False.
+        :return: An access token with the desired scopes.
+        :rtype: ~azure.core.credentials.AccessToken
         :raises CredentialUnavailableError: the credential is unable to attempt authentication because it lacks
             required data, state, or platform support
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
@@ -120,7 +142,7 @@ class InteractiveCredential(MsalCredential, ABC):
 
         allow_prompt = kwargs.pop("_allow_prompt", not self._disable_automatic_authentication)
         try:
-            token = self._acquire_token_silent(*scopes, **kwargs)
+            token = self._acquire_token_silent(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
             _LOGGER.info("%s.get_token succeeded", self.__class__.__name__)
             return token
         except Exception as ex:  # pylint:disable=broad-except
@@ -137,7 +159,7 @@ class InteractiveCredential(MsalCredential, ABC):
         now = int(time.time())
 
         try:
-            result = self._request_token(*scopes, **kwargs)
+            result = self._request_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
             if "access_token" not in result:
                 message = "Authentication failed: {}".format(result.get("error_description") or result.get("error"))
                 response = self._client.get_error_response(result)
@@ -157,8 +179,7 @@ class InteractiveCredential(MsalCredential, ABC):
         _LOGGER.info("%s.get_token succeeded", self.__class__.__name__)
         return AccessToken(result["access_token"], now + int(result["expires_in"]))
 
-    def authenticate(self, **kwargs):
-        # type: (**Any) -> AuthenticationRecord
+    def authenticate(self, **kwargs: Any) -> AuthenticationRecord:
         """Interactively authenticate a user.
 
         :keyword Iterable[str] scopes: scopes to request during authentication, such as those provided by
@@ -185,8 +206,7 @@ class InteractiveCredential(MsalCredential, ABC):
         return self._auth_record  # type: ignore
 
     @wrap_exceptions
-    def _acquire_token_silent(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> AccessToken
+    def _acquire_token_silent(self, *scopes: str, **kwargs: Any) -> AccessToken:
         result = None
         claims = kwargs.get("claims")
         if self._auth_record:
@@ -200,7 +220,7 @@ class InteractiveCredential(MsalCredential, ABC):
                 if result and "access_token" in result and "expires_in" in result:
                     return AccessToken(result["access_token"], now + int(result["expires_in"]))
 
-        # if we get this far, result is either None or the content of an AAD error response
+        # if we get this far, result is either None or the content of a Microsoft Entra ID error response
         if result:
             response = self._client.get_error_response(result)
             raise AuthenticationRequiredError(scopes, claims=claims, response=response)

@@ -12,12 +12,13 @@ from typing import Any, Awaitable, TYPE_CHECKING
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
 
-from .. import models
+from .. import models as _models
 from .._serialization import Deserializer, Serializer
 from ._configuration import DevCenterMgmtClientConfiguration
 from .operations import (
     AttachedNetworksOperations,
     CatalogsOperations,
+    CheckNameAvailabilityOperations,
     DevBoxDefinitionsOperations,
     DevCentersOperations,
     EnvironmentTypesOperations,
@@ -74,6 +75,9 @@ class DevCenterMgmtClient:  # pylint: disable=client-accepts-api-version-keyword
     :vartype operation_statuses: azure.mgmt.devcenter.aio.operations.OperationStatusesOperations
     :ivar usages: UsagesOperations operations
     :vartype usages: azure.mgmt.devcenter.aio.operations.UsagesOperations
+    :ivar check_name_availability: CheckNameAvailabilityOperations operations
+    :vartype check_name_availability:
+     azure.mgmt.devcenter.aio.operations.CheckNameAvailabilityOperations
     :ivar skus: SkusOperations operations
     :vartype skus: azure.mgmt.devcenter.aio.operations.SkusOperations
     :ivar pools: PoolsOperations operations
@@ -88,8 +92,8 @@ class DevCenterMgmtClient:  # pylint: disable=client-accepts-api-version-keyword
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2022-10-12-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2023-04-01". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -105,9 +109,9 @@ class DevCenterMgmtClient:  # pylint: disable=client-accepts-api-version-keyword
         self._config = DevCenterMgmtClientConfiguration(
             credential=credential, subscription_id=subscription_id, **kwargs
         )
-        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
@@ -137,6 +141,9 @@ class DevCenterMgmtClient:  # pylint: disable=client-accepts-api-version-keyword
             self._client, self._config, self._serialize, self._deserialize
         )
         self.usages = UsagesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.check_name_availability = CheckNameAvailabilityOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.skus = SkusOperations(self._client, self._config, self._serialize, self._deserialize)
         self.pools = PoolsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.schedules = SchedulesOperations(self._client, self._config, self._serialize, self._deserialize)
@@ -173,5 +180,5 @@ class DevCenterMgmtClient:  # pylint: disable=client-accepts-api-version-keyword
         await self._client.__aenter__()
         return self
 
-    async def __aexit__(self, *exc_details) -> None:
+    async def __aexit__(self, *exc_details: Any) -> None:
         await self._client.__aexit__(*exc_details)

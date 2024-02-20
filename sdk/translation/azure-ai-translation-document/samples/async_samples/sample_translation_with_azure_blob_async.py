@@ -111,7 +111,7 @@ class SampleTranslationWithAzureBlobAsync:
                         my_blob.write(await download_stream.readall())
 
                 print("Downloaded {} locally".format("translated_"+self.document_name))
-            else:
+            elif document.error:
                 print("\nThere was a problem translating your document.")
                 print(f"Document Error Code: {document.error.code}, Message: {document.error.message}\n")
 

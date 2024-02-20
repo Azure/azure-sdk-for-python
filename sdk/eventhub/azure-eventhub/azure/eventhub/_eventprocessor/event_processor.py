@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
+from __future__ import annotations
 import random
 import uuid
 import logging
@@ -20,7 +21,12 @@ from typing import (
 )
 from functools import partial
 
-from .._utils import get_event_links
+from .._tracing import (
+    process_context_manager,
+    receive_context_manager,
+    get_span_links_from_received_events,
+    is_tracing_enabled,
+)
 from .partition_context import PartitionContext
 from .in_memory_checkpoint_store import InMemoryCheckpointStore
 from .ownership_manager import OwnershipManager
@@ -33,6 +39,7 @@ if TYPE_CHECKING:
     from .._common import EventData
     from .._consumer import EventHubConsumer
     from .._consumer_client import EventHubConsumerClient
+
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -48,12 +55,11 @@ class EventProcessor(
 
     def __init__(
         self,
-        eventhub_client,  # type: EventHubConsumerClient
-        consumer_group,  # type: str
-        on_event,  # type: Callable[[PartitionContext, Union[Optional[EventData], List[EventData]]], None]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        eventhub_client: EventHubConsumerClient,
+        consumer_group: str,
+        on_event: Callable[[PartitionContext, Union[Optional[EventData], List[EventData]]], None],
+        **kwargs: Any
+    ) -> None:
         # pylint: disable=line-too-long
         self._consumer_group = consumer_group
         self._eventhub_client = eventhub_client
@@ -87,7 +93,7 @@ class EventProcessor(
         )  # type: Union[bool, Dict[str, bool]]
 
         self._load_balancing_interval = kwargs.get(
-            "load_balancing_interval", 10.0
+            "load_balancing_interval", 30.0
         )  # type: float
         self._load_balancing_strategy = (
             kwargs.get("load_balancing_strategy") or LoadBalancingStrategy.GREEDY
@@ -121,8 +127,9 @@ class EventProcessor(
             self._partition_id,
         )
 
-    def __repr__(self):
-        # type: () -> str
+        self._last_received_time = time.time_ns()
+
+    def __repr__(self) -> str:
         return "EventProcessor: id {}".format(self._id)
 
     def _process_error(self, partition_context, err):
@@ -140,8 +147,7 @@ class EventProcessor(
                     err_again,
                 )
 
-    def _cancel_tasks_for_partitions(self, to_cancel_partitions):
-        # type: (Iterable[str]) -> None
+    def _cancel_tasks_for_partitions(self, to_cancel_partitions: Iterable[str]) -> None:
         with self._lock:
             _LOGGER.debug(
                 "EventProcessor %r tries to cancel partitions %r",
@@ -178,8 +184,11 @@ class EventProcessor(
             "EventProcessor %r has claimed partition %r", self._id, partition_id
         )
 
-    def _create_tasks_for_claimed_ownership(self, claimed_partitions, checkpoints=None):
-        # type: (Iterable[str], Optional[Dict[str, Dict[str, Any]]]) -> None
+    def _create_tasks_for_claimed_ownership(
+        self,
+        claimed_partitions: Iterable[str],
+        checkpoints: Optional[Dict[str, Dict[str, Any]]]=None
+    ) -> None:
         with self._lock:
             _LOGGER.debug(
                 "EventProcessor %r tries to claim partition %r",
@@ -222,27 +231,37 @@ class EventProcessor(
                     )
                     self._initialize_partition_consumer(partition_id)
 
-    def _on_event_received(self, partition_context, event):
-        # type: (PartitionContext, Union[Optional[EventData], List[EventData]]) -> None
+    def _on_event_received(
+        self,
+        partition_context: PartitionContext,
+        event: Union[Optional[EventData], List[EventData]]
+    ) -> None:
         if event:
             try:
                 partition_context._last_received_event = event[-1]  # type: ignore  #pylint:disable=protected-access
             except TypeError:
                 partition_context._last_received_event = event  # type: ignore  #pylint:disable=protected-access
-            links = get_event_links(event)
-            with self._context(links=links):
+
+            links = []
+            is_batch = False
+            if is_tracing_enabled():
+                links = get_span_links_from_received_events(event)
+                if isinstance(event, list):
+                    is_batch = True
+
+            with receive_context_manager(self._eventhub_client, links=links, start_time=self._last_received_time):  # pylint:disable=protected-access
+                self._last_received_time = time.time_ns()
+
+            with process_context_manager(self._eventhub_client, links=links, is_batch=is_batch):
                 self._event_handler(partition_context, event)
         else:
             self._event_handler(partition_context, event)
 
-    def _load_balancing(self):
-        # type: () -> None
+    def _load_balancing(self) -> None:
         """Start the EventProcessor.
 
         The EventProcessor will try to claim and balance partition ownership with other `EventProcessor`
         and start receiving EventData from EventHub and processing events.
-
-        :return: None
 
         """
         while self._running:
@@ -296,8 +315,12 @@ class EventProcessor(
 
             time.sleep(load_balancing_interval)
 
-    def _close_consumer(self, partition_id, consumer, reason):
-        # type: (str, EventHubConsumer, CloseReason) -> None
+    def _close_consumer(
+        self,
+        partition_id: str,
+        consumer: EventHubConsumer,
+        reason: CloseReason
+    ) -> None:
         consumer.close()
         with self._lock:
             del self._consumers[partition_id]
@@ -331,9 +354,12 @@ class EventProcessor(
 
         self._ownership_manager.release_ownership(partition_id)
 
-    def _do_receive(self, partition_id, consumer):
-        # type: (str, EventHubConsumer) -> None
-        """Call the consumer.receive() and handle exceptions if any after it exhausts retries."""
+    def _do_receive(self, partition_id: str, consumer: EventHubConsumer) -> None:
+        """Call the consumer.receive() and handle exceptions if any after it exhausts retries.
+
+        :param str partition_id: The partition id.
+        :param ~azure.eventhub._consumer.EventHubConsumer consumer: The consumer object.
+        """
         try:
             consumer.receive(self._batch, self._max_batch_size, self._max_wait_time)
         except Exception as error:  # pylint:disable=broad-except
@@ -347,10 +373,11 @@ class EventProcessor(
                 error,
             )
             self._process_error(self._partition_contexts[partition_id], error)
+            # TODO: close consumer if non-retryable. issue #27137
+            # Does OWNERSHIP_LOST make sense for all errors?
             self._close_consumer(partition_id, consumer, CloseReason.OWNERSHIP_LOST)
 
-    def start(self):
-        # type: () -> None
+    def start(self) -> None:
         if self._running:
             _LOGGER.info("EventProcessor %r has already started.", self._id)
             return
@@ -375,8 +402,7 @@ class EventProcessor(
             for partition_id, consumer in list(self._consumers.items()):
                 self._close_consumer(partition_id, consumer, CloseReason.SHUTDOWN)
 
-    def stop(self):
-        # type: () -> None
+    def stop(self) -> None:
         """Stop the EventProcessor.
 
         The EventProcessor will stop receiving events from EventHubs and release the ownership of the partitions
@@ -384,8 +410,6 @@ class EventProcessor(
         Other running EventProcessor will take over these released partitions.
 
         A stopped EventProcessor can be restarted by calling method `start` again.
-
-        :return: None
 
         """
         if not self._running:

@@ -36,7 +36,7 @@ class RecoveryServicesBackupPassiveClientConfiguration(Configuration):  # pylint
 
     def __init__(self, credential: "AsyncTokenCredential", subscription_id: str, **kwargs: Any) -> None:
         super(RecoveryServicesBackupPassiveClientConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop("api_version", "2021-11-15")  # type: str
+        api_version: str = kwargs.pop("api_version", "2021-11-15")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")

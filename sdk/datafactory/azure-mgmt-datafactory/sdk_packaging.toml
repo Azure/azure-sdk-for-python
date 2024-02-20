@@ -5,3 +5,4 @@ package_pprint_name = "Data Factory Management"
 package_doc_id = "datafactory"
 is_stable = false
 is_arm = true
+title = "DataFactoryManagementClient"

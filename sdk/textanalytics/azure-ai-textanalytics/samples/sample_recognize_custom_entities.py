@@ -25,11 +25,9 @@ USAGE:
 """
 
 
-import os
-
-
 def sample_recognize_custom_entities() -> None:
     # [START recognize_custom_entities]
+    import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics import TextAnalyticsClient
 
@@ -70,7 +68,7 @@ def sample_recognize_custom_entities() -> None:
                 )
         elif custom_entities_result.is_error is True:
             print("...Is an error with code '{}' and message '{}'".format(
-                custom_entities_result.code, custom_entities_result.message
+                custom_entities_result.error.code, custom_entities_result.error.message
                 )
             )
     # [END recognize_custom_entities]

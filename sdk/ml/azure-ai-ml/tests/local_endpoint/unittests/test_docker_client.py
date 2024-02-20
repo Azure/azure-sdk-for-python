@@ -10,9 +10,9 @@ import pytest
 
 from azure.ai.ml._local_endpoints import LocalEndpointMode
 from azure.ai.ml._local_endpoints.docker_client import DockerClient
-from azure.ai.ml.exceptions import MultipleLocalDeploymentsFoundError
 from azure.ai.ml._local_endpoints.vscode_debug.vscode_client import VSCodeClient
 from azure.ai.ml.constants._endpoint import LocalEndpointConstants
+from azure.ai.ml.exceptions import MultipleLocalDeploymentsFoundError
 
 
 @pytest.fixture

@@ -20,36 +20,38 @@ from ._models_py3 import SourceControlConfiguration
 from ._models_py3 import SourceControlConfigurationList
 from ._models_py3 import SystemData
 
-
-from ._source_control_configuration_client_enums import (
-    ComplianceStateType,
-    Enum0,
-    Enum1,
-    MessageLevelType,
-    OperatorScopeType,
-    OperatorType,
-    ProvisioningStateType,
-)
+from ._source_control_configuration_client_enums import ComplianceStateType
+from ._source_control_configuration_client_enums import Enum0
+from ._source_control_configuration_client_enums import Enum1
+from ._source_control_configuration_client_enums import MessageLevelType
+from ._source_control_configuration_client_enums import OperatorScopeType
+from ._source_control_configuration_client_enums import OperatorType
+from ._source_control_configuration_client_enums import ProvisioningStateType
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'ComplianceStatus',
-    'ErrorDefinition',
-    'ErrorResponse',
-    'HelmOperatorProperties',
-    'ProxyResource',
-    'Resource',
-    'ResourceProviderOperation',
-    'ResourceProviderOperationDisplay',
-    'ResourceProviderOperationList',
-    'Result',
-    'SourceControlConfiguration',
-    'SourceControlConfigurationList',
-    'SystemData',
-    'ComplianceStateType',
-    'Enum0',
-    'Enum1',
-    'MessageLevelType',
-    'OperatorScopeType',
-    'OperatorType',
-    'ProvisioningStateType',
+    "ComplianceStatus",
+    "ErrorDefinition",
+    "ErrorResponse",
+    "HelmOperatorProperties",
+    "ProxyResource",
+    "Resource",
+    "ResourceProviderOperation",
+    "ResourceProviderOperationDisplay",
+    "ResourceProviderOperationList",
+    "Result",
+    "SourceControlConfiguration",
+    "SourceControlConfigurationList",
+    "SystemData",
+    "ComplianceStateType",
+    "Enum0",
+    "Enum1",
+    "MessageLevelType",
+    "OperatorScopeType",
+    "OperatorType",
+    "ProvisioningStateType",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

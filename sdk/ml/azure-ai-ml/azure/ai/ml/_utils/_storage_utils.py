@@ -4,13 +4,14 @@
 
 import logging
 import re
-from typing import Tuple, Union
+from typing import Optional, Tuple, Union
 
 from azure.ai.ml._artifacts._blob_storage_helper import BlobStorageClient
+from azure.ai.ml._artifacts._constants import STORAGE_URI_REGEX
 from azure.ai.ml._artifacts._fileshare_storage_helper import FileStorageClient
 from azure.ai.ml._artifacts._gen2_storage_helper import Gen2StorageClient
 from azure.ai.ml._azure_environments import _get_storage_endpoint_from_metadata
-from azure.ai.ml._restclient.v2021_10_01.models import DatastoreType
+from azure.ai.ml._restclient.v2022_10_01.models import DatastoreType
 from azure.ai.ml.constants._common import (
     FILE_PREFIX,
     FOLDER_PREFIX,
@@ -27,22 +28,16 @@ from azure.ai.ml.exceptions import ErrorTarget, ValidationErrorType, ValidationE
 
 module_logger = logging.getLogger(__name__)
 
-SUPPORTED_STORAGE_TYPES = [
-    DatastoreType.AZURE_BLOB,
-    DatastoreType.AZURE_DATA_LAKE_GEN2,
-    DatastoreType.AZURE_FILE,
-]
-
 
 class AzureMLDatastorePathUri:
-    """Parser for an azureml:// datastore path URI, e.g.:
-    azureml://datastores/mydatastore/paths/images/dogs'.
+    """Parser for an azureml:// datastore path URI, e.g.: azureml://datastores/mydatastore/paths/images/dogs'.
 
     :param uri: The AzureML datastore path URI.
     :type uri: str
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if the AzureML datastore
         path URI is incorrectly formatted.
-    '"""
+    '
+    """
 
     def __init__(self, uri: str):
         if uri.startswith(FILE_PREFIX):
@@ -114,7 +109,6 @@ class AzureMLDatastorePathUri:
         )
 
     def get_uri_type(self) -> str:
-
         if self.uri[0:20] == "azureml://datastores":
             return "Datastore"
         if self.uri[0:14] == "azureml://jobs":
@@ -135,15 +129,40 @@ def get_storage_client(
     credential: str,
     storage_account: str,
     storage_type: Union[DatastoreType, str] = DatastoreType.AZURE_BLOB,
-    account_url: str = None,
-    container_name: str = None,
+    account_url: Optional[str] = None,
+    container_name: Optional[str] = None,
 ) -> Union[BlobStorageClient, FileStorageClient, Gen2StorageClient]:
-    """Return a storage client class instance based on the storage account
-    type."""
-    if storage_type not in SUPPORTED_STORAGE_TYPES:
+    """Return a storage client class instance based on the storage account type.
+
+    :param credential: The credential
+    :type credential: str
+    :param storage_account: The storage_account name
+    :type storage_account: str
+    :param storage_type: The storage type
+    :type storage_type: Union[DatastoreType, str]
+    :param account_url: The account url
+    :type account_url: Optional[str]
+    :param container_name: The container name
+    :type container_name: Optional[str]
+    :return: The storage client
+    :rtype: Union[BlobStorageClient, FileStorageClient, Gen2StorageClient]
+    """
+    client_builders = {
+        DatastoreType.AZURE_BLOB: lambda credential, container_name, account_url: BlobStorageClient(
+            credential=credential, account_url=account_url, container_name=container_name
+        ),
+        DatastoreType.AZURE_DATA_LAKE_GEN2: lambda credential, container_name, account_url: Gen2StorageClient(
+            credential=credential, file_system=container_name, account_url=account_url
+        ),
+        DatastoreType.AZURE_FILE: lambda credential, container_name, account_url: FileStorageClient(
+            credential=credential, file_share_name=container_name, account_url=account_url
+        ),
+    }
+
+    if storage_type not in client_builders:
         msg = (
             f"Datastore type {storage_type} is not supported. Supported storage"
-            f"types for artifact upload include: {*SUPPORTED_STORAGE_TYPES,}"
+            + f"types for artifact upload include: {*client_builders,}"
         )
         raise ValidationException(
             message=msg,
@@ -155,21 +174,7 @@ def get_storage_client(
     storage_endpoint = _get_storage_endpoint_from_metadata()
     if not account_url and storage_endpoint:
         account_url = STORAGE_ACCOUNT_URLS[storage_type].format(storage_account, storage_endpoint)
-
-    if storage_type == DatastoreType.AZURE_BLOB:
-        return BlobStorageClient(
-            credential=credential,
-            container_name=container_name,
-            account_url=account_url,
-        )
-    if storage_type == DatastoreType.AZURE_DATA_LAKE_GEN2:
-        return Gen2StorageClient(credential=credential, file_system=container_name, account_url=account_url)
-    if storage_type == DatastoreType.AZURE_FILE:
-        return FileStorageClient(
-            credential=credential,
-            file_share_name=container_name,
-            account_url=account_url,
-        )
+    return client_builders[storage_type](credential, container_name, account_url)
 
 
 def get_artifact_path_from_storage_url(blob_url: str, container_name: dict) -> str:
@@ -182,7 +187,19 @@ def get_artifact_path_from_storage_url(blob_url: str, container_name: dict) -> s
     return blob_url
 
 
-def get_ds_name_and_path_prefix(asset_uri: str) -> Tuple[str, str]:
-    ds_name = asset_uri.split("paths")[0].split("/")[-2]
-    path_prefix = asset_uri.split("paths")[1][1:]
+def get_ds_name_and_path_prefix(asset_uri: str, registry_name: Optional[str] = None) -> Tuple[str, str]:
+    if registry_name:
+        try:
+            split_paths = re.findall(STORAGE_URI_REGEX, asset_uri)
+            path_prefix = split_paths[0][3]
+        except Exception as e:
+            raise Exception("Registry asset URI could not be parsed.") from e
+        ds_name = None
+    else:
+        try:
+            ds_name = asset_uri.split("paths")[0].split("/")[-2]
+            path_prefix = asset_uri.split("paths")[1][1:]
+        except Exception as e:
+            raise Exception("Workspace asset URI could not be parsed.") from e
+
     return ds_name, path_prefix

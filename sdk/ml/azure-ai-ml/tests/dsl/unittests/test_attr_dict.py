@@ -81,3 +81,8 @@ class TestAttrDict:
         assert not obj
         obj.continue_on_step_failure = False
         assert obj
+
+    def test_attr_dict_false_value(self):
+        obj = _AttrDict()
+        obj.false_value = False
+        assert obj._get_attrs() == {"false_value": False}

@@ -18,10 +18,15 @@ class AuthenticationRequiredError(CredentialUnavailableError):
     interaction as needed. Its properties provide additional information that may be required to authenticate. The
     control_interactive_prompts sample demonstrates handling this error by calling a credential's "authenticate"
     method.
+
+    :param str scopes: Scopes requested during the failed authentication
+    :param str message: An error message explaining the reason for the exception.
+    :param str claims: Additional claims required in the next authentication.
     """
 
-    def __init__(self, scopes, message=None, claims=None, **kwargs):
-        # type: (Iterable[str], Optional[str], Optional[str], **Any) -> None
+    def __init__(
+        self, scopes: Iterable[str], message: Optional[str] = None, claims: Optional[str] = None, **kwargs: Any
+    ) -> None:
         self._claims = claims
         self._scopes = scopes
         if not message:
@@ -29,13 +34,17 @@ class AuthenticationRequiredError(CredentialUnavailableError):
         super(AuthenticationRequiredError, self).__init__(message=message, **kwargs)
 
     @property
-    def scopes(self):
-        # type: () -> Iterable[str]
-        """Scopes requested during the failed authentication"""
+    def scopes(self) -> Iterable[str]:
+        """Scopes requested during the failed authentication.
+
+        :rtype: ~typing.Iterable[str]
+        """
         return self._scopes
 
     @property
-    def claims(self):
-        # type: () -> Optional[str]
-        """Additional claims required in the next authentication"""
+    def claims(self) -> Optional[str]:
+        """Additional claims required in the next authentication.
+
+        :rtype: str or None
+        """
         return self._claims

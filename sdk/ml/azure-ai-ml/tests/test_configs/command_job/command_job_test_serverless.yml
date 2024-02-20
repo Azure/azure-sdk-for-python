@@ -1,0 +1,13 @@
+command: pip freeze
+environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33
+name: "testdataset1"
+display_name: "test_dataset_display_name1"
+experiment_name: mfe-test1-dataset
+identity:
+  type: AMLToken
+inputs:
+  "testdataset":
+    mode: ro_mount
+    path: ../data
+queue_settings:
+  job_tier: standard

@@ -12,7 +12,7 @@ from typing import Any, TYPE_CHECKING
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.mgmt.core import ARMPipelineClient
 
-from . import models
+from . import models as _models
 from ._configuration import WebPubSubManagementClientConfiguration
 from ._serialization import Deserializer, Serializer
 from .operations import (
@@ -24,6 +24,7 @@ from .operations import (
     WebPubSubOperations,
     WebPubSubPrivateEndpointConnectionsOperations,
     WebPubSubPrivateLinkResourcesOperations,
+    WebPubSubReplicasOperations,
     WebPubSubSharedPrivateLinkResourcesOperations,
 )
 
@@ -56,18 +57,19 @@ class WebPubSubManagementClient:  # pylint: disable=client-accepts-api-version-k
     :ivar web_pub_sub_private_link_resources: WebPubSubPrivateLinkResourcesOperations operations
     :vartype web_pub_sub_private_link_resources:
      azure.mgmt.webpubsub.operations.WebPubSubPrivateLinkResourcesOperations
+    :ivar web_pub_sub_replicas: WebPubSubReplicasOperations operations
+    :vartype web_pub_sub_replicas: azure.mgmt.webpubsub.operations.WebPubSubReplicasOperations
     :ivar web_pub_sub_shared_private_link_resources: WebPubSubSharedPrivateLinkResourcesOperations
      operations
     :vartype web_pub_sub_shared_private_link_resources:
      azure.mgmt.webpubsub.operations.WebPubSubSharedPrivateLinkResourcesOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: Gets subscription Id which uniquely identify the Microsoft Azure
-     subscription. The subscription ID forms part of the URI for every service call. Required.
+    :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2022-08-01-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2023-06-01-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -84,9 +86,9 @@ class WebPubSubManagementClient:  # pylint: disable=client-accepts-api-version-k
         self._config = WebPubSubManagementClientConfiguration(
             credential=credential, subscription_id=subscription_id, **kwargs
         )
-        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client: ARMPipelineClient = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
@@ -104,6 +106,9 @@ class WebPubSubManagementClient:  # pylint: disable=client-accepts-api-version-k
             self._client, self._config, self._serialize, self._deserialize
         )
         self.web_pub_sub_private_link_resources = WebPubSubPrivateLinkResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.web_pub_sub_replicas = WebPubSubReplicasOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.web_pub_sub_shared_private_link_resources = WebPubSubSharedPrivateLinkResourcesOperations(
@@ -132,15 +137,12 @@ class WebPubSubManagementClient:  # pylint: disable=client-accepts-api-version-k
         request_copy.url = self._client.format_url(request_copy.url)
         return self._client.send_request(request_copy, **kwargs)
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         self._client.close()
 
-    def __enter__(self):
-        # type: () -> WebPubSubManagementClient
+    def __enter__(self) -> "WebPubSubManagementClient":
         self._client.__enter__()
         return self
 
-    def __exit__(self, *exc_details):
-        # type: (Any) -> None
+    def __exit__(self, *exc_details: Any) -> None:
         self._client.__exit__(*exc_details)

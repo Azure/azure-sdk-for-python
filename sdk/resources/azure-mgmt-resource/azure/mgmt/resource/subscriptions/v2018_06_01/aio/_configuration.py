@@ -34,7 +34,7 @@ class SubscriptionClientConfiguration(Configuration):  # pylint: disable=too-man
 
     def __init__(self, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
         super(SubscriptionClientConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop("api_version", "2018-06-01")  # type: str
+        api_version: str = kwargs.pop("api_version", "2018-06-01")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")

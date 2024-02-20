@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,15 +8,16 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from ... import _serialization
 
-from ._container_registry_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
-class Resource(msrest.serialization.Model):
+class Resource(_serialization.Model):
     """An Azure resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -28,47 +30,41 @@ class Resource(msrest.serialization.Model):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :ivar location: Required. The location of the resource. This cannot be changed after the
-     resource is created.
+    :ivar location: The location of the resource. This cannot be changed after the resource is
+     created. Required.
     :vartype location: str
-    :ivar tags: A set of tags. The tags of the resource.
+    :ivar tags: The tags of the resource.
     :vartype tags: dict[str, str]
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
     :vartype system_data: ~azure.mgmt.containerregistry.v2019_06_01_preview.models.SystemData
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
-        :keyword location: Required. The location of the resource. This cannot be changed after the
-         resource is created.
+        :keyword location: The location of the resource. This cannot be changed after the resource is
+         created. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. The tags of the resource.
+        :keyword tags: The tags of the resource.
         :paramtype tags: dict[str, str]
         """
-        super(Resource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -77,9 +73,9 @@ class Resource(msrest.serialization.Model):
         self.system_data = None
 
 
-class AgentPool(Resource):
-    """The agentpool that has the ARM resource and properties. 
-The agentpool will have all information to create an agent pool.
+class AgentPool(Resource):  # pylint: disable=too-many-instance-attributes
+    """The agentpool that has the ARM resource and properties.
+    The agentpool will have all information to create an agent pool.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -91,10 +87,10 @@ The agentpool will have all information to create an agent pool.
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :ivar location: Required. The location of the resource. This cannot be changed after the
-     resource is created.
+    :ivar location: The location of the resource. This cannot be changed after the resource is
+     created. Required.
     :vartype location: str
-    :ivar tags: A set of tags. The tags of the resource.
+    :ivar tags: The tags of the resource.
     :vartype tags: dict[str, str]
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
     :vartype system_data: ~azure.mgmt.containerregistry.v2019_06_01_preview.models.SystemData
@@ -102,38 +98,38 @@ The agentpool will have all information to create an agent pool.
     :vartype count: int
     :ivar tier: The Tier of agent machine.
     :vartype tier: str
-    :ivar os: The OS of agent machine. Possible values include: "Windows", "Linux".
+    :ivar os: The OS of agent machine. Known values are: "Windows" and "Linux".
     :vartype os: str or ~azure.mgmt.containerregistry.v2019_06_01_preview.models.OS
     :ivar virtual_network_subnet_resource_id: The Virtual Network Subnet Resource Id of the agent
      machine.
     :vartype virtual_network_subnet_resource_id: str
-    :ivar provisioning_state: The provisioning state of this agent pool. Possible values include:
-     "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled".
+    :ivar provisioning_state: The provisioning state of this agent pool. Known values are:
+     "Creating", "Updating", "Deleting", "Succeeded", "Failed", and "Canceled".
     :vartype provisioning_state: str or
      ~azure.mgmt.containerregistry.v2019_06_01_preview.models.ProvisioningState
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'system_data': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'count': {'key': 'properties.count', 'type': 'int'},
-        'tier': {'key': 'properties.tier', 'type': 'str'},
-        'os': {'key': 'properties.os', 'type': 'str'},
-        'virtual_network_subnet_resource_id': {'key': 'properties.virtualNetworkSubnetResourceId', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "count": {"key": "properties.count", "type": "int"},
+        "tier": {"key": "properties.tier", "type": "str"},
+        "os": {"key": "properties.os", "type": "str"},
+        "virtual_network_subnet_resource_id": {"key": "properties.virtualNetworkSubnetResourceId", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -143,27 +139,27 @@ The agentpool will have all information to create an agent pool.
         tags: Optional[Dict[str, str]] = None,
         count: Optional[int] = None,
         tier: Optional[str] = None,
-        os: Optional[Union[str, "OS"]] = None,
+        os: Optional[Union[str, "_models.OS"]] = None,
         virtual_network_subnet_resource_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword location: Required. The location of the resource. This cannot be changed after the
-         resource is created.
+        :keyword location: The location of the resource. This cannot be changed after the resource is
+         created. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. The tags of the resource.
+        :keyword tags: The tags of the resource.
         :paramtype tags: dict[str, str]
         :keyword count: The count of agent machine.
         :paramtype count: int
         :keyword tier: The Tier of agent machine.
         :paramtype tier: str
-        :keyword os: The OS of agent machine. Possible values include: "Windows", "Linux".
+        :keyword os: The OS of agent machine. Known values are: "Windows" and "Linux".
         :paramtype os: str or ~azure.mgmt.containerregistry.v2019_06_01_preview.models.OS
         :keyword virtual_network_subnet_resource_id: The Virtual Network Subnet Resource Id of the
          agent machine.
         :paramtype virtual_network_subnet_resource_id: str
         """
-        super(AgentPool, self).__init__(location=location, tags=tags, **kwargs)
+        super().__init__(location=location, tags=tags, **kwargs)
         self.count = count
         self.tier = tier
         self.os = os
@@ -171,7 +167,7 @@ The agentpool will have all information to create an agent pool.
         self.provisioning_state = None
 
 
-class AgentPoolListResult(msrest.serialization.Model):
+class AgentPoolListResult(_serialization.Model):
     """The collection of agent pools.
 
     :ivar value: The collection value.
@@ -181,29 +177,25 @@ class AgentPoolListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[AgentPool]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[AgentPool]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["AgentPool"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+        self, *, value: Optional[List["_models.AgentPool"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The collection value.
         :paramtype value: list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.AgentPool]
         :keyword next_link: The URI that can be used to request the next set of paged results.
         :paramtype next_link: str
         """
-        super(AgentPoolListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class AgentPoolQueueStatus(msrest.serialization.Model):
+class AgentPoolQueueStatus(_serialization.Model):
     """The QueueStatus of Agent Pool.
 
     :ivar count: The number of pending runs in the queue.
@@ -211,56 +203,45 @@ class AgentPoolQueueStatus(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'count': {'key': 'count', 'type': 'int'},
+        "count": {"key": "count", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        count: Optional[int] = None,
-        **kwargs
-    ):
+    def __init__(self, *, count: Optional[int] = None, **kwargs: Any) -> None:
         """
         :keyword count: The number of pending runs in the queue.
         :paramtype count: int
         """
-        super(AgentPoolQueueStatus, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.count = count
 
 
-class AgentPoolUpdateParameters(msrest.serialization.Model):
+class AgentPoolUpdateParameters(_serialization.Model):
     """The parameters for updating an agent pool.
 
-    :ivar tags: A set of tags. The ARM resource tags.
+    :ivar tags: The ARM resource tags.
     :vartype tags: dict[str, str]
     :ivar count: The count of agent machine.
     :vartype count: int
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'count': {'key': 'properties.count', 'type': 'int'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "count": {"key": "properties.count", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        count: Optional[int] = None,
-        **kwargs
-    ):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, count: Optional[int] = None, **kwargs: Any) -> None:
         """
-        :keyword tags: A set of tags. The ARM resource tags.
+        :keyword tags: The ARM resource tags.
         :paramtype tags: dict[str, str]
         :keyword count: The count of agent machine.
         :paramtype count: int
         """
-        super(AgentPoolUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
         self.count = count
 
 
-class AgentProperties(msrest.serialization.Model):
+class AgentProperties(_serialization.Model):
     """The properties that determine the run agent configuration.
 
     :ivar cpu: The CPU configuration in terms of number of cores required for the run.
@@ -268,31 +249,26 @@ class AgentProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'cpu': {'key': 'cpu', 'type': 'int'},
+        "cpu": {"key": "cpu", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        cpu: Optional[int] = None,
-        **kwargs
-    ):
+    def __init__(self, *, cpu: Optional[int] = None, **kwargs: Any) -> None:
         """
         :keyword cpu: The CPU configuration in terms of number of cores required for the run.
         :paramtype cpu: int
         """
-        super(AgentProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.cpu = cpu
 
 
-class Argument(msrest.serialization.Model):
+class Argument(_serialization.Model):
     """The properties of a run argument.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the argument.
+    :ivar name: The name of the argument. Required.
     :vartype name: str
-    :ivar value: Required. The value of the argument.
+    :ivar value: The value of the argument. Required.
     :vartype value: str
     :ivar is_secret: Flag to indicate whether the argument represents a secret and want to be
      removed from build logs.
@@ -300,47 +276,40 @@ class Argument(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
-        'value': {'required': True},
+        "name": {"required": True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
-        'is_secret': {'key': 'isSecret', 'type': 'bool'},
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "str"},
+        "is_secret": {"key": "isSecret", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        value: str,
-        is_secret: Optional[bool] = False,
-        **kwargs
-    ):
+    def __init__(self, *, name: str, value: str, is_secret: bool = False, **kwargs: Any) -> None:
         """
-        :keyword name: Required. The name of the argument.
+        :keyword name: The name of the argument. Required.
         :paramtype name: str
-        :keyword value: Required. The value of the argument.
+        :keyword value: The value of the argument. Required.
         :paramtype value: str
         :keyword is_secret: Flag to indicate whether the argument represents a secret and want to be
          removed from build logs.
         :paramtype is_secret: bool
         """
-        super(Argument, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.value = value
         self.is_secret = is_secret
 
 
-class AuthInfo(msrest.serialization.Model):
+class AuthInfo(_serialization.Model):
     """The authorization properties for accessing the source code repository.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar token_type: Required. The type of Auth token. Possible values include: "PAT", "OAuth".
+    :ivar token_type: The type of Auth token. Required. Known values are: "PAT" and "OAuth".
     :vartype token_type: str or ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TokenType
-    :ivar token: Required. The access token used to access the source control provider.
+    :ivar token: The access token used to access the source control provider. Required.
     :vartype token: str
     :ivar refresh_token: The refresh token used to refresh the access token.
     :vartype refresh_token: str
@@ -351,33 +320,33 @@ class AuthInfo(msrest.serialization.Model):
     """
 
     _validation = {
-        'token_type': {'required': True},
-        'token': {'required': True},
+        "token_type": {"required": True},
+        "token": {"required": True},
     }
 
     _attribute_map = {
-        'token_type': {'key': 'tokenType', 'type': 'str'},
-        'token': {'key': 'token', 'type': 'str'},
-        'refresh_token': {'key': 'refreshToken', 'type': 'str'},
-        'scope': {'key': 'scope', 'type': 'str'},
-        'expires_in': {'key': 'expiresIn', 'type': 'int'},
+        "token_type": {"key": "tokenType", "type": "str"},
+        "token": {"key": "token", "type": "str"},
+        "refresh_token": {"key": "refreshToken", "type": "str"},
+        "scope": {"key": "scope", "type": "str"},
+        "expires_in": {"key": "expiresIn", "type": "int"},
     }
 
     def __init__(
         self,
         *,
-        token_type: Union[str, "TokenType"],
+        token_type: Union[str, "_models.TokenType"],
         token: str,
         refresh_token: Optional[str] = None,
         scope: Optional[str] = None,
         expires_in: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword token_type: Required. The type of Auth token. Possible values include: "PAT", "OAuth".
+        :keyword token_type: The type of Auth token. Required. Known values are: "PAT" and "OAuth".
         :paramtype token_type: str or
          ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TokenType
-        :keyword token: Required. The access token used to access the source control provider.
+        :keyword token: The access token used to access the source control provider. Required.
         :paramtype token: str
         :keyword refresh_token: The refresh token used to refresh the access token.
         :paramtype refresh_token: str
@@ -386,7 +355,7 @@ class AuthInfo(msrest.serialization.Model):
         :keyword expires_in: Time in seconds that the token remains valid.
         :paramtype expires_in: int
         """
-        super(AuthInfo, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.token_type = token_type
         self.token = token
         self.refresh_token = refresh_token
@@ -394,10 +363,10 @@ class AuthInfo(msrest.serialization.Model):
         self.expires_in = expires_in
 
 
-class AuthInfoUpdateParameters(msrest.serialization.Model):
+class AuthInfoUpdateParameters(_serialization.Model):
     """The authorization properties for accessing the source code repository.
 
-    :ivar token_type: The type of Auth token. Possible values include: "PAT", "OAuth".
+    :ivar token_type: The type of Auth token. Known values are: "PAT" and "OAuth".
     :vartype token_type: str or ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TokenType
     :ivar token: The access token used to access the source control provider.
     :vartype token: str
@@ -410,25 +379,25 @@ class AuthInfoUpdateParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'token_type': {'key': 'tokenType', 'type': 'str'},
-        'token': {'key': 'token', 'type': 'str'},
-        'refresh_token': {'key': 'refreshToken', 'type': 'str'},
-        'scope': {'key': 'scope', 'type': 'str'},
-        'expires_in': {'key': 'expiresIn', 'type': 'int'},
+        "token_type": {"key": "tokenType", "type": "str"},
+        "token": {"key": "token", "type": "str"},
+        "refresh_token": {"key": "refreshToken", "type": "str"},
+        "scope": {"key": "scope", "type": "str"},
+        "expires_in": {"key": "expiresIn", "type": "int"},
     }
 
     def __init__(
         self,
         *,
-        token_type: Optional[Union[str, "TokenType"]] = None,
+        token_type: Optional[Union[str, "_models.TokenType"]] = None,
         token: Optional[str] = None,
         refresh_token: Optional[str] = None,
         scope: Optional[str] = None,
         expires_in: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword token_type: The type of Auth token. Possible values include: "PAT", "OAuth".
+        :keyword token_type: The type of Auth token. Known values are: "PAT" and "OAuth".
         :paramtype token_type: str or
          ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TokenType
         :keyword token: The access token used to access the source control provider.
@@ -440,7 +409,7 @@ class AuthInfoUpdateParameters(msrest.serialization.Model):
         :keyword expires_in: Time in seconds that the token remains valid.
         :paramtype expires_in: int
         """
-        super(AuthInfoUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.token_type = token_type
         self.token = token
         self.refresh_token = refresh_token
@@ -448,11 +417,10 @@ class AuthInfoUpdateParameters(msrest.serialization.Model):
         self.expires_in = expires_in
 
 
-class BaseImageDependency(msrest.serialization.Model):
+class BaseImageDependency(_serialization.Model):
     """Properties that describe a base image dependency.
 
-    :ivar type: The type of the base image dependency. Possible values include: "BuildTime",
-     "RunTime".
+    :ivar type: The type of the base image dependency. Known values are: "BuildTime" and "RunTime".
     :vartype type: str or
      ~azure.mgmt.containerregistry.v2019_06_01_preview.models.BaseImageDependencyType
     :ivar registry: The registry login server.
@@ -466,25 +434,25 @@ class BaseImageDependency(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'registry': {'key': 'registry', 'type': 'str'},
-        'repository': {'key': 'repository', 'type': 'str'},
-        'tag': {'key': 'tag', 'type': 'str'},
-        'digest': {'key': 'digest', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "registry": {"key": "registry", "type": "str"},
+        "repository": {"key": "repository", "type": "str"},
+        "tag": {"key": "tag", "type": "str"},
+        "digest": {"key": "digest", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        type: Optional[Union[str, "BaseImageDependencyType"]] = None,
+        type: Optional[Union[str, "_models.BaseImageDependencyType"]] = None,
         registry: Optional[str] = None,
         repository: Optional[str] = None,
         tag: Optional[str] = None,
         digest: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword type: The type of the base image dependency. Possible values include: "BuildTime",
+        :keyword type: The type of the base image dependency. Known values are: "BuildTime" and
          "RunTime".
         :paramtype type: str or
          ~azure.mgmt.containerregistry.v2019_06_01_preview.models.BaseImageDependencyType
@@ -497,7 +465,7 @@ class BaseImageDependency(msrest.serialization.Model):
         :keyword digest: The sha256-based digest of the image manifest.
         :paramtype digest: str
         """
-        super(BaseImageDependency, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.type = type
         self.registry = registry
         self.repository = repository
@@ -505,68 +473,68 @@ class BaseImageDependency(msrest.serialization.Model):
         self.digest = digest
 
 
-class BaseImageTrigger(msrest.serialization.Model):
+class BaseImageTrigger(_serialization.Model):
     """The trigger based on base image dependency.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar base_image_trigger_type: Required. The type of the auto trigger for base image dependency
-     updates. Possible values include: "All", "Runtime".
+    :ivar base_image_trigger_type: The type of the auto trigger for base image dependency updates.
+     Required. Known values are: "All" and "Runtime".
     :vartype base_image_trigger_type: str or
      ~azure.mgmt.containerregistry.v2019_06_01_preview.models.BaseImageTriggerType
     :ivar update_trigger_endpoint: The endpoint URL for receiving update triggers.
     :vartype update_trigger_endpoint: str
-    :ivar update_trigger_payload_type: Type of Payload body for Base image update triggers.
-     Possible values include: "Default", "Token".
+    :ivar update_trigger_payload_type: Type of Payload body for Base image update triggers. Known
+     values are: "Default" and "Token".
     :vartype update_trigger_payload_type: str or
      ~azure.mgmt.containerregistry.v2019_06_01_preview.models.UpdateTriggerPayloadType
-    :ivar status: The current status of trigger. Possible values include: "Disabled", "Enabled".
+    :ivar status: The current status of trigger. Known values are: "Disabled" and "Enabled".
     :vartype status: str or ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TriggerStatus
-    :ivar name: Required. The name of the trigger.
+    :ivar name: The name of the trigger. Required.
     :vartype name: str
     """
 
     _validation = {
-        'base_image_trigger_type': {'required': True},
-        'name': {'required': True},
+        "base_image_trigger_type": {"required": True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'base_image_trigger_type': {'key': 'baseImageTriggerType', 'type': 'str'},
-        'update_trigger_endpoint': {'key': 'updateTriggerEndpoint', 'type': 'str'},
-        'update_trigger_payload_type': {'key': 'updateTriggerPayloadType', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
+        "base_image_trigger_type": {"key": "baseImageTriggerType", "type": "str"},
+        "update_trigger_endpoint": {"key": "updateTriggerEndpoint", "type": "str"},
+        "update_trigger_payload_type": {"key": "updateTriggerPayloadType", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "name": {"key": "name", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        base_image_trigger_type: Union[str, "BaseImageTriggerType"],
+        base_image_trigger_type: Union[str, "_models.BaseImageTriggerType"],
         name: str,
         update_trigger_endpoint: Optional[str] = None,
-        update_trigger_payload_type: Optional[Union[str, "UpdateTriggerPayloadType"]] = None,
-        status: Optional[Union[str, "TriggerStatus"]] = None,
-        **kwargs
-    ):
+        update_trigger_payload_type: Optional[Union[str, "_models.UpdateTriggerPayloadType"]] = None,
+        status: Optional[Union[str, "_models.TriggerStatus"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword base_image_trigger_type: Required. The type of the auto trigger for base image
-         dependency updates. Possible values include: "All", "Runtime".
+        :keyword base_image_trigger_type: The type of the auto trigger for base image dependency
+         updates. Required. Known values are: "All" and "Runtime".
         :paramtype base_image_trigger_type: str or
          ~azure.mgmt.containerregistry.v2019_06_01_preview.models.BaseImageTriggerType
         :keyword update_trigger_endpoint: The endpoint URL for receiving update triggers.
         :paramtype update_trigger_endpoint: str
         :keyword update_trigger_payload_type: Type of Payload body for Base image update triggers.
-         Possible values include: "Default", "Token".
+         Known values are: "Default" and "Token".
         :paramtype update_trigger_payload_type: str or
          ~azure.mgmt.containerregistry.v2019_06_01_preview.models.UpdateTriggerPayloadType
-        :keyword status: The current status of trigger. Possible values include: "Disabled", "Enabled".
+        :keyword status: The current status of trigger. Known values are: "Disabled" and "Enabled".
         :paramtype status: str or
          ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TriggerStatus
-        :keyword name: Required. The name of the trigger.
+        :keyword name: The name of the trigger. Required.
         :paramtype name: str
         """
-        super(BaseImageTrigger, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.base_image_trigger_type = base_image_trigger_type
         self.update_trigger_endpoint = update_trigger_endpoint
         self.update_trigger_payload_type = update_trigger_payload_type
@@ -574,67 +542,67 @@ class BaseImageTrigger(msrest.serialization.Model):
         self.name = name
 
 
-class BaseImageTriggerUpdateParameters(msrest.serialization.Model):
+class BaseImageTriggerUpdateParameters(_serialization.Model):
     """The properties for updating base image dependency trigger.
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar base_image_trigger_type: The type of the auto trigger for base image dependency updates.
-     Possible values include: "All", "Runtime".
+     Known values are: "All" and "Runtime".
     :vartype base_image_trigger_type: str or
      ~azure.mgmt.containerregistry.v2019_06_01_preview.models.BaseImageTriggerType
     :ivar update_trigger_endpoint: The endpoint URL for receiving update triggers.
     :vartype update_trigger_endpoint: str
-    :ivar update_trigger_payload_type: Type of Payload body for Base image update triggers.
-     Possible values include: "Default", "Token".
+    :ivar update_trigger_payload_type: Type of Payload body for Base image update triggers. Known
+     values are: "Default" and "Token".
     :vartype update_trigger_payload_type: str or
      ~azure.mgmt.containerregistry.v2019_06_01_preview.models.UpdateTriggerPayloadType
-    :ivar status: The current status of trigger. Possible values include: "Disabled", "Enabled".
+    :ivar status: The current status of trigger. Known values are: "Disabled" and "Enabled".
     :vartype status: str or ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TriggerStatus
-    :ivar name: Required. The name of the trigger.
+    :ivar name: The name of the trigger. Required.
     :vartype name: str
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'base_image_trigger_type': {'key': 'baseImageTriggerType', 'type': 'str'},
-        'update_trigger_endpoint': {'key': 'updateTriggerEndpoint', 'type': 'str'},
-        'update_trigger_payload_type': {'key': 'updateTriggerPayloadType', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
+        "base_image_trigger_type": {"key": "baseImageTriggerType", "type": "str"},
+        "update_trigger_endpoint": {"key": "updateTriggerEndpoint", "type": "str"},
+        "update_trigger_payload_type": {"key": "updateTriggerPayloadType", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "name": {"key": "name", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         name: str,
-        base_image_trigger_type: Optional[Union[str, "BaseImageTriggerType"]] = None,
+        base_image_trigger_type: Optional[Union[str, "_models.BaseImageTriggerType"]] = None,
         update_trigger_endpoint: Optional[str] = None,
-        update_trigger_payload_type: Optional[Union[str, "UpdateTriggerPayloadType"]] = None,
-        status: Optional[Union[str, "TriggerStatus"]] = None,
-        **kwargs
-    ):
+        update_trigger_payload_type: Optional[Union[str, "_models.UpdateTriggerPayloadType"]] = None,
+        status: Optional[Union[str, "_models.TriggerStatus"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword base_image_trigger_type: The type of the auto trigger for base image dependency
-         updates. Possible values include: "All", "Runtime".
+         updates. Known values are: "All" and "Runtime".
         :paramtype base_image_trigger_type: str or
          ~azure.mgmt.containerregistry.v2019_06_01_preview.models.BaseImageTriggerType
         :keyword update_trigger_endpoint: The endpoint URL for receiving update triggers.
         :paramtype update_trigger_endpoint: str
         :keyword update_trigger_payload_type: Type of Payload body for Base image update triggers.
-         Possible values include: "Default", "Token".
+         Known values are: "Default" and "Token".
         :paramtype update_trigger_payload_type: str or
          ~azure.mgmt.containerregistry.v2019_06_01_preview.models.UpdateTriggerPayloadType
-        :keyword status: The current status of trigger. Possible values include: "Disabled", "Enabled".
+        :keyword status: The current status of trigger. Known values are: "Disabled" and "Enabled".
         :paramtype status: str or
          ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TriggerStatus
-        :keyword name: Required. The name of the trigger.
+        :keyword name: The name of the trigger. Required.
         :paramtype name: str
         """
-        super(BaseImageTriggerUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.base_image_trigger_type = base_image_trigger_type
         self.update_trigger_endpoint = update_trigger_endpoint
         self.update_trigger_payload_type = update_trigger_payload_type
@@ -642,7 +610,7 @@ class BaseImageTriggerUpdateParameters(msrest.serialization.Model):
         self.name = name
 
 
-class Credentials(msrest.serialization.Model):
+class Credentials(_serialization.Model):
     """The parameters that describes a set of credentials that will be used when a run is invoked.
 
     :ivar source_registry: Describes the credential parameters for accessing the source registry.
@@ -657,17 +625,17 @@ class Credentials(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'source_registry': {'key': 'sourceRegistry', 'type': 'SourceRegistryCredentials'},
-        'custom_registries': {'key': 'customRegistries', 'type': '{CustomRegistryCredentials}'},
+        "source_registry": {"key": "sourceRegistry", "type": "SourceRegistryCredentials"},
+        "custom_registries": {"key": "customRegistries", "type": "{CustomRegistryCredentials}"},
     }
 
     def __init__(
         self,
         *,
-        source_registry: Optional["SourceRegistryCredentials"] = None,
-        custom_registries: Optional[Dict[str, "CustomRegistryCredentials"]] = None,
-        **kwargs
-    ):
+        source_registry: Optional["_models.SourceRegistryCredentials"] = None,
+        custom_registries: Optional[Dict[str, "_models.CustomRegistryCredentials"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword source_registry: Describes the credential parameters for accessing the source
          registry.
@@ -680,12 +648,12 @@ class Credentials(msrest.serialization.Model):
         :paramtype custom_registries: dict[str,
          ~azure.mgmt.containerregistry.v2019_06_01_preview.models.CustomRegistryCredentials]
         """
-        super(Credentials, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.source_registry = source_registry
         self.custom_registries = custom_registries
 
 
-class CustomRegistryCredentials(msrest.serialization.Model):
+class CustomRegistryCredentials(_serialization.Model):
     """Describes the credentials that will be used to access a custom registry during a run.
 
     :ivar user_name: The username for logging into the custom registry.
@@ -704,19 +672,19 @@ class CustomRegistryCredentials(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'user_name': {'key': 'userName', 'type': 'SecretObject'},
-        'password': {'key': 'password', 'type': 'SecretObject'},
-        'identity': {'key': 'identity', 'type': 'str'},
+        "user_name": {"key": "userName", "type": "SecretObject"},
+        "password": {"key": "password", "type": "SecretObject"},
+        "identity": {"key": "identity", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        user_name: Optional["SecretObject"] = None,
-        password: Optional["SecretObject"] = None,
+        user_name: Optional["_models.SecretObject"] = None,
+        password: Optional["_models.SecretObject"] = None,
         identity: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword user_name: The username for logging into the custom registry.
         :paramtype user_name: ~azure.mgmt.containerregistry.v2019_06_01_preview.models.SecretObject
@@ -732,21 +700,21 @@ class CustomRegistryCredentials(msrest.serialization.Model):
          source of authentication used for accessing the registry.
         :paramtype identity: str
         """
-        super(CustomRegistryCredentials, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.user_name = user_name
         self.password = password
         self.identity = identity
 
 
-class RunRequest(msrest.serialization.Model):
+class RunRequest(_serialization.Model):
     """The request parameters for scheduling a run.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: DockerBuildRequest, EncodedTaskRunRequest, FileTaskRunRequest, TaskRunRequest.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    DockerBuildRequest, EncodedTaskRunRequest, FileTaskRunRequest, TaskRunRequest
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. The type of the run request.Constant filled by server.
+    :ivar type: The type of the run request. Required.
     :vartype type: str
     :ivar is_archive_enabled: The value that indicates whether archiving is enabled for the run or
      not.
@@ -759,28 +727,33 @@ class RunRequest(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'is_archive_enabled': {'key': 'isArchiveEnabled', 'type': 'bool'},
-        'agent_pool_name': {'key': 'agentPoolName', 'type': 'str'},
-        'log_template': {'key': 'logTemplate', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "is_archive_enabled": {"key": "isArchiveEnabled", "type": "bool"},
+        "agent_pool_name": {"key": "agentPoolName", "type": "str"},
+        "log_template": {"key": "logTemplate", "type": "str"},
     }
 
     _subtype_map = {
-        'type': {'DockerBuildRequest': 'DockerBuildRequest', 'EncodedTaskRunRequest': 'EncodedTaskRunRequest', 'FileTaskRunRequest': 'FileTaskRunRequest', 'TaskRunRequest': 'TaskRunRequest'}
+        "type": {
+            "DockerBuildRequest": "DockerBuildRequest",
+            "EncodedTaskRunRequest": "EncodedTaskRunRequest",
+            "FileTaskRunRequest": "FileTaskRunRequest",
+            "TaskRunRequest": "TaskRunRequest",
+        }
     }
 
     def __init__(
         self,
         *,
-        is_archive_enabled: Optional[bool] = False,
+        is_archive_enabled: bool = False,
         agent_pool_name: Optional[str] = None,
         log_template: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword is_archive_enabled: The value that indicates whether archiving is enabled for the run
          or not.
@@ -791,19 +764,19 @@ class RunRequest(msrest.serialization.Model):
          log artifact.
         :paramtype log_template: str
         """
-        super(RunRequest, self).__init__(**kwargs)
-        self.type = None  # type: Optional[str]
+        super().__init__(**kwargs)
+        self.type: Optional[str] = None
         self.is_archive_enabled = is_archive_enabled
         self.agent_pool_name = agent_pool_name
         self.log_template = log_template
 
 
-class DockerBuildRequest(RunRequest):
+class DockerBuildRequest(RunRequest):  # pylint: disable=too-many-instance-attributes
     """The parameters for a docker quick build.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. The type of the run request.Constant filled by server.
+    :ivar type: The type of the run request. Required.
     :vartype type: str
     :ivar is_archive_enabled: The value that indicates whether archiving is enabled for the run or
      not.
@@ -820,7 +793,7 @@ class DockerBuildRequest(RunRequest):
     :vartype is_push_enabled: bool
     :ivar no_cache: The value of this property indicates whether the image cache is enabled or not.
     :vartype no_cache: bool
-    :ivar docker_file_path: Required. The Docker file path relative to the source location.
+    :ivar docker_file_path: The Docker file path relative to the source location. Required.
     :vartype docker_file_path: str
     :ivar target: The name of the target build stage for the docker build.
     :vartype target: str
@@ -828,7 +801,7 @@ class DockerBuildRequest(RunRequest):
     :vartype arguments: list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.Argument]
     :ivar timeout: Run timeout in seconds.
     :vartype timeout: int
-    :ivar platform: Required. The platform properties against which the run has to happen.
+    :ivar platform: The platform properties against which the run has to happen. Required.
     :vartype platform: ~azure.mgmt.containerregistry.v2019_06_01_preview.models.PlatformProperties
     :ivar agent_configuration: The machine configuration of the run agent.
     :vartype agent_configuration:
@@ -844,49 +817,49 @@ class DockerBuildRequest(RunRequest):
     """
 
     _validation = {
-        'type': {'required': True},
-        'docker_file_path': {'required': True},
-        'timeout': {'maximum': 28800, 'minimum': 300},
-        'platform': {'required': True},
+        "type": {"required": True},
+        "docker_file_path": {"required": True},
+        "timeout": {"maximum": 28800, "minimum": 300},
+        "platform": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'is_archive_enabled': {'key': 'isArchiveEnabled', 'type': 'bool'},
-        'agent_pool_name': {'key': 'agentPoolName', 'type': 'str'},
-        'log_template': {'key': 'logTemplate', 'type': 'str'},
-        'image_names': {'key': 'imageNames', 'type': '[str]'},
-        'is_push_enabled': {'key': 'isPushEnabled', 'type': 'bool'},
-        'no_cache': {'key': 'noCache', 'type': 'bool'},
-        'docker_file_path': {'key': 'dockerFilePath', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'arguments': {'key': 'arguments', 'type': '[Argument]'},
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'platform': {'key': 'platform', 'type': 'PlatformProperties'},
-        'agent_configuration': {'key': 'agentConfiguration', 'type': 'AgentProperties'},
-        'source_location': {'key': 'sourceLocation', 'type': 'str'},
-        'credentials': {'key': 'credentials', 'type': 'Credentials'},
+        "type": {"key": "type", "type": "str"},
+        "is_archive_enabled": {"key": "isArchiveEnabled", "type": "bool"},
+        "agent_pool_name": {"key": "agentPoolName", "type": "str"},
+        "log_template": {"key": "logTemplate", "type": "str"},
+        "image_names": {"key": "imageNames", "type": "[str]"},
+        "is_push_enabled": {"key": "isPushEnabled", "type": "bool"},
+        "no_cache": {"key": "noCache", "type": "bool"},
+        "docker_file_path": {"key": "dockerFilePath", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "arguments": {"key": "arguments", "type": "[Argument]"},
+        "timeout": {"key": "timeout", "type": "int"},
+        "platform": {"key": "platform", "type": "PlatformProperties"},
+        "agent_configuration": {"key": "agentConfiguration", "type": "AgentProperties"},
+        "source_location": {"key": "sourceLocation", "type": "str"},
+        "credentials": {"key": "credentials", "type": "Credentials"},
     }
 
     def __init__(
         self,
         *,
         docker_file_path: str,
-        platform: "PlatformProperties",
-        is_archive_enabled: Optional[bool] = False,
+        platform: "_models.PlatformProperties",
+        is_archive_enabled: bool = False,
         agent_pool_name: Optional[str] = None,
         log_template: Optional[str] = None,
         image_names: Optional[List[str]] = None,
-        is_push_enabled: Optional[bool] = True,
-        no_cache: Optional[bool] = False,
+        is_push_enabled: bool = True,
+        no_cache: bool = False,
         target: Optional[str] = None,
-        arguments: Optional[List["Argument"]] = None,
-        timeout: Optional[int] = 3600,
-        agent_configuration: Optional["AgentProperties"] = None,
+        arguments: Optional[List["_models.Argument"]] = None,
+        timeout: int = 3600,
+        agent_configuration: Optional["_models.AgentProperties"] = None,
         source_location: Optional[str] = None,
-        credentials: Optional["Credentials"] = None,
-        **kwargs
-    ):
+        credentials: Optional["_models.Credentials"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword is_archive_enabled: The value that indicates whether archiving is enabled for the run
          or not.
@@ -904,7 +877,7 @@ class DockerBuildRequest(RunRequest):
         :keyword no_cache: The value of this property indicates whether the image cache is enabled or
          not.
         :paramtype no_cache: bool
-        :keyword docker_file_path: Required. The Docker file path relative to the source location.
+        :keyword docker_file_path: The Docker file path relative to the source location. Required.
         :paramtype docker_file_path: str
         :keyword target: The name of the target build stage for the docker build.
         :paramtype target: str
@@ -912,7 +885,7 @@ class DockerBuildRequest(RunRequest):
         :paramtype arguments: list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.Argument]
         :keyword timeout: Run timeout in seconds.
         :paramtype timeout: int
-        :keyword platform: Required. The platform properties against which the run has to happen.
+        :keyword platform: The platform properties against which the run has to happen. Required.
         :paramtype platform:
          ~azure.mgmt.containerregistry.v2019_06_01_preview.models.PlatformProperties
         :keyword agent_configuration: The machine configuration of the run agent.
@@ -927,8 +900,10 @@ class DockerBuildRequest(RunRequest):
          this run is invoked.
         :paramtype credentials: ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Credentials
         """
-        super(DockerBuildRequest, self).__init__(is_archive_enabled=is_archive_enabled, agent_pool_name=agent_pool_name, log_template=log_template, **kwargs)
-        self.type = 'DockerBuildRequest'  # type: str
+        super().__init__(
+            is_archive_enabled=is_archive_enabled, agent_pool_name=agent_pool_name, log_template=log_template, **kwargs
+        )
+        self.type: str = "DockerBuildRequest"
         self.image_names = image_names
         self.is_push_enabled = is_push_enabled
         self.no_cache = no_cache
@@ -942,18 +917,18 @@ class DockerBuildRequest(RunRequest):
         self.credentials = credentials
 
 
-class TaskStepProperties(msrest.serialization.Model):
+class TaskStepProperties(_serialization.Model):
     """Base properties for any task step.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: DockerBuildStep, EncodedTaskStep, FileTaskStep.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    DockerBuildStep, EncodedTaskStep, FileTaskStep
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. The type of the step.Constant filled by server. Possible values include:
-     "Docker", "FileTask", "EncodedTask".
+    :ivar type: The type of the step. Required. Known values are: "Docker", "FileTask", and
+     "EncodedTask".
     :vartype type: str or ~azure.mgmt.containerregistry.v2019_06_01_preview.models.StepType
     :ivar base_image_dependencies: List of base image dependencies for a step.
     :vartype base_image_dependencies:
@@ -966,28 +941,22 @@ class TaskStepProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'required': True},
-        'base_image_dependencies': {'readonly': True},
+        "type": {"required": True},
+        "base_image_dependencies": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'base_image_dependencies': {'key': 'baseImageDependencies', 'type': '[BaseImageDependency]'},
-        'context_path': {'key': 'contextPath', 'type': 'str'},
-        'context_access_token': {'key': 'contextAccessToken', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "base_image_dependencies": {"key": "baseImageDependencies", "type": "[BaseImageDependency]"},
+        "context_path": {"key": "contextPath", "type": "str"},
+        "context_access_token": {"key": "contextAccessToken", "type": "str"},
     }
 
-    _subtype_map = {
-        'type': {'Docker': 'DockerBuildStep', 'EncodedTask': 'EncodedTaskStep', 'FileTask': 'FileTaskStep'}
-    }
+    _subtype_map = {"type": {"Docker": "DockerBuildStep", "EncodedTask": "EncodedTaskStep", "FileTask": "FileTaskStep"}}
 
     def __init__(
-        self,
-        *,
-        context_path: Optional[str] = None,
-        context_access_token: Optional[str] = None,
-        **kwargs
-    ):
+        self, *, context_path: Optional[str] = None, context_access_token: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword context_path: The URL(absolute or relative) of the source context for the task step.
         :paramtype context_path: str
@@ -995,8 +964,8 @@ class TaskStepProperties(msrest.serialization.Model):
          associated with the context for a step.
         :paramtype context_access_token: str
         """
-        super(TaskStepProperties, self).__init__(**kwargs)
-        self.type = None  # type: Optional[str]
+        super().__init__(**kwargs)
+        self.type: Optional[str] = None
         self.base_image_dependencies = None
         self.context_path = context_path
         self.context_access_token = context_access_token
@@ -1009,8 +978,8 @@ class DockerBuildStep(TaskStepProperties):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. The type of the step.Constant filled by server. Possible values include:
-     "Docker", "FileTask", "EncodedTask".
+    :ivar type: The type of the step. Required. Known values are: "Docker", "FileTask", and
+     "EncodedTask".
     :vartype type: str or ~azure.mgmt.containerregistry.v2019_06_01_preview.models.StepType
     :ivar base_image_dependencies: List of base image dependencies for a step.
     :vartype base_image_dependencies:
@@ -1027,7 +996,7 @@ class DockerBuildStep(TaskStepProperties):
     :vartype is_push_enabled: bool
     :ivar no_cache: The value of this property indicates whether the image cache is enabled or not.
     :vartype no_cache: bool
-    :ivar docker_file_path: Required. The Docker file path relative to the source context.
+    :ivar docker_file_path: The Docker file path relative to the source context. Required.
     :vartype docker_file_path: str
     :ivar target: The name of the target build stage for the docker build.
     :vartype target: str
@@ -1037,22 +1006,22 @@ class DockerBuildStep(TaskStepProperties):
     """
 
     _validation = {
-        'type': {'required': True},
-        'base_image_dependencies': {'readonly': True},
-        'docker_file_path': {'required': True},
+        "type": {"required": True},
+        "base_image_dependencies": {"readonly": True},
+        "docker_file_path": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'base_image_dependencies': {'key': 'baseImageDependencies', 'type': '[BaseImageDependency]'},
-        'context_path': {'key': 'contextPath', 'type': 'str'},
-        'context_access_token': {'key': 'contextAccessToken', 'type': 'str'},
-        'image_names': {'key': 'imageNames', 'type': '[str]'},
-        'is_push_enabled': {'key': 'isPushEnabled', 'type': 'bool'},
-        'no_cache': {'key': 'noCache', 'type': 'bool'},
-        'docker_file_path': {'key': 'dockerFilePath', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'arguments': {'key': 'arguments', 'type': '[Argument]'},
+        "type": {"key": "type", "type": "str"},
+        "base_image_dependencies": {"key": "baseImageDependencies", "type": "[BaseImageDependency]"},
+        "context_path": {"key": "contextPath", "type": "str"},
+        "context_access_token": {"key": "contextAccessToken", "type": "str"},
+        "image_names": {"key": "imageNames", "type": "[str]"},
+        "is_push_enabled": {"key": "isPushEnabled", "type": "bool"},
+        "no_cache": {"key": "noCache", "type": "bool"},
+        "docker_file_path": {"key": "dockerFilePath", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "arguments": {"key": "arguments", "type": "[Argument]"},
     }
 
     def __init__(
@@ -1062,12 +1031,12 @@ class DockerBuildStep(TaskStepProperties):
         context_path: Optional[str] = None,
         context_access_token: Optional[str] = None,
         image_names: Optional[List[str]] = None,
-        is_push_enabled: Optional[bool] = True,
-        no_cache: Optional[bool] = False,
+        is_push_enabled: bool = True,
+        no_cache: bool = False,
         target: Optional[str] = None,
-        arguments: Optional[List["Argument"]] = None,
-        **kwargs
-    ):
+        arguments: Optional[List["_models.Argument"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword context_path: The URL(absolute or relative) of the source context for the task step.
         :paramtype context_path: str
@@ -1082,7 +1051,7 @@ class DockerBuildStep(TaskStepProperties):
         :keyword no_cache: The value of this property indicates whether the image cache is enabled or
          not.
         :paramtype no_cache: bool
-        :keyword docker_file_path: Required. The Docker file path relative to the source context.
+        :keyword docker_file_path: The Docker file path relative to the source context. Required.
         :paramtype docker_file_path: str
         :keyword target: The name of the target build stage for the docker build.
         :paramtype target: str
@@ -1090,8 +1059,8 @@ class DockerBuildStep(TaskStepProperties):
          step.
         :paramtype arguments: list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.Argument]
         """
-        super(DockerBuildStep, self).__init__(context_path=context_path, context_access_token=context_access_token, **kwargs)
-        self.type = 'Docker'  # type: str
+        super().__init__(context_path=context_path, context_access_token=context_access_token, **kwargs)
+        self.type: str = "Docker"
         self.image_names = image_names
         self.is_push_enabled = is_push_enabled
         self.no_cache = no_cache
@@ -1100,16 +1069,16 @@ class DockerBuildStep(TaskStepProperties):
         self.arguments = arguments
 
 
-class TaskStepUpdateParameters(msrest.serialization.Model):
+class TaskStepUpdateParameters(_serialization.Model):
     """Base properties for updating any task step.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: DockerBuildStepUpdateParameters, EncodedTaskStepUpdateParameters, FileTaskStepUpdateParameters.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    DockerBuildStepUpdateParameters, EncodedTaskStepUpdateParameters, FileTaskStepUpdateParameters
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. The type of the step.Constant filled by server. Possible values include:
-     "Docker", "FileTask", "EncodedTask".
+    :ivar type: The type of the step. Required. Known values are: "Docker", "FileTask", and
+     "EncodedTask".
     :vartype type: str or ~azure.mgmt.containerregistry.v2019_06_01_preview.models.StepType
     :ivar context_path: The URL(absolute or relative) of the source context for the task step.
     :vartype context_path: str
@@ -1119,26 +1088,26 @@ class TaskStepUpdateParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'context_path': {'key': 'contextPath', 'type': 'str'},
-        'context_access_token': {'key': 'contextAccessToken', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "context_path": {"key": "contextPath", "type": "str"},
+        "context_access_token": {"key": "contextAccessToken", "type": "str"},
     }
 
     _subtype_map = {
-        'type': {'Docker': 'DockerBuildStepUpdateParameters', 'EncodedTask': 'EncodedTaskStepUpdateParameters', 'FileTask': 'FileTaskStepUpdateParameters'}
+        "type": {
+            "Docker": "DockerBuildStepUpdateParameters",
+            "EncodedTask": "EncodedTaskStepUpdateParameters",
+            "FileTask": "FileTaskStepUpdateParameters",
+        }
     }
 
     def __init__(
-        self,
-        *,
-        context_path: Optional[str] = None,
-        context_access_token: Optional[str] = None,
-        **kwargs
-    ):
+        self, *, context_path: Optional[str] = None, context_access_token: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword context_path: The URL(absolute or relative) of the source context for the task step.
         :paramtype context_path: str
@@ -1146,8 +1115,8 @@ class TaskStepUpdateParameters(msrest.serialization.Model):
          associated with the context for a step.
         :paramtype context_access_token: str
         """
-        super(TaskStepUpdateParameters, self).__init__(**kwargs)
-        self.type = None  # type: Optional[str]
+        super().__init__(**kwargs)
+        self.type: Optional[str] = None
         self.context_path = context_path
         self.context_access_token = context_access_token
 
@@ -1157,8 +1126,8 @@ class DockerBuildStepUpdateParameters(TaskStepUpdateParameters):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. The type of the step.Constant filled by server. Possible values include:
-     "Docker", "FileTask", "EncodedTask".
+    :ivar type: The type of the step. Required. Known values are: "Docker", "FileTask", and
+     "EncodedTask".
     :vartype type: str or ~azure.mgmt.containerregistry.v2019_06_01_preview.models.StepType
     :ivar context_path: The URL(absolute or relative) of the source context for the task step.
     :vartype context_path: str
@@ -1182,19 +1151,19 @@ class DockerBuildStepUpdateParameters(TaskStepUpdateParameters):
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'context_path': {'key': 'contextPath', 'type': 'str'},
-        'context_access_token': {'key': 'contextAccessToken', 'type': 'str'},
-        'image_names': {'key': 'imageNames', 'type': '[str]'},
-        'is_push_enabled': {'key': 'isPushEnabled', 'type': 'bool'},
-        'no_cache': {'key': 'noCache', 'type': 'bool'},
-        'docker_file_path': {'key': 'dockerFilePath', 'type': 'str'},
-        'arguments': {'key': 'arguments', 'type': '[Argument]'},
-        'target': {'key': 'target', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "context_path": {"key": "contextPath", "type": "str"},
+        "context_access_token": {"key": "contextAccessToken", "type": "str"},
+        "image_names": {"key": "imageNames", "type": "[str]"},
+        "is_push_enabled": {"key": "isPushEnabled", "type": "bool"},
+        "no_cache": {"key": "noCache", "type": "bool"},
+        "docker_file_path": {"key": "dockerFilePath", "type": "str"},
+        "arguments": {"key": "arguments", "type": "[Argument]"},
+        "target": {"key": "target", "type": "str"},
     }
 
     def __init__(
@@ -1206,10 +1175,10 @@ class DockerBuildStepUpdateParameters(TaskStepUpdateParameters):
         is_push_enabled: Optional[bool] = None,
         no_cache: Optional[bool] = None,
         docker_file_path: Optional[str] = None,
-        arguments: Optional[List["Argument"]] = None,
+        arguments: Optional[List["_models.Argument"]] = None,
         target: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword context_path: The URL(absolute or relative) of the source context for the task step.
         :paramtype context_path: str
@@ -1232,8 +1201,8 @@ class DockerBuildStepUpdateParameters(TaskStepUpdateParameters):
         :keyword target: The name of the target build stage for the docker build.
         :paramtype target: str
         """
-        super(DockerBuildStepUpdateParameters, self).__init__(context_path=context_path, context_access_token=context_access_token, **kwargs)
-        self.type = 'Docker'  # type: str
+        super().__init__(context_path=context_path, context_access_token=context_access_token, **kwargs)
+        self.type: str = "Docker"
         self.image_names = image_names
         self.is_push_enabled = is_push_enabled
         self.no_cache = no_cache
@@ -1242,12 +1211,12 @@ class DockerBuildStepUpdateParameters(TaskStepUpdateParameters):
         self.target = target
 
 
-class EncodedTaskRunRequest(RunRequest):
+class EncodedTaskRunRequest(RunRequest):  # pylint: disable=too-many-instance-attributes
     """The parameters for a quick task run request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. The type of the run request.Constant filled by server.
+    :ivar type: The type of the run request. Required.
     :vartype type: str
     :ivar is_archive_enabled: The value that indicates whether archiving is enabled for the run or
      not.
@@ -1257,8 +1226,8 @@ class EncodedTaskRunRequest(RunRequest):
     :ivar log_template: The template that describes the repository and tag information for run log
      artifact.
     :vartype log_template: str
-    :ivar encoded_task_content: Required. Base64 encoded value of the template/definition file
-     content.
+    :ivar encoded_task_content: Base64 encoded value of the template/definition file content.
+     Required.
     :vartype encoded_task_content: str
     :ivar encoded_values_content: Base64 encoded value of the parameters/values file content.
     :vartype encoded_values_content: str
@@ -1266,7 +1235,7 @@ class EncodedTaskRunRequest(RunRequest):
     :vartype values: list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.SetValue]
     :ivar timeout: Run timeout in seconds.
     :vartype timeout: int
-    :ivar platform: Required. The platform properties against which the run has to happen.
+    :ivar platform: The platform properties against which the run has to happen. Required.
     :vartype platform: ~azure.mgmt.containerregistry.v2019_06_01_preview.models.PlatformProperties
     :ivar agent_configuration: The machine configuration of the run agent.
     :vartype agent_configuration:
@@ -1282,43 +1251,43 @@ class EncodedTaskRunRequest(RunRequest):
     """
 
     _validation = {
-        'type': {'required': True},
-        'encoded_task_content': {'required': True},
-        'timeout': {'maximum': 28800, 'minimum': 300},
-        'platform': {'required': True},
+        "type": {"required": True},
+        "encoded_task_content": {"required": True},
+        "timeout": {"maximum": 28800, "minimum": 300},
+        "platform": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'is_archive_enabled': {'key': 'isArchiveEnabled', 'type': 'bool'},
-        'agent_pool_name': {'key': 'agentPoolName', 'type': 'str'},
-        'log_template': {'key': 'logTemplate', 'type': 'str'},
-        'encoded_task_content': {'key': 'encodedTaskContent', 'type': 'str'},
-        'encoded_values_content': {'key': 'encodedValuesContent', 'type': 'str'},
-        'values': {'key': 'values', 'type': '[SetValue]'},
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'platform': {'key': 'platform', 'type': 'PlatformProperties'},
-        'agent_configuration': {'key': 'agentConfiguration', 'type': 'AgentProperties'},
-        'source_location': {'key': 'sourceLocation', 'type': 'str'},
-        'credentials': {'key': 'credentials', 'type': 'Credentials'},
+        "type": {"key": "type", "type": "str"},
+        "is_archive_enabled": {"key": "isArchiveEnabled", "type": "bool"},
+        "agent_pool_name": {"key": "agentPoolName", "type": "str"},
+        "log_template": {"key": "logTemplate", "type": "str"},
+        "encoded_task_content": {"key": "encodedTaskContent", "type": "str"},
+        "encoded_values_content": {"key": "encodedValuesContent", "type": "str"},
+        "values": {"key": "values", "type": "[SetValue]"},
+        "timeout": {"key": "timeout", "type": "int"},
+        "platform": {"key": "platform", "type": "PlatformProperties"},
+        "agent_configuration": {"key": "agentConfiguration", "type": "AgentProperties"},
+        "source_location": {"key": "sourceLocation", "type": "str"},
+        "credentials": {"key": "credentials", "type": "Credentials"},
     }
 
     def __init__(
         self,
         *,
         encoded_task_content: str,
-        platform: "PlatformProperties",
-        is_archive_enabled: Optional[bool] = False,
+        platform: "_models.PlatformProperties",
+        is_archive_enabled: bool = False,
         agent_pool_name: Optional[str] = None,
         log_template: Optional[str] = None,
         encoded_values_content: Optional[str] = None,
-        values: Optional[List["SetValue"]] = None,
-        timeout: Optional[int] = 3600,
-        agent_configuration: Optional["AgentProperties"] = None,
+        values: Optional[List["_models.SetValue"]] = None,
+        timeout: int = 3600,
+        agent_configuration: Optional["_models.AgentProperties"] = None,
         source_location: Optional[str] = None,
-        credentials: Optional["Credentials"] = None,
-        **kwargs
-    ):
+        credentials: Optional["_models.Credentials"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword is_archive_enabled: The value that indicates whether archiving is enabled for the run
          or not.
@@ -1328,8 +1297,8 @@ class EncodedTaskRunRequest(RunRequest):
         :keyword log_template: The template that describes the repository and tag information for run
          log artifact.
         :paramtype log_template: str
-        :keyword encoded_task_content: Required. Base64 encoded value of the template/definition file
-         content.
+        :keyword encoded_task_content: Base64 encoded value of the template/definition file content.
+         Required.
         :paramtype encoded_task_content: str
         :keyword encoded_values_content: Base64 encoded value of the parameters/values file content.
         :paramtype encoded_values_content: str
@@ -1337,7 +1306,7 @@ class EncodedTaskRunRequest(RunRequest):
         :paramtype values: list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.SetValue]
         :keyword timeout: Run timeout in seconds.
         :paramtype timeout: int
-        :keyword platform: Required. The platform properties against which the run has to happen.
+        :keyword platform: The platform properties against which the run has to happen. Required.
         :paramtype platform:
          ~azure.mgmt.containerregistry.v2019_06_01_preview.models.PlatformProperties
         :keyword agent_configuration: The machine configuration of the run agent.
@@ -1352,8 +1321,10 @@ class EncodedTaskRunRequest(RunRequest):
          this run is invoked.
         :paramtype credentials: ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Credentials
         """
-        super(EncodedTaskRunRequest, self).__init__(is_archive_enabled=is_archive_enabled, agent_pool_name=agent_pool_name, log_template=log_template, **kwargs)
-        self.type = 'EncodedTaskRunRequest'  # type: str
+        super().__init__(
+            is_archive_enabled=is_archive_enabled, agent_pool_name=agent_pool_name, log_template=log_template, **kwargs
+        )
+        self.type: str = "EncodedTaskRunRequest"
         self.encoded_task_content = encoded_task_content
         self.encoded_values_content = encoded_values_content
         self.values = values
@@ -1371,8 +1342,8 @@ class EncodedTaskStep(TaskStepProperties):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. The type of the step.Constant filled by server. Possible values include:
-     "Docker", "FileTask", "EncodedTask".
+    :ivar type: The type of the step. Required. Known values are: "Docker", "FileTask", and
+     "EncodedTask".
     :vartype type: str or ~azure.mgmt.containerregistry.v2019_06_01_preview.models.StepType
     :ivar base_image_dependencies: List of base image dependencies for a step.
     :vartype base_image_dependencies:
@@ -1382,8 +1353,8 @@ class EncodedTaskStep(TaskStepProperties):
     :ivar context_access_token: The token (git PAT or SAS token of storage account blob) associated
      with the context for a step.
     :vartype context_access_token: str
-    :ivar encoded_task_content: Required. Base64 encoded value of the template/definition file
-     content.
+    :ivar encoded_task_content: Base64 encoded value of the template/definition file content.
+     Required.
     :vartype encoded_task_content: str
     :ivar encoded_values_content: Base64 encoded value of the parameters/values file content.
     :vartype encoded_values_content: str
@@ -1392,19 +1363,19 @@ class EncodedTaskStep(TaskStepProperties):
     """
 
     _validation = {
-        'type': {'required': True},
-        'base_image_dependencies': {'readonly': True},
-        'encoded_task_content': {'required': True},
+        "type": {"required": True},
+        "base_image_dependencies": {"readonly": True},
+        "encoded_task_content": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'base_image_dependencies': {'key': 'baseImageDependencies', 'type': '[BaseImageDependency]'},
-        'context_path': {'key': 'contextPath', 'type': 'str'},
-        'context_access_token': {'key': 'contextAccessToken', 'type': 'str'},
-        'encoded_task_content': {'key': 'encodedTaskContent', 'type': 'str'},
-        'encoded_values_content': {'key': 'encodedValuesContent', 'type': 'str'},
-        'values': {'key': 'values', 'type': '[SetValue]'},
+        "type": {"key": "type", "type": "str"},
+        "base_image_dependencies": {"key": "baseImageDependencies", "type": "[BaseImageDependency]"},
+        "context_path": {"key": "contextPath", "type": "str"},
+        "context_access_token": {"key": "contextAccessToken", "type": "str"},
+        "encoded_task_content": {"key": "encodedTaskContent", "type": "str"},
+        "encoded_values_content": {"key": "encodedValuesContent", "type": "str"},
+        "values": {"key": "values", "type": "[SetValue]"},
     }
 
     def __init__(
@@ -1414,25 +1385,25 @@ class EncodedTaskStep(TaskStepProperties):
         context_path: Optional[str] = None,
         context_access_token: Optional[str] = None,
         encoded_values_content: Optional[str] = None,
-        values: Optional[List["SetValue"]] = None,
-        **kwargs
-    ):
+        values: Optional[List["_models.SetValue"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword context_path: The URL(absolute or relative) of the source context for the task step.
         :paramtype context_path: str
         :keyword context_access_token: The token (git PAT or SAS token of storage account blob)
          associated with the context for a step.
         :paramtype context_access_token: str
-        :keyword encoded_task_content: Required. Base64 encoded value of the template/definition file
-         content.
+        :keyword encoded_task_content: Base64 encoded value of the template/definition file content.
+         Required.
         :paramtype encoded_task_content: str
         :keyword encoded_values_content: Base64 encoded value of the parameters/values file content.
         :paramtype encoded_values_content: str
         :keyword values: The collection of overridable values that can be passed when running a task.
         :paramtype values: list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.SetValue]
         """
-        super(EncodedTaskStep, self).__init__(context_path=context_path, context_access_token=context_access_token, **kwargs)
-        self.type = 'EncodedTask'  # type: str
+        super().__init__(context_path=context_path, context_access_token=context_access_token, **kwargs)
+        self.type: str = "EncodedTask"
         self.encoded_task_content = encoded_task_content
         self.encoded_values_content = encoded_values_content
         self.values = values
@@ -1443,8 +1414,8 @@ class EncodedTaskStepUpdateParameters(TaskStepUpdateParameters):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. The type of the step.Constant filled by server. Possible values include:
-     "Docker", "FileTask", "EncodedTask".
+    :ivar type: The type of the step. Required. Known values are: "Docker", "FileTask", and
+     "EncodedTask".
     :vartype type: str or ~azure.mgmt.containerregistry.v2019_06_01_preview.models.StepType
     :ivar context_path: The URL(absolute or relative) of the source context for the task step.
     :vartype context_path: str
@@ -1460,16 +1431,16 @@ class EncodedTaskStepUpdateParameters(TaskStepUpdateParameters):
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'context_path': {'key': 'contextPath', 'type': 'str'},
-        'context_access_token': {'key': 'contextAccessToken', 'type': 'str'},
-        'encoded_task_content': {'key': 'encodedTaskContent', 'type': 'str'},
-        'encoded_values_content': {'key': 'encodedValuesContent', 'type': 'str'},
-        'values': {'key': 'values', 'type': '[SetValue]'},
+        "type": {"key": "type", "type": "str"},
+        "context_path": {"key": "contextPath", "type": "str"},
+        "context_access_token": {"key": "contextAccessToken", "type": "str"},
+        "encoded_task_content": {"key": "encodedTaskContent", "type": "str"},
+        "encoded_values_content": {"key": "encodedValuesContent", "type": "str"},
+        "values": {"key": "values", "type": "[SetValue]"},
     }
 
     def __init__(
@@ -1479,9 +1450,9 @@ class EncodedTaskStepUpdateParameters(TaskStepUpdateParameters):
         context_access_token: Optional[str] = None,
         encoded_task_content: Optional[str] = None,
         encoded_values_content: Optional[str] = None,
-        values: Optional[List["SetValue"]] = None,
-        **kwargs
-    ):
+        values: Optional[List["_models.SetValue"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword context_path: The URL(absolute or relative) of the source context for the task step.
         :paramtype context_path: str
@@ -1495,14 +1466,14 @@ class EncodedTaskStepUpdateParameters(TaskStepUpdateParameters):
         :keyword values: The collection of overridable values that can be passed when running a task.
         :paramtype values: list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.SetValue]
         """
-        super(EncodedTaskStepUpdateParameters, self).__init__(context_path=context_path, context_access_token=context_access_token, **kwargs)
-        self.type = 'EncodedTask'  # type: str
+        super().__init__(context_path=context_path, context_access_token=context_access_token, **kwargs)
+        self.type: str = "EncodedTask"
         self.encoded_task_content = encoded_task_content
         self.encoded_values_content = encoded_values_content
         self.values = values
 
 
-class ErrorResponse(msrest.serialization.Model):
+class ErrorResponse(_serialization.Model):
     """An error response from the Azure Container Registry service.
 
     :ivar error: Azure container registry build API error body.
@@ -1510,31 +1481,26 @@ class ErrorResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorResponseBody'},
+        "error": {"key": "error", "type": "ErrorResponseBody"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: Optional["ErrorResponseBody"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, error: Optional["_models.ErrorResponseBody"] = None, **kwargs: Any) -> None:
         """
         :keyword error: Azure container registry build API error body.
         :paramtype error: ~azure.mgmt.containerregistry.v2019_06_01_preview.models.ErrorResponseBody
         """
-        super(ErrorResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.error = error
 
 
-class ErrorResponseBody(msrest.serialization.Model):
+class ErrorResponseBody(_serialization.Model):
     """An error response from the Azure Container Registry service.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar code: Required. error code.
+    :ivar code: error code. Required.
     :vartype code: str
-    :ivar message: Required. error message.
+    :ivar message: error message. Required.
     :vartype message: str
     :ivar target: target of the particular error.
     :vartype target: str
@@ -1545,15 +1511,15 @@ class ErrorResponseBody(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'required': True},
-        'message': {'required': True},
+        "code": {"required": True},
+        "message": {"required": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[InnerErrorDescription]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[InnerErrorDescription]"},
     }
 
     def __init__(
@@ -1562,13 +1528,13 @@ class ErrorResponseBody(msrest.serialization.Model):
         code: str,
         message: str,
         target: Optional[str] = None,
-        details: Optional[List["InnerErrorDescription"]] = None,
-        **kwargs
-    ):
+        details: Optional[List["_models.InnerErrorDescription"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword code: Required. error code.
+        :keyword code: error code. Required.
         :paramtype code: str
-        :keyword message: Required. error message.
+        :keyword message: error message. Required.
         :paramtype message: str
         :keyword target: target of the particular error.
         :paramtype target: str
@@ -1577,19 +1543,19 @@ class ErrorResponseBody(msrest.serialization.Model):
         :paramtype details:
          list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.InnerErrorDescription]
         """
-        super(ErrorResponseBody, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
         self.target = target
         self.details = details
 
 
-class FileTaskRunRequest(RunRequest):
+class FileTaskRunRequest(RunRequest):  # pylint: disable=too-many-instance-attributes
     """The request parameters for a scheduling run against a task file.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. The type of the run request.Constant filled by server.
+    :ivar type: The type of the run request. Required.
     :vartype type: str
     :ivar is_archive_enabled: The value that indicates whether archiving is enabled for the run or
      not.
@@ -1599,7 +1565,7 @@ class FileTaskRunRequest(RunRequest):
     :ivar log_template: The template that describes the repository and tag information for run log
      artifact.
     :vartype log_template: str
-    :ivar task_file_path: Required. The template/definition file path relative to the source.
+    :ivar task_file_path: The template/definition file path relative to the source. Required.
     :vartype task_file_path: str
     :ivar values_file_path: The values/parameters file path relative to the source.
     :vartype values_file_path: str
@@ -1607,7 +1573,7 @@ class FileTaskRunRequest(RunRequest):
     :vartype values: list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.SetValue]
     :ivar timeout: Run timeout in seconds.
     :vartype timeout: int
-    :ivar platform: Required. The platform properties against which the run has to happen.
+    :ivar platform: The platform properties against which the run has to happen. Required.
     :vartype platform: ~azure.mgmt.containerregistry.v2019_06_01_preview.models.PlatformProperties
     :ivar agent_configuration: The machine configuration of the run agent.
     :vartype agent_configuration:
@@ -1623,43 +1589,43 @@ class FileTaskRunRequest(RunRequest):
     """
 
     _validation = {
-        'type': {'required': True},
-        'task_file_path': {'required': True},
-        'timeout': {'maximum': 28800, 'minimum': 300},
-        'platform': {'required': True},
+        "type": {"required": True},
+        "task_file_path": {"required": True},
+        "timeout": {"maximum": 28800, "minimum": 300},
+        "platform": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'is_archive_enabled': {'key': 'isArchiveEnabled', 'type': 'bool'},
-        'agent_pool_name': {'key': 'agentPoolName', 'type': 'str'},
-        'log_template': {'key': 'logTemplate', 'type': 'str'},
-        'task_file_path': {'key': 'taskFilePath', 'type': 'str'},
-        'values_file_path': {'key': 'valuesFilePath', 'type': 'str'},
-        'values': {'key': 'values', 'type': '[SetValue]'},
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'platform': {'key': 'platform', 'type': 'PlatformProperties'},
-        'agent_configuration': {'key': 'agentConfiguration', 'type': 'AgentProperties'},
-        'source_location': {'key': 'sourceLocation', 'type': 'str'},
-        'credentials': {'key': 'credentials', 'type': 'Credentials'},
+        "type": {"key": "type", "type": "str"},
+        "is_archive_enabled": {"key": "isArchiveEnabled", "type": "bool"},
+        "agent_pool_name": {"key": "agentPoolName", "type": "str"},
+        "log_template": {"key": "logTemplate", "type": "str"},
+        "task_file_path": {"key": "taskFilePath", "type": "str"},
+        "values_file_path": {"key": "valuesFilePath", "type": "str"},
+        "values": {"key": "values", "type": "[SetValue]"},
+        "timeout": {"key": "timeout", "type": "int"},
+        "platform": {"key": "platform", "type": "PlatformProperties"},
+        "agent_configuration": {"key": "agentConfiguration", "type": "AgentProperties"},
+        "source_location": {"key": "sourceLocation", "type": "str"},
+        "credentials": {"key": "credentials", "type": "Credentials"},
     }
 
     def __init__(
         self,
         *,
         task_file_path: str,
-        platform: "PlatformProperties",
-        is_archive_enabled: Optional[bool] = False,
+        platform: "_models.PlatformProperties",
+        is_archive_enabled: bool = False,
         agent_pool_name: Optional[str] = None,
         log_template: Optional[str] = None,
         values_file_path: Optional[str] = None,
-        values: Optional[List["SetValue"]] = None,
-        timeout: Optional[int] = 3600,
-        agent_configuration: Optional["AgentProperties"] = None,
+        values: Optional[List["_models.SetValue"]] = None,
+        timeout: int = 3600,
+        agent_configuration: Optional["_models.AgentProperties"] = None,
         source_location: Optional[str] = None,
-        credentials: Optional["Credentials"] = None,
-        **kwargs
-    ):
+        credentials: Optional["_models.Credentials"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword is_archive_enabled: The value that indicates whether archiving is enabled for the run
          or not.
@@ -1669,7 +1635,7 @@ class FileTaskRunRequest(RunRequest):
         :keyword log_template: The template that describes the repository and tag information for run
          log artifact.
         :paramtype log_template: str
-        :keyword task_file_path: Required. The template/definition file path relative to the source.
+        :keyword task_file_path: The template/definition file path relative to the source. Required.
         :paramtype task_file_path: str
         :keyword values_file_path: The values/parameters file path relative to the source.
         :paramtype values_file_path: str
@@ -1677,7 +1643,7 @@ class FileTaskRunRequest(RunRequest):
         :paramtype values: list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.SetValue]
         :keyword timeout: Run timeout in seconds.
         :paramtype timeout: int
-        :keyword platform: Required. The platform properties against which the run has to happen.
+        :keyword platform: The platform properties against which the run has to happen. Required.
         :paramtype platform:
          ~azure.mgmt.containerregistry.v2019_06_01_preview.models.PlatformProperties
         :keyword agent_configuration: The machine configuration of the run agent.
@@ -1692,8 +1658,10 @@ class FileTaskRunRequest(RunRequest):
          this run is invoked.
         :paramtype credentials: ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Credentials
         """
-        super(FileTaskRunRequest, self).__init__(is_archive_enabled=is_archive_enabled, agent_pool_name=agent_pool_name, log_template=log_template, **kwargs)
-        self.type = 'FileTaskRunRequest'  # type: str
+        super().__init__(
+            is_archive_enabled=is_archive_enabled, agent_pool_name=agent_pool_name, log_template=log_template, **kwargs
+        )
+        self.type: str = "FileTaskRunRequest"
         self.task_file_path = task_file_path
         self.values_file_path = values_file_path
         self.values = values
@@ -1711,8 +1679,8 @@ class FileTaskStep(TaskStepProperties):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. The type of the step.Constant filled by server. Possible values include:
-     "Docker", "FileTask", "EncodedTask".
+    :ivar type: The type of the step. Required. Known values are: "Docker", "FileTask", and
+     "EncodedTask".
     :vartype type: str or ~azure.mgmt.containerregistry.v2019_06_01_preview.models.StepType
     :ivar base_image_dependencies: List of base image dependencies for a step.
     :vartype base_image_dependencies:
@@ -1722,8 +1690,8 @@ class FileTaskStep(TaskStepProperties):
     :ivar context_access_token: The token (git PAT or SAS token of storage account blob) associated
      with the context for a step.
     :vartype context_access_token: str
-    :ivar task_file_path: Required. The task template/definition file path relative to the source
-     context.
+    :ivar task_file_path: The task template/definition file path relative to the source context.
+     Required.
     :vartype task_file_path: str
     :ivar values_file_path: The task values/parameters file path relative to the source context.
     :vartype values_file_path: str
@@ -1732,19 +1700,19 @@ class FileTaskStep(TaskStepProperties):
     """
 
     _validation = {
-        'type': {'required': True},
-        'base_image_dependencies': {'readonly': True},
-        'task_file_path': {'required': True},
+        "type": {"required": True},
+        "base_image_dependencies": {"readonly": True},
+        "task_file_path": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'base_image_dependencies': {'key': 'baseImageDependencies', 'type': '[BaseImageDependency]'},
-        'context_path': {'key': 'contextPath', 'type': 'str'},
-        'context_access_token': {'key': 'contextAccessToken', 'type': 'str'},
-        'task_file_path': {'key': 'taskFilePath', 'type': 'str'},
-        'values_file_path': {'key': 'valuesFilePath', 'type': 'str'},
-        'values': {'key': 'values', 'type': '[SetValue]'},
+        "type": {"key": "type", "type": "str"},
+        "base_image_dependencies": {"key": "baseImageDependencies", "type": "[BaseImageDependency]"},
+        "context_path": {"key": "contextPath", "type": "str"},
+        "context_access_token": {"key": "contextAccessToken", "type": "str"},
+        "task_file_path": {"key": "taskFilePath", "type": "str"},
+        "values_file_path": {"key": "valuesFilePath", "type": "str"},
+        "values": {"key": "values", "type": "[SetValue]"},
     }
 
     def __init__(
@@ -1754,25 +1722,25 @@ class FileTaskStep(TaskStepProperties):
         context_path: Optional[str] = None,
         context_access_token: Optional[str] = None,
         values_file_path: Optional[str] = None,
-        values: Optional[List["SetValue"]] = None,
-        **kwargs
-    ):
+        values: Optional[List["_models.SetValue"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword context_path: The URL(absolute or relative) of the source context for the task step.
         :paramtype context_path: str
         :keyword context_access_token: The token (git PAT or SAS token of storage account blob)
          associated with the context for a step.
         :paramtype context_access_token: str
-        :keyword task_file_path: Required. The task template/definition file path relative to the
-         source context.
+        :keyword task_file_path: The task template/definition file path relative to the source context.
+         Required.
         :paramtype task_file_path: str
         :keyword values_file_path: The task values/parameters file path relative to the source context.
         :paramtype values_file_path: str
         :keyword values: The collection of overridable values that can be passed when running a task.
         :paramtype values: list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.SetValue]
         """
-        super(FileTaskStep, self).__init__(context_path=context_path, context_access_token=context_access_token, **kwargs)
-        self.type = 'FileTask'  # type: str
+        super().__init__(context_path=context_path, context_access_token=context_access_token, **kwargs)
+        self.type: str = "FileTask"
         self.task_file_path = task_file_path
         self.values_file_path = values_file_path
         self.values = values
@@ -1783,8 +1751,8 @@ class FileTaskStepUpdateParameters(TaskStepUpdateParameters):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. The type of the step.Constant filled by server. Possible values include:
-     "Docker", "FileTask", "EncodedTask".
+    :ivar type: The type of the step. Required. Known values are: "Docker", "FileTask", and
+     "EncodedTask".
     :vartype type: str or ~azure.mgmt.containerregistry.v2019_06_01_preview.models.StepType
     :ivar context_path: The URL(absolute or relative) of the source context for the task step.
     :vartype context_path: str
@@ -1800,16 +1768,16 @@ class FileTaskStepUpdateParameters(TaskStepUpdateParameters):
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'context_path': {'key': 'contextPath', 'type': 'str'},
-        'context_access_token': {'key': 'contextAccessToken', 'type': 'str'},
-        'task_file_path': {'key': 'taskFilePath', 'type': 'str'},
-        'values_file_path': {'key': 'valuesFilePath', 'type': 'str'},
-        'values': {'key': 'values', 'type': '[SetValue]'},
+        "type": {"key": "type", "type": "str"},
+        "context_path": {"key": "contextPath", "type": "str"},
+        "context_access_token": {"key": "contextAccessToken", "type": "str"},
+        "task_file_path": {"key": "taskFilePath", "type": "str"},
+        "values_file_path": {"key": "valuesFilePath", "type": "str"},
+        "values": {"key": "values", "type": "[SetValue]"},
     }
 
     def __init__(
@@ -1819,9 +1787,9 @@ class FileTaskStepUpdateParameters(TaskStepUpdateParameters):
         context_access_token: Optional[str] = None,
         task_file_path: Optional[str] = None,
         values_file_path: Optional[str] = None,
-        values: Optional[List["SetValue"]] = None,
-        **kwargs
-    ):
+        values: Optional[List["_models.SetValue"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword context_path: The URL(absolute or relative) of the source context for the task step.
         :paramtype context_path: str
@@ -1835,22 +1803,22 @@ class FileTaskStepUpdateParameters(TaskStepUpdateParameters):
         :keyword values: The collection of overridable values that can be passed when running a task.
         :paramtype values: list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.SetValue]
         """
-        super(FileTaskStepUpdateParameters, self).__init__(context_path=context_path, context_access_token=context_access_token, **kwargs)
-        self.type = 'FileTask'  # type: str
+        super().__init__(context_path=context_path, context_access_token=context_access_token, **kwargs)
+        self.type: str = "FileTask"
         self.task_file_path = task_file_path
         self.values_file_path = values_file_path
         self.values = values
 
 
-class IdentityProperties(msrest.serialization.Model):
+class IdentityProperties(_serialization.Model):
     """Managed identity for the resource.
 
     :ivar principal_id: The principal ID of resource identity.
     :vartype principal_id: str
     :ivar tenant_id: The tenant ID of resource.
     :vartype tenant_id: str
-    :ivar type: The identity type. Possible values include: "SystemAssigned", "UserAssigned",
-     "SystemAssigned, UserAssigned", "None".
+    :ivar type: The identity type. Known values are: "SystemAssigned", "UserAssigned",
+     "SystemAssigned, UserAssigned", and "None".
     :vartype type: str or
      ~azure.mgmt.containerregistry.v2019_06_01_preview.models.ResourceIdentityType
     :ivar user_assigned_identities: The list of user identities associated with the resource. The
@@ -1863,10 +1831,10 @@ class IdentityProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserIdentityProperties}'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "user_assigned_identities": {"key": "userAssignedIdentities", "type": "{UserIdentityProperties}"},
     }
 
     def __init__(
@@ -1874,17 +1842,17 @@ class IdentityProperties(msrest.serialization.Model):
         *,
         principal_id: Optional[str] = None,
         tenant_id: Optional[str] = None,
-        type: Optional[Union[str, "ResourceIdentityType"]] = None,
-        user_assigned_identities: Optional[Dict[str, "UserIdentityProperties"]] = None,
-        **kwargs
-    ):
+        type: Optional[Union[str, "_models.ResourceIdentityType"]] = None,
+        user_assigned_identities: Optional[Dict[str, "_models.UserIdentityProperties"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword principal_id: The principal ID of resource identity.
         :paramtype principal_id: str
         :keyword tenant_id: The tenant ID of resource.
         :paramtype tenant_id: str
-        :keyword type: The identity type. Possible values include: "SystemAssigned", "UserAssigned",
-         "SystemAssigned, UserAssigned", "None".
+        :keyword type: The identity type. Known values are: "SystemAssigned", "UserAssigned",
+         "SystemAssigned, UserAssigned", and "None".
         :paramtype type: str or
          ~azure.mgmt.containerregistry.v2019_06_01_preview.models.ResourceIdentityType
         :keyword user_assigned_identities: The list of user identities associated with the resource.
@@ -1895,14 +1863,14 @@ class IdentityProperties(msrest.serialization.Model):
         :paramtype user_assigned_identities: dict[str,
          ~azure.mgmt.containerregistry.v2019_06_01_preview.models.UserIdentityProperties]
         """
-        super(IdentityProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.principal_id = principal_id
         self.tenant_id = tenant_id
         self.type = type
         self.user_assigned_identities = user_assigned_identities
 
 
-class ImageDescriptor(msrest.serialization.Model):
+class ImageDescriptor(_serialization.Model):
     """Properties for a registry image.
 
     :ivar registry: The registry login server.
@@ -1916,10 +1884,10 @@ class ImageDescriptor(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'registry': {'key': 'registry', 'type': 'str'},
-        'repository': {'key': 'repository', 'type': 'str'},
-        'tag': {'key': 'tag', 'type': 'str'},
-        'digest': {'key': 'digest', 'type': 'str'},
+        "registry": {"key": "registry", "type": "str"},
+        "repository": {"key": "repository", "type": "str"},
+        "tag": {"key": "tag", "type": "str"},
+        "digest": {"key": "digest", "type": "str"},
     }
 
     def __init__(
@@ -1929,8 +1897,8 @@ class ImageDescriptor(msrest.serialization.Model):
         repository: Optional[str] = None,
         tag: Optional[str] = None,
         digest: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword registry: The registry login server.
         :paramtype registry: str
@@ -1941,14 +1909,14 @@ class ImageDescriptor(msrest.serialization.Model):
         :keyword digest: The sha256-based digest of the image manifest.
         :paramtype digest: str
         """
-        super(ImageDescriptor, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.registry = registry
         self.repository = repository
         self.tag = tag
         self.digest = digest
 
 
-class ImageUpdateTrigger(msrest.serialization.Model):
+class ImageUpdateTrigger(_serialization.Model):
     """The image update trigger that caused a build.
 
     :ivar id: The unique ID of the trigger.
@@ -1960,19 +1928,19 @@ class ImageUpdateTrigger(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
-        'images': {'key': 'images', 'type': '[ImageDescriptor]'},
+        "id": {"key": "id", "type": "str"},
+        "timestamp": {"key": "timestamp", "type": "iso-8601"},
+        "images": {"key": "images", "type": "[ImageDescriptor]"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         timestamp: Optional[datetime.datetime] = None,
-        images: Optional[List["ImageDescriptor"]] = None,
-        **kwargs
-    ):
+        images: Optional[List["_models.ImageDescriptor"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: The unique ID of the trigger.
         :paramtype id: str
@@ -1982,59 +1950,52 @@ class ImageUpdateTrigger(msrest.serialization.Model):
         :paramtype images:
          list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.ImageDescriptor]
         """
-        super(ImageUpdateTrigger, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
         self.timestamp = timestamp
         self.images = images
 
 
-class InnerErrorDescription(msrest.serialization.Model):
+class InnerErrorDescription(_serialization.Model):
     """inner error.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar code: Required. error code.
+    :ivar code: error code. Required.
     :vartype code: str
-    :ivar message: Required. error message.
+    :ivar message: error message. Required.
     :vartype message: str
     :ivar target: target of the particular error.
     :vartype target: str
     """
 
     _validation = {
-        'code': {'required': True},
-        'message': {'required': True},
+        "code": {"required": True},
+        "message": {"required": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        code: str,
-        message: str,
-        target: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, code: str, message: str, target: Optional[str] = None, **kwargs: Any) -> None:
         """
-        :keyword code: Required. error code.
+        :keyword code: error code. Required.
         :paramtype code: str
-        :keyword message: Required. error message.
+        :keyword message: error message. Required.
         :paramtype message: str
         :keyword target: target of the particular error.
         :paramtype target: str
         """
-        super(InnerErrorDescription, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
         self.target = target
 
 
-class OverrideTaskStepProperties(msrest.serialization.Model):
+class OverrideTaskStepProperties(_serialization.Model):
     """OverrideTaskStepProperties.
 
     :ivar context_path: The source context against which run has to be queued.
@@ -2054,12 +2015,12 @@ class OverrideTaskStepProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'context_path': {'key': 'contextPath', 'type': 'str'},
-        'file': {'key': 'file', 'type': 'str'},
-        'arguments': {'key': 'arguments', 'type': '[Argument]'},
-        'target': {'key': 'target', 'type': 'str'},
-        'values': {'key': 'values', 'type': '[SetValue]'},
-        'update_trigger_token': {'key': 'updateTriggerToken', 'type': 'str'},
+        "context_path": {"key": "contextPath", "type": "str"},
+        "file": {"key": "file", "type": "str"},
+        "arguments": {"key": "arguments", "type": "[Argument]"},
+        "target": {"key": "target", "type": "str"},
+        "values": {"key": "values", "type": "[SetValue]"},
+        "update_trigger_token": {"key": "updateTriggerToken", "type": "str"},
     }
 
     def __init__(
@@ -2067,12 +2028,12 @@ class OverrideTaskStepProperties(msrest.serialization.Model):
         *,
         context_path: Optional[str] = None,
         file: Optional[str] = None,
-        arguments: Optional[List["Argument"]] = None,
+        arguments: Optional[List["_models.Argument"]] = None,
         target: Optional[str] = None,
-        values: Optional[List["SetValue"]] = None,
+        values: Optional[List["_models.SetValue"]] = None,
         update_trigger_token: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword context_path: The source context against which run has to be queued.
         :paramtype context_path: str
@@ -2089,7 +2050,7 @@ class OverrideTaskStepProperties(msrest.serialization.Model):
          the base image trigger webhook.
         :paramtype update_trigger_token: str
         """
-        super(OverrideTaskStepProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.context_path = context_path
         self.file = file
         self.arguments = arguments
@@ -2098,104 +2059,105 @@ class OverrideTaskStepProperties(msrest.serialization.Model):
         self.update_trigger_token = update_trigger_token
 
 
-class PlatformProperties(msrest.serialization.Model):
+class PlatformProperties(_serialization.Model):
     """The platform properties against which the run has to happen.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar os: Required. The operating system type required for the run. Possible values include:
-     "Windows", "Linux".
+    :ivar os: The operating system type required for the run. Required. Known values are: "Windows"
+     and "Linux".
     :vartype os: str or ~azure.mgmt.containerregistry.v2019_06_01_preview.models.OS
-    :ivar architecture: The OS architecture. Possible values include: "amd64", "x86", "386", "arm",
+    :ivar architecture: The OS architecture. Known values are: "amd64", "x86", "386", "arm", and
      "arm64".
     :vartype architecture: str or
      ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Architecture
-    :ivar variant: Variant of the CPU. Possible values include: "v6", "v7", "v8".
+    :ivar variant: Variant of the CPU. Known values are: "v6", "v7", and "v8".
     :vartype variant: str or ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Variant
     """
 
     _validation = {
-        'os': {'required': True},
+        "os": {"required": True},
     }
 
     _attribute_map = {
-        'os': {'key': 'os', 'type': 'str'},
-        'architecture': {'key': 'architecture', 'type': 'str'},
-        'variant': {'key': 'variant', 'type': 'str'},
+        "os": {"key": "os", "type": "str"},
+        "architecture": {"key": "architecture", "type": "str"},
+        "variant": {"key": "variant", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        os: Union[str, "OS"],
-        architecture: Optional[Union[str, "Architecture"]] = None,
-        variant: Optional[Union[str, "Variant"]] = None,
-        **kwargs
-    ):
+        os: Union[str, "_models.OS"],
+        architecture: Optional[Union[str, "_models.Architecture"]] = None,
+        variant: Optional[Union[str, "_models.Variant"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword os: Required. The operating system type required for the run. Possible values include:
-         "Windows", "Linux".
+        :keyword os: The operating system type required for the run. Required. Known values are:
+         "Windows" and "Linux".
         :paramtype os: str or ~azure.mgmt.containerregistry.v2019_06_01_preview.models.OS
-        :keyword architecture: The OS architecture. Possible values include: "amd64", "x86", "386",
-         "arm", "arm64".
+        :keyword architecture: The OS architecture. Known values are: "amd64", "x86", "386", "arm", and
+         "arm64".
         :paramtype architecture: str or
          ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Architecture
-        :keyword variant: Variant of the CPU. Possible values include: "v6", "v7", "v8".
+        :keyword variant: Variant of the CPU. Known values are: "v6", "v7", and "v8".
         :paramtype variant: str or ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Variant
         """
-        super(PlatformProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.os = os
         self.architecture = architecture
         self.variant = variant
 
 
-class PlatformUpdateParameters(msrest.serialization.Model):
+class PlatformUpdateParameters(_serialization.Model):
     """The properties for updating the platform configuration.
 
-    :ivar os: The operating system type required for the run. Possible values include: "Windows",
+    :ivar os: The operating system type required for the run. Known values are: "Windows" and
      "Linux".
     :vartype os: str or ~azure.mgmt.containerregistry.v2019_06_01_preview.models.OS
-    :ivar architecture: The OS architecture. Possible values include: "amd64", "x86", "386", "arm",
+    :ivar architecture: The OS architecture. Known values are: "amd64", "x86", "386", "arm", and
      "arm64".
     :vartype architecture: str or
      ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Architecture
-    :ivar variant: Variant of the CPU. Possible values include: "v6", "v7", "v8".
+    :ivar variant: Variant of the CPU. Known values are: "v6", "v7", and "v8".
     :vartype variant: str or ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Variant
     """
 
     _attribute_map = {
-        'os': {'key': 'os', 'type': 'str'},
-        'architecture': {'key': 'architecture', 'type': 'str'},
-        'variant': {'key': 'variant', 'type': 'str'},
+        "os": {"key": "os", "type": "str"},
+        "architecture": {"key": "architecture", "type": "str"},
+        "variant": {"key": "variant", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        os: Optional[Union[str, "OS"]] = None,
-        architecture: Optional[Union[str, "Architecture"]] = None,
-        variant: Optional[Union[str, "Variant"]] = None,
-        **kwargs
-    ):
+        os: Optional[Union[str, "_models.OS"]] = None,
+        architecture: Optional[Union[str, "_models.Architecture"]] = None,
+        variant: Optional[Union[str, "_models.Variant"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword os: The operating system type required for the run. Possible values include:
-         "Windows", "Linux".
+        :keyword os: The operating system type required for the run. Known values are: "Windows" and
+         "Linux".
         :paramtype os: str or ~azure.mgmt.containerregistry.v2019_06_01_preview.models.OS
-        :keyword architecture: The OS architecture. Possible values include: "amd64", "x86", "386",
-         "arm", "arm64".
+        :keyword architecture: The OS architecture. Known values are: "amd64", "x86", "386", "arm", and
+         "arm64".
         :paramtype architecture: str or
          ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Architecture
-        :keyword variant: Variant of the CPU. Possible values include: "v6", "v7", "v8".
+        :keyword variant: Variant of the CPU. Known values are: "v6", "v7", and "v8".
         :paramtype variant: str or ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Variant
         """
-        super(PlatformUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.os = os
         self.architecture = architecture
         self.variant = variant
 
 
-class ProxyResource(msrest.serialization.Model):
-    """The resource model definition for a ARM proxy resource. It will have everything other than required location and tags.
+class ProxyResource(_serialization.Model):
+    """The resource model definition for a ARM proxy resource. It will have everything other than
+    required location and tags.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -2210,33 +2172,29 @@ class ProxyResource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ProxyResource, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
         self.system_data = None
 
 
-class Run(ProxyResource):
+class Run(ProxyResource):  # pylint: disable=too-many-instance-attributes
     """Run resource properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2251,13 +2209,13 @@ class Run(ProxyResource):
     :vartype system_data: ~azure.mgmt.containerregistry.v2019_06_01_preview.models.SystemData
     :ivar run_id: The unique identifier for the run.
     :vartype run_id: str
-    :ivar status: The current status of the run. Possible values include: "Queued", "Started",
-     "Running", "Succeeded", "Failed", "Canceled", "Error", "Timeout".
+    :ivar status: The current status of the run. Known values are: "Queued", "Started", "Running",
+     "Succeeded", "Failed", "Canceled", "Error", and "Timeout".
     :vartype status: str or ~azure.mgmt.containerregistry.v2019_06_01_preview.models.RunStatus
     :ivar last_updated_time: The last updated time for the run.
     :vartype last_updated_time: ~datetime.datetime
-    :ivar run_type: The type of run. Possible values include: "QuickBuild", "QuickRun",
-     "AutoBuild", "AutoRun".
+    :ivar run_type: The type of run. Known values are: "QuickBuild", "QuickRun", "AutoBuild", and
+     "AutoRun".
     :vartype run_type: str or ~azure.mgmt.containerregistry.v2019_06_01_preview.models.RunType
     :ivar agent_pool_name: The dedicated agent pool for the run.
     :vartype agent_pool_name: str
@@ -2300,8 +2258,8 @@ class Run(ProxyResource):
     :vartype update_trigger_token: str
     :ivar log_artifact: The image description for the log artifact.
     :vartype log_artifact: ~azure.mgmt.containerregistry.v2019_06_01_preview.models.ImageDescriptor
-    :ivar provisioning_state: The provisioning state of a run. Possible values include: "Creating",
-     "Updating", "Deleting", "Succeeded", "Failed", "Canceled".
+    :ivar provisioning_state: The provisioning state of a run. Known values are: "Creating",
+     "Updating", "Deleting", "Succeeded", "Failed", and "Canceled".
     :vartype provisioning_state: str or
      ~azure.mgmt.containerregistry.v2019_06_01_preview.models.ProvisioningState
     :ivar is_archive_enabled: The value that indicates whether archiving is enabled or not.
@@ -2309,78 +2267,78 @@ class Run(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'run_error_message': {'readonly': True},
-        'log_artifact': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "run_error_message": {"readonly": True},
+        "log_artifact": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'run_id': {'key': 'properties.runId', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'last_updated_time': {'key': 'properties.lastUpdatedTime', 'type': 'iso-8601'},
-        'run_type': {'key': 'properties.runType', 'type': 'str'},
-        'agent_pool_name': {'key': 'properties.agentPoolName', 'type': 'str'},
-        'create_time': {'key': 'properties.createTime', 'type': 'iso-8601'},
-        'start_time': {'key': 'properties.startTime', 'type': 'iso-8601'},
-        'finish_time': {'key': 'properties.finishTime', 'type': 'iso-8601'},
-        'output_images': {'key': 'properties.outputImages', 'type': '[ImageDescriptor]'},
-        'task': {'key': 'properties.task', 'type': 'str'},
-        'image_update_trigger': {'key': 'properties.imageUpdateTrigger', 'type': 'ImageUpdateTrigger'},
-        'source_trigger': {'key': 'properties.sourceTrigger', 'type': 'SourceTriggerDescriptor'},
-        'timer_trigger': {'key': 'properties.timerTrigger', 'type': 'TimerTriggerDescriptor'},
-        'platform': {'key': 'properties.platform', 'type': 'PlatformProperties'},
-        'agent_configuration': {'key': 'properties.agentConfiguration', 'type': 'AgentProperties'},
-        'source_registry_auth': {'key': 'properties.sourceRegistryAuth', 'type': 'str'},
-        'custom_registries': {'key': 'properties.customRegistries', 'type': '[str]'},
-        'run_error_message': {'key': 'properties.runErrorMessage', 'type': 'str'},
-        'update_trigger_token': {'key': 'properties.updateTriggerToken', 'type': 'str'},
-        'log_artifact': {'key': 'properties.logArtifact', 'type': 'ImageDescriptor'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'is_archive_enabled': {'key': 'properties.isArchiveEnabled', 'type': 'bool'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "run_id": {"key": "properties.runId", "type": "str"},
+        "status": {"key": "properties.status", "type": "str"},
+        "last_updated_time": {"key": "properties.lastUpdatedTime", "type": "iso-8601"},
+        "run_type": {"key": "properties.runType", "type": "str"},
+        "agent_pool_name": {"key": "properties.agentPoolName", "type": "str"},
+        "create_time": {"key": "properties.createTime", "type": "iso-8601"},
+        "start_time": {"key": "properties.startTime", "type": "iso-8601"},
+        "finish_time": {"key": "properties.finishTime", "type": "iso-8601"},
+        "output_images": {"key": "properties.outputImages", "type": "[ImageDescriptor]"},
+        "task": {"key": "properties.task", "type": "str"},
+        "image_update_trigger": {"key": "properties.imageUpdateTrigger", "type": "ImageUpdateTrigger"},
+        "source_trigger": {"key": "properties.sourceTrigger", "type": "SourceTriggerDescriptor"},
+        "timer_trigger": {"key": "properties.timerTrigger", "type": "TimerTriggerDescriptor"},
+        "platform": {"key": "properties.platform", "type": "PlatformProperties"},
+        "agent_configuration": {"key": "properties.agentConfiguration", "type": "AgentProperties"},
+        "source_registry_auth": {"key": "properties.sourceRegistryAuth", "type": "str"},
+        "custom_registries": {"key": "properties.customRegistries", "type": "[str]"},
+        "run_error_message": {"key": "properties.runErrorMessage", "type": "str"},
+        "update_trigger_token": {"key": "properties.updateTriggerToken", "type": "str"},
+        "log_artifact": {"key": "properties.logArtifact", "type": "ImageDescriptor"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "is_archive_enabled": {"key": "properties.isArchiveEnabled", "type": "bool"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         run_id: Optional[str] = None,
-        status: Optional[Union[str, "RunStatus"]] = None,
+        status: Optional[Union[str, "_models.RunStatus"]] = None,
         last_updated_time: Optional[datetime.datetime] = None,
-        run_type: Optional[Union[str, "RunType"]] = None,
+        run_type: Optional[Union[str, "_models.RunType"]] = None,
         agent_pool_name: Optional[str] = None,
         create_time: Optional[datetime.datetime] = None,
         start_time: Optional[datetime.datetime] = None,
         finish_time: Optional[datetime.datetime] = None,
-        output_images: Optional[List["ImageDescriptor"]] = None,
+        output_images: Optional[List["_models.ImageDescriptor"]] = None,
         task: Optional[str] = None,
-        image_update_trigger: Optional["ImageUpdateTrigger"] = None,
-        source_trigger: Optional["SourceTriggerDescriptor"] = None,
-        timer_trigger: Optional["TimerTriggerDescriptor"] = None,
-        platform: Optional["PlatformProperties"] = None,
-        agent_configuration: Optional["AgentProperties"] = None,
+        image_update_trigger: Optional["_models.ImageUpdateTrigger"] = None,
+        source_trigger: Optional["_models.SourceTriggerDescriptor"] = None,
+        timer_trigger: Optional["_models.TimerTriggerDescriptor"] = None,
+        platform: Optional["_models.PlatformProperties"] = None,
+        agent_configuration: Optional["_models.AgentProperties"] = None,
         source_registry_auth: Optional[str] = None,
         custom_registries: Optional[List[str]] = None,
         update_trigger_token: Optional[str] = None,
-        provisioning_state: Optional[Union[str, "ProvisioningState"]] = None,
-        is_archive_enabled: Optional[bool] = False,
-        **kwargs
-    ):
+        provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None,
+        is_archive_enabled: bool = False,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword run_id: The unique identifier for the run.
         :paramtype run_id: str
-        :keyword status: The current status of the run. Possible values include: "Queued", "Started",
-         "Running", "Succeeded", "Failed", "Canceled", "Error", "Timeout".
+        :keyword status: The current status of the run. Known values are: "Queued", "Started",
+         "Running", "Succeeded", "Failed", "Canceled", "Error", and "Timeout".
         :paramtype status: str or ~azure.mgmt.containerregistry.v2019_06_01_preview.models.RunStatus
         :keyword last_updated_time: The last updated time for the run.
         :paramtype last_updated_time: ~datetime.datetime
-        :keyword run_type: The type of run. Possible values include: "QuickBuild", "QuickRun",
-         "AutoBuild", "AutoRun".
+        :keyword run_type: The type of run. Known values are: "QuickBuild", "QuickRun", "AutoBuild",
+         and "AutoRun".
         :paramtype run_type: str or ~azure.mgmt.containerregistry.v2019_06_01_preview.models.RunType
         :keyword agent_pool_name: The dedicated agent pool for the run.
         :paramtype agent_pool_name: str
@@ -2419,14 +2377,14 @@ class Run(ProxyResource):
         :paramtype custom_registries: list[str]
         :keyword update_trigger_token: The update trigger token passed for the Run.
         :paramtype update_trigger_token: str
-        :keyword provisioning_state: The provisioning state of a run. Possible values include:
-         "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled".
+        :keyword provisioning_state: The provisioning state of a run. Known values are: "Creating",
+         "Updating", "Deleting", "Succeeded", "Failed", and "Canceled".
         :paramtype provisioning_state: str or
          ~azure.mgmt.containerregistry.v2019_06_01_preview.models.ProvisioningState
         :keyword is_archive_enabled: The value that indicates whether archiving is enabled or not.
         :paramtype is_archive_enabled: bool
         """
-        super(Run, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.run_id = run_id
         self.status = status
         self.last_updated_time = last_updated_time
@@ -2451,16 +2409,16 @@ class Run(ProxyResource):
         self.is_archive_enabled = is_archive_enabled
 
 
-class RunFilter(msrest.serialization.Model):
+class RunFilter(_serialization.Model):
     """Properties that are enabled for Odata querying on runs.
 
     :ivar run_id: The unique identifier for the run.
     :vartype run_id: str
-    :ivar run_type: The type of run. Possible values include: "QuickBuild", "QuickRun",
-     "AutoBuild", "AutoRun".
+    :ivar run_type: The type of run. Known values are: "QuickBuild", "QuickRun", "AutoBuild", and
+     "AutoRun".
     :vartype run_type: str or ~azure.mgmt.containerregistry.v2019_06_01_preview.models.RunType
-    :ivar status: The current status of the run. Possible values include: "Queued", "Started",
-     "Running", "Succeeded", "Failed", "Canceled", "Error", "Timeout".
+    :ivar status: The current status of the run. Known values are: "Queued", "Started", "Running",
+     "Succeeded", "Failed", "Canceled", "Error", and "Timeout".
     :vartype status: str or ~azure.mgmt.containerregistry.v2019_06_01_preview.models.RunStatus
     :ivar create_time: The create time for a run.
     :vartype create_time: ~datetime.datetime
@@ -2479,39 +2437,39 @@ class RunFilter(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'run_id': {'key': 'runId', 'type': 'str'},
-        'run_type': {'key': 'runType', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'create_time': {'key': 'createTime', 'type': 'iso-8601'},
-        'finish_time': {'key': 'finishTime', 'type': 'iso-8601'},
-        'output_image_manifests': {'key': 'outputImageManifests', 'type': 'str'},
-        'is_archive_enabled': {'key': 'isArchiveEnabled', 'type': 'bool'},
-        'task_name': {'key': 'taskName', 'type': 'str'},
-        'agent_pool_name': {'key': 'agentPoolName', 'type': 'str'},
+        "run_id": {"key": "runId", "type": "str"},
+        "run_type": {"key": "runType", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "create_time": {"key": "createTime", "type": "iso-8601"},
+        "finish_time": {"key": "finishTime", "type": "iso-8601"},
+        "output_image_manifests": {"key": "outputImageManifests", "type": "str"},
+        "is_archive_enabled": {"key": "isArchiveEnabled", "type": "bool"},
+        "task_name": {"key": "taskName", "type": "str"},
+        "agent_pool_name": {"key": "agentPoolName", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         run_id: Optional[str] = None,
-        run_type: Optional[Union[str, "RunType"]] = None,
-        status: Optional[Union[str, "RunStatus"]] = None,
+        run_type: Optional[Union[str, "_models.RunType"]] = None,
+        status: Optional[Union[str, "_models.RunStatus"]] = None,
         create_time: Optional[datetime.datetime] = None,
         finish_time: Optional[datetime.datetime] = None,
         output_image_manifests: Optional[str] = None,
         is_archive_enabled: Optional[bool] = None,
         task_name: Optional[str] = None,
         agent_pool_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword run_id: The unique identifier for the run.
         :paramtype run_id: str
-        :keyword run_type: The type of run. Possible values include: "QuickBuild", "QuickRun",
-         "AutoBuild", "AutoRun".
+        :keyword run_type: The type of run. Known values are: "QuickBuild", "QuickRun", "AutoBuild",
+         and "AutoRun".
         :paramtype run_type: str or ~azure.mgmt.containerregistry.v2019_06_01_preview.models.RunType
-        :keyword status: The current status of the run. Possible values include: "Queued", "Started",
-         "Running", "Succeeded", "Failed", "Canceled", "Error", "Timeout".
+        :keyword status: The current status of the run. Known values are: "Queued", "Started",
+         "Running", "Succeeded", "Failed", "Canceled", "Error", and "Timeout".
         :paramtype status: str or ~azure.mgmt.containerregistry.v2019_06_01_preview.models.RunStatus
         :keyword create_time: The create time for a run.
         :paramtype create_time: ~datetime.datetime
@@ -2528,7 +2486,7 @@ class RunFilter(msrest.serialization.Model):
         :keyword agent_pool_name: The name of the agent pool that the run corresponds to.
         :paramtype agent_pool_name: str
         """
-        super(RunFilter, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.run_id = run_id
         self.run_type = run_type
         self.status = status
@@ -2540,7 +2498,7 @@ class RunFilter(msrest.serialization.Model):
         self.agent_pool_name = agent_pool_name
 
 
-class RunGetLogResult(msrest.serialization.Model):
+class RunGetLogResult(_serialization.Model):
     """The result of get log link operation.
 
     :ivar log_link: The link to logs for a run on a azure container registry.
@@ -2550,17 +2508,13 @@ class RunGetLogResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'log_link': {'key': 'logLink', 'type': 'str'},
-        'log_artifact_link': {'key': 'logArtifactLink', 'type': 'str'},
+        "log_link": {"key": "logLink", "type": "str"},
+        "log_artifact_link": {"key": "logArtifactLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        log_link: Optional[str] = None,
-        log_artifact_link: Optional[str] = None,
-        **kwargs
-    ):
+        self, *, log_link: Optional[str] = None, log_artifact_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword log_link: The link to logs for a run on a azure container registry.
         :paramtype log_link: str
@@ -2568,12 +2522,12 @@ class RunGetLogResult(msrest.serialization.Model):
          registry.
         :paramtype log_artifact_link: str
         """
-        super(RunGetLogResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.log_link = log_link
         self.log_artifact_link = log_artifact_link
 
 
-class RunListResult(msrest.serialization.Model):
+class RunListResult(_serialization.Model):
     """Collection of runs.
 
     :ivar value: The collection value.
@@ -2583,29 +2537,25 @@ class RunListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Run]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Run]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["Run"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+        self, *, value: Optional[List["_models.Run"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The collection value.
         :paramtype value: list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.Run]
         :keyword next_link: The URI that can be used to request the next set of paged results.
         :paramtype next_link: str
         """
-        super(RunListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class RunUpdateParameters(msrest.serialization.Model):
+class RunUpdateParameters(_serialization.Model):
     """The set of run properties that can be updated.
 
     :ivar is_archive_enabled: The value that indicates whether archiving is enabled or not.
@@ -2613,24 +2563,19 @@ class RunUpdateParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'is_archive_enabled': {'key': 'isArchiveEnabled', 'type': 'bool'},
+        "is_archive_enabled": {"key": "isArchiveEnabled", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        is_archive_enabled: Optional[bool] = None,
-        **kwargs
-    ):
+    def __init__(self, *, is_archive_enabled: Optional[bool] = None, **kwargs: Any) -> None:
         """
         :keyword is_archive_enabled: The value that indicates whether archiving is enabled or not.
         :paramtype is_archive_enabled: bool
         """
-        super(RunUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.is_archive_enabled = is_archive_enabled
 
 
-class SecretObject(msrest.serialization.Model):
+class SecretObject(_serialization.Model):
     """Describes the properties of a secret object value.
 
     :ivar value: The value of the secret. The format of this value will be determined
@@ -2639,22 +2584,22 @@ class SecretObject(msrest.serialization.Model):
     :vartype value: str
     :ivar type: The type of the secret object which determines how the value of the secret object
      has to be
-     interpreted. Possible values include: "Opaque", "Vaultsecret".
+     interpreted. Known values are: "Opaque" and "Vaultsecret".
     :vartype type: str or ~azure.mgmt.containerregistry.v2019_06_01_preview.models.SecretObjectType
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "value": {"key": "value", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         value: Optional[str] = None,
-        type: Optional[Union[str, "SecretObjectType"]] = None,
-        **kwargs
-    ):
+        type: Optional[Union[str, "_models.SecretObjectType"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The value of the secret. The format of this value will be determined
          based on the type of the secret object. If the type is Opaque, the value will be
@@ -2662,71 +2607,64 @@ class SecretObject(msrest.serialization.Model):
         :paramtype value: str
         :keyword type: The type of the secret object which determines how the value of the secret
          object has to be
-         interpreted. Possible values include: "Opaque", "Vaultsecret".
+         interpreted. Known values are: "Opaque" and "Vaultsecret".
         :paramtype type: str or
          ~azure.mgmt.containerregistry.v2019_06_01_preview.models.SecretObjectType
         """
-        super(SecretObject, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.type = type
 
 
-class SetValue(msrest.serialization.Model):
+class SetValue(_serialization.Model):
     """The properties of a overridable value that can be passed to a task template.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the overridable value.
+    :ivar name: The name of the overridable value. Required.
     :vartype name: str
-    :ivar value: Required. The overridable value.
+    :ivar value: The overridable value. Required.
     :vartype value: str
     :ivar is_secret: Flag to indicate whether the value represents a secret or not.
     :vartype is_secret: bool
     """
 
     _validation = {
-        'name': {'required': True},
-        'value': {'required': True},
+        "name": {"required": True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
-        'is_secret': {'key': 'isSecret', 'type': 'bool'},
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "str"},
+        "is_secret": {"key": "isSecret", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        value: str,
-        is_secret: Optional[bool] = False,
-        **kwargs
-    ):
+    def __init__(self, *, name: str, value: str, is_secret: bool = False, **kwargs: Any) -> None:
         """
-        :keyword name: Required. The name of the overridable value.
+        :keyword name: The name of the overridable value. Required.
         :paramtype name: str
-        :keyword value: Required. The overridable value.
+        :keyword value: The overridable value. Required.
         :paramtype value: str
         :keyword is_secret: Flag to indicate whether the value represents a secret or not.
         :paramtype is_secret: bool
         """
-        super(SetValue, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.value = value
         self.is_secret = is_secret
 
 
-class SourceProperties(msrest.serialization.Model):
+class SourceProperties(_serialization.Model):
     """The properties of the source code repository.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar source_control_type: Required. The type of source control service. Possible values
-     include: "Github", "VisualStudioTeamService".
+    :ivar source_control_type: The type of source control service. Required. Known values are:
+     "Github" and "VisualStudioTeamService".
     :vartype source_control_type: str or
      ~azure.mgmt.containerregistry.v2019_06_01_preview.models.SourceControlType
-    :ivar repository_url: Required. The full URL to the source code repository.
+    :ivar repository_url: The full URL to the source code repository. Required.
     :vartype repository_url: str
     :ivar branch: The branch name of the source code.
     :vartype branch: str
@@ -2738,32 +2676,32 @@ class SourceProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'source_control_type': {'required': True},
-        'repository_url': {'required': True},
+        "source_control_type": {"required": True},
+        "repository_url": {"required": True},
     }
 
     _attribute_map = {
-        'source_control_type': {'key': 'sourceControlType', 'type': 'str'},
-        'repository_url': {'key': 'repositoryUrl', 'type': 'str'},
-        'branch': {'key': 'branch', 'type': 'str'},
-        'source_control_auth_properties': {'key': 'sourceControlAuthProperties', 'type': 'AuthInfo'},
+        "source_control_type": {"key": "sourceControlType", "type": "str"},
+        "repository_url": {"key": "repositoryUrl", "type": "str"},
+        "branch": {"key": "branch", "type": "str"},
+        "source_control_auth_properties": {"key": "sourceControlAuthProperties", "type": "AuthInfo"},
     }
 
     def __init__(
         self,
         *,
-        source_control_type: Union[str, "SourceControlType"],
+        source_control_type: Union[str, "_models.SourceControlType"],
         repository_url: str,
         branch: Optional[str] = None,
-        source_control_auth_properties: Optional["AuthInfo"] = None,
-        **kwargs
-    ):
+        source_control_auth_properties: Optional["_models.AuthInfo"] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword source_control_type: Required. The type of source control service. Possible values
-         include: "Github", "VisualStudioTeamService".
+        :keyword source_control_type: The type of source control service. Required. Known values are:
+         "Github" and "VisualStudioTeamService".
         :paramtype source_control_type: str or
          ~azure.mgmt.containerregistry.v2019_06_01_preview.models.SourceControlType
-        :keyword repository_url: Required. The full URL to the source code repository.
+        :keyword repository_url: The full URL to the source code repository. Required.
         :paramtype repository_url: str
         :keyword branch: The branch name of the source code.
         :paramtype branch: str
@@ -2773,107 +2711,104 @@ class SourceProperties(msrest.serialization.Model):
         :paramtype source_control_auth_properties:
          ~azure.mgmt.containerregistry.v2019_06_01_preview.models.AuthInfo
         """
-        super(SourceProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.source_control_type = source_control_type
         self.repository_url = repository_url
         self.branch = branch
         self.source_control_auth_properties = source_control_auth_properties
 
 
-class SourceRegistryCredentials(msrest.serialization.Model):
+class SourceRegistryCredentials(_serialization.Model):
     """Describes the credential parameters for accessing the source registry.
 
     :ivar login_mode: The authentication mode which determines the source registry login scope. The
      credentials for the source registry
      will be generated using the given scope. These credentials will be used to login to
-     the source registry during the run. Possible values include: "None", "Default".
+     the source registry during the run. Known values are: "None" and "Default".
     :vartype login_mode: str or
      ~azure.mgmt.containerregistry.v2019_06_01_preview.models.SourceRegistryLoginMode
     """
 
     _attribute_map = {
-        'login_mode': {'key': 'loginMode', 'type': 'str'},
+        "login_mode": {"key": "loginMode", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        login_mode: Optional[Union[str, "SourceRegistryLoginMode"]] = None,
-        **kwargs
-    ):
+        self, *, login_mode: Optional[Union[str, "_models.SourceRegistryLoginMode"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword login_mode: The authentication mode which determines the source registry login scope.
          The credentials for the source registry
          will be generated using the given scope. These credentials will be used to login to
-         the source registry during the run. Possible values include: "None", "Default".
+         the source registry during the run. Known values are: "None" and "Default".
         :paramtype login_mode: str or
          ~azure.mgmt.containerregistry.v2019_06_01_preview.models.SourceRegistryLoginMode
         """
-        super(SourceRegistryCredentials, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.login_mode = login_mode
 
 
-class SourceTrigger(msrest.serialization.Model):
+class SourceTrigger(_serialization.Model):
     """The properties of a source based trigger.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar source_repository: Required. The properties that describes the source(code) for the task.
+    :ivar source_repository: The properties that describes the source(code) for the task. Required.
     :vartype source_repository:
      ~azure.mgmt.containerregistry.v2019_06_01_preview.models.SourceProperties
-    :ivar source_trigger_events: Required. The source event corresponding to the trigger.
+    :ivar source_trigger_events: The source event corresponding to the trigger. Required.
     :vartype source_trigger_events: list[str or
      ~azure.mgmt.containerregistry.v2019_06_01_preview.models.SourceTriggerEvent]
-    :ivar status: The current status of trigger. Possible values include: "Disabled", "Enabled".
+    :ivar status: The current status of trigger. Known values are: "Disabled" and "Enabled".
     :vartype status: str or ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TriggerStatus
-    :ivar name: Required. The name of the trigger.
+    :ivar name: The name of the trigger. Required.
     :vartype name: str
     """
 
     _validation = {
-        'source_repository': {'required': True},
-        'source_trigger_events': {'required': True},
-        'name': {'required': True},
+        "source_repository": {"required": True},
+        "source_trigger_events": {"required": True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'source_repository': {'key': 'sourceRepository', 'type': 'SourceProperties'},
-        'source_trigger_events': {'key': 'sourceTriggerEvents', 'type': '[str]'},
-        'status': {'key': 'status', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
+        "source_repository": {"key": "sourceRepository", "type": "SourceProperties"},
+        "source_trigger_events": {"key": "sourceTriggerEvents", "type": "[str]"},
+        "status": {"key": "status", "type": "str"},
+        "name": {"key": "name", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        source_repository: "SourceProperties",
-        source_trigger_events: List[Union[str, "SourceTriggerEvent"]],
+        source_repository: "_models.SourceProperties",
+        source_trigger_events: List[Union[str, "_models.SourceTriggerEvent"]],
         name: str,
-        status: Optional[Union[str, "TriggerStatus"]] = None,
-        **kwargs
-    ):
+        status: Optional[Union[str, "_models.TriggerStatus"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword source_repository: Required. The properties that describes the source(code) for the
-         task.
+        :keyword source_repository: The properties that describes the source(code) for the task.
+         Required.
         :paramtype source_repository:
          ~azure.mgmt.containerregistry.v2019_06_01_preview.models.SourceProperties
-        :keyword source_trigger_events: Required. The source event corresponding to the trigger.
+        :keyword source_trigger_events: The source event corresponding to the trigger. Required.
         :paramtype source_trigger_events: list[str or
          ~azure.mgmt.containerregistry.v2019_06_01_preview.models.SourceTriggerEvent]
-        :keyword status: The current status of trigger. Possible values include: "Disabled", "Enabled".
+        :keyword status: The current status of trigger. Known values are: "Disabled" and "Enabled".
         :paramtype status: str or
          ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TriggerStatus
-        :keyword name: Required. The name of the trigger.
+        :keyword name: The name of the trigger. Required.
         :paramtype name: str
         """
-        super(SourceTrigger, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.source_repository = source_repository
         self.source_trigger_events = source_trigger_events
         self.status = status
         self.name = name
 
 
-class SourceTriggerDescriptor(msrest.serialization.Model):
+class SourceTriggerDescriptor(_serialization.Model):
     """The source trigger that caused a run.
 
     :ivar id: The unique ID of the trigger.
@@ -2893,27 +2828,27 @@ class SourceTriggerDescriptor(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'event_type': {'key': 'eventType', 'type': 'str'},
-        'commit_id': {'key': 'commitId', 'type': 'str'},
-        'pull_request_id': {'key': 'pullRequestId', 'type': 'str'},
-        'repository_url': {'key': 'repositoryUrl', 'type': 'str'},
-        'branch_name': {'key': 'branchName', 'type': 'str'},
-        'provider_type': {'key': 'providerType', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "event_type": {"key": "eventType", "type": "str"},
+        "commit_id": {"key": "commitId", "type": "str"},
+        "pull_request_id": {"key": "pullRequestId", "type": "str"},
+        "repository_url": {"key": "repositoryUrl", "type": "str"},
+        "branch_name": {"key": "branchName", "type": "str"},
+        "provider_type": {"key": "providerType", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         event_type: Optional[str] = None,
         commit_id: Optional[str] = None,
         pull_request_id: Optional[str] = None,
         repository_url: Optional[str] = None,
         branch_name: Optional[str] = None,
         provider_type: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: The unique ID of the trigger.
         :paramtype id: str
@@ -2930,7 +2865,7 @@ class SourceTriggerDescriptor(msrest.serialization.Model):
         :keyword provider_type: The source control provider type.
         :paramtype provider_type: str
         """
-        super(SourceTriggerDescriptor, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
         self.event_type = event_type
         self.commit_id = commit_id
@@ -2940,7 +2875,7 @@ class SourceTriggerDescriptor(msrest.serialization.Model):
         self.provider_type = provider_type
 
 
-class SourceTriggerUpdateParameters(msrest.serialization.Model):
+class SourceTriggerUpdateParameters(_serialization.Model):
     """The properties for updating a source based trigger.
 
     All required parameters must be populated in order to send to Azure.
@@ -2951,32 +2886,32 @@ class SourceTriggerUpdateParameters(msrest.serialization.Model):
     :ivar source_trigger_events: The source event corresponding to the trigger.
     :vartype source_trigger_events: list[str or
      ~azure.mgmt.containerregistry.v2019_06_01_preview.models.SourceTriggerEvent]
-    :ivar status: The current status of trigger. Possible values include: "Disabled", "Enabled".
+    :ivar status: The current status of trigger. Known values are: "Disabled" and "Enabled".
     :vartype status: str or ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TriggerStatus
-    :ivar name: Required. The name of the trigger.
+    :ivar name: The name of the trigger. Required.
     :vartype name: str
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'source_repository': {'key': 'sourceRepository', 'type': 'SourceUpdateParameters'},
-        'source_trigger_events': {'key': 'sourceTriggerEvents', 'type': '[str]'},
-        'status': {'key': 'status', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
+        "source_repository": {"key": "sourceRepository", "type": "SourceUpdateParameters"},
+        "source_trigger_events": {"key": "sourceTriggerEvents", "type": "[str]"},
+        "status": {"key": "status", "type": "str"},
+        "name": {"key": "name", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         name: str,
-        source_repository: Optional["SourceUpdateParameters"] = None,
-        source_trigger_events: Optional[List[Union[str, "SourceTriggerEvent"]]] = None,
-        status: Optional[Union[str, "TriggerStatus"]] = None,
-        **kwargs
-    ):
+        source_repository: Optional["_models.SourceUpdateParameters"] = None,
+        source_trigger_events: Optional[List[Union[str, "_models.SourceTriggerEvent"]]] = None,
+        status: Optional[Union[str, "_models.TriggerStatus"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword source_repository: The properties that describes the source(code) for the task.
         :paramtype source_repository:
@@ -2984,24 +2919,24 @@ class SourceTriggerUpdateParameters(msrest.serialization.Model):
         :keyword source_trigger_events: The source event corresponding to the trigger.
         :paramtype source_trigger_events: list[str or
          ~azure.mgmt.containerregistry.v2019_06_01_preview.models.SourceTriggerEvent]
-        :keyword status: The current status of trigger. Possible values include: "Disabled", "Enabled".
+        :keyword status: The current status of trigger. Known values are: "Disabled" and "Enabled".
         :paramtype status: str or
          ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TriggerStatus
-        :keyword name: Required. The name of the trigger.
+        :keyword name: The name of the trigger. Required.
         :paramtype name: str
         """
-        super(SourceTriggerUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.source_repository = source_repository
         self.source_trigger_events = source_trigger_events
         self.status = status
         self.name = name
 
 
-class SourceUpdateParameters(msrest.serialization.Model):
+class SourceUpdateParameters(_serialization.Model):
     """The properties for updating the source code repository.
 
-    :ivar source_control_type: The type of source control service. Possible values include:
-     "Github", "VisualStudioTeamService".
+    :ivar source_control_type: The type of source control service. Known values are: "Github" and
+     "VisualStudioTeamService".
     :vartype source_control_type: str or
      ~azure.mgmt.containerregistry.v2019_06_01_preview.models.SourceControlType
     :ivar repository_url: The full URL to the source code repository.
@@ -3016,24 +2951,24 @@ class SourceUpdateParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'source_control_type': {'key': 'sourceControlType', 'type': 'str'},
-        'repository_url': {'key': 'repositoryUrl', 'type': 'str'},
-        'branch': {'key': 'branch', 'type': 'str'},
-        'source_control_auth_properties': {'key': 'sourceControlAuthProperties', 'type': 'AuthInfoUpdateParameters'},
+        "source_control_type": {"key": "sourceControlType", "type": "str"},
+        "repository_url": {"key": "repositoryUrl", "type": "str"},
+        "branch": {"key": "branch", "type": "str"},
+        "source_control_auth_properties": {"key": "sourceControlAuthProperties", "type": "AuthInfoUpdateParameters"},
     }
 
     def __init__(
         self,
         *,
-        source_control_type: Optional[Union[str, "SourceControlType"]] = None,
+        source_control_type: Optional[Union[str, "_models.SourceControlType"]] = None,
         repository_url: Optional[str] = None,
         branch: Optional[str] = None,
-        source_control_auth_properties: Optional["AuthInfoUpdateParameters"] = None,
-        **kwargs
-    ):
+        source_control_auth_properties: Optional["_models.AuthInfoUpdateParameters"] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword source_control_type: The type of source control service. Possible values include:
-         "Github", "VisualStudioTeamService".
+        :keyword source_control_type: The type of source control service. Known values are: "Github"
+         and "VisualStudioTeamService".
         :paramtype source_control_type: str or
          ~azure.mgmt.containerregistry.v2019_06_01_preview.models.SourceControlType
         :keyword repository_url: The full URL to the source code repository.
@@ -3046,14 +2981,14 @@ class SourceUpdateParameters(msrest.serialization.Model):
         :paramtype source_control_auth_properties:
          ~azure.mgmt.containerregistry.v2019_06_01_preview.models.AuthInfoUpdateParameters
         """
-        super(SourceUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.source_control_type = source_control_type
         self.repository_url = repository_url
         self.branch = branch
         self.source_control_auth_properties = source_control_auth_properties
 
 
-class SourceUploadDefinition(msrest.serialization.Model):
+class SourceUploadDefinition(_serialization.Model):
     """The properties of a response to source upload request.
 
     :ivar upload_url: The URL where the client can upload the source.
@@ -3064,17 +2999,11 @@ class SourceUploadDefinition(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'upload_url': {'key': 'uploadUrl', 'type': 'str'},
-        'relative_path': {'key': 'relativePath', 'type': 'str'},
+        "upload_url": {"key": "uploadUrl", "type": "str"},
+        "relative_path": {"key": "relativePath", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        upload_url: Optional[str] = None,
-        relative_path: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, upload_url: Optional[str] = None, relative_path: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword upload_url: The URL where the client can upload the source.
         :paramtype upload_url: str
@@ -3082,26 +3011,26 @@ class SourceUploadDefinition(msrest.serialization.Model):
          queue build request.
         :paramtype relative_path: str
         """
-        super(SourceUploadDefinition, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.upload_url = upload_url
         self.relative_path = relative_path
 
 
-class SystemData(msrest.serialization.Model):
+class SystemData(_serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
     :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Possible values include:
-     "User", "Application", "ManagedIdentity", "Key".
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", and "Key".
     :vartype created_by_type: str or
      ~azure.mgmt.containerregistry.v2019_06_01_preview.models.CreatedByType
     :ivar created_at: The timestamp of resource creation (UTC).
     :vartype created_at: ~datetime.datetime
     :ivar last_modified_by: The identity that last modified the resource.
     :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: "User", "Application", "ManagedIdentity", "Key".
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", and "Key".
     :vartype last_modified_by_type: str or
      ~azure.mgmt.containerregistry.v2019_06_01_preview.models.LastModifiedByType
     :ivar last_modified_at: The timestamp of resource modification (UTC).
@@ -3109,44 +3038,44 @@ class SystemData(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'created_by': {'key': 'createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'createdByType', 'type': 'str'},
-        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
-        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
     }
 
     def __init__(
         self,
         *,
         created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         created_at: Optional[datetime.datetime] = None,
         last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "LastModifiedByType"]] = None,
+        last_modified_by_type: Optional[Union[str, "_models.LastModifiedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
-        :keyword created_by_type: The type of identity that created the resource. Possible values
-         include: "User", "Application", "ManagedIdentity", "Key".
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", and "Key".
         :paramtype created_by_type: str or
          ~azure.mgmt.containerregistry.v2019_06_01_preview.models.CreatedByType
         :keyword created_at: The timestamp of resource creation (UTC).
         :paramtype created_at: ~datetime.datetime
         :keyword last_modified_by: The identity that last modified the resource.
         :paramtype last_modified_by: str
-        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
-         values include: "User", "Application", "ManagedIdentity", "Key".
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", and "Key".
         :paramtype last_modified_by_type: str or
          ~azure.mgmt.containerregistry.v2019_06_01_preview.models.LastModifiedByType
         :keyword last_modified_at: The timestamp of resource modification (UTC).
         :paramtype last_modified_at: ~datetime.datetime
         """
-        super(SystemData, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
         self.created_at = created_at
@@ -3155,9 +3084,9 @@ class SystemData(msrest.serialization.Model):
         self.last_modified_at = last_modified_at
 
 
-class Task(Resource):
-    """The task that has the ARM resource and task properties. 
-The task will have all information to schedule a run against it.
+class Task(Resource):  # pylint: disable=too-many-instance-attributes
+    """The task that has the ARM resource and task properties.
+    The task will have all information to schedule a run against it.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -3169,22 +3098,22 @@ The task will have all information to schedule a run against it.
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :ivar location: Required. The location of the resource. This cannot be changed after the
-     resource is created.
+    :ivar location: The location of the resource. This cannot be changed after the resource is
+     created. Required.
     :vartype location: str
-    :ivar tags: A set of tags. The tags of the resource.
+    :ivar tags: The tags of the resource.
     :vartype tags: dict[str, str]
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
     :vartype system_data: ~azure.mgmt.containerregistry.v2019_06_01_preview.models.SystemData
     :ivar identity: Identity for the resource.
     :vartype identity: ~azure.mgmt.containerregistry.v2019_06_01_preview.models.IdentityProperties
-    :ivar provisioning_state: The provisioning state of the task. Possible values include:
-     "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled".
+    :ivar provisioning_state: The provisioning state of the task. Known values are: "Creating",
+     "Updating", "Deleting", "Succeeded", "Failed", and "Canceled".
     :vartype provisioning_state: str or
      ~azure.mgmt.containerregistry.v2019_06_01_preview.models.ProvisioningState
     :ivar creation_date: The creation date of task.
     :vartype creation_date: ~datetime.datetime
-    :ivar status: The current status of task. Possible values include: "Disabled", "Enabled".
+    :ivar status: The current status of task. Known values are: "Disabled" and "Enabled".
     :vartype status: str or ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TaskStatus
     :ivar platform: The platform properties against which the run has to happen.
     :vartype platform: ~azure.mgmt.containerregistry.v2019_06_01_preview.models.PlatformProperties
@@ -3211,36 +3140,36 @@ The task will have all information to schedule a run against it.
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'system_data': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'creation_date': {'readonly': True},
-        'timeout': {'maximum': 28800, 'minimum': 300},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "creation_date": {"readonly": True},
+        "timeout": {"maximum": 28800, "minimum": 300},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'identity': {'key': 'identity', 'type': 'IdentityProperties'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'platform': {'key': 'properties.platform', 'type': 'PlatformProperties'},
-        'agent_configuration': {'key': 'properties.agentConfiguration', 'type': 'AgentProperties'},
-        'agent_pool_name': {'key': 'properties.agentPoolName', 'type': 'str'},
-        'timeout': {'key': 'properties.timeout', 'type': 'int'},
-        'step': {'key': 'properties.step', 'type': 'TaskStepProperties'},
-        'trigger': {'key': 'properties.trigger', 'type': 'TriggerProperties'},
-        'credentials': {'key': 'properties.credentials', 'type': 'Credentials'},
-        'log_template': {'key': 'properties.logTemplate', 'type': 'str'},
-        'is_system_task': {'key': 'properties.isSystemTask', 'type': 'bool'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "identity": {"key": "identity", "type": "IdentityProperties"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "creation_date": {"key": "properties.creationDate", "type": "iso-8601"},
+        "status": {"key": "properties.status", "type": "str"},
+        "platform": {"key": "properties.platform", "type": "PlatformProperties"},
+        "agent_configuration": {"key": "properties.agentConfiguration", "type": "AgentProperties"},
+        "agent_pool_name": {"key": "properties.agentPoolName", "type": "str"},
+        "timeout": {"key": "properties.timeout", "type": "int"},
+        "step": {"key": "properties.step", "type": "TaskStepProperties"},
+        "trigger": {"key": "properties.trigger", "type": "TriggerProperties"},
+        "credentials": {"key": "properties.credentials", "type": "Credentials"},
+        "log_template": {"key": "properties.logTemplate", "type": "str"},
+        "is_system_task": {"key": "properties.isSystemTask", "type": "bool"},
     }
 
     def __init__(
@@ -3248,29 +3177,29 @@ The task will have all information to schedule a run against it.
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        identity: Optional["IdentityProperties"] = None,
-        status: Optional[Union[str, "TaskStatus"]] = None,
-        platform: Optional["PlatformProperties"] = None,
-        agent_configuration: Optional["AgentProperties"] = None,
+        identity: Optional["_models.IdentityProperties"] = None,
+        status: Optional[Union[str, "_models.TaskStatus"]] = None,
+        platform: Optional["_models.PlatformProperties"] = None,
+        agent_configuration: Optional["_models.AgentProperties"] = None,
         agent_pool_name: Optional[str] = None,
-        timeout: Optional[int] = 3600,
-        step: Optional["TaskStepProperties"] = None,
-        trigger: Optional["TriggerProperties"] = None,
-        credentials: Optional["Credentials"] = None,
+        timeout: int = 3600,
+        step: Optional["_models.TaskStepProperties"] = None,
+        trigger: Optional["_models.TriggerProperties"] = None,
+        credentials: Optional["_models.Credentials"] = None,
         log_template: Optional[str] = None,
-        is_system_task: Optional[bool] = False,
-        **kwargs
-    ):
+        is_system_task: bool = False,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword location: Required. The location of the resource. This cannot be changed after the
-         resource is created.
+        :keyword location: The location of the resource. This cannot be changed after the resource is
+         created. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. The tags of the resource.
+        :keyword tags: The tags of the resource.
         :paramtype tags: dict[str, str]
         :keyword identity: Identity for the resource.
         :paramtype identity:
          ~azure.mgmt.containerregistry.v2019_06_01_preview.models.IdentityProperties
-        :keyword status: The current status of task. Possible values include: "Disabled", "Enabled".
+        :keyword status: The current status of task. Known values are: "Disabled" and "Enabled".
         :paramtype status: str or ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TaskStatus
         :keyword platform: The platform properties against which the run has to happen.
         :paramtype platform:
@@ -3296,7 +3225,7 @@ The task will have all information to schedule a run against it.
          system task or not.
         :paramtype is_system_task: bool
         """
-        super(Task, self).__init__(location=location, tags=tags, **kwargs)
+        super().__init__(location=location, tags=tags, **kwargs)
         self.identity = identity
         self.provisioning_state = None
         self.creation_date = None
@@ -3312,7 +3241,7 @@ The task will have all information to schedule a run against it.
         self.is_system_task = is_system_task
 
 
-class TaskListResult(msrest.serialization.Model):
+class TaskListResult(_serialization.Model):
     """The collection of tasks.
 
     :ivar value: The collection value.
@@ -3322,31 +3251,27 @@ class TaskListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Task]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Task]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["Task"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+        self, *, value: Optional[List["_models.Task"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The collection value.
         :paramtype value: list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.Task]
         :keyword next_link: The URI that can be used to request the next set of paged results.
         :paramtype next_link: str
         """
-        super(TaskListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
 class TaskRun(ProxyResource):
-    """The task run that has the ARM resource and properties. 
-The task run will have the information of request and result of a run.
+    """The task run that has the ARM resource and properties.
+    The task run will have the information of request and result of a run.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -3362,8 +3287,8 @@ The task run will have the information of request and result of a run.
     :vartype identity: ~azure.mgmt.containerregistry.v2019_06_01_preview.models.IdentityProperties
     :ivar location: The location of the resource.
     :vartype location: str
-    :ivar provisioning_state: The provisioning state of this task run. Possible values include:
-     "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled".
+    :ivar provisioning_state: The provisioning state of this task run. Known values are:
+     "Creating", "Updating", "Deleting", "Succeeded", "Failed", and "Canceled".
     :vartype provisioning_state: str or
      ~azure.mgmt.containerregistry.v2019_06_01_preview.models.ProvisioningState
     :ivar run_request: The request (parameters) for the run.
@@ -3376,36 +3301,36 @@ The task run will have the information of request and result of a run.
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'run_result': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "run_result": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'identity': {'key': 'identity', 'type': 'IdentityProperties'},
-        'location': {'key': 'location', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'run_request': {'key': 'properties.runRequest', 'type': 'RunRequest'},
-        'run_result': {'key': 'properties.runResult', 'type': 'Run'},
-        'force_update_tag': {'key': 'properties.forceUpdateTag', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "identity": {"key": "identity", "type": "IdentityProperties"},
+        "location": {"key": "location", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "run_request": {"key": "properties.runRequest", "type": "RunRequest"},
+        "run_result": {"key": "properties.runResult", "type": "Run"},
+        "force_update_tag": {"key": "properties.forceUpdateTag", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        identity: Optional["IdentityProperties"] = None,
+        identity: Optional["_models.IdentityProperties"] = None,
         location: Optional[str] = None,
-        run_request: Optional["RunRequest"] = None,
+        run_request: Optional["_models.RunRequest"] = None,
         force_update_tag: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword identity: Identity for the resource.
         :paramtype identity:
@@ -3418,7 +3343,7 @@ The task run will have the information of request and result of a run.
          configuration has not changed.
         :paramtype force_update_tag: str
         """
-        super(TaskRun, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.identity = identity
         self.location = location
         self.provisioning_state = None
@@ -3427,7 +3352,7 @@ The task run will have the information of request and result of a run.
         self.force_update_tag = force_update_tag
 
 
-class TaskRunListResult(msrest.serialization.Model):
+class TaskRunListResult(_serialization.Model):
     """The collection of task runs.
 
     :ivar value: The collection value.
@@ -3437,24 +3362,20 @@ class TaskRunListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[TaskRun]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[TaskRun]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["TaskRun"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+        self, *, value: Optional[List["_models.TaskRun"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The collection value.
         :paramtype value: list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.TaskRun]
         :keyword next_link: The URI that can be used to request the next set of paged results.
         :paramtype next_link: str
         """
-        super(TaskRunListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
@@ -3464,7 +3385,7 @@ class TaskRunRequest(RunRequest):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. The type of the run request.Constant filled by server.
+    :ivar type: The type of the run request. Required.
     :vartype type: str
     :ivar is_archive_enabled: The value that indicates whether archiving is enabled for the run or
      not.
@@ -3474,7 +3395,7 @@ class TaskRunRequest(RunRequest):
     :ivar log_template: The template that describes the repository and tag information for run log
      artifact.
     :vartype log_template: str
-    :ivar task_id: Required. The resource ID of task against which run has to be queued.
+    :ivar task_id: The resource ID of task against which run has to be queued. Required.
     :vartype task_id: str
     :ivar override_task_step_properties: Set of overridable parameters that can be passed when
      running a Task.
@@ -3483,29 +3404,29 @@ class TaskRunRequest(RunRequest):
     """
 
     _validation = {
-        'type': {'required': True},
-        'task_id': {'required': True},
+        "type": {"required": True},
+        "task_id": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'is_archive_enabled': {'key': 'isArchiveEnabled', 'type': 'bool'},
-        'agent_pool_name': {'key': 'agentPoolName', 'type': 'str'},
-        'log_template': {'key': 'logTemplate', 'type': 'str'},
-        'task_id': {'key': 'taskId', 'type': 'str'},
-        'override_task_step_properties': {'key': 'overrideTaskStepProperties', 'type': 'OverrideTaskStepProperties'},
+        "type": {"key": "type", "type": "str"},
+        "is_archive_enabled": {"key": "isArchiveEnabled", "type": "bool"},
+        "agent_pool_name": {"key": "agentPoolName", "type": "str"},
+        "log_template": {"key": "logTemplate", "type": "str"},
+        "task_id": {"key": "taskId", "type": "str"},
+        "override_task_step_properties": {"key": "overrideTaskStepProperties", "type": "OverrideTaskStepProperties"},
     }
 
     def __init__(
         self,
         *,
         task_id: str,
-        is_archive_enabled: Optional[bool] = False,
+        is_archive_enabled: bool = False,
         agent_pool_name: Optional[str] = None,
         log_template: Optional[str] = None,
-        override_task_step_properties: Optional["OverrideTaskStepProperties"] = None,
-        **kwargs
-    ):
+        override_task_step_properties: Optional["_models.OverrideTaskStepProperties"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword is_archive_enabled: The value that indicates whether archiving is enabled for the run
          or not.
@@ -3515,27 +3436,29 @@ class TaskRunRequest(RunRequest):
         :keyword log_template: The template that describes the repository and tag information for run
          log artifact.
         :paramtype log_template: str
-        :keyword task_id: Required. The resource ID of task against which run has to be queued.
+        :keyword task_id: The resource ID of task against which run has to be queued. Required.
         :paramtype task_id: str
         :keyword override_task_step_properties: Set of overridable parameters that can be passed when
          running a Task.
         :paramtype override_task_step_properties:
          ~azure.mgmt.containerregistry.v2019_06_01_preview.models.OverrideTaskStepProperties
         """
-        super(TaskRunRequest, self).__init__(is_archive_enabled=is_archive_enabled, agent_pool_name=agent_pool_name, log_template=log_template, **kwargs)
-        self.type = 'TaskRunRequest'  # type: str
+        super().__init__(
+            is_archive_enabled=is_archive_enabled, agent_pool_name=agent_pool_name, log_template=log_template, **kwargs
+        )
+        self.type: str = "TaskRunRequest"
         self.task_id = task_id
         self.override_task_step_properties = override_task_step_properties
 
 
-class TaskRunUpdateParameters(msrest.serialization.Model):
+class TaskRunUpdateParameters(_serialization.Model):
     """The parameters for updating a task run.
 
     :ivar identity: Identity for the resource.
     :vartype identity: ~azure.mgmt.containerregistry.v2019_06_01_preview.models.IdentityProperties
     :ivar location: The location of the resource.
     :vartype location: str
-    :ivar tags: A set of tags. The ARM resource tags.
+    :ivar tags: The ARM resource tags.
     :vartype tags: dict[str, str]
     :ivar run_request: The request (parameters) for the new run.
     :vartype run_request: ~azure.mgmt.containerregistry.v2019_06_01_preview.models.RunRequest
@@ -3545,30 +3468,30 @@ class TaskRunUpdateParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'identity': {'key': 'identity', 'type': 'IdentityProperties'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'run_request': {'key': 'properties.runRequest', 'type': 'RunRequest'},
-        'force_update_tag': {'key': 'properties.forceUpdateTag', 'type': 'str'},
+        "identity": {"key": "identity", "type": "IdentityProperties"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "run_request": {"key": "properties.runRequest", "type": "RunRequest"},
+        "force_update_tag": {"key": "properties.forceUpdateTag", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        identity: Optional["IdentityProperties"] = None,
+        identity: Optional["_models.IdentityProperties"] = None,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        run_request: Optional["RunRequest"] = None,
+        run_request: Optional["_models.RunRequest"] = None,
         force_update_tag: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword identity: Identity for the resource.
         :paramtype identity:
          ~azure.mgmt.containerregistry.v2019_06_01_preview.models.IdentityProperties
         :keyword location: The location of the resource.
         :paramtype location: str
-        :keyword tags: A set of tags. The ARM resource tags.
+        :keyword tags: The ARM resource tags.
         :paramtype tags: dict[str, str]
         :keyword run_request: The request (parameters) for the new run.
         :paramtype run_request: ~azure.mgmt.containerregistry.v2019_06_01_preview.models.RunRequest
@@ -3576,7 +3499,7 @@ class TaskRunUpdateParameters(msrest.serialization.Model):
          configuration has not changed.
         :paramtype force_update_tag: str
         """
-        super(TaskRunUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.identity = identity
         self.location = location
         self.tags = tags
@@ -3584,14 +3507,14 @@ class TaskRunUpdateParameters(msrest.serialization.Model):
         self.force_update_tag = force_update_tag
 
 
-class TaskUpdateParameters(msrest.serialization.Model):
+class TaskUpdateParameters(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """The parameters for updating a task.
 
     :ivar identity: Identity for the resource.
     :vartype identity: ~azure.mgmt.containerregistry.v2019_06_01_preview.models.IdentityProperties
-    :ivar tags: A set of tags. The ARM resource tags.
+    :ivar tags: The ARM resource tags.
     :vartype tags: dict[str, str]
-    :ivar status: The current status of task. Possible values include: "Disabled", "Enabled".
+    :ivar status: The current status of task. Known values are: "Disabled" and "Enabled".
     :vartype status: str or ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TaskStatus
     :ivar platform: The platform properties against which the run has to happen.
     :vartype platform:
@@ -3618,42 +3541,42 @@ class TaskUpdateParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'identity': {'key': 'identity', 'type': 'IdentityProperties'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'platform': {'key': 'properties.platform', 'type': 'PlatformUpdateParameters'},
-        'agent_configuration': {'key': 'properties.agentConfiguration', 'type': 'AgentProperties'},
-        'agent_pool_name': {'key': 'properties.agentPoolName', 'type': 'str'},
-        'timeout': {'key': 'properties.timeout', 'type': 'int'},
-        'step': {'key': 'properties.step', 'type': 'TaskStepUpdateParameters'},
-        'trigger': {'key': 'properties.trigger', 'type': 'TriggerUpdateParameters'},
-        'credentials': {'key': 'properties.credentials', 'type': 'Credentials'},
-        'log_template': {'key': 'properties.logTemplate', 'type': 'str'},
+        "identity": {"key": "identity", "type": "IdentityProperties"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "status": {"key": "properties.status", "type": "str"},
+        "platform": {"key": "properties.platform", "type": "PlatformUpdateParameters"},
+        "agent_configuration": {"key": "properties.agentConfiguration", "type": "AgentProperties"},
+        "agent_pool_name": {"key": "properties.agentPoolName", "type": "str"},
+        "timeout": {"key": "properties.timeout", "type": "int"},
+        "step": {"key": "properties.step", "type": "TaskStepUpdateParameters"},
+        "trigger": {"key": "properties.trigger", "type": "TriggerUpdateParameters"},
+        "credentials": {"key": "properties.credentials", "type": "Credentials"},
+        "log_template": {"key": "properties.logTemplate", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        identity: Optional["IdentityProperties"] = None,
+        identity: Optional["_models.IdentityProperties"] = None,
         tags: Optional[Dict[str, str]] = None,
-        status: Optional[Union[str, "TaskStatus"]] = None,
-        platform: Optional["PlatformUpdateParameters"] = None,
-        agent_configuration: Optional["AgentProperties"] = None,
+        status: Optional[Union[str, "_models.TaskStatus"]] = None,
+        platform: Optional["_models.PlatformUpdateParameters"] = None,
+        agent_configuration: Optional["_models.AgentProperties"] = None,
         agent_pool_name: Optional[str] = None,
         timeout: Optional[int] = None,
-        step: Optional["TaskStepUpdateParameters"] = None,
-        trigger: Optional["TriggerUpdateParameters"] = None,
-        credentials: Optional["Credentials"] = None,
+        step: Optional["_models.TaskStepUpdateParameters"] = None,
+        trigger: Optional["_models.TriggerUpdateParameters"] = None,
+        credentials: Optional["_models.Credentials"] = None,
         log_template: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword identity: Identity for the resource.
         :paramtype identity:
          ~azure.mgmt.containerregistry.v2019_06_01_preview.models.IdentityProperties
-        :keyword tags: A set of tags. The ARM resource tags.
+        :keyword tags: The ARM resource tags.
         :paramtype tags: dict[str, str]
-        :keyword status: The current status of task. Possible values include: "Disabled", "Enabled".
+        :keyword status: The current status of task. Known values are: "Disabled" and "Enabled".
         :paramtype status: str or ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TaskStatus
         :keyword platform: The platform properties against which the run has to happen.
         :paramtype platform:
@@ -3678,7 +3601,7 @@ class TaskUpdateParameters(msrest.serialization.Model):
          log artifact.
         :paramtype log_template: str
         """
-        super(TaskUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.identity = identity
         self.tags = tags
         self.status = status
@@ -3692,54 +3615,49 @@ class TaskUpdateParameters(msrest.serialization.Model):
         self.log_template = log_template
 
 
-class TimerTrigger(msrest.serialization.Model):
+class TimerTrigger(_serialization.Model):
     """The properties of a timer trigger.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar schedule: Required. The CRON expression for the task schedule.
+    :ivar schedule: The CRON expression for the task schedule. Required.
     :vartype schedule: str
-    :ivar status: The current status of trigger. Possible values include: "Disabled", "Enabled".
+    :ivar status: The current status of trigger. Known values are: "Disabled" and "Enabled".
     :vartype status: str or ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TriggerStatus
-    :ivar name: Required. The name of the trigger.
+    :ivar name: The name of the trigger. Required.
     :vartype name: str
     """
 
     _validation = {
-        'schedule': {'required': True},
-        'name': {'required': True},
+        "schedule": {"required": True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'schedule': {'key': 'schedule', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
+        "schedule": {"key": "schedule", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "name": {"key": "name", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        schedule: str,
-        name: str,
-        status: Optional[Union[str, "TriggerStatus"]] = None,
-        **kwargs
-    ):
+        self, *, schedule: str, name: str, status: Optional[Union[str, "_models.TriggerStatus"]] = None, **kwargs: Any
+    ) -> None:
         """
-        :keyword schedule: Required. The CRON expression for the task schedule.
+        :keyword schedule: The CRON expression for the task schedule. Required.
         :paramtype schedule: str
-        :keyword status: The current status of trigger. Possible values include: "Disabled", "Enabled".
+        :keyword status: The current status of trigger. Known values are: "Disabled" and "Enabled".
         :paramtype status: str or
          ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TriggerStatus
-        :keyword name: Required. The name of the trigger.
+        :keyword name: The name of the trigger. Required.
         :paramtype name: str
         """
-        super(TimerTrigger, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.schedule = schedule
         self.status = status
         self.name = name
 
 
-class TimerTriggerDescriptor(msrest.serialization.Model):
+class TimerTriggerDescriptor(_serialization.Model):
     """TimerTriggerDescriptor.
 
     :ivar timer_trigger_name: The timer trigger name that caused the run.
@@ -3749,49 +3667,45 @@ class TimerTriggerDescriptor(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'timer_trigger_name': {'key': 'timerTriggerName', 'type': 'str'},
-        'schedule_occurrence': {'key': 'scheduleOccurrence', 'type': 'str'},
+        "timer_trigger_name": {"key": "timerTriggerName", "type": "str"},
+        "schedule_occurrence": {"key": "scheduleOccurrence", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        timer_trigger_name: Optional[str] = None,
-        schedule_occurrence: Optional[str] = None,
-        **kwargs
-    ):
+        self, *, timer_trigger_name: Optional[str] = None, schedule_occurrence: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword timer_trigger_name: The timer trigger name that caused the run.
         :paramtype timer_trigger_name: str
         :keyword schedule_occurrence: The occurrence that triggered the run.
         :paramtype schedule_occurrence: str
         """
-        super(TimerTriggerDescriptor, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.timer_trigger_name = timer_trigger_name
         self.schedule_occurrence = schedule_occurrence
 
 
-class TimerTriggerUpdateParameters(msrest.serialization.Model):
+class TimerTriggerUpdateParameters(_serialization.Model):
     """The properties for updating a timer trigger.
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar schedule: The CRON expression for the task schedule.
     :vartype schedule: str
-    :ivar status: The current status of trigger. Possible values include: "Disabled", "Enabled".
+    :ivar status: The current status of trigger. Known values are: "Disabled" and "Enabled".
     :vartype status: str or ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TriggerStatus
-    :ivar name: Required. The name of the trigger.
+    :ivar name: The name of the trigger. Required.
     :vartype name: str
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'schedule': {'key': 'schedule', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
+        "schedule": {"key": "schedule", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "name": {"key": "name", "type": "str"},
     }
 
     def __init__(
@@ -3799,25 +3713,25 @@ class TimerTriggerUpdateParameters(msrest.serialization.Model):
         *,
         name: str,
         schedule: Optional[str] = None,
-        status: Optional[Union[str, "TriggerStatus"]] = None,
-        **kwargs
-    ):
+        status: Optional[Union[str, "_models.TriggerStatus"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword schedule: The CRON expression for the task schedule.
         :paramtype schedule: str
-        :keyword status: The current status of trigger. Possible values include: "Disabled", "Enabled".
+        :keyword status: The current status of trigger. Known values are: "Disabled" and "Enabled".
         :paramtype status: str or
          ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TriggerStatus
-        :keyword name: Required. The name of the trigger.
+        :keyword name: The name of the trigger. Required.
         :paramtype name: str
         """
-        super(TimerTriggerUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.schedule = schedule
         self.status = status
         self.name = name
 
 
-class TriggerProperties(msrest.serialization.Model):
+class TriggerProperties(_serialization.Model):
     """The properties of a trigger.
 
     :ivar timer_triggers: The collection of timer triggers.
@@ -3832,19 +3746,19 @@ class TriggerProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'timer_triggers': {'key': 'timerTriggers', 'type': '[TimerTrigger]'},
-        'source_triggers': {'key': 'sourceTriggers', 'type': '[SourceTrigger]'},
-        'base_image_trigger': {'key': 'baseImageTrigger', 'type': 'BaseImageTrigger'},
+        "timer_triggers": {"key": "timerTriggers", "type": "[TimerTrigger]"},
+        "source_triggers": {"key": "sourceTriggers", "type": "[SourceTrigger]"},
+        "base_image_trigger": {"key": "baseImageTrigger", "type": "BaseImageTrigger"},
     }
 
     def __init__(
         self,
         *,
-        timer_triggers: Optional[List["TimerTrigger"]] = None,
-        source_triggers: Optional[List["SourceTrigger"]] = None,
-        base_image_trigger: Optional["BaseImageTrigger"] = None,
-        **kwargs
-    ):
+        timer_triggers: Optional[List["_models.TimerTrigger"]] = None,
+        source_triggers: Optional[List["_models.SourceTrigger"]] = None,
+        base_image_trigger: Optional["_models.BaseImageTrigger"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword timer_triggers: The collection of timer triggers.
         :paramtype timer_triggers:
@@ -3856,13 +3770,13 @@ class TriggerProperties(msrest.serialization.Model):
         :paramtype base_image_trigger:
          ~azure.mgmt.containerregistry.v2019_06_01_preview.models.BaseImageTrigger
         """
-        super(TriggerProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.timer_triggers = timer_triggers
         self.source_triggers = source_triggers
         self.base_image_trigger = base_image_trigger
 
 
-class TriggerUpdateParameters(msrest.serialization.Model):
+class TriggerUpdateParameters(_serialization.Model):
     """The properties for updating triggers.
 
     :ivar timer_triggers: The collection of timer triggers.
@@ -3877,19 +3791,19 @@ class TriggerUpdateParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'timer_triggers': {'key': 'timerTriggers', 'type': '[TimerTriggerUpdateParameters]'},
-        'source_triggers': {'key': 'sourceTriggers', 'type': '[SourceTriggerUpdateParameters]'},
-        'base_image_trigger': {'key': 'baseImageTrigger', 'type': 'BaseImageTriggerUpdateParameters'},
+        "timer_triggers": {"key": "timerTriggers", "type": "[TimerTriggerUpdateParameters]"},
+        "source_triggers": {"key": "sourceTriggers", "type": "[SourceTriggerUpdateParameters]"},
+        "base_image_trigger": {"key": "baseImageTrigger", "type": "BaseImageTriggerUpdateParameters"},
     }
 
     def __init__(
         self,
         *,
-        timer_triggers: Optional[List["TimerTriggerUpdateParameters"]] = None,
-        source_triggers: Optional[List["SourceTriggerUpdateParameters"]] = None,
-        base_image_trigger: Optional["BaseImageTriggerUpdateParameters"] = None,
-        **kwargs
-    ):
+        timer_triggers: Optional[List["_models.TimerTriggerUpdateParameters"]] = None,
+        source_triggers: Optional[List["_models.SourceTriggerUpdateParameters"]] = None,
+        base_image_trigger: Optional["_models.BaseImageTriggerUpdateParameters"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword timer_triggers: The collection of timer triggers.
         :paramtype timer_triggers:
@@ -3901,13 +3815,13 @@ class TriggerUpdateParameters(msrest.serialization.Model):
         :paramtype base_image_trigger:
          ~azure.mgmt.containerregistry.v2019_06_01_preview.models.BaseImageTriggerUpdateParameters
         """
-        super(TriggerUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.timer_triggers = timer_triggers
         self.source_triggers = source_triggers
         self.base_image_trigger = base_image_trigger
 
 
-class UserIdentityProperties(msrest.serialization.Model):
+class UserIdentityProperties(_serialization.Model):
     """UserIdentityProperties.
 
     :ivar principal_id: The principal id of user assigned identity.
@@ -3917,23 +3831,17 @@ class UserIdentityProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'client_id': {'key': 'clientId', 'type': 'str'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "client_id": {"key": "clientId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        principal_id: Optional[str] = None,
-        client_id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, principal_id: Optional[str] = None, client_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword principal_id: The principal id of user assigned identity.
         :paramtype principal_id: str
         :keyword client_id: The client id of user assigned identity.
         :paramtype client_id: str
         """
-        super(UserIdentityProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.principal_id = principal_id
         self.client_id = client_id

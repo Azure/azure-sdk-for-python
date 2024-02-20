@@ -35,12 +35,14 @@ class FakeTokenCredential(object):
     def __init__(self):
         self.token = AccessToken("YOU SHALL NOT PASS", 0)
 
-    def get_token(self, *args):
+    def get_token(self, *args, **kwargs):
         return self.token
 
 class FormRecognizerTest(AzureRecordedTestCase):
 
     testing_container_sas_url = os.getenv("FORMRECOGNIZER_TESTING_DATA_CONTAINER_SAS_URL", "https://blob_sas_url")
+    barcode_url_tif = _get_blob_url(testing_container_sas_url, "testingdata", "barcode2.tif")
+    formula_url_jpg = _get_blob_url(testing_container_sas_url, "testingdata", "formula4.jpg")
     receipt_url_jpg = _get_blob_url(testing_container_sas_url, "testingdata", "contoso-allinone.jpg")
     receipt_url_png = _get_blob_url(testing_container_sas_url, "testingdata", "contoso-receipt.png")
     business_card_url_jpg = _get_blob_url(testing_container_sas_url, "testingdata", "businessCard.jpg")
@@ -60,6 +62,7 @@ class FormRecognizerTest(AzureRecordedTestCase):
     label_table_fixed_row_url_pdf = _get_blob_url(testing_container_sas_url, "testingdata", "label_table_fixed_rows1.pdf")
     multipage_receipt_url_pdf = _get_blob_url(testing_container_sas_url, "testingdata", "multipage_receipt.pdf")
     invoice_no_sub_line_item = _get_blob_url(testing_container_sas_url, "testingdata", "ErrorImage.tiff")
+    irs_classifier_document_url = _get_blob_url(testing_container_sas_url, "testingdata", "IRS-1040_2.pdf")
 
     # file stream samples
     receipt_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/receipt/contoso-allinone.jpg"))
@@ -84,6 +87,7 @@ class FormRecognizerTest(AzureRecordedTestCase):
     w2_png = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/tax/sample_w2.png"))
     html_file = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/simple_html.html"))
     spreadsheet = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/spreadsheet_example.xlsx"))
+    irs_classifier_document = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/IRS-1040.pdf"))
 
     def get_oauth_endpoint(self):
         return os.getenv("FORMRECOGNIZER_TEST_ENDPOINT")
@@ -122,6 +126,7 @@ class FormRecognizerTest(AzureRecordedTestCase):
         assert model.model_id == expected.model_id
         assert model.created_on == expected.created_date_time
         assert model.description == expected.description
+        assert model.expires_on == expected.expiration_date_time
 
         for name, field in model.doc_types.items():
             assert name in expected.doc_types
@@ -562,11 +567,16 @@ class FormRecognizerTest(AzureRecordedTestCase):
     def assertDocumentStylesTransformCorrect(self, transformed_styles, raw_styles, **kwargs):
         if transformed_styles == [] and not raw_styles:
             return
-        
+
         for style, expected in zip(transformed_styles, raw_styles):
             assert style.is_handwritten == expected.is_handwritten
+            assert style.similar_font_family == expected.similar_font_family
+            assert style.font_style == expected.font_style
+            assert style.font_weight == expected.font_weight
+            assert style.color == expected.color
+            assert style.background_color == expected.background_color
             assert style.confidence == expected.confidence
-            
+
             for span, expected_span in zip(style.spans or [], expected.spans or []):
                     self.assertSpanTransformCorrect(span, expected_span)
 
@@ -574,10 +584,10 @@ class FormRecognizerTest(AzureRecordedTestCase):
         if not element or not expected:
             return
         assert element.content == expected.content
-        
+
         for span, expected_span in zip(element.spans or [], expected.spans or []):
                 self.assertSpanTransformCorrect(span, expected_span)
-            
+
         self.assertBoundingRegionsTransformCorrect(element.bounding_regions, expected.bounding_regions)
 
     def assertDocumentTablesTransformCorrect(self, transformed_tables, raw_tables, **kwargs):
@@ -592,7 +602,7 @@ class FormRecognizerTest(AzureRecordedTestCase):
 
             for span, expected_span in zip(table.spans or [], expected.spans or []):
                 self.assertSpanTransformCorrect(span, expected_span)
-            
+
             self.assertBoundingRegionsTransformCorrect(table.bounding_regions, expected.bounding_regions)
 
     def assertDocumentParagraphsTransformCorrect(self, transformed_paragraphs, raw_paragraphs, **kwargs):
@@ -604,7 +614,7 @@ class FormRecognizerTest(AzureRecordedTestCase):
 
             for span, expected_span in zip(par.spans or [], expected.spans or []):
                 self.assertSpanTransformCorrect(span, expected_span)
-            
+
             self.assertBoundingRegionsTransformCorrect(par.bounding_regions, expected.bounding_regions)
 
     def assertDocumentTableCellTransformCorrect(self, transformed_cell, raw_cell, **kwargs):
@@ -626,7 +636,7 @@ class FormRecognizerTest(AzureRecordedTestCase):
 
         for span, expected_span in zip(transformed_cell.spans or [], raw_cell.spans or []):
                 self.assertSpanTransformCorrect(span, expected_span)
-            
+
         self.assertBoundingRegionsTransformCorrect(transformed_cell.bounding_regions, raw_cell.bounding_regions)
 
     def assertDocumentPagesTransformCorrect(self, transformed_pages, raw_pages, **kwargs):
@@ -698,7 +708,7 @@ class FormRecognizerTest(AzureRecordedTestCase):
         for region, expected_region in zip(bounding_regions, expected):
             assert region.page_number == expected_region.page_number
             self.assertBoundingPolygonTransformCorrect(region.polygon, expected_region.polygon)
-            
+
 
     def assertDocumentFieldValueTransformCorrect(self, document_field, expected):
         if expected is None:
@@ -722,6 +732,8 @@ class FormRecognizerTest(AzureRecordedTestCase):
             assert document_field.value == expected.value_country_region
         if field_type == "signature":
             assert document_field.value == expected.value_signature
+        if field_type == "boolean":
+            assert document_field.value == expected.value_boolean
         if field_type == "array":
             for i in range(len(expected.value_array)):
                 self.assertDocumentFieldValueTransformCorrect(document_field.value[i], expected.value_array[i])

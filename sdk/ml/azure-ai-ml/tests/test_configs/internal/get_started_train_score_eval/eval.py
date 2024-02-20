@@ -1,9 +1,9 @@
 import argparse
 from pathlib import Path
 
-parser = argparse.ArgumentParser("score")
-parser.add_argument("--scoring_result", type=str, help="Path of scoring result")
-parser.add_argument("--eval_output", type=str, help="Path of output evaluation result")
+parser = argparse.ArgumentParser("eval")
+parser.add_argument("--scoring_result", type=str, help="Path of scoring result.")
+parser.add_argument("--eval_output", type=str, help="Path of output evaluation result.")
 
 args = parser.parse_args()
 

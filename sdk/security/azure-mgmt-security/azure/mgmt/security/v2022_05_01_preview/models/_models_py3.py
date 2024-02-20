@@ -56,10 +56,10 @@ class EnvironmentData(_serialization.Model):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.environment_type = None  # type: Optional[str]
+        self.environment_type: Optional[str] = None
 
 
 class AWSEnvironmentData(EnvironmentData):
@@ -85,14 +85,14 @@ class AWSEnvironmentData(EnvironmentData):
         "organizational_data": {"key": "organizationalData", "type": "AwsOrganizationalData"},
     }
 
-    def __init__(self, *, organizational_data: Optional["_models.AwsOrganizationalData"] = None, **kwargs):
+    def __init__(self, *, organizational_data: Optional["_models.AwsOrganizationalData"] = None, **kwargs: Any) -> None:
         """
         :keyword organizational_data: The AWS account's organizational data.
         :paramtype organizational_data:
          ~azure.mgmt.security.v2022_05_01_preview.models.AwsOrganizationalData
         """
         super().__init__(**kwargs)
-        self.environment_type = "AwsAccount"  # type: str
+        self.environment_type: str = "AwsAccount"
         self.organizational_data = organizational_data
 
 
@@ -125,10 +125,10 @@ class AwsOrganizationalData(_serialization.Model):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.organization_membership_type = None  # type: Optional[str]
+        self.organization_membership_type: Optional[str] = None
 
 
 class AwsOrganizationalDataMaster(AwsOrganizationalData):
@@ -159,8 +159,8 @@ class AwsOrganizationalDataMaster(AwsOrganizationalData):
     }
 
     def __init__(
-        self, *, stackset_name: Optional[str] = None, excluded_account_ids: Optional[List[str]] = None, **kwargs
-    ):
+        self, *, stackset_name: Optional[str] = None, excluded_account_ids: Optional[List[str]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword stackset_name: If the multi cloud account is of membership type organization, this
          will be the name of the onboarding stackset.
@@ -170,7 +170,7 @@ class AwsOrganizationalDataMaster(AwsOrganizationalData):
         :paramtype excluded_account_ids: list[str]
         """
         super().__init__(**kwargs)
-        self.organization_membership_type = "Organization"  # type: str
+        self.organization_membership_type: str = "Organization"
         self.stackset_name = stackset_name
         self.excluded_account_ids = excluded_account_ids
 
@@ -198,14 +198,14 @@ class AwsOrganizationalDataMember(AwsOrganizationalData):
         "parent_hierarchy_id": {"key": "parentHierarchyId", "type": "str"},
     }
 
-    def __init__(self, *, parent_hierarchy_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, parent_hierarchy_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword parent_hierarchy_id: If the multi cloud account is not of membership type
          organization, this will be the ID of the account's parent.
         :paramtype parent_hierarchy_id: str
         """
         super().__init__(**kwargs)
-        self.organization_membership_type = "Member"  # type: str
+        self.organization_membership_type: str = "Member"
         self.parent_hierarchy_id = parent_hierarchy_id
 
 
@@ -228,10 +228,10 @@ class AzureDevOpsScopeEnvironmentData(EnvironmentData):
         "environment_type": {"key": "environmentType", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.environment_type = "AzureDevOpsScope"  # type: str
+        self.environment_type: str = "AzureDevOpsScope"
 
 
 class AzureTrackedResourceLocation(_serialization.Model):
@@ -245,7 +245,7 @@ class AzureTrackedResourceLocation(_serialization.Model):
         "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(self, *, location: Optional[str] = None, **kwargs):
+    def __init__(self, *, location: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword location: Location where the resource is stored.
         :paramtype location: str
@@ -288,7 +288,7 @@ class CloudErrorBody(_serialization.Model):
         "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -347,10 +347,10 @@ class CloudOffering(_serialization.Model):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.offering_type = None  # type: Optional[str]
+        self.offering_type: Optional[str] = None
         self.description = None
 
 
@@ -392,15 +392,15 @@ class CspmMonitorAwsOffering(CloudOffering):
         self,
         *,
         native_cloud_connection: Optional["_models.CspmMonitorAwsOfferingNativeCloudConnection"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword native_cloud_connection: The native cloud connection configuration.
         :paramtype native_cloud_connection:
          ~azure.mgmt.security.v2022_05_01_preview.models.CspmMonitorAwsOfferingNativeCloudConnection
         """
         super().__init__(**kwargs)
-        self.offering_type = "CspmMonitorAws"  # type: str
+        self.offering_type: str = "CspmMonitorAws"
         self.native_cloud_connection = native_cloud_connection
 
 
@@ -415,7 +415,7 @@ class CspmMonitorAwsOfferingNativeCloudConnection(_serialization.Model):
         "cloud_role_arn": {"key": "cloudRoleArn", "type": "str"},
     }
 
-    def __init__(self, *, cloud_role_arn: Optional[str] = None, **kwargs):
+    def __init__(self, *, cloud_role_arn: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword cloud_role_arn: The cloud role ARN in AWS for this feature.
         :paramtype cloud_role_arn: str
@@ -451,10 +451,10 @@ class CspmMonitorAzureDevOpsOffering(CloudOffering):
         "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.offering_type = "CspmMonitorAzureDevOps"  # type: str
+        self.offering_type: str = "CspmMonitorAzureDevOps"
 
 
 class CspmMonitorGcpOffering(CloudOffering):
@@ -495,15 +495,15 @@ class CspmMonitorGcpOffering(CloudOffering):
         self,
         *,
         native_cloud_connection: Optional["_models.CspmMonitorGcpOfferingNativeCloudConnection"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword native_cloud_connection: The native cloud connection configuration.
         :paramtype native_cloud_connection:
          ~azure.mgmt.security.v2022_05_01_preview.models.CspmMonitorGcpOfferingNativeCloudConnection
         """
         super().__init__(**kwargs)
-        self.offering_type = "CspmMonitorGcp"  # type: str
+        self.offering_type: str = "CspmMonitorGcp"
         self.native_cloud_connection = native_cloud_connection
 
 
@@ -527,8 +527,8 @@ class CspmMonitorGcpOfferingNativeCloudConnection(_serialization.Model):
         *,
         workload_identity_provider_id: Optional[str] = None,
         service_account_email_address: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword workload_identity_provider_id: The GCP workload identity provider id for the offering.
         :paramtype workload_identity_provider_id: str
@@ -568,10 +568,10 @@ class CspmMonitorGithubOffering(CloudOffering):
         "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.offering_type = "CspmMonitorGithub"  # type: str
+        self.offering_type: str = "CspmMonitorGithub"
 
 
 class DefenderFoDatabasesAwsOffering(CloudOffering):
@@ -612,15 +612,15 @@ class DefenderFoDatabasesAwsOffering(CloudOffering):
         self,
         *,
         arc_auto_provisioning: Optional["_models.DefenderFoDatabasesAwsOfferingArcAutoProvisioning"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword arc_auto_provisioning: The ARC autoprovisioning configuration.
         :paramtype arc_auto_provisioning:
          ~azure.mgmt.security.v2022_05_01_preview.models.DefenderFoDatabasesAwsOfferingArcAutoProvisioning
         """
         super().__init__(**kwargs)
-        self.offering_type = "DefenderForDatabasesAws"  # type: str
+        self.offering_type: str = "DefenderForDatabasesAws"
         self.arc_auto_provisioning = arc_auto_provisioning
 
 
@@ -654,8 +654,8 @@ class DefenderFoDatabasesAwsOfferingArcAutoProvisioning(_serialization.Model):
         service_principal_secret_metadata: Optional[
             "_models.DefenderFoDatabasesAwsOfferingArcAutoProvisioningServicePrincipalSecretMetadata"
         ] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword enabled: Is arc auto provisioning enabled.
         :paramtype enabled: bool
@@ -695,8 +695,8 @@ class DefenderFoDatabasesAwsOfferingArcAutoProvisioningServicePrincipalSecretMet
         expiry_date: Optional[datetime.datetime] = None,
         parameter_store_region: Optional[str] = None,
         parameter_name_in_store: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword expiry_date: expiration date of service principal secret.
         :paramtype expiry_date: ~datetime.datetime
@@ -807,8 +807,8 @@ class DefenderForContainersAwsOffering(CloudOffering):  # pylint: disable=too-ma
         auto_provisioning: Optional[bool] = None,
         kube_audit_retention_time: Optional[int] = None,
         scuba_external_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kubernetes_service: The kubernetes service connection configuration.
         :paramtype kubernetes_service:
@@ -843,7 +843,7 @@ class DefenderForContainersAwsOffering(CloudOffering):  # pylint: disable=too-ma
         :paramtype scuba_external_id: str
         """
         super().__init__(**kwargs)
-        self.offering_type = "DefenderForContainersAws"  # type: str
+        self.offering_type: str = "DefenderForContainersAws"
         self.kubernetes_service = kubernetes_service
         self.kubernetes_scuba_reader = kubernetes_scuba_reader
         self.cloud_watch_to_kinesis = cloud_watch_to_kinesis
@@ -868,7 +868,7 @@ class DefenderForContainersAwsOfferingCloudWatchToKinesis(_serialization.Model):
         "cloud_role_arn": {"key": "cloudRoleArn", "type": "str"},
     }
 
-    def __init__(self, *, cloud_role_arn: Optional[str] = None, **kwargs):
+    def __init__(self, *, cloud_role_arn: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword cloud_role_arn: The cloud role ARN in AWS used by CloudWatch to transfer data into
          Kinesis.
@@ -889,7 +889,7 @@ class DefenderForContainersAwsOfferingContainerVulnerabilityAssessment(_serializ
         "cloud_role_arn": {"key": "cloudRoleArn", "type": "str"},
     }
 
-    def __init__(self, *, cloud_role_arn: Optional[str] = None, **kwargs):
+    def __init__(self, *, cloud_role_arn: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword cloud_role_arn: The cloud role ARN in AWS for this feature.
         :paramtype cloud_role_arn: str
@@ -909,7 +909,7 @@ class DefenderForContainersAwsOfferingContainerVulnerabilityAssessmentTask(_seri
         "cloud_role_arn": {"key": "cloudRoleArn", "type": "str"},
     }
 
-    def __init__(self, *, cloud_role_arn: Optional[str] = None, **kwargs):
+    def __init__(self, *, cloud_role_arn: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword cloud_role_arn: The cloud role ARN in AWS for this feature.
         :paramtype cloud_role_arn: str
@@ -929,7 +929,7 @@ class DefenderForContainersAwsOfferingKinesisToS3(_serialization.Model):
         "cloud_role_arn": {"key": "cloudRoleArn", "type": "str"},
     }
 
-    def __init__(self, *, cloud_role_arn: Optional[str] = None, **kwargs):
+    def __init__(self, *, cloud_role_arn: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword cloud_role_arn: The cloud role ARN in AWS used by Kinesis to transfer data into S3.
         :paramtype cloud_role_arn: str
@@ -949,7 +949,7 @@ class DefenderForContainersAwsOfferingKubernetesScubaReader(_serialization.Model
         "cloud_role_arn": {"key": "cloudRoleArn", "type": "str"},
     }
 
-    def __init__(self, *, cloud_role_arn: Optional[str] = None, **kwargs):
+    def __init__(self, *, cloud_role_arn: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword cloud_role_arn: The cloud role ARN in AWS for this feature used for reading data.
         :paramtype cloud_role_arn: str
@@ -970,7 +970,7 @@ class DefenderForContainersAwsOfferingKubernetesService(_serialization.Model):
         "cloud_role_arn": {"key": "cloudRoleArn", "type": "str"},
     }
 
-    def __init__(self, *, cloud_role_arn: Optional[str] = None, **kwargs):
+    def __init__(self, *, cloud_role_arn: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword cloud_role_arn: The cloud role ARN in AWS for this feature used for provisioning
          resources.
@@ -1042,8 +1042,8 @@ class DefenderForContainersGcpOffering(CloudOffering):
         audit_logs_auto_provisioning_flag: Optional[bool] = None,
         defender_agent_auto_provisioning_flag: Optional[bool] = None,
         policy_agent_auto_provisioning_flag: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword native_cloud_connection: The native cloud connection configuration.
         :paramtype native_cloud_connection:
@@ -1061,7 +1061,7 @@ class DefenderForContainersGcpOffering(CloudOffering):
         :paramtype policy_agent_auto_provisioning_flag: bool
         """
         super().__init__(**kwargs)
-        self.offering_type = "DefenderForContainersGcp"  # type: str
+        self.offering_type: str = "DefenderForContainersGcp"
         self.native_cloud_connection = native_cloud_connection
         self.data_pipeline_native_cloud_connection = data_pipeline_native_cloud_connection
         self.audit_logs_auto_provisioning_flag = audit_logs_auto_provisioning_flag
@@ -1090,8 +1090,8 @@ class DefenderForContainersGcpOfferingDataPipelineNativeCloudConnection(_seriali
         *,
         service_account_email_address: Optional[str] = None,
         workload_identity_provider_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword service_account_email_address: The data collection service account email address in
          GCP for this offering.
@@ -1125,8 +1125,8 @@ class DefenderForContainersGcpOfferingNativeCloudConnection(_serialization.Model
         *,
         service_account_email_address: Optional[str] = None,
         workload_identity_provider_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword service_account_email_address: The service account email address in GCP for this
          offering.
@@ -1188,8 +1188,8 @@ class DefenderForDatabasesGcpOffering(CloudOffering):
         defender_for_databases_arc_auto_provisioning: Optional[
             "_models.DefenderForDatabasesGcpOfferingDefenderForDatabasesArcAutoProvisioning"
         ] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword arc_auto_provisioning: The ARC autoprovisioning configuration.
         :paramtype arc_auto_provisioning:
@@ -1200,7 +1200,7 @@ class DefenderForDatabasesGcpOffering(CloudOffering):
          ~azure.mgmt.security.v2022_05_01_preview.models.DefenderForDatabasesGcpOfferingDefenderForDatabasesArcAutoProvisioning
         """
         super().__init__(**kwargs)
-        self.offering_type = "DefenderForDatabasesGcp"  # type: str
+        self.offering_type: str = "DefenderForDatabasesGcp"
         self.arc_auto_provisioning = arc_auto_provisioning
         self.defender_for_databases_arc_auto_provisioning = defender_for_databases_arc_auto_provisioning
 
@@ -1228,8 +1228,8 @@ class DefenderForDatabasesGcpOfferingArcAutoProvisioning(_serialization.Model):
         *,
         enabled: Optional[bool] = None,
         configuration: Optional["_models.DefenderForDatabasesGcpOfferingArcAutoProvisioningConfiguration"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword enabled: Is arc auto provisioning enabled.
         :paramtype enabled: bool
@@ -1262,8 +1262,8 @@ class DefenderForDatabasesGcpOfferingArcAutoProvisioningConfiguration(_serializa
         *,
         client_id: Optional[str] = None,
         agent_onboarding_service_account_numeric_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword client_id: The Azure service principal client id for agent onboarding.
         :paramtype client_id: str
@@ -1296,8 +1296,8 @@ class DefenderForDatabasesGcpOfferingDefenderForDatabasesArcAutoProvisioning(_se
         *,
         service_account_email_address: Optional[str] = None,
         workload_identity_provider_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword service_account_email_address: The service account email address in GCP for this
          offering.
@@ -1384,8 +1384,8 @@ class DefenderForServersAwsOffering(CloudOffering):
         mde_auto_provisioning: Optional["_models.DefenderForServersAwsOfferingMdeAutoProvisioning"] = None,
         sub_plan: Optional["_models.DefenderForServersAwsOfferingSubPlan"] = None,
         vm_scanners: Optional["_models.DefenderForServersAwsOfferingVmScanners"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword defender_for_servers: The Defender for servers connection configuration.
         :paramtype defender_for_servers:
@@ -1408,7 +1408,7 @@ class DefenderForServersAwsOffering(CloudOffering):
          ~azure.mgmt.security.v2022_05_01_preview.models.DefenderForServersAwsOfferingVmScanners
         """
         super().__init__(**kwargs)
-        self.offering_type = "DefenderForServersAws"  # type: str
+        self.offering_type: str = "DefenderForServersAws"
         self.defender_for_servers = defender_for_servers
         self.arc_auto_provisioning = arc_auto_provisioning
         self.va_auto_provisioning = va_auto_provisioning
@@ -1447,8 +1447,8 @@ class DefenderForServersAwsOfferingArcAutoProvisioning(_serialization.Model):
         service_principal_secret_metadata: Optional[
             "_models.DefenderForServersAwsOfferingArcAutoProvisioningServicePrincipalSecretMetadata"
         ] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword enabled: Is arc auto provisioning enabled.
         :paramtype enabled: bool
@@ -1488,8 +1488,8 @@ class DefenderForServersAwsOfferingArcAutoProvisioningServicePrincipalSecretMeta
         expiry_date: Optional[str] = None,
         parameter_store_region: Optional[str] = None,
         parameter_name_in_store: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword expiry_date: expiration date of service principal secret.
         :paramtype expiry_date: str
@@ -1515,7 +1515,7 @@ class DefenderForServersAwsOfferingDefenderForServers(_serialization.Model):
         "cloud_role_arn": {"key": "cloudRoleArn", "type": "str"},
     }
 
-    def __init__(self, *, cloud_role_arn: Optional[str] = None, **kwargs):
+    def __init__(self, *, cloud_role_arn: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword cloud_role_arn: The cloud role ARN in AWS for this feature.
         :paramtype cloud_role_arn: str
@@ -1538,7 +1538,7 @@ class DefenderForServersAwsOfferingMdeAutoProvisioning(_serialization.Model):
         "configuration": {"key": "configuration", "type": "object"},
     }
 
-    def __init__(self, *, enabled: Optional[bool] = None, configuration: Optional[JSON] = None, **kwargs):
+    def __init__(self, *, enabled: Optional[bool] = None, configuration: Optional[JSON] = None, **kwargs: Any) -> None:
         """
         :keyword enabled: Is Microsoft Defender for Endpoint auto provisioning enabled.
         :paramtype enabled: bool
@@ -1561,7 +1561,7 @@ class DefenderForServersAwsOfferingSubPlan(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, *, type: Optional[Union[str, "_models.SubPlan"]] = None, **kwargs):
+    def __init__(self, *, type: Optional[Union[str, "_models.SubPlan"]] = None, **kwargs: Any) -> None:
         """
         :keyword type: The available sub plans. Known values are: "P1" and "P2".
         :paramtype type: str or ~azure.mgmt.security.v2022_05_01_preview.models.SubPlan
@@ -1593,8 +1593,8 @@ class DefenderForServersAwsOfferingVaAutoProvisioning(_serialization.Model):
         *,
         enabled: Optional[bool] = None,
         configuration: Optional["_models.DefenderForServersAwsOfferingVaAutoProvisioningConfiguration"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword enabled: Is Vulnerability Assessment auto provisioning enabled.
         :paramtype enabled: bool
@@ -1619,7 +1619,7 @@ class DefenderForServersAwsOfferingVaAutoProvisioningConfiguration(_serializatio
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, *, type: Optional[Union[str, "_models.Type"]] = None, **kwargs):
+    def __init__(self, *, type: Optional[Union[str, "_models.Type"]] = None, **kwargs: Any) -> None:
         """
         :keyword type: The Vulnerability Assessment solution to be provisioned. Can be either 'TVM' or
          'Qualys'. Known values are: "Qualys" and "TVM".
@@ -1649,8 +1649,8 @@ class DefenderForServersAwsOfferingVmScanners(_serialization.Model):
         *,
         enabled: Optional[bool] = None,
         configuration: Optional["_models.DefenderForServersAwsOfferingVmScannersConfiguration"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword enabled: Is Microsoft Defender for Server VM scanning enabled.
         :paramtype enabled: bool
@@ -1686,8 +1686,8 @@ class DefenderForServersAwsOfferingVmScannersConfiguration(_serialization.Model)
         cloud_role_arn: Optional[str] = None,
         scanning_mode: Optional[Union[str, "_models.ScanningMode"]] = None,
         exclusion_tags: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword cloud_role_arn: The cloud role ARN in AWS for this feature.
         :paramtype cloud_role_arn: str
@@ -1770,8 +1770,8 @@ class DefenderForServersGcpOffering(CloudOffering):
         va_auto_provisioning: Optional["_models.DefenderForServersGcpOfferingVaAutoProvisioning"] = None,
         mde_auto_provisioning: Optional["_models.DefenderForServersGcpOfferingMdeAutoProvisioning"] = None,
         sub_plan: Optional["_models.DefenderForServersGcpOfferingSubPlan"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword defender_for_servers: The Defender for servers connection configuration.
         :paramtype defender_for_servers:
@@ -1791,7 +1791,7 @@ class DefenderForServersGcpOffering(CloudOffering):
          ~azure.mgmt.security.v2022_05_01_preview.models.DefenderForServersGcpOfferingSubPlan
         """
         super().__init__(**kwargs)
-        self.offering_type = "DefenderForServersGcp"  # type: str
+        self.offering_type: str = "DefenderForServersGcp"
         self.defender_for_servers = defender_for_servers
         self.arc_auto_provisioning = arc_auto_provisioning
         self.va_auto_provisioning = va_auto_provisioning
@@ -1822,8 +1822,8 @@ class DefenderForServersGcpOfferingArcAutoProvisioning(_serialization.Model):
         *,
         enabled: Optional[bool] = None,
         configuration: Optional["_models.DefenderForServersGcpOfferingArcAutoProvisioningConfiguration"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword enabled: Is arc auto provisioning enabled.
         :paramtype enabled: bool
@@ -1856,8 +1856,8 @@ class DefenderForServersGcpOfferingArcAutoProvisioningConfiguration(_serializati
         *,
         client_id: Optional[str] = None,
         agent_onboarding_service_account_numeric_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword client_id: The Azure service principal client id for agent onboarding.
         :paramtype client_id: str
@@ -1889,8 +1889,8 @@ class DefenderForServersGcpOfferingDefenderForServers(_serialization.Model):
         *,
         workload_identity_provider_id: Optional[str] = None,
         service_account_email_address: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword workload_identity_provider_id: The workload identity provider id in GCP for this
          feature.
@@ -1918,7 +1918,7 @@ class DefenderForServersGcpOfferingMdeAutoProvisioning(_serialization.Model):
         "configuration": {"key": "configuration", "type": "object"},
     }
 
-    def __init__(self, *, enabled: Optional[bool] = None, configuration: Optional[JSON] = None, **kwargs):
+    def __init__(self, *, enabled: Optional[bool] = None, configuration: Optional[JSON] = None, **kwargs: Any) -> None:
         """
         :keyword enabled: Is Microsoft Defender for Endpoint auto provisioning enabled.
         :paramtype enabled: bool
@@ -1941,7 +1941,7 @@ class DefenderForServersGcpOfferingSubPlan(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, *, type: Optional[Union[str, "_models.SubPlan"]] = None, **kwargs):
+    def __init__(self, *, type: Optional[Union[str, "_models.SubPlan"]] = None, **kwargs: Any) -> None:
         """
         :keyword type: The available sub plans. Known values are: "P1" and "P2".
         :paramtype type: str or ~azure.mgmt.security.v2022_05_01_preview.models.SubPlan
@@ -1973,8 +1973,8 @@ class DefenderForServersGcpOfferingVaAutoProvisioning(_serialization.Model):
         *,
         enabled: Optional[bool] = None,
         configuration: Optional["_models.DefenderForServersGcpOfferingVaAutoProvisioningConfiguration"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword enabled: Is Vulnerability Assessment auto provisioning enabled.
         :paramtype enabled: bool
@@ -1999,7 +1999,7 @@ class DefenderForServersGcpOfferingVaAutoProvisioningConfiguration(_serializatio
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, *, type: Optional[Union[str, "_models.Type"]] = None, **kwargs):
+    def __init__(self, *, type: Optional[Union[str, "_models.Type"]] = None, **kwargs: Any) -> None:
         """
         :keyword type: The Vulnerability Assessment solution to be provisioned. Can be either 'TVM' or
          'Qualys'. Known values are: "Qualys" and "TVM".
@@ -2030,7 +2030,7 @@ class ErrorAdditionalInfo(_serialization.Model):
         "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.type = None
@@ -2049,7 +2049,7 @@ class ETag(_serialization.Model):
         "etag": {"key": "etag", "type": "str"},
     }
 
-    def __init__(self, *, etag: Optional[str] = None, **kwargs):
+    def __init__(self, *, etag: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword etag: Entity tag is used for comparing two or more entities from the same requested
          resource.
@@ -2088,10 +2088,10 @@ class GcpOrganizationalData(_serialization.Model):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.organization_membership_type = None  # type: Optional[str]
+        self.organization_membership_type: Optional[str] = None
 
 
 class GcpOrganizationalDataMember(GcpOrganizationalData):
@@ -2122,8 +2122,12 @@ class GcpOrganizationalDataMember(GcpOrganizationalData):
     }
 
     def __init__(
-        self, *, parent_hierarchy_id: Optional[str] = None, management_project_number: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        parent_hierarchy_id: Optional[str] = None,
+        management_project_number: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword parent_hierarchy_id: If the multi cloud account is not of membership type
          organization, this will be the ID of the project's parent.
@@ -2133,7 +2137,7 @@ class GcpOrganizationalDataMember(GcpOrganizationalData):
         :paramtype management_project_number: str
         """
         super().__init__(**kwargs)
-        self.organization_membership_type = "Member"  # type: str
+        self.organization_membership_type: str = "Member"
         self.parent_hierarchy_id = parent_hierarchy_id
         self.management_project_number = management_project_number
 
@@ -2175,8 +2179,8 @@ class GcpOrganizationalDataOrganization(GcpOrganizationalData):
         excluded_project_numbers: Optional[List[str]] = None,
         service_account_email_address: Optional[str] = None,
         workload_identity_provider_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword excluded_project_numbers: If the multi cloud account is of membership type
          organization, list of accounts excluded from offering.
@@ -2189,7 +2193,7 @@ class GcpOrganizationalDataOrganization(GcpOrganizationalData):
         :paramtype workload_identity_provider_id: str
         """
         super().__init__(**kwargs)
-        self.organization_membership_type = "Organization"  # type: str
+        self.organization_membership_type: str = "Organization"
         self.excluded_project_numbers = excluded_project_numbers
         self.service_account_email_address = service_account_email_address
         self.workload_identity_provider_id = workload_identity_provider_id
@@ -2218,7 +2222,9 @@ class GcpProjectDetails(_serialization.Model):
         "workload_identity_pool_id": {"key": "workloadIdentityPoolId", "type": "str"},
     }
 
-    def __init__(self, *, project_number: Optional[str] = None, project_id: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, project_number: Optional[str] = None, project_id: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword project_number: The unique GCP Project number.
         :paramtype project_number: str
@@ -2262,8 +2268,8 @@ class GcpProjectEnvironmentData(EnvironmentData):
         *,
         organizational_data: Optional["_models.GcpOrganizationalData"] = None,
         project_details: Optional["_models.GcpProjectDetails"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword organizational_data: The Gcp project's organizational data.
         :paramtype organizational_data:
@@ -2272,7 +2278,7 @@ class GcpProjectEnvironmentData(EnvironmentData):
         :paramtype project_details: ~azure.mgmt.security.v2022_05_01_preview.models.GcpProjectDetails
         """
         super().__init__(**kwargs)
-        self.environment_type = "GcpProject"  # type: str
+        self.environment_type: str = "GcpProject"
         self.organizational_data = organizational_data
         self.project_details = project_details
 
@@ -2296,10 +2302,10 @@ class GithubScopeEnvironmentData(EnvironmentData):
         "environment_type": {"key": "environmentType", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.environment_type = "GithubScope"  # type: str
+        self.environment_type: str = "GithubScope"
 
 
 class InformationProtectionAwsOffering(CloudOffering):
@@ -2340,15 +2346,15 @@ class InformationProtectionAwsOffering(CloudOffering):
         self,
         *,
         information_protection: Optional["_models.InformationProtectionAwsOfferingInformationProtection"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword information_protection: The native cloud connection configuration.
         :paramtype information_protection:
          ~azure.mgmt.security.v2022_05_01_preview.models.InformationProtectionAwsOfferingInformationProtection
         """
         super().__init__(**kwargs)
-        self.offering_type = "InformationProtectionAws"  # type: str
+        self.offering_type: str = "InformationProtectionAws"
         self.information_protection = information_protection
 
 
@@ -2363,7 +2369,7 @@ class InformationProtectionAwsOfferingInformationProtection(_serialization.Model
         "cloud_role_arn": {"key": "cloudRoleArn", "type": "str"},
     }
 
-    def __init__(self, *, cloud_role_arn: Optional[str] = None, **kwargs):
+    def __init__(self, *, cloud_role_arn: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword cloud_role_arn: The cloud role ARN in AWS for this feature.
         :paramtype cloud_role_arn: str
@@ -2383,7 +2389,7 @@ class Kind(_serialization.Model):
         "kind": {"key": "kind", "type": "str"},
     }
 
-    def __init__(self, *, kind: Optional[str] = None, **kwargs):
+    def __init__(self, *, kind: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword kind: Kind of the resource.
         :paramtype kind: str
@@ -2417,7 +2423,7 @@ class Resource(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -2436,7 +2442,7 @@ class Tags(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: A list of key value pairs that describe the resource.
         :paramtype tags: dict[str, str]
@@ -2490,8 +2496,8 @@ class TrackedResource(Resource, AzureTrackedResourceLocation, Kind, ETag, Tags):
         etag: Optional[str] = None,
         kind: Optional[str] = None,
         location: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: A list of key value pairs that describe the resource.
         :paramtype tags: dict[str, str]
@@ -2589,8 +2595,8 @@ class SecurityConnector(TrackedResource):  # pylint: disable=too-many-instance-a
         environment_name: Optional[Union[str, "_models.CloudName"]] = None,
         offerings: Optional[List["_models.CloudOffering"]] = None,
         environment_data: Optional["_models.EnvironmentData"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: A list of key value pairs that describe the resource.
         :paramtype tags: dict[str, str]
@@ -2644,7 +2650,7 @@ class SecurityConnectorsList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.SecurityConnector"], **kwargs):
+    def __init__(self, *, value: List["_models.SecurityConnector"], **kwargs: Any) -> None:
         """
         :keyword value: The list of security connectors under the given scope. Required.
         :paramtype value: list[~azure.mgmt.security.v2022_05_01_preview.models.SecurityConnector]
@@ -2692,8 +2698,8 @@ class SystemData(_serialization.Model):
         last_modified_by: Optional[str] = None,
         last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str

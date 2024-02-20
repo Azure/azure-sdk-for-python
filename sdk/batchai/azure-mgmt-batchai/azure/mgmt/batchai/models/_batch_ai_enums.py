@@ -6,27 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class AllocationState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AllocationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Allocation state of the cluster. Possible values are: steady - Indicates that the cluster is
     not resizing. There are no changes to the number of compute nodes in the cluster in progress. A
     cluster enters this state when it is created and when no operations are being performed on the
@@ -37,7 +21,7 @@ class AllocationState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     STEADY = "steady"
     RESIZING = "resizing"
 
-class CachingType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class CachingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Caching type for the disks. Available values are none (default), readonly, readwrite. Caching
     type can be set only for VM sizes supporting premium storage.
     """
@@ -46,7 +30,7 @@ class CachingType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     READONLY = "readonly"
     READWRITE = "readwrite"
 
-class DeallocationOption(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class DeallocationOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Actions which should be performed when compute nodes are removed from the cluster. Possible
     values are: requeue (default) - Terminate running jobs and requeue them so the jobs will run
     again. Remove compute nodes as soon as jobs have been terminated; terminate - Terminate running
@@ -59,7 +43,7 @@ class DeallocationOption(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     TERMINATE = "terminate"
     WAITFORJOBCOMPLETION = "waitforjobcompletion"
 
-class ExecutionState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ExecutionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The current state of the job. Possible values are: queued - The job is queued and able to run.
     A job enters this state when it is created, or when it is awaiting a retry after a failed run.
     running - The job is running on a compute cluster. This includes job-level preparation such as
@@ -77,7 +61,7 @@ class ExecutionState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SUCCEEDED = "succeeded"
     FAILED = "failed"
 
-class FileServerProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class FileServerProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Provisioning state of the File Server. Possible values: creating - The File Server is getting
     created; updating - The File Server creation has been accepted and it is getting updated;
     deleting - The user has requested that the File Server be deleted, and it is in the process of
@@ -92,14 +76,14 @@ class FileServerProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, 
     SUCCEEDED = "succeeded"
     FAILED = "failed"
 
-class FileType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class FileType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of the file. Possible values are file and directory.
     """
 
     FILE = "file"
     DIRECTORY = "directory"
 
-class JobPriority(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class JobPriority(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Scheduling priority associated with the job. Possible values: low, normal, high.
     """
 
@@ -107,7 +91,7 @@ class JobPriority(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     NORMAL = "normal"
     HIGH = "high"
 
-class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Provisioning state of the cluster. Possible value are: creating - Specifies that the cluster is
     being created. succeeded - Specifies that the cluster has been created successfully. failed -
     Specifies that the cluster creation has failed. deleting - Specifies that the cluster is being
@@ -119,7 +103,7 @@ class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     FAILED = "failed"
     DELETING = "deleting"
 
-class StorageAccountType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class StorageAccountType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of storage account to be used on the disk. Possible values are: Standard_LRS or
     Premium_LRS. Premium storage account type can only be used with VM sizes supporting premium
     storage.
@@ -128,7 +112,7 @@ class StorageAccountType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     STANDARD_LRS = "Standard_LRS"
     PREMIUM_LRS = "Premium_LRS"
 
-class ToolType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The toolkit type of the job.
     """
 
@@ -141,13 +125,13 @@ class ToolType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     CUSTOMMPI = "custommpi"
     CUSTOM = "custom"
 
-class UsageUnit(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class UsageUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """An enum describing the unit of usage measurement.
     """
 
     COUNT = "Count"
 
-class VmPriority(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class VmPriority(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """VM priority. Allowed values are: dedicated (default) and lowpriority.
     """
 

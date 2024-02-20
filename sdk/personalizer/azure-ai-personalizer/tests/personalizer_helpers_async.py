@@ -34,7 +34,7 @@ async def enable_multi_slot(personalizer_endpoint, personalizer_api_key, is_live
 
     multi_slot_policy = {
         "name": "enable multi slot",
-        "arguments": policy["arguments"].replace("--cb_explore_adf", "--ccb_explore_adf")
+        "arguments": policy["arguments"].replace("--cb_explore_adf", "--ccb_explore_adf"),
     }
 
     await client.update_policy(multi_slot_policy)

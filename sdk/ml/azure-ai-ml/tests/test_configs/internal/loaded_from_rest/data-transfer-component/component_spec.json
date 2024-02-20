@@ -11,7 +11,8 @@
   "inputs": {
     "source_data": {
       "type": "path",
-      "description": "Source data"
+      "description": "Source data",
+      "optional": false
     }
   },
   "outputs": {

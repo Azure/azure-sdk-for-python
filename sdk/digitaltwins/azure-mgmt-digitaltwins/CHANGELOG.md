@@ -1,5 +1,33 @@
 # Release History
 
+## 6.4.0 (2023-03-20)
+
+### Features Added
+
+  - Model AzureDataExplorerConnectionProperties has a new parameter adx_relationship_lifecycle_events_table_name
+  - Model AzureDataExplorerConnectionProperties has a new parameter adx_twin_lifecycle_events_table_name
+  - Model AzureDataExplorerConnectionProperties has a new parameter record_property_and_item_removals
+  - Operation TimeSeriesDatabaseConnectionsOperations.begin_delete has a new optional parameter cleanup_connection_artifacts
+
+## 6.4.0b1 (2023-02-16)
+
+### Other Changes
+
+  - Added generated samples in github repo
+  - Drop support for python<3.7.0
+
+## 6.3.0 (2022-12-15)
+
+### Features Added
+
+  - Model AzureDataExplorerConnectionProperties has a new parameter identity
+  - Model DigitalTwinsEndpointResourceProperties has a new parameter identity
+  - Model DigitalTwinsIdentity has a new parameter user_assigned_identities
+  - Model EventGrid has a new parameter identity
+  - Model EventHub has a new parameter identity
+  - Model ServiceBus has a new parameter identity
+  - Model TimeSeriesDatabaseConnectionProperties has a new parameter identity
+
 ## 6.2.0 (2022-06-28)
 
 **Features**

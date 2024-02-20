@@ -18,14 +18,14 @@ import logging
 import os
 import uuid
 from datetime import datetime
+from typing import Dict, Iterable, Tuple
 from uuid import uuid4
 
 from marshmallow import ValidationError
 
-from azure.core.exceptions import HttpResponseError
-
 from azure.ai.ml._utils.utils import _is_user_error_from_exception_type, _is_user_error_from_status_code, _str_to_bool
 from azure.ai.ml.exceptions import ErrorCategory, MlException
+from azure.core.exceptions import HttpResponseError
 
 # Get environment variable IS_IN_CI_PIPELINE to decide whether it's in CI test
 IS_IN_CI_PIPELINE = _str_to_bool(os.environ.get("IS_IN_CI_PIPELINE", "False"))
@@ -59,11 +59,11 @@ class ActivityLoggerAdapter(logging.LoggerAdapter):
     :type activity_info: str
     """
 
-    def __init__(self, logger, activity_info):
+    def __init__(self, logger: logging.Logger, activity_info: str):
         """Initialize a new instance of the class.
 
         :param logger: The activity logger.
-        :type logger: logger
+        :type logger: logging.Logger
         :param activity_info: The info to write to the logger.
         :type activity_info: str
         """
@@ -71,17 +71,23 @@ class ActivityLoggerAdapter(logging.LoggerAdapter):
         super(ActivityLoggerAdapter, self).__init__(logger, None)
 
     @property
-    def activity_info(self):
-        """Return current activity info."""
+    def activity_info(self) -> str:
+        """Return current activity info.
+
+        :return: The info to write to the logger
+        :rtype: str
+        """
         return self._activity_info
 
-    def process(self, msg, kwargs):
+    def process(self, msg: str, kwargs: Dict) -> Tuple[str, Dict]:
         """Process the log message.
 
         :param msg: The log message.
         :type msg: str
         :param kwargs: The arguments with properties.
         :type kwargs: dict
+        :return: A tuple of the processed msg and kwargs
+        :rtype: Tuple[str, Dict]
         """
         if "extra" not in kwargs:
             kwargs["extra"] = {}
@@ -106,6 +112,8 @@ def error_preprocess(activityLogger, exception):
     :type activityLogger: ActivityLoggerAdapter
     :param exception: The raised exception to be preprocessed.
     :type exception: BaseException
+    :return: The provided exception
+    :rtype: Exception
     """
 
     if isinstance(exception, HttpResponseError):
@@ -123,7 +131,7 @@ def error_preprocess(activityLogger, exception):
         if exception.inner_exception:
             activityLogger.activity_info["innerException"] = type(exception.inner_exception).__name__
     elif isinstance(exception, MlException):
-        # If exception is MLException, it will have error_category, message and target attributes and will log those
+        # If exception is MlException, it will have error_category, message and target attributes and will log those
         # information in log_activity, no need more actions here.
         pass
     elif isinstance(exception, ValidationError):
@@ -150,7 +158,7 @@ def log_activity(
     activity_name,
     activity_type=ActivityType.INTERNALCALL,
     custom_dimensions=None,
-):
+) -> Iterable[ActivityLoggerAdapter]:
     """Log an activity.
 
     An activity is a logical block of code that consumers want to monitor.
@@ -166,12 +174,14 @@ def log_activity(
     :type activity_type: str
     :param custom_dimensions: The custom properties of the activity.
     :type custom_dimensions: dict
+    :return: An activity logger
+    :rtype: Iterable[ActivityLoggerAdapter]
     """
-    activity_info = dict(
-        activity_id=str(uuid.uuid4()),
-        activity_name=activity_name,
-        activity_type=activity_type,
-    )
+    activity_info = {
+        "activity_id": str(uuid.uuid4()),
+        "activity_name": activity_name,
+        "activity_type": activity_type,
+    }
     custom_dimensions = custom_dimensions or {}
     custom_dimensions.update({"client_request_id": str(uuid4())})
     activity_info.update(custom_dimensions)
@@ -186,14 +196,15 @@ def log_activity(
 
     try:
         yield activityLogger
-    except BaseException as e: # pylint: disable=broad-except
+    except BaseException as e:  # pylint: disable=broad-except
         exception = error_preprocess(activityLogger, e)
         completion_status = ActivityCompletionStatus.FAILURE
         # All the system and unknown errors except for NotImplementedError will be wrapped with a new exception.
         if IS_IN_CI_PIPELINE and not isinstance(e, NotImplementedError):
             if (
                 isinstance(exception, MlException)
-                and exception.error_category in [ErrorCategory.SYSTEM_ERROR, ErrorCategory.UNKNOWN] # pylint: disable=no-member
+                and exception.error_category  # pylint: disable=no-member
+                in [ErrorCategory.SYSTEM_ERROR, ErrorCategory.UNKNOWN]
             ) or (
                 "errorCategory" in activityLogger.activity_info
                 and activityLogger.activity_info["errorCategory"] in [ErrorCategory.SYSTEM_ERROR, ErrorCategory.UNKNOWN]
@@ -215,19 +226,24 @@ def log_activity(
                 message += ", Exception={}".format(type(exception).__name__)
                 activityLogger.activity_info["exception"] = type(exception).__name__
                 if isinstance(exception, MlException):
-                    activityLogger.activity_info["errorMessage"] = exception.no_personal_data_message # pylint: disable=no-member
-                    activityLogger.activity_info["errorTarget"] = exception.target # pylint: disable=no-member
-                    activityLogger.activity_info["errorCategory"] = exception.error_category # pylint: disable=no-member
-                    if exception.inner_exception: # pylint: disable=no-member
+                    activityLogger.activity_info[
+                        "errorMessage"
+                    ] = exception.no_personal_data_message  # pylint: disable=no-member
+                    activityLogger.activity_info["errorTarget"] = exception.target  # pylint: disable=no-member
+                    activityLogger.activity_info[
+                        "errorCategory"
+                    ] = exception.error_category  # pylint: disable=no-member
+                    if exception.inner_exception:  # pylint: disable=no-member
                         # pylint: disable=no-member
                         activityLogger.activity_info["innerException"] = type(exception.inner_exception).__name__
                 activityLogger.error(message)
             else:
                 activityLogger.info(message)
-        except Exception: # pylint: disable=broad-except
-            return # pylint: disable=lost-exception
+        except Exception:  # pylint: disable=broad-except
+            return  # pylint: disable=lost-exception
 
 
+# pylint: disable-next=docstring-missing-rtype
 def monitor_with_activity(
     logger,
     activity_name,
@@ -263,6 +279,7 @@ def monitor_with_activity(
     return monitor
 
 
+# pylint: disable-next=docstring-missing-rtype
 def monitor_with_telemetry_mixin(
     logger,
     activity_name,
@@ -308,7 +325,7 @@ def monitor_with_telemetry_mixin(
                         dimensions.update(obj._get_telemetry_values())
                     elif extra_keys and key in extra_keys:
                         dimensions[key] = str(obj)
-                except Exception: # pylint: disable=broad-except
+                except Exception:  # pylint: disable=broad-except
                     pass
             # add left keys with None
             if extra_keys:
@@ -322,7 +339,7 @@ def monitor_with_telemetry_mixin(
 
             try:
                 return value._get_telemetry_values() if isinstance(value, TelemetryMixin) else {}
-            except Exception: # pylint: disable=broad-except
+            except Exception:  # pylint: disable=broad-except
                 return {}
 
         @functools.wraps(f)

@@ -4,7 +4,7 @@
 
 import json
 import logging
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 from azure.ai.ml._restclient.v2020_09_01_dataplanepreview.models import ComputeConfiguration as RestComputeConfiguration
 from azure.ai.ml.constants._common import LOCAL_COMPUTE_TARGET
@@ -15,17 +15,33 @@ module_logger = logging.getLogger(__name__)
 
 
 class ComputeConfiguration(RestTranslatableMixin, DictMixin):
+    """Compute resource configuration
+
+    :param target: The compute target.
+    :type target: Optional[str]
+    :param instance_count: The number of instances.
+    :type instance_count: Optional[int]
+    :param is_local: Specifies if the compute will be on the local machine.
+    :type is_local: Optional[bool]
+    :param location: The location of the compute resource.
+    :type location: Optional[str]
+    :param properties: The resource properties
+    :type properties: Optional[Dict[str, Any]]
+    :param deserialize_properties: Specifies if property bag should be deserialized. Defaults to False.
+    :type deserialize_properties: bool
+    """
+
     def __init__(
         self,
         *,
-        target: str = None,
-        instance_count: int = None,
-        is_local: bool = None,
-        instance_type: str = None,
-        location: str = None,
-        properties: Dict[str, Any] = None,
+        target: Optional[str] = None,
+        instance_count: Optional[int] = None,
+        is_local: Optional[bool] = None,
+        instance_type: Optional[str] = None,
+        location: Optional[str] = None,
+        properties: Optional[Dict[str, Any]] = None,
         deserialize_properties: bool = False,
-    ):
+    ) -> None:
         self.instance_count = instance_count
         self.target = target or LOCAL_COMPUTE_TARGET
         self.is_local = is_local or self.target == LOCAL_COMPUTE_TARGET
@@ -36,7 +52,7 @@ class ComputeConfiguration(RestTranslatableMixin, DictMixin):
             for key, value in self.properties.items():
                 try:
                     self.properties[key] = json.loads(value)
-                except Exception: # pylint: disable=broad-except
+                except Exception:  # pylint: disable=broad-except
                     # keep serialized string if load fails
                     pass
 
@@ -52,7 +68,7 @@ class ComputeConfiguration(RestTranslatableMixin, DictMixin):
                     elif key.lower() == JobComputePropertyFields.AISUPERCOMPUTER.lower():
                         key = JobComputePropertyFields.AISUPERCOMPUTER
                     serialized_properties[key] = json.dumps(value)
-                except Exception: # pylint: disable=broad-except
+                except Exception:  # pylint: disable=broad-except
                     pass
         else:
             serialized_properties = None

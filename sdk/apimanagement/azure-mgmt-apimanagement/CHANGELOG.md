@@ -1,5 +1,65 @@
 # Release History
 
+## 4.0.0 (2023-04-20)
+
+### Features Added
+
+  - Added operation ApiManagementServiceOperations.begin_migrate_to_stv2
+  - Added operation group ApiWikiOperations
+  - Added operation group ApiWikisOperations
+  - Added operation group AuthorizationAccessPolicyOperations
+  - Added operation group AuthorizationLoginLinksOperations
+  - Added operation group AuthorizationOperations
+  - Added operation group AuthorizationProviderOperations
+  - Added operation group DocumentationOperations
+  - Added operation group GraphQLApiResolverOperations
+  - Added operation group GraphQLApiResolverPolicyOperations
+  - Added operation group PolicyFragmentOperations
+  - Added operation group PortalConfigOperations
+  - Added operation group ProductWikiOperations
+  - Added operation group ProductWikisOperations
+  - Model AdditionalLocation has a new parameter nat_gateway_state
+  - Model AdditionalLocation has a new parameter outbound_public_ip_addresses
+  - Model ApiCreateOrUpdateParameter has a new parameter translate_required_query_parameters_conduct
+  - Model ApiCreateOrUpdateProperties has a new parameter translate_required_query_parameters_conduct
+  - Model ApiManagementServiceBaseProperties has a new parameter nat_gateway_state
+  - Model ApiManagementServiceBaseProperties has a new parameter outbound_public_ip_addresses
+  - Model ApiManagementServiceProperties has a new parameter nat_gateway_state
+  - Model ApiManagementServiceProperties has a new parameter outbound_public_ip_addresses
+  - Model ApiManagementServiceResource has a new parameter nat_gateway_state
+  - Model ApiManagementServiceResource has a new parameter outbound_public_ip_addresses
+  - Model ApiManagementServiceUpdateParameters has a new parameter nat_gateway_state
+  - Model ApiManagementServiceUpdateParameters has a new parameter outbound_public_ip_addresses
+  - Model ApiManagementServiceUpdateProperties has a new parameter nat_gateway_state
+  - Model ApiManagementServiceUpdateProperties has a new parameter outbound_public_ip_addresses
+  - Model AuthenticationSettingsContract has a new parameter o_auth2_authentication_settings
+  - Model AuthenticationSettingsContract has a new parameter openid_authentication_settings
+  - Model AuthorizationServerContract has a new parameter use_in_api_documentation
+  - Model AuthorizationServerContract has a new parameter use_in_test_console
+  - Model AuthorizationServerContractProperties has a new parameter use_in_api_documentation
+  - Model AuthorizationServerContractProperties has a new parameter use_in_test_console
+  - Model AuthorizationServerUpdateContract has a new parameter use_in_api_documentation
+  - Model AuthorizationServerUpdateContract has a new parameter use_in_test_console
+  - Model AuthorizationServerUpdateContractProperties has a new parameter use_in_api_documentation
+  - Model AuthorizationServerUpdateContractProperties has a new parameter use_in_test_console
+  - Model DiagnosticContract has a new parameter metrics
+  - Model IdentityProviderBaseParameters has a new parameter client_library
+  - Model IdentityProviderContract has a new parameter client_library
+  - Model IdentityProviderContractProperties has a new parameter client_library
+  - Model IdentityProviderCreateContract has a new parameter client_library
+  - Model IdentityProviderCreateContractProperties has a new parameter client_library
+  - Model IdentityProviderUpdateParameters has a new parameter client_library
+  - Model IdentityProviderUpdateProperties has a new parameter client_library
+  - Model OpenidConnectProviderContract has a new parameter use_in_api_documentation
+  - Model OpenidConnectProviderContract has a new parameter use_in_test_console
+  - Model OpenidConnectProviderUpdateContract has a new parameter use_in_api_documentation
+  - Model OpenidConnectProviderUpdateContract has a new parameter use_in_test_console
+
+### Breaking Changes
+
+  - Operation ContentItemOperations.create_or_update has a new required parameter parameters
+  - Operation ContentTypeOperations.create_or_update has a new required parameter parameters
+
 ## 3.1.0b1 (2022-11-11)
 
 ### Features Added

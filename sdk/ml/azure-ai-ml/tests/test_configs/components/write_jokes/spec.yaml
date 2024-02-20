@@ -1,0 +1,21 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
+type: command
+
+name: hello_python_world
+display_name: Hello_Python_World
+version: 2
+
+code: ./src
+
+environment:
+  conda_file: ./conda.yaml
+  image: mcr.microsoft.com/azureml/openmpi4.1.0-cuda11.8-cudnn8-ubuntu22.04:20230227.v1
+
+inputs:
+  component_in_number:
+    type: number
+    optional: False
+    description: A number
+
+command: >-
+  echo ${{inputs.component_in_number}} & python hello.py

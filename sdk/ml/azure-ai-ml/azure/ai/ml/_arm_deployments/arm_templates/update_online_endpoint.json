@@ -6,22 +6,22 @@
         "mode": "Incremental",
         "parameters": {},
         "template": {
-        "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-        "contentVersion": "1.0.0.0",
-        "parameters": {},
-        "variables": {},
-        "resources": [
-            {
-                "type": "Microsoft.MachineLearningServices/workspaces/onlineEndpoints",
-                "apiVersion": "2021-10-01",
-                "location": "[parameters('location')]",
-                "name": "[concat(parameters('workspaceName'), '/', parameters('onlineEndpointName'))]",
-                "identity": "[parameters('onlineEndpointIdentity')]",
-                "tags": "[parameters('onlineEndpointTags')]",
-                "properties": "[parameters('onlineEndpointPropertiesTrafficUpdate')]"
-            }
-        ],
-        "outputs": {}
+            "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+            "contentVersion": "1.0.0.0",
+            "parameters": {},
+            "variables": {},
+            "resources": [
+                {
+                    "type": "Microsoft.MachineLearningServices/workspaces/onlineEndpoints",
+                    "apiVersion": "2021-10-01",
+                    "location": "[parameters('location')]",
+                    "name": "[concat(parameters('workspaceName'), '/', parameters('onlineEndpointName'))]",
+                    "identity": "[parameters('onlineEndpointIdentity')]",
+                    "tags": "[parameters('onlineEndpointTags')]",
+                    "properties": "[parameters('onlineEndpointPropertiesTrafficUpdate')]"
+                }
+            ],
+            "outputs": {}
         }
     }
 }

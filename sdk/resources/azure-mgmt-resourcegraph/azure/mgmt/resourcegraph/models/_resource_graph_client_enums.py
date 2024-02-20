@@ -10,6 +10,17 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class AuthorizationScopeFilter(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Defines what level of authorization resources should be returned based on the which
+    subscriptions and management groups are passed as scopes.
+    """
+
+    AT_SCOPE_AND_BELOW = "AtScopeAndBelow"
+    AT_SCOPE_AND_ABOVE = "AtScopeAndAbove"
+    AT_SCOPE_EXACT = "AtScopeExact"
+    AT_SCOPE_ABOVE_AND_BELOW = "AtScopeAboveAndBelow"
+
+
 class ChangeCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The change category."""
 
@@ -33,6 +44,7 @@ class ColumnDataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NUMBER = "number"
     BOOLEAN = "boolean"
     OBJECT = "object"
+    DATETIME = "datetime"
 
 
 class FacetSortOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -48,13 +60,6 @@ class PropertyChangeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     INSERT = "Insert"
     UPDATE = "Update"
     REMOVE = "Remove"
-
-
-class ResourcesHistoryRequestOptionsResultFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """ResourcesHistoryRequestOptionsResultFormat."""
-
-    TABLE = "table"
-    OBJECT_ARRAY = "objectArray"
 
 
 class ResultFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):

@@ -11,7 +11,6 @@ from json import dumps, loads
 from unittest import mock
 
 import pytest
-import six
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from azure.storage.queue import BinaryBase64DecodePolicy, BinaryBase64EncodePolicy, VERSION
 from azure.storage.queue.aio import QueueServiceClient
@@ -42,7 +41,7 @@ TEST_QUEUE_PREFIX = 'encryptionqueue'
 # ------------------------------------------------------------------------------
 
 def _decode_base64_to_bytes(data):
-        if isinstance(data, six.text_type):
+        if isinstance(data, str):
             data = data.encode('utf-8')
         return b64decode(data)
 
@@ -781,6 +780,42 @@ class TestAsyncStorageQueueEncryption(AsyncStorageRecordedTestCase):
 
         # Assert
         assert content == decrypted_data
+
+    @QueuePreparer()
+    @recorded_by_proxy_async
+    async def test_encryption_user_agent(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        app_id = 'TestAppId'
+        content = 'Hello World Encrypted!'
+        kek = KeyWrapper('key1')
+
+        def assert_user_agent(request):
+            start = f'{app_id} azstorage-clientsideencryption/2.0 '
+            assert request.http_request.headers['User-Agent'].startswith(start)
+
+        # Test method level keyword
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"),
+            storage_account_key,
+            require_encryption=True,
+            encryption_version='2.0',
+            key_encryption_key=kek)
+        queue = await self._create_queue(qsc)
+        await queue.send_message(content, raw_request_hook=assert_user_agent, user_agent=app_id)
+
+        # Test client constructor level keyword
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"),
+            storage_account_key,
+            require_encryption=True,
+            encryption_version='2.0',
+            key_encryption_key=kek,
+            user_agent=app_id)
+
+        queue = self._get_queue_reference(qsc)
+        await queue.send_message(content, raw_request_hook=assert_user_agent)
 
 
 # ------------------------------------------------------------------------------

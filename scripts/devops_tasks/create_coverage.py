@@ -18,7 +18,7 @@ from common_tasks import run_check_call
 logging.getLogger().setLevel(logging.INFO)
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
-coverage_dir = os.path.join(root_dir, "_all_coverage_files/")
+coverage_dir = os.path.join(root_dir, "_coverage/")
 
 
 def collect_tox_coverage_files():
@@ -26,14 +26,12 @@ def collect_tox_coverage_files():
     run(coverage_version_cmd, cwd=root_dir)
 
     logging.info("Running collect tox coverage files...")
-    root_coverage_dir = os.path.join(root_dir, "_coverage/")
 
     coverage_files = []
     for root, _, files in os.walk(coverage_dir):
         for f in files:
             if re.match(".coverage_*", f):
                 coverage_files.append(os.path.join(root, f))
-                fix_dot_coverage_file(os.path.join(root, f))
 
     logging.info(".coverage files: {}".format(coverage_files))
 
@@ -54,26 +52,35 @@ def collect_tox_coverage_files():
 def generate_coverage_xml():
     if os.path.exists(coverage_dir):
         logging.info("Generating coverage XML")
-        commands = ["coverage", "xml", "-i", "--omit", '"*test*,*example*"']
+        commands = ["coverage", "xml", "-i"]
         run_check_call(commands, root_dir, always_exit = False)
     else:
         logging.error("Coverage file is not available in {} to generate coverage XML".format(coverage_dir))
 
 
-def fix_dot_coverage_file(coverage_file):
+def fix_coverage_xml(coverage_file):
     print("running 'fix_dot_coverage_file' on {}".format(coverage_file))
 
     out = None
-    with open(coverage_file) as cov_file:
+    with open(coverage_file, encoding="utf-8") as cov_file:
         line = cov_file.read()
-        out = re.sub("\/\.tox\/[\s\S]*?\/site-packages", "/", line)
+
+        # replace relative paths in folder structure pattern
+        out = re.sub("\/\.tox\/[\s\S_]*?\/site-packages", "", line)
+
+        # replace relative paths in python import pattern
+        out = re.sub("\.?\.tox[\s\S\.\d]*?\.site-packages", "", out)
 
     if out:
         with open(coverage_file, 'w') as cov_file:
             cov_file.write(out)
 
-
 if __name__ == "__main__":
+    coverage_xml = os.path.join(root_dir, 'coverage.xml')
+
     collect_tox_coverage_files()
     generate_coverage_xml()
     create_coverage_report()
+
+    if os.path.exists(coverage_xml):
+        fix_coverage_xml(coverage_xml)

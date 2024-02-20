@@ -77,32 +77,6 @@ class PoolNodeCountsPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(PoolNodeCountsPaged, self).__init__(*args, **kwargs)
-class CloudJobPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`CloudJob <azure.batch.models.CloudJob>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'odata\\.nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[CloudJob]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(CloudJobPaged, self).__init__(*args, **kwargs)
-class JobPreparationAndReleaseTaskExecutionInformationPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`JobPreparationAndReleaseTaskExecutionInformation <azure.batch.models.JobPreparationAndReleaseTaskExecutionInformation>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'odata\\.nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[JobPreparationAndReleaseTaskExecutionInformation]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(JobPreparationAndReleaseTaskExecutionInformationPaged, self).__init__(*args, **kwargs)
 class CertificatePaged(Paged):
     """
     A paging container for iterating over a list of :class:`Certificate <azure.batch.models.Certificate>` object
@@ -142,6 +116,32 @@ class CloudJobSchedulePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(CloudJobSchedulePaged, self).__init__(*args, **kwargs)
+class CloudJobPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`CloudJob <azure.batch.models.CloudJob>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'odata\\.nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[CloudJob]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(CloudJobPaged, self).__init__(*args, **kwargs)
+class JobPreparationAndReleaseTaskExecutionInformationPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`JobPreparationAndReleaseTaskExecutionInformation <azure.batch.models.JobPreparationAndReleaseTaskExecutionInformation>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'odata\\.nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[JobPreparationAndReleaseTaskExecutionInformation]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(JobPreparationAndReleaseTaskExecutionInformationPaged, self).__init__(*args, **kwargs)
 class CloudTaskPaged(Paged):
     """
     A paging container for iterating over a list of :class:`CloudTask <azure.batch.models.CloudTask>` object

@@ -1,6 +1,6 @@
 trio
 requests
-aiohttp>=3.0
+aiohttp>=3.0; python_version <= '3.11'
 opencensus>=0.6.0
 opencensus-ext-azure
 opencensus-ext-threading

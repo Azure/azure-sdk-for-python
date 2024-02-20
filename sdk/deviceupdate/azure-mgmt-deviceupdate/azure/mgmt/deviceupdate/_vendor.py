@@ -38,7 +38,7 @@ def _format_url_section(template, **kwargs):
             template = "/".join(components)
 
 
-class MixinABC(ABC):
+class DeviceUpdateMgmtClientMixinABC(ABC):
     """DO NOT use this class. It is for internal typing use only."""
 
     _client: "PipelineClient"

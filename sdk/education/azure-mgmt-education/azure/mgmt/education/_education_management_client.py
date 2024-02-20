@@ -9,20 +9,30 @@
 from copy import deepcopy
 from typing import Any, TYPE_CHECKING
 
-from msrest import Deserializer, Serializer
-
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.mgmt.core import ARMPipelineClient
 
-from . import models
+from . import models as _models
 from ._configuration import EducationManagementClientConfiguration
-from .operations import EducationManagementClientOperationsMixin, GrantsOperations, JoinRequestsOperations, LabsOperations, Operations, StudentLabsOperations, StudentsOperations
+from ._serialization import Deserializer, Serializer
+from .operations import (
+    EducationManagementClientOperationsMixin,
+    GrantsOperations,
+    JoinRequestsOperations,
+    LabsOperations,
+    Operations,
+    StudentLabsOperations,
+    StudentsOperations,
+)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
-class EducationManagementClient(EducationManagementClientOperationsMixin):    # pylint: disable=too-many-instance-attributes
+
+class EducationManagementClient(
+    EducationManagementClientOperationsMixin
+):  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """Education client provides access to education resources for Azure subscriptions.
 
     :ivar operations: Operations operations
@@ -37,7 +47,7 @@ class EducationManagementClient(EducationManagementClientOperationsMixin):    # 
     :vartype students: azure.mgmt.education.operations.StudentsOperations
     :ivar student_labs: StudentLabsOperations operations
     :vartype student_labs: azure.mgmt.education.operations.StudentLabsOperations
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
@@ -47,43 +57,23 @@ class EducationManagementClient(EducationManagementClientOperationsMixin):    # 
     """
 
     def __init__(
-        self,
-        credential: "TokenCredential",
-        base_url: str = "https://management.azure.com",
-        **kwargs: Any
+        self, credential: "TokenCredential", base_url: str = "https://management.azure.com", **kwargs: Any
     ) -> None:
         self._config = EducationManagementClientConfiguration(credential=credential, **kwargs)
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.operations = Operations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.grants = GrantsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.labs = LabsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.join_requests = JoinRequestsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.students = StudentsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.student_labs = StudentLabsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.grants = GrantsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.labs = LabsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.join_requests = JoinRequestsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.students = StudentsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.student_labs = StudentLabsOperations(self._client, self._config, self._serialize, self._deserialize)
 
-
-    def _send_request(
-        self,
-        request: HttpRequest,
-        **kwargs: Any
-    ) -> HttpResponse:
+    def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -92,7 +82,7 @@ class EducationManagementClient(EducationManagementClientOperationsMixin):    # 
         >>> response = client._send_request(request)
         <HttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest
@@ -105,15 +95,12 @@ class EducationManagementClient(EducationManagementClientOperationsMixin):    # 
         request_copy.url = self._client.format_url(request_copy.url)
         return self._client.send_request(request_copy, **kwargs)
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         self._client.close()
 
-    def __enter__(self):
-        # type: () -> EducationManagementClient
+    def __enter__(self) -> "EducationManagementClient":
         self._client.__enter__()
         return self
 
-    def __exit__(self, *exc_details):
-        # type: (Any) -> None
+    def __exit__(self, *exc_details) -> None:
         self._client.__exit__(*exc_details)

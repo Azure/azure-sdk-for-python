@@ -1,0 +1,14 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
+type: pipeline
+display_name: pipeline job with short name
+experiment_name: Singularity in pipeline
+settings:
+  default_compute: azureml://virtualclusters/SingularityTestVC
+jobs:
+  hello_world:
+    command: echo Hello World
+    environment:
+      image: singularitybase.azurecr.io/base/job/deepspeed/0.4-pytorch-1.7.0-cuda11.0-cudnn8-devel:20221017T152225334
+    compute: azureml://virtualclusters/centeuapvc
+    resources:
+      instance_type: Singularity.ND40rs_v2

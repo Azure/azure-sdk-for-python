@@ -8,7 +8,6 @@
 import sys
 from base64 import b64encode, b64decode
 
-import six
 from azure.core.exceptions import DecodeError
 
 from ._encryption import decrypt_queue_message, encrypt_queue_message, _ENCRYPTION_PROTOCOL_V1
@@ -79,7 +78,7 @@ class TextBase64EncodePolicy(MessageEncodePolicy):
     """
 
     def encode(self, content):
-        if not isinstance(content, six.text_type):
+        if not isinstance(content, str):
             raise TypeError("Message content must be text for base 64 encoding.")
         return b64encode(content.encode('utf-8')).decode('utf-8')
 
@@ -100,7 +99,7 @@ class TextBase64DecodePolicy(MessageDecodePolicy):
             raise DecodeError(
                 message="Message content is not valid base 64.",
                 response=response,
-                error=error)
+                error=error) from error
 
 
 class BinaryBase64EncodePolicy(MessageEncodePolicy):
@@ -111,7 +110,7 @@ class BinaryBase64EncodePolicy(MessageEncodePolicy):
     """
 
     def encode(self, content):
-        if not isinstance(content, six.binary_type):
+        if not isinstance(content, bytes):
             raise TypeError("Message content must be bytes for base 64 encoding.")
         return b64encode(content).decode('utf-8')
 
@@ -132,14 +131,14 @@ class BinaryBase64DecodePolicy(MessageDecodePolicy):
             raise DecodeError(
                 message="Message content is not valid base 64.",
                 response=response,
-                error=error)
+                error=error) from error
 
 
 class NoEncodePolicy(MessageEncodePolicy):
     """Bypass any message content encoding."""
 
     def encode(self, content):
-        if isinstance(content, six.binary_type) and sys.version_info > (3,):
+        if isinstance(content, bytes) and sys.version_info > (3,):
             raise TypeError(
                 "Message content must not be bytes. Use the BinaryBase64EncodePolicy to send bytes."
             )

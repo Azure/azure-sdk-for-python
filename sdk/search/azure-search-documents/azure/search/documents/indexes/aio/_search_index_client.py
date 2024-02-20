@@ -3,10 +3,11 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import TYPE_CHECKING, Union
+from typing import Union, Any, List, Optional, MutableMapping, cast
 
 from azure.core import MatchConditions
 from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged
@@ -23,18 +24,13 @@ from ..._version import SDK_MONIKER
 from ..models import (
     SearchIndex,
     SynonymMap,
-    SearchAlias
+    SearchAlias,
+    AnalyzeResult,
+    AnalyzeTextOptions,
 )
 
-if TYPE_CHECKING:
-    # pylint:disable=unused-import,ungrouped-imports
-    from .._generated.models import AnalyzeResult
-    from ..models._models import AnalyzeTextOptions
-    from typing import Any, Dict, List
-    from azure.core.credentials_async import AsyncTokenCredential
 
-
-class SearchIndexClient(HeadersMixin): # pylint:disable=too-many-public-methods
+class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
     """A client to interact with Azure search service Indexes.
 
     :param endpoint: The URL endpoint of an Azure search service
@@ -47,26 +43,19 @@ class SearchIndexClient(HeadersMixin): # pylint:disable=too-many-public-methods
      will be assumed.
     """
 
-    _ODATA_ACCEPT = "application/json;odata.metadata=minimal"  # type: str
+    _ODATA_ACCEPT: str = "application/json;odata.metadata=minimal"
+    _client: _SearchServiceClient
 
-    def __init__(
-        self,
-        endpoint: str,
-        credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
-        **kwargs
-    ) -> None:
+    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, AsyncTokenCredential], **kwargs) -> None:
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
-        self._endpoint = normalize_endpoint(endpoint)  # type: str
+        self._endpoint = normalize_endpoint(endpoint)
         self._credential = credential
         audience = kwargs.pop("audience", None)
         if isinstance(credential, AzureKeyCredential):
             self._aad = False
             self._client = _SearchServiceClient(
-                endpoint=endpoint,
-                sdk_moniker=SDK_MONIKER,
-                api_version=self._api_version,
-                **kwargs
-            )  # type: _SearchServiceClient
+                endpoint=endpoint, sdk_moniker=SDK_MONIKER, api_version=self._api_version, **kwargs
+            )
         else:
             self._aad = True
             authentication_policy = get_authentication_policy(credential, audience=audience, is_async=True)
@@ -76,35 +65,35 @@ class SearchIndexClient(HeadersMixin): # pylint:disable=too-many-public-methods
                 sdk_moniker=SDK_MONIKER,
                 api_version=self._api_version,
                 **kwargs
-            )  # type: _SearchServiceClient
+            )
 
-    async def __aenter__(self):
-        # type: () -> SearchIndexesClient
+    async def __aenter__(self) -> "SearchIndexClient":
         await self._client.__aenter__()  # pylint:disable=no-member
         return self
 
-    async def __aexit__(self, *args):
-        # type: (*Any) -> None
-        return await self._client.__aexit__(*args)  # pylint:disable=no-member
+    async def __aexit__(self, *args: Any) -> None:
+        return await self._client.__aexit__(*args)
 
-    async def close(self):
-        # type: () -> None
-        """Close the :class:`~azure.search.documents.indexes.aio.SearchIndexClient` session."""
+    async def close(self) -> None:
+        """Close the :class:`~azure.search.documents.indexes.aio.SearchIndexClient` session.
+
+        :return: None
+        :rtype: None
+        """
         return await self._client.close()
 
-    def get_search_client(self, index_name, **kwargs):
-        # type: (str, dict) -> SearchClient
+    def get_search_client(self, index_name: str, **kwargs: Any) -> SearchClient:
         """Return a client to perform operations on Search.
 
         :param index_name: The name of the Search Index
         :type index_name: str
+        :return: SearchClient
         :rtype: ~azure.search.documents.aio.SearchClient
         """
         return SearchClient(self._endpoint, index_name, self._credential, **kwargs)
 
     @distributed_trace
-    def list_indexes(self, **kwargs):
-        # type: (**Any) -> AsyncItemPaged[SearchIndex]
+    def list_indexes(self, *, select: Optional[List[str]] = None, **kwargs) -> AsyncItemPaged[SearchIndex]:
         """List the indexes in an Azure Search service.
 
         :keyword select: Selects which top-level properties of the skillsets to retrieve. Specified as a
@@ -114,35 +103,29 @@ class SearchIndexClient(HeadersMixin): # pylint:disable=too-many-public-methods
         :return: List of indexes
         :rtype: ~azure.core.async_paging.AsyncItemPaged[:class:`~azure.search.documents.indexes.models.SearchIndex`]
         :raises: ~azure.core.exceptions.HttpResponseError
-
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        if kwargs.get('select', None):
-            kwargs['select'] = ','.join(kwargs['select'])
+        if select:
+            kwargs["select"] = ",".join(select)
         # pylint:disable=protected-access
-        return self._client.indexes.list(
-            cls=lambda objs: [SearchIndex._from_generated(x) for x in objs], **kwargs
-        )
+        indexes = self._client.indexes.list(cls=lambda objs: [SearchIndex._from_generated(x) for x in objs], **kwargs)
+        return cast(AsyncItemPaged[SearchIndex], indexes)
 
     @distributed_trace
-    def list_index_names(self, **kwargs):
-        # type: (**Any) -> AsyncItemPaged[str]
+    def list_index_names(self, **kwargs: Any) -> AsyncItemPaged[str]:
         """List the index names in an Azure Search service.
 
         :return: List of index names
         :rtype: ~azure.core.async_paging.AsyncItemPaged[str]
         :raises: ~azure.core.exceptions.HttpResponseError
-
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
 
-        return self._client.indexes.list(
-            cls=lambda objs: [x.name for x in objs], **kwargs
-        )
+        names = self._client.indexes.list(cls=lambda objs: [x.name for x in objs], **kwargs)
+        return cast(AsyncItemPaged[str], names)
 
     @distributed_trace_async
-    async def get_index(self, name, **kwargs):
-        # type: (str, **Any) -> SearchIndex
+    async def get_index(self, name: str, **kwargs: Any) -> SearchIndex:
         """
 
         :param name: The name of the index to retrieve.
@@ -165,25 +148,22 @@ class SearchIndexClient(HeadersMixin): # pylint:disable=too-many-public-methods
         return SearchIndex._from_generated(result)  # pylint:disable=protected-access
 
     @distributed_trace_async
-    async def get_index_statistics(self, index_name, **kwargs):
-        # type: (str, **Any) -> dict
+    async def get_index_statistics(self, index_name: str, **kwargs: Any) -> MutableMapping[str, Any]:
         """Returns statistics for the given index, including a document count
         and storage usage.
 
         :param index_name: The name of the index to retrieve.
         :type index_name: str
         :return: Statistics for the given index, including a document count and storage usage.
-        :rtype: dict
+        :rtype: Dict
         :raises: ~azure.core.exceptions.HttpResponseError
-
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = await self._client.indexes.get_statistics(index_name, **kwargs)
         return result.as_dict()
 
     @distributed_trace_async
-    async def delete_index(self, index, **kwargs):
-        # type: (Union[str, SearchIndex], **Any) -> None
+    async def delete_index(self, index: Union[str, SearchIndex], **kwargs: Any) -> None:
         """Deletes a search index and all the documents it contains. The model must be
         provided instead of the name to use the access conditions
 
@@ -208,16 +188,13 @@ class SearchIndexClient(HeadersMixin): # pylint:disable=too-many-public-methods
         )
         kwargs.update(access_condition)
         try:
-            index_name = index.name
+            index_name = index.name  # type: ignore
         except AttributeError:
             index_name = index
-        await self._client.indexes.delete(
-            index_name=index_name, error_map=error_map, **kwargs
-        )
+        await self._client.indexes.delete(index_name=index_name, error_map=error_map, **kwargs)
 
     @distributed_trace_async
-    async def create_index(self, index, **kwargs):
-        # type: (SearchIndex, **Any) -> SearchIndex
+    async def create_index(self, index: SearchIndex, **kwargs: Any) -> SearchIndex:
         """Creates a new search index.
 
         :param index: The index object.
@@ -238,11 +215,17 @@ class SearchIndexClient(HeadersMixin): # pylint:disable=too-many-public-methods
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         patched_index = index._to_generated()  # pylint:disable=protected-access
         result = await self._client.indexes.create(patched_index, **kwargs)
-        return result
+        return SearchIndex._from_generated(result)  # pylint:disable=protected-access
 
     @distributed_trace_async
-    async def create_or_update_index(self, index, allow_index_downtime=None, **kwargs):
-        # type: (SearchIndex, bool, MatchConditions, **Any) -> SearchIndex
+    async def create_or_update_index(
+        self,
+        index: SearchIndex,
+        allow_index_downtime: Optional[bool] = None,
+        *,
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
+        **kwargs: Any
+    ) -> SearchIndex:
         """Creates a new search index or updates an index if it already exists.
 
         :param index: The index object.
@@ -273,9 +256,7 @@ class SearchIndexClient(HeadersMixin): # pylint:disable=too-many-public-methods
                 :caption: Update an index.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        error_map, access_condition = get_access_conditions(
-            index, kwargs.pop("match_condition", MatchConditions.Unconditionally)
-        )
+        error_map, access_condition = get_access_conditions(index, match_condition)
         kwargs.update(access_condition)
         patched_index = index._to_generated()  # pylint:disable=protected-access
         result = await self._client.indexes.create_or_update(
@@ -286,11 +267,10 @@ class SearchIndexClient(HeadersMixin): # pylint:disable=too-many-public-methods
             error_map=error_map,
             **kwargs
         )
-        return result
+        return SearchIndex._from_generated(result)  # pylint:disable=protected-access
 
     @distributed_trace_async
-    async def analyze_text(self, index_name, analyze_request, **kwargs):
-        # type: (str, AnalyzeTextOptions, **Any) -> AnalyzeResult
+    async def analyze_text(self, index_name: str, analyze_request: AnalyzeTextOptions, **kwargs: Any) -> AnalyzeResult:
         """Shows how an analyzer breaks text into tokens.
 
         :param index_name: The name of the index for which to test an analyzer.
@@ -319,16 +299,15 @@ class SearchIndexClient(HeadersMixin): # pylint:disable=too-many-public-methods
         return result
 
     @distributed_trace_async
-    async def get_synonym_maps(self, **kwargs):
-        # type: (**Any) -> List[SynonymMap]
+    async def get_synonym_maps(self, *, select: Optional[List[str]] = None, **kwargs) -> List[SynonymMap]:
         """List the Synonym Maps in an Azure Search service.
 
         :keyword select: Selects which top-level properties of the skillsets to retrieve. Specified as a
          list of JSON property names, or '*' for all properties. The default is all
          properties.
-        :paramtype select: list[str]
+        :paramtype select: List[str]
         :return: List of synonym maps
-        :rtype: list[~azure.search.documents.indexes.models.SynonymMap]
+        :rtype: List[~azure.search.documents.indexes.models.SynonymMap]
         :raises: ~azure.core.exceptions.HttpResponseError
 
         .. admonition:: Example:
@@ -342,29 +321,29 @@ class SearchIndexClient(HeadersMixin): # pylint:disable=too-many-public-methods
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        if kwargs.get('select', None):
-            kwargs['select'] = ','.join(kwargs['select'])
+        if select:
+            kwargs["select"] = ",".join(select)
         result = await self._client.synonym_maps.list(**kwargs)
+        assert result.synonym_maps is not None  # Hint for mypy
         # pylint:disable=protected-access
         return [SynonymMap._from_generated(x) for x in result.synonym_maps]
 
     @distributed_trace_async
-    async def get_synonym_map_names(self, **kwargs):
-        # type: (**Any) -> List[str]
+    async def get_synonym_map_names(self, **kwargs: Any) -> List[str]:
         """List the Synonym Map names in an Azure Search service.
 
         :return: List of synonym map names
-        :rtype: list[str]
+        :rtype: List[str]
         :raises: ~azure.core.exceptions.HttpResponseError
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = await self._client.synonym_maps.list(**kwargs)
+        assert result.synonym_maps is not None  # Hint for mypy
         return [x.name for x in result.synonym_maps]
 
     @distributed_trace_async
-    async def get_synonym_map(self, name, **kwargs):
-        # type: (str, **Any) -> SynonymMap
+    async def get_synonym_map(self, name: str, **kwargs: Any) -> SynonymMap:
         """Retrieve a named Synonym Map in an Azure Search service
 
         :param name: The name of the Synonym Map to get
@@ -388,8 +367,13 @@ class SearchIndexClient(HeadersMixin): # pylint:disable=too-many-public-methods
         return SynonymMap._from_generated(result)  # pylint:disable=protected-access
 
     @distributed_trace_async
-    async def delete_synonym_map(self, synonym_map, **kwargs):
-        # type: (Union[str, SynonymMap], **Any) -> None
+    async def delete_synonym_map(
+        self,
+        synonym_map: Union[str, SynonymMap],
+        *,
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
+        **kwargs: Any
+    ) -> None:
         """Delete a named Synonym Map in an Azure Search service. To use access conditions,
         the SynonymMap model must be provided instead of the name. It is enough to provide
         the name of the synonym map to delete unconditionally.
@@ -413,21 +397,16 @@ class SearchIndexClient(HeadersMixin): # pylint:disable=too-many-public-methods
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        error_map, access_condition = get_access_conditions(
-            synonym_map, kwargs.pop("match_condition", MatchConditions.Unconditionally)
-        )
+        error_map, access_condition = get_access_conditions(synonym_map, match_condition)
         kwargs.update(access_condition)
         try:
-            name = synonym_map.name
+            name = synonym_map.name  # type: ignore
         except AttributeError:
             name = synonym_map
-        await self._client.synonym_maps.delete(
-            synonym_map_name=name, error_map=error_map, **kwargs
-        )
+        await self._client.synonym_maps.delete(synonym_map_name=name, error_map=error_map, **kwargs)
 
     @distributed_trace_async
-    async def create_synonym_map(self, synonym_map, **kwargs):
-        # type: (SynonymMap, **Any) -> SynonymMap
+    async def create_synonym_map(self, synonym_map: SynonymMap, **kwargs: Any) -> SynonymMap:
         """Create a new Synonym Map in an Azure Search service
 
         :param synonym_map: The Synonym Map object
@@ -446,15 +425,18 @@ class SearchIndexClient(HeadersMixin): # pylint:disable=too-many-public-methods
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        patched_synonym_map = (
-            synonym_map._to_generated()  # pylint:disable=protected-access
-        )
+        patched_synonym_map = synonym_map._to_generated()  # pylint:disable=protected-access
         result = await self._client.synonym_maps.create(patched_synonym_map, **kwargs)
         return SynonymMap._from_generated(result)  # pylint:disable=protected-access
 
     @distributed_trace_async
-    async def create_or_update_synonym_map(self, synonym_map, **kwargs):
-        # type: (SynonymMap, **Any) -> SynonymMap
+    async def create_or_update_synonym_map(
+        self,
+        synonym_map: SynonymMap,
+        *,
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
+        **kwargs: Any
+    ) -> SynonymMap:
         """Create a new Synonym Map in an Azure Search service, or update an
         existing one.
 
@@ -464,16 +446,11 @@ class SearchIndexClient(HeadersMixin): # pylint:disable=too-many-public-methods
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: The created or updated Synonym Map
         :rtype: :class:`~azure.search.documents.indexes.models.SynonymMap`
-
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        error_map, access_condition = get_access_conditions(
-            synonym_map, kwargs.pop("match_condition", MatchConditions.Unconditionally)
-        )
+        error_map, access_condition = get_access_conditions(synonym_map, match_condition)
         kwargs.update(access_condition)
-        patched_synonym_map = (
-            synonym_map._to_generated()  # pylint:disable=protected-access
-        )
+        patched_synonym_map = synonym_map._to_generated()  # pylint:disable=protected-access
         result = await self._client.synonym_maps.create_or_update(
             synonym_map_name=synonym_map.name,
             synonym_map=patched_synonym_map,
@@ -484,16 +461,18 @@ class SearchIndexClient(HeadersMixin): # pylint:disable=too-many-public-methods
         return SynonymMap._from_generated(result)  # pylint:disable=protected-access
 
     @distributed_trace_async
-    async def get_service_statistics(self, **kwargs):
-        # type: (**Any) -> dict
-        """Get service level statistics for a search service."""
+    async def get_service_statistics(self, **kwargs) -> MutableMapping[str, Any]:
+        """Get service level statistics for a search service.
+
+        :return: Service statistics result
+        :rtype: dict
+        """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = await self._client.get_service_statistics(**kwargs)
         return result.as_dict()
 
     @distributed_trace
-    def list_aliases(self, **kwargs):
-        # type: (**Any) -> AsyncItemPaged[SearchAlias]
+    def list_aliases(self, *, select: Optional[List[str]] = None, **kwargs) -> AsyncItemPaged[SearchAlias]:
         """List the aliases in an Azure Search service.
 
         :keyword select: Selects which top-level properties of the skillsets to retrieve. Specified as a
@@ -503,17 +482,15 @@ class SearchIndexClient(HeadersMixin): # pylint:disable=too-many-public-methods
         :return: List of Aliases
         :rtype: ~azure.core.paging.AsyncItemPaged[~azure.search.documents.indexes.models.SearchAlias]
         :raises: ~azure.core.exceptions.HttpResponseError
-
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        if kwargs.get('select', None):
-            kwargs['select'] = ','.join(kwargs['select'])
+        if select:
+            kwargs["select"] = ",".join(select)
         # pylint:disable=protected-access
-        return self._client.aliases.list(**kwargs)
+        return cast(AsyncItemPaged[SearchAlias], self._client.aliases.list(**kwargs))
 
     @distributed_trace
-    def list_alias_names(self, **kwargs):
-        # type: (**Any) -> AsyncItemPaged[str]
+    def list_alias_names(self, **kwargs) -> AsyncItemPaged[str]:
         """List the alias names in an Azure Search service.
 
         :return: List of alias names
@@ -523,13 +500,11 @@ class SearchIndexClient(HeadersMixin): # pylint:disable=too-many-public-methods
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
 
-        return self._client.aliases.list(
-            cls=lambda objs: [x.name for x in objs], **kwargs
-        )
+        names = self._client.aliases.list(cls=lambda objs: [x.name for x in objs], **kwargs)
+        return cast(AsyncItemPaged[str], names)
 
-    @distributed_trace
-    async def get_alias(self, name, **kwargs):
-        # type: (str, **Any) -> SearchAlias
+    @distributed_trace_async
+    async def get_alias(self, name: str, **kwargs) -> SearchAlias:
         """
 
         :param name: The name of the alias to retrieve.
@@ -542,9 +517,14 @@ class SearchIndexClient(HeadersMixin): # pylint:disable=too-many-public-methods
         result = await self._client.aliases.get(name, **kwargs)
         return result
 
-    @distributed_trace
-    async def delete_alias(self, alias, **kwargs):
-        # type: (Union[str, SearchAlias], **Any) -> None
+    @distributed_trace_async
+    async def delete_alias(
+        self,
+        alias: Union[str, SearchAlias],
+        *,
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
+        **kwargs: Any
+    ) -> None:
         """Deletes a search alias and its associated mapping to an index.
         This operation is permanent, with no recovery option. The mapped index is untouched by this operation
         :param alias: The alias name or object to delete.
@@ -563,21 +543,16 @@ class SearchIndexClient(HeadersMixin): # pylint:disable=too-many-public-methods
                 :caption: Delete an alias.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        error_map, access_condition = get_access_conditions(
-            alias, kwargs.pop("match_condition", MatchConditions.Unconditionally)
-        )
+        error_map, access_condition = get_access_conditions(alias, match_condition)
         kwargs.update(access_condition)
         try:
-            alias_name = alias.name
+            alias_name = alias.name  # type: ignore
         except AttributeError:
             alias_name = alias
-        await self._client.aliases.delete(
-            alias_name=alias_name, error_map=error_map, **kwargs
-        )
+        await self._client.aliases.delete(alias_name=alias_name, error_map=error_map, **kwargs)
 
-    @distributed_trace
-    async def create_alias(self, alias, **kwargs):
-        # type: (SearchIndex, **Any) -> SearchAlias
+    @distributed_trace_async
+    async def create_alias(self, alias: SearchAlias, **kwargs: Any) -> SearchAlias:
         """Creates a new search alias.
         :param alias: The alias object.
         :type alias: ~azure.search.documents.indexes.models.SearchAlias
@@ -598,9 +573,10 @@ class SearchIndexClient(HeadersMixin): # pylint:disable=too-many-public-methods
         result = await self._client.aliases.create(alias, **kwargs)
         return result  # pylint:disable=protected-access
 
-    @distributed_trace
-    async def create_or_update_alias(self, alias, **kwargs):
-        # type: (str, SearchAlias, **Any) -> SearchAlias
+    @distributed_trace_async
+    async def create_or_update_alias(
+        self, alias: SearchAlias, *, match_condition: MatchConditions = MatchConditions.Unconditionally, **kwargs: Any
+    ) -> SearchAlias:
         """Creates a new search alias or updates an alias if it already exists.
 
         :param alias: The definition of the alias to create or update.
@@ -625,16 +601,9 @@ class SearchIndexClient(HeadersMixin): # pylint:disable=too-many-public-methods
                 :caption: Update an alias.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        error_map, access_condition = get_access_conditions(
-            alias, kwargs.pop("match_condition", MatchConditions.Unconditionally)
-        )
+        error_map, access_condition = get_access_conditions(alias, match_condition)
         kwargs.update(access_condition)
         result = await self._client.aliases.create_or_update(
-            alias_name=alias.name,
-            alias=alias,
-            prefer="return=representation",
-            error_map=error_map,
-            **kwargs
+            alias_name=alias.name, alias=alias, prefer="return=representation", error_map=error_map, **kwargs
         )
         return result  # pylint:disable=protected-access
-        

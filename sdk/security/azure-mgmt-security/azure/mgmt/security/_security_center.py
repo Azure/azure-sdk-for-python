@@ -53,7 +53,7 @@ class SecurityCenter(MultiApiClientMixin, _SDKClient):
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
-    DEFAULT_API_VERSION = '2022-05-01'
+    DEFAULT_API_VERSION = '2023-01-01'
     _PROFILE_TAG = "azure.mgmt.security.SecurityCenter"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
@@ -64,6 +64,11 @@ class SecurityCenter(MultiApiClientMixin, _SDKClient):
             'alerts': '2022-01-01',
             'alerts_suppression_rules': '2019-01-01-preview',
             'allowed_connections': '2020-01-01',
+            'api_collection': '2022-11-20-preview',
+            'api_collection_offboarding': '2022-11-20-preview',
+            'api_collection_onboarding': '2022-11-20-preview',
+            'application': '2022-07-01-preview',
+            'applications': '2022-07-01-preview',
             'assessments': '2021-06-01',
             'assessments_metadata': '2021-06-01',
             'auto_provisioning_settings': '2017-08-01-preview',
@@ -77,7 +82,6 @@ class SecurityCenter(MultiApiClientMixin, _SDKClient):
             'discovered_security_solutions': '2020-01-01',
             'external_security_solutions': '2020-01-01',
             'governance_assignments': '2022-01-01-preview',
-            'governance_rule': '2022-01-01-preview',
             'governance_rules': '2022-01-01-preview',
             'information_protection_policies': '2017-08-01-preview',
             'ingestion_settings': '2021-01-15-preview',
@@ -89,26 +93,21 @@ class SecurityCenter(MultiApiClientMixin, _SDKClient):
             'locations': '2015-06-01-preview',
             'mde_onboardings': '2021-10-01-preview',
             'operations': '2015-06-01-preview',
-            'pricings': '2022-03-01',
             'regulatory_compliance_assessments': '2019-01-01-preview',
             'regulatory_compliance_controls': '2019-01-01-preview',
             'regulatory_compliance_standards': '2019-01-01-preview',
             'secure_score_control_definitions': '2020-01-01',
             'secure_score_controls': '2020-01-01',
             'secure_scores': '2020-01-01',
-            'security_connector_governance_rule': '2022-01-01-preview',
-            'security_connector_governance_rules': '2022-01-01-preview',
-            'security_connector_governance_rules_execute_status': '2022-01-01-preview',
+            'security_connector_application': '2022-07-01-preview',
+            'security_connector_applications': '2022-07-01-preview',
             'security_contacts': '2017-08-01-preview',
             'security_solutions': '2020-01-01',
             'security_solutions_reference_data': '2020-01-01',
             'server_vulnerability_assessment': '2020-01-01',
+            'settings': '2022-05-01',
             'software_inventories': '2021-05-01-preview',
-            'sql_vulnerability_assessment_baseline_rules': '2020-07-01-preview',
-            'sql_vulnerability_assessment_scan_results': '2020-07-01-preview',
-            'sql_vulnerability_assessment_scans': '2020-07-01-preview',
             'sub_assessments': '2019-01-01-preview',
-            'subscription_governance_rules_execute_status': '2022-01-01-preview',
             'tasks': '2015-06-01-preview',
             'topology': '2020-01-01',
             'workspace_settings': '2017-08-01-preview',
@@ -120,10 +119,10 @@ class SecurityCenter(MultiApiClientMixin, _SDKClient):
         self,
         credential: "TokenCredential",
         subscription_id: str,
-        api_version=None, # type: Optional[str]
+        api_version: Optional[str]=None,
         base_url: str = "https://management.azure.com",
-        profile=KnownProfiles.default, # type: KnownProfiles
-        **kwargs  # type: Any
+        profile: KnownProfiles=KnownProfiles.default,
+        **kwargs: Any
     ):
         self._config = SecurityCenterConfiguration(credential, subscription_id, **kwargs)
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
@@ -164,6 +163,11 @@ class SecurityCenter(MultiApiClientMixin, _SDKClient):
            * 2022-05-01-preview: :mod:`v2022_05_01_preview.models<azure.mgmt.security.v2022_05_01_preview.models>`
            * 2022-07-01-preview: :mod:`v2022_07_01_preview.models<azure.mgmt.security.v2022_07_01_preview.models>`
            * 2022-08-01-preview: :mod:`v2022_08_01_preview.models<azure.mgmt.security.v2022_08_01_preview.models>`
+           * 2022-11-20-preview: :mod:`v2022_11_20_preview.models<azure.mgmt.security.v2022_11_20_preview.models>`
+           * 2023-01-01: :mod:`v2023_01_01.models<azure.mgmt.security.v2023_01_01.models>`
+           * 2023-01-01-preview: :mod:`v2023_01_01_preview.models<azure.mgmt.security.v2023_01_01_preview.models>`
+           * 2023-02-01-preview: :mod:`v2023_02_01_preview.models<azure.mgmt.security.v2023_02_01_preview.models>`
+           * 2023-03-01-preview: :mod:`v2023_03_01_preview.models<azure.mgmt.security.v2023_03_01_preview.models>`
         """
         if api_version == '2015-06-01-preview':
             from .v2015_06_01_preview import models
@@ -236,6 +240,21 @@ class SecurityCenter(MultiApiClientMixin, _SDKClient):
             return models
         elif api_version == '2022-08-01-preview':
             from .v2022_08_01_preview import models
+            return models
+        elif api_version == '2022-11-20-preview':
+            from .v2022_11_20_preview import models
+            return models
+        elif api_version == '2023-01-01':
+            from .v2023_01_01 import models
+            return models
+        elif api_version == '2023-01-01-preview':
+            from .v2023_01_01_preview import models
+            return models
+        elif api_version == '2023-02-01-preview':
+            from .v2023_02_01_preview import models
+            return models
+        elif api_version == '2023-03-01-preview':
+            from .v2023_03_01_preview import models
             return models
         raise ValueError("API version {} is not available".format(api_version))
 
@@ -323,6 +342,48 @@ class SecurityCenter(MultiApiClientMixin, _SDKClient):
             from .v2020_01_01.operations import AllowedConnectionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'allowed_connections'".format(api_version))
+        self._config.api_version = api_version
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def api_collection(self):
+        """Instance depends on the API version:
+
+           * 2022-11-20-preview: :class:`APICollectionOperations<azure.mgmt.security.v2022_11_20_preview.operations.APICollectionOperations>`
+        """
+        api_version = self._get_api_version('api_collection')
+        if api_version == '2022-11-20-preview':
+            from .v2022_11_20_preview.operations import APICollectionOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'api_collection'".format(api_version))
+        self._config.api_version = api_version
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def api_collection_offboarding(self):
+        """Instance depends on the API version:
+
+           * 2022-11-20-preview: :class:`APICollectionOffboardingOperations<azure.mgmt.security.v2022_11_20_preview.operations.APICollectionOffboardingOperations>`
+        """
+        api_version = self._get_api_version('api_collection_offboarding')
+        if api_version == '2022-11-20-preview':
+            from .v2022_11_20_preview.operations import APICollectionOffboardingOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'api_collection_offboarding'".format(api_version))
+        self._config.api_version = api_version
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def api_collection_onboarding(self):
+        """Instance depends on the API version:
+
+           * 2022-11-20-preview: :class:`APICollectionOnboardingOperations<azure.mgmt.security.v2022_11_20_preview.operations.APICollectionOnboardingOperations>`
+        """
+        api_version = self._get_api_version('api_collection_onboarding')
+        if api_version == '2022-11-20-preview':
+            from .v2022_11_20_preview.operations import APICollectionOnboardingOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'api_collection_onboarding'".format(api_version))
         self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
@@ -543,20 +604,6 @@ class SecurityCenter(MultiApiClientMixin, _SDKClient):
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
-    def governance_rule(self):
-        """Instance depends on the API version:
-
-           * 2022-01-01-preview: :class:`GovernanceRuleOperations<azure.mgmt.security.v2022_01_01_preview.operations.GovernanceRuleOperations>`
-        """
-        api_version = self._get_api_version('governance_rule')
-        if api_version == '2022-01-01-preview':
-            from .v2022_01_01_preview.operations import GovernanceRuleOperations as OperationClass
-        else:
-            raise ValueError("API version {} does not have operation group 'governance_rule'".format(api_version))
-        self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
-
-    @property
     def governance_rules(self):
         """Instance depends on the API version:
 
@@ -567,6 +614,34 @@ class SecurityCenter(MultiApiClientMixin, _SDKClient):
             from .v2022_01_01_preview.operations import GovernanceRulesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'governance_rules'".format(api_version))
+        self._config.api_version = api_version
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def health_report(self):
+        """Instance depends on the API version:
+
+           * 2023-02-01-preview: :class:`HealthReportOperations<azure.mgmt.security.v2023_02_01_preview.operations.HealthReportOperations>`
+        """
+        api_version = self._get_api_version('health_report')
+        if api_version == '2023-02-01-preview':
+            from .v2023_02_01_preview.operations import HealthReportOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'health_report'".format(api_version))
+        self._config.api_version = api_version
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def health_reports(self):
+        """Instance depends on the API version:
+
+           * 2023-02-01-preview: :class:`HealthReportsOperations<azure.mgmt.security.v2023_02_01_preview.operations.HealthReportsOperations>`
+        """
+        api_version = self._get_api_version('health_reports')
+        if api_version == '2023-02-01-preview':
+            from .v2023_02_01_preview.operations import HealthReportsOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'health_reports'".format(api_version))
         self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
@@ -716,12 +791,15 @@ class SecurityCenter(MultiApiClientMixin, _SDKClient):
 
            * 2018-06-01: :class:`PricingsOperations<azure.mgmt.security.v2018_06_01.operations.PricingsOperations>`
            * 2022-03-01: :class:`PricingsOperations<azure.mgmt.security.v2022_03_01.operations.PricingsOperations>`
+           * 2023-01-01: :class:`PricingsOperations<azure.mgmt.security.v2023_01_01.operations.PricingsOperations>`
         """
         api_version = self._get_api_version('pricings')
         if api_version == '2018-06-01':
             from .v2018_06_01.operations import PricingsOperations as OperationClass
         elif api_version == '2022-03-01':
             from .v2022_03_01.operations import PricingsOperations as OperationClass
+        elif api_version == '2023-01-01':
+            from .v2023_01_01.operations import PricingsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'pricings'".format(api_version))
         self._config.api_version = api_version
@@ -840,54 +918,13 @@ class SecurityCenter(MultiApiClientMixin, _SDKClient):
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
-    def security_connector_governance_rule(self):
-        """Instance depends on the API version:
-
-           * 2022-01-01-preview: :class:`SecurityConnectorGovernanceRuleOperations<azure.mgmt.security.v2022_01_01_preview.operations.SecurityConnectorGovernanceRuleOperations>`
-        """
-        api_version = self._get_api_version('security_connector_governance_rule')
-        if api_version == '2022-01-01-preview':
-            from .v2022_01_01_preview.operations import SecurityConnectorGovernanceRuleOperations as OperationClass
-        else:
-            raise ValueError("API version {} does not have operation group 'security_connector_governance_rule'".format(api_version))
-        self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
-
-    @property
-    def security_connector_governance_rules(self):
-        """Instance depends on the API version:
-
-           * 2022-01-01-preview: :class:`SecurityConnectorGovernanceRulesOperations<azure.mgmt.security.v2022_01_01_preview.operations.SecurityConnectorGovernanceRulesOperations>`
-        """
-        api_version = self._get_api_version('security_connector_governance_rules')
-        if api_version == '2022-01-01-preview':
-            from .v2022_01_01_preview.operations import SecurityConnectorGovernanceRulesOperations as OperationClass
-        else:
-            raise ValueError("API version {} does not have operation group 'security_connector_governance_rules'".format(api_version))
-        self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
-
-    @property
-    def security_connector_governance_rules_execute_status(self):
-        """Instance depends on the API version:
-
-           * 2022-01-01-preview: :class:`SecurityConnectorGovernanceRulesExecuteStatusOperations<azure.mgmt.security.v2022_01_01_preview.operations.SecurityConnectorGovernanceRulesExecuteStatusOperations>`
-        """
-        api_version = self._get_api_version('security_connector_governance_rules_execute_status')
-        if api_version == '2022-01-01-preview':
-            from .v2022_01_01_preview.operations import SecurityConnectorGovernanceRulesExecuteStatusOperations as OperationClass
-        else:
-            raise ValueError("API version {} does not have operation group 'security_connector_governance_rules_execute_status'".format(api_version))
-        self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
-
-    @property
     def security_connectors(self):
         """Instance depends on the API version:
 
            * 2021-07-01-preview: :class:`SecurityConnectorsOperations<azure.mgmt.security.v2021_07_01_preview.operations.SecurityConnectorsOperations>`
            * 2022-05-01-preview: :class:`SecurityConnectorsOperations<azure.mgmt.security.v2022_05_01_preview.operations.SecurityConnectorsOperations>`
            * 2022-08-01-preview: :class:`SecurityConnectorsOperations<azure.mgmt.security.v2022_08_01_preview.operations.SecurityConnectorsOperations>`
+           * 2023-03-01-preview: :class:`SecurityConnectorsOperations<azure.mgmt.security.v2023_03_01_preview.operations.SecurityConnectorsOperations>`
         """
         api_version = self._get_api_version('security_connectors')
         if api_version == '2021-07-01-preview':
@@ -896,6 +933,8 @@ class SecurityCenter(MultiApiClientMixin, _SDKClient):
             from .v2022_05_01_preview.operations import SecurityConnectorsOperations as OperationClass
         elif api_version == '2022-08-01-preview':
             from .v2022_08_01_preview.operations import SecurityConnectorsOperations as OperationClass
+        elif api_version == '2023-03-01-preview':
+            from .v2023_03_01_preview.operations import SecurityConnectorsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'security_connectors'".format(api_version))
         self._config.api_version = api_version
@@ -912,6 +951,20 @@ class SecurityCenter(MultiApiClientMixin, _SDKClient):
             from .v2017_08_01_preview.operations import SecurityContactsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'security_contacts'".format(api_version))
+        self._config.api_version = api_version
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def security_operators(self):
+        """Instance depends on the API version:
+
+           * 2023-01-01-preview: :class:`SecurityOperatorsOperations<azure.mgmt.security.v2023_01_01_preview.operations.SecurityOperatorsOperations>`
+        """
+        api_version = self._get_api_version('security_operators')
+        if api_version == '2023-01-01-preview':
+            from .v2023_01_01_preview.operations import SecurityOperatorsOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'security_operators'".format(api_version))
         self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
@@ -996,10 +1049,13 @@ class SecurityCenter(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2020-07-01-preview: :class:`SqlVulnerabilityAssessmentBaselineRulesOperations<azure.mgmt.security.v2020_07_01_preview.operations.SqlVulnerabilityAssessmentBaselineRulesOperations>`
+           * 2023-02-01-preview: :class:`SqlVulnerabilityAssessmentBaselineRulesOperations<azure.mgmt.security.v2023_02_01_preview.operations.SqlVulnerabilityAssessmentBaselineRulesOperations>`
         """
         api_version = self._get_api_version('sql_vulnerability_assessment_baseline_rules')
         if api_version == '2020-07-01-preview':
             from .v2020_07_01_preview.operations import SqlVulnerabilityAssessmentBaselineRulesOperations as OperationClass
+        elif api_version == '2023-02-01-preview':
+            from .v2023_02_01_preview.operations import SqlVulnerabilityAssessmentBaselineRulesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'sql_vulnerability_assessment_baseline_rules'".format(api_version))
         self._config.api_version = api_version
@@ -1010,10 +1066,13 @@ class SecurityCenter(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2020-07-01-preview: :class:`SqlVulnerabilityAssessmentScanResultsOperations<azure.mgmt.security.v2020_07_01_preview.operations.SqlVulnerabilityAssessmentScanResultsOperations>`
+           * 2023-02-01-preview: :class:`SqlVulnerabilityAssessmentScanResultsOperations<azure.mgmt.security.v2023_02_01_preview.operations.SqlVulnerabilityAssessmentScanResultsOperations>`
         """
         api_version = self._get_api_version('sql_vulnerability_assessment_scan_results')
         if api_version == '2020-07-01-preview':
             from .v2020_07_01_preview.operations import SqlVulnerabilityAssessmentScanResultsOperations as OperationClass
+        elif api_version == '2023-02-01-preview':
+            from .v2023_02_01_preview.operations import SqlVulnerabilityAssessmentScanResultsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'sql_vulnerability_assessment_scan_results'".format(api_version))
         self._config.api_version = api_version
@@ -1024,10 +1083,13 @@ class SecurityCenter(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2020-07-01-preview: :class:`SqlVulnerabilityAssessmentScansOperations<azure.mgmt.security.v2020_07_01_preview.operations.SqlVulnerabilityAssessmentScansOperations>`
+           * 2023-02-01-preview: :class:`SqlVulnerabilityAssessmentScansOperations<azure.mgmt.security.v2023_02_01_preview.operations.SqlVulnerabilityAssessmentScansOperations>`
         """
         api_version = self._get_api_version('sql_vulnerability_assessment_scans')
         if api_version == '2020-07-01-preview':
             from .v2020_07_01_preview.operations import SqlVulnerabilityAssessmentScansOperations as OperationClass
+        elif api_version == '2023-02-01-preview':
+            from .v2023_02_01_preview.operations import SqlVulnerabilityAssessmentScansOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'sql_vulnerability_assessment_scans'".format(api_version))
         self._config.api_version = api_version
@@ -1044,20 +1106,6 @@ class SecurityCenter(MultiApiClientMixin, _SDKClient):
             from .v2019_01_01_preview.operations import SubAssessmentsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'sub_assessments'".format(api_version))
-        self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
-
-    @property
-    def subscription_governance_rules_execute_status(self):
-        """Instance depends on the API version:
-
-           * 2022-01-01-preview: :class:`SubscriptionGovernanceRulesExecuteStatusOperations<azure.mgmt.security.v2022_01_01_preview.operations.SubscriptionGovernanceRulesExecuteStatusOperations>`
-        """
-        api_version = self._get_api_version('subscription_governance_rules_execute_status')
-        if api_version == '2022-01-01-preview':
-            from .v2022_01_01_preview.operations import SubscriptionGovernanceRulesExecuteStatusOperations as OperationClass
-        else:
-            raise ValueError("API version {} does not have operation group 'subscription_governance_rules_execute_status'".format(api_version))
         self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 

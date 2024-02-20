@@ -1,18 +1,18 @@
 # Using the CertificateCredential
 
-Applications which execute in a protected environment can authenticate using a client assertion signed by a private key whose public key or root certificate is registered with AAD. The Azure.Identity library provides the `CertificateCredential` for applications choosing to authenticate this way. Below are some examples of how applications can utilize the `CertificateCredential` to authenticate clients.
+Applications which execute in a protected environment can authenticate using a client assertion signed by a private key whose public key or root certificate is registered with Microsoft Entra ID. The `azure-identity` library provides the `CertificateCredential` for applications choosing to authenticate this way. Below are some examples of how applications can utilize the `CertificateCredential` to authenticate clients.
 
 
 ## Loading certificates from disk
 
 Applications commonly need to load a client certificate from disk. One approach is for the application to construct the `CertificateCredential` by specifying the application's tenant ID, client ID, and the path to the certificate.
 
-```py
+```python
 credential = CertificateCredential(tenant_id, client_id, "./certs/cert.pfx")
 ```
 Alternatively, the application can load the certificate itself, such as in the following example.
 
-```py
+```python
 certificate_data = open(CERT_PATH, "rb").read()
 
 credential = CertificateCredential(tenant_id, client_id, certificate_data=certificate_data)
@@ -28,7 +28,7 @@ However, if an application wants to roll this certificate without creating new s
 
 If the application gets notified of certificate rotations and it can directly respond, it might choose to wrap the `CertificateCredential` in a custom credential which provides a means for rotating the certificate. 
 
-```py
+```python
 class RotatableCertificateCredential(object):
     def __init__(self, tenant_id, client_id, certificate_path=None, **kwargs):
         self._tenant_id = tenant_id
@@ -47,7 +47,7 @@ The above example shows a custom credential type `RotatableCertificateCredential
 ### Implicit rotation
 Some applications might want to respond to certificate rotations which are external to the application (for instance, if a separate process rotates the certificate by updating it on disk). Here the application create a custom credential which checks for certificate updates when tokens are requested. 
 
-```py
+```python
 class RotatingCertificateCredential(object):
     def __init__(self, tenant_id, client_id, certificate_path=None, **kwargs):
         self._tenant_id = tenant_id

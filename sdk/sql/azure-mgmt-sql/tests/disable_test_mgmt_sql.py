@@ -13,6 +13,7 @@ from devtools_testutils import (
     AzureMgmtTestCase, ResourceGroupPreparer,
     AzureMgmtPreparer, FakeResource
 )
+from devtools_testutils.fake_credentials import FAKE_LOGIN_PASSWORD
 
 
 def get_server_params(location):
@@ -20,7 +21,7 @@ def get_server_params(location):
         'location': 'westus2', #location, # "self.region" is 'west-us' by default
         'version': '12.0',
         'administrator_login': 'mysecretname',
-        'administrator_login_password': 'HusH_Sec4et'
+        'administrator_login_password': FAKE_LOGIN_PASSWORD  # this password may not work -- check when tests are active
     }
 
 

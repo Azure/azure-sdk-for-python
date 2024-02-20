@@ -7,7 +7,7 @@ parent_dir = str(Path(__file__).parent)
 
 
 def generate_dsl_pipeline() -> PipelineJob:
-    environment = "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5"
+    environment = "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
 
     # 1. Construct command job
     train_func = command(

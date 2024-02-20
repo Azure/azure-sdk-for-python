@@ -37,6 +37,7 @@ setup(
     long_description = long_description,
     long_description_content_type = 'text/markdown',
     url = 'https://github.com/Azure/azure-sdk-for-python',
+    keywords="azure, azure sdk",
     author = 'Microsoft Corporation',
     author_email = 'azuresdkengsysadmins@microsoft.com',
 
@@ -68,7 +69,6 @@ setup(
     install_requires = [
         'azure-core<2.0.0,>=1.25.0',
         'msrest>=0.6.21',
-        'six>=1.11.0',
         'python-dateutil>=2.8.0'
     ],
     extras_require = {

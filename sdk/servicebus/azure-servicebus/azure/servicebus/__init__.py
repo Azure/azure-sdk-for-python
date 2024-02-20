@@ -3,8 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from uamqp import constants
-
 from ._version import VERSION
 
 __version__ = VERSION
@@ -23,6 +21,7 @@ from ._common.constants import (
     ServiceBusSubQueue,
     ServiceBusMessageState,
     ServiceBusSessionFilter,
+    TransportType,
     NEXT_AVAILABLE_SESSION,
 )
 from ._common.auto_lock_renewer import AutoLockRenewer
@@ -30,8 +29,6 @@ from ._common._connection_string_parser import (
     parse_connection_string,
     ServiceBusConnectionStringProperties,
 )
-
-TransportType = constants.TransportType
 
 __all__ = [
     "ServiceBusMessage",

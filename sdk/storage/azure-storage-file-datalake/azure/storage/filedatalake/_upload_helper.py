@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=no-self-use
 
 from ._deserialize import (
     process_storage_error)
@@ -41,6 +40,7 @@ def upload_datalake_file(  # pylint: disable=unused-argument
         path_http_headers = kwargs.pop('path_http_headers', None)
         modified_access_conditions = kwargs.pop('modified_access_conditions', None)
         chunk_size = kwargs.pop('chunk_size', 100 * 1024 * 1024)
+        encryption_context = kwargs.pop('encryption_context', None)
 
         if not overwrite:
             # if customers didn't specify access conditions, they cannot flush data to existing file
@@ -57,6 +57,7 @@ def upload_datalake_file(  # pylint: disable=unused-argument
                 modified_access_conditions=modified_access_conditions,
                 umask=umask,
                 permissions=permissions,
+                encryption_context=encryption_context,
                 cls=return_response_headers,
                 **kwargs)
 

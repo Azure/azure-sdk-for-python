@@ -5,4 +5,5 @@ package_pprint_name = "Search Management"
 package_doc_id = "search"
 is_stable = false
 is_arm = true
-sample_link = "search"
+sample_link = ""
+title = "SearchManagementClient"

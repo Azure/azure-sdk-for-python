@@ -1,6 +1,10 @@
+import contextlib
+import dataclasses
 import os
+import shutil
+import tempfile
 from pathlib import Path
-from typing import Callable
+from typing import Callable, List, Tuple
 
 import pytest
 
@@ -8,26 +12,36 @@ from azure.ai.ml._utils._asset_utils import (
     AmlIgnoreFile,
     GitIgnoreFile,
     IgnoreFile,
+    _check_or_modify_auto_delete_setting,
+    _validate_auto_delete_setting_in_data_output,
+    _validate_workspace_managed_datastore,
+    get_directory_size,
     get_ignore_file,
     get_object_hash,
-    traverse_directory,
+    get_upload_files_from_folder,
 )
 from azure.ai.ml._utils.utils import convert_windows_path_to_unix
-
-
-@pytest.fixture
-def gitignore_file_directory() -> str:
-    return "./tests/test_configs/storage/gitignore_only/"
+from azure.ai.ml.constants._common import AutoDeleteCondition
+from azure.ai.ml.entities._assets.auto_delete_setting import AutoDeleteSetting
+from azure.ai.ml.exceptions import AssetPathException, ValidationException
 
 
 @pytest.fixture
 def storage_test_directory() -> str:
-    return "./tests/test_configs/storage/"
+    with tempfile.TemporaryDirectory() as temp_dir:
+        shutil.rmtree(temp_dir)
+        shutil.copytree("./tests/test_configs/storage/", temp_dir)
+        yield temp_dir
 
 
 @pytest.fixture
-def no_ignore_file_directory() -> str:
-    return "./tests/test_configs/storage/dont_include_us/"
+def gitignore_file_directory(storage_test_directory: str) -> str:
+    return os.path.join(storage_test_directory, "gitignore_only")
+
+
+@pytest.fixture
+def no_ignore_file_directory(storage_test_directory: str) -> str:
+    return os.path.join(storage_test_directory, "dont_include_us")
 
 
 @pytest.fixture
@@ -45,36 +59,116 @@ def no_ignore_file(no_ignore_file_directory: str) -> IgnoreFile:
     return IgnoreFile(None)
 
 
-@pytest.fixture
-def target_file_path(storage_test_directory: str) -> os.PathLike:
+def generate_link_file(base_dir: str) -> Tuple[os.PathLike, os.PathLike]:
     target_file_name = "target_file_rand_name.txt"
-    target_file = Path(os.path.join(os.path.abspath(storage_test_directory), target_file_name))
+    target_file = Path(os.path.join(os.path.abspath(base_dir), target_file_name))
     target_file.write_text("some text")
-    target_file = convert_windows_path_to_unix(target_file)
-    yield target_file
 
-    if os.path.exists(target_file):
-        os.remove(target_file)
-
-
-@pytest.fixture
-def link_file_path(
-    storage_test_directory: str, target_file_path: os.PathLike
-) -> os.PathLike:
     link_file_name = "link_file_rand_name.txt"
-    link_file = Path(os.path.join(os.path.abspath(storage_test_directory), link_file_name))
+    link_file = Path(os.path.join(os.path.abspath(base_dir), link_file_name))
 
-    try:
-        os.symlink(target_file_path, link_file)
-    except FileExistsError:
-        pass
+    os.symlink(target_file, link_file)
 
     assert os.path.islink(link_file)
-    link_file = convert_windows_path_to_unix(link_file)
-    yield link_file
+    return convert_windows_path_to_unix(target_file), convert_windows_path_to_unix(link_file)
 
-    if os.path.exists(link_file):
-        os.remove(link_file)
+
+@dataclasses.dataclass
+class SymbolLinkTestCase:
+    target_folder: str
+    link_folder: str
+    temp_folder: str
+    target_file: str = None
+    expected_remote_paths_without_prefix: List[str] = None
+
+    @classmethod
+    @contextlib.contextmanager
+    def _base(cls) -> "SymbolLinkTestCase":
+        with tempfile.TemporaryDirectory() as base_dir:
+            test_case = cls(
+                target_folder=os.path.join(base_dir, "target_folder"),
+                link_folder=os.path.join(base_dir, "link_folder"),
+                temp_folder=os.path.join(base_dir, "temp_folder"),
+            )
+            os.mkdir(test_case.target_folder)
+            os.mkdir(test_case.link_folder)
+            os.mkdir(test_case.temp_folder)
+
+            test_case.target_file = os.path.join(test_case.target_folder, "target_file.txt")
+            with open(test_case.target_file, "w") as f:
+                f.write("file content")
+            yield test_case
+
+    @classmethod
+    @contextlib.contextmanager
+    def intermediate_link(cls) -> "SymbolLinkTestCase":
+        with cls._base() as test_case:
+            Path(test_case.temp_folder, "intermediate_file.txt").symlink_to(test_case.target_file)
+            link_file = os.path.join(test_case.link_folder, "link_file.txt")
+            Path(link_file).symlink_to(os.path.join(test_case.temp_folder, "intermediate_file.txt"))
+            test_case.expected_remote_paths_without_prefix = [
+                "link_file.txt",
+            ]
+            yield test_case
+
+    @classmethod
+    @contextlib.contextmanager
+    def relative_file(cls) -> "SymbolLinkTestCase":
+        with cls._base() as test_case:
+            link_file = os.path.join(test_case.link_folder, "link_file.txt")
+            cur_dir = os.getcwd()
+            os.chdir(test_case.link_folder)
+            os.symlink(src=os.path.relpath(test_case.target_file, test_case.link_folder), dst=link_file)
+            os.chdir(cur_dir)
+            test_case.expected_remote_paths_without_prefix = [
+                "link_file.txt",
+            ]
+            yield test_case
+
+    @classmethod
+    @contextlib.contextmanager
+    def relative_folder(cls) -> "SymbolLinkTestCase":
+        with cls._base() as test_case:
+            link_path = os.path.join(test_case.link_folder, "link_folder")
+            cur_dir = os.getcwd()
+            os.chdir(test_case.link_folder)
+            os.symlink(src=os.path.relpath(test_case.target_folder, test_case.link_folder), dst=link_path)
+            os.chdir(cur_dir)
+            test_case.expected_remote_paths_without_prefix = [
+                "link_folder/target_file.txt",
+            ]
+            yield test_case
+
+    @classmethod
+    @contextlib.contextmanager
+    def relative_intermediate_folder(cls) -> "SymbolLinkTestCase":
+        with cls._base() as test_case:
+            cur_dir = os.getcwd()
+            temp_base = os.path.join(test_case.temp_folder, "sub_folder")
+            os.mkdir(temp_base)
+            inter_folder = os.path.join(temp_base, "inter")
+            os.chdir(temp_base)
+            os.symlink(src=os.path.relpath(test_case.target_folder, temp_base), dst=inter_folder)
+
+            link_path = os.path.join(test_case.link_folder, "link_folder")
+            os.chdir(test_case.link_folder)
+            os.symlink(src=os.path.relpath(temp_base, test_case.link_folder), dst=link_path)
+            os.chdir(cur_dir)
+            test_case.expected_remote_paths_without_prefix = [
+                "link_folder/inter/target_file.txt",
+            ]
+            yield test_case
+
+    @classmethod
+    @contextlib.contextmanager
+    def basic_file(cls) -> "SymbolLinkTestCase":
+        with cls._base() as test_case:
+            link_file = os.path.join(test_case.link_folder, "link_file.txt")
+            os.symlink(src=test_case.target_file, dst=link_file)
+            test_case.expected_remote_paths_without_prefix = [
+                "link_file.txt",
+            ]
+            yield test_case
 
 
 @pytest.mark.unittest
@@ -116,20 +210,21 @@ class TestAssetUtils:
         source_path = Path(storage_test_directory).resolve()
         prefix = source_path.name + "/"
 
-        amlignore_upload_paths = []
-        gitignore_upload_paths = []
-        no_ignore_upload_paths = []
-
-        for root, _, files in os.walk(source_path, followlinks=True):
-            amlignore_upload_paths += list(
-                traverse_directory(root, files, source_path, prefix, ignore_file=amlignore_file)
-            )
-            gitignore_upload_paths += list(
-                traverse_directory(root, files, source_path, prefix, ignore_file=gitignore_file)
-            )
-            no_ignore_upload_paths += list(
-                traverse_directory(root, files, source_path, prefix, ignore_file=no_ignore_file)
-            )
+        amlignore_upload_paths = get_upload_files_from_folder(
+            source_path,
+            prefix=prefix,
+            ignore_file=amlignore_file,
+        )
+        gitignore_upload_paths = get_upload_files_from_folder(
+            source_path,
+            prefix=prefix,
+            ignore_file=gitignore_file,
+        )
+        no_ignore_upload_paths = get_upload_files_from_folder(
+            source_path,
+            prefix=prefix,
+            ignore_file=no_ignore_file,
+        )
 
         assert len(no_ignore_upload_paths) == 7
         assert len(gitignore_upload_paths) == 6
@@ -138,10 +233,10 @@ class TestAssetUtils:
     def test_upload_paths_match(self, storage_test_directory: str) -> None:
         source_path = Path(storage_test_directory).resolve()
         prefix = source_path.name + "/"
-        upload_paths = []
-
-        for root, _, files in os.walk(source_path, followlinks=True):
-            upload_paths += list(traverse_directory(root, files, source_path, prefix))
+        upload_paths = get_upload_files_from_folder(
+            source_path,
+            prefix=prefix,
+        )
 
         for local_path, remote_path in upload_paths:
             remote_path = remote_path.split("/", 2)[-1]  # strip LocalUpload/<asset id> prefix
@@ -149,31 +244,103 @@ class TestAssetUtils:
                 continue
             assert remote_path in local_path
 
-    def test_symlinks_included_in_hash(self, target_file_path: os.PathLike, link_file_path: os.PathLike) -> None:
-        """Confirm that changes in the original file are respected when the symlink is hashed"""
-
-        # hash symlink, update original file, hash symlink again and compare hashes
-        original_hash = get_object_hash(path=link_file_path, ignore_file=no_ignore_file)
-        Path(target_file_path).write_text("some more text")
-        updated_hash = get_object_hash(path=link_file_path, ignore_file=no_ignore_file)
-        assert original_hash != updated_hash
-
-    def test_symlink_upload_paths(
-        self, storage_test_directory: str, target_file_path: os.PathLike, link_file_path: os.PathLike
+    @pytest.mark.parametrize(
+        "create_test_case",
+        [
+            pytest.param(SymbolLinkTestCase.basic_file, id="basic_file"),
+            pytest.param(SymbolLinkTestCase.intermediate_link, id="intermediate_link"),
+            pytest.param(SymbolLinkTestCase.relative_file, id="relative_file"),
+            pytest.param(SymbolLinkTestCase.relative_folder, id="relative_folder"),
+            pytest.param(SymbolLinkTestCase.relative_intermediate_folder, id="relative_intermediate_folder"),
+        ],
+    )
+    def test_symlinks_included_in_hash(
+        self, create_test_case: Callable[[], SymbolLinkTestCase], no_ignore_file: IgnoreFile
     ) -> None:
+        """Confirm that changes in the original file are respected when the symlink is hashed"""
+        with create_test_case() as test_case:
+            # hash symlink, update original file, hash symlink again and compare hashes
+            original_hash = get_object_hash(path=test_case.link_folder, ignore_file=no_ignore_file)
+            Path(test_case.target_file).write_text("some more text")
+            updated_hash = get_object_hash(path=test_case.link_folder, ignore_file=no_ignore_file)
+            assert original_hash != updated_hash
+
+    @pytest.mark.parametrize(
+        "create_test_case",
+        [
+            pytest.param(SymbolLinkTestCase.basic_file, id="basic_file"),
+            pytest.param(SymbolLinkTestCase.intermediate_link, id="intermediate_link"),
+            pytest.param(SymbolLinkTestCase.relative_file, id="relative_file"),
+            pytest.param(SymbolLinkTestCase.relative_folder, id="relative_folder"),
+            pytest.param(SymbolLinkTestCase.relative_intermediate_folder, id="relative_intermediate_folder"),
+        ],
+    )
+    def test_symlink_upload_paths(self, create_test_case: Callable[[], SymbolLinkTestCase]) -> None:
         """Confirm that symlink name is preserved for upload to storage, but that target file's path is uploaded
 
         e.g given a file ./dir/foo/bar.txt with a symlink ./other_dir/bar_link.txt, we want to upload the contents of ./dir/food/bar.txt at path ./other_dir/bar_link.txt in the remote storage.
         """
-        source_path = Path(storage_test_directory).resolve()
-        prefix = source_path.name + "/"
-        upload_paths_list = []
+        prefix = "random_prefix/"
+        with create_test_case() as test_case:
+            upload_paths_list = get_upload_files_from_folder(
+                test_case.link_folder,
+                prefix=prefix,
+            )
 
-        for root, _, files in os.walk(source_path, followlinks=True):
-            upload_paths_list += list(traverse_directory(root, files, source_path, prefix))
+            local_paths = [i for i, _ in upload_paths_list]
+            remote_paths = [j for _, j in upload_paths_list]
 
-        local_paths = [i for i, _ in upload_paths_list]
-        remote_paths = [j for _, j in upload_paths_list]
+            # When username is too long, temp folder path will be truncated, e.g. longusername -> LONGUS~
+            # so resolve target_file_path to get the full path
+            assert Path(test_case.target_file).resolve().as_posix() in local_paths
+            # remote file names are relative to root and include the prefix
+            assert list(sorted(remote_paths)) == list(
+                sorted([prefix + p for p in test_case.expected_remote_paths_without_prefix])
+            )
 
-        assert target_file_path in local_paths
-        assert any([rp in link_file_path for rp in remote_paths])  # remote file names are relative
+    def test_directory_size_with_ignore_file(self, storage_test_directory: str, amlignore_file: AmlIgnoreFile) -> None:
+        base_size = get_directory_size(storage_test_directory)
+        with_ignore_size = get_directory_size(storage_test_directory, ignore_file=amlignore_file)
+
+        # Note, the [1] index is the number of files counted in the directory size calculation.
+        # The [0] index is the sum file size, which we don't check here due to how instable that
+        # value is across systems/builds.
+        # Directory size calculated with ignore file should include less files
+        assert len(with_ignore_size[1]) < len(base_size[1])
+
+        # Directory size calculated after symlink creation should correctly include linked file size,
+        # and count symlink file itself towards file count.
+        _, _ = generate_link_file(storage_test_directory)
+        with_symlink_size = get_directory_size(storage_test_directory)
+        assert len(with_symlink_size[1]) == len(base_size[1]) + 2
+
+    def test_check_or_modify_auto_delete_setting(self):
+        _check_or_modify_auto_delete_setting(None)
+
+        setting = {"condition": "created_greater_than"}
+        _check_or_modify_auto_delete_setting(setting)
+        assert setting["condition"] == "createdGreaterThan"
+
+        setting = AutoDeleteSetting(condition=AutoDeleteCondition.CREATED_GREATER_THAN)
+        _check_or_modify_auto_delete_setting(setting)
+        assert setting.condition == "createdGreaterThan"
+
+    def test_validate_auto_delete_setting_in_data_output(self):
+        with pytest.raises(ValidationException):
+            _validate_auto_delete_setting_in_data_output({"value": "30d"})
+
+        _validate_auto_delete_setting_in_data_output(None)
+        _validate_auto_delete_setting_in_data_output({})
+
+    def test_validate_workspace_managed_datastore(self):
+        with pytest.raises(AssetPathException):
+            _validate_workspace_managed_datastore("azureml://datastores/workspacemanageddatastore/123")
+
+        path = _validate_workspace_managed_datastore("azureml://datastores/workspacemanageddatastore")
+        assert path == "azureml://datastores/workspacemanageddatastore/paths"
+
+        path = _validate_workspace_managed_datastore("azureml://datastores/workspacemanageddatastore/")
+        assert path == "azureml://datastores/workspacemanageddatastore/paths"
+
+        path = _validate_workspace_managed_datastore("azureml://datastores/workspacemanageddatastore123")
+        assert path == "azureml://datastores/workspacemanageddatastore123"

@@ -1,0 +1,61 @@
+{% set name = "azure-ai-language-questionanswering" %}
+
+package:
+  name: "{{ name|lower }}"
+  version: {{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+
+source:
+  url: {{ environ.get('COGNITIVELANGUAGE_SOURCE_DISTRIBUTION', '') }}
+
+build:
+  noarch: python
+  number: 0
+  script: "{{ PYTHON }} -m pip install . -vv"
+
+requirements:
+  host:
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - pip
+    - python
+    - six
+    - requests-oauthlib >=0.5.0
+    - aiohttp
+    - isodate
+  run:
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - python
+    - six
+    - requests-oauthlib >=0.5.0
+    - aiohttp
+    - isodate
+
+test:
+  imports:
+    - azure.ai.language.questionanswering
+    - azure.ai.language.questionanswering.aio
+    - azure.ai.language.questionanswering.models
+
+about:
+  home: "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-questionanswering"
+  license: MIT
+  license_family: MIT
+  license_file: 
+  summary: "Microsoft Azure Question Answering Client Library for Python"
+  description: |
+    Question Answering is a cloud-based API service that lets you create a conversational 
+    question-and-answer layer over your existing data. Use it to build a knowledge base 
+    by extracting questions and answers from your semi-structured content, including FAQ, 
+    manuals, and documents. Answer users’ questions with the best answers from the QnAs 
+    in your knowledge base automatically. Your knowledge base gets smarter, too, as it 
+    continually learns from users' behavior.
+    Please see https://aka.ms/azsdk/conda/releases/questionanswering for version details.
+  doc_url: 
+  dev_url: 
+
+extra:
+  recipe-maintainers:
+    - xiangyan99

@@ -4,11 +4,7 @@
 # ------------------------------------
 
 import pytest
-
-try:
-    from unittest import mock
-except ImportError:
-    import mock
+from unittest import mock
 
 from azure.search.documents._generated.models import (
     AutocompleteRequest,
@@ -19,7 +15,7 @@ from azure.search.documents._generated.models import (
 from azure.search.documents._queries import AutocompleteQuery, SuggestQuery, SearchQuery
 
 
-class TestAutocompleteQuery(object):
+class TestAutocompleteQuery:
     def test_init(self):
         query = AutocompleteQuery(search_text="text", suggester_name="sg")
         assert type(query.request) is AutocompleteRequest
@@ -46,15 +42,13 @@ class TestAutocompleteQuery(object):
         query.filter("expr0")
         assert query.request.filter == "expr0"
 
-        query = AutocompleteQuery(
-            search_text="text", suggester_name="sg", filter="expr1"
-        )
+        query = AutocompleteQuery(search_text="text", suggester_name="sg", filter="expr1")
         assert query.request.filter == "expr1"
         query.filter("expr2")
         assert query.request.filter == "expr2"
 
 
-class TestSearchQuery(object):
+class TestSearchQuery:
     def test_init(self):
         query = SearchQuery()
         assert type(query.request) is SearchRequest
@@ -138,7 +132,7 @@ class TestSearchQuery(object):
             assert str(e) == "At least one field must be provided"
 
 
-class TestSuggestQuery(object):
+class TestSuggestQuery:
     def test_init(self):
         query = SuggestQuery(search_text="text", suggester_name="sg")
         assert type(query.request) is SuggestRequest

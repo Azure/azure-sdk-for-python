@@ -1,4 +1,4 @@
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 #
 # Copyright (c) Microsoft Corporation. All rights reserved.
 #
@@ -22,7 +22,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 #
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 import json
 import os.path
 import sys
@@ -31,15 +31,10 @@ import pytest
 
 CWD = os.path.dirname(__file__)
 
-# Ignore collection of async tests for Python 2
-collect_ignore = []
-if sys.version_info < (3, 5):
-    collect_ignore.append("asynctests")
-
 
 def pytest_addoption(parser):
-    parser.addoption("--runslow", action="store_true",
-                     default=False, help="run slow tests")
+    parser.addoption("--runslow", action="store_true", default=False, help="run slow tests")
+
 
 def pytest_collection_modifyitems(config, items):
     if config.getoption("--runslow"):
@@ -58,6 +53,4 @@ def user_password():
         with open(filepath, "r") as fd:
             userpass = json.load(fd)["userpass"]
             return userpass["user"], userpass["password"]
-    raise ValueError("Create a {} file with a 'userpass' key and two keys 'user' and 'password'".format(
-        filepath
-    ))
+    raise ValueError("Create a {} file with a 'userpass' key and two keys 'user' and 'password'".format(filepath))

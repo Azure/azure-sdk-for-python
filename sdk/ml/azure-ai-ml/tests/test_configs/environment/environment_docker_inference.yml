@@ -2,7 +2,7 @@ name: TestEnv
 version: 1
 conda_file: environment_files/environment.yml
 os_type: Linux
-image: mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04
+image: mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04
 inference_config:
   scoring_route:
     port: 5001

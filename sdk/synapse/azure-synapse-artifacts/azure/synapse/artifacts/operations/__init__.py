@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from ._link_connection_operations import LinkConnectionOperations
+from ._run_notebook_operations import RunNotebookOperations
 from ._kql_scripts_operations import KqlScriptsOperations
 from ._kql_script_operations import KqlScriptOperations
 from ._metastore_operations import MetastoreOperations
@@ -31,11 +32,12 @@ from ._trigger_run_operations import TriggerRunOperations
 from ._workspace_operations import WorkspaceOperations
 
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "LinkConnectionOperations",
+    "RunNotebookOperations",
     "KqlScriptsOperations",
     "KqlScriptOperations",
     "MetastoreOperations",

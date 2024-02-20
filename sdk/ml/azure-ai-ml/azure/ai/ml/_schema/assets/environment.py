@@ -2,14 +2,20 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=unused-argument,no-self-use
+# pylint: disable=unused-argument
 
 import logging
 
 from marshmallow import ValidationError, fields, post_load, pre_dump, pre_load
 
-from azure.ai.ml._restclient.v2022_05_01.models import InferenceContainerProperties, OperatingSystemType, Route
-from azure.ai.ml._schema.core.fields import NestedField, UnionField
+from azure.ai.ml._restclient.v2022_05_01.models import (
+    InferenceContainerProperties,
+    OperatingSystemType,
+    Route,
+)
+from azure.ai.ml._schema.core.fields import ExperimentalField, NestedField, UnionField, LocalPathField
+from azure.ai.ml._schema.core.intellectual_property import IntellectualPropertySchema
+
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 from azure.ai.ml.constants._common import (
     ANONYMOUS_ENV_NAME,
@@ -27,7 +33,13 @@ module_logger = logging.getLogger(__name__)
 
 class BuildContextSchema(metaclass=PatchedSchemaMeta):
     dockerfile_path = fields.Str()
-    path = fields.Str()
+    path = UnionField(
+        [
+            LocalPathField(),
+            # build context also support http url
+            fields.URL(),
+        ]
+    )
 
     @post_load
     def make(self, data, **kwargs):
@@ -73,7 +85,14 @@ class _BaseEnvironmentSchema(AssetSchema):
         allowed_values=[OperatingSystemType.Linux, OperatingSystemType.Windows],
         required=False,
     )
-    datastore = fields.Str(metadata={"description": "Name of the datastore to upload to."}, required=False)
+    datastore = fields.Str(
+        metadata={
+            "description": "Name of the datastore to upload to.",
+            "arm_type": AzureMLResourceType.DATASTORE,
+        },
+        required=False,
+    )
+    intellectual_property = ExperimentalField(NestedField(IntellectualPropertySchema), dump_only=True)
 
     @pre_load
     def pre_load(self, data, **kwargs):
@@ -91,6 +110,10 @@ class _BaseEnvironmentSchema(AssetSchema):
         from azure.ai.ml.entities._assets import Environment
 
         if isinstance(data, Environment):
+            if data._intellectual_property:  # pylint: disable=protected-access
+                ipp_field = data._intellectual_property  # pylint: disable=protected-access
+                if ipp_field:
+                    setattr(data, "intellectual_property", ipp_field)
             return data
         if data is None or not hasattr(data, "get"):
             raise ValidationError("Environment cannot be None")
@@ -105,7 +128,7 @@ class _BaseEnvironmentSchema(AssetSchema):
         except FileNotFoundError as e:
             # Environment.__init__() will raise FileNotFoundError if build.path is not found when trying to calculate
             # the hash for anonymous. Raise ValidationError instead to collect all errors in schema validation.
-            raise ValidationError("Environment file not found: {}".format(e))
+            raise ValidationError("Environment file not found: {}".format(e)) from e
         return obj
 
 
@@ -116,14 +139,13 @@ class EnvironmentSchema(_BaseEnvironmentSchema):
 
 class AnonymousEnvironmentSchema(_BaseEnvironmentSchema, AnonymousAssetSchema):
     @pre_load
+    # pylint: disable-next=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
     def trim_dump_only(self, data, **kwargs):
-        """trim_dump_only in PathAwareSchema removes all properties which are
-        dump only.
+        """trim_dump_only in PathAwareSchema removes all properties which are dump only.
 
-        By the time we reach this schema name and version properties are
-        removed so no warning is shown. This method overrides
-        trim_dump_only in PathAwareSchema to check for name and version
-        and raise warning if present. And then calls the it
+        By the time we reach this schema name and version properties are removed so no warning is shown. This method
+        overrides trim_dump_only in PathAwareSchema to check for name and version and raise warning if present. And then
+        calls the it
         """
         if isinstance(data, str) or data is None:
             return data
@@ -132,6 +154,7 @@ class AnonymousEnvironmentSchema(_BaseEnvironmentSchema, AnonymousAssetSchema):
         # CliV2AnonymousEnvironment is a default name for anonymous environment
         if name is not None and name != ANONYMOUS_ENV_NAME:
             module_logger.warning(
-                "Warning: the provided asset name '%s' will not be used for anonymous registration", name
+                "Warning: the provided asset name '%s' will not be used for anonymous registration",
+                name,
             )
         return super(AnonymousEnvironmentSchema, self).trim_dump_only(data, **kwargs)

@@ -48,7 +48,7 @@ class CommonResourceProperties(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -67,7 +67,7 @@ class CreateGenericQuotaRequestParameters(_serialization.Model):
         "value": {"key": "value", "type": "[CurrentQuotaLimitBase]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.CurrentQuotaLimitBase"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.CurrentQuotaLimitBase"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: Quota change requests.
         :paramtype value: list[~azure.mgmt.quota.models.CurrentQuotaLimitBase]
@@ -105,7 +105,7 @@ class CurrentQuotaLimitBase(_serialization.Model):
         "properties": {"key": "properties", "type": "QuotaProperties"},
     }
 
-    def __init__(self, *, properties: Optional["_models.QuotaProperties"] = None, **kwargs):
+    def __init__(self, *, properties: Optional["_models.QuotaProperties"] = None, **kwargs: Any) -> None:
         """
         :keyword properties: Quota properties for the specified resource, based on the API called,
          Quotas or Usages.
@@ -146,7 +146,7 @@ class CurrentUsagesBase(_serialization.Model):
         "properties": {"key": "properties", "type": "UsagesProperties"},
     }
 
-    def __init__(self, *, properties: Optional["_models.UsagesProperties"] = None, **kwargs):
+    def __init__(self, *, properties: Optional["_models.UsagesProperties"] = None, **kwargs: Any) -> None:
         """
         :keyword properties: Usage properties for the specified resource.
         :paramtype properties: ~azure.mgmt.quota.models.UsagesProperties
@@ -169,7 +169,7 @@ class ExceptionResponse(_serialization.Model):
         "error": {"key": "error", "type": "ServiceError"},
     }
 
-    def __init__(self, *, error: Optional["_models.ServiceError"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.ServiceError"] = None, **kwargs: Any) -> None:
         """
         :keyword error: API error details.
         :paramtype error: ~azure.mgmt.quota.models.ServiceError
@@ -200,10 +200,10 @@ class LimitJsonObject(_serialization.Model):
 
     _subtype_map = {"limit_object_type": {"LimitValue": "LimitObject"}}
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.limit_object_type = None  # type: Optional[str]
+        self.limit_object_type: Optional[str] = None
 
 
 class LimitObject(LimitJsonObject):
@@ -231,7 +231,9 @@ class LimitObject(LimitJsonObject):
         "limit_type": {"key": "limitType", "type": "str"},
     }
 
-    def __init__(self, *, value: int, limit_type: Optional[Union[str, "_models.QuotaLimitTypes"]] = None, **kwargs):
+    def __init__(
+        self, *, value: int, limit_type: Optional[Union[str, "_models.QuotaLimitTypes"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The quota/limit value. Required.
         :paramtype value: int
@@ -240,7 +242,7 @@ class LimitObject(LimitJsonObject):
         :paramtype limit_type: str or ~azure.mgmt.quota.models.QuotaLimitTypes
         """
         super().__init__(**kwargs)
-        self.limit_object_type = "LimitValue"  # type: str
+        self.limit_object_type: str = "LimitValue"
         self.value = value
         self.limit_type = limit_type
 
@@ -272,8 +274,8 @@ class OperationDisplay(_serialization.Model):
         resource: Optional[str] = None,
         operation: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider: Provider name.
         :paramtype provider: str
@@ -306,8 +308,12 @@ class OperationList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.OperationResponse"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.OperationResponse"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value:
         :paramtype value: list[~azure.mgmt.quota.models.OperationResponse]
@@ -342,8 +348,8 @@ class OperationResponse(_serialization.Model):
         name: Optional[str] = None,
         display: Optional["_models.OperationDisplay"] = None,
         origin: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name:
         :paramtype name: str
@@ -378,8 +384,8 @@ class QuotaLimits(_serialization.Model):
         *,
         value: Optional[List["_models.CurrentQuotaLimitBase"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of quota limits.
         :paramtype value: list[~azure.mgmt.quota.models.CurrentQuotaLimitBase]
@@ -412,8 +418,8 @@ class QuotaLimitsResponse(_serialization.Model):
         *,
         value: Optional[List["_models.CurrentQuotaLimitBase"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of quota limits with the quota request status.
         :paramtype value: list[~azure.mgmt.quota.models.CurrentQuotaLimitBase]
@@ -439,7 +445,7 @@ class QuotaProperties(_serialization.Model):
     :ivar name: Resource name provided by the resource provider. Use this property name when
      requesting quota.
     :vartype name: ~azure.mgmt.quota.models.ResourceName
-    :ivar resource_type: Resource type name.
+    :ivar resource_type: The name of the resource type. Optional field.
     :vartype resource_type: str
     :ivar quota_period: The time period over which the quota usage values are summarized. For
      example:
@@ -476,15 +482,15 @@ class QuotaProperties(_serialization.Model):
         name: Optional["_models.ResourceName"] = None,
         resource_type: Optional[str] = None,
         properties: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword limit: Resource quota limit properties.
         :paramtype limit: ~azure.mgmt.quota.models.LimitJsonObject
         :keyword name: Resource name provided by the resource provider. Use this property name when
          requesting quota.
         :paramtype name: ~azure.mgmt.quota.models.ResourceName
-        :keyword resource_type: Resource type name.
+        :keyword resource_type: The name of the resource type. Optional field.
         :paramtype resource_type: str
         :keyword properties: Additional properties for the specific resource provider.
         :paramtype properties: JSON
@@ -549,8 +555,8 @@ class QuotaRequestDetails(_serialization.Model):
         *,
         error: Optional["_models.ServiceErrorDetail"] = None,
         value: Optional[List["_models.SubRequest"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword error: Error details of the quota request.
         :paramtype error: ~azure.mgmt.quota.models.ServiceErrorDetail
@@ -584,8 +590,12 @@ class QuotaRequestDetailsList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.QuotaRequestDetails"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.QuotaRequestDetails"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: Quota request details.
         :paramtype value: list[~azure.mgmt.quota.models.QuotaRequestDetails]
@@ -627,7 +637,7 @@ class QuotaRequestOneResourceSubmitResponse(_serialization.Model):  # pylint: di
     :ivar name_properties_name: Resource name provided by the resource provider. Use this property
      name when requesting quota.
     :vartype name_properties_name: ~azure.mgmt.quota.models.ResourceName
-    :ivar resource_type: Resource type name.
+    :ivar resource_type: The name of the resource type. Optional field.
     :vartype resource_type: str
     :ivar quota_period: The time period over which the quota usage values are summarized. For
      example:
@@ -682,8 +692,8 @@ class QuotaRequestOneResourceSubmitResponse(_serialization.Model):  # pylint: di
         resource_type: Optional[str] = None,
         error: Optional["_models.ServiceErrorDetail"] = None,
         properties: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword limit: Resource quota limit properties.
         :paramtype limit: ~azure.mgmt.quota.models.LimitObject
@@ -693,7 +703,7 @@ class QuotaRequestOneResourceSubmitResponse(_serialization.Model):  # pylint: di
         :keyword name_properties_name: Resource name provided by the resource provider. Use this
          property name when requesting quota.
         :paramtype name_properties_name: ~azure.mgmt.quota.models.ResourceName
-        :keyword resource_type: Resource type name.
+        :keyword resource_type: The name of the resource type. Optional field.
         :paramtype resource_type: str
         :keyword error: Error details of the quota request.
         :paramtype error: ~azure.mgmt.quota.models.ServiceErrorDetail
@@ -756,8 +766,8 @@ class QuotaRequestProperties(_serialization.Model):
         *,
         error: Optional["_models.ServiceErrorDetail"] = None,
         value: Optional[List["_models.SubRequest"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword error: Error details of the quota request.
         :paramtype error: ~azure.mgmt.quota.models.ServiceErrorDetail
@@ -800,7 +810,7 @@ class QuotaRequestSubmitResponse(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, *, properties: Optional["_models.QuotaRequestProperties"] = None, **kwargs):
+    def __init__(self, *, properties: Optional["_models.QuotaRequestProperties"] = None, **kwargs: Any) -> None:
         """
         :keyword properties: Quota request details.
         :paramtype properties: ~azure.mgmt.quota.models.QuotaRequestProperties
@@ -839,7 +849,7 @@ class QuotaRequestSubmitResponse202(_serialization.Model):  # pylint: disable=to
     :ivar name_properties_name: Resource name provided by the resource provider. Use this property
      name when requesting quota.
     :vartype name_properties_name: ~azure.mgmt.quota.models.ResourceName
-    :ivar resource_type: Resource type name.
+    :ivar resource_type: The name of the resource type. Optional field.
     :vartype resource_type: str
     :ivar quota_period: The time period over which the quota usage values are summarized. For
      example:
@@ -882,8 +892,8 @@ class QuotaRequestSubmitResponse202(_serialization.Model):  # pylint: disable=to
         name_properties_name: Optional["_models.ResourceName"] = None,
         resource_type: Optional[str] = None,
         properties: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword limit: Resource quota limit properties.
         :paramtype limit: ~azure.mgmt.quota.models.LimitObject
@@ -893,7 +903,7 @@ class QuotaRequestSubmitResponse202(_serialization.Model):  # pylint: disable=to
         :keyword name_properties_name: Resource name provided by the resource provider. Use this
          property name when requesting quota.
         :paramtype name_properties_name: ~azure.mgmt.quota.models.ResourceName
-        :keyword resource_type: Resource type name.
+        :keyword resource_type: The name of the resource type. Optional field.
         :paramtype resource_type: str
         :keyword properties: Additional properties for the specific resource provider.
         :paramtype properties: JSON
@@ -913,7 +923,8 @@ class QuotaRequestSubmitResponse202(_serialization.Model):  # pylint: disable=to
 
 
 class ResourceName(_serialization.Model):
-    """Name of the resource provided by the resource Provider. When requesting quota, use this property name.
+    """Name of the resource provided by the resource Provider. When requesting quota, use this
+    property name.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -932,7 +943,7 @@ class ResourceName(_serialization.Model):
         "localized_value": {"key": "localizedValue", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: Resource name.
         :paramtype value: str
@@ -965,7 +976,7 @@ class ServiceError(_serialization.Model):
         "details": {"key": "details", "type": "[ServiceErrorDetail]"},
     }
 
-    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword code: Error code.
         :paramtype code: str
@@ -999,7 +1010,7 @@ class ServiceErrorDetail(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -1052,8 +1063,8 @@ class SubRequest(_serialization.Model):
         name: Optional["_models.ResourceName"] = None,
         unit: Optional[str] = None,
         limit: Optional["_models.LimitJsonObject"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Resource name.
         :paramtype name: ~azure.mgmt.quota.models.ResourceName
@@ -1089,8 +1100,12 @@ class UsagesLimits(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.CurrentUsagesBase"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.CurrentUsagesBase"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of quota limits.
         :paramtype value: list[~azure.mgmt.quota.models.CurrentUsagesBase]
@@ -1124,7 +1139,9 @@ class UsagesObject(_serialization.Model):
         "usages_type": {"key": "usagesType", "type": "str"},
     }
 
-    def __init__(self, *, value: int, usages_type: Optional[Union[str, "_models.UsagesTypes"]] = None, **kwargs):
+    def __init__(
+        self, *, value: int, usages_type: Optional[Union[str, "_models.UsagesTypes"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The usages value. Required.
         :paramtype value: int
@@ -1150,7 +1167,7 @@ class UsagesProperties(_serialization.Model):
     :ivar name: Resource name provided by the resource provider. Use this property name when
      requesting quota.
     :vartype name: ~azure.mgmt.quota.models.ResourceName
-    :ivar resource_type: The name of the resource type.
+    :ivar resource_type: The name of the resource type. Optional field.
     :vartype resource_type: str
     :ivar quota_period: The time period for the summary of the quota usage values. For example:
      *P1D (per one day)*\ PT1M (per one minute)
@@ -1186,15 +1203,15 @@ class UsagesProperties(_serialization.Model):
         name: Optional["_models.ResourceName"] = None,
         resource_type: Optional[str] = None,
         properties: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword usages: The quota limit properties for this resource.
         :paramtype usages: ~azure.mgmt.quota.models.UsagesObject
         :keyword name: Resource name provided by the resource provider. Use this property name when
          requesting quota.
         :paramtype name: ~azure.mgmt.quota.models.ResourceName
-        :keyword resource_type: The name of the resource type.
+        :keyword resource_type: The name of the resource type. Optional field.
         :paramtype resource_type: str
         :keyword properties: Additional properties for the specific resource provider.
         :paramtype properties: JSON

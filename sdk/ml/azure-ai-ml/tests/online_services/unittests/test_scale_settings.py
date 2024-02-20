@@ -1,6 +1,6 @@
 import pytest
 
-from azure.ai.ml._restclient.v2021_10_01.models import (
+from azure.ai.ml._restclient.v2022_10_01.models import (
     TargetUtilizationScaleSettings as RestTargetUtilizationScaleSettings,
 )
 from azure.ai.ml._utils.utils import camel_to_snake
@@ -8,7 +8,7 @@ from azure.ai.ml.entities import DefaultScaleSettings, TargetUtilizationScaleSet
 
 
 @pytest.mark.unittest
-@pytest.mark.production_experience_test
+@pytest.mark.production_experiences_test
 class TestScaleSettings:
     def test_target_utilization_scale_settings_from_object(self) -> None:
         rest_scale_settings = RestTargetUtilizationScaleSettings(

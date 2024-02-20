@@ -11,12 +11,11 @@ from search_service_preparer import SearchEnvVarPreparer, search_decorator
 
 
 class TestSearchClient(AzureRecordedTestCase):
-
     @SearchEnvVarPreparer()
     @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
     @recorded_by_proxy
     def test_search_client(self, endpoint, api_key, index_name):
-        client = SearchClient(endpoint, index_name, api_key)
+        client = SearchClient(endpoint, index_name, api_key, retry_backoff_factor=60)
         self._test_get_search_simple(client)
         self._test_get_search_simple_with_top(client)
         self._test_get_search_filter(client)
@@ -44,42 +43,46 @@ class TestSearchClient(AzureRecordedTestCase):
 
     def _test_get_search_filter(self, client):
         select = ["hotelName", "category", "description"]
-        results = list(client.search(
-            search_text="WiFi",
-            filter="category eq 'Budget'",
-            select=",".join(select),
-            order_by="hotelName desc"
-        ))
-        assert [x["hotelName"] for x in results] == sorted(
-            [x["hotelName"] for x in results], reverse=True
+        results = list(
+            client.search(
+                search_text="WiFi",
+                filter="category eq 'Budget'",
+                select=",".join(select),
+                order_by="hotelName desc",
+            )
         )
+        assert [x["hotelName"] for x in results] == sorted([x["hotelName"] for x in results], reverse=True)
         expected = {
             "category",
             "hotelName",
             "description",
             "@search.score",
+            "@search.reranker_score",
             "@search.highlights",
+            "@search.captions",
         }
         assert all(set(x) == expected for x in results)
         assert all(x["category"] == "Budget" for x in results)
 
     def _test_get_search_filter_array(self, client):
         select = ["hotelName", "category", "description"]
-        results = list(client.search(
-            search_text="WiFi",
-            filter="category eq 'Budget'",
-            select=select,
-            order_by="hotelName desc"
-        ))
-        assert [x["hotelName"] for x in results] == sorted(
-            [x["hotelName"] for x in results], reverse=True
+        results = list(
+            client.search(
+                search_text="WiFi",
+                filter="category eq 'Budget'",
+                select=select,
+                order_by="hotelName desc",
+            )
         )
+        assert [x["hotelName"] for x in results] == sorted([x["hotelName"] for x in results], reverse=True)
         expected = {
             "category",
             "hotelName",
             "description",
             "@search.score",
+            "@search.reranker_score",
             "@search.highlights",
+            "@search.captions",
         }
         assert all(set(x) == expected for x in results)
         assert all(x["category"] == "Budget" for x in results)
@@ -107,10 +110,7 @@ class TestSearchClient(AzureRecordedTestCase):
 
     def _test_get_search_facets_result(self, client):
         select = ("hotelName", "category", "description")
-        results = client.search(search_text="WiFi",
-                                facets=["category"],
-                                select=",".join(select)
-                                )
+        results = client.search(search_text="WiFi", facets=["category"], select=",".join(select))
         assert results.get_facets() == {
             "category": [
                 {"value": "Budget", "count": 4},

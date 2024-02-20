@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.quota import AzureQuotaExtensionAPI
+from azure.mgmt.quota import QuotaMgmtClient
 
 """
 # PREREQUISITES
@@ -24,7 +24,7 @@ from azure.mgmt.quota import AzureQuotaExtensionAPI
 
 
 def main():
-    client = AzureQuotaExtensionAPI(
+    client = QuotaMgmtClient(
         credential=DefaultAzureCredential(),
     )
 
@@ -33,6 +33,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/quota/resource-manager/Microsoft.Quota/preview/2021-03-15-preview/examples/GetOperations.json
+# x-ms-original-file: specification/quota/resource-manager/Microsoft.Quota/stable/2023-02-01/examples/GetOperations.json
 if __name__ == "__main__":
     main()

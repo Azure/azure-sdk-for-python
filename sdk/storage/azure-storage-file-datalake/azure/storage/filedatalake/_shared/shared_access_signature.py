@@ -113,6 +113,7 @@ class SharedAccessSignature(object):
         Use the returned signature with the sas_token parameter of the service
         or to create a new account object.
 
+        :param Any services: The specified services associated with the shared access signature.
         :param ResourceTypes resource_types:
             Specifies the resource types that are accessible with the account
             SAS. You can combine values to provide access to more than one
@@ -151,6 +152,8 @@ class SharedAccessSignature(object):
         :keyword str encryption_scope:
             Optional. If specified, this is the encryption scope to use when sending requests
             authorized with this SAS URI.
+        :returns: The generated SAS token for the account.
+        :rtype: str
         '''
         sas = _SharedAccessHelper()
         sas.add_base(permission, expiry, start, ip, protocol, self.x_ms_version)
@@ -168,6 +171,9 @@ class _SharedAccessHelper(object):
     def _add_query(self, name, val):
         if val:
             self.query_dict[name] = _str(val) if val is not None else None
+
+    def add_encryption_scope(self, **kwargs):
+        self._add_query(QueryStringConstants.SIGNED_ENCRYPTION_SCOPE, kwargs.pop('encryption_scope', None))
 
     def add_base(self, permission, expiry, start, ip, protocol, x_ms_version):
         if isinstance(start, date):
@@ -192,9 +198,6 @@ class _SharedAccessHelper(object):
     def add_account(self, services, resource_types):
         self._add_query(QueryStringConstants.SIGNED_SERVICES, services)
         self._add_query(QueryStringConstants.SIGNED_RESOURCE_TYPES, resource_types)
-
-    def add_encryption_scope(self, **kwargs):
-        self._add_query(QueryStringConstants.SIGNED_ENCRYPTION_SCOPE, kwargs.pop('encryption_scope', None))
 
     def add_override_response_headers(self, cache_control,
                                       content_disposition,
@@ -228,4 +231,4 @@ class _SharedAccessHelper(object):
                         sign_string(account_key, string_to_sign))
 
     def get_token(self):
-        return '&'.join(['{0}={1}'.format(n, url_quote(v)) for n, v in self.query_dict.items() if v is not None])
+        return '&'.join([f'{n}={url_quote(v)}' for n, v in self.query_dict.items() if v is not None])

@@ -5,4 +5,5 @@ package_pprint_name = "Machine Learning Services Management"
 package_doc_id = ""
 is_stable = false
 is_arm = true
-sample_link = "machinelearningservices"
+sample_link = ""
+title = "MachineLearningServicesMgmtClient"

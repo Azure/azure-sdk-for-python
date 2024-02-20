@@ -4,7 +4,7 @@
 # ------------------------------------
 import functools
 import os
-from typing import Optional
+from typing import Optional, Any
 
 from azure.core.pipeline.policies import AsyncHTTPPolicy
 from azure.core.pipeline import PipelineRequest, PipelineResponse
@@ -15,7 +15,7 @@ from ..._credentials.azure_arc import _get_request, _get_secret_key
 
 
 class AzureArcCredential(AsyncManagedIdentityBase):
-    def get_client(self, **kwargs) -> Optional[AsyncManagedIdentityClient]:
+    def get_client(self, **kwargs: Any) -> Optional[AsyncManagedIdentityClient]:
         url = os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT)
         imds = os.environ.get(EnvironmentVariables.IMDS_ENDPOINT)
         if url and imds:

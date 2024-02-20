@@ -44,7 +44,7 @@ setup(
     author='Microsoft Corporation',
     author_email='azpysdkhelp@microsoft.com',
     url='https://github.com/Azure/azure-sdk-for-python',
-    keywords="azure, form recognizer, cognitive services, document analyzer, document analysis, applied ai",
+    keywords="azure, form recognizer, cognitive services, document analyzer, document analysis, applied ai, azure sdk",
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         'Programming Language :: Python',
@@ -54,6 +54,7 @@ setup(
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
@@ -63,6 +64,9 @@ setup(
         'azure',
         'azure.ai',
     ]),
+    package_data={
+        'azure.ai.formrecognizer': ['py.typed'],
+    },
     python_requires=">=3.7",
     install_requires=[
         "azure-core<2.0.0,>=1.23.0",

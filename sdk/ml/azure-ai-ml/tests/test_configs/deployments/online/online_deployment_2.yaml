@@ -11,6 +11,6 @@ environment:
   name: env-model1
   version: 3
   conda_file: ../model-1/environment/conda.yml
-  image: mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04:20210727.v1
+  image: mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04:20230227.v1
 instance_type: Standard_F2s_v2
 instance_count: 1

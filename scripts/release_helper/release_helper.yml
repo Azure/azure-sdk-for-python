@@ -61,7 +61,7 @@ jobs:
         # create virtual env
         python -m venv venv-sdk
         source venv-sdk/bin/activate
-        pip install -r $script_path/requirement.txt
+        python -m pip install -r $script_path/requirement.txt
 
         # checkout the target branch
         cd file-storage

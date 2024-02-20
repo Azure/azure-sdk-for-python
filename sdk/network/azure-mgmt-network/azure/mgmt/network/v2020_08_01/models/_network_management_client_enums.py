@@ -744,6 +744,7 @@ class LoadBalancerSkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     REGIONAL = "Regional"
     GLOBAL = "Global"
+    GLOBAL_ENUM = "Global"
 
 
 class LoadDistribution(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -968,6 +969,7 @@ class PublicIPAddressSkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     REGIONAL = "Regional"
     GLOBAL = "Global"
+    GLOBAL_ENUM = "Global"
 
 
 class PublicIPPrefixSkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -981,6 +983,7 @@ class PublicIPPrefixSkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     REGIONAL = "Regional"
     GLOBAL = "Global"
+    GLOBAL_ENUM = "Global"
 
 
 class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

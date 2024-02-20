@@ -23,32 +23,30 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-
+from __future__ import annotations
 import logging
 from collections.abc import Iterable
-from typing import (
-    Any,
-    TypeVar,
-    TYPE_CHECKING,
-)
+from typing import TypeVar, Generic, Optional, Any
 from .configuration import Configuration
 from .pipeline import Pipeline
 from .pipeline.transport._base import PipelineClientBase
+from .pipeline.transport import HttpTransport
 from .pipeline.policies import (
     ContentDecodePolicy,
     DistributedTracingPolicy,
     HttpLoggingPolicy,
     RequestIdPolicy,
     RetryPolicy,
+    SensitiveHeaderCleanupPolicy,
 )
 
-if TYPE_CHECKING:
-    HTTPResponseType = TypeVar("HTTPResponseType")
-    HTTPRequestType = TypeVar("HTTPRequestType")
+HTTPResponseType = TypeVar("HTTPResponseType")
+HTTPRequestType = TypeVar("HTTPRequestType")
 
 _LOGGER = logging.getLogger(__name__)
 
-class PipelineClient(PipelineClientBase):
+
+class PipelineClient(PipelineClientBase, Generic[HTTPRequestType, HTTPResponseType]):
     """Service client core methods.
 
     Builds a Pipeline client.
@@ -75,56 +73,77 @@ class PipelineClient(PipelineClientBase):
             :caption: Builds the pipeline client.
     """
 
-    def __init__(self, base_url, **kwargs):
+    def __init__(
+        self,
+        base_url: str,
+        *,
+        pipeline: Optional[Pipeline[HTTPRequestType, HTTPResponseType]] = None,
+        config: Optional[Configuration[HTTPRequestType, HTTPResponseType]] = None,
+        **kwargs: Any,
+    ):
         super(PipelineClient, self).__init__(base_url)
-        self._config = kwargs.pop("config", None) or Configuration(**kwargs)
+        self._config: Configuration[HTTPRequestType, HTTPResponseType] = config or Configuration(**kwargs)
         self._base_url = base_url
-        if kwargs.get("pipeline"):
-            self._pipeline = kwargs["pipeline"]
-        else:
-            self._pipeline = self._build_pipeline(self._config, **kwargs)
 
-    def __enter__(self):
+        self._pipeline = pipeline or self._build_pipeline(self._config, **kwargs)
+
+    def __enter__(self) -> PipelineClient[HTTPRequestType, HTTPResponseType]:
         self._pipeline.__enter__()
         return self
 
-    def __exit__(self, *exc_details):
+    def __exit__(self, *exc_details: Any) -> None:
         self._pipeline.__exit__(*exc_details)
 
-    def close(self):
+    def close(self) -> None:
         self.__exit__()
 
-    def _build_pipeline(self, config, **kwargs): # pylint: disable=no-self-use
-        transport = kwargs.get('transport')
-        policies = kwargs.get('policies')
-        per_call_policies = kwargs.get('per_call_policies', [])
-        per_retry_policies = kwargs.get('per_retry_policies', [])
+    def _build_pipeline(
+        self,
+        config: Configuration[HTTPRequestType, HTTPResponseType],
+        *,
+        transport: Optional[HttpTransport[HTTPRequestType, HTTPResponseType]] = None,
+        policies=None,
+        per_call_policies=None,
+        per_retry_policies=None,
+        **kwargs,
+    ) -> Pipeline[HTTPRequestType, HTTPResponseType]:
+        per_call_policies = per_call_policies or []
+        per_retry_policies = per_retry_policies or []
 
         if policies is None:  # [] is a valid policy list
             policies = [
-                RequestIdPolicy(**kwargs),
+                config.request_id_policy or RequestIdPolicy(**kwargs),
                 config.headers_policy,
                 config.user_agent_policy,
                 config.proxy_policy,
-                ContentDecodePolicy(**kwargs)
+                ContentDecodePolicy(**kwargs),
             ]
             if isinstance(per_call_policies, Iterable):
                 policies.extend(per_call_policies)
             else:
                 policies.append(per_call_policies)
 
-            policies.extend([config.redirect_policy,
-                             config.retry_policy,
-                             config.authentication_policy,
-                             config.custom_hook_policy])
+            policies.extend(
+                [
+                    config.redirect_policy,
+                    config.retry_policy,
+                    config.authentication_policy,
+                    config.custom_hook_policy,
+                ]
+            )
             if isinstance(per_retry_policies, Iterable):
                 policies.extend(per_retry_policies)
             else:
                 policies.append(per_retry_policies)
 
-            policies.extend([config.logging_policy,
-                             DistributedTracingPolicy(**kwargs),
-                             config.http_logging_policy or HttpLoggingPolicy(**kwargs)])
+            policies.extend(
+                [
+                    config.logging_policy,
+                    DistributedTracingPolicy(**kwargs),
+                    SensitiveHeaderCleanupPolicy(**kwargs) if config.redirect_policy else None,
+                    config.http_logging_policy or HttpLoggingPolicy(**kwargs),
+                ]
+            )
         else:
             if isinstance(per_call_policies, Iterable):
                 per_call_policies_list = list(per_call_policies)
@@ -143,23 +162,24 @@ class PipelineClient(PipelineClientBase):
                     if isinstance(policy, RetryPolicy):
                         index_of_retry = index
                 if index_of_retry == -1:
-                    raise ValueError("Failed to add per_retry_policies; "
-                                     "no RetryPolicy found in the supplied list of policies. ")
-                policies_1 = policies[:index_of_retry+1]
-                policies_2 = policies[index_of_retry+1:]
+                    raise ValueError(
+                        "Failed to add per_retry_policies; no RetryPolicy found in the supplied list of policies. "
+                    )
+                policies_1 = policies[: index_of_retry + 1]
+                policies_2 = policies[index_of_retry + 1 :]
                 policies_1.extend(per_retry_policies_list)
                 policies_1.extend(policies_2)
                 policies = policies_1
 
-        if not transport:
-            from .pipeline.transport import RequestsTransport
+        if transport is None:
+            # Use private import for better typing, mypy and pyright don't like PEP562
+            from .pipeline.transport._requests_basic import RequestsTransport
+
             transport = RequestsTransport(**kwargs)
 
         return Pipeline(transport, policies)
 
-
-    def send_request(self, request, **kwargs):
-        # type: (HTTPRequestType, Any) -> HTTPResponseType
+    def send_request(self, request: HTTPRequestType, **kwargs: Any) -> HTTPResponseType:
         """Method that runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -174,9 +194,9 @@ class PipelineClient(PipelineClientBase):
         :return: The response of your network call. Does not do error handling on your response.
         :rtype: ~azure.core.rest.HttpResponse
         """
-        stream = kwargs.pop("stream", False) # want to add default value
+        stream = kwargs.pop("stream", False)  # want to add default value
         return_pipeline_response = kwargs.pop("_return_pipeline_response", False)
-        pipeline_response = self._pipeline.run(request, stream=stream, **kwargs) # pylint: disable=protected-access
+        pipeline_response = self._pipeline.run(request, stream=stream, **kwargs)  # pylint: disable=protected-access
         if return_pipeline_response:
-            return pipeline_response
+            return pipeline_response  # type: ignore  # This is a private API we don't want to type in signature
         return pipeline_response.http_response

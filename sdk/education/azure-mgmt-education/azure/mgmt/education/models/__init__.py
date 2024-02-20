@@ -27,51 +27,49 @@ from ._models_py3 import StudentLabListResult
 from ._models_py3 import StudentListResult
 from ._models_py3 import SystemData
 
-
-from ._education_management_client_enums import (
-    ActionType,
-    CreatedByType,
-    GrantStatus,
-    GrantType,
-    JoinRequestStatus,
-    LabStatus,
-    Origin,
-    StudentLabStatus,
-    StudentRole,
-)
+from ._education_management_client_enums import ActionType
+from ._education_management_client_enums import CreatedByType
+from ._education_management_client_enums import GrantStatus
+from ._education_management_client_enums import GrantType
+from ._education_management_client_enums import JoinRequestStatus
+from ._education_management_client_enums import LabStatus
+from ._education_management_client_enums import Origin
+from ._education_management_client_enums import StudentLabStatus
+from ._education_management_client_enums import StudentRole
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'Amount',
-    'ErrorResponse',
-    'ErrorResponseBody',
-    'GrantDetails',
-    'GrantListResponse',
-    'InviteCodeGenerateRequest',
-    'JoinRequestDetails',
-    'JoinRequestList',
-    'LabDetails',
-    'LabListResult',
-    'Operation',
-    'OperationDisplay',
-    'OperationListResult',
-    'RedeemRequest',
-    'Resource',
-    'StudentDetails',
-    'StudentLabDetails',
-    'StudentLabListResult',
-    'StudentListResult',
-    'SystemData',
-    'ActionType',
-    'CreatedByType',
-    'GrantStatus',
-    'GrantType',
-    'JoinRequestStatus',
-    'LabStatus',
-    'Origin',
-    'StudentLabStatus',
-    'StudentRole',
+    "Amount",
+    "ErrorResponse",
+    "ErrorResponseBody",
+    "GrantDetails",
+    "GrantListResponse",
+    "InviteCodeGenerateRequest",
+    "JoinRequestDetails",
+    "JoinRequestList",
+    "LabDetails",
+    "LabListResult",
+    "Operation",
+    "OperationDisplay",
+    "OperationListResult",
+    "RedeemRequest",
+    "Resource",
+    "StudentDetails",
+    "StudentLabDetails",
+    "StudentLabListResult",
+    "StudentListResult",
+    "SystemData",
+    "ActionType",
+    "CreatedByType",
+    "GrantStatus",
+    "GrantType",
+    "JoinRequestStatus",
+    "LabStatus",
+    "Origin",
+    "StudentLabStatus",
+    "StudentRole",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

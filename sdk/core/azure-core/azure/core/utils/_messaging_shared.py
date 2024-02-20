@@ -11,20 +11,25 @@
 # ==========================================================================
 
 
-
 import json
-from azure.core.exceptions import raise_with_traceback
+
 
 def _get_json_content(obj):
     """Event mixin to have methods that are common to different Event types
     like CloudEvent, EventGridEvent etc.
+
+    :param obj: The object to get the JSON content from.
+    :type obj: any
+    :return: The JSON content of the object.
+    :rtype: dict
+    :raises ValueError if JSON content cannot be loaded from the object
     """
     msg = "Failed to load JSON content from the object."
     try:
         # storage queue
         return json.loads(obj.content)
     except ValueError as err:
-        raise_with_traceback(ValueError, msg, err)
+        raise ValueError(msg) from err
     except AttributeError:
         # eventhubs
         try:
@@ -33,9 +38,9 @@ def _get_json_content(obj):
             # servicebus
             return json.loads(next(obj.body))
         except ValueError as err:
-            raise_with_traceback(ValueError, msg, err)
-        except: # pylint: disable=bare-except
+            raise ValueError(msg) from err
+        except:  # pylint: disable=bare-except
             try:
                 return json.loads(obj)
             except ValueError as err:
-                raise_with_traceback(ValueError, msg, err)
+                raise ValueError(msg) from err

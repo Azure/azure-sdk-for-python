@@ -7,15 +7,10 @@
 
 import datetime
 import json
-from typing import Callable, Mapping, Union, TypeVar, Any, Optional
+from typing import Callable, Mapping, TypeVar, Any, Optional
 from typing_extensions import Protocol, runtime_checkable
 from azure.core.exceptions import HttpResponseError, ODataV4Format
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import (
-    HttpResponse,
-    AsyncHttpResponse,
-    HttpRequest,
-)
 from azure.core.polling import LROPoller, PollingMethod
 from azure.core.polling.base_polling import (
     LocationPolling,
@@ -25,11 +20,7 @@ from azure.core.polling.base_polling import (
     BadResponse,
 )
 
-PollingReturnType = TypeVar("PollingReturnType")
-
-
-ResponseType = Union[HttpResponse, AsyncHttpResponse]
-PipelineResponseType = PipelineResponse[HttpRequest, ResponseType]
+PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
 
 
 def raise_error(response, errors, message):
@@ -46,45 +37,45 @@ def parse_operation_id(location):
 
 
 @runtime_checkable
-class DocumentModelAdministrationLROPoller(Protocol[PollingReturnType]):
+class DocumentModelAdministrationLROPoller(Protocol[PollingReturnType_co]):
     """Implements a protocol followed by returned poller objects."""
 
     @property
-    def details(  # pylint: disable=no-self-use, unused-argument
+    def details(  # pylint: disable=unused-argument
         self,
     ) -> Mapping[str, Any]:
         ...
 
-    def polling_method(  # pylint: disable=no-self-use
+    def polling_method(
         self,
-    ) -> PollingMethod[PollingReturnType]:
+    ) -> PollingMethod[PollingReturnType_co]:
         ...
 
-    def continuation_token(self) -> str:  # pylint: disable=no-self-use
+    def continuation_token(self) -> str:
         ...
 
-    def status(self) -> str:  # pylint: disable=no-self-use
+    def status(self) -> str:
         ...
 
-    def result(  # pylint: disable=no-self-use, unused-argument
+    def result(  # pylint: disable=unused-argument
         self, timeout: Optional[int] = None
-    ) -> PollingReturnType:
+    ) -> PollingReturnType_co:
         ...
 
-    def wait(self, timeout: Optional[float] = None) -> None:  # pylint: disable=no-self-use, unused-argument
+    def wait(self, timeout: Optional[float] = None) -> None:  # pylint: disable=unused-argument
         ...
 
-    def done(self) -> bool:  # pylint: disable=no-self-use
+    def done(self) -> bool:
         ...
 
-    def add_done_callback(self, func: Callable) -> None:  # pylint: disable=no-self-use, unused-argument
+    def add_done_callback(self, func: Callable) -> None:  # pylint: disable=unused-argument
         ...
 
-    def remove_done_callback(self, func: Callable) -> None:  # pylint: disable=no-self-use, unused-argument
+    def remove_done_callback(self, func: Callable) -> None:  # pylint: disable=unused-argument
         ...
 
 
-class DocumentModelAdministrationClientLROPoller(LROPoller[PollingReturnType]):
+class DocumentModelAdministrationClientLROPoller(LROPoller[PollingReturnType_co]):  # pylint: disable=name-too-long
     """Custom poller for model build operations. Call `result()` on the poller to return
     a :class:`~azure.ai.formrecognizer.DocumentModelDetails`.
 
@@ -101,7 +92,11 @@ class DocumentModelAdministrationClientLROPoller(LROPoller[PollingReturnType]):
 
     @property
     def details(self) -> Mapping[str, Any]:
-        """Returns metadata associated with the long-running operation."""
+        """Returns metadata associated with the long-running operation.
+
+        :return: Returns metadata associated with the long-running operation.
+        :rtype: Mapping[str, Any]
+        """
         created_on = self._current_body.get("createdDateTime", None)
         if created_on:
             created_on = datetime.datetime.strptime(created_on, "%Y-%m-%dT%H:%M:%SZ")
@@ -121,7 +116,7 @@ class DocumentModelAdministrationClientLROPoller(LROPoller[PollingReturnType]):
 
     @classmethod
     def from_continuation_token(
-        cls, polling_method: PollingMethod[PollingReturnType], continuation_token: str, **kwargs: Any
+        cls, polling_method: PollingMethod[PollingReturnType_co], continuation_token: str, **kwargs: Any
     ) -> "DocumentModelAdministrationClientLROPoller":
         (
             client,
@@ -135,9 +130,10 @@ class DocumentModelAdministrationClientLROPoller(LROPoller[PollingReturnType]):
 class DocumentModelAdministrationPolling(OperationResourcePolling):
     """Polling method overrides for training endpoints."""
 
-    def get_final_get_url(self, pipeline_response: PipelineResponseType) -> None:
+    def get_final_get_url(self, pipeline_response: Any) -> None:
         """If a final GET is needed, returns the URL.
 
+        :param any pipeline_response: The pipeline response to get the final url.
         :rtype: None
         """
         return None
@@ -147,13 +143,19 @@ class FormTrainingPolling(LocationPolling):
     """Polling method overrides for training endpoints."""
 
     def get_polling_url(self) -> str:
-        """Return the polling URL."""
+        """Return the polling URL.
+
+        :return: Returns the polling URL.
+        :rtype: str
+        """
         return self._location_url + "?includeKeys=true"
 
-    def get_status(self, pipeline_response: PipelineResponse) -> str:  # pylint: disable=no-self-use
+    def get_status(self, pipeline_response: PipelineResponse) -> str:
         """Process the latest status update retrieved from a 'location' header.
 
         :param azure.core.pipeline.PipelineResponse pipeline_response: latest REST call response.
+        :return: Returns the latest status from the 'location' header.
+        :rtype: str
         :raises: BadResponse if response has no body.
         """
         response = pipeline_response.http_response
@@ -181,11 +183,13 @@ class FormTrainingPolling(LocationPolling):
 class AnalyzePolling(OperationResourcePolling):
     """Polling method overrides for custom analyze endpoints."""
 
-    def get_status(self, pipeline_response: PipelineResponse) -> str:  # pylint: disable=no-self-use
-        """Process the latest status update retrieved from an "Operation-Location" header.
+    def get_status(self, pipeline_response: PipelineResponse) -> str:
+        """Process the latest status update retrieved from an 'Operation-Location' header.
         Raise errors for issues with input document.
 
         :param azure.core.pipeline.PipelineResponse pipeline_response: The response to extract the status.
+        :return: Returns the latest status from the 'Operation-Location' header.
+        :rtype: str
         :raises: BadResponse if response has no body, or body does not contain status.
             HttpResponseError if there is an error with the input document.
         """
@@ -209,11 +213,13 @@ class AnalyzePolling(OperationResourcePolling):
 class CopyPolling(OperationResourcePolling):
     """Polling method overrides for copy endpoint."""
 
-    def get_status(self, pipeline_response: PipelineResponse) -> str:  # pylint: disable=no-self-use
+    def get_status(self, pipeline_response: PipelineResponse) -> str:
         """Process the latest status update retrieved from an "Operation-Location" header.
         Raise errors for issues occurring during the copy model operation.
 
         :param azure.core.pipeline.PipelineResponse pipeline_response: The response to extract the status.
+        :return: Returns the latest status from the 'Operation-Location' header.
+        :rtype: str
         :raises: BadResponse if response has no body, or body does not contain status.
             HttpResponseError if there is an error with the input document.
         """

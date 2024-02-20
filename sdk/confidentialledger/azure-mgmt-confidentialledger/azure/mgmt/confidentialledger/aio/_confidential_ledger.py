@@ -9,35 +9,36 @@
 from copy import deepcopy
 from typing import Any, Awaitable, TYPE_CHECKING
 
-from msrest import Deserializer, Serializer
-
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
 
-from .. import models
+from .. import models as _models
+from .._serialization import Deserializer, Serializer
 from ._configuration import ConfidentialLedgerConfiguration
-from .operations import ConfidentialLedgerOperationsMixin, LedgerOperations, Operations
+from .operations import ConfidentialLedgerOperationsMixin, LedgerOperations, ManagedCCFOperations, Operations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-class ConfidentialLedger(ConfidentialLedgerOperationsMixin):
+
+class ConfidentialLedger(ConfidentialLedgerOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
     """Microsoft Azure Confidential Compute Ledger Control Plane REST API version 2020-12-01-preview.
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.confidentialledger.aio.operations.Operations
     :ivar ledger: LedgerOperations operations
     :vartype ledger: azure.mgmt.confidentialledger.aio.operations.LedgerOperations
-    :param credential: Credential needed for the client to connect to Azure.
+    :ivar managed_ccf: ManagedCCFOperations operations
+    :vartype managed_ccf: azure.mgmt.confidentialledger.aio.operations.ManagedCCFOperations
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: The Azure subscription ID. This is a GUID-formatted string (e.g.
-     00000000-0000-0000-0000-000000000000).
+    :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2022-05-13". Note that overriding this
-     default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2023-01-26-preview". Note that overriding
+     this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -51,21 +52,17 @@ class ConfidentialLedger(ConfidentialLedgerOperationsMixin):
         **kwargs: Any
     ) -> None:
         self._config = ConfidentialLedgerConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
-        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.ledger = LedgerOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.managed_ccf = ManagedCCFOperations(self._client, self._config, self._serialize, self._deserialize)
 
-
-    def _send_request(
-        self,
-        request: HttpRequest,
-        **kwargs: Any
-    ) -> Awaitable[AsyncHttpResponse]:
+    def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -74,7 +71,7 @@ class ConfidentialLedger(ConfidentialLedgerOperationsMixin):
         >>> response = await client._send_request(request)
         <AsyncHttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest
@@ -94,5 +91,5 @@ class ConfidentialLedger(ConfidentialLedgerOperationsMixin):
         await self._client.__aenter__()
         return self
 
-    async def __aexit__(self, *exc_details) -> None:
+    async def __aexit__(self, *exc_details: Any) -> None:
         await self._client.__aexit__(*exc_details)

@@ -3,10 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, Iterable, Dict, List, Type, Tuple,
-    TYPE_CHECKING
-)
+from typing import NoReturn, TYPE_CHECKING
 import logging
 from xml.etree.ElementTree import Element
 
@@ -44,10 +41,8 @@ class PartialBatchErrorException(HttpResponseError):
         super(PartialBatchErrorException, self).__init__(message=message, response=response)
 
 
+# Parses the blob length from the content range header: bytes 1-3/65537
 def parse_length_from_content_range(content_range):
-    '''
-    Parses the blob length from the content range header: bytes 1-3/65537
-    '''
     if content_range is None:
         return None
 
@@ -67,7 +62,10 @@ def normalize_headers(headers):
 
 
 def deserialize_metadata(response, obj, headers):  # pylint: disable=unused-argument
-    raw_metadata = {k: v for k, v in response.headers.items() if k.startswith("x-ms-meta-")}
+    try:
+        raw_metadata = {k: v for k, v in response.http_response.headers.items() if k.startswith("x-ms-meta-")}
+    except AttributeError:
+        raw_metadata = {k: v for k, v in response.headers.items() if k.startswith("x-ms-meta-")}
     return {k[10:]: v for k, v in raw_metadata.items()}
 
 
@@ -83,7 +81,11 @@ def return_context_and_deserialized(response, deserialized, response_headers):  
     return response.http_response.location_mode, deserialized
 
 
-def process_storage_error(storage_error):   # pylint:disable=too-many-statements
+def return_raw_deserialized(response, *_):
+    return response.http_response.location_mode, response.context[ContentDecodePolicy.CONTEXT_NAME]
+
+
+def process_storage_error(storage_error) -> NoReturn:  # pylint:disable=too-many-statements
     raise_error = HttpResponseError
     serialized = False
     if not storage_error.response:
@@ -160,11 +162,11 @@ def process_storage_error(storage_error):   # pylint:disable=too-many-statements
 
     # Error message should include all the error properties
     try:
-        error_message += "\nErrorCode:{}".format(error_code.value)
+        error_message += f"\nErrorCode:{error_code.value}"
     except AttributeError:
-        error_message += "\nErrorCode:{}".format(error_code)
+        error_message += f"\nErrorCode:{error_code}"
     for name, info in additional_data.items():
-        error_message += "\n{}:{}".format(name, info)
+        error_message += f"\n{name}:{info}"
 
     # No need to create an instance if it has already been serialized by the generated layer
     if serialized:
@@ -180,8 +182,8 @@ def process_storage_error(storage_error):   # pylint:disable=too-many-statements
     try:
         # `from None` prevents us from double printing the exception (suppresses generated layer error context)
         exec("raise error from None")   # pylint: disable=exec-used # nosec
-    except SyntaxError:
-        raise error
+    except SyntaxError as exc:
+        raise error from exc
 
 
 def parse_to_internal_user_delegation_key(service_user_delegation_key):

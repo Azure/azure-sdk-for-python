@@ -41,18 +41,18 @@ async def run_sample():
     print("\n.. Create keys")
     rsa_key = await client.create_rsa_key("rsaKeyNameAsync")
     ec_key = await client.create_ec_key("ecKeyNameAsync")
-    print("Created key '{0}' of type '{1}'.".format(rsa_key.name, rsa_key.key_type))
-    print("Created key '{0}' of type '{1}'.".format(ec_key.name, ec_key.key_type))
+    print(f"Created key '{rsa_key.name}' of type '{rsa_key.key_type}'.")
+    print(f"Created key '{ec_key.name}' of type '{ec_key.key_type}'.")
 
     print("\n.. Delete the keys")
     for key_name in (ec_key.name, rsa_key.name):
         deleted_key = await client.delete_key(key_name)
-        print("Deleted key '{0}'".format(deleted_key.name))
+        print(f"Deleted key '{deleted_key.name}'")
 
     # A deleted key can only be recovered if the Key Vault is soft-delete enabled.
     print("\n.. Recover a deleted key")
     recovered_key = await client.recover_deleted_key(rsa_key.name)
-    print("Recovered key '{0}'".format(recovered_key.name))
+    print(f"Recovered key '{recovered_key.name}'")
 
     # To permanently delete the key, the deleted key needs to be purged.
     await client.delete_key(recovered_key.name)
@@ -62,7 +62,7 @@ async def run_sample():
     print("\n.. Purge keys")
     for key_name in (ec_key.name, rsa_key.name):
         await client.purge_deleted_key(key_name)
-        print("Purged '{}'".format(key_name))
+        print(f"Purged '{key_name}'")
 
     print("\nrun_sample done")
     await credential.close()

@@ -5,7 +5,7 @@
 # pylint: disable=protected-access
 
 from abc import ABC
-from typing import List, Union
+from typing import List, Optional, Union
 
 from azure.ai.ml.constants._common import TYPE
 from azure.ai.ml.constants._job.sweep import SearchSpace
@@ -14,12 +14,19 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, JobException
 
 
 class SweepDistribution(ABC, RestTranslatableMixin):
-    def __init__(self, *, type: str = None):  # pylint: disable=redefined-builtin
+    """Base class for sweep distribution configuration.
+
+    This class should not be instantiated directly. Instead, use one of its subclasses.
+
+    :keyword type: Type of distribution.
+    :paramtype type: str
+    """
+
+    def __init__(self, *, type: Optional[str] = None) -> None:  # pylint: disable=redefined-builtin
         self.type = type
 
     @classmethod
     def _from_rest_object(cls, obj: List) -> "SweepDistribution":
-
         mapping = {
             SearchSpace.CHOICE: Choice,
             SearchSpace.NORMAL: Normal,
@@ -54,11 +61,20 @@ class SweepDistribution(ABC, RestTranslatableMixin):
 class Choice(SweepDistribution):
     """Choice distribution configuration.
 
-    :ivar type: Specifies the type of sweep distribution. Set automatically to "choice" for this class.
-    :vartype type: str
+    :param values: List of values to choose from.
+    :type values: list[Union[float, str, dict]]
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
+            :start-after: [START configure_sweep_job_choice_loguniform]
+            :end-before: [END configure_sweep_job_choice_loguniform]
+            :language: python
+            :dedent: 8
+            :caption: Using Choice distribution to set values for a hyperparameter sweep
     """
 
-    def __init__(self, values: List[Union[float, str, dict]] = None, **kwargs):
+    def __init__(self, values: Optional[List[Union[float, str, dict]]] = None, **kwargs) -> None:
         kwargs.setdefault(TYPE, SearchSpace.CHOICE)
         super().__init__(**kwargs)
         self.values = values
@@ -103,11 +119,22 @@ class Choice(SweepDistribution):
 class Normal(SweepDistribution):
     """Normal distribution configuration.
 
-    :ivar type: Specifies the type of sweep distribution. Set automatically to "normal" for this class.
-    :vartype type: str
+    :param mu: Mean of the distribution.
+    :type mu: float
+    :param sigma: Standard deviation of the distribution.
+    :type sigma: float
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
+            :start-after: [START configure_sweep_job_randint_normal]
+            :end-before: [END configure_sweep_job_randint_normal]
+            :language: python
+            :dedent: 8
+            :caption: Configuring Normal distributions for a hyperparameter sweep on a Command job.
     """
 
-    def __init__(self, mu: float = None, sigma: float = None, **kwargs):
+    def __init__(self, mu: Optional[float] = None, sigma: Optional[float] = None, **kwargs) -> None:
         kwargs.setdefault(TYPE, SearchSpace.NORMAL)
         super().__init__(**kwargs)
         self.mu = mu
@@ -124,11 +151,22 @@ class Normal(SweepDistribution):
 class LogNormal(Normal):
     """LogNormal distribution configuration.
 
-    :ivar type: Specifies the type of sweep distribution. Set automatically to "lognormal" for this class.
-    :vartype type: str
+    :param mu: Mean of the log of the distribution.
+    :type mu: float
+    :param sigma: Standard deviation of the log of the distribution.
+    :type sigma: float
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
+            :start-after: [START configure_sweep_job_lognormal_qlognormal]
+            :end-before: [END configure_sweep_job_lognormal_qlognormal]
+            :language: python
+            :dedent: 8
+            :caption: Configuring LogNormal distributions for a hyperparameter sweep on a Command job.
     """
 
-    def __init__(self, mu: float = None, sigma: float = None, **kwargs):
+    def __init__(self, mu: Optional[float] = None, sigma: Optional[float] = None, **kwargs) -> None:
         kwargs.setdefault(TYPE, SearchSpace.LOGNORMAL)
         super().__init__(mu=mu, sigma=sigma, **kwargs)
 
@@ -136,11 +174,26 @@ class LogNormal(Normal):
 class QNormal(Normal):
     """QNormal distribution configuration.
 
-    :ivar type: Specifies the type of sweep distribution. Set automatically to "qnormal" for this class.
-    :vartype type: str
+    :param mu: Mean of the distribution.
+    :type mu: float
+    :param sigma: Standard deviation of the distribution.
+    :type sigma: float
+    :param q: Quantization factor.
+    :type q: int
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
+            :start-after: [START configure_sweep_job_qloguniform_qnormal]
+            :end-before: [END configure_sweep_job_qloguniform_qnormal]
+            :language: python
+            :dedent: 8
+            :caption: Configuring QNormal distributions for a hyperparameter sweep on a Command job.
     """
 
-    def __init__(self, mu: float = None, sigma: float = None, q: int = None, **kwargs):
+    def __init__(
+        self, mu: Optional[float] = None, sigma: Optional[float] = None, q: Optional[int] = None, **kwargs
+    ) -> None:
         kwargs.setdefault(TYPE, SearchSpace.QNORMAL)
         super().__init__(mu=mu, sigma=sigma, **kwargs)
         self.q = q
@@ -156,11 +209,25 @@ class QNormal(Normal):
 class QLogNormal(QNormal):
     """QLogNormal distribution configuration.
 
-    :ivar type: Specifies the type of sweep distribution. Set automatically to "qlognormal" for this class.
-    :vartype type: str
+    :param mu: Mean of the log of the distribution.
+    :type mu: Optional[float]
+    :param sigma: Standard deviation of the log of the distribution.
+    :type sigma: Optional[float]
+    :param q: Quantization factor.
+    :type q: Optional[int]
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
+            :start-after: [START configure_sweep_job_lognormal_qlognormal]
+            :end-before: [END configure_sweep_job_lognormal_qlognormal]
+            :language: python
+            :dedent: 8
+            :caption: Configuring QLogNormal distributions for a hyperparameter sweep on a Command job.
     """
 
-    def __init__(self, mu: float = None, sigma: float = None, q: int = None, **kwargs):
+    def __init__(
+        self, mu: Optional[float] = None, sigma: Optional[float] = None, q: Optional[int] = None, **kwargs
+    ) -> None:
         kwargs.setdefault(TYPE, SearchSpace.QLOGNORMAL)
         super().__init__(mu=mu, sigma=sigma, q=q, **kwargs)
 
@@ -168,10 +235,20 @@ class QLogNormal(QNormal):
 class Randint(SweepDistribution):
     """Randint distribution configuration.
 
-    :ivar type: Specifies the type of sweep distribution. Set automatically to "randint" for this class.
-    :vartype type: str
+    :param upper: Upper bound of the distribution.
+    :type upper: int
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
+            :start-after: [START configure_sweep_job_randint_normal]
+            :end-before: [END configure_sweep_job_randint_normal]
+            :language: python
+            :dedent: 8
+            :caption: Configuring Randint distributions for a hyperparameter sweep on a Command job.
     """
-    def __init__(self, upper: int = None, **kwargs):
+
+    def __init__(self, upper: Optional[int] = None, **kwargs) -> None:
         kwargs.setdefault(TYPE, SearchSpace.RANDINT)
         super().__init__(**kwargs)
         self.upper = upper
@@ -187,11 +264,23 @@ class Randint(SweepDistribution):
 class Uniform(SweepDistribution):
     """Uniform distribution configuration.
 
-    :ivar type: Specifies the type of sweep distribution. Set automatically to "uniform" for this class.
-    :vartype type: str
+    :param min_value: Minimum value of the distribution.
+    :type min_value: float
+    :param max_value: Maximum value of the distribution.
+    :type max_value: float
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
+            :start-after: [START configure_sweep_job_uniform]
+            :end-before: [END configure_sweep_job_uniform]
+            :language: python
+            :dedent: 8
+            :caption: Configuring Uniform distributions for learning rates and momentum
+                during a hyperparameter sweep on a Command job.
     """
 
-    def __init__(self, min_value: float = None, max_value: float = None, **kwargs):
+    def __init__(self, min_value: Optional[float] = None, max_value: Optional[float] = None, **kwargs) -> None:
         kwargs.setdefault(TYPE, SearchSpace.UNIFORM)
         super().__init__(**kwargs)
         self.min_value = min_value
@@ -208,11 +297,22 @@ class Uniform(SweepDistribution):
 class LogUniform(Uniform):
     """LogUniform distribution configuration.
 
-    :ivar type: Specifies the type of sweep distribution. Set automatically to "loguniform" for this class.
-    :vartype type: str
+    :param min_value: Minimum value of the log of the distribution.
+    :type min_value: float
+    :param max_value: Maximum value of the log of the distribution.
+    :type max_value: float
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
+            :start-after: [START configure_sweep_job_choice_loguniform]
+            :end-before: [END configure_sweep_job_choice_loguniform]
+            :language: python
+            :dedent: 8
+            :caption: Configuring a LogUniform distribution for a hyperparameter sweep job learning rate
     """
 
-    def __init__(self, min_value: float = None, max_value: float = None, **kwargs):
+    def __init__(self, min_value: Optional[float] = None, max_value: Optional[float] = None, **kwargs) -> None:
         kwargs.setdefault(TYPE, SearchSpace.LOGUNIFORM)
         super().__init__(min_value=min_value, max_value=max_value, **kwargs)
 
@@ -220,17 +320,30 @@ class LogUniform(Uniform):
 class QUniform(Uniform):
     """QUniform distribution configuration.
 
-    :ivar type: Specifies the type of sweep distribution. Set automatically to "quniform" for this class.
-    :vartype type: str
+    :param min_value: Minimum value of the distribution.
+    :type min_value: Optional[Union[int, float]]
+    :param max_value: Maximum value of the distribution.
+    :type max_value: Optional[Union[int, float]]
+    :param q: Quantization factor.
+    :type q: Optional[int]
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
+            :start-after: [START configure_sweep_job_truncation_selection_policy]
+            :end-before: [END configure_sweep_job_truncation_selection_policy]
+            :language: python
+            :dedent: 8
+            :caption: Configuring QUniform distributions for a hyperparameter sweep on a Command job.
     """
 
     def __init__(
         self,
-        min_value: Union[int, float] = None,
-        max_value: Union[int, float] = None,
-        q: int = None,
+        min_value: Optional[Union[int, float]] = None,
+        max_value: Optional[Union[int, float]] = None,
+        q: Optional[int] = None,
         **kwargs,
-    ):
+    ) -> None:
         kwargs.setdefault(TYPE, SearchSpace.QUNIFORM)
         super().__init__(min_value=min_value, max_value=max_value, **kwargs)
         self.q = q
@@ -246,9 +359,25 @@ class QUniform(Uniform):
 class QLogUniform(QUniform):
     """QLogUniform distribution configuration.
 
-    :ivar type: Specifies the type of sweep distribution. Set automatically to "qloguniform" for this class.
-    :vartype type: str
+    :param min_value: Minimum value of the log of the distribution.
+    :type min_value: Optional[float]
+    :param max_value: Maximum value of the log of the distribution.
+    :type max_value: Optional[float]
+    :param q: Quantization factor.
+    :type q: Optional[int]
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
+            :start-after: [START configure_sweep_job_qloguniform_qnormal]
+            :end-before: [END configure_sweep_job_qloguniform_qnormal]
+            :language: python
+            :dedent: 8
+            :caption: Configuring QLogUniform distributions for a hyperparameter sweep on a Command job.
     """
-    def __init__(self, min_value: float = None, max_value: float = None, q: int = None, **kwargs):
+
+    def __init__(
+        self, min_value: Optional[float] = None, max_value: Optional[float] = None, q: Optional[int] = None, **kwargs
+    ) -> None:
         kwargs.setdefault(TYPE, SearchSpace.QLOGUNIFORM)
         super().__init__(min_value=min_value, max_value=max_value, q=q, **kwargs)

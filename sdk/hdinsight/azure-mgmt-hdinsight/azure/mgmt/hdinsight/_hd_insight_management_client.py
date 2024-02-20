@@ -37,30 +37,30 @@ if TYPE_CHECKING:
 class HDInsightManagementClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """HDInsight Management Client.
 
-    :ivar clusters: ClustersOperations operations
-    :vartype clusters: azure.mgmt.hdinsight.operations.ClustersOperations
     :ivar applications: ApplicationsOperations operations
     :vartype applications: azure.mgmt.hdinsight.operations.ApplicationsOperations
-    :ivar locations: LocationsOperations operations
-    :vartype locations: azure.mgmt.hdinsight.operations.LocationsOperations
+    :ivar clusters: ClustersOperations operations
+    :vartype clusters: azure.mgmt.hdinsight.operations.ClustersOperations
     :ivar configurations: ConfigurationsOperations operations
     :vartype configurations: azure.mgmt.hdinsight.operations.ConfigurationsOperations
     :ivar extensions: ExtensionsOperations operations
     :vartype extensions: azure.mgmt.hdinsight.operations.ExtensionsOperations
-    :ivar script_actions: ScriptActionsOperations operations
-    :vartype script_actions: azure.mgmt.hdinsight.operations.ScriptActionsOperations
-    :ivar script_execution_history: ScriptExecutionHistoryOperations operations
-    :vartype script_execution_history:
-     azure.mgmt.hdinsight.operations.ScriptExecutionHistoryOperations
+    :ivar locations: LocationsOperations operations
+    :vartype locations: azure.mgmt.hdinsight.operations.LocationsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.hdinsight.operations.Operations
-    :ivar virtual_machines: VirtualMachinesOperations operations
-    :vartype virtual_machines: azure.mgmt.hdinsight.operations.VirtualMachinesOperations
     :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
     :vartype private_endpoint_connections:
      azure.mgmt.hdinsight.operations.PrivateEndpointConnectionsOperations
     :ivar private_link_resources: PrivateLinkResourcesOperations operations
     :vartype private_link_resources: azure.mgmt.hdinsight.operations.PrivateLinkResourcesOperations
+    :ivar script_actions: ScriptActionsOperations operations
+    :vartype script_actions: azure.mgmt.hdinsight.operations.ScriptActionsOperations
+    :ivar script_execution_history: ScriptExecutionHistoryOperations operations
+    :vartype script_execution_history:
+     azure.mgmt.hdinsight.operations.ScriptExecutionHistoryOperations
+    :ivar virtual_machines: VirtualMachinesOperations operations
+    :vartype virtual_machines: azure.mgmt.hdinsight.operations.VirtualMachinesOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The subscription credentials which uniquely identify Microsoft Azure
@@ -68,8 +68,8 @@ class HDInsightManagementClient:  # pylint: disable=client-accepts-api-version-k
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2021-06-01". Note that overriding this
-     default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2023-04-15-preview". Note that overriding
+     this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -85,29 +85,29 @@ class HDInsightManagementClient:  # pylint: disable=client-accepts-api-version-k
         self._config = HDInsightManagementClientConfiguration(
             credential=credential, subscription_id=subscription_id, **kwargs
         )
-        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client: ARMPipelineClient = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.clusters = ClustersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.applications = ApplicationsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.locations = LocationsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.clusters = ClustersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.configurations = ConfigurationsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.extensions = ExtensionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.script_actions = ScriptActionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.script_execution_history = ScriptExecutionHistoryOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.locations = LocationsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_machines = VirtualMachinesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.private_link_resources = PrivateLinkResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.script_actions = ScriptActionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.script_execution_history = ScriptExecutionHistoryOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_machines = VirtualMachinesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
 
@@ -140,5 +140,5 @@ class HDInsightManagementClient:  # pylint: disable=client-accepts-api-version-k
         self._client.__enter__()
         return self
 
-    def __exit__(self, *exc_details) -> None:
+    def __exit__(self, *exc_details: Any) -> None:
         self._client.__exit__(*exc_details)

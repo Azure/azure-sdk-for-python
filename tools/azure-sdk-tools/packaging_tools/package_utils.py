@@ -28,7 +28,14 @@ def change_log_generate(package_name, last_version, tag_is_stable: bool = False)
 
     client = PyPIClient()
     try:
-        last_version[-1] = str(client.get_ordered_versions(package_name)[-1])
+        ordered_versions = client.get_ordered_versions(package_name)
+        last_release = ordered_versions[-1]
+        stable_releases = [x for x in ordered_versions if not x.is_prerelease]
+        last_stable_release = stable_releases[-1] if stable_releases else None
+        if tag_is_stable:
+            last_version[-1] = str(last_stable_release) if last_stable_release else str(last_release)
+        else:
+            last_version[-1] = str(last_release)
     except:
         return "  - Initial Release"
     else:

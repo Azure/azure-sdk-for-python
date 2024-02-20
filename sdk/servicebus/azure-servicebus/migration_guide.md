@@ -125,7 +125,7 @@ subscription_dead_letter_receiver = subscription_client.get_deadletter_receiver(
 ```
 
 In V7:
-```Python
+```python
 with ServiceBusClient.from_connection_string(connstr) as client:
 
     # for queues

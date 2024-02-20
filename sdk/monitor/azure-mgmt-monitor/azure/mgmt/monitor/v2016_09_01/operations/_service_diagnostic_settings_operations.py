@@ -38,7 +38,7 @@ def build_get_request(resource_uri: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2016-09-01"))  # type: str
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -47,7 +47,7 @@ def build_get_request(resource_uri: str, **kwargs: Any) -> HttpRequest:
         "resourceUri": _SERIALIZER.url("resource_uri", resource_uri, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -62,8 +62,8 @@ def build_create_or_update_request(resource_uri: str, **kwargs: Any) -> HttpRequ
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2016-09-01"))  # type: str
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-09-01"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -72,7 +72,7 @@ def build_create_or_update_request(resource_uri: str, **kwargs: Any) -> HttpRequ
         "resourceUri": _SERIALIZER.url("resource_uri", resource_uri, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -89,8 +89,8 @@ def build_update_request(resource_uri: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2016-09-01"))  # type: str
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-09-01"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -99,7 +99,7 @@ def build_update_request(resource_uri: str, **kwargs: Any) -> HttpRequest:
         "resourceUri": _SERIALIZER.url("resource_uri", resource_uri, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -118,7 +118,7 @@ class ServiceDiagnosticSettingsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~$(python-base-namespace).v2016_09_01.MonitorManagementClient`'s
+        :class:`~azure.mgmt.monitor.v2016_09_01.MonitorManagementClient`'s
         :attr:`service_diagnostic_settings` attribute.
     """
 
@@ -140,7 +140,7 @@ class ServiceDiagnosticSettingsOperations:
         :type resource_uri: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ServiceDiagnosticSettingsResource or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2016_09_01.models.ServiceDiagnosticSettingsResource
+        :rtype: ~azure.mgmt.monitor.v2016_09_01.models.ServiceDiagnosticSettingsResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -154,8 +154,8 @@ class ServiceDiagnosticSettingsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2016-09-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ServiceDiagnosticSettingsResource]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-09-01"))
+        cls: ClsType[_models.ServiceDiagnosticSettingsResource] = kwargs.pop("cls", None)
 
         request = build_get_request(
             resource_uri=resource_uri,
@@ -165,10 +165,11 @@ class ServiceDiagnosticSettingsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -185,7 +186,7 @@ class ServiceDiagnosticSettingsOperations:
 
         return deserialized
 
-    get.metadata = {"url": "/{resourceUri}/providers/microsoft.insights/diagnosticSettings/service"}  # type: ignore
+    get.metadata = {"url": "/{resourceUri}/providers/microsoft.insights/diagnosticSettings/service"}
 
     @overload
     def create_or_update(
@@ -202,14 +203,13 @@ class ServiceDiagnosticSettingsOperations:
         :param resource_uri: The identifier of the resource. Required.
         :type resource_uri: str
         :param parameters: Parameters supplied to the operation. Required.
-        :type parameters:
-         ~$(python-base-namespace).v2016_09_01.models.ServiceDiagnosticSettingsResource
+        :type parameters: ~azure.mgmt.monitor.v2016_09_01.models.ServiceDiagnosticSettingsResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ServiceDiagnosticSettingsResource or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2016_09_01.models.ServiceDiagnosticSettingsResource
+        :rtype: ~azure.mgmt.monitor.v2016_09_01.models.ServiceDiagnosticSettingsResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -229,7 +229,7 @@ class ServiceDiagnosticSettingsOperations:
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ServiceDiagnosticSettingsResource or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2016_09_01.models.ServiceDiagnosticSettingsResource
+        :rtype: ~azure.mgmt.monitor.v2016_09_01.models.ServiceDiagnosticSettingsResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -242,16 +242,16 @@ class ServiceDiagnosticSettingsOperations:
 
         :param resource_uri: The identifier of the resource. Required.
         :type resource_uri: str
-        :param parameters: Parameters supplied to the operation. Is either a model type or a IO type.
-         Required.
-        :type parameters:
-         ~$(python-base-namespace).v2016_09_01.models.ServiceDiagnosticSettingsResource or IO
+        :param parameters: Parameters supplied to the operation. Is either a
+         ServiceDiagnosticSettingsResource type or a IO type. Required.
+        :type parameters: ~azure.mgmt.monitor.v2016_09_01.models.ServiceDiagnosticSettingsResource or
+         IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ServiceDiagnosticSettingsResource or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2016_09_01.models.ServiceDiagnosticSettingsResource
+        :rtype: ~azure.mgmt.monitor.v2016_09_01.models.ServiceDiagnosticSettingsResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -265,9 +265,9 @@ class ServiceDiagnosticSettingsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2016-09-01"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ServiceDiagnosticSettingsResource]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-09-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ServiceDiagnosticSettingsResource] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -288,10 +288,11 @@ class ServiceDiagnosticSettingsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -307,7 +308,7 @@ class ServiceDiagnosticSettingsOperations:
 
         return deserialized
 
-    create_or_update.metadata = {"url": "/{resourceUri}/providers/microsoft.insights/diagnosticSettings/service"}  # type: ignore
+    create_or_update.metadata = {"url": "/{resourceUri}/providers/microsoft.insights/diagnosticSettings/service"}
 
     @overload
     def update(
@@ -325,13 +326,13 @@ class ServiceDiagnosticSettingsOperations:
         :type resource_uri: str
         :param service_diagnostic_settings_resource: Parameters supplied to the operation. Required.
         :type service_diagnostic_settings_resource:
-         ~$(python-base-namespace).v2016_09_01.models.ServiceDiagnosticSettingsResourcePatch
+         ~azure.mgmt.monitor.v2016_09_01.models.ServiceDiagnosticSettingsResourcePatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ServiceDiagnosticSettingsResource or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2016_09_01.models.ServiceDiagnosticSettingsResource
+        :rtype: ~azure.mgmt.monitor.v2016_09_01.models.ServiceDiagnosticSettingsResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -356,7 +357,7 @@ class ServiceDiagnosticSettingsOperations:
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ServiceDiagnosticSettingsResource or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2016_09_01.models.ServiceDiagnosticSettingsResource
+        :rtype: ~azure.mgmt.monitor.v2016_09_01.models.ServiceDiagnosticSettingsResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -373,15 +374,15 @@ class ServiceDiagnosticSettingsOperations:
         :param resource_uri: The identifier of the resource. Required.
         :type resource_uri: str
         :param service_diagnostic_settings_resource: Parameters supplied to the operation. Is either a
-         model type or a IO type. Required.
+         ServiceDiagnosticSettingsResourcePatch type or a IO type. Required.
         :type service_diagnostic_settings_resource:
-         ~$(python-base-namespace).v2016_09_01.models.ServiceDiagnosticSettingsResourcePatch or IO
+         ~azure.mgmt.monitor.v2016_09_01.models.ServiceDiagnosticSettingsResourcePatch or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ServiceDiagnosticSettingsResource or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2016_09_01.models.ServiceDiagnosticSettingsResource
+        :rtype: ~azure.mgmt.monitor.v2016_09_01.models.ServiceDiagnosticSettingsResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -395,9 +396,9 @@ class ServiceDiagnosticSettingsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2016-09-01"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ServiceDiagnosticSettingsResource]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-09-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ServiceDiagnosticSettingsResource] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -418,10 +419,11 @@ class ServiceDiagnosticSettingsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -438,4 +440,4 @@ class ServiceDiagnosticSettingsOperations:
 
         return deserialized
 
-    update.metadata = {"url": "/{resourceUri}/providers/microsoft.insights/diagnosticSettings/service"}  # type: ignore
+    update.metadata = {"url": "/{resourceUri}/providers/microsoft.insights/diagnosticSettings/service"}

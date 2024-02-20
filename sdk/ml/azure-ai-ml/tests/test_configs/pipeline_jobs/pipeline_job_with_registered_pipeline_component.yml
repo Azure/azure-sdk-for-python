@@ -1,0 +1,6 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
+type: pipeline
+jobs:
+  hello_world_component:
+    type: pipeline
+    component: azureml:hello_world_component@default

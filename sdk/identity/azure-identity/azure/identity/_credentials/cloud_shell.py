@@ -14,8 +14,7 @@ from .._internal.managed_identity_base import ManagedIdentityBase
 
 
 class CloudShellCredential(ManagedIdentityBase):
-    def get_client(self, **kwargs):
-        # type: (**Any) -> Optional[ManagedIdentityClient]
+    def get_client(self, **kwargs: Any) -> Optional[ManagedIdentityClient]:
         url = os.environ.get(EnvironmentVariables.MSI_ENDPOINT)
         if url:
             return ManagedIdentityClient(

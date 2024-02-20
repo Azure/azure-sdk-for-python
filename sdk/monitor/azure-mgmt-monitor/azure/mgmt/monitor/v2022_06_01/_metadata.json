@@ -19,13 +19,15 @@
                 "signature": "credential: \"TokenCredential\",",
                 "description": "Credential needed for the client to connect to Azure. Required.",
                 "docstring_type": "~azure.core.credentials.TokenCredential",
-                "required": true
+                "required": true,
+                "method_location": "positional"
             },
             "subscription_id": {
                 "signature": "subscription_id: str,",
                 "description": "The ID of the target subscription. Required.",
                 "docstring_type": "str",
-                "required": true
+                "required": true,
+                "method_location": "positional"
             }
         },
         "async": {
@@ -48,22 +50,25 @@
         "service_client_specific": {
             "sync": {
                 "api_version": {
-                    "signature": "api_version=None, # type: Optional[str]",
+                    "signature": "api_version: Optional[str]=None,",
                     "description": "API version to use if no profile is provided, or if missing in profile.",
                     "docstring_type": "str",
-                    "required": false
+                    "required": false,
+                    "method_location": "positional"
                 },
                 "base_url": {
                     "signature": "base_url: str = \"https://management.azure.com\",",
                     "description": "Service URL",
                     "docstring_type": "str",
-                    "required": false
+                    "required": false,
+                    "method_location": "positional"
                 },
                 "profile": {
-                    "signature": "profile=KnownProfiles.default, # type: KnownProfiles",
+                    "signature": "profile: KnownProfiles=KnownProfiles.default,",
                     "description": "A profile definition, from KnownProfiles to dict.",
                     "docstring_type": "azure.profiles.KnownProfiles",
-                    "required": false
+                    "required": false,
+                    "method_location": "positional"
                 }
             },
             "async": {
@@ -71,19 +76,22 @@
                     "signature": "api_version: Optional[str] = None,",
                     "description": "API version to use if no profile is provided, or if missing in profile.",
                     "docstring_type": "str",
-                    "required": false
+                    "required": false,
+                    "method_location": "positional"
                 },
                 "base_url": {
                     "signature": "base_url: str = \"https://management.azure.com\",",
                     "description": "Service URL",
                     "docstring_type": "str",
-                    "required": false
+                    "required": false,
+                    "method_location": "positional"
                 },
                 "profile": {
                     "signature": "profile: KnownProfiles = KnownProfiles.default,",
                     "description": "A profile definition, from KnownProfiles to dict.",
                     "docstring_type": "azure.profiles.KnownProfiles",
-                    "required": false
+                    "required": false,
+                    "method_location": "positional"
                 }
             }
         }
@@ -97,6 +105,9 @@
         "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMHttpLoggingPolicy\", \"AsyncARMChallengeAuthenticationPolicy\"]}, \"local\": {\".._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
     },
     "operation_groups": {
-        "action_groups": "ActionGroupsOperations"
+        "action_groups": "ActionGroupsOperations",
+        "data_collection_endpoints": "DataCollectionEndpointsOperations",
+        "data_collection_rule_associations": "DataCollectionRuleAssociationsOperations",
+        "data_collection_rules": "DataCollectionRulesOperations"
     }
 }

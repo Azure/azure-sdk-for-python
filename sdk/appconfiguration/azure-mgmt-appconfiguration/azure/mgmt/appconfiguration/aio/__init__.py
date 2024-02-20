@@ -7,4 +7,5 @@
 # --------------------------------------------------------------------------
 
 from ._app_configuration_management_client import AppConfigurationManagementClient
-__all__ = ['AppConfigurationManagementClient']
+
+__all__ = ["AppConfigurationManagementClient"]

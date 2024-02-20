@@ -16,7 +16,7 @@ inputs:
     description: A number
 environment:
   conda_file: ../environment/endpoint_conda.yml
-  image: mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04
+  image: mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04
 command: echo Hello World & echo ${{inputs.component_in_number}}
 code: "../python"
 ...

@@ -1,5 +1,19 @@
 # Release History
 
+## 10.2.0 (2023-09-21)
+
+### Features Added
+
+  - Added operation group ArchiveVersionsOperations
+  - Added operation group ArchivesOperations
+
+## 10.1.0 (2023-02-15)
+
+### Features Added
+
+  - Added operation group CacheRulesOperations
+  - Added operation group CredentialSetsOperations
+
 ## 10.0.0 (2022-05-26)
 
 **Features**

@@ -23,10 +23,13 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Any, AsyncIterator
+from typing import Any, AsyncIterator, Optional, Type
+from types import TracebackType
 from ._rest_py3 import AsyncHttpResponse as _AsyncHttpResponse
 from ._http_response_impl import (
-    _HttpResponseBaseImpl, _HttpResponseBackcompatMixinBase, _RestHttpClientTransportResponseBase
+    _HttpResponseBaseImpl,
+    _HttpResponseBackcompatMixinBase,
+    _RestHttpClientTransportResponseBase,
 )
 from ..utils._pipeline_transport_rest_shared import _pad_attr_name
 from ..utils._pipeline_transport_rest_shared_async import _PartGenerator
@@ -44,14 +47,14 @@ class AsyncHttpResponseBackcompatMixin(_HttpResponseBackcompatMixinBase):
         """DEPRECATED: Assuming the content-type is multipart/mixed, will return the parts as an async iterator.
         This is deprecated and will be removed in a later release.
         :rtype: AsyncIterator
+        :return: The parts of the response
         :raises ValueError: If the content is not multipart/mixed
         """
         if not self.content_type or not self.content_type.startswith("multipart/mixed"):
-            raise ValueError(
-                "You can't get parts if the response is not multipart/mixed"
-            )
+            raise ValueError("You can't get parts if the response is not multipart/mixed")
 
         return _PartGenerator(self, default_http_response_type=RestAsyncHttpClientTransportResponse)
+
 
 class AsyncHttpResponseImpl(_HttpResponseBaseImpl, _AsyncHttpResponse, AsyncHttpResponseBackcompatMixin):
     """AsyncHttpResponseImpl built on top of our HttpResponse protocol class.
@@ -96,9 +99,7 @@ class AsyncHttpResponseImpl(_HttpResponseBaseImpl, _AsyncHttpResponse, AsyncHttp
         :rtype: AsyncIterator[bytes]
         """
         self._stream_download_check()
-        async for part in self._stream_download_generator(
-            response=self, pipeline=None, decompress=False
-        ):
+        async for part in self._stream_download_generator(response=self, pipeline=None, decompress=False):
             yield part
         await self.close()
 
@@ -112,11 +113,7 @@ class AsyncHttpResponseImpl(_HttpResponseBaseImpl, _AsyncHttpResponse, AsyncHttp
                 yield self.content[i : i + self._block_size]
         else:
             self._stream_download_check()
-            async for part in self._stream_download_generator(
-                response=self,
-                pipeline=None,
-                decompress=True
-            ):
+            async for part in self._stream_download_generator(response=self, pipeline=None, decompress=True):
                 yield part
             await self.close()
 
@@ -130,20 +127,21 @@ class AsyncHttpResponseImpl(_HttpResponseBaseImpl, _AsyncHttpResponse, AsyncHttp
             self._is_closed = True
             await self._internal_response.close()
 
-    async def __aexit__(self, *args) -> None:
+    async def __aexit__(
+        self,
+        exc_type: Optional[Type[BaseException]] = None,
+        exc_value: Optional[BaseException] = None,
+        traceback: Optional[TracebackType] = None,
+    ) -> None:
         await self.close()
 
     def __repr__(self) -> str:
-        content_type_str = (
-            ", Content-Type: {}".format(self.content_type) if self.content_type else ""
-        )
-        return "<AsyncHttpResponse: {} {}{}>".format(
-            self.status_code, self.reason, content_type_str
-        )
+        content_type_str = ", Content-Type: {}".format(self.content_type) if self.content_type else ""
+        return "<AsyncHttpResponse: {} {}{}>".format(self.status_code, self.reason, content_type_str)
+
 
 class RestAsyncHttpClientTransportResponse(_RestHttpClientTransportResponseBase, AsyncHttpResponseImpl):
-    """Create a Rest HTTPResponse from an http.client response.
-    """
+    """Create a Rest HTTPResponse from an http.client response."""
 
     async def iter_bytes(self, **kwargs):
         raise TypeError("We do not support iter_bytes for this transport response")

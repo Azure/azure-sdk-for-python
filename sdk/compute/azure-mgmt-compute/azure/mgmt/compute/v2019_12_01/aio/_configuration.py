@@ -37,7 +37,7 @@ class ComputeManagementClientConfiguration(Configuration):  # pylint: disable=to
 
     def __init__(self, credential: "AsyncTokenCredential", subscription_id: str, **kwargs: Any) -> None:
         super(ComputeManagementClientConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop("api_version", "2019-12-01")  # type: str
+        api_version: str = kwargs.pop("api_version", "2019-12-01")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")

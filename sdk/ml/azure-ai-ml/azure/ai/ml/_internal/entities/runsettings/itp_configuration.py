@@ -1,15 +1,21 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import List
+from typing import List, Optional
 
-from azure.ai.ml.entities._job.job_resource_configuration import BaseProperty
+from ....entities._job.job_resource_configuration import BaseProperty
 
 
 class ITPResourceConfiguration(BaseProperty):
     """ITP resource configuration."""
 
-    def __init__(self, gpu_count: int = None, cpu_count: int = None, memory_request_in_gb: int = None, **kwargs):
+    def __init__(
+        self,
+        gpu_count: Optional[int] = None,
+        cpu_count: Optional[int] = None,
+        memory_request_in_gb: Optional[int] = None,
+        **kwargs
+    ):
         """
         :param gpu_count: Gpu count Defines how many gpu cores a single node gpu job will use.
         Default value is 1.
@@ -32,10 +38,10 @@ class ITPPriorityConfiguration(BaseProperty):
 
     def __init__(
         self,
-        job_priority: int = None,
-        is_preemptible: bool = None,
-        node_count_set: List[int] = None,
-        scale_interval: int = None,
+        job_priority: Optional[int] = None,
+        is_preemptible: Optional[bool] = None,
+        node_count_set: Optional[List[int]] = None,
+        scale_interval: Optional[int] = None,
         **kwargs
     ):
         """
@@ -66,11 +72,11 @@ class ITPInteractiveConfiguration(BaseProperty):
 
     def __init__(
         self,
-        is_ssh_enabled: bool = None,
-        ssh_public_key: str = None,
-        is_i_python_enabled: bool = None,
-        is_tensor_board_enabled: bool = None,
-        interactive_port: int = None,
+        is_ssh_enabled: Optional[bool] = None,
+        ssh_public_key: Optional[str] = None,
+        is_i_python_enabled: Optional[bool] = None,
+        is_tensor_board_enabled: Optional[bool] = None,
+        interactive_port: Optional[int] = None,
         **kwargs
     ):
         """
@@ -107,10 +113,10 @@ class ITPConfiguration(BaseProperty):
 
     def __init__(
         self,
-        resource_configuration: ITPResourceConfiguration = None,
-        priority_configuration: ITPPriorityConfiguration = None,
-        interactive_configuration: ITPInteractiveConfiguration = None,
-        retry: ITPRetrySettings = None,
+        resource_configuration: Optional[ITPResourceConfiguration] = None,
+        priority_configuration: Optional[ITPPriorityConfiguration] = None,
+        interactive_configuration: Optional[ITPInteractiveConfiguration] = None,
+        retry: Optional[ITPRetrySettings] = None,
         **kwargs
     ):
         """

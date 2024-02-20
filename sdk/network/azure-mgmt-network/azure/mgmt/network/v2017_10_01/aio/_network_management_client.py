@@ -12,7 +12,7 @@ from typing import Any, Awaitable, TYPE_CHECKING
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
 
-from .. import models
+from .. import models as _models
 from ..._serialization import Deserializer, Serializer
 from ._configuration import NetworkManagementClientConfiguration
 from .operations import (
@@ -194,104 +194,114 @@ class NetworkManagementClient(
         self._config = NetworkManagementClientConfiguration(
             credential=credential, subscription_id=subscription_id, **kwargs
         )
-        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
         self.application_gateways = ApplicationGatewaysOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2017-10-01"
         )
         self.application_security_groups = ApplicationSecurityGroupsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2017-10-01"
         )
         self.available_endpoint_services = AvailableEndpointServicesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2017-10-01"
         )
         self.express_route_circuit_authorizations = ExpressRouteCircuitAuthorizationsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2017-10-01"
         )
         self.express_route_circuit_peerings = ExpressRouteCircuitPeeringsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2017-10-01"
         )
         self.express_route_circuits = ExpressRouteCircuitsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2017-10-01"
         )
         self.express_route_service_providers = ExpressRouteServiceProvidersOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2017-10-01"
         )
-        self.load_balancers = LoadBalancersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.load_balancers = LoadBalancersOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2017-10-01"
+        )
         self.load_balancer_backend_address_pools = LoadBalancerBackendAddressPoolsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2017-10-01"
         )
         self.load_balancer_frontend_ip_configurations = LoadBalancerFrontendIPConfigurationsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2017-10-01"
         )
         self.inbound_nat_rules = InboundNatRulesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2017-10-01"
         )
         self.load_balancer_load_balancing_rules = LoadBalancerLoadBalancingRulesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2017-10-01"
         )
         self.load_balancer_network_interfaces = LoadBalancerNetworkInterfacesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2017-10-01"
         )
         self.load_balancer_probes = LoadBalancerProbesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2017-10-01"
         )
         self.network_interfaces = NetworkInterfacesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2017-10-01"
         )
         self.network_interface_ip_configurations = NetworkInterfaceIPConfigurationsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2017-10-01"
         )
         self.network_interface_load_balancers = NetworkInterfaceLoadBalancersOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2017-10-01"
         )
         self.network_security_groups = NetworkSecurityGroupsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2017-10-01"
         )
-        self.security_rules = SecurityRulesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.security_rules = SecurityRulesOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2017-10-01"
+        )
         self.default_security_rules = DefaultSecurityRulesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2017-10-01"
         )
         self.network_watchers = NetworkWatchersOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2017-10-01"
         )
-        self.packet_captures = PacketCapturesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.packet_captures = PacketCapturesOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2017-10-01"
+        )
         self.connection_monitors = ConnectionMonitorsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2017-10-01"
         )
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize, "2017-10-01")
         self.public_ip_addresses = PublicIPAddressesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2017-10-01"
         )
-        self.route_filters = RouteFiltersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.route_filters = RouteFiltersOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2017-10-01"
+        )
         self.route_filter_rules = RouteFilterRulesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2017-10-01"
         )
-        self.route_tables = RouteTablesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.routes = RoutesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.route_tables = RouteTablesOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2017-10-01"
+        )
+        self.routes = RoutesOperations(self._client, self._config, self._serialize, self._deserialize, "2017-10-01")
         self.bgp_service_communities = BgpServiceCommunitiesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2017-10-01"
         )
-        self.usages = UsagesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.usages = UsagesOperations(self._client, self._config, self._serialize, self._deserialize, "2017-10-01")
         self.virtual_networks = VirtualNetworksOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2017-10-01"
         )
-        self.subnets = SubnetsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.subnets = SubnetsOperations(self._client, self._config, self._serialize, self._deserialize, "2017-10-01")
         self.virtual_network_peerings = VirtualNetworkPeeringsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2017-10-01"
         )
         self.virtual_network_gateways = VirtualNetworkGatewaysOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2017-10-01"
         )
         self.virtual_network_gateway_connections = VirtualNetworkGatewayConnectionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2017-10-01"
         )
         self.local_network_gateways = LocalNetworkGatewaysOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2017-10-01"
         )
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
@@ -323,5 +333,5 @@ class NetworkManagementClient(
         await self._client.__aenter__()
         return self
 
-    async def __aexit__(self, *exc_details) -> None:
+    async def __aexit__(self, *exc_details: Any) -> None:
         await self._client.__aexit__(*exc_details)

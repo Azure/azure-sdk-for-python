@@ -18,25 +18,28 @@ from ._virtual_networks_operations import VirtualNetworksOperations
 from ._inventory_items_operations import InventoryItemsOperations
 from ._hybrid_identity_metadata_operations import HybridIdentityMetadataOperations
 from ._machine_extensions_operations import MachineExtensionsOperations
+from ._azure_arc_vmware_management_service_api_operations import AzureArcVMwareManagementServiceAPIOperationsMixin
 from ._guest_agents_operations import GuestAgentsOperations
 
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'Operations',
-    'VirtualMachinesOperations',
-    'ResourcePoolsOperations',
-    'ClustersOperations',
-    'HostsOperations',
-    'DatastoresOperations',
-    'VCentersOperations',
-    'VirtualMachineTemplatesOperations',
-    'VirtualNetworksOperations',
-    'InventoryItemsOperations',
-    'HybridIdentityMetadataOperations',
-    'MachineExtensionsOperations',
-    'GuestAgentsOperations',
+    "Operations",
+    "VirtualMachinesOperations",
+    "ResourcePoolsOperations",
+    "ClustersOperations",
+    "HostsOperations",
+    "DatastoresOperations",
+    "VCentersOperations",
+    "VirtualMachineTemplatesOperations",
+    "VirtualNetworksOperations",
+    "InventoryItemsOperations",
+    "HybridIdentityMetadataOperations",
+    "MachineExtensionsOperations",
+    "AzureArcVMwareManagementServiceAPIOperationsMixin",
+    "GuestAgentsOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

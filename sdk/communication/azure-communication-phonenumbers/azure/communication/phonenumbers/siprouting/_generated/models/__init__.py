@@ -6,23 +6,21 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import CommunicationError
-    from ._models_py3 import CommunicationErrorResponse
-    from ._models_py3 import SipConfiguration
-    from ._models_py3 import SipTrunkInternal
-    from ._models_py3 import SipTrunkRoute
-except (SyntaxError, ImportError):
-    from ._models import CommunicationError  # type: ignore
-    from ._models import CommunicationErrorResponse  # type: ignore
-    from ._models import SipConfiguration  # type: ignore
-    from ._models import SipTrunkInternal  # type: ignore
-    from ._models import SipTrunkRoute  # type: ignore
+from ._models import CommunicationError
+from ._models import CommunicationErrorResponse
+from ._models import SipConfiguration
+from ._models import SipTrunkInternal
+from ._models import SipTrunkRouteInternal
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'CommunicationError',
-    'CommunicationErrorResponse',
-    'SipConfiguration',
-    'SipTrunkInternal',
-    'SipTrunkRoute',
+    "CommunicationError",
+    "CommunicationErrorResponse",
+    "SipConfiguration",
+    "SipTrunkInternal",
+    "SipTrunkRouteInternal",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

@@ -22,13 +22,14 @@ USAGE:
 """
 
 import os
+import pandas as pd
+
 from azure.ai.anomalydetector import AnomalyDetectorClient
 from azure.core.credentials import AzureKeyCredential
-import pandas as pd
+from azure.ai.anomalydetector.models import *
 
 
 class DetectChangePointsSample(object):
-
     def detect_change_point(self):
         SUBSCRIPTION_KEY = os.environ["ANOMALY_DETECTOR_KEY"]
         ANOMALY_DETECTOR_ENDPOINT = os.environ["ANOMALY_DETECTOR_ENDPOINT"]
@@ -44,41 +45,44 @@ class DetectChangePointsSample(object):
 
         # <loadDataFile>
         series = []
-        data_file = pd.read_csv(TIME_SERIES_DATA_PATH, header=None, encoding='utf-8', parse_dates=[0])
+        data_file = pd.read_csv(TIME_SERIES_DATA_PATH, header=None, encoding="utf-8", parse_dates=[0])
         for index, row in data_file.iterrows():
-            series.append({"timestamp": row[0], "value": row[1]})
+            series.append(TimeSeriesPoint(timestamp=row[0], value=row[1]))
         # </loadDataFile>
 
         # Create a request from the data file
 
         # <request>
-        request = {
-            "series": series,
-            "granularity": "daily"
-        }
+        request = UnivariateChangePointDetectionOptions(
+            series=series,
+            granularity=TimeGranularity.DAILY,
+        )
         # </request>
 
         # detect change points throughout the entire time series
 
         # <detectChangePoint>
-        print('Detecting change points in the entire time series.')
+        print("Detecting change points in the entire time series.")
 
         try:
             response = client.detect_univariate_change_point(request)
 
         except Exception as e:
-            print('Error code: {}'.format(e.error.code), 'Error message: {}'.format(e.error.message))
+            print(
+                "Error code: {}".format(e.error.code),
+                "Error message: {}".format(e.error.message),
+            )
 
-        if any(response['isChangePoint']):
-            print('An change point was detected at index:')
-            for i, value in enumerate(response['isChangePoint']):
+        if any(response.is_change_point):
+            print("An change point was detected at index:")
+            for i, value in enumerate(response.is_change_point):
                 if value:
                     print(i)
         else:
-            print('No change point were detected in the time series.')
+            print("No change point were detected in the time series.")
         # </detectChangePoint>
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sample = DetectChangePointsSample()
     sample.detect_change_point()

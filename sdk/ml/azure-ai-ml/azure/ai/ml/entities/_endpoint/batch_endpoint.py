@@ -5,7 +5,7 @@
 import logging
 from os import PathLike
 from pathlib import Path
-from typing import IO, Any, AnyStr, Dict, Union
+from typing import IO, Any, AnyStr, Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2022_05_01.models import BatchEndpointData
 from azure.ai.ml._restclient.v2022_05_01.models import BatchEndpointDetails as RestBatchEndpoint
@@ -30,34 +30,34 @@ class BatchEndpoint(Endpoint):
     :param properties: The asset property dictionary.
     :type properties: dict[str, str]
     :param auth_mode: Possible values include: "AMLToken", "Key", "AADToken", defaults to None
-    :type auth_mode: str, optional
+    :type auth_mode: str
     :param description: Description of the inference endpoint, defaults to None
-    :type description: str, optional
+    :type description: str
     :param location: defaults to None
-    :type location: str, optional
+    :type location: str
     :param defaults:  Traffic rules on how the traffic will be routed across deployments, defaults to {}
-    :type defaults: Dict[str, str], optional
+    :type defaults: Dict[str, str]
     :param default_deployment_name:  Equivalent to defaults.default_deployment, will be ignored if defaults is present.
-    :type default_deployment_name: str, optional
+    :type default_deployment_name: str
     :param scoring_uri: URI to use to perform a prediction, readonly.
-    :type scoring_uri: str, optional
+    :type scoring_uri: str
     :param openapi_uri: URI to check the open API definition of the endpoint.
-    :type openapi_uri: str, optional
+    :type openapi_uri: str
     """
 
     def __init__(
         self,
         *,
-        name: str = None,
-        tags: Dict = None,
-        properties: Dict = None,
+        name: Optional[str] = None,
+        tags: Optional[Dict] = None,
+        properties: Optional[Dict] = None,
         auth_mode: str = AAD_TOKEN_YAML,
-        description: str = None,
-        location: str = None,
-        defaults: Dict[str, str] = None,
-        default_deployment_name: str = None,
-        scoring_uri: str = None,
-        openapi_uri: str = None,
+        description: Optional[str] = None,
+        location: Optional[str] = None,
+        defaults: Optional[Dict[str, str]] = None,
+        default_deployment_name: Optional[str] = None,
+        scoring_uri: Optional[str] = None,
+        openapi_uri: Optional[str] = None,
         **kwargs,
     ) -> None:
         super(BatchEndpoint, self).__init__(
@@ -89,24 +89,24 @@ class BatchEndpoint(Endpoint):
         return BatchEndpointData(location=location, tags=self.tags, properties=batch_endpoint)
 
     @classmethod
-    def _from_rest_object(cls, endpoint: BatchEndpointData):  # pylint: disable=arguments-renamed
+    def _from_rest_object(cls, obj: BatchEndpointData) -> "BatchEndpoint":
         return BatchEndpoint(
-            id=endpoint.id,
-            name=endpoint.name,
-            tags=endpoint.tags,
-            properties=endpoint.properties.properties,
-            auth_mode=camel_to_snake(endpoint.properties.auth_mode),
-            description=endpoint.properties.description,
-            location=endpoint.location,
-            defaults=endpoint.properties.defaults,
-            provisioning_state=endpoint.properties.provisioning_state,
-            scoring_uri=endpoint.properties.scoring_uri,
-            openapi_uri=endpoint.properties.swagger_uri,
+            id=obj.id,
+            name=obj.name,
+            tags=obj.tags,
+            properties=obj.properties.properties,
+            auth_mode=camel_to_snake(obj.properties.auth_mode),
+            description=obj.properties.description,
+            location=obj.location,
+            defaults=obj.properties.defaults,
+            provisioning_state=obj.properties.provisioning_state,
+            scoring_uri=obj.properties.scoring_uri,
+            openapi_uri=obj.properties.swagger_uri,
         )
 
     def dump(
         self,
-        dest: Union[str, PathLike, IO[AnyStr]] = None,  # pylint: disable=unused-argument
+        dest: Optional[Union[str, PathLike, IO[AnyStr]]] = None,  # pylint: disable=unused-argument
         **kwargs,  # pylint: disable=unused-argument
     ) -> Dict[str, Any]:
         context = {BASE_PATH_CONTEXT_KEY: Path(".").parent}
@@ -115,9 +115,9 @@ class BatchEndpoint(Endpoint):
     @classmethod
     def _load(
         cls,
-        data: Dict = None,
-        yaml_path: Union[PathLike, str] = None,
-        params_override: list = None,
+        data: Optional[Dict] = None,
+        yaml_path: Optional[Union[PathLike, str]] = None,
+        params_override: Optional[list] = None,
         **kwargs,
     ) -> "BatchEndpoint":
         data = data or {}

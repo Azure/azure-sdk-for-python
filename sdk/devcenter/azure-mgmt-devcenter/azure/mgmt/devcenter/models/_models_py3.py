@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
 
@@ -49,7 +49,7 @@ class Resource(_serialization.Model):
         "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -74,8 +74,11 @@ class AllowedEnvironmentType(Resource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.devcenter.models.SystemData
-    :ivar provisioning_state: The provisioning state of the resource.
-    :vartype provisioning_state: str
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "NotSpecified", "Accepted", "Running", "Creating", "Created", "Updating", "Updated",
+     "Deleting", "Deleted", "Succeeded", "Failed", "Canceled", "MovingResources",
+     "TransientFailure", "RolloutInProgress", and "StorageProvisioningFailed".
+    :vartype provisioning_state: str or ~azure.mgmt.devcenter.models.ProvisioningState
     """
 
     _validation = {
@@ -94,7 +97,7 @@ class AllowedEnvironmentType(Resource):
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.provisioning_state = None
@@ -121,7 +124,7 @@ class AllowedEnvironmentTypeListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -144,15 +147,18 @@ class AttachedNetworkConnection(Resource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.devcenter.models.SystemData
-    :ivar provisioning_state: The provisioning state of the resource.
-    :vartype provisioning_state: str
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "NotSpecified", "Accepted", "Running", "Creating", "Created", "Updating", "Updated",
+     "Deleting", "Deleted", "Succeeded", "Failed", "Canceled", "MovingResources",
+     "TransientFailure", "RolloutInProgress", and "StorageProvisioningFailed".
+    :vartype provisioning_state: str or ~azure.mgmt.devcenter.models.ProvisioningState
     :ivar network_connection_id: The resource ID of the NetworkConnection you want to attach.
     :vartype network_connection_id: str
     :ivar network_connection_location: The geo-location where the NetworkConnection resource
      specified in 'networkConnectionResourceId' property lives.
     :vartype network_connection_location: str
-    :ivar health_check_status: Health check status values. Known values are: "Pending", "Running",
-     "Passed", "Failed", "Warning", and "Unknown".
+    :ivar health_check_status: Health check status values. Known values are: "Unknown", "Pending",
+     "Running", "Passed", "Warning", and "Failed".
     :vartype health_check_status: str or ~azure.mgmt.devcenter.models.HealthCheckStatus
     :ivar domain_join_type: AAD Join type of the network. This is populated based on the referenced
      Network Connection. Known values are: "HybridAzureADJoin" and "AzureADJoin".
@@ -182,7 +188,7 @@ class AttachedNetworkConnection(Resource):
         "domain_join_type": {"key": "properties.domainJoinType", "type": "str"},
     }
 
-    def __init__(self, *, network_connection_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, network_connection_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword network_connection_id: The resource ID of the NetworkConnection you want to attach.
         :paramtype network_connection_id: str
@@ -216,7 +222,7 @@ class AttachedNetworkListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -244,7 +250,7 @@ class Capability(_serialization.Model):
         "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.name = None
@@ -271,8 +277,11 @@ class Catalog(Resource):
     :vartype git_hub: ~azure.mgmt.devcenter.models.GitCatalog
     :ivar ado_git: Properties for an Azure DevOps catalog type.
     :vartype ado_git: ~azure.mgmt.devcenter.models.GitCatalog
-    :ivar provisioning_state: The provisioning state of the resource.
-    :vartype provisioning_state: str
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "NotSpecified", "Accepted", "Running", "Creating", "Created", "Updating", "Updated",
+     "Deleting", "Deleted", "Succeeded", "Failed", "Canceled", "MovingResources",
+     "TransientFailure", "RolloutInProgress", and "StorageProvisioningFailed".
+    :vartype provisioning_state: str or ~azure.mgmt.devcenter.models.ProvisioningState
     :ivar sync_state: The synchronization state of the catalog. Known values are: "Succeeded",
      "InProgress", "Failed", and "Canceled".
     :vartype sync_state: str or ~azure.mgmt.devcenter.models.CatalogSyncState
@@ -307,8 +316,8 @@ class Catalog(Resource):
         *,
         git_hub: Optional["_models.GitCatalog"] = None,
         ado_git: Optional["_models.GitCatalog"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword git_hub: Properties for a GitHub catalog type.
         :paramtype git_hub: ~azure.mgmt.devcenter.models.GitCatalog
@@ -344,7 +353,7 @@ class CatalogListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -370,8 +379,8 @@ class CatalogUpdateProperties(_serialization.Model):
         *,
         git_hub: Optional["_models.GitCatalog"] = None,
         ado_git: Optional["_models.GitCatalog"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword git_hub: Properties for a GitHub catalog type.
         :paramtype git_hub: ~azure.mgmt.devcenter.models.GitCatalog
@@ -392,8 +401,11 @@ class CatalogProperties(CatalogUpdateProperties):
     :vartype git_hub: ~azure.mgmt.devcenter.models.GitCatalog
     :ivar ado_git: Properties for an Azure DevOps catalog type.
     :vartype ado_git: ~azure.mgmt.devcenter.models.GitCatalog
-    :ivar provisioning_state: The provisioning state of the resource.
-    :vartype provisioning_state: str
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "NotSpecified", "Accepted", "Running", "Creating", "Created", "Updating", "Updated",
+     "Deleting", "Deleted", "Succeeded", "Failed", "Canceled", "MovingResources",
+     "TransientFailure", "RolloutInProgress", and "StorageProvisioningFailed".
+    :vartype provisioning_state: str or ~azure.mgmt.devcenter.models.ProvisioningState
     :ivar sync_state: The synchronization state of the catalog. Known values are: "Succeeded",
      "InProgress", "Failed", and "Canceled".
     :vartype sync_state: str or ~azure.mgmt.devcenter.models.CatalogSyncState
@@ -420,8 +432,8 @@ class CatalogProperties(CatalogUpdateProperties):
         *,
         git_hub: Optional["_models.GitCatalog"] = None,
         ado_git: Optional["_models.GitCatalog"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword git_hub: Properties for a GitHub catalog type.
         :paramtype git_hub: ~azure.mgmt.devcenter.models.GitCatalog
@@ -435,7 +447,8 @@ class CatalogProperties(CatalogUpdateProperties):
 
 
 class CatalogUpdate(_serialization.Model):
-    """The catalog's properties for partial update. Properties not provided in the update request will not be changed.
+    """The catalog's properties for partial update. Properties not provided in the update request will
+    not be changed.
 
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
@@ -457,8 +470,8 @@ class CatalogUpdate(_serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         git_hub: Optional["_models.GitCatalog"] = None,
         ado_git: Optional["_models.GitCatalog"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -471,6 +484,73 @@ class CatalogUpdate(_serialization.Model):
         self.tags = tags
         self.git_hub = git_hub
         self.ado_git = ado_git
+
+
+class CheckNameAvailabilityRequest(_serialization.Model):
+    """The check availability request body.
+
+    :ivar name: The name of the resource for which availability needs to be checked.
+    :vartype name: str
+    :ivar type: The resource type.
+    :vartype type: str
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+    }
+
+    def __init__(self, *, name: Optional[str] = None, type: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword name: The name of the resource for which availability needs to be checked.
+        :paramtype name: str
+        :keyword type: The resource type.
+        :paramtype type: str
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.type = type
+
+
+class CheckNameAvailabilityResponse(_serialization.Model):
+    """The check availability result.
+
+    :ivar name_available: Indicates if the resource name is available.
+    :vartype name_available: bool
+    :ivar reason: The reason why the given name is not available. Known values are: "Invalid" and
+     "AlreadyExists".
+    :vartype reason: str or ~azure.mgmt.devcenter.models.CheckNameAvailabilityReason
+    :ivar message: Detailed reason why the given name is available.
+    :vartype message: str
+    """
+
+    _attribute_map = {
+        "name_available": {"key": "nameAvailable", "type": "bool"},
+        "reason": {"key": "reason", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        name_available: Optional[bool] = None,
+        reason: Optional[Union[str, "_models.CheckNameAvailabilityReason"]] = None,
+        message: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name_available: Indicates if the resource name is available.
+        :paramtype name_available: bool
+        :keyword reason: The reason why the given name is not available. Known values are: "Invalid"
+         and "AlreadyExists".
+        :paramtype reason: str or ~azure.mgmt.devcenter.models.CheckNameAvailabilityReason
+        :keyword message: Detailed reason why the given name is available.
+        :paramtype message: str
+        """
+        super().__init__(**kwargs)
+        self.name_available = name_available
+        self.reason = reason
+        self.message = message
 
 
 class CloudErrorBody(_serialization.Model):
@@ -510,8 +590,8 @@ class CloudErrorBody(_serialization.Model):
         message: str,
         target: Optional[str] = None,
         details: Optional[List["_models.CloudErrorBody"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword code: An identifier for the error. Codes are invariant and are intended to be consumed
          programmatically. Required.
@@ -533,7 +613,8 @@ class CloudErrorBody(_serialization.Model):
 
 
 class TrackedResource(Resource):
-    """The resource model definition for an Azure Resource Manager tracked top level resource which has 'tags' and a 'location'.
+    """The resource model definition for an Azure Resource Manager tracked top level resource which
+    has 'tags' and a 'location'.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -573,7 +654,7 @@ class TrackedResource(Resource):
         "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -614,8 +695,15 @@ class DevBoxDefinition(TrackedResource):  # pylint: disable=too-many-instance-at
     :ivar os_storage_type: The storage type used for the Operating System disk of Dev Boxes created
      using this definition.
     :vartype os_storage_type: str
-    :ivar provisioning_state: The provisioning state of the resource.
-    :vartype provisioning_state: str
+    :ivar hibernate_support: Indicates whether Dev Boxes created with this definition are capable
+     of hibernation. Not all images are capable of supporting hibernation. To find out more see
+     https://aka.ms/devbox/hibernate. Known values are: "Disabled" and "Enabled".
+    :vartype hibernate_support: str or ~azure.mgmt.devcenter.models.HibernateSupport
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "NotSpecified", "Accepted", "Running", "Creating", "Created", "Updating", "Updated",
+     "Deleting", "Deleted", "Succeeded", "Failed", "Canceled", "MovingResources",
+     "TransientFailure", "RolloutInProgress", and "StorageProvisioningFailed".
+    :vartype provisioning_state: str or ~azure.mgmt.devcenter.models.ProvisioningState
     :ivar image_validation_status: Validation status of the configured image. Known values are:
      "Unknown", "Pending", "Succeeded", "Failed", and "TimedOut".
     :vartype image_validation_status: str or ~azure.mgmt.devcenter.models.ImageValidationStatus
@@ -650,6 +738,7 @@ class DevBoxDefinition(TrackedResource):  # pylint: disable=too-many-instance-at
         "image_reference": {"key": "properties.imageReference", "type": "ImageReference"},
         "sku": {"key": "properties.sku", "type": "Sku"},
         "os_storage_type": {"key": "properties.osStorageType", "type": "str"},
+        "hibernate_support": {"key": "properties.hibernateSupport", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "image_validation_status": {"key": "properties.imageValidationStatus", "type": "str"},
         "image_validation_error_details": {
@@ -667,8 +756,9 @@ class DevBoxDefinition(TrackedResource):  # pylint: disable=too-many-instance-at
         image_reference: Optional["_models.ImageReference"] = None,
         sku: Optional["_models.Sku"] = None,
         os_storage_type: Optional[str] = None,
-        **kwargs
-    ):
+        hibernate_support: Optional[Union[str, "_models.HibernateSupport"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -681,11 +771,16 @@ class DevBoxDefinition(TrackedResource):  # pylint: disable=too-many-instance-at
         :keyword os_storage_type: The storage type used for the Operating System disk of Dev Boxes
          created using this definition.
         :paramtype os_storage_type: str
+        :keyword hibernate_support: Indicates whether Dev Boxes created with this definition are
+         capable of hibernation. Not all images are capable of supporting hibernation. To find out more
+         see https://aka.ms/devbox/hibernate. Known values are: "Disabled" and "Enabled".
+        :paramtype hibernate_support: str or ~azure.mgmt.devcenter.models.HibernateSupport
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.image_reference = image_reference
         self.sku = sku
         self.os_storage_type = os_storage_type
+        self.hibernate_support = hibernate_support
         self.provisioning_state = None
         self.image_validation_status = None
         self.image_validation_error_details = None
@@ -713,7 +808,7 @@ class DevBoxDefinitionListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -721,7 +816,8 @@ class DevBoxDefinitionListResult(_serialization.Model):
 
 
 class DevBoxDefinitionUpdateProperties(_serialization.Model):
-    """Properties of a Dev Box definition. These properties can be updated after the resource has been created.
+    """Properties of a Dev Box definition. These properties can be updated after the resource has been
+    created.
 
     :ivar image_reference: Image reference information.
     :vartype image_reference: ~azure.mgmt.devcenter.models.ImageReference
@@ -730,12 +826,17 @@ class DevBoxDefinitionUpdateProperties(_serialization.Model):
     :ivar os_storage_type: The storage type used for the Operating System disk of Dev Boxes created
      using this definition.
     :vartype os_storage_type: str
+    :ivar hibernate_support: Indicates whether Dev Boxes created with this definition are capable
+     of hibernation. Not all images are capable of supporting hibernation. To find out more see
+     https://aka.ms/devbox/hibernate. Known values are: "Disabled" and "Enabled".
+    :vartype hibernate_support: str or ~azure.mgmt.devcenter.models.HibernateSupport
     """
 
     _attribute_map = {
         "image_reference": {"key": "imageReference", "type": "ImageReference"},
         "sku": {"key": "sku", "type": "Sku"},
         "os_storage_type": {"key": "osStorageType", "type": "str"},
+        "hibernate_support": {"key": "hibernateSupport", "type": "str"},
     }
 
     def __init__(
@@ -744,8 +845,9 @@ class DevBoxDefinitionUpdateProperties(_serialization.Model):
         image_reference: Optional["_models.ImageReference"] = None,
         sku: Optional["_models.Sku"] = None,
         os_storage_type: Optional[str] = None,
-        **kwargs
-    ):
+        hibernate_support: Optional[Union[str, "_models.HibernateSupport"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword image_reference: Image reference information.
         :paramtype image_reference: ~azure.mgmt.devcenter.models.ImageReference
@@ -754,11 +856,16 @@ class DevBoxDefinitionUpdateProperties(_serialization.Model):
         :keyword os_storage_type: The storage type used for the Operating System disk of Dev Boxes
          created using this definition.
         :paramtype os_storage_type: str
+        :keyword hibernate_support: Indicates whether Dev Boxes created with this definition are
+         capable of hibernation. Not all images are capable of supporting hibernation. To find out more
+         see https://aka.ms/devbox/hibernate. Known values are: "Disabled" and "Enabled".
+        :paramtype hibernate_support: str or ~azure.mgmt.devcenter.models.HibernateSupport
         """
         super().__init__(**kwargs)
         self.image_reference = image_reference
         self.sku = sku
         self.os_storage_type = os_storage_type
+        self.hibernate_support = hibernate_support
 
 
 class DevBoxDefinitionProperties(DevBoxDefinitionUpdateProperties):
@@ -773,8 +880,15 @@ class DevBoxDefinitionProperties(DevBoxDefinitionUpdateProperties):
     :ivar os_storage_type: The storage type used for the Operating System disk of Dev Boxes created
      using this definition.
     :vartype os_storage_type: str
-    :ivar provisioning_state: The provisioning state of the resource.
-    :vartype provisioning_state: str
+    :ivar hibernate_support: Indicates whether Dev Boxes created with this definition are capable
+     of hibernation. Not all images are capable of supporting hibernation. To find out more see
+     https://aka.ms/devbox/hibernate. Known values are: "Disabled" and "Enabled".
+    :vartype hibernate_support: str or ~azure.mgmt.devcenter.models.HibernateSupport
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "NotSpecified", "Accepted", "Running", "Creating", "Created", "Updating", "Updated",
+     "Deleting", "Deleted", "Succeeded", "Failed", "Canceled", "MovingResources",
+     "TransientFailure", "RolloutInProgress", and "StorageProvisioningFailed".
+    :vartype provisioning_state: str or ~azure.mgmt.devcenter.models.ProvisioningState
     :ivar image_validation_status: Validation status of the configured image. Known values are:
      "Unknown", "Pending", "Succeeded", "Failed", and "TimedOut".
     :vartype image_validation_status: str or ~azure.mgmt.devcenter.models.ImageValidationStatus
@@ -798,6 +912,7 @@ class DevBoxDefinitionProperties(DevBoxDefinitionUpdateProperties):
         "image_reference": {"key": "imageReference", "type": "ImageReference"},
         "sku": {"key": "sku", "type": "Sku"},
         "os_storage_type": {"key": "osStorageType", "type": "str"},
+        "hibernate_support": {"key": "hibernateSupport", "type": "str"},
         "provisioning_state": {"key": "provisioningState", "type": "str"},
         "image_validation_status": {"key": "imageValidationStatus", "type": "str"},
         "image_validation_error_details": {"key": "imageValidationErrorDetails", "type": "ImageValidationErrorDetails"},
@@ -810,8 +925,9 @@ class DevBoxDefinitionProperties(DevBoxDefinitionUpdateProperties):
         image_reference: Optional["_models.ImageReference"] = None,
         sku: Optional["_models.Sku"] = None,
         os_storage_type: Optional[str] = None,
-        **kwargs
-    ):
+        hibernate_support: Optional[Union[str, "_models.HibernateSupport"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword image_reference: Image reference information.
         :paramtype image_reference: ~azure.mgmt.devcenter.models.ImageReference
@@ -820,8 +936,18 @@ class DevBoxDefinitionProperties(DevBoxDefinitionUpdateProperties):
         :keyword os_storage_type: The storage type used for the Operating System disk of Dev Boxes
          created using this definition.
         :paramtype os_storage_type: str
+        :keyword hibernate_support: Indicates whether Dev Boxes created with this definition are
+         capable of hibernation. Not all images are capable of supporting hibernation. To find out more
+         see https://aka.ms/devbox/hibernate. Known values are: "Disabled" and "Enabled".
+        :paramtype hibernate_support: str or ~azure.mgmt.devcenter.models.HibernateSupport
         """
-        super().__init__(image_reference=image_reference, sku=sku, os_storage_type=os_storage_type, **kwargs)
+        super().__init__(
+            image_reference=image_reference,
+            sku=sku,
+            os_storage_type=os_storage_type,
+            hibernate_support=hibernate_support,
+            **kwargs
+        )
         self.provisioning_state = None
         self.image_validation_status = None
         self.image_validation_error_details = None
@@ -842,7 +968,7 @@ class TrackedResourceUpdate(_serialization.Model):
         "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, location: Optional[str] = None, **kwargs):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, location: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -868,6 +994,10 @@ class DevBoxDefinitionUpdate(TrackedResourceUpdate):
     :ivar os_storage_type: The storage type used for the Operating System disk of Dev Boxes created
      using this definition.
     :vartype os_storage_type: str
+    :ivar hibernate_support: Indicates whether Dev Boxes created with this definition are capable
+     of hibernation. Not all images are capable of supporting hibernation. To find out more see
+     https://aka.ms/devbox/hibernate. Known values are: "Disabled" and "Enabled".
+    :vartype hibernate_support: str or ~azure.mgmt.devcenter.models.HibernateSupport
     """
 
     _attribute_map = {
@@ -876,6 +1006,7 @@ class DevBoxDefinitionUpdate(TrackedResourceUpdate):
         "image_reference": {"key": "properties.imageReference", "type": "ImageReference"},
         "sku": {"key": "properties.sku", "type": "Sku"},
         "os_storage_type": {"key": "properties.osStorageType", "type": "str"},
+        "hibernate_support": {"key": "properties.hibernateSupport", "type": "str"},
     }
 
     def __init__(
@@ -886,8 +1017,9 @@ class DevBoxDefinitionUpdate(TrackedResourceUpdate):
         image_reference: Optional["_models.ImageReference"] = None,
         sku: Optional["_models.Sku"] = None,
         os_storage_type: Optional[str] = None,
-        **kwargs
-    ):
+        hibernate_support: Optional[Union[str, "_models.HibernateSupport"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -900,11 +1032,16 @@ class DevBoxDefinitionUpdate(TrackedResourceUpdate):
         :keyword os_storage_type: The storage type used for the Operating System disk of Dev Boxes
          created using this definition.
         :paramtype os_storage_type: str
+        :keyword hibernate_support: Indicates whether Dev Boxes created with this definition are
+         capable of hibernation. Not all images are capable of supporting hibernation. To find out more
+         see https://aka.ms/devbox/hibernate. Known values are: "Disabled" and "Enabled".
+        :paramtype hibernate_support: str or ~azure.mgmt.devcenter.models.HibernateSupport
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.image_reference = image_reference
         self.sku = sku
         self.os_storage_type = os_storage_type
+        self.hibernate_support = hibernate_support
 
 
 class DevCenter(TrackedResource):
@@ -931,8 +1068,13 @@ class DevCenter(TrackedResource):
     :vartype location: str
     :ivar identity: Managed identity properties.
     :vartype identity: ~azure.mgmt.devcenter.models.ManagedServiceIdentity
-    :ivar provisioning_state: The provisioning state of the resource.
-    :vartype provisioning_state: str
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "NotSpecified", "Accepted", "Running", "Creating", "Created", "Updating", "Updated",
+     "Deleting", "Deleted", "Succeeded", "Failed", "Canceled", "MovingResources",
+     "TransientFailure", "RolloutInProgress", and "StorageProvisioningFailed".
+    :vartype provisioning_state: str or ~azure.mgmt.devcenter.models.ProvisioningState
+    :ivar dev_center_uri: The URI of the Dev Center.
+    :vartype dev_center_uri: str
     """
 
     _validation = {
@@ -942,6 +1084,7 @@ class DevCenter(TrackedResource):
         "system_data": {"readonly": True},
         "location": {"required": True},
         "provisioning_state": {"readonly": True},
+        "dev_center_uri": {"readonly": True},
     }
 
     _attribute_map = {
@@ -953,6 +1096,7 @@ class DevCenter(TrackedResource):
         "location": {"key": "location", "type": "str"},
         "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "dev_center_uri": {"key": "properties.devCenterUri", "type": "str"},
     }
 
     def __init__(
@@ -961,8 +1105,8 @@ class DevCenter(TrackedResource):
         location: str,
         tags: Optional[Dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -974,6 +1118,7 @@ class DevCenter(TrackedResource):
         super().__init__(tags=tags, location=location, **kwargs)
         self.identity = identity
         self.provisioning_state = None
+        self.dev_center_uri = None
 
 
 class DevCenterListResult(_serialization.Model):
@@ -997,7 +1142,7 @@ class DevCenterListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -1046,8 +1191,8 @@ class Sku(_serialization.Model):
         size: Optional[str] = None,
         family: Optional[str] = None,
         capacity: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the SKU. Ex - P3. It is typically a letter+number code. Required.
         :paramtype name: str
@@ -1129,8 +1274,8 @@ class DevCenterSku(Sku):
         size: Optional[str] = None,
         family: Optional[str] = None,
         capacity: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the SKU. Ex - P3. It is typically a letter+number code. Required.
         :paramtype name: str
@@ -1155,7 +1300,8 @@ class DevCenterSku(Sku):
 
 
 class DevCenterUpdate(TrackedResourceUpdate):
-    """The devcenter resource for partial updates. Properties not provided in the update request will not be changed.
+    """The devcenter resource for partial updates. Properties not provided in the update request will
+    not be changed.
 
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
@@ -1177,8 +1323,8 @@ class DevCenterUpdate(TrackedResourceUpdate):
         tags: Optional[Dict[str, str]] = None,
         location: Optional[str] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -1189,6 +1335,64 @@ class DevCenterUpdate(TrackedResourceUpdate):
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.identity = identity
+
+
+class EndpointDependency(_serialization.Model):
+    """A domain name and connection details used to access a dependency.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar domain_name: The domain name of the dependency. Domain names may be fully qualified or
+     may contain a * wildcard.
+    :vartype domain_name: str
+    :ivar description: Human-readable supplemental information about the dependency and when it is
+     applicable.
+    :vartype description: str
+    :ivar endpoint_details: The list of connection details for this endpoint.
+    :vartype endpoint_details: list[~azure.mgmt.devcenter.models.EndpointDetail]
+    """
+
+    _validation = {
+        "domain_name": {"readonly": True},
+        "description": {"readonly": True},
+        "endpoint_details": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "domain_name": {"key": "domainName", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "endpoint_details": {"key": "endpointDetails", "type": "[EndpointDetail]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.domain_name = None
+        self.description = None
+        self.endpoint_details = None
+
+
+class EndpointDetail(_serialization.Model):
+    """Details about the connection between the Batch service and the endpoint.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar port: The port an endpoint is connected to.
+    :vartype port: int
+    """
+
+    _validation = {
+        "port": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "port": {"key": "port", "type": "int"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.port = None
 
 
 class EnvironmentRole(_serialization.Model):
@@ -1213,7 +1417,7 @@ class EnvironmentRole(_serialization.Model):
         "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.role_name = None
@@ -1238,8 +1442,11 @@ class EnvironmentType(Resource):
     :vartype system_data: ~azure.mgmt.devcenter.models.SystemData
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar provisioning_state: The provisioning state of the resource.
-    :vartype provisioning_state: str
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "NotSpecified", "Accepted", "Running", "Creating", "Created", "Updating", "Updated",
+     "Deleting", "Deleted", "Succeeded", "Failed", "Canceled", "MovingResources",
+     "TransientFailure", "RolloutInProgress", and "StorageProvisioningFailed".
+    :vartype provisioning_state: str or ~azure.mgmt.devcenter.models.ProvisioningState
     """
 
     _validation = {
@@ -1259,7 +1466,7 @@ class EnvironmentType(Resource):
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -1290,7 +1497,7 @@ class EnvironmentTypeListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -1298,7 +1505,8 @@ class EnvironmentTypeListResult(_serialization.Model):
 
 
 class EnvironmentTypeUpdate(_serialization.Model):
-    """The environment type for partial update. Properties not provided in the update request will not be changed.
+    """The environment type for partial update. Properties not provided in the update request will not
+    be changed.
 
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
@@ -1308,7 +1516,7 @@ class EnvironmentTypeUpdate(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -1338,7 +1546,7 @@ class ErrorAdditionalInfo(_serialization.Model):
         "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.type = None
@@ -1378,7 +1586,7 @@ class ErrorDetail(_serialization.Model):
         "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -1386,6 +1594,27 @@ class ErrorDetail(_serialization.Model):
         self.target = None
         self.details = None
         self.additional_info = None
+
+
+class ErrorResponse(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
+
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.devcenter.models.ErrorDetail
+    """
+
+    _attribute_map = {
+        "error": {"key": "error", "type": "ErrorDetail"},
+    }
+
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.devcenter.models.ErrorDetail
+        """
+        super().__init__(**kwargs)
+        self.error = error
 
 
 class Gallery(Resource):
@@ -1404,8 +1633,11 @@ class Gallery(Resource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.devcenter.models.SystemData
-    :ivar provisioning_state: The provisioning state of the resource.
-    :vartype provisioning_state: str
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "NotSpecified", "Accepted", "Running", "Creating", "Created", "Updating", "Updated",
+     "Deleting", "Deleted", "Succeeded", "Failed", "Canceled", "MovingResources",
+     "TransientFailure", "RolloutInProgress", and "StorageProvisioningFailed".
+    :vartype provisioning_state: str or ~azure.mgmt.devcenter.models.ProvisioningState
     :ivar gallery_resource_id: The resource ID of the backing Azure Compute Gallery.
     :vartype gallery_resource_id: str
     """
@@ -1427,7 +1659,7 @@ class Gallery(Resource):
         "gallery_resource_id": {"key": "properties.galleryResourceId", "type": "str"},
     }
 
-    def __init__(self, *, gallery_resource_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, gallery_resource_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword gallery_resource_id: The resource ID of the backing Azure Compute Gallery.
         :paramtype gallery_resource_id: str
@@ -1458,7 +1690,7 @@ class GalleryListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -1493,8 +1725,8 @@ class GitCatalog(_serialization.Model):
         branch: Optional[str] = None,
         secret_identifier: Optional[str] = None,
         path: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword uri: Git URI.
         :paramtype uri: str
@@ -1518,8 +1750,8 @@ class HealthCheck(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar status: The status of the health check item. Known values are: "Pending", "Running",
-     "Passed", "Failed", "Warning", and "Unknown".
+    :ivar status: The status of the health check item. Known values are: "Unknown", "Pending",
+     "Running", "Passed", "Warning", and "Failed".
     :vartype status: str or ~azure.mgmt.devcenter.models.HealthCheckStatus
     :ivar display_name: The display name of this health check item.
     :vartype display_name: str
@@ -1555,7 +1787,7 @@ class HealthCheck(_serialization.Model):
         "additional_details": {"key": "additionalDetails", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.status = None
@@ -1611,7 +1843,7 @@ class HealthCheckStatusDetails(Resource):
         "health_checks": {"key": "properties.healthChecks", "type": "[HealthCheck]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.start_date_time = None
@@ -1640,15 +1872,45 @@ class HealthCheckStatusDetailsListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
+class HealthStatusDetail(_serialization.Model):
+    """Pool health status detail.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: An identifier for the issue.
+    :vartype code: str
+    :ivar message: A message describing the issue, intended to be suitable for display in a user
+     interface.
+    :vartype message: str
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code = None
+        self.message = None
+
+
 class ProxyResource(Resource):
-    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
+    tags and a location.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1679,12 +1941,12 @@ class ProxyResource(Resource):
         "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
 
 
-class Image(ProxyResource):
+class Image(ProxyResource):  # pylint: disable=too-many-instance-attributes
     """Represents an image.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1712,8 +1974,15 @@ class Image(ProxyResource):
      image.
     :vartype recommended_machine_configuration:
      ~azure.mgmt.devcenter.models.RecommendedMachineConfiguration
-    :ivar provisioning_state: The provisioning state of the resource.
-    :vartype provisioning_state: str
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "NotSpecified", "Accepted", "Running", "Creating", "Created", "Updating", "Updated",
+     "Deleting", "Deleted", "Succeeded", "Failed", "Canceled", "MovingResources",
+     "TransientFailure", "RolloutInProgress", and "StorageProvisioningFailed".
+    :vartype provisioning_state: str or ~azure.mgmt.devcenter.models.ProvisioningState
+    :ivar hibernate_support: Indicates whether this image has hibernate enabled. Not all images are
+     capable of supporting hibernation. To find out more see https://aka.ms/devbox/hibernate. Known
+     values are: "Disabled" and "Enabled".
+    :vartype hibernate_support: str or ~azure.mgmt.devcenter.models.HibernateSupport
     """
 
     _validation = {
@@ -1727,6 +1996,7 @@ class Image(ProxyResource):
         "sku": {"readonly": True},
         "recommended_machine_configuration": {"readonly": True},
         "provisioning_state": {"readonly": True},
+        "hibernate_support": {"readonly": True},
     }
 
     _attribute_map = {
@@ -1743,9 +2013,10 @@ class Image(ProxyResource):
             "type": "RecommendedMachineConfiguration",
         },
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "hibernate_support": {"key": "properties.hibernateSupport", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.description = None
@@ -1754,6 +2025,7 @@ class Image(ProxyResource):
         self.sku = None
         self.recommended_machine_configuration = None
         self.provisioning_state = None
+        self.hibernate_support = None
 
 
 class ImageListResult(_serialization.Model):
@@ -1777,7 +2049,7 @@ class ImageListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -1795,12 +2067,6 @@ class ImageReference(_serialization.Model):
     :ivar exact_version: The actual version of the image after use. When id references a gallery
      image latest version, this will indicate the actual version in use.
     :vartype exact_version: str
-    :ivar publisher: The image publisher.
-    :vartype publisher: str
-    :ivar offer: The image offer.
-    :vartype offer: str
-    :ivar sku: The image sku.
-    :vartype sku: str
     """
 
     _validation = {
@@ -1810,37 +2076,17 @@ class ImageReference(_serialization.Model):
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "exact_version": {"key": "exactVersion", "type": "str"},
-        "publisher": {"key": "publisher", "type": "str"},
-        "offer": {"key": "offer", "type": "str"},
-        "sku": {"key": "sku", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        publisher: Optional[str] = None,
-        offer: Optional[str] = None,
-        sku: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: Image ID, or Image version ID. When Image ID is provided, its latest version will
          be used.
         :paramtype id: str
-        :keyword publisher: The image publisher.
-        :paramtype publisher: str
-        :keyword offer: The image offer.
-        :paramtype offer: str
-        :keyword sku: The image sku.
-        :paramtype sku: str
         """
         super().__init__(**kwargs)
         self.id = id
         self.exact_version = None
-        self.publisher = publisher
-        self.offer = offer
-        self.sku = sku
 
 
 class ImageValidationErrorDetails(_serialization.Model):
@@ -1857,7 +2103,7 @@ class ImageValidationErrorDetails(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword code: An identifier for the error.
         :paramtype code: str
@@ -1894,8 +2140,11 @@ class ImageVersion(ProxyResource):
     :vartype exclude_from_latest: bool
     :ivar os_disk_image_size_in_gb: The size of the OS disk image, in GB.
     :vartype os_disk_image_size_in_gb: int
-    :ivar provisioning_state: The provisioning state of the resource.
-    :vartype provisioning_state: str
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "NotSpecified", "Accepted", "Running", "Creating", "Created", "Updating", "Updated",
+     "Deleting", "Deleted", "Succeeded", "Failed", "Canceled", "MovingResources",
+     "TransientFailure", "RolloutInProgress", and "StorageProvisioningFailed".
+    :vartype provisioning_state: str or ~azure.mgmt.devcenter.models.ProvisioningState
     """
 
     _validation = {
@@ -1922,7 +2171,7 @@ class ImageVersion(ProxyResource):
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.name_properties_name = None
@@ -1953,7 +2202,7 @@ class ImageVersionListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -1981,7 +2230,7 @@ class ListUsagesResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -2030,8 +2279,8 @@ class ManagedServiceIdentity(_serialization.Model):
         *,
         type: Union[str, "_models.ManagedServiceIdentityType"],
         user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: Type of managed service identity (where both SystemAssigned and UserAssigned
          types are allowed). Required. Known values are: "None", "SystemAssigned", "UserAssigned", and
@@ -2085,11 +2334,14 @@ class NetworkConnection(TrackedResource):  # pylint: disable=too-many-instance-a
     :vartype domain_username: str
     :ivar domain_password: The password for the account used to join domain.
     :vartype domain_password: str
-    :ivar provisioning_state: The provisioning state of the resource.
-    :vartype provisioning_state: str
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "NotSpecified", "Accepted", "Running", "Creating", "Created", "Updating", "Updated",
+     "Deleting", "Deleted", "Succeeded", "Failed", "Canceled", "MovingResources",
+     "TransientFailure", "RolloutInProgress", and "StorageProvisioningFailed".
+    :vartype provisioning_state: str or ~azure.mgmt.devcenter.models.ProvisioningState
     :ivar health_check_status: Overall health status of the network connection. Health checks are
      run on creation, update, and periodically to validate the network connection. Known values are:
-     "Pending", "Running", "Passed", "Failed", "Warning", and "Unknown".
+     "Unknown", "Pending", "Running", "Passed", "Warning", and "Failed".
     :vartype health_check_status: str or ~azure.mgmt.devcenter.models.HealthCheckStatus
     :ivar networking_resource_group_name: The name for resource group where NICs will be placed.
     :vartype networking_resource_group_name: str
@@ -2137,8 +2389,8 @@ class NetworkConnection(TrackedResource):  # pylint: disable=too-many-instance-a
         domain_password: Optional[str] = None,
         networking_resource_group_name: Optional[str] = None,
         domain_join_type: Optional[Union[str, "_models.DomainJoinType"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -2195,7 +2447,7 @@ class NetworkConnectionListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -2203,7 +2455,8 @@ class NetworkConnectionListResult(_serialization.Model):
 
 
 class NetworkConnectionUpdate(TrackedResourceUpdate):
-    """The network connection properties for partial update. Properties not provided in the update request will not be changed.
+    """The network connection properties for partial update. Properties not provided in the update
+    request will not be changed.
 
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
@@ -2243,8 +2496,8 @@ class NetworkConnectionUpdate(TrackedResourceUpdate):
         organization_unit: Optional[str] = None,
         domain_username: Optional[str] = None,
         domain_password: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -2272,7 +2525,8 @@ class NetworkConnectionUpdate(TrackedResourceUpdate):
 
 
 class NetworkConnectionUpdateProperties(_serialization.Model):
-    """Properties of network connection. These properties can be updated after the resource has been created.
+    """Properties of network connection. These properties can be updated after the resource has been
+    created.
 
     :ivar subnet_id: The subnet to attach Virtual Machines to.
     :vartype subnet_id: str
@@ -2304,8 +2558,8 @@ class NetworkConnectionUpdateProperties(_serialization.Model):
         organization_unit: Optional[str] = None,
         domain_username: Optional[str] = None,
         domain_password: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword subnet_id: The subnet to attach Virtual Machines to.
         :paramtype subnet_id: str
@@ -2347,11 +2601,14 @@ class NetworkProperties(NetworkConnectionUpdateProperties):
     :vartype domain_username: str
     :ivar domain_password: The password for the account used to join domain.
     :vartype domain_password: str
-    :ivar provisioning_state: The provisioning state of the resource.
-    :vartype provisioning_state: str
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "NotSpecified", "Accepted", "Running", "Creating", "Created", "Updating", "Updated",
+     "Deleting", "Deleted", "Succeeded", "Failed", "Canceled", "MovingResources",
+     "TransientFailure", "RolloutInProgress", and "StorageProvisioningFailed".
+    :vartype provisioning_state: str or ~azure.mgmt.devcenter.models.ProvisioningState
     :ivar health_check_status: Overall health status of the network connection. Health checks are
      run on creation, update, and periodically to validate the network connection. Known values are:
-     "Pending", "Running", "Passed", "Failed", "Warning", and "Unknown".
+     "Unknown", "Pending", "Running", "Passed", "Warning", and "Failed".
     :vartype health_check_status: str or ~azure.mgmt.devcenter.models.HealthCheckStatus
     :ivar networking_resource_group_name: The name for resource group where NICs will be placed.
     :vartype networking_resource_group_name: str
@@ -2388,8 +2645,8 @@ class NetworkProperties(NetworkConnectionUpdateProperties):
         domain_username: Optional[str] = None,
         domain_password: Optional[str] = None,
         networking_resource_group_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword subnet_id: The subnet to attach Virtual Machines to.
         :paramtype subnet_id: str
@@ -2460,7 +2717,7 @@ class Operation(_serialization.Model):
         "action_type": {"key": "actionType", "type": "str"},
     }
 
-    def __init__(self, *, display: Optional["_models.OperationDisplay"] = None, **kwargs):
+    def __init__(self, *, display: Optional["_models.OperationDisplay"] = None, **kwargs: Any) -> None:
         """
         :keyword display: Localized display information for this particular operation.
         :paramtype display: ~azure.mgmt.devcenter.models.OperationDisplay
@@ -2506,7 +2763,7 @@ class OperationDisplay(_serialization.Model):
         "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.provider = None
@@ -2516,7 +2773,8 @@ class OperationDisplay(_serialization.Model):
 
 
 class OperationListResult(_serialization.Model):
-    """A list of REST API operations supported by an Azure Resource Provider. It contains an URL link to get the next set of results.
+    """A list of REST API operations supported by an Azure Resource Provider. It contains an URL link
+    to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -2536,7 +2794,7 @@ class OperationListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -2593,8 +2851,8 @@ class OperationStatusResult(_serialization.Model):
         end_time: Optional[datetime.datetime] = None,
         operations: Optional[List["_models.OperationStatusResult"]] = None,
         error: Optional["_models.ErrorDetail"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Fully qualified ID for the async operation.
         :paramtype id: str
@@ -2684,8 +2942,8 @@ class OperationStatus(OperationStatusResult):
         end_time: Optional[datetime.datetime] = None,
         operations: Optional[List["_models.OperationStatusResult"]] = None,
         error: Optional["_models.ErrorDetail"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Fully qualified ID for the async operation.
         :paramtype id: str
@@ -2717,6 +2975,66 @@ class OperationStatus(OperationStatusResult):
         )
         self.resource_id = None
         self.properties = None
+
+
+class OutboundEnvironmentEndpoint(_serialization.Model):
+    """A collection of related endpoints from the same service for which the agent requires outbound
+    access.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar category: The type of service that the agent connects to.
+    :vartype category: str
+    :ivar endpoints: The endpoints for this service for which the agent requires outbound access.
+    :vartype endpoints: list[~azure.mgmt.devcenter.models.EndpointDependency]
+    """
+
+    _validation = {
+        "category": {"readonly": True},
+        "endpoints": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "category": {"key": "category", "type": "str"},
+        "endpoints": {"key": "endpoints", "type": "[EndpointDependency]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.category = None
+        self.endpoints = None
+
+
+class OutboundEnvironmentEndpointCollection(_serialization.Model):
+    """Values returned by the List operation.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: The collection of outbound network dependency endpoints returned by the listing
+     operation.
+    :vartype value: list[~azure.mgmt.devcenter.models.OutboundEnvironmentEndpoint]
+    :ivar next_link: The continuation token.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[OutboundEnvironmentEndpoint]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword next_link: The continuation token.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = None
+        self.next_link = next_link
 
 
 class Pool(TrackedResource):  # pylint: disable=too-many-instance-attributes
@@ -2751,8 +3069,21 @@ class Pool(TrackedResource):  # pylint: disable=too-many-instance-attributes
     :ivar local_administrator: Indicates whether owners of Dev Boxes in this pool are added as
      local administrators on the Dev Box. Known values are: "Disabled" and "Enabled".
     :vartype local_administrator: str or ~azure.mgmt.devcenter.models.LocalAdminStatus
-    :ivar provisioning_state: The provisioning state of the resource.
-    :vartype provisioning_state: str
+    :ivar stop_on_disconnect: Stop on disconnect configuration settings for Dev Boxes created in
+     this pool.
+    :vartype stop_on_disconnect: ~azure.mgmt.devcenter.models.StopOnDisconnectConfiguration
+    :ivar health_status: Overall health status of the Pool. Indicates whether or not the Pool is
+     available to create Dev Boxes. Known values are: "Unknown", "Pending", "Healthy", "Warning",
+     and "Unhealthy".
+    :vartype health_status: str or ~azure.mgmt.devcenter.models.HealthStatus
+    :ivar health_status_details: Details on the Pool health status to help diagnose issues. This is
+     only populated when the pool status indicates the pool is in a non-healthy state.
+    :vartype health_status_details: list[~azure.mgmt.devcenter.models.HealthStatusDetail]
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "NotSpecified", "Accepted", "Running", "Creating", "Created", "Updating", "Updated",
+     "Deleting", "Deleted", "Succeeded", "Failed", "Canceled", "MovingResources",
+     "TransientFailure", "RolloutInProgress", and "StorageProvisioningFailed".
+    :vartype provisioning_state: str or ~azure.mgmt.devcenter.models.ProvisioningState
     """
 
     _validation = {
@@ -2761,6 +3092,8 @@ class Pool(TrackedResource):  # pylint: disable=too-many-instance-attributes
         "type": {"readonly": True},
         "system_data": {"readonly": True},
         "location": {"required": True},
+        "health_status": {"readonly": True},
+        "health_status_details": {"readonly": True},
         "provisioning_state": {"readonly": True},
     }
 
@@ -2775,6 +3108,9 @@ class Pool(TrackedResource):  # pylint: disable=too-many-instance-attributes
         "network_connection_name": {"key": "properties.networkConnectionName", "type": "str"},
         "license_type": {"key": "properties.licenseType", "type": "str"},
         "local_administrator": {"key": "properties.localAdministrator", "type": "str"},
+        "stop_on_disconnect": {"key": "properties.stopOnDisconnect", "type": "StopOnDisconnectConfiguration"},
+        "health_status": {"key": "properties.healthStatus", "type": "str"},
+        "health_status_details": {"key": "properties.healthStatusDetails", "type": "[HealthStatusDetail]"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
@@ -2787,8 +3123,9 @@ class Pool(TrackedResource):  # pylint: disable=too-many-instance-attributes
         network_connection_name: Optional[str] = None,
         license_type: Optional[Union[str, "_models.LicenseType"]] = None,
         local_administrator: Optional[Union[str, "_models.LocalAdminStatus"]] = None,
-        **kwargs
-    ):
+        stop_on_disconnect: Optional["_models.StopOnDisconnectConfiguration"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -2804,12 +3141,18 @@ class Pool(TrackedResource):  # pylint: disable=too-many-instance-attributes
         :keyword local_administrator: Indicates whether owners of Dev Boxes in this pool are added as
          local administrators on the Dev Box. Known values are: "Disabled" and "Enabled".
         :paramtype local_administrator: str or ~azure.mgmt.devcenter.models.LocalAdminStatus
+        :keyword stop_on_disconnect: Stop on disconnect configuration settings for Dev Boxes created in
+         this pool.
+        :paramtype stop_on_disconnect: ~azure.mgmt.devcenter.models.StopOnDisconnectConfiguration
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.dev_box_definition_name = dev_box_definition_name
         self.network_connection_name = network_connection_name
         self.license_type = license_type
         self.local_administrator = local_administrator
+        self.stop_on_disconnect = stop_on_disconnect
+        self.health_status = None
+        self.health_status_details = None
         self.provisioning_state = None
 
 
@@ -2834,7 +3177,7 @@ class PoolListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -2854,6 +3197,9 @@ class PoolUpdateProperties(_serialization.Model):
     :ivar local_administrator: Indicates whether owners of Dev Boxes in this pool are added as
      local administrators on the Dev Box. Known values are: "Disabled" and "Enabled".
     :vartype local_administrator: str or ~azure.mgmt.devcenter.models.LocalAdminStatus
+    :ivar stop_on_disconnect: Stop on disconnect configuration settings for Dev Boxes created in
+     this pool.
+    :vartype stop_on_disconnect: ~azure.mgmt.devcenter.models.StopOnDisconnectConfiguration
     """
 
     _attribute_map = {
@@ -2861,6 +3207,7 @@ class PoolUpdateProperties(_serialization.Model):
         "network_connection_name": {"key": "networkConnectionName", "type": "str"},
         "license_type": {"key": "licenseType", "type": "str"},
         "local_administrator": {"key": "localAdministrator", "type": "str"},
+        "stop_on_disconnect": {"key": "stopOnDisconnect", "type": "StopOnDisconnectConfiguration"},
     }
 
     def __init__(
@@ -2870,8 +3217,9 @@ class PoolUpdateProperties(_serialization.Model):
         network_connection_name: Optional[str] = None,
         license_type: Optional[Union[str, "_models.LicenseType"]] = None,
         local_administrator: Optional[Union[str, "_models.LocalAdminStatus"]] = None,
-        **kwargs
-    ):
+        stop_on_disconnect: Optional["_models.StopOnDisconnectConfiguration"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword dev_box_definition_name: Name of a Dev Box definition in parent Project of this Pool.
         :paramtype dev_box_definition_name: str
@@ -2883,12 +3231,16 @@ class PoolUpdateProperties(_serialization.Model):
         :keyword local_administrator: Indicates whether owners of Dev Boxes in this pool are added as
          local administrators on the Dev Box. Known values are: "Disabled" and "Enabled".
         :paramtype local_administrator: str or ~azure.mgmt.devcenter.models.LocalAdminStatus
+        :keyword stop_on_disconnect: Stop on disconnect configuration settings for Dev Boxes created in
+         this pool.
+        :paramtype stop_on_disconnect: ~azure.mgmt.devcenter.models.StopOnDisconnectConfiguration
         """
         super().__init__(**kwargs)
         self.dev_box_definition_name = dev_box_definition_name
         self.network_connection_name = network_connection_name
         self.license_type = license_type
         self.local_administrator = local_administrator
+        self.stop_on_disconnect = stop_on_disconnect
 
 
 class PoolProperties(PoolUpdateProperties):
@@ -2906,11 +3258,26 @@ class PoolProperties(PoolUpdateProperties):
     :ivar local_administrator: Indicates whether owners of Dev Boxes in this pool are added as
      local administrators on the Dev Box. Known values are: "Disabled" and "Enabled".
     :vartype local_administrator: str or ~azure.mgmt.devcenter.models.LocalAdminStatus
-    :ivar provisioning_state: The provisioning state of the resource.
-    :vartype provisioning_state: str
+    :ivar stop_on_disconnect: Stop on disconnect configuration settings for Dev Boxes created in
+     this pool.
+    :vartype stop_on_disconnect: ~azure.mgmt.devcenter.models.StopOnDisconnectConfiguration
+    :ivar health_status: Overall health status of the Pool. Indicates whether or not the Pool is
+     available to create Dev Boxes. Known values are: "Unknown", "Pending", "Healthy", "Warning",
+     and "Unhealthy".
+    :vartype health_status: str or ~azure.mgmt.devcenter.models.HealthStatus
+    :ivar health_status_details: Details on the Pool health status to help diagnose issues. This is
+     only populated when the pool status indicates the pool is in a non-healthy state.
+    :vartype health_status_details: list[~azure.mgmt.devcenter.models.HealthStatusDetail]
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "NotSpecified", "Accepted", "Running", "Creating", "Created", "Updating", "Updated",
+     "Deleting", "Deleted", "Succeeded", "Failed", "Canceled", "MovingResources",
+     "TransientFailure", "RolloutInProgress", and "StorageProvisioningFailed".
+    :vartype provisioning_state: str or ~azure.mgmt.devcenter.models.ProvisioningState
     """
 
     _validation = {
+        "health_status": {"readonly": True},
+        "health_status_details": {"readonly": True},
         "provisioning_state": {"readonly": True},
     }
 
@@ -2919,6 +3286,9 @@ class PoolProperties(PoolUpdateProperties):
         "network_connection_name": {"key": "networkConnectionName", "type": "str"},
         "license_type": {"key": "licenseType", "type": "str"},
         "local_administrator": {"key": "localAdministrator", "type": "str"},
+        "stop_on_disconnect": {"key": "stopOnDisconnect", "type": "StopOnDisconnectConfiguration"},
+        "health_status": {"key": "healthStatus", "type": "str"},
+        "health_status_details": {"key": "healthStatusDetails", "type": "[HealthStatusDetail]"},
         "provisioning_state": {"key": "provisioningState", "type": "str"},
     }
 
@@ -2929,8 +3299,9 @@ class PoolProperties(PoolUpdateProperties):
         network_connection_name: Optional[str] = None,
         license_type: Optional[Union[str, "_models.LicenseType"]] = None,
         local_administrator: Optional[Union[str, "_models.LocalAdminStatus"]] = None,
-        **kwargs
-    ):
+        stop_on_disconnect: Optional["_models.StopOnDisconnectConfiguration"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword dev_box_definition_name: Name of a Dev Box definition in parent Project of this Pool.
         :paramtype dev_box_definition_name: str
@@ -2942,19 +3313,26 @@ class PoolProperties(PoolUpdateProperties):
         :keyword local_administrator: Indicates whether owners of Dev Boxes in this pool are added as
          local administrators on the Dev Box. Known values are: "Disabled" and "Enabled".
         :paramtype local_administrator: str or ~azure.mgmt.devcenter.models.LocalAdminStatus
+        :keyword stop_on_disconnect: Stop on disconnect configuration settings for Dev Boxes created in
+         this pool.
+        :paramtype stop_on_disconnect: ~azure.mgmt.devcenter.models.StopOnDisconnectConfiguration
         """
         super().__init__(
             dev_box_definition_name=dev_box_definition_name,
             network_connection_name=network_connection_name,
             license_type=license_type,
             local_administrator=local_administrator,
+            stop_on_disconnect=stop_on_disconnect,
             **kwargs
         )
+        self.health_status = None
+        self.health_status_details = None
         self.provisioning_state = None
 
 
 class PoolUpdate(TrackedResourceUpdate):
-    """The pool properties for partial update. Properties not provided in the update request will not be changed.
+    """The pool properties for partial update. Properties not provided in the update request will not
+    be changed.
 
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
@@ -2970,6 +3348,9 @@ class PoolUpdate(TrackedResourceUpdate):
     :ivar local_administrator: Indicates whether owners of Dev Boxes in this pool are added as
      local administrators on the Dev Box. Known values are: "Disabled" and "Enabled".
     :vartype local_administrator: str or ~azure.mgmt.devcenter.models.LocalAdminStatus
+    :ivar stop_on_disconnect: Stop on disconnect configuration settings for Dev Boxes created in
+     this pool.
+    :vartype stop_on_disconnect: ~azure.mgmt.devcenter.models.StopOnDisconnectConfiguration
     """
 
     _attribute_map = {
@@ -2979,6 +3360,7 @@ class PoolUpdate(TrackedResourceUpdate):
         "network_connection_name": {"key": "properties.networkConnectionName", "type": "str"},
         "license_type": {"key": "properties.licenseType", "type": "str"},
         "local_administrator": {"key": "properties.localAdministrator", "type": "str"},
+        "stop_on_disconnect": {"key": "properties.stopOnDisconnect", "type": "StopOnDisconnectConfiguration"},
     }
 
     def __init__(
@@ -2990,8 +3372,9 @@ class PoolUpdate(TrackedResourceUpdate):
         network_connection_name: Optional[str] = None,
         license_type: Optional[Union[str, "_models.LicenseType"]] = None,
         local_administrator: Optional[Union[str, "_models.LocalAdminStatus"]] = None,
-        **kwargs
-    ):
+        stop_on_disconnect: Optional["_models.StopOnDisconnectConfiguration"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -3007,15 +3390,19 @@ class PoolUpdate(TrackedResourceUpdate):
         :keyword local_administrator: Indicates whether owners of Dev Boxes in this pool are added as
          local administrators on the Dev Box. Known values are: "Disabled" and "Enabled".
         :paramtype local_administrator: str or ~azure.mgmt.devcenter.models.LocalAdminStatus
+        :keyword stop_on_disconnect: Stop on disconnect configuration settings for Dev Boxes created in
+         this pool.
+        :paramtype stop_on_disconnect: ~azure.mgmt.devcenter.models.StopOnDisconnectConfiguration
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.dev_box_definition_name = dev_box_definition_name
         self.network_connection_name = network_connection_name
         self.license_type = license_type
         self.local_administrator = local_administrator
+        self.stop_on_disconnect = stop_on_disconnect
 
 
-class Project(TrackedResource):
+class Project(TrackedResource):  # pylint: disable=too-many-instance-attributes
     """Represents a project resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3041,8 +3428,17 @@ class Project(TrackedResource):
     :vartype dev_center_id: str
     :ivar description: Description of the project.
     :vartype description: str
-    :ivar provisioning_state: The provisioning state of the resource.
-    :vartype provisioning_state: str
+    :ivar max_dev_boxes_per_user: When specified, limits the maximum number of Dev Boxes a single
+     user can create across all pools in the project. This will have no effect on existing Dev Boxes
+     when reduced.
+    :vartype max_dev_boxes_per_user: int
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "NotSpecified", "Accepted", "Running", "Creating", "Created", "Updating", "Updated",
+     "Deleting", "Deleted", "Succeeded", "Failed", "Canceled", "MovingResources",
+     "TransientFailure", "RolloutInProgress", and "StorageProvisioningFailed".
+    :vartype provisioning_state: str or ~azure.mgmt.devcenter.models.ProvisioningState
+    :ivar dev_center_uri: The URI of the Dev Center resource this project is associated with.
+    :vartype dev_center_uri: str
     """
 
     _validation = {
@@ -3051,7 +3447,9 @@ class Project(TrackedResource):
         "type": {"readonly": True},
         "system_data": {"readonly": True},
         "location": {"required": True},
+        "max_dev_boxes_per_user": {"minimum": 0},
         "provisioning_state": {"readonly": True},
+        "dev_center_uri": {"readonly": True},
     }
 
     _attribute_map = {
@@ -3063,7 +3461,9 @@ class Project(TrackedResource):
         "location": {"key": "location", "type": "str"},
         "dev_center_id": {"key": "properties.devCenterId", "type": "str"},
         "description": {"key": "properties.description", "type": "str"},
+        "max_dev_boxes_per_user": {"key": "properties.maxDevBoxesPerUser", "type": "int"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "dev_center_uri": {"key": "properties.devCenterUri", "type": "str"},
     }
 
     def __init__(
@@ -3073,8 +3473,9 @@ class Project(TrackedResource):
         tags: Optional[Dict[str, str]] = None,
         dev_center_id: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        max_dev_boxes_per_user: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -3084,11 +3485,17 @@ class Project(TrackedResource):
         :paramtype dev_center_id: str
         :keyword description: Description of the project.
         :paramtype description: str
+        :keyword max_dev_boxes_per_user: When specified, limits the maximum number of Dev Boxes a
+         single user can create across all pools in the project. This will have no effect on existing
+         Dev Boxes when reduced.
+        :paramtype max_dev_boxes_per_user: int
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.dev_center_id = dev_center_id
         self.description = description
+        self.max_dev_boxes_per_user = max_dev_boxes_per_user
         self.provisioning_state = None
+        self.dev_center_uri = None
 
 
 class ProjectEnvironmentType(Resource):  # pylint: disable=too-many-instance-attributes
@@ -3118,7 +3525,7 @@ class ProjectEnvironmentType(Resource):  # pylint: disable=too-many-instance-att
     :vartype deployment_target_id: str
     :ivar status: Defines whether this Environment Type can be used in this Project. Known values
      are: "Enabled" and "Disabled".
-    :vartype status: str or ~azure.mgmt.devcenter.models.EnableStatus
+    :vartype status: str or ~azure.mgmt.devcenter.models.EnvironmentTypeEnableStatus
     :ivar creator_role_assignment: The role definition assigned to the environment creator on
      backing resources.
     :vartype creator_role_assignment:
@@ -3126,8 +3533,11 @@ class ProjectEnvironmentType(Resource):  # pylint: disable=too-many-instance-att
     :ivar user_role_assignments: Role Assignments created on environment backing resources. This is
      a mapping from a user object ID to an object of role definition IDs.
     :vartype user_role_assignments: dict[str, ~azure.mgmt.devcenter.models.UserRoleAssignmentValue]
-    :ivar provisioning_state: The provisioning state of the resource.
-    :vartype provisioning_state: str
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "NotSpecified", "Accepted", "Running", "Creating", "Created", "Updating", "Updated",
+     "Deleting", "Deleted", "Succeeded", "Failed", "Canceled", "MovingResources",
+     "TransientFailure", "RolloutInProgress", and "StorageProvisioningFailed".
+    :vartype provisioning_state: str or ~azure.mgmt.devcenter.models.ProvisioningState
     """
 
     _validation = {
@@ -3163,11 +3573,11 @@ class ProjectEnvironmentType(Resource):  # pylint: disable=too-many-instance-att
         identity: Optional["_models.ManagedServiceIdentity"] = None,
         location: Optional[str] = None,
         deployment_target_id: Optional[str] = None,
-        status: Optional[Union[str, "_models.EnableStatus"]] = None,
+        status: Optional[Union[str, "_models.EnvironmentTypeEnableStatus"]] = None,
         creator_role_assignment: Optional["_models.ProjectEnvironmentTypeUpdatePropertiesCreatorRoleAssignment"] = None,
         user_role_assignments: Optional[Dict[str, "_models.UserRoleAssignmentValue"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -3180,7 +3590,7 @@ class ProjectEnvironmentType(Resource):  # pylint: disable=too-many-instance-att
         :paramtype deployment_target_id: str
         :keyword status: Defines whether this Environment Type can be used in this Project. Known
          values are: "Enabled" and "Disabled".
-        :paramtype status: str or ~azure.mgmt.devcenter.models.EnableStatus
+        :paramtype status: str or ~azure.mgmt.devcenter.models.EnvironmentTypeEnableStatus
         :keyword creator_role_assignment: The role definition assigned to the environment creator on
          backing resources.
         :paramtype creator_role_assignment:
@@ -3222,7 +3632,7 @@ class ProjectEnvironmentTypeListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -3230,14 +3640,15 @@ class ProjectEnvironmentTypeListResult(_serialization.Model):
 
 
 class ProjectEnvironmentTypeUpdateProperties(_serialization.Model):
-    """Properties of a project environment type. These properties can be updated after the resource has been created.
+    """Properties of a project environment type. These properties can be updated after the resource
+    has been created.
 
     :ivar deployment_target_id: Id of a subscription that the environment type will be mapped to.
      The environment's resources will be deployed into this subscription.
     :vartype deployment_target_id: str
     :ivar status: Defines whether this Environment Type can be used in this Project. Known values
      are: "Enabled" and "Disabled".
-    :vartype status: str or ~azure.mgmt.devcenter.models.EnableStatus
+    :vartype status: str or ~azure.mgmt.devcenter.models.EnvironmentTypeEnableStatus
     :ivar creator_role_assignment: The role definition assigned to the environment creator on
      backing resources.
     :vartype creator_role_assignment:
@@ -3261,18 +3672,18 @@ class ProjectEnvironmentTypeUpdateProperties(_serialization.Model):
         self,
         *,
         deployment_target_id: Optional[str] = None,
-        status: Optional[Union[str, "_models.EnableStatus"]] = None,
+        status: Optional[Union[str, "_models.EnvironmentTypeEnableStatus"]] = None,
         creator_role_assignment: Optional["_models.ProjectEnvironmentTypeUpdatePropertiesCreatorRoleAssignment"] = None,
         user_role_assignments: Optional[Dict[str, "_models.UserRoleAssignmentValue"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword deployment_target_id: Id of a subscription that the environment type will be mapped
          to. The environment's resources will be deployed into this subscription.
         :paramtype deployment_target_id: str
         :keyword status: Defines whether this Environment Type can be used in this Project. Known
          values are: "Enabled" and "Disabled".
-        :paramtype status: str or ~azure.mgmt.devcenter.models.EnableStatus
+        :paramtype status: str or ~azure.mgmt.devcenter.models.EnvironmentTypeEnableStatus
         :keyword creator_role_assignment: The role definition assigned to the environment creator on
          backing resources.
         :paramtype creator_role_assignment:
@@ -3299,7 +3710,7 @@ class ProjectEnvironmentTypeProperties(ProjectEnvironmentTypeUpdateProperties):
     :vartype deployment_target_id: str
     :ivar status: Defines whether this Environment Type can be used in this Project. Known values
      are: "Enabled" and "Disabled".
-    :vartype status: str or ~azure.mgmt.devcenter.models.EnableStatus
+    :vartype status: str or ~azure.mgmt.devcenter.models.EnvironmentTypeEnableStatus
     :ivar creator_role_assignment: The role definition assigned to the environment creator on
      backing resources.
     :vartype creator_role_assignment:
@@ -3307,8 +3718,11 @@ class ProjectEnvironmentTypeProperties(ProjectEnvironmentTypeUpdateProperties):
     :ivar user_role_assignments: Role Assignments created on environment backing resources. This is
      a mapping from a user object ID to an object of role definition IDs.
     :vartype user_role_assignments: dict[str, ~azure.mgmt.devcenter.models.UserRoleAssignmentValue]
-    :ivar provisioning_state: The provisioning state of the resource.
-    :vartype provisioning_state: str
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "NotSpecified", "Accepted", "Running", "Creating", "Created", "Updating", "Updated",
+     "Deleting", "Deleted", "Succeeded", "Failed", "Canceled", "MovingResources",
+     "TransientFailure", "RolloutInProgress", and "StorageProvisioningFailed".
+    :vartype provisioning_state: str or ~azure.mgmt.devcenter.models.ProvisioningState
     """
 
     _validation = {
@@ -3330,18 +3744,18 @@ class ProjectEnvironmentTypeProperties(ProjectEnvironmentTypeUpdateProperties):
         self,
         *,
         deployment_target_id: Optional[str] = None,
-        status: Optional[Union[str, "_models.EnableStatus"]] = None,
+        status: Optional[Union[str, "_models.EnvironmentTypeEnableStatus"]] = None,
         creator_role_assignment: Optional["_models.ProjectEnvironmentTypeUpdatePropertiesCreatorRoleAssignment"] = None,
         user_role_assignments: Optional[Dict[str, "_models.UserRoleAssignmentValue"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword deployment_target_id: Id of a subscription that the environment type will be mapped
          to. The environment's resources will be deployed into this subscription.
         :paramtype deployment_target_id: str
         :keyword status: Defines whether this Environment Type can be used in this Project. Known
          values are: "Enabled" and "Disabled".
-        :paramtype status: str or ~azure.mgmt.devcenter.models.EnableStatus
+        :paramtype status: str or ~azure.mgmt.devcenter.models.EnvironmentTypeEnableStatus
         :keyword creator_role_assignment: The role definition assigned to the environment creator on
          backing resources.
         :paramtype creator_role_assignment:
@@ -3362,7 +3776,8 @@ class ProjectEnvironmentTypeProperties(ProjectEnvironmentTypeUpdateProperties):
 
 
 class ProjectEnvironmentTypeUpdate(_serialization.Model):
-    """The project environment type for partial update. Properties not provided in the update request will not be changed.
+    """The project environment type for partial update. Properties not provided in the update request
+    will not be changed.
 
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
@@ -3373,7 +3788,7 @@ class ProjectEnvironmentTypeUpdate(_serialization.Model):
     :vartype deployment_target_id: str
     :ivar status: Defines whether this Environment Type can be used in this Project. Known values
      are: "Enabled" and "Disabled".
-    :vartype status: str or ~azure.mgmt.devcenter.models.EnableStatus
+    :vartype status: str or ~azure.mgmt.devcenter.models.EnvironmentTypeEnableStatus
     :ivar creator_role_assignment: The role definition assigned to the environment creator on
      backing resources.
     :vartype creator_role_assignment:
@@ -3401,11 +3816,11 @@ class ProjectEnvironmentTypeUpdate(_serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
         deployment_target_id: Optional[str] = None,
-        status: Optional[Union[str, "_models.EnableStatus"]] = None,
+        status: Optional[Union[str, "_models.EnvironmentTypeEnableStatus"]] = None,
         creator_role_assignment: Optional["_models.ProjectEnvironmentTypeUpdatePropertiesCreatorRoleAssignment"] = None,
         user_role_assignments: Optional[Dict[str, "_models.UserRoleAssignmentValue"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -3416,7 +3831,7 @@ class ProjectEnvironmentTypeUpdate(_serialization.Model):
         :paramtype deployment_target_id: str
         :keyword status: Defines whether this Environment Type can be used in this Project. Known
          values are: "Enabled" and "Disabled".
-        :paramtype status: str or ~azure.mgmt.devcenter.models.EnableStatus
+        :paramtype status: str or ~azure.mgmt.devcenter.models.EnvironmentTypeEnableStatus
         :keyword creator_role_assignment: The role definition assigned to the environment creator on
          backing resources.
         :paramtype creator_role_assignment:
@@ -3446,7 +3861,7 @@ class ProjectEnvironmentTypeUpdatePropertiesCreatorRoleAssignment(_serialization
         "roles": {"key": "roles", "type": "{EnvironmentRole}"},
     }
 
-    def __init__(self, *, roles: Optional[Dict[str, "_models.EnvironmentRole"]] = None, **kwargs):
+    def __init__(self, *, roles: Optional[Dict[str, "_models.EnvironmentRole"]] = None, **kwargs: Any) -> None:
         """
         :keyword roles: A map of roles to assign to the environment creator.
         :paramtype roles: dict[str, ~azure.mgmt.devcenter.models.EnvironmentRole]
@@ -3476,7 +3891,7 @@ class ProjectListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -3490,23 +3905,44 @@ class ProjectUpdateProperties(_serialization.Model):
     :vartype dev_center_id: str
     :ivar description: Description of the project.
     :vartype description: str
+    :ivar max_dev_boxes_per_user: When specified, limits the maximum number of Dev Boxes a single
+     user can create across all pools in the project. This will have no effect on existing Dev Boxes
+     when reduced.
+    :vartype max_dev_boxes_per_user: int
     """
+
+    _validation = {
+        "max_dev_boxes_per_user": {"minimum": 0},
+    }
 
     _attribute_map = {
         "dev_center_id": {"key": "devCenterId", "type": "str"},
         "description": {"key": "description", "type": "str"},
+        "max_dev_boxes_per_user": {"key": "maxDevBoxesPerUser", "type": "int"},
     }
 
-    def __init__(self, *, dev_center_id: Optional[str] = None, description: Optional[str] = None, **kwargs):
+    def __init__(
+        self,
+        *,
+        dev_center_id: Optional[str] = None,
+        description: Optional[str] = None,
+        max_dev_boxes_per_user: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword dev_center_id: Resource Id of an associated DevCenter.
         :paramtype dev_center_id: str
         :keyword description: Description of the project.
         :paramtype description: str
+        :keyword max_dev_boxes_per_user: When specified, limits the maximum number of Dev Boxes a
+         single user can create across all pools in the project. This will have no effect on existing
+         Dev Boxes when reduced.
+        :paramtype max_dev_boxes_per_user: int
         """
         super().__init__(**kwargs)
         self.dev_center_id = dev_center_id
         self.description = description
+        self.max_dev_boxes_per_user = max_dev_boxes_per_user
 
 
 class ProjectProperties(ProjectUpdateProperties):
@@ -3518,33 +3954,64 @@ class ProjectProperties(ProjectUpdateProperties):
     :vartype dev_center_id: str
     :ivar description: Description of the project.
     :vartype description: str
-    :ivar provisioning_state: The provisioning state of the resource.
-    :vartype provisioning_state: str
+    :ivar max_dev_boxes_per_user: When specified, limits the maximum number of Dev Boxes a single
+     user can create across all pools in the project. This will have no effect on existing Dev Boxes
+     when reduced.
+    :vartype max_dev_boxes_per_user: int
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "NotSpecified", "Accepted", "Running", "Creating", "Created", "Updating", "Updated",
+     "Deleting", "Deleted", "Succeeded", "Failed", "Canceled", "MovingResources",
+     "TransientFailure", "RolloutInProgress", and "StorageProvisioningFailed".
+    :vartype provisioning_state: str or ~azure.mgmt.devcenter.models.ProvisioningState
+    :ivar dev_center_uri: The URI of the Dev Center resource this project is associated with.
+    :vartype dev_center_uri: str
     """
 
     _validation = {
+        "max_dev_boxes_per_user": {"minimum": 0},
         "provisioning_state": {"readonly": True},
+        "dev_center_uri": {"readonly": True},
     }
 
     _attribute_map = {
         "dev_center_id": {"key": "devCenterId", "type": "str"},
         "description": {"key": "description", "type": "str"},
+        "max_dev_boxes_per_user": {"key": "maxDevBoxesPerUser", "type": "int"},
         "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "dev_center_uri": {"key": "devCenterUri", "type": "str"},
     }
 
-    def __init__(self, *, dev_center_id: Optional[str] = None, description: Optional[str] = None, **kwargs):
+    def __init__(
+        self,
+        *,
+        dev_center_id: Optional[str] = None,
+        description: Optional[str] = None,
+        max_dev_boxes_per_user: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword dev_center_id: Resource Id of an associated DevCenter.
         :paramtype dev_center_id: str
         :keyword description: Description of the project.
         :paramtype description: str
+        :keyword max_dev_boxes_per_user: When specified, limits the maximum number of Dev Boxes a
+         single user can create across all pools in the project. This will have no effect on existing
+         Dev Boxes when reduced.
+        :paramtype max_dev_boxes_per_user: int
         """
-        super().__init__(dev_center_id=dev_center_id, description=description, **kwargs)
+        super().__init__(
+            dev_center_id=dev_center_id,
+            description=description,
+            max_dev_boxes_per_user=max_dev_boxes_per_user,
+            **kwargs
+        )
         self.provisioning_state = None
+        self.dev_center_uri = None
 
 
 class ProjectUpdate(TrackedResourceUpdate):
-    """The project properties for partial update. Properties not provided in the update request will not be changed.
+    """The project properties for partial update. Properties not provided in the update request will
+    not be changed.
 
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
@@ -3554,13 +4021,22 @@ class ProjectUpdate(TrackedResourceUpdate):
     :vartype dev_center_id: str
     :ivar description: Description of the project.
     :vartype description: str
+    :ivar max_dev_boxes_per_user: When specified, limits the maximum number of Dev Boxes a single
+     user can create across all pools in the project. This will have no effect on existing Dev Boxes
+     when reduced.
+    :vartype max_dev_boxes_per_user: int
     """
+
+    _validation = {
+        "max_dev_boxes_per_user": {"minimum": 0},
+    }
 
     _attribute_map = {
         "tags": {"key": "tags", "type": "{str}"},
         "location": {"key": "location", "type": "str"},
         "dev_center_id": {"key": "properties.devCenterId", "type": "str"},
         "description": {"key": "properties.description", "type": "str"},
+        "max_dev_boxes_per_user": {"key": "properties.maxDevBoxesPerUser", "type": "int"},
     }
 
     def __init__(
@@ -3570,8 +4046,9 @@ class ProjectUpdate(TrackedResourceUpdate):
         location: Optional[str] = None,
         dev_center_id: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        max_dev_boxes_per_user: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -3581,10 +4058,15 @@ class ProjectUpdate(TrackedResourceUpdate):
         :paramtype dev_center_id: str
         :keyword description: Description of the project.
         :paramtype description: str
+        :keyword max_dev_boxes_per_user: When specified, limits the maximum number of Dev Boxes a
+         single user can create across all pools in the project. This will have no effect on existing
+         Dev Boxes when reduced.
+        :paramtype max_dev_boxes_per_user: int
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.dev_center_id = dev_center_id
         self.description = description
+        self.max_dev_boxes_per_user = max_dev_boxes_per_user
 
 
 class RecommendedMachineConfiguration(_serialization.Model):
@@ -3608,7 +4090,7 @@ class RecommendedMachineConfiguration(_serialization.Model):
         "v_cp_us": {"key": "vCPUs", "type": "ResourceRange"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.memory = None
@@ -3636,7 +4118,7 @@ class ResourceRange(_serialization.Model):
         "max": {"key": "max", "type": "int"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.min = None
@@ -3669,9 +4151,12 @@ class Schedule(Resource):
     :vartype time_zone: str
     :ivar state: Indicates whether or not this scheduled task is enabled. Known values are:
      "Enabled" and "Disabled".
-    :vartype state: str or ~azure.mgmt.devcenter.models.EnableStatus
-    :ivar provisioning_state: The provisioning state of the resource.
-    :vartype provisioning_state: str
+    :vartype state: str or ~azure.mgmt.devcenter.models.ScheduleEnableStatus
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "NotSpecified", "Accepted", "Running", "Creating", "Created", "Updating", "Updated",
+     "Deleting", "Deleted", "Succeeded", "Failed", "Canceled", "MovingResources",
+     "TransientFailure", "RolloutInProgress", and "StorageProvisioningFailed".
+    :vartype provisioning_state: str or ~azure.mgmt.devcenter.models.ProvisioningState
     """
 
     _validation = {
@@ -3702,9 +4187,9 @@ class Schedule(Resource):
         frequency: Optional[Union[str, "_models.ScheduledFrequency"]] = None,
         time: Optional[str] = None,
         time_zone: Optional[str] = None,
-        state: Optional[Union[str, "_models.EnableStatus"]] = None,
-        **kwargs
-    ):
+        state: Optional[Union[str, "_models.ScheduleEnableStatus"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type_properties_type: Supported type this scheduled task represents. "StopDevBox"
         :paramtype type_properties_type: str or ~azure.mgmt.devcenter.models.ScheduledType
@@ -3716,7 +4201,7 @@ class Schedule(Resource):
         :paramtype time_zone: str
         :keyword state: Indicates whether or not this scheduled task is enabled. Known values are:
          "Enabled" and "Disabled".
-        :paramtype state: str or ~azure.mgmt.devcenter.models.EnableStatus
+        :paramtype state: str or ~azure.mgmt.devcenter.models.ScheduleEnableStatus
         """
         super().__init__(**kwargs)
         self.type_properties_type = type_properties_type
@@ -3748,7 +4233,7 @@ class ScheduleListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -3768,7 +4253,7 @@ class ScheduleUpdateProperties(_serialization.Model):
     :vartype time_zone: str
     :ivar state: Indicates whether or not this scheduled task is enabled. Known values are:
      "Enabled" and "Disabled".
-    :vartype state: str or ~azure.mgmt.devcenter.models.EnableStatus
+    :vartype state: str or ~azure.mgmt.devcenter.models.ScheduleEnableStatus
     """
 
     _attribute_map = {
@@ -3786,9 +4271,9 @@ class ScheduleUpdateProperties(_serialization.Model):
         frequency: Optional[Union[str, "_models.ScheduledFrequency"]] = None,
         time: Optional[str] = None,
         time_zone: Optional[str] = None,
-        state: Optional[Union[str, "_models.EnableStatus"]] = None,
-        **kwargs
-    ):
+        state: Optional[Union[str, "_models.ScheduleEnableStatus"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: Supported type this scheduled task represents. "StopDevBox"
         :paramtype type: str or ~azure.mgmt.devcenter.models.ScheduledType
@@ -3800,7 +4285,7 @@ class ScheduleUpdateProperties(_serialization.Model):
         :paramtype time_zone: str
         :keyword state: Indicates whether or not this scheduled task is enabled. Known values are:
          "Enabled" and "Disabled".
-        :paramtype state: str or ~azure.mgmt.devcenter.models.EnableStatus
+        :paramtype state: str or ~azure.mgmt.devcenter.models.ScheduleEnableStatus
         """
         super().__init__(**kwargs)
         self.type = type
@@ -3825,9 +4310,12 @@ class ScheduleProperties(ScheduleUpdateProperties):
     :vartype time_zone: str
     :ivar state: Indicates whether or not this scheduled task is enabled. Known values are:
      "Enabled" and "Disabled".
-    :vartype state: str or ~azure.mgmt.devcenter.models.EnableStatus
-    :ivar provisioning_state: The provisioning state of the resource.
-    :vartype provisioning_state: str
+    :vartype state: str or ~azure.mgmt.devcenter.models.ScheduleEnableStatus
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "NotSpecified", "Accepted", "Running", "Creating", "Created", "Updating", "Updated",
+     "Deleting", "Deleted", "Succeeded", "Failed", "Canceled", "MovingResources",
+     "TransientFailure", "RolloutInProgress", and "StorageProvisioningFailed".
+    :vartype provisioning_state: str or ~azure.mgmt.devcenter.models.ProvisioningState
     """
 
     _validation = {
@@ -3850,9 +4338,9 @@ class ScheduleProperties(ScheduleUpdateProperties):
         frequency: Optional[Union[str, "_models.ScheduledFrequency"]] = None,
         time: Optional[str] = None,
         time_zone: Optional[str] = None,
-        state: Optional[Union[str, "_models.EnableStatus"]] = None,
-        **kwargs
-    ):
+        state: Optional[Union[str, "_models.ScheduleEnableStatus"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: Supported type this scheduled task represents. "StopDevBox"
         :paramtype type: str or ~azure.mgmt.devcenter.models.ScheduledType
@@ -3864,14 +4352,15 @@ class ScheduleProperties(ScheduleUpdateProperties):
         :paramtype time_zone: str
         :keyword state: Indicates whether or not this scheduled task is enabled. Known values are:
          "Enabled" and "Disabled".
-        :paramtype state: str or ~azure.mgmt.devcenter.models.EnableStatus
+        :paramtype state: str or ~azure.mgmt.devcenter.models.ScheduleEnableStatus
         """
         super().__init__(type=type, frequency=frequency, time=time, time_zone=time_zone, state=state, **kwargs)
         self.provisioning_state = None
 
 
 class ScheduleUpdate(TrackedResourceUpdate):
-    """The schedule properties for partial update. Properties not provided in the update request will not be changed.
+    """The schedule properties for partial update. Properties not provided in the update request will
+    not be changed.
 
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
@@ -3887,7 +4376,7 @@ class ScheduleUpdate(TrackedResourceUpdate):
     :vartype time_zone: str
     :ivar state: Indicates whether or not this scheduled task is enabled. Known values are:
      "Enabled" and "Disabled".
-    :vartype state: str or ~azure.mgmt.devcenter.models.EnableStatus
+    :vartype state: str or ~azure.mgmt.devcenter.models.ScheduleEnableStatus
     """
 
     _attribute_map = {
@@ -3909,9 +4398,9 @@ class ScheduleUpdate(TrackedResourceUpdate):
         frequency: Optional[Union[str, "_models.ScheduledFrequency"]] = None,
         time: Optional[str] = None,
         time_zone: Optional[str] = None,
-        state: Optional[Union[str, "_models.EnableStatus"]] = None,
-        **kwargs
-    ):
+        state: Optional[Union[str, "_models.ScheduleEnableStatus"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -3927,7 +4416,7 @@ class ScheduleUpdate(TrackedResourceUpdate):
         :paramtype time_zone: str
         :keyword state: Indicates whether or not this scheduled task is enabled. Known values are:
          "Enabled" and "Disabled".
-        :paramtype state: str or ~azure.mgmt.devcenter.models.EnableStatus
+        :paramtype state: str or ~azure.mgmt.devcenter.models.ScheduleEnableStatus
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.type = type
@@ -3958,11 +4447,47 @@ class SkuListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
         self.next_link = None
+
+
+class StopOnDisconnectConfiguration(_serialization.Model):
+    """Stop on disconnect configuration settings for Dev Boxes created in this pool.
+
+    :ivar status: Whether the feature to stop the Dev Box on disconnect once the grace period has
+     lapsed is enabled. Known values are: "Enabled" and "Disabled".
+    :vartype status: str or ~azure.mgmt.devcenter.models.StopOnDisconnectEnableStatus
+    :ivar grace_period_minutes: The specified time in minutes to wait before stopping a Dev Box
+     once disconnect is detected.
+    :vartype grace_period_minutes: int
+    """
+
+    _attribute_map = {
+        "status": {"key": "status", "type": "str"},
+        "grace_period_minutes": {"key": "gracePeriodMinutes", "type": "int"},
+    }
+
+    def __init__(
+        self,
+        *,
+        status: Optional[Union[str, "_models.StopOnDisconnectEnableStatus"]] = None,
+        grace_period_minutes: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword status: Whether the feature to stop the Dev Box on disconnect once the grace period
+         has lapsed is enabled. Known values are: "Enabled" and "Disabled".
+        :paramtype status: str or ~azure.mgmt.devcenter.models.StopOnDisconnectEnableStatus
+        :keyword grace_period_minutes: The specified time in minutes to wait before stopping a Dev Box
+         once disconnect is detected.
+        :paramtype grace_period_minutes: int
+        """
+        super().__init__(**kwargs)
+        self.status = status
+        self.grace_period_minutes = grace_period_minutes
 
 
 class SystemData(_serialization.Model):
@@ -4002,8 +4527,8 @@ class SystemData(_serialization.Model):
         last_modified_by: Optional[str] = None,
         last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
@@ -4056,8 +4581,8 @@ class Usage(_serialization.Model):
         limit: Optional[int] = None,
         unit: Optional[Union[str, "_models.UsageUnit"]] = None,
         name: Optional["_models.UsageName"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword current_value: The current usage.
         :paramtype current_value: int
@@ -4089,7 +4614,7 @@ class UsageName(_serialization.Model):
         "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(self, *, localized_value: Optional[str] = None, value: Optional[str] = None, **kwargs):
+    def __init__(self, *, localized_value: Optional[str] = None, value: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword localized_value: The localized name of the resource.
         :paramtype localized_value: str
@@ -4122,7 +4647,7 @@ class UserAssignedIdentity(_serialization.Model):
         "client_id": {"key": "clientId", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.principal_id = None
@@ -4140,7 +4665,7 @@ class UserRoleAssignmentValue(_serialization.Model):
         "roles": {"key": "roles", "type": "{EnvironmentRole}"},
     }
 
-    def __init__(self, *, roles: Optional[Dict[str, "_models.EnvironmentRole"]] = None, **kwargs):
+    def __init__(self, *, roles: Optional[Dict[str, "_models.EnvironmentRole"]] = None, **kwargs: Any) -> None:
         """
         :keyword roles: A map of roles to assign to the parent user.
         :paramtype roles: dict[str, ~azure.mgmt.devcenter.models.EnvironmentRole]

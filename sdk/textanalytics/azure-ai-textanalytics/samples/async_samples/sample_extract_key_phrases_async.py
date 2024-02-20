@@ -21,7 +21,6 @@ USAGE:
     2) AZURE_LANGUAGE_KEY - your Language subscription key
 """
 
-import os
 import asyncio
 
 
@@ -29,8 +28,9 @@ async def sample_extract_key_phrases_async() -> None:
     print(
         "In this sample, we want to find the articles that mention Microsoft to read."
     )
-    articles_that_mention_microsoft = []
+
     # [START extract_key_phrases_async]
+    import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics.aio import TextAnalyticsClient
 
@@ -57,6 +57,7 @@ async def sample_extract_key_phrases_async() -> None:
     async with text_analytics_client:
         result = await text_analytics_client.extract_key_phrases(articles)
 
+    articles_that_mention_microsoft = []
     for idx, doc in enumerate(result):
         if not doc.is_error:
             print("Key phrases in article #{}: {}".format(

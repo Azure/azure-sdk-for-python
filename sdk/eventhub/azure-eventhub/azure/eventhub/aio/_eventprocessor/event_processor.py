@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
+from __future__ import annotations
 import random
 from typing import (
     Dict,
@@ -18,17 +19,22 @@ from typing import (
 import uuid
 import asyncio
 import logging
+import time
 from functools import partial
 
 from ..._common import EventData
 from ..._eventprocessor.common import CloseReason, LoadBalancingStrategy
 from ..._eventprocessor._eventprocessor_mixin import EventProcessorMixin
-from ..._utils import get_event_links
+from ..._tracing import (
+    get_span_links_from_received_events,
+    is_tracing_enabled,
+    receive_context_manager,
+    process_context_manager,
+)
 from .partition_context import PartitionContext
 from .in_memory_checkpoint_store import InMemoryCheckpointStore
 from .checkpoint_store import CheckpointStore
 from ._ownership_manager import OwnershipManager
-from .utils import get_running_loop
 from .._async_utils import get_dict_with_loop_if_needed
 
 if TYPE_CHECKING:
@@ -64,7 +70,7 @@ class EventProcessor(
         checkpoint_store: Optional[CheckpointStore] = None,
         initial_event_position: Union[str, int, "datetime", Dict[str, Any]] = "@latest",
         initial_event_position_inclusive: Union[bool, Dict[str, bool]] = False,
-        load_balancing_interval: float = 10.0,
+        load_balancing_interval: float = 30.0,
         partition_ownership_expiration_interval: Optional[float] = None,
         load_balancing_strategy: LoadBalancingStrategy = LoadBalancingStrategy.GREEDY,
         owner_level: Optional[int] = None,
@@ -131,6 +137,8 @@ class EventProcessor(
             self._partition_id,
         )
 
+        self._last_received_time = time.time_ns()
+
     def __repr__(self) -> str:
         return "EventProcessor: id {}".format(self._id)
 
@@ -170,7 +178,7 @@ class EventProcessor(
             if partition_id not in self._tasks or self._tasks[partition_id].done():
                 checkpoint = checkpoints.get(partition_id) if checkpoints else None
                 if self._running:
-                    self._tasks[partition_id] = get_running_loop().create_task(
+                    self._tasks[partition_id] = asyncio.create_task(
                         self._receive(partition_id, checkpoint)
                     )
                     _LOGGER.info(
@@ -233,8 +241,18 @@ class EventProcessor(
                 partition_context._last_received_event = event[-1]  # type: ignore  #pylint:disable=protected-access
             except TypeError:
                 partition_context._last_received_event = event  # type: ignore  # pylint:disable=protected-access
-            links = get_event_links(event)
-            with self._context(links=links):
+
+            links = []
+            is_batch = False
+            if is_tracing_enabled():
+                links = get_span_links_from_received_events(event)
+                if isinstance(event, list):
+                    is_batch = True
+
+            with receive_context_manager(self._eventhub_client, links=links, start_time=self._last_received_time):
+                self._last_received_time = time.time_ns()
+
+            with process_context_manager(self._eventhub_client, links=links, is_batch=is_batch):
                 await self._event_handler(partition_context, event)
         else:
             await self._event_handler(partition_context, event)
@@ -338,8 +356,6 @@ class EventProcessor(
         The EventProcessor will try to claim and balance partition ownership with other `EventProcessor`
          and asynchronously start receiving EventData from EventHub and processing events.
 
-        :return: None
-
         """
         _LOGGER.info("EventProcessor %r is being started", self._id)
         if not self._running:
@@ -406,8 +422,6 @@ class EventProcessor(
         Other running EventProcessor will take over these released partitions.
 
         A stopped EventProcessor can be restarted by calling method `start` again.
-
-        :return: None
 
         """
         self._running = False

@@ -98,8 +98,8 @@ class TextAnalyticsClientOperationsMixin(object):
         api_version = self._get_api_version('analyze_text')
         if api_version == '2022-05-01':
             from .v2022_05_01.operations import TextAnalyticsClientOperationsMixin as OperationClass
-        elif api_version == '2022-10-01-preview':
-            from .v2022_10_01_preview.operations import TextAnalyticsClientOperationsMixin as OperationClass
+        elif api_version == '2023-04-01':
+            from .v2023_04_01.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'analyze_text'".format(api_version))
         mixin_instance = OperationClass()
@@ -144,8 +144,8 @@ class TextAnalyticsClientOperationsMixin(object):
         api_version = self._get_api_version('analyze_text_job_status')
         if api_version == '2022-05-01':
             from .v2022_05_01.operations import TextAnalyticsClientOperationsMixin as OperationClass
-        elif api_version == '2022-10-01-preview':
-            from .v2022_10_01_preview.operations import TextAnalyticsClientOperationsMixin as OperationClass
+        elif api_version == '2023-04-01':
+            from .v2023_04_01.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'analyze_text_job_status'".format(api_version))
         mixin_instance = OperationClass()
@@ -226,8 +226,8 @@ class TextAnalyticsClientOperationsMixin(object):
         api_version = self._get_api_version('begin_analyze_text_cancel_job')
         if api_version == '2022-05-01':
             from .v2022_05_01.operations import TextAnalyticsClientOperationsMixin as OperationClass
-        elif api_version == '2022-10-01-preview':
-            from .v2022_10_01_preview.operations import TextAnalyticsClientOperationsMixin as OperationClass
+        elif api_version == '2023-04-01':
+            from .v2023_04_01.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_analyze_text_cancel_job'".format(api_version))
         mixin_instance = OperationClass()
@@ -272,8 +272,8 @@ class TextAnalyticsClientOperationsMixin(object):
         api_version = self._get_api_version('begin_analyze_text_submit_job')
         if api_version == '2022-05-01':
             from .v2022_05_01.operations import TextAnalyticsClientOperationsMixin as OperationClass
-        elif api_version == '2022-10-01-preview':
-            from .v2022_10_01_preview.operations import TextAnalyticsClientOperationsMixin as OperationClass
+        elif api_version == '2023-04-01':
+            from .v2023_04_01.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_analyze_text_submit_job'".format(api_version))
         mixin_instance = OperationClass()

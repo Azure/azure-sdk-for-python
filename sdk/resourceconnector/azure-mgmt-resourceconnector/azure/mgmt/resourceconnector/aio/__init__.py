@@ -6,15 +6,18 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._appliances import Appliances
+from ._resource_connector_mgmt_client import ResourceConnectorMgmtClient
 
 try:
     from ._patch import __all__ as _patch_all
-    from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+    from ._patch import *  # pylint: disable=unused-wildcard-import
 except ImportError:
     _patch_all = []
 from ._patch import patch_sdk as _patch_sdk
-__all__ = ['Appliances']
+
+__all__ = [
+    "ResourceConnectorMgmtClient",
+]
 __all__.extend([p for p in _patch_all if p not in __all__])
 
 _patch_sdk()

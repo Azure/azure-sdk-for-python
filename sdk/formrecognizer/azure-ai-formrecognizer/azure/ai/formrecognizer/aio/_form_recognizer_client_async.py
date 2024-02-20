@@ -48,14 +48,14 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/v3.1/async_samples/sample_authentication_async.py
+        .. literalinclude:: ../samples/v3.1/async_samples/sample_authentication_v3_1_async.py
             :start-after: [START create_fr_client_with_key_async]
             :end-before: [END create_fr_client_with_key_async]
             :language: python
             :dedent: 8
             :caption: Creating the FormRecognizerClient with an endpoint and API key.
 
-        .. literalinclude:: ../samples/v3.1/async_samples/sample_authentication_async.py
+        .. literalinclude:: ../samples/v3.1/async_samples/sample_authentication_v3_1_async.py
             :start-after: [START create_fr_client_with_aad_async]
             :end-before: [END create_fr_client_with_aad_async]
             :language: python
@@ -285,7 +285,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
             )
         except ValueError as e:
             if "begin_analyze_business_card_async" in str(e):
-                raise ValueError(
+                raise ValueError(  # pylint: disable=raise-missing-from
                     "Method 'begin_recognize_business_cards' is only available for API version V2_1 and up"
                 )
             raise e
@@ -332,8 +332,8 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
             )
         except ValueError as e:
             if "begin_analyze_business_card_async" in str(e):
-                raise ValueError(
-                    "Method 'begin_recognize_business_cards_from_url' is only available for " "API version V2_1 and up"
+                raise ValueError(  # pylint: disable=raise-missing-from
+                    "Method 'begin_recognize_business_cards_from_url' is only available for API version V2_1 and up"
                 )
             raise e
 
@@ -400,13 +400,13 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
             )
         except ValueError as e:
             if "begin_analyze_id_document_async" in str(e):
-                raise ValueError(
+                raise ValueError(  # pylint: disable=raise-missing-from
                     "Method 'begin_recognize_identity_documents' is only available for API version V2_1 and up"
                 )
             raise e
 
     @distributed_trace_async
-    async def begin_recognize_identity_documents_from_url(
+    async def begin_recognize_identity_documents_from_url(  # pylint: disable=name-too-long
         self, identity_document_url: str, **kwargs: Any
     ) -> AsyncLROPoller[List[RecognizedForm]]:
         """Extract field text and semantic values from a given identity document.
@@ -445,14 +445,16 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
             )
         except ValueError as e:
             if "begin_analyze_id_document_async" in str(e):
-                raise ValueError(
+                raise ValueError(  # pylint: disable=raise-missing-from
                     "Method 'begin_recognize_identity_documents_from_url' is "
                     "only available for API version V2_1 and up"
                 )
             raise e
 
     @distributed_trace_async
-    async def begin_recognize_invoices(self, invoice: str, **kwargs: Any) -> AsyncLROPoller[List[RecognizedForm]]:
+    async def begin_recognize_invoices(
+        self, invoice: Union[bytes, IO[bytes]], **kwargs: Any
+    ) -> AsyncLROPoller[List[RecognizedForm]]:
         """Extract field text and semantic values from a given invoice.
         The input document must be of one of the supported content types - 'application/pdf',
         'image/jpeg', 'image/png', 'image/tiff' or 'image/bmp'.
@@ -511,7 +513,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
             )
         except ValueError as e:
             if "begin_analyze_invoice_async" in str(e):
-                raise ValueError("Method 'begin_recognize_invoices' is only available for API version V2_1 and up")
+                raise ValueError("Method 'begin_recognize_invoices' is only available for API version V2_1 and up")  # pylint: disable=raise-missing-from
             raise e
 
     @distributed_trace_async
@@ -555,8 +557,8 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
             )
         except ValueError as e:
             if "begin_analyze_invoice_async" in str(e):
-                raise ValueError(
-                    "Method 'begin_recognize_invoices_from_url' is " "only available for API version V2_1 and up"
+                raise ValueError(  # pylint: disable=raise-missing-from
+                    "Method 'begin_recognize_invoices_from_url' is only available for API version V2_1 and up"
                 )
             raise e
 
@@ -764,7 +766,9 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
             return prepare_form_result(analyze_result, model_id)
 
         callback = kwargs.pop("cls", analyze_callback)
-        polling = AsyncLROBasePolling(timeout=polling_interval, lro_algorithms=[AnalyzePolling()], **kwargs)
+        polling: AsyncLROBasePolling = AsyncLROBasePolling(
+            timeout=polling_interval, lro_algorithms=[AnalyzePolling()], **kwargs
+        )
 
         # FIXME: part of this code will be removed once autorest can handle diff mixin
         # signatures across API versions
@@ -822,7 +826,9 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
             return prepare_form_result(analyze_result, model_id)
 
         callback = kwargs.pop("cls", analyze_callback)
-        polling = AsyncLROBasePolling(timeout=polling_interval, lro_algorithms=[AnalyzePolling()], **kwargs)
+        polling: AsyncLROBasePolling = AsyncLROBasePolling(
+            timeout=polling_interval, lro_algorithms=[AnalyzePolling()], **kwargs
+        )
 
         # FIXME: part of this code will be removed once autorest can handle diff mixin
         # signatures across API versions

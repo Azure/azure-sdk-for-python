@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 VERSION = "unknown"
 
 
-class LogsIngestionClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
+class LogsIngestionClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes,name-too-long
     """Configuration for LogsIngestionClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -29,14 +29,14 @@ class LogsIngestionClientConfiguration(Configuration):  # pylint: disable=too-ma
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :keyword api_version: Api Version. Default value is "2021-11-01-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2023-01-01". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, endpoint: str, credential: "TokenCredential", **kwargs: Any) -> None:
         super(LogsIngestionClientConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop("api_version", "2021-11-01-preview")  # type: str
+        api_version: str = kwargs.pop("api_version", "2023-01-01")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
@@ -46,14 +46,11 @@ class LogsIngestionClientConfiguration(Configuration):  # pylint: disable=too-ma
         self.endpoint = endpoint
         self.credential = credential
         self.api_version = api_version
-        self.credential_scopes = kwargs.pop("credential_scopes", ["user_impersonation"])
-        kwargs.setdefault("sdk_moniker", "logsingestionclient/{}".format(VERSION))
+        self.credential_scopes = kwargs.pop("credential_scopes", ["https://monitor.azure.com//.default"])
+        kwargs.setdefault("sdk_moniker", "monitor-ingestion/{}".format(VERSION))
         self._configure(**kwargs)
 
-    def _configure(
-        self, **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+    def _configure(self, **kwargs: Any) -> None:
         self.user_agent_policy = kwargs.get("user_agent_policy") or policies.UserAgentPolicy(**kwargs)
         self.headers_policy = kwargs.get("headers_policy") or policies.HeadersPolicy(**kwargs)
         self.proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)

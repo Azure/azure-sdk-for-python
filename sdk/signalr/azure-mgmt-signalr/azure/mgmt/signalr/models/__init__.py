@@ -36,6 +36,8 @@ from ._models_py3 import PrivateLinkResourceList
 from ._models_py3 import PrivateLinkServiceConnectionState
 from ._models_py3 import ProxyResource
 from ._models_py3 import RegenerateKeyParameters
+from ._models_py3 import Replica
+from ._models_py3 import ReplicaList
 from ._models_py3 import Resource
 from ._models_py3 import ResourceLogCategory
 from ._models_py3 import ResourceLogConfiguration
@@ -81,7 +83,7 @@ from ._signal_rmanagement_client_enums import SignalRRequestType
 from ._signal_rmanagement_client_enums import SignalRSkuTier
 from ._signal_rmanagement_client_enums import UpstreamAuthType
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
@@ -115,6 +117,8 @@ __all__ = [
     "PrivateLinkServiceConnectionState",
     "ProxyResource",
     "RegenerateKeyParameters",
+    "Replica",
+    "ReplicaList",
     "Resource",
     "ResourceLogCategory",
     "ResourceLogConfiguration",

@@ -12,7 +12,11 @@ This package has been tested with Python 3.6+.
 
 For a more complete view of Azure libraries, see the [Azure SDK for Python release page](https://aka.ms/azsdk/python/all).
 
-[Source code][source_code] | [Package (PyPI)][Attestation_pypi] | [API reference documentation][API_reference] | [Product documentation](https://docs.microsoft.com/azure/attestation/)
+[Source code][source_code]
+| [Package (PyPI)][Attestation_pypi]
+| [Package (Conda)](https://anaconda.org/microsoft/azure-security-attestation/)
+| [API reference documentation][API_reference]
+| [Product documentation](https://docs.microsoft.com/azure/attestation/)
 
 ## Getting started
 

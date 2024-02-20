@@ -12,6 +12,7 @@ from test_utilities.utils import omit_with_wildcard
 
 from azure.ai.ml import MLClient, load_job
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
+from azure.ai.ml.exceptions import ValidationException
 
 from .._util import _DSL_TIMEOUT_SECOND
 
@@ -39,7 +40,9 @@ def assert_dsl_curated(pipeline, job_yaml, omit_fields):
 @pytest.mark.pipeline_test
 class TestDSLPipelineSamples:
     def test_e2e_local_components(self) -> None:
-        from test_configs.dsl_pipeline.e2e_local_components.pipeline import generate_dsl_pipeline as e2e_local_components
+        from test_configs.dsl_pipeline.e2e_local_components.pipeline import (
+            generate_dsl_pipeline as e2e_local_components,
+        )
 
         pipeline = e2e_local_components()
         job_yaml = str(samples_dir / "e2e_local_components/pipeline.yml")
@@ -191,7 +194,9 @@ class TestDSLPipelineSamples:
         assert_dsl_curated(pipeline, job_yaml, omit_fields)
 
     def test_env_public_docker_image(self) -> None:
-        from test_configs.dsl_pipeline.env_public_docker_image.pipeline import generate_dsl_pipeline as env_public_docker_image
+        from test_configs.dsl_pipeline.env_public_docker_image.pipeline import (
+            generate_dsl_pipeline as env_public_docker_image,
+        )
 
         pipeline = env_public_docker_image()
         job_yaml = str(samples_dir / "env_public_docker_image/pipeline.yml")
@@ -269,7 +274,9 @@ class TestDSLPipelineSamples:
         assert_dsl_curated(pipeline, job_yaml, omit_fields)
 
     def test_nyc_taxi_data_regression(self) -> None:
-        from test_configs.dsl_pipeline.nyc_taxi_data_regression.pipeline import generate_dsl_pipeline as nyc_taxi_data_regression
+        from test_configs.dsl_pipeline.nyc_taxi_data_regression.pipeline import (
+            generate_dsl_pipeline as nyc_taxi_data_regression,
+        )
 
         pipeline = nyc_taxi_data_regression()
         job_yaml = str(samples_dir / "nyc_taxi_data_regression/pipeline.yml")
@@ -295,7 +302,9 @@ class TestDSLPipelineSamples:
         assert_dsl_curated(pipeline, job_yaml, omit_fields)
 
     def test_command_job_in_pipeline(self) -> None:
-        from test_configs.dsl_pipeline.command_job_in_pipeline.pipeline import generate_dsl_pipeline as command_job_in_pipeline
+        from test_configs.dsl_pipeline.command_job_in_pipeline.pipeline import (
+            generate_dsl_pipeline as command_job_in_pipeline,
+        )
 
         pipeline = command_job_in_pipeline()
         job_yaml = str(samples_dir / "command_job_in_pipeline/pipeline.yml")
@@ -353,7 +362,9 @@ class TestDSLPipelineSamples:
         assert_dsl_curated(pipeline, job_yaml, omit_fields)
 
     def test_parallel_components(self) -> None:
-        from test_configs.dsl_pipeline.parallel_component.pipeline import generate_dsl_pipeline as pipeline_with_parallel_components
+        from test_configs.dsl_pipeline.parallel_component.pipeline import (
+            generate_dsl_pipeline as pipeline_with_parallel_components,
+        )
 
         pipeline = pipeline_with_parallel_components()
         job_yaml = str(samples_dir / "parallel_component/pipeline.yml")
@@ -368,7 +379,9 @@ class TestDSLPipelineSamples:
         assert_dsl_curated(pipeline, job_yaml, omit_fields)
 
     def test_automl_job_in_pipeline(self) -> None:
-        from test_configs.dsl_pipeline.automl_job_in_pipeline.pipeline import generate_dsl_pipeline as automl_job_in_pipeline
+        from test_configs.dsl_pipeline.automl_job_in_pipeline.pipeline import (
+            generate_dsl_pipeline as automl_job_in_pipeline,
+        )
 
         pipeline = automl_job_in_pipeline()
         job_yaml = str(samples_dir / "automl_job_in_pipeline/pipeline.yml")
@@ -389,7 +402,9 @@ class TestDSLPipelineSamples:
         assert_dsl_curated(pipeline, job_yaml, omit_fields)
 
     def test_spark_job_in_pipeline(self) -> None:
-        from test_configs.dsl_pipeline.spark_job_in_pipeline.pipeline import generate_dsl_pipeline_from_yaml as spark_job_in_pipeline
+        from test_configs.dsl_pipeline.spark_job_in_pipeline.pipeline import (
+            generate_dsl_pipeline_from_yaml as spark_job_in_pipeline,
+        )
 
         pipeline = spark_job_in_pipeline()
         job_yaml = str(samples_dir / "spark_job_in_pipeline/pipeline.yml")
@@ -402,7 +417,9 @@ class TestDSLPipelineSamples:
         assert_dsl_curated(pipeline, job_yaml, omit_fields)
 
     def test_spark_job_with_inline_job(self) -> None:
-        from test_configs.dsl_pipeline.spark_job_in_pipeline.pipeline import generate_dsl_pipeline_from_yaml as spark_job_in_pipeline
+        from test_configs.dsl_pipeline.spark_job_in_pipeline.pipeline import (
+            generate_dsl_pipeline_from_yaml as spark_job_in_pipeline,
+        )
 
         pipeline = spark_job_in_pipeline()
         job_yaml = str(samples_dir / "spark_job_in_pipeline/pipeline_inline_job.yml")
@@ -426,5 +443,133 @@ class TestDSLPipelineSamples:
             "properties.display_name",
             "properties.jobs.count_by_row.componentId",
             "properties.jobs.add_greeting_column.componentId",
+        ]
+        assert_dsl_curated(pipeline, job_yaml, omit_fields)
+
+    def test_data_transfer_copy_job_in_pipeline(self) -> None:
+        from test_configs.dsl_pipeline.data_transfer_job_in_pipeline.copy_data.pipeline import (
+            generate_dsl_pipeline_from_yaml as data_transfer_job_in_pipeline,
+        )
+
+        pipeline = data_transfer_job_in_pipeline()
+        job_yaml = str(samples_dir / "data_transfer_job_in_pipeline/copy_data/pipeline.yml")
+        omit_fields = [
+            "properties.display_name",
+            "properties.jobs.merge_files.componentId",
+            "properties.inputs.cosmos_folder.uri",
+            "properties.inputs.cosmos_folder_dup.uri",
+        ]
+        assert_dsl_curated(pipeline, job_yaml, omit_fields)
+
+    def test_data_transfer_copy_inline_job_in_pipeline(self) -> None:
+        from test_configs.dsl_pipeline.data_transfer_job_in_pipeline.copy_data.pipeline import (
+            generate_dsl_pipeline_from_yaml as data_transfer_job_in_pipeline,
+        )
+
+        pipeline = data_transfer_job_in_pipeline()
+        job_yaml = str(samples_dir / "data_transfer_job_in_pipeline/copy_data/pipeline_inline.yml")
+        omit_fields = [
+            "properties.display_name",
+            "properties.jobs.merge_files.componentId",
+            "properties.inputs.cosmos_folder.uri",
+            "properties.inputs.cosmos_folder_dup.uri",
+        ]
+        assert_dsl_curated(pipeline, job_yaml, omit_fields)
+
+    def test_data_transfer_copy_job_builder_with_inline_job(self) -> None:
+        from test_configs.dsl_pipeline.data_transfer_job_in_pipeline.copy_data.pipeline import (
+            generate_dsl_pipeline_from_builder as data_transfer_job_in_pipeline,
+        )
+
+        pipeline = data_transfer_job_in_pipeline()
+        job_yaml = str(samples_dir / "data_transfer_job_in_pipeline/copy_data/pipeline_inline.yml")
+        omit_fields = [
+            "properties.display_name",
+            "properties.jobs.merge_files.componentId",
+            "properties.inputs.cosmos_folder.uri",
+            "properties.inputs.cosmos_folder_dup.uri",
+        ]
+        assert_dsl_curated(pipeline, job_yaml, omit_fields)
+
+    def test_data_transfer_import_database_job_builder_with_inline_job(self) -> None:
+        from test_configs.dsl_pipeline.data_transfer_job_in_pipeline.import_database.pipeline import (
+            generate_dsl_pipeline_from_builder as data_transfer_job_in_pipeline,
+        )
+
+        pipeline = data_transfer_job_in_pipeline()
+        job_yaml = str(samples_dir / "data_transfer_job_in_pipeline/import_database/pipeline_inline.yml")
+        omit_fields = [
+            "properties.display_name",
+        ]
+        assert_dsl_curated(pipeline, job_yaml, omit_fields)
+
+    def test_data_transfer_import_stored_database_job_builder_with_inline_job(self) -> None:
+        from test_configs.dsl_pipeline.data_transfer_job_in_pipeline.import_stored_database.pipeline import (
+            generate_dsl_pipeline_from_builder as data_transfer_job_in_pipeline,
+        )
+
+        pipeline = data_transfer_job_in_pipeline()
+        job_yaml = str(samples_dir / "data_transfer_job_in_pipeline/import_stored_database/pipeline_inline.yml")
+        omit_fields = [
+            "properties.display_name",
+        ]
+        assert_dsl_curated(pipeline, job_yaml, omit_fields)
+
+    def test_data_transfer_import_file_system_job_builder_with_inline_job(self) -> None:
+        from test_configs.dsl_pipeline.data_transfer_job_in_pipeline.import_file_system.pipeline import (
+            generate_dsl_pipeline_from_builder as data_transfer_job_in_pipeline,
+        )
+
+        pipeline = data_transfer_job_in_pipeline()
+        job_yaml = str(samples_dir / "data_transfer_job_in_pipeline/import_file_system/pipeline_inline.yml")
+        omit_fields = [
+            "properties.display_name",
+        ]
+        assert_dsl_curated(pipeline, job_yaml, omit_fields)
+
+    def test_data_transfer_export_database_job_builder_with_inline_job(self) -> None:
+        from test_configs.dsl_pipeline.data_transfer_job_in_pipeline.export_database.pipeline import (
+            generate_dsl_pipeline_from_builder as data_transfer_job_in_pipeline,
+        )
+
+        pipeline = data_transfer_job_in_pipeline()
+        job_yaml = str(samples_dir / "data_transfer_job_in_pipeline/export_database/pipeline_inline.yml")
+        omit_fields = [
+            "properties.display_name",
+            "properties.inputs.cosmos_folder.uri",
+            "properties.jobs.blob_azuresql_node_input.inputs.source.uri",
+        ]
+        assert_dsl_curated(pipeline, job_yaml, omit_fields)
+
+    def test_data_transfer_export_file_system_job_builder_with_inline_job(self) -> None:
+        from test_configs.dsl_pipeline.data_transfer_job_in_pipeline.export_file_system.pipeline import (
+            generate_dsl_pipeline_from_builder as data_transfer_job_in_pipeline,
+        )
+
+        job_yaml = str(samples_dir / "data_transfer_job_in_pipeline/export_file_system/pipeline_inline.yml")
+
+        with pytest.raises(ValidationException) as e:
+            data_transfer_job_in_pipeline()
+            assert (
+                "Sink is a required field for export data task and we don't support exporting file system for now." in e
+            )
+
+        with pytest.raises(ValidationException) as e:
+            load_job(source=job_yaml)
+            assert (
+                "Sink is a required field for export data task and we don't support exporting file system for now." in e
+            )
+
+    def test_data_transfer_multi_job_in_pipeline(self) -> None:
+        from test_configs.dsl_pipeline.data_transfer_job_in_pipeline.pipeline import (
+            generate_dsl_pipeline as data_transfer_job_in_pipeline,
+        )
+
+        pipeline = data_transfer_job_in_pipeline()
+        job_yaml = str(samples_dir / "data_transfer_job_in_pipeline/pipeline.yml")
+        omit_fields = [
+            "properties.display_name",
+            "properties.jobs.merge_files.componentId",
+            "properties.jobs.blob_azuresql.inputs.source.uri",
         ]
         assert_dsl_curated(pipeline, job_yaml, omit_fields)

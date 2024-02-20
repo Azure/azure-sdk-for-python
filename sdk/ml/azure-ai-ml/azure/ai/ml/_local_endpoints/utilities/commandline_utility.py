@@ -65,14 +65,14 @@ def run_cli_command(
         if return_json:
             try:
                 return json.loads(exclude_warnings(output))
-            except Exception:
+            except Exception as e:
                 msg = "Expected JSON, instead got: \n{}\n"
                 raise MlException(
                     message=msg.format(output),
                     no_personal_data_message=msg.format("[something else]"),
                     target=ErrorTarget.LOCAL_ENDPOINT,
                     error_category=ErrorCategory.SYSTEM_ERROR,
-                )
+                ) from e
         else:
             return output
     except subprocess.CalledProcessError as e:

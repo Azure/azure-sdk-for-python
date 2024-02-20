@@ -3,27 +3,22 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import cast, List, TYPE_CHECKING
+from typing import cast, List, Any, Union, Dict
 import time
 import threading
 
-from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import ServiceResponseTimeoutError
 from ._utils import is_retryable_status_code, get_authentication_policy
 from .indexes import SearchIndexClient as SearchServiceClient
 from ._search_indexing_buffered_sender_base import SearchIndexingBufferedSenderBase
 from ._generated import SearchIndexClient
-from ._generated.models import IndexingResult, IndexBatch
+from ._generated.models import IndexingResult, IndexBatch, IndexAction
 from ._search_documents_error import RequestEntityTooLargeError
 from ._index_documents_batch import IndexDocumentsBatch
 from ._headers_mixin import HeadersMixin
 from ._version import SDK_MONIKER
-
-if TYPE_CHECKING:
-    # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Union
-    from azure.core.credentials import TokenCredential
 
 
 class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixin):
@@ -55,10 +50,13 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
      will be assumed.
     """
 
+    _client: SearchIndexClient
+
     # pylint: disable=too-many-instance-attributes
 
-    def __init__(self, endpoint, index_name, credential, **kwargs):
-        # type: (str, str, Union[AzureKeyCredential, TokenCredential], **Any) -> None
+    def __init__(
+        self, endpoint: str, index_name: str, credential: Union[AzureKeyCredential, TokenCredential], **kwargs: Any
+    ) -> None:
         super(SearchIndexingBufferedSender, self).__init__(
             endpoint=endpoint, index_name=index_name, credential=credential, **kwargs
         )
@@ -72,7 +70,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
                 sdk_moniker=SDK_MONIKER,
                 api_version=self._api_version,
                 **kwargs
-            )  # type: SearchIndexClient
+            )
         else:
             self._aad = True
             authentication_policy = get_authentication_policy(credential, audience=audience)
@@ -83,11 +81,10 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
                 sdk_moniker=SDK_MONIKER,
                 api_version=self._api_version,
                 **kwargs
-            )  # type: SearchIndexClient
+            )
         self._reset_timer()
 
-    def _cleanup(self, flush=True):
-        # type: () -> None
+    def _cleanup(self, flush: bool = True) -> None:
         """Clean up the client.
 
         :param bool flush: flush the actions queue before shutdown the client
@@ -98,31 +95,27 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         if self._auto_flush:
             self._timer.cancel()
 
-    def __repr__(self):
-        # type: () -> str
+    def __repr__(self) -> str:
         return "<SearchIndexingBufferedSender [endpoint={}, index={}]>".format(
             repr(self._endpoint), repr(self._index_name)
         )[:1024]
 
     @property
-    def actions(self):
-        # type: () -> List[IndexAction]
+    def actions(self) -> List[IndexAction]:
         """The list of currently index actions in queue to index.
 
-        :rtype: List[IndexAction]
+        :rtype: list[IndexAction]
         """
         return self._index_documents_batch.actions
 
     @distributed_trace
-    def close(self, **kwargs):  # pylint: disable=unused-argument
-        # type: () -> None
+    def close(self, **kwargs) -> None:  # pylint: disable=unused-argument
         """Close the :class:`~azure.search.documents.SearchClient` session."""
         self._cleanup(flush=True)
         return self._client.close()
 
     @distributed_trace
-    def flush(self, timeout=86400, **kwargs):  # pylint:disable=unused-argument
-        # type: (int) -> bool
+    def flush(self, timeout: int = 86400, **kwargs: Any) -> bool:  # pylint:disable=unused-argument
         """Flush the batch.
 
         :param int timeout: time out setting. Default is 86400s (one day)
@@ -146,17 +139,17 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
                 has_error = True
         return has_error
 
-    def _process(self, timeout=86400, **kwargs):
-        # type: (int) -> bool
+    def _process(self, timeout: int = 86400, **kwargs) -> bool:
         raise_error = kwargs.pop("raise_error", True)
         actions = self._index_documents_batch.dequeue_actions()
         has_error = False
         if not self._index_key:
             try:
-                client = SearchServiceClient(self._endpoint, self._credential)
-                result = client.get_index(self._index_name)
-                if result:
-                    for field in result.fields:
+                credential = cast(Union[AzureKeyCredential, TokenCredential], self._credential)
+                client = SearchServiceClient(self._endpoint, credential)
+                index_result = client.get_index(self._index_name)
+                if index_result:
+                    for field in index_result.fields:
                         if field.key:
                             self._index_key = field.name
                             break
@@ -169,11 +162,8 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
             results = self._index_documents_actions(actions=actions, timeout=timeout)
             for result in results:
                 try:
-                    action = next(
-                        x
-                        for x in actions
-                        if x.additional_properties.get(self._index_key) == result.key
-                    )
+                    assert self._index_key is not None  # Hint for mypy
+                    action = next(x for x in actions if x.additional_properties.get(self._index_key) == result.key)
                     if result.succeeded:
                         self._callback_succeed(action)
                     elif is_retryable_status_code(result.status_code):
@@ -191,21 +181,23 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
                 if raise_error:
                     raise
                 return True
+        return has_error
 
-    def _process_if_needed(self):
-        # type: () -> bool
+    def _process_if_needed(self) -> bool:
         """Every time when a new action is queued, this method
         will be triggered. It checks the actions already queued and flushes them if:
         1. Auto_flush is on
         2. There are self._batch_action_count actions queued
+        :return: True if proces is needed, False otherwise
+        :rtype: bool
         """
         if not self._auto_flush:
-            return
+            return False
 
         if len(self._index_documents_batch.actions) < self._batch_action_count:
-            return
+            return False
 
-        self._process(raise_error=False)
+        return self._process(raise_error=False)
 
     def _reset_timer(self):
         # pylint: disable=access-member-before-definition
@@ -218,69 +210,63 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
             self._timer.start()
 
     @distributed_trace
-    def upload_documents(self, documents, **kwargs):  # pylint: disable=unused-argument
-        # type: (List[dict]) -> None
+    def upload_documents(self, documents: List[Dict], **kwargs) -> None:  # pylint: disable=unused-argument
         """Queue upload documents actions.
 
         :param documents: A list of documents to upload.
-        :type documents: List[dict]
+        :type documents: list[dict]
         """
         actions = self._index_documents_batch.add_upload_actions(documents)
         self._callback_new(actions)
         self._process_if_needed()
 
     @distributed_trace
-    def delete_documents(self, documents, **kwargs):  # pylint: disable=unused-argument
-        # type: (List[dict]) -> None
+    def delete_documents(self, documents: List[Dict], **kwargs) -> None:  # pylint: disable=unused-argument
         """Queue delete documents actions
 
         :param documents: A list of documents to delete.
-        :type documents: List[dict]
+        :type documents: list[dict]
         """
         actions = self._index_documents_batch.add_delete_actions(documents)
         self._callback_new(actions)
         self._process_if_needed()
 
     @distributed_trace
-    def merge_documents(self, documents, **kwargs):  # pylint: disable=unused-argument
-        # type: (List[dict]) -> None
+    def merge_documents(self, documents: List[Dict], **kwargs) -> None:  # pylint: disable=unused-argument
         """Queue merge documents actions
 
         :param documents: A list of documents to merge.
-        :type documents: List[dict]
+        :type documents: list[dict]
         """
         actions = self._index_documents_batch.add_merge_actions(documents)
         self._callback_new(actions)
         self._process_if_needed()
 
     @distributed_trace
-    def merge_or_upload_documents(
-        self, documents, **kwargs
-    ):  # pylint: disable=unused-argument
-        # type: (List[dict]) -> None
+    def merge_or_upload_documents(self, documents: List[Dict], **kwargs) -> None:
+        # pylint: disable=unused-argument
         """Queue merge documents or upload documents actions
 
         :param documents: A list of documents to merge or upload.
-        :type documents: List[dict]
+        :type documents: list[dict]
         """
         actions = self._index_documents_batch.add_merge_or_upload_actions(documents)
         self._callback_new(actions)
         self._process_if_needed()
 
     @distributed_trace
-    def index_documents(self, batch, **kwargs):
-        # type: (IndexDocumentsBatch, **Any) -> List[IndexingResult]
+    def index_documents(self, batch: IndexDocumentsBatch, **kwargs) -> List[IndexingResult]:
         """Specify a document operations to perform as a batch.
 
         :param batch: A batch of document operations to perform.
         :type batch: IndexDocumentsBatch
-        :rtype:  List[IndexingResult]
+        :return: Indexing result of each action in the batch.
+        :rtype:  list[IndexingResult]
         :raises :class:`~azure.search.documents.RequestEntityTooLargeError`
         """
         return self._index_documents_actions(actions=batch.actions, **kwargs)
 
-    def _index_documents_actions(self, actions, **kwargs):
-        # type: (List[IndexAction], **Any) -> List[IndexingResult]
+    def _index_documents_actions(self, actions: List[IndexAction], **kwargs) -> List[IndexingResult]:
         error_map = {413: RequestEntityTooLargeError}
 
         timeout = kwargs.pop("timeout", 86400)
@@ -288,56 +274,48 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         batch = IndexBatch(actions=actions)
         try:
-            batch_response = self._client.documents.index(
-                batch=batch, error_map=error_map, **kwargs
-            )
+            batch_response = self._client.documents.index(batch=batch, error_map=error_map, **kwargs)
             return cast(List[IndexingResult], batch_response.results)
-        except RequestEntityTooLargeError:
+        except RequestEntityTooLargeError as ex:
             if len(actions) == 1:
                 raise
             pos = round(len(actions) / 2)
             if pos < self._batch_action_count:
-                self._index_documents_batch = pos
+                self._index_documents_batch.enqueue_actions(actions)
             now = int(time.time())
             remaining = timeout - (now - begin_time)
             if remaining < 0:
-                raise ServiceResponseTimeoutError("Service response time out")
+                raise ServiceResponseTimeoutError("Service response time out") from ex
             batch_response_first_half = self._index_documents_actions(
                 actions=actions[:pos], error_map=error_map, timeout=remaining, **kwargs
             )
             if len(batch_response_first_half) > 0:
-                result_first_half = cast(
-                    List[IndexingResult], batch_response_first_half.results
-                )
+                result_first_half = batch_response_first_half
             else:
                 result_first_half = []
             now = int(time.time())
             remaining = timeout - (now - begin_time)
             if remaining < 0:
-                raise ServiceResponseTimeoutError("Service response time out")
+                raise ServiceResponseTimeoutError("Service response time out") from ex
             batch_response_second_half = self._index_documents_actions(
                 actions=actions[pos:], error_map=error_map, timeout=remaining, **kwargs
             )
             if len(batch_response_second_half) > 0:
-                result_second_half = cast(
-                    List[IndexingResult], batch_response_second_half.results
-                )
+                result_second_half = batch_response_second_half
             else:
                 result_second_half = []
-            return result_first_half.extend(result_second_half)
+            result_first_half.extend(result_second_half)
+            return result_first_half
 
-    def __enter__(self):
-        # type: () -> SearchIndexingBufferedSender
+    def __enter__(self) -> "SearchIndexingBufferedSender":
         self._client.__enter__()  # pylint:disable=no-member
         return self
 
-    def __exit__(self, *args):
-        # type: (*Any) -> None
+    def __exit__(self, *args) -> None:
         self.close()
-        self._client.__exit__(*args)  # pylint:disable=no-member
+        self._client.__exit__(*args)
 
-    def _retry_action(self, action):
-        # type: (IndexAction) -> None
+    def _retry_action(self, action: IndexAction) -> None:
         if not self._index_key:
             self._callback_fail(action)
             return
@@ -354,22 +332,19 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         else:
             self._callback_fail(action)
 
-    def _callback_succeed(self, action):
-        # type: (IndexAction) -> None
+    def _callback_succeed(self, action: IndexAction) -> None:
         if self._on_remove:
             self._on_remove(action)
         if self._on_progress:
             self._on_progress(action)
 
-    def _callback_fail(self, action):
-        # type: (IndexAction) -> None
+    def _callback_fail(self, action: IndexAction) -> None:
         if self._on_remove:
             self._on_remove(action)
         if self._on_error:
             self._on_error(action)
 
-    def _callback_new(self, actions):
-        # type: (List[IndexAction]) -> None
+    def _callback_new(self, actions: List[IndexAction]) -> None:
         if self._on_new:
             for action in actions:
                 self._on_new(action)
