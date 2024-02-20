@@ -17,8 +17,6 @@ from conftest import (
     ENV_AZURE_OPENAI_AUDIO_NAME,
     ENV_AZURE_OPENAI_NORTHCENTRALUS_ENDPOINT,
     ENV_AZURE_OPENAI_NORTHCENTRALUS_KEY,
-    configure,
-    AZURE,
     reload
 )
 
@@ -28,9 +26,7 @@ audio_test_file = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", 
 class TestCLI(AzureRecordedTestCase):
     """No support for embeddings CLI cmd"""
 
-    @configure
-    @pytest.mark.parametrize("api_type", [AZURE])
-    def test_cli_env_vars_key(self, client, azure_openai_creds, api_type, **kwargs):
+    def test_cli_env_vars_key(self):
         with reload():
             os.environ["AZURE_OPENAI_ENDPOINT"] = os.getenv(ENV_AZURE_OPENAI_ENDPOINT)
             os.environ["OPENAI_API_VERSION"] = ENV_AZURE_OPENAI_API_VERSION
@@ -57,9 +53,7 @@ class TestCLI(AzureRecordedTestCase):
                 del os.environ['OPENAI_API_VERSION']
                 del os.environ["OPENAI_API_TYPE"]
 
-    @configure
-    @pytest.mark.parametrize("api_type", [AZURE])
-    def test_cli_env_vars_token(self, client, azure_openai_creds, api_type, **kwargs):
+    def test_cli_env_vars_token(self):
         with reload():
             os.environ["AZURE_OPENAI_ENDPOINT"] = os.getenv(ENV_AZURE_OPENAI_ENDPOINT)
             os.environ["OPENAI_API_VERSION"] = ENV_AZURE_OPENAI_API_VERSION
@@ -86,9 +80,7 @@ class TestCLI(AzureRecordedTestCase):
                 del os.environ['OPENAI_API_VERSION']
                 del os.environ["OPENAI_API_TYPE"]
 
-    @configure
-    @pytest.mark.parametrize("api_type", [AZURE])
-    def test_cli_ad_token(self, client, azure_openai_creds, api_type, **kwargs):
+    def test_cli_ad_token(self):
         with reload():
             result = subprocess.run(
                 [
@@ -108,9 +100,7 @@ class TestCLI(AzureRecordedTestCase):
             )
             assert result.returncode == 0
 
-    @configure
-    @pytest.mark.parametrize("api_type", [AZURE])
-    def test_cli_completions(self, client, azure_openai_creds, api_type, **kwargs):
+    def test_cli_completions(self):
         with reload():
             result = subprocess.run(
                 [
@@ -130,9 +120,7 @@ class TestCLI(AzureRecordedTestCase):
             )
             assert result.returncode == 0
 
-    @configure
-    @pytest.mark.parametrize("api_type", [AZURE])
-    def test_cli_chat_completions(self, client, azure_openai_creds, api_type, **kwargs):
+    def test_cli_chat_completions(self):
         with reload():
             result = subprocess.run(
                 [
@@ -154,9 +142,7 @@ class TestCLI(AzureRecordedTestCase):
             assert result.returncode == 0
 
     @pytest.mark.skip("Unrecognized file format")
-    @configure
-    @pytest.mark.parametrize("api_type", [AZURE])
-    def test_cli_audio_transcription(self, client, azure_openai_creds, api_type, **kwargs):
+    def test_cli_audio_transcription(self):
         with reload():
             result = subprocess.run(
                 [
@@ -177,9 +163,7 @@ class TestCLI(AzureRecordedTestCase):
             assert result.returncode == 0
 
     @pytest.mark.skip("Unrecognized file format")
-    @configure
-    @pytest.mark.parametrize("api_type", [AZURE])
-    def test_cli_audio_translation(self, client, azure_openai_creds, api_type, **kwargs):
+    def test_cli_audio_translation(self):
         with reload():
             result = subprocess.run(
                 [
@@ -199,9 +183,7 @@ class TestCLI(AzureRecordedTestCase):
             )
             assert result.returncode == 0
 
-    @configure
-    @pytest.mark.parametrize("api_type", [AZURE])
-    def test_cli_models_list(self, client, azure_openai_creds, api_type, **kwargs):
+    def test_cli_models_list(self):
         with reload():
             result = subprocess.run(
                 [
@@ -217,10 +199,7 @@ class TestCLI(AzureRecordedTestCase):
             )
             assert result.returncode == 0
 
-
-    @configure
-    @pytest.mark.parametrize("api_type", [AZURE])
-    def test_cli_models_retrieve(self, client, azure_openai_creds, api_type, **kwargs):
+    def test_cli_models_retrieve(self):
         with reload():
             result = subprocess.run(
                 [
