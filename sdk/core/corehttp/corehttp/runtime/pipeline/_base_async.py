@@ -48,6 +48,9 @@ class _SansIOAsyncHTTPPolicyRunner(
     :type policy: ~corehttp.runtime.pipeline.policies.SansIOHTTPPolicy
     """
 
+    next: "AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]"
+    """Pointer to the next policy or a transport (wrapped as a policy). Will be set at pipeline creation."""
+
     def __init__(self, policy: SansIOHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]) -> None:
         super(_SansIOAsyncHTTPPolicyRunner, self).__init__()
         self._policy = policy
@@ -78,6 +81,9 @@ class _AsyncTransportRunner(
     :param sender: The async Http Transport instance.
     :type sender: ~corehttp.transport.AsyncHttpTransport
     """
+
+    next: "AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]"
+    """Pointer to the next policy or a transport (wrapped as a policy). Will be set at pipeline creation."""
 
     def __init__(self, sender: AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType]) -> None:
         super(_AsyncTransportRunner, self).__init__()
@@ -127,7 +133,7 @@ class AsyncPipeline(AsyncContextManager["AsyncPipeline"], Generic[HTTPRequestTyp
         self._transport = transport
 
         for policy in policies or []:
-            if hasattr(policy, "send"):
+            if isinstance(policy, AsyncHTTPPolicy):
                 self._impl_policies.append(policy)
             elif isinstance(policy, SansIOHTTPPolicy):
                 self._impl_policies.append(_SansIOAsyncHTTPPolicyRunner(policy))

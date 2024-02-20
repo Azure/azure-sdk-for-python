@@ -51,6 +51,9 @@ class _SansIOHTTPPolicyRunner(HTTPPolicy[HTTPRequestType, HTTPResponseType]):
     :type policy: ~corehttp.runtime.pipeline.policies.SansIOHTTPPolicy
     """
 
+    next: "HTTPPolicy[HTTPRequestType, HTTPResponseType]"
+    """Pointer to the next policy or a transport (wrapped as a policy). Will be set at pipeline creation."""
+
     def __init__(self, policy: SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]) -> None:
         super(_SansIOHTTPPolicyRunner, self).__init__()
         self._policy = policy
@@ -77,6 +80,9 @@ class _TransportRunner(HTTPPolicy[HTTPRequestType, HTTPResponseType]):
     :param sender: The Http Transport instance.
     :type sender: ~corehttp.transport.HttpTransport
     """
+
+    next: "HTTPPolicy[HTTPRequestType, HTTPResponseType]"
+    """Pointer to the next policy or a transport (wrapped as a policy). Will be set at pipeline creation."""
 
     def __init__(self, sender: HttpTransport[HTTPRequestType, HTTPResponseType]) -> None:
         super(_TransportRunner, self).__init__()
@@ -123,7 +129,7 @@ class Pipeline(ContextManager["Pipeline"], Generic[HTTPRequestType, HTTPResponse
         self._transport = transport
 
         for policy in policies or []:
-            if hasattr(policy, "send"):
+            if isinstance(policy, HTTPPolicy):
                 self._impl_policies.append(policy)
             elif isinstance(policy, SansIOHTTPPolicy):
                 self._impl_policies.append(_SansIOHTTPPolicyRunner(policy))

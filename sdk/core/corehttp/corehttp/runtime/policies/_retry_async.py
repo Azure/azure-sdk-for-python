@@ -27,7 +27,7 @@
 This module is the requests implementation of Pipeline ABC
 """
 from __future__ import annotations
-from typing import Dict, Any, Optional, cast, TYPE_CHECKING
+from typing import Dict, Any, Optional, cast, TypeVar, TYPE_CHECKING
 import logging
 import time
 
@@ -46,6 +46,8 @@ if TYPE_CHECKING:
 
 _LOGGER = logging.getLogger(__name__)
 
+AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
+HTTPRequestType = TypeVar("HTTPRequestType")
 
 class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy[HttpRequest, AsyncHttpResponse]):
     """Async flavor of the retry policy.
@@ -73,6 +75,9 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy[HttpRequest, AsyncHttpRe
 
     :keyword int retry_backoff_max: The maximum back off time. Default value is 120 seconds (2 minutes).
     """
+
+    next: "AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]"
+    """Pointer to the next policy or a transport (wrapped as a policy). Will be set at pipeline creation."""
 
     async def _sleep_for_retry(
         self,

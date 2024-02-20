@@ -24,7 +24,6 @@
 #
 # --------------------------------------------------------------------------
 from __future__ import annotations
-import abc
 import copy
 import logging
 
@@ -40,8 +39,9 @@ HTTPRequestType = TypeVar("HTTPRequestType")
 _LOGGER = logging.getLogger(__name__)
 
 
-class HTTPPolicy(abc.ABC, Generic[HTTPRequestType, HTTPResponseType]):
-    """An HTTP policy ABC.
+@runtime_checkable
+class HTTPPolicy(Generic[HTTPRequestType, HTTPResponseType], Protocol):
+    """An HTTP policy protocol.
 
     Use with a synchronous pipeline.
     """
@@ -49,9 +49,8 @@ class HTTPPolicy(abc.ABC, Generic[HTTPRequestType, HTTPResponseType]):
     next: "HTTPPolicy[HTTPRequestType, HTTPResponseType]"
     """Pointer to the next policy or a transport (wrapped as a policy). Will be set at pipeline creation."""
 
-    @abc.abstractmethod
     def send(self, request: PipelineRequest[HTTPRequestType]) -> PipelineResponse[HTTPRequestType, HTTPResponseType]:
-        """Abstract send method for a synchronous pipeline. Mutates the request.
+        """Send method for a synchronous pipeline. Mutates the request.
 
         Context content is dependent on the HttpTransport.
 
@@ -66,10 +65,10 @@ class HTTPPolicy(abc.ABC, Generic[HTTPRequestType, HTTPResponseType]):
 class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType], Protocol):
     """Represents a sans I/O policy.
 
-    SansIOHTTPPolicy is a base class for policies that only modify or
+    SansIOHTTPPolicy is a protocol for policies that only modify or
     mutate a request based on the HTTP specification, and do not depend
     on the specifics of any particular transport. SansIOHTTPPolicy
-    subclasses will function in either a Pipeline or an AsyncPipeline,
+    subtype classes will function in either a Pipeline or an AsyncPipeline,
     and can act either before the request is done, or after.
     You can optionally make these methods coroutines (or return awaitable objects)
     but they will then be tied to AsyncPipeline usage.
