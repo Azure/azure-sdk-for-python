@@ -58,7 +58,7 @@ _LONG_PING_INTERVAL_SECONDS = 60
 _POST_CANCEL_INTERVAL_SECONDS = 20
 
 
-class Response:
+class _Response:
     """Response that encapsulates pipeline response and response headers from
     QuickPulse client.
     """
@@ -68,7 +68,7 @@ class Response:
         self._response_headers = response_headers
 
 
-class UnsuccessfulQuickPulsePostError(Exception):
+class _UnsuccessfulQuickPulsePostError(Exception):
     """Exception raised to indicate unsuccessful QuickPulse post for backoff logic."""
 
 
@@ -112,7 +112,7 @@ class _QuickpulseExporter(MetricExporter):
         result = MetricExportResult.SUCCESS
         base_monitoring_data_point = kwargs.get("base_monitoring_data_point")
         if base_monitoring_data_point is None:
-            return result
+            return MetricExportResult.FAILURE
         data_points = _metric_to_quick_pulse_data_points(
             metrics_data,
             base_monitoring_data_point=base_monitoring_data_point,
@@ -125,15 +125,16 @@ class _QuickpulseExporter(MetricExporter):
                 monitoring_data_points=data_points,
                 ikey=self._instrumentation_key,
                 x_ms_qps_transmission_time=_ticks_since_dot_net_epoch(),
-                cls=Response,
+                cls=_Response,
             )
             if not post_response:
                 # If no response, assume unsuccessful
                 result = MetricExportResult.FAILURE
-            header = post_response._response_headers.get("x-ms-qps-subscribed")  # pylint: disable=protected-access
-            if header != "true":
-                # User leaving the live metrics page will be treated as an unsuccessful
-                result = MetricExportResult.FAILURE
+            else:
+                header = post_response._response_headers.get("x-ms-qps-subscribed")  # pylint: disable=protected-access
+                if header != "true":
+                    # User leaving the live metrics page will be treated as an unsuccessful
+                    result = MetricExportResult.FAILURE
         except Exception:  # pylint: disable=broad-except,invalid-name
             # Errors are not reported and assumed as unsuccessful
             result = MetricExportResult.FAILURE
@@ -171,7 +172,7 @@ class _QuickpulseExporter(MetricExporter):
         """
 
 
-    def _ping(self, monitoring_data_point) -> Optional[Response]:
+    def _ping(self, monitoring_data_point) -> Optional[_Response]:
         ping_response = None
         token = attach(set_value(_SUPPRESS_INSTRUMENTATION_KEY, True))
         try:
@@ -179,7 +180,7 @@ class _QuickpulseExporter(MetricExporter):
                 monitoring_data_point=monitoring_data_point,
                 ikey=self._instrumentation_key,
                 x_ms_qps_transmission_time=_ticks_since_dot_net_epoch(),
-                cls=Response,
+                cls=_Response,
             )
             return ping_response  # type: ignore
         except HttpResponseError:
@@ -255,7 +256,7 @@ class _QuickpulseMetricReader(MetricReader):
             print("posting...")
             try:
                 self.collect()
-            except UnsuccessfulQuickPulsePostError:
+            except _UnsuccessfulQuickPulsePostError:
                 # Unsuccessful posts instigate backoff logic
                 # Backoff after _POST_CANCEL_INTERVAL_SECONDS (20s) of no successful requests
                 # And resume pinging
@@ -280,9 +281,9 @@ class _QuickpulseMetricReader(MetricReader):
         )
         if result is MetricExportResult.FAILURE:
             # There is currently no way to propagate unsuccessful metric post so
-            # we raise an UnsuccessfulQuickPulsePostError exception. MUST handle
+            # we raise an _UnsuccessfulQuickPulsePostError exception. MUST handle
             # this exception whenever `collect()` is called
-            raise UnsuccessfulQuickPulsePostError()
+            raise _UnsuccessfulQuickPulsePostError()
 
     def shutdown(self, timeout_millis: float = 30_000, **kwargs) -> None:
         self._worker.cancel()

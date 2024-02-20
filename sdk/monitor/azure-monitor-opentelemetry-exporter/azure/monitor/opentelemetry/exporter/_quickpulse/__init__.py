@@ -4,8 +4,8 @@
 # license information.
 # -------------------------------------------------------------------------
 
-from azure.monitor.opentelemetry.exporter._quickpulse._exporter import _QuickpulseExporter
+from azure.monitor.opentelemetry.exporter._quickpulse._live_metrics import enable_live_metrics
 
 __all__ = [
-    "_QuickpulseExporter",
+    "enable_live_metrics",
 ]
