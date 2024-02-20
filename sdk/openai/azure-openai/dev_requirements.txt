@@ -2,3 +2,4 @@
 -e ../../../tools/azure-devtools
 ../../identity/azure-identity
 httpx
+aiohttp

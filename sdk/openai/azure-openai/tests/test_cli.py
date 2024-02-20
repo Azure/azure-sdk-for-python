@@ -22,7 +22,7 @@ from conftest import (
     reload
 )
 
-audio_test_file = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "./assets/hello.m4a"))
+audio_test_file = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./assets/hello.m4a"))
 
 
 class TestCLI(AzureRecordedTestCase):

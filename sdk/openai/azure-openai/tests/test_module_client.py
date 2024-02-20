@@ -24,7 +24,7 @@ from conftest import (
     get_bearer_token_provider
 )
 
-audio_test_file = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "./assets/hello.m4a"))
+audio_test_file = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./assets/hello.m4a"))
 
 
 class TestModuleClient(AzureRecordedTestCase):
