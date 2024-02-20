@@ -6,6 +6,5 @@
 -e ../azure-ai-resources
 -e ../azure-ai-generative[faiss,hugging_face,langchain,index,qa_generation,simulator,evaluate,promptflow]
 azureml-core
-azure-cli
 pytest
 pytest-xdist
