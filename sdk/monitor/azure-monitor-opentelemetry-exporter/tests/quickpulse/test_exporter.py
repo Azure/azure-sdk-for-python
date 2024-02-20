@@ -6,8 +6,6 @@ from unittest import mock
 
 from opentelemetry.sdk.metrics.export import (
     AggregationTemporality,
-    Histogram,
-    MetricExporter,
     Metric,
     MetricExportResult,
     MetricsData as OTMetricsData,
@@ -19,10 +17,10 @@ from opentelemetry.sdk.metrics.export import (
 )
 from opentelemetry.sdk.util.instrumentation import InstrumentationScope
 from opentelemetry.sdk.resources import Resource, ResourceAttributes
+from azure.core.exceptions import HttpResponseError
 from azure.monitor.opentelemetry.exporter._quickpulse._generated._client import QuickpulseClient
 from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import MonitoringDataPoint
 from azure.monitor.opentelemetry.exporter._quickpulse._exporter import (
-    _metric_to_quick_pulse_data_points,
     _QuickpulseExporter,
     _QuickpulseMetricReader,
     _Response,
@@ -86,26 +84,26 @@ class TestQuickpulseExporter(unittest.TestCase):
             "InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ac;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/"
         )
 
-    # @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._generated._client.QuickpulseClient.__new__")
-    # def test_init(self, client_mock):
-    #     client_inst_mock = mock.Mock()
-    #     client_mock.return_value = client_inst_mock
-    #     exporter = _QuickpulseExporter(
-    #         connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/"
-    #     )
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._generated._client.QuickpulseClient.__new__")
+    def test_init(self, client_mock):
+        client_inst_mock = mock.Mock()
+        client_mock.return_value = client_inst_mock
+        exporter = _QuickpulseExporter(
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/"
+        )
         
-    #     self.assertEqual(exporter._live_endpoint, "https://eastus.livediagnostics.monitor.azure.com/")
-    #     self.assertEqual(exporter._instrumentation_key, "4321abcd-5678-4efa-8abc-1234567890ab")
-    #     self.assertEqual(exporter._client, client_inst_mock)
-    #     client_mock.assert_called_with(
-    #         QuickpulseClient,
-    #         host="https://eastus.livediagnostics.monitor.azure.com/"
-    #     )
+        self.assertEqual(exporter._live_endpoint, "https://eastus.livediagnostics.monitor.azure.com/")
+        self.assertEqual(exporter._instrumentation_key, "4321abcd-5678-4efa-8abc-1234567890ab")
+        self.assertEqual(exporter._client, client_inst_mock)
+        client_mock.assert_called_with(
+            QuickpulseClient,
+            host="https://eastus.livediagnostics.monitor.azure.com/"
+        )
 
 
-    # def test_export_missing_data_point(self):
-    #     result = self._exporter.export(OTMetricsData(resource_metrics=[]))
-    #     self.assertEqual(result, MetricExportResult.FAILURE)
+    def test_export_missing_data_point(self):
+        result = self._exporter.export(OTMetricsData(resource_metrics=[]))
+        self.assertEqual(result, MetricExportResult.FAILURE)
 
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._generated._client.QuickpulseClient.post")
@@ -139,23 +137,23 @@ class TestQuickpulseExporter(unittest.TestCase):
         )
         self.assertEqual(result, MetricExportResult.FAILURE)
 
-    # @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._exporter._metric_to_quick_pulse_data_points")
-    # def test_export_exception(self, convert_mock):
-    #     post_response = _Response(
-    #         mock.Mock(),
-    #         None,
-    #         {},
-    #     )
-    #     convert_mock.return_value = [self._data_point]
-    #     with mock.patch(
-    #         "azure.monitor.opentelemetry.exporter._quickpulse._generated._client.QuickpulseClient.post",
-    #         throw(Exception),
-    #     ):  # noqa: E501
-    #         result = self._exporter.export(
-    #             self._metrics_data,
-    #             base_monitoring_data_point=self._data_point
-    #         )
-    #         self.assertEqual(result, MetricExportResult.FAILURE)
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._exporter._metric_to_quick_pulse_data_points")
+    def test_export_exception(self, convert_mock):
+        post_response = _Response(
+            mock.Mock(),
+            None,
+            {},
+        )
+        convert_mock.return_value = [self._data_point]
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter._quickpulse._generated._client.QuickpulseClient.post",
+            throw(Exception),
+        ):  # noqa: E501
+            result = self._exporter.export(
+                self._metrics_data,
+                base_monitoring_data_point=self._data_point
+            )
+            self.assertEqual(result, MetricExportResult.FAILURE)
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._generated._client.QuickpulseClient.post")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._exporter._metric_to_quick_pulse_data_points")
@@ -174,3 +172,28 @@ class TestQuickpulseExporter(unittest.TestCase):
             base_monitoring_data_point=self._data_point
         )
         self.assertEqual(result, MetricExportResult.SUCCESS)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._generated._client.QuickpulseClient.ping")
+    def test_ping(self, ping_mock):
+        ping_response = _Response(
+            mock.Mock(),
+            None,
+            {
+                "x-ms-qps-subscribed": "false",
+            }
+        )
+        ping_mock.return_value = ping_response
+        response = self._exporter._ping(
+            monitoring_data_point=self._data_point
+        )
+        self.assertEqual(response, ping_response)
+
+    def test_ping_exception(self):
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter._quickpulse._generated._client.QuickpulseClient.ping",
+            throw(HttpResponseError),
+        ):  # noqa: E501
+            response = self._exporter._ping(
+                monitoring_data_point=self._data_point
+            )
+            self.assertIsNone(response)
