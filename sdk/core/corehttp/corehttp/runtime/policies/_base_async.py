@@ -33,7 +33,6 @@ if TYPE_CHECKING:
     from ...runtime.pipeline import PipelineRequest, PipelineResponse
 
 AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
-HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
 
 

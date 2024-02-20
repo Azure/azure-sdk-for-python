@@ -35,6 +35,8 @@ if TYPE_CHECKING:
 
 HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
+SansIOHTTPResponseType_contra = TypeVar("SansIOHTTPResponseType_contra", contravariant=True)
+SansIOHTTPRequestType_contra = TypeVar("SansIOHTTPRequestType_contra", contravariant=True)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -62,7 +64,7 @@ class HTTPPolicy(Generic[HTTPRequestType, HTTPResponseType], Protocol):
 
 
 @runtime_checkable
-class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType], Protocol):
+class SansIOHTTPPolicy(Generic[SansIOHTTPRequestType_contra, SansIOHTTPResponseType_contra], Protocol):
     """Represents a sans I/O policy.
 
     SansIOHTTPPolicy is a protocol for policies that only modify or
@@ -74,7 +76,7 @@ class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType], Protocol):
     but they will then be tied to AsyncPipeline usage.
     """
 
-    def on_request(self, request: PipelineRequest[HTTPRequestType]) -> Union[None, Awaitable[None]]:
+    def on_request(self, request: PipelineRequest[SansIOHTTPRequestType_contra]) -> Union[None, Awaitable[None]]:
         """Is executed before sending the request from next policy.
 
         :param request: Request to be modified before sent from next policy.
@@ -83,8 +85,8 @@ class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType], Protocol):
 
     def on_response(
         self,
-        request: PipelineRequest[HTTPRequestType],
-        response: PipelineResponse[HTTPRequestType, HTTPResponseType],
+        request: PipelineRequest[SansIOHTTPRequestType_contra],
+        response: PipelineResponse[SansIOHTTPRequestType_contra, SansIOHTTPResponseType_contra],
     ) -> Union[None, Awaitable[None]]:
         """Is executed after the request comes back from the policy.
 

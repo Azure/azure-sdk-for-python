@@ -47,8 +47,6 @@ from ...runtime.pipeline import PipelineRequest, PipelineResponse, PipelineConte
 
 AllHttpResponseType = TypeVar("AllHttpResponseType", HttpResponse, AsyncHttpResponse)
 ClsRetryPolicy = TypeVar("ClsRetryPolicy", bound="RetryPolicyBase")
-HTTPResponseType = TypeVar("HTTPResponseType")
-HTTPRequestType = TypeVar("HTTPRequestType")
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -421,7 +419,7 @@ class RetryPolicy(RetryPolicyBase, HTTPPolicy[HttpRequest, HttpResponse]):
     :keyword int timeout: Timeout setting for the operation in seconds, default is 604800s (7 days).
     """
 
-    next: "HTTPPolicy[HTTPRequestType, HTTPResponseType]"
+    next: "HTTPPolicy[HttpRequest, HttpResponse]"
     """Pointer to the next policy or a transport (wrapped as a policy). Will be set at pipeline creation."""
 
     def _sleep_for_retry(

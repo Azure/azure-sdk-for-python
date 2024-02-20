@@ -46,8 +46,6 @@ if TYPE_CHECKING:
 
 _LOGGER = logging.getLogger(__name__)
 
-AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
-HTTPRequestType = TypeVar("HTTPRequestType")
 
 class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy[HttpRequest, AsyncHttpResponse]):
     """Async flavor of the retry policy.
@@ -76,7 +74,7 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy[HttpRequest, AsyncHttpRe
     :keyword int retry_backoff_max: The maximum back off time. Default value is 120 seconds (2 minutes).
     """
 
-    next: "AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]"
+    next: "AsyncHTTPPolicy[HttpRequest, AsyncHttpResponse]"
     """Pointer to the next policy or a transport (wrapped as a policy). Will be set at pipeline creation."""
 
     async def _sleep_for_retry(
