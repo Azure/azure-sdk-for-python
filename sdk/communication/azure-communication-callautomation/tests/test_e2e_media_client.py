@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from datetime import timedelta
+import pytest
 import time
 import unittest
 
@@ -86,7 +87,8 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
         self.terminate_call(unique_id)
         return
 
-    @recorded_by_proxy
+    @pytest.mark.skip(reason="disabling this test due to status code change in the muteparticipant service, current test data doesnt have the change. Created work item to update the test data https://skype.visualstudio.com/SPOOL/_workitems/edit/3602301")
+    @recorded_by_proxy    
     def test_add_and_mute_participant_in_a_call(self):
 
         # try to establish the call

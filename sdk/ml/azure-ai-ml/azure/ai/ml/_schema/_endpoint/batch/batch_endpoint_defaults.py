@@ -9,7 +9,7 @@ from typing import Any
 
 from marshmallow import fields, post_load
 
-from azure.ai.ml._restclient.v2022_05_01.models import BatchEndpointDefaults
+from azure.ai.ml._restclient.v2023_10_01.models import BatchEndpointDefaults
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 
 module_logger = logging.getLogger(__name__)
