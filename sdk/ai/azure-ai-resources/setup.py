@@ -71,7 +71,8 @@ setup(
         "mlflow-skinny<3",
         "opencensus-ext-logging<=0.1.1",
         "azure-mgmt-resource<23.0.0,>=22.0.0",
-        "mmh3"
+        "mmh3",
+        "fsspec"
     ],
     project_urls={
         "Bug Reports": "https://github.com/Azure/azure-sdk-for-python/issues",
