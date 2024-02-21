@@ -13,11 +13,9 @@ from ._shared import parse_key_vault_id
 class SecretProperties(object):
     """A secret's ID and attributes."""
 
-    def __init__(
-        self, *args: Any, **kwargs: Any
-    ) -> None:
-        self._attributes: _models.SecretAttributes = args[0]
-        self._id: Optional[str] = args[1]
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        self._attributes: Optional[_models.SecretAttributes] = args[0] if args else kwargs.get("attributes", None)
+        self._id: Optional[str] = args[1] if len(args) > 1 else kwargs.get("vault_id", None)
         self._vault_id = KeyVaultSecretIdentifier(self._id) if self._id else None
         self._content_type = kwargs.get("content_type", None)
         self._key_id = kwargs.get("key_id", None)
