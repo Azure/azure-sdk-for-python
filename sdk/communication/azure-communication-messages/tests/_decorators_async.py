@@ -22,7 +22,7 @@ class MessagesPreparersAsync(object):
                 self.resource_name = endpoint.split(".")[0]
 
             else:
-                self.connection_string = "endpoint=https://sanitized.communication.azure.net/;accesskey=fake==="
+                self.connection_string = "endpoint=https://sanitized.unitedstates.communication.azure.com/;accesskey=fake==="
                 self.resource_name = "sanitized"
 
             return await func(self, *args, **kwargs)
@@ -36,7 +36,7 @@ class MessagesPreparersAsync(object):
             if is_live() or is_live_and_not_recording():
                 self.endpoint_str = os.getenv("COMMUNICATION_LIVETEST_DYNAMIC_ENDPOINT")
             else:
-                self.endpoint = "https://sanitized.communication.azure.net"
+                self.endpoint = "sanitized.unitedstates.communication.azure.com"
 
             return await func(self, *args, **kwargs)
 

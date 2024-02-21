@@ -60,7 +60,7 @@ class RouterPreparers(object):
                 endpoint, _ = parse_connection_str(self.connection_string)
                 self.resource_name = endpoint.split(".")[0]
             else:
-                self.connection_string = "endpoint=https://sanitized.communication.azure.net/;accesskey=fake==="
+                self.connection_string = "endpoint=https://sanitized.unitedstates.communication.azure.net/;accesskey=fake==="
                 self.resource_name = "sanitized"
 
             func(self, *args, **kwargs)
