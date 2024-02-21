@@ -65,12 +65,22 @@ class NotificationMessagesClient(NotificationMessagesClientGenerated):
     @classmethod
     def from_connection_string(cls, conn_str: str, **kwargs: Any) -> "NotificationMessagesClient":
         """Create NotificationMessagesClient from a Connection String.
+        :param conn_str: Azure communication service connection string. Required.
+        :type conn_str: str
+        :return: instance of NotificationMessagesClient
+        :rtype:
+         ~azure.communication.messages.NotificationMessagesClient
         """
         endpoint, access_key = parse_connection_str(conn_str)
         return cls(endpoint, AzureKeyCredential(access_key), **kwargs)
     @classmethod
     def from_token_credentials(cls, endpoint: str, **kwargs: Any) -> "NotificationMessagesClient":
         """Create NotificationMessagesClient from an endpoint and TokenCredentials.
+        :param endpoint: Azure communication service endpoint string. Required.
+        :type endpoint: str
+        :return: instance of NotificationMessagesClient
+        :rtype:
+         ~azure.communication.messages.notificationmessagesclient
         """
         return cls(endpoint, credential=DefaultAzureCredential(), **kwargs)
 
@@ -108,13 +118,19 @@ class MessageTemplateClient(MessageTemplateClientGenerated):
         self._authentication_policy =  get_authentication_policy(endpoint, credential)
         self._credential = credential
         super().__init__(
-            self._endpoint, self._credential, authentication_policy=self._authentication_policy, api_version=self._api_version, **kwargs
+            self._endpoint, self._credential,
+            authentication_policy=self._authentication_policy,
+            api_version=self._api_version, **kwargs
         )
 
     @classmethod
     def from_connection_string(cls, conn_str: str, **kwargs: Any) -> "MessageTemplateClient":
         """Create MessageTemplateClient from a Connection String.
-
+        :param conn_str: Azure communication service connection string. Required.
+        :type conn_str: str
+        :return: instance of MessageTemplateClient
+        :rtype:
+         ~azure.communication.messages.messagetemplateclient
         """
         endpoint, access_key = parse_connection_str(conn_str)
         return cls(endpoint, AzureKeyCredential(access_key), **kwargs)
@@ -122,14 +138,14 @@ class MessageTemplateClient(MessageTemplateClientGenerated):
     @classmethod
     def from_token_credentials(cls, endpoint: str, **kwargs: Any) -> "MessageTemplateClient":
         """Create MessageTemplateClient from an endpoint and TokenCredentials.
-        :param endpoint: The registration ID of the channel. Required.
+        :param endpoint: Azure communication service endpoint string. Required.
         :type endpoint: str
         :return: instance of MessageTemplateClient
         :rtype:
          ~azure.communication.messages.messagetemplateclient
         """
         return cls(endpoint, credential=DefaultAzureCredential(), **kwargs)
-    
+
 __all__: List[str] = [
     "NotificationMessagesClient",
     "MessageTemplateClient",
