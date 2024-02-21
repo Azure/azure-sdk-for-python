@@ -159,14 +159,14 @@ class _StatsbeatMetrics:
         rpId = ''
         os_type = platform.system()
         # rp, rpId
-        if os.environ.get("WEBSITE_SITE_NAME") is not None:
+        if _utils._is_on_app_service():
             # Web apps
             rp = _RP_NAMES[0]
             rpId = '{}/{}'.format(
                         os.environ.get("WEBSITE_SITE_NAME"),
                         os.environ.get("WEBSITE_HOME_STAMPNAME", '')
             )
-        elif os.environ.get("FUNCTIONS_WORKER_RUNTIME") is not None:
+        elif _utils._is_on_functions():
             # Function apps
             rp = _RP_NAMES[1]
             rpId = os.environ.get("WEBSITE_HOSTNAME", '')
@@ -177,6 +177,7 @@ class _StatsbeatMetrics:
                         self._vm_data.get("vmId", ''),
                         self._vm_data.get("subscriptionId", ''))
             os_type = self._vm_data.get("osType", '')
+        # TODO: add AKS scenario
         else:
             # Not in any rp or VM metadata failed
             rp = _RP_NAMES[3]

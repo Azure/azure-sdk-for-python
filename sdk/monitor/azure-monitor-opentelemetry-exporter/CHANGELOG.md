@@ -13,6 +13,9 @@
 
 ### Other Changes
 
+- Add attachType character to sdkVersion prefix
+    ([#34226](https://github.com/Azure/azure-sdk-for-python/pull/34226))
+
 ## 1.0.0b22 (2024-02-01)
 
 ### Features Added
