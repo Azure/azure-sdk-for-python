@@ -3,7 +3,6 @@
 # ---------------------------------------------------------
 
 import uuid
-from pandas import DataFrame
 from typing import Any, Dict, Optional
 
 from azure.core.tracing.decorator import distributed_trace
@@ -81,7 +80,7 @@ class PFOperations():
 
     @distributed_trace
     @monitor_with_telemetry_mixin(logger, "PF.GetRunDetails", ActivityType.PUBLICAPI)
-    def get_run_details(self, run_name: str) -> DataFrame:
+    def get_run_details(self, run_name: str) -> "DataFrame":
         """Get the details of a run
         
         :param run_name: The name of the run
