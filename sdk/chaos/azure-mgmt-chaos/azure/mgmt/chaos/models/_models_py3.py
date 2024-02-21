@@ -1476,19 +1476,31 @@ class ExperimentUpdate(_serialization.Model):
 
     :ivar identity: The identity of the experiment resource.
     :vartype identity: ~azure.mgmt.chaos.models.ResourceIdentity
+    :ivar tags: The tags of the experiment resource.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
         "identity": {"key": "identity", "type": "ResourceIdentity"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, identity: Optional["_models.ResourceIdentity"] = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        identity: Optional["_models.ResourceIdentity"] = None,
+        tags: Optional[Dict[str, str]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword identity: The identity of the experiment resource.
         :paramtype identity: ~azure.mgmt.chaos.models.ResourceIdentity
+        :keyword tags: The tags of the experiment resource.
+        :paramtype tags: dict[str, str]
         """
         super().__init__(**kwargs)
         self.identity = identity
+        self.tags = tags
 
 
 class KeyValuePair(_serialization.Model):
@@ -1645,9 +1657,11 @@ class OperationListResult(_serialization.Model):
         self.next_link = None
 
 
-class OperationStatus(_serialization.Model):
+class OperationStatus(ErrorResponse):
     """The status of operation.
 
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.chaos.models.ErrorDetail
     :ivar id: The operation Id.
     :vartype id: str
     :ivar name: The operation name.
@@ -1658,31 +1672,31 @@ class OperationStatus(_serialization.Model):
     :vartype end_time: str
     :ivar status: The status of the operation.
     :vartype status: str
-    :ivar error: The error detail of the operation if any.
-    :vartype error: ~azure.mgmt.chaos.models.ErrorResponse
     """
 
     _attribute_map = {
+        "error": {"key": "error", "type": "ErrorDetail"},
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "start_time": {"key": "startTime", "type": "str"},
         "end_time": {"key": "endTime", "type": "str"},
         "status": {"key": "status", "type": "str"},
-        "error": {"key": "error", "type": "ErrorResponse"},
     }
 
     def __init__(
         self,
         *,
+        error: Optional["_models.ErrorDetail"] = None,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         start_time: Optional[str] = None,
         end_time: Optional[str] = None,
         status: Optional[str] = None,
-        error: Optional["_models.ErrorResponse"] = None,
         **kwargs: Any
     ) -> None:
         """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.chaos.models.ErrorDetail
         :keyword id: The operation Id.
         :paramtype id: str
         :keyword name: The operation name.
@@ -1693,16 +1707,13 @@ class OperationStatus(_serialization.Model):
         :paramtype end_time: str
         :keyword status: The status of the operation.
         :paramtype status: str
-        :keyword error: The error detail of the operation if any.
-        :paramtype error: ~azure.mgmt.chaos.models.ErrorResponse
         """
-        super().__init__(**kwargs)
+        super().__init__(error=error, **kwargs)
         self.id = id
         self.name = name
         self.start_time = start_time
         self.end_time = end_time
         self.status = status
-        self.error = error
 
 
 class ResourceIdentity(_serialization.Model):
