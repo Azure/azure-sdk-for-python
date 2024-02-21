@@ -37,7 +37,7 @@ def _build_structured_message(
     data: bytes,
     segment_size: Union[int, List[int]],
     flags: StructuredMessageProperties,
-    invalidate_crc_segment: Optional[int] = None
+    invalidate_crc_segment: Optional[int] = None,
 ) -> Tuple[BytesIO, int]:
     if isinstance(segment_size, list):
         segment_count = len(segment_size)
@@ -86,6 +86,8 @@ def _build_structured_message(
 
     # Message footer
     if StructuredMessageProperties.CRC64 in flags:
+        if invalidate_crc_segment == -1:
+            message_crc += 5
         message.write(message_crc.to_bytes(StructuredMessageConstants.CRC64_LENGTH, 'little'))
 
     message.seek(0, 0)
@@ -196,7 +198,7 @@ class TestStructuredMessageDecodeStream:
 
         assert content == data
 
-    @pytest.mark.parametrize("invalid_segment", [1, 2, 3])
+    @pytest.mark.parametrize("invalid_segment", [1, 2, 3, -1])
     def test_crc64_mismatch_read_all(self, invalid_segment):
         data = os.urandom(3 * 1024)
         message_stream, length = _build_structured_message(
@@ -210,7 +212,7 @@ class TestStructuredMessageDecodeStream:
             stream.read()
         assert 'CRC64 mismatch' in str(e.value)
 
-    @pytest.mark.parametrize("invalid_segment", [1, 2, 3])
+    @pytest.mark.parametrize("invalid_segment", [1, 2, 3, -1])
     def test_crc64_mismatch_read_chunks(self, invalid_segment):
         data = os.urandom(3 * 1024)
         message_stream, length = _build_structured_message(
