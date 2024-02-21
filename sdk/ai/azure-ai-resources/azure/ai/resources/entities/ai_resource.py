@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 
-from typing import Dict, Optional
+from typing import Dict, List, Optional
 
 from azure.ai.ml.entities import CustomerManagedKey, WorkspaceHub
 from azure.ai.ml.entities._credentials import IdentityConfiguration
