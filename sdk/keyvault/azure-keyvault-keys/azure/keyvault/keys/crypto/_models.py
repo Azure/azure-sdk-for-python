@@ -120,19 +120,14 @@ def get_signature_algorithm(padding: AsymmetricPadding, algorithm: HashAlgorithm
 class KeyVaultRSAPublicKey(RSAPublicKey):
     """An `RSAPublicKey` implementation based on a key managed by Key Vault.
 
-    Only synchronous clients and operations are supported at this time.
+    This class should not be instantiated directly. Instead, use the
+    :func:`~azure.keyvault.keys.crypto.CryptographyClient.create_rsa_public_key` method to create a key based on the
+    client's key. Only synchronous clients and operations are supported at this time.
     """
 
-    def __init__(self, client: "CryptographyClient", key_material: JsonWebKey) -> None:
-        """Creates a `KeyVaultRSAPublicKey` from a `CryptographyClient` and key.
-
-        :param client: The client that will be used to communicate with Key Vault.
-        :type client: ~azure.keyvault.keys.crypto.CryptographyClient
-        :param key_material: They Key Vault key's material, as a `JsonWebKey`.
-        :type key_material: ~azure.keyvault.keys.JsonWebKey
-        """
+    def __init__(self, client: "CryptographyClient", key_material: Optional[JsonWebKey] = None) -> None:
         self._client: "CryptographyClient" = client
-        self._key: JsonWebKey = key_material
+        self._key: Optional[JsonWebKey] = key_material
 
     def encrypt(self, plaintext: bytes, padding: AsymmetricPadding) -> bytes:
         """Encrypts the given plaintext.
@@ -156,7 +151,15 @@ class KeyVaultRSAPublicKey(RSAPublicKey):
 
         :returns: The key's size.
         :rtype: int
+
+        :raises ValueError: if the client is unable to obtain the key material from Key Vault.
         """
+        if self._key is None:
+            raise ValueError(
+                "Key material could not be obtained from Key Vault. Only remote cryptographic operations "
+                "(encrypt, verify) can be performed."
+            )
+
         public_key = self.public_numbers().public_key()
         return public_key.key_size
 
@@ -165,7 +168,15 @@ class KeyVaultRSAPublicKey(RSAPublicKey):
 
         :returns: The public numbers of the key.
         :rtype: RSAPublicNumbers
+
+        :raises ValueError: if the client is unable to obtain the key material from Key Vault.
         """
+        if self._key is None:
+            raise ValueError(
+                "Key material could not be obtained from Key Vault. Only remote cryptographic operations "
+                "(encrypt, verify) can be performed."
+            )
+
         e = int.from_bytes(self._key.e, "big")  # type: ignore[attr-defined]
         n = int.from_bytes(self._key.n, "big")  # type: ignore[attr-defined]
         return RSAPublicNumbers(e, n)
@@ -184,7 +195,15 @@ class KeyVaultRSAPublicKey(RSAPublicKey):
 
         :returns: The serialized key.
         :rtype: bytes
+
+        :raises ValueError: if the client is unable to obtain the key material from Key Vault.
         """
+        if self._key is None:
+            raise ValueError(
+                "Key material could not be obtained from Key Vault. Only remote cryptographic operations "
+                "(encrypt, verify) can be performed."
+            )
+
         public_key = self.public_numbers().public_key()
         return public_key.public_bytes(encoding=encoding, format=format)
 
@@ -250,12 +269,18 @@ class KeyVaultRSAPublicKey(RSAPublicKey):
 
         :returns: The signed data.
         :rtype: bytes
-        :raises:
-            NotImplementedError if the local version of `cryptography` doesn't support this method.
-            :class:`~cryptography.exceptions.InvalidSignature` if the signature is invalid.
-            :class:`~cryptography.exceptions.UnsupportedAlgorithm` if the signature data recovery is not supported with
+        :raises NotImplementedError: if the local version of `cryptography` doesn't support this method.
+        :raises ~cryptography.exceptions.InvalidSignature: if the signature is invalid.
+        :raises ~cryptography.exceptions.UnsupportedAlgorithm: if the signature data recovery is not supported with
             the provided `padding` type.
+        :raises ValueError: if the client is unable to obtain the key material from Key Vault.
         """
+        if self._key is None:
+            raise ValueError(
+                "Key material could not be obtained from Key Vault. Only remote cryptographic operations "
+                "(encrypt, verify) can be performed."
+            )
+
         public_key = self.public_numbers().public_key()
         try:
             return public_key.recover_data_from_signature(signature=signature, padding=padding, algorithm=algorithm)
@@ -270,9 +295,13 @@ class KeyVaultRSAPublicKey(RSAPublicKey):
         :param object other: Another object to compare with this instance. Currently, only comparisons with
             `KeyVaultRSAPrivateKey` or `JsonWebKey` instances are supported.
 
-        :returns: True if the objects are equal; False otherwise.
+        :returns: True if the objects are equal; False if the objects are unequal or if key material can't be obtained
+            from Key Vault for comparison.
         :rtype: bool
         """
+        if self._key is None:
+            return False
+
         if isinstance(other, KeyVaultRSAPublicKey):
             return all(getattr(self._key, field) == getattr(other._key, field) for field in self._key._FIELDS)
         if isinstance(other, JsonWebKey):
@@ -289,19 +318,14 @@ class KeyVaultRSAPublicKey(RSAPublicKey):
 class KeyVaultRSAPrivateKey(RSAPrivateKey):
     """An `RSAPrivateKey` implementation based on a key managed by Key Vault.
 
-    Only synchronous clients and operations are supported at this time.
+    This class should not be instantiated directly. Instead, use the
+    :func:`~azure.keyvault.keys.crypto.CryptographyClient.create_rsa_private_key` method to create a key based on the
+    client's key. Only synchronous clients and operations are supported at this time.
     """
 
-    def __init__(self, client: "CryptographyClient", key_material: JsonWebKey) -> None:
-        """Creates a `KeyVaultRSAPrivateKey` from a `CryptographyClient` and key.
-
-        :param client: The client that will be used to communicate with Key Vault.
-        :type client: ~azure.keyvault.keys.crypto.CryptographyClient
-        :param key_material: They Key Vault key's material, as a `JsonWebKey`.
-        :type key_material: ~azure.keyvault.keys.JsonWebKey
-        """
+    def __init__(self, client: "CryptographyClient", key_material: Optional[JsonWebKey]) -> None:
         self._client: "CryptographyClient" = client
-        self._key: JsonWebKey = key_material
+        self._key: Optional[JsonWebKey] = key_material
 
     def decrypt(self, ciphertext: bytes, padding: AsymmetricPadding) -> bytes:
         """Decrypts the provided ciphertext.
@@ -325,7 +349,15 @@ class KeyVaultRSAPrivateKey(RSAPrivateKey):
 
         :returns: The key's size.
         :rtype: int
+
+        :raises ValueError: if the client is unable to obtain the key material from Key Vault.
         """
+        if self._key is None:
+            raise ValueError(
+                "Key material could not be obtained from Key Vault. Only remote cryptographic operations "
+                "(decrypt, sign) can be performed."
+            )
+
         # Key size only requires public modulus, which we can always get
         # Relying on private numbers instead would cause issues for keys stored in KV (which doesn't return private key)
         return self.public_key().key_size
@@ -374,7 +406,15 @@ class KeyVaultRSAPrivateKey(RSAPrivateKey):
 
         :returns: The private numbers of the key.
         :rtype: ~cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateNumbers
+
+        :raises ValueError: if the client is unable to obtain the key material from Key Vault.
         """
+        if self._key is None:
+            raise ValueError(
+                "Key material could not be obtained from Key Vault. Only remote cryptographic operations "
+                "(decrypt, sign) can be performed."
+            )
+
         # Fetch public numbers from JWK
         e = int.from_bytes(self._key.e, "big")  # type: ignore[attr-defined]
         n = int.from_bytes(self._key.n, "big")  # type: ignore[attr-defined]
@@ -420,7 +460,15 @@ class KeyVaultRSAPrivateKey(RSAPrivateKey):
 
         :returns: The serialized key.
         :rtype: bytes
+
+        :raises ValueError: if the client is unable to obtain the key material from Key Vault.
         """
+        if self._key is None:
+            raise ValueError(
+                "Key material could not be obtained from Key Vault. Only remote cryptographic operations "
+                "(decrypt, sign) can be performed."
+            )
+
         try:
             private_numbers = self.private_numbers()
         except ValueError as exc:
