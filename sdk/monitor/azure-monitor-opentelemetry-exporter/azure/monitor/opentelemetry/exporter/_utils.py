@@ -182,6 +182,7 @@ def _populate_part_a_fields(resource: Resource):
         device_id = resource.attributes.get(ResourceAttributes.DEVICE_ID)
         device_model = resource.attributes.get(ResourceAttributes.DEVICE_MODEL_NAME)
         device_make = resource.attributes.get(ResourceAttributes.DEVICE_MANUFACTURER)
+        app_version = resource.attributes.get(ResourceAttributes.SERVICE_VERSION)
         if service_name:
             if service_namespace:
                 tags[ContextTagKeys.AI_CLOUD_ROLE] = str(service_namespace) + \
@@ -199,6 +200,9 @@ def _populate_part_a_fields(resource: Resource):
             tags[ContextTagKeys.AI_DEVICE_MODEL] = device_model # type: ignore
         if device_make:
             tags[ContextTagKeys.AI_DEVICE_OEM_NAME] = device_make # type: ignore
+        if app_version:
+            tags[ContextTagKeys.AI_APPLICATION_VER] = app_version # type: ignore
+        
     return tags
 
 # pylint: disable=W0622
