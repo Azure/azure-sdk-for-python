@@ -96,39 +96,58 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=
 
     async def _on_amqp_management_open_complete(self, management_open_result: ManagementOpenResult) -> None:
         if self.state in (CbsState.CLOSED, CbsState.ERROR):
+            # pylint: disable=line-too-long
             _LOGGER.debug(
-                "CSB with status: %r encounters unexpected AMQP management open complete.",
-                self.state,
-                extra=self._network_trace_params
+                "[Connection:%s, Session:%s, Link:%s] CBS with status: %r encounters unexpected AMQP management open complete.",
+                self._network_trace_params["amqpConnection"],
+                self._network_trace_params["amqpSession"],
+                self._network_trace_params["amqpLink"],
+                self.state
             )
         elif self.state == CbsState.OPEN:
             self.state = CbsState.ERROR
             _LOGGER.info(
-                "Unexpected AMQP management open complete in OPEN, CBS error occurred.",
-                extra=self._network_trace_params
+                "[Connection:%s, Session:%s, Link:%s] Unexpected AMQP management open complete in OPEN, CBS error occurred.",
+                self._network_trace_params["amqpConnection"],
+                self._network_trace_params["amqpSession"],
+                self._network_trace_params["amqpLink"]
             )
         elif self.state == CbsState.OPENING:
             self.state = CbsState.OPEN if management_open_result == ManagementOpenResult.OK else CbsState.CLOSED
             _LOGGER.info(
-                "CBS completed opening with status: %r",
-                management_open_result,
-                extra=self._network_trace_params
+                "[Connection:%s, Session:%s, Link:%s] CBS completed opening with status: %r",
+                self._network_trace_params["amqpConnection"],
+                self._network_trace_params["amqpSession"],
+                self._network_trace_params["amqpLink"],
+                management_open_result
             )
 
     async def _on_amqp_management_error(self) -> None:
         if self.state == CbsState.CLOSED:
-            _LOGGER.debug("Unexpected AMQP error in CLOSED state.", extra=self._network_trace_params)
+            _LOGGER.debug(
+                "[Connection:%s, Session:%s, Link:%s] Unexpected AMQP error in CLOSED state.",
+                self._network_trace_params["amqpConnection"],
+                self._network_trace_params["amqpSession"],
+                self._network_trace_params["amqpLink"]
+            )
         elif self.state == CbsState.OPENING:
             self.state = CbsState.ERROR
             await self._mgmt_link.close()
             _LOGGER.info(
-                "CBS failed to open with status: %r",
-                ManagementOpenResult.ERROR,
-                extra=self._network_trace_params
+                "[Connection:%s, Session:%s, Link:%s] CBS failed to open with status: %r",
+                self._network_trace_params["amqpConnection"],
+                self._network_trace_params["amqpSession"],
+                self._network_trace_params["amqpLink"],
+                ManagementOpenResult.ERROR
             )
         elif self.state == CbsState.OPEN:
             self.state = CbsState.ERROR
-            _LOGGER.info("CBS error occurred.", extra=self._network_trace_params)
+            _LOGGER.info(
+                "[Connection:%s, Session:%s, Link:%s] CBS error occurred.",
+                self._network_trace_params["amqpConnection"],
+                self._network_trace_params["amqpSession"],
+                self._network_trace_params["amqpLink"]
+            )
 
     async def _on_execute_operation_complete(
         self,
@@ -140,18 +159,22 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=
     ) -> None:
         if error_condition:
             _LOGGER.info(
-                "CBS Put token error: %r",
-                error_condition,
-                extra=self._network_trace_params
+                "[Connection:%s, Session:%s, Link:%s] CBS Put token error: %r",
+                self._network_trace_params["amqpConnection"],
+                self._network_trace_params["amqpSession"],
+                self._network_trace_params["amqpLink"],
+                error_condition
             )
             self.auth_state = CbsAuthState.ERROR
             return
         _LOGGER.debug(
-            "CBS Put token result (%r), status code: %s, status_description: %s.",
+            "[Connection:%s, Session:%s, Link:%s] CBS Put token result (%r), status code: %s, status_description: %s.",
+            self._network_trace_params["amqpConnection"],
+            self._network_trace_params["amqpSession"],
+            self._network_trace_params["amqpLink"],
             execute_operation_result,
             status_code,
-            status_description,
-            extra=self._network_trace_params
+            status_description
         )
         self._token_status_code = status_code
         self._token_status_description = status_description
@@ -172,11 +195,13 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=
                 self._expires_on, self._refresh_window
             )
             _LOGGER.debug(
-                "CBS status check: state == %r, expired == %r, refresh required == %r",
+                "[Connection:%s, Session:%s, Link:%s] CBS status check: state == %r, expired == %r, refresh required == %r",
+                self._network_trace_params["amqpConnection"],
+                self._network_trace_params["amqpSession"],
+                self._network_trace_params["amqpLink"],
                 self.auth_state,
                 is_expired,
-                is_refresh_required,
-                extra=self._network_trace_params
+                is_refresh_required
             )
             if is_expired:
                 self.auth_state = CbsAuthState.EXPIRED
@@ -184,9 +209,11 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=
                 self.auth_state = CbsAuthState.REFRESH_REQUIRED
         elif self.auth_state == CbsAuthState.IN_PROGRESS:
             _LOGGER.debug(
-                "CBS update in progress. Token put time: %r",
-                self._token_put_time,
-                extra=self._network_trace_params
+                "[Connection:%s, Session:%s, Link:%s] CBS update in progress. Token put time: %r",
+                self._network_trace_params["amqpConnection"],
+                self._network_trace_params["amqpSession"],
+                self._network_trace_params["amqpLink"],
+                self._token_put_time
             )
             if self._token_put_time is not None:
                 put_timeout = check_put_timeout_status(self._auth_timeout, self._token_put_time)
@@ -217,13 +244,17 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=
         access_token = await self._auth.get_token()
         if not access_token:
             _LOGGER.info(
-                "Token refresh function received an empty token object.",
-                extra=self._network_trace_params
+                "[Connection:%s, Session:%s, Link:%s] Token refresh function received an empty token object.",
+                self._network_trace_params["amqpConnection"],
+                self._network_trace_params["amqpSession"],
+                self._network_trace_params["amqpLink"]
             )
         elif not access_token.token:
             _LOGGER.info(
-                "Token refresh function received an empty token.",
-                extra=self._network_trace_params
+                "[Connection:%s, Session:%s, Link:%s] Token refresh function received an empty token.",
+                self._network_trace_params["amqpConnection"],
+                self._network_trace_params["amqpSession"],
+                self._network_trace_params["amqpLink"]
             )
         self._expires_on = access_token.expires_on
         expires_in = self._expires_on - int(utc_now().timestamp())
@@ -262,8 +293,10 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=
             return True
         if self.auth_state == CbsAuthState.REFRESH_REQUIRED:
             _LOGGER.info(
-                "Token will expire soon - attempting to refresh.",
-                extra=self._network_trace_params
+                "[Connection:%s, Session:%s, Link:%s] Token will expire soon - attempting to refresh.",
+                self._network_trace_params["amqpConnection"],
+                self._network_trace_params["amqpSession"],
+                self._network_trace_params["amqpLink"]
             )
             await self.update_token()
             return False

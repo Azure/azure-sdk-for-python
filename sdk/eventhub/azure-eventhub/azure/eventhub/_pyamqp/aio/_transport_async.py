@@ -107,10 +107,12 @@ class AsyncTransportMixin:
                 frame_type = frame_header[5]
                 if verify_frame_type is not None and frame_type != verify_frame_type:
                     _LOGGER.debug(
-                        "Received invalid frame type: %r, expected: %r",
+                        "[Connection:%s, Session:%s, Link:%s] Received invalid frame type: %r, expected: %r",
+                        self.network_trace_params["amqpConnection"],
+                        self.network_trace_params["amqpSession"],
+                        self.network_trace_params["amqpLink"],
                         frame_type,
-                        verify_frame_type,
-                        extra=self.network_trace_params
+                        verify_frame_type
                     )
                     raise ValueError(
                         f"Received invalid frame type: {frame_type}, expected: {verify_frame_type}"
@@ -150,7 +152,13 @@ class AsyncTransportMixin:
                     raise socket.timeout()
                 if get_errno(exc) not in _UNAVAIL:
                     self.connected = False
-                _LOGGER.debug("Transport read failed: %r", exc, extra=self.network_trace_params)
+                _LOGGER.debug(
+                    "[Connection:%s, Session:%s, Link:%s] Transport read failed: %r",
+                    self.network_trace_params["amqpConnection"],
+                    self.network_trace_params["amqpSession"],
+                    self.network_trace_params["amqpLink"],
+                    exc
+                )
                 raise
             offset -= 2
         return frame_header, channel, payload[offset:]
@@ -162,7 +170,13 @@ class AsyncTransportMixin:
             except socket.timeout:
                 raise
             except (OSError, IOError, socket.error) as exc:
-                _LOGGER.debug("Transport write failed: %r", exc, extra=self.network_trace_params)
+                _LOGGER.debug(
+                    "[Connection:%s, Session:%s, Link:%s] Transport write failed: %r",
+                    self.network_trace_params["amqpConnection"],
+                    self.network_trace_params["amqpSession"],
+                    self.network_trace_params["amqpLink"],
+                    exc
+                )
                 if get_errno(exc) not in _UNAVAIL:
                     self.connected = False
                 raise
@@ -293,7 +307,13 @@ class AsyncTransport(
 
 
         except (OSError, IOError, SSLError) as e:
-            _LOGGER.info("Transport connect failed: %r", e, extra=self.network_trace_params)
+            _LOGGER.info(
+                "[Connection:%s, Session:%s, Link:%s] Transport connect failed: %r",
+                self.network_trace_params["amqpConnection"],
+                self.network_trace_params["amqpSession"],
+                self.network_trace_params["amqpLink"],
+                e
+            )
             # if not fully connected, close socket, and reraise error
             if self.writer and not self.connected:
                 self.writer.close()
@@ -410,7 +430,13 @@ class AsyncTransport(
                     await self.writer.wait_closed()
             except Exception as e:  # pylint: disable=broad-except
                 # Sometimes SSL raises APPLICATION_DATA_AFTER_CLOSE_NOTIFY here on close.
-                _LOGGER.debug("Error shutting down socket: %r", e, extra=self.network_trace_params)
+                _LOGGER.debug(
+                    "[Connection:%s, Session:%s, Link:%s] Error shutting down socket: %r",
+                    self.network_trace_params["amqpConnection"],
+                    self.network_trace_params["amqpSession"],
+                    self.network_trace_params["amqpLink"],
+                    e
+                )
             self.writer, self.reader = None, None
         self.connected = False
 
@@ -504,7 +530,13 @@ class WebSocketTransportAsync(
                 heartbeat=DEFAULT_WEBSOCKET_HEARTBEAT_SECONDS,
             )
         except ClientConnectorError as exc:
-            _LOGGER.info("Websocket connect failed: %r", exc, extra=self.network_trace_params)
+            _LOGGER.info(
+                "[Connection:%s, Session:%s, Link:%s] Websocket connect failed: %r",
+                self.network_trace_params["amqpConnection"],
+                self.network_trace_params["amqpSession"],
+                self.network_trace_params["amqpLink"],
+                exc
+            )
             if self._custom_endpoint:
                 raise AuthenticationException(
                     ErrorCondition.ClientError,

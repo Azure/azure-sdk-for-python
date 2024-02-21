@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- Updated network trace logging to include AMQP connection/session/link names for advanced usage.
+
 ## 5.11.6 (2024-02-12)
 
 This version and all future versions will require Python 3.8+. Python 3.7 is no longer supported.

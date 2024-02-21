@@ -132,12 +132,25 @@ class Link:  # pylint: disable=too-many-instance-attributes
             return
         previous_state = self.state
         self.state = new_state
-        _LOGGER.info("Link state changed: %r -> %r", previous_state, new_state, extra=self.network_trace_params)
+        _LOGGER.info(
+            "[Connection:%s, Session:%s, Link:%s] Link state changed: %r -> %r",
+            self.network_trace_params["amqpConnection"],
+            self.network_trace_params["amqpSession"],
+            self.network_trace_params["amqpLink"],
+            previous_state,
+            new_state
+        )
         try:
             if self._on_link_state_change is not None:
                 self._on_link_state_change(previous_state, new_state)
         except Exception as e:  # pylint: disable=broad-except
-            _LOGGER.error("Link state change callback failed: '%r'", e, extra=self.network_trace_params)
+            _LOGGER.error(
+                "[Connection:%s, Session:%s, Link:%s] Link state change callback failed: '%r'",
+                self.network_trace_params["amqpConnection"],
+                self.network_trace_params["amqpSession"],
+                self.network_trace_params["amqpLink"],
+                e
+            )
 
     def _on_session_state_change(self) -> None:
         if self._session.state == SessionState.MAPPED:
@@ -166,16 +179,33 @@ class Link:  # pylint: disable=too-many-instance-attributes
             properties=self.properties,
         )
         if self.network_trace:
-            _LOGGER.debug("-> %r", attach_frame, extra=self.network_trace_params)
+            _LOGGER.debug(
+                "[Connection:%s, Session:%s, Link:%s] -> %r",
+                self.network_trace_params["amqpConnection"],
+                self.network_trace_params["amqpSession"],
+                self.network_trace_params["amqpLink"],
+               attach_frame
+            )
         self._session._outgoing_attach(attach_frame) # pylint: disable=protected-access
 
     def _incoming_attach(self, frame) -> None:
         if self.network_trace:
-            _LOGGER.debug("<- %r", AttachFrame(*frame), extra=self.network_trace_params)
+            _LOGGER.debug(
+                "[Connection:%s, Session:%s, Link:%s] <- %r",
+                AttachFrame(*frame),
+                self.network_trace_params["amqpConnection"],
+                self.network_trace_params["amqpSession"],
+                self.network_trace_params["amqpLink"]
+            )
         if self._is_closed:
             raise ValueError("Invalid link")
         if not frame[5] or not frame[6]:
-            _LOGGER.info("Cannot get source or target. Detaching link", extra=self.network_trace_params)
+            _LOGGER.info(
+                "[Connection:%s, Session:%s, Link:%s] Cannot get source or target. Detaching link",
+                self.network_trace_params["amqpConnection"],
+                self.network_trace_params["amqpSession"],
+                self.network_trace_params["amqpLink"]
+            )
             self._set_state(LinkState.DETACHED)
             raise ValueError("Invalid link")
         self.remote_handle = frame[1]  # handle
@@ -194,7 +224,13 @@ class Link:  # pylint: disable=too-many-instance-attributes
                     frame[6] = Target(*frame[6])
                 self._on_attach(AttachFrame(*frame))
             except Exception as e:  # pylint: disable=broad-except
-                _LOGGER.warning("Callback for link attach raised error: %r", e, extra=self.network_trace_params)
+                _LOGGER.warning(
+                    "[Connection:%s, Session:%s, Link:%s] Callback for link attach raised error: %r",
+                    self.network_trace_params["amqpConnection"],
+                    self.network_trace_params["amqpSession"],
+                    self.network_trace_params["amqpLink"],
+                    e
+                )
 
     def _outgoing_flow(self, **kwargs: Any) -> None:
         flow_frame = {
@@ -217,14 +253,26 @@ class Link:  # pylint: disable=too-many-instance-attributes
     def _outgoing_detach(self, close: bool = False, error: Optional[AMQPError] = None) -> None:
         detach_frame = DetachFrame(handle=self.handle, closed=close, error=error)
         if self.network_trace:
-            _LOGGER.debug("-> %r", detach_frame, extra=self.network_trace_params)
+            _LOGGER.debug(
+                "[Connection:%s, Session:%s, Link:%s] -> %r",
+                self.network_trace_params["amqpConnection"],
+                self.network_trace_params["amqpSession"],
+                self.network_trace_params["amqpLink"],
+                detach_frame
+            )
         self._session._outgoing_detach(detach_frame) # pylint: disable=protected-access
         if close:
             self._is_closed = True
 
     def _incoming_detach(self, frame) -> None:
         if self.network_trace:
-            _LOGGER.debug("<- %r", DetachFrame(*frame), extra=self.network_trace_params)
+            _LOGGER.debug(
+                "[Connection:%s, Session:%s, Link:%s] <- %r",
+                self.network_trace_params["amqpConnection"],
+                self.network_trace_params["amqpSession"],
+                self.network_trace_params["amqpLink"],
+                DetachFrame(*frame)
+            )
         if self.state == LinkState.ATTACHED:
             self._outgoing_detach(close=frame[1])  # closed
         elif frame[1] and not self._is_closed and self.state in [LinkState.ATTACH_SENT, LinkState.ATTACH_RCVD]:
@@ -259,7 +307,13 @@ class Link:  # pylint: disable=too-many-instance-attributes
                 self._outgoing_detach(close=close, error=error)
                 self._set_state(LinkState.DETACH_SENT)
         except Exception as exc:  # pylint: disable=broad-except
-            _LOGGER.info("An error occurred when detaching the link: %r", exc, extra=self.network_trace_params)
+            _LOGGER.info(
+                "[Connection:%s, Session:%s, Link:%s] An error occurred when detaching the link: %r",
+                self.network_trace_params["amqpConnection"],
+                self.network_trace_params["amqpSession"],
+                self.network_trace_params["amqpLink"],
+                exc
+            )
             self._set_state(LinkState.DETACHED)
 
     def flow(self, *, link_credit: Optional[int] = None, **kwargs: Any) -> None:

@@ -151,9 +151,10 @@ class AMQPClientAsync(AMQPClientSync):
                 elapsed_time = current_time - start_time
                 if elapsed_time >= self._keep_alive_interval:
                     _logger.debug(
-                        "Keeping %r connection alive.",
-                        self.__class__.__name__,
-                        extra=self._network_trace_params
+                        "[Connection:%s, Session:%s] Keeping %r connection alive.",
+                        self._network_trace_params["amqpConnection"],
+                        self._network_trace_params["amqpSession"],
+                        self.__class__.__name__
                     )
                     await asyncio.shield(self._connection.listen(wait=self._socket_timeout,
                         batch=self._link.current_link_credit))
@@ -161,10 +162,11 @@ class AMQPClientAsync(AMQPClientSync):
                 await asyncio.sleep(1)
         except Exception as e:  # pylint: disable=broad-except
             _logger.info(
-                "Connection keep-alive for %r failed: %r.",
+                "[Connection:%s, Session:%s] Connection keep-alive for %r failed: %r.",
+                self._network_trace_params["amqpConnection"],
+                self._network_trace_params["amqpSession"],
                 self.__class__.__name__,
-                e,
-                extra=self._network_trace_params
+                e
             )
 
     async def __aenter__(self):
@@ -751,7 +753,11 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
                 await self._link.flow()
             await self._connection.listen(wait=self._socket_timeout, **kwargs)
         except ValueError:
-            _logger.info("Timeout reached, closing receiver.", extra=self._network_trace_params)
+            _logger.info(
+                "[Connection:%s, Session:%s] Timeout reached, closing receiver.",
+                self._network_trace_params["amqpConnection"],
+                self._network_trace_params["amqpSession"]
+            )
             self._shutdown = True
             return False
         return True

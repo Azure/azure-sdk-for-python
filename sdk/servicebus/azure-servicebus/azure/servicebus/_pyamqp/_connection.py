@@ -446,7 +446,7 @@ class Connection:  # pylint:disable=too-many-instance-attributes
             _LOGGER.error(
                 "[Connection:%s] OPEN frame received on a channel that is not 0.",
                 self._network_trace_params["amqpConnection"]
-            ) 
+            )
             self.close(
                 error=AMQPError(
                     condition=ErrorCondition.NotAllowed, description="OPEN frame received on a channel that is not 0."

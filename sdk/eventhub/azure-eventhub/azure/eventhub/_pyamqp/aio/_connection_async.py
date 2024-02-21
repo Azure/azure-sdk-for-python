@@ -196,10 +196,10 @@ class Connection:  # pylint:disable=too-many-instance-attributes
         previous_state = self.state
         self.state = new_state
         _LOGGER.info(
-            "Connection state changed: %r -> %r",
+            "[Connection:%s] Connection state changed: %r -> %r",
+            self._network_trace_params["amqpConnection"],
             previous_state,
-            new_state,
-            extra=self._network_trace_params
+            new_state
         )
         for session in self._outgoing_endpoints.values():
             await session._on_connection_state_change()  # pylint:disable=protected-access
@@ -321,7 +321,11 @@ class Connection:  # pylint:disable=too-many-instance-attributes
                     error=exc,
                 )
         else:
-            _LOGGER.info("Cannot write frame in current state: %r", self.state, extra=self._network_trace_params)
+            _LOGGER.info(
+                "[Connection:%s] Cannot write frame in current state: %r",
+                self._network_trace_params["amqpConnection"],
+                self.state
+            )
 
     def _get_next_outgoing_channel(self) -> int:
         """Get the next available outgoing channel number within the max channel limit.
@@ -346,7 +350,10 @@ class Connection:  # pylint:disable=too-many-instance-attributes
     async def _outgoing_empty(self) -> None:
         """Send an empty frame to prevent the connection from reaching an idle timeout."""
         if self._network_trace:
-            _LOGGER.debug("-> EmptyFrame()", extra=self._network_trace_params)
+            _LOGGER.debug(
+                "[Connection:%s] -> EmptyFrame()",
+                self._network_trace_params["amqpConnection"]
+            )
 
         if self._error:
             raise self._error
@@ -366,7 +373,11 @@ class Connection:  # pylint:disable=too-many-instance-attributes
         """Send the AMQP protocol header to initiate the connection."""
         self._last_frame_sent_time = time.time()
         if self._network_trace:
-            _LOGGER.debug("-> Header(%r)", HEADER_FRAME, extra=self._network_trace_params)
+            _LOGGER.debug(
+                "[Connection:%s] -> Header(%r)",
+                self._network_trace_params["amqpConnection"],
+                HEADER_FRAME,
+            )
         await self._transport.write(HEADER_FRAME)
 
     async def _incoming_header(self, _, frame: bytes) -> None:
@@ -375,7 +386,11 @@ class Connection:  # pylint:disable=too-many-instance-attributes
         :param bytes frame: The incoming frame.
         """
         if self._network_trace:
-            _LOGGER.debug("<- Header(%r)", frame, extra=self._network_trace_params)
+            _LOGGER.debug(
+                "[Connection:%s] <- Header(%r)",
+                self._network_trace_params["amqpConnection"],
+                frame
+            )
         if self.state == ConnectionState.START:
             await self._set_state(ConnectionState.HDR_RCVD)
         elif self.state == ConnectionState.HDR_SENT:
@@ -404,7 +419,11 @@ class Connection:  # pylint:disable=too-many-instance-attributes
             properties=self._properties,
         )
         if self._network_trace:
-            _LOGGER.debug("-> %r", open_frame, extra=self._network_trace_params)
+            _LOGGER.debug(
+                "[Connection:%s] -> %r",
+                self._network_trace_params["amqpConnection"],
+                open_frame
+            )
         await self._send_frame(0, open_frame)
 
     async def _incoming_open(self, channel: int, frame) -> None:
@@ -430,9 +449,16 @@ class Connection:  # pylint:disable=too-many-instance-attributes
         """
         # TODO: Add type hints for full frame tuple contents.
         if self._network_trace:
-            _LOGGER.debug("<- %r", OpenFrame(*frame), extra=self._network_trace_params)
+            _LOGGER.debug(
+                "[Connection:%s] <- %r",
+                self._network_trace_params["amqpConnection"],
+                OpenFrame(*frame)
+            )
         if channel != 0:
-            _LOGGER.error("OPEN frame received on a channel that is not 0.", extra=self._network_trace_params)
+            _LOGGER.error(
+                "[Connection:%s] OPEN frame received on a channel that is not 0.",
+                self._network_trace_params["amqpConnection"]
+            )
             await self.close(
                 error=AMQPError(
                     condition=ErrorCondition.NotAllowed,
@@ -441,7 +467,10 @@ class Connection:  # pylint:disable=too-many-instance-attributes
             )
             await self._set_state(ConnectionState.END)
         if self.state == ConnectionState.OPENED:
-            _LOGGER.error("OPEN frame received in the OPENED state.", extra=self._network_trace_params)
+            _LOGGER.error(
+                "[Connection:%s] OPEN frame received in the OPENED state.",
+                self._network_trace_params["amqpConnection"]
+            )
             await self.close()
         if frame[4]:
             self._remote_idle_timeout = cast(float, frame[4] / 1000)  # Convert to seconds
@@ -460,8 +489,8 @@ class Connection:  # pylint:disable=too-many-instance-attributes
                 )
             )
             _LOGGER.error(
-                "Failed parsing OPEN frame: Max frame size is less than supported minimum.",
-                extra=self._network_trace_params
+                "[Connection:%s] Failed parsing OPEN frame: Max frame size is less than supported minimum.",
+                self._network_trace_params["amqpConnection"]
             )
             return
         self._remote_max_frame_size = frame[2]
@@ -479,7 +508,11 @@ class Connection:  # pylint:disable=too-many-instance-attributes
                     description=f"Connection is an illegal state: {self.state}",
                 )
             )
-            _LOGGER.error("Connection is an illegal state: %r", self.state, extra=self._network_trace_params)
+            _LOGGER.error(
+                "[Connection:%s] Connection is an illegal state: %r",
+                self._network_trace_params["amqpConnection"],
+                self.state
+            )
 
     async def _outgoing_close(self, error: Optional[AMQPError] = None) -> None:
         """Send a Close frame to shutdown connection with optional error information.
@@ -487,7 +520,11 @@ class Connection:  # pylint:disable=too-many-instance-attributes
         """
         close_frame = CloseFrame(error=error)
         if self._network_trace:
-            _LOGGER.debug("-> %r", close_frame, extra=self._network_trace_params)
+            _LOGGER.debug(
+                "[Connection:%s] -> %r",
+                self._network_trace_params["amqpConnection"],
+                close_frame
+            )
         await self._send_frame(0, close_frame)
 
     async def _incoming_close(self, channel: int, frame: Tuple[Any, ...]) -> None:
@@ -501,7 +538,11 @@ class Connection:  # pylint:disable=too-many-instance-attributes
         :param tuple frame: The incoming Close frame.
         """
         if self._network_trace:
-            _LOGGER.debug("<- %r", CloseFrame(*frame), extra=self._network_trace_params)
+            _LOGGER.debug(
+                "[Connection:%s] <- %r",
+                self._network_trace_params["amqpConnection"],
+                CloseFrame(*frame)
+            )
         disconnect_states = [
             ConnectionState.HDR_RCVD,
             ConnectionState.HDR_EXCH,
@@ -516,8 +557,8 @@ class Connection:  # pylint:disable=too-many-instance-attributes
         close_error = None
         if channel > self._channel_max:
             _LOGGER.error(
-                "CLOSE frame received on a channel greated than support max.",
-                extra=self._network_trace_params
+                "[Connection:%s] CLOSE frame received on a channel greated than support max.",
+                self._network_trace_params["amqpConnection"]
             )
             close_error = AMQPError(
                 condition=ErrorCondition.InvalidField,
@@ -534,8 +575,8 @@ class Connection:  # pylint:disable=too-many-instance-attributes
                 condition=frame[0][0], description=frame[0][1], info=frame[0][2]
             )
             _LOGGER.error(
-                "Connection closed with error: %r", frame[0],
-                extra=self._network_trace_params
+                "[Connection:%s] Connection closed with error: %r", frame[0],
+                self._network_trace_params["amqpConnection"]
             )
 
     async def _incoming_begin(self, channel: int, frame: Tuple[Any, ...]) -> None:
@@ -593,8 +634,8 @@ class Connection:  # pylint:disable=too-many-instance-attributes
                     description="Invalid channel number received"
                 ))
             _LOGGER.error(
-                "END frame received on invalid channel. Closing connection.",
-                extra=self._network_trace_params
+                "[Connection:%s] END frame received on invalid channel. Closing connection.",
+                self._network_trace_params["amqpConnection"]
             )
             return
 
@@ -659,7 +700,11 @@ class Connection:  # pylint:disable=too-many-instance-attributes
                 return True
             if performative == 1:
                 return False  # TODO: incoming EMPTY
-            _LOGGER.error("Unrecognized incoming frame: %r", frame, extra=self._network_trace_params)
+            _LOGGER.error(
+                "[Connection:%s] Unrecognized incoming frame: %r",
+                self._network_trace_params["amqpConnection"],
+                frame
+            )
             return True
         except KeyError:
             return True  # TODO: channel error
@@ -690,8 +735,8 @@ class Connection:  # pylint:disable=too-many-instance-attributes
             cast(float, self._last_frame_received_time),
         ) or (await self._get_remote_timeout(now)):
             _LOGGER.info(
-                "No frame received for the idle timeout. Closing connection.",
-                extra=self._network_trace_params
+                "[Connection:%s] No frame received for the idle timeout. Closing connection.",
+                self._network_trace_params["amqpConnection"]
             )
             await self.close(
                 error=AMQPError(
@@ -769,8 +814,8 @@ class Connection:  # pylint:disable=too-many-instance-attributes
                     cast(float, self._last_frame_received_time),
                 ) or (await self._get_remote_timeout(now)):
                     _LOGGER.info(
-                        "No frame received for the idle timeout. Closing connection.",
-                        extra=self._network_trace_params
+                        "[Connection:%s] No frame received for the idle timeout. Closing connection.",
+                        self._network_trace_params["amqpConnection"]
                     )
                     await self.close(
                         error=AMQPError(
@@ -793,9 +838,9 @@ class Connection:  # pylint:disable=too-many-instance-attributes
                         break
                 else:
                     _LOGGER.info(
-                        "Connection cannot read frames in this state: %r",
-                        self.state,
-                        extra=self._network_trace_params
+                        "[Connection:%s] Connection cannot read frames in this state: %r",
+                        self._network_trace_params["amqpConnection"],
+                        self.state
                     )
                     break
         except (OSError, IOError, SSLError, socket.error) as exc:
@@ -918,7 +963,11 @@ class Connection:  # pylint:disable=too-many-instance-attributes
             await self._wait_for_response(wait, ConnectionState.END)
         except Exception as exc:  # pylint:disable=broad-except
             # If error happened during closing, ignore the error and set state to END
-            _LOGGER.info("An error occurred when closing the connection: %r", exc, extra=self._network_trace_params)
+            _LOGGER.info(
+                "[Connection:%s] An error occurred when closing the connection: %r",
+                self._network_trace_params["amqpConnection"],
+                exc
+            )
             await self._set_state(ConnectionState.END)
         finally:
             await self._disconnect()

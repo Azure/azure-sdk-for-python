@@ -65,23 +65,28 @@ class ManagementOperation(object):
         raw_message,
         error=None
     ):
+        # pylint: disable=line-too-long
         _LOGGER.debug(
-            "Management operation completed, id: %r; result: %r; code: %r; description: %r, error: %r",
+            "[Connection:%s, Session:%s, Link:%s] Management operation completed, id: %r; result: %r; code: %r; description: %r, error: %r",
+            self._network_trace_params["amqpConnection"],
+            self._network_trace_params["amqpSession"],
+            self._network_trace_params["amqpLink"],
             operation_id,
             operation_result,
             status_code,
             status_description,
-            error,
-            extra=self._network_trace_params
+            error
         )
 
         if operation_result in\
                 (ManagementExecuteOperationResult.ERROR, ManagementExecuteOperationResult.LINK_CLOSED):
             self._mgmt_error = error
             _LOGGER.error(
-                "Failed to complete management operation due to error: %r.",
-                error,
-                extra=self._network_trace_params
+                "[Connection:%s, Session:%s, Link:%s] Failed to complete management operation due to error: %r.",
+                self._network_trace_params["amqpConnection"],
+                self._network_trace_params["amqpSession"],
+                self._network_trace_params["amqpLink"],
+                error
             )
         else:
             self._responses[operation_id] = (status_code, status_description, raw_message)
