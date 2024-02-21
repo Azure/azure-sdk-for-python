@@ -5,8 +5,9 @@
 import pytest
 import tempfile
 import os
-from azure.ai.generative.synthetic.simulator import SimulatorTemplates
+
 from unittest.mock import Mock, patch
+from azure.ai.generative.synthetic.simulator.templates.simulator_templates import SimulatorTemplates
 from azure.ai.generative.synthetic.simulator import _template_dir as template_dir
 from azure.ai.generative.synthetic.simulator.templates._templates import SUMMARIZATION_PATH, SUMMARIZATION
 
