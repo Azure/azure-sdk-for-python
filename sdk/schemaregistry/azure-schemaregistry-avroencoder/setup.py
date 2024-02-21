@@ -33,7 +33,7 @@ with open('CHANGELOG.md', encoding='utf-8') as f:
     changelog = f.read()
 
 install_packages = [
-    'azure-schemaregistry>=1.0.0,<2.0.0',
+    'azure-schemaregistry>=1.0.0',
     'avro>=1.11.0',
     "typing-extensions>=4.0.1",
 ]
@@ -53,13 +53,15 @@ setup(
         "Development Status :: 5 - Production/Stable",
         'Programming Language :: Python',
         'Programming Language :: Python :: 3 :: Only',
-        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.12',
         'License :: OSI Approved :: MIT License',
     ],
-    python_requires=">=3.7",
+    python_requires=">=3.8",
     zip_safe=False,
     packages=find_namespace_packages(
         include=['azure.schemaregistry.encoder.*']  # Exclude packages that will be covered by PEP420 or nspkg

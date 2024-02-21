@@ -59,6 +59,7 @@ setup(
         "Development Status :: 5 - Production/Stable",
         'Programming Language :: Python',
         'Programming Language :: Python :: 3 :: Only',
+        'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
@@ -70,7 +71,7 @@ setup(
     zip_safe=False,
     packages=find_packages(exclude=exclude_packages),
     install_requires=[
-        "azure-core<2.0.0,>=1.14.0",
+        "azure-core>=1.14.0",
         "typing-extensions>=4.0.1",
     ]
 )
