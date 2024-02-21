@@ -145,7 +145,7 @@ class ComponentOperations(_ScopeDependentOperations):
             AzureMLResourceType.JOB, lambda x: isinstance(x, JobOperations)
         )
 
-    @monitor_with_activity(logger, "Component.List", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Component.List", ActivityType.PUBLICAPI)
     def list(
         self,
         name: Union[str, None] = None,
@@ -214,7 +214,7 @@ class ComponentOperations(_ScopeDependentOperations):
             ),
         )
 
-    @monitor_with_telemetry_mixin(logger, "ComponentVersion.Get", ActivityType.INTERNALCALL)
+    @monitor_with_telemetry_mixin(ops_logger, "ComponentVersion.Get", ActivityType.INTERNALCALL)
     def _get_component_version(self, name: str, version: Optional[str] = DEFAULT_COMPONENT_VERSION) -> ComponentVersion:
         """Returns ComponentVersion information about the specified component name and version.
 
@@ -244,7 +244,7 @@ class ComponentOperations(_ScopeDependentOperations):
         )
         return result
 
-    @monitor_with_telemetry_mixin(logger, "Component.Get", ActivityType.PUBLICAPI)
+    @monitor_with_telemetry_mixin(ops_logger, "Component.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, version: Optional[str] = None, label: Optional[str] = None) -> Component:
         """Returns information about the specified component.
 
@@ -310,7 +310,7 @@ class ComponentOperations(_ScopeDependentOperations):
         parent.environment = environment
 
     @experimental
-    @monitor_with_telemetry_mixin(logger, "Component.Download", ActivityType.PUBLICAPI)
+    @monitor_with_telemetry_mixin(ops_logger, "Component.Download", ActivityType.PUBLICAPI)
     def download(self, name: str, download_path: Union[PathLike, str] = ".", *, version: Optional[str] = None) -> None:
         """Download the specified component and its dependencies to local. Local component can be used to create
         the component in another workspace or for offline development.
@@ -371,7 +371,7 @@ class ComponentOperations(_ScopeDependentOperations):
         return component
 
     @experimental
-    @monitor_with_telemetry_mixin(logger, "Component.Validate", ActivityType.PUBLICAPI)
+    @monitor_with_telemetry_mixin(ops_logger, "Component.Validate", ActivityType.PUBLICAPI)
     def validate(
         self,
         component: Union[Component, types.FunctionType],
@@ -395,7 +395,7 @@ class ComponentOperations(_ScopeDependentOperations):
             skip_remote_validation=kwargs.pop("skip_remote_validation", True),
         )
 
-    @monitor_with_telemetry_mixin(logger, "Component.Validate", ActivityType.INTERNALCALL)
+    @monitor_with_telemetry_mixin(ops_logger, "Component.Validate", ActivityType.INTERNALCALL)
     def _validate(
         self,
         component: Union[Component, types.FunctionType],
@@ -652,7 +652,7 @@ class ComponentOperations(_ScopeDependentOperations):
         )
         return component
 
-    @monitor_with_telemetry_mixin(logger, "Component.Archive", ActivityType.PUBLICAPI)
+    @monitor_with_telemetry_mixin(ops_logger, "Component.Archive", ActivityType.PUBLICAPI)
     def archive(
         self,
         name: str,
@@ -689,7 +689,7 @@ class ComponentOperations(_ScopeDependentOperations):
             label=label,
         )
 
-    @monitor_with_telemetry_mixin(logger, "Component.Restore", ActivityType.PUBLICAPI)
+    @monitor_with_telemetry_mixin(ops_logger, "Component.Restore", ActivityType.PUBLICAPI)
     def restore(
         self,
         name: str,

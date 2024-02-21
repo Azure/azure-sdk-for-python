@@ -50,7 +50,7 @@ from azure.core.exceptions import HttpResponseError
 
 
 ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
+module_logger = ops_logger.module_logger
 
 
 class CodeOperations(_ScopeDependentOperations):
@@ -89,7 +89,7 @@ class CodeOperations(_ScopeDependentOperations):
         self._datastore_operation = datastore_operations
         self._init_kwargs = kwargs
 
-    @monitor_with_activity(logger, "Code.CreateOrUpdate", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Code.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(self, code: Code) -> Code:
         """Returns created or updated code asset.
 
@@ -211,7 +211,7 @@ class CodeOperations(_ScopeDependentOperations):
                     ) from ex
             raise ex
 
-    @monitor_with_activity(logger, "Code.Get", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Code.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, version: str) -> Code:
         """Returns information about the specified code asset.
 
@@ -236,7 +236,7 @@ class CodeOperations(_ScopeDependentOperations):
         return self._get(name=name, version=version)
 
     # this is a public API but CodeOperations is hidden, so it may only monitor internal calls
-    @monitor_with_activity(logger, "Code.Download", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Code.Download", ActivityType.PUBLICAPI)
     def download(self, name: str, version: str, download_path: Union[PathLike, str]) -> None:
         """Download content of a code.
 

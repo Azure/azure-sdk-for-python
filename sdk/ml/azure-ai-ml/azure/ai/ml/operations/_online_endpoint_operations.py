@@ -38,7 +38,7 @@ from azure.core.tracing.decorator import distributed_trace
 from ._operation_orchestrator import OperationOrchestrator
 
 ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
+module_logger = ops_logger.module_logger
 
 
 def _strip_zeroes_from_traffic(traffic: Dict[str, str]) -> Dict[str, str]:
@@ -75,7 +75,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
 
     @distributed_trace
-    @monitor_with_activity(logger, "OnlineEndpoint.List", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "OnlineEndpoint.List", ActivityType.PUBLICAPI)
     def list(self, *, local: bool = False) -> ItemPaged[OnlineEndpoint]:
         """List endpoints of the workspace.
 
@@ -95,7 +95,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         )
 
     @distributed_trace
-    @monitor_with_activity(logger, "OnlineEndpoint.ListKeys", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "OnlineEndpoint.ListKeys", ActivityType.PUBLICAPI)
     def get_keys(self, name: str) -> Union[EndpointAuthKeys, EndpointAuthToken]:
         """Get the auth credentials.
 
@@ -108,7 +108,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         return self._get_online_credentials(name=name)
 
     @distributed_trace
-    @monitor_with_activity(logger, "OnlineEndpoint.Get", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "OnlineEndpoint.Get", ActivityType.PUBLICAPI)
     def get(
         self,
         name: str,
@@ -156,7 +156,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         return converted_endpoint
 
     @distributed_trace
-    @monitor_with_activity(logger, "OnlineEndpoint.BeginDelete", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "OnlineEndpoint.BeginDelete", ActivityType.PUBLICAPI)
     def begin_delete(self, name: Optional[str] = None, *, local: bool = False) -> LROPoller[None]:
         """Delete an Online Endpoint.
 
@@ -192,7 +192,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         return delete_poller
 
     @distributed_trace
-    @monitor_with_activity(logger, "OnlineEndpoint.BeginDeleteOrUpdate", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "OnlineEndpoint.BeginDeleteOrUpdate", ActivityType.PUBLICAPI)
     def begin_create_or_update(self, endpoint: OnlineEndpoint, *, local: bool = False) -> LROPoller[OnlineEndpoint]:
         """Create or update an endpoint.
 
@@ -255,7 +255,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
                 raise ex
 
     @distributed_trace
-    @monitor_with_activity(logger, "OnlineEndpoint.BeginGenerateKeys", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "OnlineEndpoint.BeginGenerateKeys", ActivityType.PUBLICAPI)
     def begin_regenerate_keys(
         self,
         name: str,
@@ -290,7 +290,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         )
 
     @distributed_trace
-    @monitor_with_activity(logger, "OnlineEndpoint.Invoke", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "OnlineEndpoint.Invoke", ActivityType.PUBLICAPI)
     def invoke(
         self,
         endpoint_name: str,
