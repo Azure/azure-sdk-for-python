@@ -23,18 +23,14 @@ from azure.storage.extensions import crc64
 def _write_segment(
     number: int,
     data: bytes,
-    flags: StructuredMessageProperties,
+    data_crc: Optional[int],
     stream: BytesIO,
-    invalidate_crc: bool
 ) -> None:
     stream.write(number.to_bytes(2, 'little'))  # Segment number
     stream.write(len(data).to_bytes(8, 'little'))  # Segment length
     stream.write(data)  # Segment content
-    if StructuredMessageProperties.CRC64 in flags:
-        crc: int = crc64.compute_crc64(data, 0)
-        if invalidate_crc:
-            crc -= 5
-        stream.write(crc.to_bytes(StructuredMessageConstants.CRC64_LENGTH, 'little'))
+    if data_crc is not None:
+        stream.write(data_crc.to_bytes(StructuredMessageConstants.CRC64_LENGTH, 'little'))
 
 
 def _build_structured_message(
@@ -52,7 +48,8 @@ def _build_structured_message(
     message_length = (
         StructuredMessageConstants.V1_HEADER_LENGTH +
         ((StructuredMessageConstants.V1_SEGMENT_HEADER_LENGTH + segment_footer_length) * segment_count) +
-        len(data))
+        len(data) +
+        (StructuredMessageConstants.CRC64_LENGTH if StructuredMessageProperties.CRC64 in flags else 0))
 
     message = BytesIO()
 
@@ -64,20 +61,32 @@ def _build_structured_message(
 
     # Special case for 0 length content
     if len(data) == 0:
-        _write_segment(1, data, flags, message, False)
+        crc = 0 if StructuredMessageProperties.CRC64 in flags else None
+        _write_segment(1, data, crc, message)
         message.seek(0, 0)
         return message, message_length
 
     # Segments
     segment_sizes = segment_size if isinstance(segment_size, list) else [segment_size] * segment_count
     offset = 0
+    message_crc = 0
     for i in range(1, segment_count + 1):
         size = segment_sizes[i - 1]
         segment_data = data[offset: offset + size]
         offset += size
 
-        invalidate_crc = i == invalidate_crc_segment
-        _write_segment(i, segment_data, flags, message, invalidate_crc)
+        segment_crc = None
+        if StructuredMessageProperties.CRC64 in flags:
+            segment_crc = crc64.compute_crc64(segment_data, 0)
+            if i == invalidate_crc_segment:
+                segment_crc += 5
+        _write_segment(i, segment_data, segment_crc, message)
+
+        message_crc = crc64.compute_crc64(segment_data, message_crc)
+
+    # Message footer
+    if StructuredMessageProperties.CRC64 in flags:
+        message.write(message_crc.to_bytes(StructuredMessageConstants.CRC64_LENGTH, 'little'))
 
     message.seek(0, 0)
     return message, message_length

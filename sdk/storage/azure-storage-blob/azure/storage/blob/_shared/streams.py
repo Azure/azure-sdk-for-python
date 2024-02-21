@@ -108,6 +108,7 @@ class StructuredMessageDecodeStream:
 
             if self._end_of_segment_content:
                 self._read_segment_footer()
+                # If we are on the last segment, also read the message footer
                 if self._segment_number == self.num_segments:
                     self._read_message_footer()
 
@@ -132,8 +133,12 @@ class StructuredMessageDecodeStream:
             raise StructuredMessageError(f"The structured message version is not supported: {self.message_version}")
 
     def _read_message_footer(self) -> None:
-        # V1 does not have a message footer
-        pass
+        footer_length = 0
+        if StructuredMessageProperties.CRC64 in self.flags:
+            message_crc = self._inner_stream.read(StructuredMessageConstants.CRC64_LENGTH)
+            footer_length += StructuredMessageConstants.CRC64_LENGTH
+
+        self._message_offset += footer_length
 
     def _read_segment_header(self) -> None:
         segment_number = int.from_bytes(self._inner_stream.read(2), 'little')
