@@ -2,7 +2,7 @@ from typing import Callable
 import pytest
 
 from azure.ai.resources.client import AIClient
-from azure.ai.resources.entities import Project
+from azure.ai.resources.entities import Project, AIResource
 from azure.core.exceptions import ResourceNotFoundError
 from devtools_testutils import  is_live
 
@@ -33,22 +33,34 @@ class TestProjects:
     # DEV NOTE: due to how long it takes for 3 LROPollers to resolve, this test can easily take a couple minutes to run in live mode
     @pytest.mark.skipif(condition=not is_live(), reason="Random generation in ARM template(?) makes create recordings useless.")
     def test_create_update_and_delete(self, ai_client: AIClient, rand_num: Callable[[], str]):
-        new_local_project = Project(
-            name="e2eTestProj" + rand_num(),
-            ai_resource=f"/subscriptions/{ai_client.subscription_id}/resourceGroups/{ai_client.resource_group_name}"
-             + f"/providers/Microsoft.MachineLearningServices/workspaces/{ai_client.ai_resource_name}",
-            description="Transient test project. Delete if seen.",
-        )
-        created_project = ai_client.projects.begin_create(project=new_local_project).result()
-        assert created_project.name == new_local_project.name
-        assert created_project.ai_resource == new_local_project.ai_resource
+        try:
+            # Create none values to make cleanup easier
+            created_project = None
+            created_resource = None
+            # create AI resource to house project
+            created_resource = ai_client.ai_resources.begin_create(ai_resource=AIResource(
+                name="e2eTestResource" + rand_num(),
+            )).result()
+
+            # Create project with above AI resource as parent.
+            new_local_project = Project(
+                name="e2eTestProj" + rand_num(),
+                ai_resource=created_resource.id,
+                description="Transient test project. Delete if seen.",
+            )
+            created_project = ai_client.projects.begin_create(project=new_local_project).result()
+            assert created_project.name == new_local_project.name
+            assert created_project.ai_resource == new_local_project.ai_resource
+        finally:
+            if created_project:
+                ai_client.projects.begin_delete(name=created_project.name, delete_dependent_resources=True).wait()
+                # Ensure that project was deleted
+                with pytest.raises(ResourceNotFoundError):
+                    ai_client.projects.get(name=created_project.name)
+            if created_resource:
+                ai_client.ai_resources.begin_delete(name=created_resource.name, delete_dependent_resources=True).wait()
 
 
-        delete_poller = ai_client.projects.begin_delete(name=created_project.name, delete_dependent_resources=True)
-        delete_poller.wait()
-
-        with pytest.raises(ResourceNotFoundError):
-            ai_client.projects.get(name=created_project.name)
 
     # This test should be run live as little as possible, since it requires a special client setup that
     # most users don't have locally, and doesn't clean up easily. Because of this, this test shouldn't ever
