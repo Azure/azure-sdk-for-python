@@ -338,7 +338,7 @@ class AIClient:
         input_source: Union[IndexDataSource, str],
         identity: Optional[Union[ManagedIdentityConfiguration, UserIdentityConfiguration]] = None,
         _dry_run: bool = False,
-    ) -> Union["MLIndex", ]:
+    ) -> Union["MLIndex", "Job"]:  # type: ignore[name-defined]
         """Builds an index on the cloud using the Azure AI Resources service.
         
         :param output_index_name: The name of the index to be created.
@@ -514,7 +514,7 @@ class AIClient:
         else:
             raise ValueError(f"Unsupported input source type {type(input_source)}")
 
-    def get_default_aoai_connection(self) -> "AzureOpenAIConnection":
+    def get_default_aoai_connection(self) -> "AzureOpenAIConnection":  # type: ignore[name-defined]
         """Retrieves the default Azure Open AI connection associated with this AIClient's project,
         creating it if it does not already exist.
 
@@ -523,7 +523,7 @@ class AIClient:
         """
         return self._connections.get(DEFAULT_OPEN_AI_CONNECTION_NAME)
     
-    def get_default_content_safety_connection(self) -> "AzureAIServiceConnection":
+    def get_default_content_safety_connection(self) -> "AzureAIServiceConnection":  # type: ignore[name-defined]
         """Retrieves a default Azure AI Service connection associated with this AIClient's project,
         creating it if the connection does not already exist.
         This particular AI Service connection is linked to an Azure Content Safety service.
