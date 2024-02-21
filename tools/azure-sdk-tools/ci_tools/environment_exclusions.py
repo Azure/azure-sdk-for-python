@@ -33,6 +33,7 @@ IGNORE_PACKAGES = [
     "azure-media-analytics-edge",
     "azure-media-videoanalyzer-edge",
     "azure-template",
+    "azure-purview-datamap",
 ]
 
 
