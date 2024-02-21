@@ -1,13 +1,15 @@
 # Release History
 
-## 4.4.0b3 (Unreleased)
+## 4.4.0 (2024-02-22)
 
 ### Features Added
 - Added support for service API version `7.5`
-
-### Breaking Changes
+- (From 4.4.0b2) `KeyVaultBackupClient.begin_backup` and `KeyVaultBackupClient.begin_restore` now accept a
+  `use_managed_identity` keyword-only argument to enable authentication via Managed Identity
 
 ### Bugs Fixed
+- (From 4.4.0b1) Token requests made during AD FS authentication no longer specify an erroneous "adfs" tenant ID
+  ([#29888](https://github.com/Azure/azure-sdk-for-python/issues/29888))
 
 ### Other Changes
 - Python 3.7 is no longer supported. Please use Python version 3.8 or later.
