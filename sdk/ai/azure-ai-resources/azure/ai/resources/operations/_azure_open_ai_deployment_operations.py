@@ -24,7 +24,17 @@ class AzureOpenAIDeploymentOperations():
         deployment_dict = deployment.serialize()
         deployment_dict["properties"]["sku"] = deployment_dict.pop("sku")
 
-        template = get_empty_azure_open_ai_arm_template()
+        import json
+        byte_payload = json.dumps(deployment_dict).encode("utf-8")
+
+        return self._ai_client.azure_open_ai_deployments.begin_create_or_update(
+            self._ml_client.resource_group_name,
+            self._ml_client.workspace_name,
+            "Azure.OpenAI",
+            deployment_name,
+        )
+
+        """template = get_empty_azure_open_ai_arm_template()
         template["parameters"]["workspaceName"] = {"defaultValue": self._ml_client.workspace_name, "type": "String"}
         template["parameters"]["deploymentName"] = {"defaultValue": deployment_name, "type": "String"}
         template["parameters"]["deploymentProperties"] = {"defaultValue": deployment_dict["properties"], "type": "Object"}
@@ -44,7 +54,7 @@ class AzureOpenAIDeploymentOperations():
                 }
             },
             cls=lro_callback,
-        )
+        )"""
 
     def get(self, deployment_name: str):
         return self._ai_client.azure_open_ai_deployments.get(

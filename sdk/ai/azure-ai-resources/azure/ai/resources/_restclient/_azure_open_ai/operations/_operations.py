@@ -380,7 +380,7 @@ class AzureOpenAIDeploymentsOperations:
         workspace_name: str,
         endpoint_name: str,
         deployment_name: str,
-        properties: Union[_models.AzureOpenAIDeploymentUpdate, IO[bytes]],
+        properties: Union[_models.AzureOpenAIDeployment, IO[bytes]],
         **kwargs: Any
     ) -> Optional[JSON]:
         error_map = {
