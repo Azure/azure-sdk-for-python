@@ -393,7 +393,7 @@ stages:
                 service: monitor
                 in_batch: ${{ parameters.release_azure_monitor_opentelemetry }}
                 checkout:
-                - package: azure-monitor-ingestion
+                - package: azure-monitor-opentelemetry
                   version: 1.2.0
               - name : azure-monitor-ingestion
                 service: monitor
