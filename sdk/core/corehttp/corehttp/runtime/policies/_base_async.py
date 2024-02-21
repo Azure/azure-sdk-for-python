@@ -24,7 +24,6 @@
 #
 # --------------------------------------------------------------------------
 from __future__ import annotations
-import abc
 
 from typing import Generic, TypeVar, TYPE_CHECKING
 from typing_extensions import Protocol, runtime_checkable

@@ -112,6 +112,7 @@ class HeadersPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
         """
         return None
 
+
 class UserAgentPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
     """User-Agent Policy. Allows custom values to be added to the User-Agent header.
 

@@ -31,10 +31,10 @@ from utils import SYNC_TRANSPORTS
 
 
 def test_sans_io_exception():
-
     class SansIOHTTPPolicyImpl(SansIOHTTPPolicy):
         def on_request(self, request):
             pass
+
         def on_response(self, request, response):
             pass
 
