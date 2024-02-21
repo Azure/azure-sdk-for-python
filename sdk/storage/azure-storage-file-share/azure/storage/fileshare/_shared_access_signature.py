@@ -286,8 +286,8 @@ def generate_account_sas(
         For example, specifying sip=168.1.5.65 or sip=168.1.5.60-168.1.5.70 on the SAS
         restricts the request to those IP addresses.
     :keyword Services services:
-        Specifies the services that the Shared Access Signature (sas) token will be able to be utilized with. Will default
-        to only this package (i.e. fileshare) if not provided.
+        Specifies the services that the Shared Access Signature (sas) token will be able to be utilized with.
+        Will default to only this package (i.e. fileshare) if not provided.
     :keyword str protocol:
         Specifies the protocol permitted for a request made. The default value is https.
     :return: A Shared Access Signature (sas) token.
