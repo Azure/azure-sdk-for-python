@@ -6,6 +6,9 @@
 - Added support for service API version `7.5`
 
 ### Breaking Changes
+> These changes do not impact the API of stable versions such as 4.7.0. Only code written against a beta version such as 4.8.0b2 may be affected.
+- Removed `CertificateProperties.x509_thumbprint_string`. To get the certificate's thumbprint in hex, use
+  `CertificateProperties.x509_thumbprint.hex()` or print the `CertificateProperties` instance.
 
 ### Bugs Fixed
 

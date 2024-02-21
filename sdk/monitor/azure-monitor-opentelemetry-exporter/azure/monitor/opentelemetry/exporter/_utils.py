@@ -36,8 +36,10 @@ except ImportError:
 
 
 def _is_on_app_service():
-    return "WEBSITE_SITE_NAME" in environ
+    return environ.get("WEBSITE_SITE_NAME") is not None
 
+def _is_on_functions():
+    return environ.get("FUNCTIONS_WORKER_RUNTIME") is not None
 
 def _is_attach_enabled():
     return isdir("/agents/python/")
@@ -45,14 +47,30 @@ def _is_attach_enabled():
 
 def _get_sdk_version_prefix():
     sdk_version_prefix = ''
-    if _is_on_app_service() and _is_attach_enabled():
-        os = 'u'
-        system = platform.system()
-        if system == "Linux":
-            os = 'l'
-        elif system == "Windows":
-            os = 'w'
-        sdk_version_prefix = "a{}_".format(os)
+    rp = 'u'
+    if _is_on_functions():
+        rp = 'f'
+    elif _is_on_app_service():
+        rp = 'a'
+    # TODO: Add VM scenario outside statsbeat
+    # elif _is_on_vm():
+    #     rp = 'v'
+    # TODO: Add AKS scenario
+    # elif _is_on_aks():
+    #     rp = 'k'
+
+    os = 'u'
+    system = platform.system()
+    if system == "Linux":
+        os = 'l'
+    elif system == "Windows":
+        os = 'w'
+
+    attach_type = 'm'
+    if _is_attach_enabled():
+        attach_type = 'i'
+    sdk_version_prefix = "{}{}{}_".format(rp, os, attach_type)
+
     return sdk_version_prefix
 
 
