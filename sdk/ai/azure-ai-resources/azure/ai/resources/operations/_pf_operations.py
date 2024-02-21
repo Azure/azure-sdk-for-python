@@ -80,7 +80,7 @@ class PFOperations():
 
     @distributed_trace
     @monitor_with_telemetry_mixin(logger, "PF.GetRunDetails", ActivityType.PUBLICAPI)
-    def get_run_details(self, run_name: str) -> "DataFrame":
+    def get_run_details(self, run_name: str) -> "DataFrame":  # type: ignore[name-defined]
         """Get the details of a run
         
         :param run_name: The name of the run
