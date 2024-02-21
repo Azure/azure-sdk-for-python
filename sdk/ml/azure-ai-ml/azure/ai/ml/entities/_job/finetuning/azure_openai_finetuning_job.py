@@ -6,14 +6,15 @@ from azure.ai.ml._restclient.v2024_01_01_preview.models import (
 )
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.entities._job._input_output_helpers import from_rest_data_outputs, to_rest_data_outputs
-from typing import Any, Dict
-from azure.ai.ml.entities._job.finetuning.finetuning_job import FineTuningJob
+from typing import Any, Dict, cast
+from azure.ai.ml.entities._job.finetuning.finetuning_vertical import FineTuningVertical
 from typing import cast
 from azure.ai.ml.entities._job.finetuning.azure_openai_hyperparameters import AzureOpenAIHyperparameters
 from azure.ai.ml.entities._util import load_from_dict
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 
-class AzureOpenAIFineTuningJob(FineTuningJob):
+class AzureOpenAIFineTuningJob(FineTuningVertical):
     def __init__(
         self,
         **kwargs: Any,
@@ -24,22 +25,21 @@ class AzureOpenAIFineTuningJob(FineTuningJob):
         training_data = kwargs.pop("training_data", None)
         validation_data = kwargs.pop("validation_data", None)
         hyperparameters = kwargs.pop("hyperparameters", None)
-        if not hyperparameters and cast(hyperparameters, AzureOpenAIHyperparameters) is not None:
-            hyperparameters_dict = {
-                "batch_size": hyperparameters.batch_size,
-                "learning_rate_multiplier": hyperparameters.learning_rate_multiplier,
-                "n_epochs": hyperparameters.n_epochs,
-            }
-            if hyperparameters.additional_properties:
-                for k, v in hyperparameters.additional_properties.items():
-                    hyperparameters_dict[k] = v
+        if hyperparameters and cast(hyperparameters, AzureOpenAIHyperparameters) is None:
+            raise ValidationException(
+                category=ErrorCategory.USER_ERROR,
+                target=ErrorTarget.JOB,
+                message="Hyperparameters if provided should of type AzureOpenAIHyperparameters",
+            )
+
+        self._hyperparameters = hyperparameters
+
         super().__init__(
             task=task,
             model=model,
             model_provider=RestModelProvider.AZURE_OPEN_AI,
             training_data=training_data,
             validation_data=validation_data,
-            hyperparameters=hyperparameters_dict,
             **kwargs,
         )
 
@@ -50,13 +50,7 @@ class AzureOpenAIFineTuningJob(FineTuningJob):
         :return:
         :rtype: AzureOpenAIHyperparameters
         """
-        if self._hyperparameters:
-            hyperparameters = AzureOpenAIHyperparameters()
-            hyperparameters.batch_size = self._hyperparameters.get("batch_size", None)
-            hyperparameters.learning_rate = self._hyperparameters.get("learning_rate_multiplier", None)
-            hyperparameters.max_epochs = self._hyperparameters.get("n_epochs", None)
-            return hyperparameters
-        return None
+        return self._hyperparameters
 
     @hyperparameters.setter
     def hyperparameters(self, hyperparameters: AzureOpenAIHyperparameters) -> None:
@@ -65,12 +59,7 @@ class AzureOpenAIFineTuningJob(FineTuningJob):
         :param hyperparameters: Hyperparameters for finetuning the model.
         :type hyperparameters: AzureOpenAiHyperParameters
         """
-        if hyperparameters:
-            self._hyperparameters = {
-                "batch_size": hyperparameters.batch_size,
-                "learning_rate_multiplier": hyperparameters.learning_rate_multiplier,
-                "n_epochs": hyperparameters.n_epochs,
-            }
+        self._hyperparameters = hyperparameters
 
     def _to_rest_object(self) -> "RestFineTuningJob":
         """Convert CustomFineTuningVertical object to a RestFineTuningJob object.
@@ -230,8 +219,6 @@ class AzureOpenAIFineTuningJob(FineTuningJob):
 
         if not super().__eq__(other):
             return False
-
-        return self.primary_metric == other.primary_metric
 
     def __ne__(self, other: object) -> bool:
         """Check inequality between two AzureOpenAIFineTuningJob objects.

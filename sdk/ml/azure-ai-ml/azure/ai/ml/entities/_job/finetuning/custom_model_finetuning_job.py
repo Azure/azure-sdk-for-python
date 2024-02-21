@@ -7,11 +7,11 @@ from azure.ai.ml._restclient.v2024_01_01_preview.models import (
 from azure.ai.ml.entities._job._input_output_helpers import from_rest_data_outputs, to_rest_data_outputs
 from typing import Any, Dict
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
-from azure.ai.ml.entities._job.finetuning.finetuning_job import FineTuningJob
+from azure.ai.ml.entities._job.finetuning.finetuning_vertical import FineTuningVertical
 from azure.ai.ml.entities._util import load_from_dict
 
 
-class CustomModelFineTuningJob(FineTuningJob):
+class CustomModelFineTuningJob(FineTuningVertical):
     def __init__(
         self,
         **kwargs: Any,
@@ -21,16 +21,33 @@ class CustomModelFineTuningJob(FineTuningJob):
         task = kwargs.pop("task", None)
         training_data = kwargs.pop("training_data", None)
         validation_data = kwargs.pop("validation_data", None)
-        hyperparameters = kwargs.pop("hyperparameters", None)
+        self._hyperparameters = kwargs.pop("hyperparameters", None)
         super().__init__(
             task=task,
             model=model,
             model_provider=RestModelProvider.CUSTOM,
             training_data=training_data,
             validation_data=validation_data,
-            hyperparameters=hyperparameters,
             **kwargs,
         )
+
+    @property
+    def hyperparameters(self) -> Dict[str, str]:
+        """Get hyperparameters.
+
+        :return:
+        :rtype: hyperparameters: Dict[str,str]
+        """
+        return self._hyperparameters
+
+    @hyperparameters.setter
+    def hyperparameters(self, hyperparameters: Dict[str, str]) -> None:
+        """Set hyperparameters.
+
+        :param hyperparameters: Hyperparameters for finetuning the model
+        :type hyperparameters: Dict[str,str]
+        """
+        self._hyperparameters = hyperparameters
 
     def _to_rest_object(self) -> "RestFineTuningJob":
         """Convert CustomFineTuningVertical object to a RestFineTuningJob object.
@@ -39,16 +56,16 @@ class CustomModelFineTuningJob(FineTuningJob):
         :rtype: JobBase
         """
         custom_finetuning_vertical = RestCustomModelFineTuningVertical(
-            task=self._task,
+            task_type=self._task,
             model=self._model,
             model_provider=self._model_provider,
             training_data=self._training_data,
             validation_data=self._validation_data,
             hyper_parameters=self._hyperparameters,
         )
-        self._resolve_data_inputs(custom_finetuning_vertical)
+        self._resolve_inputs(custom_finetuning_vertical)
 
-        result = RestFineTuningJob(
+        finetuning_job = RestFineTuningJob(
             display_name=self.display_name,
             description=self.description,
             experiment_name=self.experiment_name,
@@ -57,6 +74,8 @@ class CustomModelFineTuningJob(FineTuningJob):
             fine_tuning_details=custom_finetuning_vertical,
             outputs=to_rest_data_outputs(self.outputs),
         )
+
+        result = RestJobBase(properties=finetuning_job)
         result.name = self.name
 
         return result
@@ -72,7 +91,7 @@ class CustomModelFineTuningJob(FineTuningJob):
         """
 
         properties: RestFineTuningJob = obj.properties
-        finetuning_details: RestCustomModelFineTuningVertical = properties.task_details
+        finetuning_details: RestCustomModelFineTuningVertical = properties.fine_tuning_details
 
         job_args_dict = {
             "id": obj.id,
@@ -88,16 +107,15 @@ class CustomModelFineTuningJob(FineTuningJob):
         }
 
         custom_model_finetuning_job = cls(
-            task=finetuning_details.task,
+            task=finetuning_details.task_type,
             model=finetuning_details.model,
-            model_provider=finetuning_details.model_provider,
             training_data=finetuning_details.training_data,
             validation_data=finetuning_details.validation_data,
             hyperparameters=finetuning_details.hyper_parameters,
             **job_args_dict,
         )
 
-        custom_model_finetuning_job._restore_data_inputs()
+        custom_model_finetuning_job._restore_inputs()
 
         return custom_model_finetuning_job
 
@@ -187,10 +205,7 @@ class CustomModelFineTuningJob(FineTuningJob):
         if not isinstance(other, CustomModelFineTuningJob):
             return NotImplemented
 
-        if not super().__eq__(other):
-            return False
-
-        return self.primary_metric == other.primary_metric
+        return super().__eq__(other) and self.hyperparameters == other.hyperparameters
 
     def __ne__(self, other: object) -> bool:
         """Check inequality between two CustomModelFineTuningJob objects.
