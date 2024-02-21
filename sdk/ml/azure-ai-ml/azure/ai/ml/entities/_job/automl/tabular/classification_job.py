@@ -218,15 +218,21 @@ class ClassificationJob(AutoMLTabular):
             n_cross_validations=task_details.n_cross_validations,
             test_data=task_details.test_data,
             test_data_size=task_details.test_data_size,
-            featurization=TabularFeaturizationSettings._from_rest_object(task_details.featurization_settings)
-            if task_details.featurization_settings
-            else None,
-            limits=TabularLimitSettings._from_rest_object(task_details.limit_settings)
-            if task_details.limit_settings
-            else None,
-            training=ClassificationTrainingSettings._from_rest_object(task_details.training_settings)
-            if task_details.training_settings
-            else None,
+            featurization=(
+                TabularFeaturizationSettings._from_rest_object(task_details.featurization_settings)
+                if task_details.featurization_settings
+                else None
+            ),
+            limits=(
+                TabularLimitSettings._from_rest_object(task_details.limit_settings)
+                if task_details.limit_settings
+                else None
+            ),
+            training=(
+                ClassificationTrainingSettings._from_rest_object(task_details.training_settings)
+                if task_details.training_settings
+                else None
+            ),
             primary_metric=task_details.primary_metric,
             positive_label=task_details.positive_label,
             log_verbosity=task_details.log_verbosity,
