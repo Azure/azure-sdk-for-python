@@ -57,6 +57,10 @@ class AadClientBase(abc.ABC):
         self._cache = cache
         self._cae_cache = cae_cache
         self._cache_options = kwargs.pop("cache_persistence_options", None)
+        if self._cache or self._cae_cache:
+            self._custom_cache = True
+        else:
+            self._custom_cache = False
 
     def _get_cache(self, **kwargs: Any) -> TokenCache:
         cache = self._cae_cache if kwargs.get("enable_cae") else self._cache
@@ -345,6 +349,21 @@ class AadClientBase(abc.ABC):
     def _post(self, data: Dict, **kwargs: Any) -> HttpRequest:
         url = self._get_token_url(**kwargs)
         return HttpRequest("POST", url, data=data, headers={"Content-Type": "application/x-www-form-urlencoded"})
+
+    def __getstate__(self) -> Dict[str, Any]:
+        state = self.__dict__.copy()
+        # Remove the non-picklable entries
+        if not self._custom_cache:
+            del state["_cache"]
+            del state["_cae_cache"]
+        return state
+
+    def __setstate__(self, state: Dict[str, Any]) -> None:
+        self.__dict__.update(state)
+        # Re-create the unpickable entries
+        if not self._custom_cache:
+            self._cache = None
+            self._cae_cache = None
 
 
 def _merge_claims_challenge_and_capabilities(capabilities, claims_challenge):
