@@ -9,7 +9,6 @@ from opentelemetry.sdk.metrics.export import (
     Metric,
     MetricExportResult,
     MetricsData as OTMetricsData,
-    MetricReader,
     NumberDataPoint,
     ResourceMetrics,
     ScopeMetrics,
@@ -18,12 +17,16 @@ from opentelemetry.sdk.metrics.export import (
 from opentelemetry.sdk.util.instrumentation import InstrumentationScope
 from opentelemetry.sdk.resources import Resource, ResourceAttributes
 from azure.core.exceptions import HttpResponseError
+from azure.monitor.opentelemetry.exporter._utils import PeriodicTask
 from azure.monitor.opentelemetry.exporter._quickpulse._generated._client import QuickpulseClient
 from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import MonitoringDataPoint
 from azure.monitor.opentelemetry.exporter._quickpulse._exporter import (
+    _POST_INTERVAL_SECONDS,
     _QuickpulseExporter,
     _QuickpulseMetricReader,
+    _QuickpulseState,
     _Response,
+    _UnsuccessfulQuickPulsePostError,
 )
 
 
@@ -34,7 +37,7 @@ def throw(exc_type, *args, **kwargs):
     return func
 
 
-class TestQuickpulseExporter(unittest.TestCase):
+class TestQuickpulse(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls._resource = Resource.create(
@@ -83,6 +86,11 @@ class TestQuickpulseExporter(unittest.TestCase):
         cls._exporter = _QuickpulseExporter(
             "InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ac;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/"
         )
+        cls._reader = _QuickpulseMetricReader(
+            cls._exporter,
+            cls._data_point,
+        )
+
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._generated._client.QuickpulseClient.__new__")
     def test_init(self, client_mock):
@@ -197,3 +205,97 @@ class TestQuickpulseExporter(unittest.TestCase):
                 monitoring_data_point=self._data_point
             )
             self.assertIsNone(response)
+
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._utils.PeriodicTask.__new__")
+    def test_quickpulsereader_init(self, task_mock):
+        task_inst_mock = mock.Mock()
+        task_mock.return_value = task_inst_mock
+        reader = _QuickpulseMetricReader(
+            self._exporter,
+            self._data_point,
+        )
+        self.assertEqual(reader._exporter, self._exporter)
+        self.assertEqual(reader._quick_pulse_state, _QuickpulseState.PING_SHORT)
+        self.assertEqual(reader._base_monitoring_data_point, self._data_point)
+        self.assertEqual(reader._elapsed_num_seconds, 0)
+        self.assertEqual(reader._elapsed_num_seconds, 0)
+        self.assertEqual(reader._worker, task_inst_mock)
+        task_mock.assert_called_with(
+            PeriodicTask,
+            interval=_POST_INTERVAL_SECONDS,
+            function=reader._ticker,
+            name="QuickpulseMetricReader",
+        )
+        self.assertTrue(reader._worker.daemon)
+        task_inst_mock.start.assert_called_once()
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._exporter._QuickpulseExporter._ping")
+    @mock.patch("azure.monitor.opentelemetry.exporter._utils.PeriodicTask.__new__")
+    def test_quickpulsereader_ticker_ping_true(self, task_mock, ping_mock):
+        task_inst_mock = mock.Mock()
+        task_mock.return_value = task_inst_mock
+        reader = _QuickpulseMetricReader(
+            self._exporter,
+            self._data_point,
+        )
+        reader._quick_pulse_state = _QuickpulseState.PING_SHORT
+        reader._elapsed_num_seconds = _QuickpulseState.PING_SHORT.value
+        ping_mock.return_value = _Response(
+            None,
+            None,
+            {
+                "x-ms-qps-subscribed": "true"
+            }
+        )
+        reader._ticker()
+        ping_mock.assert_called_once_with(
+            self._data_point,
+        )
+        self.assertEqual(reader._quick_pulse_state, _QuickpulseState.POST_SHORT)
+        self.assertEqual(reader._elapsed_num_seconds, 1)
+
+    # TODO: Other ticker cases
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._exporter._QuickpulseExporter.export")
+    @mock.patch("azure.monitor.opentelemetry.exporter._utils.PeriodicTask.__new__")
+    def test_quickpulsereader_receive_metrics(self, task_mock, export_mock):
+        task_inst_mock = mock.Mock()
+        task_mock.return_value = task_inst_mock
+        reader = _QuickpulseMetricReader(
+            self._exporter,
+            self._data_point,
+        )
+        export_mock.return_value = MetricExportResult.SUCCESS
+        reader._receive_metrics(
+            self._metrics_data,
+            20_000,
+        )
+        export_mock.assert_called_once_with(
+            self._metrics_data,
+            timeout_millis=20_000,
+            base_monitoring_data_point=self._data_point,
+            documents=[],
+        )
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._exporter._QuickpulseExporter.export")
+    @mock.patch("azure.monitor.opentelemetry.exporter._utils.PeriodicTask.__new__")
+    def test_quickpulsereader_receive_metrics_exception(self, task_mock, export_mock):
+        task_inst_mock = mock.Mock()
+        task_mock.return_value = task_inst_mock
+        reader = _QuickpulseMetricReader(
+            self._exporter,
+            self._data_point,
+        )
+        export_mock.return_value = MetricExportResult.FAILURE
+        with self.assertRaises(_UnsuccessfulQuickPulsePostError):
+            reader._receive_metrics(
+                self._metrics_data,
+                20_000,
+            )
+            export_mock.assert_called_once_with(
+                self._metrics_data,
+                timeout_millis=20_000,
+                base_monitoring_data_point=self._data_point,
+                documents=[],
+            )

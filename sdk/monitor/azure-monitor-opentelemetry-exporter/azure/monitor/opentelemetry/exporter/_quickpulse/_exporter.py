@@ -190,7 +190,7 @@ class _QuickpulseExporter(MetricExporter):
         return ping_response
 
 
-class QuickpulseState(Enum):
+class _QuickpulseState(Enum):
     """Current state of quickpulse service.
     The numerical value represents the ping/post interval in ms for those states.
     """
@@ -208,7 +208,7 @@ class _QuickpulseMetricReader(MetricReader):
         base_monitoring_data_point: MonitoringDataPoint,
     ) -> None:
         self._exporter = exporter
-        self._quick_pulse_state = QuickpulseState.PING_SHORT
+        self._quick_pulse_state = _QuickpulseState.PING_SHORT
         self._base_monitoring_data_point = base_monitoring_data_point
         self._elapsed_num_seconds = 0
         self._worker = PeriodicTask(
@@ -236,22 +236,22 @@ class _QuickpulseMetricReader(MetricReader):
                     if header and header == "true":
                         print("ping succeeded: switching to post")
                         # Switch state to post if subscribed
-                        self._quick_pulse_state = QuickpulseState.POST_SHORT
+                        self._quick_pulse_state = _QuickpulseState.POST_SHORT
                         self._elapsed_num_seconds = 0
                     else:
                         # Backoff after _LONG_PING_INTERVAL_SECONDS (60s) of no successful requests
-                        if self._quick_pulse_state is QuickpulseState.PING_SHORT and \
+                        if self._quick_pulse_state is _QuickpulseState.PING_SHORT and \
                             self._elapsed_num_seconds >= _LONG_PING_INTERVAL_SECONDS:
                             print("ping failed for 60s, switching to pinging every 60s")
-                            self._quick_pulse_state = QuickpulseState.PING_LONG
+                            self._quick_pulse_state = _QuickpulseState.PING_LONG
                 # TODO: Implement redirect
                 else:
                     # Erroneous ping responses instigate backoff logic
                     # Backoff after _LONG_PING_INTERVAL_SECONDS (60s) of no successful requests
-                    if self._quick_pulse_state is QuickpulseState.PING_SHORT and \
+                    if self._quick_pulse_state is _QuickpulseState.PING_SHORT and \
                         self._elapsed_num_seconds >= _LONG_PING_INTERVAL_SECONDS:
                         print("ping failed for 60s, switching to pinging every 60s")
-                        self._quick_pulse_state = QuickpulseState.PING_LONG
+                        self._quick_pulse_state = _QuickpulseState.PING_LONG
         else:
             print("posting...")
             try:
@@ -262,7 +262,7 @@ class _QuickpulseMetricReader(MetricReader):
                 # And resume pinging
                 if self._elapsed_num_seconds >= _POST_CANCEL_INTERVAL_SECONDS:
                     print("post failed for 20s, switching to pinging")
-                    self._quick_pulse_state = QuickpulseState.PING_SHORT
+                    self._quick_pulse_state = _QuickpulseState.PING_SHORT
                     self._elapsed_num_seconds = 0
 
         self._elapsed_num_seconds += 1
@@ -290,7 +290,7 @@ class _QuickpulseMetricReader(MetricReader):
         self._worker.join()
 
     def _is_ping_state(self):
-        return self._quick_pulse_state in (QuickpulseState.PING_SHORT, QuickpulseState.PING_LONG)
+        return self._quick_pulse_state in (_QuickpulseState.PING_SHORT, _QuickpulseState.PING_LONG)
 
 def _metric_to_quick_pulse_data_points(  # pylint: disable=too-many-nested-blocks
     metrics_data: OTMetricsData,
