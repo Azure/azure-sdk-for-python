@@ -11,7 +11,10 @@ from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, U
 
 from .. import _model_base
 from .._model_base import rest_discriminator, rest_field
-from ._enums import CommunicationMessageKind, CommunicationMessagesChannel, MessageTemplateBindingsKind, MessageTemplateValueKind
+from ._enums import (CommunicationMessageKind,
+CommunicationMessagesChannel,
+MessageTemplateBindingsKind,
+MessageTemplateValueKind)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -65,8 +68,7 @@ class NotificationContent(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
- 
- 
+
 
 
 class MediaNotificationContent(NotificationContent, discriminator='image'):
@@ -117,8 +119,7 @@ class MediaNotificationContent(NotificationContent, discriminator='image'):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, kind=CommunicationMessageKind.IMAGE, **kwargs)
- 
- 
+
 
 
 class MessageReceipt(_model_base.Model):
@@ -156,8 +157,7 @@ class MessageReceipt(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
- 
- 
+
 
 
 class MessageTemplate(_model_base.Model):
@@ -207,8 +207,7 @@ class MessageTemplate(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
- 
- 
+
 
 
 class MessageTemplateBindings(_model_base.Model):
@@ -245,8 +244,7 @@ class MessageTemplateBindings(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
- 
- 
+
 
 
 class MessageTemplateValue(_model_base.Model):
@@ -291,8 +289,7 @@ class MessageTemplateValue(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
- 
- 
+
 
 
 class MessageTemplateDocument(MessageTemplateValue, discriminator='document'):
@@ -342,8 +339,7 @@ class MessageTemplateDocument(MessageTemplateValue, discriminator='document'):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, kind=MessageTemplateValueKind.DOCUMENT, **kwargs)
- 
- 
+
 
 
 class MessageTemplateImage(MessageTemplateValue, discriminator='image'):
@@ -393,8 +389,7 @@ class MessageTemplateImage(MessageTemplateValue, discriminator='image'):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, kind=MessageTemplateValueKind.IMAGE, **kwargs)
- 
- 
+
 
 
 class MessageTemplateItem(_model_base.Model):
@@ -451,8 +446,7 @@ class MessageTemplateItem(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
- 
- 
+
 
 
 class MessageTemplateLocation(MessageTemplateValue, discriminator='location'):
@@ -507,8 +501,7 @@ class MessageTemplateLocation(MessageTemplateValue, discriminator='location'):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, kind=MessageTemplateValueKind.LOCATION, **kwargs)
- 
- 
+
 
 
 class MessageTemplateQuickAction(MessageTemplateValue, discriminator='quickAction'):
@@ -554,8 +547,7 @@ class MessageTemplateQuickAction(MessageTemplateValue, discriminator='quickActio
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, kind=MessageTemplateValueKind.QUICK_ACTION, **kwargs)
- 
- 
+
 
 
 class MessageTemplateText(MessageTemplateValue, discriminator='text'):
@@ -595,8 +587,7 @@ class MessageTemplateText(MessageTemplateValue, discriminator='text'):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, kind=MessageTemplateValueKind.TEXT, **kwargs)
- 
- 
+
 
 
 class MessageTemplateVideo(MessageTemplateValue, discriminator='video'):
@@ -646,8 +637,8 @@ class MessageTemplateVideo(MessageTemplateValue, discriminator='video'):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, kind=MessageTemplateValueKind.VIDEO, **kwargs)
- 
- 
+
+
 
 
 class SendMessageResult(_model_base.Model):
@@ -680,8 +671,8 @@ class SendMessageResult(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
- 
- 
+
+
 
 
 class TemplateNotificationContent(NotificationContent, discriminator='template'):
@@ -725,8 +716,8 @@ class TemplateNotificationContent(NotificationContent, discriminator='template')
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, kind=CommunicationMessageKind.TEMPLATE, **kwargs)
- 
- 
+
+
 
 
 class TextNotificationContent(NotificationContent, discriminator='text'):
@@ -770,8 +761,7 @@ class TextNotificationContent(NotificationContent, discriminator='text'):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, kind=CommunicationMessageKind.TEXT, **kwargs)
- 
- 
+
 
 
 class WhatsAppMessageTemplateBindings(MessageTemplateBindings, discriminator='whatsApp'):
@@ -827,8 +817,7 @@ class WhatsAppMessageTemplateBindings(MessageTemplateBindings, discriminator='wh
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, kind=MessageTemplateBindingsKind.WHATSAPP, **kwargs)
- 
- 
+
 
 
 class WhatsAppMessageTemplateBindingsButton(_model_base.Model):
@@ -867,8 +856,7 @@ class WhatsAppMessageTemplateBindingsButton(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
- 
- 
+
 
 
 class WhatsAppMessageTemplateBindingsComponent(_model_base.Model):
@@ -901,8 +889,6 @@ class WhatsAppMessageTemplateBindingsComponent(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
- 
- 
 
 
 class WhatsAppMessageTemplateItem(MessageTemplateItem, discriminator='whatsApp'):
@@ -954,5 +940,4 @@ class WhatsAppMessageTemplateItem(MessageTemplateItem, discriminator='whatsApp')
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, kind=CommunicationMessagesChannel.WHATSAPP, **kwargs)
- 
  

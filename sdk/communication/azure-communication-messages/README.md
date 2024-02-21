@@ -96,9 +96,9 @@ additional questions or comments.
 [azure_identity_pip]: https://pypi.org/project/azure-identity/
 [default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
 [pip]: https://pypi.org/project/pip/
-[azure_sub]: https://azure.microsoft.com/free/
+[azure_sub]: https://azure.microsoft.com
 
 [source]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-messages
 [product_docs]: https://docs.microsoft.com/azure/communication-services/overview
 [pypi]: https://pypi.org
-[nextsteps]: https://learn.microsoft.com/en-us/azure/communication-services/concepts/advanced-messaging/whatsapp/whatsapp-overview
+[nextsteps]: https://learn.microsoft.com/azure/communication-services/concepts/advanced-messaging/whatsapp/whatsapp-overview

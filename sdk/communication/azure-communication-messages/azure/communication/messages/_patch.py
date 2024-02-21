@@ -57,23 +57,23 @@ class NotificationMessagesClient(NotificationMessagesClientGenerated):
         self._authentication_policy =  get_authentication_policy(endpoint, credential)
         self._credential = credential
         super().__init__(
-            self._endpoint, self._credential, authentication_policy=self._authentication_policy, api_version=self._api_version, **kwargs
+            self._endpoint,
+            self._credential,
+            authentication_policy=self._authentication_policy,
+            api_version=self._api_version,
+            **kwargs
         )
-
     @classmethod
     def from_connection_string(cls, conn_str: str, **kwargs: Any) -> "NotificationMessagesClient":
         """Create NotificationMessagesClient from a Connection String.
-        
         """
         endpoint, access_key = parse_connection_str(conn_str)
         return cls(endpoint, AzureKeyCredential(access_key), **kwargs)
-
     @classmethod
     def from_token_credentials(cls, endpoint: str, **kwargs: Any) -> "NotificationMessagesClient":
         """Create NotificationMessagesClient from an endpoint and TokenCredentials.
-        
         """
-        return cls(endpoint, DefaultAzureCredential(), **kwargs)
+        return cls(endpoint, credential=DefaultAzureCredential(), **kwargs)
 
 class MessageTemplateClient(MessageTemplateClientGenerated):
     """A client to interact with the AzureCommunicationService Messaging service.
@@ -125,7 +125,7 @@ class MessageTemplateClient(MessageTemplateClientGenerated):
         """Create MessageTemplateClient from an endpoint and TokenCredentials.
         
         """
-        return cls(endpoint, DefaultAzureCredential(), **kwargs)
+        return cls(endpoint, credential=DefaultAzureCredential(), **kwargs)
     
 __all__: List[str] = [
     "NotificationMessagesClient",

@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 
     from .._serialization import Deserializer, Serializer
 
-class NotificationMessagesClientMixinABC(  
+class NotificationMessagesClientMixinABC(
     ABC
 ):
     """DO NOT use this class. It is for internal typing use only."""
@@ -24,7 +24,7 @@ class NotificationMessagesClientMixinABC(
     _config: NotificationMessagesClientConfiguration
     _serialize: "Serializer"
     _deserialize: "Deserializer"
-class MessageTemplateClientMixinABC(  
+class MessageTemplateClientMixinABC(
     ABC
 ):
     """DO NOT use this class. It is for internal typing use only."""
@@ -32,4 +32,3 @@ class MessageTemplateClientMixinABC(
     _config: MessageTemplateClientConfiguration
     _serialize: "Serializer"
     _deserialize: "Deserializer"
-

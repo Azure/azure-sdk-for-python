@@ -14,7 +14,8 @@ from typing import Any, Callable, Dict, IO, Iterable, List, Optional, TypeVar, U
 import urllib.parse
 import uuid
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, ResourceNotModifiedError, map_error
+from azure.core.exceptions import (ClientAuthenticationError, HttpResponseError,
+ResourceExistsError, ResourceNotFoundError, ResourceNotModifiedError, map_error)
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.rest import HttpRequest, HttpResponse
@@ -490,7 +491,7 @@ class NotificationMessagesClientOperationsMixin(   # pylint: disable=name-too-lo
 
         if response.status_code not in [202]:
             if _stream:
-                 response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -528,7 +529,10 @@ class NotificationMessagesClientOperationsMixin(   # pylint: disable=name-too-lo
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError
         }
         error_map.update(kwargs.pop('error_map', {}) or {})
 
@@ -539,7 +543,6 @@ class NotificationMessagesClientOperationsMixin(   # pylint: disable=name-too-lo
             'cls', None
         )
 
-        
         _request = build_notification_messages_download_media_request(
             id=id,
             api_version=self._config.api_version,
@@ -562,12 +565,13 @@ class NotificationMessagesClientOperationsMixin(   # pylint: disable=name-too-lo
 
         if response.status_code not in [200]:
             if _stream:
-                 response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
+        response_headers['x-ms-client-request-id']=self._deserialize('str',
+                                                                     response.headers.get('x-ms-client-request-id'))
 
         response.read()
         deserialized = response.content
@@ -578,7 +582,7 @@ class NotificationMessagesClientOperationsMixin(   # pylint: disable=name-too-lo
         return deserialized  # type: ignore
 
 
-class MessageTemplateClientOperationsMixin( 
+class MessageTemplateClientOperationsMixin(
     MessageTemplateClientMixinABC
 ):
 
@@ -632,7 +636,6 @@ class MessageTemplateClientOperationsMixin(
         error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
-                
                 _request = build_message_template_list_templates_request(
                     channel_id=channel_id,
                     maxpagesize=maxpagesize,
@@ -679,7 +682,7 @@ class MessageTemplateClientOperationsMixin(
 
             if response.status_code not in [200]:
                 if _stream:
-                     response.read()  # Load the body in memory and close the socket
+                    response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response)
 
@@ -689,4 +692,3 @@ class MessageTemplateClientOperationsMixin(
         return ItemPaged(
             get_next, extract_data
         )
-

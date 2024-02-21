@@ -9,15 +9,13 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from typing import (
     List,
     Any,
-    Awaitable,
     Union,
 )
 from urllib.parse import urlparse
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
-from azure.identity import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential
 from .._shared.utils import parse_connection_str
-from .._shared.policy import HMACCredentialsPolicy
 from ._client import (
     NotificationMessagesClient as NotificationMessagesClientGenerated,
     MessageTemplateClient as MessageTemplateClientGenerated,
@@ -28,7 +26,8 @@ from .._shared.auth_policy_utils import get_authentication_policy
 class NotificationMessagesClient(NotificationMessagesClientGenerated):
     """A client to interact with the AzureCommunicationService Messaging service.
 
-    This client allows you to send and receive WhatsApp template messages using the Azure Communication Services Messaging SDK.
+    This client allows you to send and receive WhatsApp template messages using the
+    Azure Communication Services Messaging SDK.
 
     :param str endpoint:
         The endpoint of the Azure Communication resource.
@@ -39,7 +38,8 @@ class NotificationMessagesClient(NotificationMessagesClientGenerated):
         Note that overriding this default value may result in unsupported behavior.
     """
 
-    def __init__(self, endpoint: str, credential: Union[AsyncTokenCredential, AzureKeyCredential], **kwargs: Any) -> None:
+    def __init__(self, endpoint: str,
+                 credential: Union[AsyncTokenCredential, AzureKeyCredential], **kwargs: Any) -> None:
         if not credential:
             raise ValueError("credential can not be None")
 
@@ -58,29 +58,30 @@ class NotificationMessagesClient(NotificationMessagesClientGenerated):
         self._authentication_policy =  get_authentication_policy(endpoint, credential)
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
         super().__init__(
-            self._endpoint, self._credential, authentication_policy=self._authentication_policy, api_version=self._api_version, **kwargs
+            self._endpoint, self._credential,
+            authentication_policy=self._authentication_policy, api_version=self._api_version, **kwargs
         )
 
     @classmethod
     def from_connection_string(cls, conn_str: str, **kwargs: Any) -> "NotificationMessagesClient":
         """Create NotificationMessagesClient from a Connection String.
-        
+        :rtype:~azure.communication.message.notificationclient
         """
         endpoint, access_key = parse_connection_str(conn_str)
-        breakpoint
         return cls(endpoint, AzureKeyCredential(key=access_key), **kwargs)
     
     @classmethod
     def from_token_credentials(cls, endpoint: str, **kwargs: Any) -> "NotificationMessagesClient":
         """Create NotificationMessagesClient from an endpoint and TokenCredentials.
-        
+        :rtype:~azure.communication.message.notificationclient
         """
-        return cls(endpoint, DefaultAzureCredential(), **kwargs)
+        return cls(endpoint, credential= DefaultAzureCredential(), **kwargs)
 
 class MessageTemplateClient(MessageTemplateClientGenerated):
     """A client to interact with the AzureCommunicationService Messaging service.
 
-    This client allows you to send and receive WhatsApp template messages using the Azure Communication Services Messaging SDK.
+    This client allows you to send and receive WhatsApp template
+    messages using the Azure Communication Services Messaging SDK.
 
     :param str endpoint:
         The endpoint of the Azure Communication resource.
@@ -91,7 +92,8 @@ class MessageTemplateClient(MessageTemplateClientGenerated):
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, credential: Union[AsyncTokenCredential, AzureKeyCredential], **kwargs: Any) -> "None":
+    def __init__(self, endpoint: str, credential: Union[AsyncTokenCredential,
+                                                        AzureKeyCredential], **kwargs: Any) -> "None":
         if not credential:
             raise ValueError("credential can not be None")
 
@@ -110,13 +112,16 @@ class MessageTemplateClient(MessageTemplateClientGenerated):
         self._authentication_policy =  get_authentication_policy(endpoint, credential)
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
         super().__init__(
-            self._endpoint, self._credential, authentication_policy=self._authentication_policy, api_version=self._api_version, **kwargs
+            self._endpoint, self._credential,
+            authentication_policy=self._authentication_policy,
+            api_version=self._api_version,
+            **kwargs
         )
 
     @classmethod
     def from_connection_string(cls, conn_str: str, **kwargs: Any) -> "MessageTemplateClient":
         """Create MessageTemplateClient from a Connection String.
-
+        :rtype:~azure.communication.message.messagetemplateclient
         """
         endpoint, access_key = parse_connection_str(conn_str)
         return cls(endpoint, AzureKeyCredential(access_key), **kwargs)
@@ -124,9 +129,9 @@ class MessageTemplateClient(MessageTemplateClientGenerated):
     @classmethod
     def from_token_credentials(cls, endpoint: str, **kwargs: Any) -> "MessageTemplateClient":
         """Create MessageTemplateClient from an endpoint and TokenCredentials.
-        
+        :rtype:~azure.communication.message.messagetemplateclient
         """
-        return cls(endpoint, DefaultAzureCredential(), **kwargs)
+        return cls(endpoint, credential= DefaultAzureCredential(), **kwargs)
 
 __all__: List[str] = [
     "NotificationMessagesClient",
