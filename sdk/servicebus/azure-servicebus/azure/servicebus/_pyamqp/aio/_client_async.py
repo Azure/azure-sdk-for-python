@@ -975,8 +975,8 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         await self._link.send_disposition(
             first_delivery_id=first,
             last_delivery_id=last,
-            settled=True,
+            settled=False, # True 
             delivery_state=state,
             batchable=batchable,
-            wait=True
+            wait=True  # we should block until msgs is settled
         )
