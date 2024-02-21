@@ -1701,7 +1701,7 @@
       ]
     },
     {
-      "filename": "sdk/purview/azure-purview-datamap/azure/purview/datamap/_model_base.py",
+      "filename": "sdk/purview/azure-purview-datamap/azure/purview/datamap/*.py",
       "words": [
         "mros",
         "Nify",
