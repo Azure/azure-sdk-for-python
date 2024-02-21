@@ -213,7 +213,7 @@ class AIClient:
     def single_deployments(self) -> SingleDeploymentOperations:
         """A collection of single deployment-related operations.
 
-        :return: Single eployment operations
+        :return: Single deployment operations
         :rtype: SingleDeploymentOperations
         """
         return self._single_deployments
