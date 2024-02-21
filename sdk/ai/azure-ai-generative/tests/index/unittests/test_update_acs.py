@@ -25,14 +25,14 @@ class EmbeddingConfig:
 def test_acs_no_embeddings(acs_connection, acs_index_name):
     from azure.core.credentials import AzureKeyCredential
     test_acs_config = {
-        "endpoint": acs_connection["properties"]["target"],
+        "endpoint": acs_connection.target,
         "index_name": acs_index_name if acs_index_name is not None else f"azureml-rag-test-{uuid.uuid4()}",
         "api_version": "2021-04-30-Preview",
-        "credential": AzureKeyCredential(acs_connection["properties"]["credentials"]["key"]),
+        "credential": AzureKeyCredential(acs_connection.credentials.key),
         "connection_args": {
             "connection_type": "workspace_connection",
             "connection": {
-                "id": acs_connection["id"],
+                "id": acs_connection.id,
             },
         },
         "push_embeddings": "False"
@@ -40,7 +40,7 @@ def test_acs_no_embeddings(acs_connection, acs_index_name):
     yield test_acs_config
 
     logger.info(f"Deleting index: {test_acs_config['index_name']}")
-    index_client = SearchIndexClient(endpoint=acs_connection["properties"]["target"], credential=test_acs_config["credential"], api_version=test_acs_config["api_version"])
+    index_client = SearchIndexClient(endpoint=acs_connection.target, credential=test_acs_config["credential"], api_version=test_acs_config["api_version"])
     index_client.delete_index(test_acs_config["index_name"])
 
 
@@ -48,14 +48,14 @@ def test_acs_no_embeddings(acs_connection, acs_index_name):
 def test_acs_embeddings(acs_connection, keep_acs_index, acs_index_name):
     from azure.core.credentials import AzureKeyCredential
     test_acs_config = {
-        "endpoint": acs_connection["properties"]["target"],
+        "endpoint": acs_connection.target,
         "index_name": acs_index_name if acs_index_name is not None else f"azureml-rag-test-{uuid.uuid4()}",
         "api_version": "2023-07-01-preview",
-        "credential": AzureKeyCredential(acs_connection["properties"]["credentials"]["key"]),
+        "credential": AzureKeyCredential(acs_connection.credentials.key),
         "connection_args": {
             "connection_type": "workspace_connection",
             "connection": {
-                "id": acs_connection["id"],
+                "id": acs_connection.id,
             },
         }
     }
@@ -65,7 +65,7 @@ def test_acs_embeddings(acs_connection, keep_acs_index, acs_index_name):
         logger.info(f"Keeping index: {test_acs_config['index_name']}")
     else:
         logger.info(f"Deleting index: {test_acs_config['index_name']}")
-        index_client = SearchIndexClient(endpoint=acs_connection["properties"]["target"], credential=test_acs_config["credential"], api_version=test_acs_config["api_version"])
+        index_client = SearchIndexClient(endpoint=acs_connection.target, credential=test_acs_config["credential"], api_version=test_acs_config["api_version"])
         index_client.delete_index(test_acs_config["index_name"])
 
 
@@ -150,14 +150,14 @@ def run_acs_update(test_acs_config, test_data_dir, embedding_config=None):
 def test_free_acs_embeddings(free_tier_acs_connection, keep_acs_index, acs_index_name):
     from azure.core.credentials import AzureKeyCredential
     test_acs_config = {
-        "endpoint": free_tier_acs_connection["properties"]["target"],
+        "endpoint": free_tier_acs_connection.target,
         "index_name": acs_index_name if acs_index_name is not None else f"azureml-rag-test-{uuid.uuid4()}",
         "api_version": "2023-07-01-preview",
-        "credential": AzureKeyCredential(free_tier_acs_connection["properties"]["credentials"]["key"]),
+        "credential": AzureKeyCredential(free_tier_acs_connection.credentials.key),
         "connection_args": {
             "connection_type": "workspace_connection",
             "connection": {
-                "id": free_tier_acs_connection["id"],
+                "id": free_tier_acs_connection.id,
             },
         }
     }
@@ -167,7 +167,7 @@ def test_free_acs_embeddings(free_tier_acs_connection, keep_acs_index, acs_index
         logger.info(f"Keeping index: {test_acs_config['index_name']}")
     else:
         logger.info(f"Deleting index: {test_acs_config['index_name']}")
-        index_client = SearchIndexClient(endpoint=free_tier_acs_connection["properties"]["target"], credential=test_acs_config["credential"], api_version=test_acs_config["api_version"])
+        index_client = SearchIndexClient(endpoint=free_tier_acs_connection.target, credential=test_acs_config["credential"], api_version=test_acs_config["api_version"])
         index_client.delete_index(test_acs_config["index_name"])
 
 

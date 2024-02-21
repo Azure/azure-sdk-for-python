@@ -5,7 +5,9 @@ from pathlib import Path
 from typing import List
 
 import pytest
-from azure.ai.resources._index._utils.connections import connection_to_credential, get_metadata_from_connection
+from azure.ai.resources.client import AIClient
+from azure.core.exceptions import ResourceNotFoundError
+from azure.identity import AzureCliCredential, DefaultAzureCredential, InteractiveBrowserCredential
 
 logger = logging.getLogger(__name__)
 
@@ -87,41 +89,64 @@ def test_data_dir(test_dir):
     logger.info(f"test data directory is {test_data_dir}")
     return test_data_dir
 
-# TODO: Update to use WorkspaceConnections and MLClients
+
 @pytest.fixture(scope="session")
-def free_tier_acs_connection(azureml_workspace_v1) -> dict:
+def free_tier_acs_connection(ai_client) -> dict:
     """
     Retrieve ACS connection information.
-
     To register a new connection use azure.ai.ml.MLClient.connections.create
     or AI/ML Workspace UI.
     """
-    from azure.ai.resources._index._utils.connections import get_connection_by_name_v2
-
-    return get_connection_by_name_v2(azureml_workspace_v1, "free-teir-eastus")
+    return ai_client.connections.get("free-teir-eastus")
 
 @pytest.fixture(scope="session")
-def azureml_workspace_v1(subscription_id, resource_group, workspace_name, workspace_config_path):
-    from azureml.core import Workspace
-    from azureml.core.authentication import AzureCliAuthentication
+def azure_credentials():
+    try:
+        credential = AzureCliCredential(process_timeout=60)
+        # Check if given credential can get token successfully.
+        credential.get_token("https://management.azure.com/.default")
+    except Exception:
+        try:
+            credential = DefaultAzureCredential(process_timeout=60)
+            # Check if given credential can get token successfully.
+            credential.get_token("https://management.azure.com/.default")
+        except Exception:
+            credential = InteractiveBrowserCredential()
 
+    return credential
+
+@pytest.fixture(scope="session")
+def ai_client(azure_credentials, subscription_id, resource_group, workspace_name, workspace_config_path):
     if workspace_config_path is not None and len(workspace_config_path) > 0:
         logger.info(
-            f"🔃 Loading workspace from config file: {workspace_config_path}.")
-        return Workspace.from_config(path=workspace_config_path)
+            f"🔃 Loading Project details from config file: {workspace_config_path}.")
+        try:
+            return AIClient.from_config(credential=azure_credentials, path=workspace_config_path)
+        except Exception as e:
+            logger.warning(
+                f"Failed to load Project details from config file: {workspace_config_path}: {e}")
 
-    logger.info(f"🔃 Using AzureML workspace: {workspace_name}")
-    return Workspace(subscription_id, resource_group, workspace_name, auth=AzureCliAuthentication())
+    ai_client = AIClient(
+        subscription_id=subscription_id,
+        resource_group_name=resource_group,
+        ai_resource_name = workspace_name,
+        project_name=workspace_name,
+        credential=azure_credentials
+    )
+    logger.info(f"🔃 Using AIClient: {ai_client}")
+    return ai_client
 
-# TODO: Update to use WorkspaceConnections and MLClients
+
 @pytest.fixture(scope="session")
-def acs_connection(azureml_workspace_v1, acs_connection_name) -> dict:
+def acs_connection(ai_client, acs_connection_name):
     """
     Retrieve ACS connection information.
-
     To register a new connection use azure.ai.ml.MLClient.connections.create
     or AI/ML Workspace UI.
     """
-    from azure.ai.resources._index._utils.connections import get_connection_by_name_v2
-
-    return get_connection_by_name_v2(azureml_workspace_v1, acs_connection_name)
+    try:
+        return ai_client.connections.get(acs_connection_name)
+    except ResourceNotFoundError:
+        error = f"Azure Search connection {acs_connection_name} not found, create a new connection via UI or code (find this message in code)."
+        logger.error(error)
+        raise ValueError(error)

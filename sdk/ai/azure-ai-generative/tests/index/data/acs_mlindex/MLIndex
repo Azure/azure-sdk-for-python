@@ -25,6 +25,6 @@ index:
     metadata: meta_json_string
     title: title
     url: url
-  index: azureml-rag-test-e00867a5-23b4-4ac0-9ea4-4edc317f852d
+  index: azureml-rag-test-964a2fdb-6871-4d76-8ce3-57f3583f6fb7
   kind: acs
   semantic_configuration_name: azureml-default
