@@ -23,3 +23,12 @@ ALL_TEMPLATES = {
     "summarization": SUMMARIZATION_PATH,
     "search": SEARCH_PATH
 }
+
+CH_TEMPLATES_COLLECTION_KEY = set([
+    "adv_qa",
+    "adv_conversation",
+    "adv_summarization",
+    "adv_search",
+    "adv_rewrite",
+    "adv_content_gen_ungrounded",
+    "adv_content_gen_grounded"])

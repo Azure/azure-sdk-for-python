@@ -11,7 +11,7 @@ from .models import Model, PromptflowModel
 
 
 @dataclass
-class Deployment:
+class SingleDeployment:
     """
     A model deployment.
 
@@ -52,7 +52,7 @@ class Deployment:
 
 
     @classmethod
-    def _from_v2_endpoint_deployment(cls, endpoint: OnlineEndpoint, deployment: OnlineDeployment) -> "Deployment":
+    def _from_v2_endpoint_deployment(cls, endpoint: OnlineEndpoint, deployment: OnlineDeployment) -> "SingleDeployment":
         return cls(
             name=deployment.name,
             model=deployment.model,
