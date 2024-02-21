@@ -216,7 +216,7 @@ class Simulator:
         max_conversation_turns: int,
         parameters: List[dict] = [],
         jailbreak: bool = False,
-        api_call_retry_max_count: int = 3,
+        api_call_retry_limit: int = 3,
         api_call_retry_sleep_sec: int = 1,
         api_call_delay_sec: float = 0,
         concurrent_async_task: int = 3
@@ -233,8 +233,8 @@ class Simulator:
         :keyword jailbreak: If set to True, allows breaking out of the conversation flow defined by the template.
             Defaults to False.
         :paramtype jailbreak: bool, optional
-        :keyword api_call_retry_max_count: The maximum number of API call retries in case of errors. Defaults to 3.
-        :paramtype api_call_retry_max_count: int, optional
+        :keyword api_call_retry_limit: The maximum number of API call retries in case of errors. Defaults to 3.
+        :paramtype api_call_retry_limit: int, optional
         :keyword api_call_retry_sleep_sec: The time in seconds to wait between API call retries. Defaults to 1.
         :paramtype api_call_retry_sleep_sec: int, optional
         :keyword api_call_delay_sec: The time in seconds to wait between API calls. Defaults to 0.
@@ -287,7 +287,7 @@ class Simulator:
                             template=t,
                             parameters=p,
                             max_conversation_turns=max_conversation_turns,
-                            api_call_retry_max_count=api_call_retry_max_count,
+                            api_call_retry_limit=api_call_retry_limit,
                             api_call_delay_sec=api_call_delay_sec,
                             sem=semaphore,
                         )
@@ -303,7 +303,7 @@ class Simulator:
         template: "Template",
         max_conversation_turns: int,
         parameters: dict = {},
-        api_call_retry_max_count: int = 3,
+        api_call_retry_limit: int = 3,
         api_call_retry_sleep_sec: int = 1,
         api_call_delay_sec: float = 0,
         sem: "asyncio.Semaphore" = asyncio.Semaphore(3),
@@ -318,7 +318,7 @@ class Simulator:
                 the simulations. Defaults to an empty list.
             jailbreak (bool, optional): If set to True, allows breaking out of the conversation flow defined by the
                 template. Defaults to False.
-            api_call_retry_max_count (int, optional): The maximum number of API call retries in case of errors.
+            api_call_retry_limit (int, optional): The maximum number of API call retries in case of errors.
                 Defaults to 3.
             api_call_retry_sleep_sec (int, optional): The time in seconds to wait between API call retries. Defaults to 1.
             api_call_delay_sec (float, optional): The time in seconds to wait between API calls. Defaults to 0.
@@ -339,7 +339,7 @@ class Simulator:
         # simulate the conversation
 
         asyncHttpClient = AsyncHTTPClientWithRetry(
-            n_retry=api_call_retry_max_count,
+            n_retry=api_call_retry_limit,
             retry_timeout=api_call_retry_sleep_sec,
             logger=logging.getLogger(),
         )
@@ -437,7 +437,7 @@ class Simulator:
         max_conversation_turns: int,
         parameters: List[dict] = [],
         jailbreak: bool = False,
-        api_call_retry_max_count: int = 3,
+        api_call_retry_limit: int = 3,
         api_call_retry_sleep_sec: int = 1,
         api_call_delay_sec: float = 0,
         concurrent_async_task: int = 1,
@@ -448,7 +448,7 @@ class Simulator:
                 parameters=parameters,
                 max_conversation_turns=max_conversation_turns,
                 jailbreak=jailbreak,
-                api_call_retry_max_count=api_call_retry_max_count,
+                api_call_retry_limit=api_call_retry_limit,
                 api_call_retry_sleep_sec=api_call_retry_sleep_sec,
                 api_call_delay_sec=api_call_delay_sec,
                 concurrent_async_task=concurrent_async_task,
@@ -462,7 +462,7 @@ class Simulator:
         max_conversation_turns: int,
         parameters: List[dict] = [],
         jailbreak: bool = False,
-        api_call_retry_max_count: int = 3,
+        api_call_retry_limit: int = 3,
         api_call_retry_sleep_sec: int = 1,
         api_call_delay_sec: float = 0,
     ):
@@ -477,8 +477,8 @@ class Simulator:
         :type parameters: List[dict], optional
         :param jailbreak: A flag to determine if the simulation should continue when encountering API errors.
         :type jailbreak: bool, optional
-        :param api_call_retry_max_count: The maximum number of retries for API calls upon encountering an error.
-        :type api_call_retry_max_count: int, optional
+        :param api_call_retry_limit: The maximum number of retries for API calls upon encountering an error.
+        :type api_call_retry_limit: int, optional
         :param api_call_retry_sleep_sec: The number of seconds to wait between retry attempts of an API call.
         :type api_call_retry_sleep_sec: int, optional
         :param api_call_delay_sec: The number of seconds to wait before making a new API call to simulate conversation delay.
@@ -497,7 +497,7 @@ class Simulator:
                 max_conversation_turns,
                 parameters,
                 jailbreak,
-                api_call_retry_max_count,
+                api_call_retry_limit,
                 api_call_retry_sleep_sec,
                 api_call_delay_sec,
                 concurrent_async_task,
