@@ -277,14 +277,12 @@ def monitor_with_activity(
         def wrapper(*args, **kwargs):
             tracer = ops_logger.package_tracer if ops_logger else None
             if tracer:
-                print("using tracer")
                 with tracer.span(name=f.__name__):
                     with log_activity(
                         ops_logger.package_logger, activity_name or f.__name__, activity_type, custom_dimensions
                     ):
                         return f(*args, **kwargs)
             else:
-                print("No tracer")
                 with log_activity(
                     ops_logger.package_logger, activity_name or f.__name__, activity_type, custom_dimensions
                 ):

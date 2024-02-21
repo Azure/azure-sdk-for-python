@@ -1,13 +1,13 @@
 import logging
-from mock import patch
-import pytest
 
+import pytest
+from mock import patch
 from opencensus.ext.azure.log_exporter import AzureLogHandler
 
 from azure.ai.ml._telemetry import AML_INTERNAL_LOGGER_NAMESPACE, get_appinsights_log_handler
-from azure.ai.ml._utils._logger_utils import OpsLogger, initialize_logger_info
 from azure.ai.ml._telemetry.logging_handler import AzureMLSDKLogHandler
 from azure.ai.ml._user_agent import USER_AGENT
+from azure.ai.ml._utils._logger_utils import OpsLogger, initialize_logger_info
 
 
 @pytest.mark.unittest
@@ -29,11 +29,11 @@ class TestLoggerUtils:
 class TestLoggingHandler:
     def test_logging_enabled(self) -> None:
         with patch("azure.ai.ml._telemetry.logging_handler.in_jupyter_notebook", return_value=False):
-            handler = get_appinsights_log_handler(user_agent=USER_AGENT)
+            handler, _ = get_appinsights_log_handler(user_agent=USER_AGENT)
             assert isinstance(handler, logging.NullHandler)
 
         with patch("azure.ai.ml._telemetry.logging_handler.in_jupyter_notebook", return_value=True):
-            handler = get_appinsights_log_handler(user_agent=USER_AGENT)
+            handler, _ = get_appinsights_log_handler(user_agent=USER_AGENT)
             assert isinstance(handler, AzureLogHandler)
             assert isinstance(handler, AzureMLSDKLogHandler)
 
