@@ -269,12 +269,11 @@ class KeyVaultRSAPublicKey(RSAPublicKey):
 
         :returns: The signed data.
         :rtype: bytes
-        :raises:
-            NotImplementedError if the local version of `cryptography` doesn't support this method.
-            :class:`~cryptography.exceptions.InvalidSignature` if the signature is invalid.
-            :class:`~cryptography.exceptions.UnsupportedAlgorithm` if the signature data recovery is not supported with
+        :raises NotImplementedError: if the local version of `cryptography` doesn't support this method.
+        :raises ~cryptography.exceptions.InvalidSignature: if the signature is invalid.
+        :raises ~cryptography.exceptions.UnsupportedAlgorithm: if the signature data recovery is not supported with
             the provided `padding` type.
-            ValueError if the client is unable to obtain the key material from Key Vault.
+        :raises ValueError: if the client is unable to obtain the key material from Key Vault.
         """
         if self._key is None:
             raise ValueError(
