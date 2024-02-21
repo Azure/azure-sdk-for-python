@@ -26,9 +26,6 @@ class EvaluationMetrics:
     GPT_FLUENCY = "gpt_fluency"
     GPT_SIMILARITY = "gpt_similarity"
     F1_SCORE = "f1_score"
-    EXACT_MATCH = "exact_match"
-    ADA_SIMILARITY = "ada_similarity"
-    BERTSCORE = "bertscore"
     GPT_RETRIEVAL_SCORE = "gpt_retrieval_score"
     # These are temporary until names are fixed in metrics package
     RETRIEVAL_SCORE = "retrieval_score"
@@ -53,10 +50,6 @@ class QaMetrics:
         EvaluationMetrics.GPT_FLUENCY,
         EvaluationMetrics.GPT_SIMILARITY,
         EvaluationMetrics.F1_SCORE,
-        EvaluationMetrics.EXACT_MATCH,
-        EvaluationMetrics.ADA_SIMILARITY,
-        EvaluationMetrics.BERTSCORE,
-        EvaluationMetrics.BERTSCORE,
         EvaluationMetrics.HATE_FAIRNESS,
         EvaluationMetrics.VIOLENCE,
         EvaluationMetrics.SELF_HARM,
@@ -71,6 +64,8 @@ class ChatMetrics:
         EvaluationMetrics.GPT_RETRIEVAL_SCORE
     ]
     SUPPORTED_LIST = [
+        EvaluationMetrics.GPT_COHERENCE,
+        EvaluationMetrics.GPT_FLUENCY,
         EvaluationMetrics.GPT_GROUNDEDNESS,
         EvaluationMetrics.GPT_RELEVANCE,
         EvaluationMetrics.GPT_RETRIEVAL_SCORE,
