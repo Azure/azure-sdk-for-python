@@ -137,8 +137,8 @@ class AsyncPipeline(AsyncContextManager["AsyncPipeline"], Generic[HTTPRequestTyp
                 self._impl_policies.append(policy)
             elif isinstance(policy, SansIOHTTPPolicy):
                 self._impl_policies.append(_SansIOAsyncHTTPPolicyRunner(policy))
-            elif policy:
-                self._impl_policies.append(policy)
+            else:
+                raise TypeError("Unsupported policy type: {}".format(type(policy)))
         for index in range(len(self._impl_policies) - 1):
             self._impl_policies[index].next = self._impl_policies[index + 1]
         if self._impl_policies:

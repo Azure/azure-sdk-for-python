@@ -57,3 +57,4 @@ class AsyncHTTPPolicy(Generic[HTTPRequestType, AsyncHTTPResponseType], Protocol)
         :return: The pipeline response object.
         :rtype: ~corehttp.runtime.pipeline.PipelineResponse
         """
+        ...
