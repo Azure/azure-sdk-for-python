@@ -67,3 +67,5 @@ yarl
 azure-identity
 openai
 wrapt
+mmh3
+fsspec
