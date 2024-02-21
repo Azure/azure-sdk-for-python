@@ -269,7 +269,7 @@ class MLClient:
 
         user_agent = kwargs.get("user_agent", None)
 
-        app_insights_handler = get_appinsights_log_handler(
+        app_insights_handler: Tuple = get_appinsights_log_handler(
             user_agent,
             **{"properties": properties},
             enable_telemetry=self._operation_config.enable_telemetry,

@@ -252,6 +252,7 @@ def monitor_with_activity(
     logger,
     activity_name,
     activity_type=ActivityType.INTERNALCALL,
+    ops_logger=None,
     custom_dimensions=None,
 ):
     """Add a wrapper for monitoring an activity (code).
@@ -260,8 +261,8 @@ def monitor_with_activity(
     To monitor, use the ``@monitor_with_activity`` decorator. As an alternative, you can also wrap the
     logical block of code with the ``log_activity()`` method.
 
-    :param logger: The logger adapter.
-    :type logger: logging.LoggerAdapter
+    :param ops_logger: The operations logging class, containing loggers and tracer for the package and module
+    :type ops_logger: ~azure.ai.ml._utils._logger_utils.OpsLogger
     :param activity_name: The name of the activity. The name should be unique per the wrapped logical code block.
     :type activity_name: str
     :param activity_type: One of PUBLICAPI, INTERNALCALL, or CLIENTPROXY which represent an incoming API call,
@@ -275,8 +276,16 @@ def monitor_with_activity(
     def monitor(f):
         @functools.wraps(f)
         def wrapper(*args, **kwargs):
-            with log_activity(logger, activity_name or f.__name__, activity_type, custom_dimensions):
-                return f(*args, **kwargs)
+            tracer = ops_logger.package_tracer if ops_logger else None
+            if tracer:
+                print("using tracer")
+                with tracer.span(name=f.__name__):
+                    with log_activity(logger, activity_name or f.__name__, activity_type, custom_dimensions):
+                        return f(*args, **kwargs)
+            else:
+                print("No tracer")
+                with log_activity(logger, activity_name or f.__name__, activity_type, custom_dimensions):
+                    return f(*args, **kwargs)
 
         return wrapper
 

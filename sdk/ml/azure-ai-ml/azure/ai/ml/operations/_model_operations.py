@@ -279,7 +279,7 @@ class ModelOperations(_ScopeDependentOperations):
             )
         )
 
-    @monitor_with_activity(logger, "Model.Get", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Model.Get", ActivityType.PUBLICAPI, ops_logger=ops_logger)
     def get(self, name: str, version: Optional[str] = None, label: Optional[str] = None) -> Model:
         """Returns information about the specified model asset.
 
@@ -463,7 +463,7 @@ class ModelOperations(_ScopeDependentOperations):
             label=label,
         )
 
-    @monitor_with_activity(logger, "Model.List", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Model.List", ActivityType.PUBLICAPI, ops_logger=ops_logger)
     def list(
         self,
         name: Optional[str] = None,

@@ -13,7 +13,10 @@ import traceback
 from opencensus.ext.azure.common import utils
 from opencensus.ext.azure.common.protocol import Data, Envelope, ExceptionData, Message
 from opencensus.ext.azure.log_exporter import AzureLogHandler
+from opencensus.ext.azure.trace_exporter import AzureExporter
 from opencensus.trace import config_integration
+from opencensus.trace.samplers import ProbabilitySampler
+from opencensus.trace.tracer import Tracer
 
 from azure.ai.ml._user_agent import USER_AGENT
 
@@ -102,15 +105,15 @@ def get_appinsights_log_handler(
     :paramtype enable_telemetry: bool
     :keyword kwargs: Optional keyword arguments for adding additional information to messages.
     :paramtype kwargs: dict
-    :return: The logging handler.
-    :rtype: AzureMLSDKLogHandler
+    :return: The logging handler and tracer.
+    :rtype: Tuple[AzureMLSDKLogHandler, opencensus.trace.tracer.Tracer]
     """
     try:
         if instrumentation_key is None:
             instrumentation_key = INSTRUMENTATION_KEY
 
-        if not in_jupyter_notebook() or not enable_telemetry:
-            return logging.NullHandler()
+        # if not in_jupyter_notebook() or not enable_telemetry:
+        #     return logging.NullHandler()
 
         if not user_agent or not user_agent.lower() == USER_AGENT.lower():
             return logging.NullHandler()
@@ -135,10 +138,15 @@ def get_appinsights_log_handler(
         )
         current_logger.addHandler(handler)
 
-        return handler
+        tracer = Tracer(
+            exporter=AzureExporter(connection_string=f"InstrumentationKey={instrumentation_key}"),
+            sampler=ProbabilitySampler(1.0),
+        )
+
+        return handler, tracer
     except Exception:  # pylint: disable=broad-except
         # ignore any exceptions, telemetry collection errors shouldn't block an operation
-        return logging.NullHandler()
+        return logging.NullHandler(), None
 
 
 # cspell:ignore AzureMLSDKLogHandler
