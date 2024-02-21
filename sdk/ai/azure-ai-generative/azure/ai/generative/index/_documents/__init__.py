@@ -55,7 +55,12 @@ class DocumentChunksIterator(Iterator):
         self.span = None
 
     def __iter__(self) -> Iterator[ChunkedDocument]:
-        """Iterate over document chunks."""
+        """
+        Iterate over document chunks.
+
+        :return: The Iterator object of document chunks.
+        :rtype: Iterator[ChunkedDocument]
+        """
         if self.document_path_replacement_regex:
             document_path_replacement = self.document_path_replacement_regex
             url_replacement_match = re.compile(document_path_replacement["match_pattern"])
@@ -84,8 +89,13 @@ class DocumentChunksIterator(Iterator):
 
         return self
 
-    def __next__(self):
-        """Get the next document chunk.""."""
+    def __next__(self) -> ChunkedDocument:
+        """
+        Get the next document chunk.
+
+        :return: The next document chunk.
+        :rtype: ChunkedDocument
+        """
         if self.document_chunks_iterator is None:
             raise StopIteration
         # if self.span is None:
@@ -110,7 +120,16 @@ class DocumentChunksIterator(Iterator):
     def _document_statistics(  # pylint: disable=dangerous-default-value
         self, sources: Iterable[DocumentSource], allowed_extensions=SUPPORTED_EXTENSIONS
     ) -> Generator[DocumentSource, None, None]:
-        """Filter out sources with extensions not in allowed_extensions."""
+        """
+        Filter out sources with extensions not in allowed_extensions.
+
+        :keyword sources: An iterable of DocumentSource objects.
+        :paramtype sources: Iterable[DocumentSource]
+        :keyword allowed_extensions: A list of allowed file extensions.
+        :paramtype allowed_extensions: List[str]
+        :return: A Generator object of filtering out sources with extensions not in allowed_extensions.
+        :rtype: Generator[DocumentSource, None, None]
+        """
         if self.__document_statistics is None:
             self.__document_statistics = {  # type: ignore
                 "total_files": 0,
@@ -144,7 +163,14 @@ class DocumentChunksIterator(Iterator):
 
     @staticmethod
     def _infer_base_url_from_git(files_source: Union[str, Path]) -> Optional[str]:
-        """Try and infer base_url from git repo remote info if source is in a git repo."""
+        """
+        Try and infer base_url from git repo remote info if source is in a git repo.
+
+        :keyword files_source: The source directory of file.
+        :paramtype files_source: Union[str, Path]
+        :return: The inferred base URL.
+        :rtype: Optional[str]
+        """
         try:
             import git
 
