@@ -7,7 +7,7 @@
 - Add device.* to part A fields
     ([#34229](https://github.com/Azure/azure-sdk-for-python/pull/34229))
 - Add application.ver to part A fields
-    ([#34229](https://github.com/Azure/azure-sdk-for-python/pull/34229))
+    ([#34401](https://github.com/Azure/azure-sdk-for-python/pull/34401))
 
 ### Breaking Changes
 

@@ -202,7 +202,7 @@ def _populate_part_a_fields(resource: Resource):
             tags[ContextTagKeys.AI_DEVICE_OEM_NAME] = device_make # type: ignore
         if app_version:
             tags[ContextTagKeys.AI_APPLICATION_VER] = app_version # type: ignore
-        
+
     return tags
 
 # pylint: disable=W0622
