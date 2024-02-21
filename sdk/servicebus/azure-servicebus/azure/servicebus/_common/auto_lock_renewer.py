@@ -278,6 +278,9 @@ class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
                 "be lock-renewed.  (E.g. only messages received via receive() or the receiver iterator,"
                 "not using RECEIVE_AND_DELETE receive mode, and not returned from Peek)"
             )
+        
+        #automatically renew message lock
+        receiver.renew_message_lock(renewable)
 
         starttime = get_renewable_start_time(renewable)
 
