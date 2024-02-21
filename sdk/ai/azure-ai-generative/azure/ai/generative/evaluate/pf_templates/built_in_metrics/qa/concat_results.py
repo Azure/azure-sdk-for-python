@@ -23,7 +23,7 @@ def default_quality_results():
 # Adding type to arguments and return value will help the system show the types properly
 # Please update the function name/signature per need
 @tool
-def concat_results(quality_results: dict = None, safety_results: dict = None) -> dict:
+def concat_results(selected_metrics: dict, quality_results: dict = None, safety_results: dict = None) -> dict:
     if quality_results:
         concated_results = quality_results.copy()
     else:

@@ -2,11 +2,17 @@ from typing import List
 from promptflow import tool, log_metric
 import numpy as np
 from utils import filter_metrics
+from constants import RAIService
+
 
 @tool
 def aggregate_results(results: List[dict], selected_metrics: List[dict], thresholds: List[int]) -> dict:
-    selected_safety_metrics = filter_metrics(selected_metrics[0]["safety_metrics"])
-    selected_quality_metrics = filter_metrics(selected_metrics[0]["quality_metrics"])
+    if selected_metrics:
+        selected_safety_metrics = filter_metrics(selected_metrics[0]["safety_metrics"])
+        selected_quality_metrics = filter_metrics(selected_metrics[0]["quality_metrics"])
+    else:
+        selected_safety_metrics = []
+        selected_quality_metrics = []
 
     if thresholds != [] and thresholds is not None:
         threshold = np.float16(thresholds[0])

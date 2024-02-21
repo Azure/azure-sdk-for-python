@@ -312,6 +312,7 @@ nodes:
   inputs:
     quality_results: ${concat_quality_scores.output}
     safety_results: ${format_service_output.output}
+    selected_metrics: ${select_metrics.output}
   use_variants: false
 node_variants: {}
 $schema: https://azuremlschemas.azureedge.net/promptflow/latest/Flow.schema.json
