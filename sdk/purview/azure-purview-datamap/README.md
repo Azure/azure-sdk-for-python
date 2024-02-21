@@ -1,7 +1,5 @@
-
-
 # Azure Purview Datamap client library for Python
-<!-- write necessary description of service -->
+Microsoft Purview Data Map provides the foundation for data discovery and data governance. Microsoft Purview Data Map is a cloud native PaaS service that captures metadata about enterprise data present in analytics and operation systems on-premises and cloud. Azure PurviewDataMap client provides a set of APIs in Purview Data Map Data Plane. For a full list of APIs, please refer to [Data Map API](https://learn.microsoft.com/en-us/rest/api/purview/datamapdataplane/operation-groups?view=rest-purview-datamapdataplane-2023-09-01).
 
 ## Getting started
 
@@ -46,7 +44,7 @@ Use the returned token credential to authenticate the client:
 
 >>> client = DataMapClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
 >>> try:
-        <!-- write test code here -->
+        client.type_definition.get()
     except HttpResponseError as e:
         print('service responds error: {}'.format(e.response.json()))
 
