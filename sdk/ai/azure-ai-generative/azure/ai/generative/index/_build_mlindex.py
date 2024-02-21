@@ -9,6 +9,7 @@ import yaml  # type: ignore[import]
 from packaging import version
 
 from azure.ai.resources._utils._open_ai_utils import build_open_ai_protocol
+from azure.ai.resources.entities import AzureOpenAIModelConfiguration
 from azure.ai.resources.entities.mlindex import Index
 from azure.ai.resources.operations._acs_output_config import ACSOutputConfig
 from azure.ai.resources.operations._index_data_source import ACSSource, LocalSource
@@ -30,6 +31,7 @@ def build_index(
     chunk_prepend_summary: Optional[bool] = None,
     document_path_replacement_regex: Optional[Dict[str, str]] = None,
     embeddings_cache_path: Optional[str] = None,
+    model_config: Optional[Union[Dict[str, str], "AzureOpenAIModelConfiguration"]] = None,
 ) -> Index:
 
     """Generates embeddings locally and stores Index reference in memory
@@ -83,7 +85,22 @@ def build_index(
     connection_args = {}
     if "open_ai" in embeddings_model:
         import os
-        if aoai_connection_id:
+        if model_config:
+            api_key = None
+            api_base = None
+            if isinstance(model_config, Dict):
+                api_key = model_config.get("api_key", None)
+                api_base = model_config.get("azure_endpoint", None) if model_config.get("azure_endpoint", None) \
+                    else model_config.get("api_base", None)
+            elif isinstance(model_config, AzureOpenAIModelConfiguration):
+                api_key = model_config.api_key
+                api_base = model_config.api_base
+            connection_args = {
+                "connection_type": "credential_pass_in",
+                "connection": {"key": api_key},
+                "endpoint": api_base,
+            }
+        elif aoai_connection_id:
             aoai_connection = get_connection_by_id_v2(aoai_connection_id)
             connection_args = {
                 "connection_type": "workspace_connection",

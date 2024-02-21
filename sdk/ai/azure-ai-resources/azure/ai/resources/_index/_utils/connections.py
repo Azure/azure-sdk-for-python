@@ -81,6 +81,12 @@ def get_connection_credential(config, credential: Optional[TokenCredential] = No
 
         keyvault = ws.get_default_keyvault()
         connection_credential = AzureKeyCredential(keyvault.get_secret(config.get("connection", {}).get("key")))
+    elif config.get("connection_type", None) == "credential_pass_in":
+        key = config.get("connection", {}).get("key")
+        if key:
+            connection_credential = AzureKeyCredential(key)
+        else:
+            connection_credential = credential if credential is not None else DefaultAzureCredential(process_timeout=60)
     elif config.get("connection_type", None) == "workspace_connection":
         connection_id = config.get("connection", {}).get("id")
         connection = get_connection_by_id_v2(connection_id, credential=credential)
