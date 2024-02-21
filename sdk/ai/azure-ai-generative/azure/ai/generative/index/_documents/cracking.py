@@ -25,7 +25,20 @@ def files_to_document_source(
     base_url: Optional[str] = None,
     process_url: Optional[Callable[[str], str]] = None,
 ) -> Iterator[DocumentSource]:
-    """Convert files to DocumentSource."""
+    """
+    Convert files to DocumentSource.
+
+    :keyword files_source: The source directory containing the files or a specific file.
+    :paramtype files_source: Union[str, Path]
+    :keyword glob: The glob pattern to match files within the source directory.
+    :paramtype glob: str
+    :keyword base_url: The base URL to prepend to each file's path.
+    :paramtype base_url: Optional[str]
+    :keyword process_url: A function to process the URL before use.
+    :paramtype process_url: Optional[Callable[[str], str]]
+    :return: A DocumentSource object representing a file.
+    :rtype: Iterator[DocumentSource]
+    """
     file_source_path = Path(files_source)
     if file_source_path.is_file():
         url: str = base_url  # type: ignore[assignment]
@@ -50,13 +63,27 @@ class BaseDocumentLoader(ABC):
     """Base class for document loaders."""
 
     def __init__(self, file: IO, document_source: DocumentSource, metadata: dict):
-        """Initialize loader."""
+        """
+        Initialize loader.
+
+        :keyword file: The file object representing the document.
+        :paramtype file: IO
+        :keyword document_source: The source of the document.
+        :paramtype document_source: DocumentSource
+        :keyword metadata: Metadata associated with the document.
+        :paramtype metadata: dict
+        """
         self.file = file
         self.document_source = document_source
         self.metadata = metadata
 
     def load_chunked_document(self) -> ChunkedDocument:
-        """Load file contents into ChunkedDocument."""
+        """
+        Load file contents into ChunkedDocument.
+
+        :return: A ChunkedDocument object representing file contents.
+        :rtype: ChunkedDocument
+        """
         if "source" in self.metadata:
             if "title" not in self.metadata["source"]:
                 self.metadata["source"]["title"] = Path(self.document_source.filename).name
@@ -67,23 +94,43 @@ class BaseDocumentLoader(ABC):
 
     @classmethod
     def file_io_mode(cls) -> str:
-        """Return the file io mode."""
+        """
+        Return the file io mode.
+
+        :return: The file io mode.
+        :rtype: str
+        """
         return "r"
 
     @abstractmethod
     def file_extensions(self) -> List[str]:
-        """Return the file extensions of the file types to be loaded."""
+        """
+        Return the file extensions of the file types to be loaded.
+
+        :return: The file extensions of the file types to be loaded.
+        :rtype: List[str]
+        """
 
     @abstractmethod
     def load(self) -> List[Document]:
-        """Load file contents into Document(s)."""
+        """
+        Load file contents into Document(s).
+
+        :return: A list of Document object representing file contents.
+        :rtype: List[Document]
+        """
 
 
 class TextFileIOLoader(BaseDocumentLoader):
     """Load text files."""
 
     def load(self) -> List[Document]:
-        """Load file contents into Document."""
+        """
+        Load file contents into Document.
+
+        :return: A list of Document object representing file contents.
+        :rtype: List[Document]
+        """
         try:
             text = self.file.read().decode()
         except UnicodeDecodeError:
@@ -100,11 +147,21 @@ class TextFileIOLoader(BaseDocumentLoader):
 
     @classmethod
     def file_io_mode(cls) -> str:
-        """Return the file io mode."""
+        """
+        Return the file io mode.
+
+        :return: The file io mode.
+        :rtype: str
+        """
         return "rb"
 
     def file_extensions(self) -> List[str]:
-        """Return the file extensions of the file types to be loaded."""
+        """
+        Return the file extensions of the file types to be loaded.
+
+        :return: The file extensions of the file types to be loaded.
+        :rtype: List[str]
+        """
         return [".txt", ".md", ".py"]
 
 
@@ -114,14 +171,30 @@ class UnstructuredHTMLFileIOLoader(UnstructuredFileIOLoader, BaseDocumentLoader)
     def __init__(
         self, file: IO, document_source: DocumentSource, metadata: dict, mode="single", **unstructured_kwargs: Any
     ):
-        """Initialize a text file loader."""
+        """
+        Initialize a text file loader.
+
+        :keyword file: The file to load.
+        :paramtype file: IO
+        :keyword document_source: The source of the document.
+        :paramtype document_source: DocumentSource
+        :keyword metadata: Metadata associated with the document.
+        :paramtype metadata: dict
+        :keyword mode: The mode of loading.
+        :paramtype mode: str
+        """
         self.metadata = metadata
         self.document_source = document_source
         super().__init__(file=file, mode=mode, **unstructured_kwargs)  # type: ignore[call-arg]
         # TODO: Bug 2878420
 
     def load(self) -> List[Document]:
-        """Load file contents into Documents."""
+        """
+        Load file contents into Documents.
+
+        :return: A list of Document object representing file contents.
+        :rtype: List[Document]
+        """
         docs = super().load()  # type: ignore[safe-super]
         # TODO: Bug 2878421
         # TODO: Extract html file title and add to metadata
@@ -129,11 +202,21 @@ class UnstructuredHTMLFileIOLoader(UnstructuredFileIOLoader, BaseDocumentLoader)
 
     @classmethod
     def file_io_mode(cls) -> str:
-        """Return the file io mode."""
+        """
+        Return the file io mode.
+
+        :return: The file io mode.
+        :rtype: str
+        """
         return "rb"
 
     def file_extensions(self) -> List[str]:
-        """Return the file extensions of the file types to be loaded."""
+        """
+        Return the file extensions of the file types to be loaded.
+
+        :return: The file extensions of the file types to be loaded.
+        :rtype: List[str]
+        """
         return [".html", ".htm"]
 
     def _get_elements(self) -> List:
@@ -149,7 +232,12 @@ class PDFFileLoader(BaseDocumentLoader):
     """Load PDF files."""
 
     def load_chunked_document(self) -> ChunkedDocument:
-        """Load file contents into ChunkedDocument."""
+        """
+        Load file contents into ChunkedDocument.
+
+        :return: A ChunkedDocument object representing file contents.
+        :rtype: ChunkedDocument
+        """
         pages = self.load()
         chunk_prefix = f"Title: {Path(self.document_source.filename).name}"
         return ChunkedDocument(
@@ -157,7 +245,12 @@ class PDFFileLoader(BaseDocumentLoader):
         )
 
     def load(self) -> List[Document]:
-        """Load file contents into Document(s)."""
+        """
+        Load file contents into Document(s).
+
+        :return: A list of Document object representing file contents.
+        :rtype: List[Document]
+        """
         try:
             from pypdf import PdfReader
         except ImportError:
@@ -181,16 +274,31 @@ class PDFFileLoader(BaseDocumentLoader):
 
     @classmethod
     def file_io_mode(cls) -> str:
-        """Return the file io mode."""
+        """
+        Return the file io mode.
+
+        :return: The file io mode.
+        :rtype: str
+        """
         return "rb"
 
     def file_extensions(self) -> List[str]:
-        """Return the file extensions of the file types to be loaded."""
+        """
+        Return the file extensions of the file types to be loaded.
+
+        :return: The file extensions of the file types to be loaded.
+        :rtype: List[str]
+        """
         return [".pdf"]
 
     @staticmethod
     def fallback_loader() -> Type[BaseDocumentLoader]:
-        """Return a fallback loader for this loader."""
+        """
+        Return a fallback loader for this loader.
+
+        :return: A fallback loader for this loader.
+        :rtype: Type[BaseDocumentLoader]
+        """
         return TikaLoader
 
 
@@ -198,7 +306,12 @@ class TikaLoader(BaseDocumentLoader):
     """Load various unstructured files formats using Apache Tika."""
 
     def load_chunked_document(self) -> ChunkedDocument:
-        """Load file contents into ChunkedDocument."""
+        """
+        Load file contents into ChunkedDocument.
+
+        :return: A ChunkedDocument object representing file contents.
+        :rtype: ChunkedDocument
+        """
         doc = self.load()
         chunk_prefix = f"Title: {Path(self.document_source.filename).name}"
         return ChunkedDocument(
@@ -206,7 +319,12 @@ class TikaLoader(BaseDocumentLoader):
         )
 
     def load(self) -> List[Document]:
-        """Load file content into Document(s)."""
+        """
+        Load file content into Document(s).
+
+        :return: A list of Document object representing file contents.
+        :rtype: List[Document]
+        """
         from tika import parser
 
         parsed = parser.from_file(self.file)
@@ -225,16 +343,35 @@ class TikaLoader(BaseDocumentLoader):
 
     @classmethod
     def file_io_mode(cls) -> str:
-        """Return the file io mode."""
+        """
+        Return the file io mode.
+
+        :return: The file io mode.
+        :rtype: str
+        """
         return "rb"
 
     def file_extensions(self) -> List[str]:
-        """Return the file extensions of the file types to be loaded."""
+        """
+        Return the file extensions of the file types to be loaded.
+
+        :return: The file extensions of the file types to be loaded.
+        :rtype: List[str]
+        """
         return [".ppt", ".pptx", ".doc", ".docx", ".xls", ".xlsx"]
 
 
 def extract_text_document_title(text: str, file_name: str) -> Tuple[str, str]:
-    """Extract a title from a text document."""
+    """
+    Extract a title from a text document.
+
+    :keyword text: The content of the text document.
+    :paramtype text: str
+    :keyword file_name: The name of the file.
+    :paramtype file_name: str
+    :return: A tuple containing the original title extracted and the cleaned title.
+    :rtype: Tuple[str, str]
+    """
     file_extension = Path(file_name).suffix
     title: Any = None
     if file_extension == ".md":
@@ -320,10 +457,17 @@ file_extension_loaders_dict = {
 SUPPORTED_EXTENSIONS = list(file_extension_loaders_dict.keys())
 
 
-def crack_documents(
-    sources: Iterator[DocumentSource], file_extension_loaders=None
-) -> Iterator[ChunkedDocument]:
-    """Crack documents into chunks."""
+def crack_documents(sources: Iterator[DocumentSource], file_extension_loaders=None) -> Iterator[ChunkedDocument]:
+    """
+    Crack documents into chunks.
+
+    :keyword sources: An iterator over document sources.
+    :paramtype sources: Iterator[DocumentSource]
+    :keyword file_extension_loaders: A dictionary mapping file extensions to loader classes.
+    :paramtype file_extension_loaders: Optional[dict]
+    :return: An iterator over chunked documents.
+    :rtype: Iterator[ChunkedDocument]
+    """
     if file_extension_loaders is None:
         file_extension_loaders = file_extension_loaders_dict
     total_time: float = 0.0
