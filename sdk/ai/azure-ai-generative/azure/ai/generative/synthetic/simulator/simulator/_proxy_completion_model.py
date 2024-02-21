@@ -149,7 +149,7 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
 
                     time_taken = time.time() - time_start
 
-                    parsed_response = self._parse_response(
+                    parsed_response = self._parse_response(  # type: ignore[call-arg]
                         response_data, request_data=request_data
                     )
                 else:
