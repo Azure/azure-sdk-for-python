@@ -69,7 +69,6 @@ class NotificationMessagesClient(NotificationMessagesClientGenerated):
         """
         endpoint, access_key = parse_connection_str(conn_str)
         return cls(endpoint, AzureKeyCredential(key=access_key), **kwargs)
-    
     @classmethod
     def from_token_credentials(cls, endpoint: str, **kwargs: Any) -> "NotificationMessagesClient":
         """Create NotificationMessagesClient from an endpoint and TokenCredentials.

@@ -529,7 +529,6 @@ class MessageTemplateClientOperationsMixin(
         error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
-            
                 _request = build_message_template_list_templates_request(
                     channel_id=channel_id,
                     maxpagesize=maxpagesize,

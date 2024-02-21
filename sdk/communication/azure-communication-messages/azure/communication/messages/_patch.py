@@ -15,7 +15,6 @@ from urllib.parse import urlparse
 from azure.core.credentials import TokenCredential, AzureKeyCredential
 from azure.identity import DefaultAzureCredential
 from ._shared.utils import parse_connection_str
-from ._shared.policy import HMACCredentialsPolicy
 from ._client import (
     NotificationMessagesClient as NotificationMessagesClientGenerated,
     MessageTemplateClient as MessageTemplateClientGenerated,
@@ -123,7 +122,11 @@ class MessageTemplateClient(MessageTemplateClientGenerated):
     @classmethod
     def from_token_credentials(cls, endpoint: str, **kwargs: Any) -> "MessageTemplateClient":
         """Create MessageTemplateClient from an endpoint and TokenCredentials.
-        
+        :param endpoint: The registration ID of the channel. Required.
+        :type endpoint: str
+        :return: instance of MessageTemplateClient
+        :rtype:
+         ~azure.communication.messages.messagetemplateclient
         """
         return cls(endpoint, credential=DefaultAzureCredential(), **kwargs)
     
