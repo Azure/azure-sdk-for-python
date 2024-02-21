@@ -34,15 +34,30 @@ class ChunkedDocument:
 
     @property
     def page_content(self) -> str:
-        """Get the page content of the chunked document."""
+        """
+        Get the page content of the chunked document.
+
+        :return: The page content of the chunked document.
+        :rtype: str
+        """
         return "\n\n".join([chunk.page_content for chunk in self.chunks])
 
     def get_metadata(self) -> dict:
-        """Get the metadata of the chunked document."""
+        """
+        Get the metadata of the chunked document.
+
+        :return: The metadata of the chunked document.
+        :rtype: dict
+        """
         return self.metadata
 
     def flatten(self) -> List[Document]:
-        """Flatten the chunked document."""
+        """
+        Flatten the chunked document.
+
+        :return: The flatten chunked document.
+        :rtype: List[Document]
+        """
         chunks = []
         for i, chunk in enumerate(self.chunks):
             chunk.metadata["source"]["chunk_id"] = str(i)
@@ -58,7 +73,16 @@ def _init_nltk():
 
 
 def get_langchain_splitter(file_extension: str, arguments: dict) -> TextSplitter:
-    """Get a text splitter for a given file extension."""
+    """
+    Get a text splitter for a given file extension.
+
+    :keyword file_extension: The given file extension.
+    :paramtype file_extension: str
+    :keyword arguments: The arguments of getting a text splitter.
+    :paramtype arguments: dict
+    :return: A text splitter for a given file extension.
+    :rtype: TextSplitter
+    """
     use_nltk = False
     if "use_nltk" in arguments:
         use_nltk = arguments["use_nltk"] is True
@@ -158,7 +182,18 @@ file_extension_splitters_dict = {
 def split_documents(  # pylint: disable=too-many-statements
     documents: Iterable[ChunkedDocument], splitter_args: dict, file_extension_splitters=None
 ) -> Iterator[ChunkedDocument]:
-    """Split documents into chunks."""
+    """
+    Split documents into chunks.
+
+    :keyword documents: The documents to be split.
+    :paramtype documents: Iterable[ChunkedDocument]
+    :keyword splitter_args: The splitter arguments to be used.
+    :paramtype splitter_args: dict
+    :keyword file_extension_splitters: The file extension splitters to be used.
+    :paramtype file_extension_splitters: dict
+    :return: Documents chunks.
+    :rtype: Iterator[ChunkedDocument]
+    """
     if file_extension_splitters is None:
         file_extension_splitters = file_extension_splitters_dict
     total_time: float = 0.0
@@ -271,7 +306,12 @@ class MarkdownBlock:
 
     @property
     def header_level(self) -> int:
-        """Get the header level of the block."""
+        """
+        Get the header level of the block.
+
+        :return: The header level of the block.
+        :rtype: int
+        """
         if self.header is None:
             return 0
         return self.header.count("#", 0, self.header.find(" "))
@@ -281,7 +321,14 @@ class MarkdownHeaderSplitter(TextSplitter):
     """Split text by markdown headers."""
 
     def __init__(self, remove_hyperlinks: bool = True, remove_images: bool = True, **kwargs: Any):
-        """Initialize Markdown Header Splitter."""
+        """
+        Initialize Markdown Header Splitter.
+
+        :keyword remove_hyperlinks: Remove hyperlinks or not.
+        :paramtype remove_hyperlinks: bool
+        :keyword remove_images: Remove images or not.
+        :paramtype remove_images: bool
+        """
         from azure.ai.resources._index._langchain.vendor.text_splitter import TokenTextSplitter
 
         self._remove_hyperlinks = remove_hyperlinks
@@ -291,14 +338,30 @@ class MarkdownHeaderSplitter(TextSplitter):
         super().__init__(**kwargs)
 
     def split_text(self, text: str) -> List[str]:
-        """Split text into multiple components."""
+        """
+        Split text into multiple components.
+
+        :keyword text: Text to be split.
+        :paramtype text: str
+        :return: Multiple text components.
+        :rtype: List[str]
+        """
         blocks = self.get_blocks(text)
         return [block.content for block in blocks]
 
     def create_documents(
         self, texts: List[str], metadatas: Optional[List[dict]] = None
     ) -> List[StaticDocument]:  # type: ignore[override]
-        """Create documents from a list of texts."""
+        """
+        Create documents from a list of texts.
+
+        :keyword texts: A list of texts.
+        :paramtype texts: List[str]
+        :keyword metadatas: Metadatas of creating documents.
+        :paramtype metadatas: Optional[List[dict]]
+        :return: Created Documents.
+        :rtype: List[StaticDocument]
+        """
         _metadatas = metadatas or [{}] * len(texts)
         documents = []
 
@@ -339,7 +402,14 @@ class MarkdownHeaderSplitter(TextSplitter):
         return documents
 
     def get_blocks(self, markdown_text: str) -> List[MarkdownBlock]:
-        """Parse blocks from markdown text."""
+        """
+        Parse blocks from markdown text.
+
+        :keyword markdown_text: Markdown text being parsed.
+        :paramtype markdown_text: str
+        :return: Parsed blocks.
+        :rtype: List[MarkdownBlock]
+        """
         blocks = re.split(r"(^#+\s.*)", markdown_text, flags=re.MULTILINE)
         blocks = [b for b in blocks if b.strip()]
 

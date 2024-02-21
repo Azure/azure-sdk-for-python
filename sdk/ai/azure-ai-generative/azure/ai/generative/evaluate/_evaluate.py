@@ -85,9 +85,14 @@ def _get_metric_handler_class(
     return handler
 
 
-def _log_metrics(run_id, metrics):
+def _log_metrics(run_id: str, metrics: Dict):
     """
     Helper method to log metrics into specified run.
+
+    :keyword run_id: The specified run id.
+    :paramtype run_id: str
+    :keyword metrics: The metrics about to be logged.
+    :paramtype metrics: Dict
     """
     client = mlflow.tracking.MlflowClient()
     timestamp = int(time.time() * 1000)

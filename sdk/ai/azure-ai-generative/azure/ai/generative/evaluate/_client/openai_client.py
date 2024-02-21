@@ -5,8 +5,6 @@ import asyncio
 import logging
 from typing import Any, Dict, Optional
 
-import requests
-
 from openai import AsyncAzureOpenAI
 from openai.types.chat.chat_completion import ChatCompletion
 
@@ -49,7 +47,7 @@ class AzureOpenAIClient:  # pylint: disable=client-accepts-api-version-keyword
                     seed=0,
                 )
                 return result
-            except requests.exceptions.HTTPError as ex:
+            except TimeoutError as ex:
                 LOGGER.debug("Failed to call llm with exception : %s", str(ex))
                 return ex
 

@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 import json
 import logging
+from typing import Union
 
 
 LOGGER = logging.getLogger(__name__)
@@ -10,9 +11,12 @@ LOGGER = logging.getLogger(__name__)
 
 class JsonParser(object):
     @staticmethod
-    def parse(value):
+    def parse(value: Union[str, bytes, bytearray]):
         """
         Parse input value as json. Returns empty dict in case value cannot be parsed as valid json
+
+        :keyword value: Value to be parse.
+        :paramtype value: Union[str, bytes, bytearray]
         """
         value_as_json = None
         try:

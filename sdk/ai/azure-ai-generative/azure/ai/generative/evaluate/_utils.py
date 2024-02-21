@@ -183,9 +183,14 @@ def _get_ai_studio_url(tracking_uri: str, evaluation_id: str):
     return studio_url
 
 
-def _copy_artifact(source, destination):
+def _copy_artifact(source: str, destination: str):
     """
     Copies files from source to destination.If destination does not exists creates it.
+
+    :keyword source: The source path of copied files.
+    :paramtype source: str
+    :keyword destination: The destination path of copied files.
+    :paramtype destination: str
     """
 
     pathlib.Path(destination).mkdir(exist_ok=True, parents=True)

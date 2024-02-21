@@ -124,33 +124,63 @@ class MLIndex:
 
     @property
     def name(self) -> str:
-        """Returns the name of the MLIndex."""
+        """
+        Returns the name of the MLIndex.
+
+        :return: The name of the MLIndex.
+        :rtype: str
+        """
         return self.index_config.get("name", "")
 
     @name.setter
     def name(self, value: str):
-        """Sets the name of the MLIndex."""
+        """
+        Sets the name of the MLIndex.
+
+        :keyword value: The name of the MLIndex.
+        :paramtype value: str
+        """
         self.index_config["name"] = value
 
     @property
     def description(self) -> str:
-        """Returns the description of the MLIndex."""
+        """
+        Returns the description of the MLIndex.
+
+        :return: The description of the MLIndex.
+        :rtype: str
+        """
         return self.index_config.get("description", "")
 
     @description.setter
     def description(self, value: str):
-        """Sets the description of the MLIndex."""
+        """
+        Sets the description of the MLIndex.
+
+        :keyword value: The name of the MLIndex.
+        :paramtype value: str
+        """
         self.index_config["description"] = value
 
     def get_langchain_embeddings(self, credential: Optional[TokenCredential] = None):
-        """Get the LangChainEmbeddings from the MLIndex."""
+        """
+        Get the LangChainEmbeddings from the MLIndex.
+
+        :keyword credential: The credential used to get the LangChainEmbeddings from the MLIndex.
+        :paramtype credential: Optional[TokenCredential]
+        """
         embeddings = EmbeddingsContainer.from_metadata(self.embeddings_config.copy())
 
         return embeddings.as_langchain_embeddings(credential=credential)
 
     # pylint: disable=too-many-locals, too-many-branches, too-many-statements
     def as_langchain_vectorstore(self, credential: Optional[TokenCredential] = None):
-        """Converts MLIndex to a retriever object that can be used with langchain, may download files."""
+        """
+        Converts MLIndex to a retriever object that can be used with langchain, may download files.
+
+        :keyword credential: The credential used to converts MLIndex to a retriever object.
+        :paramtype credential: Optional[TokenCredential]
+        """
         with track_activity(logger, "MLIndex.as_langchain_vectorstore") as activity_logger:
             index_kind = self.index_config.get("kind", "none")
 
@@ -348,7 +378,12 @@ class MLIndex:
             raise ValueError(f"Unknown index kind: {index_kind}")
 
     def as_langchain_retriever(self, credential: Optional[TokenCredential] = None, **kwargs):
-        """Converts MLIndex to a retriever object that can be used with langchain, may download files."""
+        """
+        Converts MLIndex to a retriever object that can be used with langchain, may download files.
+
+        :keyword credential: The credential used to converts MLIndex to a retriever object.
+        :paramtype credential: Optional[TokenCredential]
+        """
         index_kind = self.index_config.get("kind", None)
         if index_kind == "acs":
             if self.index_config.get("field_mapping", {}).get("embedding", None) is None:
@@ -382,6 +417,9 @@ class MLIndex:
 
         An azure.search.documents.SearchClient for acs indexes or
         an azure.ai.resources._index._indexes.indexFaissAndDocStore for faiss indexes.
+
+        :keyword credential: The credential used to converts MLIndex config into a client for the underlying Index.
+        :paramtype credential: Optional[TokenCredential]
         """
         index_kind = self.index_config.get("kind", None)
         if index_kind == "acs":
@@ -419,7 +457,12 @@ class MLIndex:
         raise ValueError(f"Unknown index kind: {index_kind}")
 
     def __repr__(self):
-        """Returns a string representation of the MLIndex object."""
+        """
+        Returns a string representation of the MLIndex object.
+
+        :return: A string representation of the MLIndex object.
+        :rtype: str
+        """
         return yaml.dump(
             {
                 "index": self.index_config,
@@ -436,11 +479,14 @@ class MLIndex:
         """
         Override the connections used by the MLIndex.
 
-        Args:
-        ----
-            embedding_connection: Optional connection to use for embeddings model
-            index_connection: Optional connection to use for index
-            credential: Optional credential to use when resolving connection information
+        :keyword embedding_connection: Optional connection to use for embeddings model.
+        :paramtype embedding_connection: Optional[Union[str, BaseConnection, WorkspaceConnection]]
+        :keyword index_connection: Optional connection to use for index.
+        :paramtype index_connection: Optional[Union[str, BaseConnection, WorkspaceConnection]]
+        :keyword credential: Optional credential to use when resolving connection information.
+        :paramtype credential: Optional[TokenCredential]
+        :return: A MLIndex object.
+        :rtype: MLIndex
         """
         if embedding_connection:
             if self.embeddings_config.get("key") is not None:
@@ -477,7 +523,12 @@ class MLIndex:
         self,
         connection: Optional[Union[str, BaseConnection, WorkspaceConnection]],
     ) -> "MLIndex":
-        """Set the embeddings connection used by the MLIndex."""
+        """
+        Set the embeddings connection used by the MLIndex.
+
+        :keyword connection: Optional connection to use for embeddings model.
+        :paramtype connection: Optional[Union[str, BaseConnection, WorkspaceConnection]]
+        """
         return self.override_connections(embedding_connection=connection)
 
     @staticmethod
@@ -500,28 +551,36 @@ class MLIndex:
         r"""
         Create a new MLIndex from a repo.
 
-        Args:
-        ----
-            source_uri: Iterator of documents to index
-            source_glob: Glob pattern to match files to index
-            chunk_size: Size of chunks to split documents into
-            chunk_overlap: Size of overlap between chunks
-            citation_url: Optional url to replace citation urls with
-            citation_replacement_regex: Optional regex to use to replace citation urls,
-                e.g. `{"match_pattern": "(.*)/articles/(.*)(\.[^.]+)$", "replacement_pattern": "\1/\2"}`
-            embeddings_model: Name of embeddings model to use,
-            expected format
-                `azure_open_ai://deployment/.../model/text-embedding-ada-002` or
-                `hugging_face://model/all-mpnet-base-v2`
-            embeddings_connection: Optional connection to use for embeddings model
-            embeddings_container: Optional path to location where un-indexed embeddings can be saved/loaded.
-            index_type: Type of index to use, e.g. faiss
-            index_connection: Optional connection to use for index
-            index_config: Config for index, e.g. index_name or field_mapping for acs
-
-        Returns:
-        -------
-            MLIndex
+        :keyword source_uri: Iterator of documents to index.
+        :paramtype source_uri: str
+        :keyword source_glob: Glob pattern to match files to index.
+        :paramtype source_glob: str
+        :keyword chunk_size: Size of chunks to split documents into.
+        :paramtype chunk_size: int
+        :keyword chunk_overlap: Size of overlap between chunks.
+        :paramtype chunk_overlap: int
+        :keyword citation_url: Optional url to replace citation urls with.
+        :paramtype citation_url: Optional[str]
+        :keyword citation_replacement_regex: Optional regex to use to replace citation urls.
+        :paramtype citation_replacement_regex: Optional[Dict[str, str]]
+        :keyword embeddings_model: Name of embeddings model to use.
+        :paramtype embeddings_model: str
+        :keyword embeddings_connection: Optional connection to use for embeddings model.
+        :paramtype embeddings_connection: Optional[str]
+        :keyword embeddings_container: Optional path to location where un-indexed embeddings can be saved/loaded.
+        :paramtype embeddings_container: Optional[Union[str, Path]]
+        :keyword index_type: Type of index to use.
+        :paramtype index_type: str
+        :keyword index_connection: Optional connection to use for index.
+        :paramtype index_connection: Optional[str]
+        :keyword index_config: Config for index.
+        :paramtype index_config: Optional[Dict[str, Any]]
+        :keyword output_path: Optional path to save index to.
+        :paramtype output_path: Optional[Union[str, Path]]
+        :keyword credential: Optional credential to use when resolving connection information.
+        :paramtype credential: Optional[TokenCredential]
+        :return: A new MLIndex.
+        :rtype: MLIndex
         """
         if index_config is None:
             index_config = {}
@@ -571,22 +630,26 @@ class MLIndex:
         """
         Create a new MLIndex from documents.
 
-        Args:
-        ----
-            documents: Iterator of documents to index
-            index_kind: Kind of index to use
-            embeddings_model: Name of embeddings model to use, expected format
-                `azure_open_ai://deployment/.../model/text-embedding-ada-002` or
-                `hugging_face://model/all-mpnet-base-v2`
-            embeddings_container: Optional path to location where un-indexed embeddings can be saved/loaded.
-            index_type: Type of index to use, e.g. faiss
-            index_connection: Optional connection to use for index
-            index_config: Config for index, e.g. index_name or field_mapping for acs
-            output_path: Optional path to save index to
-
-        Returns:
-        -------
-            MLIndex
+        :keyword documents: Iterator of documents to index.
+        :paramtype documents: Union[Iterator[Document], BaseLoader, DocumentChunksIterator]
+        :keyword embeddings_model: Name of embeddings model to use.
+        :paramtype embeddings_model: str
+        :keyword embeddings_connection: Optional connection to use for embeddings model.
+        :paramtype embeddings_connection: Optional[str]
+        :keyword embeddings_container: Optional path to location where un-indexed embeddings can be saved/loaded.
+        :paramtype embeddings_container: Optional[Union[str, Path]]
+        :keyword index_type: Type of index to use.
+        :paramtype index_type: str
+        :keyword index_connection: Optional connection to use for index.
+        :paramtype index_connection: Optional[str]
+        :keyword index_config: Config for index.
+        :paramtype index_config: Optional[Dict[str, Any]]
+        :keyword output_path: Optional path to save index to.
+        :paramtype output_path: Optional[Union[str, Path]]
+        :keyword credential: Optional credential to use when resolving connection information.
+        :paramtype credential: Optional[TokenCredential]
+        :return: A new MLIndex.
+        :rtype: MLIndex
         """
         if index_config is None:
             index_config = {}
@@ -682,7 +745,7 @@ class MLIndex:
             embeddings.save(
                 str(
                     Path(embeddings_container)
-                    / f"{now.strftime('%Y%m%d')}_{now.strftime('%H%M%S')}_{str(uuid.uuid4()).split('-')[0]}"
+                    / f"{now.strftime('%Y%m%d')}_{now.strftime('%H%M%S')}_{str(uuid.uuid4()).split('-', 1)[0]}"
                 )
             )
 
@@ -709,18 +772,20 @@ class MLIndex:
         """
         Create a new MLIndex from embeddings.
 
-        Args
-        ----
-            embeddings: EmbeddingsContainer to index
-            index_type: Type of index to use, e.g. faiss
-            index_connection: Optional connection to use for index
-            index_config: Config for index, e.g. index_name or field_mapping for acs
-            output_path: Optional path to save index to
-            credential: Optional credential to use when resolving connection information
-
-        Returns
-        -------
-            MLIndex
+        :keyword embeddings: EmbeddingsContainer to index.
+        :paramtype embeddings: EmbeddingsContainer
+        :keyword index_type: Type of index to use.
+        :paramtype index_type: str
+        :keyword index_connection: Optional connection to use for index.
+        :paramtype index_connection: Optional[str]
+        :keyword index_config: Config for index.
+        :paramtype index_config: Optional[Dict[str, Any]]
+        :keyword output_path: Optional path to save index to.
+        :paramtype output_path: Optional[Union[str, Path]]
+        :keyword credential: Optional credential to use when resolving connection information.
+        :paramtype credential: Optional[TokenCredential]
+        :return: A new MLIndex.
+        :rtype: MLIndex
         """
         if index_config is None:
             index_config = {}
@@ -819,6 +884,11 @@ class MLIndex:
         Save the MLIndex to a uri.
 
         Will use uri MLIndex was loaded from if `output_uri` not set.
+
+        :keyword output_uri: The output path of saving the MLIndex.
+        :paramtype output_uri: str
+        :keyword just_config: Config of saving the MLIndex.
+        :paramtype just_config: bool
         """
         # Use fsspec to create MLIndex yaml file at output_uri and call save on _underlying_index if present
         try:
