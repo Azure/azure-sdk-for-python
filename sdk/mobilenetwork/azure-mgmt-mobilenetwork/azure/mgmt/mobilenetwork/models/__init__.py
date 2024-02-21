@@ -26,12 +26,17 @@ from ._models_py3 import DataNetworkResourceId
 from ._models_py3 import DiagnosticsPackage
 from ._models_py3 import DiagnosticsPackageListResult
 from ._models_py3 import DiagnosticsUploadConfiguration
+from ._models_py3 import DnnIpPair
 from ._models_py3 import EncryptedSimPropertiesFormat
 from ._models_py3 import EncryptedSimUploadList
 from ._models_py3 import ErrorAdditionalInfo
 from ._models_py3 import ErrorDetail
 from ._models_py3 import ErrorResponse
 from ._models_py3 import EventHubConfiguration
+from ._models_py3 import ExtendedUeInfo
+from ._models_py3 import ExtendedUeInfoProperties
+from ._models_py3 import HomeNetworkPrivateKeysProvisioning
+from ._models_py3 import HomeNetworkPublicKey
 from ._models_py3 import HttpsServerCertificate
 from ._models_py3 import IdentityAndTagsObject
 from ._models_py3 import Installation
@@ -66,6 +71,8 @@ from ._models_py3 import PlmnId
 from ._models_py3 import PortRange
 from ._models_py3 import PortReuseHoldTimes
 from ._models_py3 import ProxyResource
+from ._models_py3 import PublicLandMobileNetwork
+from ._models_py3 import PublicLandMobileNetworkHomeNetworkPublicKeys
 from ._models_py3 import QosPolicy
 from ._models_py3 import Resource
 from ._models_py3 import Service
@@ -101,6 +108,13 @@ from ._models_py3 import SubResource
 from ._models_py3 import SystemData
 from ._models_py3 import TagsObject
 from ._models_py3 import TrackedResource
+from ._models_py3 import UeInfo
+from ._models_py3 import UeInfo4G
+from ._models_py3 import UeInfo5G
+from ._models_py3 import UeInfoList
+from ._models_py3 import UeQOSFlow
+from ._models_py3 import UeSessionInfo4G
+from ._models_py3 import UeSessionInfo5G
 from ._models_py3 import UserAssignedIdentity
 
 from ._mobile_network_management_client_enums import AuthenticationType
@@ -110,23 +124,29 @@ from ._mobile_network_management_client_enums import CoreNetworkType
 from ._mobile_network_management_client_enums import CreatedByType
 from ._mobile_network_management_client_enums import DesiredInstallationState
 from ._mobile_network_management_client_enums import DiagnosticsPackageStatus
+from ._mobile_network_management_client_enums import HomeNetworkPrivateKeysProvisioningState
 from ._mobile_network_management_client_enums import InstallationReason
 from ._mobile_network_management_client_enums import InstallationState
 from ._mobile_network_management_client_enums import ManagedServiceIdentityType
 from ._mobile_network_management_client_enums import NaptEnabled
 from ._mobile_network_management_client_enums import ObsoleteVersion
 from ._mobile_network_management_client_enums import PacketCaptureStatus
+from ._mobile_network_management_client_enums import PdnType
 from ._mobile_network_management_client_enums import PduSessionType
 from ._mobile_network_management_client_enums import PlatformType
 from ._mobile_network_management_client_enums import PreemptionCapability
 from ._mobile_network_management_client_enums import PreemptionVulnerability
 from ._mobile_network_management_client_enums import ProvisioningState
+from ._mobile_network_management_client_enums import RatType
 from ._mobile_network_management_client_enums import RecommendedVersion
 from ._mobile_network_management_client_enums import ReinstallRequired
+from ._mobile_network_management_client_enums import RrcEstablishmentCause
 from ._mobile_network_management_client_enums import SdfDirection
 from ._mobile_network_management_client_enums import SimState
 from ._mobile_network_management_client_enums import SiteProvisioningState
 from ._mobile_network_management_client_enums import TrafficControlPermission
+from ._mobile_network_management_client_enums import UeState
+from ._mobile_network_management_client_enums import UeUsageSetting
 from ._mobile_network_management_client_enums import VersionState
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
@@ -153,12 +173,17 @@ __all__ = [
     "DiagnosticsPackage",
     "DiagnosticsPackageListResult",
     "DiagnosticsUploadConfiguration",
+    "DnnIpPair",
     "EncryptedSimPropertiesFormat",
     "EncryptedSimUploadList",
     "ErrorAdditionalInfo",
     "ErrorDetail",
     "ErrorResponse",
     "EventHubConfiguration",
+    "ExtendedUeInfo",
+    "ExtendedUeInfoProperties",
+    "HomeNetworkPrivateKeysProvisioning",
+    "HomeNetworkPublicKey",
     "HttpsServerCertificate",
     "IdentityAndTagsObject",
     "Installation",
@@ -193,6 +218,8 @@ __all__ = [
     "PortRange",
     "PortReuseHoldTimes",
     "ProxyResource",
+    "PublicLandMobileNetwork",
+    "PublicLandMobileNetworkHomeNetworkPublicKeys",
     "QosPolicy",
     "Resource",
     "Service",
@@ -228,6 +255,13 @@ __all__ = [
     "SystemData",
     "TagsObject",
     "TrackedResource",
+    "UeInfo",
+    "UeInfo4G",
+    "UeInfo5G",
+    "UeInfoList",
+    "UeQOSFlow",
+    "UeSessionInfo4G",
+    "UeSessionInfo5G",
     "UserAssignedIdentity",
     "AuthenticationType",
     "BillingSku",
@@ -236,23 +270,29 @@ __all__ = [
     "CreatedByType",
     "DesiredInstallationState",
     "DiagnosticsPackageStatus",
+    "HomeNetworkPrivateKeysProvisioningState",
     "InstallationReason",
     "InstallationState",
     "ManagedServiceIdentityType",
     "NaptEnabled",
     "ObsoleteVersion",
     "PacketCaptureStatus",
+    "PdnType",
     "PduSessionType",
     "PlatformType",
     "PreemptionCapability",
     "PreemptionVulnerability",
     "ProvisioningState",
+    "RatType",
     "RecommendedVersion",
     "ReinstallRequired",
+    "RrcEstablishmentCause",
     "SdfDirection",
     "SimState",
     "SiteProvisioningState",
     "TrafficControlPermission",
+    "UeState",
+    "UeUsageSetting",
     "VersionState",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])

@@ -478,20 +478,20 @@ class MobileNetworksOperations:
         self,
         resource_group_name: str,
         mobile_network_name: str,
-        parameters: _models.TagsObject,
+        parameters: _models.IdentityAndTagsObject,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.MobileNetwork:
-        """Updates mobile network tags.
+        """Updates mobile network tags and managed identity.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param mobile_network_name: The name of the mobile network. Required.
         :type mobile_network_name: str
-        :param parameters: Parameters supplied to update mobile network tags. Required.
-        :type parameters: ~azure.mgmt.mobilenetwork.models.TagsObject
+        :param parameters: Parameters supplied to update mobile network tags and/or identity. Required.
+        :type parameters: ~azure.mgmt.mobilenetwork.models.IdentityAndTagsObject
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -511,14 +511,14 @@ class MobileNetworksOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.MobileNetwork:
-        """Updates mobile network tags.
+        """Updates mobile network tags and managed identity.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param mobile_network_name: The name of the mobile network. Required.
         :type mobile_network_name: str
-        :param parameters: Parameters supplied to update mobile network tags. Required.
+        :param parameters: Parameters supplied to update mobile network tags and/or identity. Required.
         :type parameters: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -534,19 +534,19 @@ class MobileNetworksOperations:
         self,
         resource_group_name: str,
         mobile_network_name: str,
-        parameters: Union[_models.TagsObject, IO],
+        parameters: Union[_models.IdentityAndTagsObject, IO],
         **kwargs: Any
     ) -> _models.MobileNetwork:
-        """Updates mobile network tags.
+        """Updates mobile network tags and managed identity.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param mobile_network_name: The name of the mobile network. Required.
         :type mobile_network_name: str
-        :param parameters: Parameters supplied to update mobile network tags. Is either a TagsObject
-         type or a IO type. Required.
-        :type parameters: ~azure.mgmt.mobilenetwork.models.TagsObject or IO
+        :param parameters: Parameters supplied to update mobile network tags and/or identity. Is either
+         a IdentityAndTagsObject type or a IO type. Required.
+        :type parameters: ~azure.mgmt.mobilenetwork.models.IdentityAndTagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -576,7 +576,7 @@ class MobileNetworksOperations:
         if isinstance(parameters, (IOBase, bytes)):
             _content = parameters
         else:
-            _json = self._serialize.body(parameters, "TagsObject")
+            _json = self._serialize.body(parameters, "IdentityAndTagsObject")
 
         request = build_update_tags_request(
             resource_group_name=resource_group_name,

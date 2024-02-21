@@ -985,9 +985,9 @@ class PacketCoreControlPlanesOperations:
     async def begin_reinstall(
         self, resource_group_name: str, packet_core_control_plane_name: str, **kwargs: Any
     ) -> AsyncLROPoller[_models.AsyncOperationStatus]:
-        """Reinstall the specified packet core control plane. This action will remove any transaction
-        state from the packet core to return it to a known state. This action will cause a service
-        outage.
+        """Reinstall the specified packet core control plane. This action will try to restore the packet
+        core to the installed state that was disrupted by a transient failure. This action will cause a
+        service outage.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.

@@ -1,5 +1,15 @@
 # Release History
 
+## 3.2.0 (2024-03-18)
+
+### Features Added
+
+  - Added operation group ExtendedUeInformationOperations
+  - Added operation group UeInformationOperations
+  - Model MobileNetwork has a new parameter identity
+  - Model MobileNetwork has a new parameter public_land_mobile_networks
+  - Model PacketCoreControlPlane has a new parameter home_network_private_keys_provisioning
+
 ## 3.1.0 (2023-11-20)
 
 ### Features Added
