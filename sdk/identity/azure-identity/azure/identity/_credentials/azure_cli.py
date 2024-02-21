@@ -9,7 +9,6 @@ import re
 import shutil
 import subprocess
 import sys
-import time
 from typing import List, Optional, Any, Dict
 
 from azure.core.credentials import AccessToken
@@ -60,10 +59,10 @@ class AzureCliCredential:
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
         self._process_timeout = process_timeout
 
-    def __enter__(self):
+    def __enter__(self) -> "AzureCliCredential":
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, *args: Any) -> None:
         pass
 
     def close(self) -> None:
@@ -139,14 +138,13 @@ def parse_token(output) -> Optional[AccessToken]:
     """
     try:
         token = json.loads(output)
-        dt = datetime.strptime(token["expiresOn"], "%Y-%m-%d %H:%M:%S.%f")
-        if hasattr(dt, "timestamp"):
-            # Python >= 3.3
-            expires_on = dt.timestamp()
-        else:
-            # taken from Python 3.5's datetime.timestamp()
-            expires_on = time.mktime((dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second, -1, -1, -1))
 
+        # Use "expires_on" if it's present, otherwise use "expiresOn".
+        if "expires_on" in token:
+            return AccessToken(token["accessToken"], int(token["expires_on"]))
+
+        dt = datetime.strptime(token["expiresOn"], "%Y-%m-%d %H:%M:%S.%f")
+        expires_on = dt.timestamp()
         return AccessToken(token["accessToken"], int(expires_on))
     except (KeyError, ValueError):
         return None

@@ -827,7 +827,7 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         if not self._link:
             self._link = self._session.create_receiver_link(
                 source_address=self.source,
-                link_credit=self._link_credit,
+                link_credit=self._link_credit,  # link_credit=0 on flow frame sent before client is ready
                 send_settle_mode=self._send_settle_mode,
                 rcv_settle_mode=self._receive_settle_mode,
                 max_message_size=self._max_message_size,

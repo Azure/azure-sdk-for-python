@@ -3,12 +3,22 @@
 ## 4.8.0b4 (Unreleased)
 
 ### Features Added
+- Added support for service API version `7.5`
 
 ### Breaking Changes
+> These changes do not impact the API of stable versions such as 4.7.0. Only code written against a beta version such as 4.8.0b2 may be affected.
+- Removed `CertificateProperties.x509_thumbprint_string`. To get the certificate's thumbprint in hex, use
+  `CertificateProperties.x509_thumbprint.hex()` or print the `CertificateProperties` instance.
 
 ### Bugs Fixed
 
 ### Other Changes
+- Python 3.7 is no longer supported. Please use Python version 3.8 or later.
+- `asyncio` is no longer directly referenced by the library
+  ([#33819](https://github.com/Azure/azure-sdk-for-python/pull/33819))
+- Key Vault API version `7.5` is now the default
+- Updated minimum `azure-core` version to 1.29.5
+- Dropped `azure-common` requirement
 
 ## 4.8.0b3 (2023-11-03)
 

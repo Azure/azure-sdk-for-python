@@ -26,7 +26,7 @@ from azure.mgmt.sql import SqlManagementClient
 def main():
     client = SqlManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="20D7082A-0FC7-4468-82BD-542694D5042B",
+        subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
     response = client.managed_instances.begin_update(
@@ -34,13 +34,13 @@ def main():
         managed_instance_name="testinstance",
         parameters={
             "properties": {
-                "maintenanceConfigurationId": "/subscriptions/20d7082a-0fc7-4468-82bd-542694d5042b/providers/Microsoft.Maintenance/publicMaintenanceConfigurations/SQL_Default"
+                "maintenanceConfigurationId": "/subscriptions/00000000-1111-2222-3333-444444444444/providers/Microsoft.Maintenance/publicMaintenanceConfigurations/SQL_Default"
             }
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2022-08-01-preview/examples/ManagedInstanceRemoveMaintenanceConfiguration.json
+# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2023-05-01-preview/examples/ManagedInstanceRemoveMaintenanceConfiguration.json
 if __name__ == "__main__":
     main()

@@ -667,10 +667,9 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
         ]
 
         completion = await client_async.chat.completions.create(
-            model=f"{azure_openai_creds['chat_completions_name']}/extensions",
             messages=messages,
             extra_body={
-                "dataSources":[
+                "data_sources":[
                     {
                         "type": "AzureCognitiveSearch",
                         "parameters": {
@@ -681,6 +680,7 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
                     }
                 ],
             },
+            **kwargs
         )
         assert completion.id
         assert completion.object == "extensions.chat.completion"
@@ -691,8 +691,8 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
         assert completion.choices[0].index is not None
         assert completion.choices[0].message.content is not None
         assert completion.choices[0].message.role
-        assert completion.choices[0].message.model_extra["context"]["messages"][0]["role"] == "tool"
-        assert completion.choices[0].message.model_extra["context"]["messages"][0]["content"]
+        assert completion.choices[0].message.context["citations"]
+        assert completion.choices[0].message.context["intent"]
 
     @configure_async
     @pytest.mark.asyncio
@@ -704,10 +704,9 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
         ]
 
         response = await client_async.chat.completions.create(
-            model=f"{azure_openai_creds['chat_completions_name']}/extensions",
             messages=messages,
             extra_body={
-                "dataSources":[
+                "data_sources":[
                     {
                         "type": "AzureCognitiveSearch",
                         "parameters": {
@@ -718,7 +717,8 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
                     }
                 ],
             },
-            stream=True
+            stream=True,
+            **kwargs
         )
         async for chunk in response:
             assert chunk.id
@@ -728,9 +728,9 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
             for c in chunk.choices:
                 assert c.index is not None
                 assert c.delta is not None
-                if c.delta.model_extra.get("context"):
-                    assert c.delta.model_extra["context"]["messages"][0]["role"] == "tool"
-                    assert c.delta.model_extra["context"]["messages"][0]["content"]
+                if hasattr(c.delta, "context"):
+                    assert c.delta.context["citations"]
+                    assert c.delta.context["intent"]
                 if c.delta.role:
                     assert c.delta.role == "assistant"
                 if c.delta.content:
@@ -851,9 +851,6 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
         function_call =  completion.choices[0].message.tool_calls[0].function
         assert function_call.name == "get_current_weather"
         assert "Seattle" in function_call.arguments
-        if api_type == GPT_4_AZURE:
-            # workaround to address difference between AOAI and OAI
-            completion.choices[0].message.content = None
         messages.append(completion.choices[0].message)
 
         tool_call_id = completion.choices[0].message.tool_calls[0].id
@@ -1013,9 +1010,6 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
         assert completion.choices[0].message.role
 
         assert len(completion.choices[0].message.tool_calls) == 2
-        if api_type == GPT_4_AZURE:
-            # workaround to address difference between AOAI and OAI
-            completion.choices[0].message.content = None
         messages.append(completion.choices[0].message)
 
         function_call = completion.choices[0].message.tool_calls[0].function
@@ -1072,6 +1066,27 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
                 }
             ],
         )
+        assert completion.object == "chat.completion"
+        assert len(completion.choices) == 1
+        assert completion.choices[0].index is not None
+        assert completion.choices[0].message.content is not None
+        assert completion.choices[0].message.role
+
+    @configure_async
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("api_type", [OPENAI])
+    async def test_chat_completion_logprobs(self, client_async, azure_openai_creds, api_type, **kwargs):
+        messages = [
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": "Who won the world series in 2020?"}
+        ]
+
+        completion = await client_async.chat.completions.create(
+            messages=messages,
+            logprobs=True,
+            top_logprobs=3,
+            **kwargs
+        )
         assert completion.id
         assert completion.object == "chat.completion"
         assert completion.model
@@ -1080,6 +1095,12 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
         assert completion.usage.prompt_tokens is not None
         assert completion.usage.total_tokens == completion.usage.completion_tokens + completion.usage.prompt_tokens
         assert len(completion.choices) == 1
+        assert completion.choices[0].finish_reason
         assert completion.choices[0].index is not None
         assert completion.choices[0].message.content is not None
         assert completion.choices[0].message.role
+        assert completion.choices[0].logprobs.content
+        for logprob in completion.choices[0].logprobs.content:
+            assert logprob.token
+            assert logprob.logprob
+            assert logprob.bytes

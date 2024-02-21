@@ -6,51 +6,48 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._models_py3 import Action
-from ._models_py3 import AdministratorDetails
-from ._models_py3 import Attributes
-from ._models_py3 import BackupCertificateResult
-from ._models_py3 import CertificateAttributes
-from ._models_py3 import CertificateBundle
-from ._models_py3 import CertificateCreateParameters
-from ._models_py3 import CertificateImportParameters
-from ._models_py3 import CertificateIssuerItem
-from ._models_py3 import CertificateIssuerListResult
-from ._models_py3 import CertificateIssuerSetParameters
-from ._models_py3 import CertificateIssuerUpdateParameters
-from ._models_py3 import CertificateItem
-from ._models_py3 import CertificateListResult
-from ._models_py3 import CertificateMergeParameters
-from ._models_py3 import CertificateOperation
-from ._models_py3 import CertificateOperationUpdateParameter
-from ._models_py3 import CertificatePolicy
-from ._models_py3 import CertificateRestoreParameters
-from ._models_py3 import CertificateUpdateParameters
-from ._models_py3 import Contact
-from ._models_py3 import Contacts
-from ._models_py3 import DeletedCertificateBundle
-from ._models_py3 import DeletedCertificateItem
-from ._models_py3 import DeletedCertificateListResult
-from ._models_py3 import Error
-from ._models_py3 import IssuerAttributes
-from ._models_py3 import IssuerBundle
-from ._models_py3 import IssuerCredentials
-from ._models_py3 import IssuerParameters
-from ._models_py3 import KeyProperties
-from ._models_py3 import KeyVaultError
-from ._models_py3 import LifetimeAction
-from ._models_py3 import OrganizationDetails
-from ._models_py3 import PendingCertificateSigningRequestResult
-from ._models_py3 import SecretProperties
-from ._models_py3 import SubjectAlternativeNames
-from ._models_py3 import Trigger
-from ._models_py3 import X509CertificateProperties
+from ._models import Action
+from ._models import AdministratorDetails
+from ._models import Attributes
+from ._models import BackupCertificateResult
+from ._models import CertificateAttributes
+from ._models import CertificateBundle
+from ._models import CertificateCreateParameters
+from ._models import CertificateImportParameters
+from ._models import CertificateIssuerItem
+from ._models import CertificateIssuerSetParameters
+from ._models import CertificateIssuerUpdateParameters
+from ._models import CertificateItem
+from ._models import CertificateMergeParameters
+from ._models import CertificateOperation
+from ._models import CertificateOperationUpdateParameter
+from ._models import CertificatePolicy
+from ._models import CertificateRestoreParameters
+from ._models import CertificateUpdateParameters
+from ._models import Contact
+from ._models import Contacts
+from ._models import DeletedCertificateBundle
+from ._models import DeletedCertificateItem
+from ._models import Error
+from ._models import IssuerAttributes
+from ._models import IssuerBundle
+from ._models import IssuerCredentials
+from ._models import IssuerParameters
+from ._models import KeyProperties
+from ._models import KeyVaultError
+from ._models import LifetimeAction
+from ._models import OrganizationDetails
+from ._models import PendingCertificateSigningRequestResult
+from ._models import SecretProperties
+from ._models import SubjectAlternativeNames
+from ._models import Trigger
+from ._models import X509CertificateProperties
 
-from ._key_vault_client_enums import ActionType
-from ._key_vault_client_enums import DeletionRecoveryLevel
-from ._key_vault_client_enums import JsonWebKeyCurveName
-from ._key_vault_client_enums import JsonWebKeyType
-from ._key_vault_client_enums import KeyUsageType
+from ._enums import ActionType
+from ._enums import DeletionRecoveryLevel
+from ._enums import JsonWebKeyCurveName
+from ._enums import JsonWebKeyType
+from ._enums import KeyUsageType
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
@@ -65,11 +62,9 @@ __all__ = [
     "CertificateCreateParameters",
     "CertificateImportParameters",
     "CertificateIssuerItem",
-    "CertificateIssuerListResult",
     "CertificateIssuerSetParameters",
     "CertificateIssuerUpdateParameters",
     "CertificateItem",
-    "CertificateListResult",
     "CertificateMergeParameters",
     "CertificateOperation",
     "CertificateOperationUpdateParameter",
@@ -80,7 +75,6 @@ __all__ = [
     "Contacts",
     "DeletedCertificateBundle",
     "DeletedCertificateItem",
-    "DeletedCertificateListResult",
     "Error",
     "IssuerAttributes",
     "IssuerBundle",

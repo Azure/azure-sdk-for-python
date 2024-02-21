@@ -144,7 +144,7 @@ class CertificateProperties(object):
         self._tags = kwargs.pop("tags", None)
 
     def __repr__(self) -> str:
-        return f"<CertificateProperties [{self.id}]>"[:1024]
+        return f"<CertificateProperties [{self._x509_thumbprint.hex().upper()}]>"[:1024]
 
     @classmethod
     def _from_certificate_item(
@@ -254,21 +254,12 @@ class CertificateProperties(object):
     def x509_thumbprint(self) -> bytes:
         """The certificate's thumbprint, in bytes.
 
+        To get the thumbprint as a hexadecimal string, call ``.hex()`` on this property.
+
         :return: The certificate's thumbprint, in bytes.
         :rtype: bytes
         """
         return self._x509_thumbprint
-
-    @property
-    def x509_thumbprint_string(self) -> str:
-        """The certificate's thumbprint, as a hexadecimal string.
-
-        The thumbprint is formatted without colon delimiters; e.g. 76E1819FADF06A55EF4B126A2EF743C2BAE8A151.
-
-        :return: The certificate's thumbprint, as a hexadecimal string.
-        :rtype: str
-        """
-        return self._x509_thumbprint.hex().upper()
 
     @property
     def tags(self) -> Optional[Dict[str, str]]:

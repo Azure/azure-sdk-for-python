@@ -1,40 +1,21 @@
 # The MIT License (MIT)
-# Copyright (c) 2022 Microsoft Corporation
-
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
-
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
+# Copyright (c) Microsoft Corporation. All rights reserved.
 
 import unittest
-import pytest
-from azure.cosmos import cosmos_client, PartitionKey, Offer, http_constants
-import test_config
 from unittest.mock import MagicMock
 
-# This class tests the backwards compatibility of features being deprecated to ensure users are not broken before
-# properly removing the methods marked for deprecation.
+import pytest
 
-pytestmark = pytest.mark.cosmosEmulator
+import test_config
+from azure.cosmos import Offer, http_constants, CosmosClient, DatabaseProxy, ContainerProxy
 
 
-@pytest.mark.usefixtures("teardown")
+@pytest.mark.cosmosEmulator
 class TestBackwardsCompatibility(unittest.TestCase):
-
-    configs = test_config._test_config
+    configs = test_config.TestConfig
+    databaseForTest: DatabaseProxy = None
+    client: CosmosClient = None
+    containerForTest: ContainerProxy = None
     host = configs.host
     masterKey = configs.masterKey
 
@@ -47,11 +28,9 @@ class TestBackwardsCompatibility(unittest.TestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, consistency_level="Session")
-        cls.databaseForTest = cls.client.create_database_if_not_exists("Offer_Test_DB",
-                                                                       offer_throughput=500)
-        cls.containerForTest = cls.databaseForTest.create_container_if_not_exists(
-            cls.configs.TEST_COLLECTION_SINGLE_PARTITION_ID, PartitionKey(path="/id"), offer_throughput=400)
+        cls.client = CosmosClient(cls.host, cls.masterKey)
+        cls.databaseForTest = cls.client.get_database_client(cls.configs.TEST_DATABASE_ID)
+        cls.containerForTest = cls.databaseForTest.get_container_client(cls.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
 
     def test_offer_methods(self):
         database_offer = self.databaseForTest.get_throughput()

@@ -11,7 +11,7 @@ from typing import Any, List, Union
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 
-from ._client import(
+from ._client import (
     DocumentIntelligenceClient as DIClientGenerated,
     DocumentIntelligenceAdministrationClient as DIAClientGenerated,
 )
@@ -48,7 +48,9 @@ class DocumentIntelligenceClient(DIClientGenerated):  # pylint: disable=client-a
         )
 
 
-class DocumentIntelligenceAdministrationClient(DIAClientGenerated):  # pylint: disable=client-accepts-api-version-keyword
+class DocumentIntelligenceAdministrationClient(
+    DIAClientGenerated
+):  # pylint: disable=client-accepts-api-version-keyword
     """DocumentIntelligenceAdministrationClient.
 
     :param endpoint: The Document Intelligence service endpoint. Required.

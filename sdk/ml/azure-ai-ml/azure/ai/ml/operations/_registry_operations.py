@@ -4,11 +4,10 @@
 
 # pylint: disable=protected-access,unused-argument
 
-from typing import Dict, Iterable, Optional
+from typing import Dict, Iterable, Optional, cast
 
 from azure.ai.ml._restclient.v2022_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
-
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities import Registry
@@ -58,16 +57,22 @@ class RegistryOperations:
         :rtype: ~azure.core.paging.ItemPaged[Registry]
         """
         if scope.lower() == Scope.SUBSCRIPTION:
-            return self._operation.list_by_subscription(
-                cls=lambda objs: [Registry._from_rest_object(obj) for obj in objs]
+            return cast(
+                Iterable[Registry],
+                self._operation.list_by_subscription(
+                    cls=lambda objs: [Registry._from_rest_object(obj) for obj in objs]
+                ),
             )
-        return self._operation.list(
-            cls=lambda objs: [Registry._from_rest_object(obj) for obj in objs],
-            resource_group_name=self._resource_group_name,
+        return cast(
+            Iterable[Registry],
+            self._operation.list(
+                cls=lambda objs: [Registry._from_rest_object(obj) for obj in objs],
+                resource_group_name=self._resource_group_name,
+            ),
         )
 
     @monitor_with_activity(logger, "Registry.Get", ActivityType.PUBLICAPI)
-    def get(self, name: Optional[str] = None) -> Registry:
+    def get(self, name: Optional[str] = None) -> Optional[Registry]:
         """Get a registry by name.
 
         :param name: Name of the registry.
@@ -83,7 +88,7 @@ class RegistryOperations:
         obj = self._operation.get(resource_group, registry_name)
         return Registry._from_rest_object(obj)
 
-    def _check_registry_name(self, name) -> str:
+    def _check_registry_name(self, name: Optional[str]) -> str:
         registry_name = name or self._default_registry_name
         if not registry_name:
             msg = "Please provide a registry name or use a MLClient with a registry name set."
@@ -138,7 +143,7 @@ class RegistryOperations:
             resource_group_name=self._resource_group_name,
             registry_name=registry.name,
             body=registry_data,
-            polling=self._get_polling(registry.name),
+            polling=self._get_polling(str(registry.name)),
             cls=lambda response, deserialized, headers: Registry._from_rest_object(deserialized),
         )
 

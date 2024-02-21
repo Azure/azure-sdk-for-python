@@ -10,7 +10,13 @@ from typing import TYPE_CHECKING
 
 from msrest import Serializer
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
@@ -45,10 +51,10 @@ def build_list_request(
     job_type = kwargs.pop('job_type', None)  # type: Optional[str]
     tag = kwargs.pop('tag', None)  # type: Optional[str]
     list_view_type = kwargs.pop('list_view_type', None)  # type: Optional[Union[str, "_models.ListViewType"]]
+    properties = kwargs.pop('properties', None)  # type: Optional[str]
     asset_name = kwargs.pop('asset_name', None)  # type: Optional[str]
     scheduled = kwargs.pop('scheduled', None)  # type: Optional[bool]
     schedule_id = kwargs.pop('schedule_id', None)  # type: Optional[str]
-    properties = kwargs.pop('properties', None)  # type: Optional[str]
 
     accept = "application/json"
     # Construct URL
@@ -72,14 +78,14 @@ def build_list_request(
         _query_parameters['tag'] = _SERIALIZER.query("tag", tag, 'str')
     if list_view_type is not None:
         _query_parameters['listViewType'] = _SERIALIZER.query("list_view_type", list_view_type, 'str')
+    if properties is not None:
+        _query_parameters['properties'] = _SERIALIZER.query("properties", properties, 'str')
     if asset_name is not None:
         _query_parameters['assetName'] = _SERIALIZER.query("asset_name", asset_name, 'str')
     if scheduled is not None:
         _query_parameters['scheduled'] = _SERIALIZER.query("scheduled", scheduled, 'bool')
     if schedule_id is not None:
         _query_parameters['scheduleId'] = _SERIALIZER.query("schedule_id", schedule_id, 'str')
-    if properties is not None:
-        _query_parameters['properties'] = _SERIALIZER.query("properties", properties, 'str')
 
     # Construct headers
     _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
@@ -326,10 +332,10 @@ class JobsOperations(object):
         job_type=None,  # type: Optional[str]
         tag=None,  # type: Optional[str]
         list_view_type=None,  # type: Optional[Union[str, "_models.ListViewType"]]
+        properties=None,  # type: Optional[str]
         asset_name=None,  # type: Optional[str]
         scheduled=None,  # type: Optional[bool]
         schedule_id=None,  # type: Optional[str]
-        properties=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["_models.JobBaseResourceArmPaginatedResult"]
@@ -349,15 +355,15 @@ class JobsOperations(object):
         :type tag: str
         :param list_view_type: View type for including/excluding (for example) archived entities.
         :type list_view_type: str or ~azure.mgmt.machinelearningservices.models.ListViewType
+        :param properties: Comma-separated list of property names (and optionally values). Example:
+         prop1,prop2=value2.
+        :type properties: str
         :param asset_name: Asset name the job's named output is registered with.
         :type asset_name: str
         :param scheduled: Indicator whether the job is scheduled job.
         :type scheduled: bool
         :param schedule_id: The scheduled id for listing the job triggered from.
         :type schedule_id: str
-        :param properties: Comma-separated list of property names (and optionally values). Example:
-         prop1,prop2=value2.
-        :type properties: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either JobBaseResourceArmPaginatedResult or the result of
          cls(response)
@@ -384,10 +390,10 @@ class JobsOperations(object):
                     job_type=job_type,
                     tag=tag,
                     list_view_type=list_view_type,
+                    properties=properties,
                     asset_name=asset_name,
                     scheduled=scheduled,
                     schedule_id=schedule_id,
-                    properties=properties,
                     template_url=self.list.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -404,10 +410,10 @@ class JobsOperations(object):
                     job_type=job_type,
                     tag=tag,
                     list_view_type=list_view_type,
+                    properties=properties,
                     asset_name=asset_name,
                     scheduled=scheduled,
                     schedule_id=schedule_id,
-                    properties=properties,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
@@ -716,8 +722,10 @@ class JobsOperations(object):
     ):
         # type: (...) -> "_models.JobBase"
         """Creates and executes a Job.
+        For update case, the Tags in the definition passed in will replace Tags in the existing job.
 
         Creates and executes a Job.
+        For update case, the Tags in the definition passed in will replace Tags in the existing job.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str

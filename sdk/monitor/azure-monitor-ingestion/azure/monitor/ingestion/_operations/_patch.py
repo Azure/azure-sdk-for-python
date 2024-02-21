@@ -31,7 +31,7 @@ class LogsIngestionClientOperationsMixin(GeneratedOps):
         self,
         rule_id: str,
         stream_name: str,
-        logs: Union[List[JSON], IO],
+        logs: Union[List[JSON], IO[bytes]],
         *,
         on_error: Optional[Callable[[LogsUploadError], None]] = None,
         **kwargs: Any
@@ -68,8 +68,10 @@ class LogsIngestionClientOperationsMixin(GeneratedOps):
             super()._upload(rule_id, stream=stream_name, body=logs, content_encoding=content_encoding, **kwargs)
             return
 
-        if not isinstance(logs, Sequence):
-            raise ValueError("The 'logs' parameter must be a list of JSON objects or an I/O stream that is readable.")
+        if not isinstance(logs, Sequence) or isinstance(logs, str):
+            raise ValueError(
+                "The 'logs' parameter must be a list of mappings/dictionaries or an I/O stream that is readable."
+            )
 
         for gzip_data, log_chunk in _create_gzip_requests(cast(List[JSON], logs)):
             try:

@@ -6,7 +6,7 @@
 import pytest
 import openai
 from devtools_testutils import AzureRecordedTestCase
-from conftest import configure_v0, AZURE, OPENAI, ALL, AZURE_AD, setup_adapter
+from conftest import configure_v0, AZURE, OPENAI, ALL, AZURE_AD
 
 
 class TestChatCompletions(AzureRecordedTestCase):
@@ -696,11 +696,11 @@ class TestChatCompletions(AzureRecordedTestCase):
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": "How is Azure machine learning different than Azure OpenAI?"}
         ]
-        setup_adapter(azure_openai_creds["chat_completions_name"])
+
         completion = openai.ChatCompletion.create(
             messages=messages,
             deployment_id=azure_openai_creds["chat_completions_name"],
-            dataSources=[
+            data_sources=[
                 {
                     "type": "AzureCognitiveSearch",
                     "parameters": {
@@ -720,9 +720,8 @@ class TestChatCompletions(AzureRecordedTestCase):
         assert completion.choices[0].index is not None
         assert completion.choices[0].message.content is not None
         assert completion.choices[0].message.role
-        assert completion.choices[0].message.context.messages[0].role == "tool"
-        assert completion.choices[0].message.context.messages[0].content
-        openai.requestssession = None
+        assert completion.choices[0].message.context.citations
+        assert completion.choices[0].message.context.intent
 
     @pytest.mark.parametrize("api_type", [AZURE])
     @configure_v0
@@ -731,11 +730,11 @@ class TestChatCompletions(AzureRecordedTestCase):
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": "How is Azure machine learning different than Azure OpenAI?"}
         ]
-        setup_adapter(azure_openai_creds["chat_completions_name"])
+
         response = openai.ChatCompletion.create(
             messages=messages,
             deployment_id=azure_openai_creds["chat_completions_name"],
-            dataSources=[
+            data_sources=[
                 {
                     "type": "AzureCognitiveSearch",
                     "parameters": {
@@ -756,11 +755,9 @@ class TestChatCompletions(AzureRecordedTestCase):
                 assert c.index is not None
                 assert c.delta is not None
                 if c.delta.get("context"):
-                    assert c.delta.context.messages[0].role == "tool"
-                    assert c.delta.context.messages[0].content.find("citations") != -1
+                    assert c.delta.context.intent
+                    assert c.delta.context.citations
                 if c.delta.get("role"):
                     assert c.delta.role == "assistant"
                 if c.delta.get("content"):
                     assert c.delta.content is not None
-
-        openai.requestssession = None

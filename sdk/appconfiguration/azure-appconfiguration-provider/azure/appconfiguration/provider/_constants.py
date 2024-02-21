@@ -5,6 +5,7 @@
 # -------------------------------------------------------------------------
 
 FEATURE_MANAGEMENT_KEY = "FeatureManagement"
+FEATURE_FLAG_KEY = "FeatureFlags"
 FEATURE_FLAG_PREFIX = ".appconfig.featureflag/"
 
 EMPTY_LABEL = "\0"

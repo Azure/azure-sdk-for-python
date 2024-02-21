@@ -4,7 +4,7 @@
 
 # pylint: disable=protected-access
 
-from typing import Dict, Iterable, Optional
+from typing import Any, Dict, Iterable, Optional, cast
 
 from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWorkspaces as ServiceClient082023Preview
 from azure.ai.ml._scope_dependent_operations import (
@@ -47,7 +47,7 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
         self._init_kwargs = kwargs
 
     @monitor_with_activity(logger, "WorkspaceConnections.Get", ActivityType.PUBLICAPI)
-    def get(self, name: str, **kwargs: Dict) -> WorkspaceConnection:
+    def get(self, name: str, **kwargs: Dict) -> Optional[WorkspaceConnection]:
         """Get a workspace connection by name.
 
         :param name: Name of the workspace connection.
@@ -75,7 +75,9 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
         return WorkspaceConnection._from_rest_object(rest_obj=obj)
 
     @monitor_with_activity(logger, "WorkspaceConnections.CreateOrUpdate", ActivityType.PUBLICAPI)
-    def create_or_update(self, workspace_connection, **kwargs) -> WorkspaceConnection:
+    def create_or_update(
+        self, workspace_connection: WorkspaceConnection, **kwargs: Any
+    ) -> Optional[WorkspaceConnection]:
         """Create or update a workspace connection.
 
         :param workspace_connection: Workspace Connection definition
@@ -104,7 +106,7 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
         return WorkspaceConnection._from_rest_object(rest_obj=response)
 
     @monitor_with_activity(logger, "WorkspaceConnections.Delete", ActivityType.PUBLICAPI)
-    def delete(self, name) -> None:
+    def delete(self, name: str) -> None:
         """Delete the workspace connection.
 
         :param name: Name of the workspace connection.
@@ -130,11 +132,15 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
     def list(
         self,
         connection_type: Optional[str] = None,
+        include_data_connections: bool = False,
+        **kwargs: Any,
     ) -> Iterable[WorkspaceConnection]:
         """List all workspace connections for a workspace.
 
         :param connection_type: Type of workspace connection to list.
         :type connection_type: Optional[str]
+        :param include_data_connections: If true, also return data connections. Defaults to False.
+        :type include_data_connections: bool
         :return: An iterator like instance of workspace connection objects
         :rtype: Iterable[~azure.ai.ml.entities.WorkspaceConnection]
 
@@ -147,9 +153,20 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
                 :dedent: 8
                 :caption: Lists all connections for a workspace for a certain type, in this case "git".
         """
-        return self._operation.list(
-            workspace_name=self._workspace_name,
-            cls=lambda objs: [WorkspaceConnection._from_rest_object(obj) for obj in objs],
-            category=_snake_to_camel(connection_type) if connection_type else connection_type,
-            **self._scope_kwargs,
+
+        if include_data_connections:
+            if "params" in kwargs:
+                kwargs["params"]["includeAll"] = "true"
+            else:
+                kwargs["params"] = {"includeAll": "true"}
+
+        return cast(
+            Iterable[WorkspaceConnection],
+            self._operation.list(
+                workspace_name=self._workspace_name,
+                cls=lambda objs: [WorkspaceConnection._from_rest_object(obj) for obj in objs],
+                category=_snake_to_camel(connection_type) if connection_type else connection_type,
+                **self._scope_kwargs,
+                **kwargs,
+            ),
         )

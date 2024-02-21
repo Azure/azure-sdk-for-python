@@ -1,0 +1,5 @@
+azure-core @ git+https://git@github.com/Azure/azure-sdk-for-python.git@main#subdirectory=sdk/core/azure-core
+azure-identity @ git+https://git@github.com/Azure/azure-sdk-for-python.git@main#subdirectory=sdk/identity/azure-identity
+aiohttp>=3.0
+flask[async]
+azure-storage-blob

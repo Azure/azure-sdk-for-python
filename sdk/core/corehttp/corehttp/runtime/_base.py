@@ -36,7 +36,6 @@ def _format_url_section(template, **kwargs):
     This is used for API like Storage, where when Swagger has template section not defined as parameter.
 
     :param str template: a string template to fill
-    :keyword dict[str,str] kwargs: Template values as string
     :rtype: str
     :returns: Template completed
     """
