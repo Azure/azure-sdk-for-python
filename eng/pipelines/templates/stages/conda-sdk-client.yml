@@ -161,7 +161,7 @@ stages:
           - "312"
           checkout:
           - package: uamqp
-            download_uri: https://files.pythonhosted.org/packages/0b/d8/fc24d95e6f6c80851ae6738c78da081cd535c924b02c5a4928b108b9ed42/uamqp-1.6.5.tar.gz
+            download_uri: https://files.pythonhosted.org/packages/3e/eb/5c84e91d423d225dfb55c25aa74c10524b677170d2c35e374d9e8217d881/uamqp-1.6.8.tar.gz
 
   - stage: Build_Universal_Dependencies
     displayName: Build Universal Conda Packages
