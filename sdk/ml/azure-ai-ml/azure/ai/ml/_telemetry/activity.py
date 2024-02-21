@@ -23,6 +23,7 @@ from uuid import uuid4
 
 from marshmallow import ValidationError
 
+from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils.utils import _is_user_error_from_exception_type, _is_user_error_from_status_code, _str_to_bool
 from azure.ai.ml.exceptions import ErrorCategory, MlException
 from azure.core.exceptions import HttpResponseError
@@ -249,7 +250,7 @@ def log_activity(
 
 # pylint: disable-next=docstring-missing-rtype
 def monitor_with_activity(
-    ops_logger,
+    logger,
     activity_name,
     activity_type=ActivityType.INTERNALCALL,
     custom_dimensions=None,
@@ -260,8 +261,8 @@ def monitor_with_activity(
     To monitor, use the ``@monitor_with_activity`` decorator. As an alternative, you can also wrap the
     logical block of code with the ``log_activity()`` method.
 
-    :param ops_logger: The operations logging class, containing loggers and tracer for the package and module
-    :type ops_logger: ~azure.ai.ml._utils._logger_utils.OpsLogger
+    :param logger: The operations logging class, containing loggers and tracer for the package and module
+    :type logger: ~azure.ai.ml._utils._logger_utils.OpsLogger
     :param activity_name: The name of the activity. The name should be unique per the wrapped logical code block.
     :type activity_name: str
     :param activity_type: One of PUBLICAPI, INTERNALCALL, or CLIENTPROXY which represent an incoming API call,
@@ -275,17 +276,15 @@ def monitor_with_activity(
     def monitor(f):
         @functools.wraps(f)
         def wrapper(*args, **kwargs):
-            tracer = ops_logger.package_tracer if ops_logger else None
+            tracer = logger.package_tracer if isinstance(logger, OpsLogger) else None
             if tracer:
                 with tracer.span(name=f.__name__):
                     with log_activity(
-                        ops_logger.package_logger, activity_name or f.__name__, activity_type, custom_dimensions
+                        logger.package_logger, activity_name or f.__name__, activity_type, custom_dimensions
                     ):
                         return f(*args, **kwargs)
             else:
-                with log_activity(
-                    ops_logger.package_logger, activity_name or f.__name__, activity_type, custom_dimensions
-                ):
+                with log_activity(logger.package_logger, activity_name or f.__name__, activity_type, custom_dimensions):
                     return f(*args, **kwargs)
 
         return wrapper
