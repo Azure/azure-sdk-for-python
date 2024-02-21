@@ -502,3 +502,13 @@ class ScheduleTriggerResult:
             schedule_action_type=obj.schedule_action_type,
             job_name=obj.submission_id,
         )
+
+    def _to_dict(self) -> dict:
+        """Convert the object to a dictionary.
+        :return: The dictionary representation of the object.
+        :rtype: dict
+        """
+        return {
+            "job_name": self.job_name,
+            "schedule_action_type": self.schedule_action_type,
+        }
