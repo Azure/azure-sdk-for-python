@@ -120,8 +120,8 @@ def get_appinsights_log_handler(
             return (logging.NullHandler(), None)
 
         if kwargs:
-            if "properties" in kwargs and "subscription_id" in kwargs.get("properties"):
-                if kwargs.get("properties")["subscription_id"] in test_subscriptions:
+            if "properties" in kwargs and "subscription_id" in kwargs.get("properties"):  # type: ignore[operator]
+                if kwargs.get("properties")["subscription_id"] in test_subscriptions:  # type: ignore[index]
                     return (logging.NullHandler(), None)
 
         child_namespace = component_name or __name__
