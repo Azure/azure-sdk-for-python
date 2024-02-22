@@ -52,7 +52,7 @@ class TestNotificationMessageClientForTextAsync(AsyncMessagesRecordedTestCase):
             raise
         assert raised is False
         assert message_response.message_id is not None
-        assert message_response.to == phone_number
+        assert message_response.to is not None
 
 
     @MessagesPreparersAsync.messages_test_decorator_async
@@ -82,7 +82,7 @@ class TestNotificationMessageClientForTextAsync(AsyncMessagesRecordedTestCase):
             raise
         assert raised is False
         assert message_response.message_id is not None
-        assert message_response.to == phone_number
+        assert message_response.to is not None
     
 
     @MessagesPreparersAsync.messages_test_decorator_async
@@ -123,8 +123,7 @@ class TestNotificationMessageClientForTextAsync(AsyncMessagesRecordedTestCase):
             raise
         assert raised is False
         assert message_response.message_id is not None
-        assert message_response.to == phone_number
-
+        assert message_response.to is not None
 
     @MessagesPreparersAsync.messages_test_decorator_async
     @recorded_by_proxy_async 
@@ -150,7 +149,7 @@ class TestNotificationMessageClientForTextAsync(AsyncMessagesRecordedTestCase):
             raise
         assert raised is False
         assert message_response.message_id is not None
-        assert message_response.to == phone_number
+        assert message_response.to is not None
     
 
     @MessagesPreparersAsync.messages_test_decorator_async

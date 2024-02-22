@@ -15,7 +15,6 @@ class MessagesPreparersAsync(object):
     @staticmethod
     def messages_test_decorator_async(func: Callable[[], object], **kwargs: Any):
         async def wrapper(self, *args, **kwargs):
-            breakpoint
             if is_live() or is_live_and_not_recording():
                 self.connection_string = os.getenv("COMMUNICATION_LIVETEST_DYNAMIC_CONNECTION_STRING")
                 endpoint, _ = parse_connection_str(self.connection_string)
