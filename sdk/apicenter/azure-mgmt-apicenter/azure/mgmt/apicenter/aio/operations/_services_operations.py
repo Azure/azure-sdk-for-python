@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, overload
+from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -21,17 +21,20 @@ from azure.core.exceptions import (
 )
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
+from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
+from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._services_operations import (
     build_create_or_update_request,
     build_delete_request,
+    build_export_metadata_schema_request,
     build_get_request,
     build_list_by_resource_group_request,
     build_list_by_subscription_request,
@@ -74,7 +77,7 @@ class ServicesOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.ServiceCollection] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ServiceListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -116,7 +119,7 @@ class ServicesOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("ServiceCollection", pipeline_response)
+            deserialized = self._deserialize("ServiceListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -144,7 +147,7 @@ class ServicesOperations:
 
     @distributed_trace
     def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.Service"]:
-        """Lists services within a resource group.
+        """Returns a collection of services within the resource group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -158,7 +161,7 @@ class ServicesOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.ServiceCollection] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ServiceListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -201,7 +204,7 @@ class ServicesOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("ServiceCollection", pipeline_response)
+            deserialized = self._deserialize("ServiceListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -231,12 +234,12 @@ class ServicesOperations:
 
     @distributed_trace_async
     async def get(self, resource_group_name: str, service_name: str, **kwargs: Any) -> _models.Service:
-        """Get service.
+        """Returns details of the service.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param service_name: Service name. Required.
+        :param service_name: The name of Azure API Center service. Required.
         :type service_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Service or the result of cls(response)
@@ -297,19 +300,19 @@ class ServicesOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        resource: Optional[_models.Service] = None,
+        resource: _models.Service,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.Service:
-        """Create or update service.
+        """Creates new or updates existing API.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param service_name: Service name. Required.
+        :param service_name: The name of Azure API Center service. Required.
         :type service_name: str
-        :param resource: The service entity. Default value is None.
+        :param resource: Resource create parameters. Required.
         :type resource: ~azure.mgmt.apicenter.models.Service
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -325,19 +328,19 @@ class ServicesOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        resource: Optional[IO] = None,
+        resource: IO,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.Service:
-        """Create or update service.
+        """Creates new or updates existing API.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param service_name: Service name. Required.
+        :param service_name: The name of Azure API Center service. Required.
         :type service_name: str
-        :param resource: The service entity. Default value is None.
+        :param resource: Resource create parameters. Required.
         :type resource: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -350,21 +353,16 @@ class ServicesOperations:
 
     @distributed_trace_async
     async def create_or_update(
-        self,
-        resource_group_name: str,
-        service_name: str,
-        resource: Optional[Union[_models.Service, IO]] = None,
-        **kwargs: Any
+        self, resource_group_name: str, service_name: str, resource: Union[_models.Service, IO], **kwargs: Any
     ) -> _models.Service:
-        """Create or update service.
+        """Creates new or updates existing API.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param service_name: Service name. Required.
+        :param service_name: The name of Azure API Center service. Required.
         :type service_name: str
-        :param resource: The service entity. Is either a Service type or a IO type. Default value is
-         None.
+        :param resource: Resource create parameters. Is either a Service type or a IO type. Required.
         :type resource: ~azure.mgmt.apicenter.models.Service or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -395,10 +393,7 @@ class ServicesOperations:
         if isinstance(resource, (IOBase, bytes)):
             _content = resource
         else:
-            if resource is not None:
-                _json = self._serialize.body(resource, "Service")
-            else:
-                _json = None
+            _json = self._serialize.body(resource, "Service")
 
         request = build_create_or_update_request(
             resource_group_name=resource_group_name,
@@ -447,20 +442,20 @@ class ServicesOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        parameters: Optional[_models.ServiceUpdate] = None,
+        properties: _models.ServiceUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.Service:
-        """Update service.
+        """Updates existing service.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param service_name: Service name. Required.
+        :param service_name: The name of Azure API Center service. Required.
         :type service_name: str
-        :param parameters: The service properties to be updated. Default value is None.
-        :type parameters: ~azure.mgmt.apicenter.models.ServiceUpdate
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.apicenter.models.ServiceUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -475,20 +470,20 @@ class ServicesOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        parameters: Optional[IO] = None,
+        properties: IO,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.Service:
-        """Update service.
+        """Updates existing service.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param service_name: Service name. Required.
+        :param service_name: The name of Azure API Center service. Required.
         :type service_name: str
-        :param parameters: The service properties to be updated. Default value is None.
-        :type parameters: IO
+        :param properties: The resource properties to be updated. Required.
+        :type properties: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -500,22 +495,18 @@ class ServicesOperations:
 
     @distributed_trace_async
     async def update(
-        self,
-        resource_group_name: str,
-        service_name: str,
-        parameters: Optional[Union[_models.ServiceUpdate, IO]] = None,
-        **kwargs: Any
+        self, resource_group_name: str, service_name: str, properties: Union[_models.ServiceUpdate, IO], **kwargs: Any
     ) -> _models.Service:
-        """Update service.
+        """Updates existing service.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param service_name: Service name. Required.
+        :param service_name: The name of Azure API Center service. Required.
         :type service_name: str
-        :param parameters: The service properties to be updated. Is either a ServiceUpdate type or a IO
-         type. Default value is None.
-        :type parameters: ~azure.mgmt.apicenter.models.ServiceUpdate or IO
+        :param properties: The resource properties to be updated. Is either a ServiceUpdate type or a
+         IO type. Required.
+        :type properties: ~azure.mgmt.apicenter.models.ServiceUpdate or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -542,13 +533,10 @@ class ServicesOperations:
         content_type = content_type or "application/json"
         _json = None
         _content = None
-        if isinstance(parameters, (IOBase, bytes)):
-            _content = parameters
+        if isinstance(properties, (IOBase, bytes)):
+            _content = properties
         else:
-            if parameters is not None:
-                _json = self._serialize.body(parameters, "ServiceUpdate")
-            else:
-                _json = None
+            _json = self._serialize.body(properties, "ServiceUpdate")
 
         request = build_update_request(
             resource_group_name=resource_group_name,
@@ -592,12 +580,12 @@ class ServicesOperations:
     async def delete(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, service_name: str, **kwargs: Any
     ) -> None:
-        """Delete service.
+        """Deletes specified service.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param service_name: Service name. Required.
+        :param service_name: The name of Azure API Center service. Required.
         :type service_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
@@ -647,4 +635,238 @@ class ServicesOperations:
 
     delete.metadata = {
         "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiCenter/services/{serviceName}"
+    }
+
+    async def _export_metadata_schema_initial(
+        self,
+        resource_group_name: str,
+        service_name: str,
+        body: Union[_models.MetadataSchemaExportRequest, IO],
+        **kwargs: Any
+    ) -> Optional[_models.MetadataSchemaExportResult]:
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Optional[_models.MetadataSchemaExportResult]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _json = self._serialize.body(body, "MetadataSchemaExportRequest")
+
+        request = build_export_metadata_schema_request(
+            resource_group_name=resource_group_name,
+            service_name=service_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            content=_content,
+            template_url=self._export_metadata_schema_initial.metadata["url"],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = None
+        response_headers = {}
+        if response.status_code == 200:
+            deserialized = self._deserialize("MetadataSchemaExportResult", pipeline_response)
+
+        if response.status_code == 202:
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)
+
+        return deserialized
+
+    _export_metadata_schema_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiCenter/services/{serviceName}/exportMetadataSchema"
+    }
+
+    @overload
+    async def begin_export_metadata_schema(
+        self,
+        resource_group_name: str,
+        service_name: str,
+        body: _models.MetadataSchemaExportRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.MetadataSchemaExportResult]:
+        """Exports the effective metadata schema.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param service_name: The name of Azure API Center service. Required.
+        :type service_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.apicenter.models.MetadataSchemaExportRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns either MetadataSchemaExportResult or the
+         result of cls(response)
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.apicenter.models.MetadataSchemaExportResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_export_metadata_schema(
+        self,
+        resource_group_name: str,
+        service_name: str,
+        body: IO,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.MetadataSchemaExportResult]:
+        """Exports the effective metadata schema.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param service_name: The name of Azure API Center service. Required.
+        :type service_name: str
+        :param body: The content of the action request. Required.
+        :type body: IO
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns either MetadataSchemaExportResult or the
+         result of cls(response)
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.apicenter.models.MetadataSchemaExportResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def begin_export_metadata_schema(
+        self,
+        resource_group_name: str,
+        service_name: str,
+        body: Union[_models.MetadataSchemaExportRequest, IO],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.MetadataSchemaExportResult]:
+        """Exports the effective metadata schema.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param service_name: The name of Azure API Center service. Required.
+        :type service_name: str
+        :param body: The content of the action request. Is either a MetadataSchemaExportRequest type or
+         a IO type. Required.
+        :type body: ~azure.mgmt.apicenter.models.MetadataSchemaExportRequest or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns either MetadataSchemaExportResult or the
+         result of cls(response)
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.apicenter.models.MetadataSchemaExportResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.MetadataSchemaExportResult] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._export_metadata_schema_initial(
+                resource_group_name=resource_group_name,
+                service_name=service_name,
+                body=body,
+                api_version=api_version,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize("MetadataSchemaExportResult", pipeline_response)
+            if cls:
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    begin_export_metadata_schema.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiCenter/services/{serviceName}/exportMetadataSchema"
     }
