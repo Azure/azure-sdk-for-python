@@ -168,9 +168,9 @@ class AIClient:
         .. code-block:: json
 
             {
-                "subscription_id": subscription_id,
-                "resource_group": resource_group_name,
-                "project_name": project_name,
+                "subscription_id": "<subscription_id>",
+                "resource_group": "<resource_group_name>",
+                "project_name": "<project_name>",
             }
 
         This method provides a simple way to reuse the same project across multiple Python notebooks or projects
@@ -536,7 +536,7 @@ class AIClient:
         creating it if it does not already exist.
 
         :return: An Azure OpenAI Connection associated to the project
-        :rtype: ~azure.ai.resources.entities.AzureOpenAIConnection
+        :rtype: ~azure.ai.resources.entities.connection_subtypes.AzureOpenAIConnection
         """
         return self._connections.get(DEFAULT_OPEN_AI_CONNECTION_NAME)
     
@@ -547,7 +547,7 @@ class AIClient:
 
         :return: An Azure AI Service Connection associated to the project that is linked to an Azure
             Content Safety service.
-        :rtype: ~azure.ai.resources.entities.AzureAIServiceConnection
+        :rtype: ~azure.ai.resources.entities.connection_subtypes.AzureAIServiceConnection
         """
         return self._connections.get(DEFAULT_CONTENT_SAFETY_CONNECTION_NAME)
 
