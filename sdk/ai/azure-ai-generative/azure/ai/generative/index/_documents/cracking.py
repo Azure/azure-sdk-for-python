@@ -10,9 +10,9 @@ from pathlib import Path
 from typing import IO, Any, Callable, Iterator, List, Optional, Tuple, Type, Union
 
 from azure.ai.generative.index._documents.chunking import ChunkedDocument, DocumentSource
-from azure.ai.generative.index._documents.document import Document, StaticDocument
 from azure.ai.generative.index._langchain.vendor.document_loaders.unstructured import UnstructuredFileIOLoader
 from azure.ai.generative.index._utils.logging import get_logger, safe_mlflow_log_metric
+from azure.ai.resources._index._documents.document import Document, StaticDocument
 
 logger = get_logger(__name__)
 
@@ -128,8 +128,7 @@ class UnstructuredHTMLFileIOLoader(UnstructuredFileIOLoader, BaseDocumentLoader)
         """Initialize a text file loader."""
         self.metadata = metadata
         self.document_source = document_source
-        super().__init__(file=file, mode=mode, **unstructured_kwargs)  # type: ignore[call-arg]
-        # TODO: Bug 2878420
+        super().__init__(file=file, **unstructured_kwargs)
 
     def load(self) -> List[Document]:
         """Load file contents into Documents."""
@@ -343,16 +342,16 @@ def crack_documents(sources: Iterator[DocumentSource], file_extension_loaders=fi
     log_batch_size = 100
     for i, source in enumerate(sources):
         file_start_time = time.time()
-        # TODO: Bug 2878422 for all type: ignore in this method
-        files_by_extension[source.path.suffix.lower()] += 1  # type: ignore[union-attr]
-        loader_cls = file_extension_loaders.get(source.path.suffix.lower())  # type: ignore[union-attr]
+        assert isinstance(source.path, Path)
+        files_by_extension[source.path.suffix.lower()] += 1
+        loader_cls = file_extension_loaders.get(source.path.suffix.lower())
         if i % log_batch_size == 0:
             for ext in files_by_extension:
                 if files_by_extension[ext] > 0:
                     safe_mlflow_log_metric(ext, files_by_extension[ext], logger=logger, step=int(time.time() * 1000))
         mode = "r"
         if loader_cls is None:
-            raise RuntimeError(f"Unsupported file extension '{source.path.suffix}': {source.filename}")  # type: ignore[union-attr]
+            raise RuntimeError(f"Unsupported file extension '{source.path.suffix}': {source.filename}")
 
         if hasattr(loader_cls, "file_io_mode"):
             mode = loader_cls.file_io_mode()
@@ -360,7 +359,7 @@ def crack_documents(sources: Iterator[DocumentSource], file_extension_loaders=fi
             mode = "rb"
 
         try:
-            with open(source.path, mode=mode) as f:  # type: ignore[arg-type]
+            with open(source.path, mode=mode) as f:
                 loader = loader_cls(**{
                     "file": f,
                     "document_source": source,
@@ -373,7 +372,7 @@ def crack_documents(sources: Iterator[DocumentSource], file_extension_loaders=fi
             # if loader_cls has a fallback_loader, try that
             if hasattr(loader_cls, "fallback_loader"):
                 fallback_loader_cls = loader_cls.fallback_loader()
-                with open(source.path, mode=mode) as f:  # type: ignore[arg-type]
+                with open(source.path, mode=mode) as f:
                     loader = fallback_loader_cls(**{
                         "file": f,
                         "document_source": source,

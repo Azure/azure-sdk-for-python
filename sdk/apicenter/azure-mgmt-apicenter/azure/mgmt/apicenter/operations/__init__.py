@@ -8,6 +8,13 @@
 
 from ._operations import Operations
 from ._services_operations import ServicesOperations
+from ._metadata_schemas_operations import MetadataSchemasOperations
+from ._workspaces_operations import WorkspacesOperations
+from ._apis_operations import ApisOperations
+from ._deployments_operations import DeploymentsOperations
+from ._api_versions_operations import ApiVersionsOperations
+from ._api_definitions_operations import ApiDefinitionsOperations
+from ._environments_operations import EnvironmentsOperations
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
@@ -16,6 +23,13 @@ from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     "Operations",
     "ServicesOperations",
+    "MetadataSchemasOperations",
+    "WorkspacesOperations",
+    "ApisOperations",
+    "DeploymentsOperations",
+    "ApiVersionsOperations",
+    "ApiDefinitionsOperations",
+    "EnvironmentsOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

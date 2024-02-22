@@ -16,9 +16,10 @@ def validate_input(question: str, answer: str, context: str, ground_truth: str, 
     for col in expected_input_cols:
         if input_data[col] and input_data[col].strip():
             actual_input_cols.add(col)
-    data_validation = selected_metrics
-    for metric in selected_metrics:
-        if selected_metrics[metric]:
+    selected_quality_metrics = selected_metrics["quality_metrics"]
+    data_validation = selected_quality_metrics
+    for metric in selected_quality_metrics:
+        if selected_quality_metrics[metric]:
             metric_required_fields = dict_metric_required_fields[metric]
             if metric_required_fields <= actual_input_cols:
                 data_validation[metric] = True

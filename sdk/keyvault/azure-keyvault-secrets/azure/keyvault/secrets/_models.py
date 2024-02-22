@@ -11,28 +11,12 @@ from ._shared import parse_key_vault_id
 
 
 class SecretProperties(object):
-    """A secret's ID and attributes.
+    """A secret's ID and attributes."""
 
-    :param attributes: The secret's attributes.
-    :type attributes: ~azure.keyvault.secrets._generated.models.SecretAttributes
-    :param secret_id: The secret's ID.
-    :type secret_id: str or None
-
-    :keyword str content_type: The content type of the secret.
-    :keyword str key_id: If this is a secret backing a KV certificate, then this field specifies the corresponding key
-        backing the certificate.
-    :keyword bool managed: True if the secret's lifetime is managed by Key Vault. If this secret is backing a
-        certificate, this will be True.
-    :keyword tags: Application specific metadata in the form of key-value pairs.
-    :paramtype tags: dict[str, str]
-    """
-
-    def __init__(
-        self, attributes: Optional[_models.SecretAttributes], secret_id: Optional[str], **kwargs: Any
-    ) -> None:
-        self._attributes = attributes
-        self._id = secret_id
-        self._vault_id = KeyVaultSecretIdentifier(secret_id) if secret_id else None
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        self._attributes: Optional[_models.SecretAttributes] = args[0] if args else kwargs.get("attributes", None)
+        self._id: Optional[str] = args[1] if len(args) > 1 else kwargs.get("vault_id", None)
+        self._vault_id = KeyVaultSecretIdentifier(self._id) if self._id else None
         self._content_type = kwargs.get("content_type", None)
         self._key_id = kwargs.get("key_id", None)
         self._managed = kwargs.get("managed", None)

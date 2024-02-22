@@ -30,6 +30,7 @@ class AIResource:
         customer_managed_key: Optional[CustomerManagedKey] = None,
         public_network_access: Optional[str] = None,
         identity: Optional[IdentityConfiguration] = None,
+        container_registry: Optional[str] = None,
         primary_user_assigned_identity: Optional[str] = None,
         default_project_resource_group: Optional[str] = None,  # Unpacked WorkspaceHubConfig field
         **kwargs,
@@ -46,6 +47,7 @@ class AIResource:
             customer_managed_key=customer_managed_key,
             public_network_access=public_network_access,
             identity=identity,
+            container_registry=container_registry,
             primary_user_assigned_identity=primary_user_assigned_identity,
             workspace_hub_config=WorkspaceHubConfig(
                 additional_workspace_storage_accounts=[],
@@ -308,6 +310,26 @@ class AIResource:
         if not value:
             return
         self._workspace_hub.identity = value
+
+    @property
+    def container_registry(self) -> str:
+        """The container_registry of the resource.
+
+        :return: Name of the container registry.
+        :rtype: str
+        """
+        return self._workspace_hub.container_registry
+    
+    @container_registry.setter
+    def container_registry(self, value: str):
+        """Set the container_registry of the resource.
+
+        :param value: The new container registry to assign to the resource.
+        :type value: str
+        """
+        if not value:
+            return
+        self._workspace_hub.container_registry = value
 
     @property
     def primary_user_assigned_identity(self) -> str:
