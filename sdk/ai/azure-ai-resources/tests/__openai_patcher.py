@@ -65,7 +65,7 @@ class TestProxyHttpxClient(openai._base_client.SyncHttpxClientWrapper):
     def _send_to_proxy(self, request: httpx.Request, **kwargs) -> httpx.Response:
         """Forwards a network request to the test proxy
 
-        :param httpx.Requeste request: The request to send
+        :param httpx.Request request: The request to send
         :keyword **kwargs: The kwargs accepted by httpx.Client.send
         :return: The request's response
         :rtype: httpx.Response
