@@ -10,7 +10,7 @@
 
 ### Other Changes
 
-- Accept float for `retry_after` header.
+- Accept float for `retry_after` header.  #34203
 
 ## 1.30.0 (2024-02-01)
 
