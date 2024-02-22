@@ -56,7 +56,6 @@
 # PRLabel: %Event Hubs
 /sdk/eventhub/                                                       @annatisch @kashifkhan @swathipil @l0lawrence
 
-# ServiceOwners: @jalauzon-msft @vincenttran-msft
 # ServiceLabel: %Storage
 # PRLabel: %Storage
 /sdk/storage/                                                        @annatisch @jalauzon-msft @vincenttran-msft
@@ -113,12 +112,10 @@
 # PRLabel: %Communication - Common
 /sdk/communication/**/_shared/                                       @Azure/acs-identity-sdk @AikoBB @maximrytych-ms @mjafferi-msft
 
-# ServiceOwners: @lynshi
 # ServiceLabel: %Confidential Ledger
 # PRLabel: %Confidential Ledger
 /sdk/confidentialledger/azure-confidentialledger/                    @PallabPaul @lynshi
 
-# ServiceOwners: @mengaims
 # ServiceLabel: %Content Safety
 # PRLabel: %Content Safety
 /sdk/contentsafety/                                                  @mengaims @JieZhou000
@@ -151,15 +148,11 @@
 # PRLabel: %Monitor - ApplicationInsights
 /sdk/applicationinsights/azure-applicationinsights/                  @azmonapplicationinsights @pvaneck
 
-# AzureSdkOwners: @lzchen
 # ServiceLabel: %Monitor - Distro
-
 # PRLabel: %Monitor - Distro
 /sdk/monitor/azure-monitor-opentelemetry/                            @lzchen @jeremydvoss
 
-# AzureSdkOwners: @lzchen
 # ServiceLabel: %Monitor - Exporter
-
 # PRLabel: %Monitor - Exporter
 /sdk/monitor/azure-monitor-opentelemetry-exporter/                   @lmazuel @lzchen @hectorhdzg @jeremydvoss
 
@@ -177,7 +170,6 @@
 # PRLabel: %Container Service
 /sdk/containerservice/                                               @zqingqing1
 
-# ServiceOwners: @simorenoh
 # ServiceLabel: %Cosmos
 # PRLabel: %Cosmos
 /sdk/cosmos/                                                         @kushagraThapar @simorenoh @xinlian12 @annatisch @bambriz
