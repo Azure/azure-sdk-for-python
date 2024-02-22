@@ -14,7 +14,7 @@ from azure.mgmt.recoveryservicessiterecovery import SiteRecoveryManagementClient
     pip install azure-identity
     pip install azure-mgmt-recoveryservicessiterecovery
 # USAGE
-    python replicationv_centers_get.py
+    python replication_infrastructure_delete.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -26,18 +26,17 @@ from azure.mgmt.recoveryservicessiterecovery import SiteRecoveryManagementClient
 def main():
     client = SiteRecoveryManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="7c943c1b-5122-4097-90c8-861411bdd574",
-        resource_group_name="MadhaviVRG",
-        resource_name="MadhaviVault",
+        subscription_id="c183865e-6077-46f2-a3b1-deb0f4f4650a",
+        resource_group_name="resourceGroupPS1",
+        resource_name="vault1",
     )
 
-    response = client.replicationv_centers.get(
-        fabric_name="MadhaviFabric",
-        vcenter_name="esx-78",
-    )
-    print(response)
+    client.replication_fabrics.begin_remove_infra(
+        resource_name="vault1",
+        fabric_name="cloud1",
+    ).result()
 
 
-# x-ms-original-file: specification/recoveryservicessiterecovery/resource-manager/Microsoft.RecoveryServices/stable/2023-08-01/examples/ReplicationvCenters_Get.json
+# x-ms-original-file: specification/recoveryservicessiterecovery/resource-manager/Microsoft.RecoveryServices/stable/2023-08-01/examples/ReplicationInfrastructure_Delete.json
 if __name__ == "__main__":
     main()
