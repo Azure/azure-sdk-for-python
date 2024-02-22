@@ -294,7 +294,7 @@ def monitor_with_activity(
 
 # pylint: disable-next=docstring-missing-rtype
 def monitor_with_telemetry_mixin(
-    ops_logger,
+    logger,
     activity_name,
     activity_type=ActivityType.INTERNALCALL,
     custom_dimensions=None,
@@ -309,8 +309,8 @@ def monitor_with_telemetry_mixin(
     will collect from return value.
     To monitor, use the ``@monitor_with_telemetry_mixin`` decorator.
 
-    :param ops_logger: The operations logging class, containing loggers and tracer for the package and module
-    :type ops_logger: ~azure.ai.ml._utils._logger_utils.OpsLogger
+    :param logger: The operations logging class, containing loggers and tracer for the package and module
+    :type logger: logging.LoggerAdapter
     :param activity_name: The name of the activity. The name should be unique per the wrapped logical code block.
     :type activity_name: str
     :param activity_type: One of PUBLICAPI, INTERNALCALL, or CLIENTPROXY which represent an incoming API call,
@@ -323,6 +323,8 @@ def monitor_with_telemetry_mixin(
     :type extra_keys: list[str]
     :return:
     """
+
+    logger = logger.package_logger if isinstance(logger, OpsLogger) else logger
 
     def monitor(f):
         def _collect_from_parameters(f, args, kwargs, extra_keys):
@@ -359,9 +361,7 @@ def monitor_with_telemetry_mixin(
         def wrapper(*args, **kwargs):
             parameter_dimensions = _collect_from_parameters(f, args, kwargs, extra_keys)
             dimensions = {**parameter_dimensions, **(custom_dimensions or {})}
-            with log_activity(
-                ops_logger.package_logger, activity_name or f.__name__, activity_type, dimensions
-            ) as activityLogger:
+            with log_activity(logger, activity_name or f.__name__, activity_type, dimensions) as activityLogger:
                 return_value = f(*args, **kwargs)
                 if not parameter_dimensions:
                     # collect from return if no dimensions from parameter
