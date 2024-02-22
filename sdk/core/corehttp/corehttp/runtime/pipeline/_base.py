@@ -140,6 +140,10 @@ class Pipeline(ContextManager["Pipeline"], Generic[HTTPRequestType, HTTPResponse
                 self._impl_policies.append(policy)
             elif is_sansio_http_policy(policy):
                 self._impl_policies.append(_SansIOHTTPPolicyRunner(policy))
+            elif policy:
+                raise AttributeError(
+                    f"'{type(policy)}' object has no attribute 'send' or 'on_request' and 'on_response'."
+                )
         for index in range(len(self._impl_policies) - 1):
             self._impl_policies[index].next = self._impl_policies[index + 1]
         if self._impl_policies:

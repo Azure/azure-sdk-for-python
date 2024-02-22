@@ -49,6 +49,14 @@ async def test_sans_io_exception():
         await pipeline.run(req)
 
 
+def test_invalid_policy_error():
+    class FooPolicy:
+        pass
+
+    with pytest.raises(AttributeError):
+        pipeline = Pipeline(transport=Mock(), policies=[FooPolicy()])
+
+
 @pytest.mark.asyncio
 @pytest.mark.parametrize("transport", ASYNC_TRANSPORTS)
 async def test_transport_socket_timeout(transport):

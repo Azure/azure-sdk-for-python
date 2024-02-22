@@ -4,6 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 
+from unittest.mock import Mock
 import json
 from io import BytesIO
 import xml.etree.ElementTree as ET
@@ -50,6 +51,14 @@ def test_sans_io_exception():
     req = HttpRequest("GET", "/")
     with pytest.raises(ValueError):
         pipeline.run(req)
+
+
+def test_invalid_policy_error():
+    class FooPolicy:
+        pass
+
+    with pytest.raises(AttributeError):
+        pipeline = Pipeline(transport=Mock(), policies=[FooPolicy()])
 
 
 @pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
