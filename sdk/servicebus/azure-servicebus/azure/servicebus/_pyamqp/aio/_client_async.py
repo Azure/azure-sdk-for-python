@@ -987,5 +987,5 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
             settled=False, # True 
             delivery_state=state,
             batchable=batchable,
-            wait=True  # we should block until msgs is settled
+            wait=True
         )
