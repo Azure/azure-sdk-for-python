@@ -35,7 +35,7 @@ import platform
 import xml.etree.ElementTree as ET
 import types
 import re
-from typing import IO, cast, Union, Optional, AnyStr, Dict, Any, Mapping, Awaitable, TYPE_CHECKING
+from typing import IO, cast, Union, Optional, AnyStr, Dict, Any, Mapping, TYPE_CHECKING
 
 from ... import __version__ as core_version
 from ...exceptions import DecodeError

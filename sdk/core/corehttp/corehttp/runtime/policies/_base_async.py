@@ -24,20 +24,20 @@
 #
 # --------------------------------------------------------------------------
 from __future__ import annotations
+import abc
 
 from typing import Generic, TypeVar, TYPE_CHECKING
-from typing_extensions import Protocol, runtime_checkable
 
 if TYPE_CHECKING:
     from ...runtime.pipeline import PipelineRequest, PipelineResponse
 
 AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
+HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
 
 
-@runtime_checkable
-class AsyncHTTPPolicy(Generic[HTTPRequestType, AsyncHTTPResponseType], Protocol):
-    """An async HTTP policy protocol.
+class AsyncHTTPPolicy(abc.ABC, Generic[HTTPRequestType, AsyncHTTPResponseType]):
+    """An async HTTP policy ABC.
 
     Use with an asynchronous pipeline.
     """
@@ -45,10 +45,11 @@ class AsyncHTTPPolicy(Generic[HTTPRequestType, AsyncHTTPResponseType], Protocol)
     next: "AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]"
     """Pointer to the next policy or a transport (wrapped as a policy). Will be set at pipeline creation."""
 
+    @abc.abstractmethod
     async def send(
         self, request: PipelineRequest[HTTPRequestType]
     ) -> PipelineResponse[HTTPRequestType, AsyncHTTPResponseType]:
-        """Send method for a asynchronous pipeline. Mutates the request.
+        """Abstract send method for a asynchronous pipeline. Mutates the request.
 
         Context content is dependent on the HttpTransport.
 
@@ -57,4 +58,3 @@ class AsyncHTTPPolicy(Generic[HTTPRequestType, AsyncHTTPResponseType], Protocol)
         :return: The pipeline response object.
         :rtype: ~corehttp.runtime.pipeline.PipelineResponse
         """
-        ...

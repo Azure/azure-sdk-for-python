@@ -2,13 +2,6 @@
 
 ## 1.0.0b3 (2024-02-01)
 
-### Breaking Changes
-
-- The `SansIOHTTPPolicy` and `HTTPPolicy` under `corehttp.runtime.policies` are now `typing.Protocols`. [#34296](https://github.com/Azure/azure-sdk-for-python/pull/34296)
-
-
-## 1.0.0b3 (2024-02-01)
-
 ### Features Added
 
 - Support tuple input for `files` values to `corehttp.rest.HttpRequest` #34082

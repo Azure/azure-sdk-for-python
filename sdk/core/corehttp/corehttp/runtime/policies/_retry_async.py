@@ -74,9 +74,6 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy[HttpRequest, AsyncHttpRe
     :keyword int retry_backoff_max: The maximum back off time. Default value is 120 seconds (2 minutes).
     """
 
-    next: "AsyncHTTPPolicy[HttpRequest, AsyncHttpResponse]"
-    """Pointer to the next policy or a transport (wrapped as a policy). Will be set at pipeline creation."""
-
     async def _sleep_for_retry(
         self,
         response: PipelineResponse[HttpRequest, AsyncHttpResponse],

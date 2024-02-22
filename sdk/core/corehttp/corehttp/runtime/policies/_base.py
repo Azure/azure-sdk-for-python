@@ -24,26 +24,23 @@
 #
 # --------------------------------------------------------------------------
 from __future__ import annotations
+import abc
 import copy
 import logging
 
 from typing import Generic, TypeVar, Union, Any, Optional, Awaitable, Dict, TYPE_CHECKING
-from typing_extensions import Protocol, runtime_checkable
 
 if TYPE_CHECKING:
     from ...runtime.pipeline import PipelineRequest, PipelineResponse
 
 HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
-SansIOHTTPResponseType_contra = TypeVar("SansIOHTTPResponseType_contra", contravariant=True)
-SansIOHTTPRequestType_contra = TypeVar("SansIOHTTPRequestType_contra", contravariant=True)
 
 _LOGGER = logging.getLogger(__name__)
 
 
-@runtime_checkable
-class HTTPPolicy(Generic[HTTPRequestType, HTTPResponseType], Protocol):
-    """An HTTP policy protocol.
+class HTTPPolicy(abc.ABC, Generic[HTTPRequestType, HTTPResponseType]):
+    """An HTTP policy ABC.
 
     Use with a synchronous pipeline.
     """
@@ -51,8 +48,9 @@ class HTTPPolicy(Generic[HTTPRequestType, HTTPResponseType], Protocol):
     next: "HTTPPolicy[HTTPRequestType, HTTPResponseType]"
     """Pointer to the next policy or a transport (wrapped as a policy). Will be set at pipeline creation."""
 
+    @abc.abstractmethod
     def send(self, request: PipelineRequest[HTTPRequestType]) -> PipelineResponse[HTTPRequestType, HTTPResponseType]:
-        """Send method for a synchronous pipeline. Mutates the request.
+        """Abstract send method for a synchronous pipeline. Mutates the request.
 
         Context content is dependent on the HttpTransport.
 
@@ -61,34 +59,31 @@ class HTTPPolicy(Generic[HTTPRequestType, HTTPResponseType], Protocol):
         :return: The pipeline response object.
         :rtype: ~corehttp.runtime.pipeline.PipelineResponse
         """
-        ...
 
 
-@runtime_checkable
-class SansIOHTTPPolicy(Generic[SansIOHTTPRequestType_contra, SansIOHTTPResponseType_contra], Protocol):
+class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType]):
     """Represents a sans I/O policy.
 
-    SansIOHTTPPolicy is a protocol for policies that only modify or
+    SansIOHTTPPolicy is a base class for policies that only modify or
     mutate a request based on the HTTP specification, and do not depend
     on the specifics of any particular transport. SansIOHTTPPolicy
-    subtype classes will function in either a Pipeline or an AsyncPipeline,
+    subclasses will function in either a Pipeline or an AsyncPipeline,
     and can act either before the request is done, or after.
     You can optionally make these methods coroutines (or return awaitable objects)
     but they will then be tied to AsyncPipeline usage.
     """
 
-    def on_request(self, request: PipelineRequest[SansIOHTTPRequestType_contra]) -> Union[None, Awaitable[None]]:
+    def on_request(self, request: PipelineRequest[HTTPRequestType]) -> Union[None, Awaitable[None]]:
         """Is executed before sending the request from next policy.
 
         :param request: Request to be modified before sent from next policy.
         :type request: ~corehttp.runtime.pipeline.PipelineRequest
         """
-        return None
 
     def on_response(
         self,
-        request: PipelineRequest[SansIOHTTPRequestType_contra],
-        response: PipelineResponse[SansIOHTTPRequestType_contra, SansIOHTTPResponseType_contra],
+        request: PipelineRequest[HTTPRequestType],
+        response: PipelineResponse[HTTPRequestType, HTTPResponseType],
     ) -> Union[None, Awaitable[None]]:
         """Is executed after the request comes back from the policy.
 
@@ -97,7 +92,6 @@ class SansIOHTTPPolicy(Generic[SansIOHTTPRequestType_contra, SansIOHTTPResponseT
         :param response: Pipeline response object
         :type response: ~corehttp.runtime.pipeline.PipelineResponse
         """
-        return None
 
 
 class RequestHistory(Generic[HTTPRequestType, HTTPResponseType]):

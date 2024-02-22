@@ -26,15 +26,22 @@
 from __future__ import annotations
 from types import TracebackType
 from typing import Any, Union, Generic, TypeVar, List, Optional, Iterable, Type
-from typing_extensions import AsyncContextManager
+from typing_extensions import AsyncContextManager, TypeGuard
 
 from . import PipelineRequest, PipelineResponse, PipelineContext
 from ..policies import AsyncHTTPPolicy, SansIOHTTPPolicy
+from ..pipeline._base import is_sansio_http_policy
 from ._tools_async import await_result as _await_result
 from ...transport import AsyncHttpTransport
 
 AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
+
+
+def is_async_http_policy(policy) -> TypeGuard[AsyncHTTPPolicy]:
+    if hasattr(policy, "send"):
+        return True
+    return False
 
 
 class _SansIOAsyncHTTPPolicyRunner(
@@ -47,9 +54,6 @@ class _SansIOAsyncHTTPPolicyRunner(
     :param policy: A SansIO policy.
     :type policy: ~corehttp.runtime.pipeline.policies.SansIOHTTPPolicy
     """
-
-    next: "AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]"
-    """Pointer to the next policy or a transport (wrapped as a policy). Will be set at pipeline creation."""
 
     def __init__(self, policy: SansIOHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]) -> None:
         super(_SansIOAsyncHTTPPolicyRunner, self).__init__()
@@ -81,9 +85,6 @@ class _AsyncTransportRunner(
     :param sender: The async Http Transport instance.
     :type sender: ~corehttp.transport.AsyncHttpTransport
     """
-
-    next: "AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]"
-    """Pointer to the next policy or a transport (wrapped as a policy). Will be set at pipeline creation."""
 
     def __init__(self, sender: AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType]) -> None:
         super(_AsyncTransportRunner, self).__init__()
@@ -133,12 +134,10 @@ class AsyncPipeline(AsyncContextManager["AsyncPipeline"], Generic[HTTPRequestTyp
         self._transport = transport
 
         for policy in policies or []:
-            if isinstance(policy, AsyncHTTPPolicy):
+            if is_async_http_policy(policy):
                 self._impl_policies.append(policy)
-            elif isinstance(policy, SansIOHTTPPolicy):
+            elif is_sansio_http_policy(policy):
                 self._impl_policies.append(_SansIOAsyncHTTPPolicyRunner(policy))
-            elif policy:
-                self._impl_policies.append(policy)
         for index in range(len(self._impl_policies) - 1):
             self._impl_policies[index].next = self._impl_policies[index + 1]
         if self._impl_policies:

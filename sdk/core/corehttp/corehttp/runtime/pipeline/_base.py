@@ -26,6 +26,7 @@
 from __future__ import annotations
 import logging
 from typing import Generic, TypeVar, Union, Any, List, Optional, Iterable, ContextManager
+from typing_extensions import TypeGuard
 
 from . import (
     PipelineRequest,
@@ -42,6 +43,17 @@ HTTPRequestType = TypeVar("HTTPRequestType")
 _LOGGER = logging.getLogger(__name__)
 
 
+def is_http_policy(policy) -> TypeGuard[HTTPPolicy]:
+    if hasattr(policy, "send"):
+        return True
+    return False
+
+def is_sansio_http_policy(policy) -> TypeGuard[SansIOHTTPPolicy]:
+    if hasattr(policy, "on_request") or hasattr(policy, "on_response"):
+        return True
+    return False
+
+
 class _SansIOHTTPPolicyRunner(HTTPPolicy[HTTPRequestType, HTTPResponseType]):
     """Sync implementation of the SansIO policy.
 
@@ -50,9 +62,6 @@ class _SansIOHTTPPolicyRunner(HTTPPolicy[HTTPRequestType, HTTPResponseType]):
     :param policy: A SansIO policy.
     :type policy: ~corehttp.runtime.pipeline.policies.SansIOHTTPPolicy
     """
-
-    next: "HTTPPolicy[HTTPRequestType, HTTPResponseType]"
-    """Pointer to the next policy or a transport (wrapped as a policy). Will be set at pipeline creation."""
 
     def __init__(self, policy: SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]) -> None:
         super(_SansIOHTTPPolicyRunner, self).__init__()
@@ -80,9 +89,6 @@ class _TransportRunner(HTTPPolicy[HTTPRequestType, HTTPResponseType]):
     :param sender: The Http Transport instance.
     :type sender: ~corehttp.transport.HttpTransport
     """
-
-    next: "HTTPPolicy[HTTPRequestType, HTTPResponseType]"
-    """Pointer to the next policy or a transport (wrapped as a policy). Will be set at pipeline creation."""
 
     def __init__(self, sender: HttpTransport[HTTPRequestType, HTTPResponseType]) -> None:
         super(_TransportRunner, self).__init__()
@@ -129,12 +135,10 @@ class Pipeline(ContextManager["Pipeline"], Generic[HTTPRequestType, HTTPResponse
         self._transport = transport
 
         for policy in policies or []:
-            if isinstance(policy, HTTPPolicy):
+            if is_http_policy(policy):
                 self._impl_policies.append(policy)
-            elif isinstance(policy, SansIOHTTPPolicy):
+            elif is_sansio_http_policy(policy):
                 self._impl_policies.append(_SansIOHTTPPolicyRunner(policy))
-            elif policy:
-                self._impl_policies.append(policy)
         for index in range(len(self._impl_policies) - 1):
             self._impl_policies[index].next = self._impl_policies[index + 1]
         if self._impl_policies:

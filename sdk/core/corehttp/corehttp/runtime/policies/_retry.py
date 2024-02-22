@@ -419,9 +419,6 @@ class RetryPolicy(RetryPolicyBase, HTTPPolicy[HttpRequest, HttpResponse]):
     :keyword int timeout: Timeout setting for the operation in seconds, default is 604800s (7 days).
     """
 
-    next: "HTTPPolicy[HttpRequest, HttpResponse]"
-    """Pointer to the next policy or a transport (wrapped as a policy). Will be set at pipeline creation."""
-
     def _sleep_for_retry(
         self,
         response: PipelineResponse[HttpRequest, HttpResponse],
