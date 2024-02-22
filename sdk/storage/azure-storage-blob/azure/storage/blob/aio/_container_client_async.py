@@ -1559,8 +1559,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
                 "Please use 'BlobProperties.name' or any other str input type instead.",
                 DeprecationWarning
             )
-        if hasattr(blob, 'name'):
-            blob_name = blob.get('name') # type: ignore[attr-defined]
+            blob_name = blob.get('name')
         else:
             blob_name = blob
         _pipeline = AsyncPipeline(
