@@ -8,7 +8,7 @@ import pytest
 from devtools_testutils import AzureRecordedTestCase
 
 from azure.ai.ml import MLClient
-from azure.ai.ml.entities._inputs_outputs import Input
+from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.operations._run_history_constants import JobStatus
 from azure.ai.ml.entities._inputs_outputs import Input
 from typing import Optional, Dict
@@ -36,12 +36,17 @@ class TestCustomModelFineTuningJob(AzureRecordedTestCase):
             task=FineTuningTaskType.TEXT_COMPLETION,
             training_data=training_data,
             validation_data=validation_data,
-            # hyperparameters={"foo": "bar"},
+            hyperparameters={
+                "per_device_train_batch_size": "1",
+                "learning_rate": "0.00002",
+                "num_train_epochs": "1",
+            },
             model=mlflow_model_llama,
             name=f"llama-{short_guid}",
             experiment_name="foo_exp",
             tags={"foo_tag": "bar"},
             properties={"my_property": True},
+            outputs={"registered_model": Output(type="mlflow_model", name=f"llama-finetune-registered-{short_guid}")},
         )
         # Trigger job
         created_job = client.jobs.create_or_update(classification_task)
