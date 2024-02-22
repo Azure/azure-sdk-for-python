@@ -83,7 +83,7 @@ class SansIOHTTPPolicy(Generic[SansIOHTTPRequestType_contra, SansIOHTTPResponseT
         :param request: Request to be modified before sent from next policy.
         :type request: ~corehttp.runtime.pipeline.PipelineRequest
         """
-        ...
+        return None
 
     def on_response(
         self,
@@ -97,7 +97,7 @@ class SansIOHTTPPolicy(Generic[SansIOHTTPRequestType_contra, SansIOHTTPResponseT
         :param response: Pipeline response object
         :type response: ~corehttp.runtime.pipeline.PipelineResponse
         """
-        ...
+        return None
 
 
 class RequestHistory(Generic[HTTPRequestType, HTTPResponseType]):

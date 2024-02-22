@@ -98,20 +98,6 @@ class HeadersPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
         if additional_headers:
             request.http_request.headers.update(additional_headers)
 
-    def on_response(  # pylint: disable=unused-argument
-        self,
-        request: PipelineRequest[HTTPRequestType],
-        response: PipelineResponse[HTTPRequestType, HTTPResponseType],
-    ) -> Union[None, Awaitable[None]]:
-        """Is executed after the request comes back from the policy.
-
-        :param request: Request to be modified after returning from the policy.
-        :type request: ~corehttp.runtime.pipeline.PipelineRequest
-        :param response: Pipeline response object
-        :type response: ~corehttp.runtime.pipeline.PipelineResponse
-        """
-        return None
-
 
 class UserAgentPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
     """User-Agent Policy. Allows custom values to be added to the User-Agent header.
@@ -183,20 +169,6 @@ class UserAgentPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
 
         elif self.overwrite or self._USERAGENT not in http_request.headers:
             http_request.headers[self._USERAGENT] = self.user_agent
-
-    def on_response(  # pylint: disable=unused-argument
-        self,
-        request: PipelineRequest[HTTPRequestType],
-        response: PipelineResponse[HTTPRequestType, HTTPResponseType],
-    ) -> Union[None, Awaitable[None]]:
-        """Is executed after the request comes back from the policy.
-
-        :param request: Request to be modified after returning from the policy.
-        :type request: ~corehttp.runtime.pipeline.PipelineRequest
-        :param response: Pipeline response object
-        :type response: ~corehttp.runtime.pipeline.PipelineResponse
-        """
-        return None
 
 
 class NetworkTraceLoggingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
@@ -490,17 +462,3 @@ class ProxyPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
         ctxt = request.context.options
         if self.proxies and "proxies" not in ctxt:
             ctxt["proxies"] = self.proxies
-
-    def on_response(  # pylint: disable=unused-argument
-        self,
-        request: PipelineRequest[HTTPRequestType],
-        response: PipelineResponse[HTTPRequestType, HTTPResponseType],
-    ) -> Union[None, Awaitable[None]]:
-        """Is executed after the request comes back from the policy.
-
-        :param request: Request to be modified after returning from the policy.
-        :type request: ~corehttp.runtime.pipeline.PipelineRequest
-        :param response: Pipeline response object
-        :type response: ~corehttp.runtime.pipeline.PipelineResponse
-        """
-        return None
