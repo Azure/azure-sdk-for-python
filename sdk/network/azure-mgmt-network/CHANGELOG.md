@@ -1,5 +1,11 @@
 # Release History
 
+## 25.3.0 (2024-02-22)
+
+### Features Added
+
+  - Model BastionHost has a new parameter zones
+
 ## 25.2.0 (2023-12-18)
 
 ### Features Added

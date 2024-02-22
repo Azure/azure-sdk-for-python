@@ -26,7 +26,12 @@ class ManagedIdentityClientBase(abc.ABC):
         identity_config: Optional[Dict] = None,
         **kwargs: Any
     ) -> None:
-        self._cache = kwargs.pop("_cache", None) or TokenCache()
+        self._custom_cache = False
+        self._cache = kwargs.pop("_cache", None)
+        if self._cache:
+            self._custom_cache = True
+        else:
+            self._cache = TokenCache()
         self._content_callback = kwargs.pop("_content_callback", None)
         self._identity_config = identity_config or {}
         if client_id:
@@ -90,6 +95,19 @@ class ManagedIdentityClientBase(abc.ABC):
     @abc.abstractmethod
     def _build_pipeline(self, **kwargs):
         pass
+
+    def __getstate__(self) -> Dict[str, Any]:
+        state = self.__dict__.copy()
+        # Remove the non-picklable entries
+        if not self._custom_cache:
+            del state["_cache"]
+        return state
+
+    def __setstate__(self, state: Dict[str, Any]) -> None:
+        self.__dict__.update(state)
+        # Re-create the unpickable entries
+        if not self._custom_cache:
+            self._cache = TokenCache()
 
 
 class ManagedIdentityClient(ManagedIdentityClientBase):
