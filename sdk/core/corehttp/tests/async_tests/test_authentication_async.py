@@ -238,6 +238,7 @@ async def test_bearer_policy_calls_sansio_methods():
     policy.on_challenge.assert_called_once()
     policy.on_exception.assert_called_once_with(policy.request)
 
+
 async def test_azure_core_sans_io_policy():
     """Tests to see that we can use an azure.core SansIOHTTPPolicy with the corehttp Pipeline"""
 
@@ -247,7 +248,9 @@ async def test_azure_core_sans_io_policy():
             self.on_exception = Mock(return_value=False)
             self.on_request = Mock()
 
-    credential = Mock(get_token=Mock(return_value=get_completed_future(AccessToken("***", int(time.time()) + 3600))), key="key")
+    credential = Mock(
+        get_token=Mock(return_value=get_completed_future(AccessToken("***", int(time.time()) + 3600))), key="key"
+    )
     policy = TestPolicy(credential, "scope")
     transport = Mock(send=Mock(return_value=get_completed_future(Mock(status_code=200))))
 
@@ -255,6 +258,7 @@ async def test_azure_core_sans_io_policy():
     await pipeline.run(HttpRequest("GET", "https://localhost"))
 
     policy.on_request.assert_called_once()
+
 
 def get_completed_future(result=None):
     fut = asyncio.Future()

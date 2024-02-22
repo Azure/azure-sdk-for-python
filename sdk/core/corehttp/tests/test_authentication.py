@@ -251,6 +251,7 @@ def test_bearer_policy_calls_sansio_methods():
     policy.on_challenge.assert_called_once()
     policy.on_exception.assert_called_once_with(policy.request)
 
+
 def test_azure_core_sans_io_policy():
     """Tests to see that we can use an azure.core SansIOHTTPPolicy with the corehttp Pipeline"""
 
@@ -268,6 +269,7 @@ def test_azure_core_sans_io_policy():
     pipeline.run(HttpRequest("GET", "https://localhost"))
 
     policy.on_request.assert_called_once()
+
 
 def test_service_key_credential_policy():
     """Tests to see if we can create an ServiceKeyCredentialPolicy"""

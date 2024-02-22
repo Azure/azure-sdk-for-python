@@ -48,6 +48,7 @@ def is_http_policy(policy) -> TypeGuard[HTTPPolicy]:
         return True
     return False
 
+
 def is_sansio_http_policy(policy) -> TypeGuard[SansIOHTTPPolicy]:
     if hasattr(policy, "on_request") and hasattr(policy, "on_response"):
         return True
