@@ -5,39 +5,10 @@
 # pylint: disable=unused-argument
 
 from azure.ai.ml._schema.job import BaseJobSchema
-from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum, UnionField
 from azure.ai.ml._schema.job.input_output_fields_provider import OutputsField
-from azure.ai.ml.constants import JobType
-from azure.ai.ml._utils.utils import camel_to_snake
-from azure.ai.ml._schema.assets.mlflow_model import MlflowModelSchema
-from azure.ai.ml._schema.job.input_output_entry import MLTableInputSchema, DataInputSchema
-from azure.ai.ml._restclient.v2024_01_01_preview.models import FineTuningTaskType
-from azure.ai.ml.constants._job.finetuning import FineTuningConstants
 
 # This is meant to match the yaml definition NOT the models defined in _restclient
 
 
 class FineTuningJobSchema(BaseJobSchema):
-    type = StringTransformedEnum(required=True, allowed_values=JobType.FINE_TUNING)
-    model = NestedField(MlflowModelSchema)
-    training_data = UnionField([NestedField(MLTableInputSchema), NestedField(DataInputSchema)])
-    validation_data = UnionField([NestedField(MLTableInputSchema), NestedField(DataInputSchema)])
     outputs = OutputsField()
-    task = StringTransformedEnum(
-        allowed_values=[
-            FineTuningTaskType.CHAT_COMPLETION,
-            FineTuningTaskType.TEXT_COMPLETION,
-            FineTuningTaskType.TEXT_CLASSIFICATION,
-            FineTuningTaskType.QUESTION_ANSWERING,
-            FineTuningTaskType.TEXT_SUMMARIZATION,
-            FineTuningTaskType.TOKEN_CLASSIFICATION,
-            FineTuningTaskType.TEXT_TRANSLATION,
-            FineTuningTaskType.IMAGE_CLASSIFICATION,
-            FineTuningTaskType.IMAGE_INSTANCE_SEGMENTATION,
-            FineTuningTaskType.IMAGE_OBJECT_DETECTION,
-            FineTuningTaskType.VIDEO_MULTI_OBJECT_TRACKING,
-        ],
-        casing_transform=camel_to_snake,
-        data_key=FineTuningConstants.TaskType,
-        required=True,
-    )

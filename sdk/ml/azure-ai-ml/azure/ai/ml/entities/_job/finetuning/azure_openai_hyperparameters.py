@@ -28,7 +28,8 @@ class AzureOpenAIHyperparameters(RestTranslatableMixin):
         self._batch_size = batch_size
         self._learning_rate_multiplier = learning_rate_multiplier
         self._n_epochs = n_epochs
-        self._additional_properties = kwargs
+        # Not exposed in the public API, so need to check how to handle this
+        # self._additional_properties = kwargs
 
     @property
     def batch_size(self) -> Optional[int]:
@@ -60,15 +61,16 @@ class AzureOpenAIHyperparameters(RestTranslatableMixin):
         """Set the number of epochs."""
         self._n_epochs = value
 
-    @property
-    def additional_properties(self) -> dict:
-        """Get additional properties."""
-        return self._additional_properties
+    # Not exposed in the public API, so need to check how to handle this
+    # @property
+    # def additional_properties(self) -> dict:
+    #    """Get additional properties."""
+    #    return self._additional_properties
 
-    @additional_properties.setter
-    def additional_properties(self, value: dict) -> None:
-        """Set additional properties."""
-        self._additional_properties = value
+    # @additional_properties.setter
+    # def additional_properties(self, value: dict) -> None:
+    #    """Set additional properties."""
+    #    self._additional_properties = value
 
     def _to_rest_object(self) -> RestAzureOpenAiHyperParameters:
         return RestAzureOpenAiHyperParameters(
@@ -84,7 +86,6 @@ class AzureOpenAIHyperparameters(RestTranslatableMixin):
             learning_rate_multiplier=obj.learning_rate_multiplier,
             n_epochs=obj.n_epochs,
         )
-        aoai_hyperparameters.additional_properties = obj.additional_properties
         return aoai_hyperparameters
 
     def __eq__(self, other: object) -> bool:
@@ -94,7 +95,6 @@ class AzureOpenAIHyperparameters(RestTranslatableMixin):
             self._batch_size == other._batch_size
             and self._learning_rate_multiplier == other._learning_rate_multiplier
             and self._n_epochs == other._n_epochs
-            and self._additional_properties == other.additional_properties
         )
 
     def __ne__(self, other: object) -> bool:
