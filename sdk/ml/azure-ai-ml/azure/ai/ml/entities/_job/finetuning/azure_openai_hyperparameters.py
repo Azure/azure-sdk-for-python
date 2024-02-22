@@ -85,6 +85,7 @@ class AzureOpenAIHyperparameters(RestTranslatableMixin):
             n_epochs=obj.n_epochs,
         )
         aoai_hyperparameters.additional_properties = obj.additional_properties
+        return aoai_hyperparameters
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, AzureOpenAIHyperparameters):
@@ -93,7 +94,7 @@ class AzureOpenAIHyperparameters(RestTranslatableMixin):
             self._batch_size == other._batch_size
             and self._learning_rate_multiplier == other._learning_rate_multiplier
             and self._n_epochs == other._n_epochs
-            and self.additional_properties == other.additional_properties
+            and self._additional_properties == other.additional_properties
         )
 
     def __ne__(self, other: object) -> bool:

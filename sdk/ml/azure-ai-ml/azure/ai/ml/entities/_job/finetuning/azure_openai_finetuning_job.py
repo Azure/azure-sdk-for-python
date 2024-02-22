@@ -68,17 +68,17 @@ class AzureOpenAIFineTuningJob(FineTuningVertical):
         :rtype: JobBase
         """
         aoai_finetuning_vertical = RestAzureOpenAIFineTuning(
-            task=self._task,
+            task_type=self._task,
             model=self._model,
             model_provider=self._model_provider,
             training_data=self._training_data,
             validation_data=self._validation_data,
-            hyper_parameters=self.hyperparameters.to_rest_object() if self.hyperparameters else None,
+            hyper_parameters=self.hyperparameters._to_rest_object() if self.hyperparameters else None,
         )
 
-        self._resolve_data_inputs(aoai_finetuning_vertical)
+        self._resolve_inputs(aoai_finetuning_vertical)
 
-        result = RestFineTuningJob(
+        finetuning_job = RestFineTuningJob(
             display_name=self.display_name,
             description=self.description,
             experiment_name=self.experiment_name,
@@ -87,6 +87,8 @@ class AzureOpenAIFineTuningJob(FineTuningVertical):
             fine_tuning_details=aoai_finetuning_vertical,
             outputs=to_rest_data_outputs(self.outputs),
         )
+
+        result = RestJobBase(properties=finetuning_job)
         result.name = self.name
 
         return result
@@ -102,7 +104,7 @@ class AzureOpenAIFineTuningJob(FineTuningVertical):
         """
 
         properties: RestFineTuningJob = obj.properties
-        finetuning_details: RestAzureOpenAIFineTuning = properties.task_details
+        finetuning_details: RestAzureOpenAIFineTuning = properties.fine_tuning_details
 
         job_args_dict = {
             "id": obj.id,
@@ -118,16 +120,15 @@ class AzureOpenAIFineTuningJob(FineTuningVertical):
         }
 
         aoai_finetuning_job = cls(
-            task=finetuning_details.task,
+            task=finetuning_details.task_type,
             model=finetuning_details.model,
-            model_provider=finetuning_details.model_provider,
             training_data=finetuning_details.training_data,
             validation_data=finetuning_details.validation_data,
-            hyperparameters=finetuning_details.hyper_parameters,
+            hyperparameters=AzureOpenAIHyperparameters._from_rest_object(finetuning_details.hyper_parameters),
             **job_args_dict,
         )
 
-        aoai_finetuning_job._restore_data_inputs()
+        aoai_finetuning_job._restore_inputs()
 
         return aoai_finetuning_job
 
@@ -217,8 +218,7 @@ class AzureOpenAIFineTuningJob(FineTuningVertical):
         if not isinstance(other, AzureOpenAIFineTuningJob):
             return NotImplemented
 
-        if not super().__eq__(other):
-            return False
+        return super().__eq__(other) and self.hyperparameters == other.hyperparameters
 
     def __ne__(self, other: object) -> bool:
         """Check inequality between two AzureOpenAIFineTuningJob objects.

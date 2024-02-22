@@ -82,12 +82,12 @@ class CustomModelFineTuningJob(FineTuningVertical):
 
     @classmethod
     def _from_rest_object(cls, obj: RestJobBase) -> "CustomModelFineTuningJob":
-        """Convert a REST object to ClassificationJob object.
+        """Convert a REST object to CustomModelFineTuningJob object.
 
-        :param obj: ClassificationJob in Rest format.
+        :param obj: CustomModelFineTuningJob in Rest format.
         :type obj: JobBase
-        :return: ClassificationJob objects.
-        :rtype: ClassificationJob
+        :return: CustomModelFineTuningJob objects.
+        :rtype: CustomModelFineTuningJob
         """
 
         properties: RestFineTuningJob = obj.properties
