@@ -7,7 +7,6 @@ from typing import Dict
 import pytest
 from azure.ai.generative.synthetic.qa import QADataGenerator
 
-import pytest
 from packaging import version
 from devtools_testutils import (
     FakeTokenCredential,
