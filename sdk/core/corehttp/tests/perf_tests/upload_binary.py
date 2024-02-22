@@ -46,6 +46,7 @@ class UploadBinaryDataTest(_BlobTest):
             },
             content=self.upload_stream,
         )
+        request.query = {}
         response = self.pipeline_client.pipeline.run(request).http_response
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=self.error_map)
@@ -67,6 +68,7 @@ class UploadBinaryDataTest(_BlobTest):
             },
             content=self.upload_stream_async,
         )
+        request.query = {}
         pipeline_response = await self.async_pipeline_client.pipeline.run(request)
         response = pipeline_response.http_response
         if response.status_code not in [201]:

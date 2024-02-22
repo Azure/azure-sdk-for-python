@@ -48,6 +48,7 @@ class UpdateEntityJSONTest(_TableTest):
             json=self.base_entity,
             content=None,
         )
+        request.query = {}
         response = self.pipeline_client.pipeline.run(
             request,
         ).http_response
@@ -72,6 +73,7 @@ class UpdateEntityJSONTest(_TableTest):
             json=self.base_entity,
             content=None,
         )
+        request.query = {}
         response = (
             await self.async_pipeline_client.pipeline.run(
                 request,

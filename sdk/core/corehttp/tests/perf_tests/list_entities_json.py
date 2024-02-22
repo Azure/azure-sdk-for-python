@@ -58,6 +58,7 @@ class ListEntitiesPageableTest(_TableTest):
                 "x-ms-date": current_time,
             },
         )
+        request.query = {}
         response = self.pipeline_client.pipeline.run(request).http_response
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=self.error_map)
@@ -86,6 +87,7 @@ class ListEntitiesPageableTest(_TableTest):
                 "x-ms-date": current_time,
             },
         )
+        request.query = {}
         response = (await self.async_pipeline_client.pipeline.run(request)).http_response
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=self.error_map)

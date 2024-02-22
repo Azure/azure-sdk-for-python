@@ -42,6 +42,7 @@ class QueryEntitiesJSONTest(_TableTest):
                 "x-ms-date": current_time,
             },
         )
+        request.query = {"$select": self.select, "$filter": self.filter}
         response = self.pipeline_client.pipeline.run(
             request,
         ).http_response
@@ -64,6 +65,7 @@ class QueryEntitiesJSONTest(_TableTest):
                 "x-ms-date": current_time,
             },
         )
+        request.query = {"$select": self.select, "$filter": self.filter}
         response = (
             await self.async_pipeline_client.pipeline.run(
                 request,

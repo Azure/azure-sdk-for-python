@@ -44,16 +44,18 @@ class DownloadBinaryDataTest(_BlobTest):
 
     def run_sync(self):
         current_time = format_date_time(time())
+        request = HttpRequest(
+            "GET",
+            self.blob_endpoint,
+            headers={
+                "x-ms-version": self.api_version,
+                "Accept": "application/octet-stream",
+                "x-ms-date": current_time,
+            },
+        )
+        request.query = {}
         response = self.pipeline_client.pipeline.run(
-            HttpRequest(
-                "GET",
-                self.blob_endpoint,
-                headers={
-                    "x-ms-version": self.api_version,
-                    "Accept": "application/octet-stream",
-                    "x-ms-date": current_time,
-                },
-            ),
+            request,
             stream=True,
         ).http_response
         response.read()
@@ -63,17 +65,19 @@ class DownloadBinaryDataTest(_BlobTest):
 
     async def run_async(self):
         current_time = format_date_time(time())
+        request = HttpRequest(
+            "GET",
+            self.blob_endpoint,
+            headers={
+                "x-ms-version": self.api_version,
+                "Accept": "application/octet-stream",
+                "x-ms-date": current_time,
+            },
+        )
+        request.query = {}
         response = (
             await self.async_pipeline_client.pipeline.run(
-                HttpRequest(
-                    "GET",
-                    self.blob_endpoint,
-                    headers={
-                        "x-ms-version": self.api_version,
-                        "Accept": "application/octet-stream",
-                        "x-ms-date": current_time,
-                    },
-                ),
+                request,
                 stream=True,
             )
         ).http_response
