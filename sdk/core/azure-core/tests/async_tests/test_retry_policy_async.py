@@ -59,7 +59,7 @@ def test_retry_types():
     assert backoff_time == 4
 
 
-@pytest.mark.parametrize("retry_after_input,http_request", product(["0", "800", "1000", "1200"], HTTP_REQUESTS))
+@pytest.mark.parametrize("retry_after_input,http_request", product(["0", "800", "1000", "1200", "0.9"], HTTP_REQUESTS))
 def test_retry_after(retry_after_input, http_request):
     retry_policy = AsyncRetryPolicy()
     request = http_request("GET", "http://localhost")
@@ -78,7 +78,7 @@ def test_retry_after(retry_after_input, http_request):
     assert retry_after == float(retry_after_input)
 
 
-@pytest.mark.parametrize("retry_after_input,http_request", product(["0", "800", "1000", "1200"], HTTP_REQUESTS))
+@pytest.mark.parametrize("retry_after_input,http_request", product(["0", "800", "1000", "1200", "0.9"], HTTP_REQUESTS))
 def test_x_ms_retry_after(retry_after_input, http_request):
     retry_policy = AsyncRetryPolicy()
     request = http_request("GET", "http://localhost")
