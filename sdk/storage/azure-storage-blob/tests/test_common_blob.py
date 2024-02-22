@@ -49,6 +49,7 @@ from azure.storage.blob import (
     upload_blob_to_url)
 from azure.storage.blob._generated.models import RehydratePriority
 from azure.storage.blob._shared.models import Services
+from azure.storage.fileshare import ShareServiceClient
 
 from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
@@ -2143,7 +2144,6 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
     @BlobPreparer()
     @recorded_by_proxy
     def test_multiple_services_sas(self, **kwargs):
-        from azure.storage.fileshare import ShareServiceClient
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
@@ -2263,7 +2263,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         # Assert response using blob sas
         assert resp_with_blob_sas['immutability_policy_until_date'] is not None
         assert resp_with_blob_sas['immutability_policy_mode'] is not None
-        
+
         if self.is_live:
             blob_client.delete_immutability_policy()
             blob_client.set_legal_hold(False)

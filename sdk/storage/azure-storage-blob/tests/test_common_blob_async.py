@@ -49,6 +49,7 @@ from azure.storage.blob import (
     generate_container_sas,
     generate_blob_sas)
 from azure.storage.blob._shared.models import Services
+from azure.storage.fileshare.aio import ShareServiceClient
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import BlobPreparer
@@ -2318,7 +2319,6 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
     @BlobPreparer()
     @recorded_by_proxy_async
     async def test_multiple_services_sas(self, **kwargs):
-        from azure.storage.fileshare.aio import ShareServiceClient
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
