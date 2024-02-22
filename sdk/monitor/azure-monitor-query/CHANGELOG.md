@@ -17,6 +17,17 @@
 
 ### Other Changes
 
+## 1.2.1 (2024-01-31)
+
+### Bugs Fixed
+
+- Fixed certain keyword arguments from not being propagated when using `MetricsQueryClient`.
+
+### Other Changes
+
+- Internal updates to generated code.
+- Bumped minimum dependency on `azure-core` to `>=1.28.0`.
+
 ## 1.3.0b2 (2023-11-20)
 
 ### Other Changes

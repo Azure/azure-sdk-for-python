@@ -154,7 +154,7 @@ class MetricsQueryClient(object):  # pylint: disable=client-accepts-api-version-
          namespaces. This should be provided as a datetime object.
         :paramtype start_time: Optional[~datetime.datetime]
         :return: An iterator like instance of either MetricNamespace or the result of cls(response)
-        :rtype: ~azure.core.paging.AsyncItemPaged[:class: `~azure.monitor.query.MetricNamespace`]
+        :rtype: ~azure.core.paging.AsyncItemPaged[~azure.monitor.query.MetricNamespace]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -188,7 +188,7 @@ class MetricsQueryClient(object):  # pylint: disable=client-accepts-api-version-
         :keyword namespace: Metric namespace to query metric definitions for.
         :paramtype namespace: Optional[str]
         :return: An iterator like instance of either MetricDefinition or the result of cls(response)
-        :rtype: ~azure.core.paging.AsyncItemPaged[:class: `~azure.monitor.query.MetricDefinition`]
+        :rtype: ~azure.core.paging.AsyncItemPaged[~azure.monitor.query.MetricDefinition]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
