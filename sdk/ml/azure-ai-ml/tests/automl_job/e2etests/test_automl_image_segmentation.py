@@ -98,7 +98,7 @@ class TestAutoMLImageSegmentation(AzureRecordedTestCase):
             image_instance_segmentation_job_sweep.extend_search_space(
                 [
                     SearchSpace(
-                        model_name=Choice(["mask_rcnn_swin-s-p4-w7_fpn_fp16_ms-crop-3x_coco"]),
+                        model_name=Choice(["mask-rcnn_swin-t-p4-w7_fpn_amp-ms-crop-3x_coco"]),
                         number_of_epochs=Choice([1]),
                         gradient_accumulation_step=Choice([1]),
                         learning_rate=Choice([0.005]),
@@ -118,7 +118,7 @@ class TestAutoMLImageSegmentation(AzureRecordedTestCase):
             )
             image_instance_segmentation_job_individual = copy.deepcopy(image_instance_segmentation_job)
             image_instance_segmentation_job_individual.set_training_parameters(
-                model_name="mask_rcnn_swin-s-p4-w7_fpn_fp16_ms-crop-3x_coco", number_of_epochs=1
+                model_name="mask-rcnn_swin-t-p4-w7_fpn_amp-ms-crop-3x_coco", number_of_epochs=1
             )
             image_instance_segmentation_job_reuse = copy.deepcopy(image_instance_segmentation_job_individual)
         else:

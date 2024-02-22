@@ -185,8 +185,7 @@ class UnstructuredHTMLFileIOLoader(UnstructuredFileIOLoader, BaseDocumentLoader)
         """
         self.metadata = metadata
         self.document_source = document_source
-        super().__init__(file=file, mode=mode, **unstructured_kwargs)  # type: ignore[call-arg]
-        # TODO: Bug 2878420
+        super().__init__(file=file, **unstructured_kwargs)
 
     def load(self) -> List[Document]:
         """
@@ -475,17 +474,16 @@ def crack_documents(sources: Iterator[DocumentSource], file_extension_loaders=No
     log_batch_size = 100
     for i, source in enumerate(sources):
         file_start_time = time.time()
-        # TODO: Bug 2878422 for all type: ignore in this method
-        files_by_extension[source.path.suffix.lower()] += 1  # type: ignore[union-attr]
-        loader_cls = file_extension_loaders.get(source.path.suffix.lower())  # type: ignore[union-attr]
+        assert isinstance(source.path, Path)
+        files_by_extension[source.path.suffix.lower()] += 1
+        loader_cls = file_extension_loaders.get(source.path.suffix.lower())
         if i % log_batch_size == 0:
             for ext in files_by_extension:
                 if files_by_extension[ext] > 0:
                     safe_mlflow_log_metric(ext, files_by_extension[ext], logger=logger, step=int(time.time() * 1000))
         mode = "r"
         if loader_cls is None:
-            msg = f"Unsupported file extension '{source.path.suffix}': {source.filename}"  # type: ignore[union-attr]
-            raise RuntimeError(msg)
+            raise RuntimeError(f"Unsupported file extension '{source.path.suffix}': {source.filename}")
 
         if hasattr(loader_cls, "file_io_mode"):
             mode = loader_cls.file_io_mode()
@@ -493,8 +491,12 @@ def crack_documents(sources: Iterator[DocumentSource], file_extension_loaders=No
             mode = "rb"
 
         try:
-            with open(source.path, mode=mode, encoding="utf-8") as f:  # type: ignore[arg-type]
-                loader = loader_cls(**{"file": f, "document_source": source, "metadata": {}})
+            with open(source.path, mode=mode) as f:
+                loader = loader_cls(**{
+                    "file": f,
+                    "document_source": source,
+                    "metadata": {}
+                })
                 file_pre_yield_time = time.time()
                 total_time += file_pre_yield_time - file_start_time
                 yield loader.load_chunked_document()
@@ -502,8 +504,12 @@ def crack_documents(sources: Iterator[DocumentSource], file_extension_loaders=No
             # if loader_cls has a fallback_loader, try that
             if hasattr(loader_cls, "fallback_loader"):
                 fallback_loader_cls = loader_cls.fallback_loader()
-                with open(source.path, mode=mode, encoding="utf-8") as f:  # type: ignore[arg-type]
-                    loader = fallback_loader_cls(**{"file": f, "document_source": source, "metadata": {}})
+                with open(source.path, mode=mode) as f:
+                    loader = fallback_loader_cls(**{
+                        "file": f,
+                        "document_source": source,
+                        "metadata": {}
+                    })
                     file_pre_yield_time = time.time()
                     total_time += file_pre_yield_time - file_start_time
                     yield loader.load_chunked_document()

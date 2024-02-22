@@ -113,6 +113,9 @@ from ._models_py3 import EnableProtectionInput
 from ._models_py3 import EnableProtectionInputProperties
 from ._models_py3 import EnableProtectionProviderSpecificInput
 from ._models_py3 import EncryptionDetails
+from ._models_py3 import ErrorAdditionalInfo
+from ._models_py3 import ErrorDetail
+from ._models_py3 import ErrorResponse
 from ._models_py3 import Event
 from ._models_py3 import EventCollection
 from ._models_py3 import EventProperties
@@ -690,6 +693,9 @@ __all__ = [
     "EnableProtectionInputProperties",
     "EnableProtectionProviderSpecificInput",
     "EncryptionDetails",
+    "ErrorAdditionalInfo",
+    "ErrorDetail",
+    "ErrorResponse",
     "Event",
     "EventCollection",
     "EventProperties",

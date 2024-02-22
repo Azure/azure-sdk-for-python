@@ -514,9 +514,7 @@ class MLIndex:
                 if isinstance(index_connection, str):
                     index_connection = get_connection_by_id_v2(index_connection, credential=credential)
                 self.index_config["connection"] = {"id": get_id_from_connection(index_connection)}
-        # pylint: disable=no-value-for-parameter
-        self.save(just_config=True)  # type: ignore[call-arg]
-        # TODO: Bug 2877747
+        self.save(self.base_uri, just_config=True)
         return self
 
     def set_embeddings_connection(
