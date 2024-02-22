@@ -74,7 +74,6 @@
 # PRLabel: %Attestation
 /sdk/attestation/azure-security-attestation/                         @anilba06 @Azure/azure-sdk-write-attestation @gkostal
 
-# ServiceOwners: @cRui861
 # ServiceLabel: %Batch
 # PRLabel: %Batch
 /sdk/batch/                                                          @jingjlii @JJJessieWang @wanghoppe @dpwatrous @wiboris @cRui861
@@ -312,11 +311,9 @@
 # PRLabel: %OpenAI
 /sdk/openai/                                                         @kristapratico @glecaros
 
-# ServiceOwners: @yifan-zhou922
 # ServiceLabel: %Purview
-
 # PRLabel: %Purview
-/sdk/purview/                                                        @iscai-msft @msyyc
+/sdk/purview/                                                        @yifan-zhou922
 
 # PRLabel: %Recovery Services
 /sdk/recoveryservices/                                               @DheerendraRathor
@@ -349,9 +346,8 @@
 /sdk/template/                                                       @scbedd @weshaggard @benbp
 
 # ServiceLabel: %Cognitive - Text Analytics
-
 # PRLabel: %Cognitive - Text Analytics
-/sdk/textanalytics/                                                  @kristapratico @quentinRobinson @wangyuantao
+/sdk/textanalytics/                                                  @quentinRobinson @wangyuantao
 
 # AzureSdkOwners: @YalinLi0312
 # ServiceLabel: %Cognitive - Form Recognizer
