@@ -36,7 +36,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_list_request(**kwargs: Any) -> HttpRequest:
+def build_list_request(location: str, subscription_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -44,7 +44,16 @@ def build_list_request(**kwargs: Any) -> HttpRequest:
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "/providers/Microsoft.ServiceFabric/operations")
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/providers/Microsoft.ServiceFabric/locations/{location}/unsupportedVmSizes",
+    )  # pylint: disable=line-too-long
+    path_format_arguments = {
+        "location": _SERIALIZER.url("location", location, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -55,14 +64,43 @@ def build_list_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class Operations:
+def build_get_request(location: str, vm_size: str, subscription_id: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/providers/Microsoft.ServiceFabric/locations/{location}/unsupportedVmSizes/{vmSize}",
+    )  # pylint: disable=line-too-long
+    path_format_arguments = {
+        "location": _SERIALIZER.url("location", location, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "vmSize": _SERIALIZER.url("vm_size", vm_size, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+class UnsupportedVmSizesOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.servicefabric.ServiceFabricManagementClient`'s
-        :attr:`operations` attribute.
+        :attr:`unsupported_vm_sizes` attribute.
     """
 
     models = _models
@@ -75,21 +113,23 @@ class Operations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> Iterable["_models.OperationResult"]:
-        """Lists all of the available Service Fabric resource provider API operations.
+    def list(self, location: str, **kwargs: Any) -> Iterable["_models.VMSizeResource"]:
+        """Get the lists of unsupported vm sizes for Service Fabric Clusters.
 
-        Get the list of available Service Fabric resource provider API operations.
+        Get the lists of unsupported vm sizes for Service Fabric Clusters.
 
+        :param location: The location parameter. Required.
+        :type location: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either OperationResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.servicefabric.models.OperationResult]
+        :return: An iterator like instance of either VMSizeResource or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.servicefabric.models.VMSizeResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.OperationListResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.VMSizesResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -103,6 +143,8 @@ class Operations:
             if not next_link:
 
                 request = build_list_request(
+                    location=location,
+                    subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     template_url=self.list.metadata["url"],
                     headers=_headers,
@@ -130,7 +172,7 @@ class Operations:
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("OperationListResult", pipeline_response)
+            deserialized = self._deserialize("VMSizesResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -154,4 +196,70 @@ class Operations:
 
         return ItemPaged(get_next, extract_data)
 
-    list.metadata = {"url": "/providers/Microsoft.ServiceFabric/operations"}
+    list.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.ServiceFabric/locations/{location}/unsupportedVmSizes"
+    }
+
+    @distributed_trace
+    def get(self, location: str, vm_size: str, **kwargs: Any) -> _models.VMSizeResource:
+        """Get unsupported vm size for Service Fabric Clusters.
+
+        Get unsupported vm size for Service Fabric Clusters.
+
+        :param location: The location parameter. Required.
+        :type location: str
+        :param vm_size: VM Size name. Required.
+        :type vm_size: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: VMSizeResource or the result of cls(response)
+        :rtype: ~azure.mgmt.servicefabric.models.VMSizeResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[_models.VMSizeResource] = kwargs.pop("cls", None)
+
+        request = build_get_request(
+            location=location,
+            vm_size=vm_size,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            template_url=self.get.metadata["url"],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorModel, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("VMSizeResource", pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    get.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.ServiceFabric/locations/{location}/unsupportedVmSizes/{vmSize}"
+    }
