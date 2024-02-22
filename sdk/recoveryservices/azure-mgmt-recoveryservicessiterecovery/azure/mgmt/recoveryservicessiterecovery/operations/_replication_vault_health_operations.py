@@ -40,7 +40,7 @@ def build_get_request(resource_name: str, resource_group_name: str, subscription
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -71,7 +71,7 @@ def build_refresh_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL

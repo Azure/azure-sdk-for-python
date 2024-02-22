@@ -32,10 +32,21 @@ def main():
     response = client.services.create_or_update(
         resource_group_name="contoso-resources",
         service_name="contoso",
+        resource={
+            "identity": {
+                "type": "SystemAssigned, UserAssigned",
+                "userAssignedIdentities": {
+                    "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/contoso-resources/providers/Microsoft.ManagedIdentity/userAssignedIdentities/contoso-identity": {}
+                },
+            },
+            "location": "East US",
+            "properties": {},
+            "tags": {},
+        },
     )
     print(response)
 
 
-# x-ms-original-file: specification/apicenter/resource-manager/Microsoft.ApiCenter/preview/2023-07-01-preview/examples/Services_CreateOrUpdate.json
+# x-ms-original-file: specification/apicenter/resource-manager/Microsoft.ApiCenter/stable/2024-03-01/examples/Services_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

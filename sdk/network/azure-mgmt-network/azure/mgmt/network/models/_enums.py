@@ -1274,6 +1274,8 @@ class VirtualNetworkPrivateEndpointNetworkPolicies(str, Enum, metaclass=CaseInse
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
+    NETWORK_SECURITY_GROUP_ENABLED = "NetworkSecurityGroupEnabled"
+    ROUTE_TABLE_ENABLED = "RouteTableEnabled"
 
 class VirtualNetworkPrivateLinkServiceNetworkPolicies(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enable or Disable apply network policies on private link service in the subnet."""

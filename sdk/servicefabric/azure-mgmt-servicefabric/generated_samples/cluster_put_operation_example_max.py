@@ -69,6 +69,7 @@ def main():
                     "storageAccountName": "diag",
                     "tableEndpoint": "https://diag.table.core.windows.net/",
                 },
+                "enableHttpGatewayExclusiveAuthMode": True,
                 "eventStoreServiceEnabled": True,
                 "fabricSettings": [
                     {"name": "UpgradeService", "parameters": [{"name": "AppPollIntervalInSeconds", "value": "60"}]}
@@ -82,6 +83,7 @@ def main():
                         "durabilityLevel": "Silver",
                         "ephemeralPorts": {"endPort": 64000, "startPort": 49000},
                         "httpGatewayEndpointPort": 19007,
+                        "httpGatewayTokenAuthEndpointPort": 19081,
                         "isPrimary": True,
                         "isStateless": False,
                         "multipleAvailabilityZones": True,
@@ -171,6 +173,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/servicefabric/resource-manager/Microsoft.ServiceFabric/stable/2021-06-01/examples/ClusterPutOperation_example_max.json
+# x-ms-original-file: specification/servicefabric/resource-manager/Microsoft.ServiceFabric/preview/2023-11-01-preview/examples/ClusterPutOperation_example_max.json
 if __name__ == "__main__":
     main()

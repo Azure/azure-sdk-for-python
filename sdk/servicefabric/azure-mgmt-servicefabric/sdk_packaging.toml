@@ -2,6 +2,6 @@
 package_name = "azure-mgmt-servicefabric"
 package_pprint_name = "Service Fabric Management"
 package_doc_id = "service-fabric"
-is_stable = true
+is_stable = false
 is_arm = true
 title = "ServiceFabricManagementClient"
