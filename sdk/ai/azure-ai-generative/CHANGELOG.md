@@ -4,9 +4,13 @@
 
 ### Features Added
 
+- build_index supports passing aoai credentials as arguments
+
 ### Breaking Changes
 
 ### Bugs Fixed
+
+- use correct environment variable names for aoai key
 
 ### Other Changes
 
