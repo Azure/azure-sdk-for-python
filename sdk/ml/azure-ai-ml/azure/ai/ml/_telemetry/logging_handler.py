@@ -119,9 +119,10 @@ def get_appinsights_log_handler(
         if not user_agent or not user_agent.lower() == USER_AGENT.lower():
             return (logging.NullHandler(), None)
 
-        if "properties" in kwargs and "subscription_id" in kwargs.get("properties"):
-            if kwargs.get("properties")["subscription_id"] in test_subscriptions:
-                return (logging.NullHandler(), None)
+        if kwargs:
+            if "properties" in kwargs and "subscription_id" in kwargs.get("properties"):
+                if kwargs.get("properties")["subscription_id"] in test_subscriptions:
+                    return (logging.NullHandler(), None)
 
         child_namespace = component_name or __name__
         current_logger = logging.getLogger(AML_INTERNAL_LOGGER_NAMESPACE).getChild(child_namespace)
