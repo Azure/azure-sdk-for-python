@@ -22,7 +22,6 @@ from devtools_testutils import (
     StorageAccountPreparer
 )
 
-
 # When running live, these variables may need to be updated depending on the
 # test environment
 AZURE_ARM_ENDPOINT = "https://centraluseuap.management.azure.com"
