@@ -15,6 +15,8 @@
 
 - Add attachType character to sdkVersion prefix
     ([#34226](https://github.com/Azure/azure-sdk-for-python/pull/34226))
+- Add AKS scenarios to statsbeat metric and sdkVersion prefix
+    ([#34427](https://github.com/Azure/azure-sdk-for-python/pull/34427))
 
 ## 1.0.0b22 (2024-02-01)
 
