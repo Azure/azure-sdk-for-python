@@ -313,7 +313,7 @@
 
 # ServiceLabel: %Purview
 # PRLabel: %Purview
-/sdk/purview/
+/sdk/purview/                                                        @iscai-msft @msyyc
 
 # PRLabel: %Recovery Services
 /sdk/recoveryservices/                                               @DheerendraRathor
