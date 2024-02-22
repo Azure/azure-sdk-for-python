@@ -10,6 +10,7 @@ from azure.appconfiguration.provider import WatchKey
 from devtools_testutils import recorded_by_proxy
 from preparers import app_config_decorator_aad
 from testcase import AppConfigTestCase, has_feature_flag
+from test_constants import FEATURE_MANAGEMENT_KEY
 
 
 class TestAppConfigurationProvider(AppConfigTestCase, unittest.TestCase):
@@ -29,7 +30,7 @@ class TestAppConfigurationProvider(AppConfigTestCase, unittest.TestCase):
         )
         assert client["refresh_message"] == "original value"
         assert client["my_json"]["key"] == "value"
-        assert "FeatureManagement" in client
+        assert FEATURE_MANAGEMENT_KEY in client
         assert has_feature_flag(client, "Alpha")
 
         setting = client._client.get_configuration_setting(key="refresh_message")
@@ -92,7 +93,7 @@ class TestAppConfigurationProvider(AppConfigTestCase, unittest.TestCase):
         assert client["refresh_message"] == "original value"
         assert client["non_refreshed_message"] == "Static"
         assert client["my_json"]["key"] == "value"
-        assert "FeatureManagement" in client
+        assert FEATURE_MANAGEMENT_KEY in client
         assert has_feature_flag(client, "Alpha")
 
         setting = client._client.get_configuration_setting(key="refresh_message")

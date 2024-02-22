@@ -7,6 +7,7 @@ from azure.appconfiguration.provider import SettingSelector, AzureAppConfigurati
 from devtools_testutils.aio import recorded_by_proxy_async
 from async_preparers import app_config_decorator_async
 from asynctestcase import AppConfigTestCase, has_feature_flag
+from test_constants import FEATURE_MANAGEMENT_KEY
 
 
 class TestAppConfigurationProvider(AppConfigTestCase):
@@ -21,7 +22,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         ) as client:
             assert client["message"] == "hi"
             assert client["my_json"]["key"] == "value"
-            assert "FeatureManagement" in client
+            assert FEATURE_MANAGEMENT_KEY in client
             assert has_feature_flag(client, "Alpha")
 
     # method: provider_trim_prefixes
@@ -41,7 +42,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
             assert client["my_json"]["key"] == "value"
             assert client["trimmed"] == "key"
             assert "test.trimmed" not in client
-            assert "FeatureManagement" in client
+            assert FEATURE_MANAGEMENT_KEY in client
             assert has_feature_flag(client, "Alpha")
 
     # method: provider_selectors
@@ -56,7 +57,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         ) as client:
             assert client["message"] == "test"
             assert "test.trimmed" not in client
-            assert "FeatureManagement" not in client
+            assert FEATURE_MANAGEMENT_KEY not in client
 
     # method: provider_selectors
     @app_config_decorator_async

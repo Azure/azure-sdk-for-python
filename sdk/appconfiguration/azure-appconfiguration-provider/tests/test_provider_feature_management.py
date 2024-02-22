@@ -9,8 +9,7 @@ from devtools_testutils import recorded_by_proxy
 from preparers import app_config_decorator
 from testcase import AppConfigTestCase, setup_configs, has_feature_flag
 from unittest.mock import patch
-
-from azure.appconfiguration.provider._azureappconfigurationprovider import _delay_failure
+from test_constants import FEATURE_MANAGEMENT_KEY
 
 
 class TestAppConfigurationProviderFeatureManagement(AppConfigTestCase):
@@ -24,7 +23,7 @@ class TestAppConfigurationProviderFeatureManagement(AppConfigTestCase):
             feature_flag_enabled=True,
         )
         assert len(client.keys()) == 1
-        assert "FeatureManagement" in client
+        assert FEATURE_MANAGEMENT_KEY in client
         assert has_feature_flag(client, "Alpha")
 
     # method: load
@@ -42,5 +41,5 @@ class TestAppConfigurationProviderFeatureManagement(AppConfigTestCase):
             user_agent="SDK/Integration",
         )
         assert len(client.keys()) == 1
-        assert "FeatureManagement" in client
+        assert FEATURE_MANAGEMENT_KEY in client
         assert not has_feature_flag(client, "Alpha")

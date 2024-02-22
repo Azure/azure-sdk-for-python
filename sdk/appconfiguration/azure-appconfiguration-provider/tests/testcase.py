@@ -7,7 +7,7 @@
 from devtools_testutils import AzureRecordedTestCase
 from azure.appconfiguration import AzureAppConfigurationClient, ConfigurationSetting, FeatureFlagConfigurationSetting
 from azure.appconfiguration.provider import SettingSelector, load, AzureAppConfigurationKeyVaultOptions
-import os
+from test_constants import FEATURE_MANAGEMENT_KEY, FEATURE_FLAG_KEY
 
 
 class AppConfigTestCase(AzureRecordedTestCase):
@@ -186,7 +186,7 @@ def create_feature_flag_config_setting(key, label, enabled):
 
 
 def has_feature_flag(client, feature_id, enabled=False):
-    for feature_flag in client["FeatureManagement"]["FeatureFlags"]:
+    for feature_flag in client[FEATURE_MANAGEMENT_KEY][FEATURE_FLAG_KEY]:
         if feature_flag["id"] == feature_id:
             return feature_flag["enabled"] == enabled
     return False

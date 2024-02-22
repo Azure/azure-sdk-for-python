@@ -9,6 +9,7 @@ from preparers import app_config_decorator
 from testcase import AppConfigTestCase, has_feature_flag
 import datetime
 from unittest.mock import patch
+from test_constants import FEATURE_MANAGEMENT_KEY
 
 from azure.appconfiguration.provider._azureappconfigurationprovider import _delay_failure
 
@@ -29,7 +30,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         )
         assert client["message"] == "hi"
         assert client["my_json"]["key"] == "value"
-        assert "FeatureManagement" in client
+        assert FEATURE_MANAGEMENT_KEY in client
         assert has_feature_flag(client, "Alpha")
 
     # method: provider_trim_prefixes
@@ -47,7 +48,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         assert client["my_json"]["key"] == "value"
         assert client["trimmed"] == "key"
         assert "test.trimmed" not in client
-        assert "FeatureManagement" in client
+        assert FEATURE_MANAGEMENT_KEY in client
         assert has_feature_flag(client, "Alpha")
 
     # method: provider_selectors
@@ -62,7 +63,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         )
         assert client["message"] == "test"
         assert "test.trimmed" not in client
-        assert "FeatureManagement" not in client
+        assert FEATURE_MANAGEMENT_KEY not in client
 
     # method: provider_selectors
     @recorded_by_proxy
