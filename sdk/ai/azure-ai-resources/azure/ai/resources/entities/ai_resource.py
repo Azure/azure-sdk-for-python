@@ -13,9 +13,37 @@ from azure.ai.ml.entities._workspace_hub.workspace_hub_config import WorkspaceHu
 
 # Effectively a lightweight wrapper around a v2 WorkspaceHub
 class AIResource:
-    """An AI Resource, which serves as a container for projects and other AI-related objects"""
+    """An AI Resource, which serves as a container for projects and other AI-related objects
 
-    # TODO full docstring
+    :param name: The name for the AI resource.
+    :type name: str
+    :param description: The description of the AI resource.
+    :type description: Optional[str]
+    :param tags: The tags for the AI resource.
+    :type tags: Optional[Dict[str, str]]
+    :param display_name: The display name for the AI resource.
+    :type display_name: Optional[str]
+    :param location: The location for the AI resource.
+    :type location: Optional[str]
+    :param resource_group: The resource group associated with the AI resource.
+    :type resource_group: Optional[str]
+    :param managed_network: The managed network associated with the AI resource.
+    :type managed_network: Optional[~azure.ai.ml.entities._workspace.networking.ManagedNetwork]
+    :param storage_account: The storage account associated with the AI resource.
+    :type storage_account: Optional[str]
+    :param customer_managed_key: The customer managed key associated with the AI resource.
+    :type customer_managed_key: Optional[~azure.ai.ml.entities.CustomerManagedKey]
+    :param public_network_access: The public network access associated with the AI resource.
+    :type public_network_access: Optional[str]
+    :param identity: The identity associated with the AI resource.
+    :type identity: Optional[~azure.ai.ml.entities.IdentityConfiguration]
+    :param container_registry: The container registry associated with the AI resource.
+    :type container_registry: Optional[str]
+    :param primary_user_assigned_identity: The primary user assigned identity associated with the AI resource.
+    :type primary_user_assigned_identity: Optional[str]
+    :param default_project_resource_group: The default project's resource group.
+    :type default_project_resource_group: Optional[str]
+    """
     def __init__(
         self,
         *,
@@ -35,36 +63,7 @@ class AIResource:
         default_project_resource_group: Optional[str] = None,  # Unpacked WorkspaceHubConfig field
         **kwargs,
     ) -> None:
-        """
-        :param name: The name for the AI resource.
-        :type name: str
-        :param description: The description of the AI resource.
-        :type description: Optional[str]
-        :param tags: The tags for the AI resource.
-        :type tags: Optional[Dict[str, str]]
-        :param display_name: The display name for the AI resource.
-        :type display_name: Optional[str]
-        :param location: The location for the AI resource.
-        :type location: Optional[str]
-        :param resource_group: The resource group associated with the AI resource.
-        :type resource_group: Optional[str]
-        :param managed_network: The managed network associated with the AI resource.
-        :type managed_network: Optional[~azure.ai.ml.entities._workspace.networking.ManagedNetwork]
-        :param storage_account: The storage account associated with the AI resource.
-        :type storage_account: Optional[str]
-        :param customer_managed_key: The customer managed key associated with the AI resource.
-        :type customer_managed_key: Optional[~azure.ai.ml.entities.CustomerManagedKey]
-        :param public_network_access: The public network access associated with the AI resource.
-        :type public_network_access: Optional[str]
-        :param identity: The identity associated with the AI resource.
-        :type identity: Optional[~azure.ai.ml.entities._credentials.IdentityConfiguration]
-        :param container_registry: The container registry associated with the AI resource.
-        :type container_registry: Optional[str]
-        :param primary_user_assigned_identity: The primary user assigned identity associated with the AI resource.
-        :type primary_user_assigned_identity: Optional[str]
-        :param default_project_resource_group: The default project's resource group.
-        :type default_project_resource_group: Optional[str]
-        """
+
         self._workspace_hub = WorkspaceHub(
             name=name,
             description=description,
@@ -325,7 +324,7 @@ class AIResource:
         """The identity associated with the workspace hub.
 
         :return: The identity associated with the workspace hub.
-        :rtype: Optional[~azure.ai.ml.entities._credentials.IdentityConfiguration]
+        :rtype: Optional[~azure.ai.ml.entities.IdentityConfiguration]
         """
         return self._workspace_hub.identity
 
@@ -334,7 +333,7 @@ class AIResource:
         """Sets the identity associated with the workspace hub.
 
         :param value: The identity to associate with the workspace hub.
-        :type value: Optional[~azure.ai.ml.entities._credentials.IdentityConfiguration]
+        :type value: Optional[~azure.ai.ml.entities.IdentityConfiguration]
         """
         if not value:
             return

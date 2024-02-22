@@ -22,7 +22,7 @@ class AIResourceOperations:
     """AIResourceOperations.
 
     You should not instantiate this class directly. Instead, you should
-    create an MLClient instance that instantiates it for you and
+    create an AIClient instance that instantiates it for you and
     attaches it as an attribute.
 
     :param ml_client: The Azure Machine Learning client

@@ -41,7 +41,7 @@ class ModelOperations():
         :param model: The model to package.
         :type model: Union[~azure.ai.resources.entities.models.Model, ~azure.ai.resources.entities.models.PromptflowModel]
         :param output: The output directory for the packaged model. Defaults to the current working directory.
-        :type output: Union[str, ~pathlib.Path]
+        :type output: Union[str, pathlib.Path]
         :raises Exception: If the model is not supported for packaging or if neither `chat_module` nor `loader_module` is
             provided to `Model` if `MLmodel` is not present in `Model.path`.
         """

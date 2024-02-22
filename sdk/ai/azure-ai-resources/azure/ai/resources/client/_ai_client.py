@@ -44,6 +44,17 @@ class AIClient:
     """A client class to interact with Azure AI services.
 
     Use this client to manage Azure AI resources such as MLIndexes, jobs, models, and so on.
+
+    :param credential: The credential object.
+    :type credential: ~azure.core.credentials.TokenCredential
+    :param subscription_id: The Azure subscription ID.
+    :type subscription_id: str
+    :param resource_group_name: The name of the resource group.
+    :type resource_group_name: str
+    :param ai_resource_name: The name of the AI resource.
+    :type ai_resource_name: Optional[str]
+    :param project_name: The name of the AI project.
+    :type project_name: Optional[str]
     """
     def __init__(
         self,
@@ -54,18 +65,6 @@ class AIClient:
         project_name: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
-        """
-        :param credential: The credential object.
-        :type credential: ~azure.core.credentials.TokenCredential
-        :param subscription_id: The Azure subscription ID.
-        :type subscription_id: str
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param ai_resource_name: The name of the AI resource.
-        :type ai_resource_name: Optional[str]
-        :param project_name: The name of the AI project.
-        :type project_name: Optional[str]
-        """
 
         self._add_user_agent(kwargs)
 
@@ -271,7 +270,7 @@ class AIClient:
         """A collection of Azure OpenAI deployment-related operations.
 
         :return: Azure OpenAI deployment operations
-        :rtype: AzureOpenAIDeploymentOperations
+        :rtype: ~azure.ai.resources.operations.AzureOpenAIDeploymentOperations
         """
         return self._azure_open_ai_deployments
 
@@ -306,7 +305,7 @@ class AIClient:
     def project_name(self) -> Optional[str]:
         """The workspace where workspace-dependent operations will be executed.
 
-        :return: The workspace where workspace-dependent operations will be executed.
+        :return: The name of the workspace where workspace-dependent operations will be executed.
         :rtype: Optional[str]
         """
         return self._scope.project_name
@@ -382,11 +381,12 @@ class AIClient:
             ~azure.ai.resources.constants._common.DEFAULT_OPEN_AI_CONNECTION_NAME.
         :type aoai_connection_id: str
         :param acs_config: The configuration for the ACS output.
-        :type acs_config: Optional[ACSOutputConfig]
+        :type acs_config: Optional[~azure.ai.resources.operations.ACSOutputConfig]
         :param input_source: The input source for the index.
-        :type input_source: Union[IndexDataSource, str]
+        :type input_source: Union[~azure.ai.resources.operations.IndexDataSource, str]
         :param identity: The identity to be used for the index.
-        :type identity: Optional[Union[ManagedIdentityConfiguration, UserIdentityConfiguration]]
+        :type identity: Optional[Union[~azure.ai.ml.entities.ManagedIdentityConfiguration,
+            ~azure.ai.ml.entities.UserIdentityConfiguration]]
         :param _dry_run: Whether to run the operation as a dry run. Defaults to False.
         :type _dry_run: bool
         :return: If the `source_input` is an ACSSource, returns an MLIndex object.

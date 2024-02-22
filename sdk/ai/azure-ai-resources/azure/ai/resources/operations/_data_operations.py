@@ -62,11 +62,11 @@ class DataOperations():
         :type name: str
         :param version: The data version
         :type version: str
-        :param label: The labels associated with the data resource
+        :param label: The label associated with the data resource
         :type label: str
-        :return: The data resource with the provided name, version, and labels.
+        :return: The data resource with the provided name, version, and label.
         :rtype: ~azure.ai.resources.entities.data.Data
-        :raises Exception: If no data asset with the provided name and version is found
+        :raises Exception: If no matching data resource is found
         """
         data = self._ml_client.data.get(name, version, label)
         if "azureml.mlIndexAsset" in data.properties:

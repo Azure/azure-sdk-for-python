@@ -42,7 +42,7 @@ class Index:
         :param text: The text to query the index with.
         :type text: str
         :return: A list of documents relevant to the query.
-        :rtype: List[Document]
+        :rtype: List[azure.ai.resources._index._langchain.vendor.schema.document.Document]
         :raises ImportError: If the azure-ai-generative[index] package is not installed
         """
         try:
