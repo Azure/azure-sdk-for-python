@@ -26,7 +26,7 @@ import struct
 from typing import IO, Sequence, Type, Union, overload, List
 from typing_extensions import Literal
 
-from ._cosmos_integers import UInt64, UInt128
+from ._cosmos_integers import _UInt64, _UInt128
 from ._cosmos_murmurhash3 import murmurhash3_128
 from ._routing.routing_range import Range
 
@@ -44,7 +44,7 @@ _MaxPartitionKeyBinarySize = \
      ) * 3
 
 
-class PartitionKeyComponentType:
+class _PartitionKeyComponentType:
     Undefined = 0x0
     Null = 0x1
     PFalse = 0x2
@@ -204,23 +204,23 @@ class PartitionKey(dict):
         writer: IO[bytes]
     ) -> None:
         if value is True:
-            writer.write(bytes([PartitionKeyComponentType.PTrue]))
+            writer.write(bytes([_PartitionKeyComponentType.PTrue]))
         elif value is False:
-            writer.write(bytes([PartitionKeyComponentType.PFalse]))
+            writer.write(bytes([_PartitionKeyComponentType.PFalse]))
         elif value is None or value == {} or value == NonePartitionKeyValue:
-            writer.write(bytes([PartitionKeyComponentType.Null]))
+            writer.write(bytes([_PartitionKeyComponentType.Null]))
         elif isinstance(value, int):
-            writer.write(bytes([PartitionKeyComponentType.Number]))
+            writer.write(bytes([_PartitionKeyComponentType.Number]))
             writer.write(value.to_bytes(8, 'little'))  # assuming value is a 64-bit integer
         elif isinstance(value, float):
-            writer.write(bytes([PartitionKeyComponentType.Number]))
+            writer.write(bytes([_PartitionKeyComponentType.Number]))
             writer.write(struct.pack('<d', value))
         elif isinstance(value, str):
-            writer.write(bytes([PartitionKeyComponentType.String]))
+            writer.write(bytes([_PartitionKeyComponentType.String]))
             writer.write(value.encode('utf-8'))
             writer.write(bytes([0xFF]))
         elif isinstance(value, _Undefined):
-            writer.write(bytes([PartitionKeyComponentType.Undefined]))
+            writer.write(bytes([_PartitionKeyComponentType.Undefined]))
 
     def _get_effective_partition_key_for_hash_partitioning_v2(
         self,
@@ -231,8 +231,8 @@ class PartitionKey(dict):
                 self._write_for_hashing_v2(component, ms)
 
             ms_bytes = ms.getvalue()
-            hash128 = murmurhash3_128(bytearray(ms_bytes), UInt128(0, 0))
-            hash_bytes = UInt128.to_byte_array(hash128)
+            hash128 = murmurhash3_128(bytearray(ms_bytes), _UInt128(0, 0))
+            hash_bytes = _UInt128.to_byte_array(hash128)
             hash_bytes.reverse()
 
             # Reset 2 most significant bits, as max exclusive value is 'FF'.
@@ -254,7 +254,7 @@ class PartitionKey(dict):
             self._write_for_hashing_v2(value, binary_writer)
 
             ms_bytes = ms.getvalue()
-            hash128 = murmurhash3_128(bytearray(ms_bytes), UInt128(0, 0))
+            hash128 = murmurhash3_128(bytearray(ms_bytes), _UInt128(0, 0))
             hash_v_bytes = hash128.to_byte_array()
             hash_v = list(reversed(hash_v_bytes))
 
@@ -294,14 +294,14 @@ def _write_for_binary_encoding(
     binary_writer: IO[bytes]
 ) -> None:
     if isinstance(value, bool):
-        binary_writer.write(bytes([(PartitionKeyComponentType.PTrue if value else PartitionKeyComponentType.PFalse)]))
+        binary_writer.write(bytes([(_PartitionKeyComponentType.PTrue if value else _PartitionKeyComponentType.PFalse)]))
 
     elif isinstance(value, _Infinity):
-        binary_writer.write(bytes([PartitionKeyComponentType.Infinity]))
+        binary_writer.write(bytes([_PartitionKeyComponentType.Infinity]))
 
     elif isinstance(value, (int, float)):  # Assuming number value is int or float
-        binary_writer.write(bytes([PartitionKeyComponentType.Number]))
-        payload = UInt64.encode_double_as_uint64(value)  # Function to be defined elsewhere
+        binary_writer.write(bytes([_PartitionKeyComponentType.Number]))
+        payload = _UInt64.encode_double_as_uint64(value)  # Function to be defined elsewhere
 
         # Encode first chunk with 8-bits of payload
         binary_writer.write(bytes([(payload >> (64 - 8))]))
@@ -323,7 +323,7 @@ def _write_for_binary_encoding(
         binary_writer.write(bytes([(byte_to_write & 0xFE)]))
 
     elif isinstance(value, str):
-        binary_writer.write(bytes([PartitionKeyComponentType.String]))
+        binary_writer.write(bytes([_PartitionKeyComponentType.String]))
         utf8_value = value.encode('utf-8')
         short_string = len(utf8_value) <= _MaxStringBytesToAppend
 
@@ -337,4 +337,4 @@ def _write_for_binary_encoding(
             binary_writer.write(bytes([0x00]))
 
     elif isinstance(value, _Undefined):
-        binary_writer.write(bytes([PartitionKeyComponentType.Undefined]))
+        binary_writer.write(bytes([_PartitionKeyComponentType.Undefined]))
