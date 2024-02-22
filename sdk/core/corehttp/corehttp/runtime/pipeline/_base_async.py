@@ -26,15 +26,22 @@
 from __future__ import annotations
 from types import TracebackType
 from typing import Any, Union, Generic, TypeVar, List, Optional, Iterable, Type
-from typing_extensions import AsyncContextManager
+from typing_extensions import AsyncContextManager, TypeGuard
 
 from . import PipelineRequest, PipelineResponse, PipelineContext
 from ..policies import AsyncHTTPPolicy, SansIOHTTPPolicy
+from ..pipeline._base import is_sansio_http_policy
 from ._tools_async import await_result as _await_result
 from ...transport import AsyncHttpTransport
 
 AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
+
+
+def is_async_http_policy(policy) -> TypeGuard[AsyncHTTPPolicy]:
+    if hasattr(policy, "send"):
+        return True
+    return False
 
 
 class _SansIOAsyncHTTPPolicyRunner(
@@ -127,10 +134,10 @@ class AsyncPipeline(AsyncContextManager["AsyncPipeline"], Generic[HTTPRequestTyp
         self._transport = transport
 
         for policy in policies or []:
-            if isinstance(policy, SansIOHTTPPolicy):
-                self._impl_policies.append(_SansIOAsyncHTTPPolicyRunner(policy))
-            elif policy:
+            if is_async_http_policy(policy):
                 self._impl_policies.append(policy)
+            elif is_sansio_http_policy(policy):
+                self._impl_policies.append(_SansIOAsyncHTTPPolicyRunner(policy))
         for index in range(len(self._impl_policies) - 1):
             self._impl_policies[index].next = self._impl_policies[index + 1]
         if self._impl_policies:
