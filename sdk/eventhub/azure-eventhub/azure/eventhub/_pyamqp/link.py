@@ -192,10 +192,10 @@ class Link:  # pylint: disable=too-many-instance-attributes
         if self.network_trace:
             _LOGGER.debug(
                 "[Connection:%s, Session:%s, Link:%s] <- %r",
-                AttachFrame(*frame),
                 self.network_trace_params["amqpConnection"],
                 self.network_trace_params["amqpSession"],
-                self.network_trace_params["amqpLink"]
+                self.network_trace_params["amqpLink"],
+                AttachFrame(*frame)
             )
         if self._is_closed:
             raise ValueError("Invalid link")
