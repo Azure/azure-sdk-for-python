@@ -6,7 +6,7 @@
 
 import os
 
-from typing import Any, AnyStr, Dict, IO, Iterable, Optional, Union, TYPE_CHECKING
+from typing import Any, AnyStr, Dict, cast, IO, Iterable, Optional, Union, TYPE_CHECKING
 from ._list_blobs_helper import BlobPrefix
 from .._models import BlobType
 from .._shared.policies_async import ExponentialRetry, LinearRetry
@@ -72,10 +72,10 @@ async def upload_blob_to_url(
     :rtype: dict(str, Any)
     """
     async with BlobClient.from_blob_url(blob_url, credential=credential) as client:
-        return await client.upload_blob(
+        return await cast(BlobClient, client).upload_blob(
             data=data,
             blob_type=BlobType.BlockBlob,
-            **kwargs)  # type: ignore [no-any-return]
+            **kwargs)
 
 
 # Download data to specified open file-handle.

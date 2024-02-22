@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 import os
 
-from typing import Any, AnyStr, Dict, IO, Iterable, Optional, Union, TYPE_CHECKING
+from typing import Any, AnyStr, cast, Dict, IO, Iterable, Optional, Union, TYPE_CHECKING
 from ._version import VERSION
 from ._blob_client import BlobClient
 from ._container_client import ContainerClient
@@ -119,10 +119,10 @@ def upload_blob_to_url(
     :rtype: dict(str, Any)
     """
     with BlobClient.from_blob_url(blob_url, credential=credential) as client:
-        return client.upload_blob(data=data, blob_type=BlobType.BLOCKBLOB, **kwargs)  # type: ignore [no-any-return]
+        return cast(BlobClient, client).upload_blob(data=data, blob_type=BlobType.BLOCKBLOB, **kwargs)
 
 
-def _download_to_stream(client: BlobClient, handle: IO, **kwargs: Any) -> None:
+def _download_to_stream(client: BlobClient, handle: IO[bytes], **kwargs: Any) -> None:
     """
     Download data to specified open file-handle.
 
@@ -135,7 +135,7 @@ def _download_to_stream(client: BlobClient, handle: IO, **kwargs: Any) -> None:
 
 def download_blob_from_url(
     blob_url: str,
-    output: Union[str, IO[Any]],
+    output: Union[str, IO[bytes]],
     credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
     **kwargs: Any
 ) -> None:
@@ -184,7 +184,7 @@ def download_blob_from_url(
     overwrite = kwargs.pop('overwrite', False)
     with BlobClient.from_blob_url(blob_url, credential=credential) as client:
         if hasattr(output, 'write'):
-            _download_to_stream(client, output, **kwargs)  # type: ignore [arg-type]
+            _download_to_stream(client, cast(IO[bytes], output), **kwargs)
         else:
             if not overwrite and os.path.isfile(output):
                 raise ValueError(f"The file '{output}' already exists.")
