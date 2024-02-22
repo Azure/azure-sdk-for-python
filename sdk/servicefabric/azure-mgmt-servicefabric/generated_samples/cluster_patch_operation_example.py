@@ -34,6 +34,7 @@ def main():
         cluster_name="myCluster",
         parameters={
             "properties": {
+                "enableHttpGatewayExclusiveAuthMode": True,
                 "eventStoreServiceEnabled": True,
                 "nodeTypes": [
                     {
@@ -42,6 +43,7 @@ def main():
                         "durabilityLevel": "Bronze",
                         "ephemeralPorts": {"endPort": 64000, "startPort": 49000},
                         "httpGatewayEndpointPort": 19007,
+                        "httpGatewayTokenAuthEndpointPort": 19081,
                         "isPrimary": True,
                         "name": "nt1vm",
                         "vmInstanceCount": 5,
@@ -52,6 +54,7 @@ def main():
                         "durabilityLevel": "Bronze",
                         "ephemeralPorts": {"endPort": 4000, "startPort": 3000},
                         "httpGatewayEndpointPort": 0,
+                        "httpGatewayTokenAuthEndpointPort": 19081,
                         "isPrimary": False,
                         "name": "testnt1",
                         "vmInstanceCount": 3,
@@ -69,6 +72,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/servicefabric/resource-manager/Microsoft.ServiceFabric/stable/2021-06-01/examples/ClusterPatchOperation_example.json
+# x-ms-original-file: specification/servicefabric/resource-manager/Microsoft.ServiceFabric/preview/2023-11-01-preview/examples/ClusterPatchOperation_example.json
 if __name__ == "__main__":
     main()

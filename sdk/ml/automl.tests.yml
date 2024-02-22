@@ -4,6 +4,7 @@ extends:
   template: ./tests.yml
   parameters:
     TestMarkArgument: "automl_test"
+    TestTimeoutInMinutes: 480
     CloudConfig:
       Public:
         SubscriptionConfiguration: $(python-ml-automl-sub-scope)

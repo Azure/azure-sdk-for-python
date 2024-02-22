@@ -38,4 +38,3 @@ trace.get_tracer_provider().add_span_processor(span_processor)
 application = get_asgi_application()
 
 # cSpell:enable
-

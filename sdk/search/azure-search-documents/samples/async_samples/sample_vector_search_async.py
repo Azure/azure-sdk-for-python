@@ -179,7 +179,7 @@ async def simple_hybrid_search():
             vector_queries=[vector_query],
             select=["hotelId", "hotelName"],
         )
-        print(await results.get_answers())
+
         async for result in results:
             print(result)
     # [END simple_hybrid_search]

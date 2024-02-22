@@ -38,6 +38,7 @@ class ConversationBot:
 
 
         self.role = role
+        self.conversation_template_orig = conversation_template
         self.conversation_template: jinja2.Template = jinja2.Template(
             conversation_template, undefined=jinja2.StrictUndefined
         )
@@ -50,17 +51,25 @@ class ConversationBot:
 
         self.logger = logging.getLogger(repr(self))
 
+        self.conversation_starter = None # can either be a dictionary or jinja template
         if role == ConversationRole.USER:
             if "conversation_starter" in self.persona_template_args:
-                self.logger.info(
-                    'This simulated bot will use the provided conversation starter '
-                    f'"{repr(self.persona_template_args["conversation_starter"])[:400]}"'
-                    'instead of generating a turn using a LLM'
-                )
-                self.conversation_starter = self.persona_template_args["conversation_starter"]
+                conversation_starter_content = self.persona_template_args["conversation_starter"]
+                if type(conversation_starter_content) is dict:
+                    self.logger.info(f'This simulated bot will use the provided conversation starter (passed in as dictionary): {conversation_starter_content} instead of generating a turn using a LLM')
+                    self.conversation_starter = conversation_starter_content
+                else:
+                    self.logger.info(
+                        'This simulated bot will use the provided conversation starter '
+                        f'{repr(conversation_starter_content)[:400]}'
+                        ' instead of generating a turn using a LLM'
+                    )
+                    self.conversation_starter = jinja2.Template(
+                        conversation_starter_content, undefined=jinja2.StrictUndefined
+                    )
             else:
                 self.logger.info('This simulated bot will generate the first turn as no conversation starter is provided')
-                self.conversation_starter = ""
+
 
 
     async def generate_response(
@@ -88,11 +97,16 @@ class ConversationBot:
 
         # check if this is the first turn and the conversation_starter is not None,
         # return the conversations starter rather than generating turn using LLM
-        if turn_number == 0 and self.conversation_starter is not None and self.conversation_starter != "":
-            self.logger.info(f"Returning conversation starter: {self.conversation_starter}")
+        if turn_number == 0 and self.conversation_starter is not None:
+            # if conversation_starter is a dictionary, pass it into samples as is
+            if type(self.conversation_starter) is dict:
+                self.logger.info(f"Returning conversation starter: {self.conversation_starter}")
+                samples = [self.conversation_starter]
+            else:
+                self.logger.info(f"Returning conversation starter: {repr(self.persona_template_args['conversation_starter'])[:400]}")
+                samples = [self.conversation_starter.render(**self.persona_template_args)] # type: ignore[attr-defined]
             time_taken = 0
 
-            samples = [self.conversation_starter]
             finish_reason = ["stop"]
 
             parsed_response = {
@@ -103,11 +117,15 @@ class ConversationBot:
             full_response = parsed_response
             return parsed_response, {}, time_taken, full_response
 
-        prompt = self.conversation_template.render(
-            conversation_turns=conversation_history[-max_history:],
-            role=self.role.value,
-            **self.persona_template_args
-        )
+        try:
+            prompt = self.conversation_template.render(
+                conversation_turns=conversation_history[-max_history:],
+                role=self.role.value,
+                **self.persona_template_args
+            )
+        except:
+            import code
+            code.interact(local=locals())
 
         messages = [{"role": "system", "content": prompt}]
 
