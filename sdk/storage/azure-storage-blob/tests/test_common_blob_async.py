@@ -48,7 +48,7 @@ from azure.storage.blob import (
     generate_account_sas,
     generate_container_sas,
     generate_blob_sas)
-
+from azure.storage.blob._shared.models import Services
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import BlobPreparer
@@ -2314,6 +2314,48 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         # Assert
         assert blob_name == blob_properties.name
         assert self.container_name == container_properties.name
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_multiple_services_sas(self, **kwargs):
+        from azure.storage.fileshare.aio import ShareServiceClient
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        await self._setup(storage_account_name, storage_account_key)
+        blob_name = await self._create_block_blob()
+
+        account_sas_permission = AccountSasPermissions(read=True, write=True, delete=True, add=True,
+                                                       permanent_delete=True, list=True)
+        assert 'y' in str(account_sas_permission)
+
+        token = self.generate_sas(
+            generate_account_sas,
+            self.bsc.account_name,
+            self.bsc.credential.account_key,
+            ResourceTypes(container=True, object=True, service=True),
+            account_sas_permission,
+            datetime.utcnow() + timedelta(hours=1),
+            services=Services(blob=True, fileshare=True)
+        )
+
+        # Act
+        blob = BlobClient(
+            self.bsc.url, container_name=self.container_name, blob_name=blob_name, credential=token)
+        container = ContainerClient(
+            self.bsc.url, container_name=self.container_name, credential=token)
+        fsc = ShareServiceClient(
+            self.account_url(storage_account_name, "file"), credential=token)
+
+        container_props = await container.get_container_properties()
+        blob_props = await blob.get_blob_properties()
+        fsc_props = await fsc.get_service_properties()
+
+        # Assert
+        assert container_props is not None
+        assert blob_props is not None
+        assert fsc_props is not None
 
     @BlobPreparer()
     @recorded_by_proxy_async

@@ -48,6 +48,7 @@ from azure.storage.blob import (
     generate_container_sas,
     upload_blob_to_url)
 from azure.storage.blob._generated.models import RehydratePriority
+from azure.storage.blob._shared.models import Services
 
 from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
@@ -2138,6 +2139,43 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         # Assert
         assert blob_list is not None
         assert blob_props is not None
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_multiple_services_sas(self, **kwargs):
+        from azure.storage.fileshare import ShareServiceClient
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        blob_name = self._create_block_blob()
+
+        token = self.generate_sas(
+            generate_account_sas,
+            self.bsc.account_name,
+            self.bsc.credential.account_key,
+            ResourceTypes(container=True, object=True, service=True),
+            AccountSasPermissions(read=True, list=True),
+            datetime.utcnow() + timedelta(hours=1),
+            services=Services(blob=True, fileshare=True)
+        )
+
+        # Act
+        blob = BlobClient(
+            self.bsc.url, container_name=self.container_name, blob_name=blob_name, credential=token)
+        container = ContainerClient(
+            self.bsc.url, container_name=self.container_name, credential=token)
+        fsc = ShareServiceClient(
+            self.account_url(storage_account_name, "file"), credential=token)
+
+        container_props = container.get_container_properties()
+        blob_props = blob.get_blob_properties()
+        fsc_props = fsc.get_service_properties()
+
+        # Assert
+        assert container_props is not None
+        assert blob_props is not None
+        assert fsc_props is not None
 
     @pytest.mark.live_test_only
     @BlobPreparer()

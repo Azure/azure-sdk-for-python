@@ -5,6 +5,8 @@
 This version and all future versions will require Python 3.8+. Python 3.7 is no longer supported.
 
 ### Features Added
+- The `services` parameter has been added to the `generate_account_sas` API, which enables the ability to generate SAS
+tokens to be used with multiple services. By default, the SAS token service scope will default to the current service.
 
 ### Bugs Fixed
 - Bumped dependency of `typing-extensions` to `>=4.6.0` to avoid potential `TypeError` with `typing.TypeVar` on
@@ -117,7 +119,7 @@ an Account SAS with certain service level operations.
 also included a change to how account SAS is generated to reflect a change made to the service in SAS generation for
 service version 2020-12-06.
 - Updated documentation for `receive_messages()` to explain iterator behavior and life-cycle.
-- Added a sample to `queue_samples_message.py` (and async-equivalent) showcasing the use of `max_messages` in `receive_messages()`. 
+- Added a sample to `queue_samples_message.py` (and async-equivalent) showcasing the use of `max_messages` in `receive_messages()`.
 
 ## 12.2.0 (2022-03-08)
 
