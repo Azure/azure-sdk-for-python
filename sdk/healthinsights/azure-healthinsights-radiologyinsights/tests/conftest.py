@@ -31,9 +31,6 @@ import pytest
 
 from devtools_testutils import test_proxy, add_general_regex_sanitizer
 
-
-
-
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
     healthinsights_endpoint = os.environ.get(

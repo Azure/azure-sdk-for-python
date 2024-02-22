@@ -75,9 +75,8 @@ class HealthInsightsSamples:
         )
         # Create author
         author = models.DocumentAuthor(id="author2", full_name="authorName2")
-        # Create document
-        # create_date_time=datetime.datetime(2021,8,29,0,0,0,0)
-        create_date_time = datetime.datetime.utcnow()
+        
+        create_date_time = datetime.datetime.now(datetime.UTC)
         patient_document1 = models.PatientDocument(
             type=models.DocumentType.NOTE,
             clinical_type=models.ClinicalDocumentType.RADIOLOGY_REPORT,
