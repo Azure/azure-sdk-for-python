@@ -29,8 +29,6 @@ class OpsLogger:
 
     def update_info(self, data: Dict) -> None:
         if "app_insights_handler" in data:
-            app_insights_handler = data.pop("app_insights_handler")
-            if not isinstance(app_insights_handler, logging.NullHandler):
-                logger, tracer = app_insights_handler
-                self.package_logger.addHandler(logger)
-                self.package_tracer = tracer
+            logger, tracer = data.pop("app_insights_handler")
+            self.package_logger.addHandler(logger)
+            self.package_tracer = tracer
