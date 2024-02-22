@@ -11,8 +11,8 @@ from azure.appconfiguration.provider.aio import load
 from azure.appconfiguration.provider import SettingSelector, AzureAppConfigurationKeyVaultOptions
 from test_constants import FEATURE_MANAGEMENT_KEY, FEATURE_FLAG_KEY
 
-class AppConfigTestCase(AzureRecordedTestCase):
 
+class AppConfigTestCase(AzureRecordedTestCase):
     async def create_aad_client(
         self,
         appconfiguration_endpoint_string,

@@ -9,6 +9,7 @@ from async_preparers import app_config_decorator_async
 from asynctestcase import AppConfigTestCase, has_feature_flag
 from test_constants import FEATURE_MANAGEMENT_KEY
 
+
 class TestAppConfigurationProvider(AppConfigTestCase):
     # method: provider_creation_aad
     @app_config_decorator_async
