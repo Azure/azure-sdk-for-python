@@ -28,9 +28,11 @@ from azure.ai.ml._restclient.model_dataplane import AzureMachineLearningWorkspac
 from azure.ai.ml._restclient.runhistory import AzureMachineLearningWorkspaces as ServiceClientRunHistory
 from azure.ai.ml._restclient.runhistory.models import Run
 from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient022023Preview
+from azure.ai.ml._restclient.v2024_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012024Preview
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase, ListViewType, UserIdentity
 from azure.ai.ml._restclient.v2023_08_01_preview.models import JobBase as JobBase_2308
 from azure.ai.ml._restclient.v2023_08_01_preview.models import JobType as RestJobType
+from azure.ai.ml._restclient.v2024_01_01_preview.models import JobType as RestJobType_20240101
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -71,6 +73,7 @@ from azure.ai.ml.entities._builders import BaseNode, Command, Spark
 from azure.ai.ml.entities._datastore._constants import WORKSPACE_BLOB_STORE
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
+from azure.ai.ml.entities._job.finetuning.finetuning_job import FineTuningJob
 from azure.ai.ml.entities._job.base_job import _BaseJob
 from azure.ai.ml.entities._job.import_job import ImportJob
 from azure.ai.ml.entities._job.job import _is_pipeline_child_job
@@ -152,12 +155,14 @@ class JobOperations(_ScopeDependentOperations):
         operation_scope: OperationScope,
         operation_config: OperationConfig,
         service_client_02_2023_preview: ServiceClient022023Preview,
+        service_client_01_2024_preview: ServiceClient012024Preview,
         all_operations: OperationsContainer,
         credential: TokenCredential,
         **kwargs: Any,
     ) -> None:
         super(JobOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
+        self._operation_2024_01_preview = service_client_01_2024_preview.jobs
         self._operation_2023_02_preview = service_client_02_2023_preview.jobs
         self._service_client = service_client_02_2023_preview
         self._all_operations = all_operations
@@ -719,19 +724,25 @@ class JobOperations(_ScopeDependentOperations):
     ) -> JobBase:
         service_client_operation = self._operation_2023_02_preview
         # Upgrade api from 2023-04-01-preview to 2023-08-01 for pipeline job
+        if rest_job_resource.properties.job_type == RestJobType_20240101.FINE_TUNING:
+            service_client_operation = self._operation_2024_01_preview
         if rest_job_resource.properties.job_type == RestJobType.PIPELINE:
             service_client_operation = self.service_client_08_2023_preview.jobs
 
         if rest_job_resource.properties.job_type == RestJobType.SWEEP:
             service_client_operation = self.service_client_08_2023_preview.jobs
 
-        result = service_client_operation.create_or_update(
-            id=rest_job_resource.name,
-            resource_group_name=self._operation_scope.resource_group_name,
-            workspace_name=self._workspace_name,
-            body=rest_job_resource,
-            **kwargs,
-        )
+        try:
+            result = service_client_operation.create_or_update(
+                id=rest_job_resource.name,
+                resource_group_name=self._operation_scope.resource_group_name,
+                workspace_name=self._workspace_name,
+                body=rest_job_resource,
+                **kwargs,
+            )
+        except Exception as e:
+            print(e)
+            raise e
 
         return result
 
@@ -1073,6 +1084,8 @@ class JobOperations(_ScopeDependentOperations):
             # as they are part of the pipeline component
         elif isinstance(job, AutoMLJob):
             self._resolve_automl_job_inputs(job)
+        elif isinstance(job, FineTuningJob):
+            self._resolve_finetuning_job_inputs(job)
         elif isinstance(job, Spark):
             self._resolve_job_inputs(job._job_inputs.values(), job._base_path)
         elif isinstance(job, Command):
@@ -1102,6 +1115,18 @@ class JobOperations(_ScopeDependentOperations):
                 self._resolve_job_input(job.validation_data, job._base_path)
             if hasattr(job, "test_data") and job.test_data is not None:
                 self._resolve_job_input(job.test_data, job._base_path)
+
+    def _resolve_finetuning_job_inputs(self, job: FineTuningJob) -> None:
+        """This method resolves the inputs for FineTuning jobs.
+
+        :param job: the job resource entity
+        :type job: AutoMLJob
+        """
+        if isinstance(job, FineTuningJob):
+            # self._resolve_job_input(job.model, job._base_path)
+            self._resolve_job_input(job.training_data, job._base_path)
+            if job.validation_data is not None:
+                self._resolve_job_input(job.validation_data, job._base_path)
 
     def _resolve_azureml_id(self, job: Job) -> Job:
         """This method converts ARM id to name or name:version for nested
@@ -1325,6 +1350,8 @@ class JobOperations(_ScopeDependentOperations):
             job = self._resolve_arm_id_for_automl_job(job, resolver, inside_pipeline=False)
         elif isinstance(job, PipelineJob):
             job = self._resolve_arm_id_for_pipeline_job(job, resolver)
+        elif isinstance(job, FineTuningJob):
+            job = self._resolve_arm_id_for_finetuning_job(job, resolver)
         else:
             msg = f"Non supported job type: {type(job)}"
             raise ValidationException(
@@ -1477,6 +1504,26 @@ class JobOperations(_ScopeDependentOperations):
         if inside_pipeline and job.compute is None:
             return job
         job.compute = resolver(job.compute, azureml_type=AzureMLResourceType.COMPUTE)
+        return job
+
+    def _resolve_arm_id_for_finetuning_job(self, job: FineTuningJob, resolver: _AssetResolver) -> FineTuningJob:
+        """Resolve arm_id for AutoMLJob.
+
+        :param job: The AutoML job
+        :type job: AutoMLJob
+        :param resolver: The asset resolver function
+        :type resolver: _AssetResolver
+        :param inside_pipeline: Whether the job is within a pipeline
+        :type inside_pipeline: bool
+        :return: The provided FineTuningJob, with resolved fields
+        :rtype: FineTuningJob
+        """
+        # AutoML does not have dependency uploads. Only need to resolve reference to arm id.
+
+        # automl node in pipeline has optional compute
+        # if inside_pipeline and job.compute is None:
+        #    return job
+        # job.model = resolver(job.model, azureml_type=AzureMLResourceType.MODEL)
         return job
 
     def _resolve_arm_id_for_pipeline_job(self, pipeline_job: PipelineJob, resolver: _AssetResolver) -> PipelineJob:
