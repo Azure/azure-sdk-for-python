@@ -7,11 +7,11 @@ from time import time
 from wsgiref.handlers import format_date_time
 from devtools_testutils.perfstress_tests import get_random_bytes, WriteStream
 
-from azure.core.exceptions import (
+from corehttp.exceptions import (
     HttpResponseError,
     map_error,
 )
-from azure.core.rest import HttpRequest
+from corehttp.rest import HttpRequest
 from azure.storage.blob._generated.operations._block_blob_operations import build_upload_request
 from ._test_base import _BlobTest
 
@@ -36,7 +36,7 @@ class DownloadBinaryDataTest(_BlobTest):
                 "x-ms-date": current_time,
             },
         )
-        response = (await self.async_pipeline_client._pipeline.run(request, stream=False)).http_response
+        response = (await self.async_pipeline_client.pipeline.run(request, stream=False)).http_response
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=self.error_map)
@@ -44,7 +44,7 @@ class DownloadBinaryDataTest(_BlobTest):
 
     def run_sync(self):
         current_time = format_date_time(time())
-        response = self.pipeline_client._pipeline.run(
+        response = self.pipeline_client.pipeline.run(
             HttpRequest(
                 "GET",
                 self.blob_endpoint,
@@ -64,7 +64,7 @@ class DownloadBinaryDataTest(_BlobTest):
     async def run_async(self):
         current_time = format_date_time(time())
         response = (
-            await self.async_pipeline_client._pipeline.run(
+            await self.async_pipeline_client.pipeline.run(
                 HttpRequest(
                     "GET",
                     self.blob_endpoint,

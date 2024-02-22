@@ -6,13 +6,12 @@ from time import time
 from wsgiref.handlers import format_date_time
 from urllib.parse import quote
 
-from azure.core.rest import HttpRequest
-from azure.core.exceptions import (
+from corehttp.rest import HttpRequest
+from corehttp.exceptions import (
     HttpResponseError,
     map_error,
 )
-from azure.core.paging import ItemPaged
-from azure.core.async_paging import AsyncItemPaged
+from corehttp.paging import ItemPaged, AsyncItemPaged
 
 from .custom_iterator import CustomIterator, AsyncCustomIterator
 from ._test_base import _TableTest
@@ -59,7 +58,7 @@ class ListEntitiesPageableTest(_TableTest):
                 "x-ms-date": current_time,
             },
         )
-        response = self.pipeline_client._pipeline.run(request).http_response
+        response = self.pipeline_client.pipeline.run(request).http_response
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=self.error_map)
             raise HttpResponseError(response=response)
@@ -87,7 +86,7 @@ class ListEntitiesPageableTest(_TableTest):
                 "x-ms-date": current_time,
             },
         )
-        response = (await self.async_pipeline_client._pipeline.run(request)).http_response
+        response = (await self.async_pipeline_client.pipeline.run(request)).http_response
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=self.error_map)
             raise HttpResponseError(response=response)

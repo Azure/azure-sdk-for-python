@@ -6,8 +6,8 @@ from time import time
 from wsgiref.handlers import format_date_time
 from urllib.parse import quote
 
-from azure.core.rest import HttpRequest
-from azure.core.exceptions import (
+from corehttp.rest import HttpRequest
+from corehttp.exceptions import (
     HttpResponseError,
     map_error,
 )
@@ -42,7 +42,7 @@ class QueryEntitiesJSONTest(_TableTest):
                 "x-ms-date": current_time,
             },
         )
-        response = self.pipeline_client._pipeline.run(
+        response = self.pipeline_client.pipeline.run(
             request,
         ).http_response
         response.json()
@@ -65,7 +65,7 @@ class QueryEntitiesJSONTest(_TableTest):
             },
         )
         response = (
-            await self.async_pipeline_client._pipeline.run(
+            await self.async_pipeline_client.pipeline.run(
                 request,
             )
         ).http_response

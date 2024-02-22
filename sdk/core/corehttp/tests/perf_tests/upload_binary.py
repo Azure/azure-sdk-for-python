@@ -7,12 +7,19 @@ from time import time
 from wsgiref.handlers import format_date_time
 from devtools_testutils.perfstress_tests import RandomStream, AsyncRandomStream
 
-from azure.core.rest import HttpRequest
-from azure.core.exceptions import (
+from corehttp.rest import HttpRequest
+from corehttp.exceptions import (
     HttpResponseError,
     map_error,
 )
 from ._test_base import _BlobTest
+
+import logging
+import sys
+handler = logging.StreamHandler(stream=sys.stdout)
+logger = logging.getLogger('corehttp')
+logger.setLevel(logging.DEBUG)
+logger.addHandler(handler)
 
 
 class UploadBinaryDataTest(_BlobTest):
@@ -39,7 +46,7 @@ class UploadBinaryDataTest(_BlobTest):
             },
             content=self.upload_stream,
         )
-        response = self.pipeline_client._pipeline.run(request).http_response
+        response = self.pipeline_client.pipeline.run(request).http_response
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=self.error_map)
             raise HttpResponseError(response=response)
@@ -60,7 +67,7 @@ class UploadBinaryDataTest(_BlobTest):
             },
             content=self.upload_stream_async,
         )
-        pipeline_response = await self.async_pipeline_client._pipeline.run(request)
+        pipeline_response = await self.async_pipeline_client.pipeline.run(request)
         response = pipeline_response.http_response
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=self.error_map)

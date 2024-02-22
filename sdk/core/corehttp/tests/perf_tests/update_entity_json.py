@@ -6,8 +6,8 @@ import uuid
 from time import time
 from wsgiref.handlers import format_date_time
 
-from azure.core.rest import HttpRequest
-from azure.core.exceptions import (
+from corehttp.rest import HttpRequest
+from corehttp.exceptions import (
     HttpResponseError,
     map_error,
 )
@@ -48,7 +48,7 @@ class UpdateEntityJSONTest(_TableTest):
             json=self.base_entity,
             content=None,
         )
-        response = self.pipeline_client._pipeline.run(
+        response = self.pipeline_client.pipeline.run(
             request,
         ).http_response
         if response.status_code not in [204]:
@@ -73,7 +73,7 @@ class UpdateEntityJSONTest(_TableTest):
             content=None,
         )
         response = (
-            await self.async_pipeline_client._pipeline.run(
+            await self.async_pipeline_client.pipeline.run(
                 request,
             )
         ).http_response

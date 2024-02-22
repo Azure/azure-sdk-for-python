@@ -6,8 +6,7 @@ from typing import (
     Any,
     Callable,
 )
-from azure.core.paging import PageIterator
-from azure.core.async_paging import AsyncPageIterator
+from corehttp.paging import PageIterator, AsyncPageIterator
 
 NEXT_PARTITION_KEY = "x-ms-continuation-NextPartitionKey"
 NEXT_ROW_KEY = "x-ms-continuation-NextRowKey"
