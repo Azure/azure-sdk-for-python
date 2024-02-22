@@ -161,6 +161,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         prefetch_count: int = 0,
         **kwargs: Any,
     ) -> None:
+        self._message_count = 1
         self._session_id = None
         self._message_iter: Optional[Iterator[ServiceBusReceivedMessage]] = None
         self._amqp_transport: "AmqpTransport"
@@ -334,7 +335,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             receive_mode=self._receive_mode,
             timeout=self._max_wait_time * self._amqp_transport.TIMEOUT_FACTOR if self._max_wait_time else 0,
             # set link_credit to at least 1 so that messages can be received
-            link_credit=self._prefetch_count + 1,
+            link_credit=self._prefetch_count + 1 if self._prefetch_count else self._message_count,
             # If prefetch is "off", then keep_alive coroutine frequently listens on the connection for messages and
             # releases right away, since no "prefetched" messages should be in the internal buffer.
             keep_alive_interval=self._config.keep_alive if self._prefetch_count != 0 else 5,
@@ -376,6 +377,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
     ) -> List[ServiceBusReceivedMessage]:
         # pylint: disable=protected-access
         try:
+            self._message_count = max_message_count or 1
             self._receive_context.set()
             self._open()
 
