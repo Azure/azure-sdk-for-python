@@ -32,7 +32,7 @@ class TestCustomModelFineTuningJob(AzureRecordedTestCase):
         guid = uuid.uuid4()
         short_guid = str(guid)[:8]
         training_data, validation_data = text_completion_dataset
-        classification_task = self._get_custom_model_finetuning_job(
+        custom_model_finetuning_job = self._get_custom_model_finetuning_job(
             task=FineTuningTaskType.TEXT_COMPLETION,
             training_data=training_data,
             validation_data=validation_data,
@@ -42,16 +42,25 @@ class TestCustomModelFineTuningJob(AzureRecordedTestCase):
                 "num_train_epochs": "1",
             },
             model=mlflow_model_llama,
+            display_name=f"llama-display-name-{short_guid}",
             name=f"llama-{short_guid}",
-            experiment_name="foo_exp",
+            experiment_name="llama-finetuning-experiment",
             tags={"foo_tag": "bar"},
             properties={"my_property": True},
             outputs={"registered_model": Output(type="mlflow_model", name=f"llama-finetune-registered-{short_guid}")},
         )
         # Trigger job
-        created_job = client.jobs.create_or_update(classification_task)
+        created_job = client.jobs.create_or_update(custom_model_finetuning_job)
+
+        # Assert created job
         assert created_job.id is not None
-        assert created_job.name is not None
+        assert created_job.name == f"llama-{short_guid}", f"Expected job name to be llama-{short_guid}"
+        assert (
+            created_job.display_name == f"llama-display-name-{short_guid}"
+        ), f"Expected display name to be llama-display-name-{short_guid}"
+        assert (
+            created_job.experiment_name == "llama-finetuning-experiment"
+        ), "Expected experiment name to be llama-finetuning-experiment"
         assert created_job.status == JobStatus.RUNNING
         # TODO: Need service side fixes - Assert completion - Need to check why ES SB handler is
         # not completing the run appropriately.

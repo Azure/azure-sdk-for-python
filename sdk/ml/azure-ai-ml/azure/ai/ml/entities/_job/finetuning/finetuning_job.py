@@ -58,3 +58,29 @@ class FineTuningJob(Job, JobIOMixin):
             target=ErrorTarget.FINETUNING,
             error_category=ErrorCategory.SYSTEM_ERROR,
         )
+
+    def __eq__(self, other: object) -> bool:
+        """Returns True if both instances have the same values.
+
+        This method check instances equality and returns True if both of
+            the instances have the same attributes with the same values.
+
+        :param other: Any object
+        :type other: object
+        :return: True or False
+        :rtype: bool
+        """
+        if not isinstance(other, FineTuningJob):
+            return NotImplemented
+
+        return self.outputs == other.outputs
+
+    def __ne__(self, other: object) -> bool:
+        """Check inequality between two FineTuningJob objects.
+
+        :param other: Any object
+        :type other: object
+        :return: True or False
+        :rtype: bool
+        """
+        return not self.__eq__(other)

@@ -174,8 +174,8 @@ class FineTuningVertical(FineTuningJob):
 
         return (
             # TODO: Equality from base class does not work, no current precedence for this
-            # super().__eq__(other) and
-            self.task == other.task
+            super().__eq__(other)
+            and self.task == other.task
             and self.model == other.model
             and self.model_provider == other.model_provider
             and self.training_data == other.training_data

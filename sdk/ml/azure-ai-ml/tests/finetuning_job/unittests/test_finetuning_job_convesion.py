@@ -1,5 +1,5 @@
 from azure.ai.ml.constants._common import AssetTypes
-from azure.ai.ml.entities._inputs_outputs import Input
+from azure.ai.ml.entities._inputs_outputs import Input, Output
 from typing import Optional, Dict
 from azure.ai.ml._restclient.v2024_01_01_preview.models import (
     UriFileJobInput,
@@ -35,6 +35,7 @@ class TestCustomModelFineTuningJob:
         # Create Custom Model FineTuning Job
         custom_model_finetuning_job = self._get_custom_model_finetuning_job(
             task=task,
+            display_name="llama-display-name",
             training_data=Input(type=AssetTypes.URI_FILE, path="https://foo/bar/train.csv"),
             validation_data=Input(type=AssetTypes.URI_FILE, path="https://foo/bar/test.csv"),
             hyperparameters={"foo": "bar"},
@@ -45,6 +46,7 @@ class TestCustomModelFineTuningJob:
             experiment_name="foo_exp",
             tags={"foo_tag": "bar"},
             properties={"my_property": True},
+            outputs={"registered_model": Output(type="mlflow_model", name="llama-finetune-registered")},
         )
         rest_obj = custom_model_finetuning_job._to_rest_object()
         assert isinstance(
@@ -60,6 +62,7 @@ class TestCustomModelFineTuningJob:
         original_obj = CustomModelFineTuningJob._from_rest_object(rest_obj)
         assert custom_model_finetuning_job == original_obj, "Conversion to/from rest object failed"
         assert original_obj.task == task, "Task not set correctly"
+        assert original_obj.display_name == "llama-display-name", "Display name not set correctly"
         assert original_obj.name == "llama-finetuning", "Name not set correctly"
         assert original_obj.experiment_name == "foo_exp", "Experiment name not set correctly"
         assert original_obj.tags == {"foo_tag": "bar"}, "Tags not set correctly"
@@ -77,6 +80,11 @@ class TestCustomModelFineTuningJob:
         assert (
             original_obj.model.path == "azureml://registries/azureml-meta/models/Llama-2-7b/versions/9"
         ), "Model path not set correctly"
+
+        assert isinstance(original_obj.outputs["registered_model"], Output), "Output is not Output"
+        mlflow_model_output = original_obj.outputs["registered_model"]
+        assert mlflow_model_output.type == "mlflow_model", "Output type not set correctly"
+        assert mlflow_model_output.name == "llama-finetune-registered", "Output name not set correctly"
 
     @pytest.mark.parametrize(
         "task",
