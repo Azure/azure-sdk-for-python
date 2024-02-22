@@ -250,7 +250,7 @@ def generate_account_sas(
     start: Optional[Union["datetime", str]] = None,
     ip: Optional[str] = None,
     *,
-    services: Services = Services(fileshare=True),
+    services: Union[Services, str] = Services(fileshare=True),
     **kwargs: Any
 ) -> str:
     """Generates a shared access signature for the file service.
@@ -285,7 +285,7 @@ def generate_account_sas(
         or address range specified on the SAS token, the request is not authenticated.
         For example, specifying sip=168.1.5.65 or sip=168.1.5.60-168.1.5.70 on the SAS
         restricts the request to those IP addresses.
-    :keyword Services services:
+    :keyword Union[Services, str] services:
         Specifies the services that the Shared Access Signature (sas) token will be able to be utilized with.
         Will default to only this package (i.e. fileshare) if not provided.
     :keyword str protocol:
