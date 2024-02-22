@@ -51,6 +51,10 @@ class MsalCredential:  # pylint: disable=too-many-instance-attributes
 
         self._cache = kwargs.pop("_cache", None)
         self._cae_cache = kwargs.pop("_cae_cache", None)
+        if self._cache or self._cae_cache:
+            self._custom_cache = True
+        else:
+            self._custom_cache = False
         self._cache_options = kwargs.pop("cache_persistence_options", None)
 
         super(MsalCredential, self).__init__()
@@ -112,3 +116,22 @@ class MsalCredential:  # pylint: disable=too-many-instance-attributes
             )
 
         return client_applications_map[tenant_id]
+
+    def __getstate__(self) -> Dict[str, Any]:
+        state = self.__dict__.copy()
+        # Remove the non-picklable entries
+        del state["_client_applications"]
+        del state["_cae_client_applications"]
+        if not self._custom_cache:
+            del state["_cache"]
+            del state["_cae_cache"]
+        return state
+
+    def __setstate__(self, state: Dict[str, Any]) -> None:
+        self.__dict__.update(state)
+        # Re-create the unpickable entries
+        self._client_applications = {}
+        self._cae_client_applications = {}
+        if not self._custom_cache:
+            self._cache = None
+            self._cae_cache = None

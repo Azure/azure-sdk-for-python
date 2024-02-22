@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added pickling support. ([#34134](https://github.com/Azure/azure-sdk-for-python/pull/34134))
+
 ### Breaking Changes
 
 ### Bugs Fixed
