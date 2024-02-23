@@ -13,7 +13,7 @@ from azure.core.credentials import AccessToken
 from azure.communication.messages.aio import NotificationMessagesClient
 from azure.communication.messages.models import (
     TextNotificationContent,
-    MediaNotificationContent,
+    ImageNotificationContent,
     TemplateNotificationContent,
     MessageReceipt,
     MessageTemplate,
@@ -127,12 +127,12 @@ class TestNotificationMessageClientForTextAsync(AsyncMessagesRecordedTestCase):
 
     @MessagesPreparersAsync.messages_test_decorator_async
     @recorded_by_proxy_async 
-    async def test_media_send_message_async(self):
+    async def test_image_send_message_async(self):
         phone_number: str = "+14254360097"
         input_media_uri: str = "https://aka.ms/acsicon1"
         raised = False
 
-        template_options = MediaNotificationContent(
+        template_options = ImageNotificationContent(
             channel_registration_id="b045be8c-45cd-492a-b2a2-47bae7c36959",
             to=[phone_number],
             media_uri=input_media_uri)

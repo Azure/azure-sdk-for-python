@@ -25,7 +25,7 @@ class NotificationContent(_model_base.Model):
     """Details of the message to send.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    MediaNotificationContent, TemplateNotificationContent, TextNotificationContent
+    ImageNotificationContent, TemplateNotificationContent, TextNotificationContent
 
     All required parameters must be populated in order to send to server.
 
@@ -71,8 +71,8 @@ class NotificationContent(_model_base.Model):
 
 
 
-class MediaNotificationContent(NotificationContent, discriminator='image'):
-    """A request to send a media notification.
+class ImageNotificationContent(NotificationContent, discriminator='image'):
+    """A request to send a Image notification.
 
     All required parameters must be populated in order to send to server.
 

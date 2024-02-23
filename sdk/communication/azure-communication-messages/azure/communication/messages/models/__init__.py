@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._models import MediaNotificationContent
+from ._models import ImageNotificationContent
 from ._models import MessageReceipt
 from ._models import MessageTemplate
 from ._models import MessageTemplateBindings
@@ -38,7 +38,7 @@ from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 __all__ = [
-    'MediaNotificationContent',
+    'ImageNotificationContent',
     'MessageReceipt',
     'MessageTemplate',
     'MessageTemplateBindings',
