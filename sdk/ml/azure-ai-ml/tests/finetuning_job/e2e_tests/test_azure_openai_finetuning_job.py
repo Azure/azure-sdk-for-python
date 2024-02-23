@@ -10,11 +10,9 @@ from devtools_testutils import AzureRecordedTestCase
 from azure.ai.ml import MLClient
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.operations._run_history_constants import JobStatus
-from azure.ai.ml.entities._inputs_outputs import Input
 from typing import Optional, Dict
 from azure.ai.ml.entities._job.finetuning.azure_openai_finetuning_job import AzureOpenAIFineTuningJob
 from azure.ai.ml.entities._job.finetuning.azure_openai_hyperparameters import AzureOpenAIHyperparameters
-import pytest
 from azure.ai.ml._restclient.v2024_01_01_preview.models import (
     FineTuningTaskType,
 )
