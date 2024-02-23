@@ -17,7 +17,6 @@ from opentelemetry.sdk.metrics.export import (
 from opentelemetry.sdk.util.instrumentation import InstrumentationScope
 from opentelemetry.sdk.resources import Resource, ResourceAttributes
 from azure.core.exceptions import HttpResponseError
-from azure.monitor.opentelemetry.exporter._utils import PeriodicTask
 from azure.monitor.opentelemetry.exporter._quickpulse._generated._client import QuickpulseClient
 from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import MonitoringDataPoint
 from azure.monitor.opentelemetry.exporter._quickpulse._exporter import (
@@ -207,7 +206,7 @@ class TestQuickpulse(unittest.TestCase):
             self.assertIsNone(response)
 
 
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._exporter.PeriodicTask.__new__")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._exporter.PeriodicTask")
     def test_quickpulsereader_init(self, task_mock):
         task_inst_mock = mock.Mock()
         task_mock.return_value = task_inst_mock
@@ -222,7 +221,6 @@ class TestQuickpulse(unittest.TestCase):
         self.assertEqual(reader._elapsed_num_seconds, 0)
         self.assertEqual(reader._worker, task_inst_mock)
         task_mock.assert_called_with(
-            PeriodicTask,
             interval=_POST_INTERVAL_SECONDS,
             function=reader._ticker,
             name="QuickpulseMetricReader",
@@ -231,7 +229,7 @@ class TestQuickpulse(unittest.TestCase):
         task_inst_mock.start.assert_called_once()
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._exporter._QuickpulseExporter._ping")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._exporter.PeriodicTask.__new__")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._exporter.PeriodicTask")
     def test_quickpulsereader_ticker_ping_true(self, task_mock, ping_mock):
         task_inst_mock = mock.Mock()
         task_mock.return_value = task_inst_mock
@@ -258,7 +256,7 @@ class TestQuickpulse(unittest.TestCase):
     # TODO: Other ticker cases
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._exporter._QuickpulseExporter.export")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._exporter.PeriodicTask.__new__")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._exporter.PeriodicTask")
     def test_quickpulsereader_receive_metrics(self, task_mock, export_mock):
         task_inst_mock = mock.Mock()
         task_mock.return_value = task_inst_mock
@@ -279,7 +277,7 @@ class TestQuickpulse(unittest.TestCase):
         )
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._exporter._QuickpulseExporter.export")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._exporter.PeriodicTask.__new__")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._exporter.PeriodicTask")
     def test_quickpulsereader_receive_metrics_exception(self, task_mock, export_mock):
         task_inst_mock = mock.Mock()
         task_mock.return_value = task_inst_mock
