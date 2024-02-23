@@ -1,16 +1,15 @@
 import functools
 import datetime
-import asyncio
 import pytz
 
 from azure.core.credentials import AzureKeyCredential
-from azure.healthinsights.radiologyinsights.aio import RadiologyInsightsClient
+from azure.healthinsights.radiologyinsights import RadiologyInsightsClient
 from azure.healthinsights.radiologyinsights import models
-from devtools_testutils.aio import recorded_by_proxy_async
 
 from devtools_testutils import (
     AzureRecordedTestCase,
     EnvironmentVariableLoader,
+    recorded_by_proxy,
 )
 
 HealthInsightsEnvPreparer = functools.partial(
@@ -19,6 +18,7 @@ HealthInsightsEnvPreparer = functools.partial(
     healthinsights_endpoint="https://fake_ad_resource.cognitiveservices.azure.com",
     healthinsights_key="00000000000000000000000000000000",
 )
+
 
 class TestRadiologyInsightsClient(AzureRecordedTestCase):
 
@@ -96,12 +96,12 @@ class TestRadiologyInsightsClient(AzureRecordedTestCase):
         return data
     
     @HealthInsightsEnvPreparer()
-    @recorded_by_proxy_async
-    async def test_critical_result(self, healthinsights_endpoint, healthinsights_key):
+    @recorded_by_proxy
+    def test_critical_result(self, healthinsights_endpoint, healthinsights_key):
         radiology_insights_client = RadiologyInsightsClient(healthinsights_endpoint, AzureKeyCredential(healthinsights_key))
         data = TestRadiologyInsightsClient.create_request(self)
         request_time = datetime.datetime.now(pytz.utc)
-        poller = await radiology_insights_client.begin_infer_radiology_insights(
+        poller = radiology_insights_client.begin_infer_radiology_insights(
                 data,
                 headers={
                     "Repeatability-First-Sent": request_time.strftime(
@@ -109,7 +109,7 @@ class TestRadiologyInsightsClient(AzureRecordedTestCase):
                     )
                 },
             )
-        radiology_insights_result = await poller.result()
+        radiology_insights_result = poller.result()
 
         for patient_result in radiology_insights_result.patient_results:
             assert patient_result.inferences is not None
