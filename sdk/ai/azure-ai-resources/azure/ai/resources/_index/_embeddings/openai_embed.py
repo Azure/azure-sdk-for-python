@@ -11,7 +11,7 @@ from azure.ai.resources._user_agent import USER_AGENT
 from azure.ai.resources._index._utils.logging import get_logger
 from packaging import version
 
-logger = get_logger("embeddings.openai")
+logger = get_logger("embeddings.openai_embed")
 
 
 class OpenAIEmbedder:

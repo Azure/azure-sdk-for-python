@@ -1,6 +1,6 @@
 import logging
 
-from azure.ai.resources._index._embeddings.openai import OpenAIEmbedder
+from azure.ai.resources._index._embeddings.openai_embed import OpenAIEmbedder
 
 logger = logging.getLogger(__name__)
 

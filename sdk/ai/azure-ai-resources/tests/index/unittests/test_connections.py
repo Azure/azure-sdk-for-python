@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 
 def test_connection_credential(test_data_dir: Path):
-    environment_mlindex = (test_data_dir / "mlindex_connections" / "environment").resolve()
+    environment_mlindex = (test_data_dir / "mlindex_connections").resolve()
     logger.info(environment_mlindex)
 
     index = MLIndex(str(environment_mlindex))

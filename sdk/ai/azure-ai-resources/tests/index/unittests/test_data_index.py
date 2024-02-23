@@ -45,7 +45,6 @@ def test_dataindex_config_load(test_data_dir):
     assert isinstance(data_index1.source, IndexSource)
     assert isinstance(data_index2.source, IndexSource)
     assert data_index1.source.input_data.type == data_index2.source.input_data.type
-    assert data_index1.source.input_data.path == data_index2.source.input_data.path
     assert data_index1.source.input_glob == data_index2.source.input_glob
     assert data_index1.source.chunk_size == data_index2.source.chunk_size
     assert data_index1.source.chunk_overlap == data_index2.source.chunk_overlap

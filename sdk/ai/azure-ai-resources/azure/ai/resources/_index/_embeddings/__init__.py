@@ -10,7 +10,7 @@ from typing import Callable, List, Optional, Union
 
 import cloudpickle
 from azure.core.credentials import TokenCredential
-from azure.ai.resources._index._embeddings.openai import OpenAIEmbedder
+from azure.ai.resources._index._embeddings.openai_embed import OpenAIEmbedder
 from azure.ai.resources._index._langchain.vendor.embeddings.base import Embeddings as Embedder
 from azure.ai.resources._index._models import init_open_ai_from_config, parse_model_uri
 from azure.ai.resources._index._utils.logging import get_logger
