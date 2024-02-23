@@ -31,40 +31,39 @@ def build_index(  # pylint: disable=too-many-locals, too-many-statements
     document_path_replacement_regex: Optional[Dict[str, str]] = None,
     embeddings_cache_path: Optional[str] = None,
 ) -> Index:
-
     """
     Generates embeddings locally and stores Index reference in memory
 
-    :keyword output_index_name: The name of the output index.
-    :paramtype output_index_name: str
-    :keyword vector_store: The vector store to be indexed.
-    :paramtype vector_store: str
-    :keyword index_input_config: The configuration for input data source.
-    :paramtype index_input_config: Union[ACSSource, LocalSource]
-    :keyword acs_config: The configuration for Azure Cognitive Search output.
-    :paramtype acs_config: ACSOutputConfig
-    :keyword embeddings_model: The embeddings model to use.
-    :paramtype embeddings_model: str
-    :keyword aoai_connection_id: The ID of AOAI connection. Defaults to None.
-    :paramtype aoai_connection_id: Optional[str]
-    :keyword data_source_url: The URL of the data source. Defaults to None.
-    :paramtype data_source_url: Optional[str]
-    :keyword chunk_size: The size of each chunk. Defaults to 1024.
-    :paramtype chunk_size: int
-    :keyword chunk_overlap: The overlap between chunks. Defaults to 0.
-    :paramtype chunk_overlap: int
-    :keyword input_glob: The input glob pattern. Defaults to "**/*".
-    :paramtype input_glob: str
-    :keyword max_sample_files: The maximum number of sample files. Defaults to None.
-    :paramtype max_sample_files: Optional[int]
-    :keyword chunk_prepend_summary: Whether to prepend summary to each chunk. Defaults to None.
-    :paramtype chunk_prepend_summary: Optional[bool]
-    :keyword document_path_replacement_regex: The regex for document path replacement. Defaults to None.
-    :paramtype document_path_replacement_regex: Optional[Dict[str, str]]
-    :keyword embeddings_cache_path: The path to embeddings cache. Defaults to None.
-    :paramtype embeddings_cache_path: Optional[str]
+    :param output_index_name: The name of the output index.
+    :type output_index_name: str
+    :param vector_store: The vector store to be indexed.
+    :type vector_store: str
+    :param index_input_config: The configuration for input data source.
+    :type index_input_config: Union[ACSSource, LocalSource]
+    :param acs_config: The configuration for Azure Cognitive Search output.
+    :type acs_config: ACSOutputConfig
+    :param embeddings_model: The embeddings model to use.
+    :type embeddings_model: str
+    :param aoai_connection_id: The ID of AOAI connection. Defaults to None.
+    :type aoai_connection_id: Optional[str]
+    :param data_source_url: The URL of the data source. Defaults to None.
+    :type data_source_url: Optional[str]
+    :param chunk_size: The size of each chunk. Defaults to 1024.
+    :type chunk_size: int
+    :param chunk_overlap: The overlap between chunks. Defaults to 0.
+    :type chunk_overlap: int
+    :param input_glob: The input glob pattern.
+    :type input_glob: str
+    :param max_sample_files: The maximum number of sample files. Defaults to None.
+    :type max_sample_files: Optional[int]
+    :param chunk_prepend_summary: Whether to prepend summary to each chunk. Defaults to None.
+    :type chunk_prepend_summary: Optional[bool]
+    :param document_path_replacement_regex: The regex for document path replacement. Defaults to None.
+    :type document_path_replacement_regex: Optional[Dict[str, str]]
+    :param embeddings_cache_path: The path to embeddings cache. Defaults to None.
+    :type embeddings_cache_path: Optional[str]
     :return: The built index.
-    :rtype: ~azure.ai.resources.entities.mlindex.Index
+    :rtype: Index
     """
     try:
         from azure.ai.generative.index._documents import DocumentChunksIterator, split_documents
@@ -90,12 +89,8 @@ def build_index(  # pylint: disable=too-many-locals, too-many-statements
             acs_config=index_input_config,
         )
     embeddings_cache_path = str(Path(embeddings_cache_path) if embeddings_cache_path else Path.cwd())
-    save_path = str(Path(embeddings_cache_path)/f"{output_index_name}-mlindex")
-    splitter_args= {
-        'chunk_size': chunk_size,
-        'chunk_overlap': chunk_overlap,
-        'use_rcts': True
-    }
+    save_path = str(Path(embeddings_cache_path) / f"{output_index_name}-mlindex")
+    splitter_args = {"chunk_size": chunk_size, "chunk_overlap": chunk_overlap, "use_rcts": True}
     if max_sample_files is not None:
         splitter_args["max_sample_files"] = max_sample_files
     if chunk_prepend_summary is not None:
