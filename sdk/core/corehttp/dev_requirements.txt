@@ -9,3 +9,4 @@ httpx>=0.25.0
 ../../core/azure-core
 azure-storage-blob
 azure-data-tables
+azure-identity
