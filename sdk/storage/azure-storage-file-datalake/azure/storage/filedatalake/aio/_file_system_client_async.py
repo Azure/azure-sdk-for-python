@@ -38,7 +38,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
     from azure.core.credentials_async import AsyncTokenCredential
     from datetime import datetime
-    from ._models import PathProperties
+    from .._models import PathProperties
 
 
 class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
