@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Any, List, Optional
+from typing import Any, List, Optional, MutableMapping
 from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 from .._generated.models import (
@@ -122,12 +122,24 @@ class SearchIndexerSkillset:
         kwargs["skills"] = custom_skills
         return cls(**kwargs)
 
-    def serialize(self):
-        return self._to_generated().serialize()
+    def serialize(self, keep_readonly: bool = False, **kwargs: Any) -> MutableMapping[str, Any]:
+        """Return the JSON that would be sent to server from this model.
+        :param bool keep_readonly: If you want to serialize the readonly attributes
+        :returns: A dict JSON compatible object
+        :rtype: dict
+        """
+        return self._to_generated().serialize(keep_readonly=keep_readonly, **kwargs)
 
     @classmethod
-    def deserialize(cls, data):
-        return cls._from_generated(_SearchIndexerSkillset.deserialize(data))
+    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> "SearchIndexerSkillset":
+        """Parse a str using the RestAPI syntax and return a SearchIndexerSkillset instance.
+
+        :param str data: A str using RestAPI structure. JSON by default.
+        :param str content_type: JSON by default, set application/xml if XML.
+        :returns: A SearchIndexerSkillset instance
+        :raises: DeserializationError if something went wrong
+        """
+        return cls._from_generated(_SearchIndexerSkillset.deserialize(data, content_type=content_type))
 
 
 class EntityRecognitionSkillVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -422,9 +434,35 @@ class AnalyzeTextOptions:
             char_filters=self.char_filters,
         )
 
-    def serialize(self):
-        return self._to_analyze_request().serialize()
+    @classmethod
+    def _from_analyze_request(cls, analyze_request):
+        return cls(
+            text=analyze_request.text,
+            analyzer_name=analyze_request.analyzer,
+            tokenizer_name=analyze_request.tokenizer,
+            normalizer_name=analyze_request.normalizer,
+            token_filters=analyze_request.token_filters,
+            char_filters=analyze_request.char_filters,
+        )
 
+    def serialize(self, keep_readonly: bool = False, **kwargs: Any) -> MutableMapping[str, Any]:
+        """Return the JSON that would be sent to server from this model.
+        :param bool keep_readonly: If you want to serialize the readonly attributes
+        :returns: A dict JSON compatible object
+        :rtype: dict
+        """
+        return self._to_analyze_request().serialize(keep_readonly=keep_readonly, **kwargs)
+
+    @classmethod
+    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> "AnalyzeTextOptions":
+        """Parse a str using the RestAPI syntax and return a AnalyzeTextOptions instance.
+
+        :param str data: A str using RestAPI structure. JSON by default.
+        :param str content_type: JSON by default, set application/xml if XML.
+        :returns: A AnalyzeTextOptions instance
+        :raises: DeserializationError if something went wrong
+        """
+        return cls._from_analyze_request(AnalyzeRequest.deserialize(data, content_type=content_type))
 
 class CustomAnalyzer(LexicalAnalyzer):
     """Allows you to take control over the process of converting text into indexable/searchable tokens.
@@ -703,12 +741,24 @@ class SearchResourceEncryptionKey:
             application_secret=application_secret,
         )
 
-    def serialize(self):
-        return self._to_generated().serialize()
+    def serialize(self, keep_readonly: bool = False, **kwargs: Any) -> MutableMapping[str, Any]:
+        """Return the JSON that would be sent to server from this model.
+        :param bool keep_readonly: If you want to serialize the readonly attributes
+        :returns: A dict JSON compatible object
+        :rtype: dict
+        """
+        return self._to_generated().serialize(keep_readonly=keep_readonly, **kwargs)
 
     @classmethod
-    def deserialize(cls, data):
-        return cls._from_generated(_SearchResourceEncryptionKey.deserialize(data))
+    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> "SearchResourceEncryptionKey":
+        """Parse a str using the RestAPI syntax and return a SearchResourceEncryptionKey instance.
+
+        :param str data: A str using RestAPI structure. JSON by default.
+        :param str content_type: JSON by default, set application/xml if XML.
+        :returns: A SearchResourceEncryptionKey instance
+        :raises: DeserializationError if something went wrong
+        """
+        return cls._from_generated(_SearchResourceEncryptionKey.deserialize(data, content_type=content_type))
 
 
 class SynonymMap:
@@ -767,12 +817,24 @@ class SynonymMap:
             e_tag=synonym_map.e_tag,
         )
 
-    def serialize(self):
-        return self._to_generated().serialize()
+    def serialize(self, keep_readonly: bool = False, **kwargs: Any) -> MutableMapping[str, Any]:
+        """Return the JSON that would be sent to server from this model.
+        :param bool keep_readonly: If you want to serialize the readonly attributes
+        :returns: A dict JSON compatible object
+        :rtype: dict
+        """
+        return self._to_generated().serialize(keep_readonly=keep_readonly, **kwargs)
 
     @classmethod
-    def deserialize(cls, data):
-        return cls._from_generated(_SynonymMap.deserialize(data))
+    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> "SynonymMap":
+        """Parse a str using the RestAPI syntax and return a SynonymMap instance.
+
+        :param str data: A str using RestAPI structure. JSON by default.
+        :param str content_type: JSON by default, set application/xml if XML.
+        :returns: A SynonymMap instance
+        :raises: DeserializationError if something went wrong
+        """
+        return cls._from_generated(_SynonymMap.deserialize(data, content_type=content_type))
 
 
 class SearchIndexerDataSourceConnection:
@@ -859,12 +921,24 @@ class SearchIndexerDataSourceConnection:
             identity=search_indexer_data_source.identity,
         )
 
-    def serialize(self):
-        return self._to_generated().serialize()
+    def serialize(self, keep_readonly: bool = False, **kwargs: Any) -> MutableMapping[str, Any]:
+        """Return the JSON that would be sent to server from this model.
+        :param bool keep_readonly: If you want to serialize the readonly attributes
+        :returns: A dict JSON compatible object
+        :rtype: dict
+        """
+        return self._to_generated().serialize(keep_readonly=keep_readonly, **kwargs)
 
     @classmethod
-    def deserialize(cls, data):
-        return cls._from_generated(_SearchIndexerDataSource.deserialize(data))
+    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> "SearchIndexerDataSourceConnection":
+        """Parse a str using the RestAPI syntax and return a SearchIndexerDataSourceConnection instance.
+
+        :param str data: A str using RestAPI structure. JSON by default.
+        :param str content_type: JSON by default, set application/xml if XML.
+        :returns: A SearchIndexerDataSourceConnection instance
+        :raises: DeserializationError if something went wrong
+        """
+        return cls._from_generated(_SearchIndexerDataSource.deserialize(data, content_type=content_type))
 
 
 def pack_analyzer(analyzer):

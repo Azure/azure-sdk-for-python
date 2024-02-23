@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Any, Dict, Union, List, Optional
+from typing import Any, Dict, Union, List, Optional, MutableMapping
 
 from ._edm import Collection, ComplexType, String
 from .._generated.models import (
@@ -234,12 +234,24 @@ class SearchField:
             vector_search_profile_name=search_field.vector_search_profile_name,
         )
 
-    def serialize(self):
-        return self._to_generated().serialize()
+    def serialize(self, keep_readonly: bool = False, **kwargs: Any) -> MutableMapping[str, Any]:
+        """Return the JSON that would be sent to server from this model.
+        :param bool keep_readonly: If you want to serialize the readonly attributes
+        :returns: A dict JSON compatible object
+        :rtype: dict
+        """
+        return self._to_generated().serialize(keep_readonly=keep_readonly, **kwargs)
 
     @classmethod
-    def deserialize(cls, data):
-        return cls._from_generated(_SearchField.deserialize(data))
+    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> "SearchField":
+        """Parse a str using the RestAPI syntax and return a SearchField instance.
+
+        :param str data: A str using RestAPI structure. JSON by default.
+        :param str content_type: JSON by default, set application/xml if XML.
+        :returns: A SearchField instance
+        :raises: DeserializationError if something went wrong
+        """
+        return cls._from_generated(_SearchField.deserialize(data, content_type=content_type))
 
 
 def SimpleField(
@@ -642,12 +654,24 @@ class SearchIndex:
             vector_search=search_index.vector_search,
         )
 
-    def serialize(self):
-        return self._to_generated().serialize()
+    def serialize(self, keep_readonly: bool = False, **kwargs: Any) -> MutableMapping[str, Any]:
+        """Return the JSON that would be sent to server from this model.
+        :param bool keep_readonly: If you want to serialize the readonly attributes
+        :returns: A dict JSON compatible object
+        :rtype: dict
+        """
+        return self._to_generated().serialize(keep_readonly=keep_readonly, **kwargs)
 
     @classmethod
-    def deserialize(cls, data):
-        return cls._from_generated(_SearchIndex.deserialize(data))
+    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> "SearchIndex":
+        """Parse a str using the RestAPI syntax and return a SearchIndex instance.
+
+        :param str data: A str using RestAPI structure. JSON by default.
+        :param str content_type: JSON by default, set application/xml if XML.
+        :returns: A SearchIndex instance
+        :raises: DeserializationError if something went wrong
+        """
+        return cls._from_generated(_SearchIndex.deserialize(data, content_type=content_type))
 
 
 def pack_search_field(search_field: SearchField) -> _SearchField:
