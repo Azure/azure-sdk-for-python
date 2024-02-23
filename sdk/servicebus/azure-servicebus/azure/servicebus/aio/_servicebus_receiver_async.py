@@ -407,6 +407,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
     ) -> List[ServiceBusReceivedMessage]:
         # pylint: disable=protected-access
         try:
+            print("_RECEIVE BEING CALLED")
             self._message_count = max_message_count or 1
             self._receive_context.set()
             await self._open()
@@ -427,6 +428,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
 
             batch: Union[List["uamqp_Message"], List["pyamqp_Message"]] = []
             while not received_messages_queue.empty() and len(batch) < max_message_count:
+                print("receiving msgs from non-empty queue")
                 batch.append(received_messages_queue.get())
                 received_messages_queue.task_done()
             if len(batch) >= max_message_count:
@@ -439,7 +441,9 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
             first_message_received = expired = False
             receiving = True
             while receiving and not expired and len(batch) < max_message_count:
+                # print("1st while")
                 while receiving and received_messages_queue.qsize() < max_message_count:
+                    # print("2nd while")
                     if (
                         abs_timeout
                         and self._amqp_transport.get_current_time(amqp_receive_client)
@@ -465,6 +469,8 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
                 while (
                     not received_messages_queue.empty() and len(batch) < max_message_count
                 ):
+                    # print("3rd while")
+                    # print("clearing out non-empty queue")
                     batch.append(received_messages_queue.get())
                     received_messages_queue.task_done()
             return [self._build_received_message(message) for message in batch]

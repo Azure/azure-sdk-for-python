@@ -281,8 +281,12 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         # pylint: disable=protected-access
         receiver._handler._last_activity_timestamp = time.time()
         if receiver._receive_context.is_set():
+            print(f"Received message {frame}")
+            print(message.header)
+            print(message.message_annotations)
             receiver._handler._received_messages.put((frame, message))
         else:
+            print(f"Received message {frame} but no receive context set")
             await receiver._handler.settle_messages_async(frame[1], 'released')
 
     @staticmethod

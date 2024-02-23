@@ -273,8 +273,9 @@ class Connection:  # pylint:disable=too-many-instance-attributes
             timeout = None
         else:
             timeout = wait
+        performative = kwargs.pop("performative", None)
         new_frame = await self._transport.receive_frame(timeout=timeout, **kwargs)
-        return await self._process_incoming_frame(*new_frame)
+        return await self._process_incoming_frame(*new_frame, performative=performative)
 
     def _can_write(self) -> bool:
         """Whether the connection is in a state where it is legal to write outgoing frames.
@@ -597,7 +598,7 @@ class Connection:  # pylint:disable=too-many-instance-attributes
             )
             return
 
-    async def _process_incoming_frame(self, channel: int, frame: Optional[Union[bytes, Tuple[Any,...]]]) -> bool:  # pylint:disable=too-many-return-statements
+    async def _process_incoming_frame(self, channel: int, frame: Optional[Union[bytes, Tuple[Any,...]]], **kwargs) -> bool:  # pylint:disable=too-many-return-statements
         """Process an incoming frame, either directly or by passing to the necessary Session.
 
         :param int channel: The channel the frame arrived on.
@@ -613,12 +614,13 @@ class Connection:  # pylint:disable=too-many-instance-attributes
             performative, fields = cast(Union[bytes, Tuple], frame)
         except TypeError:
             return True  # Empty Frame or socket timeout
+        
         fields = cast(Tuple[Any, ...], fields)
         try:
             self._last_frame_received_time = time.time()
             if performative == 20:
                 await self._incoming_endpoints[channel]._incoming_transfer(  # pylint:disable=protected-access
-                    fields
+                    fields, **kwargs
                 )
                 return False
             if performative == 21:

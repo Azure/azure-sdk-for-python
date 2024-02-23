@@ -31,6 +31,8 @@ class ReceiverLink(Link):
         self._on_transfer = kwargs.pop("on_transfer")
         self._received_payload = bytearray()
         self._first_frame = None
+        self.incoming_disposition = False
+        self._pending_receipts = []
 
     @classmethod
     def from_incoming_frame(cls, session, handle, frame):
@@ -38,9 +40,13 @@ class ReceiverLink(Link):
         # check link_create_from_endpoint in C lib
         raise NotImplementedError("Pending")
 
-    async def _process_incoming_message(self, frame, message):
+    async def _process_incoming_message(self, frame, message, **kwargs):
         try:
-            return await self._on_transfer(frame, message)
+            if kwargs.get("performative", None) == 21:
+                print("RELEASE MSG")
+                return await self._outgoing_disposition(first=frame[1], last=None, settled=False, state=Released(), batchable=None)
+            else:
+                return await self._on_transfer(frame, message)
         except Exception as e:  # pylint: disable=broad-except
             _LOGGER.error("Transfer callback function failed with error: %r", e, extra=self.network_trace_params)
         return None
@@ -54,7 +60,7 @@ class ReceiverLink(Link):
         self.current_link_credit = self.link_credit
         await self._outgoing_flow()
 
-    async def _incoming_transfer(self, frame):
+    async def _incoming_transfer(self, frame, **kwargs):
         if self.network_trace:
             _LOGGER.debug("<- %r", TransferFrame(payload=b"***", *frame[:-1]), extra=self.network_trace_params)
         self.delivery_count += 1
@@ -74,7 +80,7 @@ class ReceiverLink(Link):
                 self._received_payload = bytearray()
             else:
                 message = decode_payload(frame[11])
-            delivery_state = await self._process_incoming_message(self._first_frame, message)
+            delivery_state = await self._process_incoming_message(self._first_frame, message, **kwargs)
             if not frame[4] and delivery_state:  # settled
                 await self._outgoing_disposition(
                     first=self._first_frame[1],
@@ -86,10 +92,11 @@ class ReceiverLink(Link):
 
     async def _wait_for_response(self, wait: Union[bool, float]) -> None:
         if wait is True:
-            await self._session._connection.listen(wait=False) # pylint: disable=protected-access
-            if self.state == LinkState.ERROR:
-                if self._error:
-                    raise self._error
+            while not self.incoming_disposition:
+                await self._session._connection.listen(wait=False, performative=21) # pylint: disable=protected-access
+                if self.state == LinkState.ERROR:
+                    if self._error:
+                        raise self._error
         elif wait:
             await self._session._connection.listen(wait=wait) # pylint: disable=protected-access
             if self.state == LinkState.ERROR:
@@ -104,12 +111,24 @@ class ReceiverLink(Link):
         state: Optional[Union[Received, Accepted, Rejected, Released, Modified]],
         batchable: Optional[bool],
     ):
+        self.incoming_disposition = False
         disposition_frame = DispositionFrame(
             role=self.role, first=first, last=last, settled=settled, state=state, batchable=batchable
         )
         if self.network_trace:
             _LOGGER.debug("-> %r", DispositionFrame(*disposition_frame), extra=self.network_trace_params)
         await self._session._outgoing_disposition(disposition_frame) # pylint: disable=protected-access
+        self._pending_receipts.append(disposition_frame[1])
+
+    async def _incoming_disposition(self, frame):
+        disposition_frame = DispositionFrame(*frame)
+        if disposition_frame[1] in self._pending_receipts:
+            self._pending_receipts.remove(disposition_frame[1])
+
+        # need to do something to differentiate by state accepted/released/rejected to determine settle state
+        self.incoming_disposition = True
+        # print("Sent back out Disposition Frame: ", disposition_frame)
+        # await self._outgoing_disposition(disposition_frame.first, None, disposition_frame.settled, Accepted(), disposition_frame.batchable) # pylint: disable=protected-access
 
     async def attach(self):
         await super().attach()
@@ -128,5 +147,6 @@ class ReceiverLink(Link):
         if self._is_closed:
             raise ValueError("Link already closed.")
         await self._outgoing_disposition(first_delivery_id, last_delivery_id, settled, delivery_state, batchable)
-        if not settled:
+        if not settled and isinstance(delivery_state, Accepted):
+            print(wait)
             await self._wait_for_response(wait)
