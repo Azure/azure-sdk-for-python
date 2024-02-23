@@ -271,12 +271,13 @@ class ReferenceEmbeddedDocument(EmbeddedDocument):
 
     _last_opened_embeddings: Optional[Tuple[str, object]] = None
 
-    def __init__(self, document_id: str, mtime, document_hash: str, path_to_data: str, index, embeddings_container_path: str, metadata: dict):
+    def __init__(self, document_id: str, mtime, document_hash: str, path_to_data: str, index, embeddings_container_path: str, metadata: dict, is_local: bool = False):
         """Initialize the document."""
         super().__init__(document_id, mtime, document_hash, metadata)
         self.path_to_data = path_to_data
         self.embeddings_container_path = embeddings_container_path
         self.index = index
+        self.is_local = is_local
 
     def get_data(self) -> str:
         """Get the data of the document."""
@@ -619,8 +620,7 @@ class EmbeddingsContainer:
                     doc_id,
                     mtime,
                     document_hash,
-                    path_to_data=None,  # type: ignore[arg-type]
-                    #TODO: Bug 2879181
+                    path_to_data="",
                     index=None,
                     embeddings_container_path=embeddings_container_path,
                     metadata=metadata
@@ -898,9 +898,9 @@ class EmbeddingsContainer:
             raise ValueError("No embed function provided.")
 
         if hasattr(input_documents, "__module__") and "langchain" in input_documents.__module__ and "document_loaders" in input_documents.__module__:
+            assert isinstance(input_documents, BaseLoader)
             input_documents = iter([WrappedLangChainDocument(d)
-                                   for d in input_documents.load()])  # type: ignore[union-attr]
-            # TODO: Bug 2879186
+                                   for d in input_documents.load()])
         elif isinstance(input_documents, DocumentChunksIterator):
             flattened_docs: List = []
             for chunked_doc in input_documents:
