@@ -128,7 +128,7 @@ class SearchIndexerSkillset:
         :returns: A dict JSON compatible object
         :rtype: dict
         """
-        return self._to_generated().serialize(keep_readonly=keep_readonly, **kwargs)
+        return self._to_generated().serialize(keep_readonly=keep_readonly, **kwargs)  # type: ignore
 
     @classmethod
     def deserialize(cls, data: Any, content_type: Optional[str] = None) -> "SearchIndexerSkillset":
@@ -435,7 +435,7 @@ class AnalyzeTextOptions:
         )
 
     @classmethod
-    def _from_analyze_request(cls, analyze_request):
+    def _from_analyze_request(cls, analyze_request) -> "AnalyzeTextOptions":
         return cls(
             text=analyze_request.text,
             analyzer_name=analyze_request.analyzer,
@@ -451,7 +451,7 @@ class AnalyzeTextOptions:
         :returns: A dict JSON compatible object
         :rtype: dict
         """
-        return self._to_analyze_request().serialize(keep_readonly=keep_readonly, **kwargs)
+        return self._to_analyze_request().serialize(keep_readonly=keep_readonly, **kwargs)  # type: ignore
 
     @classmethod
     def deserialize(cls, data: Any, content_type: Optional[str] = None) -> "AnalyzeTextOptions":
@@ -463,6 +463,7 @@ class AnalyzeTextOptions:
         :raises: DeserializationError if something went wrong
         """
         return cls._from_analyze_request(AnalyzeRequest.deserialize(data, content_type=content_type))
+
 
 class CustomAnalyzer(LexicalAnalyzer):
     """Allows you to take control over the process of converting text into indexable/searchable tokens.
@@ -747,7 +748,7 @@ class SearchResourceEncryptionKey:
         :returns: A dict JSON compatible object
         :rtype: dict
         """
-        return self._to_generated().serialize(keep_readonly=keep_readonly, **kwargs)
+        return self._to_generated().serialize(keep_readonly=keep_readonly, **kwargs)  # type: ignore
 
     @classmethod
     def deserialize(cls, data: Any, content_type: Optional[str] = None) -> "SearchResourceEncryptionKey":
@@ -758,7 +759,7 @@ class SearchResourceEncryptionKey:
         :returns: A SearchResourceEncryptionKey instance
         :raises: DeserializationError if something went wrong
         """
-        return cls._from_generated(_SearchResourceEncryptionKey.deserialize(data, content_type=content_type))
+        return cls._from_generated(_SearchResourceEncryptionKey.deserialize(data, content_type=content_type))  # type: ignore
 
 
 class SynonymMap:
@@ -823,7 +824,7 @@ class SynonymMap:
         :returns: A dict JSON compatible object
         :rtype: dict
         """
-        return self._to_generated().serialize(keep_readonly=keep_readonly, **kwargs)
+        return self._to_generated().serialize(keep_readonly=keep_readonly, **kwargs)  # type: ignore
 
     @classmethod
     def deserialize(cls, data: Any, content_type: Optional[str] = None) -> "SynonymMap":
@@ -927,7 +928,7 @@ class SearchIndexerDataSourceConnection:
         :returns: A dict JSON compatible object
         :rtype: dict
         """
-        return self._to_generated().serialize(keep_readonly=keep_readonly, **kwargs)
+        return self._to_generated().serialize(keep_readonly=keep_readonly, **kwargs)  # type: ignore
 
     @classmethod
     def deserialize(cls, data: Any, content_type: Optional[str] = None) -> "SearchIndexerDataSourceConnection":

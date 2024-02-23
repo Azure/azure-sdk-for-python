@@ -251,7 +251,7 @@ class SearchField:
         :returns: A SearchField instance
         :raises: DeserializationError if something went wrong
         """
-        return cls._from_generated(_SearchField.deserialize(data, content_type=content_type))
+        return cls._from_generated(_SearchField.deserialize(data, content_type=content_type))  # type: ignore
 
 
 def SimpleField(
