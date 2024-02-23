@@ -127,8 +127,8 @@ class HealthInsightsSamples:
         except Exception as ex:
             print(str(ex))
             return
-
-    # display critical result description
+    
+    # [START display_critical_results]
     def display_critical_results(self, radiology_insights_result):
         for patient_result in radiology_insights_result.patient_results:
             for ri_inference in patient_result.inferences:
@@ -140,7 +140,7 @@ class HealthInsightsSamples:
                     print(
                         f"Critical Result Inference found: {critical_result.description}"
                     )
-
+    # [END display_critical_results]
 
 async def main():
     sample = HealthInsightsSamples()

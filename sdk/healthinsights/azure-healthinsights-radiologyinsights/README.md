@@ -22,7 +22,7 @@ This table shows the relationship between SDK versions and supported API version
 
 | SDK version | Supported API version of service |
 |-------------|----------------------------------|
-| 1.0.0b1     | 2024-01-17-preview               |
+| 1.0.0b1     | 2023-09-01-preview               |
 
 
 ### Authenticate the client
@@ -85,12 +85,14 @@ For an example how to create a client, a request and get the result see the exam
 ### Get Critical Result Inference information
 
 ```python
+\<!-- SNIPPET:sample_critical_result_inference_async.display_critical_results-->
 def display_critical_results(self,radiology_insights_result):
         for patient_result in radiology_insights_result.patient_results:
             for ri_inference in patient_result.inferences:
                 if ri_inference.kind == models.RadiologyInsightsInferenceType.CRITICAL_RESULT:
                     critical_result = ri_inference.result
                     print(f"Critical Result Inference found: {critical_result.description}")
+\<!-- SNIPPET:sample_critical_result_inference_async.display_critical_results-->
 ```
 
 For detailed conceptual information of this and other inferences please read more [here][inferences].
