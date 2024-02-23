@@ -1,6 +1,6 @@
 import pytest
 from pathlib import Path
-from typing import Dict, cast
+from typing import cast
 from azure.ai.ml import load_job
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.entities._job.finetuning.finetuning_job import FineTuningJob
@@ -66,7 +66,7 @@ def expected_azure_openai_finetuning_job_full(
     return AzureOpenAIFineTuningJob._to_rest_object(custom_model_finetuning_job)
 
 
-class TestCustomModelFineTuningJobSchema:
+class TestAzureOpenAIFineTuningJobSchema:
 
     def _validate_finetuning_job(self, finetuning_job: FineTuningJob):
         assert isinstance(finetuning_job, FineTuningJob)
@@ -76,7 +76,7 @@ class TestCustomModelFineTuningJobSchema:
         mlflow_model = cast(Input, finetuning_job.model)
         assert mlflow_model.type == "mlflow_model"
 
-    def test_custom_model_finetuning_job_full(
+    def test_azure_openai_finetuning_job_full(
         self, expected_azure_openai_finetuning_job_full, loaded_azure_openai_model_finetuning_job_full
     ):
         self._validate_finetuning_job(loaded_azure_openai_model_finetuning_job_full)

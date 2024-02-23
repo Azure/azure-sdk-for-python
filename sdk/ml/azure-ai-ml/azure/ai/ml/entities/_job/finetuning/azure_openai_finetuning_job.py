@@ -25,7 +25,7 @@ class AzureOpenAIFineTuningJob(FineTuningVertical):
         training_data = kwargs.pop("training_data", None)
         validation_data = kwargs.pop("validation_data", None)
         hyperparameters = kwargs.pop("hyperparameters", None)
-        if hyperparameters and cast(hyperparameters, AzureOpenAIHyperparameters) is None:
+        if hyperparameters and not isinstance(hyperparameters, AzureOpenAIHyperparameters):
             raise ValidationException(
                 category=ErrorCategory.USER_ERROR,
                 target=ErrorTarget.JOB,
@@ -180,6 +180,18 @@ class AzureOpenAIFineTuningJob(FineTuningVertical):
         :rtype: AzureOpenAIFineTuningJob
         """
         loaded_data.pop("model_provider", None)
+        hyperaparameters = loaded_data.pop("hyperparameters", None)
+
+        if hyperaparameters:
+            hyperaparameters_dict = {}
+            for key, value in hyperaparameters.items():
+                hyperaparameters_dict[key] = value
+            azure_openai_hyperparameters = AzureOpenAIHyperparameters(
+                batch_size=hyperaparameters_dict.get("batch_size", None),
+                learning_rate_multiplier=hyperaparameters_dict.get("learning_rate_multiplier", None),
+                n_epochs=hyperaparameters_dict.get("n_epochs", None),
+            )
+            loaded_data["hyperparameters"] = azure_openai_hyperparameters
         job = AzureOpenAIFineTuningJob(**loaded_data)
         return job
 

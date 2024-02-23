@@ -4,3 +4,4 @@ class FineTuningConstants:
 
     TaskType = "task"
     ModelProvider = "model_provider"
+    HyperParameters = "hyperparameters"

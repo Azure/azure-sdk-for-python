@@ -17,8 +17,8 @@ validation_data:
   type: uri_file
 hyperparameters:
   n_epochs: 1
-  per_device_train_batch_size: 1
-  batch_size: 0.00002
+  learning_rate_multiplier: 0.00002
+  batch_size: 1
 properties:
   my_property: "my_value"
 tags:
