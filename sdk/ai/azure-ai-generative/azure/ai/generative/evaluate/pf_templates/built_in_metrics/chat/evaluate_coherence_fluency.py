@@ -14,7 +14,7 @@ def evaluate_coherence_fluency(parsed_qa: dict, connection: AzureOpenAIConnectio
      "questions" : parsed_qa["questions"],
      "openai_params" : openai_params
     }
-    metrics = filter_metrics(selected_metrics["non_rag_metrics"])#["gpt_fluency", "gpt_coherence"]
+    metrics = filter_metrics(selected_metrics["non_rag_metrics"])
 
     if len(metrics) == 0:
         return None

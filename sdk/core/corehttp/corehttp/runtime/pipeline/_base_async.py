@@ -24,6 +24,7 @@
 #
 # --------------------------------------------------------------------------
 from __future__ import annotations
+import inspect
 from types import TracebackType
 from typing import Any, Union, Generic, TypeVar, List, Optional, Iterable, Type
 from typing_extensions import AsyncContextManager, TypeGuard
@@ -38,8 +39,13 @@ AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
 
 
+<<<<<<< HEAD
 def is_async_http_policy(policy) -> TypeGuard[AsyncHTTPPolicy]:
     if hasattr(policy, "send"):
+=======
+def is_async_http_policy(policy: object) -> TypeGuard[AsyncHTTPPolicy]:
+    if hasattr(policy, "send") and inspect.iscoroutinefunction(policy.send):
+>>>>>>> main
         return True
     return False
 
@@ -138,6 +144,10 @@ class AsyncPipeline(AsyncContextManager["AsyncPipeline"], Generic[HTTPRequestTyp
                 self._impl_policies.append(policy)
             elif is_sansio_http_policy(policy):
                 self._impl_policies.append(_SansIOAsyncHTTPPolicyRunner(policy))
+            elif policy:
+                raise AttributeError(
+                    f"'{type(policy)}' object has no attribute 'send' or both 'on_request' and 'on_response'."
+                )
         for index in range(len(self._impl_policies) - 1):
             self._impl_policies[index].next = self._impl_policies[index + 1]
         if self._impl_policies:

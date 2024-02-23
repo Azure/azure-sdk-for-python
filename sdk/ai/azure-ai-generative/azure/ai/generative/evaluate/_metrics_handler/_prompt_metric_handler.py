@@ -72,8 +72,6 @@ class PromptMetricHandler(MetricHandler):
                 data_source = self.test_data
             elif data_column in self.prediction_data.columns:
                 data_source = self.prediction_data
-            elif self.truth_data is not None and data_column in self.truth_data.columns:
-                data_source = self.truth_data
 
             if data_source is None:
                 raise Exception(f"{data_column} data needed for metric calculation not found")

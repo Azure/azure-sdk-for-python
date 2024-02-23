@@ -1,17 +1,25 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Callable
+from typing import Callable, Tuple
 
 import pytest
 from devtools_testutils import AzureRecordedTestCase
 
-from azure.ai.ml import MLClient, load_workspace_connection
-from azure.ai.ml._restclient.v2023_06_01_preview.models import ConnectionAuthType, ConnectionCategory
+from azure.ai.ml import MLClient, load_workspace_connection, load_datastore
+from azure.ai.ml._restclient.v2024_01_01_preview.models import ConnectionAuthType, ConnectionCategory
 from azure.ai.ml._utils.utils import camel_to_snake
-from azure.ai.ml.entities import WorkspaceConnection, Workspace, WorkspaceHub, ApiKeyConfiguration
+from azure.ai.ml.entities import (
+    WorkspaceConnection,
+    Workspace,
+    WorkspaceHub,
+    ApiKeyConfiguration,
+    AzureBlobDatastore,
+    AzureBlobStoreWorkspaceConnection,
+)
 from azure.ai.ml.constants._common import WorkspaceConnectionTypes
 from azure.core.exceptions import ResourceNotFoundError
+from azure.ai.ml.entities._datastore.datastore import Datastore
 
 
 @pytest.mark.xdist_group(name="workspace_connection")
@@ -475,3 +483,59 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         del_lean1.result()
         del_lean2.result()
         client.workspace_hubs.begin_delete(name=hub.name, delete_dependent_resources=True)
+
+    @pytest.mark.shareTest
+    def test_workspace_connection_data_connection_listing(
+        self,
+        client: MLClient,
+        randstr: Callable[[], str],
+        account_keys: Tuple[str, str],
+        blob_store_file: str,
+        storage_account_name: str,
+    ) -> None:
+        # Workspace connections cannot be used to CREATE datastore connections, so we need
+        # to use normal datastore operations to first make a blob datastore that we can
+        # then use to test against the data connection listing functionality.
+        # This test borrows heavily from the datastore e2e tests.
+
+        # Create a blob datastore.
+        primary_account_key, secondary_account_key = account_keys
+        random_name = randstr("random_name")
+        params_override = [
+            {"credentials.account_key": primary_account_key},
+            {"name": random_name},
+            {"account_name": storage_account_name},
+        ]
+        internal_blob_ds = load_datastore(blob_store_file, params_override=params_override)
+        created_datastore = datastore_create_get_list(client, internal_blob_ds, random_name)
+        assert isinstance(created_datastore, AzureBlobDatastore)
+        assert created_datastore.container_name == internal_blob_ds.container_name
+        assert created_datastore.account_name == internal_blob_ds.account_name
+        assert created_datastore.credentials.account_key == primary_account_key
+
+        # Make sure that normal list call doesn't include data connection
+        assert internal_blob_ds.name not in [conn.name for conn in client.connections.list()]
+
+        # Make sure that the data connection list call includes the data connection
+        found_datastore_conn = False
+        for conn in client.connections.list(include_data_connections=True):
+            if created_datastore.name == conn.name:
+                assert conn.type == camel_to_snake(ConnectionCategory.AZURE_BLOB)
+                assert isinstance(conn, AzureBlobStoreWorkspaceConnection)
+                found_datastore_conn = True
+        # Ensure that we actually found and validated the data connection.
+        assert found_datastore_conn
+        # delete the data store.
+        client.datastores.delete(random_name)
+        with pytest.raises(Exception):
+            client.datastores.get(random_name)
+
+
+# Helper function copied from datstore e2e test.
+def datastore_create_get_list(client: MLClient, datastore: Datastore, random_name: str) -> Datastore:
+    client.datastores.create_or_update(datastore)
+    datastore = client.datastores.get(random_name, include_secrets=True)
+    assert datastore.name == random_name
+    ds_list = client.datastores.list()
+    assert any(ds.name == datastore.name for ds in ds_list)
+    return datastore

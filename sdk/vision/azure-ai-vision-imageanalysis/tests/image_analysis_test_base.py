@@ -47,7 +47,7 @@ class ImageAnalysisTestBase(AzureRecordedTestCase):
     PRINT_ANALYSIS_RESULTS = True
 
     # We use a single image (the same one) for all error-free tests, one hosted on the web and one local
-    IMAGE_URL = "https://aka.ms/azai/vision/image-analysis-sample.jpg"
+    IMAGE_URL = "https://aka.ms/azsdk/image-analysis/sample.jpg"
     IMAGE_FILE = path.abspath(path.join(path.abspath(__file__), "..", "./sample.jpg"))
 
     def _create_client_for_standard_analysis(self, sync: bool, get_connection_url: bool = False, **kwargs):

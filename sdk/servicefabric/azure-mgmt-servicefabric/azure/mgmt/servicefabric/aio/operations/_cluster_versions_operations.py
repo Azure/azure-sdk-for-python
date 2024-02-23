@@ -62,8 +62,7 @@ class ClusterVersionsOperations:
 
         Gets information about an available Service Fabric cluster code version.
 
-        :param location: The location for the cluster code versions. This is different from cluster
-         location. Required.
+        :param location: The location parameter. Required.
         :type location: str
         :param cluster_version: The cluster code version. Required.
         :type cluster_version: str
@@ -134,8 +133,7 @@ class ClusterVersionsOperations:
 
         Gets information about an available Service Fabric cluster code version by environment.
 
-        :param location: The location for the cluster code versions. This is different from cluster
-         location. Required.
+        :param location: The location parameter. Required.
         :type location: str
         :param environment: The operating system of the cluster. The default means all. Known values
          are: "Windows" and "Linux". Required.
@@ -203,8 +201,7 @@ class ClusterVersionsOperations:
 
         Gets all available code versions for Service Fabric cluster resources by location.
 
-        :param location: The location for the cluster code versions. This is different from cluster
-         location. Required.
+        :param location: The location parameter. Required.
         :type location: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ClusterCodeVersionsListResult or the result of cls(response)
@@ -267,8 +264,7 @@ class ClusterVersionsOperations:
 
         Gets all available code versions for Service Fabric cluster resources by environment.
 
-        :param location: The location for the cluster code versions. This is different from cluster
-         location. Required.
+        :param location: The location parameter. Required.
         :type location: str
         :param environment: The operating system of the cluster. The default means all. Known values
          are: "Windows" and "Linux". Required.

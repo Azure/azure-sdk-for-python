@@ -6,6 +6,13 @@
 
 ### Breaking Changes
 
+- Remapped certain attributes to converge with OpenTelemetry semantic conventions version `1.23.1` ([#34089](https://github.com/Azure/azure-sdk-for-python/pull/34089)):
+    - `http.method` -> `http.request.method`
+    - `http.status_code` -> `http.response.status_code`
+    - `net.peer.name` -> `server.address`
+    - `net.peer.port` -> `server.port`
+    - `http.url` -> `url.full`
+
 ### Bugs Fixed
 
 ### Other Changes

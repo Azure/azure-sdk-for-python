@@ -9,11 +9,11 @@ import pytest
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import HttpRequest, RequestsTransport
 from azure.keyvault.keys import KeyReleasePolicy
-from azure.keyvault.keys._shared.client_base import DEFAULT_VERSION, ApiVersion
+from azure.keyvault.keys._shared.client_base import ApiVersion
 from devtools_testutils import AzureRecordedTestCase
 
 
-HSM_SUPPORTED_VERSIONS = {ApiVersion.V7_2, ApiVersion.V7_3, ApiVersion.V7_4, ApiVersion.V7_5_PREVIEW_1}
+HSM_SUPPORTED_VERSIONS = {ApiVersion.V7_2, ApiVersion.V7_3, ApiVersion.V7_4, ApiVersion.V7_5}
 
 
 def get_attestation_token(attestation_uri):
@@ -44,7 +44,7 @@ def get_release_policy(attestation_uri, **kwargs):
 def get_test_parameters(only_hsm=False, only_vault=False, api_versions=None):
     """generates a list of parameter pairs for test case parameterization, where [x, y] = [api_version, is_hsm]"""
     combinations = []
-    versions = api_versions or pytest.api_version
+    versions = api_versions or pytest.api_version  # pytest.api_version -> [DEFAULT_VERSION] if live, ApiVersion if not
 
     for api_version in versions:
         if not only_vault and api_version in HSM_SUPPORTED_VERSIONS:
@@ -79,7 +79,7 @@ class KeysClientPreparer(AzureRecordedTestCase):
     def __call__(self, fn):
         def _preparer(test_class, api_version, is_hsm, **kwargs):
 
-            self._skip_if_not_configured(api_version, is_hsm)
+            self._skip_if_not_configured(is_hsm)
             if not self.is_logging_enabled:
                 kwargs.update({"logging_enable": False})
             endpoint_url = self.managed_hsm_url if is_hsm else self.vault_url
@@ -102,11 +102,8 @@ class KeysClientPreparer(AzureRecordedTestCase):
         if self.is_live:
             os.environ["AZURE_TENANT_ID"] = os.environ["KEYVAULT_TENANT_ID"]
             os.environ["AZURE_CLIENT_ID"] = os.environ["KEYVAULT_CLIENT_ID"]
-            os.environ["AZURE_CLIENT_SECRET"] = os.environ["KEYVAULT_CLIENT_SECRET"]
+            os.environ["AZURE_CLIENT_SECRET"] = os.environ.get("KEYVAULT_CLIENT_SECRET", "")  # Empty for user auth
 
-    def _skip_if_not_configured(self, api_version, is_hsm):
-
-        if self.is_live and api_version != DEFAULT_VERSION:
-            pytest.skip("This test only uses the default API version for live tests")
+    def _skip_if_not_configured(self, is_hsm):
         if self.is_live and is_hsm and self.managed_hsm_url is None:
             pytest.skip("No HSM endpoint for live testing")

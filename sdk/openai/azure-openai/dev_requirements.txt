@@ -4,3 +4,4 @@
 numpy
 aiohttp
 requests
+httpx

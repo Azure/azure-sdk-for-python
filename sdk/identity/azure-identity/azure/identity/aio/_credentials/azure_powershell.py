@@ -108,7 +108,7 @@ async def run_command_line(command_line: List[str], timeout: int) -> str:
     try:
         proc = await start_process(command_line)
         stdout, stderr = await asyncio.wait_for(proc.communicate(), 10)
-        if sys.platform.startswith("win") and b"' is not recognized" in stderr:
+        if sys.platform.startswith("win") and (b"' is not recognized" in stderr or proc.returncode == 9009):
             # pwsh.exe isn't on the path; try powershell.exe
             command_line[-1] = command_line[-1].replace("pwsh", "powershell", 1)
             proc = await start_process(command_line)
