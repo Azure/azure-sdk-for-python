@@ -28,7 +28,6 @@ from .._generated.models import (
     SearchIndexerIndexProjections,
 )
 
-
 DELIMITER = "|"
 
 
@@ -761,8 +760,9 @@ class SearchResourceEncryptionKey:
         :returns: A SearchResourceEncryptionKey instance
         :raises: DeserializationError if something went wrong
         """
-        return cls._from_generated(
-            _SearchResourceEncryptionKey.deserialize(data, content_type=content_type))  # type: ignore
+        return cls._from_generated(  # type: ignore
+            _SearchResourceEncryptionKey.deserialize(data, content_type=content_type)
+        )
 
 
 class SynonymMap:
