@@ -12,7 +12,7 @@ import re
 import uuid
 from io import SEEK_SET, UnsupportedOperation
 from time import time
-from typing import Any, Dict, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, Optional, TYPE_CHECKING
 from urllib.parse import (
         parse_qsl,
         urlencode,
