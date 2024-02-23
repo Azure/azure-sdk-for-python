@@ -11,7 +11,7 @@ from .models import Model, PromptflowModel
 
 
 @dataclass
-class Deployment:
+class SingleDeployment:
     name: str
     model: Union[str, Model, PromptflowModel]
     app_insights_enabled: bool = True
@@ -26,7 +26,7 @@ class Deployment:
 
 
     @classmethod
-    def _from_v2_endpoint_deployment(cls, endpoint: OnlineEndpoint, deployment: OnlineDeployment) -> "Deployment":
+    def _from_v2_endpoint_deployment(cls, endpoint: OnlineEndpoint, deployment: OnlineDeployment) -> "SingleDeployment":
         return cls(
             name=deployment.name,
             model=deployment.model,

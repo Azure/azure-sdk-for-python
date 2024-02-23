@@ -252,3 +252,14 @@ async def test_async_token_credential_inheritance():
 
     cred = TestTokenCredential()
     await cred.get_token("scope")
+
+
+@pytest.mark.asyncio
+async def test_async_token_credential_asyncio_lock():
+    auth_policy = AsyncBearerTokenCredentialPolicy(Mock(), "scope")
+    assert isinstance(auth_policy._lock, asyncio.Lock)
+
+
+def test_async_token_credential_sync():
+    """Verify that AsyncBearerTokenCredentialPolicy can be constructed in a synchronous context."""
+    AsyncBearerTokenCredentialPolicy(Mock(), "scope")

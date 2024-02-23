@@ -23,7 +23,7 @@ from azure.core.polling import LROPoller
 from .._utils._scoring_script_utils import create_chat_scoring_script, create_mlmodel_file
 from .._utils._registry_utils import get_registry_model
 from .._utils._deployment_utils import get_default_allowed_instance_type_for_hugging_face, get_empty_deployment_arm_template
-from ..entities.deployment import Deployment
+from ..entities.single_deployment import SingleDeployment
 from ..entities.deployment_keys import DeploymentKeys
 from ..entities.models import Model, PromptflowModel
 
@@ -33,7 +33,7 @@ ops_logger = ActivityLogger(__name__)
 logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 
 
-class DeploymentOperations:
+class SingleDeploymentOperations:
     def __init__(self, ml_client: MLClient, connections, **kwargs) -> None:
         self._ml_client = ml_client
         self._connections = connections
@@ -41,8 +41,8 @@ class DeploymentOperations:
         self._resource_management_client = ResourceManagementClient(self._ml_client._credential, self._ml_client.subscription_id)
 
     @distributed_trace
-    @monitor_with_activity(logger, "Deployment.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
-    def begin_create_or_update(self, deployment: Deployment) -> LROPoller[Deployment]:
+    @monitor_with_activity(logger, "SingleDeployment.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
+    def begin_create_or_update(self, deployment: SingleDeployment) -> LROPoller[SingleDeployment]:
         model = deployment.model
         endpoint_name = deployment.endpoint_name if deployment.endpoint_name else deployment.name
 
@@ -251,7 +251,7 @@ class DeploymentOperations:
 
         def lro_callback(raw_response, deserialized, headers):
             outputs = deserialized.properties.outputs
-            return Deployment._from_v2_endpoint_deployment(
+            return SingleDeployment._from_v2_endpoint_deployment(
                 self._ml_client.online_endpoints.get(outputs["online_endpoint_name"]["value"]),
                 self._ml_client.online_deployments.get(outputs["online_deployment_name"]["value"], outputs["online_endpoint_name"]["value"])
             )
@@ -269,8 +269,8 @@ class DeploymentOperations:
         )
 
     @distributed_trace
-    @monitor_with_activity(logger, "Deployment.Get", ActivityType.PUBLICAPI)
-    def get(self, name: str, endpoint_name: Optional[str] = None) -> Deployment:
+    @monitor_with_activity(logger, "SingleDeployment.Get", ActivityType.PUBLICAPI)
+    def get(self, name: str, endpoint_name: Optional[str] = None) -> SingleDeployment:
         endpoint_name = endpoint_name if endpoint_name else name
         deployment = self._ml_client.online_deployments.get(
             name=name,
@@ -278,26 +278,26 @@ class DeploymentOperations:
         )
         endpoint = self._ml_client.online_endpoints.get(endpoint_name)
 
-        return Deployment._from_v2_endpoint_deployment(endpoint, deployment)
+        return SingleDeployment._from_v2_endpoint_deployment(endpoint, deployment)
 
     @distributed_trace
-    @monitor_with_activity(logger, "Deployment.List", ActivityType.PUBLICAPI)
-    def list(self) -> Iterable[Deployment]:
+    @monitor_with_activity(logger, "SingleDeployment.List", ActivityType.PUBLICAPI)
+    def list(self) -> Iterable[SingleDeployment]:
         deployments = []
         endpoints = self._ml_client.online_endpoints.list()
         for endpoint in endpoints:
             v2_deployments = self._ml_client.online_deployments.list(endpoint.name)
-            deployments.extend([Deployment._from_v2_endpoint_deployment(endpoint, deployment) for deployment in v2_deployments])
+            deployments.extend([SingleDeployment._from_v2_endpoint_deployment(endpoint, deployment) for deployment in v2_deployments])
         return deployments
 
     @distributed_trace
-    @monitor_with_activity(logger, "Deployment.GetKeys", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "SingleDeployment.GetKeys", ActivityType.PUBLICAPI)
     def get_keys(self, name: str, endpoint_name: Optional[str] = None) -> DeploymentKeys:
         endpoint_name = endpoint_name if endpoint_name else name
         return DeploymentKeys._from_v2_endpoint_keys(self._ml_client.online_endpoints.get_keys(endpoint_name))
 
     @distributed_trace
-    @monitor_with_activity(logger, "Deployment.Delete", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "SingleDeployment.Delete", ActivityType.PUBLICAPI)
     def delete(self, name: str, endpoint_name: Optional[str] = None) -> None:
         self._ml_client.online_deployments.delete(
             name=name,
@@ -305,7 +305,7 @@ class DeploymentOperations:
         ).result()
 
     @distributed_trace
-    @monitor_with_activity(logger, "Deployment.Invoke", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "SingleDeployment.Invoke", ActivityType.PUBLICAPI)
     def invoke(self, name: str, request_file: Union[str, os.PathLike], endpoint_name: Optional[str] = None) -> Any:
         return self._ml_client.online_endpoints.invoke(
             endpoint_name=endpoint_name if endpoint_name else name,
@@ -316,7 +316,7 @@ class DeploymentOperations:
     def _check_default_instance_type_and_populate(
         self,
         instance_type: str,
-        deployment: Deployment,
+        deployment: SingleDeployment,
         allowed_instance_types: Optional[List[str]] = None,
         min_sku_spec: Optional[str] = None,
     ) -> None:

@@ -18,7 +18,12 @@ from opentelemetry.util.types import Attributes
 
 from azure.monitor.opentelemetry.exporter._generated.models import ContextTagKeys, TelemetryItem
 from azure.monitor.opentelemetry.exporter._version import VERSION as ext_version
-from azure.monitor.opentelemetry.exporter._constants import _INSTRUMENTATIONS_BIT_MAP
+from azure.monitor.opentelemetry.exporter._constants import (
+    _INSTRUMENTATIONS_BIT_MAP,
+    _WEBSITE_SITE_NAME,
+    _FUNCTIONS_WORKER_RUNTIME,
+    _AKS_ARM_NAMESPACE_ID,
+)
 
 
 opentelemetry_version = ""
@@ -36,14 +41,22 @@ except ImportError:
     ).version
 
 
+# Azure App Service
+
 def _is_on_app_service():
-    return environ.get("WEBSITE_SITE_NAME") is not None
+    return environ.get(_WEBSITE_SITE_NAME) is not None
 
 def _is_on_functions():
-    return environ.get("FUNCTIONS_WORKER_RUNTIME") is not None
+    return environ.get(_FUNCTIONS_WORKER_RUNTIME) is not None
 
 def _is_attach_enabled():
     return isdir("/agents/python/")
+
+
+# AKS
+
+def _is_on_aks():
+    return _AKS_ARM_NAMESPACE_ID in environ
 
 
 def _get_sdk_version_prefix():
@@ -56,9 +69,8 @@ def _get_sdk_version_prefix():
     # TODO: Add VM scenario outside statsbeat
     # elif _is_on_vm():
     #     rp = 'v'
-    # TODO: Add AKS scenario
-    # elif _is_on_aks():
-    #     rp = 'k'
+    elif _is_on_aks():
+        rp = 'k'
 
     os = 'u'
     system = platform.system()
@@ -204,6 +216,7 @@ def _populate_part_a_fields(resource: Resource):
         device_id = resource.attributes.get(ResourceAttributes.DEVICE_ID)
         device_model = resource.attributes.get(ResourceAttributes.DEVICE_MODEL_NAME)
         device_make = resource.attributes.get(ResourceAttributes.DEVICE_MANUFACTURER)
+        app_version = resource.attributes.get(ResourceAttributes.SERVICE_VERSION)
         if service_name:
             if service_namespace:
                 tags[ContextTagKeys.AI_CLOUD_ROLE] = str(service_namespace) + \
@@ -221,6 +234,9 @@ def _populate_part_a_fields(resource: Resource):
             tags[ContextTagKeys.AI_DEVICE_MODEL] = device_model # type: ignore
         if device_make:
             tags[ContextTagKeys.AI_DEVICE_OEM_NAME] = device_make # type: ignore
+        if app_version:
+            tags[ContextTagKeys.AI_APPLICATION_VER] = app_version # type: ignore
+
     return tags
 
 # pylint: disable=W0622

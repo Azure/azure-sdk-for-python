@@ -1,5 +1,12 @@
 # Release History
 
+## 1.2.0 (2024-02-22)
+
+### Features Added
+
+  - Added operation ReplicationFabricsOperations.begin_remove_infra
+  - Model A2AEnableProtectionInput has a new parameter auto_protection_of_data_disk
+
 ## 1.1.0 (2023-09-15)
 
 ### Features Added
