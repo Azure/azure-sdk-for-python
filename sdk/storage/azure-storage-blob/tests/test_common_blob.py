@@ -2141,18 +2141,15 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         assert blob_props is not None
 
     @BlobPreparer()
-    @recorded_by_proxy
     def test_multiple_services_sas(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        self._setup(storage_account_name, storage_account_key)
-
         # Act
         token = self.generate_sas(
             generate_account_sas,
-            self.bsc.account_name,
-            self.bsc.credential.account_key,
+            storage_account_name,
+            storage_account_key,
             ResourceTypes(container=True, object=True, service=True),
             AccountSasPermissions(read=True, list=True),
             datetime.utcnow() + timedelta(hours=1),

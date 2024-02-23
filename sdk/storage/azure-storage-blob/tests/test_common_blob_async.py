@@ -2316,24 +2316,17 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         assert self.container_name == container_properties.name
 
     @BlobPreparer()
-    @recorded_by_proxy_async
     async def test_multiple_services_sas(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        # Arrange
-        await self._setup(storage_account_name, storage_account_key)
-
-        account_sas_permission = AccountSasPermissions(read=True, write=True, delete=True, add=True,
-                                                       permanent_delete=True, list=True)
-
         # Act
         token = self.generate_sas(
             generate_account_sas,
-            self.bsc.account_name,
-            self.bsc.credential.account_key,
+            storage_account_name,
+            storage_account_key,
             ResourceTypes(container=True, object=True, service=True),
-            account_sas_permission,
+            AccountSasPermissions(read=True, list=True),
             datetime.utcnow() + timedelta(hours=1),
             services=Services(blob=True, fileshare=True)
         )
