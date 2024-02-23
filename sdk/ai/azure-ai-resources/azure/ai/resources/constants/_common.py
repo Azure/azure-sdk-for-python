@@ -31,8 +31,8 @@ class IndexType(object):
     FAISS = "faiss"
 
 class OperationScope:
-    """Some AI Client Operations can be applied to either the client's AI resource
+    """Some AI Client Operations can be applied to either the client's AI hub
     or its project. For such operations, this is used to determine that scope.
     """
-    AI_RESOURCE = "ai_resource"
+    AI_HUB = "ai_hub"
     PROJECT = "project"

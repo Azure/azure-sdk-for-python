@@ -12,8 +12,8 @@ from azure.ai.ml.entities._workspace_hub.workspace_hub_config import WorkspaceHu
 
 
 # Effectively a lightweight wrapper around a v2 WorkspaceHub
-class AIResource:
-    """An AI Resource, which serves as a container for projects and other AI-related objects"""
+class AIHub:
+    """An AI Hub, which serves as a container for projects and other AI-related objects"""
 
     # TODO full docstring
     def __init__(
@@ -57,14 +57,14 @@ class AIResource:
         )
 
     @classmethod
-    def _from_v2_workspace_hub(cls, workspace_hub: WorkspaceHub) -> "AIResource":
+    def _from_v2_workspace_hub(cls, workspace_hub: WorkspaceHub) -> "AIHub":
         """Create a connection from a v2 AML SDK workspace hub. For internal use.
 
         :param workspace_hub: The workspace connection object to convert into a workspace.
         :type workspace_hub: ~azure.ai.ml.entities.WorkspaceConnection
 
-        :return: The converted AI resource.
-        :rtype: ~azure.ai.resources.entities.AIResource
+        :return: The converted AI hub.
+        :rtype: ~azure.ai.resources.entities.AIHub
         """
         # It's simpler to create a placeholder resource, then overwrite the internal WC.
         # We don't need to worry about the potentially changing WC fields this way.

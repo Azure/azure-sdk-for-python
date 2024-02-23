@@ -8,7 +8,7 @@ from azure.ai.resources.entities import (
     AzureAIServiceConnection,
     GitHubConnection,
     CustomConnection,
-    AIResource,
+    AIHub,
     Project
 )
 from azure.ai.resources.constants import OperationScope
@@ -174,11 +174,11 @@ class TestConnections:
     @pytest.mark.skipif(condition=True, reason="Resource creation API result inconsistent in uncontrollable way.")
     def test_is_shared_and_scoping_behavior(self, ai_client: AIClient, rand_num: Callable[[], str]) -> None:
         # Create a AI resource and 2 child projects
-        resource = ai_client.ai_resources.begin_create(ai_resource=AIResource(name=f"e2etest_resource_{rand_num()}")).result()
-        poller_1 = ai_client.projects.begin_create(project=Project(name=f"e2etest_proj1_{rand_num()}", ai_resource=resource.id))
+        resource = ai_client.ai_hubs.begin_create(ai_hub=AIHub(name=f"e2etest_resource_{rand_num()}")).result()
+        poller_1 = ai_client.projects.begin_create(project=Project(name=f"e2etest_proj1_{rand_num()}", ai_hub=resource.id))
         proj_1 = poller_1.result()
         # projects can't be created in parallel sadly. Doing so risks parallel operation conflict errors.
-        poller_2 = ai_client.projects.begin_create(project=Project(name=f"e2etest_{rand_num()}", ai_resource=resource.id))
+        poller_2 = ai_client.projects.begin_create(project=Project(name=f"e2etest_{rand_num()}", ai_hub=resource.id))
         proj_2 = poller_2.result()
 
         client_1 = AIClient(
@@ -186,17 +186,17 @@ class TestConnections:
             subscription_id=ai_client.subscription_id,
             resource_group_name=ai_client.resource_group_name,
             project_name=proj_1.name,
-            ai_resource_name=resource.name
+            ai_hub_name=resource.name
         )
         client_2 = AIClient(
             credential=ai_client._credential,
             subscription_id=ai_client.subscription_id,
             resource_group_name=ai_client.resource_group_name,
             project_name=proj_2.name,
-            ai_resource_name=resource.name
+            ai_hub_name=resource.name
         )
 
-        # Create 4 connections, 2 in the AI Resource, and 2 in one of the projects, toggling
+        # Create 4 connections, 2 in the AI Hub, and 2 in one of the projects, toggling
         # the "is_shared" property.
         # Names don't need randomization since the containers are transient
         parent_conn_shared = CustomConnection(
@@ -204,7 +204,7 @@ class TestConnections:
             target="notReal",
             credentials=ApiKeyConfiguration(key="1111")
         )
-        # AI Resources can't actually have is_shared be false, make sure this is overridden upon creation.
+        # AI Hubs can't actually have is_shared be false, make sure this is overridden upon creation.
         parent_conn_closed = CustomConnection(
             name="closedResConn",
             target="notReal",
@@ -226,7 +226,7 @@ class TestConnections:
         assert parent_conn_shared.is_shared
 
         parent_conn_closed = client_1.connections.create_or_update(connection=parent_conn_closed)
-        # Expected, ai resources can't have is_shared==False.
+        # Expected, ai hubs can't have is_shared==False.
         assert parent_conn_closed.is_shared
 
         proj_conn_shared = client_1.connections.create_or_update(
@@ -262,7 +262,7 @@ class TestConnections:
             client_2.connections.get(name=proj_conn_closed.name, scope=OperationScope.PROJECT)
 
         # We expect 6/5 connections instead of 4/3 because of the 2 default connections that are created
-        # for ai resources.
+        # for ai hubs.
         assert len([x for x in client_1.connections.list()]) == 6
         assert len([x for x in client_2.connections.list()]) == 6
         assert len([x for x in client_1.connections.list(scope=OperationScope.PROJECT)]) == 6
@@ -273,4 +273,4 @@ class TestConnections:
         del_2 = client_2.projects.begin_delete(name=proj_2.name, delete_dependent_resources=False)
         del_1.result()
         del_2.result()
-        client_1.ai_resources.begin_delete(name=resource.name, delete_dependent_resources=True)
+        client_1.ai_hubs.begin_delete(name=resource.name, delete_dependent_resources=True)

@@ -6,7 +6,7 @@ from typing import Any, Iterable, Optional
 from azure.core.tracing.decorator import distributed_trace
 
 from azure.ai.resources.constants._common import DEFAULT_OPEN_AI_CONNECTION_NAME
-from azure.ai.resources.entities import AIResource
+from azure.ai.resources.entities import AIHub
 from azure.ai.ml import MLClient
 from azure.ai.ml.constants._common import Scope
 from azure.ai.ml.entities._workspace_hub._constants import ENDPOINT_AI_SERVICE_KIND
@@ -18,8 +18,8 @@ activity_logger = ActivityLogger(__name__)
 logger, module_logger = activity_logger.package_logger, activity_logger.module_logger
 
 
-class AIResourceOperations:
-    """AIResourceOperations.
+class AIHubOperations:
+    """AIHubOperations.
 
     You should not instantiate this class directly. Instead, you should
     create an MLClient instance that instantiates it for you and
@@ -32,49 +32,49 @@ class AIResourceOperations:
         activity_logger.update_info(kwargs)
 
     @distributed_trace
-    @monitor_with_activity(logger, "AIResource.Get", ActivityType.PUBLICAPI)
-    def get(self, *, name: str, **kwargs) -> AIResource:
-        """Get an AI resource by name.
+    @monitor_with_activity(logger, "AIHub.Get", ActivityType.PUBLICAPI)
+    def get(self, *, name: str, **kwargs) -> AIHub:
+        """Get an AI hub by name.
 
-        :keyword name: Name of the AI resource.
+        :keyword name: Name of the AI hub.
         :paramtype name: str
 
-        :return: The AI resource with the provided name.
-        :rtype: ~azure.ai.resources.entities.AIResource
+        :return: The AI hub with the provided name.
+        :rtype: ~azure.ai.resources.entities.AIHub
         """
         workspace_hub = self._ml_client._workspace_hubs.get(name=name, **kwargs)
-        resource = AIResource._from_v2_workspace_hub(workspace_hub)
+        resource = AIHub._from_v2_workspace_hub(workspace_hub)
         return resource
 
     @distributed_trace
-    @monitor_with_activity(logger, "AIResource.List", ActivityType.PUBLICAPI)
-    def list(self, *, scope: str = Scope.RESOURCE_GROUP) -> Iterable[AIResource]:
-        """List all AI resource assets in a project.
+    @monitor_with_activity(logger, "AIHub.List", ActivityType.PUBLICAPI)
+    def list(self, *, scope: str = Scope.RESOURCE_GROUP) -> Iterable[AIHub]:
+        """List all AI hub assets in a project.
 
         :keyword scope: The scope of the listing. Can be either "resource_group" or "subscription", and defaults to "resource_group".
         :paramtype scope: str
 
-        :return: An iterator like instance of AI resource objects
-        :rtype: Iterable[~azure.ai.resources.entities.AIResource]
+        :return: An iterator like instance of AI hub objects
+        :rtype: Iterable[~azure.ai.resources.entities.AIHub]
         """
-        return [AIResource._from_v2_workspace_hub(wh) for wh in self._ml_client._workspace_hubs.list(scope=scope)]
+        return [AIHub._from_v2_workspace_hub(wh) for wh in self._ml_client._workspace_hubs.list(scope=scope)]
 
     @distributed_trace
-    @monitor_with_activity(logger, "AIResource.BeginCreate", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "AIHub.BeginCreate", ActivityType.PUBLICAPI)
     def begin_create(
         self,
         *,
-        ai_resource: AIResource,
+        ai_hub: AIHub,
         update_dependent_resources: bool = False,
         endpoint_resource_id: Optional[str] = None,
         endpoint_kind: str = ENDPOINT_AI_SERVICE_KIND,
         **kwargs,
-    ) -> LROPoller[AIResource]:
-        """Create a new AI resource.
+    ) -> LROPoller[AIHub]:
+        """Create a new AI hub.
 
-        :keyword ai_resource: Resource definition
-            or object which can be translated to a AI resource.
-        :paramtype ai_resource: ~azure.ai.resources.entities.AIResource
+        :keyword ai_hub: Resource definition
+            or object which can be translated to a AI hub.
+        :paramtype ai_hub: ~azure.ai.resources.entities.AIHub
         :keyword update_dependent_resources: Whether to update dependent resources. Defaults to False.
         :paramtype update_dependent_resources: boolean
         :keyword endpoint_resource_id: The UID of an AI service or Open AI resource.
@@ -88,54 +88,54 @@ class AIResourceOperations:
             by the endpoint_resource_id field. Defaults to "AIServices". The only other valid
             input is "OpenAI".
         :paramtype endpoint_kind: str
-        :return: An instance of LROPoller that returns the created AI resource.
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.resources.entities.AIResource]
+        :return: An instance of LROPoller that returns the created AI hub.
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.resources.entities.AIHub]
         """
         return self._ml_client.workspace_hubs.begin_create(
-            workspace_hub=ai_resource._workspace_hub,
+            workspace_hub=ai_hub._workspace_hub,
             update_dependent_resources=update_dependent_resources,
             endpoint_resource_id=endpoint_resource_id,
             endpoint_kind=endpoint_kind,
-            cls=lambda hub: AIResource._from_v2_workspace_hub(hub),
+            cls=lambda hub: AIHub._from_v2_workspace_hub(hub),
             **kwargs
         )
 
     @distributed_trace
-    @monitor_with_activity(logger, "AIResource.BeginUpdate", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "AIHub.BeginUpdate", ActivityType.PUBLICAPI)
     def begin_update(
-        self, *, ai_resource: AIResource, update_dependent_resources: bool = False, **kwargs
-    ) -> LROPoller[AIResource]:
+        self, *, ai_hub: AIHub, update_dependent_resources: bool = False, **kwargs
+    ) -> LROPoller[AIHub]:
         """Update the name, description, tags, PNA, manageNetworkSettings, 
         container registry, or encryption of a Resource.
 
-        :keyword ai_resource: AI resource definition.
-        :paramtype ai_resource: ~azure.ai.resources.entities.AIResource
+        :keyword ai_hub: AI hub definition.
+        :paramtype ai_hub: ~azure.ai.resources.entities.AIHub
         :keyword update_dependent_resources: Whether to update dependent resources. Defaults to False.
             This must be set to true in order to update the container registry.
         :paramtype update_dependent_resources: boolean
-        :return: An instance of LROPoller that returns the updated AI resource.
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.resources.entities.AIResource]
+        :return: An instance of LROPoller that returns the updated AI hub.
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.resources.entities.AIHub]
         """
         return self._ml_client.workspace_hubs.begin_update(
-            workspace_hub=ai_resource._workspace_hub,
+            workspace_hub=ai_hub._workspace_hub,
             update_dependent_resources=update_dependent_resources,
-            cls=lambda hub: AIResource._from_v2_workspace_hub(hub),
+            cls=lambda hub: AIHub._from_v2_workspace_hub(hub),
             **kwargs
         )
 
     @distributed_trace
-    @monitor_with_activity(logger, "AIResource.BeginDelete", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "AIHub.BeginDelete", ActivityType.PUBLICAPI)
     def begin_delete(
         self, *, name: str, delete_dependent_resources: bool, permanently_delete: bool = False, **kwargs
     ) -> LROPoller[None]:
-        """Delete an AI resource.
+        """Delete an AI hub.
 
         :keyword name: Name of the Resource
         :paramtype name: str
-        :keyword delete_dependent_resources: Whether to delete dependent resources associated with the AI resource.
+        :keyword delete_dependent_resources: Whether to delete dependent resources associated with the AI hub.
         :paramtype delete_dependent_resources: bool
-        :keyword permanently_delete: AI resource are soft-deleted by default to allow recovery of data.
-            Set this flag to true to override the soft-delete behavior and permanently delete your AI resource.
+        :keyword permanently_delete: AI hub are soft-deleted by default to allow recovery of data.
+            Set this flag to true to override the soft-delete behavior and permanently delete your AI hub.
         :paramtype permanently_delete: bool
         :return: A poller to track the operation status.
         :rtype: ~azure.core.polling.LROPoller[None]

@@ -2,7 +2,7 @@ from typing import Callable
 import pytest
 
 from azure.ai.resources.client import AIClient
-from azure.ai.resources.entities import Project, AIResource
+from azure.ai.resources.entities import Project, AIHub
 from azure.core.exceptions import ResourceNotFoundError
 from devtools_testutils import  is_live
 
@@ -38,19 +38,19 @@ class TestProjects:
             created_project = None
             created_resource = None
             # create AI resource to house project
-            created_resource = ai_client.ai_resources.begin_create(ai_resource=AIResource(
+            created_resource = ai_client.ai_hubs.begin_create(ai_hub=AIHub(
                 name="e2eTestResource" + rand_num(),
             )).result()
 
             # Create project with above AI resource as parent.
             new_local_project = Project(
                 name="e2eTestProj" + rand_num(),
-                ai_resource=created_resource.id,
+                ai_hub=created_resource.id,
                 description="Transient test project. Delete if seen.",
             )
             created_project = ai_client.projects.begin_create(project=new_local_project).result()
             assert created_project.name == new_local_project.name
-            assert created_project.ai_resource == new_local_project.ai_resource
+            assert created_project.ai_hub == new_local_project.ai_hub
         finally:
             if created_project:
                 ai_client.projects.begin_delete(name=created_project.name, delete_dependent_resources=True).wait()
@@ -58,7 +58,7 @@ class TestProjects:
                 with pytest.raises(ResourceNotFoundError):
                     ai_client.projects.get(name=created_project.name)
             if created_resource:
-                ai_client.ai_resources.begin_delete(name=created_resource.name, delete_dependent_resources=True).wait()
+                ai_client.ai_hubs.begin_delete(name=created_resource.name, delete_dependent_resources=True).wait()
 
 
 
@@ -72,7 +72,7 @@ class TestProjects:
             name="e2e_test_perm_proj",
             description="Transient test object. Delete if seen.",
             resource_group=ai_developer_client.resource_group_name,
-            ai_resource=ai_developer_client.ai_resource_name
+            ai_hub=ai_developer_client.ai_hub_name
         )
         created_project = ai_developer_client.projects.begin_create(project=new_local_project).result()
         assert new_local_project.name == created_project.name
