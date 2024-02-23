@@ -771,7 +771,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
             "limits": get_rest_dict_for_node_attrs(self.limits, clear_empty_value=True),
             "resources": get_rest_dict_for_node_attrs(self.resources, clear_empty_value=True),
             "services": get_rest_dict_for_node_attrs(self.services),
-            "identity": self.identity._to_dict() if self.identity and not isinstance(self.identity, Dict) else None,
+            "identity": get_rest_dict_for_node_attrs(self.identity),
             "queue_settings": get_rest_dict_for_node_attrs(self.queue_settings, clear_empty_value=True),
         }.items():
             if value is not None:
