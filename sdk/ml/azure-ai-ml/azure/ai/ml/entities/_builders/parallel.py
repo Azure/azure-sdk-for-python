@@ -450,7 +450,9 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):  # pylint: disable=too-many-i
                     "partition_keys": json.dumps(self.partition_keys)
                     if self.partition_keys is not None
                     else self.partition_keys,
-                    "identity": get_rest_dict_for_node_attrs(self.identity),
+                    "identity": self.identity._to_dict()
+                    if self.identity and not isinstance(self.identity, Dict)
+                    else None,
                     "resources": get_rest_dict_for_node_attrs(self.resources),
                 }
             )
@@ -479,8 +481,9 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):  # pylint: disable=too-many-i
 
         if "partition_keys" in obj and obj["partition_keys"]:
             obj["partition_keys"] = json.dumps(obj["partition_keys"])
+
         if "identity" in obj and obj["identity"]:
-            obj["identity"] = _BaseJobIdentityConfiguration._from_rest_object(obj["identity"])
+            obj["identity"] = _BaseJobIdentityConfiguration._load(obj["identity"])
         return obj
 
     def _build_inputs(self) -> Dict:
