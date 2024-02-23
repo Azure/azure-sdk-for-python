@@ -62,6 +62,15 @@ class PipelineClient(PipelineClientBase, Generic[HTTPRequestType, HTTPResponseTy
 
     :ivar pipeline: The Pipeline object associated with the client.
     :vartype pipeline: ~corehttp.runtime.pipeline.Pipeline or None
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/sample_pipeline_client.py
+            :start-after: [START build_pipeline_client]
+            :end-before: [END build_pipeline_client]
+            :language: python
+            :dedent: 4
+            :caption: Builds the pipeline client.
     """
 
     def __init__(
