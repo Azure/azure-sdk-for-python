@@ -84,6 +84,7 @@ from azure.ai.ml.operations import (
     WorkspaceConnectionsOperations,
     WorkspaceHubOperations,
     WorkspaceOperations,
+    ServerlessEndpointOperations,
 )
 from azure.ai.ml.operations._code_operations import CodeOperations
 from azure.ai.ml.operations._feature_set_operations import FeatureSetOperations
@@ -649,6 +650,11 @@ class MLClient:
             self._credential,
             **app_insights_handler_kwargs,
         )
+        self._serverless_endpoints = ServerlessEndpointOperations(
+            self._operation_scope,
+            self._operation_config,
+            self._service_client_01_2024_preview,
+        )
         self._operation_container.add(AzureMLResourceType.WORKSPACE_HUB, self._workspace_hubs)  # type: ignore[arg-type]
 
         self._operation_container.add(AzureMLResourceType.FEATURE_STORE, self._featurestores)  # type: ignore[arg-type]
@@ -973,6 +979,16 @@ class MLClient:
         :rtype: ~azure.ai.ml.operations.ScheduleOperations
         """
         return self._schedules
+
+    @property
+    @experimental
+    def serverless_endpoints(self) -> ServerlessEndpointOperations:
+        """A collection of serverless endpoint related operations.
+
+        :return: Serverless endpoint operations.
+        :rtype: ~azure.ai.ml.operations.ServerlessEndpointOperations
+        """
+        return self._serverless_endpoints
 
     @property
     def subscription_id(self) -> str:
