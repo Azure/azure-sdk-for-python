@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+from enum import Enum
 import json
 import os
 import platform
@@ -23,6 +24,10 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _REQ_RETRY_NAME,
     _REQ_SUCCESS_NAME,
     _REQ_THROTTLE_NAME,
+    _WEBSITE_HOME_STAMPNAME,
+    _WEBSITE_HOSTNAME,
+    _WEBSITE_SITE_NAME,
+    _AKS_ARM_NAMESPACE_ID,
 )
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     _REQUESTS_MAP_LOCK,
@@ -38,7 +43,12 @@ _AIMS_API_VERSION = "api-version=2017-12-01"
 _AIMS_FORMAT = "format=json"
 
 _ENDPOINT_TYPES = ["breeze"]
-_RP_NAMES = ["appsvc", "functions", "vm", "unknown"]
+class _RP_Names(Enum):
+    APP_SERVICE = "appsvc"
+    FUNCTIONS = "functions"
+    AKS = "aks"
+    VM = "vm"
+    UNKNOWN = "unknown"
 
 _HOST_PATTERN = re.compile('^https?://(?:www\\.)?([^/.]+)')
 
@@ -66,7 +76,7 @@ class _AttachTypes:
 class _StatsbeatMetrics:
 
     _COMMON_ATTRIBUTES: Dict[str, Any] = {
-        "rp": _RP_NAMES[3],
+        "rp": _RP_Names.UNKNOWN.value,
         "attach": _AttachTypes.MANUAL,
         "cikey": None,
         "runtimeVersion": platform.python_version(),
@@ -161,27 +171,30 @@ class _StatsbeatMetrics:
         # rp, rpId
         if _utils._is_on_app_service():
             # Web apps
-            rp = _RP_NAMES[0]
+            rp = _RP_Names.APP_SERVICE.value
             rpId = '{}/{}'.format(
-                        os.environ.get("WEBSITE_SITE_NAME"),
-                        os.environ.get("WEBSITE_HOME_STAMPNAME", '')
+                        os.environ.get(_WEBSITE_SITE_NAME),
+                        os.environ.get(_WEBSITE_HOME_STAMPNAME, '')
             )
         elif _utils._is_on_functions():
             # Function apps
-            rp = _RP_NAMES[1]
-            rpId = os.environ.get("WEBSITE_HOSTNAME", '')
+            rp = _RP_Names.FUNCTIONS.value
+            rpId = os.environ.get(_WEBSITE_HOSTNAME, '')
+        elif _utils._is_on_aks():
+            # AKS
+            rp = _RP_Names.AKS.value
+            rpId = os.environ.get(_AKS_ARM_NAMESPACE_ID, '')
         elif self._vm_retry and self._get_azure_compute_metadata():
             # VM
-            rp = _RP_NAMES[2]
+            rp = _RP_Names.VM.value
             rpId = '{}/{}'.format(
                         self._vm_data.get("vmId", ''),
                         self._vm_data.get("subscriptionId", ''))
             os_type = self._vm_data.get("osType", '')
-        # TODO: add AKS scenario
         else:
             # Not in any rp or VM metadata failed
-            rp = _RP_NAMES[3]
-            rpId = _RP_NAMES[3]
+            rp = _RP_Names.UNKNOWN.value
+            rpId = _RP_Names.UNKNOWN.value
 
         _StatsbeatMetrics._COMMON_ATTRIBUTES["rp"] = rp
         _StatsbeatMetrics._COMMON_ATTRIBUTES["os"] = os_type or platform.system()
