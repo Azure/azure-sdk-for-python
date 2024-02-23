@@ -72,7 +72,8 @@ setup(
         "opencensus-ext-logging<=0.1.1",
         "azure-mgmt-resource<23.0.0,>=22.0.0",
         "mmh3",
-        "fsspec"
+        "fsspec",
+        "openai"
     ],
     project_urls={
         "Bug Reports": "https://github.com/Azure/azure-sdk-for-python/issues",
