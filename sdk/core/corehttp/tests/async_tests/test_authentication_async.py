@@ -94,12 +94,15 @@ async def test_bearer_policy_token_caching():
         get_token_calls += 1
         return expected_token
 
+    async def send_mock(_):
+        return Mock(http_response=Mock(status_code=200))
+
     credential = Mock(get_token=get_token)
     policies = [
         AsyncBearerTokenCredentialPolicy(credential, "scope"),
-        Mock(send=Mock(return_value=get_completed_future(Mock()))),
+        Mock(send=send_mock),
     ]
-    pipeline = AsyncPipeline(transport=Mock, policies=policies)
+    pipeline = AsyncPipeline(transport=Mock(), policies=policies)
 
     await pipeline.run(HttpRequest("GET", "https://spam.eggs"))
     assert get_token_calls == 1  # policy has no token at first request -> it should call get_token
@@ -112,7 +115,7 @@ async def test_bearer_policy_token_caching():
     expected_token = expired_token
     policies = [
         AsyncBearerTokenCredentialPolicy(credential, "scope"),
-        Mock(send=lambda _: get_completed_future(Mock())),
+        Mock(send=send_mock),
     ]
     pipeline = AsyncPipeline(transport=Mock(), policies=policies)
 

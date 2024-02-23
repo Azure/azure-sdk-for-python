@@ -24,6 +24,7 @@
 #
 # --------------------------------------------------------------------------
 from __future__ import annotations
+import inspect
 from types import TracebackType
 from typing import Any, Union, Generic, TypeVar, List, Optional, Iterable, Type
 from typing_extensions import AsyncContextManager, TypeGuard
@@ -38,8 +39,8 @@ AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
 
 
-def is_async_http_policy(policy) -> TypeGuard[AsyncHTTPPolicy]:
-    if hasattr(policy, "send"):
+def is_async_http_policy(policy: object) -> TypeGuard[AsyncHTTPPolicy]:
+    if hasattr(policy, "send") and inspect.iscoroutinefunction(policy.send):
         return True
     return False
 
