@@ -39,13 +39,8 @@ AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
 
 
-<<<<<<< HEAD
-def is_async_http_policy(policy) -> TypeGuard[AsyncHTTPPolicy]:
-    if hasattr(policy, "send"):
-=======
 def is_async_http_policy(policy: object) -> TypeGuard[AsyncHTTPPolicy]:
     if hasattr(policy, "send") and inspect.iscoroutinefunction(policy.send):
->>>>>>> main
         return True
     return False
 

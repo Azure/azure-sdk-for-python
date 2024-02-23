@@ -43,23 +43,14 @@ HTTPRequestType = TypeVar("HTTPRequestType")
 _LOGGER = logging.getLogger(__name__)
 
 
-<<<<<<< HEAD
-def is_http_policy(policy) -> TypeGuard[HTTPPolicy]:
-=======
 def is_http_policy(policy: object) -> TypeGuard[HTTPPolicy]:
->>>>>>> main
     if hasattr(policy, "send"):
         return True
     return False
 
-<<<<<<< HEAD
-def is_sansio_http_policy(policy) -> TypeGuard[SansIOHTTPPolicy]:
-    if hasattr(policy, "on_request") or hasattr(policy, "on_response"):
-=======
 
 def is_sansio_http_policy(policy: object) -> TypeGuard[SansIOHTTPPolicy]:
     if hasattr(policy, "on_request") and hasattr(policy, "on_response"):
->>>>>>> main
         return True
     return False
 
