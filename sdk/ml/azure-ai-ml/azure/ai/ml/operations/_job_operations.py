@@ -732,17 +732,13 @@ class JobOperations(_ScopeDependentOperations):
         if rest_job_resource.properties.job_type == RestJobType.SWEEP:
             service_client_operation = self.service_client_08_2023_preview.jobs
 
-        try:
-            result = service_client_operation.create_or_update(
-                id=rest_job_resource.name,
-                resource_group_name=self._operation_scope.resource_group_name,
-                workspace_name=self._workspace_name,
-                body=rest_job_resource,
-                **kwargs,
-            )
-        except Exception as e:
-            print(e)
-            raise e
+        result = service_client_operation.create_or_update(
+            id=rest_job_resource.name,
+            resource_group_name=self._operation_scope.resource_group_name,
+            workspace_name=self._workspace_name,
+            body=rest_job_resource,
+            **kwargs,
+        )
 
         return result
 
