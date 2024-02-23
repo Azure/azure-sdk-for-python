@@ -137,6 +137,7 @@ class SearchIndexerSkillset:
         :param str data: A str using RestAPI structure. JSON by default.
         :param str content_type: JSON by default, set application/xml if XML.
         :returns: A SearchIndexerSkillset instance
+        :rtype: SearchIndexerSkillset
         :raises: DeserializationError if something went wrong
         """
         return cls._from_generated(_SearchIndexerSkillset.deserialize(data, content_type=content_type))
@@ -460,6 +461,7 @@ class AnalyzeTextOptions:
         :param str data: A str using RestAPI structure. JSON by default.
         :param str content_type: JSON by default, set application/xml if XML.
         :returns: A AnalyzeTextOptions instance
+        :rtype: AnalyzeTextOptions
         :raises: DeserializationError if something went wrong
         """
         return cls._from_analyze_request(AnalyzeRequest.deserialize(data, content_type=content_type))
@@ -759,7 +761,8 @@ class SearchResourceEncryptionKey:
         :returns: A SearchResourceEncryptionKey instance
         :raises: DeserializationError if something went wrong
         """
-        return cls._from_generated(_SearchResourceEncryptionKey.deserialize(data, content_type=content_type))  # type: ignore
+        return cls._from_generated(
+            _SearchResourceEncryptionKey.deserialize(data, content_type=content_type))  # type: ignore
 
 
 class SynonymMap:
@@ -833,6 +836,7 @@ class SynonymMap:
         :param str data: A str using RestAPI structure. JSON by default.
         :param str content_type: JSON by default, set application/xml if XML.
         :returns: A SynonymMap instance
+        :rtype: SynonymMap
         :raises: DeserializationError if something went wrong
         """
         return cls._from_generated(_SynonymMap.deserialize(data, content_type=content_type))
@@ -937,6 +941,7 @@ class SearchIndexerDataSourceConnection:
         :param str data: A str using RestAPI structure. JSON by default.
         :param str content_type: JSON by default, set application/xml if XML.
         :returns: A SearchIndexerDataSourceConnection instance
+        :rtype: SearchIndexerDataSourceConnection
         :raises: DeserializationError if something went wrong
         """
         return cls._from_generated(_SearchIndexerDataSource.deserialize(data, content_type=content_type))

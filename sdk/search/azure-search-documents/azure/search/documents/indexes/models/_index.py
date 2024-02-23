@@ -669,6 +669,7 @@ class SearchIndex:
         :param str data: A str using RestAPI structure. JSON by default.
         :param str content_type: JSON by default, set application/xml if XML.
         :returns: A SearchIndex instance
+        :rtype: SearchIndex
         :raises: DeserializationError if something went wrong
         """
         return cls._from_generated(_SearchIndex.deserialize(data, content_type=content_type))
