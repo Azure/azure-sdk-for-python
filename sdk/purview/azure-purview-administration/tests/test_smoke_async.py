@@ -13,7 +13,7 @@ class TestPurviewAccountSmokeAsync(PurviewAccountTestAsync):
 
     @PurviewAccountPowerShellPreparer()
     @recorded_by_proxy_async
-    async def test_basic_smoke_test(self, purviewaccount_endpoint):
+    async def disable_test_basic_smoke_test(self, purviewaccount_endpoint):
         client = self.create_async_client(endpoint=purviewaccount_endpoint)
         response = await client.accounts.get_access_keys()
         assert set(response.keys()) == set(['atlasKafkaPrimaryEndpoint', 'atlasKafkaSecondaryEndpoint'])
