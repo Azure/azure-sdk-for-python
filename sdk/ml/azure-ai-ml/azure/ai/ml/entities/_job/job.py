@@ -212,6 +212,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
         from azure.ai.ml.entities._job.import_job import ImportJob
         from azure.ai.ml.entities._job.pipeline.pipeline_job import PipelineJob
         from azure.ai.ml.entities._job.sweep.sweep_job import SweepJob
+        from azure.ai.ml.entities._job.finetuning.finetuning_job import FineTuningJob
 
         job_type: Optional[Type["Job"]] = None
         type_in_override = find_type_in_override(params_override)
@@ -228,6 +229,8 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
             job_type = AutoMLJob
         elif type_str == JobType.PIPELINE:
             job_type = PipelineJob
+        elif type_str == JobType.FINE_TUNING:
+            job_type = FineTuningJob
         else:
             msg = f"Unsupported job type: {type_str}."
             raise ValidationException(

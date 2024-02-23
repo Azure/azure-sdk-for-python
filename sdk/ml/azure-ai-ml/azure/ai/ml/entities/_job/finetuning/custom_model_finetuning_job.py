@@ -153,7 +153,6 @@ class CustomModelFineTuningJob(FineTuningVertical):
         #    )
         # else:
         loaded_data = load_from_dict(CustomModelFineTuningSchema, data, context, additional_message, **kwargs)
-
         job_instance = cls._create_instance_from_schema_dict(loaded_data)
         return job_instance
 

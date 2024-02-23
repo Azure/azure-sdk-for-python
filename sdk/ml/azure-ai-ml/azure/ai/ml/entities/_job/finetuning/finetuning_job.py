@@ -7,6 +7,7 @@ from azure.ai.ml._restclient.v2024_01_01_preview.models import (
 )
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml.constants._job.finetuning import FineTuningConstants
 
 
 class FineTuningJob(Job, JobIOMixin):
@@ -51,12 +52,51 @@ class FineTuningJob(Job, JobIOMixin):
         if class_type:
             res: FineTuningJob = class_type._from_rest_object(obj)
             return res
-        msg = f"Unsupported model provider type: {obj.properties.task_details.task_type}"
+        msg = f"Unsupported model provider type: {obj.properties.fine_tuning_details.model_provider}"
         raise ValidationException(
             message=msg,
             no_personal_data_message=msg,
             target=ErrorTarget.FINETUNING,
             error_category=ErrorCategory.SYSTEM_ERROR,
+        )
+
+    @classmethod
+    def _load_from_dict(
+        cls,
+        data: Dict,
+        context: Dict,
+        additional_message: str,
+        **kwargs: Any,
+    ) -> "FineTuningJob":
+        """Loads the dictionary objects to an FineTuningJob object.
+
+        :param data: A data dictionary.
+        :type data: typing.Dict
+        :param context: A context dictionary.
+        :type context: typing.Dict
+        :param additional_message: An additional message to be logged in the ValidationException.
+        :type additional_message: str
+
+        :raises ValidationException: task type validation error
+        :return: An FineTuningJob
+        :rtype: FineTuningJob
+        """
+        model_provider = data.get(FineTuningConstants.ModelProvider)
+        class_type = cls._get_model_provider_mapping().get(model_provider, None)
+        if class_type:
+            res: FineTuningJob = class_type._load_from_dict(
+                data,
+                context,
+                additional_message,
+                **kwargs,
+            )
+            return res
+        msg = f"Unsupported model provider type: {model_provider}"
+        raise ValidationException(
+            message=msg,
+            no_personal_data_message=msg,
+            target=ErrorTarget.AUTOML,
+            error_category=ErrorCategory.USER_ERROR,
         )
 
     def __eq__(self, other: object) -> bool:

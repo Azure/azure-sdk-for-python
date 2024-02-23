@@ -3,3 +3,4 @@ class FineTuningConstants:
     Custom = "custom"
 
     TaskType = "task"
+    ModelProvider = "model_provider"

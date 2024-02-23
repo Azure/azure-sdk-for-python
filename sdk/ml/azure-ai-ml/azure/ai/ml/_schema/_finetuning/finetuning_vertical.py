@@ -6,11 +6,9 @@
 
 from azure.ai.ml._schema._finetuning.finetuning_job import FineTuningJobSchema
 from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum, UnionField
-from azure.ai.ml._schema.job.input_output_fields_provider import OutputsField
 from azure.ai.ml.constants import JobType
 from azure.ai.ml._utils.utils import camel_to_snake
-from azure.ai.ml._schema.assets.mlflow_model import MlflowModelSchema
-from azure.ai.ml._schema.job.input_output_entry import MLTableInputSchema, DataInputSchema
+from azure.ai.ml._schema.job.input_output_entry import MLTableInputSchema, DataInputSchema, ModelInputSchema
 from azure.ai.ml._restclient.v2024_01_01_preview.models import FineTuningTaskType
 from azure.ai.ml.constants._job.finetuning import FineTuningConstants
 
@@ -19,7 +17,7 @@ from azure.ai.ml.constants._job.finetuning import FineTuningConstants
 
 class FineTuningVerticalSchema(FineTuningJobSchema):
     type = StringTransformedEnum(required=True, allowed_values=JobType.FINE_TUNING)
-    model = NestedField(MlflowModelSchema)
+    model = NestedField(ModelInputSchema, required=True)
     training_data = UnionField([NestedField(MLTableInputSchema), NestedField(DataInputSchema)])
     validation_data = UnionField([NestedField(MLTableInputSchema), NestedField(DataInputSchema)])
     task = StringTransformedEnum(
