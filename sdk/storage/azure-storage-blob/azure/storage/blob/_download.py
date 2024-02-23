@@ -699,10 +699,10 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         self._encoding = encoding
         return self.readall()
 
-    def readinto(self, stream: IO[T]) -> int:
+    def readinto(self, stream: IO[bytes]) -> int:
         """Download the contents of this file to a stream.
 
-        :param IO[T] stream:
+        :param IO[bytes] stream:
             The stream to download to. This can be an open file-handle,
             or any writable stream. The stream must be seekable if the download
             uses more than one parallel connection.
