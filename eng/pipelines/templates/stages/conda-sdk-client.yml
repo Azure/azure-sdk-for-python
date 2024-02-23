@@ -376,13 +376,13 @@ stages:
                 in_batch: ${{ parameters.release_azure_keyvault }}
                 checkout:
                 - package: azure-keyvault-administration
-                  version: 4.3.0
+                  version: 4.4.0
                 - package: azure-keyvault-certificates
-                  version: 4.7.0
-                - package: azure-keyvault-keys
                   version: 4.8.0
+                - package: azure-keyvault-keys
+                  version: 4.9.0
                 - package: azure-keyvault-secrets
-                  version: 4.7.0
+                  version: 4.8.0
               - name: azure-messaging-webpubsubservice
                 service: webpubsub
                 in_batch: ${{ parameters.release_azure_messaging_webpubsubservice }}
@@ -442,6 +442,8 @@ stages:
                 - package: azure-mgmt-advisor
                   version: 9.0.0
                 - package: azure-mgmt-alertsmanagement
+                  version: 1.0.0
+                - package: azure-mgmt-apicenter
                   version: 1.0.0
                 - package: azure-mgmt-apimanagement
                   version: 4.0.0
@@ -634,7 +636,7 @@ stages:
                 - package: azure-mgmt-netapp
                   version: 11.0.0
                 - package: azure-mgmt-network
-                  version: 25.2.0
+                  version: 25.3.0
                 - package: azure-mgmt-networkanalytics
                   version: 1.0.0
                 - package: azure-mgmt-networkcloud
@@ -674,7 +676,7 @@ stages:
                 - package: azure-mgmt-recoveryservicesbackup
                   version: 9.0.0
                 - package: azure-mgmt-recoveryservicessiterecovery
-                  version: 1.1.0
+                  version: 1.2.0
                 - package: azure-mgmt-redhatopenshift
                   version: 1.4.0
                 - package: azure-mgmt-redis

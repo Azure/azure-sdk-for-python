@@ -45,6 +45,11 @@ test:
     - azure.mgmt.alertsmanagement.aio.operations
     - azure.mgmt.alertsmanagement.models
     - azure.mgmt.alertsmanagement.operations
+    - azure.mgmt.apicenter
+    - azure.mgmt.apicenter.aio
+    - azure.mgmt.apicenter.aio.operations
+    - azure.mgmt.apicenter.models
+    - azure.mgmt.apicenter.operations
     - azure.mgmt.apimanagement
     - azure.mgmt.apimanagement.aio
     - azure.mgmt.apimanagement.aio.operations

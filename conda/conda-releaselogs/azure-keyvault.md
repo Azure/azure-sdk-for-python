@@ -4,10 +4,10 @@
 
 ### Packages included
 
-- azure-keyvault-administration-4.3.0
-- azure-keyvault-certificates-4.7.0
-- azure-keyvault-keys-4.8.0
-- azure-keyvault-secrets-4.7.0
+- azure-keyvault-administration-4.4.0
+- azure-keyvault-certificates-4.8.0
+- azure-keyvault-keys-4.9.0
+- azure-keyvault-secrets-4.8.0
 
 ## 2023.12.01
 

@@ -6,6 +6,7 @@
 
 - azure-mgmt-advisor-9.0.0
 - azure-mgmt-alertsmanagement-1.0.0
+- azure-mgmt-apicenter-1.0.0
 - azure-mgmt-apimanagement-4.0.0
 - azure-mgmt-appconfiguration-3.0.0
 - azure-mgmt-appcontainers-3.0.0
@@ -100,7 +101,7 @@
 - azure-mgmt-monitor-6.0.2
 - azure-mgmt-msi-7.0.0
 - azure-mgmt-netapp-11.0.0
-- azure-mgmt-network-25.2.0
+- azure-mgmt-network-25.3.0
 - azure-mgmt-networkanalytics-1.0.0
 - azure-mgmt-networkcloud-1.0.0
 - azure-mgmt-newrelicobservability-1.0.0
@@ -121,6 +122,7 @@
 - azure-mgmt-rdbms-10.1.0
 - azure-mgmt-recoveryservices-2.5.0
 - azure-mgmt-recoveryservicesbackup-9.0.0
+- azure-mgmt-recoveryservicessiterecovery-1.2.0
 - azure-mgmt-redhatopenshift-1.4.0
 - azure-mgmt-redis-14.3.0
 - azure-mgmt-redisenterprise-2.0.0
