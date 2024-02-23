@@ -16,8 +16,9 @@ from ._test_base import _BlobTest
 
 import logging
 import sys
+
 handler = logging.StreamHandler(stream=sys.stdout)
-logger = logging.getLogger('corehttp')
+logger = logging.getLogger("corehttp")
 logger.setLevel(logging.DEBUG)
 logger.addHandler(handler)
 

@@ -20,12 +20,12 @@ from corehttp.runtime.policies import (
     HeadersPolicy,
     ProxyPolicy,
     NetworkTraceLoggingPolicy,
-#    HttpLoggingPolicy,
+    #    HttpLoggingPolicy,
     RetryPolicy,
-#    CustomHookPolicy,
-#    RedirectPolicy,
+    #    CustomHookPolicy,
+    #    RedirectPolicy,
     AsyncRetryPolicy,
-#    AsyncRedirectPolicy,
+    #    AsyncRedirectPolicy,
     BearerTokenCredentialPolicy,
     AsyncBearerTokenCredentialPolicy,
 )
@@ -45,6 +45,7 @@ from azure.storage.blob._shared.authentication import SharedKeyCredentialPolicy 
 from azure.data.tables._authentication import SharedKeyCredentialPolicy as TableSharedKeyCredentialPolicy
 
 _LETTERS = string.ascii_letters
+
 
 class _ServiceTest(PerfStressTest):
     transport = None
@@ -72,7 +73,9 @@ class _ServiceTest(PerfStressTest):
                 try:
                     self.sync_transport = sync_transport_types[self.args.transport]
                 except KeyError:
-                    raise ValueError(f"Invalid sync transport:{self.args.transport}\n Valid options are:\n- requests\n- httpx\n")
+                    raise ValueError(
+                        f"Invalid sync transport:{self.args.transport}\n Valid options are:\n- requests\n- httpx\n"
+                    )
             # if async, override async default
             else:
                 try:
@@ -96,9 +99,9 @@ class _ServiceTest(PerfStressTest):
             ProxyPolicy,
             NetworkTraceLoggingPolicy,
             RetryPolicy,
-            #HttpLoggingPolicy,
-            #CustomHookPolicy,
-            #RedirectPolicy,
+            # HttpLoggingPolicy,
+            # CustomHookPolicy,
+            # RedirectPolicy,
         ]
 
         if self.args.policies is None:
@@ -129,9 +132,9 @@ class _ServiceTest(PerfStressTest):
             ProxyPolicy,
             NetworkTraceLoggingPolicy,
             AsyncRetryPolicy,
-            #HttpLoggingPolicy,
-            #CustomHookPolicy,
-            #AsyncRedirectPolicy,
+            # HttpLoggingPolicy,
+            # CustomHookPolicy,
+            # AsyncRedirectPolicy,
         ]
         if self.args.policies is None:
             # if None, only auth policy is passed in
