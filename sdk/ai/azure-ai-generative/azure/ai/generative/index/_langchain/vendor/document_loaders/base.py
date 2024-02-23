@@ -30,17 +30,14 @@ class BaseLoader(ABC):
     def load(self) -> List[Document]:
         """Load data into Document objects."""
 
-    def load_and_split(
-        self, text_splitter: Optional[TextSplitter] = None
-    ) -> List[Document]:
+    def load_and_split(self, text_splitter: Optional[TextSplitter] = None) -> List[Document]:
         """Load Documents and split into chunks. Chunks are returned as Documents.
 
-        Args:
-            text_splitter: TextSplitter instance to use for splitting documents.
-              Defaults to RecursiveCharacterTextSplitter.
-
-        Returns:
-            List of Documents.
+        :param text_splitter: TextSplitter instance to use for splitting documents.
+            Defaults to RecursiveCharacterTextSplitter.
+        :type text_splitter: Optional[TextSplitter]
+        :return: List of Documents.
+        :rtype: List[Document]
         """
         if text_splitter is None:
             _text_splitter: TextSplitter = RecursiveCharacterTextSplitter()
@@ -51,10 +48,10 @@ class BaseLoader(ABC):
 
     # Attention: This method will be upgraded into an abstractmethod once it's
     #            implemented in all the existing subclasses.
-    def lazy_load(
-        self,
-    ) -> Iterator[Document]:
-        """A lazy loader for Documents."""
-        raise NotImplementedError(
-            f"{self.__class__.__name__} does not implement lazy_load()"
-        )
+    def lazy_load(self) -> Iterator[Document]:
+        """A lazy loader for Documents.
+
+        :return: An iterator of Document objects.
+        :rtype: Iterator[Document]
+        """
+        raise NotImplementedError(f"{self.__class__.__name__} does not implement lazy_load()")

@@ -67,16 +67,17 @@ def create_search_index_sdk(acs_config: dict, credential, embeddings: Optional[E
     """
     Create a search index using the Azure Search SDK.
 
-    Args:
-    ----
-        acs_config (dict): ACS configuration dictionary. Expected to contain:
-            - endpoint: ACS endpoint
-            - index_name: ACS index name
-            - field_mapping: Mappings from a set of fields
-              understoon by MLIndex (refer to MLIndex.INDEX_FIELD_MAPPING_TYPES) to ACS field names.
-        credential (TokenCredential): Azure credential to use for authentication.
-        embeddings (EmbeddingsContainer): EmbeddingsContainer to use for creating the index.
+    :param acs_config: ACS configuration dictionary. Expected to contain:
+        - endpoint: ACS endpoint
+        - index_name: ACS index name
+        - field_mapping: Mappings from a set of fields
+          understood by MLIndex (refer to MLIndex.INDEX_FIELD_MAPPING_TYPES) to ACS field names.
+    :type acs_config: dict
+    :param credential: Azure credential to use for authentication.
+    :type credential: TokenCredential
+    :param embeddings: EmbeddingsContainer to use for creating the index.
         If provided, the index will be configured to support vector search.
+    :type embeddings: Optional[EmbeddingsContainer]
     """
     logger.info(f"Ensuring search index {acs_config['index_name']} exists")
     index_client = SearchIndexClient(endpoint=acs_config["endpoint"], credential=credential, user_agent=acs_user_agent)
@@ -231,7 +232,24 @@ def create_index_from_raw_embeddings(
     credential: Optional[TokenCredential] = None,
     verbosity: int = 1,
 ) -> MLIndex:
-    """Upload an EmbeddingsContainer to Azure Cognitive Search and return an MLIndex."""
+    """
+    Upload an EmbeddingsContainer to Azure Cognitive Search and return an MLIndex.
+
+    :param emb: The EmbeddingsContainer to upload.
+    :type emb: EmbeddingsContainer
+    :param acs_config: The ACS configuration.
+    :type acs_config: Optional[Dict[str, Any]]
+    :param connection: The connection configuration.
+    :type connection: Optional[Dict[str, Any]]
+    :param output_path: The output path.
+    :type output_path: Optional[Union[Path, str]]
+    :param credential: The credential.
+    :type credential: Optional[TokenCredential]
+    :param verbosity: The verbosity level.
+    :type verbosity: int
+    :return: The MLIndex.
+    :rtype: MLIndex
+    """
     if acs_config is None:
         acs_config = {}
 
@@ -389,9 +407,8 @@ def create_index_from_raw_embeddings(
                 if verbosity > 2:
                     logger.info(f"Skipping document as it should already be in index: {doc_id}")
                 continue
-            else:
-                if verbosity > 2:
-                    logger.info(f"Pushing document to index: {doc_id}")
+            if verbosity > 2:
+                logger.info(f"Pushing document to index: {doc_id}")
 
             doc_source = emb_doc.metadata.get("source", {})
             if isinstance(doc_source, str):

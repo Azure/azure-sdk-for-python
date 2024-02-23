@@ -12,7 +12,13 @@ logger = get_logger(__name__)
 
 
 def azureml_faiss_as_langchain_faiss(faissanddocstore: FaissAndDocStore) -> VectorStore:
-    """Convert an AzureML FaissAndDocStore to a langchain FAISS VectorStore."""
+    """Convert an AzureML FaissAndDocStore to a langchain FAISS VectorStore.
+
+    :param faissanddocstore: The AzureML FaissAndDocStore to convert.
+    :type faissanddocstore: FaissAndDocStore
+    :return: The converted langchain FAISS VectorStore.
+    :rtype: VectorStore
+    """
     return FAISS(
         faissanddocstore.query_embed,
         faissanddocstore.index,

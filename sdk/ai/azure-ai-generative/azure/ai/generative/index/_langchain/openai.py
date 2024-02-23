@@ -5,7 +5,16 @@
 
 
 def patch_openai_embedding_retries(logger, activity_logger, max_seconds_retrying=540):
-    """Patch the openai embedding to retry on failure.""."""
+    """
+    Patch the openai embedding to retry on failure.
+
+    :param logger: The logger object.
+    :type logger: Logger
+    :param activity_logger: The activity logger object.
+    :type activity_logger: ActivityLogger
+    :param max_seconds_retrying: The maximum number of seconds to retry.
+    :type max_seconds_retrying: int
+    """
     from datetime import datetime
 
     from azure.ai.resources._index._langchain.vendor.embeddings import openai as langchain_openai

@@ -308,9 +308,21 @@ class QADataGenerator:
         output_format: OutputStructure = OutputStructure.PROMPTFLOW,
         field_mapping: Optional[Dict[str, str]] = None,
     ):
-        """Writes results from QA gen to a jsonl file for Promptflow batch run results is either a list of questions
+        """
+        Writes results from QA gen to a jsonl file for Promptflow batch run results is either a list of questions
         and answers or list of list of questions and answers grouped by their chunk e.g. [("How are you?",
-        "I am good.")] or [ [("How are you?", "I am good.")], [("What can I do?", "Tell me a joke.")]
+        "I am good.")] or [ [("How are you?", "I am good.")], [("What can I do?", "Tell me a joke.")].
+
+        :param output_path: The path to the output file.
+        :type output_path: str
+        :param qa_type: The type of QA data.
+        :type qa_type: QAType
+        :param results: The results of the QA generation.
+        :type results: Union[List, List[List]]
+        :param output_format: The output structure format.
+        :type output_format: OutputStructure, optional
+        :param field_mapping: The field mapping for the output structure.
+        :type field_mapping: Optional[Dict[str, str]], optional
         """
         data_dict = defaultdict(list)
 

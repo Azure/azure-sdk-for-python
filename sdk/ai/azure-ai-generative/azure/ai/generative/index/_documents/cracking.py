@@ -491,7 +491,7 @@ def crack_documents(sources: Iterator[DocumentSource], file_extension_loaders=No
             mode = "rb"
 
         try:
-            with open(source.path, mode=mode) as f:
+            with open(source.path, mode=mode, encoding="utf-8") as f:
                 loader = loader_cls(**{
                     "file": f,
                     "document_source": source,
@@ -504,7 +504,7 @@ def crack_documents(sources: Iterator[DocumentSource], file_extension_loaders=No
             # if loader_cls has a fallback_loader, try that
             if hasattr(loader_cls, "fallback_loader"):
                 fallback_loader_cls = loader_cls.fallback_loader()
-                with open(source.path, mode=mode) as f:
+                with open(source.path, mode=mode, encoding="utf-8") as f:
                     loader = fallback_loader_cls(**{
                         "file": f,
                         "document_source": source,

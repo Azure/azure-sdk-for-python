@@ -67,11 +67,23 @@ except Exception:  # pylint: disable=broad-except
 
         @property
         def activity_info(self):
-            """Return current activity info."""
+            """Return current activity info.
+
+            :return: The current activity info.
+            :rtype: dict
+            """
             return self._activity_info
 
         def process(self, msg, kwargs):
-            """Process the log message."""
+            """Process the log message.
+
+            :param msg: The log message.
+            :type msg: str
+            :param kwargs: Additional keyword arguments.
+            :type kwargs: dict
+            :return: The processed log message and keyword arguments.
+            :rtype: tuple
+            """
             return msg, kwargs
 
 
@@ -112,7 +124,14 @@ class LoggerFactory:
             self.mlflow = False
 
     def with_mlflow(self, mlflow=True):
-        """Set whether to log to mlflow."""
+        """
+        Set whether to log to mlflow.
+
+        :param mlflow: Whether to log to mlflow. Default is True.
+        :type mlflow: bool
+        :return: The updated LoggerFactory instance.
+        :rtype: LoggerFactory
+        """
         try:
             import mlflow
 
@@ -123,7 +142,16 @@ class LoggerFactory:
         return self
 
     def with_stdout(self, stdout=True, _verbosity=logging.INFO):
-        """Set whether to log to stdout."""
+        """
+        Set whether to log to stdout.
+
+        :param stdout: Whether to log to stdout. Default is True.
+        :type stdout: bool
+        :param _verbosity: The verbosity level of the logger. Default is logging.INFO.
+        :type _verbosity: int
+        :return: The updated LoggerFactory instance.
+        :rtype: LoggerFactory
+        """
         if stdout:
             # Add stdout handler to any loggers created before enabling stdout.
             self.stdout = logging.StreamHandler(stream=sys.stdout)
@@ -140,7 +168,12 @@ class LoggerFactory:
         return self
 
     def with_appinsights(self):
-        """Set whether to log track_* events to appinsights."""
+        """
+        Set whether to log track_* events to appinsights.
+
+        :return: None
+        :rtype: None
+        """
         if telemetry_enabled and self.appinsights is None:
             import atexit
 
@@ -148,7 +181,16 @@ class LoggerFactory:
             atexit.register(self.appinsights.flush)
 
     def get_logger(self, name, level=None):
-        """Get a logger with the given name and level."""
+        """
+        Get a logger with the given name and level.
+
+        :param name: The name of the logger.
+        :type name: str
+        :param level: The level of the logger. Default is None.
+        :type level: Optional[int]
+        :return: The logger with the given name and level.
+        :rtype: logging.Logger
+        """
         if name not in self.loggers:
             logger = logging.getLogger(f"azure.ai.generative.index.{name}")
             if level is not None:
@@ -161,7 +203,20 @@ class LoggerFactory:
         return self.loggers[name]
 
     def track_activity(self, logger, name, activity_type=DEFAULT_ACTIVITY_TYPE, custom_dimensions=None):
-        """Track the activity of the given logger."""
+        """
+        Track the activity of the given logger.
+
+        :param logger: The logger to track the activity.
+        :type logger: logging.Logger
+        :param name: The name of the activity.
+        :type name: str
+        :param activity_type: The type of the activity. Default is DEFAULT_ACTIVITY_TYPE.
+        :type activity_type: str
+        :param custom_dimensions: Custom dimensions to include in the telemetry payload. Default is None.
+        :type custom_dimensions: Optional[Dict[str, Any]]
+        :return: The result of the activity tracking.
+        :rtype: Any
+        """
         if custom_dimensions is None:
             custom_dimensions = {}
         if self.appinsights:
@@ -176,7 +231,15 @@ class LoggerFactory:
         return _run_without_logging(logger)
 
     def telemetry_info(self, logger, message, custom_dimensions=None):
-        """Track info with given logger."""
+        """Track info with given logger.
+
+        :param logger: The logger to track the info.
+        :type logger: logging.Logger
+        :param message: The info message to track.
+        :type message: str
+        :param custom_dimensions: Custom dimensions to include in the telemetry payload. Default is None.
+        :type custom_dimensions: Optional[Dict[str, Any]]
+        """
         if custom_dimensions is None:
             custom_dimensions = {}
         if self.appinsights:
@@ -189,7 +252,15 @@ class LoggerFactory:
                 activity_logger.info(message)
 
     def telemetry_error(self, logger, message, custom_dimensions=None):
-        """Track error with given logger."""
+        """Track error with given logger.
+
+        :param logger: The logger to track the error.
+        :type logger: logging.Logger
+        :param message: The error message to track.
+        :type message: str
+        :param custom_dimensions: Custom dimensions to include in the telemetry payload. Default is None.
+        :type custom_dimensions: Optional[Dict[str, Any]]
+        """
         if custom_dimensions is None:
             custom_dimensions = {}
         if self.appinsights:
@@ -203,7 +274,15 @@ class LoggerFactory:
 
     @staticmethod
     def get_stack(limit=3, start=1) -> Optional[str]:
-        """Get the stack trace as a string."""
+        """Get the stack trace as a string.
+
+        :param limit: The maximum number of frames to include in the stack trace. Default is 3.
+        :type limit: int
+        :param start: The index of the first frame to include in the stack trace. Default is 1.
+        :type start: int
+        :return: The stack trace as a string.
+        :rtype: Optional[str]
+        """
         try:
             stack = inspect.stack()
             # The index of the first frame to print.
@@ -263,22 +342,51 @@ _logger_factory = LoggerFactory()
 
 
 def enable_stdout_logging(_verbosity=logging.INFO):
-    """Enable logging to stdout."""
+    """
+    Enable logging to stdout.
+
+    :param _verbosity: The verbosity level of the logging. Default is logging.INFO.
+    :type _verbosity: int
+    """
     _logger_factory.with_stdout(True, _verbosity)
 
 
 def enable_appinsights_logging():
-    """Enable logging to appinsights."""
+    """
+    Enable logging to appinsights.
+    """
     _logger_factory.with_appinsights()
 
 
 def get_logger(name, level=logging.INFO):
-    """Get a logger with the given name and level."""
+    """
+    Get a logger with the given name and level.
+
+    :param name: The name of the logger.
+    :type name: str
+    :param level: The logging level. Default is logging.INFO.
+    :type level: int
+    :return: The logger instance.
+    :rtype: Logger
+    """
     return _logger_factory.get_logger(name, level)
 
 
 def track_activity(logger, name, activity_type=DEFAULT_ACTIVITY_TYPE, custom_dimensions=None):
-    """Track the activity with given logger."""
+    """
+    Track the activity with given logger.
+
+    :param logger: The logger instance.
+    :type logger: Logger
+    :param name: The name of the activity.
+    :type name: str
+    :param activity_type: The type of the activity. Default is DEFAULT_ACTIVITY_TYPE.
+    :type activity_type: str
+    :param custom_dimensions: Custom dimensions for the activity. Default is None.
+    :type custom_dimensions: dict, optional
+    :return: The result of the track_activity method.
+    :rtype: Any
+    """
     if custom_dimensions is None:
         custom_dimensions = {}
     enable_appinsights_logging()
@@ -286,14 +394,36 @@ def track_activity(logger, name, activity_type=DEFAULT_ACTIVITY_TYPE, custom_dim
 
 
 def track_info(logger, message, custom_dimensions=None):
-    """Track info with given logger."""
+    """
+    Track info with given logger.
+
+    :param logger: The logger instance.
+    :type logger: Logger
+    :param message: The info message.
+    :type message: str
+    :param custom_dimensions: Custom dimensions for the info message. Default is None.
+    :type custom_dimensions: dict, optional
+    :return: The result of the telemetry_info method.
+    :rtype: Any
+    """
     if custom_dimensions is None:
         custom_dimensions = {}
     return _logger_factory.telemetry_info(logger, message, custom_dimensions)
 
 
 def track_error(logger, message, custom_dimensions=None):
-    """Track error with given logger."""
+    """
+    Track error with given logger.
+
+    :param logger: The logger instance.
+    :type logger: Logger
+    :param message: The error message.
+    :type message: str
+    :param custom_dimensions: Custom dimensions for the error message. Default is None.
+    :type custom_dimensions: dict, optional
+    :return: The result of the telemetry_error method.
+    :rtype: Any
+    """
     if custom_dimensions is None:
         custom_dimensions = {}
     return _logger_factory.telemetry_error(logger, message, custom_dimensions)
@@ -305,17 +435,30 @@ def track_error(logger, message, custom_dimensions=None):
 
 
 def disable_mlflow():
-    """Disable mlflow logging."""
+    """
+    Disable mlflow logging.
+    """
     _logger_factory.mlflow = False
 
 
 def mlflow_enabled():
-    """Check if mlflow logging is enabled."""
+    """
+    Check if mlflow logging is enabled.
+
+    :return: True if mlflow logging is enabled, False otherwise.
+    :rtype: bool
+    """
     return _logger_factory.mlflow
 
 
 def safe_mlflow_log_metric(*args, logger, **kwargs):
-    """Log metric to mlflow if enabled."""
+    """
+    Log metric to mlflow if enabled.
+
+    :param args: The arguments for the metric.
+    :type args: tuple
+    :keyword logger: The logger object.
+    """
     if mlflow_enabled():
         import mlflow
 
@@ -332,7 +475,14 @@ def safe_mlflow_log_metric(*args, logger, **kwargs):
 
 @contextmanager
 def safe_mlflow_start_run(logger):
-    """Start mlflow run if enabled."""
+    """
+    Start mlflow run if enabled.
+
+    :param logger: The logger object.
+    :type logger: Logger
+    :return: None
+    :rtype: None
+    """
     if mlflow_enabled():
         import mlflow
 

@@ -19,7 +19,17 @@ class GitCloneProgress(git.remote.RemoteProgress):
     """A progress handler for git clone operations."""
 
     def update(self, op_code, cur_count, max_count=None, message=""):
-        """Update the progress of the git clone operation."""
+        """Update the progress of the git clone operation.
+
+        :param op_code: The operation code.
+        :type op_code: int
+        :param cur_count: The current count.
+        :type cur_count: int
+        :param max_count: The maximum count (optional).
+        :type max_count: int
+        :param message: The progress message (optional).
+        :type message: str
+        """
         if message:
             git_logger.info(message.strip())
 
@@ -40,7 +50,13 @@ class GitRepoBranch:
 
 
 def parse_git_url(git_url: str) -> GitRepoBranch:
-    """Parse a git url into a GitRepoBranch."""
+    """Parse a git url into a GitRepoBranch.
+
+    :param git_url: The URL of the git repository.
+    :type git_url: str
+    :return: The parsed GitRepoBranch object.
+    :rtype: GitRepoBranch
+    """
     import re
 
     git_repo_pattern = re.compile(r"(.*\.git$)|(https:\/\/github\.com.*)\/blob\/(.*)|(https:\/\/github\.com.*(?!git)$)")
@@ -62,7 +78,17 @@ def parse_git_url(git_url: str) -> GitRepoBranch:
 
 
 def clone_repo(git_url: str, local_path: Path, branch: Optional[str] = None, authentication: Optional[dict] = None):
-    """Clone a git repository to a local path, optionally checking out a branch."""
+    """Clone a git repository to a local path, optionally checking out a branch.
+
+    :param git_url: The URL of the git repository.
+    :type git_url: str
+    :param local_path: The local path where the repository will be cloned.
+    :type local_path: Path
+    :param branch: The branch to check out (optional).
+    :type branch: Optional[str]
+    :param authentication: The authentication credentials (optional).
+    :type authentication: Optional[dict]
+    """
     logger.info(f"Cloning {git_url} to {local_path}")
 
     git_repo_branch = parse_git_url(git_url)
@@ -100,8 +126,14 @@ def clone_repo(git_url: str, local_path: Path, branch: Optional[str] = None, aut
     logger.info(f'Cloned branch "{repo.active_branch}" at commit: {repo.head.commit.hexsha}')
 
 
-def get_keyvault_authentication(authentication_key_prefix: str):
-    """Get the username and password for a keyvault authentication key""."""
+def get_keyvault_authentication(authentication_key_prefix: str) -> dict:
+    """Get the username and password for a keyvault authentication key.
+
+    :param authentication_key_prefix: The prefix of the authentication key.
+    :type authentication_key_prefix: str
+    :return: A dictionary containing the username and password.
+    :rtype: dict
+    """
     username = get_secret_from_workspace(f"{authentication_key_prefix}-USER")
     password = get_secret_from_workspace(f"{authentication_key_prefix}-PASS")
     return {"username": username, "password": password}

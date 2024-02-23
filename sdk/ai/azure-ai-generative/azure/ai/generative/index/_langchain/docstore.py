@@ -15,38 +15,42 @@ class FileBasedDocStore(Docstore, AddableMixin):
     """Simple docstore which serializes to file and loads into memory."""
 
     def __init__(self, docstore: FileBasedDocstore):
-        """Initialize with azure.ai.resources._index._docstore.FileBasedDocstore."""
+        """Initialize with azure.ai.resources._index._docstore.FileBasedDocstore.
+
+        :param docstore: The FileBasedDocstore instance.
+        """
         self.docstore = docstore
 
     def add(self, texts: Dict[str, LangChainDocument]) -> None:
         """
         Add texts to in memory dictionary.
 
-        Args:
-        ----
-            texts: dictionary of id -> document.
-
-        Returns:
-        -------
-            None
+        :param texts: Dictionary of id -> document.
+        :type texts: Dict[str, LangChainDocument]
+        :return: None
+        :rtype: None
         """
         return self.docstore.add({k: WrappedLangChainDocument(v) for (k, v) in texts.items()})
 
     def delete(self, ids: list) -> None:
-        """Deleting IDs from in memory dictionary."""
+        """
+        Deleting IDs from in memory dictionary.
+
+        :param ids: List of IDs to delete.
+        :type ids: list
+        :return: None
+        :rtype: None
+        """
         return self.docstore.delete(ids)
 
     def search(self, search: str) -> Union[LangChainDocument, str]:
         """
         Search via direct lookup.
 
-        Args:
-        ----
-            search: id of a document to search for.
-
-        Returns:
-        -------
-            Document if found, else error message.
+        :param search: ID of a document to search for.
+        :type search: str
+        :return: Document if found, else error message.
+        :rtype: Union[LangChainDocument, str]
         """
         doc = self.docstore.search(search)
         if isinstance(doc, Document):
@@ -58,13 +62,21 @@ class FileBasedDocStore(Docstore, AddableMixin):
         """
         Save to JSONL file.
 
-        Args:
-        ----
-            output_path: folder to save doctore contents in.
+        :param output_path: Folder to save docstore contents in.
+        :type output_path: str
+        :return: None
+        :rtype: None
         """
         return self.docstore.save(output_path)
 
     @classmethod
     def load(cls, input_path: str) -> "FileBasedDocstore":
-        """Load from JSONL file."""
+        """
+        Load from JSONL file.
+
+        :param input_path: Path to the JSONL file.
+        :type input_path: str
+        :return: FileBasedDocstore instance.
+        :rtype: FileBasedDocstore
+        """
         return FileBasedDocStore.load(input_path)

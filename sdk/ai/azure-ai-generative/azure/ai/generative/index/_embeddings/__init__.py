@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
@@ -37,7 +38,18 @@ logger = get_logger(__name__)
 def get_langchain_embeddings(
     embedding_kind: str, arguments: dict, credential: Optional[TokenCredential] = None
 ) -> Union[OpenAIEmbedder, Embedder]:
-    """Get an instance of Embedder from the given arguments."""
+    """
+    Get an instance of Embedder from the given arguments.
+
+    :keyword embedding_kind: The kind of embedding to use.
+    :paramtype embedding_kind: str
+    :keyword arguments: The arguments for initializing the Embedder.
+    :paramtype arguments: dict
+    :keyword credential: The optional TokenCredential for authentication.
+    :paramtype credential: Optional[TokenCredential]
+    :return: An instance of Embedder.
+    :rtype: Union[OpenAIEmbedder, Embedder]
+    """
     if "open_ai" in embedding_kind:
         # return _args_to_openai_embedder(arguments)
 
@@ -75,15 +87,31 @@ def get_langchain_embeddings(
             """HuggingFaceEmbeddings with kwargs argument to embed_doceuments to support loggers being passed in."""
 
             def __init__(self, embeddings):
-                """Initialize the ActivitySafeHuggingFaceEmbeddings."""
+                """Initialize the ActivitySafeHuggingFaceEmbeddings.
+
+                :param embeddings: The embeddings instance.
+                :type embeddings: Embedder
+                """
                 self.embeddings = embeddings
 
             def embed_documents(self, texts: List[str]) -> List[List[float]]:
-                """Embed the given documents."""
+                """Embed the given documents.
+
+                :param texts: The list of documents to embed.
+                :type texts: List[str]
+                :return: The embedded documents.
+                :rtype: List[List[float]]
+                """
                 return self.embeddings.embed_documents(texts)
 
             def embed_query(self, text: str) -> List[float]:
-                """Embed the given query."""
+                """Embed the given query.
+
+                :param text: The query to embed.
+                :type text: str
+                :return: The embedded query.
+                :rtype: List[float]
+                """
                 return self.embeddings.embed_query(text)
 
         return ActivitySafeHuggingFaceEmbeddings(HuggingFaceEmbeddings(model_name=model_name))
@@ -105,7 +133,18 @@ def get_langchain_embeddings(
 def get_embed_fn(
     embedding_kind: str, arguments: dict, credential: Optional[TokenCredential] = None
 ) -> Callable[[List[str]], List[List[float]]]:
-    """Get an embedding function from the given arguments."""
+    """
+    Get an embedding function from the given arguments.
+
+    :param embedding_kind: The kind of embedding.
+    :type embedding_kind: str
+    :param arguments: The arguments for the embedding function.
+    :type arguments: dict
+    :param credential: The optional credential for authentication.
+    :type credential: Optional[TokenCredential]
+    :return: The embedding function.
+    :rtype: Callable[[List[str]], List[List[float]]]
+    """
 
     if "open_ai" in embedding_kind:
         # from azure.ai.generative.index._langchain.openai import patch_openai_embedding_retries
@@ -198,7 +237,17 @@ def get_embed_fn(
 def get_query_embed_fn(
     embedding_kind: str, arguments: dict, credential: Optional[TokenCredential] = None
 ) -> Callable[[str], List[float]]:
-    """Get an embedding function from the given arguments."""
+    """Get an embedding function from the given arguments.
+
+    :param embedding_kind: The kind of embedding.
+    :type embedding_kind: str
+    :param arguments: The arguments for the embedding function.
+    :type arguments: dict
+    :param credential: The credential for authentication (optional).
+    :type credential: Optional[TokenCredential]
+    :return: The embedding function.
+    :rtype: Callable[[str], List[float]]
+    """
     if embedding_kind == "open_ai":
         # embedder = _args_to_openai_embedder(arguments)
         # return embedder.embed_query
@@ -272,18 +321,45 @@ class EmbeddedDocument(ABC):
 class DataEmbeddedDocument(EmbeddedDocument):
     """A document with an embedding and data."""
 
-    def __init__(self, document_id: str, mtime, document_hash: str, data: str, embeddings: List[float], metadata: dict):
-        """Initialize the document."""
+    def __init__(
+        self, document_id: str, mtime: Any, document_hash: str, data: str, embeddings: List[float], metadata: dict
+    ):
+        """
+        Initialize the document.
+
+        :param document_id: The ID of the document.
+        :type document_id: str
+        :param mtime: The modification time of the document.
+        :type mtime: Any
+        :param document_hash: The hash of the document.
+        :type document_hash: str
+        :param data: The data of the document.
+        :type data: str
+        :param embeddings: The embeddings of the document.
+        :type embeddings: List[float]
+        :param metadata: The metadata of the document.
+        :type metadata: dict
+        """
         super().__init__(document_id, mtime, document_hash, metadata)
         self._data = data
         self._embeddings = embeddings
 
     def get_data(self) -> str:
-        """Get the data of the document."""
+        """
+        Get the data of the document.
+
+        :return: The data of the document.
+        :rtype: str
+        """
         return self._data
 
     def get_embeddings(self) -> List[float]:
-        """Get the embeddings of the document."""
+        """
+        Get the embeddings of the document.
+
+        :return: The embeddings of the document.
+        :rtype: List[float]
+        """
         return self._embeddings
 
 
@@ -295,7 +371,7 @@ class ReferenceEmbeddedDocument(EmbeddedDocument):
     def __init__(
         self,
         document_id: str,
-        mtime,
+        mtime: Any,
         document_hash: str,
         path_to_data: str,
         index,
@@ -303,7 +379,25 @@ class ReferenceEmbeddedDocument(EmbeddedDocument):
         metadata: dict,
         is_local: bool = False,
     ):
-        """Initialize the document."""
+        """
+        Initialize the document.
+
+        :param document_id: The ID of the document.
+        :type document_id: str
+        :param mtime: The modified time of the document.
+        :type mtime: Any
+        :param document_hash: The hash of the document.
+        :type document_hash: str
+        :param path_to_data: The path to the data.
+        :type path_to_data: str
+        :param index: The index of the document.
+        :param embeddings_container_path: The path to the embeddings container.
+        :type embeddings_container_path: str
+        :param metadata: The metadata of the document.
+        :type metadata: dict
+        :param is_local: Flag indicating if the document is local, defaults to False.
+        :type is_local: bool
+        """
         super().__init__(document_id, mtime, document_hash, metadata)
         self.path_to_data = path_to_data
         self.embeddings_container_path = embeddings_container_path
@@ -311,18 +405,35 @@ class ReferenceEmbeddedDocument(EmbeddedDocument):
         self.is_local = is_local
 
     def get_data(self) -> str:
-        """Get the data of the document."""
+        """
+        Get the data of the document.
+
+        :return: The data of the document.
+        :rtype: str
+        """
         table = self.open_embedding_file(os.path.join(self.embeddings_container_path, self.path_to_data))
         return table.column("data")[self.index].as_py()
 
     def get_embeddings(self) -> str:  # type: ignore[override]
-        """Get the embeddings of the document."""
+        """
+        Get the embeddings of the document.
+
+        :return: The embeddings of the document.
+        :rtype: str
+        """
         table = self.open_embedding_file(os.path.join(self.embeddings_container_path, self.path_to_data))
         return table.column("embeddings")[self.index].as_py()
 
     @classmethod
     def open_embedding_file(cls, path) -> pa.Table:
-        """Open the embedding file and cache it."""
+        """
+        Open the embedding file and cache it.
+
+        :param path: The path to the embedding file.
+        :type path: str
+        :return: The embedding file as a PyArrow Table.
+        :rtype: pa.Table
+        """
         if cls._last_opened_embeddings is None or cls._last_opened_embeddings[0] != path:
             logger.debug(
                 f"caching embeddings file: \n{path}\n   previous path cached was: \n{cls._last_opened_embeddings}"
@@ -339,35 +450,72 @@ class WrappedLangChainDocument(Document):
     document: LangChainDocument
 
     def __init__(self, document: LangChainDocument):
-        """Initialize the document."""
+        """
+        Initialize the document.
+
+        :param document: The LangChainDocument object.
+        :type document: LangChainDocument
+        """
         super().__init__(str(uuid.uuid4()))
         self.document = document
 
     def modified_time(self) -> Any:
-        """Get the modified time of the document."""
+        """
+        Get the modified time of the document.
+
+        :return: The modified time of the document.
+        :rtype: Any
+        """
         self.document.metadata.get("mtime", None)
 
     def load_data(self) -> str:
-        """Load the data of the document."""
+        """
+        Load the data of the document.
+
+        :return: The data of the document.
+        :rtype: str
+        """
         return self.document.page_content
 
     def get_metadata(self) -> dict:
-        """Get the metadata of the document."""
+        """
+        Get the metadata of the document.
+
+        :return: The metadata of the document.
+        :rtype: dict
+        """
         return self.document.metadata
 
     def set_metadata(self, metadata: dict):
-        """Set the metadata of the document."""
+        """
+        Set the metadata of the document.
+
+        :param metadata: The metadata to set.
+        :type metadata: dict
+        """
         self.document.metadata = metadata
 
     def dumps(self) -> str:
-        """Dump the document to a json string."""
+        """
+        Dump the document to a json string.
+
+        :return: The json string representing the document.
+        :rtype: str
+        """
         return json.dumps(
             {"page_content": self.load_data(), "metadata": self.get_metadata(), "document_id": self.document_id}
         )
 
     @classmethod
     def loads(cls, data: str) -> "WrappedLangChainDocument":
-        """Load the document from a json string."""
+        """
+        Load the document from a json string.
+
+        :param data: The json string representing the document.
+        :type data: str
+        :return: The loaded WrappedLangChainDocument object.
+        :rtype: WrappedLangChainDocument
+        """
         data_dict = json.loads(data)
         lc_doc = LangChainDocument(data_dict["page_content"], data_dict["metadata"])
         wrapped_doc = cls(lc_doc)
@@ -375,7 +523,7 @@ class WrappedLangChainDocument(Document):
         return wrapped_doc
 
 
-class EmbeddingsContainer:  # pylint: disable=too-many-instance-attributes
+class EmbeddingsContainer:  # pylint: disable=too-many-instance-attributes, too-many-public-methods
     """
     A class for generating embeddings.
 
@@ -409,15 +557,35 @@ class EmbeddingsContainer:  # pylint: disable=too-many-instance-attributes
     _deleted_documents: OrderedDict
 
     def __getitem__(self, key):
-        """Get document by doc_id."""
+        """
+        Get document by doc_id.
+
+        :param key: The document ID.
+        :type key: str
+        :return: The document with the specified ID.
+        :rtype: Any
+        """
         return self._document_embeddings[key]
 
     def __len__(self):
-        """Get the number of documents in the embeddings."""
+        """
+        Get the number of documents in the embeddings.
+
+        :return: The number of documents.
+        :rtype: int
+        """
         return len(self._document_embeddings)
 
     def __init__(self, kind: str, credential: Optional[TokenCredential] = None, **kwargs):
-        """Initialize the embeddings."""
+        """
+        Initialize the embeddings.
+
+        :param kind: The type of embeddings.
+        :type kind: str
+        :param credential: The credential for authentication (optional).
+        :type credential: TokenCredential
+        :param kwargs: Additional arguments.
+        """
         self.kind = kind
         self.arguments = kwargs
         self._embed_fn = get_embed_fn(kind, kwargs, credential=credential)
@@ -434,23 +602,47 @@ class EmbeddingsContainer:  # pylint: disable=too-many-instance-attributes
 
     @property
     def embeddings_container_local_path(self):
-        """Get the path to the embeddings container."""
+        """
+        Get the path to the embeddings container.
+
+        :return: The path to the embeddings container.
+        :rtype: str
+        """
         return self._embeddings_container_path
 
     @embeddings_container_local_path.setter
     def embeddings_container_local_path(self, value):
-        """Set the path to the embeddings container."""
+        """
+        Set the path to the embeddings container.
+
+        :param value: The path to the embeddings container.
+        :type value: str
+        """
         self._embeddings_container_path = value
 
     @staticmethod
     def from_uri(uri: str, credential: Optional[TokenCredential] = None, **kwargs) -> "EmbeddingsContainer":
-        """Create an embeddings object from a URI."""
+        """
+        Create an embeddings object from a URI.
+
+        :param uri: The URI of the embeddings.
+        :type uri: str
+        :param credential: The credential for accessing the embeddings (optional).
+        :type credential: Optional[TokenCredential]
+        :return: The embeddings object.
+        :rtype: EmbeddingsContainer
+        """
         config = parse_model_uri(uri, **kwargs)
         kwargs["credential"] = credential
         return EmbeddingsContainer(**{**config, **kwargs})
 
     def get_metadata(self):
-        """Get the metadata of the embeddings."""
+        """
+        Get the metadata of the embeddings.
+
+        :return: The metadata of the embeddings.
+        :rtype: dict
+        """
         arguments = copy.deepcopy(self.arguments)
         if self.kind == "custom":
             arguments["pickled_embedding_fn"] = gzip.compress(cloudpickle.dumps(arguments["embedding_fn"]))
@@ -472,7 +664,14 @@ class EmbeddingsContainer:  # pylint: disable=too-many-instance-attributes
 
     @staticmethod
     def from_metadata(metadata: dict) -> "EmbeddingsContainer":
-        """Create an embeddings object from metadata."""
+        """
+        Create an embeddings object from metadata.
+
+        :param metadata: The metadata dictionary.
+        :type metadata: dict
+        :return: The embeddings container object.
+        :rtype: EmbeddingsContainer
+        """
         schema_version = metadata.get("schema_version", "1")
         if schema_version == "1":
             embeddings = EmbeddingsContainer(metadata["kind"], **metadata["arguments"])
@@ -489,8 +688,19 @@ class EmbeddingsContainer:  # pylint: disable=too-many-instance-attributes
         raise ValueError(f"Schema version {schema_version} is not supported")
 
     @staticmethod
-    def load(dir_name: str, embeddings_container_path, metadata_only=False):
-        """Load embeddings from a directory."""
+    def load(dir_name: str, embeddings_container_path: str, metadata_only: bool = False):
+        """
+        Load embeddings from a directory.
+
+        :param dir_name: The directory name.
+        :type dir_name: str
+        :param embeddings_container_path: The path to the embeddings container.
+        :type embeddings_container_path: str
+        :param metadata_only: Flag indicating whether to load only metadata, defaults to False.
+        :type metadata_only: bool
+        :return: Embeddings loaded from a directory.
+        :rtype: Optional[EmbeddingsContainer]
+        """
         path = Path(embeddings_container_path) / dir_name
         logger.info(f"loading embeddings from: {path}")
         with (path / "embeddings_metadata.yaml").open() as f:
@@ -515,8 +725,17 @@ class EmbeddingsContainer:  # pylint: disable=too-many-instance-attributes
 
         return embeddings
 
-    def load_v1(self, dir_name: str, embeddings_container_path):
-        """Load embeddings from a directory assuming file format version 1."""
+    def load_v1(self, dir_name: str, embeddings_container_path: str):
+        """
+        Load embeddings from a directory assuming file format version 1.
+
+        :param dir_name: The directory name.
+        :type dir_name: str
+        :param embeddings_container_path: The path to the embeddings container.
+        :type embeddings_container_path: str
+        :return: No return.
+        :rtype: None
+        """
         path = Path(embeddings_container_path) / dir_name
         embedding_partitions_files = list(Path(path).glob("embeddings*.parquet"))
         logger.info(f"found following embedding partitions: {embedding_partitions_files}")
@@ -554,8 +773,17 @@ class EmbeddingsContainer:  # pylint: disable=too-many-instance-attributes
 
         return self
 
-    def load_v2(self, dir_name: str, embeddings_container_path):  # pylint: disable=too-many-statements
-        """Load embeddings from a directory assuming file format version 2."""
+    def load_v2(self, dir_name: str, embeddings_container_path: str):  # pylint: disable=too-many-statements
+        """
+        Load embeddings from a directory assuming file format version 2.
+
+        :param dir_name: The name of the directory.
+        :type dir_name: str
+        :param embeddings_container_path: The path to the embeddings container.
+        :type embeddings_container_path: str
+        :return: No return.
+        :rtype: None
+        """
         path = Path(embeddings_container_path) / dir_name
 
         # Load Document Sources
@@ -661,8 +889,19 @@ class EmbeddingsContainer:  # pylint: disable=too-many-instance-attributes
 
         return self
 
-    def save(self, path: str, with_metadata=True, suffix: Optional[str] = None, file_format_version: str = "2"):
-        """Save the embeddings to a directory."""
+    def save(self, path: str, with_metadata: bool = True, suffix: Optional[str] = None, file_format_version: str = "2"):
+        """
+        Save the embeddings to a directory.
+
+        :param path: The directory path to save the embeddings.
+        :type path: str
+        :param with_metadata: Whether to include metadata in the saved embeddings. Default is True.
+        :type with_metadata: bool
+        :param suffix: Optional suffix to append to the saved embeddings file names. Default is None.
+        :type suffix: Optional[str]
+        :param file_format_version: The version of the file format to use for saving the embeddings. Default is "2".
+        :type file_format_version: str
+        """
         if file_format_version == "1":
             return self.save_v1(path, with_metadata, suffix)
         if file_format_version == "2":
@@ -670,8 +909,17 @@ class EmbeddingsContainer:  # pylint: disable=too-many-instance-attributes
         raise ValueError(f"Schema version {file_format_version} is not supported")
 
     # pylint: disable=too-many-locals, too-many-statements
-    def save_v2(self, path: Union[Path, str], with_metadata=True, suffix: Optional[str] = None):
-        """Save the embeddings to a directory using file format version 2."""
+    def save_v2(self, path: Union[Path, str], with_metadata: bool = True, suffix: Optional[str] = None):
+        """
+        Save the embeddings to a directory using file format version 2.
+
+        :param path: The path to the directory where the embeddings will be saved.
+        :type path: Union[Path, str]
+        :param with_metadata: Flag indicating whether to include metadata in the saved embeddings. Default is True.
+        :type with_metadata: bool
+        :param suffix: Optional suffix to append to the saved file names. Default is None.
+        :type suffix: Optional[str]
+        """
         path = Path(path)
         path.mkdir(parents=True, exist_ok=True)
 
@@ -813,8 +1061,17 @@ class EmbeddingsContainer:  # pylint: disable=too-many-instance-attributes
         if with_metadata:
             self.save_metadata(path, file_format_version="2")
 
-    def save_v1(self, path: str, with_metadata=True, suffix: Optional[str] = None):
-        """Save the embeddings to a directory using file format version 1."""
+    def save_v1(self, path: str, with_metadata: bool = True, suffix: Optional[str] = None):
+        """
+        Save the embeddings to a directory using file format version 1.
+
+        :param path: The path to the directory.
+        :type path: str
+        :param with_metadata: Whether to include metadata, defaults to True.
+        :type with_metadata: bool, optional
+        :param suffix: The suffix for the file names, defaults to None.
+        :type suffix: str, optional
+        """
         doc_ids: List = []
         mtimes: List = []
         hashes: List = []
@@ -870,18 +1127,35 @@ class EmbeddingsContainer:  # pylint: disable=too-many-instance-attributes
             self.save_metadata(path)
 
     def save_metadata(self, path, file_format_version="1"):
-        """Save the metadata to a directory."""
+        """
+        Save the metadata to a directory.
+
+        :param path: The path to the directory.
+        :type path: str
+        :param file_format_version: The file format version.
+        :type file_format_version: str
+        """
         with (Path(path) / "embeddings_metadata.yaml").open("w+") as f:
             metadata = self.get_metadata()
             metadata["file_format_version"] = file_format_version
             yaml.dump(metadata, f)
 
     def get_query_embed_fn(self) -> Callable[[str], List[float]]:
-        """Returns a function that embeds a query string."""
+        """
+        Returns a function that embeds a query string.
+
+        :return: The function that embeds a query string.
+        :rtype: Callable[[str], List[float]]
+        """
         return get_query_embed_fn(self.kind, self.arguments)
 
     def get_embedding_dimensions(self) -> Optional[int]:
-        """Returns the embedding dimensions."""
+        """
+        Returns the embedding dimensions.
+
+        :return: The embedding dimensions.
+        :rtype: Optional[int]
+        """
         if self.dimension is not None:
             return self.dimension
         if len(self._document_embeddings) > 0:
@@ -889,14 +1163,27 @@ class EmbeddingsContainer:  # pylint: disable=too-many-instance-attributes
         return None
 
     def as_langchain_embeddings(self, credential: Optional[TokenCredential] = None) -> Embedder:
-        """Returns a langchain Embedder that can be used to embed text."""
+        """
+        Returns a langchain Embedder that can be used to embed text.
+
+        :param credential: Optional credential for authentication.
+        :type credential: TokenCredential, optional
+
+        :return: The langchain Embedder.
+        :rtype: Embedder
+        """
         return get_langchain_embeddings(self.kind, self.arguments, credential=credential)
 
     # TODO: Either we need to implement the same split/embed/average flow used by `_get_len_safe_embeddings`
     # on OpenAIEmbeddings or make sure that data_chunking_component always respects max chunk_size.
     # Short term fix is to truncate any text longer than the embedding_ctx_limit if it's set.
     def get_embedding_ctx_length_truncate_func(self):
-        """Returns a function that truncates text to the embedding context length if it's set."""
+        """
+        Returns a function that truncates text to the embedding context length if it's set.
+
+        :return: The function that truncates text.
+        :rtype: Callable[[str], str]
+        """
         model = ""
         if "model" in self.arguments:
             model = self.arguments["model"]
@@ -921,9 +1208,16 @@ class EmbeddingsContainer:  # pylint: disable=too-many-instance-attributes
 
     def embed(self, input_documents: Union[Iterator[Document], BaseLoader, DocumentChunksIterator]):
         """
-        Embeds inout documents if they are new or changed and mutates current instance to drop embeddings
+        Embeds input documents if they are new or changed and mutates current instance to drop embeddings
         for documents that are no longer present.
+
+        :param input_documents: The input documents to embed.
+        :type input_documents: Union[Iterator[Document], BaseLoader, DocumentChunksIterator]
+
+        :return: The current instance with updated embeddings.
+        :rtype: EmbeddingsContainer
         """
+
         self._document_embeddings = self._get_embeddings_internal(input_documents)
         return self
 
@@ -933,7 +1227,14 @@ class EmbeddingsContainer:  # pylint: disable=too-many-instance-attributes
         """
         Embeds input documents if they are new or changed and returns a new instance with the new embeddings.
         Current instance is not mutated.
+
+        :param input_documents: The input documents to embed.
+        :type input_documents: Union[Iterator[Document], BaseLoader, DocumentChunksIterator]
+
+        :return: A new instance with updated embeddings.
+        :rtype: EmbeddingsContainer
         """
+
         document_embeddings = self._get_embeddings_internal(input_documents)
         new_embeddings = EmbeddingsContainer(self.kind, **self.arguments)
         new_embeddings._document_embeddings = document_embeddings  # pylint: disable=protected-access
@@ -1042,7 +1343,14 @@ class EmbeddingsContainer:  # pylint: disable=too-many-instance-attributes
         return documents_embedded
 
     def as_faiss_index(self, engine: str = "langchain.vectorstores.FAISS"):
-        """Returns a FAISS index that can be used to query the embeddings."""
+        """
+        Returns a FAISS index that can be used to query the embeddings.
+
+        :param engine: The engine to use for the FAISS index. Default is "langchain.vectorstores.FAISS".
+        :type engine: str
+        :return: A FAISS index.
+        :rtype: Any
+        """
         if engine == "langchain.vectorstores.FAISS":
             # Using vendored version here would mean promptflow can't unpickle the vectorstore.
             # pylint: disable=import-error
@@ -1130,7 +1438,15 @@ class EmbeddingsContainer:  # pylint: disable=too-many-instance-attributes
         return FaissClass(self.get_query_embed_fn(), index, docstore, index_to_id)
 
     def write_as_faiss_mlindex(self, output_path: Union[str, Path], engine: str = "langchain.vectorstores.FAISS"):
-        """Writes the embeddings to a FAISS MLIndex file."""
+        """Writes the embeddings to a FAISS MLIndex file.
+
+        :param output_path: The path to save the MLIndex file.
+        :type output_path: Union[str, Path]
+        :param engine: The engine to use for the MLIndex.
+        :type engine: str
+        :return: A FAISS MLIndex file.
+        :rtype: MLIndex
+        """
         from azure.ai.generative.index._mlindex import MLIndex
 
         faiss_index = self.as_faiss_index(engine)
@@ -1150,7 +1466,15 @@ class EmbeddingsContainer:  # pylint: disable=too-many-instance-attributes
     def load_latest_snapshot(
         local_embeddings_cache: Union[str, Path], activity_logger=None
     ) -> Optional["EmbeddingsContainer"]:
-        """Loads the latest snapshot from the embeddings container."""
+        """Loads the latest snapshot from the embeddings container.
+
+        :param local_embeddings_cache: The path to the local embeddings cache.
+        :type local_embeddings_cache: Union[str, Path]
+        :param activity_logger: The activity logger.
+        :type activity_logger: Optional[Any]
+        :return: The loaded embeddings container.
+        :rtype: Optional[EmbeddingsContainer]
+        """
         embeddings_container_dir_name = None
         embeddings_container: Optional[EmbeddingsContainer] = None
         # list all folders in embeddings_container and find the latest one
@@ -1206,6 +1530,13 @@ class EmbeddingsContainer:  # pylint: disable=too-many-instance-attributes
         keeping the embeddings_cache mounted if it is a remote path.
         This ensures that Referenced Embeddings accessed
         while interacting with the EmbeddingsContainer remain accessible.
+
+        :param embeddings_cache_path: The path to the embeddings cache.
+        :type embeddings_cache_path: Union[str, Path]
+        :param activity_logger: Optional activity logger.
+        :type activity_logger: Any
+        :return: An iterator yielding the loaded embeddings container.
+        :rtype: Iterator[Optional["EmbeddingsContainer"]]
         """
         local_embeddings_cache = None
         if embeddings_cache_path is not None:

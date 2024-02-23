@@ -31,15 +31,16 @@ def pinecone_index_client_from_config(pinecone_config: dict, api_key: str):
     """
     Create and return a Pinecone index client.
 
-    Args:
-    ----
-        pinecone_config (dict): Pinecone configuration dictionary. Expected to contain:
+    :param pinecone_config: Pinecone configuration dictionary. Expected to contain:
             - environment: Pinecone index environment
             - index_name: Pinecone index name
             - field_mapping: Mappings from a set of fields
-              understood by MLIndex (refer to MLIndex.INDEX_FIELD_MAPPING_TYPES) to Pinecone field names.
-
-        api_key (str): API key to use for authentication to the Pinecone index.
+                understood by MLIndex (refer to MLIndex.INDEX_FIELD_MAPPING_TYPES) to Pinecone field names.
+    :type pinecone_config: dict
+    :param api_key: API key to use for authentication to the Pinecone index.
+    :type api_key: str
+    :return: Pinecone index client.
+    :rtype: pinecone.Index
     """
     pinecone.init(api_key=api_key, environment=pinecone_config["environment"])
     return pinecone.Index(pinecone_config["index_name"])
@@ -49,17 +50,17 @@ def create_pinecone_index_sdk(pinecone_config: dict, api_key: str, embeddings: E
     """
     Create a Pinecone index using the Pinecone SDK.
 
-    Args:
-    ----
-        pinecone_config (dict): Pinecone configuration dictionary. Expected to contain:
-            - environment: Pinecone index environment
-            - index_name: Pinecone index name
-            - field_mapping: Mappings from a set of fields
-              understood by MLIndex (refer to MLIndex.INDEX_FIELD_MAPPING_TYPES) to Pinecone field names.
-
-        api_key (str): API key to use for authentication to the Pinecone index.
-        embeddings (EmbeddingsContainer): EmbeddingsContainer to use for creating the index.
+    :param pinecone_config: Pinecone configuration dictionary. Expected to contain:
+        - environment: Pinecone index environment
+        - index_name: Pinecone index name
+        - field_mapping: Mappings from a set of fields
+          understood by MLIndex (refer to MLIndex.INDEX_FIELD_MAPPING_TYPES) to Pinecone field names.
+    :type pinecone_config: dict
+    :param api_key: API key to use for authentication to the Pinecone index.
+    :type api_key: str
+    :param embeddings: EmbeddingsContainer to use for creating the index.
         If provided, the index will be configured to support vector search.
+    :type embeddings: EmbeddingsContainer
     """
     logger.info(f"Ensuring Pinecone index {pinecone_config['index_name']} exists")
 
@@ -86,22 +87,27 @@ def create_index_from_raw_embeddings(
     """
     Upload an EmbeddingsContainer to Pinecone and return an MLIndex.
 
-    Args:
-    ----
-        emb (EmbeddingsContainer): EmbeddingsContainer to use for creating the index.
+    :param emb: EmbeddingsContainer to use for creating the index.
         If provided, the index will be configured to support vector search.
-        pinecone_config (dict): Pinecone configuration dictionary. Expected to contain:
-            - environment: Pinecone project/index environment
-            - index_name: Pinecone index name
-            - field_mapping: Mappings from a set of fields
-              understood by MLIndex (refer to MLIndex.INDEX_FIELD_MAPPING_TYPES) to Pinecone field names.
-
-        connection (dict): Connection configuration dictionary describing
+    :type emb: EmbeddingsContainer
+    :param pinecone_config: Pinecone configuration dictionary. Expected to contain:
+        - environment: Pinecone project/index environment
+        - index_name: Pinecone index name
+        - field_mapping: Mappings from a set of fields
+          understood by MLIndex (refer to MLIndex.INDEX_FIELD_MAPPING_TYPES) to Pinecone field names.
+    :type pinecone_config: Optional[dict]
+    :param connection: Connection configuration dictionary describing
         the type of the connection to the Pinecone index.
-        output_path (str): The output path to store the MLIndex.
-        credential (TokenCredential): Azure credential to use for authentication.
-        verbosity (int): Defaults to 1, which will log aggregate information about
+    :type connection: Optional[dict]
+    :param output_path: The output path to store the MLIndex.
+    :type output_path: Optional[str]
+    :param credential: Azure credential to use for authentication.
+    :type credential: Optional[TokenCredential]
+    :param verbosity: Defaults to 1, which will log aggregate information about
         documents and IDs of deleted documents. 2 will log all document_ids as they are processed.
+    :type verbosity: int
+    :return: MLIndex object representing the created index.
+    :rtype: MLIndex
     """
     if pinecone_config is None:
         pinecone_config = {}
@@ -240,9 +246,8 @@ def create_index_from_raw_embeddings(
                     if verbosity > 2:
                         logger.info(f"Skipping document as it should already be in index: {doc_id}")
                     continue
-                else:
-                    if verbosity > 2:
-                        logger.info(f"Pushing document to index: {doc_id}")
+                if verbosity > 2:
+                    logger.info(f"Pushing document to index: {doc_id}")
 
                 doc_source = emb_doc.metadata.get("source", {})
                 if isinstance(doc_source, str):

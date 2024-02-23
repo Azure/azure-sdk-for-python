@@ -677,7 +677,9 @@ class MLIndex:
                         )
                     if previous_embeddings_dir_name is not None:
                         try:
-                            embeddings = EmbeddingsContainer.load(previous_embeddings_dir_name, embeddings_container)
+                            embeddings = EmbeddingsContainer.load(
+                                previous_embeddings_dir_name, embeddings_container  # type: ignore[arg-type]
+                            )
                         except (IOError, ValueError) as e:
                             logger.warning(
                                 f"failed to load embeddings from {embeddings_container} with {e}.",
