@@ -107,12 +107,12 @@ nodes:
     type: code
     path: concat_quality_scores.py
   inputs:
-    f1_score: ${f1_score.output}
     gpt_coherence_score: ${gpt_coherence.output}
-    gpt_fluency_score: ${gpt_fluency.output}
-    gpt_groundedness_score: ${gpt_groundedness.output}
-    gpt_relevance_score: ${gpt_relevance.output}
     gpt_similarity_score: ${gpt_similarity.output}
+    gpt_fluency_score: ${gpt_fluency.output}
+    gpt_relevance_score: ${gpt_relevance.output}
+    gpt_groundedness_score: ${gpt_groundedness.output}
+    f1_score: ${f1_score.output}
   use_variants: false
 - name: gpt_similarity
   type: llm
@@ -127,8 +127,8 @@ nodes:
     presence_penalty: 0
     frequency_penalty: 0
     answer: ${inputs.answer}
-    ground_truth: ${inputs.ground_truth}
     question: ${inputs.question}
+    ground_truth: ${inputs.ground_truth}
   provider: AzureOpenAI
   connection: Default_AzureOpenAI
   api: chat
@@ -150,8 +150,8 @@ nodes:
     presence_penalty: 0
     frequency_penalty: 0
     answer: ${inputs.answer}
-    context: ${inputs.context}
     question: ${inputs.question}
+    context: ${inputs.context}
   provider: AzureOpenAI
   connection: Default_AzureOpenAI
   api: chat
@@ -188,8 +188,8 @@ nodes:
     type: code
     path: f1_score.py
   inputs:
-    answer: ${inputs.answer}
     ground_truth: ${inputs.ground_truth}
+    answer: ${inputs.answer}
   activate:
     when: ${validate_input.output.f1_score}
     is: true
@@ -253,6 +253,8 @@ nodes:
     type: code
     path: validate_safety_metric_input.py
   inputs:
+    answer: ${inputs.answer}
+    question: ${inputs.question}
     selected_metrics: ${select_metrics.output}
   use_variants: false
 - name: construct_service_request
@@ -262,8 +264,6 @@ nodes:
     path: construct_service_request.py
   inputs:
     answer: ${inputs.answer}
-    context: ${inputs.context}
-    ground_truth: ${inputs.ground_truth}
     question: ${inputs.question}
     selected_metrics: ${select_metrics.output}
   activate:

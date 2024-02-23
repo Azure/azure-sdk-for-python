@@ -1,13 +1,5 @@
 from promptflow import tool
-import re
-
-def is_valid_string(input_string: str) -> bool:
-    # if input_string contains any letter or number, 
-    # it is a valid string
-    if not input_string:
-        return False
-    return bool(re.search(r'\d|\w', input_string))
-
+from utils import is_valid_string
 
 @tool
 def validate_input(question: str, answer: str, context: str, ground_truth: str, selected_metrics: dict) -> dict:
@@ -25,12 +17,11 @@ def validate_input(question: str, answer: str, context: str, ground_truth: str, 
         if input_data[col] and is_valid_string(input_data[col]):
             actual_input_cols.add(col)
     selected_quality_metrics = selected_metrics["quality_metrics"]
-    data_validation = selected_quality_metrics
+    data_validation = {}
     for metric in selected_quality_metrics:
+        data_validation[metric] = False
         if selected_quality_metrics[metric]:
             metric_required_fields = dict_metric_required_fields[metric]
             if metric_required_fields <= actual_input_cols:
                 data_validation[metric] = True
-            else:
-                data_validation[metric] = False
     return data_validation
