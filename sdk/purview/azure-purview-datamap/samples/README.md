@@ -14,7 +14,7 @@ The async versions of the samples (the python sample files appended with `_async
 
 ## Prerequisites
 
-* Python 3.6 or later is required to use this package
+* Python 3.8 or later is required to use this package
 * You must have an [Azure subscription][azure_subscription] and a [Purview][purview_resource] to use this package.
 
 ## Setup
@@ -34,6 +34,9 @@ pip install azure-purview-datamap
 2. Set the environment variables specified in the sample file you wish to run.
 3. Follow the usage described in the file, e.g. `python get_types.py`
 
-## More samples
 
-Check [more samples here][servicesample].
+<!-- LINKS -->
+
+[product_documentation]: https://azure.microsoft.com/services/purview/
+[azure_subscription]: https://azure.microsoft.com/free/
+[purview_resource]: https://docs.microsoft.com/azure/purview/create-catalog-portal
