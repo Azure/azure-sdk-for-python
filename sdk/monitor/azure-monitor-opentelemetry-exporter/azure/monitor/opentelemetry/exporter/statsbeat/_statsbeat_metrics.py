@@ -27,7 +27,6 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _WEBSITE_HOME_STAMPNAME,
     _WEBSITE_HOSTNAME,
     _WEBSITE_SITE_NAME,
-    _FUNCTIONS_WORKER_RUNTIME,
     _AKS_ARM_NAMESPACE_ID,
 )
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
@@ -47,8 +46,8 @@ _ENDPOINT_TYPES = ["breeze"]
 class _RP_Names(Enum):
     APP_SERVICE = "appsvc"
     FUNCTIONS = "functions"
-    VM = "vm"
     AKS = "aks"
+    VM = "vm"
     UNKNOWN = "unknown"
 
 _HOST_PATTERN = re.compile('^https?://(?:www\\.)?([^/.]+)')
@@ -181,6 +180,10 @@ class _StatsbeatMetrics:
             # Function apps
             rp = _RP_Names.FUNCTIONS.value
             rpId = os.environ.get(_WEBSITE_HOSTNAME, '')
+        elif _utils._is_on_aks():
+            # AKS
+            rp = _RP_Names.AKS.value
+            rpId = os.environ.get(_AKS_ARM_NAMESPACE_ID, '')
         elif self._vm_retry and self._get_azure_compute_metadata():
             # VM
             rp = _RP_Names.VM.value
@@ -188,10 +191,6 @@ class _StatsbeatMetrics:
                         self._vm_data.get("vmId", ''),
                         self._vm_data.get("subscriptionId", ''))
             os_type = self._vm_data.get("osType", '')
-        elif _utils._is_on_aks():
-            # AKS
-            rp = _RP_Names.AKS.value
-            rpId = os.environ.get(_AKS_ARM_NAMESPACE_ID, '')
         else:
             # Not in any rp or VM metadata failed
             rp = _RP_Names.UNKNOWN.value

@@ -430,7 +430,8 @@ class TestStatsbeatMetrics(unittest.TestCase):
             "WEBSITE_HOME_STAMPNAME": "stamp_name",
         }
     )
-    def test_get_attach_metric_appsvc(self):
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics._StatsbeatMetrics._get_azure_compute_metadata", return_value=False)
+    def test_get_attach_metric_appsvc(self, metadata_mock):
         attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
         self.assertEqual(attributes["rp"], _RP_Names.UNKNOWN.value)
         attributes["rp"] = _RP_Names.APP_SERVICE.value
@@ -449,7 +450,8 @@ class TestStatsbeatMetrics(unittest.TestCase):
             "WEBSITE_HOSTNAME": "host_name",
         }
     )
-    def test_get_attach_metric_functions(self):
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics._StatsbeatMetrics._get_azure_compute_metadata", return_value=False)
+    def test_get_attach_metric_functions(self, metadata_mock):
         attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
         self.assertEqual(attributes["rp"], _RP_Names.UNKNOWN.value)
         attributes["rp"] = _RP_Names.FUNCTIONS.value
@@ -459,40 +461,6 @@ class TestStatsbeatMetrics(unittest.TestCase):
             self.assertEqual(obs.value, 1)
             self.assertEqual(obs.attributes, attributes)
         self.assertEqual(_StatsbeatMetrics._COMMON_ATTRIBUTES["rp"], _RP_Names.FUNCTIONS.value)
-
-    def test_get_attach_metric_vm(self):
-        mp = MeterProvider()
-        ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
-        endpoint = "https://westus-1.in.applicationinsights.azure.com/"
-        metric = _StatsbeatMetrics(
-            mp,
-            ikey,
-            endpoint,
-            False,
-            0,
-            False,
-        )
-        _vm_data = {}
-        _vm_data["vmId"] = "123"
-        _vm_data["subscriptionId"] = "sub123"
-        _vm_data["osType"] = "test_os"
-        metric._vm_data = _vm_data
-        metric._vm_retry = True
-        metadata_mock = mock.Mock()
-        metadata_mock.return_value = True
-        metric._get_azure_compute_metadata = metadata_mock
-        attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
-        self.assertEqual(attributes["rp"], _RP_Names.UNKNOWN.value)
-        self.assertEqual(attributes["os"], platform.system())
-        attributes["rp"] = _RP_Names.VM.value
-        attributes["rpId"] = "123/sub123"
-        attributes["os"] = "test_os"
-        observations = metric._get_attach_metric(options=None)
-        for obs in observations:
-            self.assertEqual(obs.value, 1)
-            self.assertEqual(obs.attributes, attributes)
-        self.assertEqual(_StatsbeatMetrics._COMMON_ATTRIBUTES["rp"], _RP_Names.VM.value)
-        self.assertEqual(_StatsbeatMetrics._COMMON_ATTRIBUTES["os"], "test_os")
 
     # pylint: disable=protected-access
     @mock.patch.dict(
@@ -512,7 +480,41 @@ class TestStatsbeatMetrics(unittest.TestCase):
             self.assertEqual(obs.attributes, attributes)
         self.assertEqual(_StatsbeatMetrics._COMMON_ATTRIBUTES["rp"], _RP_Names.AKS.value)
 
-    def test_get_attach_metric_vm_no_os(self):
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics._StatsbeatMetrics._get_azure_compute_metadata")
+    def test_get_attach_metric_vm(self, metadata_mock):
+        mp = MeterProvider()
+        ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
+        endpoint = "https://westus-1.in.applicationinsights.azure.com/"
+        metric = _StatsbeatMetrics(
+            mp,
+            ikey,
+            endpoint,
+            False,
+            0,
+            False,
+        )
+        _vm_data = {}
+        _vm_data["vmId"] = "123"
+        _vm_data["subscriptionId"] = "sub123"
+        _vm_data["osType"] = "test_os"
+        metric._vm_data = _vm_data
+        metric._vm_retry = True
+        metadata_mock.return_value = True
+        attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
+        self.assertEqual(attributes["rp"], _RP_Names.UNKNOWN.value)
+        self.assertEqual(attributes["os"], platform.system())
+        attributes["rp"] = _RP_Names.VM.value
+        attributes["rpId"] = "123/sub123"
+        attributes["os"] = "test_os"
+        observations = metric._get_attach_metric(options=None)
+        for obs in observations:
+            self.assertEqual(obs.value, 1)
+            self.assertEqual(obs.attributes, attributes)
+        self.assertEqual(_StatsbeatMetrics._COMMON_ATTRIBUTES["rp"], _RP_Names.VM.value)
+        self.assertEqual(_StatsbeatMetrics._COMMON_ATTRIBUTES["os"], "test_os")
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics._StatsbeatMetrics._get_azure_compute_metadata", return_value=False)
+    def test_get_attach_metric_vm_no_os(self, metadata_mock):
         mp = MeterProvider()
         ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
         endpoint = "https://westus-1.in.applicationinsights.azure.com/"
@@ -530,10 +532,8 @@ class TestStatsbeatMetrics(unittest.TestCase):
         _vm_data["osType"] = None
         metric._vm_data = _vm_data
         metric._vm_retry = True
-        metadata_mock = mock.Mock()
         metadata_mock.return_value = True
         self.assertEqual(_StatsbeatMetrics._COMMON_ATTRIBUTES["os"], platform.system())
-        metric._get_azure_compute_metadata = metadata_mock
         observations = metric._get_attach_metric(options=None)
         for obs in observations:
             self.assertEqual(obs.value, 1)
