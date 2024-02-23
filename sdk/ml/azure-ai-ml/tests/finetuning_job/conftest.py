@@ -27,3 +27,13 @@ def mlflow_model_llama() -> Input:
         type=AssetTypes.MLFLOW_MODEL, path="azureml://registries/azureml-meta/models/Llama-2-7b/versions/9"
     )
     return mlflow_model
+
+
+@pytest.fixture
+def mlflow_model_gpt4() -> Input:
+    # Classification Dataset
+    # Once backend is ready to be able to handle AOAI models, update the path
+    mlflow_model = Input(
+        type=AssetTypes.MLFLOW_MODEL, path="azureml://registries/azureml-meta/models/Llama-2-7b/versions/9"
+    )
+    return mlflow_model
