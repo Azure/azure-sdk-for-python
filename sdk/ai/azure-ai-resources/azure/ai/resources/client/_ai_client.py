@@ -22,17 +22,19 @@ from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.entities._credentials import ManagedIdentityConfiguration, UserIdentityConfiguration
 from azure.core.credentials import TokenCredential
 
+from .._restclient._azure_open_ai._client import MachineLearningServicesClient
 from .._project_scope import OperationScope
 from .._user_agent import USER_AGENT
 from azure.ai.resources.operations import (
     AIResourceOperations,
     ConnectionOperations,
-    DeploymentOperations,
+    SingleDeploymentOperations,
     MLIndexOperations,
     PFOperations,
     ProjectOperations,
     DataOperations,
     ModelOperations,
+    AzureOpenAIDeploymentOperations,
 )
 
 from azure.ai.resources._telemetry import get_appinsights_log_handler
@@ -108,6 +110,11 @@ class AIClient:
             **kwargs,
         )
 
+        ai_services_client = MachineLearningServicesClient(
+            self._credential,
+            api_version="2023-08-01-preview",
+            subscription_id=subscription_id
+        )
         # TODO remove restclient dependency once v2 SDK supports lean filtering
         self._projects = ProjectOperations(
             resource_group_name=resource_group_name,
@@ -121,7 +128,8 @@ class AIClient:
         self._connections = ConnectionOperations(resource_ml_client=self._ai_resource_ml_client, project_ml_client=self._ml_client, **app_insights_handler_kwargs)
         self._mlindexes = MLIndexOperations(self._ml_client, **app_insights_handler_kwargs)
         self._ai_resources = AIResourceOperations(self._ml_client, **app_insights_handler_kwargs)
-        self._deployments = DeploymentOperations(self._ml_client, self._connections, **app_insights_handler_kwargs)
+        self._single_deployments = SingleDeploymentOperations(self._ml_client, self._connections, **app_insights_handler_kwargs)
+        self._azure_open_ai_deployments = AzureOpenAIDeploymentOperations(self._ml_client, ai_services_client)
         self._data = DataOperations(self._ml_client)
         self._models = ModelOperations(self._ml_client)
         # self._pf = PFOperations(self._ml_client, self._scope)
@@ -202,13 +210,22 @@ class AIClient:
         return self._data
 
     @property
-    def deployments(self) -> DeploymentOperations:
-        """A collection of deployment-related operations.
+    def single_deployments(self) -> SingleDeploymentOperations:
+        """A collection of single deployment-related operations.
 
-        :return: Deployment operations
-        :rtype: DeploymentOperations
+        :return: Single deployment operations
+        :rtype: SingleDeploymentOperations
         """
-        return self._deployments
+        return self._single_deployments
+
+    @property
+    def azure_open_ai_deployments(self) -> AzureOpenAIDeploymentOperations:
+        """A collection of Azure OpenAI deployment-related operations.
+
+        :return: Azure OpenAI deployment operations
+        :rtype: AzureOpenAIDeploymentOperations
+        """
+        return self._azure_open_ai_deployments
 
     @property
     def models(self) -> ModelOperations:
@@ -361,7 +378,7 @@ class AIClient:
             source=IndexSource(
                 input_data=Data(
                     type="uri_folder",
-                    path="<This will be replaced later>",
+                    path=".",
                 ),
                 input_glob=input_glob,
                 chunk_size=chunk_size,

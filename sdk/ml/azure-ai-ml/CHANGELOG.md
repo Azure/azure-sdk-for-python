@@ -7,6 +7,7 @@
 - Workspace Connection has new read-only subclass: AzureBlobStoreWorkspaceConnectionSchema.
 - Workspace Connection supports 2 new types under main class: gen 2 and azure_one_lake.
 - Workspace Connection LIST operation can return data connections via new optional flag: include_data_connections.
+- Support `ml_client.schedules.trigger(name='my_schedule')` function to trigger a schedule once.
 
 ### Bugs Fixed
 - Fix pipeline job `outputs` not load correctly when `component: <local-file>` exists in pipeline job yaml.
@@ -123,6 +124,7 @@
 - Added data import schedule. The class added is `ImportDataSchedule`.
 - Added support to enable data isolation feature at workspace creation stage.
 - Added auto_delete_setting support for asset version in data import job.
+- Switched code snapshot upload from directory-based to container-based design in order to allow finer RBAC within workspaces. A container will be created for each new snapshot. This change does not affect storage costs or snapshot functionality.
 
 ### Bugs Fixed
 

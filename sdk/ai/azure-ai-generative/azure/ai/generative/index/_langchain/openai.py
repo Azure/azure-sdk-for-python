@@ -8,7 +8,7 @@ def patch_openai_embedding_retries(logger, activity_logger, max_seconds_retrying
     """Patch the openai embedding to retry on failure.""."""
     from datetime import datetime
 
-    from azure.ai.generative.index._langchain.vendor.embeddings import openai as langchain_openai
+    from azure.ai.resources._index._langchain.vendor.embeddings import openai as langchain_openai
     from tenacity import (
         retry,
         retry_if_exception_type,
