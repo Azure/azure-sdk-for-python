@@ -40,6 +40,7 @@ from azure.storage.blob import (
     LinearRetry,
     ResourceTypes,
     RetentionPolicy,
+    Services,
     StandardBlobTier,
     StorageErrorCode,
     download_blob_from_url,
@@ -48,7 +49,6 @@ from azure.storage.blob import (
     generate_container_sas,
     upload_blob_to_url)
 from azure.storage.blob._generated.models import RehydratePriority
-from azure.storage.blob._shared.models import Services
 
 from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
