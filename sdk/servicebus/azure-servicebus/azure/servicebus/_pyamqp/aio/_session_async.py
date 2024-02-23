@@ -207,6 +207,7 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
             await self._input_handles[frame[1]].detach()
 
     async def _outgoing_flow(self, frame=None):
+        print("Session._outgoing_flow")
         link_flow = frame or {}
         link_flow.update(
             {
@@ -326,7 +327,7 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
         self.remote_outgoing_window -= 1
         self.incoming_window -= 1
         try:
-            await self._input_handles[frame[0]]._incoming_transfer(frame)  # pylint: disable=protected-access
+            await self._input_handles[frame[0]]._incoming_transfer(frame, **kwargs)  # pylint: disable=protected-access
         except KeyError:
             _LOGGER.error(
                 "Received Transfer frame on unattached link. Ending session.", extra=self.network_trace_params
@@ -340,6 +341,8 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
                 )
             )
         if self.incoming_window == 0:
+            print("Session._incoming_transfer: incoming_window == 0")
+            print(f"Send outgoing flow link_credit")
             self.incoming_window = self.target_incoming_window
             await self._outgoing_flow()
 
