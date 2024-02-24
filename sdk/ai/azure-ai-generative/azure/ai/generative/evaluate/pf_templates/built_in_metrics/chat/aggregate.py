@@ -1,13 +1,13 @@
-from typing import List, Union, Optional
-from collections import defaultdict
+from typing import List
 from promptflow import tool, log_metric
 import numpy as np
 from utils import filter_metrics
+from constants import RAIService
 
 
 @tool
 def aggregate_variants_results(results: List[dict], metrics: List[dict],
-                                thresholds):             
+                                thresholds = None):             
     rag_metrics = filter_metrics(metrics[0]["rag_metrics"])
     non_rag_metrics = filter_metrics(metrics[0]["non_rag_metrics"])
     safety_metrics = filter_metrics(metrics[0]["safety_metrics"])
@@ -17,7 +17,7 @@ def aggregate_variants_results(results: List[dict], metrics: List[dict],
     if thresholds != [] and thresholds is not None:
         threshold = np.float16(thresholds[0])
     else:
-        threshold = 3
+        threshold = RAIService.HARM_SEVERITY_THRESHOLD
 
     aggregate_results = {}
     for result in results:
@@ -25,8 +25,11 @@ def aggregate_variants_results(results: List[dict], metrics: List[dict],
             if name in selected_quality_metrics or name in safety_metrics:
                 if name not in aggregate_results.keys():
                     aggregate_results[name] = []
+                metric_value = value
+                if name in safety_metrics:
+                    metric_value = result["results_per_chat"][name + "_score"]
                 try:
-                    float_val = float(value)
+                    float_val = float(metric_value)
                 except Exception:
                     float_val = np.nan
                 aggregate_results[name].append(float_val)

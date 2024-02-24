@@ -11,6 +11,7 @@ from ._models import AddParticipantRequest
 from ._models import AddParticipantResponse
 from ._models import AddParticipantSucceeded
 from ._models import AnswerCallRequest
+from ._models import AnswerFailed
 from ._models import AzureOpenAIDialog
 from ._models import AzureOpenAIDialogUpdate
 from ._models import BaseDialog
@@ -39,6 +40,7 @@ from ._models import ContinuousDtmfRecognitionRequest
 from ._models import ContinuousDtmfRecognitionStopped
 from ._models import ContinuousDtmfRecognitionToneFailed
 from ._models import ContinuousDtmfRecognitionToneReceived
+from ._models import CreateCallFailed
 from ._models import CreateCallRequest
 from ._models import CustomCallingContext
 from ._models import DialogCompleted
@@ -146,6 +148,7 @@ __all__ = [
     "AddParticipantResponse",
     "AddParticipantSucceeded",
     "AnswerCallRequest",
+    "AnswerFailed",
     "AzureOpenAIDialog",
     "AzureOpenAIDialogUpdate",
     "BaseDialog",
@@ -174,6 +177,7 @@ __all__ = [
     "ContinuousDtmfRecognitionStopped",
     "ContinuousDtmfRecognitionToneFailed",
     "ContinuousDtmfRecognitionToneReceived",
+    "CreateCallFailed",
     "CreateCallRequest",
     "CustomCallingContext",
     "DialogCompleted",

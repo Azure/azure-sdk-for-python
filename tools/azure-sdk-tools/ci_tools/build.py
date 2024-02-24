@@ -180,17 +180,9 @@ def create_package(
     setup_parsed = ParsedSetup.from_path(setup_directory_or_file)
 
     if setup_parsed.ext_modules:
-        run(
-            [sys.executable, "-m", "cibuildwheel", "--output-dir", dist], cwd=setup_parsed.folder
-        )
+        run([sys.executable, "-m", "cibuildwheel", "--output-dir", dist], cwd=setup_parsed.folder, check=True)
 
     if enable_wheel:
-        run_logged(
-            [sys.executable, "setup.py", "bdist_wheel", "-d", dist], prefix="create_wheel", cwd=setup_parsed.folder
-        )
+        run([sys.executable, "setup.py", "bdist_wheel", "-d", dist], cwd=setup_parsed.folder, check=True)
     if enable_sdist:
-        run_logged(
-            [sys.executable, "setup.py", "sdist", "-d", dist],
-            prefix="create_sdist",
-            cwd=setup_parsed.folder,
-        )
+        run([sys.executable, "setup.py", "sdist", "-d", dist], cwd=setup_parsed.folder, check=True)

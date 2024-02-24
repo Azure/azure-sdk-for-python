@@ -6,7 +6,6 @@ def format_rag_results(rag_results: dict, supported_metrics):
     result_per_chat = {}
     result_per_turn = {}
     if rag_results:
-        #result_per_chat = rag_results['metrics']
         for metric, value in rag_results['artifacts'].items():
             result_per_chat[metric] = rag_results['metrics']["mean_" + metric]
             result_per_turn[metric] = {"reason": value['reason'], "score": value['score_per_turn']}
@@ -38,6 +37,7 @@ def format_safety_results(safety_results: dict, supported_metrics):
         if metric not in result_per_chat:
             result_per_chat[metric] = np.nan
             result_per_chat[metric + "_reasoning"] = np.nan
+            result_per_chat[metric + "_score"] = np.nan
     return result_per_chat
 
 # The inputs section will change based on the arguments of the tool function, after you save the code

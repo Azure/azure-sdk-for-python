@@ -140,13 +140,15 @@ class KeyVaultRoleDefinition(object):
     def _from_generated(cls, definition: RoleDefinition) -> "KeyVaultRoleDefinition":
         # pylint:disable=protected-access
         return cls(
-            assignable_scopes=definition.assignable_scopes,
-            description=definition.description,
+            assignable_scopes=definition.properties.assignable_scopes if definition.properties else None,
+            description=definition.properties.description if definition.properties else None,
             id=definition.id,
             name=definition.name,
-            permissions=[KeyVaultPermission._from_generated(p) for p in definition.permissions or []],
-            role_name=definition.role_name,
-            role_type=definition.role_type,
+            permissions=[KeyVaultPermission._from_generated(p) for p in definition.properties.permissions or []]
+            if definition.properties
+            else None,
+            role_name=definition.properties.role_name if definition.properties else None,
+            role_type=definition.properties.role_type if definition.properties else None,
             type=definition.type,
         )
 
@@ -171,6 +173,11 @@ class KeyVaultBackupResult(object):
 
 class KeyVaultSetting(object):
     """A Key Vault setting.
+
+    :ivar str name: The name of the account setting.
+    :ivar str value: The value of the account setting.
+    :ivar setting_type: The type specifier of the value.
+    :vartype setting_type: str or KeyVaultSettingType or None
 
     :param str name: The name of the account setting.
     :param str value: The value of the account setting.

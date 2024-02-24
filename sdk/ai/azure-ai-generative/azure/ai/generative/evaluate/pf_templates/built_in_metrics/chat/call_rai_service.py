@@ -13,7 +13,6 @@ def submit_annotation(cred, request_body):
             method="POST",
             json=request_body,
         )
-
         if response.status_code != 202:
             print("Fail evaluating '%s' with error message: %s", request_body["UserTextList"], response.text)
             response.raise_for_status()
@@ -50,8 +49,6 @@ def retrieve_annotation_result(cred, submitannotation_response):
                 request_status = None
             if request_status:
                 request_status_code = request_status.status_code
-                #if request_status_code >= 400:
-                    #request_status.raise_for_status()
                 if request_status_code == 200:
                     annotation_result = request_status.json()
                     break
