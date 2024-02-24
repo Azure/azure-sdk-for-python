@@ -76,7 +76,6 @@ class SearchIndexerSkillset:
         encryption_key: Optional["SearchResourceEncryptionKey"] = None,
         **kwargs: Any
     ) -> None:
-        super().__init__(**kwargs)
         self.name = name
         self.description = description
         self.skills = skills
