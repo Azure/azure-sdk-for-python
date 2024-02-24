@@ -74,7 +74,7 @@ class SearchIndexerSkillset:
         index_projections: Optional["SearchIndexerIndexProjections"] = None,
         e_tag: Optional[str] = None,
         encryption_key: Optional["SearchResourceEncryptionKey"] = None,
-        **kwargs: Any
+        **kwargs: Any  # pylint:disable=unused-argument
     ) -> None:
         self.name = name
         self.description = description
