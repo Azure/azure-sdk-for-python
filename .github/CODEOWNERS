@@ -306,6 +306,7 @@
 /sdk/mixedreality/azure-mixedreality-authentication/                 @RamonArguelles
 /sdk/remoterendering/                                                @FlorianBorn71
 
+# ServiceOwners: @trrwilson
 # AzureSdkOwners: @kristapratico
 # ServiceLabel: %OpenAI
 # PRLabel: %OpenAI
