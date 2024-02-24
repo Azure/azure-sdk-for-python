@@ -71,7 +71,7 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
         :keyword use_managed_identity: Indicates which authentication method should be used. If set to True, Managed HSM
             will use the configured user-assigned managed identity to authenticate with Azure Storage. Otherwise, a SAS
             token has to be specified.
-        :paramtype use_managed_identity: Literal[True]
+        :paramtype use_managed_identity: bool
         :keyword str continuation_token: A continuation token to restart polling from a saved state.
 
         :returns: An AsyncLROPoller. Call `result()` on this object to get a :class:`KeyVaultBackupResult`.
@@ -166,7 +166,7 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
         :keyword use_managed_identity: Indicates which authentication method should be used. If set to True, Managed HSM
             will use the configured user-assigned managed identity to authenticate with Azure Storage. Otherwise, a SAS
             token has to be specified.
-        :paramtype use_managed_identity: Literal[True]
+        :paramtype use_managed_identity: bool
         :keyword str key_name: Name of a single key in the backup. When set, only this key will be restored.
         :keyword str continuation_token: A continuation token to restart polling from a saved state.
 

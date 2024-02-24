@@ -5913,7 +5913,8 @@ class Subnet(SubResource):  # pylint: disable=too-many-instance-attributes
      "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar private_endpoint_network_policies: Enable or Disable apply network policies on private
-     end point in the subnet. Known values are: "Enabled" and "Disabled".
+     end point in the subnet. Known values are: "Enabled", "Disabled",
+     "NetworkSecurityGroupEnabled", and "RouteTableEnabled".
     :vartype private_endpoint_network_policies: str or
      ~azure.mgmt.network.models.VirtualNetworkPrivateEndpointNetworkPolicies
     :ivar private_link_service_network_policies: Enable or Disable apply network policies on
@@ -6025,7 +6026,8 @@ class Subnet(SubResource):  # pylint: disable=too-many-instance-attributes
         :keyword delegations: An array of references to the delegations on the subnet.
         :paramtype delegations: list[~azure.mgmt.network.models.Delegation]
         :keyword private_endpoint_network_policies: Enable or Disable apply network policies on private
-         end point in the subnet. Known values are: "Enabled" and "Disabled".
+         end point in the subnet. Known values are: "Enabled", "Disabled",
+         "NetworkSecurityGroupEnabled", and "RouteTableEnabled".
         :paramtype private_endpoint_network_policies: str or
          ~azure.mgmt.network.models.VirtualNetworkPrivateEndpointNetworkPolicies
         :keyword private_link_service_network_policies: Enable or Disable apply network policies on
@@ -22929,6 +22931,8 @@ class BastionHost(Resource):  # pylint: disable=too-many-instance-attributes
     :vartype location: str
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
+    :ivar zones: A list of availability zones denoting where the resource needs to come from.
+    :vartype zones: list[str]
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
     :ivar sku: The sku of this Bastion Host.
@@ -22977,6 +22981,7 @@ class BastionHost(Resource):  # pylint: disable=too-many-instance-attributes
         "type": {"key": "type", "type": "str"},
         "location": {"key": "location", "type": "str"},
         "tags": {"key": "tags", "type": "{str}"},
+        "zones": {"key": "zones", "type": "[str]"},
         "etag": {"key": "etag", "type": "str"},
         "sku": {"key": "sku", "type": "Sku"},
         "ip_configurations": {"key": "properties.ipConfigurations", "type": "[BastionHostIPConfiguration]"},
@@ -22999,6 +23004,7 @@ class BastionHost(Resource):  # pylint: disable=too-many-instance-attributes
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
+        zones: Optional[List[str]] = None,
         sku: Optional["_models.Sku"] = None,
         ip_configurations: Optional[List["_models.BastionHostIPConfiguration"]] = None,
         dns_name: Optional[str] = None,
@@ -23020,6 +23026,8 @@ class BastionHost(Resource):  # pylint: disable=too-many-instance-attributes
         :paramtype location: str
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
+        :keyword zones: A list of availability zones denoting where the resource needs to come from.
+        :paramtype zones: list[str]
         :keyword sku: The sku of this Bastion Host.
         :paramtype sku: ~azure.mgmt.network.models.Sku
         :keyword ip_configurations: IP configuration of the Bastion Host resource.
@@ -23049,6 +23057,7 @@ class BastionHost(Resource):  # pylint: disable=too-many-instance-attributes
         :paramtype enable_kerberos: bool
         """
         super().__init__(id=id, location=location, tags=tags, **kwargs)
+        self.zones = zones
         self.etag = None
         self.sku = sku
         self.ip_configurations = ip_configurations
