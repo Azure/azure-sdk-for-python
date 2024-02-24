@@ -22,17 +22,18 @@ def encode_example(
     encoding: Encoding = Encoding.JSON,
     indent: Optional[int] = DEFAULT_INDENT
 ) -> str:
-    '''
+    """
     Encode examples into an encoding format.
 
-    Args:
-        example (Dict[str, Any]): example to encode
-        encoding (Encoding): encoding format to use
-        key_order (Optional[List[str]]): ordering of keys printed to string
-        indent (Optional[int]): number of spaces to indent JSON output
-    Returns:
-        str: encoded example
-    '''
+    :param example: example to encode
+    :type example: Dict[str, Any]
+    :param encoding: encoding format to use
+    :type encoding: Encoding
+    :param indent: number of spaces to indent JSON output
+    :type indent: Optional[int]
+    :return: encoded example
+    :rtype: str
+    """
     if encoding.value == Encoding.JSON.value:
         # Dump JSON with keys double-quoted and final comma removed
         return json.dumps(example, indent=indent, quote_keys=True, trailing_commas=False)

@@ -5,7 +5,7 @@
 import re
 import json
 from enum import Enum
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 from .encoding import encode_example, Encoding
 from .defaults import (
@@ -88,8 +88,17 @@ class PromptTemplate:  # pylint: disable=too-many-instance-attributes
 
     @classmethod
     def from_files(cls, input_filename: str, few_shot_filename: Optional[str], **config_params):
-        """Load a PromptTemplate from parameters and infer missing params from the first
-        example in each file."""
+        """
+        Load a PromptTemplate from parameters and infer missing params from the first example in each file.
+
+        :param input_filename: The filename of the input example file.
+        :type input_filename: str
+        :param few_shot_filename: The filename of the few-shot example file.
+        :type few_shot_filename: Optional[str]
+        :keyword config_params: Additional configuration parameters.
+        :return: An instance of PromptTemplate.
+        :rtype: PromptTemplate
+        """
         # Load one few_shot_example if possible
         if few_shot_filename is None:
             few_shot_example = None
@@ -105,7 +114,17 @@ class PromptTemplate:  # pylint: disable=too-many-instance-attributes
 
     @classmethod
     def from_examples(cls, input_example: Dict[str, Any], few_shot_example: Optional[Dict[str, Any]], **config_params):
-        """Load a PromptTemplate from parameters and infer missing params from examples."""
+        """
+        Load a PromptTemplate from parameters and infer missing params from examples.
+
+        :param input_example: The input example dictionary.
+        :type input_example: Dict[str, Any]
+        :param few_shot_example: The few-shot example dictionary.
+        :type few_shot_example: Optional[Dict[str, Any]]
+        :keyword config_params: Additional configuration parameters.
+        :return: An instance of PromptTemplate.
+        :rtype: PromptTemplate
+        """
         # Validate few_shot_example
         if few_shot_example:
             for key, val in few_shot_example.items():
@@ -122,7 +141,12 @@ class PromptTemplate:  # pylint: disable=too-many-instance-attributes
         return cls(**config_params)
 
     def set_special_tokens(self, format: SpecialTokensFormat):
-        """Sets the special token formatting of the prompt for the given format."""
+        """
+        Sets the special token formatting of the prompt for the given format.
+
+        :param format: The SpecialTokensFormat to set.
+        :type format: SpecialTokensFormat
+        """
         # If changing from a previous special tokens format, reset all special tokens
         if format != self.special_tokens_format:
             for special_token in ["<|im_start|>", "<|im_end|>", "<|im_sep|>", "<|endofprompt|>"]:
@@ -157,12 +181,17 @@ class PromptTemplate:  # pylint: disable=too-many-instance-attributes
         few_shots: Optional[List[Dict[str, str]]],
         encoding: Encoding = Encoding.JSON,
     ) -> str:
-        """Formats the prompt with the given inputs and few_shot examples.
-        Args:
-            inputs: the inputs to the prompt.
-            few_shots: the few_shot examples to the prompt.
-        Returns:
-            The formatted prompt.
+        """
+        Formats the prompt with the given inputs and few_shot examples.
+
+        :param inputs: The inputs to the prompt.
+        :type inputs: Union[Dict[str, str], List[Dict[str, str]]]
+        :param few_shots: The few_shot examples to the prompt.
+        :type few_shots: Optional[List[Dict[str, str]]]
+        :param encoding: The encoding structure for prompt examples. Should be in ['JSON', 'XML']
+        :type encoding: Encoding
+        :return: The formatted prompt.
+        :rtype: str
         """
         # Build the few_shot examples
         if few_shots is not None and len(few_shots):
@@ -216,30 +245,30 @@ class PromptTemplate:  # pylint: disable=too-many-instance-attributes
         )
 
     def _encode_input_example(self, input_example: dict, encoding: Encoding = Encoding.JSON) -> Dict[str, str]:
-        """Encode input example into encoding format.
+        """
+        Encode input example into encoding format.
 
-        Args:
-            input_example: input example
-            example_index: index of example
-            encoding: encoding structure for prompt examples. Should be in ['JSON', 'XML']
-
-        Returns:
-            example_str: encoded input example
+        :param input_example: The input example.
+        :type input_example: dict
+        :param encoding: The encoding structure for prompt examples. Should be in ['JSON', 'XML']
+        :type encoding: Encoding
+        :return: The encoded input example.
+        :rtype: Dict[str, str]
         """
         inputs_only = filter_dict(input_example, remove=self.label_keys + self.metadata_keys)
         inputs_str = encode_example(inputs_only, encoding)
         return {"inputs": inputs_str}
 
     def _encode_few_shot_example(self, few_shot_example: dict, encoding: Encoding = Encoding.JSON) -> Dict[str, str]:
-        """Encode few_shot example into encoding format.
+        """
+        Encode few_shot example into encoding format.
 
-        Args:
-            few_shot_example: few_shot example
-            example_index: index of example
-            encoding: encoding structure for prompt examples. Should be in ['JSON', 'XML']
-
-        Returns:
-            example_str: encoded few_shot example
+        :param few_shot_example: The few_shot example.
+        :type few_shot_example: dict
+        :param encoding: The encoding structure for prompt examples. Should be in ['JSON', 'XML']
+        :type encoding: Encoding
+        :return: The encoded few_shot example.
+        :rtype: Dict[str, str]
         """
         inputs_only = filter_dict(few_shot_example, remove=self.label_keys + self.metadata_keys)
         labels_only = filter_dict(few_shot_example, keep=self.label_keys)
@@ -250,23 +279,28 @@ class PromptTemplate:  # pylint: disable=too-many-instance-attributes
         return {"inputs": inputs_str, "labels": labels_str}
 
     def split_output_examples(self, output_str: str) -> List[str]:
-        """Attempt to split the output into a list of examples using
+        """
+        Attempt to split the output into a list of examples using
         few_shot_example_pattern.
 
-        Args:
-            output_str: output examples
-
-        Returns:
-            output_examples: list of output examples
+        :param output_str: The output examples.
+        :type output_str: str
+        :return: The list of output examples.
+        :rtype: List[str]
         """
         output_str = output_str.strip()
         output_examples = [ex.strip() for ex in re.split(self.output_split_pattern, output_str) if ex.strip()]
         return output_examples
 
-    def unlabel_few_shot_examples(self, examples: List[dict]):
+    def unlabel_few_shot_examples(self, examples: List[dict]) -> Tuple[List[dict], List[dict]]:
         """
         Unlabel few_shot examples by removing label keys from examples and returning
-        a list of unlabeled examples and a list of labels.
+        a tuple of unlabeled examples and labels.
+
+        :param examples: The list of examples.
+        :type examples: List[dict]
+        :return: A tuple containing the list of unlabeled examples and the list of labels.
+        :rtype: Tuple[List[dict], List[dict]]
         """
         unlabeled_examples = []
         labels = []
@@ -299,7 +333,18 @@ class PromptTemplate:  # pylint: disable=too-many-instance-attributes
 def filter_dict(
     d: Dict[str, Any], remove: Optional[List[str]] = None, keep: Optional[List[str]] = None
 ) -> Dict[str, Any]:
-    """Filter dictionary by removing keys in remove list."""
+    """
+    Filter dictionary by removing keys in remove list.
+
+    :param d: The dictionary to be filtered.
+    :type d: Dict[str, Any]
+    :param remove: The list of keys to be removed from the dictionary. Default is None.
+    :type remove: Optional[List[str]]
+    :param keep: The list of keys to be kept in the dictionary. Default is None.
+    :type keep: Optional[List[str]]
+    :return: The filtered dictionary.
+    :rtype: Dict[str, Any]
+    """
     if remove is None:
         remove = []
     if keep is None:
@@ -308,14 +353,14 @@ def filter_dict(
 
 
 def replace_placeholders(prompt: str, **placeholders) -> str:
-    """Replace placeholders in prompt template with actual values.
+    """
+    Replace placeholders in prompt template with actual values.
 
-    Args:
-        prompt_template (str): Prompt template.
-        **placeholders: Dictionary of substrings to their replacements.
-
-    Returns:
-        str: Filled-in prompt.
+    :param prompt: Prompt template.
+    :type prompt: str
+    :keyword **placeholders: Dictionary of substrings to their replacements.
+    :return: Filled-in prompt.
+    :rtype: str
     """
     # Replacing placeholders using .replace is less efficient than .format(),
     # but avoids errors when format keys are present in the user's data
@@ -325,8 +370,15 @@ def replace_placeholders(prompt: str, **placeholders) -> str:
     return prompt
 
 
-def validate_datatype(key: str, val: Any):
-    """Assert that the given value is a valid data type"""
+def validate_datatype(key: str, val: Any) -> None:
+    """
+    Assert that the given value is a valid data type.
+
+    :param key: The key of the value.
+    :type key: str
+    :param val: The value to validate.
+    :type val: Any
+    """
     if isinstance(val, (bool, int, float, str)):
         return
     if isinstance(val, dict):

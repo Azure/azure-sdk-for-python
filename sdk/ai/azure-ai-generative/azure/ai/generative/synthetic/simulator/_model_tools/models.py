@@ -24,8 +24,15 @@ MIN_ERRORS_TO_FAIL = 3
 MAX_TIME_TAKEN_RECORDS = 20_000
 
 
-def get_model_class_from_url(endpoint_url: str):
-    """Convert an endpoint URL to the appropriate model class."""
+def get_model_class_from_url(endpoint_url: str) -> type:
+    """
+    Convert an endpoint URL to the appropriate model class.
+
+    :param endpoint_url: The URL of the endpoint.
+    :type endpoint_url: str
+    :return: The model class corresponding to the endpoint URL.
+    :rtype: type
+    """
     endpoint_path = urlparse(endpoint_url).path  # remove query params
 
     if endpoint_path.endswith("chat/completions"):
@@ -50,8 +57,7 @@ class AsyncHTTPClientWithRetry:
         trace_config.on_request_end.append(self.on_request_end)
         if retry_options is None:
             retry_options = RandomRetry(  # set up retry configuration
-                statuses=[104, 408, 409, 424, 429, 500, 502,
-                        503, 504],  # on which statuses to retry
+                statuses=[104, 408, 409, 424, 429, 500, 502, 503, 504],  # on which statuses to retry
                 attempts=n_retry,
                 min_timeout=retry_timeout,
                 max_timeout=retry_timeout,
@@ -117,11 +123,13 @@ class LLMBase(ABC):
         """
         Query the model a single time with a prompt.
 
-        Parameters
-        ----------
-        prompt: Prompt str to query model with.
-        session: aiohttp RetryClient object to use for the request.
-        **request_params: Additional parameters to pass to the request.
+        :param prompt: Prompt str to query model with.
+        :type prompt: str
+        :param session: aiohttp RetryClient object to use for the request.
+        :type session: RetryClient
+        :keyword **request_params: Additional parameters to pass to the request.
+        :return: Dictionary containing the completion response from the model.
+        :rtype: dict
         """
         request_data = self.format_request_data(prompt, **request_params)
         return await self.request_api(
@@ -302,6 +310,12 @@ class OpenAICompletionsModel(LLMBase):  # pylint: disable=too-many-instance-attr
     def format_request_data(self, prompt: str, **request_params) -> Dict[str, str]:
         """
         Format the request data for the OpenAI API.
+
+        :param prompt: The prompt string.
+        :type prompt: str
+        :keyword request_params: Additional parameters to pass to the model.
+        :return: The formatted request data.
+        :rtype: Dict[str, str]
         """
         # Caption images if available
         if len(self.image_captions.keys()):
@@ -324,13 +338,16 @@ class OpenAICompletionsModel(LLMBase):  # pylint: disable=too-many-instance-attr
         """
         Query the model a single time with a message.
 
-        Parameters
-        ----------
-        messages: List of messages to query the model with.
-        Expected format: [{"role": "user", "content": "Hello!"}, ...]
-        session: aiohttp RetryClient object to query the model with.
-        role: Role of the user sending the message.
-        request_params: Additional parameters to pass to the model.
+        :param messages: List of messages to query the model with.
+                         Expected format: [{"role": "user", "content": "Hello!"}, ...]
+        :type messages: List[dict]
+        :param session: aiohttp RetryClient object to query the model with.
+        :type session: RetryClient
+        :param role: Role of the user sending the message.
+        :type role: str
+        :keyword request_params: Additional parameters to pass to the model.
+        :return: Dictionary containing the completion response from the model.
+        :rtype: dict
         """
         prompt = []
         for message in messages:
@@ -356,14 +373,19 @@ class OpenAICompletionsModel(LLMBase):  # pylint: disable=too-many-instance-attr
         """
         Run a batch of prompts through the model and return the results in the order given.
 
-        Parameters
-        ----------
-        prompts: List of prompts to query the model with.
-        session: aiohttp RetryClient to use for the request.
-        api_call_max_parallel_count: Number of parallel requests to make to the API.
-        api_call_delay_seconds: Number of seconds to wait between API requests.
-        request_error_rate_threshold: Maximum error rate allowed before raising an error.
-        request_params: Additional parameters to pass to the API.
+        :param prompts: List of prompts to query the model with.
+        :type prompts: List[Dict[str, str]]
+        :param session: aiohttp RetryClient to use for the request.
+        :type session: RetryClient
+        :param api_call_max_parallel_count: Number of parallel requests to make to the API.
+        :type api_call_max_parallel_count: int
+        :param api_call_delay_seconds: Number of seconds to wait between API requests.
+        :type api_call_delay_seconds: float
+        :param request_error_rate_threshold: Maximum error rate allowed before raising an error.
+        :type request_error_rate_threshold: float
+        :keyword request_params: Additional parameters to pass to the API.
+        :return: List of completion results.
+        :rtype: List[dict]
         """
         if api_call_max_parallel_count > 1:
             self.logger.info("Using {} parallel workers to query the API..".format(api_call_max_parallel_count))
@@ -416,7 +438,17 @@ class OpenAICompletionsModel(LLMBase):  # pylint: disable=too-many-instance-attr
     ) -> None:
         """
         Query the model for all prompts given as a list and append the output to output_collector.
-        No return value, output_collector is modified in place.
+
+        :param request_datas: List of request data dictionaries.
+        :type request_datas: List[dict]
+        :param output_collector: List to store the output.
+        :type output_collector: List
+        :param session: RetryClient session.
+        :type session: RetryClient
+        :param api_call_delay_seconds: Delay between consecutive API calls in seconds.
+        :type api_call_delay_seconds: float, optional
+        :param request_error_rate_threshold: Threshold for request error rate.
+        :type request_error_rate_threshold: float, optional
         """
         logger_tasks: List = []  # to await for logging to finish
 
@@ -471,10 +503,12 @@ class OpenAICompletionsModel(LLMBase):  # pylint: disable=too-many-instance-attr
         """
         Request the model with a body of data.
 
-        Parameters
-        ----------
-        session: HTTPS Session for invoking the endpoint.
-        request_data: Prompt dictionary to query the model with. (Pass {"prompt": prompt} instead of prompt.)
+        :param session: HTTPS Session for invoking the endpoint.
+        :type session: RetryClient
+        :param request_data: Prompt dictionary to query the model with. (Pass {"prompt": prompt} instead of prompt.)
+        :type request_data: dict
+        :return: Response from the model.
+        :rtype: dict
         """
 
         self._log_request(request_data)
@@ -580,13 +614,16 @@ class OpenAIChatCompletionsModel(OpenAICompletionsModel):
         """
         Query the model a single time with a message.
 
-        Parameters
-        ----------
-        messages: List of messages to query the model with.
-        Expected format: [{"role": "user", "content": "Hello!"}, ...]
-        session: aiohttp RetryClient object to query the model with.
-        role: Not used for this model, since it is a chat model.
-        request_params: Additional parameters to pass to the model.
+        :param messages: List of messages to query the model with.
+                         Expected format: [{"role": "user", "content": "Hello!"}, ...]
+        :type messages: List[dict]
+        :param session: aiohttp RetryClient object to query the model with.
+        :type session: RetryClient
+        :param role: Not used for this model, since it is a chat model.
+        :type role: str
+        :keyword **request_params: Additional parameters to pass to the model.
+        :return: Dictionary containing the completion response.
+        :rtype: dict
         """
         request_data = self.format_request_data(
             messages=messages,
@@ -604,13 +641,15 @@ class OpenAIChatCompletionsModel(OpenAICompletionsModel):
         **request_params,
     ) -> dict:
         """
-        Query a ChatCompletions model with a single prompt.  Note: entire message will be inserted into a "system" call.
+        Query a ChatCompletions model with a single prompt.
 
-        Parameters
-        ----------
-        prompt: Prompt str to query model with.
-        session: aiohttp RetryClient object to use for the request.
-        **request_params: Additional parameters to pass to the request.
+        :param prompt: Prompt str to query model with.
+        :type prompt: str
+        :param session: aiohttp RetryClient object to use for the request.
+        :type session: RetryClient
+        :keyword **request_params: Additional parameters to pass to the request.
+        :return: Dictionary containing the completion response.
+        :rtype: dict
         """
         messages = [{"role": "system", "content": prompt}]
 
@@ -684,7 +723,12 @@ class OpenAIMultiModalCompletionsModel(OpenAICompletionsModel):
         return request
 
     def _log_request(self, request: dict) -> None:
-        """Log prompt, ignoring image data if multimodal."""
+        """
+        Log prompt, ignoring image data if multimodal.
+
+        :param request: The request dictionary.
+        :type request: dict
+        """
         loggable_prompt_transcript = {
             "transcript": [
                 (c if c["type"] != "image" else {"type": "image", "data": "..."}) for c in request["transcript"]
@@ -712,6 +756,12 @@ class LLAMACompletionsModel(OpenAICompletionsModel):
     def format_request_data(self, prompt: str, **request_params):
         """
         Format the request data for the OpenAI API.
+
+        :param prompt: The prompt string.
+        :type prompt: str
+        :keyword request_params: Additional request parameters.
+        :return: The formatted request data.
+        :rtype: dict
         """
         # Caption images if available
         if len(self.image_captions.keys()):
@@ -817,13 +867,16 @@ class LLAMAChatCompletionsModel(LLAMACompletionsModel):
         """
         Query the model a single time with a message.
 
-        Parameters
-        ----------
-        messages: List of messages to query the model with.
-        Expected format: [{"role": "user", "content": "Hello!"}, ...]
-        session: aiohttp RetryClient object to query the model with.
-        role: Not used for this model, since it is a chat model.
-        request_params: Additional parameters to pass to the model.
+        :param messages: List of messages to query the model with.
+                         Expected format: [{"role": "user", "content": "Hello!"}, ...]
+        :type messages: List[dict]
+        :param session: aiohttp RetryClient object to query the model with.
+        :type session: RetryClient
+        :param role: Not used for this model, since it is a chat model.
+        :type role: str
+        :keyword request_params: Additional parameters to pass to the model.
+        :return: Dictionary containing the response from the model.
+        :rtype: dict
         """
 
         request_data = self.format_request_data(

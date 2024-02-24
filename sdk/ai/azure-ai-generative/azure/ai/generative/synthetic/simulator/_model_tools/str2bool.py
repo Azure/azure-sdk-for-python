@@ -8,11 +8,10 @@ def str2bool(val):
     """
     Resolving boolean arguments if they are not given in the standard format
 
-    Arguments:
-        val (bool or string): boolean argument type
-    Output:
-        bool: the desired value {True, False}
-
+    :param val: (bool or string) boolean argument type
+    :type val: bool or str
+    :return: (bool) the desired value {True, False}
+    :rtype: bool
     """
     if isinstance(val, bool):
         return val

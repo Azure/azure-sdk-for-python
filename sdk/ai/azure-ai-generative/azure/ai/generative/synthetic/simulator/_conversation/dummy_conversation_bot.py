@@ -80,16 +80,14 @@ class DummyConversationBot:
         """
         Prompt the ConversationBot for a response.
 
-        Parameters
-        ----------
-        conversation_history: The turns in the conversation so far.
-        request_params: Parameters used to query GPT-4 model.
-
-        Returns
-        -------
-        response: The response from the ConversationBot.
-        time_taken: The time taken to generate the response.
-        full_response: The full response from the model.
+        :param conversation_history: The turns in the conversation so far.
+        :type conversation_history: List[ConversationTurn]
+        :param max_history: Parameters used to query GPT-4 model.
+        :type max_history: int
+        :param turn_number: Parameters used to query GPT-4 model.
+        :type turn_number: int
+        :return: The response from the ConversationBot.
+        :rtype: Tuple[dict, dict, int, dict]
         """
 
         # check if this is the first turn and the conversation_starter is not None,

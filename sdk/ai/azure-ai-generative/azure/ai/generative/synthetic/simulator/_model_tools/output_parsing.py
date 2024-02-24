@@ -21,7 +21,16 @@ def flatten_outputs(
     output_path: str,
     stability_value: int = 1,
 ):
-    """Flatten batched outputs from JobManager into a format where each line is a single example."""
+    """
+    Flatten batched outputs from JobManager into a format where each line is a single example.
+
+    :param input_path: The path to the input file.
+    :type input_path: str
+    :param output_path: The path to the output file.
+    :type output_path: str
+    :param stability_value: The stability value for stabilizing output samples, defaults to 1.
+    :type stability_value: int
+    """
     # loop over the jobs
     # save jobs in array first to sort based on input idx before writing
     with open(input_path, "r", encoding="utf-8") as f_in, open(output_path, "w", encoding="utf-8") as f_out:
@@ -90,12 +99,14 @@ def decode_example(example: str, label_keys: List[str], encoding: Encoding = Enc
     """
     Decode example from an encoding format.
 
-    Args:
-        example (str): example to decode
-        label_keys (List[str]): list of label keys to check for
-        encoding (Encoding): encoding format to use
-    Returns:
-        Dict[str, Any]: decoded example
+    :param example: The example to decode.
+    :type example: str
+    :param label_keys: List of label keys to check for.
+    :type label_keys: List[str]
+    :param encoding: The encoding format to use.
+    :type encoding: Encoding
+    :return: The decoded example.
+    :rtype: Dict[str, Any]
     """
     example = example.strip()
     if encoding == Encoding.JSON:
@@ -106,7 +117,16 @@ def decode_example(example: str, label_keys: List[str], encoding: Encoding = Enc
 
 
 def try_decode_json(example: str, label_keys: List[str]) -> Dict[str, Any]:
-    """Try to decode an example in a JSON encoding."""
+    """
+    Try to decode an example in a JSON encoding.
+
+    :param example: The example to decode.
+    :type example: str
+    :param label_keys: List of label keys to check for.
+    :type label_keys: List[str]
+    :return: The decoded example.
+    :rtype: Dict[str, Any]
+    """
     start = example.find("{")
     end_index = start + 1
     last_error = None
@@ -159,17 +179,21 @@ def get_majority_value(numbers):
 def try_parse_samples(
     samples: List[str], prompt_template: PromptTemplate, n_inputs: int, n_samples: int, job_idx: int
 ) -> Tuple[int, List[Optional[List[dict]]]]:
-    """Try to parse a list of samples into a list of examples.
+    """
+    Try to parse a list of samples into a list of examples.
 
-    Args:
-        samples (List[str]): List of samples to parse.
-        prompt_template (PromptTemplate): Prompt template used to generate prompts.
-        n_inputs (int): Number of inputs expected back in the completion.
-        n_samples (int): Number of samples expected back in the completion.
-        job_idx (int): Job index.
-
-    Returns:
-        Tuple[int, List[List[dict]]]: Number of failed samples, and list of examples.
+    :param samples: List of samples to parse.
+    :type samples: List[str]
+    :param prompt_template: Prompt template used to generate prompts.
+    :type prompt_template: PromptTemplate
+    :param n_inputs: Number of inputs expected back in the completion.
+    :type n_inputs: int
+    :param n_samples: Number of samples expected back in the completion.
+    :type n_samples: int
+    :param job_idx: Job index.
+    :type job_idx: int
+    :return: Number of failed samples, and list of examples.
+    :rtype: Tuple[int, List[List[dict]]]
     """
     output_examples: List[Optional[List[Dict]]] = []
     num_failed = 0
@@ -209,5 +233,14 @@ def try_parse_samples(
 
 
 def batch_list(unbatched: list, batch_size: int) -> List[list]:
-    """Batch a list into a list of lists of size batch_size."""
+    """
+    Batch a list into a list of lists of size batch_size.
+
+    :param unbatched: The list to be batched.
+    :type unbatched: list
+    :param batch_size: The size of each batch.
+    :type batch_size: int
+    :return: A list of lists, where each inner list has size batch_size.
+    :rtype: List[list]
+    """
     return [unbatched[i : (i + batch_size)] for i in range(0, len(unbatched), batch_size)]

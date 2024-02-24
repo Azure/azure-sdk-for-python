@@ -44,12 +44,16 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
         """
         Query the model a single time with a message.
 
-        Parameters
-        ----------
-        messages: List of messages to query the model with. Expected format: [{"role": "user", "content": "Hello!"}, ...]
-        session: aiohttp RetryClient object to query the model with.
-        role: Not used for this model, since it is a chat model.
-        request_params: Additional parameters to pass to the model.
+        :param messages: List of messages to query the model with. 
+                         Expected format: [{"role": "user", "content": "Hello!"}, ...]
+        :type messages: List[dict]
+        :param session: aiohttp RetryClient object to query the model with.
+        :type session: RetryClient
+        :param role: Not used for this model, since it is a chat model.
+        :type role: str
+        :keyword **request_params: Additional parameters to pass to the model.
+        :return: A dictionary representing the completion of the conversation query.
+        :rtype: dict
         """
         request_data = self.format_request_data(
             messages=messages,
@@ -72,6 +76,13 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
         ----------
         session: HTTPS Session for invoking the endpoint.
         request_data: Prompt dictionary to query the model with. (Pass {"prompt": prompt} instead of prompt.)
+
+        :param session: HTTPS Session for invoking the endpoint.
+        :type session: RetryClient
+        :param request_data: Prompt dictionary to query the model with. (Pass {"prompt": prompt} instead of prompt.)
+        :type request_data: dict
+        :return: A body of data.
+        :rtype: dict
         """
 
         self._log_request(request_data)

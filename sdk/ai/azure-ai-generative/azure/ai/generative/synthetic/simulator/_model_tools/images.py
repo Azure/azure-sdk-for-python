@@ -32,7 +32,16 @@ def replace_prompt_captions(
 ) -> str:
     """
     Insert captions for images into the prompt.
-    If captions are present in the prompt, return the prompt with captions replaced.
+    
+    :param prompt: The original prompt string.
+    :type prompt: str
+    :param captions: A dictionary containing image IDs as keys and their corresponding captions as values.
+                     Defaults to None if no captions are provided.
+    :type captions: Optional[dict]
+    :param logger: A logger object for logging messages. Defaults to a logger named "Prompt Image Captioner".
+    :type logger: logging.Logger
+    :return: The prompt string with captions inserted, if captions are provided; otherwise, the original prompt string.
+    :rtype: str
     """
     # Compile pattern if not already compiled
     _compile_prompt_images_pattern()
@@ -67,7 +76,20 @@ def format_multimodal_prompt(
     captions: Optional[dict] = None,
     logger: logging.Logger = logging.getLogger("Prompt Image Formatter"),
 ) -> List[dict]:
-    """Formats a prompt with images into a list of dictionaries for the API."""
+    """
+    Formats a prompt with images into a list of dictionaries for the API.
+
+    :param prompt: The main text prompt.
+    :type prompt: str
+    :param images_dir: The directory containing images to be included in the prompt, if any. Default is None.
+    :type images_dir: Optional[str]
+    :param captions: A dictionary mapping image filenames to their corresponding captions, if available. Default is None.
+    :type captions: Optional[Dict[str, str]]
+    :param logger: The logger object to log messages. Default is a logger named "Prompt Image Formatter".
+    :type logger: logging.Logger
+    :return: A list of dictionaries representing the formatted prompt for the API.
+    :rtype: List[dict]
+    """
     # Compile pattern if not already compiled
     _compile_prompt_images_pattern()
 
@@ -116,5 +138,14 @@ def _compile_prompt_images_pattern() -> None:
 
 
 def _format_image_captions(image_name, captions):
-    """Format image captions for images inserted into completions as natural language."""
+    """
+    Format image captions for images inserted into completions as natural language.
+
+    :param image_name: The name of the image.
+    :type image_name: str
+    :param captions: A dictionary containing image captions where keys are image names and values are captions.
+    :type captions: Dict[str, str]
+    :return: A formatted string representing the image caption.
+    :rtype: str
+    """
     return f"```image:{image_name}\n{captions[image_name]}\n```" ""

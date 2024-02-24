@@ -47,7 +47,12 @@ def line_map(
     error_file: Optional[pathlib.Path] = None,
     error_encoding: Optional[str] = None,
 ) -> Tuple[int, int]:
-    """Iterate over a JSONL file, applying map_func to each line"""
+    """
+    Iterate over a JSONL file, applying map_func to each line
+    
+    :return: A tuple containing the number of lines processed and the number of lines successfully mapped.
+    :rtype: Tuple[int, int]
+    """
     assert source_file.exists()
 
     # If error_file is not specified, set up a temporary file
