@@ -79,6 +79,7 @@
 - `query_language` and `query_speller` are not available for `Search` method in this stable release.
 - `alias` operations are not available in this stable release.
 - `AzureOpenAIEmbeddingSkill`, `AzureOpenAIParameters` and `AzureOpenAIVectorizer` are not available in 11.4.0.
+- Renamed `SemanticSettings` to `SemanticSearch`.
 
 ### Other Changes
 
