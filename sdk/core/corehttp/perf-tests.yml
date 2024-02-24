@@ -5,7 +5,6 @@ Project: sdk/core/corehttp
 PrimaryPackage: corehttp
 
 PackageVersions:
-- corehttp: 1.0.0b3
 - corehttp: source
 
 Tests:
