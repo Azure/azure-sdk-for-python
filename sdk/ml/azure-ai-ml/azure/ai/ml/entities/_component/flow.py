@@ -257,7 +257,6 @@ class FlowComponent(Component, AdditionalIncludesMixin):
         self._column_mapping = column_mapping or {}
         self._variant = variant
         self._connections = connections or {}
-        self._environment_variables = environment_variables or {}
 
         self._inputs = FlowComponentInputDict()
         self._outputs = FlowComponentOutputDict()
@@ -266,8 +265,14 @@ class FlowComponent(Component, AdditionalIncludesMixin):
             # file existence has been checked in _get_flow_definition
             # we don't need to rebase additional_includes as we have updated base_path
             with open(Path(self.base_path, self._flow), "r", encoding="utf-8") as f:
-                flow_content = f.read()
-                additional_includes = yaml.safe_load(flow_content).get("additional_includes", None)
+                flow_content = yaml.safe_load(f.read())
+                additional_includes = flow_content.get("additional_includes", None)
+                environment_variables_from_flow = flow_content.get("environment_variables", {})
+                for key, value in (environment_variables or {}).items():
+                    environment_variables_from_flow[key] = value
+                environment_variables = environment_variables_from_flow
+
+        self._environment_variables = environment_variables or {}
         self._additional_includes = additional_includes or []
 
         # unlike other Component, code is a private property in FlowComponent and
