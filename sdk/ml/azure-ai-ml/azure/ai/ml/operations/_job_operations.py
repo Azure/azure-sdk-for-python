@@ -1501,7 +1501,7 @@ class JobOperations(_ScopeDependentOperations):
         return job
 
     def _resolve_arm_id_for_finetuning_job(self, job: FineTuningJob, resolver: _AssetResolver) -> FineTuningJob:
-        """Resolve arm_id for AutoMLJob.
+        """Resolve arm_id for FineTuningJob.
 
         :param job: The AutoML job
         :type job: AutoMLJob
@@ -1512,10 +1512,7 @@ class JobOperations(_ScopeDependentOperations):
         :return: The provided FineTuningJob, with resolved fields
         :rtype: FineTuningJob
         """
-
-        # if inside_pipeline and job.compute is None:
-        #    return job
-        # job.model = resolver(job.model, azureml_type=AzureMLResourceType.MODEL)
+        # For now we dont have any ARM dependencies for finetuning job eg. compute
         return job
 
     def _resolve_arm_id_for_pipeline_job(self, pipeline_job: PipelineJob, resolver: _AssetResolver) -> PipelineJob:
