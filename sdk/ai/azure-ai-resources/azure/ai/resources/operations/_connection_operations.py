@@ -16,11 +16,16 @@ logger, module_logger = activity_logger.package_logger, activity_logger.module_l
 
 
 class ConnectionOperations:
-    """ConnectionOperations.
+    """Operations class for Connection objects
 
     You should not instantiate this class directly. Instead, you should
-    create an MLClient instance that instantiates it for you and
+    create an AIClient instance that instantiates it for you and
     attaches it as an attribute.
+
+    :param resource_ml_client: The Azure Machine Learning client for the AI resource
+    :type resource_ml_client: ~azure.ai.ml.MLClient
+    :param project_ml_client: The Azure Machine Learning client for the project
+    :type project_ml_client: ~azure.ai.ml.MLClient
     """
 
     def __init__(self, *, resource_ml_client: MLClient = None, project_ml_client: MLClient = None, **kwargs: Any):

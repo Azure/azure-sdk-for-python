@@ -22,8 +22,11 @@ class AIHubOperations:
     """AIHubOperations.
 
     You should not instantiate this class directly. Instead, you should
-    create an MLClient instance that instantiates it for you and
+    create an AIClient instance that instantiates it for you and
     attaches it as an attribute.
+
+    :param ml_client: The Azure Machine Learning client
+    :type ml_client: ~azure.ai.ml.MLClient
     """
 
     # TODO add operation scope at init level?
@@ -36,7 +39,7 @@ class AIHubOperations:
     def get(self, *, name: str, **kwargs) -> AIHub:
         """Get an AI hub by name.
 
-        :keyword name: Name of the AI hub.
+        :keyword name: The AI hub name
         :paramtype name: str
 
         :return: The AI hub with the provided name.
@@ -134,8 +137,9 @@ class AIHubOperations:
         :paramtype name: str
         :keyword delete_dependent_resources: Whether to delete dependent resources associated with the AI hub.
         :paramtype delete_dependent_resources: bool
-        :keyword permanently_delete: AI hub are soft-deleted by default to allow recovery of data.
-            Set this flag to true to override the soft-delete behavior and permanently delete your AI hub.
+        :keyword permanently_delete: AI hubs are soft-deleted by default to allow recovery of data.
+            Defaults to False. Set this flag to true to override the soft-delete behavior and permanently delete your
+            AI hub.
         :paramtype permanently_delete: bool
         :return: A poller to track the operation status.
         :rtype: ~azure.core.polling.LROPoller[None]
