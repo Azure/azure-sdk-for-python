@@ -165,7 +165,6 @@ class CustomModelFineTuningJob(FineTuningVertical):
         :return: CustomModelFineTuningJob object.
         :rtype: CustomModelFineTuningJob
         """
-        loaded_data.pop("model_provider", None)
         job = CustomModelFineTuningJob(**loaded_data)
         return job
 

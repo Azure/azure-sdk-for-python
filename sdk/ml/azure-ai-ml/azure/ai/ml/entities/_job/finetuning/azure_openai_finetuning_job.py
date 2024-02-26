@@ -179,19 +179,7 @@ class AzureOpenAIFineTuningJob(FineTuningVertical):
         :return: AzureOpenAIFineTuningJob object.
         :rtype: AzureOpenAIFineTuningJob
         """
-        loaded_data.pop("model_provider", None)
-        hyperaparameters = loaded_data.pop("hyperparameters", None)
 
-        if hyperaparameters:
-            hyperaparameters_dict = {}
-            for key, value in hyperaparameters.items():
-                hyperaparameters_dict[key] = value
-            azure_openai_hyperparameters = AzureOpenAIHyperparameters(
-                batch_size=hyperaparameters_dict.get("batch_size", None),
-                learning_rate_multiplier=hyperaparameters_dict.get("learning_rate_multiplier", None),
-                n_epochs=hyperaparameters_dict.get("n_epochs", None),
-            )
-            loaded_data["hyperparameters"] = azure_openai_hyperparameters
         job = AzureOpenAIFineTuningJob(**loaded_data)
         return job
 

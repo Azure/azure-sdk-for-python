@@ -8,7 +8,7 @@ from marshmallow import fields
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 
 
-class AzureOpenAiHyperparametersSchema(metaclass=PatchedSchemaMeta):
+class AzureOpenAIHyperparametersSchema(metaclass=PatchedSchemaMeta):
     n_epochs = fields.Int()
     learning_rate_multiplier = fields.Float()
     batch_size = fields.Int()
