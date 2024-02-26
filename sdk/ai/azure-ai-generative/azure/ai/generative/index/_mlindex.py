@@ -19,7 +19,6 @@ from azure.ai.resources._index._utils.connections import (
     get_connection_by_id_v2,
     get_connection_credential,
     get_id_from_connection,
-    get_pinecone_environment,
     get_target_from_connection,
 )
 from azure.ai.generative.index._utils.logging import (
@@ -29,6 +28,7 @@ from azure.ai.generative.index._utils.logging import (
     track_activity,
     version,
 )
+from azure.ai.generative.index._utils.connections import get_pinecone_environment  # TODO: should refer to resources
 from packaging import version as pkg_version
 from importlib.util import find_spec
 
