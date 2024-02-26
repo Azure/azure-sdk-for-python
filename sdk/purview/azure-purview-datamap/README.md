@@ -35,6 +35,13 @@ Use the returned token credential to authenticate the client:
 >>> client = DataMapClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
 ```
 
+## Key concepts
+
+### Client
+
+This package offers request builders so you can build http requests and send these requests to the service using the `send_request` method.
+For more information on how to use request builders and our clients, see [here][request_builders_and_client].
+
 ## Examples
 
 ```python
@@ -49,6 +56,12 @@ Use the returned token credential to authenticate the client:
         print('service responds error: {}'.format(e.response.json()))
 
 ```
+
+## Troubleshooting
+
+## Next steps
+
+For more generic samples, see our [client docs][request_builders_and_client].
 
 ## Contributing
 
