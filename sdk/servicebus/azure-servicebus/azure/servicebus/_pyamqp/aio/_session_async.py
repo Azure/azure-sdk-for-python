@@ -207,7 +207,6 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
             await self._input_handles[frame[1]].detach()
 
     async def _outgoing_flow(self, frame=None):
-        print("Session._outgoing_flow")
         link_flow = frame or {}
         link_flow.update(
             {
