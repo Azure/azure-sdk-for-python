@@ -1,6 +1,5 @@
 import functools
 import datetime
-import pytz
 
 from azure.core.credentials import AzureKeyCredential
 from azure.healthinsights.radiologyinsights import RadiologyInsightsClient

@@ -1,7 +1,6 @@
 import functools
 import datetime
 import asyncio
-import pytz
 
 from azure.core.credentials import AzureKeyCredential
 from azure.healthinsights.radiologyinsights.aio import RadiologyInsightsClient
