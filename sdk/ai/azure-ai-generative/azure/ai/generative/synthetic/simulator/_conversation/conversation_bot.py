@@ -38,8 +38,6 @@ class ConversationBot:
                 - conversation_starter: A sentence that can be used as a conversation starter, if not provided,
                     the first turn will be generated using the LLM
         """
-        self.logger = logging.getLogger(repr(self))
-
         if role == ConversationRole.USER and isinstance(model, LLAMAChatCompletionsModel):
             self.logger.info(  # type: ignore[has-type]
                 "We suggest using LLaMa chat model to simulate assistant not to simulate user"
@@ -56,6 +54,8 @@ class ConversationBot:
         else:
             self.name = self.persona_template_args.get("chatbot_name", role.value) or model.name
         self.model = model
+
+        self.logger = logging.getLogger(repr(self))
 
         self.conversation_starter = None  # can either be a dictionary or jinja template
         if role == ConversationRole.USER:
