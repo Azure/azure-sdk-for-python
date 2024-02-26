@@ -1345,7 +1345,7 @@ class JobOperations(_ScopeDependentOperations):
         elif isinstance(job, PipelineJob):
             job = self._resolve_arm_id_for_pipeline_job(job, resolver)
         elif isinstance(job, FineTuningJob):
-            job = self._resolve_arm_id_for_finetuning_job(job, resolver)
+            job = job
         else:
             msg = f"Non supported job type: {type(job)}"
             raise ValidationException(
@@ -1498,21 +1498,6 @@ class JobOperations(_ScopeDependentOperations):
         if inside_pipeline and job.compute is None:
             return job
         job.compute = resolver(job.compute, azureml_type=AzureMLResourceType.COMPUTE)
-        return job
-
-    def _resolve_arm_id_for_finetuning_job(self, job: FineTuningJob, resolver: _AssetResolver) -> FineTuningJob:
-        """Resolve arm_id for FineTuningJob.
-
-        :param job: The AutoML job
-        :type job: AutoMLJob
-        :param resolver: The asset resolver function
-        :type resolver: _AssetResolver
-        :param inside_pipeline: Whether the job is within a pipeline
-        :type inside_pipeline: bool
-        :return: The provided FineTuningJob, with resolved fields
-        :rtype: FineTuningJob
-        """
-        # For now we dont have any ARM dependencies for finetuning job eg. compute
         return job
 
     def _resolve_arm_id_for_pipeline_job(self, pipeline_job: PipelineJob, resolver: _AssetResolver) -> PipelineJob:

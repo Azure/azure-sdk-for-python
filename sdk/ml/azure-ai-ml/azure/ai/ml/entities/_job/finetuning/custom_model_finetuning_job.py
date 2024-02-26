@@ -9,8 +9,10 @@ from typing import Any, Dict
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.entities._job.finetuning.finetuning_vertical import FineTuningVertical
 from azure.ai.ml.entities._util import load_from_dict
+from azure.ai.ml._utils._experimental import experimental
 
 
+@experimental
 class CustomModelFineTuningJob(FineTuningVertical):
     def __init__(
         self,

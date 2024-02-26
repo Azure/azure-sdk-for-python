@@ -11,10 +11,12 @@ from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml._schema.job.input_output_entry import MLTableInputSchema, DataInputSchema, ModelInputSchema
 from azure.ai.ml._restclient.v2024_01_01_preview.models import FineTuningTaskType
 from azure.ai.ml.constants._job.finetuning import FineTuningConstants
+from azure.ai.ml._utils._experimental import experimental
 
 # This is meant to match the yaml definition NOT the models defined in _restclient
 
 
+@experimental
 class FineTuningVerticalSchema(FineTuningJobSchema):
     type = StringTransformedEnum(required=True, allowed_values=JobType.FINE_TUNING)
     model = NestedField(ModelInputSchema, required=True)

@@ -12,6 +12,7 @@ from azure.ai.ml.entities._job.finetuning.azure_openai_hyperparameters import Az
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml._schema.core.fields import NestedField
 from azure.ai.ml.constants._job.finetuning import FineTuningConstants
+from azure.ai.ml._utils._experimental import experimental
 from typing import Any, Dict
 
 from marshmallow import post_load
@@ -19,6 +20,7 @@ from marshmallow import post_load
 # This is meant to match the yaml definition NOT the models defined in _restclient
 
 
+@experimental
 class AzureOpenAIFineTuningSchema(FineTuningVerticalSchema):
     model_provider = StringTransformedEnum(
         required=True, allowed_values=ModelProvider.AZURE_OPEN_AI, casing_transform=camel_to_snake

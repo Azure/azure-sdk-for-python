@@ -10,8 +10,10 @@ from azure.ai.ml._restclient.v2024_01_01_preview.models import (
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.entities._job.finetuning.finetuning_job import FineTuningJob
+from azure.ai.ml._utils._experimental import experimental
 
 
+@experimental
 class FineTuningVertical(FineTuningJob):
     def __init__(
         self,
@@ -72,15 +74,13 @@ class FineTuningVertical(FineTuningJob):
         if isinstance(value, Input) and cast(Input, value).type == "mlflow_model":
             self._model = value
         else:
-            if not isinstance(value, dict):
-                msg = "Expected a mlflow model input."
-                raise ValidationException(
-                    message=msg,
-                    no_personal_data_message=msg,
-                    target=ErrorTarget.FINETUNING,
-                    error_category=ErrorCategory.USER_ERROR,
-                )
-            self._model = value
+            msg = "Expected a mlflow model input."
+            raise ValidationException(
+                message=msg,
+                no_personal_data_message=msg,
+                target=ErrorTarget.FINETUNING,
+                error_category=ErrorCategory.USER_ERROR,
+            )
 
     @property
     def model_provider(self) -> str:

@@ -11,8 +11,10 @@ from azure.ai.ml.entities._job.finetuning.finetuning_vertical import FineTuningV
 from azure.ai.ml.entities._job.finetuning.azure_openai_hyperparameters import AzureOpenAIHyperparameters
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml._utils._experimental import experimental
 
 
+@experimental
 class AzureOpenAIFineTuningJob(FineTuningVertical):
     def __init__(
         self,

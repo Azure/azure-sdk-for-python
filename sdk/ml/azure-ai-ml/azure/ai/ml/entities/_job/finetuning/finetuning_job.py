@@ -8,8 +8,10 @@ from azure.ai.ml._restclient.v2024_01_01_preview.models import (
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml.constants._job.finetuning import FineTuningConstants
+from azure.ai.ml._utils._experimental import experimental
 
 
+@experimental
 class FineTuningJob(Job, JobIOMixin):
     def __init__(
         self,

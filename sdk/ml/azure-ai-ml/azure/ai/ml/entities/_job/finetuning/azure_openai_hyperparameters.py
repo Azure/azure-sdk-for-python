@@ -3,8 +3,10 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml._restclient.v2024_01_01_preview.models import (
     AzureOpenAiHyperParameters as RestAzureOpenAiHyperParameters,
 )
+from azure.ai.ml._utils._experimental import experimental
 
 
+@experimental
 class AzureOpenAIHyperparameters(RestTranslatableMixin):
     """Hyperparameters for Azure OpenAI model finetuning."""
 
