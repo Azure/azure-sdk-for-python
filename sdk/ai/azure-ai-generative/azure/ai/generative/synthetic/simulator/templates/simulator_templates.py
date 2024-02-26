@@ -1,20 +1,17 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-
+from jinja2 import (
+    Environment as JinjaEnvironment,
+    FileSystemLoader as JinjaFileSystemLoader,
+    meta as JinjaMeta,
+)
 from azure.ai.generative.synthetic.simulator.templates._templates import (
     ALL_TEMPLATES,
     CONTEXT_KEY,
     CH_TEMPLATES_COLLECTION_KEY,
 )
 from azure.ai.generative.synthetic.simulator import _template_dir as template_dir
-from jinja2 import (
-    Environment as JinjaEnvironment,
-    FileSystemLoader as JinjaFileSystemLoader,
-    meta as JinjaMeta,
-)
-import os
-import asyncio
 
 
 class Template:

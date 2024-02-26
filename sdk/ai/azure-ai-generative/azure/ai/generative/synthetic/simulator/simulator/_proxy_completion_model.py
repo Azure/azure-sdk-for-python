@@ -1,24 +1,25 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from aiohttp_retry import RetryClient, RandomRetry, JitterRetry
-from aiohttp.web import HTTPException
-from azure.ai.generative.synthetic.simulator._model_tools.models import (
-    OpenAIChatCompletionsModel,
-    AsyncHTTPClientWithRetry,
-)
 from typing import List
 import uuid
-
-from azure.ai.generative.synthetic.simulator.simulator._simulation_request_dto import (
-    SimulationRequestDTO,
-)
-
 import time
 import logging
 import copy
 
 import asyncio
+
+from aiohttp_retry import RetryClient, JitterRetry  # pylint: disable=networking-import-outside-azure-core-transport
+from aiohttp.web import HTTPException  # pylint: disable=networking-import-outside-azure-core-transport
+from azure.ai.generative.synthetic.simulator._model_tools.models import (
+    OpenAIChatCompletionsModel,
+    AsyncHTTPClientWithRetry,
+)
+
+
+from azure.ai.generative.synthetic.simulator.simulator._simulation_request_dto import (
+    SimulationRequestDTO,
+)
 
 
 class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
@@ -29,8 +30,8 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
 
         super().__init__(name=name, *args, **kwargs)
 
-    def format_request_data(self, messages: List[dict], **request_params): # type: ignore[override]
-        request_data = {"messages": messages, **self.get_model_params()}
+    def format_request_data(self, prompt: List[dict], **request_params):  # type: ignore[override]
+        request_data = {"messages": prompt, **self.get_model_params()}
         request_data.update(request_params)
         return request_data
 
@@ -44,7 +45,7 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
         """
         Query the model a single time with a message.
 
-        :param messages: List of messages to query the model with. 
+        :param messages: List of messages to query the model with.
                          Expected format: [{"role": "user", "content": "Hello!"}, ...]
         :type messages: List[dict]
         :param session: aiohttp RetryClient object to query the model with.
@@ -100,7 +101,7 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
             "X-ModelType": self.model or "",
         }
         # add all additional headers
-        headers.update(self.additional_headers) # type: ignore[arg-type]
+        headers.update(self.additional_headers)  # type: ignore[arg-type]
 
         params = {}
         if self.api_version:
@@ -134,7 +135,7 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
             attempts=7,
             start_timeout=10,
             max_timeout=180,
-            retry_all_server_errors=False
+            retry_all_server_errors=False,
         )
 
         exp_retry_client = AsyncHTTPClientWithRetry(
@@ -148,18 +149,17 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
         await asyncio.sleep(10)
 
         async with exp_retry_client.client as expsession:
-            async with expsession.get(
-                url=self.result_url, headers=proxy_headers
-            ) as response:
+            async with expsession.get(url=self.result_url, headers=proxy_headers) as response:
                 if response.status == 200:
                     response_data = await response.json()
-                    self.logger.info(f"Response: {response_data}")
+                    self.logger.info("Response: %s", response_data)
 
                     # Copy the full response and return it to be saved in jsonl.
                     full_response = copy.copy(response_data)
 
                     time_taken = time.time() - time_start
 
+                    # pylint: disable=unexpected-keyword-arg
                     parsed_response = self._parse_response(  # type: ignore[call-arg]
                         response_data, request_data=request_data
                     )
