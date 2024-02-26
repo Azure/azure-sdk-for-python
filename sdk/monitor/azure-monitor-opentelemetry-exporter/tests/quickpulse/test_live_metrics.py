@@ -9,7 +9,6 @@ from opentelemetry.sdk.metrics import MeterProvider
 from opentelemetry.sdk.resources import Resource, ResourceAttributes
 
 from azure.monitor.opentelemetry.exporter._generated.models import ContextTagKeys
-from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import MonitoringDataPoint
 from azure.monitor.opentelemetry.exporter._quickpulse._exporter import (
     _QuickpulseExporter,
     _QuickpulseMetricReader,

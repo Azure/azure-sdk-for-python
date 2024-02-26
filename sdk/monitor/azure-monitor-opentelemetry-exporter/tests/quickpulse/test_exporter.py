@@ -91,21 +91,15 @@ class TestQuickpulse(unittest.TestCase):
         )
 
 
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._generated._client.QuickpulseClient.__new__")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._generated._client.QuickpulseClient")
     def test_init(self, client_mock):
-        client_inst_mock = mock.Mock()
-        client_mock.return_value = client_inst_mock
         exporter = _QuickpulseExporter(
             connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/"
         )
-        
         self.assertEqual(exporter._live_endpoint, "https://eastus.livediagnostics.monitor.azure.com/")
         self.assertEqual(exporter._instrumentation_key, "4321abcd-5678-4efa-8abc-1234567890ab")
-        self.assertEqual(exporter._client, client_inst_mock)
-        client_mock.assert_called_with(
-            QuickpulseClient,
-            host="https://eastus.livediagnostics.monitor.azure.com/"
-        )
+        self.assertTrue(isinstance(exporter._client, QuickpulseClient))
+        self.assertEqual(exporter._client._config.host, "https://eastus.livediagnostics.monitor.azure.com/")
 
 
     def test_export_missing_data_point(self):
