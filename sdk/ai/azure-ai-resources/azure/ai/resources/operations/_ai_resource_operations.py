@@ -22,8 +22,11 @@ class AIResourceOperations:
     """AIResourceOperations.
 
     You should not instantiate this class directly. Instead, you should
-    create an MLClient instance that instantiates it for you and
+    create an AIClient instance that instantiates it for you and
     attaches it as an attribute.
+
+    :param ml_client: The Azure Machine Learning client
+    :type ml_client: ~azure.ai.ml.MLClient
     """
 
     # TODO add operation scope at init level?
@@ -36,7 +39,7 @@ class AIResourceOperations:
     def get(self, *, name: str, **kwargs) -> AIResource:
         """Get an AI resource by name.
 
-        :keyword name: Name of the AI resource.
+        :keyword name: The AI resource name
         :paramtype name: str
 
         :return: The AI resource with the provided name.
@@ -135,7 +138,8 @@ class AIResourceOperations:
         :keyword delete_dependent_resources: Whether to delete dependent resources associated with the AI resource.
         :paramtype delete_dependent_resources: bool
         :keyword permanently_delete: AI resource are soft-deleted by default to allow recovery of data.
-            Set this flag to true to override the soft-delete behavior and permanently delete your AI resource.
+            Defaults to False. Set this flag to true to override the soft-delete behavior and permanently delete your
+            AI resource.
         :paramtype permanently_delete: bool
         :return: A poller to track the operation status.
         :rtype: ~azure.core.polling.LROPoller[None]
