@@ -143,7 +143,7 @@ In this error scenario, the username provided and the access token used as passw
 To mitigate this error, navigate to your Azure Cache for Redis resource in the Azure portal. Confirm that:
 
 - In **Data Access Configuration**, you've assigned the required role to your user/service principal identity.
-- In **Advanced settings**, the **Microsoft Entra Authentication** box is selected. If not, select it and select the **Save** button.
+- * Under **Authentication** -> **Microsoft Entra Authentication** category the **Enable Microsoft Entra Authentication** box is selected. If not, select it and select the **Save** button.
 
 ##### Permissions not granted / NOPERM Error
 
