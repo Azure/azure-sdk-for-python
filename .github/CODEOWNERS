@@ -54,8 +54,8 @@
 /sdk/identity/                                                       @pvaneck @xiangyan99 @Azure/azure-sdk-write-identity
 
 # AzureSdkOwners: @kashifkhan
-# ServiceOwners: @kasun04
 # ServiceLabel: %Event Hubs
+
 # PRLabel: %Event Hubs
 /sdk/eventhub/                                                       @annatisch @kashifkhan @swathipil @l0lawrence
 
