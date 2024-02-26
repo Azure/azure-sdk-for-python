@@ -77,3 +77,44 @@ class TestQuickpulseManager(unittest.TestCase):
         self.assertEqual(qpm._reader._base_monitoring_data_point, qpm._base_monitoring_data_point)
         self.assertTrue(isinstance(qpm._meter_provider, MeterProvider))
         self.assertEqual(qpm._meter_provider._sdk_config.metric_readers, [qpm._reader])
+
+
+    def test_singleton(self):
+        resource = Resource.create(
+            {
+                ResourceAttributes.SERVICE_INSTANCE_ID: "test_instance",
+                ResourceAttributes.SERVICE_NAME: "test_service",
+            }
+        )
+        part_a_fields = _populate_part_a_fields(resource)
+        resource2 = Resource.create(
+            {
+                ResourceAttributes.SERVICE_INSTANCE_ID: "test_instance2",
+                ResourceAttributes.SERVICE_NAME: "test_service2",
+            }
+        )
+        qpm = _QuickpulseManager(
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ac;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/",
+            resource=resource,
+        )
+        qpm2 = _QuickpulseManager(
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ac;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/",
+            resource=resource2,
+        )
+        self.assertEqual(qpm, qpm2)
+        self.assertEqual(
+            qpm._base_monitoring_data_point.instance,
+            part_a_fields.get(ContextTagKeys.AI_CLOUD_ROLE_INSTANCE, "")
+        )
+        self.assertEqual(
+            qpm._base_monitoring_data_point.role_name,
+            part_a_fields.get(ContextTagKeys.AI_CLOUD_ROLE, "")
+        )
+        self.assertEqual(
+            qpm2._base_monitoring_data_point.instance,
+            part_a_fields.get(ContextTagKeys.AI_CLOUD_ROLE_INSTANCE, "")
+        )
+        self.assertEqual(
+            qpm2._base_monitoring_data_point.role_name,
+            part_a_fields.get(ContextTagKeys.AI_CLOUD_ROLE, "")
+        )

@@ -1,8 +1,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+import datetime
 import os
 import platform
+import time
 import unittest
 
 from azure.monitor.opentelemetry.exporter import _utils
@@ -43,6 +45,21 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(ns_to_duration(60 * 1000000000), "0.00:01:00.000")
         self.assertEqual(ns_to_duration(3600 * 1000000000), "0.01:00:00.000")
         self.assertEqual(ns_to_duration(86400 * 1000000000), "1.00:00:00.000")
+
+    
+    @patch("time.time")
+    def test_ticks_since_dot_net_epoch(self, time_mock):
+        current_time = time.time()
+        shift_time = int(
+            (
+                datetime.datetime(1970, 1, 1, 0, 0, 0) -
+                datetime.datetime(1, 1, 1, 0, 0, 0)).total_seconds()
+            ) * (10 ** 7)
+        time_mock.return_value = current_time
+        ticks = _utils._ticks_since_dot_net_epoch()
+        expected_ticks = int(current_time * (10**7)) + shift_time
+        self.assertEqual(ticks, expected_ticks)
+
 
     def test_populate_part_a_fields(self):
         resource = Resource(
