@@ -51,7 +51,7 @@ class AIClient:
     :type subscription_id: str
     :param resource_group_name: The name of the resource group.
     :type resource_group_name: str
-    :param ai_hub_name: The name of the AI resource.
+    :param ai_hub_name: The name of the AI hub.
     :type ai_hub_name: Optional[str]
     :param project_name: The name of the AI project.
     :type project_name: Optional[str]

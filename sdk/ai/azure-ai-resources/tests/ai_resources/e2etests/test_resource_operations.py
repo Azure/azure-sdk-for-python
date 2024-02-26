@@ -7,7 +7,7 @@ from azure.core.exceptions import ResourceNotFoundError
 from devtools_testutils import  is_live
 # NOTE: Expect 2 AI Projects to exist already in the provided AI Client's resource group:
 # e2e_test_res_1 and e2e_test_res_2. Furthermore, the former is expected
-# to be the client's default AI resource
+# to be the client's default AI hub.
 
 @pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test")

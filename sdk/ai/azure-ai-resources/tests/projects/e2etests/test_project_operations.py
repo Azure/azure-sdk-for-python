@@ -37,12 +37,12 @@ class TestProjects:
             # Create none values to make cleanup easier
             created_project = None
             created_resource = None
-            # create AI resource to house project
+            # create AI hub to house project
             created_resource = ai_client.ai_hubs.begin_create(ai_hub=AIHub(
                 name="e2eTestResource" + rand_num(),
             )).result()
 
-            # Create project with above AI resource as parent.
+            # Create project with above AI hub as parent.
             new_local_project = Project(
                 name="e2eTestProj" + rand_num(),
                 ai_hub=created_resource.id,

@@ -22,7 +22,7 @@ class ConnectionOperations:
     create an AIClient instance that instantiates it for you and
     attaches it as an attribute.
 
-    :param resource_ml_client: The Azure Machine Learning client for the AI resource
+    :param resource_ml_client: The Azure Machine Learning client for the AI hub.
     :type resource_ml_client: ~azure.ai.ml.MLClient
     :param project_ml_client: The Azure Machine Learning client for the project
     :type project_ml_client: ~azure.ai.ml.MLClient

@@ -169,11 +169,11 @@ class TestConnections:
             ai_client.connections.get(name)
 
     # Involved test, takes 5+ minutes to run in live mode.
-    # Makes use of a lot of AI resource and Projects, so changes to those can cause this test to fail.
+    # Makes use of a lot of AI hubs and Projects, so changes to those can cause this test to fail.
     @pytest.mark.shareTest
     @pytest.mark.skipif(condition=True, reason="Resource creation API result inconsistent in uncontrollable way.")
     def test_is_shared_and_scoping_behavior(self, ai_client: AIClient, rand_num: Callable[[], str]) -> None:
-        # Create a AI resource and 2 child projects
+        # Create an AI hub and 2 child projects
         resource = ai_client.ai_hubs.begin_create(ai_hub=AIHub(name=f"e2etest_resource_{rand_num()}")).result()
         poller_1 = ai_client.projects.begin_create(project=Project(name=f"e2etest_proj1_{rand_num()}", ai_hub=resource.id))
         proj_1 = poller_1.result()
