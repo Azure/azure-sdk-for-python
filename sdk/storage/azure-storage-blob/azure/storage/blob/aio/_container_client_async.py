@@ -15,7 +15,7 @@ from typing import (  # pylint: disable=unused-import
 from urllib.parse import urlparse, unquote
 from typing_extensions import Self
 
-from azure.core.async_paging import AsyncItemPaged
+from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.transport import AsyncHttpResponse  # pylint: disable=C4756
@@ -1376,7 +1376,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
                 :caption: Deleting multiple blobs.
         """
         if len(blobs) == 0:
-            return iter([])  # type: ignore [return-value]
+            return AsyncList([])
 
         reqs, options = _generate_delete_blobs_options(
             self._query_str,
