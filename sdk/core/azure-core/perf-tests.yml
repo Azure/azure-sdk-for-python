@@ -1,11 +1,12 @@
 Service: core
 
-Project: sdk/core/corehttp
+Project: sdk/core/azure-core
 
-PrimaryPackage: corehttp
+PrimaryPackage: azure-core
 
 PackageVersions:
-- corehttp: source
+- azure-core: 1.29.6
+- azure-core: source
 
 Tests:
 - Test: upload-binary
@@ -14,13 +15,13 @@ Tests:
   - --size 1024 --parallel 64 --duration 60 --policies all
   - --size 1024 --parallel 64 --duration 60 --policies all --aad
   - --size 10240 --parallel 32 --duration 60
-  - --size 10240 --parallel 32 --duration 60 --transport httpx
+  - --size 10240 --parallel 32 --duration 60 --transport requests
 
 - Test: download-binary
   Class: DownloadBinaryDataTest
   Arguments:
   - --size 1024 --parallel 64 --duration 60
-  - --size 1024 --parallel 64 --duration 60 --transport httpx
+  - --size 1024 --parallel 64 --duration 60 --transport requests
   - --size 1024 --parallel 64 --duration 60 --aad
   - --size 10240 --parallel 32 --duration 60 --policies all
 
@@ -28,7 +29,7 @@ Tests:
   Class: UpdateEntityJSONTest
   Arguments:
   - --size 1024 --parallel 64 --duration 60
-  - --size 1024 --parallel 64 --duration 60 --transport httpx
+  - --size 1024 --parallel 64 --duration 60 --transport requests
   - --size 1024 --parallel 64 --duration 60 --aad
   - --size 1024 --parallel 64 --duration 60 --policies all
 
@@ -36,7 +37,7 @@ Tests:
   Class: QueryEntitiesJSONTest
   Arguments:
   - --size 1024 --parallel 64 --duration 60
-  - --size 1024 --parallel 64 --duration 60 --transport httpx
+  - --size 1024 --parallel 64 --duration 60 --transport requests
   - --size 1024 --parallel 64 --duration 60 --aad
   - --size 1024 --parallel 64 --duration 60 --policies all
 
@@ -44,6 +45,6 @@ Tests:
   Class: ListEntitiesPageableTest
   Arguments:
   - --count 500 --parallel 32 --warmup 60 --duration 60
-  - --count 500 --parallel 32 --warmup 60 --duration 60 --transport httpx
+  - --count 500 --parallel 32 --warmup 60 --duration 60 --transport requests
   - --count 500 --parallel 32 --warmup 60 --duration 60 --aad
   - --count 500 --parallel 32 --warmup 60 --duration 60 --policies all
