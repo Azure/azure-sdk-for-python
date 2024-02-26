@@ -1,6 +1,10 @@
 # Azure Monitor Opentelemetry Distro client library for Python
 
-The Azure Monitor Distro of [Opentelemetry Python][ot_sdk_python] provides multiple installable components available for an Opentelemetry Azure Monitor monitoring solution. It allows you to instrument your Python applications to capture and report telemetry to Azure Monitor via the Azure monitor exporters.
+The Azure Monitor Distro of [Opentelemetry Python][ot_sdk_python] provides multiple installable components available for an Opentelemetry Azure Monitor monitoring solution. It allows you to instrument your Python applications to capture and report telemetry to Azure Monitor via the Azure monitor exporters as a "one-stop-shop" telemetry solution in which you only one line of code to instrument your application.
+
+If you require more advanced configurations than the ones available below or if you have complex telemetry scenarios, we recommend instrumenting directly with the [Azure Monitor OpenTelemetry exporters][azure_monitor_opentelemetry_exporters].
+
+Prior to using this SDK, please read and understand [Data Collection Basics](https://learn.microsoft.com/en-us/azure/azure-monitor/app/opentelemetry-overview?tabs=python), especially the section on [telemetry types](https://learn.microsoft.com/en-us/azure/azure-monitor/app/opentelemetry-overview?tabs=python#telemetry-types). OpenTelemetry terminology differs from Application Insights terminology so it is important to understand the way the telemetry types map to each other.
 
 This distro automatically installs the following libraries:
 
@@ -41,7 +45,7 @@ To use this package, you must have:
 * Azure subscription - [Create a free account][azure_sub]
 * Azure Monitor - [How to use application insights][application_insights_namespace]
 * Opentelemetry SDK - [Opentelemetry SDK for Python][ot_sdk_python]
-* Python 3.7 or later - [Install Python][python]
+* Python 3.8 or later - [Install Python][python]
 
 ### Install the package
 
