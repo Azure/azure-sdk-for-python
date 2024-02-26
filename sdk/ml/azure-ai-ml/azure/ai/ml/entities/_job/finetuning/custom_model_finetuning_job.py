@@ -178,10 +178,8 @@ class CustomModelFineTuningJob(FineTuningVertical):
         """
         from azure.ai.ml._schema._finetuning.custom_model_finetuning import CustomModelFineTuningSchema
 
-        # from azure.ai.ml._schema.pipeline.automl_node import AutoMLClassificationNodeSchema
-
         schema_dict: dict = {}
-        # TODO: Combeback to this later
+        # TODO: Combeback to this later for FineTuningJob in pipeline
         # if inside_pipeline:
         #    schema_dict = AutoMLClassificationNodeSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
         # else:
