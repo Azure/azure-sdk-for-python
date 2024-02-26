@@ -1,5 +1,12 @@
 # Release History
 
+## 2.1.0b3 (2024-03-18)
+
+### Breaking Changes
+
+  - Removed operation group SuppressionListAddressesOperations
+  - Removed operation group SuppressionListsOperations
+
 ## 2.1.0b2 (2023-12-18)
 
 ### Features Added
