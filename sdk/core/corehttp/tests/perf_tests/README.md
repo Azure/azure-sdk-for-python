@@ -62,9 +62,10 @@ The options that are available for all Core perf tests:
 - `--transport` - By default, uses AiohttpTransport ("aiohttp") for async. By default, uses RequestsTransport ("requests") for sync. All options:
   - For async:
     - `"aiohttp"`: AiohttpTransport (default)
-    - `"requests"`: AsyncioRequestsTransport
+    - `"httpx"`: AsyncHttpXTransport
   - For sync:
     - `"requests"`: RequestsTransport (default)
+    - `"httpx"`: HttpXTransport
 - `--aad` - Flag to pass in to use Azure Active Directory as the authentication. By default, set to False.
 - `--size=10240` - Size of request content (in bytes). Defaults to 10240. (Not used by `ListEntitiesPageableTest`.)
 
@@ -78,5 +79,5 @@ The options that are additionally available for `ListEntitiesPageableTest`:
 ## Example command
 
 ```cmd
-(env) ~/core/corehttp> perfstress DownloadBinaryDataTest --aad --transport requests --size=20480 --parallel=2
+(env) ~/core/corehttp> perfstress DownloadBinaryDataTest --aad --transport httpx --size=20480 --parallel=2
 ```
