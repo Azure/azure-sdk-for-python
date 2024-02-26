@@ -16,7 +16,7 @@ from devtools_testutils import (
 HealthInsightsEnvPreparer = functools.partial(
     EnvironmentVariableLoader,
     "healthinsights",
-    healthinsights_endpoint="https://fake_ad_resource.cognitiveservices.azure.com",
+    healthinsights_endpoint="https://fake_ad_resource.cognitiveservices.azure.com/",
     healthinsights_key="00000000000000000000000000000000",
 )
 
@@ -62,7 +62,16 @@ class TestRadiologyInsightsClient(AzureRecordedTestCase):
 
         author = models.DocumentAuthor(id="author2", full_name="authorName2")
 
-        create_date_time = datetime.datetime(2024, 2, 19, 0, 0, 0, 0, tzinfo=pytz.utc)
+        create_date_time = datetime.datetime(
+            2024, 
+            2, 
+            19, 
+            0, 
+            0, 
+            0,
+            0, 
+            tzinfo=datetime.timezone.utc
+            )
         patient_document1 = models.PatientDocument(
             type=models.DocumentType.NOTE,
             clinical_type=models.ClinicalDocumentType.RADIOLOGY_REPORT,
@@ -100,13 +109,23 @@ class TestRadiologyInsightsClient(AzureRecordedTestCase):
     async def test_critical_result(self, healthinsights_endpoint, healthinsights_key):
         radiology_insights_client = RadiologyInsightsClient(healthinsights_endpoint, AzureKeyCredential(healthinsights_key))
         data = TestRadiologyInsightsClient.create_request(self)
-        request_time = datetime.datetime.now(pytz.utc)
+        request_time = datetime.datetime(
+            2024, 
+            2, 
+            26, 
+            0, 
+            0, 
+            0,
+            0, 
+            tzinfo=datetime.timezone.utc
+            )
         poller = await radiology_insights_client.begin_infer_radiology_insights(
                 data,
                 headers={
                     "Repeatability-First-Sent": request_time.strftime(
                         "%a, %d %b %Y %H:%M:%S GMT"
-                    )
+                    ),
+                    "Repeatability-Request-ID":"5189b7f2-a13a-4cac-bebf-407c4ffc3a7c"
                 },
             )
         radiology_insights_result = await poller.result()

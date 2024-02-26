@@ -3,7 +3,6 @@
 
 import datetime
 import os
-import pytz
 
 from azure.core.credentials import AzureKeyCredential
 from azure.healthinsights.radiologyinsights import RadiologyInsightsClient
@@ -75,7 +74,16 @@ class HealthInsightsSyncSamples:
         # Create author
         author = models.DocumentAuthor(id="author2", full_name="authorName2")
         
-        create_date_time = datetime.datetime(2024, 2, 19, 0, 0, 0, 0, tzinfo=pytz.utc)
+        create_date_time = datetime.datetime(
+            2024, 
+            2, 
+            19, 
+            0, 
+            0, 
+            0,
+            0, 
+            tzinfo=datetime.timezone.utc
+            )
         patient_document1 = models.PatientDocument(
             type=models.DocumentType.NOTE,
             clinical_type=models.ClinicalDocumentType.RADIOLOGY_REPORT,
@@ -112,7 +120,7 @@ class HealthInsightsSyncSamples:
 
         # Health Insights Radiology Insights
         try:
-            request_time = datetime.datetime.now(pytz.utc)
+            request_time = datetime.datetime.now(tz=datetime.timezone.utc)
             poller = radiology_insights_client.begin_infer_radiology_insights(
                 radiology_insights_data,
                 headers={
