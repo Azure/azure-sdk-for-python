@@ -199,7 +199,6 @@ class Link:  # pylint: disable=too-many-instance-attributes
                 _LOGGER.warning("Callback for link attach raised error: %s", e, extra=self.network_trace_params)
 
     async def _outgoing_flow(self, **kwargs: Any) -> None:
-        print("Sending Flow Frame")
         flow_frame = {
             "handle": self.handle,
             "delivery_count": self.delivery_count,
