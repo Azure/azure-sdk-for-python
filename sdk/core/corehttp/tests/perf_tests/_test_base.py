@@ -20,12 +20,8 @@ from corehttp.runtime.policies import (
     HeadersPolicy,
     ProxyPolicy,
     NetworkTraceLoggingPolicy,
-    #    HttpLoggingPolicy,
     RetryPolicy,
-    #    CustomHookPolicy,
-    #    RedirectPolicy,
     AsyncRetryPolicy,
-    #    AsyncRedirectPolicy,
     BearerTokenCredentialPolicy,
     AsyncBearerTokenCredentialPolicy,
 )
@@ -99,9 +95,6 @@ class _ServiceTest(PerfStressTest):
             ProxyPolicy,
             NetworkTraceLoggingPolicy,
             RetryPolicy,
-            # HttpLoggingPolicy,
-            # CustomHookPolicy,
-            # RedirectPolicy,
         ]
 
         if self.args.policies is None:
@@ -132,9 +125,6 @@ class _ServiceTest(PerfStressTest):
             ProxyPolicy,
             NetworkTraceLoggingPolicy,
             AsyncRetryPolicy,
-            # HttpLoggingPolicy,
-            # CustomHookPolicy,
-            # AsyncRedirectPolicy,
         ]
         if self.args.policies is None:
             # if None, only auth policy is passed in
