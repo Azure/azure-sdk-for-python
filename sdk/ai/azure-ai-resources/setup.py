@@ -77,7 +77,7 @@ setup(
         "mmh3",
         "requests",
         "azure-search-documents==11.4.0b11",
-        "numpy",
+        "numpy>=1.3.0",
         "tqdm"
     ],
     project_urls={
