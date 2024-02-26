@@ -10,6 +10,8 @@
     ([#34141](https://github.com/Azure/azure-sdk-for-python/pull/34141))
 - Add application.ver to part A fields
     ([#34401](https://github.com/Azure/azure-sdk-for-python/pull/34401))
+- Add `APPLICATIONINSIGHTS_METRIC_NAMESPACE_OPT_IN`
+    ([#34401](https://github.com/Azure/azure-sdk-for-python/pull/34401))
 
 ### Breaking Changes
 
