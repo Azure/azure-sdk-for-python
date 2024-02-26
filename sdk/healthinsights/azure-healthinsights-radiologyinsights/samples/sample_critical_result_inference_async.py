@@ -75,7 +75,16 @@ class HealthInsightsSamples:
         # Create author
         author = models.DocumentAuthor(id="author2", full_name="authorName2")
         
-        create_date_time = datetime.datetime.now(datetime.UTC)
+        create_date_time = datetime.datetime(
+            2024, 
+            2, 
+            19, 
+            0, 
+            0, 
+            0,
+            0, 
+            tzinfo=datetime.timezone.utc
+            )
         patient_document1 = models.PatientDocument(
             type=models.DocumentType.NOTE,
             clinical_type=models.ClinicalDocumentType.RADIOLOGY_REPORT,
@@ -113,10 +122,20 @@ class HealthInsightsSamples:
         # Health Insights Radiology Insights
         try:
             # poller = await radiology_insights_client.begin_infer_radiology_insights(radiology_insights_data)
+            request_time = datetime.datetime(
+                2024, 
+                2, 
+                20, 
+                0, 
+                0, 
+                0,
+                0, 
+                tzinfo=datetime.timezone.utc
+                )
             poller = await radiology_insights_client.begin_infer_radiology_insights(
                 radiology_insights_data,
                 headers={
-                    "Repeatability-First-Sent": create_date_time.strftime(
+                    "Repeatability-First-Sent": request_time.strftime(
                         "%a, %d %b %Y %H:%M:%S GMT"
                     )
                 },

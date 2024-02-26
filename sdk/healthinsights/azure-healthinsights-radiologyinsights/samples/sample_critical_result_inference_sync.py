@@ -120,7 +120,16 @@ class HealthInsightsSyncSamples:
 
         # Health Insights Radiology Insights
         try:
-            request_time = datetime.datetime.now(tz=datetime.timezone.utc)
+            request_time = datetime.datetime(
+                2024, 
+                2, 
+                20, 
+                0, 
+                0, 
+                0,
+                0, 
+                tzinfo=datetime.timezone.utc
+                )
             poller = radiology_insights_client.begin_infer_radiology_insights(
                 radiology_insights_data,
                 headers={
