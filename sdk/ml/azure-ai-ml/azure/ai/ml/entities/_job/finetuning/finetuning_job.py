@@ -18,6 +18,32 @@ class FineTuningJob(Job, JobIOMixin):
         self.outputs = kwargs.pop("outputs", None)
         super().__init__(**kwargs)
 
+    def __eq__(self, other: object) -> bool:
+        """Returns True if both instances have the same values.
+
+        This method check instances equality and returns True if both of
+            the instances have the same attributes with the same values.
+
+        :param other: Any object
+        :type other: object
+        :return: True or False
+        :rtype: bool
+        """
+        if not isinstance(other, FineTuningJob):
+            return NotImplemented
+
+        return self.outputs == other.outputs
+
+    def __ne__(self, other: object) -> bool:
+        """Check inequality between two FineTuningJob objects.
+
+        :param other: Any object
+        :type other: object
+        :return: True or False
+        :rtype: bool
+        """
+        return not self.__eq__(other)
+
     @classmethod
     def _get_model_provider_mapping(cls) -> Dict:
         """Create a mapping of task type to job class.
@@ -98,29 +124,3 @@ class FineTuningJob(Job, JobIOMixin):
             target=ErrorTarget.AUTOML,
             error_category=ErrorCategory.USER_ERROR,
         )
-
-    def __eq__(self, other: object) -> bool:
-        """Returns True if both instances have the same values.
-
-        This method check instances equality and returns True if both of
-            the instances have the same attributes with the same values.
-
-        :param other: Any object
-        :type other: object
-        :return: True or False
-        :rtype: bool
-        """
-        if not isinstance(other, FineTuningJob):
-            return NotImplemented
-
-        return self.outputs == other.outputs
-
-    def __ne__(self, other: object) -> bool:
-        """Check inequality between two FineTuningJob objects.
-
-        :param other: Any object
-        :type other: object
-        :return: True or False
-        :rtype: bool
-        """
-        return not self.__eq__(other)

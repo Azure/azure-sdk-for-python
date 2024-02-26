@@ -6,9 +6,8 @@ from azure.ai.ml._restclient.v2024_01_01_preview.models import (
 )
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.entities._job._input_output_helpers import from_rest_data_outputs, to_rest_data_outputs
-from typing import Any, Dict, cast
+from typing import Any, Dict
 from azure.ai.ml.entities._job.finetuning.finetuning_vertical import FineTuningVertical
-from typing import cast
 from azure.ai.ml.entities._job.finetuning.azure_openai_hyperparameters import AzureOpenAIHyperparameters
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
@@ -93,6 +92,51 @@ class AzureOpenAIFineTuningJob(FineTuningVertical):
 
         return result
 
+    def _to_dict(self, inside_pipeline: bool = False) -> Dict:  # pylint: disable=arguments-differ
+        """Convert the object to a dictionary.
+
+        :param inside_pipeline: whether the job is inside a pipeline or not, defaults to False
+        :type inside_pipeline: bool
+        :return: dictionary representation of the object.
+        :rtype: typing.Dict
+        """
+        from azure.ai.ml._schema._finetuning.azure_openai_finetuning import AzureOpenAIFineTuningSchema
+
+        schema_dict: dict = {}
+        # TODO: Combeback to this later for FineTuningJob in Pipelines
+        # if inside_pipeline:
+        #    schema_dict = AutoMLClassificationNodeSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        # else:
+        schema_dict = AzureOpenAIFineTuningSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+
+        return schema_dict
+
+    def __eq__(self, other: object) -> bool:
+        """Returns True if both instances have the same values.
+
+        This method check instances equality and returns True if both of
+            the instances have the same attributes with the same values.
+
+        :param other: Any object
+        :type other: object
+        :return: True or False
+        :rtype: bool
+        """
+        if not isinstance(other, AzureOpenAIFineTuningJob):
+            return NotImplemented
+
+        return super().__eq__(other) and self.hyperparameters == other.hyperparameters
+
+    def __ne__(self, other: object) -> bool:
+        """Check inequality between two AzureOpenAIFineTuningJob objects.
+
+        :param other: Any object
+        :type other: object
+        :return: True or False
+        :rtype: bool
+        """
+        return not self.__eq__(other)
+
     @classmethod
     def _from_rest_object(cls, obj: RestJobBase) -> "AzureOpenAIFineTuningJob":
         """Convert a REST object to AzureOpenAIFineTuningJob object.
@@ -151,7 +195,7 @@ class AzureOpenAIFineTuningJob(FineTuningVertical):
         :return: AzureOpenAIFineTuningJob object.
         :rtype: AzureOpenAIFineTuningJob
         """
-        from azure.ai.ml._schema._finetuning.azure_openai_finetuning import AzureOpenAiFineTuningSchema
+        from azure.ai.ml._schema._finetuning.azure_openai_finetuning import AzureOpenAIFineTuningSchema
 
         # TODO: Combeback to this later - Pipeline part.
         # from azure.ai.ml._schema.pipeline.automl_node import AutoMLClassificationNodeSchema
@@ -165,7 +209,7 @@ class AzureOpenAIFineTuningJob(FineTuningVertical):
         #        **kwargs,
         #    )
         # else:
-        loaded_data = load_from_dict(AzureOpenAiFineTuningSchema, data, context, additional_message, **kwargs)
+        loaded_data = load_from_dict(AzureOpenAIFineTuningSchema, data, context, additional_message, **kwargs)
 
         job_instance = cls._create_instance_from_schema_dict(loaded_data)
         return job_instance
@@ -182,48 +226,3 @@ class AzureOpenAIFineTuningJob(FineTuningVertical):
 
         job = AzureOpenAIFineTuningJob(**loaded_data)
         return job
-
-    def _to_dict(self, inside_pipeline: bool = False) -> Dict:  # pylint: disable=arguments-differ
-        """Convert the object to a dictionary.
-
-        :param inside_pipeline: whether the job is inside a pipeline or not, defaults to False
-        :type inside_pipeline: bool
-        :return: dictionary representation of the object.
-        :rtype: typing.Dict
-        """
-        from azure.ai.ml._schema._finetuning.azure_openai_finetuning import AzureOpenAiFineTuningSchema
-
-        schema_dict: dict = {}
-        # TODO: Combeback to this later for FineTuningJob in Pipelines
-        # if inside_pipeline:
-        #    schema_dict = AutoMLClassificationNodeSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
-        # else:
-        schema_dict = AzureOpenAiFineTuningSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
-
-        return schema_dict
-
-    def __eq__(self, other: object) -> bool:
-        """Returns True if both instances have the same values.
-
-        This method check instances equality and returns True if both of
-            the instances have the same attributes with the same values.
-
-        :param other: Any object
-        :type other: object
-        :return: True or False
-        :rtype: bool
-        """
-        if not isinstance(other, AzureOpenAIFineTuningJob):
-            return NotImplemented
-
-        return super().__eq__(other) and self.hyperparameters == other.hyperparameters
-
-    def __ne__(self, other: object) -> bool:
-        """Check inequality between two AzureOpenAIFineTuningJob objects.
-
-        :param other: Any object
-        :type other: object
-        :return: True or False
-        :rtype: bool
-        """
-        return not self.__eq__(other)

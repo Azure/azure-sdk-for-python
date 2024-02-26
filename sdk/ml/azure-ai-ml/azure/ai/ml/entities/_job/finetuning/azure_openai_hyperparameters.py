@@ -79,15 +79,6 @@ class AzureOpenAIHyperparameters(RestTranslatableMixin):
             n_epochs=self._n_epochs,
         )
 
-    @classmethod
-    def _from_rest_object(cls, obj: RestAzureOpenAiHyperParameters) -> "AzureOpenAIHyperparameters":
-        aoai_hyperparameters = cls(
-            batch_size=obj.batch_size,
-            learning_rate_multiplier=obj.learning_rate_multiplier,
-            n_epochs=obj.n_epochs,
-        )
-        return aoai_hyperparameters
-
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, AzureOpenAIHyperparameters):
             return NotImplemented
@@ -99,3 +90,12 @@ class AzureOpenAIHyperparameters(RestTranslatableMixin):
 
     def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)
+
+    @classmethod
+    def _from_rest_object(cls, obj: RestAzureOpenAiHyperParameters) -> "AzureOpenAIHyperparameters":
+        aoai_hyperparameters = cls(
+            batch_size=obj.batch_size,
+            learning_rate_multiplier=obj.learning_rate_multiplier,
+            n_epochs=obj.n_epochs,
+        )
+        return aoai_hyperparameters

@@ -20,7 +20,7 @@ class CustomModelFineTuningSchema(FineTuningVerticalSchema):
     hyperparameters = fields.Dict(keys=fields.Str(), values=fields.Str(allow_none=True))
 
     @post_load
-    def make(self, data, **kwargs) -> Dict[str, Any]:
+    def post_load_processing(self, data, **kwargs) -> Dict[str, Any]:
         data.pop("model_provider")
 
         return data

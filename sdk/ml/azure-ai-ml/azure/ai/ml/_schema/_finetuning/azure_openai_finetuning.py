@@ -19,14 +19,14 @@ from marshmallow import post_load
 # This is meant to match the yaml definition NOT the models defined in _restclient
 
 
-class AzureOpenAiFineTuningSchema(FineTuningVerticalSchema):
+class AzureOpenAIFineTuningSchema(FineTuningVerticalSchema):
     model_provider = StringTransformedEnum(
         required=True, allowed_values=ModelProvider.AZURE_OPEN_AI, casing_transform=camel_to_snake
     )
     hyperparameters = NestedField(AzureOpenAIHyperparametersSchema(), data_key=FineTuningConstants.HyperParameters)
 
     @post_load
-    def make(self, data, **kwargs) -> Dict[str, Any]:
+    def post_load_processing(self, data, **kwargs) -> Dict[str, Any]:
         data.pop("model_provider")
         hyperaparameters = data.pop("hyperparameters", None)
 
