@@ -9,9 +9,9 @@ from types import ModuleType
 from typing import Any, Callable, Dict, List, Tuple, Union
 
 import numpy as np
-from azure.ai.resources._index._docstore import FileBasedDocstore
+from azure.ai.generative.index._docstore import FileBasedDocstore
+from azure.ai.generative.index._utils.logging import get_logger
 from azure.ai.resources._index._documents import Document
-from azure.ai.resources._index._utils.logging import get_logger
 
 logger = get_logger("indexes.faiss")
 
