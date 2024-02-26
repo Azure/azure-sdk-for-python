@@ -16,7 +16,7 @@ from typing import IO, Any, AnyStr, Dict, List, Optional, Tuple, Type, Union
 from azure.ai.ml._restclient.runhistory.models import Run
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase, JobService
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobType as RestJobType
-from azure.ai.ml._restclient.v2023_08_01_preview.models import JobBase as JobBase_2308
+from azure.ai.ml._restclient.v2024_01_01_preview.models import JobBase as JobBase_2401
 from azure.ai.ml._restclient.v2024_01_01_preview.models import JobBase as JobBase_20240101Preview
 from azure.ai.ml._restclient.v2024_01_01_preview.models import JobType as RestJobType_20240101Preview
 from azure.ai.ml._utils._html_utils import make_link, to_html
@@ -287,7 +287,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
 
     @classmethod
     def _from_rest_object(  # pylint: disable=too-many-return-statements
-        cls, obj: Union[JobBase, JobBase_2308, Run, JobBase_20240101Preview]
+        cls, obj: Union[JobBase, JobBase_2401, Run]
     ) -> "Job":  # pylint: disable=too-many-return-statements
         from azure.ai.ml.entities import PipelineJob
         from azure.ai.ml.entities._builders.command import Command

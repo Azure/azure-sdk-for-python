@@ -774,9 +774,9 @@ def test_case_insensitive_key_type():
 
 
 def test_thumbprint_hex():
-    """Ensure the `CertificateProperties.x509_thumbprint_string` property correctly converts a thumbprint to hex."""
+    """Ensure `CertificateProperties.__repr__()` correctly displays the cert's thumbprint as hex."""
     properties = CertificateProperties(
         cert_id="https://vaultname.vault.azure.net/certificates/certname/version",
         x509_thumbprint=b"v\xe1\x81\x9f\xad\xf0jU\xefK\x12j.\xf7C\xc2\xba\xe8\xa1Q",
     )
-    assert properties.x509_thumbprint_string == "76E1819FADF06A55EF4B126A2EF743C2BAE8A151"
+    assert "76E1819FADF06A55EF4B126A2EF743C2BAE8A151" in str(properties)
