@@ -3,29 +3,29 @@
 # ---------------------------------------------------------
 
 import logging
-from typing import Any, Dict, List, Callable, Optional, Sequence, Tuple, Union
+from typing import Any, List, Callable, Tuple
 
 import asyncio
 
 from .conversation_bot import ConversationBot, RetryClient
 from .conversation_turn import ConversationTurn
-from .constants import ConversationRole
 
 
-def is_closing_message(response:Any, recursion_depth: int = 0):
-    if (recursion_depth > 10):
+def is_closing_message(response: Any, recursion_depth: int = 0):
+    if recursion_depth > 10:
         raise Exception("Exceeded max call depth in is_closing_message")
-    
+
     # recursively go through each inner dictionary in the JSON dict
     # and check if any value entry contains a closing message
-    if type(response) is dict:
+    if isinstance(response, dict):
         for value in response.values():
-            if is_closing_message(value, recursion_depth=recursion_depth+1):
+            if is_closing_message(value, recursion_depth=recursion_depth + 1):
                 return True
-    elif type(response) is str:
+    elif isinstance(response, str):
         return is_closing_message_helper(response)
-    
+
     return False
+
 
 def is_closing_message_helper(response: str):
     message = response.lower()
@@ -115,7 +115,7 @@ async def simulate_conversation(
             current_character_idx = current_turn % len(bots)
             current_bot = bots[current_character_idx]
             # invoke Bot to generate response given the input request
-            logger.info(f"-- Sending to {current_bot.role.value}")
+            logger.info("-- Sending to %s", current_bot.role.value)
             # pass only the last generated turn without passing the bot name.
             response, request, time_taken, full_response = await current_bot.generate_response(
                 session=session,
@@ -135,14 +135,15 @@ async def simulate_conversation(
                     message=response["samples"][0],
                     full_response=full_response,
                     request=request,
-                ))
-            logger.info(f"Last turn: {conversation_history[-1]}")
+                )
+            )
+            logger.info("Last turn: %s", conversation_history[-1])
             if mlflow_logger is not None:
                 logger_tasks.append(  # schedule logging but don't get blocked by it
                     asyncio.create_task(mlflow_logger.log_successful_response(time_taken))
                 )
-        except Exception as e:
-            logger.warning("Error:" + str(e))
+        except Exception as e:  # pylint: disable=broad-except
+            logger.warning("Error: %s", str(e))
             if mlflow_logger is not None:
                 logger_tasks.append(  # schedule logging but don't get blocked by it
                     asyncio.create_task(mlflow_logger.log_error())

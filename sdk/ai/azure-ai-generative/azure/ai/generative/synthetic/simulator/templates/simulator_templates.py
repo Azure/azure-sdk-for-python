@@ -89,14 +89,14 @@ class SimulatorTemplates:
 
         plist = self.categorized_ch_parameters
         ch_templates = []
-        for tkey, tvalue in plist.items():
-            if tvalue["category"] == template_category:
-                params = tvalue["parameters"]
+        for key, value in plist.items():
+            if value["category"] == template_category:
+                params = value["parameters"]
                 for p in params:
                     p.update({"ch_template_placeholder": "{{ch_template_placeholder}}"})
 
                 template = Template(
-                    template_name=tkey, text=None, context_key=[], content_harm=True, template_parameters=params
+                    template_name=key, text=None, context_key=[], content_harm=True, template_parameters=params
                 )
 
                 ch_templates.append(template)

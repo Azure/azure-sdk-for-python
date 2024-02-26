@@ -32,7 +32,7 @@ def replace_prompt_captions(
 ) -> str:
     """
     Insert captions for images into the prompt.
-    
+
     :param prompt: The original prompt string.
     :type prompt: str
     :param captions: A dictionary containing image IDs as keys and their corresponding captions as values.
@@ -83,7 +83,7 @@ def format_multimodal_prompt(
     :type prompt: str
     :param images_dir: The directory containing images to be included in the prompt, if any. Default is None.
     :type images_dir: Optional[str]
-    :param captions: A dictionary mapping image filenames to their corresponding captions, if available. Default is None.
+    :param captions: A dictionary mapping image filenames to their corresponding captions, if available.
     :type captions: Optional[Dict[str, str]]
     :param logger: The logger object to log messages. Default is a logger named "Prompt Image Formatter".
     :type logger: logging.Logger

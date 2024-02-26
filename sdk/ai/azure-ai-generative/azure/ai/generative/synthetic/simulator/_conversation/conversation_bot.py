@@ -38,6 +38,8 @@ class ConversationBot:
                 - conversation_starter: A sentence that can be used as a conversation starter, if not provided,
                     the first turn will be generated using the LLM
         """
+        self.logger = logging.getLogger(repr(self))
+
         if role == ConversationRole.USER and isinstance(model, LLAMAChatCompletionsModel):
             self.logger.info(  # type: ignore[has-type]
                 "We suggest using LLaMa chat model to simulate assistant not to simulate user"
@@ -55,24 +57,20 @@ class ConversationBot:
             self.name = self.persona_template_args.get("chatbot_name", role.value) or model.name
         self.model = model
 
-        self.logger = logging.getLogger(repr(self))
-
         self.conversation_starter = None  # can either be a dictionary or jinja template
         if role == ConversationRole.USER:
             if "conversation_starter" in self.persona_template_args:
                 conversation_starter_content = self.persona_template_args["conversation_starter"]
-                if type(conversation_starter_content) is dict:
+                if isinstance(conversation_starter_content, dict):
+                    msg = f"{conversation_starter_content} instead of generating a turn using a LLM"
                     self.logger.info(
-                        "This simulated bot will use the provided conversation starter (passed in as dictionary): "
-                        + f"{conversation_starter_content} instead of generating a turn using a LLM"
+                        "This simulated bot will use the provided conversation starter (passed in as dictionary): %s",
+                        msg,
                     )
                     self.conversation_starter = conversation_starter_content
                 else:
-                    self.logger.info(
-                        "This simulated bot will use the provided conversation starter "
-                        f"{repr(conversation_starter_content)[:400]}"
-                        " instead of generating a turn using a LLM"
-                    )
+                    msg = f"{repr(conversation_starter_content)[:400]} instead of generating a turn using a LLM"
+                    self.logger.info("This simulated bot will use the provided conversation starter %s", msg)
                     self.conversation_starter = jinja2.Template(
                         conversation_starter_content, undefined=jinja2.StrictUndefined
                     )
@@ -107,12 +105,12 @@ class ConversationBot:
         # return the conversations starter rather than generating turn using LLM
         if turn_number == 0 and self.conversation_starter is not None:
             # if conversation_starter is a dictionary, pass it into samples as is
-            if type(self.conversation_starter) is dict:
-                self.logger.info(f"Returning conversation starter: {self.conversation_starter}")
+            if isinstance(self.conversation_starter, dict):
+                self.logger.info("Returning conversation starter: %s", self.conversation_starter)
                 samples = [self.conversation_starter]
             else:
                 self.logger.info(
-                    f"Returning conversation starter: {repr(self.persona_template_args['conversation_starter'])[:400]}"
+                    "Returning conversation starter: %s", repr(self.persona_template_args["conversation_starter"])[:400]
                 )
                 samples = [self.conversation_starter.render(**self.persona_template_args)]  # type: ignore[attr-defined]
             time_taken = 0
@@ -129,7 +127,7 @@ class ConversationBot:
                 role=self.role.value,
                 **self.persona_template_args,
             )
-        except:
+        except Exception:  # pylint: disable=broad-except
             import code
 
             code.interact(local=locals())

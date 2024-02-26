@@ -13,7 +13,7 @@ from .conversation_bot import ConversationBot
 
 
 class AugLoopConversationBot(ConversationBot):
-    def __init__(
+    def __init__(  # pylint: disable=super-init-not-called
         self,
         role: ConversationRole,
         augLoopParams: AugLoopParams,

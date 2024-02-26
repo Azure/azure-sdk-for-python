@@ -25,9 +25,7 @@ def load_jsonl(file_path: pathlib.Path, source_encoding: str) -> List[Dict[str, 
     return result
 
 
-def save_jsonl(
-    file_path: pathlib.Path, data: List[Dict[str, Any]], destination_encoding: str
-):
+def save_jsonl(file_path: pathlib.Path, data: List[Dict[str, Any]], destination_encoding: str):
     logger.info("Saving file %s", file_path)
     with open(file_path, "w", encoding=destination_encoding) as out_file:
         for i, d in enumerate(data):
@@ -49,7 +47,7 @@ def line_map(
 ) -> Tuple[int, int]:
     """
     Iterate over a JSONL file, applying map_func to each line
-    
+
     :return: A tuple containing the number of lines processed and the number of lines successfully mapped.
     :rtype: Tuple[int, int]
     """
