@@ -341,8 +341,6 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
                 )
             )
         if self.incoming_window == 0:
-            print("Session._incoming_transfer: incoming_window == 0")
-            print(f"Send outgoing flow link_credit")
             self.incoming_window = self.target_incoming_window
             await self._outgoing_flow()
 
