@@ -335,7 +335,6 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
             delivery.transfer_state = SessionTransferState.OKAY
 
     async def _incoming_transfer(self, frame, **kwargs):
-        # print("Session._incoming_transfer")
         self.next_incoming_id += 1
         self.remote_outgoing_window -= 1
         self.incoming_window -= 1
@@ -355,8 +354,6 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
                 )
             )
         if self.incoming_window == 0:
-            print("Session._incoming_transfer: incoming_window == 0")
-            print(f"Send outgoing flow link_credit")
             self.incoming_window = self.target_incoming_window
             await self._outgoing_flow()
 

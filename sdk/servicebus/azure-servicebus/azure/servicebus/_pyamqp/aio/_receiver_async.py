@@ -42,8 +42,9 @@ class ReceiverLink(Link):
 
     async def _process_incoming_message(self, frame, message, **kwargs):
         try:
+            # If we are waiting on an incoming disposition, we should not process any new messages
             if kwargs.get("performative", None) == 21:
-                print("RELEASE MSG")
+                _LOGGER.info("Waiting on incoming disposition. Skipping message processing", extra=self.network_trace_params)
                 return await self._outgoing_disposition(first=frame[1], last=None, settled=False, state=Released(), batchable=None)
             else:
                 return await self._on_transfer(frame, message)
@@ -148,5 +149,4 @@ class ReceiverLink(Link):
             raise ValueError("Link already closed.")
         await self._outgoing_disposition(first_delivery_id, last_delivery_id, settled, delivery_state, batchable)
         if not settled and isinstance(delivery_state, Accepted):
-            print(wait)
             await self._wait_for_response(wait)
