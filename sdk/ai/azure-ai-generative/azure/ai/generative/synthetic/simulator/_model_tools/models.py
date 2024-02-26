@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+from ast import literal_eval
 import copy
 import time
 import asyncio
@@ -285,7 +286,7 @@ class OpenAICompletionsModel(LLMBase):  # pylint: disable=too-many-instance-attr
             stop = []
         # Else if stop sequence is given as a string (Ex: "["\n", "<im_end>"]"), convert
         elif isinstance(stop, str) and stop.startswith("[") and stop.endswith("]"):
-            stop = eval(stop)
+            stop = literal_eval(stop)
         elif isinstance(stop, str):
             stop = [stop]
         self.stop: List = stop  # type: ignore[assignment]
@@ -302,7 +303,7 @@ class OpenAICompletionsModel(LLMBase):  # pylint: disable=too-many-instance-attr
                 "Both top_p and temperature are set.  OpenAI advises against using both at the same time."
             )
 
-        self.logger.info("Default model settings: {}".format(self.get_model_params()))
+        self.logger.info("Default model settings: %s", self.get_model_params())
 
     def get_model_params(self):
         return {param: getattr(self, param) for param in self.model_param_names if getattr(self, param) is not None}
@@ -388,7 +389,7 @@ class OpenAICompletionsModel(LLMBase):  # pylint: disable=too-many-instance-attr
         :rtype: List[dict]
         """
         if api_call_max_parallel_count > 1:
-            self.logger.info("Using {} parallel workers to query the API..".format(api_call_max_parallel_count))
+            self.logger.info("Using %s parallel workers to query the API..", api_call_max_parallel_count)
 
         # Format prompts and tag with index
         request_datas: List[Dict] = []
@@ -419,7 +420,7 @@ class OpenAICompletionsModel(LLMBase):  # pylint: disable=too-many-instance-attr
 
         # Await the completion of all tasks, and propagate any exceptions
         await asyncio.gather(*tasks, return_exceptions=False)
-        if len(request_datas):
+        if request_datas:
             raise RuntimeError("All inference tasks were finished, but the queue is not empty")
 
         # Output results back to the caller
@@ -587,7 +588,7 @@ class OpenAIChatCompletionsModel(OpenAICompletionsModel):
     OpenAIChatCompletionsModel is a wrapper around OpenAICompletionsModel that
     formats the prompt for chat completion.
     """
-
+    # pylint: disable=keyword-arg-before-vararg
     def __init__(self, name="OpenAIChatCompletionsModel", *args, **kwargs):
         super().__init__(name=name, *args, **kwargs)
 
@@ -705,7 +706,7 @@ class OpenAIMultiModalCompletionsModel(OpenAICompletionsModel):
     """
 
     model_param_names = ["temperature", "max_tokens", "top_p", "n", "stop"]
-
+    # pylint: disable=keyword-arg-before-vararg
     def __init__(self, name="OpenAIMultiModalCompletionsModel", images_dir: Optional[str] = None, *args, **kwargs):
         self.images_dir = images_dir
 
@@ -747,7 +748,7 @@ class LLAMACompletionsModel(OpenAICompletionsModel):
     """
     Object for calling a Completions-style API for LLAMA models.
     """
-
+    # pylint: disable=keyword-arg-before-vararg
     def __init__(self, name: str = "LLAMACompletionsModel", *args, **kwargs):
         super().__init__(name=name, *args, **kwargs)
         # set authentication header to Bearer, as llama apis always uses the bearer auth_header
@@ -817,7 +818,7 @@ class LLAMAChatCompletionsModel(LLAMACompletionsModel):
     to pass a system prompt do describe how the model would behave,
     So we only use the model as assistant to reply for questions made by GPT simulated users.
     """
-
+    # pylint: disable=keyword-arg-before-vararg
     def __init__(self, name="LLAMAChatCompletionsModel", *args, **kwargs):
         super().__init__(name=name, *args, **kwargs)
         # set authentication header to Bearer, as llama apis always uses the bearer auth_header

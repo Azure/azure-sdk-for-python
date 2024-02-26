@@ -39,6 +39,7 @@ class ConversationBot:
                     the first turn will be generated using the LLM
         """
         if role == ConversationRole.USER and isinstance(model, LLAMAChatCompletionsModel):
+            # pylint: disable=access-member-before-definition
             self.logger.info(  # type: ignore[has-type]
                 "We suggest using LLaMa chat model to simulate assistant not to simulate user"
             )
