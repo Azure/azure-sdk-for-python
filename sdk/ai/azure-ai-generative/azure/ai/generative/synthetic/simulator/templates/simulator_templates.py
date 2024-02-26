@@ -27,7 +27,7 @@ class Template:
             return "{{ch_template_placeholder}}"
         return self.text
 
-    def __to_ch_templates(self):
+    def __to_ch_templates(self):  # pylint: disable=unused-private-member
         pass
 
 
@@ -89,16 +89,17 @@ class SimulatorTemplates:
 
         plist = self.categorized_ch_parameters
         ch_templates = []
-        for tkey in [k for k in plist.keys() if plist[k]["category"] == template_category]:
-            params = plist[tkey]["parameters"]
-            for p in params:
-                p.update({"ch_template_placeholder": "{{ch_template_placeholder}}"})
+        for tkey, tvalue in plist.items():
+            if tvalue["category"] == template_category:
+                params = tvalue["parameters"]
+                for p in params:
+                    p.update({"ch_template_placeholder": "{{ch_template_placeholder}}"})
 
-            template = Template(
-                template_name=tkey, text=None, context_key=[], content_harm=True, template_parameters=params
-            )
+                template = Template(
+                    template_name=tkey, text=None, context_key=[], content_harm=True, template_parameters=params
+                )
 
-            ch_templates.append(template)
+                ch_templates.append(template)
         return ch_templates
 
     def get_template(self, template_name):
@@ -111,7 +112,11 @@ class SimulatorTemplates:
             template, _, _ = self.cached_templates_source[template_name]
             return Template(template_name, template, self._get_template_context_key(template_name))
 
-        if template_name not in ALL_TEMPLATES.keys():
+        for name, (template, _, _) in self.cached_templates_source.items():
+            if name == template_name:
+                return Template(template_name, template, self._get_template_context_key(template_name))
+
+        if template_name not in ALL_TEMPLATES:
             raise ValueError(f"{template_name} not in templates library.")
 
         template_source = self.template_env.loader.get_source(self.template_env, ALL_TEMPLATES[template_name])
