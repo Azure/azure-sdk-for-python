@@ -158,7 +158,6 @@ stages:
           - "39"
           - "310"
           - "311"
-          - "312"
           checkout:
           - package: uamqp
             download_uri: https://files.pythonhosted.org/packages/3e/eb/5c84e91d423d225dfb55c25aa74c10524b677170d2c35e374d9e8217d881/uamqp-1.6.8.tar.gz
