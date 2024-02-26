@@ -7,6 +7,7 @@ import pytest
 from azure.ai.generative.synthetic.qa import QADataGenerator
 
 import pytest
+from packaging import version
 from devtools_testutils import (
     FakeTokenCredential,
     add_body_key_sanitizer,
@@ -128,6 +129,8 @@ def sanitized_environment_variables(
             "AI_TEST_STORAGE_ACCOUNT_SECONDARY_KEY": fake_datastore_key,
             "OPENAI_API_BASE": "fake_openai_api_base",
             "OPENAI_API_KEY": "fake_openai_api_key",
+            "AZURE_OPENAI_ENDPOINT": "fake_openai_api_base",
+            "AZURE_OPENAI_KEY": "fake_openai_api_key",
             "AI_OPENAI_COMPLETION_DEPLOYMENT_NAME": "fake_completion_deployment_name",
             "AI_OPENAI_COMPLETION_MODEL_NAME": "fake_completion_model_name"
         }
@@ -160,12 +163,14 @@ def e2e_project_name(sanitized_environment_variables: Dict[str, str]) -> str:
 @pytest.fixture()
 def e2e_openai_api_base(sanitized_environment_variables: Dict[str, str]) -> str:
     """Return the OpenAI API Base to use for end-to-end tests"""
-    return sanitized_environment_variables["OPENAI_API_BASE"]
+    import openai
+    return sanitized_environment_variables["OPENAI_API_BASE"] if version.parse(openai.version.VERSION) >= version.parse("1.0.0") else sanitized_environment_variables["AZURE_OPENAI_ENDPOINT"]
 
 @pytest.fixture()
 def e2e_openai_api_key(sanitized_environment_variables: Dict[str, str]) -> str:
     """Return the OpenAI API Key to use for end-to-end tests"""
-    return sanitized_environment_variables["OPENAI_API_KEY"]
+    import openai
+    return sanitized_environment_variables["OPENAI_API_KEY"] if version.parse(openai.version.VERSION) >= version.parse("1.0.0") else sanitized_environment_variables["AZURE_OPENAI_KEY"]
 
 @pytest.fixture()
 def e2e_openai_completion_deployment_name(sanitized_environment_variables: Dict[str, str]) -> str:

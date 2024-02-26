@@ -1,10 +1,20 @@
 # Release History
 
-## 1.15.1 (Unreleased)
+## 1.16.0b2 (Unreleased)
 
 ### Features Added
 
+- Added pickling support. ([#34134](https://github.com/Azure/azure-sdk-for-python/pull/34134))
+
 ### Breaking Changes
+
+### Bugs Fixed
+
+- Fixed an issue in `AzurePowerShellCredential` where if `pwsh` isn't available and the Command Prompt language is not English, it would not fall back to `powershell`. ([#34271](https://github.com/Azure/azure-sdk-for-python/pull/34271))
+
+### Other Changes
+
+## 1.16.0b1 (2024-02-06)
 
 ### Bugs Fixed
 
@@ -14,6 +24,7 @@
 ### Other Changes
 
 - `AzureCliCredential` utilizes the new `expires_on` property returned by `az` CLI versions >= 2.54.0 to determine token expiration. ([#33947](https://github.com/Azure/azure-sdk-for-python/issues/33947))
+- Azure-identity is supported on Python 3.8 or later.
 
 ## 1.15.0 (2023-10-26)
 

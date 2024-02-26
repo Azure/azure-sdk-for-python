@@ -649,6 +649,11 @@
           "$ref": "#/definitions/ArmResourceId",
           "x-nullable": true
         },
+        "managedResourceGroupSettings": {
+          "description": "Managed resource group specific settings",
+          "$ref": "#/definitions/ManagedResourceGroupSettings",
+          "x-nullable": true
+        },
         "mlFlowRegistryUri": {
           "description": "MLFlow Registry URI for the Registry",
           "type": "string",
@@ -706,6 +711,34 @@
           },
           "x-nullable": true,
           "x-ms-identifiers": []
+        }
+      },
+      "additionalProperties": false
+    },
+    "ManagedResourceGroupSettings": {
+      "description": "Managed resource group settings",
+      "type": "object",
+      "properties": {
+        "assignedIdentities": {
+          "description": "List of assigned identities for the managed resource group",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ManagedResourceGroupAssignedIdentities"
+          },
+          "x-nullable": true,
+          "x-ms-identifiers": []
+        }
+      },
+      "additionalProperties": false
+    },
+    "ManagedResourceGroupAssignedIdentities": {
+      "description": "Details for managed resource group assigned identities.",
+      "type": "object",
+      "properties": {
+        "principalId": {
+          "description": "Identity principal Id",
+          "type": "string",
+          "x-nullable": false
         }
       },
       "additionalProperties": false

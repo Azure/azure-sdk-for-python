@@ -50,10 +50,10 @@ class ScriptsProxy:
     """
 
     def __init__(
-            self,
-            container: "ContainerProxy",
-            client_connection: _CosmosClientConnection,
-            container_link: str
+        self,
+        container: "ContainerProxy",
+        client_connection: _CosmosClientConnection,
+        container_link: str
     ) -> None:
         self.client_connection = client_connection
         self.container_link = container_link

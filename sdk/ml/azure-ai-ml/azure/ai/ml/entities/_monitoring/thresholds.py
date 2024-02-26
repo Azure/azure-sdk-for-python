@@ -31,7 +31,7 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 class MetricThreshold(RestTranslatableMixin):
     def __init__(self, *, threshold: Optional[float] = None):
-        self.data_type = None
+        self.data_type: Any = None
         self.metric_name: Optional[str] = None
         self.threshold = threshold
 

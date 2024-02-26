@@ -17,7 +17,12 @@ from opentelemetry.util.types import Attributes
 
 from azure.monitor.opentelemetry.exporter._generated.models import ContextTagKeys, TelemetryItem
 from azure.monitor.opentelemetry.exporter._version import VERSION as ext_version
-from azure.monitor.opentelemetry.exporter._constants import _INSTRUMENTATIONS_BIT_MAP
+from azure.monitor.opentelemetry.exporter._constants import (
+    _INSTRUMENTATIONS_BIT_MAP,
+    _WEBSITE_SITE_NAME,
+    _FUNCTIONS_WORKER_RUNTIME,
+    _AKS_ARM_NAMESPACE_ID,
+)
 
 
 opentelemetry_version = ""
@@ -35,24 +40,49 @@ except ImportError:
     ).version
 
 
-def _is_on_app_service():
-    return "WEBSITE_SITE_NAME" in environ
+# Azure App Service
 
+def _is_on_app_service():
+    return environ.get(_WEBSITE_SITE_NAME) is not None
+
+def _is_on_functions():
+    return environ.get(_FUNCTIONS_WORKER_RUNTIME) is not None
 
 def _is_attach_enabled():
     return isdir("/agents/python/")
 
 
+# AKS
+
+def _is_on_aks():
+    return _AKS_ARM_NAMESPACE_ID in environ
+
+
 def _get_sdk_version_prefix():
     sdk_version_prefix = ''
-    if _is_on_app_service() and _is_attach_enabled():
-        os = 'u'
-        system = platform.system()
-        if system == "Linux":
-            os = 'l'
-        elif system == "Windows":
-            os = 'w'
-        sdk_version_prefix = "a{}_".format(os)
+    rp = 'u'
+    if _is_on_functions():
+        rp = 'f'
+    elif _is_on_app_service():
+        rp = 'a'
+    # TODO: Add VM scenario outside statsbeat
+    # elif _is_on_vm():
+    #     rp = 'v'
+    elif _is_on_aks():
+        rp = 'k'
+
+    os = 'u'
+    system = platform.system()
+    if system == "Linux":
+        os = 'l'
+    elif system == "Windows":
+        os = 'w'
+
+    attach_type = 'm'
+    if _is_attach_enabled():
+        attach_type = 'i'
+    sdk_version_prefix = "{}{}{}_".format(rp, os, attach_type)
+
     return sdk_version_prefix
 
 
@@ -161,6 +191,10 @@ def _populate_part_a_fields(resource: Resource):
         service_name = resource.attributes.get(ResourceAttributes.SERVICE_NAME)
         service_namespace = resource.attributes.get(ResourceAttributes.SERVICE_NAMESPACE)
         service_instance_id = resource.attributes.get(ResourceAttributes.SERVICE_INSTANCE_ID)
+        device_id = resource.attributes.get(ResourceAttributes.DEVICE_ID)
+        device_model = resource.attributes.get(ResourceAttributes.DEVICE_MODEL_NAME)
+        device_make = resource.attributes.get(ResourceAttributes.DEVICE_MANUFACTURER)
+        app_version = resource.attributes.get(ResourceAttributes.SERVICE_VERSION)
         if service_name:
             if service_namespace:
                 tags[ContextTagKeys.AI_CLOUD_ROLE] = str(service_namespace) + \
@@ -172,6 +206,15 @@ def _populate_part_a_fields(resource: Resource):
         else:
             tags[ContextTagKeys.AI_CLOUD_ROLE_INSTANCE] = platform.node()  # hostname default
         tags[ContextTagKeys.AI_INTERNAL_NODE_NAME] = tags[ContextTagKeys.AI_CLOUD_ROLE_INSTANCE]
+        if device_id:
+            tags[ContextTagKeys.AI_DEVICE_ID] = device_id # type: ignore
+        if device_model:
+            tags[ContextTagKeys.AI_DEVICE_MODEL] = device_model # type: ignore
+        if device_make:
+            tags[ContextTagKeys.AI_DEVICE_OEM_NAME] = device_make # type: ignore
+        if app_version:
+            tags[ContextTagKeys.AI_APPLICATION_VER] = app_version # type: ignore
+
     return tags
 
 # pylint: disable=W0622

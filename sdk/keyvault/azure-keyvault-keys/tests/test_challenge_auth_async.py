@@ -17,8 +17,8 @@ from azure.core.credentials import AccessToken
 from azure.core.exceptions import ServiceRequestError
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure.core.pipeline.transport import HttpRequest
-from azure.identity.aio import ClientSecretCredential
+from azure.core.rest import HttpRequest
+from azure.identity.aio import AzureCliCredential, AzurePowerShellCredential, ClientSecretCredential
 from azure.keyvault.keys._shared import AsyncChallengeAuthPolicy,HttpChallenge, HttpChallengeCache
 from azure.keyvault.keys._shared.client_base import DEFAULT_VERSION
 from azure.keyvault.keys.aio import KeyClient
@@ -49,9 +49,17 @@ class TestChallengeAuth(KeyVaultTestCase):
 
         # we set up a client for this method so it gets awaited, but we actually want to create a new client
         # this new client should use a credential with an initially fake tenant ID and still succeed with a real request
-        credential = ClientSecretCredential(
-            tenant_id=str(uuid4()), client_id=client_id, client_secret=client_secret, additionally_allowed_tenants="*"
-        )
+        if os.environ.get("AZURE_TEST_USE_PWSH_AUTH") == "true":
+            credential = AzurePowerShellCredential(tenant_id=str(uuid4()), additionally_allowed_tenants="*")
+        elif os.environ.get("AZURE_TEST_USE_CLI_AUTH") == "true":
+            credential = AzureCliCredential(tenant_id=str(uuid4()), additionally_allowed_tenants="*")
+        else:
+            credential = ClientSecretCredential(
+                tenant_id=str(uuid4()),
+                client_id=client_id,
+                client_secret=client_secret,
+                additionally_allowed_tenants="*",
+            )
         managed_hsm_url = kwargs.pop("managed_hsm_url", None)
         keyvault_url = kwargs.pop("vault_url", None)
         vault_url = managed_hsm_url if is_hsm else keyvault_url

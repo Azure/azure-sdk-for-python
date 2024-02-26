@@ -44,7 +44,7 @@ FILE_PATH = "../test-logs.json"
 
 # Option 1: Upload the file contents by passing in the file stream. With this option, no chunking is done, and the
 # file contents are uploaded as is through one request. Subject to size service limits.
-with open(FILE_PATH, "r") as f:
+with open(FILE_PATH, "rb") as f:
     try:
         client.upload(rule_id=os.environ["LOGS_DCR_RULE_ID"], stream_name=os.environ["LOGS_DCR_STREAM_NAME"], logs=f)
     except HttpResponseError as e:

@@ -60,7 +60,7 @@ def _enumerate_operation_combination() -> Dict[str, Union[str, Exception]]:
       * An Exception
     :rtype: Dict[str, Union[str, Exception]]
     """
-    res = {}
+    res: Dict = {}
     primitive_types_values = {
         NONE_PARAMETER_TYPE: repr(None),
         ComponentParameterTypes.BOOLEAN: repr(True),

@@ -1,10 +1,12 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-# pylint: disable=protected-access, too-many-nested-blocks
+# pylint: disable=protected-access
+from datetime import datetime, timezone
 from typing import Any, Iterable, List, Optional, Tuple, cast
 
 from azure.ai.ml._restclient.v2023_06_01_preview import AzureMachineLearningWorkspaces as ServiceClient062023Preview
+from azure.ai.ml._restclient.v2024_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012024Preview
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -24,6 +26,7 @@ from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 
 from .._restclient.v2022_10_01.models import ScheduleListViewType
+from .._restclient.v2024_01_01_preview.models import TriggerOnceRequest
 from .._utils._arm_id_utils import AMLNamedArmId, AMLVersionedArmId, is_ARM_id_for_parented_resource
 from .._utils._azureml_polling import AzureMLPolling
 from .._utils.utils import snake_to_camel
@@ -44,6 +47,7 @@ from ..constants._monitoring import (
     MonitorDatasetContext,
     MonitorSignalType,
 )
+from ..entities._schedule.schedule import ScheduleTriggerResult
 from . import DataOperations, JobOperations, OnlineDeploymentOperations
 from ._job_ops_helper import stream_logs_until_completion
 from ._operation_orchestrator import OperationOrchestrator
@@ -66,6 +70,7 @@ class ScheduleOperations(_ScopeDependentOperations):
         operation_scope: OperationScope,
         operation_config: OperationConfig,
         service_client_06_2023_preview: ServiceClient062023Preview,
+        service_client_01_2024_preview: ServiceClient012024Preview,
         all_operations: OperationsContainer,
         credential: TokenCredential,
         **kwargs: Any,
@@ -73,6 +78,9 @@ class ScheduleOperations(_ScopeDependentOperations):
         super(ScheduleOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
         self.service_client = service_client_06_2023_preview.schedules
+        # Note: Trigger once is supported since 24_01, we don't upgrade other operations' client because there are
+        # some breaking changes, for example: AzMonMonitoringAlertNotificationSettings is removed.
+        self.schedule_trigger_service_client = service_client_01_2024_preview.schedules
         self._all_operations = all_operations
         self._stream_logs_until_completion = stream_logs_until_completion
         # Dataplane service clients are lazily created as they are needed
@@ -92,14 +100,16 @@ class ScheduleOperations(_ScopeDependentOperations):
     def _job_operations(self) -> JobOperations:
         return cast(
             JobOperations,
-            self._all_operations.get_operation(AzureMLResourceType.JOB, lambda x: isinstance(x, JobOperations)),
+            self._all_operations.get_operation(  # type: ignore[misc]
+                AzureMLResourceType.JOB, lambda x: isinstance(x, JobOperations)
+            ),
         )
 
     @property
     def _online_deployment_operations(self) -> OnlineDeploymentOperations:
         return cast(
             OnlineDeploymentOperations,
-            self._all_operations.get_operation(
+            self._all_operations.get_operation(  # type: ignore[misc]
                 AzureMLResourceType.ONLINE_DEPLOYMENT, lambda x: isinstance(x, OnlineDeploymentOperations)
             ),
         )
@@ -108,7 +118,9 @@ class ScheduleOperations(_ScopeDependentOperations):
     def _data_operations(self) -> DataOperations:
         return cast(
             DataOperations,
-            self._all_operations.get_operation(AzureMLResourceType.DATA, lambda x: isinstance(x, DataOperations)),
+            self._all_operations.get_operation(  # type: ignore[misc]
+                AzureMLResourceType.DATA, lambda x: isinstance(x, DataOperations)
+            ),
         )
 
     @distributed_trace
@@ -240,7 +252,6 @@ class ScheduleOperations(_ScopeDependentOperations):
             self._resolve_monitor_schedule_arm_id(schedule)
         # Create schedule
         schedule_data = schedule._to_rest_object()  # type: ignore
-        print(schedule_data.properties.tags)
         poller = self.service_client.begin_create_or_update(
             resource_group_name=self._operation_scope.resource_group_name,
             workspace_name=self._workspace_name,
@@ -288,6 +299,30 @@ class ScheduleOperations(_ScopeDependentOperations):
         schedule = self.get(name=name)
         schedule._is_enabled = False
         return self.begin_create_or_update(schedule, **kwargs)
+
+    @distributed_trace
+    @monitor_with_activity(logger, "Schedule.Trigger", ActivityType.PUBLICAPI)
+    def trigger(
+        self,
+        name: str,
+        **kwargs: Any,
+    ) -> ScheduleTriggerResult:
+        """Trigger a schedule once.
+
+        :param name: Schedule name.
+        :type name: str
+        :return: TriggerRunSubmissionDto, or the result of cls(response)
+        :rtype: ~azure.ai.ml.entities.ScheduleTriggerResult
+        """
+        schedule_time = kwargs.pop("schedule_time", datetime.now(timezone.utc).isoformat())
+        return self.schedule_trigger_service_client.trigger(
+            name=name,
+            resource_group_name=self._operation_scope.resource_group_name,
+            workspace_name=self._workspace_name,
+            body=TriggerOnceRequest(schedule_time=schedule_time),
+            cls=lambda _, obj, __: ScheduleTriggerResult._from_rest_object(obj),
+            **kwargs,
+        )
 
     def _resolve_monitor_schedule_arm_id(  # pylint:disable=too-many-branches,too-many-statements
         self, schedule: MonitorSchedule

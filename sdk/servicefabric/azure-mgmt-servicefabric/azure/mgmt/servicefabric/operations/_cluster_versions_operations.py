@@ -38,7 +38,7 @@ def build_get_request(location: str, cluster_version: str, subscription_id: str,
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -73,7 +73,7 @@ def build_get_by_environment_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -103,7 +103,7 @@ def build_list_request(location: str, subscription_id: str, **kwargs: Any) -> Ht
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -133,7 +133,7 @@ def build_list_by_environment_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -184,8 +184,7 @@ class ClusterVersionsOperations:
 
         Gets information about an available Service Fabric cluster code version.
 
-        :param location: The location for the cluster code versions. This is different from cluster
-         location. Required.
+        :param location: The location parameter. Required.
         :type location: str
         :param cluster_version: The cluster code version. Required.
         :type cluster_version: str
@@ -256,8 +255,7 @@ class ClusterVersionsOperations:
 
         Gets information about an available Service Fabric cluster code version by environment.
 
-        :param location: The location for the cluster code versions. This is different from cluster
-         location. Required.
+        :param location: The location parameter. Required.
         :type location: str
         :param environment: The operating system of the cluster. The default means all. Known values
          are: "Windows" and "Linux". Required.
@@ -325,8 +323,7 @@ class ClusterVersionsOperations:
 
         Gets all available code versions for Service Fabric cluster resources by location.
 
-        :param location: The location for the cluster code versions. This is different from cluster
-         location. Required.
+        :param location: The location parameter. Required.
         :type location: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ClusterCodeVersionsListResult or the result of cls(response)
@@ -389,8 +386,7 @@ class ClusterVersionsOperations:
 
         Gets all available code versions for Service Fabric cluster resources by environment.
 
-        :param location: The location for the cluster code versions. This is different from cluster
-         location. Required.
+        :param location: The location parameter. Required.
         :type location: str
         :param environment: The operating system of the cluster. The default means all. Known values
          are: "Windows" and "Linux". Required.

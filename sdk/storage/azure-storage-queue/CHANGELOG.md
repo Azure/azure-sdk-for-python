@@ -4,6 +4,10 @@
 
 This version and all future versions will require Python 3.8+. Python 3.7 is no longer supported.
 
+### Features Added
+- The `services` parameter has been added to the `generate_account_sas` API, which enables the ability to generate SAS
+tokens to be used with multiple services. By default, the SAS token service scope will default to the current service.
+
 ### Bugs Fixed
 - Bumped dependency of `typing-extensions` to `>=4.6.0` to avoid potential `TypeError` with `typing.TypeVar` on
 Python 3.12.

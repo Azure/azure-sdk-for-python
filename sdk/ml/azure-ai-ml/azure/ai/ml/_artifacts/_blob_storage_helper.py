@@ -10,10 +10,10 @@ import sys
 import time
 import uuid
 from pathlib import Path, PurePosixPath
-from typing import TYPE_CHECKING, Dict, List, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
-from typing_extensions import Literal
 from colorama import Fore
+from typing_extensions import Literal
 
 from azure.ai.ml._artifacts._constants import (
     ARTIFACT_ORIGIN,
@@ -23,6 +23,7 @@ from azure.ai.ml._artifacts._constants import (
     MAX_CONCURRENCY,
     UPLOAD_CONFIRMATION,
 )
+from azure.ai.ml._azure_environments import _get_cloud_details
 from azure.ai.ml._utils._asset_utils import (
     AssetNotChangedError,
     IgnoreFile,
@@ -32,7 +33,6 @@ from azure.ai.ml._utils._asset_utils import (
     upload_directory,
     upload_file,
 )
-from azure.ai.ml._azure_environments import _get_cloud_details
 from azure.ai.ml.constants._common import STORAGE_AUTH_MISMATCH_ERROR
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MlException, ValidationException
 from azure.core.exceptions import ResourceNotFoundError
@@ -58,7 +58,7 @@ class BlobStorageClient:
         self.total_file_count = 1
         self.uploaded_file_count = 0
         self.overwrite = False
-        self.indicator_file = None
+        self.indicator_file: Any = None
         self.legacy = False
         self.name = None
         self.version = None
@@ -142,12 +142,12 @@ class BlobStorageClient:
                 time.sleep(0.5)
             self._set_confirmation_metadata(name, version)
         except AssetNotChangedError:
-            name = self.name
-            version = self.version
+            name = str(self.name)
+            version = str(self.version)
             if self.legacy:
                 dest = dest.replace(ARTIFACT_ORIGIN, LEGACY_ARTIFACT_DIRECTORY)
 
-        artifact_info = {
+        artifact_info: Dict = {
             "remote path": dest,
             "name": name,
             "version": version,

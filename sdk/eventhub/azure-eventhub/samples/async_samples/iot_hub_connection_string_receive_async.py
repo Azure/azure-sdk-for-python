@@ -96,7 +96,7 @@ def convert_iothub_to_eventhub_conn_str(iothub_conn_str):
         )
     except Exception as exp:
         raise ValueError(
-            "{} is not an invalid IoT Hub connection string. The underlying exception is {}".format(
+            "{} is an invalid IoT Hub connection string. The underlying exception is {}".format(
                 iothub_conn_str,
                 exp,
             )

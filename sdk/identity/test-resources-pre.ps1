@@ -22,10 +22,21 @@ param (
     [ValidatePattern('^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$')]
     [string] $SubscriptionId,
 
+    [Parameter()]
+    [hashtable] $AdditionalParameters = @{},
+
     [Parameter(ParameterSetName = 'Provisioner', Mandatory = $true)]
     [ValidateNotNullOrEmpty()]
     [string] $TenantId
 )
+
+$ProvisionLiveResources = $AdditionalParameters['ProvisionLiveResources']
+Write-Host "ProvisionLiveResources: $ProvisionLiveResources"
+if ($CI -and !$ProvisionLiveResources) {
+    Write-Host "Skipping test resource pre-provisioning."
+    return
+}
+$templateFileParameters['provisionLiveResources'] = $true
 
 Import-Module -Name $PSScriptRoot/../../eng/common/scripts/X509Certificate2 -Verbose
 

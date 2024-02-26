@@ -7,12 +7,7 @@
 import logging
 from typing import Callable, Dict, Optional, TypeVar, cast
 
-from azure.ai.ml.exceptions import (
-    ErrorCategory,
-    ErrorTarget,
-    ValidationErrorType,
-    ValidationException,
-)
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 T = TypeVar("T")
 module_logger = logging.getLogger(__name__)
@@ -77,13 +72,13 @@ class OperationScope(object):
     def workspace_name(self) -> Optional[str]:
         return self._workspace_name
 
-    @property
-    def registry_name(self) -> Optional[str]:
-        return self._registry_name
-
     @workspace_name.setter
     def workspace_name(self, value: str) -> None:
         self._workspace_name = value
+
+    @property
+    def registry_name(self) -> Optional[str]:
+        return self._registry_name
 
     @registry_name.setter
     def registry_name(self, value: str) -> None:
@@ -94,7 +89,7 @@ class _ScopeDependentOperations(object):
     def __init__(self, operation_scope: OperationScope, operation_config: OperationConfig):
         self._operation_scope = operation_scope
         self._operation_config = operation_config
-        self._scope_kwargs = {
+        self._scope_kwargs: Dict = {
             "resource_group_name": self._operation_scope.resource_group_name,
         }
 
@@ -128,7 +123,7 @@ class OperationsContainer(object):
         self._all_operations = {}
 
     @property
-    def all_operations(self) -> Dict[str, _ScopeDependentOperations]:
+    def all_operations(self) -> Dict:
         return self._all_operations
 
     def add(self, name: str, operation: _ScopeDependentOperations) -> None:

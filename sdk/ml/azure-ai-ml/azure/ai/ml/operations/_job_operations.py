@@ -29,8 +29,8 @@ from azure.ai.ml._restclient.runhistory import AzureMachineLearningWorkspaces as
 from azure.ai.ml._restclient.runhistory.models import Run
 from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient022023Preview
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase, ListViewType, UserIdentity
-from azure.ai.ml._restclient.v2023_08_01_preview.models import JobBase as JobBase_2308
 from azure.ai.ml._restclient.v2023_08_01_preview.models import JobType as RestJobType
+from azure.ai.ml._restclient.v2024_01_01_preview.models import JobBase as JobBase_2401
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -175,7 +175,7 @@ class JobOperations(_ScopeDependentOperations):
             self._all_operations, self._operation_scope, self._operation_config
         )  # pylint: disable=line-too-long
 
-        self.service_client_08_2023_preview = kwargs.pop("service_client_08_2023_preview", None)
+        self.service_client_01_2024_preview = kwargs.pop("service_client_01_2024_preview", None)
         self._kwargs = kwargs
 
         self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
@@ -184,7 +184,7 @@ class JobOperations(_ScopeDependentOperations):
     def _component_operations(self) -> ComponentOperations:
         return cast(
             ComponentOperations,
-            self._all_operations.get_operation(
+            self._all_operations.get_operation(  # type: ignore[misc]
                 AzureMLResourceType.COMPONENT, lambda x: isinstance(x, ComponentOperations)
             ),
         )
@@ -193,14 +193,16 @@ class JobOperations(_ScopeDependentOperations):
     def _compute_operations(self) -> ComputeOperations:
         return cast(
             ComputeOperations,
-            self._all_operations.get_operation(AzureMLResourceType.COMPUTE, lambda x: isinstance(x, ComputeOperations)),
+            self._all_operations.get_operation(  # type: ignore[misc]
+                AzureMLResourceType.COMPUTE, lambda x: isinstance(x, ComputeOperations)
+            ),
         )
 
     @property
     def _virtual_cluster_operations(self) -> VirtualClusterOperations:
         return cast(
             VirtualClusterOperations,
-            self._all_operations.get_operation(
+            self._all_operations.get_operation(  # type: ignore[misc]
                 AzureMLResourceType.VIRTUALCLUSTER, lambda x: isinstance(x, VirtualClusterOperations)
             ),
         )
@@ -693,7 +695,7 @@ class JobOperations(_ScopeDependentOperations):
             # request for submitting to ES. Once we request to ES and start the run, we
             # need to put the same body to MFE to append user tags etc.
             if rest_job_resource.properties.job_type == RestJobType.PIPELINE:
-                job_object = self._get_job_2308(rest_job_resource.name)
+                job_object = self._get_job_2401(rest_job_resource.name)
             else:
                 job_object = self._get_job(rest_job_resource.name)
             if result.properties.tags is not None:
@@ -718,10 +720,10 @@ class JobOperations(_ScopeDependentOperations):
         service_client_operation = self._operation_2023_02_preview
         # Upgrade api from 2023-04-01-preview to 2023-08-01 for pipeline job
         if rest_job_resource.properties.job_type == RestJobType.PIPELINE:
-            service_client_operation = self.service_client_08_2023_preview.jobs
+            service_client_operation = self.service_client_01_2024_preview.jobs
 
         if rest_job_resource.properties.job_type == RestJobType.SWEEP:
-            service_client_operation = self.service_client_08_2023_preview.jobs
+            service_client_operation = self.service_client_01_2024_preview.jobs
 
         result = service_client_operation.create_or_update(
             id=rest_job_resource.name,
@@ -736,7 +738,7 @@ class JobOperations(_ScopeDependentOperations):
     def _archive_or_restore(self, name: str, is_archived: bool) -> None:
         job_object = self._get_job(name)
         if job_object.properties.job_type == RestJobType.PIPELINE:
-            job_object = self._get_job_2308(name)
+            job_object = self._get_job_2401(name)
         if _is_pipeline_child_job(job_object):
             raise PipelineChildJobError(job_id=job_object.id)
         job_object.properties.is_archived = is_archived
@@ -936,7 +938,7 @@ class JobOperations(_ScopeDependentOperations):
             module_logger.info("Downloading artifact %s to %s", uri, destination)
             download_artifact_from_aml_uri(
                 uri=uri,
-                destination=destination,
+                destination=destination,  # type: ignore[arg-type]
                 datastore_operation=self._datastore_operations,
             )
 
@@ -1027,10 +1029,10 @@ class JobOperations(_ScopeDependentOperations):
             **self._kwargs,
         )
 
-    # Upgrade api from 2023-04-01-preview to 2023-08-01 for pipeline job
-    # We can remove this function once `_get_job` function has also been upgraded to 2023-08-01 api
-    def _get_job_2308(self, name: str) -> JobBase_2308:
-        service_client_operation = self.service_client_08_2023_preview.jobs
+    # Upgrade api from 2023-04-01-preview to 2024-01-01-preview for pipeline job
+    # We can remove this function once `_get_job` function has also been upgraded to the same version with pipeline
+    def _get_job_2401(self, name: str) -> JobBase_2401:
+        service_client_operation = self.service_client_01_2024_preview.jobs
         return service_client_operation.get(
             id=name,
             resource_group_name=self._operation_scope.resource_group_name,
@@ -1439,12 +1441,19 @@ class JobOperations(_ScopeDependentOperations):
         :return: The provided SweepJob, with resolved fields
         :rtype: SweepJob
         """
-        if job.trial.code is not None and not is_ARM_id_for_resource(job.trial.code, AzureMLResourceType.CODE):
-            job.trial.code = resolver(
+        if (
+            job.trial is not None
+            and job.trial.code is not None
+            and not is_ARM_id_for_resource(job.trial.code, AzureMLResourceType.CODE)
+        ):
+            job.trial.code = resolver(  # type: ignore[assignment]
                 Code(base_path=job._base_path, path=job.trial.code),
                 azureml_type=AzureMLResourceType.CODE,
             )
-        job.trial.environment = resolver(job.trial.environment, azureml_type=AzureMLResourceType.ENVIRONMENT)
+        if job.trial is not None:
+            job.trial.environment = resolver(  # type: ignore[assignment]
+                job.trial.environment, azureml_type=AzureMLResourceType.ENVIRONMENT
+            )
         job.compute = self._resolve_compute_id(resolver, job.compute)
         return job
 

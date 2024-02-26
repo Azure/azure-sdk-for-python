@@ -30,6 +30,7 @@ from ._deserialize import process_storage_error, is_file_path
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
     from datetime import datetime
+    from ._models import PathProperties
 
 
 class FileSystemClient(StorageAccountHostsMixin):
@@ -540,11 +541,12 @@ class FileSystemClient(StorageAccountHostsMixin):
         }
 
     @distributed_trace
-    def get_paths(self, path=None, # type: Optional[str]
-                  recursive=True,  # type: Optional[bool]
-                  max_results=None,  # type: Optional[int]
-                  **kwargs):
-        # type: (...) -> ItemPaged[PathProperties]
+    def get_paths(
+        self, path: Optional[str] = None,
+        recursive: Optional[bool] = True,
+        max_results: Optional[int] = None,
+        **kwargs: Any
+    ) -> ItemPaged["PathProperties"]:
         """Returns a generator to list the paths(could be files or directories) under the specified file system.
         The generator will lazily follow the continuation tokens returned by
         the service.

@@ -14,8 +14,8 @@ from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Union, 
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
-from azure.ai.ml._restclient.v2022_10_01 import AzureMachineLearningWorkspaces as ServiceClient102022
-from azure.ai.ml._restclient.v2022_10_01.models import ComponentVersion, ListViewType
+from azure.ai.ml._restclient.v2024_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012024
+from azure.ai.ml._restclient.v2024_01_01_preview.models import ComponentVersion, ListViewType
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -91,7 +91,7 @@ class ComponentOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client: Union[ServiceClient102022, ServiceClient102021Dataplane],
+        service_client: Union[ServiceClient012024, ServiceClient102021Dataplane],
         all_operations: OperationsContainer,
         preflight_operation: Optional[DeploymentsOperations] = None,
         **kwargs: Dict,
@@ -112,7 +112,7 @@ class ComponentOperations(_ScopeDependentOperations):
 
     @property
     def _code_operations(self) -> CodeOperations:
-        res: CodeOperations = self._all_operations.get_operation(
+        res: CodeOperations = self._all_operations.get_operation(  # type: ignore[misc]
             AzureMLResourceType.CODE, lambda x: isinstance(x, CodeOperations)
         )
         return res
@@ -121,7 +121,7 @@ class ComponentOperations(_ScopeDependentOperations):
     def _environment_operations(self) -> EnvironmentOperations:
         return cast(
             EnvironmentOperations,
-            self._all_operations.get_operation(
+            self._all_operations.get_operation(  # type: ignore[misc]
                 AzureMLResourceType.ENVIRONMENT,
                 lambda x: isinstance(x, EnvironmentOperations),
             ),
@@ -131,7 +131,7 @@ class ComponentOperations(_ScopeDependentOperations):
     def _workspace_operations(self) -> WorkspaceOperations:
         return cast(
             WorkspaceOperations,
-            self._all_operations.get_operation(
+            self._all_operations.get_operation(  # type: ignore[misc]
                 AzureMLResourceType.WORKSPACE,
                 lambda x: isinstance(x, WorkspaceOperations),
             ),
@@ -141,7 +141,9 @@ class ComponentOperations(_ScopeDependentOperations):
     def _job_operations(self) -> Any:
         from ._job_operations import JobOperations
 
-        return self._all_operations.get_operation(AzureMLResourceType.JOB, lambda x: isinstance(x, JobOperations))
+        return self._all_operations.get_operation(  # type: ignore[misc]
+            AzureMLResourceType.JOB, lambda x: isinstance(x, JobOperations)
+        )
 
     @monitor_with_activity(logger, "Component.List", ActivityType.PUBLICAPI)
     def list(

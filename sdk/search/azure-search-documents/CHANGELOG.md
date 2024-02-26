@@ -1,5 +1,19 @@
 # Release History
 
+## 11.6.0b2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+- `SearchIndexerSkillset`, `SearchField`, `SearchIndex`, `AnalyzeTextOptions`, `SearchResourceEncryptionKey`, `SynonymMap`, `SearchIndexerDataSourceConnection` are no longer subclasses of `_serialization.Model`.
+
+### Bugs Fixed
+
+- Fixed the issue that `SearchIndexerSkillset`, `SearchField`, `SearchIndex`, `AnalyzeTextOptions`, `SearchResourceEncryptionKey`, `SynonymMap`, `SearchIndexerDataSourceConnection` could not be serialized.
+
+### Other Changes
+
 ## 11.6.0b1 (2024-01-31)
 
 ### Features Added
@@ -65,6 +79,8 @@
 - `query_language` and `query_speller` are not available for `Search` method in this stable release.
 - `alias` operations are not available in this stable release.
 - `AzureOpenAIEmbeddingSkill`, `AzureOpenAIParameters` and `AzureOpenAIVectorizer` are not available in 11.4.0.
+- Renamed `vector_search_profile` to `vector_search_profile_name` in `SearchField`.
+- Renamed `SemanticSettings` to `SemanticSearch`.
 
 ### Other Changes
 
