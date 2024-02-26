@@ -22,13 +22,15 @@
 /sdk/ @lmazuel
 
 # Core
-# AzureSdkOwners: @xiangyan99 @kashifkhan @pvaneck
-# ServiceLabel: %Core.Http
 # PRLabel: %Core.Http
 /sdk/core/corehttp/                                                  @pvaneck @lmazuel @annatisch @johanste @xiangyan99 @iscai-msft @kashifkhan
 
+# AzureSdkOwners: @xiangyan99 @kashifkhan @pvaneck
+# ServiceLabel: %Core.Http
+
 # AzureSdkOwners: @xiangyan99 @kashifkhan
 # ServiceLabel: %Azure.Core
+
 # PRLabel: %Azure.Core
 /sdk/core/                                                           @lmazuel @annatisch @johanste
 /sdk/core/azure-core/                                                @lmazuel @annatisch @johanste @xiangyan99 @tjprescott @iscai-msft @kashifkhan
@@ -52,6 +54,7 @@
 /sdk/identity/                                                       @pvaneck @xiangyan99 @Azure/azure-sdk-write-identity
 
 # AzureSdkOwners: @kashifkhan
+# ServiceOwners: @kasun04
 # ServiceLabel: %Event Hubs
 # PRLabel: %Event Hubs
 /sdk/eventhub/                                                       @annatisch @kashifkhan @swathipil @l0lawrence
@@ -306,7 +309,7 @@
 /sdk/mixedreality/azure-mixedreality-authentication/                 @RamonArguelles
 /sdk/remoterendering/                                                @FlorianBorn71
 
-# ServiceOwners: @trrwilson
+# ServiceOwners: @trwilson
 # AzureSdkOwners: @kristapratico
 # ServiceLabel: %OpenAI
 # PRLabel: %OpenAI
