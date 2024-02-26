@@ -76,7 +76,9 @@ setup(
         "tiktoken>=0.3,<1",
         "mmh3",
         "requests",
-        "azure-search-documents==11.4.0b11"
+        "azure-search-documents==11.4.0b11",
+        "numpy",
+        "tqdm"
     ],
     project_urls={
         "Bug Reports": "https://github.com/Azure/azure-sdk-for-python/issues",
