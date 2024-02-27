@@ -4,7 +4,7 @@ The Azure Monitor Distro of [Opentelemetry Python][ot_sdk_python] provides multi
 
 If you require more advanced configurations than the ones available below or if you have complex telemetry scenarios, we recommend instrumenting directly with the [Azure Monitor OpenTelemetry exporters][azure_monitor_opentelemetry_exporters].
 
-Prior to using this SDK, please read and understand [Data Collection Basics](https://learn.microsoft.com/en-us/azure/azure-monitor/app/opentelemetry-overview?tabs=python), especially the section on [telemetry types](https://learn.microsoft.com/en-us/azure/azure-monitor/app/opentelemetry-overview?tabs=python#telemetry-types). OpenTelemetry terminology differs from Application Insights terminology so it is important to understand the way the telemetry types map to each other.
+Prior to using this SDK, please read and understand [Data Collection Basics](https://learn.microsoft.com/azure/azure-monitor/app/opentelemetry-overview?tabs=python), especially the section on [telemetry types](https://learn.microsoft.com/azure/azure-monitor/app/opentelemetry-overview?tabs=python#telemetry-types). OpenTelemetry terminology differs from Application Insights terminology so it is important to understand the way the telemetry types map to each other.
 
 This distro automatically installs the following libraries:
 
