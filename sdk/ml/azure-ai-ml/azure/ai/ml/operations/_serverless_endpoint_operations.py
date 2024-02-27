@@ -15,6 +15,12 @@ from azure.ai.ml._scope_dependent_operations import (
 )
 from azure.core.polling import LROPoller
 from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml._restclient.v2024_01_01_preview.models import (
+    MarketplaceSubscription,
+    MarketplaceSubscriptionProperties,
+)
+from azure.ai.ml.entities._endpoint.serverless_endpoint import ServerlessEndpoint
+from azure.core.exceptions import HttpResponseError
 
 
 class ServerlessEndpointOperations(_ScopeDependentOperations):
@@ -26,15 +32,39 @@ class ServerlessEndpointOperations(_ScopeDependentOperations):
     ):
         super().__init__(operation_scope, operation_config)
         self._service_client = service_client.serverless_endpoints
+        self._marketplace_subscriptions = service_client.marketplace_subscriptions
 
     @experimental
     def begin_create_or_update(self, endpoint: "ServerlessEndpoint") -> LROPoller["ServerlessEndpoint"]:
-        return self._service_client.begin_create_or_update(
-            self._resource_group_name,
-            self._workspace_name,
-            endpoint.name,
-            endpoint,
-        )
+        rest_serverless_endpoint = endpoint._to_rest_object()
+        try:
+            return self._service_client.begin_create_or_update(
+                self._resource_group_name,
+                self._workspace_name,
+                endpoint.name,
+                rest_serverless_endpoint,
+            )
+        except HttpResponseError as e:
+            if "The requested model requires an active Azure Marketplace subscription for publisher" in e.message:
+                marketplace_subscription = MarketplaceSubscription(
+                    properties=MarketplaceSubscriptionProperties(
+                        model_id=endpoint.properties.model_settings.model_id,
+                    )
+                )
+                self._marketplace_subscriptions.begin_create_or_update(
+                    self._resource_group_name,
+                    self._workspace_name,
+                    endpoint.name,
+                    marketplace_subscription
+                ).wait()
+                return self._service_client.begin_create_or_update(
+                    self._resource_group_name,
+                    self._workspace_name,
+                    endpoint.name,
+                    rest_serverless_endpoint,
+                )
+            else:
+                raise e
 
     @experimental
     def get(self, name: str) -> "ServerlessEndpoint":
