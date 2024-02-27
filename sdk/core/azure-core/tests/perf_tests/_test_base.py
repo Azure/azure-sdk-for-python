@@ -199,7 +199,9 @@ class _ServiceTest(PerfStressTest):
             """\n- 'policy1,policy2': Comma-separated list of policies, such as 'RetryPolicy,HttpLoggingPolicy'""",
             default=None,
         )
-        parser.add_argument("--use-entra-id", action="store_true", help="Use Microsoft Entra ID authentication instead of shared key.")
+        parser.add_argument(
+            "--use-entra-id", action="store_true", help="Use Microsoft Entra ID authentication instead of shared key."
+        )
 
 
 class _BlobTest(_ServiceTest):
