@@ -4,7 +4,6 @@
 
 from os import PathLike
 from typing import Any, AnyStr, Dict, IO, Optional
-from .._resource import Resource
 
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import KEY
