@@ -74,7 +74,7 @@ setup(
         "fsspec>=2023.3",
         "openai>=0.27.8",
         "tiktoken>=0.3,<1",
-        "mmh3",
+        "mmh3>4",
         "requests>=2.31.0",
         "azure-search-documents==11.4.0b11",
         "numpy>=1.21.0",
