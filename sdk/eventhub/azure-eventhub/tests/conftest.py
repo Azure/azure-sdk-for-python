@@ -110,8 +110,30 @@ def timeout_factor(uamqp_transport):
 def fake_span():
     return FakeSpan
 
+
 @pytest.fixture(scope="session")
-def resource_group():
+def get_credential():
+    use_pwsh = os.environ.get("AZURE_TEST_USE_PWSH_AUTH", "false")
+    use_cli = os.environ.get("AZURE_TEST_USE_CLI_AUTH", "false")
+
+    credential = EnvironmentCredential()
+    # User-based authentication through Azure PowerShell, if requested
+    if use_pwsh.lower() == "true":
+        log.info(
+            "Environment variable AZURE_TEST_USE_PWSH_AUTH set to 'true'. Using AzurePowerShellCredential."
+        )
+        from azure.identity import AzurePowerShellCredential
+        credential = AzurePowerShellCredential()
+    # User-based authentication through Azure CLI, if requested
+    if use_cli.lower() == "true":
+        log.info("Environment variable AZURE_TEST_USE_CLI_AUTH set to 'true'. Using AzureCliCredential.")
+        from azure.identity import AzureCliCredential
+        credential = AzureCliCredential()
+    return credential
+
+
+@pytest.fixture(scope="session")
+def resource_group(get_credential):
     try:
         SUBSCRIPTION_ID = os.environ["AZURE_SUBSCRIPTION_ID"]
     except KeyError:
@@ -119,7 +141,7 @@ def resource_group():
         return
     base_url = os.environ.get("EVENTHUB_RESOURCE_MANAGER_URL", "https://management.azure.com/")
     credential_scopes = ["{}.default".format(base_url)]
-    resource_client = ResourceManagementClient(EnvironmentCredential(), SUBSCRIPTION_ID, base_url=base_url, credential_scopes=credential_scopes)
+    resource_client = ResourceManagementClient(get_credential, SUBSCRIPTION_ID, base_url=base_url, credential_scopes=credential_scopes)
     resource_group_name = RES_GROUP_PREFIX + str(uuid.uuid4())
     parameters = {"location": LOCATION}
     expiry = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=1)
@@ -138,7 +160,7 @@ def resource_group():
 
 
 @pytest.fixture(scope="session")
-def eventhub_namespace(resource_group):
+def eventhub_namespace(resource_group, get_credential):
     try:
         SUBSCRIPTION_ID = os.environ["AZURE_SUBSCRIPTION_ID"]
     except KeyError:
@@ -146,7 +168,7 @@ def eventhub_namespace(resource_group):
         return
     base_url = os.environ.get("EVENTHUB_RESOURCE_MANAGER_URL", "https://management.azure.com/")
     credential_scopes = ["{}.default".format(base_url)]
-    resource_client = EventHubManagementClient(EnvironmentCredential(), SUBSCRIPTION_ID, base_url=base_url, credential_scopes=credential_scopes)
+    resource_client = EventHubManagementClient(get_credential, SUBSCRIPTION_ID, base_url=base_url, credential_scopes=credential_scopes)
     namespace_name = NAMESPACE_PREFIX + str(uuid.uuid4())
     try:
         namespace = resource_client.namespaces.begin_create_or_update(
@@ -165,7 +187,7 @@ def eventhub_namespace(resource_group):
 
 
 @pytest.fixture()
-def live_eventhub(resource_group, eventhub_namespace):  # pylint: disable=redefined-outer-name
+def live_eventhub(resource_group, eventhub_namespace, get_credential):  # pylint: disable=redefined-outer-name
     try:
         SUBSCRIPTION_ID = os.environ["AZURE_SUBSCRIPTION_ID"]
     except KeyError:
@@ -173,7 +195,7 @@ def live_eventhub(resource_group, eventhub_namespace):  # pylint: disable=redefi
         return
     base_url = os.environ.get("EVENTHUB_RESOURCE_MANAGER_URL", "https://management.azure.com/")
     credential_scopes = ["{}.default".format(base_url)]
-    resource_client = EventHubManagementClient(EnvironmentCredential(), SUBSCRIPTION_ID, base_url=base_url, credential_scopes=credential_scopes)
+    resource_client = EventHubManagementClient(get_credential, SUBSCRIPTION_ID, base_url=base_url, credential_scopes=credential_scopes)
     eventhub_name = EVENTHUB_PREFIX + str(uuid.uuid4())
     eventhub_ns_name, connection_string, key_name, primary_key = eventhub_namespace
     eventhub_endpoint_suffix = os.environ.get("EVENT_HUB_ENDPOINT_SUFFIX", ".servicebus.windows.net")
@@ -200,7 +222,7 @@ def live_eventhub(resource_group, eventhub_namespace):  # pylint: disable=redefi
             warnings.warn(UserWarning("eventhub teardown failed"))
 
 @pytest.fixture()
-def resource_mgmt_client():
+def resource_mgmt_client(get_credential):
     try:
         SUBSCRIPTION_ID = os.environ["AZURE_SUBSCRIPTION_ID"]
     except KeyError:
@@ -208,7 +230,7 @@ def resource_mgmt_client():
         return
     base_url = os.environ.get("EVENTHUB_RESOURCE_MANAGER_URL", "https://management.azure.com/")
     credential_scopes = ["{}.default".format(base_url)]
-    resource_client = EventHubManagementClient(EnvironmentCredential(), SUBSCRIPTION_ID, base_url=base_url, credential_scopes=credential_scopes)
+    resource_client = EventHubManagementClient(get_credential, SUBSCRIPTION_ID, base_url=base_url, credential_scopes=credential_scopes)
     yield resource_client
 
 @pytest.fixture()
