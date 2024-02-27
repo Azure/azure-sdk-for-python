@@ -32,7 +32,7 @@ class AzureOpenAIFineTuningSchema(FineTuningVerticalSchema):
     def post_load_processing(self, data: Dict[str, Any], **kwargs) -> Dict[str, Any]:
         """Post load processing for the schema.
 
-        :param Dictionary of parsed values from the yaml.
+        :param data: Dictionary of parsed values from the yaml.
         :type Dict[str, Any]
 
         :return Dictionary of parsed values from the yaml.

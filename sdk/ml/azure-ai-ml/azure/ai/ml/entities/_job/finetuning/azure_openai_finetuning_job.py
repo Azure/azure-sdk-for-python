@@ -57,7 +57,7 @@ class AzureOpenAIFineTuningJob(FineTuningVertical):
     def hyperparameters(self) -> AzureOpenAIHyperparameters:
         """Get hyperparameters.
 
-        :return:
+        :return: Hyperparameters for finetuning the model.
         :rtype: AzureOpenAIHyperparameters
         """
         return self._hyperparameters
