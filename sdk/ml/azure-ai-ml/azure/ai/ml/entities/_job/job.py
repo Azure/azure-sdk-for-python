@@ -17,6 +17,7 @@ from azure.ai.ml._restclient.runhistory.models import Run
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase, JobService
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobType as RestJobType
 from azure.ai.ml._restclient.v2024_01_01_preview.models import JobBase as JobBase_2401
+from azure.ai.ml._restclient.v2024_01_01_preview.models import JobType as RestJobType_20240101Preview
 from azure.ai.ml._utils._html_utils import make_link, to_html
 from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, CommonYamlFields
@@ -210,6 +211,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
         from azure.ai.ml.entities._job.import_job import ImportJob
         from azure.ai.ml.entities._job.pipeline.pipeline_job import PipelineJob
         from azure.ai.ml.entities._job.sweep.sweep_job import SweepJob
+        from azure.ai.ml.entities._job.finetuning.finetuning_job import FineTuningJob
 
         job_type: Optional[Type["Job"]] = None
         type_in_override = find_type_in_override(params_override)
@@ -226,6 +228,8 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
             job_type = AutoMLJob
         elif type_str == JobType.PIPELINE:
             job_type = PipelineJob
+        elif type_str == JobType.FINE_TUNING:
+            job_type = FineTuningJob
         else:
             msg = f"Unsupported job type: {type_str}."
             raise ValidationException(
@@ -291,6 +295,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
         from azure.ai.ml.entities._job.base_job import _BaseJob
         from azure.ai.ml.entities._job.import_job import ImportJob
         from azure.ai.ml.entities._job.sweep.sweep_job import SweepJob
+        from azure.ai.ml.entities._job.finetuning.finetuning_job import FineTuningJob
 
         try:
             if isinstance(obj, Run):
@@ -313,6 +318,8 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
                 return SweepJob._load_from_rest(obj)
             if obj.properties.job_type == RestJobType.AUTO_ML:
                 return AutoMLJob._load_from_rest(obj)
+            if obj.properties.job_type == RestJobType_20240101Preview.FINE_TUNING:
+                return FineTuningJob._load_from_rest(obj)
             if obj.properties.job_type == RestJobType.PIPELINE:
                 res_pipeline: Job = PipelineJob._load_from_rest(obj)
                 return res_pipeline
