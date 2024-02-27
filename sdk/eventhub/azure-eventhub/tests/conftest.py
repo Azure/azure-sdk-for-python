@@ -116,20 +116,19 @@ def get_credential():
     use_pwsh = os.environ.get("AZURE_TEST_USE_PWSH_AUTH", "false")
     use_cli = os.environ.get("AZURE_TEST_USE_CLI_AUTH", "false")
 
-    credential = EnvironmentCredential()
     # User-based authentication through Azure PowerShell, if requested
     if use_pwsh.lower() == "true":
         log.info(
             "Environment variable AZURE_TEST_USE_PWSH_AUTH set to 'true'. Using AzurePowerShellCredential."
         )
         from azure.identity import AzurePowerShellCredential
-        credential = AzurePowerShellCredential()
+        return AzurePowerShellCredential()
     # User-based authentication through Azure CLI, if requested
-    if use_cli.lower() == "true":
+    elif use_cli.lower() == "true":
         log.info("Environment variable AZURE_TEST_USE_CLI_AUTH set to 'true'. Using AzureCliCredential.")
         from azure.identity import AzureCliCredential
-        credential = AzureCliCredential()
-    return credential
+        return AzureCliCredential()
+    return EnvironmentCredential()
 
 
 @pytest.fixture(scope="session")
