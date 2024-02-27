@@ -1,3 +1,9 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
+
+# pylint: disable=protected-access,no-member
+
 from typing import Optional
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml._restclient.v2024_01_01_preview.models import (
@@ -16,15 +22,18 @@ class AzureOpenAIHyperparameters(RestTranslatableMixin):
         batch_size: Optional[int] = None,
         learning_rate_multiplier: Optional[float] = None,
         n_epochs: Optional[int] = None,
-        **kwargs: Optional[dict],
     ):
-        """
-        Initialize AzureOpenAIHyperparameters.
-        param batch_size: The batch size for training.
+        """Initialize AzureOpenAIHyperparameters.
+
+        param batch_size: Number of examples in each batch.
+                          A larger batch size means that model parameters are updated less
+                          frequently, but with lower variance. Defaults to None.
         type batch_size: int
-        param learning_rate_multiplier: The learning rate multiplier.
+        param learning_rate_multiplier: Scaling factor for the learning rate.
+                                        A smaller learning rate may be useful to avoid overfitting.
         type learning_rate_multiplier: float
-        param n_epochs: The number of epochs.
+        param n_epochs: The number of epochs to train the model for.
+                        An epoch refers to one full cycle through the training dataset.
         type n_epochs: int
         """
         self._batch_size = batch_size

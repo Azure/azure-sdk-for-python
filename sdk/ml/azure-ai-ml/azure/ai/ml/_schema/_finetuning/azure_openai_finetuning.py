@@ -4,6 +4,9 @@
 
 # pylint: disable=unused-argument
 
+from marshmallow import post_load
+from typing import Any, Dict
+
 from azure.ai.ml._schema.core.fields import StringTransformedEnum
 from azure.ai.ml._restclient.v2024_01_01_preview.models import ModelProvider
 from azure.ai.ml._schema._finetuning.azure_openai_hyperparameters import AzureOpenAIHyperparametersSchema
@@ -13,22 +16,27 @@ from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml._schema.core.fields import NestedField
 from azure.ai.ml.constants._job.finetuning import FineTuningConstants
 from azure.ai.ml._utils._experimental import experimental
-from typing import Any, Dict
-
-from marshmallow import post_load
-
-# This is meant to match the yaml definition NOT the models defined in _restclient
 
 
 @experimental
 class AzureOpenAIFineTuningSchema(FineTuningVerticalSchema):
+    # This is meant to match the yaml definition NOT the models defined in _restclient
+
     model_provider = StringTransformedEnum(
         required=True, allowed_values=ModelProvider.AZURE_OPEN_AI, casing_transform=camel_to_snake
     )
     hyperparameters = NestedField(AzureOpenAIHyperparametersSchema(), data_key=FineTuningConstants.HyperParameters)
 
     @post_load
-    def post_load_processing(self, data, **kwargs) -> Dict[str, Any]:
+    def post_load_processing(self, data: Dict[str, Any], **kwargs) -> Dict[str, Any]:
+        """Post load processing for the schema.
+
+        Args:
+            data (_type_): Dictionary of parsed values from the yaml.
+
+        Returns:
+            Dict[str, Any]: Dictionary of parsed values from the yaml.
+        """
         data.pop("model_provider")
         hyperaparameters = data.pop("hyperparameters", None)
 

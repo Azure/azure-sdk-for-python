@@ -1116,7 +1116,9 @@ class JobOperations(_ScopeDependentOperations):
         :param job: the job resource entity
         :type job: FineTuningJob
         """
-        if isinstance(job, FineTuningJob):
+        from azure.ai.ml.entities._job.finetuning.finetuning_vertical import FineTuningVertical
+
+        if isinstance(job, FineTuningVertical):
             # self._resolve_job_input(job.model, job._base_path)
             self._resolve_job_input(job.training_data, job._base_path)
             if job.validation_data is not None:
@@ -1345,7 +1347,7 @@ class JobOperations(_ScopeDependentOperations):
         elif isinstance(job, PipelineJob):
             job = self._resolve_arm_id_for_pipeline_job(job, resolver)
         elif isinstance(job, FineTuningJob):
-            job = job
+            pass
         else:
             msg = f"Non supported job type: {type(job)}"
             raise ValidationException(

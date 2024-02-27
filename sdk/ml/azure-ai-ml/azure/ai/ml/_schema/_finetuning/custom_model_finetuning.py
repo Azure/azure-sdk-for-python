@@ -4,20 +4,19 @@
 
 # pylint: disable=unused-argument
 
+from marshmallow import fields, post_load
+from typing import Any, Dict
+
 from azure.ai.ml._restclient.v2024_01_01_preview.models import ModelProvider
 from azure.ai.ml._schema._finetuning.finetuning_vertical import FineTuningVerticalSchema
 from azure.ai.ml._schema.core.fields import StringTransformedEnum
 from azure.ai.ml._utils._experimental import experimental
-from marshmallow import fields
-from typing import Any, Dict
-
-from marshmallow import post_load
-
-# This is meant to match the yaml definition NOT the models defined in _restclient
 
 
 @experimental
 class CustomModelFineTuningSchema(FineTuningVerticalSchema):
+    # This is meant to match the yaml definition NOT the models defined in _restclient
+
     model_provider = StringTransformedEnum(required=True, allowed_values=ModelProvider.CUSTOM)
     hyperparameters = fields.Dict(keys=fields.Str(), values=fields.Str(allow_none=True))
 

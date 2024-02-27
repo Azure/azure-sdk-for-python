@@ -24,7 +24,6 @@ import uuid
 @pytest.mark.usefixtures("recorded_test")
 @pytest.mark.skipif(condition=not is_live(), reason="Datasets downloaded by test are too large to record reliably")
 class TestCustomModelFineTuningJob(AzureRecordedTestCase):
-
     def test_custom_model_finetuning_job(
         self, text_completion_dataset: Tuple[Input, Input], mlflow_model_llama: Input, client: MLClient
     ) -> None:

@@ -62,7 +62,6 @@ def expected_custom_model_finetuning_job_full(
 
 
 class TestCustomModelFineTuningJobSchema:
-
     def _validate_finetuning_job(self, finetuning_job: FineTuningJob):
         assert isinstance(finetuning_job, FineTuningJob)
         assert finetuning_job.training_data and isinstance(finetuning_job.training_data, Input)

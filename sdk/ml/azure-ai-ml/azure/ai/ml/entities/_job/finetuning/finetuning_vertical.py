@@ -1,4 +1,11 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
+
+# pylint: disable=protected-access
+
 from typing import Any, Optional, cast
+
 from azure.ai.ml import Input
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._restclient.v2024_01_01_preview.models import (

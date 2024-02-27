@@ -1,6 +1,13 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
+
+# pylint: disable=protected-access
+
+from typing import Any, Dict
+
 from azure.ai.ml.entities._job.job import Job
 from azure.ai.ml.entities._job.job_io_mixin import JobIOMixin
-from typing import Any, Dict
 from azure.ai.ml._restclient.v2024_01_01_preview.models import (
     ModelProvider as RestModelProvider,
     JobBase as RestJobBase,

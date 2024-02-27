@@ -1,3 +1,11 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
+
+# pylint: disable=protected-access,no-member
+
+from typing import Any, Dict
+
 from azure.ai.ml._restclient.v2024_01_01_preview.models import (
     ModelProvider as RestModelProvider,
     CustomModelFineTuning as RestCustomModelFineTuningVertical,
@@ -5,7 +13,7 @@ from azure.ai.ml._restclient.v2024_01_01_preview.models import (
     JobBase as RestJobBase,
 )
 from azure.ai.ml.entities._job._input_output_helpers import from_rest_data_outputs, to_rest_data_outputs
-from typing import Any, Dict
+
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.entities._job.finetuning.finetuning_vertical import FineTuningVertical
 from azure.ai.ml.entities._util import load_from_dict

@@ -67,7 +67,6 @@ def expected_azure_openai_finetuning_job_full(
 
 
 class TestAzureOpenAIFineTuningJobSchema:
-
     def _validate_finetuning_job(self, finetuning_job: FineTuningJob):
         assert isinstance(finetuning_job, FineTuningJob)
         assert finetuning_job.training_data and isinstance(finetuning_job.training_data, Input)
