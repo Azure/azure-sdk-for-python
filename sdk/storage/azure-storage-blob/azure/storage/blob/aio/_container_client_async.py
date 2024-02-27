@@ -5,23 +5,25 @@
 # --------------------------------------------------------------------------
 # pylint: disable=too-many-lines, invalid-overridden-method
 
+from datetime import datetime
 import functools
 import warnings
 from typing import (  # pylint: disable=unused-import
-    Any, AnyStr, AsyncIterable, AsyncIterator, Dict, List, IO, Iterable, Optional, overload, Union,
+    Any, AnyStr, AsyncIterable, AsyncIterator, cast, Dict, List, IO, Iterable, Optional, overload, Union,
     TYPE_CHECKING
 )
 from urllib.parse import urlparse, unquote
 from typing_extensions import Self
 
-from azure.core.async_paging import AsyncItemPaged
+from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.pipeline import AsyncPipeline
+from azure.core.pipeline.transport import AsyncHttpResponse  # pylint: disable=C4756
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
-from .._shared.base_client import StorageAccountHostsMixin, parse_connection_str
-from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
+from .._shared.base_client import StorageAccountHostsMixin
+from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper, parse_connection_str
 from .._shared.policies_async import ExponentialRetry
 from .._shared.request_handlers import add_metadata_headers, serialize_iso
 from .._shared.response_handlers import (
@@ -51,16 +53,16 @@ from ._models import FilteredBlobPaged
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
     from azure.core.credentials_async import AsyncTokenCredential
-    from azure.core.pipeline.transport import AsyncHttpResponse  # pylint: disable=C4756
-    from datetime import datetime
-    from .._models import ( # pylint: disable=unused-import
+    from ._blob_service_client_async import BlobServiceClient
+    from .._models import (
         AccessPolicy,
         StandardBlobTier,
         PremiumPageBlobTier,
-        PublicAccess)
+        PublicAccess
+    )
 
 
-class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: disable=too-many-public-methods
+class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, StorageEncryptionMixin):  # type: ignore [misc]  # pylint: disable=too-many-public-methods
     """A client to interact with a specific container, although that container
     may not yet exist.
 
@@ -124,11 +126,11 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
             :caption: Creating the container client directly.
     """
     def __init__(
-            self, account_url: str,
-            container_name: str,
-            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
-            **kwargs: Any
-        ) -> None:
+        self, account_url: str,
+        container_name: str,
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
+        **kwargs: Any
+    ) -> None:
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
         parsed_url, sas_token = _parse_url(account_url=account_url, container_name=container_name)
 
@@ -143,7 +145,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
 
     def _build_generated_client(self) -> AzureBlobStorage:
         client = AzureBlobStorage(self.url, base_url=self.url, pipeline=self._pipeline)
-        client._config.version = self._api_version # pylint: disable=protected-access
+        client._config.version = self._api_version  # type: ignore [assignment] # pylint: disable=protected-access
         return client
 
     def _format_url(self, hostname):
@@ -156,10 +158,10 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
 
     @classmethod
     def from_container_url(
-            cls, container_url: str,
-            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
-            **kwargs: Any
-        ) -> Self:
+        cls, container_url: str,
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
+        **kwargs: Any
+    ) -> Self:
         """Create ContainerClient from a container url.
 
         :param str container_url:
@@ -204,11 +206,11 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
 
     @classmethod
     def from_connection_string(
-            cls, conn_str: str,
-            container_name: str,
-            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
-            **kwargs: Any
-        ) -> Self:
+        cls, conn_str: str,
+        container_name: str,
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
+        **kwargs: Any
+    ) -> Self:
         """Create ContainerClient from a Connection String.
 
         :param str conn_str:
@@ -248,8 +250,11 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
             account_url, container_name=container_name, credential=credential, **kwargs)
 
     @distributed_trace_async
-    async def create_container(self, metadata=None, public_access=None, **kwargs):
-        # type: (Optional[Dict[str, str]], Optional[Union[PublicAccess, str]], **Any) -> Dict[str, Union[str, datetime]]
+    async def create_container(
+        self, metadata: Optional[Dict[str, str]] = None,
+        public_access: Optional[Union["PublicAccess", str]] = None,
+        **kwargs: Any
+    ) -> Dict[str, Union[str, datetime]]:
         """
         Creates a new container under the specified account. If the container
         with the same name already exists, the operation fails.
@@ -301,8 +306,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
             process_storage_error(error)
 
     @distributed_trace_async
-    async def _rename_container(self, new_name, **kwargs):
-        # type: (str, **Any) -> ContainerClient
+    async def _rename_container(self, new_name: str, **kwargs: Any) -> "ContainerClient":
         """Renames a container.
 
         Operation is successful only if the source container exists.
@@ -339,9 +343,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
             process_storage_error(error)
 
     @distributed_trace_async
-    async def delete_container(
-            self, **kwargs):
-        # type: (Any) -> None
+    async def delete_container(self, **kwargs: Any) -> None:
         """
         Marks the specified container for deletion. The container and any blobs
         contained within it are later deleted during garbage collection.
@@ -400,10 +402,10 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
 
     @distributed_trace_async
     async def acquire_lease(
-            self, lease_duration=-1,  # type: int
-            lease_id=None,  # type: Optional[str]
-            **kwargs):
-        # type: (...) -> BlobLeaseClient
+        self, lease_duration: int =-1,
+        lease_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> BlobLeaseClient:
         """
         Requests a new lease. If the container does not have an active lease,
         the Blob service creates a lease on the container and returns a new
@@ -459,8 +461,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
         return lease
 
     @distributed_trace_async
-    async def get_account_information(self, **kwargs):
-        # type: (**Any) -> Dict[str, str]
+    async def get_account_information(self, **kwargs: Any) -> Dict[str, str]:
         """Gets information related to the storage account.
 
         The information can also be retrieved if the user has a SAS to a container or blob.
@@ -475,8 +476,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
             process_storage_error(error)
 
     @distributed_trace_async
-    async def get_container_properties(self, **kwargs):
-        # type: (**Any) -> ContainerProperties
+    async def get_container_properties(self, **kwargs: Any) -> ContainerProperties:
         """Returns all user-defined metadata and system properties for the specified
         container. The data returned does not include the container's list of blobs.
 
@@ -517,8 +517,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
         return response # type: ignore
 
     @distributed_trace_async
-    async def exists(self, **kwargs):
-        # type: (**Any) -> bool
+    async def exists(self, **kwargs: Any) -> bool:
         """
         Returns True if a container exists and returns False otherwise.
 
@@ -541,11 +540,10 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
                 return False
 
     @distributed_trace_async
-    async def set_container_metadata( # type: ignore
-            self, metadata=None,  # type: Optional[Dict[str, str]]
-            **kwargs
-        ):
-        # type: (...) -> Dict[str, Union[str, datetime]]
+    async def set_container_metadata(
+        self, metadata: Optional[Dict[str, str]] = None,
+        **kwargs: Any
+    ) -> Dict[str, Union[str, datetime]]:
         """Sets one or more user-defined name-value pairs for the specified
         container. Each call to this operation replaces all existing metadata
         attached to the container. To remove all metadata from the container,
@@ -600,8 +598,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
             process_storage_error(error)
 
     @distributed_trace
-    def _get_blob_service_client(self):  # pylint: disable=client-method-missing-kwargs
-        # type: (...) -> BlobServiceClient
+    def _get_blob_service_client(self) -> "BlobServiceClient":  # pylint: disable=client-method-missing-kwargs
         """Get a client to interact with the container's parent service account.
 
         Defaults to current container's credentials.
@@ -622,7 +619,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
         if not isinstance(self._pipeline._transport, AsyncTransportWrapper): # pylint: disable = protected-access
             _pipeline = AsyncPipeline(
                 transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
-                policies=self._pipeline._impl_policies # pylint: disable = protected-access
+                policies=self._pipeline._impl_policies #type: ignore [arg-type] # pylint: disable = protected-access
             )
         else:
             _pipeline = self._pipeline  # pylint: disable = protected-access
@@ -635,8 +632,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
 
 
     @distributed_trace_async
-    async def get_container_access_policy(self, **kwargs):
-        # type: (Any) -> Dict[str, Any]
+    async def get_container_access_policy(self, **kwargs: Any) -> Dict[str, Any]:
         """Gets the permissions for the specified container.
         The permissions indicate whether container data may be accessed publicly.
 
@@ -680,10 +676,10 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
 
     @distributed_trace_async
     async def set_container_access_policy(
-            self, signed_identifiers,  # type: Dict[str, AccessPolicy]
-            public_access=None,  # type: Optional[Union[str, PublicAccess]]
-            **kwargs  # type: Any
-        ):  # type: (...) -> Dict[str, Union[str, datetime]]
+        self, signed_identifiers: Dict[str, "AccessPolicy"],
+        public_access: Optional[Union[str, "PublicAccess"]] = None,
+        **kwargs: Any
+    ) -> Dict[str, Union[str, datetime]]:
         """Sets the permissions for the specified container or stored access
         policies that may be used with Shared Access Signatures. The permissions
         indicate whether blobs in a container may be accessed publicly.
@@ -746,20 +742,23 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
         mod_conditions = get_modify_conditions(kwargs)
         access_conditions = get_access_conditions(lease)
         try:
-            return await self._client.container.set_access_policy(
+            return cast(Dict[str, Union[str, datetime]], await self._client.container.set_access_policy(
                 container_acl=signed_identifiers or None,
                 timeout=timeout,
                 access=public_access,
                 lease_access_conditions=access_conditions,
                 modified_access_conditions=mod_conditions,
                 cls=return_response_headers,
-                **kwargs)
+                **kwargs))
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
-    def list_blobs(self, name_starts_with=None, include=None, **kwargs):
-        # type: (Optional[str], Optional[Union[str, List[str]]], **Any) -> AsyncItemPaged[BlobProperties]
+    def list_blobs(
+        self, name_starts_with: Optional[str] = None,
+        include: Optional[Union[str, List[str]]] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged[BlobProperties]:
         """Returns a generator to list the blobs under the specified container.
         The generator will lazily follow the continuation tokens returned by
         the service.
@@ -850,12 +849,11 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
 
     @distributed_trace
     def walk_blobs(
-            self, name_starts_with=None, # type: Optional[str]
-            include=None, # type: Optional[Union[List[str], str]]
-            delimiter="/", # type: str
-            **kwargs # type: Optional[Any]
-        ):
-        # type: (...) -> AsyncItemPaged[BlobProperties]
+        self, name_starts_with: Optional[str] = None,
+        include: Optional[Union[List[str], str]] = None,
+        delimiter: str ="/",
+        **kwargs: Any
+    ) -> AsyncItemPaged[BlobProperties]:
         """Returns a generator to list the blobs under the specified container.
         The generator will lazily follow the continuation tokens returned by
         the service. This operation will list blobs in accordance with a hierarchy,
@@ -902,10 +900,9 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
 
     @distributed_trace
     def find_blobs_by_tags(
-        self, filter_expression,  # type: str
-        **kwargs  # type: Optional[Any]
-    ):
-        # type: (...) -> AsyncItemPaged[FilteredBlob]
+        self, filter_expression: str,
+        **kwargs: Any
+    ) -> AsyncItemPaged[FilteredBlob]:
         """Returns a generator to list the blobs under the specified container whose tags
         match the given search expression.
         The generator will lazily follow the continuation tokens returned by
@@ -938,13 +935,13 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
 
     @distributed_trace_async
     async def upload_blob(
-            self, name: str,
-            data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[AnyStr]],
-            blob_type: Union[str, BlobType] = BlobType.BlockBlob,
-            length: Optional[int] = None,
-            metadata: Optional[Dict[str, str]] = None,
-            **kwargs
-        ) -> BlobClient:
+        self, name: str,
+        data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[AnyStr]],
+        blob_type: Union[str, BlobType] = BlobType.BLOCKBLOB,
+        length: Optional[int] = None,
+        metadata: Optional[Dict[str, str]] = None,
+        **kwargs
+    ) -> BlobClient:
         """Creates a new blob from a data source with automatic chunking.
 
         :param str name: The blob with which to interact.
@@ -1082,9 +1079,9 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
 
     @distributed_trace_async
     async def delete_blob(
-            self, blob: str,
-            delete_snapshots: Optional[str] = None,
-            **kwargs: Any
+        self, blob: str,
+        delete_snapshots: Optional[str] = None,
+        **kwargs: Any
     ) -> None:
         """Marks the specified blob or snapshot for deletion.
 
@@ -1162,34 +1159,34 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
 
     @overload
     async def download_blob(
-            self, blob: str,
-            offset: int = None,
-            length: int = None,
-            *,
-            encoding: str,
-            **kwargs: Any
+        self, blob: str,
+        offset: Optional[int] = None,
+        length: Optional[int] = None,
+        *,
+        encoding: str,
+        **kwargs: Any
     ) -> StorageStreamDownloader[str]:
         ...
 
     @overload
     async def download_blob(
-            self, blob: str,
-            offset: int = None,
-            length: int = None,
-            *,
-            encoding: None = None,
-            **kwargs: Any
+        self, blob: str,
+        offset: Optional[int] = None,
+        length: Optional[int] = None,
+        *,
+        encoding: None = None,
+        **kwargs: Any
     ) -> StorageStreamDownloader[bytes]:
         ...
 
     @distributed_trace_async
     async def download_blob(
-            self, blob: str,
-            offset: int = None,
-            length: int = None,
-            *,
-            encoding: Optional[str] = None,
-            **kwargs: Any
+        self, blob: str,
+        offset: Optional[int] = None,
+        length: Optional[int] = None,
+        *,
+        encoding: Optional[str] = None,
+        **kwargs: Any
     ) -> StorageStreamDownloader:
         """Downloads a blob to the StorageStreamDownloader. The readall() method must
         be used to read all the content or readinto() must be used to download the blob into
@@ -1290,7 +1287,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
     async def delete_blobs(
         self, *blobs: Union[str, Dict[str, Any], BlobProperties],
         **kwargs: Any
-    ) -> AsyncIterator["AsyncHttpResponse"]:
+    ) -> AsyncIterator[AsyncHttpResponse]:
         """Marks the specified blobs or snapshots for deletion.
 
         The blobs are later deleted during garbage collection.
@@ -1379,7 +1376,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
                 :caption: Deleting multiple blobs.
         """
         if len(blobs) == 0:
-            return iter([])
+            return AsyncList([])
 
         reqs, options = _generate_delete_blobs_options(
             self._query_str,
@@ -1389,14 +1386,14 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
             **kwargs
         )
 
-        return await self._batch_send(*reqs, **options)
+        return cast(AsyncIterator[AsyncHttpResponse], await self._batch_send(*reqs, **options))
 
     @distributed_trace_async
     async def set_standard_blob_tier_blobs(
         self, standard_blob_tier: Union[str, 'StandardBlobTier'],
         *blobs: Union[str, Dict[str, Any], BlobProperties],
         **kwargs: Any
-    ) -> AsyncIterator["AsyncHttpResponse"]:
+    ) -> AsyncIterator[AsyncHttpResponse]:
         """This operation sets the tier on block blobs.
 
         A block blob's tier determines Hot/Cool/Archive storage type.
@@ -1466,14 +1463,14 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
             *blobs,
             **kwargs)
 
-        return await self._batch_send(*reqs, **options)
+        return cast(AsyncIterator[AsyncHttpResponse], await self._batch_send(*reqs, **options))
 
     @distributed_trace_async
     async def set_premium_page_blob_tier_blobs(
         self, premium_page_blob_tier: Union[str, 'PremiumPageBlobTier'],
         *blobs: Union[str, Dict[str, Any], BlobProperties],
         **kwargs: Any
-    ) -> AsyncIterator["AsyncHttpResponse"]:
+    ) -> AsyncIterator[AsyncHttpResponse]:
         """Sets the page blob tiers on the blobs. This API is only supported for page blobs on premium accounts.
 
         The maximum number of blobs that can be updated in a single request is 256.
@@ -1518,20 +1515,20 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
         :rtype: asynciterator[~azure.core.pipeline.transport.AsyncHttpResponse]
         """
         reqs, options = _generate_set_tiers_options(
-            client=self._client,
-            query_str=self._query_str,
-            container_name=self.container_name,
-            blob_tier=premium_page_blob_tier,
-            blobs=blobs,
+            self._query_str,
+            self.container_name,
+            premium_page_blob_tier,
+            self._client,
+            *blobs,
             **kwargs)
 
-        return await self._batch_send(*reqs, **options)
+        return cast(AsyncIterator[AsyncHttpResponse], await self._batch_send(*reqs, **options))
 
     def get_blob_client(
-            self, blob: str,
-            snapshot: str = None,
-            *,
-            version_id: Optional[str] = None
+        self, blob: str,
+        snapshot: Optional[str] = None,
+        *,
+        version_id: Optional[str] = None
     ) -> BlobClient:
         """Get a client to interact with the specified blob.
 
@@ -1562,13 +1559,12 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
                 "Please use 'BlobProperties.name' or any other str input type instead.",
                 DeprecationWarning
             )
-        try:
             blob_name = blob.get('name')
-        except AttributeError:
+        else:
             blob_name = blob
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
-            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+            policies=self._pipeline._impl_policies  # type: ignore [arg-type] # pylint: disable = protected-access
         )
         return BlobClient(
             self.url, container_name=self.container_name, blob_name=blob_name, snapshot=snapshot,

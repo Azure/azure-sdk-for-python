@@ -6,7 +6,7 @@
 # pylint: disable=too-few-public-methods, too-many-instance-attributes
 # pylint: disable=super-init-not-called, too-many-lines
 
-from typing import Any, Callable, Dict, List, Optional, Union, TYPE_CHECKING
+from typing import Callable, Dict, List, Optional, TYPE_CHECKING
 
 from azure.core.async_paging import AsyncPageIterator
 from azure.core.exceptions import HttpResponseError
