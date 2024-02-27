@@ -14,6 +14,8 @@
 
 ### Other Changes
 
+- Default to API version `V2024_03_01_PREVIEW`
+
 ## 11.6.0b1 (2024-01-31)
 
 ### Features Added
