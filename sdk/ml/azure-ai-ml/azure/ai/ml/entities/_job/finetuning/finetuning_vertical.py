@@ -95,7 +95,10 @@ class FineTuningVertical(FineTuningJob):
 
     @property
     def model_provider(self) -> str:
-        """The model provider."""
+        """The model provider.
+        :return: The model provider.
+        :rtype: str
+        """
         return self._model_provider
 
     @model_provider.setter
@@ -126,7 +129,7 @@ class FineTuningVertical(FineTuningJob):
         self._training_data = training_data
 
     @property
-    def validation_data(self) -> Input:
+    def validation_data(self) -> Optional[Input]:
         """Get validation data.
 
         :return: Validation data input

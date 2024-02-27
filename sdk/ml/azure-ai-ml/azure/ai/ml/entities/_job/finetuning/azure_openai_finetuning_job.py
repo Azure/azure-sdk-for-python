@@ -39,6 +39,7 @@ class AzureOpenAIFineTuningJob(FineTuningVertical):
                 category=ErrorCategory.USER_ERROR,
                 target=ErrorTarget.JOB,
                 message="Hyperparameters if provided should of type AzureOpenAIHyperparameters",
+                no_personal_data_message="Hyperparameters if provided should of type AzureOpenAIHyperparameters",
             )
 
         self._hyperparameters = hyperparameters
