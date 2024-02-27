@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=unused-argument
+
 from os import PathLike
 from typing import Any, AnyStr, Dict, IO, Optional
 
@@ -48,7 +50,7 @@ class ServerlessEndpoint(Endpoint):
             ),
             tags=self.tags,
             sku=RestSku(name="Consumption"),
-            location=self.location
+            location=self.location,
         )
 
     @classmethod
@@ -61,11 +63,17 @@ class ServerlessEndpoint(Endpoint):
             auth_mode=obj.properties.auth_mode,
             provisioning_state=obj.properties.provisioning_state,
             model_id=obj.properties.model_settings.model_id,
-            marketplace_subscription=obj.properties.marketplace_subscription_id
+            marketplace_subscription=obj.properties.marketplace_subscription_id,
         )
 
     @classmethod
-    def _load(cls, data: Dict | None = None, yaml_path: PathLike | str | None = None, params_override: list | None = None, **kwargs: Any) -> "ServerlessEndpoint":
+    def _load(
+        cls,
+        data: Dict | None = None,
+        yaml_path: PathLike | str | None = None,
+        params_override: list | None = None,
+        **kwargs: Any,
+    ) -> "ServerlessEndpoint":
         pass
 
     def dump(self, dest: str | PathLike | IO[AnyStr] | None = None, **kwargs: Any) -> Dict:

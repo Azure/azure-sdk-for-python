@@ -30,7 +30,7 @@ class ServerlessEndpointOperations(_ScopeDependentOperations):
         operation_scope: OperationScope,
         operation_config: OperationConfig,
         service_client: ServiceClient202401Preview,
-        all_operations: OperationsContainer
+        all_operations: OperationsContainer,
     ):
         super().__init__(operation_scope, operation_config)
         self._service_client = service_client.serverless_endpoints
@@ -53,7 +53,7 @@ class ServerlessEndpointOperations(_ScopeDependentOperations):
                 self._workspace_name,
                 endpoint.name,
                 rest_serverless_endpoint,
-                cls=lambda response, deserialized, headers: ServerlessEndpoint._from_rest_object(deserialized)
+                cls=lambda response, deserialized, headers: ServerlessEndpoint._from_rest_object(deserialized),
             )
         except HttpResponseError as e:
             if "The requested model requires an active Azure Marketplace subscription for publisher" in e.message:
@@ -63,10 +63,7 @@ class ServerlessEndpointOperations(_ScopeDependentOperations):
                     )
                 )
                 self._marketplace_subscriptions.begin_create_or_update(
-                    self._resource_group_name,
-                    self._workspace_name,
-                    endpoint.name,
-                    marketplace_subscription
+                    self._resource_group_name, self._workspace_name, endpoint.name, marketplace_subscription
                 ).wait()
                 return self._service_client.begin_create_or_update(
                     self._resource_group_name,
@@ -84,7 +81,7 @@ class ServerlessEndpointOperations(_ScopeDependentOperations):
             self._resource_group_name,
             self._workspace_name,
             name,
-            cls=lambda response, deserialized, headers: ServerlessEndpoint._from_rest_object(deserialized)
+            cls=lambda response, deserialized, headers: ServerlessEndpoint._from_rest_object(deserialized),
         )
 
     @experimental
@@ -92,7 +89,7 @@ class ServerlessEndpointOperations(_ScopeDependentOperations):
         return self._service_client.list(
             self._resource_group_name,
             self._workspace_name,
-            cls=lambda objs: [ServerlessEndpoint._from_rest_object(obj) for obj in objs]
+            cls=lambda objs: [ServerlessEndpoint._from_rest_object(obj) for obj in objs],
         )
 
     @experimental
