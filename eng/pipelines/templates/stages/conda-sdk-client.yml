@@ -138,7 +138,6 @@ variables:
 stages:
   - stage: Build_Universal_Dependencies
     displayName: Build Universal Conda Packages
-    dependsOn: Build_Dependencies
     jobs:
     - job: 'Build'
       timeoutInMinutes: 240
