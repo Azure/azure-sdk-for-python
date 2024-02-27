@@ -7,10 +7,6 @@ parameters:
   displayName: 'msal'
   type: boolean
   default: true
-- name: release_uamqp
-  displayName: 'uamqp'
-  type: boolean
-  default: true
 - name: release_msal_extensions
   displayName: 'msal-extensions'
   type: boolean
@@ -107,10 +103,6 @@ parameters:
   displayName: 'azure-messaging-webpubsubservice'
   type: boolean
   default: true
-- name: release_azure_monitor_opentelemetry
-  displayName: 'azure-monitor-opentelemetry'
-  type: boolean
-  default: true
 - name: release_azure_monitor_query
   displayName: 'azure-monitor-query'
   type: boolean
@@ -144,24 +136,6 @@ variables:
   - template: /eng/pipelines/templates/variables/globals.yml
 
 stages:
-  - stage: Build_Dependencies
-    displayName: Build Platform-Specific Binary Conda Packages
-    jobs:
-    - template: ../jobs/build-conda-dependencies.yml
-      parameters:
-        CondaArtifacts:
-        - name: uamqp
-          common_root: uamqp
-          in_batch: true
-          conda_py_versions:
-          - "38"
-          - "39"
-          - "310"
-          - "311"
-          checkout:
-          - package: uamqp
-            download_uri: https://files.pythonhosted.org/packages/3e/eb/5c84e91d423d225dfb55c25aa74c10524b677170d2c35e374d9e8217d881/uamqp-1.6.8.tar.gz
-
   - stage: Build_Universal_Dependencies
     displayName: Build Universal Conda Packages
     dependsOn: Build_Dependencies
@@ -388,12 +362,6 @@ stages:
                 checkout:
                 - package: azure-messaging-webpubsubservice
                   version: 1.0.1
-              - name : azure-monitor-opentelemetry
-                service: monitor
-                in_batch: ${{ parameters.release_azure_monitor_opentelemetry }}
-                checkout:
-                - package: azure-monitor-opentelemetry
-                  version: 1.2.0
               - name : azure-monitor-ingestion
                 service: monitor
                 in_batch: ${{ parameters.release_azure_monitor_ingestion }}
