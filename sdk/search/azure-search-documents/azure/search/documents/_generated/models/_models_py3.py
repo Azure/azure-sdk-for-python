@@ -741,159 +741,6 @@ class QueryResultDocumentSemanticField(_serialization.Model):
         self.state = None
 
 
-class VectorQuery(_serialization.Model):
-    """The query parameters for vector and hybrid search queries.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    VectorizableTextQuery, RawVectorQuery
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar kind: The kind of vector query being performed. Required. Known values are: "vector" and
-     "text".
-    :vartype kind: str or ~azure.search.documents.models.VectorQueryKind
-    :ivar k_nearest_neighbors: Number of nearest neighbors to return as top hits.
-    :vartype k_nearest_neighbors: int
-    :ivar fields: Vector Fields of type Collection(Edm.Single) to be included in the vector
-     searched.
-    :vartype fields: str
-    :ivar exhaustive: When true, triggers an exhaustive k-nearest neighbor search across all
-     vectors within the vector index. Useful for scenarios where exact matches are critical, such as
-     determining ground truth values.
-    :vartype exhaustive: bool
-    :ivar oversampling: Oversampling factor. Minimum value is 1. It overrides the
-     'defaultOversampling' parameter configured in the index definition. It can be set only when
-     'rerankWithOriginalVectors' is true. This parameter is only permitted when a compression method
-     is used on the underlying vector field.
-    :vartype oversampling: float
-    """
-
-    _validation = {
-        "kind": {"required": True},
-    }
-
-    _attribute_map = {
-        "kind": {"key": "kind", "type": "str"},
-        "k_nearest_neighbors": {"key": "k", "type": "int"},
-        "fields": {"key": "fields", "type": "str"},
-        "exhaustive": {"key": "exhaustive", "type": "bool"},
-        "oversampling": {"key": "oversampling", "type": "float"},
-    }
-
-    _subtype_map = {"kind": {"text": "VectorizableTextQuery", "vector": "RawVectorQuery"}}
-
-    def __init__(
-        self,
-        *,
-        k_nearest_neighbors: Optional[int] = None,
-        fields: Optional[str] = None,
-        exhaustive: Optional[bool] = None,
-        oversampling: Optional[float] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword k_nearest_neighbors: Number of nearest neighbors to return as top hits.
-        :paramtype k_nearest_neighbors: int
-        :keyword fields: Vector Fields of type Collection(Edm.Single) to be included in the vector
-         searched.
-        :paramtype fields: str
-        :keyword exhaustive: When true, triggers an exhaustive k-nearest neighbor search across all
-         vectors within the vector index. Useful for scenarios where exact matches are critical, such as
-         determining ground truth values.
-        :paramtype exhaustive: bool
-        :keyword oversampling: Oversampling factor. Minimum value is 1. It overrides the
-         'defaultOversampling' parameter configured in the index definition. It can be set only when
-         'rerankWithOriginalVectors' is true. This parameter is only permitted when a compression method
-         is used on the underlying vector field.
-        :paramtype oversampling: float
-        """
-        super().__init__(**kwargs)
-        self.kind: Optional[str] = None
-        self.k_nearest_neighbors = k_nearest_neighbors
-        self.fields = fields
-        self.exhaustive = exhaustive
-        self.oversampling = oversampling
-
-
-class RawVectorQuery(VectorQuery):
-    """The query parameters to use for vector search when a raw vector value is provided.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar kind: The kind of vector query being performed. Required. Known values are: "vector" and
-     "text".
-    :vartype kind: str or ~azure.search.documents.models.VectorQueryKind
-    :ivar k_nearest_neighbors: Number of nearest neighbors to return as top hits.
-    :vartype k_nearest_neighbors: int
-    :ivar fields: Vector Fields of type Collection(Edm.Single) to be included in the vector
-     searched.
-    :vartype fields: str
-    :ivar exhaustive: When true, triggers an exhaustive k-nearest neighbor search across all
-     vectors within the vector index. Useful for scenarios where exact matches are critical, such as
-     determining ground truth values.
-    :vartype exhaustive: bool
-    :ivar oversampling: Oversampling factor. Minimum value is 1. It overrides the
-     'defaultOversampling' parameter configured in the index definition. It can be set only when
-     'rerankWithOriginalVectors' is true. This parameter is only permitted when a compression method
-     is used on the underlying vector field.
-    :vartype oversampling: float
-    :ivar vector: The vector representation of a search query. Required.
-    :vartype vector: list[float]
-    """
-
-    _validation = {
-        "kind": {"required": True},
-        "vector": {"required": True},
-    }
-
-    _attribute_map = {
-        "kind": {"key": "kind", "type": "str"},
-        "k_nearest_neighbors": {"key": "k", "type": "int"},
-        "fields": {"key": "fields", "type": "str"},
-        "exhaustive": {"key": "exhaustive", "type": "bool"},
-        "oversampling": {"key": "oversampling", "type": "float"},
-        "vector": {"key": "vector", "type": "[float]"},
-    }
-
-    def __init__(
-        self,
-        *,
-        vector: List[float],
-        k_nearest_neighbors: Optional[int] = None,
-        fields: Optional[str] = None,
-        exhaustive: Optional[bool] = None,
-        oversampling: Optional[float] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword k_nearest_neighbors: Number of nearest neighbors to return as top hits.
-        :paramtype k_nearest_neighbors: int
-        :keyword fields: Vector Fields of type Collection(Edm.Single) to be included in the vector
-         searched.
-        :paramtype fields: str
-        :keyword exhaustive: When true, triggers an exhaustive k-nearest neighbor search across all
-         vectors within the vector index. Useful for scenarios where exact matches are critical, such as
-         determining ground truth values.
-        :paramtype exhaustive: bool
-        :keyword oversampling: Oversampling factor. Minimum value is 1. It overrides the
-         'defaultOversampling' parameter configured in the index definition. It can be set only when
-         'rerankWithOriginalVectors' is true. This parameter is only permitted when a compression method
-         is used on the underlying vector field.
-        :paramtype oversampling: float
-        :keyword vector: The vector representation of a search query. Required.
-        :paramtype vector: list[float]
-        """
-        super().__init__(
-            k_nearest_neighbors=k_nearest_neighbors,
-            fields=fields,
-            exhaustive=exhaustive,
-            oversampling=oversampling,
-            **kwargs
-        )
-        self.kind: str = "vector"
-        self.vector = vector
-
-
 class RequestOptions(_serialization.Model):
     """Parameter group.
 
@@ -2123,6 +1970,80 @@ class SuggestResult(_serialization.Model):
         self.text = None
 
 
+class VectorQuery(_serialization.Model):
+    """The query parameters for vector and hybrid search queries.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    VectorizableTextQuery, VectorizedQuery
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar kind: The kind of vector query being performed. Required. Known values are: "vector" and
+     "text".
+    :vartype kind: str or ~azure.search.documents.models.VectorQueryKind
+    :ivar k_nearest_neighbors: Number of nearest neighbors to return as top hits.
+    :vartype k_nearest_neighbors: int
+    :ivar fields: Vector Fields of type Collection(Edm.Single) to be included in the vector
+     searched.
+    :vartype fields: str
+    :ivar exhaustive: When true, triggers an exhaustive k-nearest neighbor search across all
+     vectors within the vector index. Useful for scenarios where exact matches are critical, such as
+     determining ground truth values.
+    :vartype exhaustive: bool
+    :ivar oversampling: Oversampling factor. Minimum value is 1. It overrides the
+     'defaultOversampling' parameter configured in the index definition. It can be set only when
+     'rerankWithOriginalVectors' is true. This parameter is only permitted when a compression method
+     is used on the underlying vector field.
+    :vartype oversampling: float
+    """
+
+    _validation = {
+        "kind": {"required": True},
+    }
+
+    _attribute_map = {
+        "kind": {"key": "kind", "type": "str"},
+        "k_nearest_neighbors": {"key": "k", "type": "int"},
+        "fields": {"key": "fields", "type": "str"},
+        "exhaustive": {"key": "exhaustive", "type": "bool"},
+        "oversampling": {"key": "oversampling", "type": "float"},
+    }
+
+    _subtype_map = {"kind": {"text": "VectorizableTextQuery", "vector": "VectorizedQuery"}}
+
+    def __init__(
+        self,
+        *,
+        k_nearest_neighbors: Optional[int] = None,
+        fields: Optional[str] = None,
+        exhaustive: Optional[bool] = None,
+        oversampling: Optional[float] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword k_nearest_neighbors: Number of nearest neighbors to return as top hits.
+        :paramtype k_nearest_neighbors: int
+        :keyword fields: Vector Fields of type Collection(Edm.Single) to be included in the vector
+         searched.
+        :paramtype fields: str
+        :keyword exhaustive: When true, triggers an exhaustive k-nearest neighbor search across all
+         vectors within the vector index. Useful for scenarios where exact matches are critical, such as
+         determining ground truth values.
+        :paramtype exhaustive: bool
+        :keyword oversampling: Oversampling factor. Minimum value is 1. It overrides the
+         'defaultOversampling' parameter configured in the index definition. It can be set only when
+         'rerankWithOriginalVectors' is true. This parameter is only permitted when a compression method
+         is used on the underlying vector field.
+        :paramtype oversampling: float
+        """
+        super().__init__(**kwargs)
+        self.kind: Optional[str] = None
+        self.k_nearest_neighbors = k_nearest_neighbors
+        self.fields = fields
+        self.exhaustive = exhaustive
+        self.oversampling = oversampling
+
+
 class VectorizableTextQuery(VectorQuery):
     """The query parameters to use for vector search when a text value that needs to be vectorized is
     provided.
@@ -2201,3 +2122,82 @@ class VectorizableTextQuery(VectorQuery):
         )
         self.kind: str = "text"
         self.text = text
+
+
+class VectorizedQuery(VectorQuery):
+    """The query parameters to use for vector search when a raw vector value is provided.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar kind: The kind of vector query being performed. Required. Known values are: "vector" and
+     "text".
+    :vartype kind: str or ~azure.search.documents.models.VectorQueryKind
+    :ivar k_nearest_neighbors: Number of nearest neighbors to return as top hits.
+    :vartype k_nearest_neighbors: int
+    :ivar fields: Vector Fields of type Collection(Edm.Single) to be included in the vector
+     searched.
+    :vartype fields: str
+    :ivar exhaustive: When true, triggers an exhaustive k-nearest neighbor search across all
+     vectors within the vector index. Useful for scenarios where exact matches are critical, such as
+     determining ground truth values.
+    :vartype exhaustive: bool
+    :ivar oversampling: Oversampling factor. Minimum value is 1. It overrides the
+     'defaultOversampling' parameter configured in the index definition. It can be set only when
+     'rerankWithOriginalVectors' is true. This parameter is only permitted when a compression method
+     is used on the underlying vector field.
+    :vartype oversampling: float
+    :ivar vector: The vector representation of a search query. Required.
+    :vartype vector: list[float]
+    """
+
+    _validation = {
+        "kind": {"required": True},
+        "vector": {"required": True},
+    }
+
+    _attribute_map = {
+        "kind": {"key": "kind", "type": "str"},
+        "k_nearest_neighbors": {"key": "k", "type": "int"},
+        "fields": {"key": "fields", "type": "str"},
+        "exhaustive": {"key": "exhaustive", "type": "bool"},
+        "oversampling": {"key": "oversampling", "type": "float"},
+        "vector": {"key": "vector", "type": "[float]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        vector: List[float],
+        k_nearest_neighbors: Optional[int] = None,
+        fields: Optional[str] = None,
+        exhaustive: Optional[bool] = None,
+        oversampling: Optional[float] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword k_nearest_neighbors: Number of nearest neighbors to return as top hits.
+        :paramtype k_nearest_neighbors: int
+        :keyword fields: Vector Fields of type Collection(Edm.Single) to be included in the vector
+         searched.
+        :paramtype fields: str
+        :keyword exhaustive: When true, triggers an exhaustive k-nearest neighbor search across all
+         vectors within the vector index. Useful for scenarios where exact matches are critical, such as
+         determining ground truth values.
+        :paramtype exhaustive: bool
+        :keyword oversampling: Oversampling factor. Minimum value is 1. It overrides the
+         'defaultOversampling' parameter configured in the index definition. It can be set only when
+         'rerankWithOriginalVectors' is true. This parameter is only permitted when a compression method
+         is used on the underlying vector field.
+        :paramtype oversampling: float
+        :keyword vector: The vector representation of a search query. Required.
+        :paramtype vector: list[float]
+        """
+        super().__init__(
+            k_nearest_neighbors=k_nearest_neighbors,
+            fields=fields,
+            exhaustive=exhaustive,
+            oversampling=oversampling,
+            **kwargs
+        )
+        self.kind: str = "vector"
+        self.vector = vector

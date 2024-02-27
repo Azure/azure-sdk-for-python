@@ -21,7 +21,6 @@ from ._models_py3 import QueryAnswerResult
 from ._models_py3 import QueryCaptionResult
 from ._models_py3 import QueryResultDocumentRerankerInput
 from ._models_py3 import QueryResultDocumentSemanticField
-from ._models_py3 import RawVectorQuery
 from ._models_py3 import RequestOptions
 from ._models_py3 import SearchDocumentsResult
 from ._models_py3 import SearchOptions
@@ -34,6 +33,7 @@ from ._models_py3 import SuggestRequest
 from ._models_py3 import SuggestResult
 from ._models_py3 import VectorQuery
 from ._models_py3 import VectorizableTextQuery
+from ._models_py3 import VectorizedQuery
 
 from ._search_index_client_enums import AutocompleteMode
 from ._search_index_client_enums import IndexActionType
@@ -74,7 +74,6 @@ __all__ = [
     "QueryCaptionResult",
     "QueryResultDocumentRerankerInput",
     "QueryResultDocumentSemanticField",
-    "RawVectorQuery",
     "RequestOptions",
     "SearchDocumentsResult",
     "SearchOptions",
@@ -87,6 +86,7 @@ __all__ = [
     "SuggestResult",
     "VectorQuery",
     "VectorizableTextQuery",
+    "VectorizedQuery",
     "AutocompleteMode",
     "IndexActionType",
     "QueryAnswerType",
