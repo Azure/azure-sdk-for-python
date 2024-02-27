@@ -236,11 +236,11 @@ class DatastoreOperations(_ScopeDependentOperations):
     def mount(
         self,
         path: str,
+        *,
         mount_point: Optional[str] = None,
         mode: str = "ro_mount",
         debug: bool = False,
         persistent: bool = False,
-        **_kwargs,
     ) -> None:
         """Mount a datastore to a local path, so that you can access data inside it
         under a local path with any tools of your choice.
