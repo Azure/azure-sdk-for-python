@@ -66,8 +66,12 @@ The options that are available for all Core perf tests:
   - For sync:
     - `"requests"`: RequestsTransport (default)
     - `"httpx"`: HttpXTransport
-- `--aad` - Flag to pass in to use Azure Active Directory as the authentication. By default, set to False.
+- `--use-entra-id` - Flag to pass in to use Microsoft Entra ID as the authentication. By default, set to False.
 - `--size=10240` - Size of request content (in bytes). Defaults to 10240. (Not used by `ListEntitiesPageableTest`.)
+- `--policies` - List of policies to pass in to the pipeline. Options:
+  - None: No extra policies passed in, except for authentication policy. This is the default.
+  - 'all': All policies added automatically by autorest.
+  - 'policy1,policy2': Comma-separated list of policies, such as 'RetryPolicy,UserAgentPolicy'"
 
 #### Additional ListEntitiesPageableTest command line options
 
@@ -79,5 +83,5 @@ The options that are additionally available for `ListEntitiesPageableTest`:
 ## Example command
 
 ```cmd
-(env) ~/core/corehttp> perfstress DownloadBinaryDataTest --aad --transport httpx --size=20480 --parallel=2
+(env) ~/core/corehttp> perfstress DownloadBinaryDataTest --use-entra-id --transport httpx --size=20480 --parallel=2
 ```

@@ -159,7 +159,7 @@ class _ServiceTest(PerfStressTest):
         return AsyncPipelineClient(self.account_endpoint, pipeline=async_pipeline)
 
     def _set_auth_policies(self):
-        if not self.args.aad:
+        if not self.args.use_entra_id:
             # if tables, create table credential policy, else blob policy
             if "tables" in self.sdk_moniker:
                 self.sync_auth_policy = TableSharedKeyCredentialPolicy(
@@ -199,7 +199,7 @@ class _ServiceTest(PerfStressTest):
             """\n- 'policy1,policy2': Comma-separated list of policies, such as 'RetryPolicy,HttpLoggingPolicy'""",
             default=None,
         )
-        parser.add_argument("--aad", action="store_true", help="Use AAD authentication instead of shared key.")
+        parser.add_argument("--use-entra-id", action="store_true", help="Use Microsoft Entra ID authentication instead of shared key.")
 
 
 class _BlobTest(_ServiceTest):

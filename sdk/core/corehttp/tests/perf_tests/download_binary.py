@@ -53,6 +53,8 @@ class DownloadBinaryDataTest(_BlobTest):
                 "x-ms-date": current_time,
             },
         )
+        # Many policies in Azure SDKs use the backcompatible attribute `query` on HttpRequest. This is not present in corehttp.HttpRequest, so we add it manually to make
+        # Azure SDK policies work with corehttp.
         request.query = {}
         response = self.pipeline_client.pipeline.run(
             request,
@@ -74,6 +76,8 @@ class DownloadBinaryDataTest(_BlobTest):
                 "x-ms-date": current_time,
             },
         )
+        # Many policies in Azure SDKs use the backcompatible attribute `query` on HttpRequest. This is not present in corehttp.HttpRequest, so we add it manually to make
+        # Azure SDK policies work with corehttp.
         request.query = {}
         response = (
             await self.async_pipeline_client.pipeline.run(

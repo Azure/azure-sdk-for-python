@@ -47,6 +47,8 @@ class UploadBinaryDataTest(_BlobTest):
             },
             content=self.upload_stream,
         )
+        # Many policies in Azure SDKs use the backcompatible attribute `query` on HttpRequest. This is not present in corehttp.HttpRequest, so we add it manually to make
+        # Azure SDK policies work with corehttp.
         request.query = {}
         response = self.pipeline_client.pipeline.run(request).http_response
         if response.status_code not in [201]:
@@ -69,6 +71,8 @@ class UploadBinaryDataTest(_BlobTest):
             },
             content=self.upload_stream_async,
         )
+        # Many policies in Azure SDKs use the backcompatible attribute `query` on HttpRequest. This is not present in corehttp.HttpRequest, so we add it manually to make
+        # Azure SDK policies work with corehttp.
         request.query = {}
         pipeline_response = await self.async_pipeline_client.pipeline.run(request)
         response = pipeline_response.http_response
