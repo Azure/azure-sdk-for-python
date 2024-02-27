@@ -14,7 +14,6 @@ from typing import (
 from urllib.parse import urlparse
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
-from azure.identity.aio import DefaultAzureCredential
 from .._shared.utils import parse_connection_str
 from ._client import (
     NotificationMessagesClient as NotificationMessagesClientGenerated,
@@ -72,15 +71,6 @@ class NotificationMessagesClient(NotificationMessagesClientGenerated):
         """
         endpoint, access_key = parse_connection_str(conn_str)
         return cls(endpoint, AzureKeyCredential(key=access_key), **kwargs)
-    @classmethod
-    def from_token_credentials(cls, endpoint: str, **kwargs: Any) -> "NotificationMessagesClient":
-        """Create NotificationMessagesClient from an endpoint and TokenCredentials.
-        :param endpoint: Azure Communication Service endpoint. Required.
-        :type endpoint: str
-        :return: instance of NotificationMessagesClient.
-        :rtype:~azure.communication.message.notificationmessagesclient
-        """
-        return cls(endpoint, credential= DefaultAzureCredential(), **kwargs)
 
 class MessageTemplateClient(MessageTemplateClientGenerated):
     """A client to interact with the AzureCommunicationService Messaging service.
@@ -133,16 +123,6 @@ class MessageTemplateClient(MessageTemplateClientGenerated):
         """
         endpoint, access_key = parse_connection_str(conn_str)
         return cls(endpoint, AzureKeyCredential(access_key), **kwargs)
-
-    @classmethod
-    def from_token_credentials(cls, endpoint: str, **kwargs: Any) -> "MessageTemplateClient":
-        """Create MessageTemplateClient from an endpoint and TokenCredentials.
-        :param endpoint: Azure Communication Service endpoint. Required.
-        :type endpoint: str
-        :return: instance of MessageTemplateClient.
-        :rtype:~azure.communication.message.messagetemplateclient
-        """
-        return cls(endpoint, credential= DefaultAzureCredential(), **kwargs)
 
 __all__: List[str] = [
     "NotificationMessagesClient",

@@ -13,7 +13,6 @@ from typing import (
 )
 from urllib.parse import urlparse
 from azure.core.credentials import TokenCredential, AzureKeyCredential
-from azure.identity import DefaultAzureCredential
 from ._shared.utils import parse_connection_str
 from ._client import (
     NotificationMessagesClient as NotificationMessagesClientGenerated,
@@ -73,16 +72,6 @@ class NotificationMessagesClient(NotificationMessagesClientGenerated):
         """
         endpoint, access_key = parse_connection_str(conn_str)
         return cls(endpoint, AzureKeyCredential(access_key), **kwargs)
-    @classmethod
-    def from_token_credentials(cls, endpoint: str, **kwargs: Any) -> "NotificationMessagesClient":
-        """Create NotificationMessagesClient from an endpoint and TokenCredentials.
-        :param endpoint: Azure communication service endpoint string. Required.
-        :type endpoint: str
-        :return: instance of NotificationMessagesClient
-        :rtype:
-         ~azure.communication.messages.notificationmessagesclient
-        """
-        return cls(endpoint, credential=DefaultAzureCredential(), **kwargs)
 
 class MessageTemplateClient(MessageTemplateClientGenerated):
     """A client to interact with the AzureCommunicationService Messaging service.
@@ -134,17 +123,6 @@ class MessageTemplateClient(MessageTemplateClientGenerated):
         """
         endpoint, access_key = parse_connection_str(conn_str)
         return cls(endpoint, AzureKeyCredential(access_key), **kwargs)
-
-    @classmethod
-    def from_token_credentials(cls, endpoint: str, **kwargs: Any) -> "MessageTemplateClient":
-        """Create MessageTemplateClient from an endpoint and TokenCredentials.
-        :param endpoint: Azure communication service endpoint string. Required.
-        :type endpoint: str
-        :return: instance of MessageTemplateClient
-        :rtype:
-         ~azure.communication.messages.messagetemplateclient
-        """
-        return cls(endpoint, credential=DefaultAzureCredential(), **kwargs)
 
 __all__: List[str] = [
     "NotificationMessagesClient",
