@@ -21,7 +21,8 @@ from ._shared.models import(
     ResourceTypes,
     AccountSasPermissions,
     StorageErrorCode,
-    UserDelegationKey
+    UserDelegationKey,
+    Services
 )
 from ._generated.models import (
     RehydratePriority,
@@ -60,7 +61,7 @@ from ._models import (
     ArrowType,
     ObjectReplicationPolicy,
     ObjectReplicationRule,
-    ImmutabilityPolicy
+    ImmutabilityPolicy,
 )
 from ._list_blobs_helper import BlobPrefix
 
@@ -246,5 +247,6 @@ __all__ = [
     'ArrowType',
     'BlobQueryReader',
     'ObjectReplicationPolicy',
-    'ObjectReplicationRule'
+    'ObjectReplicationRule',
+    'Services',
 ]

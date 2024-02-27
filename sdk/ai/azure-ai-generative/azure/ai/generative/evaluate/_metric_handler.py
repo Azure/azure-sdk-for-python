@@ -109,7 +109,17 @@ class MetricHandler(object):
         result_metrics = pf_client.get_metrics(pf_run.name)
 
         # Drop unselected output columns
-        columns_to_drop = [col for col in result_df.columns if col.replace("outputs.", "") not in metrics]
+        #columns_to_drop = [col for col in result_df.columns if col.replace("outputs.", "").replace("_reasoning", "").replace("_score", "") not in metrics]
+        columns_to_drop = []
+        for col in result_df.columns:
+            is_col_to_delete = True
+            if col.startswith("outputs"):
+                for metric in metrics:
+                    if col.replace("outputs.", "").startswith(metric):
+                        is_col_to_delete = False
+                        break
+            if is_col_to_delete:
+                columns_to_drop.append(col)
         result_df.drop(columns_to_drop, axis=1, inplace=True)
 
         # Rename inputs/outputs columns. E.g. inputs.question -> question, outputs.gpt_fluency -> gpt_fluency

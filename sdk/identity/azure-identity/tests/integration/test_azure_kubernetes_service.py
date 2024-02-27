@@ -57,5 +57,5 @@ class TestAzureKubernetesServiceIntegration:
         pod_output = run_command([kubectl_path, "get", "pods", "-o", "jsonpath='{.items[0].metadata.name}'"])
         assert pod_name in pod_output
 
-        output = run_command([kubectl_path, "exec", pod_name, "--", "python", "/app.py"])
+        output = run_command([kubectl_path, "exec", pod_name, "--", "python3", "/app.py"])
         assert "Passed!" in output
