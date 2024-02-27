@@ -1,6 +1,16 @@
 # Release History
 
-## 4.8.0b4 (Unreleased)
+## 4.8.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 4.8.0 (2024-02-22)
 
 ### Features Added
 - Added support for service API version `7.5`
@@ -11,6 +21,8 @@
   `CertificateProperties.x509_thumbprint.hex()` or print the `CertificateProperties` instance.
 
 ### Bugs Fixed
+- (From 4.8.0b1) Token requests made during AD FS authentication no longer specify an erroneous "adfs" tenant ID
+  ([#29888](https://github.com/Azure/azure-sdk-for-python/issues/29888))
 
 ### Other Changes
 - Python 3.7 is no longer supported. Please use Python version 3.8 or later.

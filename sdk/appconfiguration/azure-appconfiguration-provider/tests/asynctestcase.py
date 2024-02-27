@@ -4,18 +4,15 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import asyncio
 from devtools_testutils import AzureRecordedTestCase
 from azure.appconfiguration.aio import AzureAppConfigurationClient
-from azure.appconfiguration import ConfigurationSetting, FeatureFlagConfigurationSetting
 from testcase import get_configs
 from azure.appconfiguration.provider.aio import load
 from azure.appconfiguration.provider import SettingSelector, AzureAppConfigurationKeyVaultOptions
+from test_constants import FEATURE_MANAGEMENT_KEY, FEATURE_FLAG_KEY
 
 
 class AppConfigTestCase(AzureRecordedTestCase):
-    import asyncio
-
     async def create_aad_client(
         self,
         appconfiguration_endpoint_string,
@@ -153,7 +150,7 @@ async def setup_configs(client, keyvault_secret_url):
 
 
 def has_feature_flag(client, feature_id, enabled=False):
-    for feature_flag in client["FeatureManagement"]["FeatureFlags"]:
+    for feature_flag in client[FEATURE_MANAGEMENT_KEY][FEATURE_FLAG_KEY]:
         if feature_flag["id"] == feature_id:
             return feature_flag["enabled"] == enabled
     return False

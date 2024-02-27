@@ -1,0 +1,11 @@
+{
+  "commit": "8bf9ff0986adb3b37755d8b0a0dfab93906d2eab",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "autorest": "3.9.7",
+  "use": [
+    "@autorest/python@6.7.1",
+    "@autorest/modelerfour@4.26.2"
+  ],
+  "autorest_command": "autorest specification/liftrastronomer/resource-manager/readme.md --generate-sample=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/home/vsts/work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.7.1 --use=@autorest/modelerfour@4.26.2 --version=3.9.7 --version-tolerant=False",
+  "readme": "specification/liftrastronomer/resource-manager/readme.md"
+}
