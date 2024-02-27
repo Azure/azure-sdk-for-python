@@ -176,7 +176,7 @@ class FineTuningVertical(FineTuningJob):
         :return: True or False
         :rtype: bool
         """
-        if not isinstance(other, FineTuningJob):
+        if not isinstance(other, FineTuningVertical):
             return NotImplemented
 
         return (
