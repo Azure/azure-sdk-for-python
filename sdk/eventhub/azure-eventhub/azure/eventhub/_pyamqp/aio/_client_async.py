@@ -304,8 +304,8 @@ class AMQPClientAsync(AMQPClientSync):
         if self._keep_alive_thread:
             await self._keep_alive_thread
             self._keep_alive_thread = None
-        self._network_trace_params["amqpConnection"] = None
-        self._network_trace_params["amqpSession"] = None
+        self._network_trace_params["amqpConnection"] = ""
+        self._network_trace_params["amqpSession"] = ""
 
     async def auth_complete_async(self):
         """Whether the authentication handshake is complete during

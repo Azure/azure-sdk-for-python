@@ -3,9 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Any, Dict, Union, List, Optional
+from typing import Any, Dict, Union, List, Optional, MutableMapping
 
-from .._generated import _serialization
 from ._edm import Collection, ComplexType, String
 from .._generated.models import (
     SearchField as _SearchField,
@@ -24,7 +23,7 @@ from ._models import (
 __all__ = ("ComplexField", "SearchableField", "SimpleField")
 
 
-class SearchField(_serialization.Model):
+class SearchField:
     # pylint: disable=too-many-instance-attributes
     """Represents a field in an index definition, which describes the name, data type, and search behavior of a field.
 
@@ -165,35 +164,7 @@ class SearchField(_serialization.Model):
     :vartype fields: list[~azure.search.documents.indexes.models.SearchField]
     """
 
-    _validation = {
-        "name": {"required": True},
-        "type": {"required": True},
-    }
-
-    _attribute_map = {
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "key": {"key": "key", "type": "bool"},
-        "hidden": {"key": "hidden", "type": "bool"},
-        "searchable": {"key": "searchable", "type": "bool"},
-        "filterable": {"key": "filterable", "type": "bool"},
-        "sortable": {"key": "sortable", "type": "bool"},
-        "facetable": {"key": "facetable", "type": "bool"},
-        "analyzer_name": {"key": "analyzerName", "type": "str"},
-        "search_analyzer_name": {"key": "searchAnalyzerName", "type": "str"},
-        "index_analyzer_name": {"key": "indexAnalyzerName", "type": "str"},
-        "normalizer_name": {"key": "normalizerName", "type": "str"},
-        "synonym_map_names": {"key": "synonymMapNames", "type": "[str]"},
-        "fields": {"key": "fields", "type": "[SearchField]"},
-        "vector_search_dimensions": {"key": "vectorSearchDimensions", "type": "int"},
-        "vector_search_profile_name": {
-            "key": "vectorSearchProfile",
-            "type": "str",
-        },
-    }
-
     def __init__(self, **kwargs):
-        super(SearchField, self).__init__(**kwargs)
         self.name = kwargs["name"]
         self.type = kwargs["type"]
         self.key = kwargs.get("key", None)
@@ -262,6 +233,25 @@ class SearchField(_serialization.Model):
             vector_search_dimensions=search_field.vector_search_dimensions,
             vector_search_profile_name=search_field.vector_search_profile_name,
         )
+
+    def serialize(self, keep_readonly: bool = False, **kwargs: Any) -> MutableMapping[str, Any]:
+        """Return the JSON that would be sent to server from this model.
+        :param bool keep_readonly: If you want to serialize the readonly attributes
+        :returns: A dict JSON compatible object
+        :rtype: dict
+        """
+        return self._to_generated().serialize(keep_readonly=keep_readonly, **kwargs)
+
+    @classmethod
+    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> "SearchField":
+        """Parse a str using the RestAPI syntax and return a SearchField instance.
+
+        :param str data: A str using RestAPI structure. JSON by default.
+        :param str content_type: JSON by default, set application/xml if XML.
+        :returns: A SearchField instance
+        :raises: DeserializationError if something went wrong
+        """
+        return cls._from_generated(_SearchField.deserialize(data, content_type=content_type))  # type: ignore
 
 
 def SimpleField(
@@ -515,7 +505,7 @@ def ComplexField(
     return SearchField(**result)
 
 
-class SearchIndex(_serialization.Model):
+class SearchIndex:
     # pylint: disable=too-many-instance-attributes
     """Represents a search index definition, which describes the fields and search behavior of an index.
 
@@ -567,35 +557,7 @@ class SearchIndex(_serialization.Model):
     :vartype e_tag: str
     """
 
-    _validation = {
-        "name": {"required": True},
-        "fields": {"required": True},
-    }
-
-    _attribute_map = {
-        "name": {"key": "name", "type": "str"},
-        "fields": {"key": "fields", "type": "[SearchField]"},
-        "scoring_profiles": {"key": "scoringProfiles", "type": "[ScoringProfile]"},
-        "default_scoring_profile": {"key": "defaultScoringProfile", "type": "str"},
-        "cors_options": {"key": "corsOptions", "type": "CorsOptions"},
-        "suggesters": {"key": "suggesters", "type": "[SearchSuggester]"},
-        "analyzers": {"key": "analyzers", "type": "[LexicalAnalyzer]"},
-        "tokenizers": {"key": "tokenizers", "type": "[LexicalTokenizer]"},
-        "token_filters": {"key": "tokenFilters", "type": "[TokenFilter]"},
-        "char_filters": {"key": "charFilters", "type": "[CharFilter]"},
-        "normalizers": {"key": "normalizers", "type": "[LexicalNormalizer]"},
-        "encryption_key": {
-            "key": "encryptionKey",
-            "type": "SearchResourceEncryptionKey",
-        },
-        "similarity": {"key": "similarity", "type": "SimilarityAlgorithm"},
-        "semantic_search": {"key": "semantic", "type": "SemanticSearch"},
-        "vector_search": {"key": "vectorSearch", "type": "VectorSearch"},
-        "e_tag": {"key": "@odata\\.etag", "type": "str"},
-    }
-
     def __init__(self, **kwargs):
-        super(SearchIndex, self).__init__(**kwargs)
         self.name = kwargs["name"]
         self.fields = kwargs["fields"]
         self.scoring_profiles = kwargs.get("scoring_profiles", None)
@@ -691,6 +653,26 @@ class SearchIndex(_serialization.Model):
             e_tag=search_index.e_tag,
             vector_search=search_index.vector_search,
         )
+
+    def serialize(self, keep_readonly: bool = False, **kwargs: Any) -> MutableMapping[str, Any]:
+        """Return the JSON that would be sent to server from this model.
+        :param bool keep_readonly: If you want to serialize the readonly attributes
+        :returns: A dict JSON compatible object
+        :rtype: dict
+        """
+        return self._to_generated().serialize(keep_readonly=keep_readonly, **kwargs)
+
+    @classmethod
+    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> "SearchIndex":
+        """Parse a str using the RestAPI syntax and return a SearchIndex instance.
+
+        :param str data: A str using RestAPI structure. JSON by default.
+        :param str content_type: JSON by default, set application/xml if XML.
+        :returns: A SearchIndex instance
+        :rtype: SearchIndex
+        :raises: DeserializationError if something went wrong
+        """
+        return cls._from_generated(_SearchIndex.deserialize(data, content_type=content_type))
 
 
 def pack_search_field(search_field: SearchField) -> _SearchField:
