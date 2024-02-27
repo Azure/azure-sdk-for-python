@@ -87,6 +87,7 @@ def _get_sdk_version_prefix():
     return sdk_version_prefix
 
 
+
 def _get_sdk_version():
     return "{}py{}:otel{}:ext{}".format(
         _get_sdk_version_prefix(), platform.python_version(), opentelemetry_version, ext_version
