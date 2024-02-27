@@ -2,7 +2,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Any, Dict, Optional
+from os import PathLike
+from typing import Any, AnyStr, Dict, IO, Optional
+from .._resource import Resource
 
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import KEY
@@ -20,6 +22,7 @@ from .endpoint import Endpoint
 class ServerlessEndpoint(Endpoint):
     def __init__(
         self,
+        *,
         name: Optional[str] = None,
         tags: Optional[Dict[str, Any]] = None,
         location: Optional[str] = None,
@@ -61,3 +64,10 @@ class ServerlessEndpoint(Endpoint):
             model_id=obj.properties.model_settings.model_id,
             marketplace_subscription=obj.properties.marketplace_subscription_id
         )
+
+    @classmethod
+    def _load(cls, data: Dict | None = None, yaml_path: PathLike | str | None = None, params_override: list | None = None, **kwargs: Any) -> "ServerlessEndpoint":
+        pass
+
+    def dump(self, dest: str | PathLike | IO[AnyStr] | None = None, **kwargs: Any) -> Dict:
+        pass
