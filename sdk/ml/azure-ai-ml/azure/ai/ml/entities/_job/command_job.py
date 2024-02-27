@@ -22,7 +22,7 @@ from azure.ai.ml.entities._credentials import (
     UserIdentityConfiguration,
     _BaseJobIdentityConfiguration,
 )
-from azure.ai.ml.entities._inputs_outputs import Input
+from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job._input_output_helpers import (
     from_rest_data_outputs,
     from_rest_inputs_to_dataset_literal,
@@ -82,7 +82,7 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
         self,
         *,
         inputs: Optional[Dict[str, Union[Input, str, bool, int, float]]] = None,
-        outputs: Optional[Dict] = None,
+        outputs: Optional[Dict[str, Output]] = None,
         limits: Optional[CommandJobLimits] = None,
         identity: Optional[
             Union[Dict, ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
@@ -95,8 +95,8 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
 
         super().__init__(**kwargs)
 
-        self.outputs = outputs
-        self.inputs = inputs
+        self.outputs = outputs  # type: ignore[assignment]
+        self.inputs = inputs  # type: ignore[assignment]
         self.limits = limits
         self.identity = identity
         self.services = services
@@ -255,8 +255,8 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
             component=component,
             compute=self.compute,
             # Need to supply the inputs with double curly.
-            inputs=self.inputs,
-            outputs=self.outputs,
+            inputs=self.inputs,  # type: ignore[arg-type]
+            outputs=self.outputs,  # type: ignore[arg-type]
             environment_variables=self.environment_variables,
             description=self.description,
             tags=self.tags,

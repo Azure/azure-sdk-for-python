@@ -163,8 +163,8 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
             compute=compute,
             **kwargs,
         )
-        self.inputs = inputs
-        self.outputs = outputs
+        self.inputs = inputs  # type: ignore[assignment]
+        self.outputs = outputs  # type: ignore[assignment]
         self.trial = trial
         self.identity = identity
 
