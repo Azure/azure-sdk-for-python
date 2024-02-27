@@ -29,11 +29,11 @@ class AzureOpenAIFineTuningSchema(FineTuningVerticalSchema):
     hyperparameters = NestedField(AzureOpenAIHyperparametersSchema(), data_key=FineTuningConstants.HyperParameters)
 
     @post_load
-    def post_load_processing(self, data: Dict[str, Any], **kwargs) -> Dict[str, Any]:
+    def post_load_processing(self, data: Dict, **kwargs) -> Dict[str, Any]:
         """Post load processing for the schema.
 
         :param data: Dictionary of parsed values from the yaml.
-        :type Dict[str, Any]
+        :type data: typing.Dict
 
         :return Dictionary of parsed values from the yaml.
         :rtype Dict[str, Any]
