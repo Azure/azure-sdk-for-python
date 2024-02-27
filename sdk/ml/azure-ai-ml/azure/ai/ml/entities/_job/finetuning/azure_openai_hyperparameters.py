@@ -49,27 +49,42 @@ class AzureOpenAIHyperparameters(RestTranslatableMixin):
 
     @batch_size.setter
     def batch_size(self, value: Optional[int]) -> None:
-        """Set the batch size for training."""
+        """Set the batch size for training.
+        :param value: The batch size for training.
+        :type value: int
+        """
         self._batch_size = value
 
     @property
     def learning_rate_multiplier(self) -> Optional[float]:
-        """Get the learning rate multiplier."""
+        """Get the learning rate multiplier.
+        :return: The learning rate multiplier.
+        :rtype: float
+        """
         return self._learning_rate_multiplier
 
     @learning_rate_multiplier.setter
     def learning_rate_multiplier(self, value: Optional[float]) -> None:
-        """Set the learning rate multiplier."""
+        """Set the learning rate multiplier.
+        :param value: The learning rate multiplier.
+        :type value: float
+        """
         self._learning_rate_multiplier = value
 
     @property
     def n_epochs(self) -> Optional[int]:
-        """Get the number of epochs."""
+        """Get the number of epochs.
+        :return: The number of epochs.
+        :rtype: int
+        """
         return self._n_epochs
 
     @n_epochs.setter
     def n_epochs(self, value: Optional[int]) -> None:
-        """Set the number of epochs."""
+        """Set the number of epochs.
+        :param value: The number of epochs.
+        :type value: int
+        """
         self._n_epochs = value
 
     # Not exposed in the public API, so need to check how to handle this
