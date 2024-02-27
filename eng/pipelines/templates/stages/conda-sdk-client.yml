@@ -7,6 +7,10 @@ parameters:
   displayName: 'msal'
   type: boolean
   default: true
+- name: release_uamqp
+  displayName: 'uamqp'
+  type: boolean
+  default: true
 - name: release_msal_extensions
   displayName: 'msal-extensions'
   type: boolean
@@ -136,8 +140,27 @@ variables:
   - template: /eng/pipelines/templates/variables/globals.yml
 
 stages:
+    - stage: Build_Dependencies
+    displayName: Build Platform-Specific Binary Conda Packages
+    jobs:
+    - template: ../jobs/build-conda-dependencies.yml
+      parameters:
+        CondaArtifacts:
+        - name: uamqp
+          common_root: uamqp
+          in_batch: true
+          conda_py_versions:
+          - "38"
+          - "39"
+          - "310"
+          - "311"
+          checkout:
+          - package: uamqp
+            download_uri: https://files.pythonhosted.org/packages/0b/d8/fc24d95e6f6c80851ae6738c78da081cd535c924b02c5a4928b108b9ed42/uamqp-1.6.5.tar.gz
+
   - stage: Build_Universal_Dependencies
     displayName: Build Universal Conda Packages
+    dependsOn: Build_Dependencies
     jobs:
     - job: 'Build'
       timeoutInMinutes: 240
