@@ -27,9 +27,11 @@
 
 # AzureSdkOwners: @xiangyan99 @kashifkhan @pvaneck
 # ServiceLabel: %Core.Http
+# ServiceOwners: @xiangyan99 @kashifkhan @pvaneck
 
 # AzureSdkOwners: @xiangyan99 @kashifkhan
 # ServiceLabel: %Azure.Core
+# ServiceOwners: @xiangyan99 @kashifkhan
 
 # PRLabel: %Azure.Core
 /sdk/core/                                                           @lmazuel @annatisch @johanste
@@ -55,6 +57,7 @@
 
 # AzureSdkOwners: @kashifkhan
 # ServiceLabel: %Event Hubs
+# ServiceOwners: @kashifkhan
 
 # PRLabel: %Event Hubs
 /sdk/eventhub/                                                       @annatisch @kashifkhan @swathipil @l0lawrence
@@ -309,7 +312,6 @@
 /sdk/mixedreality/azure-mixedreality-authentication/                 @RamonArguelles
 /sdk/remoterendering/                                                @FlorianBorn71
 
-# ServiceOwners: @trrwilson
 # AzureSdkOwners: @kristapratico
 # ServiceLabel: %OpenAI
 # PRLabel: %OpenAI
