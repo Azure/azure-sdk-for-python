@@ -109,7 +109,11 @@ class MetricHandler(object):
         result_metrics = pf_client.get_metrics(pf_run.name)
 
         # Drop unselected output columns
-        #columns_to_drop = [col for col in result_df.columns if col.replace("outputs.", "").replace("_reasoning", "").replace("_score", "") not in metrics]
+        # columns_to_drop = [
+        #     col
+        #     for col in result_df.columns
+        #     if col.replace("outputs.", "").replace("_reasoning", "").replace("_score", "") not in metrics
+        # ]
         columns_to_drop = []
         for col in result_df.columns:
             is_col_to_delete = True

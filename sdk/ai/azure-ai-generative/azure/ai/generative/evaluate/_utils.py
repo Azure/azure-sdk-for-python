@@ -167,7 +167,7 @@ def _get_ai_studio_url(tracking_uri: str, evaluation_id: str):
 
     pattern = re.compile(_PROJECT_INFO_REGEX)
 
-    mo: Optional[re.Match[str]] = pattern.match(tracking_uri)
+    mo: Optional[re.Match[str]] = pattern.match(tracking_uri)  # pylint: disable=unsubscriptable-object
 
     ret = {}
     ret[_SUB_ID] = mo.group(1) if mo else mo
