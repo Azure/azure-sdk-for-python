@@ -278,7 +278,7 @@ def monitor_with_activity(
         def wrapper(*args, **kwargs):
             tracer = logger.package_tracer if isinstance(logger, OpsLogger) else None
             if tracer:
-                with tracer.span(name=f.__name__):
+                with tracer.span():
                     with log_activity(
                         logger.package_logger, activity_name or f.__name__, activity_type, custom_dimensions
                     ):
