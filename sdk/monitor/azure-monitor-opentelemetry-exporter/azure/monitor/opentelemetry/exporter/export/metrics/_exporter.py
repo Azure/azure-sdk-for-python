@@ -180,8 +180,7 @@ def _convert_point_to_envelope(
     envelope.tags.update(_utils._populate_part_a_fields(resource)) # type: ignore
     namespace = None
     if scope is not None and _is_metric_namespace_opted_in():
-        namespace = scope.name
-        namespace = str(namespace)[:256]
+        namespace = str(scope.name)[:256]
     value: Union[int, float] = 0
     count = 1
     min_ = None
