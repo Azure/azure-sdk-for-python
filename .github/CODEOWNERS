@@ -27,11 +27,9 @@
 
 # AzureSdkOwners: @xiangyan99 @kashifkhan @pvaneck
 # ServiceLabel: %Core.Http
-# ServiceOwners: @xiangyan99 @kashifkhan @pvaneck
 
 # AzureSdkOwners: @xiangyan99 @kashifkhan
 # ServiceLabel: %Azure.Core
-# ServiceOwners: @xiangyan99 @kashifkhan
 
 # PRLabel: %Azure.Core
 /sdk/core/                                                           @lmazuel @annatisch @johanste
