@@ -57,7 +57,7 @@
 
 # AzureSdkOwners: @kashifkhan
 # ServiceLabel: %Event Hubs
-# ServiceOwners: @kashifkhan
+# ServiceOwners: @kasun04
 
 # PRLabel: %Event Hubs
 /sdk/eventhub/                                                       @annatisch @kashifkhan @swathipil @l0lawrence
