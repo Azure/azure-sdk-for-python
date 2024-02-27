@@ -140,7 +140,7 @@ variables:
   - template: /eng/pipelines/templates/variables/globals.yml
 
 stages:
-    - stage: Build_Dependencies
+  - stage: Build_Dependencies
     displayName: Build Platform-Specific Binary Conda Packages
     jobs:
     - template: ../jobs/build-conda-dependencies.yml
