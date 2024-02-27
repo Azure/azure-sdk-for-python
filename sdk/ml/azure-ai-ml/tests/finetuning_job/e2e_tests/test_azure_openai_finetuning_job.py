@@ -5,7 +5,7 @@
 from typing import Tuple
 
 import pytest
-from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils import AzureRecordedTestCase, is_live
 
 from azure.ai.ml import MLClient
 from azure.ai.ml.entities._inputs_outputs import Input, Output
@@ -21,7 +21,7 @@ import uuid
 
 @pytest.mark.automl_test
 @pytest.mark.usefixtures("recorded_test")
-# @pytest.mark.skipif(condition=not is_live(), reason="Datasets downloaded by test are too large to record reliably")
+@pytest.mark.skipif(condition=not is_live(), reason="Datasets downloaded by test are too large to record reliably")
 class TestAzureOpenAIFineTuningJob(AzureRecordedTestCase):
 
     def test_azure_openai_finetuning_job(
