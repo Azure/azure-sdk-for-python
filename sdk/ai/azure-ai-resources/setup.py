@@ -75,7 +75,7 @@ setup(
         "openai>=0.27.8",
         "tiktoken>=0.3,<1",
         "mmh3",
-        "requests",
+        "requests>=2.20.0",
         "azure-search-documents==11.4.0b11",
         "numpy>=1.21.0",
         "tqdm"
