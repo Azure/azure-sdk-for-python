@@ -1028,8 +1028,7 @@ class ContainerProxy:
         priority: Optional[Literal["High", "Low"]] = None,
         **kwargs: Any
     ) -> List[Dict[str, Any]]:
-        """ Executes the transactional batch for the specified partition key. Transactional batches either succeed or
-        fail in their entirety.
+        """ Executes the transactional batch for the specified partition key.
 
         :param batch_operations: The batch of operations to be executed.
         :type batch_operations: List[Tuple[Any]]
@@ -1048,12 +1047,6 @@ class ContainerProxy:
         :returns: A list representing the items after the batch operations went through.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The batch failed to execute.
         :raises ~azure.cosmos.exceptions.CosmosBatchOperationError: A transactional batch operation failed in the batch.
-            CosmosBatchOperationError will have several attributes providing the user more information on the error:
-            - error_index: the index of the failed operation
-            - headers: the response headers for the failed operation
-            - status_code: the status code of the failed operation, since all other operations will fail with a 424
-            - message: the error message, also including the index of the failed operation
-            - operation_responses: the list of failed operation responses
         :rtype: List[Dict[str, Any]]
         """
         if pre_trigger_include is not None:
