@@ -31,7 +31,14 @@ from azure.ai.ml.entities._job._input_output_helpers import (
     validate_inputs_for_command,
 )
 from azure.ai.ml.entities._job.distribution import DistributionConfiguration
-from azure.ai.ml.entities._job.job_service import JobServiceBase
+from azure.ai.ml.entities._job.job_service import (
+    JobService,
+    JobServiceBase,
+    JupyterLabJobService,
+    SshJobService,
+    TensorBoardJobService,
+    VsCodeJobService,
+)
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
@@ -87,7 +94,9 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
         identity: Optional[
             Union[Dict, ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
         ] = None,
-        services: Optional[Dict] = None,
+        services: Optional[
+            Dict[str, Union[JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService]]
+        ] = None,
         **kwargs: Any,
     ) -> None:
         kwargs[TYPE] = JobType.COMMAND

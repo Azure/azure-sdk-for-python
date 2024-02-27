@@ -1,9 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-
 # pylint: disable=protected-access
-
 import copy
 import logging
 import os
@@ -170,7 +168,13 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         environment: Optional[Union[Environment, str]] = None,
         environment_variables: Optional[Dict] = None,
         resources: Optional[JobResourceConfiguration] = None,
-        services: Optional[Dict] = None,
+        services: Optional[
+            Optional[
+                Dict[
+                    str, Union[JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService]
+                ]
+            ]
+        ] = None,
         queue_settings: Optional[QueueSettings] = None,
         **kwargs: Any,
     ) -> None:
@@ -178,7 +182,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
 
         # resolve normal dict to dict[str, JobService]
-        services = _resolve_job_services(services)
+        services = _resolve_job_services(services)  # type: ignore[arg-type]
         kwargs.pop("type", None)
         self._parameters: dict = kwargs.pop("parameters", {})
         BaseNode.__init__(
@@ -205,7 +209,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         self.queue_settings = queue_settings
 
         if isinstance(self.component, CommandComponent):
-            self.resources = self.resources or self.component.resources
+            self.resources = self.resources or self.component.resources  # type: ignore[assignment]
             self.distribution = self.distribution or self.component.distribution
 
         self._swept: bool = False
@@ -277,12 +281,12 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         self._distribution = value
 
     @property
-    def resources(self) -> Any:
+    def resources(self) -> JobResourceConfiguration:
         """The compute resource configuration for the command component or job.
 
         :rtype: ~azure.ai.ml.entities.JobResourceConfiguration
         """
-        return self._resources
+        return self._resources  # type: ignore[return-value]
 
     @resources.setter
     def resources(self, value: Union[Dict, JobResourceConfiguration]) -> None:
@@ -381,10 +385,10 @@ class Command(BaseNode, NodeWithGroupInputMixin):
             ~azure.ai.ml.entities.SshJobService, ~azure.ai.ml.entities.TensorBoardJobService,
             ~azure.ai.ml.entities.VsCodeJobService]]
         """
-        self._services = _resolve_job_services(value)
+        self._services = _resolve_job_services(value)  # type: ignore[assignment]
 
     @property
-    def component(self) -> Any:
+    def component(self) -> Union[str, CommandComponent]:
         """The ID or instance of the command component or job to be run for the step.
 
         :return: The ID or instance of the command component or job to be run for the step.
@@ -855,7 +859,9 @@ class Command(BaseNode, NodeWithGroupInputMixin):
             outputs=from_rest_data_outputs(rest_command_job.outputs),
         )
         command_job._id = obj.id
-        command_job.resources = JobResourceConfiguration._from_rest_object(rest_command_job.resources)
+        command_job.resources = JobResourceConfiguration._from_rest_object(  # type: ignore[assignment]
+            rest_command_job.resources
+        )
         command_job.limits = CommandJobLimits._from_rest_object(rest_command_job.limits)
         command_job.queue_settings = QueueSettings._from_rest_object(rest_command_job.queue_settings)
         if isinstance(command_job.component, CommandComponent):
