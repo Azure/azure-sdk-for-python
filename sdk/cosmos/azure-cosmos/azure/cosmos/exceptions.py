@@ -77,11 +77,20 @@ class CosmosBatchOperationError(HttpResponseError):
             operation_responses=None,
             **kwargs):
         """
-        :param int error_index: Index of operation within the batch that caused the error.
-        :param dict[str, Any] headers: Error headers.
-        :param int status_code: HTTP response code.
-        :param str message: Error message.
-        :param list operation_responses: List of failed operations' responses.
+        :ivar int error_index: Index of operation within the batch that caused the error.
+        :ivar dict[str, Any] headers: Error headers.
+        :ivar int status_code: HTTP response code.
+        :ivar str message: Error message.
+        :ivar list operation_responses: List of failed operations' responses.
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/document_management.py
+                :start-after: [START handle_batch_error]
+                :end-before: [END handle_batch_error]
+                :language: python
+                :dedent: 0
+                :caption: Handle a CosmosBatchOperationError:
+                :name: handle_batch_error
         """
         self.error_index = error_index
         self.headers = headers
