@@ -56,18 +56,22 @@ class FineTuningVertical(FineTuningJob):
     def task(self, task: str) -> None:
         """Set finetuning task.
 
-        :param task_type: The type of task to run. Possible values include: "ChatCompletion"
+        :param task: The type of task to run. Possible values include: "ChatCompletion"
                  "TextCompletion", "TextClassification", "QuestionAnswering","TextSummarization",
                  "TokenClassification", "TextTranslation", "ImageClassification", "ImageInstanceSegmentation",
                  "ImageObjectDetection","VideoMultiObjectTracking",.
-
         :type task: str
+
+        :return: None
         """
         self._task = task
 
     @property
     def model(self) -> Optional[Input]:
-        """The model to be fine-tuned."""
+        """The model to be fine-tuned.
+        :return: Input object representing the mlflow model to be fine-tuned.
+        :rtype: Input
+        """
         return self._model
 
     @model.setter

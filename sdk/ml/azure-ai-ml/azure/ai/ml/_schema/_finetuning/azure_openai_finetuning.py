@@ -4,8 +4,9 @@
 
 # pylint: disable=unused-argument
 
-from marshmallow import post_load
 from typing import Any, Dict
+from marshmallow import post_load
+
 
 from azure.ai.ml._schema.core.fields import StringTransformedEnum
 from azure.ai.ml._restclient.v2024_01_01_preview.models import ModelProvider
@@ -31,11 +32,11 @@ class AzureOpenAIFineTuningSchema(FineTuningVerticalSchema):
     def post_load_processing(self, data: Dict[str, Any], **kwargs) -> Dict[str, Any]:
         """Post load processing for the schema.
 
-        Args:
-            data (_type_): Dictionary of parsed values from the yaml.
+        param: Dictionary of parsed values from the yaml.
+        type: Dict[str, Any]
 
-        Returns:
-            Dict[str, Any]: Dictionary of parsed values from the yaml.
+        :return: Dictionary of parsed values from the yaml.
+        :rtype: Dict[str, Any]
         """
         data.pop("model_provider")
         hyperaparameters = data.pop("hyperparameters", None)

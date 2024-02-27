@@ -4,8 +4,8 @@
 
 # pylint: disable=unused-argument
 
-from marshmallow import fields, post_load
 from typing import Any, Dict
+from marshmallow import fields, post_load
 
 from azure.ai.ml._restclient.v2024_01_01_preview.models import ModelProvider
 from azure.ai.ml._schema._finetuning.finetuning_vertical import FineTuningVerticalSchema
@@ -22,6 +22,14 @@ class CustomModelFineTuningSchema(FineTuningVerticalSchema):
 
     @post_load
     def post_load_processing(self, data, **kwargs) -> Dict[str, Any]:
-        data.pop("model_provider")
+        """Post-load processing for the schema.
 
+        param: Dictionary of parsed values from the yaml.
+        type: Dict[str, Any]
+
+        :return: Dictionary of parsed values from the yaml.
+        :rtype: Dict[str, Any]
+        """
+
+        data.pop("model_provider")
         return data
