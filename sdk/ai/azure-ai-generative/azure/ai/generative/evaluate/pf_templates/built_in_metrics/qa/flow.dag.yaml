@@ -5,16 +5,15 @@ inputs:
     is_chat_input: false
   answer:
     type: string
-    default: The Alpine Explorer Tent is the most waterproof.
+    default: ""
     is_chat_input: false
   context:
     type: string
-    default: From the our product list, the alpine explorer tent is the most
-      waterproof. The Adventure Dining Tabbe has higher weight.
+    default: ""
     is_chat_input: false
   ground_truth:
     type: string
-    default: The Alpine Explorer Tent has the highest rainfly waterproof rating at 3000m
+    default: ""
     is_chat_input: false
   metrics:
     type: string
@@ -31,9 +30,6 @@ outputs:
   hate_fairness_score:
     type: string
     reference: ${concat_scores.output.hate_fairness_score}
-  ada_similarity:
-    type: string
-    reference: ${concat_scores.output.ada_similarity}
   gpt_relevance:
     type: string
     reference: ${concat_scores.output.gpt_relevance}
@@ -111,13 +107,12 @@ nodes:
     type: code
     path: concat_quality_scores.py
   inputs:
-    ada_cosine_similarity: ${ada_similarity.output}
-    f1_score: ${f1_score.output}
     gpt_coherence_score: ${gpt_coherence.output}
-    gpt_fluency_score: ${gpt_fluency.output}
-    gpt_groundedness_score: ${gpt_groundedness.output}
-    gpt_relevance_score: ${gpt_relevance.output}
     gpt_similarity_score: ${gpt_similarity.output}
+    gpt_fluency_score: ${gpt_fluency.output}
+    gpt_relevance_score: ${gpt_relevance.output}
+    gpt_groundedness_score: ${gpt_groundedness.output}
+    f1_score: ${f1_score.output}
   use_variants: false
 - name: gpt_similarity
   type: llm
@@ -132,8 +127,8 @@ nodes:
     presence_penalty: 0
     frequency_penalty: 0
     answer: ${inputs.answer}
-    ground_truth: ${inputs.ground_truth}
     question: ${inputs.question}
+    ground_truth: ${inputs.ground_truth}
   provider: AzureOpenAI
   connection: Default_AzureOpenAI
   api: chat
@@ -155,8 +150,8 @@ nodes:
     presence_penalty: 0
     frequency_penalty: 0
     answer: ${inputs.answer}
-    context: ${inputs.context}
     question: ${inputs.question}
+    context: ${inputs.context}
   provider: AzureOpenAI
   connection: Default_AzureOpenAI
   api: chat
@@ -193,8 +188,8 @@ nodes:
     type: code
     path: f1_score.py
   inputs:
-    answer: ${inputs.answer}
     ground_truth: ${inputs.ground_truth}
+    answer: ${inputs.answer}
   activate:
     when: ${validate_input.output.f1_score}
     is: true
@@ -240,44 +235,6 @@ nodes:
   inputs:
     metrics: ${inputs.metrics}
   use_variants: false
-- name: embeded_ground_truth
-  type: python
-  source:
-    type: package
-    tool: promptflow.tools.embedding.embedding
-  inputs:
-    connection: Default_AzureOpenAI
-    deployment_name: text-embedding-ada-002
-    input: ${inputs.ground_truth}
-  activate:
-    when: ${validate_input.output.ada_similarity}
-    is: true
-  use_variants: false
-- name: embeded_answer
-  type: python
-  source:
-    type: package
-    tool: promptflow.tools.embedding.embedding
-  inputs:
-    connection: Default_AzureOpenAI
-    deployment_name: text-embedding-ada-002
-    input: ${inputs.answer}
-  activate:
-    when: ${validate_input.output.ada_similarity}
-    is: true
-  use_variants: false
-- name: ada_similarity
-  type: python
-  source:
-    type: code
-    path: ada_cosine_similarity_score.py
-  inputs:
-    a: ${embeded_ground_truth.output}
-    b: ${embeded_answer.output}
-  activate:
-    when: ${validate_input.output.ada_similarity}
-    is: true
-  use_variants: false
 - name: validate_input
   type: python
   source:
@@ -296,6 +253,8 @@ nodes:
     type: code
     path: validate_safety_metric_input.py
   inputs:
+    answer: ${inputs.answer}
+    question: ${inputs.question}
     selected_metrics: ${select_metrics.output}
   use_variants: false
 - name: construct_service_request
@@ -305,8 +264,6 @@ nodes:
     path: construct_service_request.py
   inputs:
     answer: ${inputs.answer}
-    context: ${inputs.context}
-    ground_truth: ${inputs.ground_truth}
     question: ${inputs.question}
     selected_metrics: ${select_metrics.output}
   activate:
@@ -355,6 +312,7 @@ nodes:
   inputs:
     quality_results: ${concat_quality_scores.output}
     safety_results: ${format_service_output.output}
+    selected_metrics: ${select_metrics.output}
   use_variants: false
 node_variants: {}
 $schema: https://azuremlschemas.azureedge.net/promptflow/latest/Flow.schema.json
