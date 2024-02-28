@@ -176,7 +176,7 @@ class Sweep(ParameterizedSweep, BaseNode):
             resources=resources,
         )
 
-        self.identity = identity
+        self.identity: Any = identity
         self._init = False
 
     @property

@@ -21,63 +21,17 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 import yaml  # type: ignore[import]
 from azure.core.credentials import TokenCredential
-from azure.ai.generative.index._documents import Document, DocumentChunksIterator, DocumentSource, StaticDocument
-from azure.ai.generative.index._embeddings.openai import OpenAIEmbedder
+from azure.ai.generative.index._documents import DocumentChunksIterator, DocumentSource
 from azure.ai.generative.index._langchain.vendor.document_loaders.base import BaseLoader
-from azure.ai.generative.index._langchain.vendor.embeddings.base import Embeddings as Embedder
-from azure.ai.generative.index._langchain.vendor.schema.document import Document as LangChainDocument
-from azure.ai.generative.index._models import init_open_ai_from_config, parse_model_uri
 from azure.ai.generative.index._utils.logging import get_logger, track_activity
 from azure.ai.generative.index._utils.tokens import tiktoken_cache_dir
+from azure.ai.resources._index._documents import Document, StaticDocument
+from azure.ai.resources._index._embeddings.openai import OpenAIEmbedder
+from azure.ai.resources._index._langchain.vendor.embeddings.base import Embeddings as Embedder
+from azure.ai.resources._index._langchain.vendor.schema.document import Document as LangChainDocument
+from azure.ai.resources._index._models import init_open_ai_from_config, parse_model_uri
 
 logger = get_logger(__name__)
-
-
-def _args_to_openai_embedder(arguments: dict):
-    import openai
-    from azure.ai.generative.index._langchain.vendor.embeddings.openai import OpenAIEmbeddings
-    from azure.ai.generative.index._utils.logging import langchain_version
-
-    arguments = init_open_ai_from_config(arguments, credential=None)
-
-    if langchain_version > "0.0.154":
-        embedder = OpenAIEmbeddings(
-            openai_api_base=arguments.get("api_base", openai.api_base if hasattr(openai, "api_base") else openai.base_url),
-            openai_api_type=arguments.get("api_type", openai.api_type),
-            openai_api_version=arguments.get("api_version", openai.api_version),
-            openai_api_key=arguments.get("api_key", openai.api_key),
-            max_retries=100,  # TODO: Make this configurable
-        )
-    else:
-        if hasattr(openai, "api_base"):
-            openai.api_base = arguments.get("api_base", openai.api_base)
-        else:
-            openai.base_url = arguments.get("api_base", openai.base_url)
-        openai.api_type = arguments.get("api_type", openai.api_type)
-        openai.api_version = arguments.get("api_version", openai.api_version)
-        embedder = OpenAIEmbeddings(
-            openai_api_key=arguments.get("api_key", openai.api_key),
-            max_retries=100,  # TODO: Make this configurable
-        )
-
-    if "model_name" in arguments:
-        embedder.model = arguments["model_name"]
-
-    if "model" in arguments:
-        embedder.model = arguments["model"]
-
-    # Embeddings endpoint for AOAI uses deployment name and no model name.
-    if "deployment" in arguments and hasattr(embedder, "deployment"):
-        embedder.deployment = arguments["deployment"]
-
-    if "batch_size" in arguments:
-        embedder.chunk_size = int(arguments["batch_size"])
-
-    if "embedding_ctx_length" in arguments:
-        embedder.embedding_ctx_length = arguments["embedding_ctx_length"]
-
-    return embedder
-
 
 def get_langchain_embeddings(embedding_kind: str, arguments: dict, credential: Optional[TokenCredential] = None) -> Union[OpenAIEmbedder, Embedder]:
     """Get an instance of Embedder from the given arguments."""
@@ -101,7 +55,7 @@ def get_langchain_embeddings(embedding_kind: str, arguments: dict, credential: O
         )
         return embedder
     elif embedding_kind == "hugging_face":
-        from azure.ai.generative.index._langchain.vendor.embeddings.huggingface import HuggingFaceEmbeddings
+        from azure.ai.resources._index._langchain.vendor.embeddings.huggingface import HuggingFaceEmbeddings
 
         args = copy.deepcopy(arguments)
 
@@ -317,12 +271,13 @@ class ReferenceEmbeddedDocument(EmbeddedDocument):
 
     _last_opened_embeddings: Optional[Tuple[str, object]] = None
 
-    def __init__(self, document_id: str, mtime, document_hash: str, path_to_data: str, index, embeddings_container_path: str, metadata: dict):
+    def __init__(self, document_id: str, mtime, document_hash: str, path_to_data: str, index, embeddings_container_path: str, metadata: dict, is_local: bool = False):
         """Initialize the document."""
         super().__init__(document_id, mtime, document_hash, metadata)
         self.path_to_data = path_to_data
         self.embeddings_container_path = embeddings_container_path
         self.index = index
+        self.is_local = is_local
 
     def get_data(self) -> str:
         """Get the data of the document."""
@@ -665,8 +620,7 @@ class EmbeddingsContainer:
                     doc_id,
                     mtime,
                     document_hash,
-                    path_to_data=None,  # type: ignore[arg-type]
-                    #TODO: Bug 2879181
+                    path_to_data="",
                     index=None,
                     embeddings_container_path=embeddings_container_path,
                     metadata=metadata
@@ -944,9 +898,9 @@ class EmbeddingsContainer:
             raise ValueError("No embed function provided.")
 
         if hasattr(input_documents, "__module__") and "langchain" in input_documents.__module__ and "document_loaders" in input_documents.__module__:
+            assert isinstance(input_documents, BaseLoader)
             input_documents = iter([WrappedLangChainDocument(d)
-                                   for d in input_documents.load()])  # type: ignore[union-attr]
-            # TODO: Bug 2879186
+                                   for d in input_documents.load()])
         elif isinstance(input_documents, DocumentChunksIterator):
             flattened_docs: List = []
             for chunked_doc in input_documents:
@@ -1051,7 +1005,7 @@ class EmbeddingsContainer:
             import_faiss_or_so_help_me = dependable_faiss_import
         elif engine.endswith("indexes.faiss.FaissAndDocStore"):
             from azure.ai.generative.index._docstore import FileBasedDocstore
-            from azure.ai.generative.index._indexes.faiss import FaissAndDocStore, import_faiss_or_so_help_me
+            from azure.ai.generative.index._indexes.faiss import FaissAndDocStore, import_faiss_or_so_help_me  # type: ignore[no-redef]
 
             def add_doc(doc_id, emb_doc, documents):
                 documents.append(

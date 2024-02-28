@@ -9,6 +9,8 @@ import shutil
 import time
 from pathlib import Path
 from typing import Optional, Dict, List
+
+import mlflow
 import pandas as pd
 import tempfile
 
@@ -54,10 +56,17 @@ def run_pf_flow_with_dict_list(flow_path, data: List[Dict], flow_params=None):
         if flow_params is None:
             flow_params = {}
 
+        env_vars = None
+        if mlflow.get_tracking_uri() and mlflow.get_tracking_uri().startswith("azureml:"):
+            env_vars = {
+                "MLFLOW_TRACKING_URI": mlflow.get_tracking_uri()
+            }
+
         return pf_client.run(
             flow=flow_path,
             data=tmp_path,
             column_mapping=column_mapping,
+            environment_variables=env_vars,
             **flow_params
         )
 
@@ -186,3 +195,7 @@ def _copy_artifact(source, destination):
 
     pathlib.Path(destination).mkdir(exist_ok=True, parents=True)
     shutil.copy2(source, destination)
+
+
+def is_lambda_function(obj):
+    return callable(obj) and obj.__name__ == "<lambda>"

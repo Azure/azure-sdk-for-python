@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=unused-argument, line-too-long
+# pylint: disable=unused-argument, line-too-long, protected-access
 
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -22,24 +22,20 @@ from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     NumericalDataQualityMetricThreshold,
     NumericalPredictionDriftMetricThreshold,
     PredictionDriftMetricThresholdBase,
-    RegressionModelPerformanceMetric,
-    RegressionModelPerformanceMetricThreshold,
 )
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import camel_to_snake, snake_to_camel
-from azure.ai.ml.constants._monitoring import MonitorFeatureType, MonitorMetricName, MonitorModelType
+from azure.ai.ml.constants._monitoring import MonitorFeatureType, MonitorMetricName
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
-@experimental
 class MetricThreshold(RestTranslatableMixin):
     def __init__(self, *, threshold: Optional[float] = None):
-        self.data_type = None
+        self.data_type: Any = None
         self.metric_name: Optional[str] = None
         self.threshold = threshold
 
 
-@experimental
 class NumericalDriftMetrics(RestTranslatableMixin):
     """Numerical Drift Metrics
 
@@ -116,7 +112,6 @@ class NumericalDriftMetrics(RestTranslatableMixin):
         return self._find_name_and_threshold()
 
 
-@experimental
 class CategoricalDriftMetrics(RestTranslatableMixin):
     """Categorical Drift Metrics
 
@@ -182,7 +177,6 @@ class CategoricalDriftMetrics(RestTranslatableMixin):
         return self._find_name_and_threshold()
 
 
-@experimental
 class DataDriftMetricThreshold(MetricThreshold):
     """Data drift metric threshold
 
@@ -260,7 +254,6 @@ class DataDriftMetricThreshold(MetricThreshold):
         return self.numerical == other.numerical and self.categorical == other.categorical
 
 
-@experimental
 class PredictionDriftMetricThreshold(MetricThreshold):
     """Prediction drift metric threshold
 
@@ -340,7 +333,6 @@ class PredictionDriftMetricThreshold(MetricThreshold):
         )
 
 
-@experimental
 class DataQualityMetricsNumerical(RestTranslatableMixin):
     """Data Quality Numerical Metrics
 
@@ -417,7 +409,6 @@ class DataQualityMetricsNumerical(RestTranslatableMixin):
         return cls._get_default_thresholds()
 
 
-@experimental
 class DataQualityMetricsCategorical(RestTranslatableMixin):
     """Data Quality Categorical Metrics
 
@@ -494,7 +485,6 @@ class DataQualityMetricsCategorical(RestTranslatableMixin):
         return cls._get_default_thresholds()
 
 
-@experimental
 class DataQualityMetricThreshold(MetricThreshold):
     """Data quality metric threshold
 
@@ -608,52 +598,124 @@ class FeatureAttributionDriftMetricThreshold(MetricThreshold):
 
 
 @experimental
-class ModelPerformanceMetricThreshold(MetricThreshold):
+class ModelPerformanceClassificationThresholds(RestTranslatableMixin):
     def __init__(
         self,
         *,
-        metric_name: MonitorMetricName,
-        threshold: Optional[float] = None,
+        accuracy: Optional[float] = None,
+        precision: Optional[float] = None,
+        recall: Optional[float] = None,
     ):
-        super().__init__(threshold=threshold)
-        self.metric_name = metric_name
+        self.accuracy = accuracy
+        self.precision = precision
+        self.recall = recall
 
-    def _to_rest_object(self, **kwargs: Any) -> ModelPerformanceMetricThresholdBase:
-        model_type = kwargs.get("model_type")
-        metric = ""
-        if self.metric_name is not None:
-            if self.metric_name.lower() == MonitorMetricName.MAE.lower():
-                metric = RegressionModelPerformanceMetric.MEAN_ABSOLUTE_ERROR
-            elif self.metric_name.lower() == MonitorMetricName.MSE.lower():
-                metric = RegressionModelPerformanceMetric.MEAN_SQUARED_ERROR
-            elif self.metric_name.lower() == MonitorMetricName.RMSE.lower():
-                metric = RegressionModelPerformanceMetric.ROOT_MEAN_SQUARED_ERROR
-            else:
-                metric = snake_to_camel(self.metric_name)
-        threshold = MonitoringThreshold(value=self.threshold) if self.threshold is not None else None
-        return (
-            RegressionModelPerformanceMetricThreshold(
-                metric=metric,
-                threshold=threshold,
+    def _to_str_object(self, **kwargs):
+        thresholds = []
+        if self.accuracy:
+            thresholds.append(
+                '{"modelType":"classification","metric":"Accuracy","threshold":{"value":' + f"{self.accuracy}" + "}}"
             )
-            if model_type is not None and model_type.lower() == MonitorModelType.REGRESSION.lower()
-            else ClassificationModelPerformanceMetricThreshold(
-                metric=metric,
-                threshold=threshold,
+        if self.precision:
+            thresholds.append(
+                '{"modelType":"classification","metric":"Precision","threshold":{"value":' + f"{self.precision}" + "}}"
             )
+        if self.recall:
+            thresholds.append(
+                '{"modelType":"classification","metric":"Recall","threshold":{"value":' + f"{self.recall}" + "}}"
+            )
+
+        if not thresholds:
+            return None
+
+        return ", ".join(thresholds)
+
+    @classmethod
+    def _from_rest_object(cls, obj) -> "ModelPerformanceClassificationThresholds":
+        return cls(
+            accuracy=obj.threshold.value if obj.threshold else None,
+        )
+
+
+@experimental
+class ModelPerformanceRegressionThresholds(RestTranslatableMixin):
+    def __init__(
+        self,
+        *,
+        mean_absolute_error: Optional[float] = None,
+        mean_squared_error: Optional[float] = None,
+        root_mean_squared_error: Optional[float] = None,
+    ):
+        self.mean_absolute_error = mean_absolute_error
+        self.mean_squared_error = mean_squared_error
+        self.root_mean_squared_error = root_mean_squared_error
+
+    def _to_str_object(self, **kwargs):
+        thresholds = []
+        if self.mean_absolute_error:
+            thresholds.append(
+                '{"modelType":"regression","metric":"MeanAbsoluteError","threshold":{"value":'
+                + f"{self.mean_absolute_error}"
+                + "}}"
+            )
+        if self.mean_squared_error:
+            thresholds.append(
+                '{"modelType":"regression","metric":"MeanSquaredError","threshold":{"value":'
+                + f"{self.mean_squared_error}"
+                + "}}"
+            )
+        if self.root_mean_squared_error:
+            thresholds.append(
+                '{"modelType":"regression","metric":"RootMeanSquaredError","threshold":{"value":'
+                + f"{self.root_mean_squared_error}"
+                + "}}"
+            )
+
+        if not thresholds:
+            return None
+
+        return ", ".join(thresholds)
+
+
+@experimental
+class ModelPerformanceMetricThreshold(RestTranslatableMixin):
+    def __init__(
+        self,
+        *,
+        classification: Optional[ModelPerformanceClassificationThresholds] = None,
+        regression: Optional[ModelPerformanceRegressionThresholds] = None,
+    ):
+        self.classification = classification
+        self.regression = regression
+
+    def _to_str_object(self, **kwargs):
+        thresholds = []
+        if self.classification:
+            thresholds.append(self.classification._to_str_object(**kwargs))
+        if self.regression:
+            thresholds.append(self.regression._to_str_object(**kwargs))
+
+        if not thresholds:
+            return None
+        if len(thresholds) == 2:
+            result = "[" + ", ".join(thresholds) + "]"
+        else:
+            result = "[" + thresholds[0] + "]"
+        return result
+
+    def _to_rest_object(self, **kwargs) -> ModelPerformanceMetricThresholdBase:
+        threshold = MonitoringThreshold(value=0.9)
+        return ClassificationModelPerformanceMetricThreshold(
+            metric="Accuracy",
+            threshold=threshold,
         )
 
     @classmethod
     def _from_rest_object(cls, obj: ModelPerformanceMetricThresholdBase) -> "ModelPerformanceMetricThreshold":
-        if obj.metric == RegressionModelPerformanceMetric.MEAN_ABSOLUTE_ERROR:
-            metric_name = MonitorMetricName.MAE
-        elif obj.metric == RegressionModelPerformanceMetric.MEAN_SQUARED_ERROR:
-            metric_name = MonitorMetricName.MSE
-        elif obj.metric == RegressionModelPerformanceMetric.ROOT_MEAN_SQUARED_ERROR:
-            metric_name = MonitorMetricName.RMSE
-        else:
-            metric_name = snake_to_camel(obj.metric)
-        return cls(metric_name=metric_name, threshold=obj.threshold.value if obj.threshold else None)
+        return cls(
+            classification=ModelPerformanceClassificationThresholds._from_rest_object(obj),
+            regression=None,
+        )
 
 
 @experimental

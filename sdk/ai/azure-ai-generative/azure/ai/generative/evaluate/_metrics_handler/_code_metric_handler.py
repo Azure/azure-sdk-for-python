@@ -20,6 +20,7 @@ class CodeMetricHandler(MetricHandler):
             task_type,
             prediction_data,
             test_data,
+            input_output_data,
             metrics_mapping=None,
             metrics=None,
     ):
@@ -30,6 +31,7 @@ class CodeMetricHandler(MetricHandler):
             test_data=test_data,
             metrics_mapping=metrics_mapping,
             metrics=metrics,
+            input_output_data=input_output_data,
         )
 
         self._validate()
@@ -84,7 +86,7 @@ class CodeMetricHandler(MetricHandler):
         with ThreadPoolExecutor(thread_name_prefix="code_metrics_row") as thread_pool:
             for i in range(0, len(data)):
                 row_metric_futures.append(thread_pool.submit(
-                    self._submit_method, metric.calculate, data=data[i], response=response[i]
+                    self._submit_method, metric.calculate, data={**data[i], **response[i]}
                 ))
 
             for row_metric_future in row_metric_futures:
@@ -107,18 +109,4 @@ class CodeMetricHandler(MetricHandler):
                     {metric.name: row_metric_results}
                 )
 
-        if metric.aggregator:
-            try:
-                aggregated_values = self._submit_method(
-                    metric.aggregator,
-                    values=results.get("artifacts").get(metric.name)
-                )
-                results["metrics"].update(
-                    {
-                        f"{key}_{metric.name}": value for key, value in aggregated_values.items()
-                    }
-                )
-            except Exception as ex:
-                LOGGER.info(
-                    f"Error aggregating values for metric {metric.name} , failed with error {str(ex)} : Stack trace : {str(ex.__traceback__)}")
         return results

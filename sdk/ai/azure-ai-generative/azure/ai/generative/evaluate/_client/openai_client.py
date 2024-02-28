@@ -7,7 +7,7 @@ import logging
 from openai import AsyncAzureOpenAI
 from openai.types.chat.chat_completion import ChatCompletion
 
-from azure.ai.generative._user_agent import USER_AGENT
+from azure.ai.generative.evaluate._user_agent import USER_AGENT
 from azure.ai.generative.constants._common import USER_AGENT_HEADER_KEY
 
 semaphore = asyncio.Semaphore(10)

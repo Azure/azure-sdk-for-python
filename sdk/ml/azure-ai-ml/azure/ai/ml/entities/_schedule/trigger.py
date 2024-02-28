@@ -42,7 +42,7 @@ class TriggerBase(RestTranslatableMixin, ABC):
         type: str,  # pylint: disable=redefined-builtin
         start_time: Optional[Union[str, datetime]] = None,
         end_time: Optional[Union[str, datetime]] = None,
-        time_zone: TimeZone = TimeZone.UTC,
+        time_zone: Union[str, TimeZone] = TimeZone.UTC,
     ) -> None:
         super().__init__()
         self.type = type

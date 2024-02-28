@@ -1,52 +1,28 @@
 # -*- coding: utf-8 -*-
 # The MIT License (MIT)
-# Copyright (c) 2022 Microsoft Corporation
-
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
-
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
+# Copyright (c) Microsoft Corporation. All rights reserved.
 
 """End-to-end test.
 """
 
 import time
-from typing import Mapping
-import test_config
+import unittest
 import uuid
+from typing import Mapping
+
 import pytest
+import requests
 from azure.core.pipeline.transport import RequestsTransport, RequestsTransportResponse
+
 import azure.cosmos.documents as documents
 import azure.cosmos.exceptions as exceptions
+import test_config
 from azure.cosmos._routing import routing_range
 from azure.cosmos._routing.collection_routing_map import CollectionRoutingMap
-from azure.cosmos.http_constants import HttpHeaders, StatusCodes
 from azure.cosmos.aio import CosmosClient, _retry_utility_async
 from azure.cosmos.diagnostics import RecordDiagnostics
+from azure.cosmos.http_constants import HttpHeaders, StatusCodes
 from azure.cosmos.partition_key import PartitionKey
-import requests
-
-pytestmark = pytest.mark.cosmosEmulator
-
-# IMPORTANT NOTES:
-#  	Most test cases in this file create collections in your Azure Cosmos account.
-#  	Collections are billing entities.  By running these test cases, you may incur monetary costs on your account.
-
-#  	To Run the test, replace the two member fields (masterKey and host) with values
-#   associated with your Azure Cosmos account.
 
 
 class TimeoutTransport(RequestsTransport):
@@ -68,17 +44,17 @@ class TimeoutTransport(RequestsTransport):
         return response
 
 
-@pytest.mark.usefixtures("teardown")
-class TestSubpartitionCRUD:
+@pytest.mark.cosmosEmulator
+class TestSubpartitionCrudAsync(unittest.IsolatedAsyncioTestCase):
     """Python CRUD Tests.
     """
 
-    configs = test_config._test_config
+    configs = test_config.TestConfig
     host = configs.host
     masterKey = configs.masterKey
     connectionPolicy = configs.connectionPolicy
     last_headers = []
-    client = None
+    client: CosmosClient = None
 
     async def __assert_http_failure_with_status(self, status_code, func, *args, **kwargs):
         """Assert HTTP failure with status.
@@ -89,25 +65,27 @@ class TestSubpartitionCRUD:
         """
         try:
             await func(*args, **kwargs)
-            pytest.fail("function should fail")
+            self.fail("function should fail")
         except exceptions.CosmosHttpResponseError as inst:
             assert inst.status_code == status_code
 
     @classmethod
-    async def _set_up(cls):
+    def setUpClass(cls):
         if (cls.masterKey == '[YOUR_KEY_HERE]' or
                 cls.host == '[YOUR_ENDPOINT_HERE]'):
             raise Exception(
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-        cls.client = CosmosClient(cls.host, cls.masterKey)
-        cls.database_for_test = await cls.client.create_database_if_not_exists(
-            test_config._test_config.TEST_DATABASE_ID)
 
-    @pytest.mark.asyncio
+    async def asyncSetUp(self):
+        self.client = CosmosClient(self.host, self.masterKey)
+        self.database_for_test = self.client.get_database_client(self.configs.TEST_DATABASE_ID)
+
+    async def asyncTearDown(self):
+        await self.client.close()
+
     async def test_collection_crud_async(self):
-        await self._set_up()
         created_db = self.database_for_test
         collections = [collection async for collection in created_db.list_containers()]
         # create a collection
@@ -146,30 +124,21 @@ class TestSubpartitionCRUD:
         # read collection after deletion
         created_container = created_db.get_container_client(created_collection.id)
         await self.__assert_http_failure_with_status(StatusCodes.NOT_FOUND,
-                                                 created_container.read)
+                                                     created_container.read)
 
-        container_proxy = await created_db.create_container_if_not_exists(id=created_collection.id,
-                                                                          partition_key=PartitionKey(path=['/id1',
-                                                                                                           '/id2',
-                                                                                                           '/id3'],
-                                                                                                     kind='MultiHash'))
+        container_proxy = await created_db.create_container(id=created_collection.id,
+                                                            partition_key=PartitionKey(path=['/id1',
+                                                                                             '/id2',
+                                                                                             '/id3'],
+                                                                                       kind='MultiHash'))
         assert created_collection.id == container_proxy.id
         container_proxy_properties = await container_proxy._get_properties()
-        assert PartitionKey(path=["/id1", "/id2", "/id3"], kind='MultiHash') == container_proxy_properties['partitionKey']
-
-        container_proxy = await created_db.create_container_if_not_exists(id=created_collection.id,
-                                                                          partition_key=created_properties[
-                                                                              'partitionKey'])
-        assert created_container.id == container_proxy.id
-
-        container_proxy_properties = await container_proxy._get_properties()
-        assert PartitionKey(path=["/id1", "/id2", "/id3"], kind='MultiHash') == container_proxy_properties['partitionKey']
+        assert PartitionKey(path=["/id1", "/id2", "/id3"], kind='MultiHash') == container_proxy_properties[
+            'partitionKey']
 
         await created_db.delete_container(created_collection.id)
 
-    @pytest.mark.asyncio
     async def test_partitioned_collection_async(self):
-        await self._set_up()
         created_db = self.database_for_test
 
         collection_definition = {'id': 'test_partitioned_collection ' + str(uuid.uuid4()),
@@ -189,8 +158,10 @@ class TestSubpartitionCRUD:
         assert collection_definition.get('id') == created_collection.id
 
         created_collection_properties = await created_collection.read()
-        assert collection_definition.get('partitionKey').get('paths') == created_collection_properties['partitionKey']['paths']
-        assert collection_definition.get('partitionKey').get('kind') == created_collection_properties['partitionKey']['kind']
+        assert collection_definition.get('partitionKey').get('paths') == created_collection_properties['partitionKey'][
+            'paths']
+        assert collection_definition.get('partitionKey').get('kind') == created_collection_properties['partitionKey'][
+            'kind']
 
         expected_offer = await created_collection.get_throughput()
 
@@ -209,8 +180,8 @@ class TestSubpartitionCRUD:
                                   }
         try:
             created_collection = await created_db.create_container(id=collection_definition['id'],
-                                                             partition_key=collection_definition2['partitionKey'],
-                                                             offer_throughput=offer_throughput)
+                                                                   partition_key=collection_definition2['partitionKey'],
+                                                                   offer_throughput=offer_throughput)
         except exceptions.CosmosHttpResponseError as error:
             assert error.status_code == StatusCodes.BAD_REQUEST
             assert "Too many partition key paths" in error.message
@@ -226,17 +197,15 @@ class TestSubpartitionCRUD:
                                   }
         try:
             created_collection = await created_db.create_container(id=collection_definition['id'],
-                                                             partition_key=collection_definition3['partitionKey'],
-                                                             offer_throughput=offer_throughput)
+                                                                   partition_key=collection_definition3['partitionKey'],
+                                                                   offer_throughput=offer_throughput)
         except exceptions.CosmosHttpResponseError as error:
             assert error.status_code == StatusCodes.BAD_REQUEST
             assert "Too many partition key paths" in error.message
 
         await created_db.delete_container(created_collection.id)
 
-    @pytest.mark.asyncio
     async def test_partitioned_collection_partition_key_extraction_async(self):
-        await self._set_up()
         created_db = self.database_for_test
 
         collection_id = 'test_partitioned_collection_partition_key_extraction ' + str(uuid.uuid4())
@@ -277,7 +246,7 @@ class TestSubpartitionCRUD:
         try:
             created_document = await created_collection1.create_item(document_definition)
             _retry_utility_async.ExecuteFunctionAsync = self.OriginalExecuteFunction
-            pytest.fail('Operation Should Fail.')
+            self.fail('Operation Should Fail.')
         except exceptions.CosmosHttpResponseError as error:
             assert error.status_code == StatusCodes.BAD_REQUEST
             assert "Partition key [[]] is invalid" in error.message
@@ -286,9 +255,7 @@ class TestSubpartitionCRUD:
         await created_db.delete_container(created_collection.id)
         await created_db.delete_container(created_collection1.id)
 
-    @pytest.mark.asyncio
     async def test_partitioned_collection_partition_key_extraction_special_chars_async(self):
-        await self._set_up()
         created_db = self.database_for_test
 
         collection_id = 'test_partitioned_collection_partition_key_extraction_special_chars1 ' + str(uuid.uuid4())
@@ -345,9 +312,7 @@ class TestSubpartitionCRUD:
         await created_db.delete_container(created_collection1.id)
         await created_db.delete_container(created_collection2.id)
 
-    @pytest.mark.asyncio
     async def test_partitioned_collection_document_crud_and_query_async(self):
-        await self._set_up()
         created_db = self.database_for_test
         collection_id = 'test_partitioned_collection_partition_document_crud_and_query_MH ' + str(uuid.uuid4())
         created_collection = await created_db.create_container(
@@ -415,7 +380,9 @@ class TestSubpartitionCRUD:
         # query document on the partition key specified in the predicate will pass even without setting
         # enableCrossPartitionQuery or passing in the partitionKey value
         documentlist = [document async for document in created_collection.query_items(
-            query='SELECT * FROM root r WHERE r.city=\'' + replaced_document.get('city') + '\' and r.zipcode=\'' + replaced_document.get('zipcode') + '\''  # pylint: disable=line-too-long
+            query='SELECT * FROM root r WHERE r.city=\'' + replaced_document.get(
+                'city') + '\' and r.zipcode=\'' + replaced_document.get('zipcode') + '\''
+            # pylint: disable=line-too-long
         )]
         assert 1 == len(documentlist)
 
@@ -441,7 +408,7 @@ class TestSubpartitionCRUD:
 
         try:
             await created_collection.create_item(body=incomplete_document)
-            pytest.fail("Test did not fail as expected")
+            self.fail("Test did not fail as expected")
         except exceptions.CosmosHttpResponseError as error:
             assert error.status_code == StatusCodes.BAD_REQUEST
             assert "Partition key provided either doesn't correspond to definition in the collection" in error.message
@@ -449,7 +416,7 @@ class TestSubpartitionCRUD:
         # using incomplete partition key in read item
         try:
             await created_collection.read_item(created_document, partition_key=["Redmond"])
-            pytest.fail("Test did not fail as expected")
+            self.fail("Test did not fail as expected")
         except exceptions.CosmosHttpResponseError as error:
             assert error.status_code, StatusCodes.BAD_REQUEST
             assert "Partition key provided either doesn't correspond to definition in the collection" in error.message
@@ -464,9 +431,7 @@ class TestSubpartitionCRUD:
         assert doc_mixed_types.get('zipcode') == created_mixed_type_doc.get('zipcode')
         await created_db.delete_container(created_collection.id)
 
-    @pytest.mark.asyncio
     async def test_partitioned_collection_prefix_partition_query_async(self):
-        await self._set_up()
         created_db = self.database_for_test
         collection_id = 'test_partitioned_collection_partition_key_prefix_query_async ' + str(uuid.uuid4())
         created_collection = await created_db.create_container(
@@ -554,12 +519,15 @@ class TestSubpartitionCRUD:
 
         # Query all items with CA for 1st level and Oxnard for second level. Should only return 3 items
         document_list = [document async for document in created_collection.query_items(query='Select * from c'
-                                                                                       , partition_key=['CA', 'Oxnard'])]  # pylint: disable=line-too-long
+                                                                                       , partition_key=['CA',
+                                                                                                        'Oxnard'])]  # pylint: disable=line-too-long
         assert 3 == len(document_list)
 
         # Query for specific zipcode using 1st level of partition key value only:
-        document_list = [document async for document in created_collection.query_items(query='Select * from c where c.zipcode = "93033"'  # pylint: disable=line-too-long
-                                                                                       , partition_key=['CA'])]
+        document_list = [document async for document in
+                         created_collection.query_items(query='Select * from c where c.zipcode = "93033"'
+                                                        # pylint: disable=line-too-long
+                                                        , partition_key=['CA'])]
         assert 1 == len(document_list)
 
         # Query Should work with None values:
@@ -576,14 +544,13 @@ class TestSubpartitionCRUD:
         try:
             document_list = [document async for document in created_collection.query_items(query='Select * from c'
                                                                                            , partition_key=[])]
-            pytest.fail("Test did not fail as expected")
+            self.fail("Test did not fail as expected")
         except exceptions.CosmosHttpResponseError as error:
             assert error.status_code == StatusCodes.BAD_REQUEST
             assert "Cross partition query is required but disabled" in error.message
 
         await created_db.delete_container(created_collection.id)
 
-    @pytest.mark.asyncio
     async def test_partition_key_range_overlap(self):
         Id = 'id'
         MinInclusive = 'minInclusive'
@@ -612,7 +579,7 @@ class TestSubpartitionCRUD:
 
         # Case 1: EPK range matches a single entire physical partition
         EPK_range_1 = routing_range.Range(range_min="0000000030", range_max="0000000050",
-                                                    isMinInclusive=True, isMaxInclusive=False)
+                                          isMinInclusive=True, isMaxInclusive=False)
         over_lapping_ranges_1 = crm.get_overlapping_ranges([EPK_range_1])
         # Should only have 1 over lapping range
         assert len(over_lapping_ranges_1) == 1
@@ -738,3 +705,7 @@ class TestSubpartitionCRUD:
         except IndexError:
             self.last_headers.append('')
         return await self.OriginalExecuteFunction(function, *args, **kwargs)
+
+
+if __name__ == '__main__':
+    unittest.main()

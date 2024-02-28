@@ -11,38 +11,29 @@ import numpy as np
 LOGGER = logging.getLogger(__name__)
 
 
-class ScoreReasonParser(object):
+class JsonParser(object):
 
     @staticmethod
-    def parse(value, metric):
+    def parse(value):
+        """
+        Parse input value as json. Returns empty dict in case value cannot be parsed as valid json
+        """
+        value_as_json = None
         try:
-            value_json = json.loads(value)
-            score = value_json.get("score")
-            reason = value_json.get("reason")
-        except JSONDecodeError as json_parse_error:
-            LOGGER.debug(
-                f"Error parsing metric {metric.name} value as returned json from LLM is not a valid json : {value}")
-            if score is not None:
-                reason = f"Error parsing reason. Output from LLM : {value}"
-            if score is None:
-                score = np.NaN
-                reason = f"Error parsing LLM response. Output from LLM : {value}"
+            value_as_json = json.loads(value)
         except Exception as ex:
-            score = np.NaN
-            reason = str(value)
+            LOGGER.debug(f"Error parsing as a valid json : {value}")
 
-        return {metric.name: score, f"{metric.name}_reason": reason}
+        return value_as_json
 
 
-class ScoreParser(object):
+class NumberParser(object):
     @staticmethod
-    def parse(value, metric):
+    def parse(value):
+        value_as_number = None
         try:
-            match = re.search(r'\d', value)
-            if match:
-                score = match.group()
-            score = float(score)
+            value_as_number = int(value)
         except Exception as ex:
-            score = np.NaN
+            LOGGER.debug(f"Error parsing as a valid number : {value}")
 
-        return {metric.name: score}
+        return value_as_number

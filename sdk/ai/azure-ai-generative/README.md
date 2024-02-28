@@ -19,6 +19,7 @@ For a more complete set of Azure libraries, see https://aka.ms/azsdk/python/all.
 - Python 3.7 or later is required to use this package.
 - You must have an [Azure subscription][azure_subscription].
 - An [Azure Machine Learning Workspace][workspace].
+- An [Azure AI Studio project][ai_project].
 
 ### Install the package
 Install the Azure AI generative package for Python with pip:
@@ -118,8 +119,9 @@ If you encounter any bugs or have suggestions, please file an issue in the [Issu
 <!-- LINKS -->
 
 [source_code]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-generative
+[ai_project]: https://aka.ms/azureaistudio
 [ai_pypi]: https://pypi.org/project/azure-ai-generative/
-[ai_ref_docs]: https://learn.microsoft.com/python/api/overview/azure/ai-generative-readme?view=azure-python
+[ai_ref_docs]: https://learn.microsoft.com/python/api/azure-ai-generative/?view=azure-python-preview
 [generative_samples]: https://github.com/Azure-Samples/azureai-samples
 [product_documentation]: https://docs.microsoft.com/azure/machine-learning/
 [azure_subscription]: https://azure.microsoft.com/free/

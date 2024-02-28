@@ -22,7 +22,7 @@ class QueueSettings(RestTranslatableMixin, DictMixin):
     """Queue settings for a pipeline job.
 
     :ivar job_tier: Enum to determine the job tier. Possible values include: "Spot", "Basic",
-        "Standard", "Premium".
+        "Standard", "Premium", "Null".
     :vartype job_tier: str or ~azure.mgmt.machinelearningservices.models.JobTier
     :ivar priority: Controls the priority of the job on a compute.
     :vartype priority: str
@@ -77,7 +77,7 @@ class QueueSettings(RestTranslatableMixin, DictMixin):
                     error_category=ErrorCategory.USER_ERROR,
                     error_type=ValidationErrorType.INVALID_VALUE,
                 )
-            valid_keys = list(enum_class.ENTITY_TO_REST.keys())
+            valid_keys = list(enum_class.ENTITY_TO_REST.keys())  # type: ignore[attr-defined]
             if value and value.lower() not in valid_keys:
                 msg = f"{key} should be one of {valid_keys}, but received '{value}'."
                 raise ValidationException(
