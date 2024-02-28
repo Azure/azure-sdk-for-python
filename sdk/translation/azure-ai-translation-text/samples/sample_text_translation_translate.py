@@ -25,7 +25,7 @@ USAGE:
 """
 
 from azure.core.exceptions import HttpResponseError
-from azure.ai.translation.text.models import InputTextItem, TextType, ProfanityAction, ProfanityMarker
+from azure.ai.translation.text.models import TextType, ProfanityAction, ProfanityMarker
 
 # -------------------------------------------------------------------------
 # Text translation client
@@ -42,7 +42,7 @@ def get_text_translation():
     try:
         source_language = "en"
         target_languages = ["cs"]
-        input_text_elements = [InputTextItem(text="This is a test")]
+        input_text_elements = ["This is a test"]
 
         response = text_translator.translate(
             request_body=input_text_elements, to=target_languages, from_parameter=source_language
@@ -65,7 +65,7 @@ def get_text_translation_auto():
     # [START get_text_translation_auto]
     try:
         target_languages = ["cs"]
-        input_text_elements = [InputTextItem(text="This is a test")]
+        input_text_elements = ["This is a test"]
 
         response = text_translator.translate(request_body=input_text_elements, to=target_languages)
         translation = response[0] if response else None
@@ -94,7 +94,7 @@ def get_text_translation_with_transliteration():
         from_language = "ar"
         to_script = "Latn"
         target_languages = ["zh-Hans"]
-        input_text_elements = [InputTextItem(text="hudha akhtabar.")]
+        input_text_elements = ["hudha akhtabar."]
 
         response = text_translator.translate(
             request_body=input_text_elements,
@@ -128,9 +128,9 @@ def get_text_translation_multiple_inputs():
     try:
         target_languages = ["cs"]
         input_text_elements = [
-            InputTextItem(text="This is a test."),
-            InputTextItem(text="Esto es una prueba."),
-            InputTextItem(text="Dies ist ein Test."),
+            "This is a test.",
+            "Esto es una prueba.",
+            "Dies ist ein Test.",
         ]
 
         translations = text_translator.translate(request_body=input_text_elements, to=target_languages)
@@ -153,7 +153,7 @@ def get_text_translation_multiple_languages():
     # [START get_text_translation_multiple_languages]
     try:
         target_languages = ["cs", "es", "de"]
-        input_text_elements = [InputTextItem(text="This is a test")]
+        input_text_elements = ["This is a test"]
 
         response = text_translator.translate(request_body=input_text_elements, to=target_languages)
         translation = response[0] if response else None
@@ -178,7 +178,7 @@ def get_text_translation_type():
     try:
         text_type = TextType.HTML
         target_languages = ["cs"]
-        input_text_elements = [InputTextItem(text="<html><body>This <b>is</b> a test.</body></html>")]
+        input_text_elements = ["<html><body>This <b>is</b> a test.</body></html>"]
 
         response = text_translator.translate(request_body=input_text_elements, to=target_languages, text_type=text_type)
         translation = response[0] if response else None
@@ -205,9 +205,7 @@ def get_text_translation_exclude():
         source_language = "en"
         target_languages = ["cs"]
         input_text_elements = [
-            InputTextItem(
-                text='<div class="notranslate">This will not be translated.</div><div>This will be translated. </div>'
-            )
+            '<div class="notranslate">This will not be translated.</div><div>This will be translated. </div>'
         ]
 
         response = text_translator.translate(
@@ -231,9 +229,7 @@ def get_text_translation_entity():
         source_language = "en"
         target_languages = ["cs"]
         input_text_elements = [
-            InputTextItem(
-                text='The word <mstrans:dictionary translation="wordomatic">wordomatic</mstrans:dictionary> is a dictionary entry.'
-            )
+            'The word <mstrans:dictionary translation="wordomatic">wordomatic</mstrans:dictionary> is a dictionary entry.'
         ]
 
         response = text_translator.translate(
@@ -257,7 +253,7 @@ def get_text_translation_profanity():
         profanity_action = ProfanityAction.MARKED
         profanity_maker = ProfanityMarker.ASTERISK
         target_languages = ["cs"]
-        input_text_elements = [InputTextItem(text="This is ***.")]
+        input_text_elements = ["This is ***."]
 
         response = text_translator.translate(
             request_body=input_text_elements,
@@ -287,7 +283,7 @@ def get_text_translation_alignment():
     try:
         include_alignment = True
         target_languages = ["cs"]
-        input_text_elements = [InputTextItem(text="The answer lies in machine translation.")]
+        input_text_elements = ["The answer lies in machine translation."]
 
         response = text_translator.translate(
             request_body=input_text_elements, to=target_languages, include_alignment=include_alignment
@@ -316,7 +312,7 @@ def get_text_translation_sentence_length():
     try:
         include_sentence_length = True
         target_languages = ["cs"]
-        input_text_elements = [InputTextItem(text="The answer lies in machine translation. This is a test.")]
+        input_text_elements = ["The answer lies in machine translation. This is a test."]
 
         response = text_translator.translate(
             request_body=input_text_elements, to=target_languages, include_sentence_length=include_sentence_length
@@ -346,7 +342,7 @@ def get_text_translation_custom():
     try:
         category = "<<Category ID>>"
         target_languages = ["cs"]
-        input_text_elements = [InputTextItem(text="This is a test")]
+        input_text_elements = ["This is a test"]
 
         response = text_translator.translate(request_body=input_text_elements, to=target_languages, category=category)
         translation = response[0] if response else None

@@ -141,7 +141,7 @@ Renders single source-language text to multiple target-language texts with a sin
 ```python
 try:
     target_languages = ["cs", "es", "de"]
-    input_text_elements = [InputTextItem(text="This is a test")]
+    input_text_elements = ["This is a test"]
 
     response = text_translator.translate(request_body=input_text_elements, to=target_languages)
     translation = response[0] if response else None
@@ -178,7 +178,7 @@ try:
     language = "zh-Hans"
     from_script = "Hans"
     to_script = "Latn"
-    input_text_elements = [InputTextItem(text="这是个测试。")]
+    input_text_elements = ["这是个测试。"]
 
     response = text_translator.transliterate(
         request_body=input_text_elements, language=language, from_script=from_script, to_script=to_script
@@ -212,7 +212,7 @@ Identifies the positioning of sentence boundaries in a piece of text.
 try:
     include_sentence_length = True
     target_languages = ["cs"]
-    input_text_elements = [InputTextItem(text="The answer lies in machine translation. This is a test.")]
+    input_text_elements = ["The answer lies in machine translation. This is a test."]
 
     response = text_translator.translate(
         request_body=input_text_elements, to=target_languages, include_sentence_length=include_sentence_length
@@ -252,7 +252,7 @@ Returns equivalent words for the source term in the target language.
 try:
     source_language = "en"
     target_language = "es"
-    input_text_elements = [InputTextItem(text="fly")]
+    input_text_elements = ["fly"]
 
     response = text_translator.lookup_dictionary_entries(
         request_body=input_text_elements, from_parameter=source_language, to=target_language
