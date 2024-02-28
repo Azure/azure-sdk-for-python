@@ -247,13 +247,13 @@ class DatastoreOperations(_ScopeDependentOperations):
 
         :param path: The data store path to mount, in the form of `<name>` or `azureml://datastores/<name>`.
         :type path: str
-        :param mount_point: A local path used as mount point.
+        :keyword mount_point: A local path used as mount point.
         :type mount_point: str
-        :param mode: Mount mode, either `ro_mount` (read-only) or `rw_mount` (read-write).
+        :keyword mode: Mount mode, either `ro_mount` (read-only) or `rw_mount` (read-write).
         :type mode: str
-        :param debug: Whether to enable verbose logging.
+        :keyword debug: Whether to enable verbose logging.
         :type debug: bool
-        :param persistent: Whether to persist the mount after reboot. Applies only when running on Compute Instance,
+        :keyword persistent: Whether to persist the mount after reboot. Applies only when running on Compute Instance,
                 where the 'CI_NAME' environment variable is set."
         :type persistent: bool
         :return: None

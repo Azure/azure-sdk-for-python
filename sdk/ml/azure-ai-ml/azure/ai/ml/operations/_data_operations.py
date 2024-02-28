@@ -760,13 +760,13 @@ class DataOperations(_ScopeDependentOperations):
 
         :param path: The data asset path to mount, in the form of `azureml:<name>` or `azureml:<name>:<version>`.
         :type path: str
-        :param mount_point: A local path used as mount point.
+        :keyword mount_point: A local path used as mount point.
         :type mount_point: str
-        :param mode: Mount mode. Only `ro_mount` (read-only) is supported for data asset mount.
+        :keyword mode: Mount mode. Only `ro_mount` (read-only) is supported for data asset mount.
         :type mode: str
-        :param debug: Whether to enable verbose logging.
+        :keyword debug: Whether to enable verbose logging.
         :type debug: bool
-        :param persistent: Whether to persist the mount after reboot. Applies only when running on Compute Instance,
+        :keyword persistent: Whether to persist the mount after reboot. Applies only when running on Compute Instance,
                 where the 'CI_NAME' environment variable is set."
         :type persistent: bool
         :return: None
