@@ -17,6 +17,11 @@ from azure.monitor.opentelemetry.exporter._quickpulse._live_metrics import (
     enable_live_metrics,
     _QuickpulseManager,
 )
+from azure.monitor.opentelemetry.exporter._quickpulse._state import (
+    _get_global_quickpulse_state,
+    _set_global_quickpulse_state,
+    _QuickpulseState,
+)
 from azure.monitor.opentelemetry.exporter._utils import (
     _get_sdk_version,
     _populate_part_a_fields,
@@ -36,6 +41,9 @@ class TestLiveMetrics(unittest.TestCase):
 
 
 class TestQuickpulseManager(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        _set_global_quickpulse_state(_QuickpulseState.PING_SHORT)
 
     @mock.patch("opentelemetry.sdk.trace.id_generator.RandomIdGenerator.generate_trace_id")
     def test_init(self, generator_mock):
@@ -51,6 +59,7 @@ class TestQuickpulseManager(unittest.TestCase):
             connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ac;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/",
             resource=resource,
         )
+        self.assertEqual(_get_global_quickpulse_state(), _QuickpulseState.PING_SHORT)
         self.assertTrue(isinstance(qpm._exporter, _QuickpulseExporter))
         self.assertEqual(
             qpm._exporter._live_endpoint,

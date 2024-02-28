@@ -4,9 +4,17 @@ import platform
 from typing import Any, Optional
 
 from opentelemetry.sdk.metrics import MeterProvider
+from opentelemetry.sdk.trace import ReadableSpan
 from opentelemetry.sdk.trace.id_generator import RandomIdGenerator
 from opentelemetry.sdk.resources import Resource
 from azure.monitor.opentelemetry.exporter._generated.models import ContextTagKeys
+from azure.monitor.opentelemetry.exporter._quickpulse._state import (
+    _QuickpulseState,
+    _set_global_quickpulse_state,
+)
+from azure.monitor.opentelemetry.exporter._quickpulse._constants import (
+    _REQUEST_DURATION_NAME,
+)
 from azure.monitor.opentelemetry.exporter._quickpulse._exporter import (
     _QuickpulseExporter,
     _QuickpulseMetricReader,
@@ -32,6 +40,7 @@ def enable_live_metrics(**kwargs: Any) -> None:
 class _QuickpulseManager(metaclass=Singleton):
 
     def __init__(self, connection_string: Optional[str], resource: Optional[Resource]) -> None:
+        _set_global_quickpulse_state(_QuickpulseState.PING_SHORT)
         self._exporter = _QuickpulseExporter(connection_string)
         part_a_fields = {}
         if resource:
@@ -47,3 +56,15 @@ class _QuickpulseManager(metaclass=Singleton):
         )
         self._reader = _QuickpulseMetricReader(self._exporter, self._base_monitoring_data_point)
         self._meter_provider = MeterProvider([self._reader])
+        # self._meter = self._meter_provider.get_meter()
+
+        # self._request_duration = self._meter.create_histogram(
+        #     _REQUEST_DURATION_NAME[0],
+        #     "ms",
+        #     "live metrics avg request duration in ms"
+        # )
+
+#     def record_span(self, span: ReadableSpan):
+        
+
+# def record_span_for_quickpulse()

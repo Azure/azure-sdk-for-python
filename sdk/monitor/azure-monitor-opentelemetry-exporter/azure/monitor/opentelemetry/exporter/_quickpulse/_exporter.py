@@ -1,7 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 from datetime import datetime, timezone
-from enum import Enum
 from typing import Any, List, Optional
 
 from opentelemetry.context import (
@@ -32,12 +31,22 @@ from opentelemetry.sdk.metrics.export import (
 )
 
 from azure.core.exceptions import HttpResponseError
-from azure.monitor.opentelemetry.exporter._quickpulse._constants import _QUICKPULSE_METRIC_NAME_MAPPINGS
+from azure.monitor.opentelemetry.exporter._quickpulse._constants import (
+    _LONG_PING_INTERVAL_SECONDS,
+    _POST_CANCEL_INTERVAL_SECONDS,
+    _POST_INTERVAL_SECONDS,
+    _QUICKPULSE_METRIC_NAME_MAPPINGS,
+)
 from azure.monitor.opentelemetry.exporter._quickpulse._generated._client import QuickpulseClient
 from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import (
     DocumentIngress,
     MetricPoint,
     MonitoringDataPoint,
+)
+from azure.monitor.opentelemetry.exporter._quickpulse._state import (
+    _get_global_quickpulse_state,
+    _set_global_quickpulse_state,
+    _QuickpulseState,
 )
 from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser
 from azure.monitor.opentelemetry.exporter._utils import _ticks_since_dot_net_epoch, PeriodicTask
@@ -51,11 +60,6 @@ _APPLICATION_INSIGHTS_METRIC_TEMPORALITIES = {
     ObservableUpDownCounter: AggregationTemporality.CUMULATIVE,
     UpDownCounter: AggregationTemporality.CUMULATIVE,
 }
-
-_SHORT_PING_INTERVAL_SECONDS = 5
-_POST_INTERVAL_SECONDS = 1
-_LONG_PING_INTERVAL_SECONDS = 60
-_POST_CANCEL_INTERVAL_SECONDS = 20
 
 
 class _Response:
@@ -190,16 +194,6 @@ class _QuickpulseExporter(MetricExporter):
         return ping_response
 
 
-class _QuickpulseState(Enum):
-    """Current state of quickpulse service.
-    The numerical value represents the ping/post interval in ms for those states.
-    """
-
-    PING_SHORT = _SHORT_PING_INTERVAL_SECONDS
-    PING_LONG = _LONG_PING_INTERVAL_SECONDS
-    POST_SHORT = _POST_INTERVAL_SECONDS
-
-
 class _QuickpulseMetricReader(MetricReader):
 
     def __init__(
@@ -208,7 +202,6 @@ class _QuickpulseMetricReader(MetricReader):
         base_monitoring_data_point: MonitoringDataPoint,
     ) -> None:
         self._exporter = exporter
-        self._quick_pulse_state = _QuickpulseState.PING_SHORT
         self._base_monitoring_data_point = base_monitoring_data_point
         self._elapsed_num_seconds = 0
         self._worker = PeriodicTask(
@@ -226,7 +219,7 @@ class _QuickpulseMetricReader(MetricReader):
     def _ticker(self) -> None:
         if self._is_ping_state():
             # Send a ping if elapsed number of request meets the threshold
-            if self._elapsed_num_seconds % int(self._quick_pulse_state.value) == 0:
+            if self._elapsed_num_seconds % _get_global_quickpulse_state().value == 0:
                 print("pinging...")
                 ping_response = self._exporter._ping(  # pylint: disable=protected-access
                     self._base_monitoring_data_point,
@@ -236,22 +229,22 @@ class _QuickpulseMetricReader(MetricReader):
                     if header and header == "true":
                         print("ping succeeded: switching to post")
                         # Switch state to post if subscribed
-                        self._quick_pulse_state = _QuickpulseState.POST_SHORT
+                        _set_global_quickpulse_state(_QuickpulseState.POST_SHORT)
                         self._elapsed_num_seconds = 0
                     else:
                         # Backoff after _LONG_PING_INTERVAL_SECONDS (60s) of no successful requests
-                        if self._quick_pulse_state is _QuickpulseState.PING_SHORT and \
+                        if _get_global_quickpulse_state() is _QuickpulseState.PING_SHORT and \
                             self._elapsed_num_seconds >= _LONG_PING_INTERVAL_SECONDS:
                             print("ping failed for 60s, switching to pinging every 60s")
-                            self._quick_pulse_state = _QuickpulseState.PING_LONG
+                            _set_global_quickpulse_state(_QuickpulseState.PING_LONG)
                 # TODO: Implement redirect
                 else:
                     # Erroneous ping responses instigate backoff logic
                     # Backoff after _LONG_PING_INTERVAL_SECONDS (60s) of no successful requests
-                    if self._quick_pulse_state is _QuickpulseState.PING_SHORT and \
+                    if _get_global_quickpulse_state() is _QuickpulseState.PING_SHORT and \
                         self._elapsed_num_seconds >= _LONG_PING_INTERVAL_SECONDS:
                         print("ping failed for 60s, switching to pinging every 60s")
-                        self._quick_pulse_state = _QuickpulseState.PING_LONG
+                        _set_global_quickpulse_state(_QuickpulseState.PING_LONG)
         else:
             print("posting...")
             try:
@@ -262,7 +255,7 @@ class _QuickpulseMetricReader(MetricReader):
                 # And resume pinging
                 if self._elapsed_num_seconds >= _POST_CANCEL_INTERVAL_SECONDS:
                     print("post failed for 20s, switching to pinging")
-                    self._quick_pulse_state = _QuickpulseState.PING_SHORT
+                    _set_global_quickpulse_state(_QuickpulseState.PING_SHORT)
                     self._elapsed_num_seconds = 0
 
         self._elapsed_num_seconds += 1
@@ -290,7 +283,10 @@ class _QuickpulseMetricReader(MetricReader):
         self._worker.join()
 
     def _is_ping_state(self):
-        return self._quick_pulse_state in (_QuickpulseState.PING_SHORT, _QuickpulseState.PING_LONG)
+        return _get_global_quickpulse_state() in (
+            _QuickpulseState.PING_SHORT,
+            _QuickpulseState.PING_LONG
+        )
 
 def _metric_to_quick_pulse_data_points(  # pylint: disable=too-many-nested-blocks
     metrics_data: OTMetricsData,
