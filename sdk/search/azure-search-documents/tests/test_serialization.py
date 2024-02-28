@@ -78,6 +78,7 @@ def test_serialize_search_indexer_skillset():
     skillset = SearchIndexerSkillset.deserialize(serialized_skillset)
     assert skillset
 
+
 def test_serialize_search_index_dict():
     new_index_name = "hotels"
     fields = [
