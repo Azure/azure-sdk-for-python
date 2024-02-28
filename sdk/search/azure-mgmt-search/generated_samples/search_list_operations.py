@@ -14,7 +14,7 @@ from azure.mgmt.search import SearchManagementClient
     pip install azure-identity
     pip install azure-mgmt-search
 # USAGE
-    python search_create_or_update_service_auth_options.py
+    python search_list_operations.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -26,27 +26,14 @@ from azure.mgmt.search import SearchManagementClient
 def main():
     client = SearchManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subid",
+        subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.services.begin_create_or_update(
-        resource_group_name="rg1",
-        search_service_name="mysearchservice",
-        service={
-            "location": "westus",
-            "properties": {
-                "authOptions": {"aadOrApiKey": {"aadAuthFailureMode": "http401WithBearerChallenge"}},
-                "hostingMode": "default",
-                "partitionCount": 1,
-                "replicaCount": 3,
-            },
-            "sku": {"name": "standard"},
-            "tags": {"app-name": "My e-commerce app"},
-        },
-    ).result()
-    print(response)
+    response = client.operations.list()
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: specification/search/resource-manager/Microsoft.Search/preview/2024-03-01-preview/examples/SearchCreateOrUpdateServiceAuthOptions.json
+# x-ms-original-file: specification/search/resource-manager/Microsoft.Search/preview/2024-03-01-preview/examples/SearchListOperations.json
 if __name__ == "__main__":
     main()

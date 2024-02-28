@@ -15,6 +15,7 @@ from ._private_endpoint_connections_operations import PrivateEndpointConnections
 from ._shared_private_link_resources_operations import SharedPrivateLinkResourcesOperations
 from ._usages_operations import UsagesOperations
 from ._search_management_client_operations import SearchManagementClientOperationsMixin
+from ._network_security_perimeter_configurations_operations import NetworkSecurityPerimeterConfigurationsOperations
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
@@ -30,6 +31,7 @@ __all__ = [
     "SharedPrivateLinkResourcesOperations",
     "UsagesOperations",
     "SearchManagementClientOperationsMixin",
+    "NetworkSecurityPerimeterConfigurationsOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()
