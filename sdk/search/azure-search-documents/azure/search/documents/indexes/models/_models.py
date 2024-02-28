@@ -778,8 +778,6 @@ class SearchResourceEncryptionKey:
 
     @classmethod
     def _from_generated(cls, search_resource_encryption_key) -> "SearchResourceEncryptionKey":
-        if not search_resource_encryption_key:
-            return None
         if search_resource_encryption_key.access_credentials:
             application_id = search_resource_encryption_key.access_credentials.application_id
             application_secret = search_resource_encryption_key.access_credentials.application_secret
