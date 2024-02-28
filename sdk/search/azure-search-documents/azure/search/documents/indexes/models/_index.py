@@ -253,6 +253,31 @@ class SearchField:
         """
         return cls._from_generated(_SearchField.deserialize(data, content_type=content_type))  # type: ignore
 
+    def as_dict(self, keep_readonly: bool = True, **kwargs: Any) -> MutableMapping[str, Any]:
+        """Return a dict that can be serialized using json.dump.
+
+        :param bool keep_readonly: If you want to serialize the readonly attributes
+        :returns: A dict JSON compatible object
+        :rtype: dict
+        """
+        return self._to_generated().as_dict(keep_readonly=keep_readonly, **kwargs)
+
+    @classmethod
+    def from_dict(
+        cls,
+        data: Any,
+        content_type: Optional[str] = None,
+    ) -> "SearchField":
+        """Parse a dict using given key extractor return a model.
+
+        :param dict data: A dict using RestAPI structure
+        :param str content_type: JSON by default, set application/xml if XML.
+        :returns: A SearchField instance
+        :rtype: SearchField
+        :raises: DeserializationError if something went wrong
+        """
+        return cls._from_generated(_SearchField.from_dict(data, content_type=content_type))
+
 
 def SimpleField(
     *,
@@ -673,6 +698,31 @@ class SearchIndex:
         :raises: DeserializationError if something went wrong
         """
         return cls._from_generated(_SearchIndex.deserialize(data, content_type=content_type))
+
+    def as_dict(self, keep_readonly: bool = True, **kwargs: Any) -> MutableMapping[str, Any]:
+        """Return a dict that can be serialized using json.dump.
+
+        :param bool keep_readonly: If you want to serialize the readonly attributes
+        :returns: A dict JSON compatible object
+        :rtype: dict
+        """
+        return self._to_generated().as_dict(keep_readonly=keep_readonly, **kwargs)
+
+    @classmethod
+    def from_dict(
+        cls,
+        data: Any,
+        content_type: Optional[str] = None,
+    ) -> "SearchIndex":
+        """Parse a dict using given key extractor return a model.
+
+        :param dict data: A dict using RestAPI structure
+        :param str content_type: JSON by default, set application/xml if XML.
+        :returns: A SearchIndex instance
+        :rtype: SearchIndex
+        :raises: DeserializationError if something went wrong
+        """
+        return cls._from_generated(_SearchIndex.from_dict(data, content_type=content_type))
 
 
 def pack_search_field(search_field: SearchField) -> _SearchField:

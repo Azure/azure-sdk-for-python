@@ -141,6 +141,31 @@ class SearchIndexerSkillset:
         """
         return cls._from_generated(_SearchIndexerSkillset.deserialize(data, content_type=content_type))
 
+    def as_dict(self, keep_readonly: bool = True, **kwargs: Any) -> MutableMapping[str, Any]:
+        """Return a dict that can be serialized using json.dump.
+
+        :param bool keep_readonly: If you want to serialize the readonly attributes
+        :returns: A dict JSON compatible object
+        :rtype: dict
+        """
+        return self._to_generated().as_dict(keep_readonly=keep_readonly, **kwargs)
+
+    @classmethod
+    def from_dict(
+        cls,
+        data: Any,
+        content_type: Optional[str] = None,
+    ) -> "SearchIndexerSkillset":
+        """Parse a dict using given key extractor return a model.
+
+        :param dict data: A dict using RestAPI structure
+        :param str content_type: JSON by default, set application/xml if XML.
+        :returns: A SearchIndexerSkillset instance
+        :rtype: SearchIndexerSkillset
+        :raises: DeserializationError if something went wrong
+        """
+        return cls._from_generated(_SearchIndexerSkillset.from_dict(data, content_type=content_type))
+
 
 class EntityRecognitionSkillVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the Entity Recognition skill version to use."""
@@ -465,6 +490,31 @@ class AnalyzeTextOptions:
         """
         return cls._from_analyze_request(AnalyzeRequest.deserialize(data, content_type=content_type))
 
+    def as_dict(self, keep_readonly: bool = True, **kwargs: Any) -> MutableMapping[str, Any]:
+        """Return a dict that can be serialized using json.dump.
+
+        :param bool keep_readonly: If you want to serialize the readonly attributes
+        :returns: A dict JSON compatible object
+        :rtype: dict
+        """
+        return self._to_generated().as_dict(keep_readonly=keep_readonly, **kwargs)
+
+    @classmethod
+    def from_dict(
+        cls,
+        data: Any,
+        content_type: Optional[str] = None,
+    ) -> "AnalyzeTextOptions":
+        """Parse a dict using given key extractor return a model.
+
+        :param dict data: A dict using RestAPI structure
+        :param str content_type: JSON by default, set application/xml if XML.
+        :returns: A AnalyzeTextOptions instance
+        :rtype: AnalyzeTextOptions
+        :raises: DeserializationError if something went wrong
+        """
+        return cls._from_generated(AnalyzeRequest.from_dict(data, content_type=content_type))
+
 
 class CustomAnalyzer(LexicalAnalyzer):
     """Allows you to take control over the process of converting text into indexable/searchable tokens.
@@ -764,6 +814,31 @@ class SearchResourceEncryptionKey:
             _SearchResourceEncryptionKey.deserialize(data, content_type=content_type)
         )
 
+    def as_dict(self, keep_readonly: bool = True, **kwargs: Any) -> MutableMapping[str, Any]:
+        """Return a dict that can be serialized using json.dump.
+
+        :param bool keep_readonly: If you want to serialize the readonly attributes
+        :returns: A dict JSON compatible object
+        :rtype: dict
+        """
+        return self._to_generated().as_dict(keep_readonly=keep_readonly, **kwargs)
+
+    @classmethod
+    def from_dict(
+        cls,
+        data: Any,
+        content_type: Optional[str] = None,
+    ) -> "SearchResourceEncryptionKey":
+        """Parse a dict using given key extractor return a model.
+
+        :param dict data: A dict using RestAPI structure
+        :param str content_type: JSON by default, set application/xml if XML.
+        :returns: A SearchResourceEncryptionKey instance
+        :rtype: SearchResourceEncryptionKey
+        :raises: DeserializationError if something went wrong
+        """
+        return cls._from_generated(_SearchResourceEncryptionKey.from_dict(data, content_type=content_type))
+
 
 class SynonymMap:
     """Represents a synonym map definition.
@@ -840,6 +915,31 @@ class SynonymMap:
         :raises: DeserializationError if something went wrong
         """
         return cls._from_generated(_SynonymMap.deserialize(data, content_type=content_type))
+
+    def as_dict(self, keep_readonly: bool = True, **kwargs: Any) -> MutableMapping[str, Any]:
+        """Return a dict that can be serialized using json.dump.
+
+        :param bool keep_readonly: If you want to serialize the readonly attributes
+        :returns: A dict JSON compatible object
+        :rtype: dict
+        """
+        return self._to_generated().as_dict(keep_readonly=keep_readonly, **kwargs)
+
+    @classmethod
+    def from_dict(
+        cls,
+        data: Any,
+        content_type: Optional[str] = None,
+    ) -> "SynonymMap":
+        """Parse a dict using given key extractor return a model.
+
+        :param dict data: A dict using RestAPI structure
+        :param str content_type: JSON by default, set application/xml if XML.
+        :returns: A SynonymMap instance
+        :rtype: SynonymMap
+        :raises: DeserializationError if something went wrong
+        """
+        return cls._from_generated(_SynonymMap.from_dict(data, content_type=content_type))
 
 
 class SearchIndexerDataSourceConnection:
@@ -945,6 +1045,31 @@ class SearchIndexerDataSourceConnection:
         :raises: DeserializationError if something went wrong
         """
         return cls._from_generated(_SearchIndexerDataSource.deserialize(data, content_type=content_type))
+
+    def as_dict(self, keep_readonly: bool = True, **kwargs: Any) -> MutableMapping[str, Any]:
+        """Return a dict that can be serialized using json.dump.
+
+        :param bool keep_readonly: If you want to serialize the readonly attributes
+        :returns: A dict JSON compatible object
+        :rtype: dict
+        """
+        return self._to_generated().as_dict(keep_readonly=keep_readonly, **kwargs)
+
+    @classmethod
+    def from_dict(
+        cls,
+        data: Any,
+        content_type: Optional[str] = None,
+    ) -> "SearchIndexerDataSourceConnection":
+        """Parse a dict using given key extractor return a model.
+
+        :param dict data: A dict using RestAPI structure
+        :param str content_type: JSON by default, set application/xml if XML.
+        :returns: A SearchIndexerDataSourceConnection instance
+        :rtype: SearchIndexerDataSourceConnection
+        :raises: DeserializationError if something went wrong
+        """
+        return cls._from_generated(_SearchIndexerDataSource.from_dict(data, content_type=content_type))
 
 
 def pack_analyzer(analyzer):
