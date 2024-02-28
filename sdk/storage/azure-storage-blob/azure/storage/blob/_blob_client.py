@@ -224,10 +224,11 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
         :type credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]]  # pylint: disable=line-too-long
-        :param str snapshot:
+        :param snapshot:
             The optional blob snapshot on which to operate. This can be the snapshot ID string
             or the response returned from :func:`create_snapshot`. If specified, this will override
             the snapshot in the url.
+        :type snapshot: Optional[Union[str, Dict[str, Any]]]
         :keyword str version_id: The version id parameter is an opaque DateTime value that, when present,
             specifies the version of the blob to operate on.
         :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
@@ -259,9 +260,10 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         :type container_name: str
         :param blob_name: The name of the blob with which to interact.
         :type blob_name: str
-        :param str snapshot:
+        :param snapshot:
             The optional blob snapshot on which to operate. This can be the snapshot ID string
             or the response returned from :func:`create_snapshot`.
+        :type snapshot: Optional[Union[str, Dict[str, Any]]]
         :param credential:
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token, or the connection string already has shared
@@ -305,7 +307,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         The keys in the returned dictionary include 'sku_name' and 'account_kind'.
 
         :returns: A dict of account information (SKU and account type).
-        :rtype: dict(str, str)
+        :rtype: Dict[str, str]
         """
         try:
             return cast(Dict[str, str], self._client.blob.get_account_info(cls=return_response_headers, **kwargs))
@@ -341,7 +343,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             and tag values must be between 0 and 256 characters.
             Valid tag key and value characters include: lowercase and uppercase letters, digits (0-9),
             space (` `), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_)
-        :paramtype tags: dict(str, str)
+        :paramtype tags: Dict[str, str]
         :keyword bytearray source_content_md5:
             Specify the md5 that is used to verify the integrity of the source bytes.
         :keyword ~datetime.datetime source_if_modified_since:
@@ -432,14 +434,16 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         """Creates a new blob from a data source with automatic chunking.
 
         :param data: The blob data to upload.
-        :param ~azure.storage.blob.BlobType blob_type: The type of the blob. This can be
+        :type data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
+        :param blob_type: The type of the blob. This can be
             either BlockBlob, PageBlob or AppendBlob. The default value is BlockBlob.
-        :param int length:
+        :type blob_type: Union[str, ~azure.storage.blob.BlobType]
+        :param Optional[int] length:
             Number of bytes to read from the stream. This is optional, but
             should be supplied for optimal performance.
         :param metadata:
             Name-value pairs associated with the blob as metadata.
-        :type metadata: dict(str, str)
+        :type metadata: Optional[Dict[str, str]]
         :keyword tags:
             Name-value pairs associated with the blob as tag. Tags are case-sensitive.
             The tag set may contain at most 10 tags.  Tag keys must be between 1 and 128 characters,
@@ -449,7 +453,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
 
             .. versionadded:: 12.4.0
 
-        :paramtype tags: dict(str, str)
+        :paramtype tags: Dict[str, str]
         :keyword bool overwrite: Whether the blob to be uploaded should overwrite the current data.
             If True, upload_blob will overwrite the existing data. If set to False, the
             operation will fail with ResourceExistsError. The exception to the above is with Append
@@ -622,10 +626,10 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         be used to read all the content or readinto() must be used to download the blob into
         a stream. Using chunks() returns an iterator which allows the user to iterate over the content in chunks.
 
-        :param int offset:
+        :param Optional[int] offset:
             Start of byte range to use for downloading a section of the blob.
             Must be set if length is provided.
-        :param int length:
+        :param Optional[int] length:
             Number of bytes to read from the stream. This is optional, but
             should be supplied for optimal performance.
         :keyword str version_id:
@@ -1079,9 +1083,10 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
 
         If one property is set for the content_settings, all properties will be overridden.
 
-        :param ~azure.storage.blob.ContentSettings content_settings:
+        :param content_settings:
             ContentSettings object used to set blob properties. Used to set content type, encoding,
             language, disposition, md5, and cache control.
+        :type content_settings: Optional[~azure.storage.blob.ContentSettings]
         :keyword lease:
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
@@ -1135,7 +1140,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             Dict containing name and value pairs. Each call to this operation
             replaces all existing metadata attached to the blob. To remove all
             metadata from the blob, call this operation with no metadata headers.
-        :type metadata: dict(str, str)
+        :type metadata: Optional[Dict[str, str]]
         :keyword lease:
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
@@ -1183,6 +1188,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`_.
         :returns: Blob-updated property dict (Etag and last modified)
+        :rtype: Dict[str, Union[str, datetime]]
         """
         if kwargs.get('cpk') and self.scheme.lower() != 'https':
             raise ValueError("Customer provided encryption key must be used over HTTPS.")
@@ -1235,8 +1241,6 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`_.
-        :returns: Key value pairs of blob tags.
-        :rtype: Dict[str, str]
         """
 
         self._client.blob.delete_immutability_policy(**kwargs)
@@ -1276,16 +1280,18 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         :param int size:
             This specifies the maximum size for the page blob, up to 1 TB.
             The page blob size must be aligned to a 512-byte boundary.
-        :param ~azure.storage.blob.ContentSettings content_settings:
+        :param content_settings:
             ContentSettings object used to set blob properties. Used to set content type, encoding,
             language, disposition, md5, and cache control.
+        :type content_settings: Optional[~azure.storage.blob.ContentSettings]
         :param metadata:
             Name-value pairs associated with the blob as metadata.
-        :type metadata: dict(str, str)
-        :param ~azure.storage.blob.PremiumPageBlobTier premium_page_blob_tier:
+        :type metadata: Optional[Dict[str, str]]
+        :param premium_page_blob_tier:
             A page blob tier value to set the blob to. The tier correlates to the size of the
             blob and number of allowed IOPS. This is only applicable to page blobs on
             premium storage accounts.
+        :type premium_page_blob_tier: Optional[Union[str, ~azure.storage.blob.PremiumPageBlobTier]]
         :keyword tags:
             Name-value pairs associated with the blob as tag. Tags are case-sensitive.
             The tag set may contain at most 10 tags.  Tag keys must be between 1 and 128 characters,
@@ -1353,7 +1359,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`_.
         :returns: Blob-updated property dict (Etag and last modified).
-        :rtype: dict[str, Any]
+        :rtype: Dict[str, Union[str, datetime]]
         """
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
@@ -1380,12 +1386,12 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         of any existing blob is overwritten with the newly initialized append blob. To add content to
         the append blob, call the :func:`append_block` or :func:`append_block_from_url` method.
 
-        :param ~azure.storage.blob.ContentSettings content_settings:
+        :param Optional[~azure.storage.blob.ContentSettings] content_settings:
             ContentSettings object used to set blob properties. Used to set content type, encoding,
             language, disposition, md5, and cache control.
         :param metadata:
             Name-value pairs associated with the blob as metadata.
-        :type metadata: dict(str, str)
+        :type metadata: Optional[Dict[str, str]]
         :keyword tags:
             Name-value pairs associated with the blob as tag. Tags are case-sensitive.
             The tag set may contain at most 10 tags.  Tag keys must be between 1 and 128 characters,
@@ -1449,7 +1455,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`_.
         :returns: Blob-updated property dict (Etag and last modified).
-        :rtype: dict[str, Any]
+        :rtype: Dict[str, Union[str, datetime]]
         """
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
@@ -1481,7 +1487,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
 
         :param metadata:
             Name-value pairs associated with the blob as metadata.
-        :type metadata: dict(str, str)
+        :type metadata: Optional[Dict[str, str]]
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -1528,7 +1534,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`_.
         :returns: Blob-updated property dict (Snapshot ID, Etag, and last modified).
-        :rtype: dict[str, Any]
+        :rtype: Dict[str, Union[str, datetime]]
 
         .. admonition:: Example:
 
@@ -1602,7 +1608,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             source blob or file to the destination blob. If one or more name-value
             pairs are specified, the destination blob is created with the specified
             metadata, and metadata is not copied from the source blob or file.
-        :type metadata: dict(str, str)
+        :type metadata: Optional[Dict[str, str]]
         :param bool incremental_copy:
             Copies the snapshot of the source page blob to a destination page blob.
             The snapshot is copied such that only the differential changes between
@@ -1621,7 +1627,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
 
             .. versionadded:: 12.4.0
 
-        :paramtype tags: dict(str, str) or Literal["COPY"]
+        :paramtype tags: Union[Dict[str, str], Literal["COPY"]]
         :keyword ~azure.storage.blob.ImmutabilityPolicy immutability_policy:
             Specifies the immutability policy of a blob, blob snapshot or blob version.
 
@@ -1719,7 +1725,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             .. versionadded:: 12.10.0
 
         :returns: A dictionary of copy properties (etag, last_modified, copy_id, copy_status).
-        :rtype: dict[str, Union[str, ~datetime.datetime]]
+        :rtype: Dict[str, Union[str, datetime]]
 
         .. admonition:: Example:
 
@@ -1755,7 +1761,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         :param copy_id:
             The copy operation to abort. This can be either an ID string, or an
             instance of BlobProperties.
-        :type copy_id: str or ~azure.storage.blob.BlobProperties
+        :type copy_id: Union[str, Dict[str, Any], ~azure.storage.blob.BlobProperties]
         :rtype: None
 
         .. admonition:: Example:
@@ -1785,7 +1791,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             (-1) for a lease that never expires. A non-infinite lease can be
             between 15 and 60 seconds. A lease duration cannot be changed
             using renew or change. Default is -1 (infinite lease).
-        :param str lease_id:
+        :param Optional[str] lease_id:
             Proposed lease ID, in a GUID string format. The Blob Service
             returns 400 (Invalid request) if the proposed lease ID is not
             in the correct format.
@@ -1848,7 +1854,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             is infrequently accessed and stored for at least a month. The archive
             tier is optimized for storing data that is rarely accessed and stored
             for at least six months with flexible latency requirements.
-        :type standard_blob_tier: str or ~azure.storage.blob.StandardBlobTier
+        :type standard_blob_tier: Union[str, ~azure.storage.blob.StandardBlobTier]
         :keyword ~azure.storage.blob.RehydratePriority rehydrate_priority:
             Indicates the priority with which to rehydrate an archived blob
         :keyword str version_id:
@@ -1906,7 +1912,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
              The string should be less than or equal to 64 bytes in size.
              For a given blob, the block_id must be the same size for each block.
         :param data: The blob data.
-        :param int length: Size of the block.
+        :type data: Union[Iterable[AnyStr], IO[AnyStr]]
+        :param Optional[int] length: Size of the block.
         :keyword bool validate_content:
             If true, calculates an MD5 hash for each chunk of the blob. The storage
             service checks the hash of the content that has arrived with the hash
@@ -1942,7 +1949,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`_.
         :returns: Blob property dict.
-        :rtype: dict[str, Any]
+        :rtype: Dict[str, Any]
         """
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
@@ -1974,13 +1981,14 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
              The string should be less than or equal to 64 bytes in size.
              For a given blob, the block_id must be the same size for each block.
         :param str source_url: The URL.
-        :param int source_offset:
+        :param Optional[int] source_offset:
             Start of byte range to use for the block.
             Must be set if source length is provided.
-        :param int source_length: The size of the block in bytes.
-        :param bytearray source_content_md5:
+        :param Optional[int] source_length: The size of the block in bytes.
+        :param source_content_md5:
             Specify the md5 calculated for the range of
             bytes that must be read from the copy source.
+        :type source_content_md5: Optional[Union[bytes, bytearray]]
         :keyword lease:
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
@@ -2008,7 +2016,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
             the prefix of the source_authorization string.
         :returns: Blob property dict.
-        :rtype: dict[str, Any]
+        :rtype: Dict[str, Any]
         """
         if kwargs.get('cpk') and self.scheme.lower() != 'https':
             raise ValueError("Customer provided encryption key must be used over HTTPS.")
@@ -2078,14 +2086,14 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         """The Commit Block List operation writes a blob by specifying the list of
         block IDs that make up the blob.
 
-        :param list block_list:
+        :param List[BlobBlock] block_list:
             List of Blockblobs.
-        :param ~azure.storage.blob.ContentSettings content_settings:
+        :param Optional[~azure.storage.blob.ContentSettings] content_settings:
             ContentSettings object used to set blob properties. Used to set content type, encoding,
             language, disposition, md5, and cache control.
         :param metadata:
             Name-value pairs associated with the blob as metadata.
-        :type metadata: dict[str, str]
+        :type metadata: Optional[Dict[str, str]]
         :keyword tags:
             Name-value pairs associated with the blob as tag. Tags are case-sensitive.
             The tag set may contain at most 10 tags.  Tag keys must be between 1 and 128 characters,
@@ -2095,7 +2103,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
 
             .. versionadded:: 12.4.0
 
-        :paramtype tags: dict(str, str)
+        :paramtype tags: Dict[str, str]
         :keyword lease:
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
@@ -2164,7 +2172,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`_.
         :returns: Blob-updated property dict (Etag and last modified).
-        :rtype: dict(str, Any)
+        :rtype: Dict[str, Union[str, datetime]]
         """
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
@@ -2236,7 +2244,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             and tag values must be between 0 and 256 characters.
             Valid tag key and value characters include: lowercase and uppercase letters, digits (0-9),
             space (` `), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_)
-        :type tags: dict(str, str)
+        :type tags: Optional[Dict[str, str]]
         :keyword str version_id:
             The version id parameter is an opaque DateTime
             value that, when present, specifies the version of the blob to add tags to.
@@ -2314,13 +2322,13 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         """DEPRECATED: Returns the list of valid page ranges for a Page Blob or snapshot
         of a page blob.
 
-        :param int offset:
+        :param Optional[int] offset:
             Start of byte range to use for getting valid page ranges.
             If no length is given, all bytes after the offset will be searched.
             Pages must be aligned with 512-byte boundaries, the start offset
             must be a modulus of 512 and the length must be a modulus of
             512.
-        :param int length:
+        :param Optional[int] length:
             Number of bytes to use for getting valid page ranges.
             If length is given, offset must be provided.
             This range will return valid page ranges from the offset start up to
@@ -2328,10 +2336,11 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             Pages must be aligned with 512-byte boundaries, the start offset
             must be a modulus of 512 and the length must be a modulus of
             512.
-        :param str previous_snapshot_diff:
+        :param previous_snapshot_diff:
             The snapshot diff parameter that contains an opaque DateTime value that
             specifies a previous blob snapshot to be compared
             against a more recent snapshot or the current blob.
+        :type previous_snapshot_diff: Optional[Union[str, Dict[str, Any]]]
         :keyword lease:
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
@@ -2368,7 +2377,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         :returns:
             A tuple of two lists of page ranges as dictionaries with 'start' and 'end' keys.
             The first element are filled page ranges, the 2nd element is cleared page ranges.
-        :rtype: tuple(list(dict(str, str), list(dict(str, str))
+        :rtype: Tuple[List[Dict[str, int]], List[Dict[str, int]]]
         """
         warnings.warn(
             "get_page_ranges is deprecated, use list_page_ranges instead",
@@ -2422,7 +2431,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             between target blob and previous snapshot. Changed pages include both updated and cleared
             pages. The target blob may be a snapshot, as long as the snapshot specified by `previous_snapshot`
             is the older of the two.
-        :paramtype previous_snapshot: str or Dict[str, Any]
+        :paramtype previous_snapshot: Optional[Union[str, Dict[str, Any]]]
         :keyword lease:
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
@@ -2485,7 +2494,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
     def get_page_range_diff_for_managed_disk(
         self, previous_snapshot_url: str,
         offset: Optional[int] = None,
-        length:Optional[int] = None,
+        length: Optional[int] = None,
         **kwargs: Any
     ) -> Tuple[List[Dict[str, int]], List[Dict[str, int]]]:
         """Returns the list of valid page ranges for a managed disk or snapshot.
@@ -2496,17 +2505,17 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         .. versionadded:: 12.2.0
             This operation was introduced in API version '2019-07-07'.
 
-        :param previous_snapshot_url:
+        :param str previous_snapshot_url:
             Specifies the URL of a previous snapshot of the managed disk.
             The response will only contain pages that were changed between the target blob and
             its previous snapshot.
-        :param int offset:
+        :param Optional[int] offset:
             Start of byte range to use for getting valid page ranges.
             If no length is given, all bytes after the offset will be searched.
             Pages must be aligned with 512-byte boundaries, the start offset
             must be a modulus of 512 and the length must be a modulus of
             512.
-        :param int length:
+        :param Optional[int] length:
             Number of bytes to use for getting valid page ranges.
             If length is given, offset must be provided.
             This range will return valid page ranges from the offset start up to
@@ -2544,7 +2553,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         :returns:
             A tuple of two lists of page ranges as dictionaries with 'start' and 'end' keys.
             The first element are filled page ranges, the 2nd element is cleared page ranges.
-        :rtype: tuple(list(dict(str, str), list(dict(str, str))
+        :rtype: Tuple[List[Dict[str, int]], List[Dict[str, int]]]
         """
         options = _get_page_ranges_options(
             snapshot=self.snapshot,
@@ -2566,10 +2575,11 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
     ) -> Dict[str, Union[str, datetime]]:
         """Sets the blob sequence number.
 
-        :param str sequence_number_action:
+        :param sequence_number_action:
             This property indicates how the service should modify the blob's sequence
             number. See :class:`~azure.storage.blob.SequenceNumberAction` for more information.
-        :param str sequence_number:
+        :type sequence_number_action: Union[str, ~azure.storage.blob.SequenceNumberAction]
+        :param Optional[str] sequence_number:
             This property sets the blob's sequence number. The sequence number is a
             user-controlled property that you can use to track requests and manage
             concurrency issues.
@@ -2607,7 +2617,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`_.
         :returns: Blob-updated property dict (Etag and last modified).
-        :rtype: dict(str, Any)
+        :rtype: Dict[str, Union[str, datetime]]
         """
         options = _set_sequence_number_options(sequence_number_action, sequence_number=sequence_number, **kwargs)
         try:
@@ -2663,7 +2673,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`_.
         :returns: Blob-updated property dict (Etag and last modified).
-        :rtype: dict(str, Any)
+        :rtype: Dict[str, Union[str, datetime]]
         """
         if kwargs.get('cpk') and self.scheme.lower() != 'https':
             raise ValueError("Customer provided encryption key must be used over HTTPS.")
@@ -2759,7 +2769,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`_.
         :returns: Blob-updated property dict (Etag and last modified).
-        :rtype: dict(str, Any)
+        :rtype: Dict[str, Union[str, datetime]]
         """
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
@@ -2881,7 +2891,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
             the prefix of the source_authorization string.
         :returns: Blob-updated property dict (Etag and last modified).
-        :rtype: dict(str, Any)
+        :rtype: Dict[str, Any]
         """
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
@@ -2961,7 +2971,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`_.
         :returns: Blob-updated property dict (Etag and last modified).
-        :rtype: dict(str, Any)
+        :rtype: Dict[str, Union[str, datetime]]
         """
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
@@ -2987,8 +2997,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
 
         :param data:
             Content of the block. This can be bytes, text, an iterable or a file-like object.
-        :type data: bytes or str or Iterable
-        :param int length:
+        :type data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
+        :param Optional[int] length:
             Size of the block in bytes.
         :keyword bool validate_content:
             If true, calculates an MD5 hash of the block content. The storage
@@ -3058,7 +3068,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`_.
         :returns: Blob-updated property dict (Etag, last modified, append offset, committed block count).
-        :rtype: dict(str, Any)
+        :rtype: Dict[str, Union[str, datetime, int]]
         """
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
@@ -3087,9 +3097,9 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         :param str copy_source_url:
             The URL of the source data. It can point to any Azure Blob or File, that is either public or has a
             shared access signature attached.
-        :param int source_offset:
+        :param Optional[int] source_offset:
             This indicates the start of the range of bytes (inclusive) that has to be taken from the copy source.
-        :param int source_length:
+        :param Optional[int] source_length:
             This indicates the end of the range of bytes that has to be taken from the copy source.
         :keyword bytearray source_content_md5:
             If given, the service will calculate the MD5 hash of the block content and compare against this value.
@@ -3231,7 +3241,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`_.
         :returns: Blob-updated property dict (Etag, last modified, append offset, committed block count).
-        :rtype: dict(str, Any)
+        :rtype: Dict[str, Union[str, datetime, int]]
         """
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)

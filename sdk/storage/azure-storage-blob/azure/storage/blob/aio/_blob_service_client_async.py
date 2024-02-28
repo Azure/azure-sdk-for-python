@@ -166,7 +166,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin,
             Credentials provided here will take precedence over those in the connection string.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
-        :paramtype credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]]  # pylint: disable=line-too-long
+        :type credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]]  # pylint: disable=line-too-long
         :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
             authentication. Only has an effect when credential is of type TokenCredential. The value could be
             https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
@@ -229,7 +229,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin,
         The keys in the returned dictionary include 'sku_name' and 'account_kind'.
 
         :returns: A dict of account information (SKU and account type).
-        :rtype: dict(str, str)
+        :rtype: Dict[str, str]
 
         .. admonition:: Example:
 
@@ -341,31 +341,31 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin,
 
         :param analytics_logging:
             Groups the Azure Analytics Logging settings.
-        :type analytics_logging: ~azure.storage.blob.BlobAnalyticsLogging
+        :type analytics_logging: Optional[~azure.storage.blob.BlobAnalyticsLogging]
         :param hour_metrics:
             The hour metrics settings provide a summary of request
             statistics grouped by API in hourly aggregates for blobs.
-        :type hour_metrics: ~azure.storage.blob.Metrics
+        :type hour_metrics: Optional[~azure.storage.blob.Metrics]
         :param minute_metrics:
             The minute metrics settings provide request statistics
             for each minute for blobs.
-        :type minute_metrics: ~azure.storage.blob.Metrics
+        :type minute_metrics: Optional[~azure.storage.blob.Metrics]
         :param cors:
             You can include up to five CorsRule elements in the
             list. If an empty list is specified, all CORS rules will be deleted,
             and CORS will be disabled for the service.
-        :type cors: list[~azure.storage.blob.CorsRule]
-        :param str target_version:
+        :type cors: Optional[List[~azure.storage.blob.CorsRule]]
+        :param Optional[str] target_version:
             Indicates the default version to use for requests if an incoming
             request's version is not specified.
         :param delete_retention_policy:
             The delete retention policy specifies whether to retain deleted blobs.
             It also specifies the number of days and versions of blob to keep.
-        :type delete_retention_policy: ~azure.storage.blob.RetentionPolicy
+        :type delete_retention_policy: Optional[~azure.storage.blob.RetentionPolicy]
         :param static_website:
             Specifies whether the static website feature is enabled,
             and if yes, indicates the index document and 404 error document to use.
-        :type static_website: ~azure.storage.blob.StaticWebsite
+        :type static_website: Optional[~azure.storage.blob.StaticWebsite]
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
@@ -414,7 +414,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin,
         The generator will lazily follow the continuation tokens returned by
         the service and stop when all containers have been returned.
 
-        :param str name_starts_with:
+        :param Optional[str] name_starts_with:
             Filters the results to return only containers whose names
             begin with the specified prefix.
         :param bool include_metadata:
@@ -521,10 +521,10 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin,
         :param metadata:
             A dict with name-value pairs to associate with the
             container as metadata. Example: `{'Category':'test'}`
-        :type metadata: dict(str, str)
+        :type metadata: Optional[Dict[str, str]]
         :param public_access:
             Possible values include: 'container', 'blob'.
-        :type public_access: str or ~azure.storage.blob.PublicAccess
+        :type public_access: Union[~azure.storage.blob.PublicAccess, str]
         :keyword container_encryption_scope:
             Specifies the default encryption scope to set on the container and use for
             all future writes.
@@ -570,12 +570,12 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin,
         :param container:
             The container to delete. This can either be the name of the container,
             or an instance of ContainerProperties.
-        :type container: str or ~azure.storage.blob.ContainerProperties
+        :type container: Union[~azure.storage.blob.ContainerProperties, str]
         :param lease:
             If specified, delete_container only succeeds if the
             container's lease is active and matches this ID.
             Required if the container has an active lease.
-        :paramtype lease: ~azure.storage.blob.aio.BlobLeaseClient or str
+        :paramtype lease: Optional[Union[~azure.storage.blob.aio.BlobLeaseClient, str]]
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -699,7 +699,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin,
         :param container:
             The container. This can either be the name of the container,
             or an instance of ContainerProperties.
-        :type container: str or ~azure.storage.blob.ContainerProperties
+        :type container: Union[~azure.storage.blob.ContainerProperties, str]
         :returns: A ContainerClient.
         :rtype: ~azure.storage.blob.aio.ContainerClient
 
@@ -741,14 +741,14 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin,
         :param container:
             The container that the blob is in. This can either be the name of the container,
             or an instance of ContainerProperties.
-        :type container: str or ~azure.storage.blob.ContainerProperties
+        :type container: Union[~azure.storage.blob.ContainerProperties, str]
         :param str blob:
             The blob with which to interact.
         :param snapshot:
             The optional blob snapshot on which to operate. This can either be the ID of the snapshot,
             or a dictionary output returned by
             :func:`~azure.storage.blob.aio.BlobClient.create_snapshot()`.
-        :type snapshot: str or dict(str, Any)
+        :type snapshot: Optional[Union[Dict[str, Any], str]]
         :keyword str version_id: The version id parameter is an opaque DateTime value that, when present,
             specifies the version of the blob to operate on.
         :returns: A BlobClient.
