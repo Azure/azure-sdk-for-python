@@ -1,9 +1,10 @@
 # Release History
 
-## 1.1.0
+## 1.1.0 (2024-02-28)
 
 ### Bugs Fixed
 - Use the correct REST API parameter name `groups` in method `get_client_access_token`
+- Upgrade dependency package `pyjwt` to `>=2.0.0` which changes the return type of `jwt.encode(...)`. See https://pyjwt.readthedocs.io/en/stable/changelog.html#id30 for detail
 
 ## 1.1.0b1 (2022-12-12)
 
