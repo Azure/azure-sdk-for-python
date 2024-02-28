@@ -34,10 +34,13 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dic
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
+def use_standard_only():
+    """Use the standard client only."""
+    raise ValueError("The basic client is not supported for this operation.")
 
 class EventGridClientOperationsMixin(OperationsMixin):
     @overload
-    def publish_cloud_events(
+    def publish(
         self,
         topic_name: str,
         body: List[CloudEvent],
@@ -69,7 +72,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         """
 
     @overload
-    def publish_cloud_events(
+    def publish(
         self,
         topic_name: str,
         body: CloudEvent,
@@ -101,7 +104,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         """
 
     @overload
-    def publish_cloud_events(
+    def publish(
         self,
         topic_name: str,
         body: Dict[str, Any],
@@ -133,7 +136,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         """
     
     @overload
-    def publish_cloud_events(
+    def publish(
         self,
         topic_name: str,
         body: List[Dict[str, Any]],
@@ -164,7 +167,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         """
     
     @distributed_trace
-    def publish_cloud_events(
+    def publish(
         self,
         topic_name: str,
         body: Union[List[CloudEvent], CloudEvent, List[Dict[str, Any]], Dict[str, Any]],
@@ -193,82 +196,35 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        
-        # Check that the body is a CloudEvent or list of CloudEvents even if dict
-        if isinstance(body, dict) or (isinstance(body, list) and isinstance(body[0], dict)):
-            try:
-                if isinstance(body, list):
-                    body = [CloudEvent.from_dict(event) for event in body]
-                else:
-                    body = CloudEvent.from_dict(body)
-            except AttributeError:
+
+        if self._config.level == "Basic":
+            # do ga stuff
+            pass
+
+        elif self._config.level == "Standard":
+            # Check that the body is a CloudEvent or list of CloudEvents even if dict
+            if isinstance(body, dict) or (isinstance(body, list) and isinstance(body[0], dict)):
+                try:
+                    if isinstance(body, list):
+                        body = [CloudEvent.from_dict(event) for event in body]
+                    else:
+                        body = CloudEvent.from_dict(body)
+                except AttributeError:
+                    raise TypeError("Incorrect type for body. Expected CloudEvent,"
+                                    " list of CloudEvents, dict, or list of dicts."
+                                    " If dict passed, must follow the CloudEvent format.")
+
+
+            if isinstance(body, CloudEvent):
+                kwargs["content_type"] = "application/cloudevents+json; charset=utf-8"
+                self._publish(topic_name, body, self._config.api_version, binary_mode, **kwargs)
+            elif isinstance(body, list):
+                kwargs["content_type"] = "application/cloudevents-batch+json; charset=utf-8"
+                self._publish(topic_name, body, self._config.api_version, binary_mode, **kwargs)
+            else:
                 raise TypeError("Incorrect type for body. Expected CloudEvent,"
                                 " list of CloudEvents, dict, or list of dicts."
                                 " If dict passed, must follow the CloudEvent format.")
-
-
-        if isinstance(body, CloudEvent):
-            kwargs["content_type"] = "application/cloudevents+json; charset=utf-8"
-            self._publish(topic_name, body, self._config.api_version, binary_mode, **kwargs)
-        elif isinstance(body, list):
-            kwargs["content_type"] = "application/cloudevents-batch+json; charset=utf-8"
-            self._publish(topic_name, body, self._config.api_version, binary_mode, **kwargs)
-        else:
-            raise TypeError("Incorrect type for body. Expected CloudEvent,"
-                            " list of CloudEvents, dict, or list of dicts."
-                            " If dict passed, must follow the CloudEvent format.")
-
-    @distributed_trace
-    def receive_cloud_events(
-        self,
-        topic_name: str,
-        event_subscription_name: str,
-        *,
-        max_events: Optional[int] = None,
-        max_wait_time: Optional[int] = None,
-        **kwargs: Any
-    ) -> ReceiveResult:
-        """Receive Batch of Cloud Events from the Event Subscription.
-
-        :param topic_name: Topic Name. Required.
-        :type topic_name: str
-        :param event_subscription_name: Event Subscription Name. Required.
-        :type event_subscription_name: str
-        :keyword max_events: Max Events count to be received. Minimum value is 1, while maximum value
-         is 100 events. If not specified, the default value is 1. Default value is None.
-        :paramtype max_events: int
-        :keyword max_wait_time: Max wait time value for receive operation in Seconds. It is the time in
-         seconds that the server approximately waits for the availability of an event and responds to
-         the request. If an event is available, the broker responds immediately to the client. Minimum
-         value is 10 seconds, while maximum value is 120 seconds. If not specified, the default value is
-         60 seconds. Default value is None.
-        :paramtype max_wait_time: int
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
-        :return: ReceiveResult. The ReceiveResult is compatible with MutableMapping
-        :rtype: ~azure.eventgrid.models.ReceiveResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-        detail_items = []
-        received_result = self._receive_cloud_events(
-            topic_name,
-            event_subscription_name,
-            max_events=max_events,
-            max_wait_time=max_wait_time,
-            **kwargs
-        )
-        for detail_item in received_result.value:
-            deserialized_cloud_event = CloudEvent.from_dict(detail_item.event)
-            detail_item.event = deserialized_cloud_event
-            detail_items.append(
-                ReceiveDetails(
-                    broker_properties=detail_item.broker_properties,
-                    event=detail_item.event,
-                )
-            )
-        receive_result_deserialized = ReceiveResult(value=detail_items)
-        return receive_result_deserialized
 
     def _publish(self, topic_name: str, event: Any, api_version: str, binary_mode: Optional[bool] = False, **kwargs: Any) -> None:
 
@@ -333,7 +289,127 @@ class EventGridClientOperationsMixin(OperationsMixin):
 
         return deserialized # type: ignore
 
+    @use_standard_only
+    @distributed_trace
+    def receive_cloud_events(
+        self,
+        topic_name: str,
+        event_subscription_name: str,
+        *,
+        max_events: Optional[int] = None,
+        max_wait_time: Optional[int] = None,
+        **kwargs: Any
+    ) -> ReceiveResult:
+        """Receive Batch of Cloud Events from the Event Subscription.
 
+        :param topic_name: Topic Name. Required.
+        :type topic_name: str
+        :param event_subscription_name: Event Subscription Name. Required.
+        :type event_subscription_name: str
+        :keyword max_events: Max Events count to be received. Minimum value is 1, while maximum value
+         is 100 events. If not specified, the default value is 1. Default value is None.
+        :paramtype max_events: int
+        :keyword max_wait_time: Max wait time value for receive operation in Seconds. It is the time in
+         seconds that the server approximately waits for the availability of an event and responds to
+         the request. If an event is available, the broker responds immediately to the client. Minimum
+         value is 10 seconds, while maximum value is 120 seconds. If not specified, the default value is
+         60 seconds. Default value is None.
+        :paramtype max_wait_time: int
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
+        :return: ReceiveResult. The ReceiveResult is compatible with MutableMapping
+        :rtype: ~azure.eventgrid.models.ReceiveResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+        detail_items = []
+        received_result = self._receive_cloud_events(
+            topic_name,
+            event_subscription_name,
+            max_events=max_events,
+            max_wait_time=max_wait_time,
+            **kwargs
+        )
+        for detail_item in received_result.value:
+            deserialized_cloud_event = CloudEvent.from_dict(detail_item.event)
+            detail_item.event = deserialized_cloud_event
+            detail_items.append(
+                ReceiveDetails(
+                    broker_properties=detail_item.broker_properties,
+                    event=detail_item.event,
+                )
+            )
+        receive_result_deserialized = ReceiveResult(value=detail_items)
+        return receive_result_deserialized
+
+    @use_standard_only
+    @distributed_trace
+    def acknowledge_cloud_events(
+        self,
+        topic_name: str,
+        event_subscription_name: str,
+        acknowledge_options: Union[_models.AcknowledgeOptions, JSON, IO],
+        **kwargs: Any
+    ) -> _models.AcknowledgeResult:
+        return self.acknowledge_cloud_events(
+            topic_name=topic_name,
+            event_subscription_name=event_subscription_name,
+            acknowledge_options=acknowledge_options,
+            **kwargs
+        )
+    
+    @use_standard_only
+    @distributed_trace
+    def release_cloud_events(
+        self,
+        topic_name: str,
+        event_subscription_name: str,
+        release_options: Union[_models.ReleaseOptions, JSON, IO],
+        *,
+        release_delay_in_seconds: Optional[Union[int, _models.ReleaseDelay]] = None,
+        **kwargs: Any
+    ) -> _models.ReleaseResult:
+        return self.release_cloud_events(
+            topic_name=topic_name,
+            event_subscription_name=event_subscription_name,
+            release_options=release_options,
+            release_delay_in_seconds=release_delay_in_seconds,
+            **kwargs
+        )
+    
+    @use_standard_only
+    @distributed_trace
+    def reject_cloud_events(
+        self,
+        topic_name: str,
+        event_subscription_name: str,
+        reject_options: Union[_models.RejectOptions, JSON, IO],
+        **kwargs: Any
+    ) -> _models.RejectResult:
+        return self.reject_cloud_events(
+            topic_name=topic_name,
+            event_subscription_name=event_subscription_name,
+            reject_options=reject_options,
+            **kwargs
+        )
+    
+    @use_standard_only
+    @distributed_trace
+    def renew_cloud_event_locks(
+        self,
+        topic_name: str,
+        event_subscription_name: str,
+        renew_lock_options: Union[_models.RenewLockOptions, JSON, IO],
+        **kwargs: Any
+    ) -> _models.RenewCloudEventLocksResult:
+        return self.renew_cloud_event_locks(
+            topic_name=topic_name,
+            event_subscription_name=event_subscription_name,
+            renew_lock_options=renew_lock_options,
+            **kwargs
+        )
+    
+    
 def _to_http_request(topic_name: str, **kwargs: Any) -> HttpRequest:   
     # Create a HTTP request for a binary mode CloudEvent
 
