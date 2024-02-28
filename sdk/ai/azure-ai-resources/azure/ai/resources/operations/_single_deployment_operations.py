@@ -34,6 +34,15 @@ logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 
 
 class SingleDeploymentOperations:
+    """Operations class for SingleDeployment objects
+
+    You should not instantiate this class directly. Instead, you should
+    create an AIClient instance that instantiates it for you and
+    attaches it as an attribute.
+
+    :param ml_client: The Azure Machine Learning client
+    :type ml_client: ~azure.ai.ml.MLClient
+    """
     def __init__(self, ml_client: MLClient, connections, **kwargs) -> None:
         self._ml_client = ml_client
         self._connections = connections
@@ -43,6 +52,13 @@ class SingleDeploymentOperations:
     @distributed_trace
     @monitor_with_activity(logger, "SingleDeployment.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
     def begin_create_or_update(self, deployment: SingleDeployment) -> LROPoller[SingleDeployment]:
+        """Create or update a deployment.
+        
+        :param deployment: The deployment resource to create or update remotely.
+        :type deployment: ~azure.ai.resources.entities.SingleDeployment
+        :return: A poller for the long-running operation.
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.resources.entities.SingleDeployment]
+        """
         model = deployment.model
         endpoint_name = deployment.endpoint_name if deployment.endpoint_name else deployment.name
 
@@ -271,6 +287,15 @@ class SingleDeploymentOperations:
     @distributed_trace
     @monitor_with_activity(logger, "SingleDeployment.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, endpoint_name: Optional[str] = None) -> SingleDeployment:
+        """Get a deployment by name.
+        
+        :param name: The deployment name
+        :type name: str
+        :param endpoint_name: The endpoint name
+        :type endpoint_name: str
+        :return: The deployment with the provided name.
+        :rtype: ~azure.ai.resources.entities.SingleDeployment
+        """
         endpoint_name = endpoint_name if endpoint_name else name
         deployment = self._ml_client.online_deployments.get(
             name=name,
@@ -283,6 +308,11 @@ class SingleDeploymentOperations:
     @distributed_trace
     @monitor_with_activity(logger, "SingleDeployment.List", ActivityType.PUBLICAPI)
     def list(self) -> Iterable[SingleDeployment]:
+        """List all deployments.
+        
+        :return: An iterator of deployment objects
+        :rtype: Iterable[~azure.ai.resources.entities.SingleDeployment]
+        """
         deployments = []
         endpoints = self._ml_client.online_endpoints.list()
         for endpoint in endpoints:
@@ -291,14 +321,30 @@ class SingleDeploymentOperations:
         return deployments
 
     @distributed_trace
-    @monitor_with_activity(logger, "SingleDeployment.GetKeys", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Deployment.GetKeys", ActivityType.PUBLICAPI)
     def get_keys(self, name: str, endpoint_name: Optional[str] = None) -> DeploymentKeys:
+        """Get the deployment keys.
+        
+        :param name: The deployment name
+        :type name: str
+        :param endpoint_name: The endpoint name
+        :type endpoint_name: str
+        :return: The deployment keys
+        :rtype: ~azure.ai.resources.entities.DeploymentKeys
+        """
         endpoint_name = endpoint_name if endpoint_name else name
         return DeploymentKeys._from_v2_endpoint_keys(self._ml_client.online_endpoints.get_keys(endpoint_name))
 
     @distributed_trace
     @monitor_with_activity(logger, "SingleDeployment.Delete", ActivityType.PUBLICAPI)
     def delete(self, name: str, endpoint_name: Optional[str] = None) -> None:
+        """Delete a deployment.
+        
+        :param name: The deployment name
+        :type name: str
+        :param endpoint_name: The endpoint name
+        :type endpoint_name: str
+        """
         self._ml_client.online_deployments.delete(
             name=name,
             endpoint_name=endpoint_name if endpoint_name else name,
@@ -307,6 +353,17 @@ class SingleDeploymentOperations:
     @distributed_trace
     @monitor_with_activity(logger, "SingleDeployment.Invoke", ActivityType.PUBLICAPI)
     def invoke(self, name: str, request_file: Union[str, os.PathLike], endpoint_name: Optional[str] = None) -> Any:
+        """Invoke a deployment.
+
+        :param name: The deployment name
+        :type name: str
+        :param request_file: The request file
+        :type request_file: Union[str, os.PathLike]
+        :param endpoint_name: The endpoint name
+        :type endpoint_name: str
+        :return: The response from the deployment
+        :rtype: Any
+        """
         return self._ml_client.online_endpoints.invoke(
             endpoint_name=endpoint_name if endpoint_name else name,
             request_file=request_file,

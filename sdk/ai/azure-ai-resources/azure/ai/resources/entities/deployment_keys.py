@@ -8,6 +8,13 @@ from azure.ai.ml.entities import EndpointAuthKeys
 
 @dataclass
 class DeploymentKeys:
+    """Keys for model deployments
+
+    :param primary_key: The primary key for the deployment.
+    :type primary_key: str
+    :param secondary_key: The secondary key for the deployment.
+    :type secondary_key: str
+    """
     primary_key: str
     secondary_key: str
 

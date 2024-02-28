@@ -30,6 +30,7 @@ from azure.ai.ml._restclient.runhistory.models import Run
 from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient022023Preview
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase, ListViewType, UserIdentity
 from azure.ai.ml._restclient.v2023_08_01_preview.models import JobType as RestJobType
+from azure.ai.ml._restclient.v2024_01_01_preview.models import JobType as RestJobType_20240101
 from azure.ai.ml._restclient.v2024_01_01_preview.models import JobBase as JobBase_2401
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
@@ -71,6 +72,7 @@ from azure.ai.ml.entities._builders import BaseNode, Command, Spark
 from azure.ai.ml.entities._datastore._constants import WORKSPACE_BLOB_STORE
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
+from azure.ai.ml.entities._job.finetuning.finetuning_job import FineTuningJob
 from azure.ai.ml.entities._job.base_job import _BaseJob
 from azure.ai.ml.entities._job.import_job import ImportJob
 from azure.ai.ml.entities._job.job import _is_pipeline_child_job
@@ -158,6 +160,7 @@ class JobOperations(_ScopeDependentOperations):
     ) -> None:
         super(JobOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
+
         self._operation_2023_02_preview = service_client_02_2023_preview.jobs
         self._service_client = service_client_02_2023_preview
         self._all_operations = all_operations
@@ -719,6 +722,8 @@ class JobOperations(_ScopeDependentOperations):
     ) -> JobBase:
         service_client_operation = self._operation_2023_02_preview
         # Upgrade api from 2023-04-01-preview to 2023-08-01 for pipeline job
+        if rest_job_resource.properties.job_type == RestJobType_20240101.FINE_TUNING:
+            service_client_operation = self.service_client_01_2024_preview.jobs
         if rest_job_resource.properties.job_type == RestJobType.PIPELINE:
             service_client_operation = self.service_client_01_2024_preview.jobs
 
@@ -1073,6 +1078,8 @@ class JobOperations(_ScopeDependentOperations):
             # as they are part of the pipeline component
         elif isinstance(job, AutoMLJob):
             self._resolve_automl_job_inputs(job)
+        elif isinstance(job, FineTuningJob):
+            self._resolve_finetuning_job_inputs(job)
         elif isinstance(job, Spark):
             self._resolve_job_inputs(job._job_inputs.values(), job._base_path)
         elif isinstance(job, Command):
@@ -1102,6 +1109,20 @@ class JobOperations(_ScopeDependentOperations):
                 self._resolve_job_input(job.validation_data, job._base_path)
             if hasattr(job, "test_data") and job.test_data is not None:
                 self._resolve_job_input(job.test_data, job._base_path)
+
+    def _resolve_finetuning_job_inputs(self, job: FineTuningJob) -> None:
+        """This method resolves the inputs for FineTuning jobs.
+
+        :param job: the job resource entity
+        :type job: FineTuningJob
+        """
+        from azure.ai.ml.entities._job.finetuning.finetuning_vertical import FineTuningVertical
+
+        if isinstance(job, FineTuningVertical):
+            # self._resolve_job_input(job.model, job._base_path)
+            self._resolve_job_input(job.training_data, job._base_path)
+            if job.validation_data is not None:
+                self._resolve_job_input(job.validation_data, job._base_path)
 
     def _resolve_azureml_id(self, job: Job) -> Job:
         """This method converts ARM id to name or name:version for nested
@@ -1325,6 +1346,8 @@ class JobOperations(_ScopeDependentOperations):
             job = self._resolve_arm_id_for_automl_job(job, resolver, inside_pipeline=False)
         elif isinstance(job, PipelineJob):
             job = self._resolve_arm_id_for_pipeline_job(job, resolver)
+        elif isinstance(job, FineTuningJob):
+            pass
         else:
             msg = f"Non supported job type: {type(job)}"
             raise ValidationException(
