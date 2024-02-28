@@ -77,18 +77,21 @@ class StructuredMessageEncodeStream:
         *,
         segment_size: int = DEFAULT_SEGMENT_SIZE
     ) -> None:
+        if segment_size < 1:
+            raise ValueError("Segment size must be greater than 0.")
+
         self.message_version = DEFAULT_MESSAGE_VERSION
         self.content_length = content_length
         self.flags = flags
 
         self._inner_stream = inner_stream
         self._segment_size = segment_size
-        self._num_segments = math.ceil(self.content_length / self._segment_size)
+        self._num_segments = math.ceil(self.content_length / self._segment_size) or 1
 
         self.message_length = self._calculate_message_length()
 
         self._content_offset = 0
-        self._current_segment_number = 1
+        self._current_segment_number = 0  # Will be incremented before first segment
         self._current_region = SMRegion.MESSAGE_HEADER
         self._current_region_length = self._message_header_length
         self._current_region_offset = 0
@@ -112,6 +115,9 @@ class StructuredMessageEncodeStream:
     @property
     def _message_footer_length(self) -> int:
         return StructuredMessageConstants.CRC64_LENGTH if StructuredMessageProperties.CRC64 in self.flags else 0
+
+    def __len__(self):
+        return self.message_length
 
     def tell(self) -> int:
         if self._current_region == SMRegion.MESSAGE_HEADER:
@@ -176,6 +182,7 @@ class StructuredMessageEncodeStream:
                 self._num_segments)
 
         elif region == SMRegion.SEGMENT_HEADER:
+            self._current_segment_number += 1
             segment_size = min(self._segment_size, self.content_length - self._content_offset)
             self._current_region_content = generate_segment_header(self._current_segment_number, segment_size)
 
@@ -206,10 +213,10 @@ class StructuredMessageEncodeStream:
         elif current == SMRegion.SEGMENT_HEADER:
             self._current_region = SMRegion.SEGMENT_CONTENT
             self._current_region_length = min(self._segment_size, self.content_length - self._content_offset)
+            self._segment_crc64 = 0
         elif current == SMRegion.SEGMENT_CONTENT:
             self._current_region = SMRegion.SEGMENT_FOOTER
             self._current_region_length = self._segment_footer_length
-            self._segment_crc64 = 0
         elif current == SMRegion.SEGMENT_FOOTER:
             # If we're at the end of the content
             if self._content_offset == self.content_length:
@@ -218,8 +225,6 @@ class StructuredMessageEncodeStream:
             else:
                 self._current_region = SMRegion.SEGMENT_HEADER
                 self._current_region_length = self._segment_header_length
-        elif current == SMRegion.MESSAGE_FOOTER:
-            pass
         else:
             raise StructuredMessageError(f"Invalid SMRegion {self._current_region}")
 
@@ -233,7 +238,8 @@ class StructuredMessageEncodeStream:
         output.write(content)
 
         self._current_region_offset += read_size
-        if self._current_region_offset == self._current_region_length:
+        if (self._current_region_offset == self._current_region_length and
+                self._current_region != SMRegion.MESSAGE_FOOTER):
             self._advance_region(region)
 
         return read_size
