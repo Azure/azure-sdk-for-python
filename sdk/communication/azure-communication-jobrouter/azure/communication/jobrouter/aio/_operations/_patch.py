@@ -1462,7 +1462,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
                 tags=kwargs.pop("tags", router_worker.tags),
                 channels=kwargs.pop("channels", router_worker.channels),
                 available_for_offers=kwargs.pop("available_for_offers", router_worker.available_for_offers),
-                max_concurrent_offers = kwargs.pop("max_concurrent_offers", router_worker.max_concurrent_offers),
+                max_concurrent_offers=kwargs.pop("max_concurrent_offers", router_worker.max_concurrent_offers),
             )
 
         if_unmodified_since = kwargs.pop("if_unmodified_since", None)
