@@ -191,7 +191,7 @@ def _convert_container_to_endpoint(
     )
 
 
-def _convert_json_to_endpoint(endpoint_json: dict, **kwargs: Any) -> OnlineEndpoint:
+def _convert_json_to_endpoint(endpoint_json: Optional[dict], **kwargs: Any) -> OnlineEndpoint:
     """Converts metadata json and kwargs to OnlineEndpoint entity.
 
     :param endpoint_json: dictionary representation of OnlineEndpoint entity.

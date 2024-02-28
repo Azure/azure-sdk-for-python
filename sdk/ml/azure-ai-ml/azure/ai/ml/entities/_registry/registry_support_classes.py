@@ -92,7 +92,7 @@ class SystemCreatedStorageAccount:
         self,
         *,
         storage_account_hns: bool,
-        storage_account_type: StorageAccountType,
+        storage_account_type: Optional[StorageAccountType],
         arm_resource_id: Optional[str] = None,
         replicated_ids: Optional[List[str]] = None,
         replication_count: int = 1,

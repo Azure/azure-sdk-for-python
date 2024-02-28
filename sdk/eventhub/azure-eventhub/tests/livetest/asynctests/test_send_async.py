@@ -543,7 +543,7 @@ async def test_send_with_callback_async(connstr_receivers, uamqp_transport):
 @pytest.mark.parametrize("keep_alive", [None, 30, 60])
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-def test_send_with_keep_alive_async(connstr_receivers, keep_alive, uamqp_transport):
+async def test_send_with_keep_alive_async(connstr_receivers, keep_alive, uamqp_transport):
     connection_str, receivers = connstr_receivers
     client = EventHubProducerClient.from_connection_string(connection_str, keep_alive=keep_alive, uamqp_transport=uamqp_transport)
     assert client._producers["all-partitions"]._keep_alive == keep_alive
@@ -561,7 +561,7 @@ async def test_send_long_wait_idle_timeout(connstr_receivers, keep_alive, uamqp_
         retry_total = 0
     connection_str, receivers = connstr_receivers
     client = EventHubProducerClient.from_connection_string(connection_str, keep_alive=keep_alive, idle_timeout=10, retry_total=retry_total, uamqp_transport=uamqp_transport)
-    sender = await client._create_producer(partition_id="0")
+    sender = client._create_producer(partition_id="0")
     async with sender:
         await sender._open_with_retry()
         ed = EventData('data')

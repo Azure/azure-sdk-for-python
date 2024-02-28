@@ -3,7 +3,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
-import sys
 import pytest
 
 from azure.core import PipelineClient
@@ -20,7 +19,9 @@ def base_url():
 
 class TestAzureFunctionsIntegration:
     @pytest.mark.live_test_only
-    @pytest.mark.skipif(not sys.platform.startswith("linux"), reason="Test resource deployment only works on Linux.")
+    @pytest.mark.skipif(
+        not os.environ.get("IDENTITY_LIVE_RESOURCES_PROVISIONED"), reason="Integration resources not provisioned."
+    )
     def test_azure_functions_integration_sync(self, base_url):
         """Test the Azure Functions endpoint where the sync MI credential is used."""
         client = PipelineClient(base_url)
@@ -29,7 +30,9 @@ class TestAzureFunctionsIntegration:
         assert response.status_code == 200
 
     @pytest.mark.live_test_only
-    @pytest.mark.skipif(not sys.platform.startswith("linux"), reason="Test resource deployment only works on Linux.")
+    @pytest.mark.skipif(
+        not os.environ.get("IDENTITY_LIVE_RESOURCES_PROVISIONED"), reason="Integration resources not provisioned."
+    )
     def test_azure_functions_integration_async(self, base_url):
         """Test the Azure Functions endpoint where the async MI credential is used."""
         client = PipelineClient(base_url)

@@ -276,7 +276,7 @@ def stream_logs_until_completion(
             _current_logs_dict = (
                 list_logs_in_datastore(
                     ds_properties,
-                    prefix=prefix,
+                    prefix=str(prefix),
                     legacy_log_folder_name=legacy_folder_name,
                 )
                 if ds_properties is not None

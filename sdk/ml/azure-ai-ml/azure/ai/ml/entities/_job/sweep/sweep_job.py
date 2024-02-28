@@ -21,7 +21,7 @@ from azure.ai.ml.entities._credentials import (
     UserIdentityConfiguration,
     _BaseJobIdentityConfiguration,
 )
-from azure.ai.ml.entities._inputs_outputs import Input, Output
+from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job._input_output_helpers import (
     from_rest_data_outputs,
     from_rest_inputs_to_dataset_literal,
@@ -137,7 +137,7 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
             Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
         ] = None,
         inputs: Optional[Dict[str, Union[Input, str, bool, int, float]]] = None,
-        outputs: Optional[Dict[str, Output]] = None,
+        outputs: Optional[Dict] = None,
         compute: Optional[str] = None,
         limits: Optional[SweepJobLimits] = None,
         sampling_algorithm: Optional[Union[str, SamplingAlgorithm]] = None,

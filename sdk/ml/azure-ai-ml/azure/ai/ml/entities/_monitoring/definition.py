@@ -10,7 +10,6 @@ from typing_extensions import Literal
 
 from azure.ai.ml._restclient.v2023_06_01_preview.models import AzMonMonitoringAlertNotificationSettings
 from azure.ai.ml._restclient.v2023_06_01_preview.models import MonitorDefinition as RestMonitorDefinition
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._monitoring import (
     AZMONITORING,
     DEFAULT_DATA_DRIFT_SIGNAL_NAME,
@@ -29,7 +28,6 @@ from azure.ai.ml.entities._monitoring.signals import (
 from azure.ai.ml.entities._monitoring.target import MonitoringTarget
 
 
-@experimental
 class MonitorDefinition(RestTranslatableMixin):
     """Monitor definition
 
@@ -44,7 +42,8 @@ class MonitorDefinition(RestTranslatableMixin):
         , ~azure.ai.ml.entities.DataQualitySignal, ~azure.ai.ml.entities.PredictionDriftSignal
         , ~azure.ai.ml.entities.FeatureAttributionDriftSignal
         , ~azure.ai.ml.entities.CustomMonitoringSignal
-        , ~azure.ai.ml.entities.GenerationSafetyQualitySignal]]]
+        , ~azure.ai.ml.entities.GenerationSafetyQualitySignal
+        , ~azure.ai.ml.entities.ModelPerformanceSignal]]]
     :keyword alert_notification: The alert configuration for the monitor.
     :paramtype alert_notification: Optional[Union[Literal['azmonitoring'], ~azure.ai.ml.entities.AlertNotification]]
 
@@ -73,6 +72,7 @@ class MonitorDefinition(RestTranslatableMixin):
 
     def _to_rest_object(self, **kwargs: Any) -> RestMonitorDefinition:
         default_data_window_size = kwargs.get("default_data_window_size")
+        ref_data_window_size = kwargs.get("ref_data_window_size")
         rest_alert_notification = None
         if self.alert_notification:
             if isinstance(self.alert_notification, str) and self.alert_notification.lower() == AZMONITORING:
@@ -85,6 +85,7 @@ class MonitorDefinition(RestTranslatableMixin):
             _signals = {
                 signal_name: signal._to_rest_object(
                     default_data_window_size=default_data_window_size,
+                    ref_data_window_size=ref_data_window_size,
                 )
                 for signal_name, signal in self.monitoring_signals.items()
             }
@@ -101,7 +102,7 @@ class MonitorDefinition(RestTranslatableMixin):
         obj: RestMonitorDefinition,
         **kwargs: Any,
     ) -> "MonitorDefinition":
-        from_rest_alert_notification = None
+        from_rest_alert_notification: Any = None
         if obj.alert_notification_setting:
             if isinstance(obj.alert_notification_setting, AzMonMonitoringAlertNotificationSettings):
                 from_rest_alert_notification = AZMONITORING

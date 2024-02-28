@@ -14,7 +14,7 @@ from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 class DeploymentCollection:
     """Collection entity
 
-    :param enabled: Is logging for this collection enabled.
+    :param enabled: Is logging for this collection enabled. Possible values include: 'true', 'false'.
     :type enabled: str
     :param data: Data asset id associated with collection logging.
     :type data: str
@@ -54,7 +54,7 @@ class DeploymentCollection:
 
     def _to_rest_object(self) -> RestCollection:
         return RestCollection(
-            data_collection_mode="enabled" if self.enabled == "true" else "disabled",
+            data_collection_mode="enabled" if str(self.enabled).lower() == "true" else "disabled",
             sampling_rate=self.sampling_rate,
             data_id=self.data,
             client_id=self.client_id,

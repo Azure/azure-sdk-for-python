@@ -1,7 +1,17 @@
 {
   "main": "dist/src/index.js",
   "dependencies": {
-    "@azure-tools/typespec-python": "0.18.3",
-    "@azure-tools/typespec-azure-resource-manager": "0.38.0"
+    "@azure-tools/typespec-python": "0.21.1"
+  },
+  "devDependencies": {
+    "@azure-tools/typespec-autorest": "0.39.0",
+    "@azure-tools/typespec-azure-core": "0.39.0",
+    "@azure-tools/typespec-azure-resource-manager": "0.39.0",
+    "@azure-tools/typespec-client-generator-core": "0.39.0",
+    "@typespec/compiler": "0.53.0",
+    "@typespec/http": "0.53.0",
+    "@typespec/openapi": "0.53.0",
+    "@typespec/rest": "0.53.0",
+    "@typespec/versioning": "0.53.0"
   }
 }

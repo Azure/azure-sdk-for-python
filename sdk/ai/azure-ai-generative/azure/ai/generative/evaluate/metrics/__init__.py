@@ -4,9 +4,8 @@
 
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)  # type: ignore
 
-from ._custom_metric import CodeMetric, PromptMetric
+from ._custom_metric import PromptMetric
 
 __all__ = [
-    "CodeMetric",
     "PromptMetric"
 ]

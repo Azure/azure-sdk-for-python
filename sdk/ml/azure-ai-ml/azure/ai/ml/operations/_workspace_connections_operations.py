@@ -132,11 +132,15 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
     def list(
         self,
         connection_type: Optional[str] = None,
+        include_data_connections: bool = False,
+        **kwargs: Any,
     ) -> Iterable[WorkspaceConnection]:
         """List all workspace connections for a workspace.
 
         :param connection_type: Type of workspace connection to list.
         :type connection_type: Optional[str]
+        :param include_data_connections: If true, also return data connections. Defaults to False.
+        :type include_data_connections: bool
         :return: An iterator like instance of workspace connection objects
         :rtype: Iterable[~azure.ai.ml.entities.WorkspaceConnection]
 
@@ -149,6 +153,13 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
                 :dedent: 8
                 :caption: Lists all connections for a workspace for a certain type, in this case "git".
         """
+
+        if include_data_connections:
+            if "params" in kwargs:
+                kwargs["params"]["includeAll"] = "true"
+            else:
+                kwargs["params"] = {"includeAll": "true"}
+
         return cast(
             Iterable[WorkspaceConnection],
             self._operation.list(
@@ -156,5 +167,6 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
                 cls=lambda objs: [WorkspaceConnection._from_rest_object(obj) for obj in objs],
                 category=_snake_to_camel(connection_type) if connection_type else connection_type,
                 **self._scope_kwargs,
+                **kwargs,
             ),
         )

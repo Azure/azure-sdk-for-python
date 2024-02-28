@@ -311,6 +311,7 @@ class CallAutomationClient:
         operation_context: Optional[str] = None,
         media_streaming_configuration: Optional['MediaStreamingConfiguration'] = None,
         transcription_configuration: Optional['TranscriptionConfiguration'] = None,
+        source_caller_id_number: Optional['PhoneNumberIdentifier'] = None,
         **kwargs
     ) -> CallConnectionProperties:
         """Answer incoming call with Azure Communication Service's IncomingCall event
@@ -333,6 +334,9 @@ class CallAutomationClient:
          or None
         :keyword media_streaming_configuration: Media Streaming Configuration.
         :paramtype media_streaming_configuration: ~azure.communication.callautomation.MediaStreamingConfiguration
+        :source_caller_id_number: The source caller Id, a phone number, that's will be used when
+        inviting a pstn target. Required only when transferring call to PSTN, if this is an incoming voip call.
+        :vartype source_caller_id_number: ~azure.communication.callautomation.PhoneNumberIdentifier
         :return: CallConnectionProperties
         :rtype: ~azure.communication.callautomation.CallConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -344,6 +348,7 @@ class CallAutomationClient:
         answer_call_request = AnswerCallRequest(
             incoming_call_context=incoming_call_context,
             callback_uri=callback_url,
+            source_caller_id_number=serialize_phone_identifier(source_caller_id_number),
             media_streaming_configuration=media_streaming_configuration.to_generated(
             ) if media_streaming_configuration else None,
             transcription_configuration=transcription_configuration.to_generated()

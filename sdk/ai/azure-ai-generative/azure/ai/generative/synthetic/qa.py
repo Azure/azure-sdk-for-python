@@ -11,6 +11,7 @@ try:
     import time
     from enum import Enum
     from functools import lru_cache
+    from packaging import version
     from typing import Dict, List, Tuple, Any, Union, Optional
     from collections import defaultdict
     from azure.ai.resources.entities import BaseConnection
@@ -155,13 +156,19 @@ class QADataGenerator:
     _PARSING_ERR_FIRST_LINE = "Parsing error: First line must be a question"
 
     def __init__(self, model_config: Dict, **kwargs: Any):
-        """Initialize QADataGenerator using Azure OpenAI details."""        
+        """Initialize QADataGenerator using Azure OpenAI details."""
+        import openai
+        api_key = "OPENAI_API_KEY"
+        api_base = "OPENAI_API_BASE"
+        if version.parse(openai.version.VERSION) >= version.parse("1.0.0"):
+            api_key = "AZURE_OPENAI_KEY"
+            api_base = "AZURE_OPENAI_ENDPOINT"        
         self._chat_completion_params = dict(
             # AOAI connection params
             api_type=model_config["api_type"] if "api_type" in model_config else os.getenv("OPENAI_API_TYPE", "azure"),
             api_version=model_config["api_version"] if "api_version" in model_config else os.getenv("OPENAI_API_VERSION", _DEFAULT_AOAI_VERSION),
-            api_base=model_config["api_base"] if "api_base" in model_config else os.getenv("OPENAI_API_BASE"),
-            api_key=model_config["api_key"] if "api_key" in model_config else os.getenv("OPENAI_API_KEY"),
+            api_base=model_config["api_base"] if "api_base" in model_config else os.getenv(api_base),
+            api_key=model_config["api_key"] if "api_key" in model_config else os.getenv(api_key),
 
             # AOAI model params
             deployment_id=model_config["deployment"],

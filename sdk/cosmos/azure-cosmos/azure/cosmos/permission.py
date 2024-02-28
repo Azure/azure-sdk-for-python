@@ -23,6 +23,9 @@
 """
 from typing import Any, Mapping
 
+# Keeping this import for API backcompat
+from .documents import PermissionMode  # pylint: disable=unused-import
+
 
 class Permission:
     """Represents a Permission object in the Azure Cosmos DB SQL API service.

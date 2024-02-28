@@ -164,9 +164,6 @@ class WorkspaceOperationsBase(ABC):
                     workspace.storage_account,
                     workspace.container_registry,
                     workspace.key_vault,
-                    workspace.public_network_access,
-                    workspace.managed_network,
-                    workspace.customer_managed_key,
                 ]
             ):
                 msg = (

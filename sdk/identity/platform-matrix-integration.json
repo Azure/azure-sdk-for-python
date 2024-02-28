@@ -1,0 +1,15 @@
+{
+  "include": [
+    {
+      "Agent": {
+        "identity-integration": {
+          "OSVmImage": "MMSUbuntu20.04",
+          "Pool": "azsdk-pool-mms-ubuntu-2004-general",
+          "ArmTemplateParameters": "@{ ProvisionLiveResources = $true }"
+        }
+      },
+      "PythonVersion": "3.11",
+      "CoverageArg": ""
+    }
+  ]
+}

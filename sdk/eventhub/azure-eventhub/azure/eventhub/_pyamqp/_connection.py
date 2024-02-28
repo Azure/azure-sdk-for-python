@@ -135,7 +135,7 @@ class Connection:  # pylint:disable=too-many-instance-attributes
             custom_endpoint = f"{custom_parsed_url.hostname}:{custom_port}{custom_parsed_url.path}"
         self._container_id = container_id or str(uuid.uuid4())
         self._network_trace = network_trace
-        self._network_trace_params = {"amqpConnection": self._container_id, "amqpSession": None, "amqpLink": None}
+        self._network_trace_params = {"amqpConnection": self._container_id, "amqpSession": "", "amqpLink": ""}
 
         transport = kwargs.get("transport")
         self._transport_type = transport_type

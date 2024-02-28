@@ -8,7 +8,7 @@ from typing import Optional
 
 import git
 
-from azure.ai.generative.index._utils.azureml import get_secret_from_workspace
+from azure.ai.resources._index._utils.azureml import get_secret_from_workspace
 from azure.ai.generative.index._utils.logging import get_logger
 
 logger = get_logger("utils.git")
