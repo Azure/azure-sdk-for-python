@@ -50,18 +50,18 @@ az cognitiveservices account keys list --resource-group <your-resource-group-nam
 
 Once you have the value for the API key, you can pass it as a string into an instance of **AzureKeyCredential**. Use the key as the credential parameter to authenticate the client:
 
+<!-- SNIPPET:sample_critical_result_inference_async.create_radiology_insights_client-->
 ```python 
-\<!-- SNIPPET:sample_critical_result_inference_async.create_radiology_insights_client-->
 import os
 from azure.core.credentials import AzureKeyCredential
-from azure.healthinsights.clinicalmatching import ClinicalMatchingClient
+from azure.healthinsights.radiologyinsights import RadiologyInsightsClient
 
 KEY = os.environ["AZURE_HEALTH_INSIGHTS_API_KEY"]
 ENDPOINT = os.environ["AZURE_HEALTH_INSIGHTS_ENDPOINT"]
 
 radiology_insights_client = RadiologyInsightsClient(endpoint=ENDPOINT, credential=AzureKeyCredential(KEY))
-\<!-- SNIPPET:sample_critical_result_inference_async.create_radiology_insights_client-->
 ```
+<!-- SNIPPET:sample_critical_result_inference_async.create_radiology_insights_client-->
 
 ### Long-Running Operations
 
@@ -86,16 +86,20 @@ For an example how to create a client, a request and get the result see the exam
 
 ### Get Critical Result Inference information
 
+<!-- SNIPPET:sample_critical_result_inference_async.display_critical_results-->
 ```python
-\<!-- SNIPPET:sample_critical_result_inference_async.display_critical_results-->
-def display_critical_results(self,radiology_insights_result):
-        for patient_result in radiology_insights_result.patient_results:
-            for ri_inference in patient_result.inferences:
-                if ri_inference.kind == models.RadiologyInsightsInferenceType.CRITICAL_RESULT:
-                    critical_result = ri_inference.result
-                    print(f"Critical Result Inference found: {critical_result.description}")
-\<!-- SNIPPET:sample_critical_result_inference_async.display_critical_results-->
+for patient_result in radiology_insights_result.patient_results:
+    for ri_inference in patient_result.inferences:
+        if (
+            ri_inference.kind
+            == models.RadiologyInsightsInferenceType.CRITICAL_RESULT
+        ):
+            critical_result = ri_inference.result
+            print(
+                f"Critical Result Inference found: {critical_result.description}"
+            )
 ```
+<!-- SNIPPET:sample_critical_result_inference_async.display_critical_results-->
 
 For detailed conceptual information of this and other inferences please read more [here][inferences].
 

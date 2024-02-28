@@ -9,10 +9,10 @@ from azure.healthinsights.radiologyinsights import RadiologyInsightsClient
 from azure.healthinsights.radiologyinsights import models
 
 """
-FILE: sample_critical_result_inference_async.py
+FILE: sample_critical_result_inference.py
 
 DESCRIPTION:
-The sample_critical_result_inference_sync.py module processes a sample radiology document with the Radiology Insights service.
+The sample_critical_result_inference.py module processes a sample radiology document with the Radiology Insights service.
 It will initialize a RadiologyInsightsClient, build a Radiology Insights request with the sample document,
 submit it to the client, RadiologyInsightsClient, build a Radiology Insights job request with the sample document,
 submit it to the client and display the Critical Results description extracted by the Radiology Insights service.     
@@ -28,13 +28,10 @@ class HealthInsightsSyncSamples:
         KEY = os.environ["AZURE_HEALTH_INSIGHTS_API_KEY"]
         ENDPOINT = os.environ["AZURE_HEALTH_INSIGHTS_ENDPOINT"]
 
-        # Create a Radiology Insights client
-        # <client>
-
         radiology_insights_client = RadiologyInsightsClient(
             endpoint=ENDPOINT, credential=AzureKeyCredential(KEY)
         )
-        # </client>
+
         doc_content1 = """CLINICAL HISTORY:   
         20-year-old female presenting with abdominal pain. Surgical history significant for appendectomy.
         COMPARISON:   

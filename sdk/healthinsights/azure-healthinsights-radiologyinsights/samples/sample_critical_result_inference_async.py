@@ -146,8 +146,9 @@ class HealthInsightsSamples:
             print(str(ex))
             return
     
-    # [START display_critical_results]
+   
     def display_critical_results(self, radiology_insights_result):
+         # [START display_critical_results]
         for patient_result in radiology_insights_result.patient_results:
             for ri_inference in patient_result.inferences:
                 if (
