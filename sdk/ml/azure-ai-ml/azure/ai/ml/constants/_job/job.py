@@ -21,6 +21,7 @@ class JobType(object):
     IMPORT = "import"
     SPARK = "spark"
     DATA_TRANSFER = "data_transfer"
+    FINE_TUNING = "finetuning"
 
 
 class JobLimitsType(object):
@@ -119,15 +120,17 @@ class JobTierNames:
         Basic = "basic"
         Standard = "standard"
         Premium = "premium"
-        Null = "Null"
+        Null = "null"
 
     class RestNames:
+        Null = "Null"
         Spot = "Spot"
         Basic = "Basic"
         Standard = "Standard"
         Premium = "Premium"
 
     ENTITY_TO_REST = {
+        EntityNames.Null: RestNames.Null,
         EntityNames.Spot: RestNames.Spot,
         EntityNames.Basic: RestNames.Basic,
         EntityNames.Standard: RestNames.Standard,

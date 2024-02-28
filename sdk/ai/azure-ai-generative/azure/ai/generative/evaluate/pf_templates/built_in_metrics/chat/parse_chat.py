@@ -17,7 +17,10 @@ def parse_chat(chat: list) -> dict:
         if "user" in each_turn and "assistant" in each_turn: # legacy rag-evaluation format
             question = each_turn["user"]["content"]
             answer = each_turn["assistant"]["content"]
-            retrieved_documents = each_turn["retrieved_documents"]
+            try:
+                retrieved_documents = each_turn["retrieved_documents"]
+            except KeyError:
+                retrieved_documents = None
 
             questions.append(question)
             answers.append(answer)
@@ -29,7 +32,10 @@ def parse_chat(chat: list) -> dict:
                 questions.append(content)
             elif persona == "assistant":
                 answers.append(content)
-                retrieved_documents = json.dumps(each_turn["context"]["citations"])
+                try:
+                    retrieved_documents = json.dumps(each_turn["context"]["citations"])
+                except KeyError:
+                    retrieved_documents = None
                 retrieved_documents_per_chat.append(retrieved_documents)
             
     parsed_chat["questions"] = questions

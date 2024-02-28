@@ -16,8 +16,8 @@ from azure.ai.generative.index._documents.cracking import (
     crack_documents,
     files_to_document_source,
 )
-from azure.ai.generative.index._documents.document import Document, StaticDocument
 from azure.ai.generative.index._utils.logging import get_logger
+from azure.ai.resources._index._documents.document import Document, StaticDocument
 
 logger = get_logger(__name__)
 

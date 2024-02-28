@@ -9,7 +9,13 @@
 from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar, Union
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
@@ -21,7 +27,17 @@ from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._serverless_endpoints_operations import build_create_or_update_request_initial, build_delete_request_initial, build_get_request, build_get_status_request, build_list_keys_request, build_list_request, build_regenerate_keys_request_initial, build_update_request_initial
+from ...operations._serverless_endpoints_operations import (
+    build_create_or_update_request_initial,
+    build_delete_request_initial,
+    build_get_request,
+    build_get_status_request,
+    build_list_keys_request,
+    build_list_request,
+    build_regenerate_keys_request_initial,
+    build_update_request_initial,
+)
+
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 

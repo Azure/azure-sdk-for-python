@@ -2629,38 +2629,41 @@ class TestCRUDOperations(unittest.TestCase):
         item1 = {"id": "item1", "pk": "pk1"}
         item2 = {"id": "item2", "pk": "pk2"}
         self.OriginalExecuteFunction = _retry_utility.ExecuteFunction
-        priority_level_headers = []
+        priority_headers = []
 
         # mock execute function to check if priority level set in headers
 
         def priority_mock_execute_function(function, *args, **kwargs):
             if args:
-                priority_level_headers.append(args[4].headers[HttpHeaders.PriorityLevel]
+                priority_headers.append(args[4].headers[HttpHeaders.PriorityLevel]
                                               if HttpHeaders.PriorityLevel in args[4].headers else '')
             return self.OriginalExecuteFunction(function, *args, **kwargs)
 
         _retry_utility.ExecuteFunction = priority_mock_execute_function
         # upsert item with high priority
-        created_container.upsert_item(body=item1, priority_level="High")
+        created_container.upsert_item(body=item1, priority="High")
         # check if the priority level was passed
-        self.assertEqual(priority_level_headers[-1], "High")
+        self.assertEqual(priority_headers[-1], "High")
         # upsert item with low priority
-        created_container.upsert_item(body=item2, priority_level="Low")
+        created_container.upsert_item(body=item2, priority="Low")
         # check that headers passed low priority
-        self.assertEqual(priority_level_headers[-1], "Low")
+        self.assertEqual(priority_headers[-1], "Low")
         # Repeat for read operations
-        item1_read = created_container.read_item("item1", "pk1", priority_level="High")
-        self.assertEqual(priority_level_headers[-1], "High")
-        item2_read = created_container.read_item("item2", "pk2", priority_level="Low")
-        self.assertEqual(priority_level_headers[-1], "Low")
+        item1_read = created_container.read_item("item1", "pk1", priority="High")
+        self.assertEqual(priority_headers[-1], "High")
+        item2_read = created_container.read_item("item2", "pk2", priority="Low")
+        self.assertEqual(priority_headers[-1], "Low")
         # repeat for query
-        query = list(created_container.query_items("Select * from c", partition_key="pk1", priority_level="High"))
+        query = list(created_container.query_items("Select * from c", partition_key="pk1", priority="High"))
 
-        self.assertEqual(priority_level_headers[-1], "High")
+        self.assertEqual(priority_headers[-1], "High")
 
         # Negative Test: Verify that if we send a value other than High or Low that it will not set the header value
-        item2_read = created_container.read_item("item2", "pk2", priority_level="Medium")
-        self.assertNotEqual(priority_level_headers[-1], "Medium")
+        # and result in bad request
+        try:
+            item2_read = created_container.read_item("item2", "pk2", priority="Medium")
+        except exceptions.CosmosHttpResponseError as e:
+            self.assertEqual(e.status_code, StatusCodes.BAD_REQUEST)
         _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
 
     def _MockExecuteFunction(self, function, *args, **kwargs):

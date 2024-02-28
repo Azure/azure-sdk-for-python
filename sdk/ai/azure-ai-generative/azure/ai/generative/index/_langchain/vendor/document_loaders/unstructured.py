@@ -5,7 +5,7 @@
 from abc import ABC, abstractmethod
 from typing import IO, Any, Callable, Dict, List, Optional, Sequence, Union
 
-from azure.ai.generative.index._langchain.vendor.schema.document import Document
+from azure.ai.resources._index._langchain.vendor.schema.document import Document
 from azure.ai.generative.index._langchain.vendor.document_loaders.base import BaseLoader
 
 
