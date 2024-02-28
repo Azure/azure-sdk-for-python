@@ -33,3 +33,5 @@ extends:
       safeName: azuremgmteventgrid
     - name: azure-eventgrid
       safeName: azureeventgrid
+    - name: azure-eventgrid-namespaces-http
+      safeName: azureeventgridnamespaceshttp
