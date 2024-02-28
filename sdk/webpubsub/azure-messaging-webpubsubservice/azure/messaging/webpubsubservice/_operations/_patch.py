@@ -74,7 +74,8 @@ def get_token_by_key(endpoint: str, hub: str, key: str, **kwargs: Any) -> str:
         payload["role"] = roles
     if groups:
         payload["webpubsub.group"] = groups
-    return jwt.encode(payload, key, algorithm="HS256", headers=kwargs.pop("jwt_headers", {})).decode("utf-8")
+    encoded = jwt.encode(payload, key, algorithm="HS256", headers=kwargs.pop("jwt_headers", {}))
+    return encoded if isinstance(encoded, str) else encoded.decode("utf-8")
 
 
 class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixinGenerated):
@@ -168,7 +169,6 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
                 "The content_type '{}' is not one of the allowed values: "
                 "['application/json', 'application/octet-stream', 'text/plain']".format(content_type)
             )
-
         request = build_send_to_all_request(
             hub=self._config.hub,
             excluded=excluded,
@@ -194,7 +194,6 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
-
         if cls:
             return cls(pipeline_response, None, {})
 
@@ -243,7 +242,6 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
                 "The content_type '{}' is not one of the allowed values: "
                 "['application/json', 'application/octet-stream', 'text/plain']".format(content_type)
             )
-
         request = build_send_to_user_request(
             user_id=user_id,
             hub=self._config.hub,
@@ -269,7 +267,6 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
-
         if cls:
             return cls(pipeline_response, None, {})
 
@@ -327,7 +324,6 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
                 "The content_type '{}' is not one of the allowed values: "
                 "['application/json', 'application/octet-stream', 'text/plain']".format(content_type)
             )
-
         request = build_send_to_group_request(
             group=group,
             hub=self._config.hub,
@@ -354,7 +350,6 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
-
         if cls:
             return cls(pipeline_response, None, {})
 
@@ -400,7 +395,6 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
                 "The content_type '{}' is not one of the allowed values: "
                 "['application/json', 'application/octet-stream', 'text/plain']".format(content_type)
             )
-
         request = build_send_to_connection_request(
             connection_id=connection_id,
             hub=self._config.hub,
@@ -425,7 +419,6 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
-
         if cls:
             return cls(pipeline_response, None, {})
 
