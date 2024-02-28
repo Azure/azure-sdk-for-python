@@ -189,14 +189,13 @@ class TestLimitConcurrentOffersToWorkerScenario(RouterRecordedTestCase):
 
         # validate there are offers made
         self._poll_until_no_exception(
-            self.validate_worker_has_offer, AssertionError, self.get_router_worker_id(),
-            job_ids
+            self.validate_worker_has_offer, AssertionError, self.get_router_worker_id(), job_ids
         )
 
         router_job_2: RouterJob = RouterJob(
-            channel_id = channel_id,
-            queue_id = self.get_job_queue_id(),
-            priority = 1,
+            channel_id=channel_id,
+            queue_id=self.get_job_queue_id(),
+            priority=1,
         )
         router_job_2: RouterJob = router_client.upsert_job(job_identifier_2, router_job_2)
 
@@ -207,8 +206,7 @@ class TestLimitConcurrentOffersToWorkerScenario(RouterRecordedTestCase):
 
         # validate there are still offers
         self._poll_until_no_exception(
-            self.validate_worker_has_offer, AssertionError, self.get_router_worker_id(),
-            job_ids
+            self.validate_worker_has_offer, AssertionError, self.get_router_worker_id(), job_ids
         )
 
         router_worker = router_client.get_worker(self.get_router_worker_id())
@@ -232,8 +230,7 @@ class TestLimitConcurrentOffersToWorkerScenario(RouterRecordedTestCase):
 
         # check for new offers sent to worker now that previous offer has been accepted
         self._poll_until_no_exception(
-            self.validate_worker_has_offer, AssertionError, self.get_router_worker_id(),
-            [job_without_offer]
+            self.validate_worker_has_offer, AssertionError, self.get_router_worker_id(), [job_without_offer]
         )
 
         router_worker = router_client.get_worker(self.get_router_worker_id())
@@ -266,10 +263,16 @@ class TestLimitConcurrentOffersToWorkerScenario(RouterRecordedTestCase):
         queried_job_1: RouterJob = router_client.get_job(job_identifier_1)
         queried_job_2: RouterJob = router_client.get_job(job_identifier_2)
 
-        assignment_id_for_job_1 = accept_job_offer_result_1.assignment_id \
-            if accept_job_offer_result_1.job_id == job_identifier_1 else accept_job_offer_result_2.assignment_id
-        assignment_id_for_job_2 = accept_job_offer_result_1.assignment_id \
-            if accept_job_offer_result_1.job_id == job_identifier_2 else accept_job_offer_result_2.assignment_id
+        assignment_id_for_job_1 = (
+            accept_job_offer_result_1.assignment_id
+            if accept_job_offer_result_1.job_id == job_identifier_1
+            else accept_job_offer_result_2.assignment_id
+        )
+        assignment_id_for_job_2 = (
+            accept_job_offer_result_1.assignment_id
+            if accept_job_offer_result_1.job_id == job_identifier_2
+            else accept_job_offer_result_2.assignment_id
+        )
 
         job_assignment_1: RouterJobAssignment = queried_job_1.assignments[assignment_id_for_job_1]
         assert job_assignment_1.assigned_at is not None
