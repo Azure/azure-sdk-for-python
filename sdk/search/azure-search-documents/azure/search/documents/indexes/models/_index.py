@@ -206,8 +206,6 @@ class SearchField:
 
     @classmethod
     def _from_generated(cls, search_field) -> "SearchField":
-        if not search_field:
-            return None
         # pylint:disable=protected-access
         fields = [SearchField._from_generated(x) for x in search_field.fields] if search_field.fields else None
         hidden = not search_field.retrievable if search_field.retrievable is not None else None

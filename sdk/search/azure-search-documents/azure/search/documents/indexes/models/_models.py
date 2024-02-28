@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -776,7 +777,7 @@ class SearchResourceEncryptionKey:
         )
 
     @classmethod
-    def _from_generated(cls, search_resource_encryption_key):
+    def _from_generated(cls, search_resource_encryption_key) -> "SearchResourceEncryptionKey":
         if not search_resource_encryption_key:
             return None
         if search_resource_encryption_key.access_credentials:
