@@ -24,7 +24,7 @@ class ScriptReference(RestTranslatableMixin):
     """
 
     def __init__(
-        self, *, path: Optional[str] = None, command: Optional[str] = None, timeout_minutes: Optional[str] = None
+        self, *, path: Optional[str] = None, command: Optional[str] = None, timeout_minutes: Optional[int] = None
     ) -> None:
         self.path = path
         self.command = command
@@ -47,7 +47,7 @@ class ScriptReference(RestTranslatableMixin):
         script_reference = ScriptReference(
             path=obj.script_data if obj.script_data else None,
             command=obj.script_arguments if obj.script_arguments else None,
-            timeout_minutes=timeout_minutes,
+            timeout_minutes=timeout_minutes,  # type: ignore[arg-type]
         )
         return script_reference
 

@@ -295,7 +295,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         self,
         endpoint_name: str,
         *,
-        request_file: Any = None,
+        request_file: Optional[str] = None,
         deployment_name: Optional[str] = None,
         # pylint: disable=unused-argument
         input_data: Optional[Union[str, Data]] = None,
@@ -329,7 +329,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         if deployment_name:
             self._validate_deployment_name(endpoint_name, deployment_name)
 
-        with open(request_file, "rb") as f:
+        with open(request_file, "rb") as f:  # type: ignore[arg-type]
             data = json.loads(f.read())
         if local:
             return self._local_endpoint_helper.invoke(
