@@ -1956,11 +1956,12 @@ class PhoneNumbersOperations:
     def operator_information_search(
         self, body: _models.OperatorInformationRequest, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.OperatorInformationResult:
-        """Searches for operator information for a given list of phone numbers.
+        """Searches for number format and operator information for a given list of phone numbers.
 
-        Searches for operator information for a given list of phone numbers.
+        Searches for number format and operator information for a given list of phone numbers.
 
-        :param body: The phone number(s) whose operator information should be searched. Required.
+        :param body: The phone number(s) whose number format and operator information should be
+         searched. Required.
         :type body: ~azure.communication.phonenumbers.models.OperatorInformationRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -1974,11 +1975,12 @@ class PhoneNumbersOperations:
     def operator_information_search(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.OperatorInformationResult:
-        """Searches for operator information for a given list of phone numbers.
+        """Searches for number format and operator information for a given list of phone numbers.
 
-        Searches for operator information for a given list of phone numbers.
+        Searches for number format and operator information for a given list of phone numbers.
 
-        :param body: The phone number(s) whose operator information should be searched. Required.
+        :param body: The phone number(s) whose number format and operator information should be
+         searched. Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -1992,12 +1994,12 @@ class PhoneNumbersOperations:
     def operator_information_search(
         self, body: Union[_models.OperatorInformationRequest, IO[bytes]], **kwargs: Any
     ) -> _models.OperatorInformationResult:
-        """Searches for operator information for a given list of phone numbers.
+        """Searches for number format and operator information for a given list of phone numbers.
 
-        Searches for operator information for a given list of phone numbers.
+        Searches for number format and operator information for a given list of phone numbers.
 
-        :param body: The phone number(s) whose operator information should be searched. Is either a
-         OperatorInformationRequest type or a IO[bytes] type. Required.
+        :param body: The phone number(s) whose number format and operator information should be
+         searched. Is either a OperatorInformationRequest type or a IO[bytes] type. Required.
         :type body: ~azure.communication.phonenumbers.models.OperatorInformationRequest or IO[bytes]
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

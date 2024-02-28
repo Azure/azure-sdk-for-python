@@ -7,6 +7,18 @@
 - Users will now be able to purchase from countries like `IT`, `AT`, `FR`, `NO`, `PT`. They can do so by agreeing not to resell phone numbers by setting consentToNotResellNumbers to true.
 - Added support for 10DLC changes.
 
+## 1.2.0 (2024-03-01)
+
+### Features Added
+- Add support for number lookup
+  - Format only can be returned for no cost
+  - Additional number details can be returned for a cost
+
+## 1.2.0b1 (2023-08-04)
+
+### Features Added
+- Number Lookup API public preview
+- API version `2023-05-01-preview` is the default
 
 ## 1.1.0 (2023-03-28)
 
