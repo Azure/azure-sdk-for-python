@@ -62,13 +62,17 @@ class EventGridClient(InternalEventGridClient):
         **kwargs: Any
     ) -> None:
         
-        
         _endpoint = '{endpoint}'
-        self._config = EventGridClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
+        self._config = EventGridClientConfiguration(endpoint=endpoint, credential=credential, api_version=api_version, level=level, **kwargs)
+        self._config.level = level
         _policies = kwargs.pop('policies', None)
         if _policies is None:
             _policies = [policies.RequestIdPolicy(**kwargs),self._config.headers_policy,self._config.user_agent_policy,self._config.proxy_policy,policies.ContentDecodePolicy(**kwargs),self._config.redirect_policy,self._config.retry_policy,self._config.authentication_policy,self._config.custom_hook_policy,self._config.logging_policy,policies.DistributedTracingPolicy(**kwargs),policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,self._config.http_logging_policy]
-        self._client: PipelineClient = PipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
+        
+        if level == ClientLevel.BASIC:
+            self._client = EventGridPublisherClient(endpoint, credential, api_version=api_version, **kwargs)
+        else:
+            self._client: PipelineClient = PipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
 
 
         self._serialize = Serializer()
@@ -86,7 +90,7 @@ def patch_sdk():
 
 
 __all__: List[str] = [
-    "EventGridPublisherClient",
+    "EventGridClient",
     "SystemEventNames",
     "EventGridEvent",
     "generate_sas",
