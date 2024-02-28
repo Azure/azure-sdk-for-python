@@ -22,7 +22,7 @@
 """Create, read, update and delete and execute scripts in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, Dict, List, Mapping, Union, Optional, Type
+from typing import Any, Dict, List, Mapping, Union, Optional, Type, Sequence
 
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
@@ -34,7 +34,7 @@ from .partition_key import NonePartitionKeyValue, _return_undefined_or_empty_par
 # pylint: disable=protected-access
 # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
 
-PartitionKeyType = Union[str, int, float, bool, List[Union[str, int, float, bool]], Type[NonePartitionKeyValue]]
+PartitionKeyType = Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], Type[NonePartitionKeyValue]]
 
 
 class ScriptType:
