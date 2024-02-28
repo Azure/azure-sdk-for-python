@@ -148,7 +148,7 @@ class SearchIndexerSkillset:
         :returns: A dict JSON compatible object
         :rtype: dict
         """
-        return self._to_generated().as_dict(keep_readonly=keep_readonly, **kwargs)
+        return self._to_generated().as_dict(keep_readonly=keep_readonly, **kwargs)  # type: ignore
 
     @classmethod
     def from_dict(
@@ -497,7 +497,7 @@ class AnalyzeTextOptions:
         :returns: A dict JSON compatible object
         :rtype: dict
         """
-        return self._to_generated().as_dict(keep_readonly=keep_readonly, **kwargs)
+        return self._to_analyze_request().as_dict(keep_readonly=keep_readonly, **kwargs)  # type: ignore
 
     @classmethod
     def from_dict(
@@ -513,7 +513,7 @@ class AnalyzeTextOptions:
         :rtype: AnalyzeTextOptions
         :raises: DeserializationError if something went wrong
         """
-        return cls._from_generated(AnalyzeRequest.from_dict(data, content_type=content_type))
+        return cls._from_analyze_request(AnalyzeRequest.from_dict(data, content_type=content_type))
 
 
 class CustomAnalyzer(LexicalAnalyzer):
@@ -821,7 +821,7 @@ class SearchResourceEncryptionKey:
         :returns: A dict JSON compatible object
         :rtype: dict
         """
-        return self._to_generated().as_dict(keep_readonly=keep_readonly, **kwargs)
+        return self._to_generated().as_dict(keep_readonly=keep_readonly, **kwargs)  # type: ignore
 
     @classmethod
     def from_dict(
@@ -923,7 +923,7 @@ class SynonymMap:
         :returns: A dict JSON compatible object
         :rtype: dict
         """
-        return self._to_generated().as_dict(keep_readonly=keep_readonly, **kwargs)
+        return self._to_generated().as_dict(keep_readonly=keep_readonly, **kwargs)  # type: ignore
 
     @classmethod
     def from_dict(
@@ -1053,7 +1053,7 @@ class SearchIndexerDataSourceConnection:
         :returns: A dict JSON compatible object
         :rtype: dict
         """
-        return self._to_generated().as_dict(keep_readonly=keep_readonly, **kwargs)
+        return self._to_generated().as_dict(keep_readonly=keep_readonly, **kwargs)  # type: ignore
 
     @classmethod
     def from_dict(

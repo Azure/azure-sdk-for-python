@@ -205,7 +205,7 @@ class SearchField:
         )
 
     @classmethod
-    def _from_generated(cls, search_field):
+    def _from_generated(cls, search_field) -> "SearchField":
         if not search_field:
             return None
         # pylint:disable=protected-access
@@ -251,7 +251,7 @@ class SearchField:
         :returns: A SearchField instance
         :raises: DeserializationError if something went wrong
         """
-        return cls._from_generated(_SearchField.deserialize(data, content_type=content_type))  # type: ignore
+        return cls._from_generated(_SearchField.deserialize(data, content_type=content_type))
 
     def as_dict(self, keep_readonly: bool = True, **kwargs: Any) -> MutableMapping[str, Any]:
         """Return a dict that can be serialized using json.dump.
@@ -260,7 +260,7 @@ class SearchField:
         :returns: A dict JSON compatible object
         :rtype: dict
         """
-        return self._to_generated().as_dict(keep_readonly=keep_readonly, **kwargs)
+        return self._to_generated().as_dict(keep_readonly=keep_readonly, **kwargs)  # type: ignore
 
     @classmethod
     def from_dict(
@@ -706,7 +706,7 @@ class SearchIndex:
         :returns: A dict JSON compatible object
         :rtype: dict
         """
-        return self._to_generated().as_dict(keep_readonly=keep_readonly, **kwargs)
+        return self._to_generated().as_dict(keep_readonly=keep_readonly, **kwargs)  # type: ignore
 
     @classmethod
     def from_dict(
