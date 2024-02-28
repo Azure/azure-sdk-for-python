@@ -921,7 +921,6 @@ class TestDSLPipeline:
         omit_fields = ["componentId", "properties"]
         assert pydash.omit(component_from_dsl._to_rest_object(), *omit_fields) == expected_component
         assert pydash.omit(component_from_sdk._to_rest_object(), *omit_fields) == expected_component
-        expected_component.update({"_source": "REMOTE.WORKSPACE.COMPONENT"})
         assert pydash.omit(component_from_rest._to_rest_object(), *omit_fields) == expected_component
         expected_component.update({"_source": "YAML.JOB"})
         assert pydash.omit(component_from_yaml._to_rest_object(), *omit_fields) == expected_component
