@@ -25,6 +25,7 @@ from azure.ai.ml.entities._component.component import Component
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._util import load_from_dict
 
+
 @experimental
 class PipelineComponentBatchDeployment(Resource):
     """Pipeline Component Batch Deployment entity.
