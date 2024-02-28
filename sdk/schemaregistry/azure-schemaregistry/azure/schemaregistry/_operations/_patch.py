@@ -30,7 +30,7 @@ _SERIALIZER = Serializer()
 
 
 def build_schema_registry_get_schema_properties_by_content_request(  # pylint: disable=name-too-long
-    group_name: str, name: str, **kwargs: Any
+    group_name: str, schema_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -40,10 +40,10 @@ def build_schema_registry_get_schema_properties_by_content_request(  # pylint: d
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/$schemaGroups/{groupName}/schemas/{name}:get-id"
+    _url = "/$schemaGroups/{groupName}/schemas/{schemaName}:get-id"
     path_format_arguments = {
         "groupName": _SERIALIZER.url("group_name", group_name, "str"),
-        "name": _SERIALIZER.url("name", name, "str"),
+        "schemaName": _SERIALIZER.url("schemaName", schema_name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -59,7 +59,7 @@ def build_schema_registry_get_schema_properties_by_content_request(  # pylint: d
 
 
 def build_schema_registry_register_schema_request(  # pylint: disable=name-too-long
-    group_name: str, name: str, **kwargs: Any
+    group_name: str, schema_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -69,10 +69,10 @@ def build_schema_registry_register_schema_request(  # pylint: disable=name-too-l
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/$schemaGroups/{groupName}/schemas/{name}"
+    _url = "/$schemaGroups/{groupName}/schemas/{schemaName}"
     path_format_arguments = {
         "groupName": _SERIALIZER.url("group_name", group_name, "str"),
-        "name": _SERIALIZER.url("name", name, "str"),
+        "schemaName": _SERIALIZER.url("name", schema_name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -94,7 +94,7 @@ class SchemaRegistryClientOperationsMixin(GeneratedClientOperationsMixin):
 
     @distributed_trace
     def _get_schema_properties_by_content(  # pylint: disable=inconsistent-return-statements
-        self, group_name: str, name: str, schema_content: IO, **kwargs: Any
+        self, group_name: str, schema_name: str, schema_content: IO, **kwargs: Any
     ) -> None:
         """Get properties for existing schema.
 
@@ -103,8 +103,8 @@ class SchemaRegistryClientOperationsMixin(GeneratedClientOperationsMixin):
 
         :param group_name: Name of schema group. Required.
         :type group_name: str
-        :param name: Name of schema. Required.
-        :type name: str
+        :param schema_name: Name of schema. Required.
+        :type schema_name: str
         :param schema_content: String representation (UTF-8) of the registered schema. Required.
         :type schema_content: IO
         :keyword content_type: The content type for given schema. Default value is "text/plain;
@@ -134,7 +134,7 @@ class SchemaRegistryClientOperationsMixin(GeneratedClientOperationsMixin):
 
         request = build_schema_registry_get_schema_properties_by_content_request(
             group_name=group_name,
-            name=name,
+            schema_name=schema_name,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -174,7 +174,7 @@ class SchemaRegistryClientOperationsMixin(GeneratedClientOperationsMixin):
 
     @distributed_trace
     def _register_schema(  # pylint: disable=inconsistent-return-statements
-        self, group_name: str, name: str, content: IO, **kwargs: Any
+        self, group_name: str, schema_name: str, content: IO, **kwargs: Any
     ) -> None:
         """Register new schema.
 
@@ -184,8 +184,8 @@ class SchemaRegistryClientOperationsMixin(GeneratedClientOperationsMixin):
 
         :param group_name: Name of schema group. Required.
         :type group_name: str
-        :param name: Name of schema. Required.
-        :type name: str
+        :param schema_name: Name of schema. Required.
+        :type schema_name: str
         :param content: String representation (UTF-8) of the schema. Required.
         :type content: IO
         :keyword content_type: The content type for given schema. Default value is "text/plain;
@@ -215,7 +215,7 @@ class SchemaRegistryClientOperationsMixin(GeneratedClientOperationsMixin):
 
         request = build_schema_registry_register_schema_request(
             group_name=group_name,
-            name=name,
+            schema_name=schema_name,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,

@@ -153,8 +153,6 @@ class SchemaRegistryClient:
     def __init__(self, fully_qualified_namespace: str, credential: TokenCredential, **kwargs: Any) -> None:
         # using composition (not inheriting from generated client) to allow
         # calling different operations conditionally within one method
-        if "https://" not in fully_qualified_namespace:
-            fully_qualified_namespace = f"https://{fully_qualified_namespace}"
         self._generated_client = GeneratedServiceClient(
             fully_qualified_namespace=fully_qualified_namespace,
             credential=credential,
@@ -214,7 +212,7 @@ class SchemaRegistryClient:
             str, Union[int, str]
         ] = self._generated_client._register_schema(  # pylint:disable=protected-access
             group_name=group_name,
-            name=name,
+            schema_name=name,
             content=cast(IO[Any], definition),
             content_type=kwargs.pop("content_type", get_content_type(format)),
             cls=partial(prepare_schema_properties_result, format),
@@ -307,8 +305,8 @@ class SchemaRegistryClient:
             # ignoring return type because the generated client operations are not annotated w/ cls return type
             http_response, schema_properties = self._generated_client._get_schema_by_version(  # type: ignore
                 group_name=group_name,
-                name=name,
-                version=version,
+                schema_name=name,
+                schema_version=version,
                 cls=prepare_schema_result,
                 headers={  # TODO: remove when multiple content types in response are supported
                     "Accept": """application/json; serialization=Avro, application/json; \
@@ -363,7 +361,7 @@ class SchemaRegistryClient:
             str, Union[int, str]
         ] = self._generated_client._get_schema_properties_by_content(  # pylint:disable=protected-access
             group_name=group_name,
-            name=name,
+            schema_name=name,
             schema_content=cast(IO[Any], definition),
             content_type=kwargs.pop("content_type", get_content_type(format)),
             cls=partial(prepare_schema_properties_result, format),

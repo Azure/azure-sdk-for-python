@@ -146,15 +146,15 @@ class SchemaRegistryClientOperationsMixin(SchemaRegistryClientMixinABC):  # pyli
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def _list_schema_versions(self, group_name: str, name: str, **kwargs: Any) -> AsyncIterable[int]:
+    def _list_schema_versions(self, group_name: str, schema_name: str, **kwargs: Any) -> AsyncIterable[int]:
         """List schema versions.
 
         Gets the list of all versions of one schema.
 
         :param group_name: Name of schema group. Required.
         :type group_name: str
-        :param name: Name of schema. Required.
-        :type name: str
+        :param schema_name: Name of schema. Required.
+        :type schema_name: str
         :return: An iterator like instance of int
         :rtype: ~azure.core.async_paging.AsyncItemPaged[int]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -183,7 +183,7 @@ class SchemaRegistryClientOperationsMixin(SchemaRegistryClientMixinABC):  # pyli
 
                 _request = build_schema_registry_list_schema_versions_request(
                     group_name=group_name,
-                    name=name,
+                    schema_name=schema_name,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -319,17 +319,19 @@ class SchemaRegistryClientOperationsMixin(SchemaRegistryClientMixinABC):  # pyli
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def _get_schema_by_version(self, group_name: str, name: str, version: int, **kwargs: Any) -> bytes:
+    async def _get_schema_by_version(
+        self, group_name: str, schema_name: str, schema_version: int, **kwargs: Any
+    ) -> bytes:
         """Get specific schema versions.
 
         Gets one specific version of one schema.
 
         :param group_name: Name of schema group. Required.
         :type group_name: str
-        :param name: Name of schema. Required.
-        :type name: str
-        :param version: Version number of specific schema. Required.
-        :type version: int
+        :param schema_name: Name of schema. Required.
+        :type schema_name: str
+        :param schema_version: Version number of specific schema. Required.
+        :type schema_version: int
         :return: bytes
         :rtype: bytes
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -349,8 +351,8 @@ class SchemaRegistryClientOperationsMixin(SchemaRegistryClientMixinABC):  # pyli
 
         _request = build_schema_registry_get_schema_by_version_request(
             group_name=group_name,
-            name=name,
-            version=version,
+            schema_name=schema_name,
+            schema_version=schema_version,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,

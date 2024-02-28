@@ -24,7 +24,7 @@ class SchemaRegistryClientConfiguration:  # pylint: disable=too-many-instance-at
     attributes.
 
     :param fully_qualified_namespace: The Schema Registry service endpoint, for example
-     'https://my-namespace.servicebus.windows.net'. Required.
+     'my-namespace.servicebus.windows.net'. Required.
     :type fully_qualified_namespace: str
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential

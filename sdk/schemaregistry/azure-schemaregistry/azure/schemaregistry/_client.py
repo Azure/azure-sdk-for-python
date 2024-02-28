@@ -23,10 +23,11 @@ if TYPE_CHECKING:
 
 
 class SchemaRegistryClient(SchemaRegistryClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
-    """SchemaRegistryClient.
+    """SchemaRegistryClient is a client for registering and retrieving schemas from the Azure Schema
+    Registry service.
 
     :param fully_qualified_namespace: The Schema Registry service endpoint, for example
-     'https://my-namespace.servicebus.windows.net'. Required.
+     'my-namespace.servicebus.windows.net'. Required.
     :type fully_qualified_namespace: str
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
@@ -37,7 +38,7 @@ class SchemaRegistryClient(SchemaRegistryClientOperationsMixin):  # pylint: disa
 
     def __init__(self, fully_qualified_namespace: str, credential: "TokenCredential", **kwargs: Any) -> None:
         super().__init__()
-        _endpoint = "{fullyQualifiedNamespace}"
+        _endpoint = "https://{fullyQualifiedNamespace}"
         self._config = SchemaRegistryClientConfiguration(
             fully_qualified_namespace=fully_qualified_namespace, credential=credential, **kwargs
         )

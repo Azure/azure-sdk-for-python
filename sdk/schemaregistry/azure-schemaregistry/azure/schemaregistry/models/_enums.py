@@ -13,8 +13,7 @@ from azure.core import CaseInsensitiveEnumMeta
 class SchemaContentTypeValues(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of SchemaContentTypeValues."""
 
-    CUSTOM_BINARY = "application/octet-stream"
-    CUSTOM = "text/plain; charset=utf-8"
     AVRO = "application/json; serialization=Avro"
     JSON = "application/json; serialization=Json"
+    CUSTOM = "text/plain; charset=utf-8"
     PROTOBUF = "text/vnd.ms.protobuf"

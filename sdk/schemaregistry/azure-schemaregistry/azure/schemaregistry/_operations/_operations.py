@@ -54,7 +54,7 @@ def build_schema_registry_list_schema_groups_request(**kwargs: Any) -> HttpReque
 
 
 def build_schema_registry_list_schema_versions_request(  # pylint: disable=name-too-long
-    group_name: str, name: str, **kwargs: Any
+    group_name: str, schema_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -63,10 +63,10 @@ def build_schema_registry_list_schema_versions_request(  # pylint: disable=name-
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/$schemaGroups/{groupName}/schemas/{name}/versions"
+    _url = "/$schemaGroups/{groupName}/schemas/{schemaName}/versions"
     path_format_arguments = {
         "groupName": _SERIALIZER.url("group_name", group_name, "str"),
-        "name": _SERIALIZER.url("name", name, "str"),
+        "schemaName": _SERIALIZER.url("schema_name", schema_name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -87,7 +87,7 @@ def build_schema_registry_get_schema_by_id_request(  # pylint: disable=name-too-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-07-01"))
-    accept = _headers.pop("Accept", "application/octet-stream")
+    accept = _headers.pop("Accept", "application/json; serialization=Avro")
 
     # Construct URL
     _url = "/$schemaGroups/$schemas/{id}"
@@ -107,20 +107,20 @@ def build_schema_registry_get_schema_by_id_request(  # pylint: disable=name-too-
 
 
 def build_schema_registry_get_schema_by_version_request(  # pylint: disable=name-too-long
-    group_name: str, name: str, version: int, **kwargs: Any
+    group_name: str, schema_name: str, schema_version: int, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-07-01"))
-    accept = _headers.pop("Accept", "application/octet-stream")
+    accept = _headers.pop("Accept", "application/json; serialization=Avro")
 
     # Construct URL
-    _url = "/$schemaGroups/{groupName}/schemas/{name}/versions/{version}"
+    _url = "/$schemaGroups/{groupName}/schemas/{schemaName}/versions/{schemaVersion}"
     path_format_arguments = {
         "groupName": _SERIALIZER.url("group_name", group_name, "str"),
-        "name": _SERIALIZER.url("name", name, "str"),
-        "version": _SERIALIZER.url("version", version, "int"),
+        "schemaName": _SERIALIZER.url("schema_name", schema_name, "str"),
+        "schemaVersion": _SERIALIZER.url("schema_version", schema_version, "int"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -243,15 +243,15 @@ class SchemaRegistryClientOperationsMixin(SchemaRegistryClientMixinABC):  # pyli
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def _list_schema_versions(self, group_name: str, name: str, **kwargs: Any) -> Iterable[int]:
+    def _list_schema_versions(self, group_name: str, schema_name: str, **kwargs: Any) -> Iterable[int]:
         """List schema versions.
 
         Gets the list of all versions of one schema.
 
         :param group_name: Name of schema group. Required.
         :type group_name: str
-        :param name: Name of schema. Required.
-        :type name: str
+        :param schema_name: Name of schema. Required.
+        :type schema_name: str
         :return: An iterator like instance of int
         :rtype: ~azure.core.paging.ItemPaged[int]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -280,7 +280,7 @@ class SchemaRegistryClientOperationsMixin(SchemaRegistryClientMixinABC):  # pyli
 
                 _request = build_schema_registry_list_schema_versions_request(
                     group_name=group_name,
-                    name=name,
+                    schema_name=schema_name,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -416,17 +416,17 @@ class SchemaRegistryClientOperationsMixin(SchemaRegistryClientMixinABC):  # pyli
         return deserialized  # type: ignore
 
     @distributed_trace
-    def _get_schema_by_version(self, group_name: str, name: str, version: int, **kwargs: Any) -> bytes:
+    def _get_schema_by_version(self, group_name: str, schema_name: str, schema_version: int, **kwargs: Any) -> bytes:
         """Get specific schema versions.
 
         Gets one specific version of one schema.
 
         :param group_name: Name of schema group. Required.
         :type group_name: str
-        :param name: Name of schema. Required.
-        :type name: str
-        :param version: Version number of specific schema. Required.
-        :type version: int
+        :param schema_name: Name of schema. Required.
+        :type schema_name: str
+        :param schema_version: Version number of specific schema. Required.
+        :type schema_version: int
         :return: bytes
         :rtype: bytes
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -446,8 +446,8 @@ class SchemaRegistryClientOperationsMixin(SchemaRegistryClientMixinABC):  # pyli
 
         _request = build_schema_registry_get_schema_by_version_request(
             group_name=group_name,
-            name=name,
-            version=version,
+            schema_name=schema_name,
+            schema_version=schema_version,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,

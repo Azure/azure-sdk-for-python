@@ -15,6 +15,7 @@ import base64
 import re
 import copy
 import typing
+import enum
 import email.utils
 from datetime import datetime, date, time, timedelta, timezone
 from json import JSONEncoder
@@ -443,6 +444,8 @@ def _serialize(o, format: typing.Optional[str] = None):  # pylint: disable=too-m
         return _serialize_bytes(o, format)
     if isinstance(o, decimal.Decimal):
         return float(o)
+    if isinstance(o, enum.Enum):
+        return o.value
     try:
         # First try datetime.datetime
         return _serialize_datetime(o, format)
@@ -651,8 +654,12 @@ def _get_deserialize_callable_from_annotation(  # pylint: disable=R0911, R0915, 
         pass
 
     if getattr(annotation, "__origin__", None) is typing.Union:
+        # initial ordering is we make `string` the last deserialization option, because it is often them most generic
         deserializers = [
-            _get_deserialize_callable_from_annotation(arg, module, rf) for arg in annotation.__args__  # pyright: ignore
+            _get_deserialize_callable_from_annotation(arg, module, rf)
+            for arg in sorted(
+                annotation.__args__, key=lambda x: hasattr(x, "__name__") and x.__name__ == "str"  # pyright: ignore
+            )
         ]
 
         def _deserialize_with_union(deserializers, obj):
@@ -798,6 +805,10 @@ class _RestField:
         self._default = default
         self._format = format
         self._is_multipart_file_input = is_multipart_file_input
+
+    @property
+    def _class_type(self) -> typing.Any:
+        return getattr(self._type, "args", [None])[0]
 
     @property
     def _rest_name(self) -> str:
