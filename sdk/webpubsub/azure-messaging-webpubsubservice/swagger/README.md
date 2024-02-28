@@ -28,7 +28,7 @@ license-header: MICROSOFT_MIT_NO_VERSION
 python: true
 title: WebPubSubServiceClient
 head-as-boolean: true
-package-version: 1.1.0b2
+package-version: 1.1.0
 add-credential: true
 credential-scopes: https://webpubsub.azure.com/.default
 package-mode: dataplane

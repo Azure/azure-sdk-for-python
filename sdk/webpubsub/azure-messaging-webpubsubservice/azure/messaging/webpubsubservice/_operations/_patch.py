@@ -75,7 +75,7 @@ def get_token_by_key(endpoint: str, hub: str, key: str, **kwargs: Any) -> str:
     if groups:
         payload["webpubsub.group"] = groups
     encoded = jwt.encode(payload, key, algorithm="HS256", headers=kwargs.pop("jwt_headers", {}))
-    return encoded if isinstance(encoded, str) else encoded.decode("utf-8")
+    return encoded
 
 
 class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixinGenerated):
@@ -89,6 +89,8 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         :keyword minutes_to_expire: The expire time of the generated token.
         :paramtype minutes_to_expire: int
         :keyword dict[str, any] jwt_headers: Any headers you want to pass to jwt encoding.
+        :keyword groups: Groups that the connection will join when it connects. Default value is None.
+        :paramtype groups: list[str]
         :returns: JSON response containing the web socket endpoint, the token and a url with the generated access token.
         :rtype: JSON
         Example:

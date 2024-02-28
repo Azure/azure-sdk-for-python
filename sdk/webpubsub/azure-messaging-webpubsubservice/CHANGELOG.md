@@ -1,6 +1,6 @@
 # Release History
 
-## 1.1.0b2
+## 1.1.0
 
 ### Bugs Fixed
 - Use the correct REST API parameter name `groups` in method `get_client_access_token`

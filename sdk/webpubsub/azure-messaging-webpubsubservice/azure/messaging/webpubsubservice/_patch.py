@@ -109,7 +109,7 @@ class JwtCredentialPolicy(SansIOHTTPPolicy):
             key=self._credential.key,
             algorithm="HS256",
         )
-        return encoded if isinstance(encoded, str) else encoded.decode("utf-8")
+        return encoded
 
 
 class ApiManagementProxy(ProxyPolicy):
