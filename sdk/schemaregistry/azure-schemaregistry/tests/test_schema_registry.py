@@ -395,3 +395,30 @@ class TestSchemaRegistry(AzureRecordedTestCase):
 
         assert schema_properties.id is not None
         assert schema_properties.format == format
+
+    @SchemaRegistryEnvironmentVariableLoader()
+    @pytest.mark.parametrize("format, schema_str", format_params, ids=format_ids)
+    @ArgPasser()
+    @recorded_by_proxy
+    def test_schema_internal_ops_list(self, format, schema_str, **kwargs):
+        schemaregistry_fully_qualified_namespace = kwargs.pop(
+            f"schemaregistry_{format.lower()}_fully_qualified_namespace"
+        )
+        schemaregistry_group = kwargs.pop("schemaregistry_group")
+
+        sr_client = self.create_client(
+            fully_qualified_namespace=schemaregistry_fully_qualified_namespace
+        )
+        schema_groups = sr_client._generated_client._list_schema_groups()
+        for group in schema_groups:
+            assert group == schemaregistry_group
+        
+        name = "test-schema1"
+        sr_client.register_schema(schemaregistry_group, name, schema_str, format)
+        
+        schema_versions = sr_client._generated_client._list_schema_versions(schemaregistry_group, name)
+        versions = []
+        for version in schema_versions:
+            versions.append(version)
+        
+        assert len(versions) > 0
