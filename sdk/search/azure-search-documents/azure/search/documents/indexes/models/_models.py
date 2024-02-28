@@ -777,7 +777,9 @@ class SearchResourceEncryptionKey:
         )
 
     @classmethod
-    def _from_generated(cls, search_resource_encryption_key) -> "SearchResourceEncryptionKey":
+    def _from_generated(cls, search_resource_encryption_key) -> Optional["SearchResourceEncryptionKey"]:
+        if not search_resource_encryption_key:
+            return None
         if search_resource_encryption_key.access_credentials:
             application_id = search_resource_encryption_key.access_credentials.application_id
             application_secret = search_resource_encryption_key.access_credentials.application_secret
@@ -801,7 +803,7 @@ class SearchResourceEncryptionKey:
         return self._to_generated().serialize(keep_readonly=keep_readonly, **kwargs)  # type: ignore
 
     @classmethod
-    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> "SearchResourceEncryptionKey":
+    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Optional["SearchResourceEncryptionKey"]:
         """Parse a str using the RestAPI syntax and return a SearchResourceEncryptionKey instance.
 
         :param str data: A str using RestAPI structure. JSON by default.
@@ -827,7 +829,7 @@ class SearchResourceEncryptionKey:
         cls,
         data: Any,
         content_type: Optional[str] = None,
-    ) -> "SearchResourceEncryptionKey":
+    ) -> Optional["SearchResourceEncryptionKey"]:
         """Parse a dict using given key extractor return a model.
 
         :param dict data: A dict using RestAPI structure

@@ -205,7 +205,9 @@ class SearchField:
         )
 
     @classmethod
-    def _from_generated(cls, search_field) -> "SearchField":
+    def _from_generated(cls, search_field) -> Optional["SearchField"]:
+        if not search_field:
+            return None
         # pylint:disable=protected-access
         fields = [SearchField._from_generated(x) for x in search_field.fields] if search_field.fields else None
         hidden = not search_field.retrievable if search_field.retrievable is not None else None
@@ -241,7 +243,7 @@ class SearchField:
         return self._to_generated().serialize(keep_readonly=keep_readonly, **kwargs)
 
     @classmethod
-    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> "SearchField":
+    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Optional["SearchField"]:
         """Parse a str using the RestAPI syntax and return a SearchField instance.
 
         :param str data: A str using RestAPI structure. JSON by default.
@@ -265,7 +267,7 @@ class SearchField:
         cls,
         data: Any,
         content_type: Optional[str] = None,
-    ) -> "SearchField":
+    ) -> Optional["SearchField"]:
         """Parse a dict using given key extractor return a model.
 
         :param dict data: A dict using RestAPI structure
