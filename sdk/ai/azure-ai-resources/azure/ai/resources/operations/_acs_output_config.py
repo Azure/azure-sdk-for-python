@@ -12,16 +12,10 @@ from typing import Optional
 class ACSOutputConfig:
     """Config class for creating an Azure Cognitive Services index.
 
-    :param acs_index_name:
-    :type acs_index_name: str
-    :param acs_connection_id:
-    :type acs_connection_id: str
-    :param acs_index_content_key:
-    :type acs_index_content_key: str
-    :param acs_embedding_key:
-    :type acs_embedding_key: str
-    :param acs_title_key:
-    :type acs_title_key: str
+    :param acs_index_name: The name of the Azure Cognitive Services index.
+    :type acs_index_name: Optional[str]
+    :param acs_connection_id: The Azure Cognitive Services connection ID.
+    :type acs_connection_id: Optional[str]
     """
 
     def __init__(

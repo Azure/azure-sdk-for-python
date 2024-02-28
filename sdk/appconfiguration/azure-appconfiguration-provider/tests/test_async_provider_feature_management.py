@@ -9,6 +9,7 @@ from azure.appconfiguration.aio import AzureAppConfigurationClient
 from devtools_testutils.aio import recorded_by_proxy_async
 from async_preparers import app_config_decorator_async
 from asynctestcase import AppConfigTestCase, setup_configs, has_feature_flag
+from test_constants import FEATURE_MANAGEMENT_KEY
 
 
 from azure.appconfiguration.provider._azureappconfigurationprovider import _delay_failure
@@ -25,7 +26,7 @@ class TestAppConfigurationProviderFeatureManagement(AppConfigTestCase):
             feature_flag_enabled=True,
         ) as client:
             assert len(client.keys()) == 1
-            assert "FeatureManagement" in client
+            assert FEATURE_MANAGEMENT_KEY in client
             assert has_feature_flag(client, "Alpha")
 
     # method: load
@@ -43,5 +44,5 @@ class TestAppConfigurationProviderFeatureManagement(AppConfigTestCase):
             user_agent="SDK/Integration",
         ) as client:
             assert len(client.keys()) == 1
-            assert "FeatureManagement" in client
+            assert FEATURE_MANAGEMENT_KEY in client
             assert not has_feature_flag(client, "Alpha")

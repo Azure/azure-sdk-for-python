@@ -44,14 +44,14 @@ from ._models import (
     ResourceTypes,
     RetentionPolicy,
     StaticWebsite,
-    UserDelegationKey
+    UserDelegationKey,
 )
 
 from ._shared_access_signature import generate_account_sas, generate_file_system_sas, generate_directory_sas, \
     generate_file_sas
 
 from ._shared.policies import ExponentialRetry, LinearRetry
-from ._shared.models import StorageErrorCode
+from ._shared.models import StorageErrorCode, Services
 from ._version import VERSION
 
 __version__ = VERSION
@@ -105,5 +105,6 @@ __all__ = [
     'StorageErrorCode',
     'StorageStreamDownloader',
     'UserDelegationKey',
-    'VERSION'
+    'VERSION',
+    'Services'
 ]
