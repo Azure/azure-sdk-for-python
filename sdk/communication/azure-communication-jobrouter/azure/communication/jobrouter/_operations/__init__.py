@@ -6,8 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._operations import JobRouterAdministrationClientOperationsMixin
-from ._operations import JobRouterClientOperationsMixin
+from ._patch import JobRouterAdministrationClientOperationsMixin
+from ._patch import JobRouterClientOperationsMixin
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
