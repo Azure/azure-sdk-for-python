@@ -309,7 +309,6 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         :param Optional[Dict[str, Any]] metadata:
             A dict containing name-value pairs to associate with the
             queue as metadata.
-        :type metadata: Optional[Dict[str, str]]
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations.
@@ -716,7 +715,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
         :param message:
             The message object or id identifying the message to update.
-        :type message: str or ~azure.storage.queue.QueueMessage
+        :type message: Union[str, ~azure.storage.queue.QueueMessage]
         :param str pop_receipt:
             A valid pop receipt value returned from an earlier call
             to the :func:`~receive_messages` or :func:`~update_message` operation.
@@ -838,7 +837,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         If the key-encryption-key or resolver field is set on the local service object,
         the messages will be decrypted before being returned.
 
-        :param int max_messages:
+        :param Optional[int] max_messages:
             A nonzero integer value that specifies the number of
             messages to peek from the queue, up to a maximum of 32. By default,
             a single message is peeked from the queue with this operation.
@@ -852,7 +851,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             A list of :class:`~azure.storage.queue.QueueMessage` objects. Note that
             next_visible_on and pop_receipt will not be populated as peek does
             not pop the message and can only retrieve already visible messages.
-        :rtype: list(:class:`~azure.storage.queue.QueueMessage`)
+        :rtype: List[:class:`~azure.storage.queue.QueueMessage`]
 
         .. admonition:: Example:
 
@@ -938,8 +937,8 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
         :param message:
             The message object or id identifying the message to delete.
-        :type message: str or ~azure.storage.queue.QueueMessage
-        :param str pop_receipt:
+        :type message: Union[str, ~azure.storage.queue.QueueMessage]
+        :param Optional[str] pop_receipt:
             A valid pop receipt value returned from an earlier call
             to the :func:`~receive_messages` or :func:`~update_message`.
         :keyword int timeout:

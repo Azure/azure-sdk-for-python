@@ -228,15 +228,15 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
         :param analytics_logging:
             Groups the Azure Analytics Logging settings.
-        :type analytics_logging: ~azure.storage.queue.QueueAnalyticsLogging
+        :type analytics_logging: Optional[~azure.storage.queue.QueueAnalyticsLogging]
         :param hour_metrics:
             The hour metrics settings provide a summary of request
             statistics grouped by API in hourly aggregates for queues.
-        :type hour_metrics: ~azure.storage.queue.Metrics
+        :type hour_metrics: Optional[~azure.storage.queue.Metrics]
         :param minute_metrics:
             The minute metrics settings provide request statistics
             for each minute for queues.
-        :type minute_metrics: ~azure.storage.queue.Metrics
+        :type minute_metrics: Optional[~azure.storage.queue.Metrics]
         :param cors:
             You can include up to five CorsRule elements in the
             list. If an empty list is specified, all CORS rules will be deleted,
@@ -277,10 +277,10 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         The generator will lazily follow the continuation tokens returned by
         the service and stop when all queues have been returned.
 
-        :param str name_starts_with:
+        :param Optional[str] name_starts_with:
             Filters the results to return only queues whose names
             begin with the specified prefix.
-        :param bool include_metadata:
+        :param Optional[bool] include_metadata:
             Specifies that queue metadata be returned in the response.
         :keyword int results_per_page:
             The maximum number of queue names to retrieve per API
@@ -334,7 +334,7 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         :param metadata:
             A dict with name_value pairs to associate with the
             queue as metadata. Example: {'Category': 'test'}
-        :type metadata: Dict[str, str]
+        :type metadata: Optional[Dict[str, str]]
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: A QueueClient for the newly created Queue.
@@ -374,7 +374,7 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         :param queue:
             The queue to delete. This can either be the name of the queue,
             or an instance of QueueProperties.
-        :type queue: str or ~azure.storage.queue.QueueProperties
+        :type queue: Union[~azure.storage.queue.QueueProperties, str]
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
@@ -404,7 +404,7 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         :param queue:
             The queue. This can either be the name of the queue,
             or an instance of QueueProperties.
-        :type queue: str or ~azure.storage.queue.QueueProperties
+        :type queue: Union[~azure.storage.queue.QueueProperties, str]
         :returns: A :class:`~azure.storage.queue.QueueClient` object.
         :rtype: ~azure.storage.queue.QueueClient
 
