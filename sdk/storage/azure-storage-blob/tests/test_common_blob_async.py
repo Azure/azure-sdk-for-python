@@ -43,12 +43,12 @@ from azure.storage.blob import (
     RehydratePriority,
     ResourceTypes,
     RetentionPolicy,
+    Services,
     StandardBlobTier,
     StorageErrorCode,
     generate_account_sas,
     generate_container_sas,
     generate_blob_sas)
-
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import BlobPreparer
@@ -2314,6 +2314,25 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         # Assert
         assert blob_name == blob_properties.name
         assert self.container_name == container_properties.name
+
+    @BlobPreparer()
+    async def test_multiple_services_sas(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Act
+        token = self.generate_sas(
+            generate_account_sas,
+            storage_account_name,
+            storage_account_key,
+            ResourceTypes(container=True, object=True, service=True),
+            AccountSasPermissions(read=True, list=True),
+            datetime.utcnow() + timedelta(hours=1),
+            services=Services(blob=True, fileshare=True)
+        )
+
+        # Assert
+        assert 'ss=bf' in token
 
     @BlobPreparer()
     @recorded_by_proxy_async

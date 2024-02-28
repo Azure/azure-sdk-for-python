@@ -82,7 +82,7 @@ setup(
     ],
     project_urls={
         "Bug Reports": "https://github.com/Azure/azure-sdk-for-python/issues",
-        "Source": "https://github.com/Azure/azure-sdk-python",
+        "Source": "https://github.com/Azure/azure-sdk-for-python",
     },
     package_data={
         'azure.ai.resources': ['py.typed', 'azure/ai/resources/_index/_utils/encodings/*'],

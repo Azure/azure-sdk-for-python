@@ -170,11 +170,11 @@ config = load(endpoint=endpoint, credential=DefaultAzureCredential(), key_vault_
 
 ## Loading Feature Flags
 
-Feature Flags can be loaded from config stores using the provider. Feature flags are loaded as a dictionary of key/value pairs stored in the provider under the `FeatureManagement`, then `FeatureFlags`.
+Feature Flags can be loaded from config stores using the provider. Feature flags are loaded as a dictionary of key/value pairs stored in the provider under the `feature_management`, then `feature_flags`.
 
 ```python
 config = load(endpoint=endpoint, credential=DefaultAzureCredential(), feature_flags_enabled=True)
-alpha = config["FeatureManagement"]["FeatureFlags"]["Alpha"]
+alpha = config["feature_management"]["feature_flags"]["Alpha"]
 print(alpha["enabled"])
 ```
 
@@ -184,7 +184,7 @@ By default all feature flags with no label are loaded. If you want to load featu
 from azure.appconfiguration.provider import load, SettingSelector
 
 config = load(endpoint=endpoint, credential=DefaultAzureCredential(), feature_flags_enabled=True, feature_flag_selectors=[SettingSelector(key_filter="*", label_filter="dev")])
-alpha = config["FeatureManagement"]["FeatureFlags"]["Alpha"]
+alpha = config["feature_management"]["feature_flags"]["Alpha"]
 print(alpha["enabled"])
 ```
 
