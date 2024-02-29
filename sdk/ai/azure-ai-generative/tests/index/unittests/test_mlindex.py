@@ -6,7 +6,7 @@ from azure.ai.generative.index._mlindex import MLIndex
 
 logger = logging.getLogger(__name__)
 
-
+@pytest.mark.skip(reason="couldn't connect to huggingface error")
 @pytest.mark.parametrize("sub_dir", [
     "langchain_faiss",
     "azureml_rag_faiss"
