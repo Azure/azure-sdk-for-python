@@ -61,7 +61,7 @@ class HealthInsightsSyncSamples:
         )
         # Create patient info
         birth_date = datetime.date(1959, 11, 11)
-        patient_info = models.PatientInfo(sex=models.PatientInfoSex.FEMALE, birth_date=birth_date)
+        patient_info = models.PatientDetails(sex=models.PatientSex.FEMALE, birth_date=birth_date)
         # Create author
         author = models.DocumentAuthor(id="author2", full_name="authorName2")
 

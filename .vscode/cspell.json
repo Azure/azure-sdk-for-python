@@ -1716,7 +1716,8 @@
         "mros",
         "Nify",
         "loinc",
-        "wday"
+        "wday",
+        "SNOMED"
       ]
     }
   ],
