@@ -1237,8 +1237,9 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         return deserialized  # type: ignore
 
+    # https://github.com/Azure/autorest.python/issues/2262
     @distributed_trace
-    def list_distribution_policies(self, **kwargs: Any) -> AsyncIterable["_models.DistributionPolicy"]:
+    def list_distribution_policies(self, **kwargs: Any) -> AsyncItemPaged["_models.DistributionPolicy"]:
         # pylint: disable=line-too-long
         """Retrieves existing distribution policies.
 
@@ -2434,8 +2435,9 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         return deserialized  # type: ignore
 
+    # https://github.com/Azure/autorest.python/issues/2262
     @distributed_trace
-    def list_classification_policies(self, **kwargs: Any) -> AsyncIterable["_models.ClassificationPolicy"]:
+    def list_classification_policies(self, **kwargs: Any) -> AsyncItemPaged["_models.ClassificationPolicy"]:
         # pylint: disable=line-too-long
         """Retrieves existing classification policies.
 
@@ -3057,8 +3059,9 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         return deserialized  # type: ignore
 
+    # https://github.com/Azure/autorest.python/issues/2262
     @distributed_trace
-    def list_exception_policies(self, **kwargs: Any) -> AsyncIterable["_models.ExceptionPolicy"]:
+    def list_exception_policies(self, **kwargs: Any) -> AsyncItemPaged["_models.ExceptionPolicy"]:
         """Retrieves existing exception policies.
 
         Retrieves existing exception policies.
@@ -3634,8 +3637,9 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         return deserialized  # type: ignore
 
+    # https://github.com/Azure/autorest.python/issues/2262
     @distributed_trace
-    def list_queues(self, **kwargs: Any) -> AsyncIterable["_models.RouterQueue"]:
+    def list_queues(self, **kwargs: Any) -> AsyncItemPaged["_models.RouterQueue"]:
         # pylint: disable=line-too-long
         """Retrieves existing queues.
 
@@ -5521,6 +5525,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         return deserialized  # type: ignore
 
+    # https://github.com/Azure/autorest.python/issues/2262
     @distributed_trace
     def list_jobs(
         self,
@@ -5532,7 +5537,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         scheduled_before: Optional[datetime.datetime] = None,
         scheduled_after: Optional[datetime.datetime] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.RouterJob"]:
+    ) -> AsyncItemPaged["_models.RouterJob"]:
         # pylint: disable=line-too-long
         """Retrieves list of jobs based on filter parameters.
 
@@ -7140,6 +7145,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
+    # https://github.com/Azure/autorest.python/issues/2262
     @distributed_trace
     def list_workers(
         self,
@@ -7149,7 +7155,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         queue_id: Optional[str] = None,
         has_capacity: Optional[bool] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.RouterWorker"]:
+    ) -> AsyncItemPaged["_models.RouterWorker"]:
         # pylint: disable=line-too-long
         """Retrieves existing workers.
 
