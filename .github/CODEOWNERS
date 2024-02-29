@@ -1009,7 +1009,7 @@
 ###########
 /eng/                                                                @scbedd @weshaggard @benbp
 
-/tools/                                                              @scbedd
+/tools/                                                              @scbedd @mccoyp
 
 # Add owners for notifications for specific pipelines
 /eng/pipelines/templates/jobs/tests-nightly-python.yml               @lmazuel @mccoyp
