@@ -15,7 +15,7 @@ class JsonParser(object):
         """
         Parse input value as json. Returns empty dict in case value cannot be parsed as valid json
 
-        :keyword value: Value to be parse.
+        :keyword value: Value to be parsed.
         :paramtype value: Union[str, bytes, bytearray]
         """
         value_as_json = None

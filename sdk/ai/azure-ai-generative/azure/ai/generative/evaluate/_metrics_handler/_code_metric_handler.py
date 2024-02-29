@@ -67,9 +67,11 @@ class CodeMetricHandler(MetricHandler):
                         progress_bar.update(1)
                     except Exception as ex:  # pylint: disable=broad-except
                         progress_bar.update(1)
-                        msg_1 = f"Error calculating value for {metric_name}, "
-                        msg_2 = f"failed with error {str(ex)} : Stack trace : {str(ex.__traceback__)}"
-                        LOGGER.info(msg_1 + msg_2)
+                        msg = (
+                            f"Error calculating value for {metric_name}, "
+                            f"failed with error {str(ex)} : Stack trace : {str(ex.__traceback__)}"
+                        )
+                        LOGGER.info(msg)
 
         return metrics_dict
 

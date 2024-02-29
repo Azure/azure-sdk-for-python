@@ -111,7 +111,7 @@ class UnstructuredBaseLoader(BaseLoader, ABC):
             text_dict: Dict[int, str] = {}
             meta_dict: Dict[int, Dict] = {}
 
-            for _, element in enumerate(elements):
+            for element in enumerate(elements):
                 metadata = self._get_metadata()
                 if hasattr(element, "metadata"):
                     metadata.update(element.metadata.to_dict())

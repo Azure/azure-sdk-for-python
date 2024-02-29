@@ -82,13 +82,11 @@ def _has_column(data, column_name):
     if data is None:
         return False
     for d in data:
-        return not d.get(column_name) is None
+        return d.get(column_name) is not None
 
 
 def _is_flow(asset):
-    if _is_flow_local(asset):
-        return True
-    return False
+    return _is_flow_local(asset)
 
 
 def _is_flow_local(path):
@@ -96,7 +94,7 @@ def _is_flow_local(path):
         if os.path.isdir(path):
             return os.path.isfile(os.path.join(path, "flow.dag.yaml"))
         return False
-    except (FileNotFoundError, PermissionError):
+    except Exception:  # pylint: disable=broad-except
         return False
 
 

@@ -1497,7 +1497,7 @@ class EmbeddingsContainer:  # pylint: disable=too-many-instance-attributes, too-
                     key=os.path.getmtime,
                 ).parent.name
             )
-        except OSError as e:
+        except Exception as e:  # pylint: disable=broad-except
             if activity_logger:
                 activity_logger.warn("Failed to get latest folder from embeddings_container.")
             logger.warn(f"failed to get latest folder from {local_embeddings_cache} with {e}.")
