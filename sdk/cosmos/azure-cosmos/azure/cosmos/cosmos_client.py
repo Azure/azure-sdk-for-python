@@ -25,6 +25,7 @@
 from typing import Any, Dict, Iterable, List, Mapping, Optional, Union, cast
 import warnings
 
+from azure.core import MatchConditions
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.paging import ItemPaged
 from azure.core.credentials import TokenCredential
@@ -250,6 +251,11 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         id: str,
         populate_query_metrics: Optional[bool] = None,
         offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
+        *,
+        session_token: Optional[str] = None,
+        initial_headers: Optional[Dict[str, str]] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> DatabaseProxy:
         """
@@ -277,8 +283,16 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 :caption: Create a database in the Cosmos DB account:
                 :name: create_database
         """
-        request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
+        if session_token is not None:
+            kwargs["session_token"] = session_token
+        if initial_headers is not None:
+            kwargs["initial_headers"] = initial_headers
+        if etag is not None:
+            kwargs["etag"] = etag
+        if match_condition is not None:
+            kwargs["match_condition"] = match_condition
+        request_options = build_options(kwargs)
         if populate_query_metrics is not None:
             warnings.warn(
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
@@ -298,6 +312,11 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         id: str,
         populate_query_metrics: Optional[bool] = None,
         offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
+        *,
+        session_token: Optional[str] = None,
+        initial_headers: Optional[Dict[str, str]] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> DatabaseProxy:
         """
@@ -321,6 +340,14 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :rtype: ~azure.cosmos.DatabaseProxy
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The database read or creation failed.
         """
+        if session_token is not None:
+            kwargs["session_token"] = session_token
+        if initial_headers is not None:
+            kwargs["initial_headers"] = initial_headers
+        if etag is not None:
+            kwargs["etag"] = etag
+        if match_condition is not None:
+            kwargs["match_condition"] = match_condition
         try:
             database_proxy = self.get_database_client(id)
             database_proxy.read(
@@ -358,6 +385,9 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         self,
         max_item_count: Optional[int] = None,
         populate_query_metrics: Optional[bool] = None,
+        *,
+        session_token: Optional[str] = None,
+        initial_headers: Optional[Dict[str, str]] = None,
         **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
         """List the databases in a Cosmos DB SQL database account.
@@ -369,8 +399,12 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :returns: An Iterable of database properties (dicts).
         :rtype: Iterable[Dict[str, str]]
         """
-        feed_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
+        if session_token is not None:
+            kwargs["session_token"] = session_token
+        if initial_headers is not None:
+            kwargs["initial_headers"] = initial_headers
+        feed_options = build_options(kwargs)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
         if populate_query_metrics is not None:
@@ -393,6 +427,9 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         enable_cross_partition_query: Optional[bool] = None,
         max_item_count: Optional[int] = None,
         populate_query_metrics: Optional[bool] = None,
+        *,
+        session_token: Optional[str] = None,
+        initial_headers: Optional[Dict[str, str]] = None,
         **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
         """Query the databases in a Cosmos DB SQL database account.
@@ -409,8 +446,12 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :returns: An Iterable of database properties (dicts).
         :rtype: Iterable[Dict[str, str]]
         """
-        feed_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
+        if session_token is not None:
+            kwargs["session_token"] = session_token
+        if initial_headers is not None:
+            kwargs["initial_headers"] = initial_headers
+        feed_options = build_options(kwargs)
         if enable_cross_partition_query is not None:
             feed_options["enableCrossPartitionQuery"] = enable_cross_partition_query
         if max_item_count is not None:
@@ -444,6 +485,11 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         self,
         database: Union[str, DatabaseProxy, Mapping[str, Any]],
         populate_query_metrics: Optional[bool] = None,
+        *,
+        session_token: Optional[str] = None,
+        initial_headers: Optional[Dict[str, str]] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
         """Delete the database with the given ID (name).
@@ -460,8 +506,16 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the database couldn't be deleted.
         :rtype: None
         """
-        request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
+        if session_token is not None:
+            kwargs["session_token"] = session_token
+        if initial_headers is not None:
+            kwargs["initial_headers"] = initial_headers
+        if etag is not None:
+            kwargs["etag"] = etag
+        if match_condition is not None:
+            kwargs["match_condition"] = match_condition
+        request_options = build_options(kwargs)
         if populate_query_metrics is not None:
             warnings.warn(
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",

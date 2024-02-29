@@ -6,6 +6,7 @@
 import os
 import pytest
 import openai
+import httpx
 from devtools_testutils import AzureRecordedTestCase
 from azure.identity import DefaultAzureCredential
 from conftest import (
@@ -15,7 +16,8 @@ from conftest import (
     ENV_AZURE_OPENAI_API_VERSION,
     ENV_AZURE_OPENAI_CHAT_COMPLETIONS_NAME,
     configure,
-    reload
+    reload,
+    ENV_OPENAI_TEST_MODE,
 )
 
 
@@ -235,3 +237,35 @@ class TestClient(AzureRecordedTestCase):
                 del os.environ['AZURE_OPENAI_ENDPOINT']
                 del os.environ['AZURE_OPENAI_AD_TOKEN']
                 del os.environ['OPENAI_API_VERSION']
+
+    @pytest.mark.parametrize(
+        "headers,timeout",
+        [
+            ({"retry-after-ms": "2000"}, 2.0),
+            ({"retry-after-ms": "2", "retry-after": "1"}, 0.002),
+            ({"Retry-After-Ms": "2", "Retry-After": "1"}, 0.002),
+            ({"retry-after-ms": "invalid"}, ...),
+            ({}, ...),
+            (None, ...),
+        ],
+    )
+    def test_parse_retry_after_ms_header(self, headers, timeout, **kwargs):
+        if os.getenv(ENV_OPENAI_TEST_MODE) != "v1":
+            pytest.skip("Skipping - tests set to run against v1.")
+
+        client = openai.AzureOpenAI(
+            azure_endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
+            api_key="key",
+            api_version=ENV_AZURE_OPENAI_API_VERSION,
+        )
+        response_headers = httpx.Headers(headers)
+        options = openai._models.FinalRequestOptions(method="post", url="/completions")
+        retry_timeout = client._calculate_retry_timeout(
+            remaining_retries=2,
+            options=options,
+            response_headers=response_headers
+        )
+        if headers is None or headers == {} or headers.get("retry-after-ms") == "invalid":
+            assert retry_timeout  # uses the default implementation
+        else:
+            assert retry_timeout == timeout  # uses retry-after-ms

@@ -1,37 +1,18 @@
 # The MIT License (MIT)
-# Copyright (c) 2022 Microsoft Corporation
+# Copyright (c) Microsoft Corporation. All rights reserved.
 
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
-
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
-import unittest
-
-import pytest
 import base64
-import time
 import json
+import time
+import unittest
 from io import StringIO
 
-import azure.cosmos.cosmos_client as cosmos_client
-from azure.cosmos import exceptions, PartitionKey
+import pytest
 from azure.core.credentials import AccessToken
-import test_config
 
-pytestmark = pytest.mark.cosmosEmulator
+import azure.cosmos.cosmos_client as cosmos_client
+import test_config
+from azure.cosmos import exceptions, DatabaseProxy, ContainerProxy
 
 
 def _remove_padding(encoded_string):
@@ -43,6 +24,7 @@ def _remove_padding(encoded_string):
 
 def get_test_item(num):
     test_item = {
+        'pk': 'pk',
         'id': 'Item_' + str(num),
         'test_object': True,
         'lastName': 'Smith'
@@ -82,7 +64,7 @@ class CosmosEmulatorCredential(object):
                                                        "c44fd685-5c58-452c-aaf7-13ce75184f65",
                                                        "be895215-eab5-43b7-9536-9ef8fe130330"]}
 
-        emulator_key = test_config._test_config.masterKey
+        emulator_key = test_config.TestConfig.masterKey
 
         first_encoded_bytes = base64.urlsafe_b64encode(aad_header_cosmos_emulator.encode("utf-8"))
         first_encoded_padded = str(first_encoded_bytes, "utf-8")
@@ -103,19 +85,20 @@ class CosmosEmulatorCredential(object):
         return AccessToken(first_encoded + "." + second_encoded + "." + emulator_key_encoded, int(time.time() + 7200))
 
 
-@pytest.mark.usefixtures("teardown")
-class AadTest(unittest.TestCase):
-    configs = test_config._test_config
+@pytest.mark.cosmosEmulator
+class TestAAD(unittest.TestCase):
+    client: cosmos_client.CosmosClient = None
+    database: DatabaseProxy = None
+    container: ContainerProxy = None
+    configs = test_config.TestConfig
     host = configs.host
     masterKey = configs.masterKey
 
     @classmethod
     def setUpClass(cls):
         cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
-        cls.database = cls.client.create_database_if_not_exists(test_config._test_config.TEST_DATABASE_ID)
-        cls.container = cls.database.create_container_if_not_exists(
-            id=test_config._test_config.TEST_COLLECTION_SINGLE_PARTITION_ID,
-            partition_key=PartitionKey(path="/id"))
+        cls.database = cls.client.get_database_client(cls.configs.TEST_DATABASE_ID)
+        cls.container = cls.database.get_container_client(cls.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
 
     def test_emulator_aad_credentials(self):
         if self.host != 'https://localhost:8081/':
@@ -124,16 +107,14 @@ class AadTest(unittest.TestCase):
 
         aad_client = cosmos_client.CosmosClient(self.host, CosmosEmulatorCredential())
         # Do any R/W data operations with your authorized AAD client
-        db = aad_client.get_database_client(self.configs.TEST_DATABASE_ID)
-        container = db.get_container_client(self.configs.TEST_COLLECTION_SINGLE_PARTITION_ID)
 
-        print("Container info: " + str(container.read()))
-        container.create_item(get_test_item(0))
-        print("Point read result: " + str(container.read_item(item='Item_0', partition_key='Item_0')))
-        query_results = list(container.query_items(query='select * from c', partition_key='Item_0'))
+        print("Container info: " + str(self.container.read()))
+        self.container.create_item(get_test_item(0))
+        print("Point read result: " + str(self.container.read_item(item='Item_0', partition_key='pk')))
+        query_results = list(self.container.query_items(query='select * from c', partition_key='pk'))
         assert len(query_results) == 1
         print("Query result: " + str(query_results[0]))
-        container.delete_item(item='Item_0', partition_key='Item_0')
+        self.container.delete_item(item='Item_0', partition_key='pk')
 
         # Attempting to do management operations will return a 403 Forbidden exception
         try:

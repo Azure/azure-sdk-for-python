@@ -1,7 +1,6 @@
 # Release History
 
-## 4.16.1 (Unreleased)
-This version and all future versions will require Python 3.8+.
+## 4.17.1 (Unreleased)
 
 ### Features Added
 
@@ -10,6 +9,13 @@ This version and all future versions will require Python 3.8+.
 ### Bugs Fixed
 
 ### Other Changes
+
+## 4.17.0 (2024-02-08)
+This version and all future versions will require Python 3.8+.
+
+### Features Added
+
+- Added new enums values to `SystemEventNames` related to Azure Storage and Azure VMware Solution.
 
 ## 4.16.0 (2023-11-08)
 

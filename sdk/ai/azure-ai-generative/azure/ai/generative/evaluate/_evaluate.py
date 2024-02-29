@@ -12,14 +12,15 @@ import logging
 from collections import Counter
 from json import JSONDecodeError
 from pathlib import Path
-from typing import Callable, Optional, Dict, List, Mapping
+from typing import Callable, Optional, Dict, List, Mapping, Union
 from types import FunctionType
 
 import mlflow
 import numpy as np
 import pandas as pd
 from azure.core.tracing.decorator import distributed_trace
-from azure.ai.generative._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin, ActivityLogger
+from azure.ai.generative._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin, \
+    ActivityLogger
 
 from mlflow.entities import Metric
 from mlflow.exceptions import MlflowException
@@ -37,6 +38,7 @@ from ._metrics_handler._prompt_metric_handler import PromptMetricHandler
 
 from ._utils import _write_properties_to_run_history
 from .metrics._custom_metric import CodeMetric, PromptMetric, Metric as GenAIMetric
+from azure.ai.resources.entities import AzureOpenAIModelConfiguration
 
 LOGGER = logging.getLogger(__name__)
 
@@ -88,7 +90,7 @@ def _log_metrics(run_id, metrics):
 
 def _validate_metrics(metrics, task_type):
     prompt_metrics = []
-    builtin_metrics =[]
+    builtin_metrics = []
     code_metrics = []
     unknown_metrics = []
 
@@ -108,7 +110,8 @@ def _validate_metrics(metrics, task_type):
     if len(unknown_metrics) > 0:
         raise Exception("Unsupported metric found in the list")
 
-    counter = Counter(builtin_metrics + [metric.name for metric in prompt_metrics] + [metric.__name__ for metric in code_metrics])
+    counter = Counter(
+        builtin_metrics + [metric.name for metric in prompt_metrics] + [metric.__name__ for metric in code_metrics])
     duplicates = [key for key, value in counter.items() if value > 1]
     if len(duplicates) > 0:
         raise Exception(f"Duplicate metric name found {duplicates}. Metric names should be unique")
@@ -125,7 +128,7 @@ def evaluate(
         data: Optional[str] = None,
         task_type: Optional[str] = None,
         metrics_list: Optional[List[str]] = None,
-        model_config: Optional[Dict[str, str]] = None,
+        model_config: Optional[Union[Dict[str, str], "AzureOpenAIModelConfiguration"]] = None,
         data_mapping: Optional[Dict[str, str]] = None,
         output_path: Optional[str] = None,
         **kwargs
@@ -145,7 +148,7 @@ def evaluate(
     :keyword metrics_list: List of metrics to calculate. A default list is picked based on task_type if not set.
     :paramtype metrics_list: Optional[List[str]]
     :keyword model_config: GPT configuration details needed for AI-assisted metrics.
-    :paramtype model_config: Optional[Dict[str, str]]
+    :paramtype model_config: Dict[str, str]
     :keyword data_mapping: GPT configuration details needed for AI-assisted metrics.
     :paramtype data_mapping: Optional[Dict[str, str]]
     :keyword output_path: The local folder path to save evaluation artifacts to if set
@@ -163,16 +166,34 @@ def evaluate(
             :language: python
             :dedent: 8
             :caption: Evaluates target or data with built-in evaluation metrics.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ai_samples_evaluate.py
+            :start-after: [START evaluate_custom_metrics]
+            :end-before: [END evaluate_custom_metrics]
+            :language: python
+            :dedent: 8
+            :caption: Evaluates target or data with custom evaluation metrics.
+
     """
 
     results_list = []
-    metrics_config = {}
     if "tracking_uri" in kwargs:
         mlflow.set_tracking_uri(kwargs.get("tracking_uri"))
 
+    model_config_dict: Dict[str, str] = {}
     if model_config:
-        metrics_config.update({"openai_params": model_config})
-
+        if isinstance(model_config, Dict):
+            model_config_dict = model_config
+        elif isinstance(model_config, AzureOpenAIModelConfiguration):
+            model_config_dict.update({
+                "api_version": model_config.api_version,
+                "api_base": model_config.api_base,
+                "api_type": "azure",
+                "api_key": model_config.api_key,
+                "deployment_id": model_config.deployment_name
+            })
 
     if data_mapping:
         import warnings
@@ -204,7 +225,7 @@ def evaluate(
                     target=target,
                     data=data,
                     task_type=task_type,
-                    model_config=model_config,
+                    model_config=model_config_dict,
                     data_mapping=data_mapping,
                     params_dict=params_permutations_dict,
                     metrics=metrics_list,
@@ -219,7 +240,7 @@ def evaluate(
             target=target,
             data=data,
             task_type=task_type,
-            model_config=model_config,
+            model_config=model_config_dict,
             data_mapping=data_mapping,
             metrics=metrics_list,
             output_path=output_path,
@@ -241,12 +262,22 @@ def _evaluate(
         **kwargs
 ):
     try:
-        if Path(data).exists():
-            test_data = load_jsonl(data)
-            _data_is_file = True
+        if isinstance(data, str) or isinstance(data, Path):
+            if Path(data).exists():
+                test_data = load_jsonl(data)
+                _data_is_file = True
+            else:
+                raise Exception(f"{data} does not point to a valid path")
+        else:
+            # data as list of json objects
+            _ = [json.dumps(line) for line in data]
+            test_data = data
+    except JSONDecodeError as json_load_error:
+        raise Exception("Data could not be loaded. Please validate if data is valid jsonl.")
+    except TypeError:
+        raise Exception("Data is not valid json.")
     except Exception as ex:
-        LOGGER.debug("test data is not a file but loaded data")
-        test_data = data
+        raise Exception(f"Error loading data: {ex}")
         _data_is_file = False
 
     if "answer" in data_mapping:
@@ -462,11 +493,7 @@ def _get_chat_instance_table(metrics):
 
 
 def _get_instance_table(metrics, task_type, asset_handler):
-
-    if task_type == CHAT:
-        instance_level_metrics_table = _get_chat_instance_table(metrics.get("artifacts"))
-    else:
-        instance_level_metrics_table = pd.DataFrame(metrics.get("artifacts"))
+    instance_level_metrics_table = pd.DataFrame(metrics.get("artifacts"))
 
     combined_table = pd.concat(
         [asset_handler.input_output_data,

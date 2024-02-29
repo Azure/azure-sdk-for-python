@@ -196,7 +196,7 @@ class ModelOperations(_ScopeDependentOperations):
                     body=get_asset_body_for_registry_storage(self._registry_name, "models", model.name, model.version),
                 )
 
-            model, indicator_file = _check_and_upload_path(
+            model, indicator_file = _check_and_upload_path(  # type: ignore[type-var]
                 artifact=model,
                 asset_operations=self,
                 sas_uri=sas_uri,

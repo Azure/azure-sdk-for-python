@@ -1,5 +1,17 @@
 # Release History
 
+## 1.30.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+- Accept float for `retry_after` header.  #34203
+
 ## 1.30.0 (2024-02-01)
 
 ### Features Added

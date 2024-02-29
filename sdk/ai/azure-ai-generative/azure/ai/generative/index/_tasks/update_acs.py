@@ -15,7 +15,7 @@ from packaging import version as pkg_version
 
 from azure.ai.generative.index._embeddings import EmbeddingsContainer, ReferenceEmbeddedDocument
 from azure.ai.generative.index._mlindex import MLIndex
-from azure.ai.generative.index._utils.connections import get_connection_credential
+from azure.ai.resources._index._utils.connections import get_connection_credential
 from azure.ai.generative.index._utils.logging import (
     _logger_factory,
     enable_appinsights_logging,
@@ -94,14 +94,14 @@ def create_search_index_sdk(acs_config: dict, credential, embeddings: Optional[E
             elif field_type == "metadata":
                 fields.append(SimpleField(name=field_name, type=SearchFieldDataType.String))
             elif field_type == "embedding":
-                # TODO: Bug 2878424 to address type: ignore in this section
+                assert isinstance(embeddings, EmbeddingsContainer)
                 if current_version >= pkg_version.parse("11.4.0b11"):
                     fields.append(
                         SearchField(
                             name=field_name,
                             type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
                             searchable=True,
-                            vector_search_dimensions=embeddings.get_embedding_dimensions(),  # type: ignore[union-attr]
+                            vector_search_dimensions=embeddings.get_embedding_dimensions(),
                             vector_search_profile=f"{field_name}_config",
                         )
                     )
@@ -111,7 +111,7 @@ def create_search_index_sdk(acs_config: dict, credential, embeddings: Optional[E
                             name=field_name,
                             type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
                             searchable=True,
-                            vector_search_dimensions=embeddings.get_embedding_dimensions(),  # type: ignore[union-attr]
+                            vector_search_dimensions=embeddings.get_embedding_dimensions(),
                             vector_search_configuration=f"{field_name}_config",
                         )
                     )
@@ -369,7 +369,7 @@ def create_index_from_raw_embeddings(
             # was generated for this snapshot and needs to pushed to the index.
             
             # TODO: Bug 2878426
-            if syncing_index and isinstance(emb_doc, ReferenceEmbeddedDocument) and not emb_doc.is_local:  # type: ignore[attr-defined]
+            if syncing_index and isinstance(emb_doc, ReferenceEmbeddedDocument) and not emb_doc.is_local:
                 skipped_prefix_documents += 1
                 num_source_docs += 1
                 if verbosity > 2:
@@ -486,7 +486,7 @@ def main(args, logger, activity_logger):
         if args.connection_id is not None:
             connection_args["connection_type"] = "workspace_connection"
             connection_args["connection"] = {"id": args.connection_id}
-            from azure.ai.generative.index._utils.connections import (
+            from azure.ai.resources._index._utils.connections import (
                 get_connection_by_id_v2,
                 get_metadata_from_connection,
                 get_target_from_connection,

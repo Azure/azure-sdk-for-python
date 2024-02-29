@@ -14,7 +14,7 @@ from typing import Optional
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.ai.generative.index._embeddings import EmbeddingsContainer, ReferenceEmbeddedDocument
 from azure.ai.generative.index._mlindex import MLIndex
-from azure.ai.generative.index._utils.connections import get_connection_credential
+from azure.ai.resources._index._utils.connections import get_connection_credential
 from azure.ai.generative.index._utils.logging import (
     _logger_factory,
     get_logger,
@@ -303,7 +303,7 @@ def main(args, logger, activity_logger):
         if args.connection_id is not None:
             connection_args["connection_type"] = "workspace_connection"
             connection_args["connection"] = {"id": args.connection_id}
-            from azure.ai.generative.index._utils.connections import (
+            from azure.ai.resources._index._utils.connections import (
                 get_connection_by_id_v2,
                 get_metadata_from_connection,
             )

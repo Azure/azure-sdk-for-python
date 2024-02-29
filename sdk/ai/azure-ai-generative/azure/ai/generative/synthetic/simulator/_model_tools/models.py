@@ -40,7 +40,7 @@ def get_model_class_from_url(endpoint_url: str):
 
 # ===================== HTTP Retry ======================
 class AsyncHTTPClientWithRetry:
-    def __init__(self, n_retry, retry_timeout, logger):
+    def __init__(self, n_retry, retry_timeout, logger, retry_options=None):
         self.attempts = n_retry
         self.logger = logger
 
@@ -49,14 +49,14 @@ class AsyncHTTPClientWithRetry:
         trace_config = TraceConfig()  # set up request logging
         trace_config.on_request_start.append(self.on_request_start)
         trace_config.on_request_end.append(self.on_request_end)
-
-        retry_options = RandomRetry(  # set up retry configuration
-            statuses=[104, 408, 409, 424, 429, 500, 502,
-                      503, 504],  # on which statuses to retry
-            attempts=n_retry,
-            min_timeout=retry_timeout,
-            max_timeout=retry_timeout,
-        )
+        if retry_options is None:
+            retry_options = RandomRetry(  # set up retry configuration
+                statuses=[104, 408, 409, 424, 429, 500, 502,
+                        503, 504],  # on which statuses to retry
+                attempts=n_retry,
+                min_timeout=retry_timeout,
+                max_timeout=retry_timeout,
+            )
 
         self.client = RetryClient(
             trace_configs=[trace_config], retry_options=retry_options)
@@ -641,6 +641,7 @@ class OpenAIChatCompletionsModel(OpenAICompletionsModel):
         # https://platform.openai.com/docs/api-reference/chat
         samples = []
         finish_reason = []
+
         for choice in response_data["choices"]:
             if 'message' in choice and 'content' in choice['message']:
                 samples.append(choice['message']['content'])

@@ -14,6 +14,7 @@
         "tags": [
           "CapacityReservationGroup"
         ],
+        "summary": "List CapacityReservationGroups by subscription",
         "operationId": "CapacityReservationGroups_ListBySubscription",
         "produces": [
           "application/json"
@@ -58,6 +59,7 @@
         "tags": [
           "CapacityReservationGroup"
         ],
+        "summary": "Lists CapacityReservationGroups",
         "operationId": "CapacityReservationGroups_List",
         "produces": [
           "application/json"
@@ -105,6 +107,7 @@
         "tags": [
           "CapacityReservationGroup"
         ],
+        "summary": "Delete CapacityReservationGroup",
         "operationId": "CapacityReservationGroups_Delete",
         "produces": [
           "application/json"
@@ -119,6 +122,7 @@
           {
             "in": "path",
             "name": "groupId",
+            "description": "Group ID",
             "required": true,
             "type": "string",
             "pattern": "^[a-zA-Z0-9][a-zA-Z0-9\\-_]{0,254}$"
@@ -151,6 +155,7 @@
         "tags": [
           "CapacityReservationGroup"
         ],
+        "summary": "Get CapacityReservationGroup",
         "operationId": "CapacityReservationGroups_Get",
         "produces": [
           "application/json"
@@ -165,6 +170,7 @@
           {
             "in": "path",
             "name": "groupId",
+            "description": "Group ID",
             "required": true,
             "type": "string",
             "pattern": "^[a-zA-Z0-9][a-zA-Z0-9\\-_]{0,254}$"
@@ -197,6 +203,7 @@
         "tags": [
           "CapacityReservationGroup"
         ],
+        "summary": "Update CapacityReservationGroup",
         "operationId": "CapacityReservationGroups_Update",
         "consumes": [
           "application/json"
@@ -214,6 +221,7 @@
           {
             "in": "path",
             "name": "groupId",
+            "description": "Group ID",
             "required": true,
             "type": "string",
             "pattern": "^[a-zA-Z0-9][a-zA-Z0-9\\-_]{0,254}$"
@@ -224,6 +232,7 @@
           {
             "in": "body",
             "name": "body",
+            "description": "Capacity Reservation Group payload to update",
             "required": true,
             "schema": {
               "$ref": "#/definitions/PartialMinimalTrackedResourceWithSkuAndIdentity"
@@ -254,6 +263,7 @@
         "tags": [
           "CapacityReservationGroup"
         ],
+        "summary": "Create or update CapacityReservationGroup",
         "operationId": "CapacityReservationGroups_CreateOrUpdate",
         "consumes": [
           "application/json"
@@ -271,6 +281,7 @@
           {
             "in": "path",
             "name": "groupId",
+            "description": "Group ID",
             "required": true,
             "type": "string",
             "pattern": "^[a-zA-Z0-9][a-zA-Z0-9\\-_]{0,254}$"
@@ -281,6 +292,7 @@
           {
             "in": "body",
             "name": "body",
+            "description": "Capacity Reservation Group payload to create",
             "required": true,
             "schema": {
               "$ref": "#/definitions/CapacityReservationGroupTrackedResource"
@@ -2228,6 +2240,78 @@
         }
       }
     },
+    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/datareferences/{name}/versions/{version}": {
+      "post": {
+        "tags": [
+          "DataReference"
+        ],
+        "summary": "Get blob reference SAS Uri value.",
+        "operationId": "RegistryDataReferences_GetBlobReferenceSAS",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "$ref": "registries.json#/parameters/RegistryNameParameter"
+          },
+          {
+            "in": "path",
+            "name": "name",
+            "description": "Data reference name.",
+            "required": true,
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9\\-_]{0,254}$"
+          },
+          {
+            "in": "path",
+            "name": "version",
+            "description": "Version identifier.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Asset id and blob uri.",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/GetBlobReferenceSASRequestDto"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/GetBlobReferenceSASResponseDto"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "GetBlobReferenceSAS Data Reference.": {
+            "$ref": "./examples/DataReference/getBlobReferenceSAS.json"
+          }
+        }
+      }
+    },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/environments": {
       "get": {
         "tags": [
@@ -2850,6 +2934,266 @@
         "x-ms-examples": {
           "CreateOrUpdate Registry Environment Version.": {
             "$ref": "./examples/Registry/EnvironmentVersion/createOrUpdate.json"
+          }
+        },
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "original-uri"
+        }
+      }
+    },
+    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/marketplaceSubscriptions": {
+      "get": {
+        "tags": [
+          "MarketplaceSubscription"
+        ],
+        "summary": "List containers.",
+        "operationId": "MarketplaceSubscriptions_List",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "$ref": "machineLearningServices.json#/parameters/WorkspaceNameParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+          },
+          {
+            "$ref": "machineLearningServices.json#/parameters/PaginationParameter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/MarketplaceSubscriptionResourceArmPaginatedResult"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "List Workspace Marketplace Subscription.": {
+            "$ref": "./examples/Workspace/MarketplaceSubscription/list.json"
+          }
+        },
+        "x-ms-pageable": {
+          "nextLinkName": "nextLink"
+        }
+      }
+    },
+    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/marketplaceSubscriptions/{name}": {
+      "delete": {
+        "tags": [
+          "MarketplaceSubscription"
+        ],
+        "summary": "Delete Marketplace Subscription (asynchronous).",
+        "operationId": "MarketplaceSubscriptions_Delete",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "$ref": "machineLearningServices.json#/parameters/WorkspaceNameParameter"
+          },
+          {
+            "in": "path",
+            "name": "name",
+            "description": "Marketplace Subscription name.",
+            "required": true,
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9\\-_]{0,254}$"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "headers": {
+              "x-ms-async-operation-timeout": {
+                "description": "Timeout for the client to use when polling the asynchronous operation.",
+                "type": "string",
+                "format": "duration"
+              },
+              "Location": {
+                "description": "URI to poll for asynchronous operation result.",
+                "type": "string"
+              },
+              "Retry-After": {
+                "description": "Duration the client should wait between requests, in seconds.",
+                "type": "integer",
+                "format": "int32",
+                "maximum": 600,
+                "minimum": 10
+              }
+            }
+          },
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "Delete Workspace Marketplace Subscription.": {
+            "$ref": "./examples/Workspace/MarketplaceSubscription/delete.json"
+          }
+        },
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "location"
+        }
+      },
+      "get": {
+        "tags": [
+          "MarketplaceSubscription"
+        ],
+        "summary": "Get container.",
+        "operationId": "MarketplaceSubscriptions_Get",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "$ref": "machineLearningServices.json#/parameters/WorkspaceNameParameter"
+          },
+          {
+            "in": "path",
+            "name": "name",
+            "description": "Container name.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/MarketplaceSubscriptionResource"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "Get Workspace Marketplace Subscription.": {
+            "$ref": "./examples/Workspace/MarketplaceSubscription/get.json"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "MarketplaceSubscription"
+        ],
+        "summary": "Create or update Marketplace Subscription (asynchronous).",
+        "operationId": "MarketplaceSubscriptions_CreateOrUpdate",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "$ref": "machineLearningServices.json#/parameters/WorkspaceNameParameter"
+          },
+          {
+            "in": "path",
+            "name": "name",
+            "description": "Marketplace Subscription name.",
+            "required": true,
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9\\-_]{0,254}$"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Marketplace Subscription entity to apply during operation.",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/MarketplaceSubscriptionResource"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Create or update request is successful.",
+            "schema": {
+              "$ref": "#/definitions/MarketplaceSubscriptionResource"
+            }
+          },
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/MarketplaceSubscriptionResource"
+            },
+            "headers": {
+              "x-ms-async-operation-timeout": {
+                "description": "Timeout for the client to use when polling the asynchronous operation.",
+                "type": "string",
+                "format": "duration"
+              },
+              "Azure-AsyncOperation": {
+                "description": "URI to poll for asynchronous operation status.",
+                "type": "string"
+              }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "CreateOrUpdate Workspace Marketplace Subscription.": {
+            "$ref": "./examples/Workspace/MarketplaceSubscription/createOrUpdate.json"
           }
         },
         "x-ms-long-running-operation": true,
@@ -4970,6 +5314,91 @@
         }
       }
     },
+    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/codes/{name}/versions/{version}/publish": {
+      "post": {
+        "tags": [
+          "CodeVersion"
+        ],
+        "summary": "Publish version asset into registry.",
+        "operationId": "CodeVersions_Publish",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "$ref": "machineLearningServices.json#/parameters/WorkspaceNameParameter"
+          },
+          {
+            "in": "path",
+            "name": "name",
+            "description": "Container name.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "version",
+            "description": "Version identifier.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Destination registry info",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/DestinationAsset"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "headers": {
+              "Location": {
+                "description": "URI to poll for asynchronous operation result.",
+                "type": "string"
+              },
+              "Retry-After": {
+                "description": "Duration the client should wait between requests, in seconds.",
+                "type": "integer",
+                "format": "int32",
+                "maximum": 600,
+                "minimum": 10
+              }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "Publish Workspace Code Version.": {
+            "$ref": "./examples/Workspace/CodeVersion/publish.json"
+          }
+        },
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "location"
+        }
+      }
+    },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/codes/{name}/versions/{version}/startPendingUpload": {
       "post": {
         "tags": [
@@ -5586,6 +6015,91 @@
         }
       }
     },
+    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/components/{name}/versions/{version}/publish": {
+      "post": {
+        "tags": [
+          "ComponentVersion"
+        ],
+        "summary": "Publish version asset into registry.",
+        "operationId": "ComponentVersions_Publish",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "$ref": "machineLearningServices.json#/parameters/WorkspaceNameParameter"
+          },
+          {
+            "in": "path",
+            "name": "name",
+            "description": "Container name.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "version",
+            "description": "Version identifier.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Destination registry info",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/DestinationAsset"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "headers": {
+              "Location": {
+                "description": "URI to poll for asynchronous operation result.",
+                "type": "string"
+              },
+              "Retry-After": {
+                "description": "Duration the client should wait between requests, in seconds.",
+                "type": "integer",
+                "format": "int32",
+                "maximum": 600,
+                "minimum": 10
+              }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "Publish Workspace Component Version.": {
+            "$ref": "./examples/Workspace/ComponentVersion/publish.json"
+          }
+        },
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "location"
+        }
+      }
+    },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/data": {
       "get": {
         "tags": [
@@ -6134,6 +6648,91 @@
           "CreateOrUpdate Workspace Data Version Base.": {
             "$ref": "./examples/Workspace/DataVersionBase/createOrUpdate.json"
           }
+        }
+      }
+    },
+    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/data/{name}/versions/{version}/publish": {
+      "post": {
+        "tags": [
+          "DataVersion"
+        ],
+        "summary": "Publish version asset into registry.",
+        "operationId": "DataVersions_Publish",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "$ref": "machineLearningServices.json#/parameters/WorkspaceNameParameter"
+          },
+          {
+            "in": "path",
+            "name": "name",
+            "description": "Container name.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "version",
+            "description": "Version identifier.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Destination registry info",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/DestinationAsset"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "headers": {
+              "Location": {
+                "description": "URI to poll for asynchronous operation result.",
+                "type": "string"
+              },
+              "Retry-After": {
+                "description": "Duration the client should wait between requests, in seconds.",
+                "type": "integer",
+                "format": "int32",
+                "maximum": 600,
+                "minimum": 10
+              }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "Publish Workspace Data Version Base.": {
+            "$ref": "./examples/Workspace/DataVersionBase/publish.json"
+          }
+        },
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "location"
         }
       }
     },
@@ -7012,6 +7611,91 @@
           "CreateOrUpdate Workspace Environment Version.": {
             "$ref": "./examples/Workspace/EnvironmentVersion/createOrUpdate.json"
           }
+        }
+      }
+    },
+    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/environments/{name}/versions/{version}/publish": {
+      "post": {
+        "tags": [
+          "EnvironmentVersion"
+        ],
+        "summary": "Publish version asset into registry.",
+        "operationId": "EnvironmentVersions_Publish",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "$ref": "machineLearningServices.json#/parameters/WorkspaceNameParameter"
+          },
+          {
+            "in": "path",
+            "name": "name",
+            "description": "Container name.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "version",
+            "description": "Version identifier.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Destination registry info",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/DestinationAsset"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "headers": {
+              "Location": {
+                "description": "URI to poll for asynchronous operation result.",
+                "type": "string"
+              },
+              "Retry-After": {
+                "description": "Duration the client should wait between requests, in seconds.",
+                "type": "integer",
+                "format": "int32",
+                "maximum": 600,
+                "minimum": 10
+              }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "Publish Workspace Environment Version.": {
+            "$ref": "./examples/Workspace/EnvironmentVersion/publish.json"
+          }
+        },
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "location"
         }
       }
     },
@@ -10201,6 +10885,12 @@
           },
           {
             "in": "query",
+            "name": "properties",
+            "description": "Comma-separated list of property names (and optionally values). Example: prop1,prop2=value2",
+            "type": "string"
+          },
+          {
+            "in": "query",
             "name": "assetName",
             "description": "Asset name the job's named output is registered with",
             "type": "string"
@@ -10215,12 +10905,6 @@
             "in": "query",
             "name": "scheduleId",
             "description": "The scheduled id for listing the job triggered from",
-            "type": "string"
-          },
-          {
-            "in": "query",
-            "name": "properties",
-            "description": "Comma-separated list of property names (and optionally values). Example: prop1,prop2=value2",
             "type": "string"
           }
         ],
@@ -10244,6 +10928,9 @@
           },
           "List AutoML Job.": {
             "$ref": "./examples/Job/AutoMLJob/list.json"
+          },
+          "List FineTuning Job.": {
+            "$ref": "./examples/Job/FineTuningJob/list.json"
           },
           "List Sweep Job.": {
             "$ref": "./examples/Job/SweepJob/list.json"
@@ -10384,6 +11071,9 @@
           "Get AutoML Job.": {
             "$ref": "./examples/Job/AutoMLJob/get.json"
           },
+          "Get FineTuning Job.": {
+            "$ref": "./examples/Job/FineTuningJob/get.json"
+          },
           "Get Sweep Job.": {
             "$ref": "./examples/Job/SweepJob/get.json"
           },
@@ -10458,7 +11148,7 @@
         "tags": [
           "Job"
         ],
-        "summary": "Creates and executes a Job.",
+        "summary": "Creates and executes a Job.\r\nFor update case, the Tags in the definition passed in will replace Tags in the existing job.",
         "operationId": "Jobs_CreateOrUpdate",
         "consumes": [
           "application/json"
@@ -10523,6 +11213,9 @@
           },
           "CreateOrUpdate AutoML Job.": {
             "$ref": "./examples/Job/AutoMLJob/createOrUpdate.json"
+          },
+          "CreateOrUpdate FineTuning Job.": {
+            "$ref": "./examples/Job/FineTuningJob/createOrUpdate.json"
           },
           "CreateOrUpdate Sweep Job.": {
             "$ref": "./examples/Job/SweepJob/createOrUpdate.json"
@@ -11727,6 +12420,91 @@
         "x-ms-examples": {
           "Package Workspace Model Version.": {
             "$ref": "./examples/Workspace/ModelVersion/package.json"
+          }
+        },
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "location"
+        }
+      }
+    },
+    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/models/{name}/versions/{version}/publish": {
+      "post": {
+        "tags": [
+          "ModelVersion"
+        ],
+        "summary": "Publish version asset into registry.",
+        "operationId": "ModelVersions_Publish",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "$ref": "machineLearningServices.json#/parameters/WorkspaceNameParameter"
+          },
+          {
+            "in": "path",
+            "name": "name",
+            "description": "Container name.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "version",
+            "description": "Version identifier.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Destination registry info",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/DestinationAsset"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "headers": {
+              "Location": {
+                "description": "URI to poll for asynchronous operation result.",
+                "type": "string"
+              },
+              "Retry-After": {
+                "description": "Duration the client should wait between requests, in seconds.",
+                "type": "integer",
+                "format": "int32",
+                "maximum": 600,
+                "minimum": 10
+              }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "Publish Workspace Model Version.": {
+            "$ref": "./examples/Workspace/ModelVersion/publish.json"
           }
         },
         "x-ms-long-running-operation": true,
@@ -13163,6 +13941,70 @@
         }
       }
     },
+    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/schedules/{name}/trigger": {
+      "post": {
+        "tags": [
+          "Schedule"
+        ],
+        "summary": "Trigger run.",
+        "operationId": "Schedules_Trigger",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "$ref": "machineLearningServices.json#/parameters/WorkspaceNameParameter"
+          },
+          {
+            "in": "path",
+            "name": "name",
+            "description": "Schedule name.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Request body for trigger once",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/TriggerOnceRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/TriggerRunSubmissionDto"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "Trigger Schedule.": {
+            "$ref": "./examples/Schedule/trigger.json"
+          }
+        }
+      }
+    },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/serverlessEndpoints": {
       "get": {
         "tags": [
@@ -13454,7 +14296,7 @@
             "description": "Serverless Endpoint name.",
             "required": true,
             "type": "string",
-            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9\\-_]{0,254}$"
+            "pattern": "^[a-zA-Z][a-zA-Z0-9-]{0,51}$"
           },
           {
             "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
@@ -13508,6 +14350,59 @@
         "x-ms-long-running-operation": true,
         "x-ms-long-running-operation-options": {
           "final-state-via": "original-uri"
+        }
+      }
+    },
+    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/serverlessEndpoints/{name}/getStatus": {
+      "post": {
+        "tags": [
+          "ServerlessEndpoint"
+        ],
+        "summary": "Status of the model backing the Serverless Endpoint.",
+        "operationId": "ServerlessEndpoints_GetStatus",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "$ref": "machineLearningServices.json#/parameters/WorkspaceNameParameter"
+          },
+          {
+            "in": "path",
+            "name": "name",
+            "description": "Serverless Endpoint name.",
+            "required": true,
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9\\-_]{0,254}$"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/ServerlessEndpointStatus"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "GetStatus Workspace Serverless Endpoint.": {
+            "$ref": "./examples/Workspace/ServerlessEndpoint/getStatus.json"
+          }
         }
       }
     },
@@ -13648,59 +14543,6 @@
           "final-state-via": "location"
         }
       }
-    },
-    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/serverlessEndpoints/{name}/getStatus": {
-      "post": {
-        "tags": [
-          "ServerlessEndpoint"
-        ],
-        "summary": "Status of the model backing the Serverless Endpoint.",
-        "operationId": "ServerlessEndpoints_GetStatus",
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
-          },
-          {
-            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
-          },
-          {
-            "$ref": "machineLearningServices.json#/parameters/WorkspaceNameParameter"
-          },
-          {
-            "in": "path",
-            "name": "name",
-            "description": "Serverless Endpoint name.",
-            "required": true,
-            "type": "string",
-            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9\\-_]{0,254}$"
-          },
-          {
-            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "schema": {
-              "$ref": "#/definitions/ServerlessEndpointStatus"
-            }
-          },
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          }
-        },
-        "x-ms-examples": {
-          "GetStatus Workspace Serverless Endpoint.": {
-            "$ref": "./examples/Workspace/ServerlessEndpoint/getStatus.json"
-          }
-        }
-      }
     }
   },
   "definitions": {
@@ -13817,6 +14659,17 @@
       "x-ms-discriminator-value": "AmlToken",
       "additionalProperties": false
     },
+    "AnonymousAccessCredential": {
+      "description": "Access credential with no credentials",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/DataReferenceCredential"
+        }
+      ],
+      "x-ms-discriminator-value": "NoCredentials",
+      "additionalProperties": false
+    },
     "AssetBase": {
       "type": "object",
       "allOf": [
@@ -13912,6 +14765,11 @@
             "read"
           ]
         },
+        "pathOnCompute": {
+          "description": "Input Asset Delivery Path.",
+          "type": "string",
+          "x-nullable": true
+        },
         "uri": {
           "description": "[Required] Input Asset URI.",
           "minLength": 1,
@@ -13953,6 +14811,11 @@
             "create",
             "read"
           ]
+        },
+        "pathOnCompute": {
+          "description": "Output Asset Delivery Path.",
+          "type": "string",
+          "x-nullable": true
         },
         "uri": {
           "description": "Output Asset URI.",
@@ -14576,6 +15439,51 @@
         }
       },
       "x-ms-discriminator-value": "AzureMLOnline",
+      "additionalProperties": false
+    },
+    "AzureOpenAiFineTuning": {
+      "required": [
+        "modelProvider"
+      ],
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/FineTuningVertical"
+        }
+      ],
+      "properties": {
+        "hyperParameters": {
+          "description": "HyperParameters for fine tuning Azure Open AI model.",
+          "$ref": "#/definitions/AzureOpenAiHyperParameters",
+          "x-nullable": true
+        }
+      },
+      "x-ms-discriminator-value": "AzureOpenAI",
+      "additionalProperties": false
+    },
+    "AzureOpenAiHyperParameters": {
+      "description": "Azure Open AI hyperparameters for fine tuning.",
+      "type": "object",
+      "properties": {
+        "batchSize": {
+          "format": "int32",
+          "description": "Number of examples in each batch. A larger batch size means that model parameters are updated less frequently, but with lower variance.",
+          "type": "integer",
+          "x-nullable": true
+        },
+        "learningRateMultiplier": {
+          "format": "double",
+          "description": "Scaling factor for the learning rate. A smaller learning rate may be useful to avoid over fitting.",
+          "type": "number",
+          "x-nullable": true
+        },
+        "nEpochs": {
+          "format": "int32",
+          "description": "The number of epochs to train the model for. An epoch refers to one full cycle through the training dataset.",
+          "type": "integer",
+          "x-nullable": true
+        }
+      },
       "additionalProperties": false
     },
     "BanditPolicy": {
@@ -16493,6 +17401,30 @@
       },
       "additionalProperties": false
     },
+    "CustomModelFineTuning": {
+      "required": [
+        "modelProvider"
+      ],
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/FineTuningVertical"
+        }
+      ],
+      "properties": {
+        "hyperParameters": {
+          "description": "HyperParameters for fine tuning custom model.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "x-nullable": true
+          },
+          "x-nullable": true
+        }
+      },
+      "x-ms-discriminator-value": "Custom",
+      "additionalProperties": false
+    },
     "CustomModelJobInput": {
       "type": "object",
       "allOf": [
@@ -16522,8 +17454,7 @@
     "CustomMonitoringSignal": {
       "required": [
         "componentId",
-        "metricThresholds",
-        "workspaceConnection"
+        "metricThresholds"
       ],
       "type": "object",
       "allOf": [
@@ -16583,12 +17514,13 @@
           "x-ms-identifiers": []
         },
         "workspaceConnection": {
-          "description": "[Required] A list of metrics to calculate and their associated thresholds.",
+          "description": "A list of metrics to calculate and their associated thresholds.",
           "$ref": "#/definitions/MonitoringWorkspaceConnection",
           "x-ms-mutability": [
             "create",
             "read"
-          ]
+          ],
+          "x-nullable": true
         }
       },
       "x-ms-discriminator-value": "Custom",
@@ -17114,6 +18046,49 @@
       "x-ms-discriminator-value": "DataQuality",
       "additionalProperties": false
     },
+    "DataReferenceCredential": {
+      "description": "DataReferenceCredential base class",
+      "required": [
+        "credentialType"
+      ],
+      "type": "object",
+      "properties": {
+        "credentialType": {
+          "description": "[Required] Credential type used to authentication with storage.",
+          "$ref": "#/definitions/DataReferenceCredentialType"
+        }
+      },
+      "discriminator": "credentialType"
+    },
+    "DataReferenceCredentialType": {
+      "description": "Enum to determine the DataReference credentials type.",
+      "enum": [
+        "SAS",
+        "DockerCredentials",
+        "ManagedIdentity",
+        "NoCredentials"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "DataReferenceCredentialType",
+        "modelAsString": true,
+        "values": [
+          {
+            "value": "SAS"
+          },
+          {
+            "value": "DockerCredentials"
+          },
+          {
+            "value": "ManagedIdentity"
+          },
+          {
+            "value": "NoCredentials"
+          }
+        ]
+      },
+      "additionalProperties": false
+    },
     "DataType": {
       "description": "Enum to determine the type of data.",
       "enum": [
@@ -17519,6 +18494,28 @@
       ],
       "additionalProperties": false
     },
+    "DestinationAsset": {
+      "description": "Publishing destination registry asset information",
+      "type": "object",
+      "properties": {
+        "destinationName": {
+          "description": "Destination asset name",
+          "type": "string",
+          "x-nullable": true
+        },
+        "destinationVersion": {
+          "description": "Destination asset version",
+          "type": "string",
+          "x-nullable": true
+        },
+        "registryName": {
+          "description": "Destination registry name",
+          "type": "string",
+          "x-nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
     "DistributionConfiguration": {
       "description": "Base definition for job distribution configuration.",
       "required": [
@@ -17564,6 +18561,29 @@
           }
         ]
       },
+      "additionalProperties": false
+    },
+    "DockerCredential": {
+      "description": "Credential for docker with username and password",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/DataReferenceCredential"
+        }
+      ],
+      "properties": {
+        "password": {
+          "description": "DockerCredential user password",
+          "type": "string",
+          "x-nullable": true
+        },
+        "userName": {
+          "description": "DockerCredential user name",
+          "type": "string",
+          "x-nullable": true
+        }
+      },
+      "x-ms-discriminator-value": "DockerCredentials",
       "additionalProperties": false
     },
     "EarlyTerminationPolicy": {
@@ -18249,6 +19269,7 @@
     },
     "FeatureAttributionDriftMonitoringSignal": {
       "required": [
+        "featureImportanceSettings",
         "metricThreshold",
         "productionData",
         "referenceData"
@@ -18273,13 +19294,12 @@
           "x-nullable": true
         },
         "featureImportanceSettings": {
-          "description": "The settings for computing feature importance.",
+          "description": "[Required] The settings for computing feature importance.",
           "$ref": "#/definitions/FeatureImportanceSettings",
           "x-ms-mutability": [
             "create",
             "read"
-          ],
-          "x-nullable": true
+          ]
         },
         "metricThreshold": {
           "description": "[Required] A list of metrics to calculate and their associated thresholds.",
@@ -18963,6 +19983,138 @@
       "x-ms-discriminator-value": "file_system",
       "additionalProperties": false
     },
+    "FineTuningJob": {
+      "description": "FineTuning Job definition.",
+      "required": [
+        "fineTuningDetails",
+        "jobType",
+        "outputs"
+      ],
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/JobBase"
+        }
+      ],
+      "properties": {
+        "fineTuningDetails": {
+          "description": "[Required] ",
+          "$ref": "#/definitions/FineTuningVertical"
+        },
+        "outputs": {
+          "description": "[Required] ",
+          "type": "object",
+          "additionalProperties": {
+            "description": "Job output definition container information on where to find job output/logs.",
+            "$ref": "#/definitions/JobOutput",
+            "x-nullable": true
+          },
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        }
+      },
+      "x-ms-discriminator-value": "FineTuning",
+      "additionalProperties": false
+    },
+    "FineTuningTaskType": {
+      "enum": [
+        "ChatCompletion",
+        "TextCompletion",
+        "TextClassification",
+        "QuestionAnswering",
+        "TextSummarization",
+        "TokenClassification",
+        "TextTranslation",
+        "ImageClassification",
+        "ImageInstanceSegmentation",
+        "ImageObjectDetection",
+        "VideoMultiObjectTracking"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "FineTuningTaskType",
+        "modelAsString": true,
+        "values": [
+          {
+            "value": "ChatCompletion"
+          },
+          {
+            "value": "TextCompletion"
+          },
+          {
+            "value": "TextClassification"
+          },
+          {
+            "value": "QuestionAnswering"
+          },
+          {
+            "value": "TextSummarization"
+          },
+          {
+            "value": "TokenClassification"
+          },
+          {
+            "value": "TextTranslation"
+          },
+          {
+            "value": "ImageClassification"
+          },
+          {
+            "value": "ImageInstanceSegmentation"
+          },
+          {
+            "value": "ImageObjectDetection"
+          },
+          {
+            "value": "VideoMultiObjectTracking"
+          }
+        ]
+      },
+      "additionalProperties": false
+    },
+    "FineTuningVertical": {
+      "required": [
+        "model",
+        "modelProvider",
+        "taskType",
+        "trainingData"
+      ],
+      "type": "object",
+      "properties": {
+        "model": {
+          "description": "[Required] Input model for fine tuning.",
+          "$ref": "#/definitions/MLFlowModelJobInput"
+        },
+        "modelProvider": {
+          "description": "[Required] Enum to determine the type of fine tuning.",
+          "$ref": "#/definitions/ModelProvider",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        },
+        "taskType": {
+          "description": "[Required] Fine tuning task type.",
+          "$ref": "#/definitions/FineTuningTaskType",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        },
+        "trainingData": {
+          "description": "[Required] Training data for fine tuning.",
+          "$ref": "#/definitions/JobInput"
+        },
+        "validationData": {
+          "description": "Validation data for fine tuning.",
+          "$ref": "#/definitions/JobInput",
+          "x-nullable": true
+        }
+      },
+      "discriminator": "modelProvider"
+    },
     "FixedInputData": {
       "description": "Fixed input data definition.",
       "type": "object",
@@ -19553,6 +20705,58 @@
         }
       },
       "x-ms-discriminator-value": "GenerationTokenStatistics",
+      "additionalProperties": false
+    },
+    "GetBlobReferenceForConsumptionDto": {
+      "type": "object",
+      "properties": {
+        "blobUri": {
+          "format": "uri",
+          "description": "Blob uri, example: https://blob.windows.core.net/Container/Path",
+          "type": "string",
+          "x-nullable": true
+        },
+        "credential": {
+          "description": "Credential info to access storage account",
+          "$ref": "#/definitions/DataReferenceCredential",
+          "x-nullable": true
+        },
+        "storageAccountArmId": {
+          "description": "The ARM id of the storage account",
+          "type": "string",
+          "x-nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "GetBlobReferenceSASRequestDto": {
+      "description": "BlobReferenceSASRequest for getBlobReferenceSAS API",
+      "type": "object",
+      "properties": {
+        "assetId": {
+          "description": "Id of the asset to be accessed",
+          "type": "string",
+          "x-nullable": true
+        },
+        "blobUri": {
+          "format": "uri",
+          "description": "Blob uri of the asset to be accessed",
+          "type": "string",
+          "x-nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "GetBlobReferenceSASResponseDto": {
+      "description": "BlobReferenceSASResponse for getBlobReferenceSAS API",
+      "type": "object",
+      "properties": {
+        "blobReferenceForConsumption": {
+          "description": "Blob reference for consumption details",
+          "$ref": "#/definitions/GetBlobReferenceForConsumptionDto",
+          "x-nullable": true
+        }
+      },
       "additionalProperties": false
     },
     "Goal": {
@@ -20779,7 +21983,7 @@
         },
         "priority": {
           "format": "int32",
-          "description": "Priority of the group within the N:Microsoft.MachineLearning.ManagementFrontEnd.Contracts.V20230801Preview.Pools.InferencePools.",
+          "description": "Priority of the group within the N:Microsoft.MachineLearning.ManagementFrontEnd.Contracts.V20240101Preview.Pools.InferencePools.",
           "default": 0,
           "type": "integer"
         },
@@ -21696,7 +22900,8 @@
         "Labeling",
         "Sweep",
         "Pipeline",
-        "Spark"
+        "Spark",
+        "FineTuning"
       ],
       "type": "string",
       "x-ms-enum": {
@@ -21720,6 +22925,9 @@
           },
           {
             "value": "Spark"
+          },
+          {
+            "value": "FineTuning"
           }
         ]
       },
@@ -22637,6 +23845,44 @@
       "x-ms-discriminator-value": "Managed",
       "additionalProperties": false
     },
+    "ManagedIdentityCredential": {
+      "description": "Credential for user managed identity",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/DataReferenceCredential"
+        }
+      ],
+      "properties": {
+        "managedIdentityType": {
+          "description": "ManagedIdentityCredential identity type",
+          "type": "string",
+          "x-nullable": true
+        },
+        "userManagedIdentityClientId": {
+          "description": "ClientId for the UAMI. For ManagedIdentityType = SystemManaged, this field is null.",
+          "type": "string",
+          "x-nullable": true
+        },
+        "userManagedIdentityPrincipalId": {
+          "description": "PrincipalId for the UAMI. For ManagedIdentityType = SystemManaged, this field is null.",
+          "type": "string",
+          "x-nullable": true
+        },
+        "userManagedIdentityResourceId": {
+          "description": "Full arm scope for the Id. For ManagedIdentityType = SystemManaged, this field is null.",
+          "type": "string",
+          "x-nullable": true
+        },
+        "userManagedIdentityTenantId": {
+          "description": "TenantId for the UAMI. For ManagedIdentityType = SystemManaged, this field is null.",
+          "type": "string",
+          "x-nullable": true
+        }
+      },
+      "x-ms-discriminator-value": "ManagedIdentity",
+      "additionalProperties": false
+    },
     "ManagedOnlineDeployment": {
       "description": "Properties specific to a ManagedOnlineDeployment.",
       "type": "object",
@@ -22646,6 +23892,192 @@
         }
       ],
       "x-ms-discriminator-value": "Managed",
+      "additionalProperties": false
+    },
+    "MarketplacePlan": {
+      "type": "object",
+      "properties": {
+        "offerId": {
+          "description": "The Offer ID of the Marketplace Plan.",
+          "type": "string",
+          "readOnly": true,
+          "x-ms-mutability": [
+            "read"
+          ],
+          "x-nullable": true
+        },
+        "planId": {
+          "description": "The Plan ID of the Marketplace Plan.",
+          "type": "string",
+          "readOnly": true,
+          "x-ms-mutability": [
+            "read"
+          ],
+          "x-nullable": true
+        },
+        "publisherId": {
+          "description": "The Publisher ID of the Marketplace Plan.",
+          "type": "string",
+          "readOnly": true,
+          "x-ms-mutability": [
+            "read"
+          ],
+          "x-nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "MarketplaceSubscription": {
+      "required": [
+        "modelId"
+      ],
+      "type": "object",
+      "properties": {
+        "marketplacePlan": {
+          "description": "Marketplace Plan associated with the Marketplace Subscription.",
+          "$ref": "#/definitions/MarketplacePlan",
+          "readOnly": true,
+          "x-ms-mutability": [
+            "read"
+          ],
+          "x-nullable": true
+        },
+        "marketplaceSubscriptionStatus": {
+          "description": "Current status of the Marketplace Subscription.",
+          "$ref": "#/definitions/MarketplaceSubscriptionStatus",
+          "readOnly": true,
+          "x-ms-mutability": [
+            "read"
+          ]
+        },
+        "modelId": {
+          "description": "[Required] Target Marketplace Model ID to create a Marketplace Subscription for.",
+          "minLength": 1,
+          "pattern": "[a-zA-Z0-9_]",
+          "type": "string"
+        },
+        "provisioningState": {
+          "description": "Provisioning State of the Marketplace Subscription.",
+          "$ref": "#/definitions/MarketplaceSubscriptionProvisioningState",
+          "readOnly": true,
+          "x-ms-mutability": [
+            "read"
+          ]
+        }
+      },
+      "x-ms-client-name": "MarketplaceSubscriptionProperties",
+      "additionalProperties": false
+    },
+    "MarketplaceSubscriptionProvisioningState": {
+      "enum": [
+        "Creating",
+        "Deleting",
+        "Succeeded",
+        "Failed",
+        "Updating",
+        "Canceled"
+      ],
+      "type": "string",
+      "readOnly": true,
+      "x-ms-enum": {
+        "name": "MarketplaceSubscriptionProvisioningState",
+        "modelAsString": true,
+        "values": [
+          {
+            "value": "Creating",
+            "description": "MarketplaceSubscription is being created."
+          },
+          {
+            "value": "Deleting",
+            "description": "MarketplaceSubscription is being deleted."
+          },
+          {
+            "value": "Succeeded",
+            "description": "MarketplaceSubscription is successfully provisioned."
+          },
+          {
+            "value": "Failed",
+            "description": "MarketplaceSubscription provisioning failed."
+          },
+          {
+            "value": "Updating",
+            "description": "MarketplaceSubscription is being updated."
+          },
+          {
+            "value": "Canceled"
+          }
+        ]
+      },
+      "additionalProperties": false
+    },
+    "MarketplaceSubscriptionResource": {
+      "description": "Azure Resource Manager resource envelope.",
+      "required": [
+        "properties"
+      ],
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ProxyResource"
+        }
+      ],
+      "properties": {
+        "properties": {
+          "description": "[Required] Additional attributes of the entity.",
+          "$ref": "#/definitions/MarketplaceSubscription"
+        }
+      },
+      "x-ms-client-name": "MarketplaceSubscription",
+      "additionalProperties": false
+    },
+    "MarketplaceSubscriptionResourceArmPaginatedResult": {
+      "description": "A paginated list of MarketplaceSubscription entities.",
+      "type": "object",
+      "properties": {
+        "nextLink": {
+          "description": "The link to the next page of MarketplaceSubscription objects. If null, there are no additional pages.",
+          "type": "string"
+        },
+        "value": {
+          "description": "An array of objects of type MarketplaceSubscription.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MarketplaceSubscriptionResource"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "MarketplaceSubscriptionStatus": {
+      "enum": [
+        "PendingFulfillmentStart",
+        "Subscribed",
+        "Suspended",
+        "Unsubscribed"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "MarketplaceSubscriptionStatus",
+        "modelAsString": true,
+        "values": [
+          {
+            "value": "PendingFulfillmentStart",
+            "description": "The Marketplace Subscription is being fulfilled."
+          },
+          {
+            "value": "Subscribed",
+            "description": "The customer can now use the Marketplace Subscription's\nmodel and will be billed."
+          },
+          {
+            "value": "Suspended",
+            "description": "The customer could not be billed for the Marketplace Subscription.\nThe customer will not be able to access the model."
+          },
+          {
+            "value": "Unsubscribed",
+            "description": "Marketplace Subscriptions reach this state in response to an explicit customer or CSP action.\nA Marketplace Subscription can also be canceled implicitly, as a result of nonpayment of dues,\nafter being in the Suspended state for some time."
+          }
+        ]
+      },
       "additionalProperties": false
     },
     "MaterializationComputeResource": {
@@ -22939,6 +24371,44 @@
         }
       },
       "x-ms-discriminator-value": "ModelPerformance",
+      "additionalProperties": false
+    },
+    "ModelProvider": {
+      "description": "Enum to determine the type of fine tuning.",
+      "enum": [
+        "AzureOpenAI",
+        "Custom"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "ModelProvider",
+        "modelAsString": true,
+        "values": [
+          {
+            "value": "AzureOpenAI",
+            "description": "Fine tuning using Azure Open AI model."
+          },
+          {
+            "value": "Custom",
+            "description": "Fine tuning using custom model."
+          }
+        ]
+      },
+      "additionalProperties": false
+    },
+    "ModelSettings": {
+      "required": [
+        "modelId"
+      ],
+      "type": "object",
+      "properties": {
+        "modelId": {
+          "description": "[Required] ",
+          "minLength": 1,
+          "pattern": "[a-zA-Z0-9_]",
+          "type": "string"
+        }
+      },
       "additionalProperties": false
     },
     "ModelSize": {
@@ -23295,7 +24765,7 @@
         "runtimeVersion": {
           "description": "[Required] The Spark runtime version.",
           "minLength": 1,
-          "pattern": "[a-zA-Z0-9_]",
+          "pattern": "^[0-9]+\\.[0-9]+$",
           "type": "string",
           "x-ms-mutability": [
             "create",
@@ -26625,6 +28095,25 @@
       },
       "additionalProperties": false
     },
+    "SASCredential": {
+      "description": "Access with full SAS uri",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/DataReferenceCredential"
+        }
+      ],
+      "properties": {
+        "sasUri": {
+          "format": "uri",
+          "description": "Full SAS Uri, including the storage, container/blob path and SAS token",
+          "type": "string",
+          "x-nullable": true
+        }
+      },
+      "x-ms-discriminator-value": "SAS",
+      "additionalProperties": false
+    },
     "SASCredentialDto": {
       "type": "object",
       "allOf": [
@@ -26951,6 +28440,42 @@
       },
       "additionalProperties": false
     },
+    "ScheduleType": {
+      "enum": [
+        "ComputeStartStop",
+        "CreateJob",
+        "InvokeBatchEndpoint",
+        "ImportData",
+        "CreateMonitor",
+        "FeatureStoreMaterialization"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "ScheduleType",
+        "modelAsString": true,
+        "values": [
+          {
+            "value": "ComputeStartStop"
+          },
+          {
+            "value": "CreateJob"
+          },
+          {
+            "value": "InvokeBatchEndpoint"
+          },
+          {
+            "value": "ImportData"
+          },
+          {
+            "value": "CreateMonitor"
+          },
+          {
+            "value": "FeatureStoreMaterialization"
+          }
+        ]
+      },
+      "additionalProperties": false
+    },
     "Seasonality": {
       "description": "Forecasting seasonality.",
       "required": [
@@ -27055,9 +28580,6 @@
       "additionalProperties": false
     },
     "ServerlessEndpoint": {
-      "required": [
-        "offer"
-      ],
       "type": "object",
       "properties": {
         "authMode": {
@@ -27078,13 +28600,36 @@
           ],
           "x-nullable": true
         },
+        "marketplaceSubscriptionId": {
+          "description": "The MarketplaceSubscription ARM ID associated to this ServerlessEndpoint.",
+          "type": "string",
+          "readOnly": true,
+          "x-ms-mutability": [
+            "read"
+          ],
+          "x-nullable": true
+        },
+        "modelSettings": {
+          "description": "The model settings (model id) for the model being serviced on the ServerlessEndpoint.",
+          "$ref": "#/definitions/ModelSettings",
+          "x-nullable": true
+        },
         "offer": {
-          "description": "[Required] The publisher-defined Serverless Offer to provision the endpoint with.",
-          "$ref": "#/definitions/ServerlessOffer"
+          "description": "The publisher-defined Serverless Offer to provision the endpoint with.",
+          "$ref": "#/definitions/ServerlessOffer",
+          "x-nullable": true
         },
         "provisioningState": {
           "description": "Provisioning state for the endpoint.",
           "$ref": "#/definitions/EndpointProvisioningState",
+          "readOnly": true,
+          "x-ms-mutability": [
+            "read"
+          ]
+        },
+        "endpointState": {
+          "description": "State of the Serverless Endpoint.",
+          "$ref": "#/definitions/ServerlessEndpointState",
           "readOnly": true,
           "x-ms-mutability": [
             "read"
@@ -27112,6 +28657,55 @@
           "type": "integer",
           "x-nullable": true
         }
+      },
+      "additionalProperties": false
+    },
+    "ServerlessEndpointState": {
+      "description": "State of the Serverless Endpoint.",
+      "enum": [
+        "Unknown",
+        "Creating",
+        "Deleting",
+        "Suspending",
+        "Reinstating",
+        "Online",
+        "Suspended",
+        "CreationFailed",
+        "DeletionFailed"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "ServerlessEndpointState",
+        "modelAsString": true,
+        "values": [
+          {
+            "value": "Unknown"
+          },
+          {
+            "value": "Creating"
+          },
+          {
+            "value": "Deleting"
+          },
+          {
+            "value": "Suspending"
+          },
+          {
+            "value": "Reinstating"
+          },
+          {
+            "value": "Online"
+          },
+          {
+            "value": "Suspended"
+          },
+          {
+            "value": "CreationFailed"
+          },
+          {
+            "value": "DeletionFailed"
+          }
+        ]
       },
       "additionalProperties": false
     },
@@ -29112,6 +30706,33 @@
         }
       },
       "discriminator": "triggerType"
+    },
+    "TriggerOnceRequest": {
+      "required": [
+        "scheduleTime"
+      ],
+      "type": "object",
+      "properties": {
+        "scheduleTime": {
+          "description": "[Required] Specify the schedule time for trigger once",
+          "minLength": 1,
+          "pattern": "[a-zA-Z0-9_]",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "TriggerRunSubmissionDto": {
+      "type": "object",
+      "properties": {
+        "scheduleActionType": {
+          "$ref": "#/definitions/ScheduleType"
+        },
+        "submissionId": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
     },
     "TriggerType": {
       "enum": [

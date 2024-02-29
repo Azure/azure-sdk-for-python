@@ -29,12 +29,7 @@ exclude = [
   "tests",
   "setup.py",
   "samples",
-  "azure/ai/ml/_artifacts/",
-  "azure/ai/ml/_file_utils/",
-  "azure/ai/ml/_local_endpoints/",
-  "azure/ai/ml/_logging/",
   "azure/ai/ml/_utils",
-  "azure/ai/ml/data_transfer/",
   "azure/ai/ml/exceptions.py",
   "azure/ai/ml/_exception_helper.py",
 ]   

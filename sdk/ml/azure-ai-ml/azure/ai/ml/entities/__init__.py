@@ -165,11 +165,11 @@ from ._monitoring.signals import (
     FeatureAttributionDriftSignal,
     GenerationSafetyQualitySignal,
     LlmData,
+    ModelPerformanceSignal,
     MonitorFeatureFilter,
     PredictionDriftSignal,
     ProductionData,
     ReferenceData,
-    ModelPerformanceSignal,
 )
 from ._monitoring.target import MonitoringTarget
 from ._monitoring.thresholds import (
@@ -181,11 +181,11 @@ from ._monitoring.thresholds import (
     DataQualityMetricThreshold,
     FeatureAttributionDriftMetricThreshold,
     GenerationSafetyQualityMonitoringMetricThreshold,
+    ModelPerformanceClassificationThresholds,
+    ModelPerformanceMetricThreshold,
+    ModelPerformanceRegressionThresholds,
     NumericalDriftMetrics,
     PredictionDriftMetricThreshold,
-    ModelPerformanceMetricThreshold,
-    ModelPerformanceClassificationThresholds,
-    ModelPerformanceRegressionThresholds,
 )
 from ._notification.notification import Notification
 from ._registry.registry import Registry
@@ -195,7 +195,7 @@ from ._registry.registry_support_classes import (
     SystemCreatedStorageAccount,
 )
 from ._resource import Resource
-from ._schedule.schedule import JobSchedule, Schedule
+from ._schedule.schedule import JobSchedule, Schedule, ScheduleTriggerResult
 from ._schedule.trigger import CronTrigger, RecurrencePattern, RecurrenceTrigger
 from ._system_data import SystemData
 from ._validation import ValidationResult
@@ -204,6 +204,7 @@ from ._workspace.connections.workspace_connection import WorkspaceConnection
 from ._workspace.connections.workspace_connection_subtypes import (
     AzureAISearchWorkspaceConnection,
     AzureAIServiceWorkspaceConnection,
+    AzureBlobStoreWorkspaceConnection,
     AzureOpenAIWorkspaceConnection,
 )
 from ._workspace.customer_managed_key import CustomerManagedKey
@@ -285,6 +286,7 @@ __all__ = [
     "WorkspaceKeys",
     "WorkspaceConnection",
     "AzureOpenAIWorkspaceConnection",
+    "AzureBlobStoreWorkspaceConnection",
     "AzureAISearchWorkspaceConnection",
     "AzureAIServiceWorkspaceConnection",
     "DiagnoseRequestProperties",
@@ -347,6 +349,7 @@ __all__ = [
     "JobSchedule",
     "ImportDataSchedule",
     "Schedule",
+    "ScheduleTriggerResult",
     "ComputePowerAction",
     "ComputeSchedules",
     "ComputeStartStopSchedule",

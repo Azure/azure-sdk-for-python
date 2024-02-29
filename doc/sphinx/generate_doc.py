@@ -132,8 +132,7 @@ def generate_doc(config_path: str, output_directory: str = "./ref/", package_roo
     namespaces = [n for pack in config.values() for n in pack.get("namespaces", {})]
 
     for namespace in namespaces:
-        if project_pattern and not any(namespace.startswith(p) for p in project_pattern):
-            _LOGGER.info("Skip project %s", namespace)
+        if project_pattern and not namespace.startswith(project_pattern):
             continue
 
         _LOGGER.info("Working on %s", namespace)
