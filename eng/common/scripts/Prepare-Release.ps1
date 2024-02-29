@@ -109,8 +109,7 @@ else
   $ParsedReleaseDate = [datetime]$ReleaseDate
 }
 
-# Use InvariantCulture so that the date format is consistent on all machines
-$releaseDateString = $ParsedReleaseDate.ToString("MM/dd/yyyy", [CultureInfo]::InvariantCulture)
+$releaseDateString = $ParsedReleaseDate.ToString("MM/dd/yyyy")
 $month = $ParsedReleaseDate.ToString("MMMM")
 
 Write-Host "Assuming release is in $month with release date $releaseDateString" -ForegroundColor Green
@@ -183,7 +182,7 @@ if (Test-Path "Function:SetPackageVersion")
 {
   $replaceLatestEntryTitle = $true
   $latestVersion = Get-LatestReleaseDateFromChangeLog -ChangeLogLocation $packageProperties.ChangeLogPath
-  if ($latestVersion -and $latestVersion -ne $ParsedReleaseDate)
+  if ($latestVersion)
   {
     $promptMessage = "The latest entry in the CHANGELOG.md already has a release date. Do you want to replace the latest entry title? Please enter (y or n)."
     while (($readInput = Read-Host -Prompt $promptMessage) -notmatch '^[yn]$'){ }

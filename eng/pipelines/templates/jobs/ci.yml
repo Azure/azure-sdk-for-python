@@ -61,9 +61,6 @@ parameters:
   - name: GenerateApiReviewForManualOnly
     type: boolean
     default: false
-  - name: AdvancedBuild
-    type: boolean
-    default: false
 
 jobs:
 
@@ -76,10 +73,10 @@ jobs:
         image: $(LINUXVMIMAGE)
         os: linux
 
-      steps:
-      - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
-        parameters:
-          BuildTargetingString: ${{ parameters.BuildTargetingString }}
+    steps:
+    - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
+      parameters:
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
 
       - template: ../steps/build-package-artifacts.yml
         parameters:
