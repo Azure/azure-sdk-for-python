@@ -279,13 +279,23 @@ class SearchField:
         return cls._from_generated(_SearchField.from_dict(data, content_type=content_type))
 
     def __eq__(self, other: Any) -> bool:
-        """Compare objects by comparing all attributes."""
+        """Compare objects by comparing all attributes.
+
+        :param Any other: the object to compare with
+        :returns: True if all attributes are equal, else False
+        :rtype: bool
+        """
         if isinstance(other, self.__class__):
             return self.__dict__ == other.__dict__
         return False
 
     def __ne__(self, other: Any) -> bool:
-        """Compare objects by comparing all attributes."""
+        """Compare objects by comparing all attributes.
+
+        :param Any other: the object to compare with
+        :returns: False if all attributes are equal, else True
+        :rtype: bool
+        """
         return not self.__eq__(other)
 
     def __str__(self) -> str:
@@ -738,13 +748,23 @@ class SearchIndex:
         return cls._from_generated(_SearchIndex.from_dict(data, content_type=content_type))
 
     def __eq__(self, other: Any) -> bool:
-        """Compare objects by comparing all attributes."""
+        """Compare objects by comparing all attributes.
+
+        :param Any other: the object to compare with
+        :returns: True if all attributes are equal, else False
+        :rtype: bool
+        """
         if isinstance(other, self.__class__):
             return self.__dict__ == other.__dict__
         return False
 
     def __ne__(self, other: Any) -> bool:
-        """Compare objects by comparing all attributes."""
+        """Compare objects by comparing all attributes.
+
+        :param Any other: the object to compare with
+        :returns: False if all attributes are equal, else True
+        :rtype: bool
+        """
         return not self.__eq__(other)
 
     def __str__(self) -> str:
