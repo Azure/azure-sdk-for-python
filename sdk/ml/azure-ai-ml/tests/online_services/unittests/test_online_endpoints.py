@@ -375,7 +375,7 @@ class TestOnlineEndpointsOperations:
         with pytest.raises(Exception):
             mock_online_endpoint_operations.begin_create(endpoint=online_endpoint)
 
-    def test_online_invoke(
+    def test_online_invoke_with_file(
         self,
         mock_online_endpoint_operations: OnlineEndpointOperations,
         request_file: str,
@@ -397,6 +397,49 @@ class TestOnlineEndpointsOperations:
         mock_online_endpoint_operations._online_operation.get.assert_called_once()
         mock_online_endpoint_operations._online_operation.list_keys.assert_called_once()
 
+    def test_online_invoke_with_input(
+        self,
+        mock_online_endpoint_operations: OnlineEndpointOperations,
+        mocker: MockFixture,
+        mock_aml_services_2022_02_01_preview: Mock,
+    ) -> None:
+        random_name = "random_name"
+        mock_aml_services_2022_02_01_preview.online_endpoints.get.return_value = OnlineEndpointData(
+            name=random_name,
+            location="eastus",
+            properties=RestOnlineEndpoint(auth_mode="Key", scoring_uri="xxx"),
+        )
+        mockresponse = Mock()
+        mockresponse.text = lambda: '{"key": "value"}'
+        mockresponse.status_code = 200
+
+        mocker.patch.object(mock_online_endpoint_operations._requests_pipeline, "post", return_value=mockresponse)
+        assert mock_online_endpoint_operations.invoke(endpoint_name=random_name, input_data={"key": "value"})
+        mock_online_endpoint_operations._online_operation.get.assert_called_once()
+        mock_online_endpoint_operations._online_operation.list_keys.assert_called_once()
+
+    def test_online_invoke_with_kwargs(
+        self,
+        mock_online_endpoint_operations: OnlineEndpointOperations,
+        mocker: MockFixture,
+        mock_aml_services_2022_02_01_preview: Mock,
+    ) -> None:
+        random_name = "random_name"
+        mock_aml_services_2022_02_01_preview.online_endpoints.get.return_value = OnlineEndpointData(
+            name=random_name,
+            location="eastus",
+            properties=RestOnlineEndpoint(auth_mode="Key", scoring_uri="xxx"),
+        )
+        mockresponse = Mock()
+        mockresponse.text = lambda: '{"key": "value"}'
+        mockresponse.status_code = 200
+
+        mocker.patch.object(mock_online_endpoint_operations._requests_pipeline, "post", return_value=mockresponse)
+        assert mock_online_endpoint_operations.invoke(endpoint_name=random_name, key="value")
+        mock_online_endpoint_operations._online_operation.get.assert_called_once()
+        mock_online_endpoint_operations._online_operation.list_keys.assert_called_once()
+
+    
     def test_create_no_file_throw_exception(self, mock_online_endpoint_operations: OnlineEndpointOperations) -> None:
         with pytest.raises(Exception):
             mock_online_endpoint_operations.begin_create(name="random_name", file=None)

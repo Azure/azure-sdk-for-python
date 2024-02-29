@@ -297,11 +297,9 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         *,
         request_file: Any = None,
         deployment_name: Optional[str] = None,
-        # pylint: disable=unused-argument
         input_data: Optional[Union[str, Data]] = None,
         params_override: Any = None,
         local: bool = False,
-        # pylint: disable=unused-argument
         **kwargs: Any,
     ) -> str:
         """Invokes the endpoint with the provided payload.
@@ -329,8 +327,15 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         if deployment_name:
             self._validate_deployment_name(endpoint_name, deployment_name)
 
-        with open(request_file, "rb") as f:
-            data = json.loads(f.read())
+        if request_file != None:
+            with open(request_file, "rb") as f:
+                data = json.loads(f.read())
+        elif input_data != None:
+            data = input_data
+        elif kwargs != None:
+            data = kwargs
+        else:
+            data = {}
         if local:
             return self._local_endpoint_helper.invoke(
                 endpoint_name=endpoint_name, data=data, deployment_name=deployment_name
