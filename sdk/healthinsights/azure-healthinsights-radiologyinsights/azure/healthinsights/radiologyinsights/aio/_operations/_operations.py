@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,too-many-statements, line-too-long
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -118,13 +118,6 @@ class RadiologyInsightsClientOperationsMixin(RadiologyInsightsClientMixinABC):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns RadiologyInsightsInferenceResult. The
          RadiologyInsightsInferenceResult is compatible with MutableMapping
         :rtype:
@@ -1054,28 +1047,32 @@ class RadiologyInsightsClientOperationsMixin(RadiologyInsightsClientMixinABC):
                         "includeEvidence": bool,  # Optional. An indication whether the
                           model's output should include evidence for the inferences.
                         "inferenceOptions": {
-                            "finding": {
+                            "findingOptions": {
                                 "provideFocusedSentenceEvidence": bool  # Optional.
-                                  Provide a single focused sentence as evidence for the finding,
-                                  default is false.
+                                  If this is true, provide the sentence that contains the first token
+                                  of the finding's clinical indicator (i.e. the medical problem), if
+                                  there is one. This sentence is provided as an extension with url
+                                  'ci_sentence', next to the token evidence. Default is false.
                             },
-                            "followupRecommendation": {
+                            "followupRecommendationOptions": {
                                 "includeRecommendationsInReferences": bool,  #
-                                  Optional. Include/Exclude followup recommendations in references to a
-                                  guideline or article, default is false.
+                                  Optional. Include/Exclude follow-up recommendations in references to
+                                  a guideline or article. Default is false.
                                 "includeRecommendationsWithNoSpecifiedModality":
-                                  bool,  # Optional. Include/Exclude followup recommendations with no
-                                  specific radiologic modality, default is false.
+                                  bool,  # Optional. Include/Exclude follow-up recommendations without
+                                  a specific radiology procedure. Default is false.
                                 "provideFocusedSentenceEvidence": bool  # Optional.
-                                  Provide a single focused sentence as evidence for the recommendation,
-                                  default is false.
+                                  If this is true, provide one or more sentences as evidence for the
+                                  recommendation, next to the token evidence. The start and end
+                                  positions of these sentences will be put in an extension with url
+                                  'modality_sentences'. Default is false.
                             }
                         },
                         "inferenceTypes": [
-                            "str"  # Optional. A list of inference types to be inferred
-                              for the current request. This could be used if only part of the Radiology
-                              Insights inferences are required. If this list is omitted or empty, the
-                              model will return all the inference types.
+                            "str"  # Optional. This is a list of inference types to be
+                              inferred for the current request. It could be used if only part of the
+                              Radiology Insights inferences are required. If this list is omitted or
+                              empty, the model will return all the inference types.
                         ],
                         "locale": "str",  # Optional. Local for the model to use. If not
                           specified, the model will use the default locale.
@@ -1093,8 +1090,8 @@ class RadiologyInsightsClientOperationsMixin(RadiologyInsightsClientMixinABC):
                             "inferences": [
                                 radiology_insights_inference
                             ],
-                            "patientId": "str"  # The identifier given for the patient in
-                              the request. Required.
+                            "patientId": "str"  # Identifier given for the patient in the
+                              request. Required.
                         }
                     ]
                 }
@@ -1113,13 +1110,6 @@ class RadiologyInsightsClientOperationsMixin(RadiologyInsightsClientMixinABC):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns RadiologyInsightsInferenceResult. The
          RadiologyInsightsInferenceResult is compatible with MutableMapping
         :rtype:
@@ -1138,8 +1128,8 @@ class RadiologyInsightsClientOperationsMixin(RadiologyInsightsClientMixinABC):
                             "inferences": [
                                 radiology_insights_inference
                             ],
-                            "patientId": "str"  # The identifier given for the patient in
-                              the request. Required.
+                            "patientId": "str"  # Identifier given for the patient in the
+                              request. Required.
                         }
                     ]
                 }
@@ -1158,13 +1148,6 @@ class RadiologyInsightsClientOperationsMixin(RadiologyInsightsClientMixinABC):
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns RadiologyInsightsInferenceResult. The
          RadiologyInsightsInferenceResult is compatible with MutableMapping
         :rtype:
@@ -1183,8 +1166,8 @@ class RadiologyInsightsClientOperationsMixin(RadiologyInsightsClientMixinABC):
                             "inferences": [
                                 radiology_insights_inference
                             ],
-                            "patientId": "str"  # The identifier given for the patient in
-                              the request. Required.
+                            "patientId": "str"  # Identifier given for the patient in the
+                              request. Required.
                         }
                     ]
                 }
@@ -1202,16 +1185,6 @@ class RadiologyInsightsClientOperationsMixin(RadiologyInsightsClientMixinABC):
         :param body: Is one of the following types: RadiologyInsightsData, JSON, IO[bytes] Required.
         :type body: ~azure.healthinsights.radiologyinsights.models.RadiologyInsightsData or JSON or
          IO[bytes]
-        :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
-         value is None.
-        :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns RadiologyInsightsInferenceResult. The
          RadiologyInsightsInferenceResult is compatible with MutableMapping
         :rtype:
@@ -2141,28 +2114,32 @@ class RadiologyInsightsClientOperationsMixin(RadiologyInsightsClientMixinABC):
                         "includeEvidence": bool,  # Optional. An indication whether the
                           model's output should include evidence for the inferences.
                         "inferenceOptions": {
-                            "finding": {
+                            "findingOptions": {
                                 "provideFocusedSentenceEvidence": bool  # Optional.
-                                  Provide a single focused sentence as evidence for the finding,
-                                  default is false.
+                                  If this is true, provide the sentence that contains the first token
+                                  of the finding's clinical indicator (i.e. the medical problem), if
+                                  there is one. This sentence is provided as an extension with url
+                                  'ci_sentence', next to the token evidence. Default is false.
                             },
-                            "followupRecommendation": {
+                            "followupRecommendationOptions": {
                                 "includeRecommendationsInReferences": bool,  #
-                                  Optional. Include/Exclude followup recommendations in references to a
-                                  guideline or article, default is false.
+                                  Optional. Include/Exclude follow-up recommendations in references to
+                                  a guideline or article. Default is false.
                                 "includeRecommendationsWithNoSpecifiedModality":
-                                  bool,  # Optional. Include/Exclude followup recommendations with no
-                                  specific radiologic modality, default is false.
+                                  bool,  # Optional. Include/Exclude follow-up recommendations without
+                                  a specific radiology procedure. Default is false.
                                 "provideFocusedSentenceEvidence": bool  # Optional.
-                                  Provide a single focused sentence as evidence for the recommendation,
-                                  default is false.
+                                  If this is true, provide one or more sentences as evidence for the
+                                  recommendation, next to the token evidence. The start and end
+                                  positions of these sentences will be put in an extension with url
+                                  'modality_sentences'. Default is false.
                             }
                         },
                         "inferenceTypes": [
-                            "str"  # Optional. A list of inference types to be inferred
-                              for the current request. This could be used if only part of the Radiology
-                              Insights inferences are required. If this list is omitted or empty, the
-                              model will return all the inference types.
+                            "str"  # Optional. This is a list of inference types to be
+                              inferred for the current request. It could be used if only part of the
+                              Radiology Insights inferences are required. If this list is omitted or
+                              empty, the model will return all the inference types.
                         ],
                         "locale": "str",  # Optional. Local for the model to use. If not
                           specified, the model will use the default locale.
@@ -2180,8 +2157,8 @@ class RadiologyInsightsClientOperationsMixin(RadiologyInsightsClientMixinABC):
                             "inferences": [
                                 radiology_insights_inference
                             ],
-                            "patientId": "str"  # The identifier given for the patient in
-                              the request. Required.
+                            "patientId": "str"  # Identifier given for the patient in the
+                              request. Required.
                         }
                     ]
                 }

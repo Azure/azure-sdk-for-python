@@ -1,5 +1,5 @@
 # coding=utf-8
-# pylint: disable=too-many-lines, too-many-locals, line-too-long
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -8,54 +8,18 @@
 # --------------------------------------------------------------------------
 
 import datetime
-import decimal
-import sys
-from typing import Any, Dict, List, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .. import _model_base
 from .._model_base import rest_discriminator, rest_field
 from ._enums import RadiologyInsightsInferenceType
-
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
-class Extendible(_model_base.Model):
-    """FHIR extendible element.
-
-    :ivar extension: Additional Content defined by implementations.
-    :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
-    """
-
-    extension: Optional[List["_models.Extension"]] = rest_field()
-    """Additional Content defined by implementations."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        extension: Optional[List["_models.Extension"]] = None,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class RadiologyInsightsInference(Extendible):
+class RadiologyInsightsInference(_model_base.Model):
     """An inference made by the Radiology Insights model regarding a patient.
 
 
@@ -88,7 +52,9 @@ class RadiologyInsightsInference(Extendible):
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    kind: Literal[None] = rest_discriminator(name="kind")
+    extension: Optional[List["_models.Extension"]] = rest_field()
+    """Additional Content defined by implementations."""
+    kind: str = rest_discriminator(name="kind")
     """Required. Known values are: \"ageMismatch\", \"lateralityDiscrepancy\", \"sexMismatch\",
      \"completeOrderDiscrepancy\", \"limitedOrderDiscrepancy\", \"finding\", \"criticalResult\",
      \"followupRecommendation\", \"followupCommunication\", and \"radiologyProcedure\"."""
@@ -97,6 +63,7 @@ class RadiologyInsightsInference(Extendible):
     def __init__(
         self,
         *,
+        kind: str,
         extension: Optional[List["_models.Extension"]] = None,
     ):
         ...
@@ -108,29 +75,24 @@ class RadiologyInsightsInference(Extendible):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
-        self.kind: Literal[None] = None
 
 
 class AgeMismatchInference(RadiologyInsightsInference, discriminator="ageMismatch"):
-    """Age mismatch returns when there is a conflict between an age that mentioned in the clinical
-    note and the age of the patient.
-    The age of the patient is calculated by the date of birth that is set in the patient
-    information along with the time of the service that is being documented.
-    EvidenceExtension with DocumentReference evidence may be added to this inference as an
-    extension.
+    """A notification for age mismatch is displayed when the age mentioned in a document for a
+    specific patient does not match the age specified in the patient information.
 
     All required parameters must be populated in order to send to server.
 
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
-    :ivar kind: The type of the inference. Required. Age mismatch inference type
+    :ivar kind: Inference type. Required. Age mismatch inference type
     :vartype kind: str or ~azure.healthinsights.radiologyinsights.models.AGE_MISMATCH
     """
 
     kind: Literal[RadiologyInsightsInferenceType.AGE_MISMATCH] = rest_discriminator(name="kind")  # type: ignore
-    """The type of the inference. Required. Age mismatch inference type"""
+    """Inference type. Required. Age mismatch inference type"""
 
     @overload
     def __init__(
@@ -147,9 +109,8 @@ class AgeMismatchInference(RadiologyInsightsInference, discriminator="ageMismatc
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind: Literal[RadiologyInsightsInferenceType.AGE_MISMATCH] = RadiologyInsightsInferenceType.AGE_MISMATCH
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, kind=RadiologyInsightsInferenceType.AGE_MISMATCH, **kwargs)
 
 
 class Element(_model_base.Model):
@@ -322,41 +283,39 @@ class Coding(Element):
 
 
 class CompleteOrderDiscrepancyInference(RadiologyInsightsInference, discriminator="completeOrderDiscrepancy"):
-    """Completed Order mismatch
-    A complete order requires that all the body parts listed in the order will be document (some
-    body parts requires measurements).
-    This inference is relevant only for ultrasound procedure/order of type US ABDOMEN, US
-    RETROPERITONEAL, US PELVIS, or US BREAST.
-    This inference returns when there is a missing body part or a missing measurement of a body
-    part that is required by the order.
+    """A complete order discrepancy is shown when one or more body parts and/or measurements that
+    should be in the document (because there is a complete order) are not present.
 
     All required parameters must be populated in order to send to server.
 
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
-    :ivar kind: The type of the inference. Required. Complete order discrepancy inference type
+    :ivar kind: Inference type. Required. Complete order discrepancy inference type
     :vartype kind: str or ~azure.healthinsights.radiologyinsights.models.COMPLETE_ORDER_DISCREPANCY
-    :ivar order_type: Order Type. Required.
+    :ivar order_type: Order type : CPT ultrasound complete code for abdomen, retroperitoneal,
+     pelvis or breast. Required.
     :vartype order_type: ~azure.healthinsights.radiologyinsights.models.CodeableConcept
-    :ivar missing_body_parts: List of missing body parts required by a complete order.
+    :ivar missing_body_parts: List of missing body parts required by a complete order : SNOMED CT
+     codes.
     :vartype missing_body_parts:
      list[~azure.healthinsights.radiologyinsights.models.CodeableConcept]
     :ivar missing_body_part_measurements: List of missing body parts that require measurement by a
-     complete order.
+     complete order : SNOMED CT codes.
     :vartype missing_body_part_measurements:
      list[~azure.healthinsights.radiologyinsights.models.CodeableConcept]
     """
 
-    kind: Literal[RadiologyInsightsInferenceType.COMPLETE_ORDER_DISCREPANCY] = rest_discriminator(name="kind")  # type: ignore #pylint: disable=C0301
-    """The type of the inference. Required. Complete order discrepancy inference type"""
+    kind: Literal[RadiologyInsightsInferenceType.COMPLETE_ORDER_DISCREPANCY] = rest_discriminator(name="kind")  # type: ignore
+    """Inference type. Required. Complete order discrepancy inference type"""
     order_type: "_models.CodeableConcept" = rest_field(name="orderType")
-    """Order Type. Required."""
+    """Order type : CPT ultrasound complete code for abdomen, retroperitoneal, pelvis or breast.
+     Required."""
     missing_body_parts: Optional[List["_models.CodeableConcept"]] = rest_field(name="missingBodyParts")
-    """List of missing body parts required by a complete order."""
+    """List of missing body parts required by a complete order : SNOMED CT codes."""
     missing_body_part_measurements: Optional[List["_models.CodeableConcept"]] = rest_field(
         name="missingBodyPartMeasurements"
     )
-    """List of missing body parts that require measurement by a complete order."""
+    """List of missing body parts that require measurement by a complete order : SNOMED CT codes."""
 
     @overload
     def __init__(
@@ -376,11 +335,8 @@ class CompleteOrderDiscrepancyInference(RadiologyInsightsInference, discriminato
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind: Literal[
-            RadiologyInsightsInferenceType.COMPLETE_ORDER_DISCREPANCY
-        ] = RadiologyInsightsInferenceType.COMPLETE_ORDER_DISCREPANCY
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, kind=RadiologyInsightsInferenceType.COMPLETE_ORDER_DISCREPANCY, **kwargs)
 
 
 class Resource(_model_base.Model):
@@ -474,13 +430,14 @@ class DomainResource(Resource):
     """Additional Content defined by implementations."""
     modifier_extension: Optional[List["_models.Extension"]] = rest_field(name="modifierExtension")
     """Extensions that cannot be ignored."""
-    resource_type: Literal[None] = rest_discriminator(name="resourceType") # type: ignore
+    resource_type: str = rest_discriminator(name="resourceType")
     """Required. Default value is None."""
 
     @overload
     def __init__(
         self,
         *,
+        resource_type: str,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         meta: Optional["_models.Meta"] = None,
         implicit_rules: Optional[str] = None,
@@ -499,9 +456,8 @@ class DomainResource(Resource):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
-        self.resource_type: Literal[None] = None
 
 
 class Condition(DomainResource, discriminator="Condition"):  # pylint: disable=too-many-instance-attributes
@@ -661,9 +617,8 @@ class Condition(DomainResource, discriminator="Condition"):  # pylint: disable=t
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.resource_type: Literal["Condition"] = "Condition"
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, resource_type="Condition", **kwargs)
 
 
 class ConditionStage(_model_base.Model):
@@ -797,20 +752,20 @@ class ContactPoint(_model_base.Model):
 
 
 class CriticalResult(_model_base.Model):
-    """Critical Result.
+    """Critical Result consists of two properties.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar description: description of the critical result. Required.
+    :ivar description: Description : medical problem. Required.
     :vartype description: str
-    :ivar finding: finding inference.
+    :ivar finding: Finding linked to the critical result.
     :vartype finding: ~azure.healthinsights.radiologyinsights.models.Observation
     """
 
     description: str = rest_field()
-    """description of the critical result. Required."""
+    """Description : medical problem. Required."""
     finding: Optional["_models.Observation"] = rest_field()
-    """finding inference."""
+    """Finding linked to the critical result."""
 
     @overload
     def __init__(
@@ -833,22 +788,25 @@ class CriticalResult(_model_base.Model):
 
 
 class CriticalResultInference(RadiologyInsightsInference, discriminator="criticalResult"):
-    """Identifies and highlights potential Critical Findings found in a clinical document.
+    """Critical results refer to findings of utmost importance that may require timely attention due
+    to their potential impact on patient care.
 
     All required parameters must be populated in order to send to server.
 
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
-    :ivar kind: The type of the inference. Required. Critical finding inference type
+    :ivar kind: Inference type. Required. Critical finding inference type
     :vartype kind: str or ~azure.healthinsights.radiologyinsights.models.CRITICAL_RESULT
-    :ivar result: Critical Result. Required.
+    :ivar result: The complete Critical Result, as outlined below, will be reused for the
+     recommendation. Required.
     :vartype result: ~azure.healthinsights.radiologyinsights.models.CriticalResult
     """
 
     kind: Literal[RadiologyInsightsInferenceType.CRITICAL_RESULT] = rest_discriminator(name="kind")  # type: ignore
-    """The type of the inference. Required. Critical finding inference type"""
+    """Inference type. Required. Critical finding inference type"""
     result: "_models.CriticalResult" = rest_field()
-    """Critical Result. Required."""
+    """The complete Critical Result, as outlined below, will be reused for the recommendation.
+     Required."""
 
     @overload
     def __init__(
@@ -866,11 +824,8 @@ class CriticalResultInference(RadiologyInsightsInference, discriminator="critica
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind: Literal[
-            RadiologyInsightsInferenceType.CRITICAL_RESULT
-        ] = RadiologyInsightsInferenceType.CRITICAL_RESULT
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, kind=RadiologyInsightsInferenceType.CRITICAL_RESULT, **kwargs)
 
 
 class DocumentAdministrativeMetadata(_model_base.Model):
@@ -1179,23 +1134,24 @@ class Extension(Element):  # pylint: disable=too-many-instance-attributes
 
 
 class FindingInference(RadiologyInsightsInference, discriminator="finding"):
-    """Finding Inference
-    Clinical Finding can be an observation or condition that is mentioned in the clinical document.
+    """Findings in a radiology report typically describe abnormalities, lesions, or other notable
+    observations related to the anatomy or pathology of the imaged area.
 
     All required parameters must be populated in order to send to server.
 
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
-    :ivar kind: The type of the inference. Required. Finding inference type
+    :ivar kind: Inference type. Required. Finding inference type
     :vartype kind: str or ~azure.healthinsights.radiologyinsights.models.FINDING
-    :ivar finding: The finding data. Required.
+    :ivar finding: Finding data : contains extensions, fields and components linked with the
+     finding. Required.
     :vartype finding: ~azure.healthinsights.radiologyinsights.models.Observation
     """
 
     kind: Literal[RadiologyInsightsInferenceType.FINDING] = rest_discriminator(name="kind")  # type: ignore
-    """The type of the inference. Required. Finding inference type"""
+    """Inference type. Required. Finding inference type"""
     finding: "_models.Observation" = rest_field()
-    """The finding data. Required."""
+    """Finding data : contains extensions, fields and components linked with the finding. Required."""
 
     @overload
     def __init__(
@@ -1213,21 +1169,24 @@ class FindingInference(RadiologyInsightsInference, discriminator="finding"):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind: Literal[RadiologyInsightsInferenceType.FINDING] = RadiologyInsightsInferenceType.FINDING
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, kind=RadiologyInsightsInferenceType.FINDING, **kwargs)
 
 
 class FindingOptions(_model_base.Model):
-    """Finding Options.
+    """Finding options.
 
-    :ivar provide_focused_sentence_evidence: Provide a single focused sentence as evidence for the
-     finding, default is false.
+    :ivar provide_focused_sentence_evidence: If this is true, provide the sentence that contains
+     the first token of the finding's clinical indicator (i.e. the medical problem), if there is
+     one. This sentence is provided as an extension with url 'ci_sentence', next to the token
+     evidence. Default is false.
     :vartype provide_focused_sentence_evidence: bool
     """
 
     provide_focused_sentence_evidence: Optional[bool] = rest_field(name="provideFocusedSentenceEvidence")
-    """Provide a single focused sentence as evidence for the finding, default is false."""
+    """If this is true, provide the sentence that contains the first token of the finding's clinical
+     indicator (i.e. the medical problem), if there is one. This sentence is provided as an
+     extension with url 'ci_sentence', next to the token evidence. Default is false."""
 
     @overload
     def __init__(
@@ -1249,17 +1208,18 @@ class FindingOptions(_model_base.Model):
 
 
 class FollowupCommunicationInference(RadiologyInsightsInference, discriminator="followupCommunication"):
-    """Communication Inference.
+    """Follow-up communication involves the exchange of important information, recommendations, or
+    updates between radiologists and other healthcare professionals involved in a patient's care.
 
     All required parameters must be populated in order to send to server.
 
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
-    :ivar kind: The type of the inference. Required. Followup Communication inference type
+    :ivar kind: Inference type. Required. Followup Communication inference type
     :vartype kind: str or ~azure.healthinsights.radiologyinsights.models.FOLLOWUP_COMMUNICATION
-    :ivar date_time: The communication date/time.
+    :ivar date_time: Communication date and time.
     :vartype date_time: list[~datetime.datetime]
-    :ivar recipient: The recipient of the communication.
+    :ivar recipient: Recipient of the communication.
     :vartype recipient: list[str or
      ~azure.healthinsights.radiologyinsights.models.MedicalProfessionalType]
     :ivar was_acknowledged: Communication was acknowledged. Required.
@@ -1267,11 +1227,11 @@ class FollowupCommunicationInference(RadiologyInsightsInference, discriminator="
     """
 
     kind: Literal[RadiologyInsightsInferenceType.FOLLOWUP_COMMUNICATION] = rest_discriminator(name="kind")  # type: ignore
-    """The type of the inference. Required. Followup Communication inference type"""
+    """Inference type. Required. Followup Communication inference type"""
     date_time: Optional[List[datetime.datetime]] = rest_field(name="dateTime", format="rfc3339")
-    """The communication date/time."""
+    """Communication date and time."""
     recipient: Optional[List[Union[str, "_models.MedicalProfessionalType"]]] = rest_field()
-    """The recipient of the communication."""
+    """Recipient of the communication."""
     was_acknowledged: bool = rest_field(name="wasAcknowledged")
     """Communication was acknowledged. Required."""
 
@@ -1293,87 +1253,73 @@ class FollowupCommunicationInference(RadiologyInsightsInference, discriminator="
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind: Literal[
-            RadiologyInsightsInferenceType.FOLLOWUP_COMMUNICATION
-        ] = RadiologyInsightsInferenceType.FOLLOWUP_COMMUNICATION
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, kind=RadiologyInsightsInferenceType.FOLLOWUP_COMMUNICATION, **kwargs)
 
 
 class FollowupRecommendationInference(RadiologyInsightsInference, discriminator="followupRecommendation"):
-    """Recommendation Inference.
+    """Follow-up recommendations offer guidance to healthcare providers on managing and monitoring
+    patients based on the findings of imaging studies.
 
     All required parameters must be populated in order to send to server.
 
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
-    :ivar kind: The type of the inference. Required. Recommendation inference type
+    :ivar kind: Inference type. Required. Recommendation inference type
     :vartype kind: str or ~azure.healthinsights.radiologyinsights.models.FOLLOWUP_RECOMMENDATION
-    :ivar effective_date_time: Clinically relevant time/time-period for recommendation.
+    :ivar effective_date_time: Date and time are displayed when the procedure is recommended to be
+     done at a specific point in time.
     :vartype effective_date_time: str
-    :ivar effective_period: Clinically relevant time/time-period for recommendation.
+    :ivar effective_period: The period is shown if a specific period is mentioned, with a start and
+     end date-time.
     :vartype effective_period: ~azure.healthinsights.radiologyinsights.models.Period
-    :ivar findings: Findings related to this recommendation.
+    :ivar findings: Findings related to the recommendation.
     :vartype findings: list[~azure.healthinsights.radiologyinsights.models.RecommendationFinding]
-    :ivar is_conditional: Indicate that the sentence with the recommendation holds a conditional
-     statement.
-     Examples of conditional phrases: If the patient remains clinically symptomatic, Unless
-     otherwise indicated clinically in the interim. Required.
+    :ivar is_conditional: The conditional value indicates whether or not the sentence containing
+     the recommendation includes a conditional statement. Keywords for conditional statements
+     include 'if', 'when', 'unless', and so on. Required.
     :vartype is_conditional: bool
-    :ivar is_option: Indicate that the sentence with the recommendation holds an optional
-     statement.
-     Examples of Optional phrases: 'If there is suspicion for a fracture, recommend a dedicated
-     x-ray of the right clavicle.
-     Consider F/U exam in 6-12 months if patient has severe primary hyperparathyroidism, is being
-     treated with high dose steroids or in any medical condition where rapid and severe loss of bone
-     mass could occur.
-     If the patient is high risk, follow-up CT thorax is recommended in 12 months to ensure
-     stability. Required.
+    :ivar is_option: The option value indicates whether or not the sentence containing the
+     recommendation includes an optional statement. Keywords for optional statements include
+     'recommend', 'consider', and so on. Required.
     :vartype is_option: bool
-    :ivar is_guideline: Recommendation is a guideline section describing all the recommendations
-     for the follow-up of a particular finding. Required.
+    :ivar is_guideline: The guideline value indicates whether or not the recommendation is part of
+     a guideline section that compiles all recommendations applicable to various findings. Required.
     :vartype is_guideline: bool
-    :ivar is_hedging: Ambiguous, vague, or imprecise language, that can be considered a Hedging
-     Statement within the sentence of the recommendation.
-     Examples of hedging: 'can be considered', 'may be further evaluated', 'correlate clinically',
-     'as clinically indicated'. Required.
+    :ivar is_hedging: Hedging refers to ambiguous, vague or imprecise language within the sentence
+     of the recommendation. Keywords for hedging are 'can be','may be',and so on. Required.
     :vartype is_hedging: bool
-    :ivar recommended_procedure: Recommended procedure. Required.
+    :ivar recommended_procedure: The procedure recommendation can be a generic procedure or an
+     imaging procedure. Required.
     :vartype recommended_procedure:
      ~azure.healthinsights.radiologyinsights.models.ProcedureRecommendation
     """
 
     kind: Literal[RadiologyInsightsInferenceType.FOLLOWUP_RECOMMENDATION] = rest_discriminator(name="kind")  # type: ignore
-    """The type of the inference. Required. Recommendation inference type"""
+    """Inference type. Required. Recommendation inference type"""
     effective_date_time: Optional[str] = rest_field(name="effectiveDateTime")
-    """Clinically relevant time/time-period for recommendation."""
+    """Date and time are displayed when the procedure is recommended to be done at a specific point in
+     time."""
     effective_period: Optional["_models.Period"] = rest_field(name="effectivePeriod")
-    """Clinically relevant time/time-period for recommendation."""
+    """The period is shown if a specific period is mentioned, with a start and end date-time."""
     findings: Optional[List["_models.RecommendationFinding"]] = rest_field()
-    """Findings related to this recommendation."""
+    """Findings related to the recommendation."""
     is_conditional: bool = rest_field(name="isConditional")
-    """Indicate that the sentence with the recommendation holds a conditional statement.
-     Examples of conditional phrases: If the patient remains clinically symptomatic, Unless
-     otherwise indicated clinically in the interim. Required."""
+    """The conditional value indicates whether or not the sentence containing the recommendation
+     includes a conditional statement. Keywords for conditional statements include 'if', 'when',
+     'unless', and so on. Required."""
     is_option: bool = rest_field(name="isOption")
-    """Indicate that the sentence with the recommendation holds an optional statement.
-     Examples of Optional phrases: 'If there is suspicion for a fracture, recommend a dedicated
-     x-ray of the right clavicle.
-     Consider F/U exam in 6-12 months if patient has severe primary hyperparathyroidism, is being
-     treated with high dose steroids or in any medical condition where rapid and severe loss of bone
-     mass could occur.
-     If the patient is high risk, follow-up CT thorax is recommended in 12 months to ensure
-     stability. Required."""
+    """The option value indicates whether or not the sentence containing the recommendation includes
+     an optional statement. Keywords for optional statements include 'recommend', 'consider', and so
+     on. Required."""
     is_guideline: bool = rest_field(name="isGuideline")
-    """Recommendation is a guideline section describing all the recommendations for the follow-up of a
-     particular finding. Required."""
+    """The guideline value indicates whether or not the recommendation is part of a guideline section
+     that compiles all recommendations applicable to various findings. Required."""
     is_hedging: bool = rest_field(name="isHedging")
-    """Ambiguous, vague, or imprecise language, that can be considered a Hedging Statement within the
-     sentence of the recommendation.
-     Examples of hedging: 'can be considered', 'may be further evaluated', 'correlate clinically',
-     'as clinically indicated'. Required."""
+    """Hedging refers to ambiguous, vague or imprecise language within the sentence of the
+     recommendation. Keywords for hedging are 'can be','may be',and so on. Required."""
     recommended_procedure: "_models.ProcedureRecommendation" = rest_field(name="recommendedProcedure")
-    """Recommended procedure. Required."""
+    """The procedure recommendation can be a generic procedure or an imaging procedure. Required."""
 
     @overload
     def __init__(
@@ -1398,37 +1344,37 @@ class FollowupRecommendationInference(RadiologyInsightsInference, discriminator=
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind: Literal[
-            RadiologyInsightsInferenceType.FOLLOWUP_RECOMMENDATION
-        ] = RadiologyInsightsInferenceType.FOLLOWUP_RECOMMENDATION
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, kind=RadiologyInsightsInferenceType.FOLLOWUP_RECOMMENDATION, **kwargs)
 
 
 class FollowupRecommendationOptions(_model_base.Model):
-    """Followup Recommendation Options.
+    """Follow-up recommendation options.
 
-    :ivar include_recommendations_with_no_specified_modality: Include/Exclude followup
-     recommendations with no specific radiologic modality, default is false.
+    :ivar include_recommendations_with_no_specified_modality: Include/Exclude follow-up
+     recommendations without a specific radiology procedure. Default is false.
     :vartype include_recommendations_with_no_specified_modality: bool
-    :ivar include_recommendations_in_references: Include/Exclude followup recommendations in
-     references to a guideline or article, default is false.
+    :ivar include_recommendations_in_references: Include/Exclude follow-up recommendations in
+     references to a guideline or article. Default is false.
     :vartype include_recommendations_in_references: bool
-    :ivar provide_focused_sentence_evidence: Provide a single focused sentence as evidence for the
-     recommendation, default is false.
+    :ivar provide_focused_sentence_evidence: If this is true, provide one or more sentences as
+     evidence for the recommendation, next to the token evidence. The start and end positions of
+     these sentences will be put in an extension with url 'modality_sentences'. Default is false.
     :vartype provide_focused_sentence_evidence: bool
     """
 
     include_recommendations_with_no_specified_modality: Optional[bool] = rest_field(
         name="includeRecommendationsWithNoSpecifiedModality"
     )
-    """Include/Exclude followup recommendations with no specific radiologic modality, default is
+    """Include/Exclude follow-up recommendations without a specific radiology procedure. Default is
      false."""
     include_recommendations_in_references: Optional[bool] = rest_field(name="includeRecommendationsInReferences")
-    """Include/Exclude followup recommendations in references to a guideline or article, default is
+    """Include/Exclude follow-up recommendations in references to a guideline or article. Default is
      false."""
     provide_focused_sentence_evidence: Optional[bool] = rest_field(name="provideFocusedSentenceEvidence")
-    """Provide a single focused sentence as evidence for the recommendation, default is false."""
+    """If this is true, provide one or more sentences as evidence for the recommendation, next to the
+     token evidence. The start and end positions of these sentences will be put in an extension with
+     url 'modality_sentences'. Default is false."""
 
     @overload
     def __init__(
@@ -1452,7 +1398,7 @@ class FollowupRecommendationOptions(_model_base.Model):
 
 
 class ProcedureRecommendation(_model_base.Model):
-    """Radiology Insights abstract procedure.
+    """The procedure recommendation can be a generic procedure or an imaging procedure.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     GenericProcedureRecommendation, ImagingProcedureRecommendation
@@ -1464,12 +1410,26 @@ class ProcedureRecommendation(_model_base.Model):
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    kind: Literal[None] = rest_discriminator(name="kind")
+    kind: str = rest_discriminator(name="kind")
     """Required. Default value is None."""
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
+    @overload
+    def __init__(
+        self,
+        *,
+        kind: str,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
-        self.kind: Literal[None] = None
 
 
 class GenericProcedureRecommendation(ProcedureRecommendation, discriminator="genericProcedureRecommendation"):
@@ -1477,21 +1437,23 @@ class GenericProcedureRecommendation(ProcedureRecommendation, discriminator="gen
 
     All required parameters must be populated in order to send to server.
 
-    :ivar kind: The type of the procedure. Required. Default value is
+    :ivar kind: Procedure type : generic. Required. Default value is
      "genericProcedureRecommendation".
     :vartype kind: str
-    :ivar code: The procedure modality. Required.
+    :ivar code: Procedure modality : SNOMED CT code. Required.
     :vartype code: ~azure.healthinsights.radiologyinsights.models.CodeableConcept
-    :ivar description: The procedure description.
+    :ivar description: Procedure description : MANAGEMENT PROCEDURE (PROCEDURE) or CONSULTATION
+     (PROCEDURE) based on SNOMED CT.
     :vartype description: str
     """
 
     kind: Literal["genericProcedureRecommendation"] = rest_discriminator(name="kind")  # type: ignore
-    """The type of the procedure. Required. Default value is \"genericProcedureRecommendation\"."""
+    """Procedure type : generic. Required. Default value is \"genericProcedureRecommendation\"."""
     code: "_models.CodeableConcept" = rest_field()
-    """The procedure modality. Required."""
+    """Procedure modality : SNOMED CT code. Required."""
     description: Optional[str] = rest_field()
-    """The procedure description."""
+    """Procedure description : MANAGEMENT PROCEDURE (PROCEDURE) or CONSULTATION (PROCEDURE) based on
+     SNOMED CT."""
 
     @overload
     def __init__(
@@ -1509,9 +1471,8 @@ class GenericProcedureRecommendation(ProcedureRecommendation, discriminator="gen
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind: Literal["genericProcedureRecommendation"] = "genericProcedureRecommendation"
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, kind="genericProcedureRecommendation", **kwargs)
 
 
 class HealthInsightsOperationStatus(_model_base.Model):
@@ -1534,6 +1495,9 @@ class HealthInsightsOperationStatus(_model_base.Model):
     :vartype last_update_date_time: ~datetime.datetime
     :ivar error: Error object that describes the error when status is "Failed".
     :vartype error: ~azure.healthinsights.radiologyinsights.models.Error
+    :ivar result: The result of the operation.
+    :vartype result:
+     ~azure.healthinsights.radiologyinsights.models.RadiologyInsightsInferenceResult
     """
 
     id: str = rest_field(visibility=["read"])
@@ -1555,12 +1519,15 @@ class HealthInsightsOperationStatus(_model_base.Model):
     """The date and time when the processing job was last updated."""
     error: Optional["_models.Error"] = rest_field()
     """Error object that describes the error when status is \"Failed\"."""
+    result: Optional["_models.RadiologyInsightsInferenceResult"] = rest_field()
+    """The result of the operation."""
 
     @overload
     def __init__(
         self,
         *,
         error: Optional["_models.Error"] = None,
+        result: Optional["_models.RadiologyInsightsInferenceResult"] = None,
     ):
         ...
 
@@ -1631,32 +1598,32 @@ class Identifier(Element):
 
 
 class ImagingProcedure(_model_base.Model):
-    """Order Procedure - is this always a radiology procedure?.
+    """Imaging procedure.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar modality: The procedure modality. Required.
+    :ivar modality: Modality : SNOMED CT code. Required.
     :vartype modality: ~azure.healthinsights.radiologyinsights.models.CodeableConcept
-    :ivar anatomy: The procedure anatomy. Required.
+    :ivar anatomy: Anatomy : SNOMED CT code. Required.
     :vartype anatomy: ~azure.healthinsights.radiologyinsights.models.CodeableConcept
-    :ivar laterality: The procedure laterality.
+    :ivar laterality: Laterality : SNOMED CT code.
     :vartype laterality: ~azure.healthinsights.radiologyinsights.models.CodeableConcept
-    :ivar contrast: The procedure contrast.
+    :ivar contrast: Contrast : see RadiologyCodeWithTypes (below).
     :vartype contrast: ~azure.healthinsights.radiologyinsights.models.RadiologyCodeWithTypes
-    :ivar view: The procedure view.
+    :ivar view: View : see RadiologyCodeWithTypes (below).
     :vartype view: ~azure.healthinsights.radiologyinsights.models.RadiologyCodeWithTypes
     """
 
     modality: "_models.CodeableConcept" = rest_field()
-    """The procedure modality. Required."""
+    """Modality : SNOMED CT code. Required."""
     anatomy: "_models.CodeableConcept" = rest_field()
-    """The procedure anatomy. Required."""
+    """Anatomy : SNOMED CT code. Required."""
     laterality: Optional["_models.CodeableConcept"] = rest_field()
-    """The procedure laterality."""
+    """Laterality : SNOMED CT code."""
     contrast: Optional["_models.RadiologyCodeWithTypes"] = rest_field()
-    """The procedure contrast."""
+    """Contrast : see RadiologyCodeWithTypes (below)."""
     view: Optional["_models.RadiologyCodeWithTypes"] = rest_field()
-    """The procedure view."""
+    """View : see RadiologyCodeWithTypes (below)."""
 
     @overload
     def __init__(
@@ -1682,26 +1649,26 @@ class ImagingProcedure(_model_base.Model):
 
 
 class ImagingProcedureRecommendation(ProcedureRecommendation, discriminator="imagingProcedureRecommendation"):
-    """Radiology procedure.
+    """Imaging procedures.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar kind: The type of the procedure. Required. Default value is
+    :ivar kind: Procedure type : imaging. Required. Default value is
      "imagingProcedureRecommendation".
     :vartype kind: str
-    :ivar procedure_codes: The LOINC codes for the procedure.
+    :ivar procedure_codes: LOINC codes for the procedure.
     :vartype procedure_codes: list[~azure.healthinsights.radiologyinsights.models.CodeableConcept]
-    :ivar imaging_procedures: Imaging procedure. Required.
+    :ivar imaging_procedures: Imaging procedures. Required.
     :vartype imaging_procedures:
      list[~azure.healthinsights.radiologyinsights.models.ImagingProcedure]
     """
 
     kind: Literal["imagingProcedureRecommendation"] = rest_discriminator(name="kind")  # type: ignore
-    """The type of the procedure. Required. Default value is \"imagingProcedureRecommendation\"."""
+    """Procedure type : imaging. Required. Default value is \"imagingProcedureRecommendation\"."""
     procedure_codes: Optional[List["_models.CodeableConcept"]] = rest_field(name="procedureCodes")
-    """The LOINC codes for the procedure."""
+    """LOINC codes for the procedure."""
     imaging_procedures: List["_models.ImagingProcedure"] = rest_field(name="imagingProcedures")
-    """Imaging procedure. Required."""
+    """Imaging procedures. Required."""
 
     @overload
     def __init__(
@@ -1719,9 +1686,8 @@ class ImagingProcedureRecommendation(ProcedureRecommendation, discriminator="ima
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind: Literal["imagingProcedureRecommendation"] = "imagingProcedureRecommendation"
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, kind="imagingProcedureRecommendation", **kwargs)
 
 
 class InnerError(_model_base.Model):
@@ -1761,33 +1727,34 @@ class InnerError(_model_base.Model):
 
 
 class LateralityDiscrepancyInference(RadiologyInsightsInference, discriminator="lateralityDiscrepancy"):
-    """Laterality discrepancy, returns in 3 different cases:
-    OrderLateralityMismatch: there is a discrepancy between the text and the procedure/order
-    related to the clinical document.
-    TextLateralityContradiction: there is a contradiction within the text of the clinical document.
-    TextLateralityMissing: laterality is missing/not mentioned in the clinical document.
+    """A laterality mismatch occurs when there is a discrepancy between the clinical documentation and
+    the ordered procedure (orderLateralityMismatch), a contradiction within the clinical document
+    (textLateralityContradiction), or when no laterality is mentioned (textLateralityMissing).
 
     All required parameters must be populated in order to send to server.
 
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
-    :ivar kind: The type of the inference. Required. Laterality discrepancy inference type
+    :ivar kind: Inference type. Required. Laterality discrepancy inference type
     :vartype kind: str or ~azure.healthinsights.radiologyinsights.models.LATERALITY_DISCREPANCY
-    :ivar laterality_indication: laterality indication.
+    :ivar laterality_indication: Laterality indication : SNOMED CT code for laterality qualifier
+     value.
     :vartype laterality_indication: ~azure.healthinsights.radiologyinsights.models.CodeableConcept
-    :ivar discrepancy_type: mismatch type. Required. Known values are: "orderLateralityMismatch",
+    :ivar discrepancy_type: Mismatch type : orderLateralityMismatch, textLateralityContradiction,
+     textLateralityMissing. Required. Known values are: "orderLateralityMismatch",
      "textLateralityContradiction", and "textLateralityMissing".
     :vartype discrepancy_type: str or
      ~azure.healthinsights.radiologyinsights.models.LateralityDiscrepancyType
     """
 
     kind: Literal[RadiologyInsightsInferenceType.LATERALITY_DISCREPANCY] = rest_discriminator(name="kind")  # type: ignore
-    """The type of the inference. Required. Laterality discrepancy inference type"""
+    """Inference type. Required. Laterality discrepancy inference type"""
     laterality_indication: Optional["_models.CodeableConcept"] = rest_field(name="lateralityIndication")
-    """laterality indication."""
+    """Laterality indication : SNOMED CT code for laterality qualifier value."""
     discrepancy_type: Union[str, "_models.LateralityDiscrepancyType"] = rest_field(name="discrepancyType")
-    """mismatch type. Required. Known values are: \"orderLateralityMismatch\",
-     \"textLateralityContradiction\", and \"textLateralityMissing\"."""
+    """Mismatch type : orderLateralityMismatch, textLateralityContradiction, textLateralityMissing.
+     Required. Known values are: \"orderLateralityMismatch\", \"textLateralityContradiction\", and
+     \"textLateralityMissing\"."""
 
     @overload
     def __init__(
@@ -1806,48 +1773,43 @@ class LateralityDiscrepancyInference(RadiologyInsightsInference, discriminator="
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind: Literal[
-            RadiologyInsightsInferenceType.LATERALITY_DISCREPANCY
-        ] = RadiologyInsightsInferenceType.LATERALITY_DISCREPANCY
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, kind=RadiologyInsightsInferenceType.LATERALITY_DISCREPANCY, **kwargs)
 
 
 class LimitedOrderDiscrepancyInference(RadiologyInsightsInference, discriminator="limitedOrderDiscrepancy"):
-    """Limited Order mismatch
-    A limited order requires that not all the body parts listed in the order will be document.
-    This inference is relevant only for ultrasound procedure/order of type US ABDOMEN, US
-    RETROPERITONEAL, US PELVIS, or US BREAST.
-    This inference returns when all body parts and measurement of a body part required by the
-    order, mentioned in the text.
+    """A limited order discrepancy occurs when there is a limited order, but all body parts and
+    measurements that are needed for a complete order are present in the document.
 
     All required parameters must be populated in order to send to server.
 
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
-    :ivar kind: The type of the inference. Required. Limited order discrepancy inference type
+    :ivar kind: Inference type. Required. Limited order discrepancy inference type
     :vartype kind: str or ~azure.healthinsights.radiologyinsights.models.LIMITED_ORDER_DISCREPANCY
-    :ivar order_type: Order Type. Required.
+    :ivar order_type: Order type : CPT ultrasound complete code for abdomen, retroperitoneal,
+     pelvis or breast. Required.
     :vartype order_type: ~azure.healthinsights.radiologyinsights.models.CodeableConcept
-    :ivar present_body_parts: Complete list of body parts found in the document.
+    :ivar present_body_parts: List of body parts found in the document : SNOMED CT codes.
     :vartype present_body_parts:
      list[~azure.healthinsights.radiologyinsights.models.CodeableConcept]
-    :ivar present_body_part_measurements: Complete list of body parts that require measurement by a
-     complete order.
+    :ivar present_body_part_measurements: List of body parts that are measured according to the
+     document : SNOMED CT codes.
     :vartype present_body_part_measurements:
      list[~azure.healthinsights.radiologyinsights.models.CodeableConcept]
     """
 
     kind: Literal[RadiologyInsightsInferenceType.LIMITED_ORDER_DISCREPANCY] = rest_discriminator(name="kind")  # type: ignore
-    """The type of the inference. Required. Limited order discrepancy inference type"""
+    """Inference type. Required. Limited order discrepancy inference type"""
     order_type: "_models.CodeableConcept" = rest_field(name="orderType")
-    """Order Type. Required."""
+    """Order type : CPT ultrasound complete code for abdomen, retroperitoneal, pelvis or breast.
+     Required."""
     present_body_parts: Optional[List["_models.CodeableConcept"]] = rest_field(name="presentBodyParts")
-    """Complete list of body parts found in the document."""
+    """List of body parts found in the document : SNOMED CT codes."""
     present_body_part_measurements: Optional[List["_models.CodeableConcept"]] = rest_field(
         name="presentBodyPartMeasurements"
     )
-    """Complete list of body parts that require measurement by a complete order."""
+    """List of body parts that are measured according to the document : SNOMED CT codes."""
 
     @overload
     def __init__(
@@ -1867,11 +1829,8 @@ class LimitedOrderDiscrepancyInference(RadiologyInsightsInference, discriminator
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind: Literal[
-            RadiologyInsightsInferenceType.LIMITED_ORDER_DISCREPANCY
-        ] = RadiologyInsightsInferenceType.LIMITED_ORDER_DISCREPANCY
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, kind=RadiologyInsightsInferenceType.LIMITED_ORDER_DISCREPANCY, **kwargs)
 
 
 class Meta(_model_base.Model):
@@ -2085,7 +2044,7 @@ class Observation(DomainResource):  # pylint: disable=too-many-instance-attribut
     :vartype component: list[~azure.healthinsights.radiologyinsights.models.ObservationComponent]
     """
 
-    resource_type: Literal["Observation"] = rest_field(name="resourceType") # type: ignore
+    resource_type: Literal["Observation"] = rest_field(name="resourceType")
     """resourceType. Required. Default value is \"Observation\"."""
     identifier: Optional[List["_models.Identifier"]] = rest_field()
     """Business Identifier for observation."""
@@ -2204,7 +2163,7 @@ class Observation(DomainResource):  # pylint: disable=too-many-instance-attribut
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.resource_type: Literal["Observation"] = "Observation" # type: ignore
+        self.resource_type: Literal["Observation"] = "Observation"
 
 
 class ObservationComponent(Element):  # pylint: disable=too-many-instance-attributes
@@ -2376,7 +2335,7 @@ class ObservationReferenceRange(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class OrderedProcedure(Extendible):
+class OrderedProcedure(_model_base.Model):
     """Procedure information.
 
     :ivar extension: Additional Content defined by implementations.
@@ -2387,6 +2346,8 @@ class OrderedProcedure(Extendible):
     :vartype description: str
     """
 
+    extension: Optional[List["_models.Extension"]] = rest_field()
+    """Additional Content defined by implementations."""
     code: Optional["_models.CodeableConcept"] = rest_field()
     """Procedure code."""
     description: Optional[str] = rest_field()
@@ -2399,6 +2360,46 @@ class OrderedProcedure(Extendible):
         extension: Optional[List["_models.Extension"]] = None,
         code: Optional["_models.CodeableConcept"] = None,
         description: Optional[str] = None,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class PatientDetails(_model_base.Model):
+    """Patient structured information, including demographics and known structured clinical
+    information.
+
+    :ivar sex: The patient's sex. Known values are: "female", "male", and "unspecified".
+    :vartype sex: str or ~azure.healthinsights.radiologyinsights.models.PatientSex
+    :ivar birth_date: The patient's date of birth.
+    :vartype birth_date: ~datetime.date
+    :ivar clinical_info: Known clinical information for the patient, structured.
+    :vartype clinical_info: list[~azure.healthinsights.radiologyinsights.models.Resource]
+    """
+
+    sex: Optional[Union[str, "_models.PatientSex"]] = rest_field()
+    """The patient's sex. Known values are: \"female\", \"male\", and \"unspecified\"."""
+    birth_date: Optional[datetime.date] = rest_field(name="birthDate")
+    """The patient's date of birth."""
+    clinical_info: Optional[List["_models.Resource"]] = rest_field(name="clinicalInfo")
+    """Known clinical information for the patient, structured."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        sex: Optional[Union[str, "_models.PatientSex"]] = None,
+        birth_date: Optional[datetime.date] = None,
+        clinical_info: Optional[List["_models.Resource"]] = None,
     ):
         ...
 
@@ -2500,46 +2501,6 @@ class PatientDocument(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class PatientInfo(_model_base.Model):
-    """Patient structured information, including demographics and known structured clinical
-    information.
-
-    :ivar sex: The patient's sex. Known values are: "female", "male", and "unspecified".
-    :vartype sex: str or ~azure.healthinsights.radiologyinsights.models.PatientInfoSex
-    :ivar birth_date: The patient's date of birth.
-    :vartype birth_date: ~datetime.date
-    :ivar clinical_info: Known clinical information for the patient, structured.
-    :vartype clinical_info: list[~azure.healthinsights.radiologyinsights.models.Resource]
-    """
-
-    sex: Optional[Union[str, "_models.PatientInfoSex"]] = rest_field()
-    """The patient's sex. Known values are: \"female\", \"male\", and \"unspecified\"."""
-    birth_date: Optional[datetime.date] = rest_field(name="birthDate")
-    """The patient's date of birth."""
-    clinical_info: Optional[List["_models.Resource"]] = rest_field(name="clinicalInfo")
-    """Known clinical information for the patient, structured."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        sex: Optional[Union[str, "_models.PatientInfoSex"]] = None,
-        birth_date: Optional[datetime.date] = None,
-        clinical_info: Optional[List["_models.Resource"]] = None,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
 class PatientRecord(_model_base.Model):
     """A patient record, including their clinical information and data.
 
@@ -2550,7 +2511,7 @@ class PatientRecord(_model_base.Model):
     :vartype id: str
     :ivar info: Patient structured information, including demographics and known structured
      clinical information.
-    :vartype info: ~azure.healthinsights.radiologyinsights.models.PatientInfo
+    :vartype info: ~azure.healthinsights.radiologyinsights.models.PatientDetails
     :ivar encounters: Patient encounters/visits.
     :vartype encounters: list[~azure.healthinsights.radiologyinsights.models.Encounter]
     :ivar patient_documents: Patient unstructured clinical data, given as documents.
@@ -2561,7 +2522,7 @@ class PatientRecord(_model_base.Model):
     id: str = rest_field()
     """A given identifier for the patient. Has to be unique across all patients in a single request.
      Required."""
-    info: Optional["_models.PatientInfo"] = rest_field()
+    info: Optional["_models.PatientDetails"] = rest_field()
     """Patient structured information, including demographics and known structured clinical
      information."""
     encounters: Optional[List["_models.Encounter"]] = rest_field()
@@ -2574,7 +2535,7 @@ class PatientRecord(_model_base.Model):
         self,
         *,
         id: str,  # pylint: disable=redefined-builtin
-        info: Optional["_models.PatientInfo"] = None,
+        info: Optional["_models.PatientDetails"] = None,
         encounters: Optional[List["_models.Encounter"]] = None,
         patient_documents: Optional[List["_models.PatientDocument"]] = None,
     ):
@@ -2631,7 +2592,7 @@ class Quantity(Element):
     Based on `FHIR Quantity <https://www.hl7.org/fhir/R4/datatypes.html#Quantity>`_.
 
     :ivar value: Numerical value (with implicit precision).
-    :vartype value: ~decimal.Decimal
+    :vartype value: float
     :ivar comparator: < | <= | >= | > - how to understand the value.
     :vartype comparator: str
     :ivar unit: Unit representation.
@@ -2642,7 +2603,7 @@ class Quantity(Element):
     :vartype code: str
     """
 
-    value: Optional[decimal.Decimal] = rest_field()
+    value: Optional[float] = rest_field()
     """Numerical value (with implicit precision)."""
     comparator: Optional[str] = rest_field()
     """< | <= | >= | > - how to understand the value."""
@@ -2657,7 +2618,7 @@ class Quantity(Element):
     def __init__(
         self,
         *,
-        value: Optional[decimal.Decimal] = None,
+        value: Optional[float] = None,
         comparator: Optional[str] = None,
         unit: Optional[str] = None,
         system: Optional[str] = None,
@@ -2677,20 +2638,26 @@ class Quantity(Element):
 
 
 class RadiologyCodeWithTypes(_model_base.Model):
-    """Code with types.
+    """Radiology code with types : used in imaging procedure recommendation for contrast and view.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar code: Code. Required.
+    :ivar code: The SNOMED CT code indicates whether imaging was conducted with or without contrast
+     in the case of contrast, and in the case of views, it denotes the number of views. Required.
     :vartype code: ~azure.healthinsights.radiologyinsights.models.CodeableConcept
-    :ivar types: Collection of types. Required.
+    :ivar types: The collection of types will indicate the contrast substance used in the case of
+     contrast and, in the case of views, it will specify the types of views, such as lateral and
+     frontal, etc. Required.
     :vartype types: list[~azure.healthinsights.radiologyinsights.models.CodeableConcept]
     """
 
     code: "_models.CodeableConcept" = rest_field()
-    """Code. Required."""
+    """The SNOMED CT code indicates whether imaging was conducted with or without contrast in the case
+     of contrast, and in the case of views, it denotes the number of views. Required."""
     types: List["_models.CodeableConcept"] = rest_field()
-    """Collection of types. Required."""
+    """The collection of types will indicate the contrast substance used in the case of contrast and,
+     in the case of views, it will specify the types of views, such as lateral and frontal, etc.
+     Required."""
 
     @overload
     def __init__(
@@ -2713,7 +2680,7 @@ class RadiologyCodeWithTypes(_model_base.Model):
 
 
 class RadiologyInsightsData(_model_base.Model):
-    """The body of the Radiology Insights request.
+    """Contains the list of patients, and configuration data.
 
     All required parameters must be populated in order to send to server.
 
@@ -2750,28 +2717,28 @@ class RadiologyInsightsData(_model_base.Model):
 
 
 class RadiologyInsightsInferenceOptions(_model_base.Model):
-    """The options for the Radiology Insights Inferences.
+    """Options regarding follow up recommendation inferences and finding inferences.
 
-    :ivar followup_recommendation: Followup Recommendation Options.
-    :vartype followup_recommendation:
+    :ivar followup_recommendation_options: Follow-up recommendation options.
+    :vartype followup_recommendation_options:
      ~azure.healthinsights.radiologyinsights.models.FollowupRecommendationOptions
-    :ivar finding: Finding Options.
-    :vartype finding: ~azure.healthinsights.radiologyinsights.models.FindingOptions
+    :ivar finding_options: Finding options.
+    :vartype finding_options: ~azure.healthinsights.radiologyinsights.models.FindingOptions
     """
 
-    followup_recommendation: Optional["_models.FollowupRecommendationOptions"] = rest_field(
-        name="followupRecommendation"
+    followup_recommendation_options: Optional["_models.FollowupRecommendationOptions"] = rest_field(
+        name="followupRecommendationOptions"
     )
-    """Followup Recommendation Options."""
-    finding: Optional["_models.FindingOptions"] = rest_field()
-    """Finding Options."""
+    """Follow-up recommendation options."""
+    finding_options: Optional["_models.FindingOptions"] = rest_field(name="findingOptions")
+    """Finding options."""
 
     @overload
     def __init__(
         self,
         *,
-        followup_recommendation: Optional["_models.FollowupRecommendationOptions"] = None,
-        finding: Optional["_models.FindingOptions"] = None,
+        followup_recommendation_options: Optional["_models.FollowupRecommendationOptions"] = None,
+        finding_options: Optional["_models.FindingOptions"] = None,
     ):
         ...
 
@@ -2787,7 +2754,8 @@ class RadiologyInsightsInferenceOptions(_model_base.Model):
 
 
 class RadiologyInsightsInferenceResult(_model_base.Model):
-    """The inference results for the Radiology Insights request.
+    """The inference results for the Radiology Insights request. If field 'status' has value
+    'succeeded', then field 'result' will contain an instance of RadiologyInsightsInferenceResult.
 
     All required parameters must be populated in order to send to server.
 
@@ -2832,12 +2800,13 @@ class RadiologyInsightsModelConfiguration(_model_base.Model):
     :ivar include_evidence: An indication whether the model's output should include evidence for
      the inferences.
     :vartype include_evidence: bool
-    :ivar inference_types: A list of inference types to be inferred for the current request.
-     This could be used if only part of the Radiology Insights inferences are required.
-     If this list is omitted or empty, the model will return all the inference types.
+    :ivar inference_types: This is a list of inference types to be inferred for the current
+     request. It could be used if only part of the Radiology Insights inferences are required. If
+     this list is omitted or empty, the model will return all the inference types.
     :vartype inference_types: list[str or
      ~azure.healthinsights.radiologyinsights.models.RadiologyInsightsInferenceType]
-    :ivar inference_options: The options for the Radiology Insights Inferences.
+    :ivar inference_options: Options regarding follow up recommendation inferences and finding
+     inferences.
     :vartype inference_options:
      ~azure.healthinsights.radiologyinsights.models.RadiologyInsightsInferenceOptions
     :ivar locale: Local for the model to use. If not specified, the model will use the default
@@ -2852,11 +2821,11 @@ class RadiologyInsightsModelConfiguration(_model_base.Model):
     inference_types: Optional[List[Union[str, "_models.RadiologyInsightsInferenceType"]]] = rest_field(
         name="inferenceTypes"
     )
-    """A list of inference types to be inferred for the current request.
-     This could be used if only part of the Radiology Insights inferences are required.
-     If this list is omitted or empty, the model will return all the inference types."""
+    """This is a list of inference types to be inferred for the current request. It could be used if
+     only part of the Radiology Insights inferences are required. If this list is omitted or empty,
+     the model will return all the inference types."""
     inference_options: Optional["_models.RadiologyInsightsInferenceOptions"] = rest_field(name="inferenceOptions")
-    """The options for the Radiology Insights Inferences."""
+    """Options regarding follow up recommendation inferences and finding inferences."""
     locale: Optional[str] = rest_field()
     """Local for the model to use. If not specified, the model will use the default locale."""
 
@@ -2884,11 +2853,11 @@ class RadiologyInsightsModelConfiguration(_model_base.Model):
 
 
 class RadiologyInsightsPatientResult(_model_base.Model):
-    """The results of the model's work for a single patient.
+    """Results of the model's work for a single patient.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar patient_id: The identifier given for the patient in the request. Required.
+    :ivar patient_id: Identifier given for the patient in the request. Required.
     :vartype patient_id: str
     :ivar inferences: The model's inferences for the given patient. Required.
     :vartype inferences:
@@ -2896,7 +2865,7 @@ class RadiologyInsightsPatientResult(_model_base.Model):
     """
 
     patient_id: str = rest_field(name="patientId")
-    """The identifier given for the patient in the request. Required."""
+    """Identifier given for the patient in the request. Required."""
     inferences: List["_models.RadiologyInsightsInference"] = rest_field()
     """The model's inferences for the given patient. Required."""
 
@@ -2920,34 +2889,101 @@ class RadiologyInsightsPatientResult(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class RadiologyInsightsResult(_model_base.Model):
+    """Response for the Radiology Insights request.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: The unique ID of the operation. Required.
+    :vartype id: str
+    :ivar status: The status of the operation. Required. Known values are: "notStarted", "running",
+     "succeeded", "failed", and "canceled".
+    :vartype status: str or ~azure.healthinsights.radiologyinsights.models.JobStatus
+    :ivar created_date_time: The date and time when the processing job was created.
+    :vartype created_date_time: ~datetime.datetime
+    :ivar expiration_date_time: The date and time when the processing job is set to expire.
+    :vartype expiration_date_time: ~datetime.datetime
+    :ivar last_update_date_time: The date and time when the processing job was last updated.
+    :vartype last_update_date_time: ~datetime.datetime
+    :ivar error: Error object that describes the error when status is "Failed".
+    :vartype error: ~azure.healthinsights.radiologyinsights.models.Error
+    :ivar result: The result of the operation.
+    :vartype result:
+     ~azure.healthinsights.radiologyinsights.models.RadiologyInsightsInferenceResult
+    """
+
+    id: str = rest_field(visibility=["read"])
+    """The unique ID of the operation. Required."""
+    status: Union[str, "_models.JobStatus"] = rest_field(visibility=["read"])
+    """The status of the operation. Required. Known values are: \"notStarted\", \"running\",
+     \"succeeded\", \"failed\", and \"canceled\"."""
+    created_date_time: Optional[datetime.datetime] = rest_field(
+        name="createdDateTime", visibility=["read"], format="rfc3339"
+    )
+    """The date and time when the processing job was created."""
+    expiration_date_time: Optional[datetime.datetime] = rest_field(
+        name="expirationDateTime", visibility=["read"], format="rfc3339"
+    )
+    """The date and time when the processing job is set to expire."""
+    last_update_date_time: Optional[datetime.datetime] = rest_field(
+        name="lastUpdateDateTime", visibility=["read"], format="rfc3339"
+    )
+    """The date and time when the processing job was last updated."""
+    error: Optional["_models.Error"] = rest_field()
+    """Error object that describes the error when status is \"Failed\"."""
+    result: Optional["_models.RadiologyInsightsInferenceResult"] = rest_field()
+    """The result of the operation."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        error: Optional["_models.Error"] = None,
+        result: Optional["_models.RadiologyInsightsInferenceResult"] = None,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
 class RadiologyProcedureInference(RadiologyInsightsInference, discriminator="radiologyProcedure"):
-    """Procedures found in the document text or associated with the document administrative metadata.
+    """Radiology procedures are the specific imaging studies or examinations ordered for the patient,
+    extracted from the document information and text.
 
     All required parameters must be populated in order to send to server.
 
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
-    :ivar kind: The type of the inference. Required. Radiology Procedure inference type
+    :ivar kind: Inference type. Required. Radiology Procedure inference type
     :vartype kind: str or ~azure.healthinsights.radiologyinsights.models.RADIOLOGY_PROCEDURE
-    :ivar procedure_codes: The LOINC codes for the procedure.
+    :ivar procedure_codes: LOINC codes for the procedure.
     :vartype procedure_codes: list[~azure.healthinsights.radiologyinsights.models.CodeableConcept]
-    :ivar imaging_procedures: Imaging procedure. Required.
+    :ivar imaging_procedures: Imaging procedures. Required.
     :vartype imaging_procedures:
      list[~azure.healthinsights.radiologyinsights.models.ImagingProcedure]
-    :ivar ordered_procedure: The related procedure information from the document administration
-     information or as extracted from the document. Required.
+    :ivar ordered_procedure: Ordered procedure information from the document information or text.
+     Required.
     :vartype ordered_procedure: ~azure.healthinsights.radiologyinsights.models.OrderedProcedure
     """
 
     kind: Literal[RadiologyInsightsInferenceType.RADIOLOGY_PROCEDURE] = rest_discriminator(name="kind")  # type: ignore
-    """The type of the inference. Required. Radiology Procedure inference type"""
+    """Inference type. Required. Radiology Procedure inference type"""
     procedure_codes: Optional[List["_models.CodeableConcept"]] = rest_field(name="procedureCodes")
-    """The LOINC codes for the procedure."""
+    """LOINC codes for the procedure."""
     imaging_procedures: List["_models.ImagingProcedure"] = rest_field(name="imagingProcedures")
-    """Imaging procedure. Required."""
+    """Imaging procedures. Required."""
     ordered_procedure: "_models.OrderedProcedure" = rest_field(name="orderedProcedure")
-    """The related procedure information from the document administration information or as extracted
-     from the document. Required."""
+    """Ordered procedure information from the document information or text. Required."""
 
     @overload
     def __init__(
@@ -2967,11 +3003,8 @@ class RadiologyProcedureInference(RadiologyInsightsInference, discriminator="rad
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind: Literal[
-            RadiologyInsightsInferenceType.RADIOLOGY_PROCEDURE
-        ] = RadiologyInsightsInferenceType.RADIOLOGY_PROCEDURE
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, kind=RadiologyInsightsInferenceType.RADIOLOGY_PROCEDURE, **kwargs)
 
 
 class Range(Element):
@@ -3044,31 +3077,33 @@ class Ratio(Element):
         super().__init__(*args, **kwargs)
 
 
-class RecommendationFinding(Extendible):
-    """Recommendation Finding - finding reference for recommendation.
+class RecommendationFinding(_model_base.Model):
+    """Finding reference for recommendation.
 
     All required parameters must be populated in order to send to server.
 
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
-    :ivar finding: finding inference.
+    :ivar finding: Finding linked to a recommendation.
     :vartype finding: ~azure.healthinsights.radiologyinsights.models.Observation
-    :ivar critical_finding: critical finding inference.
+    :ivar critical_finding: Critical result linked to a recommendation.
     :vartype critical_finding: ~azure.healthinsights.radiologyinsights.models.CriticalResult
-    :ivar recommendation_finding_status: recommendation finding status. Required. Known values are:
+    :ivar recommendation_finding_status: Recommendation finding status. Required. Known values are:
      "present", "differential", "ruleOut", and "conditional".
     :vartype recommendation_finding_status: str or
      ~azure.healthinsights.radiologyinsights.models.RecommendationFindingStatusType
     """
 
+    extension: Optional[List["_models.Extension"]] = rest_field()
+    """Additional Content defined by implementations."""
     finding: Optional["_models.Observation"] = rest_field()
-    """finding inference."""
+    """Finding linked to a recommendation."""
     critical_finding: Optional["_models.CriticalResult"] = rest_field(name="criticalFinding")
-    """critical finding inference."""
+    """Critical result linked to a recommendation."""
     recommendation_finding_status: Union[str, "_models.RecommendationFindingStatusType"] = rest_field(
         name="recommendationFindingStatus"
     )
-    """recommendation finding status. Required. Known values are: \"present\", \"differential\",
+    """Recommendation finding status. Required. Known values are: \"present\", \"differential\",
      \"ruleOut\", and \"conditional\"."""
 
     @overload
@@ -3323,9 +3358,8 @@ class ResearchStudy(DomainResource, discriminator="ResearchStudy"):  # pylint: d
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.resource_type: Literal["ResearchStudy"] = "ResearchStudy"
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, resource_type="ResearchStudy", **kwargs)
 
 
 class ResearchStudyArm(_model_base.Model):
@@ -3414,13 +3448,13 @@ class SampledData(Element):
     :ivar origin: Zero value and units. Required.
     :vartype origin: ~azure.healthinsights.radiologyinsights.models.Quantity
     :ivar period: Number of milliseconds between samples. Required.
-    :vartype period: ~decimal.Decimal
+    :vartype period: float
     :ivar factor: Multiply data by this before adding to origin.
-    :vartype factor: ~decimal.Decimal
+    :vartype factor: float
     :ivar lower_limit: Lower limit of detection.
-    :vartype lower_limit: ~decimal.Decimal
+    :vartype lower_limit: float
     :ivar upper_limit: Upper limit of detection.
-    :vartype upper_limit: ~decimal.Decimal
+    :vartype upper_limit: float
     :ivar dimensions: Number of sample points at each time point. Required.
     :vartype dimensions: int
     :ivar data: Decimal values with spaces, or "E" | "U" | "L".
@@ -3429,13 +3463,13 @@ class SampledData(Element):
 
     origin: "_models.Quantity" = rest_field()
     """Zero value and units. Required."""
-    period: decimal.Decimal = rest_field()
+    period: float = rest_field()
     """Number of milliseconds between samples. Required."""
-    factor: Optional[decimal.Decimal] = rest_field()
+    factor: Optional[float] = rest_field()
     """Multiply data by this before adding to origin."""
-    lower_limit: Optional[decimal.Decimal] = rest_field(name="lowerLimit")
+    lower_limit: Optional[float] = rest_field(name="lowerLimit")
     """Lower limit of detection."""
-    upper_limit: Optional[decimal.Decimal] = rest_field(name="upperLimit")
+    upper_limit: Optional[float] = rest_field(name="upperLimit")
     """Upper limit of detection."""
     dimensions: int = rest_field()
     """Number of sample points at each time point. Required."""
@@ -3447,11 +3481,11 @@ class SampledData(Element):
         self,
         *,
         origin: "_models.Quantity",
-        period: decimal.Decimal,
+        period: float,
         dimensions: int,
-        factor: Optional[decimal.Decimal] = None,
-        lower_limit: Optional[decimal.Decimal] = None,
-        upper_limit: Optional[decimal.Decimal] = None,
+        factor: Optional[float] = None,
+        lower_limit: Optional[float] = None,
+        upper_limit: Optional[float] = None,
         data: Optional[str] = None,
     ):
         ...
@@ -3468,24 +3502,25 @@ class SampledData(Element):
 
 
 class SexMismatchInference(RadiologyInsightsInference, discriminator="sexMismatch"):
-    """Sex mismatch returns when there is a conflict between the patient references (female/male,
-    he/she/his/her), documented clinical procedures, or documented body parts to the patient Sex
-    that mentioned in the patient info.
+    """A notification for a sex mismatch is displayed when the gender, personal pronouns,
+    gender-related body parts, or gender-related procedures mentioned in a patient's clinical
+    document are either inconsistent or do not match the gender specified in the patient
+    information.
 
     All required parameters must be populated in order to send to server.
 
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
-    :ivar kind: The type of the inference. Required. Sex mismatch inference type
+    :ivar kind: Inference type. Required. Sex mismatch inference type
     :vartype kind: str or ~azure.healthinsights.radiologyinsights.models.SEX_MISMATCH
-    :ivar sex_indication: sex indication. Required.
+    :ivar sex_indication: Sex indication : SNOMED CT code for gender finding. Required.
     :vartype sex_indication: ~azure.healthinsights.radiologyinsights.models.CodeableConcept
     """
 
     kind: Literal[RadiologyInsightsInferenceType.SEX_MISMATCH] = rest_discriminator(name="kind")  # type: ignore
-    """The type of the inference. Required. Sex mismatch inference type"""
+    """Inference type. Required. Sex mismatch inference type"""
     sex_indication: "_models.CodeableConcept" = rest_field(name="sexIndication")
-    """sex indication. Required."""
+    """Sex indication : SNOMED CT code for gender finding. Required."""
 
     @overload
     def __init__(
@@ -3503,9 +3538,8 @@ class SexMismatchInference(RadiologyInsightsInference, discriminator="sexMismatc
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind: Literal[RadiologyInsightsInferenceType.SEX_MISMATCH] = RadiologyInsightsInferenceType.SEX_MISMATCH
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, kind=RadiologyInsightsInferenceType.SEX_MISMATCH, **kwargs)
 
 
 class TimePeriod(_model_base.Model):

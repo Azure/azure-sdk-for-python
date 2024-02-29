@@ -24,7 +24,6 @@ from ._models import DomainResource
 from ._models import Element
 from ._models import Encounter
 from ._models import Error
-from ._models import Extendible
 from ._models import Extension
 from ._models import FindingInference
 from ._models import FindingOptions
@@ -45,8 +44,8 @@ from ._models import Observation
 from ._models import ObservationComponent
 from ._models import ObservationReferenceRange
 from ._models import OrderedProcedure
+from ._models import PatientDetails
 from ._models import PatientDocument
-from ._models import PatientInfo
 from ._models import PatientRecord
 from ._models import Period
 from ._models import ProcedureRecommendation
@@ -58,6 +57,7 @@ from ._models import RadiologyInsightsInferenceOptions
 from ._models import RadiologyInsightsInferenceResult
 from ._models import RadiologyInsightsModelConfiguration
 from ._models import RadiologyInsightsPatientResult
+from ._models import RadiologyInsightsResult
 from ._models import RadiologyProcedureInference
 from ._models import Range
 from ._models import Ratio
@@ -81,9 +81,10 @@ from ._enums import JobStatus
 from ._enums import LateralityDiscrepancyType
 from ._enums import MedicalProfessionalType
 from ._enums import ObservationStatusCodeType
-from ._enums import PatientInfoSex
+from ._enums import PatientSex
 from ._enums import RadiologyInsightsInferenceType
 from ._enums import RecommendationFindingStatusType
+from ._enums import RepeatabilityResult
 from ._enums import ResearchStudyStatusCodeType
 from ._enums import SpecialtyType
 from ._patch import __all__ as _patch_all
@@ -109,7 +110,6 @@ __all__ = [
     "Element",
     "Encounter",
     "Error",
-    "Extendible",
     "Extension",
     "FindingInference",
     "FindingOptions",
@@ -130,8 +130,8 @@ __all__ = [
     "ObservationComponent",
     "ObservationReferenceRange",
     "OrderedProcedure",
+    "PatientDetails",
     "PatientDocument",
-    "PatientInfo",
     "PatientRecord",
     "Period",
     "ProcedureRecommendation",
@@ -143,6 +143,7 @@ __all__ = [
     "RadiologyInsightsInferenceResult",
     "RadiologyInsightsModelConfiguration",
     "RadiologyInsightsPatientResult",
+    "RadiologyInsightsResult",
     "RadiologyProcedureInference",
     "Range",
     "Ratio",
@@ -165,9 +166,10 @@ __all__ = [
     "LateralityDiscrepancyType",
     "MedicalProfessionalType",
     "ObservationStatusCodeType",
-    "PatientInfoSex",
+    "PatientSex",
     "RadiologyInsightsInferenceType",
     "RecommendationFindingStatusType",
+    "RepeatabilityResult",
     "ResearchStudyStatusCodeType",
     "SpecialtyType",
 ]

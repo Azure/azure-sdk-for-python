@@ -31,6 +31,7 @@ import pytest
 
 from devtools_testutils import test_proxy, add_general_regex_sanitizer
 
+
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
     healthinsights_endpoint = os.environ.get(
@@ -40,6 +41,4 @@ def add_sanitizers(test_proxy):
     add_general_regex_sanitizer(
         regex=healthinsights_endpoint, value="https://fake_ad_resource.cognitiveservices.azure.com"
     )
-    add_general_regex_sanitizer(
-        regex=healthinsights_key, value="00000000000000000000000000000000"
-    )
+    add_general_regex_sanitizer(regex=healthinsights_key, value="00000000000000000000000000000000")

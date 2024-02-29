@@ -28,9 +28,7 @@ class HealthInsightsSyncSamples:
         KEY = os.environ["AZURE_HEALTH_INSIGHTS_API_KEY"]
         ENDPOINT = os.environ["AZURE_HEALTH_INSIGHTS_ENDPOINT"]
 
-        radiology_insights_client = RadiologyInsightsClient(
-            endpoint=ENDPOINT, credential=AzureKeyCredential(KEY)
-        )
+        radiology_insights_client = RadiologyInsightsClient(endpoint=ENDPOINT, credential=AzureKeyCredential(KEY))
 
         doc_content1 = """CLINICAL HISTORY:   
         20-year-old female presenting with abdominal pain. Surgical history significant for appendectomy.
@@ -52,9 +50,7 @@ class HealthInsightsSyncSamples:
             display="US PELVIS COMPLETE",
         )
         procedure_code = models.CodeableConcept(coding=[procedure_coding])
-        ordered_procedure = models.OrderedProcedure(
-            description="US PELVIS COMPLETE", code=procedure_code
-        )
+        ordered_procedure = models.OrderedProcedure(description="US PELVIS COMPLETE", code=procedure_code)
         # Create encounter
         start = datetime.datetime(2021, 8, 28, 0, 0, 0, 0)
         end = datetime.datetime(2021, 8, 28, 0, 0, 0, 0)
@@ -65,29 +61,16 @@ class HealthInsightsSyncSamples:
         )
         # Create patient info
         birth_date = datetime.date(1959, 11, 11)
-        patient_info = models.PatientInfo(
-            sex=models.PatientInfoSex.FEMALE, birth_date=birth_date
-        )
+        patient_info = models.PatientInfo(sex=models.PatientInfoSex.FEMALE, birth_date=birth_date)
         # Create author
         author = models.DocumentAuthor(id="author2", full_name="authorName2")
-        
-        create_date_time = datetime.datetime(
-            2024, 
-            2, 
-            19, 
-            0, 
-            0, 
-            0,
-            0, 
-            tzinfo=datetime.timezone.utc
-            )
+
+        create_date_time = datetime.datetime(2024, 2, 19, 0, 0, 0, 0, tzinfo=datetime.timezone.utc)
         patient_document1 = models.PatientDocument(
             type=models.DocumentType.NOTE,
             clinical_type=models.ClinicalDocumentType.RADIOLOGY_REPORT,
             id="doc2",
-            content=models.DocumentContent(
-                source_type=models.DocumentContentSourceType.INLINE, value=doc_content1
-            ),
+            content=models.DocumentContent(source_type=models.DocumentContentSourceType.INLINE, value=doc_content1),
             created_date_time=create_date_time,
             specialty_type=models.SpecialtyType.RADIOLOGY,
             administrative_metadata=models.DocumentAdministrativeMetadata(
@@ -106,57 +89,36 @@ class HealthInsightsSyncSamples:
         )
 
         # Create a configuration
-        configuration = models.RadiologyInsightsModelConfiguration(
-            verbose=False, include_evidence=True, locale="en-US"
-        )
+        configuration = models.RadiologyInsightsModelConfiguration(verbose=False, include_evidence=True, locale="en-US")
 
         # Construct the request with the patient and configuration
-        radiology_insights_data = models.RadiologyInsightsData(
-            patients=[patient1], configuration=configuration
-        )
+        radiology_insights_data = models.RadiologyInsightsData(patients=[patient1], configuration=configuration)
 
         # Health Insights Radiology Insights
         try:
-            request_time = datetime.datetime(
-                2024, 
-                2, 
-                20, 
-                0, 
-                0, 
-                0,
-                0, 
-                tzinfo=datetime.timezone.utc
-                )
+            request_time = datetime.datetime(2024, 2, 20, 0, 0, 0, 0, tzinfo=datetime.timezone.utc)
             poller = radiology_insights_client.begin_infer_radiology_insights(
                 radiology_insights_data,
-                headers={
-                    "Repeatability-First-Sent": request_time.strftime(
-                        "%a, %d %b %Y %H:%M:%S GMT"
-                    )
-                },
+                headers={"Repeatability-First-Sent": request_time.strftime("%a, %d %b %Y %H:%M:%S GMT")},
             )
             radiology_insights_result = poller.result()
             self.display_critical_results(radiology_insights_result)
         except Exception as ex:
             print(str(ex))
             return
-    
-    
+
     def display_critical_results(self, radiology_insights_result):
         for patient_result in radiology_insights_result.patient_results:
             for ri_inference in patient_result.inferences:
-                if (
-                    ri_inference.kind
-                    == models.RadiologyInsightsInferenceType.CRITICAL_RESULT
-                ):
+                if ri_inference.kind == models.RadiologyInsightsInferenceType.CRITICAL_RESULT:
                     critical_result = ri_inference.result
-                    print(
-                        f"Critical Result Inference found: {critical_result.description}"
-                    )
-    
+                    print(f"Critical Result Inference found: {critical_result.description}")
+
+
 def main():
     sample = HealthInsightsSyncSamples()
     sample.radiology_insights_sync()
+
 
 if __name__ == "__main__":
     main()
