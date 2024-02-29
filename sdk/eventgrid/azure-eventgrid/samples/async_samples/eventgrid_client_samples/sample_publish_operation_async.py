@@ -27,13 +27,13 @@ async def run():
         # Publish a CloudEvent as dict
         try:
             cloud_event_dict = {"data": "hello", "source": "https://example.com", "type": "example"}
-            await clientpublish(topic_name=TOPIC_NAME, body=cloud_event_dict)
+            await client.publish(topic_name=TOPIC_NAME, body=cloud_event_dict)
         except HttpResponseError:
             raise
 
         # Publish a list of CloudEvents as dict
         try:
-            await clientpublish(topic_name=TOPIC_NAME, body=[cloud_event_dict, cloud_event_dict])
+            await client.publish(topic_name=TOPIC_NAME, body=[cloud_event_dict, cloud_event_dict])
         except HttpResponseError:
             raise
 
@@ -43,14 +43,14 @@ async def run():
             cloud_event = CloudEvent(
                 data="HI", source="https://example.com", type="example"
             )
-            await clientpublish(topic_name=TOPIC_NAME, body=cloud_event)
+            await client.publish(topic_name=TOPIC_NAME, body=cloud_event)
         except HttpResponseError:
             raise
 
         # Publish a list of CloudEvents
         try:
             list_of_cloud_events = [cloud_event, cloud_event]
-            await clientpublish(
+            await client.publish(
                 topic_name=TOPIC_NAME, body=list_of_cloud_events
             )
         except HttpResponseError:

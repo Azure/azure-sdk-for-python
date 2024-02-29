@@ -26,7 +26,7 @@ async def run():
         try:
             # Publish a CloudEvent
             cloud_event = CloudEvent(data="hello", source="https://example.com", type="example")
-            await clientpublish(topic_name=TOPIC_NAME, body=cloud_event)
+            await client.publish(topic_name=TOPIC_NAME, body=cloud_event)
 
             # Receive CloudEvents and parse out lock tokens
             receive_result = await client.receive_cloud_events(topic_name=TOPIC_NAME, event_subscription_name=EVENT_SUBSCRIPTION_NAME, max_events=10, max_wait_time=10)
