@@ -1,5 +1,12 @@
 # Release History
 
+## 17.3.0 (2024-03-18)
+
+### Features Added
+
+  - Model Pool has a new parameter upgrade_policy
+  - Model SupportedSku has a new parameter batch_support_end_of_life
+
 ## 17.2.0 (2023-12-18)
 
 ### Features Added
