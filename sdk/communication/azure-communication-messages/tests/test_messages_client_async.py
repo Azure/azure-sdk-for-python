@@ -162,8 +162,6 @@ class TestNotificationMessageClientForTextAsync(AsyncMessagesRecordedTestCase):
         try:
             async with message_client:
                 media_stream = await message_client.download_media(input_media_id)
-                with open('media.txt', 'wb') as file:
-                    file.write(media_stream)
         except:
             raised = True
             raise

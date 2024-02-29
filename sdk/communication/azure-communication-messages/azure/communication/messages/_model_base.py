@@ -560,7 +560,9 @@ class Model(_MyMutableMapping):
             return cls(data)
         discriminator = cls._get_discriminator(exist_discriminators)
         exist_discriminators.append(discriminator)
-        mapped_cls = cls.__mapping__.get(data.get(discriminator), cls)  # pyright: ignore # pylint: disable=no-member
+        mapped_cls = cls.__mapping__.get(
+            data.get(discriminator), cls
+        )  # pyright: ignore # pylint: disable=no-member
         if mapped_cls == cls:
             return cls(data)
         return mapped_cls._deserialize(data, exist_discriminators)  # pylint: disable=protected-access
@@ -722,8 +724,8 @@ def _get_deserialize_callable_from_annotation(  # pylint: disable=R0911, R0915, 
                     )
 
                 entry_deserializers = [
-                    _get_deserialize_callable_from_annotation(dt, module, rf) for dt in annotation.__args__
-                    # pyright: ignore
+                    _get_deserialize_callable_from_annotation(dt, module, rf)
+                        for dt in annotation.__args__  # pyright: ignore
                 ]
                 return functools.partial(_deserialize_multiple_sequence, entry_deserializers)
             deserializer = _get_deserialize_callable_from_annotation(
@@ -870,11 +872,13 @@ def rest_field(
     format: typing.Optional[str] = None,
     is_multipart_file_input: bool = False,
 ) -> typing.Any:
-    return _RestField(name=name, type=type,
-                    visibility=visibility,
-                    default=default,
-                    format=format, is_multipart_file_input=is_multipart_file_input)
-
+    return _RestField(
+        name=name,
+        type=type,
+        visibility=visibility,
+        default=default,
+        format=format,
+        is_multipart_file_input=is_multipart_file_input)
 
 def rest_discriminator(
     *,

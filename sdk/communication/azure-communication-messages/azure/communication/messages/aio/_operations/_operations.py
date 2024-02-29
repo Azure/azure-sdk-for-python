@@ -14,7 +14,11 @@ import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import (ClientAuthenticationError,
-HttpResponseError, ResourceExistsError, ResourceNotFoundError, ResourceNotModifiedError, map_error)
+                                    HttpResponseError,
+                                    ResourceExistsError,
+                                    ResourceNotFoundError,
+                                    ResourceNotModifiedError,
+                                    map_error)
 from azure.core.pipeline import PipelineResponse
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator import distributed_trace
@@ -24,7 +28,8 @@ from azure.core.utils import case_insensitive_dict
 from ... import models as _models
 from ..._model_base import SdkJSONEncoder, _deserialize
 from ..._operations._operations import (build_message_template_list_templates_request,
-     build_notification_messages_download_media_request, build_notification_messages_send_request)
+                                        build_notification_messages_download_media_request,
+                                        build_notification_messages_send_request)
 from .._vendor import MessageTemplateClientMixinABC, NotificationMessagesClientMixinABC
 
 if sys.version_info >= (3, 9):
@@ -341,7 +346,10 @@ class NotificationMessagesClientOperationsMixin(   # pylint: disable=name-too-lo
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError
         }
         error_map.update(kwargs.pop('error_map', {}) or {})
 
@@ -435,6 +443,7 @@ class NotificationMessagesClientOperationsMixin(   # pylint: disable=name-too-lo
             'cls', None
         )
 
+        
         _request = build_notification_messages_download_media_request(
             id=id,
             api_version=self._config.api_version,
@@ -462,11 +471,12 @@ class NotificationMessagesClientOperationsMixin(   # pylint: disable=name-too-lo
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        response_headers['x-ms-client-request-id']=self._deserialize('str',
-                                                                      response.headers.get('x-ms-client-request-id'))
+        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
 
-        await response.read()
-        deserialized = response.content
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = await response.read()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers) # type: ignore
@@ -474,7 +484,7 @@ class NotificationMessagesClientOperationsMixin(   # pylint: disable=name-too-lo
         return deserialized  # type: ignore
 
 
-class MessageTemplateClientOperationsMixin(
+class MessageTemplateClientOperationsMixin( 
     MessageTemplateClientMixinABC
 ):
 
@@ -524,11 +534,15 @@ class MessageTemplateClientOperationsMixin(
         )
 
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError
         }
         error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
+                
                 _request = build_message_template_list_templates_request(
                     channel_id=channel_id,
                     maxpagesize=maxpagesize,
