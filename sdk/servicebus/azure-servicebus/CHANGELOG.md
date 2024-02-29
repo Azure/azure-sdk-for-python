@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- Updated `max_wait_time` on the ServiceBusReceiver constructor to additionally configure the server timeout for Session-Enabled/Queues/Topics when NEXT_AVAILABLE_SESSION is set, allowing users to set a different timeout than the default 65 seconds when accepting a session.
+- Updated `max_wait_time` on the ServiceBusReceiver constructor allowing users to change the default server timeout of 65 seconds when accepting a session on a Session-Enabled/Queues/Topics if NEXT_AVAILABLE_SESSION is used.
 
 ### Other Changes
 
