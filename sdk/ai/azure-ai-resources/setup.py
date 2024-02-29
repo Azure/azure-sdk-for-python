@@ -72,7 +72,7 @@ setup(
         "opencensus-ext-logging<=0.1.1",
         "azure-mgmt-resource<23.0.0,>=22.0.0",
         "fsspec>=2023.3",
-        "openai>=0.27.8",
+        "openai>1",
         "tiktoken>=0.3,<1",
         "mmh3>4",
         "requests>=2.31.0",
