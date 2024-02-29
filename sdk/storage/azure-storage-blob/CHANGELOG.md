@@ -13,6 +13,7 @@ tokens to be used with multiple services. By default, the SAS token service scop
 Python 3.12.
 - Fixed an issue where authentication errors could raise `AttributeError` instead of `ClientAuthenticationError` when
 using async OAuth credentials.
+ - Fixed a typo in the initialization of `completion_time` for the `CopyProperties` model.
 
 ## 12.19.0 (2023-11-07)
 
