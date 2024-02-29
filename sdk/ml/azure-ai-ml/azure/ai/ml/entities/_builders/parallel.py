@@ -132,7 +132,8 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):  # pylint: disable=too-many-i
 
         if isinstance(component, FlowComponent):
             # make input definition fit actual inputs for flow component
-            with component._inputs._fit_inputs(inputs):  # pylint: disable=protected-access
+            # pylint: disable=protected-access
+            with component._inputs._fit_inputs(inputs):  # type: ignore[attr-defined]
                 BaseNode.__init__(
                     self,
                     type=NodeType.PARALLEL,

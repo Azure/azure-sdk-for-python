@@ -51,7 +51,19 @@ from .early_termination_policy import (
 )
 from .objective import Objective
 from .parameterized_sweep import ParameterizedSweep
-from .search_space import SweepDistribution
+from .search_space import (
+    Choice,
+    LogNormal,
+    LogUniform,
+    Normal,
+    QLogNormal,
+    QLogUniform,
+    QNormal,
+    QUniform,
+    Randint,
+    SweepDistribution,
+    Uniform,
+)
 
 module_logger = logging.getLogger(__name__)
 
@@ -141,9 +153,16 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
         compute: Optional[str] = None,
         limits: Optional[SweepJobLimits] = None,
         sampling_algorithm: Optional[Union[str, SamplingAlgorithm]] = None,
-        search_space: Optional[Dict] = None,
+        search_space: Optional[
+            Dict[
+                str,
+                Union[
+                    Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+                ],
+            ]
+        ] = None,
         objective: Optional[Objective] = None,
-        trial: Optional[Union[CommandJob, CommandComponent, ParameterizedCommand]] = None,
+        trial: Optional[Union[CommandJob, CommandComponent]] = None,
         early_termination: Optional[
             Union[EarlyTerminationPolicy, BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy]
         ] = None,
@@ -267,6 +286,10 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
         # Compute also appears in both layers of the yaml, but only one of the REST.
         # This should be a required field in one place, but cannot be if its optional in two
 
+        _search_space = {}
+        for param, dist in properties.search_space.items():
+            _search_space[param] = SweepDistribution._from_rest_object(dist)
+
         return SweepJob(
             name=obj.name,
             id=obj.id,
@@ -278,12 +301,10 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
             services=properties.services,
             status=properties.status,
             creation_context=SystemData._from_rest_object(obj.system_data) if obj.system_data else None,
-            trial=trial,
+            trial=trial,  # type: ignore[arg-type]
             compute=properties.compute_id,
             sampling_algorithm=sampling_algorithm,
-            search_space={
-                param: SweepDistribution._from_rest_object(dist) for (param, dist) in properties.search_space.items()
-            },
+            search_space=_search_space,  # type: ignore[arg-type]
             limits=SweepJobLimits._from_rest_object(properties.limits),
             early_termination=early_termination,
             objective=properties.objective,

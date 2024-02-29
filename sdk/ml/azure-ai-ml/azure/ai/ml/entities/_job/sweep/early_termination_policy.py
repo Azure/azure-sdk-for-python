@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from abc import ABC
-from typing import Any, Optional, cast
+from typing import Any, Optional, Union, cast
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import BanditPolicy as RestBanditPolicy
 from azure.ai.ml._restclient.v2023_04_01_preview.models import EarlyTerminationPolicy as RestEarlyTerminationPolicy
@@ -77,8 +77,8 @@ class BanditPolicy(EarlyTerminationPolicy):
         *,
         delay_evaluation: int = 0,
         evaluation_interval: int = 0,
-        slack_amount: Optional[float] = 0,
-        slack_factor: Optional[float] = 0,
+        slack_amount: Union[float, None] = 0,
+        slack_factor: Union[float, None] = 0,
     ) -> None:
         super().__init__(delay_evaluation=delay_evaluation, evaluation_interval=evaluation_interval)
         self.type = EarlyTerminationPolicyType.BANDIT.lower()
