@@ -35,49 +35,88 @@ def main():
         # monitor page updates
         print("**********************monitor page before updates*****************************")
         
-        continuation_token = None
-        index = 0
-        request = HttpRequest(
-            method="GET",
-            url="/kv?key=sample_key_%2A&label=sample_label_%2A&api-version=2023-10-01",
-            headers={"If-None-Match": page_etags[index], "Accept": "application/vnd.microsoft.appconfig.kvset+json, application/problem+json"}
-        )
-        first_page_response = client.send_request(request)
-        if first_page_response.status_code == 304:
-            print("No change found.")
-        if first_page_response.status_code == 200:
-            print("This page has changes.")
-            items = json.loads(bytearray(response.content))["items"]
-            for item in items:
-                print(f"Key: {item['key']}, Label: {item['label']}")
+        # continuation_token = None
+        # index = 0
+        # request = HttpRequest(
+        #     method="GET",
+        #     url="/kv?key=sample_key_%2A&label=sample_label_%2A&api-version=2023-10-01",
+        #     headers={"If-None-Match": page_etags[index], "Accept": "application/vnd.microsoft.appconfig.kvset+json, application/problem+json"}
+        # )
+        # first_page_response = client.send_request(request)
+        # if first_page_response.status_code == 304:
+        #     print("No change found.")
+        # if first_page_response.status_code == 200:
+        #     print("This page has changes.")
+        #     items = json.loads(bytearray(response.content))["items"]
+        #     for item in items:
+        #         print(f"Key: {item['key']}, Label: {item['label']}")
         
-        link = first_page_response.headers.get('Link', None)
-        continuation_token = link[1:link.index(">")] if link else None
-        index += 1
-        while continuation_token:
-            request = HttpRequest(
-                method="GET",
-                url=f"{continuation_token}",
-                headers={"If-None-Match": page_etags[index]}
-            )
-            index += 1
-            response = client.send_request(request)
-            if response.status_code == 304:
-                print("No change found.")
-            if response.status_code == 200:
-                print("This page has changes.")
-                items = json.loads(bytearray(response.content))["items"]
-                for item in items:
-                    print(f"Key: {item['key']}, Label: {item['label']}")
-            link = response.headers.get('Link', None)
+        # link = first_page_response.headers.get('Link', None)
+        # continuation_token = link[1:link.index(">")] if link else None
+        # index += 1
+        # while continuation_token:
+        #     request = HttpRequest(
+        #         method="GET",
+        #         url=f"{continuation_token}",
+        #         headers={"If-None-Match": page_etags[index]}
+        #     )
+        #     index += 1
+        #     response = client.send_request(request)
+        #     if response.status_code == 304:
+        #         print("No change found.")
+        #     if response.status_code == 200:
+        #         print("This page has changes.")
+        #         items = json.loads(bytearray(response.content))["items"]
+        #         for item in items:
+        #             print(f"Key: {item['key']}, Label: {item['label']}")
+        #     link = response.headers.get('Link', None)
+        #     continuation_token = link[1:link.index(">")] if link else None
+        
+        # solution 2: pass one page etag per API call
+        index = 0
+        try:
+            first_page_response = client.list_configuration_settings(
+                key_filter="sample_key_*",
+                label_filter="sample_label_*",
+                page_etag=page_etags[index] if index < len(page_etags) else None,
+            ).by_page()
+            next(first_page_response)
+            print("No change found.")
+            continuation_token = first_page_response.continuation_token
+            for item in first_page_response._current_page:
+                print(f"Key: {item.key}, Label: {item.label}")
+        except ResourceNotModifiedError as e:
+            print("This page has changes.")
+            link = e.response.headers.get('Link', None)
             continuation_token = link[1:link.index(">")] if link else None
+            
+        index += 1
+        
+        while continuation_token:
+            try:
+                response = client.list_configuration_settings(
+                    key_filter="sample_key_*",
+                    label_filter="sample_label_*",
+                    page_etag=page_etags[index] if index < len(page_etags) else None,
+                ).by_page(continuation_token=continuation_token)
+                next(response)
+                print("No change found.")
+                continuation_token = response.continuation_token
+                for item in response._current_page:
+                    print(f"Key: {item.key}, Label: {item.label}")
+            except ResourceNotModifiedError as e:
+                print("This page has changes.")
+                link = e.response.headers.get('Link', None)
+                continuation_token = link[1:link.index(">")] if link else None
+                
+            index += 1
         
         # add a configuration setting
         print("**********************add a configuration setting*****************************")
         client.add_configuration_setting(
             ConfigurationSetting(
                 key="sample_key_201",
-                label="sample_label_202",
+                label="sample_label_225",
             )
         )
         
@@ -91,42 +130,83 @@ def main():
         
         # monitor page updates
         print("**********************monitor page after updates*****************************")
-        continuation_token = None
-        index = 0
-        request = HttpRequest(
-            method="GET",
-            url="/kv?key=sample_key_%2A&label=sample_label_%2A&api-version=2023-10-01",
-            headers={"If-None-Match": page_etags[index], "Accept": "application/vnd.microsoft.appconfig.kvset+json, application/problem+json"}
-        )
-        first_page_response = client.send_request(request)
-        if first_page_response.status_code == 304:
-            print("No change found.")
-        if first_page_response.status_code == 200:
-            print("This page has changes.")
-            items = json.loads(bytearray(first_page_response.content))["items"]
-            for item in items:
-                print(f"Key: {item['key']}, Label: {item['label']}")
+        # solution 1: send_request
+        # continuation_token = None
+        # index = 0
+        # request = HttpRequest(
+        #     method="GET",
+        #     url="/kv?key=sample_key_%2A&label=sample_label_%2A&api-version=2023-10-01",
+        #     headers={"If-None-Match": page_etags[index], "Accept": "application/vnd.microsoft.appconfig.kvset+json, application/problem+json"}
+        # )
+        # first_page_response = client.send_request(request)
+        # if first_page_response.status_code == 304:
+        #     print("No change found.")
+        # if first_page_response.status_code == 200:
+        #     print("This page has changes.")
+        #     items = json.loads(bytearray(first_page_response.content))["items"]
+        #     for item in items:
+        #         print(f"Key: {item['key']}, Label: {item['label']}")
         
-        link = first_page_response.headers.get('Link', None)
-        continuation_token = link[1:link.index(">")] if link else None
-        index += 1
-        while continuation_token:
-            request = HttpRequest(
-                method="GET",
-                url=f"{continuation_token}",
-                headers={"If-None-Match": page_etags[index]}
-            )
-            index += 1
-            response = client.send_request(request)
-            if response.status_code == 304:
-                print("No change found.")
-            if response.status_code == 200:
-                print("This page has changes.")
-                items = json.loads(bytearray(response.content))["items"]
-                for item in items:
-                    print(f"Key: {item['key']}, Label: {item['label']}")
-            link = response.headers.get('Link', None)
+        # link = first_page_response.headers.get('Link', None)
+        # continuation_token = link[1:link.index(">")] if link else None
+        # index += 1
+        # while continuation_token:
+        #     request = HttpRequest(
+        #         method="GET",
+        #         url=f"{continuation_token}",
+        #         headers={"If-None-Match": page_etags[index]}
+        #     )
+        #     index += 1
+        #     response = client.send_request(request)
+        #     if response.status_code == 304:
+        #         print("No change found.")
+        #     if response.status_code == 200:
+        #         print("This page has changes.")
+        #         items = json.loads(bytearray(response.content))["items"]
+        #         for item in items:
+        #             print(f"Key: {item['key']}, Label: {item['label']}")
+        #     link = response.headers.get('Link', None)
+        #     continuation_token = link[1:link.index(">")] if link else None
+        
+        # solution 2: pass one page etag per API call
+        index = 0
+        try:
+            first_page_response = client.list_configuration_settings(
+                key_filter="sample_key_*",
+                label_filter="sample_label_*",
+                page_etag=page_etags[index] if index < len(page_etags) else None,
+            ).by_page()
+            next(first_page_response)
+            print("No change found.")
+            continuation_token = first_page_response.continuation_token
+            for item in first_page_response._current_page:
+                print(f"Key: {item.key}, Label: {item.label}")
+        except ResourceNotModifiedError as e:
+            print("This page has changes.")
+            link = e.response.headers.get('Link', None)
             continuation_token = link[1:link.index(">")] if link else None
+            
+        index += 1
+        
+        while continuation_token:
+            try:
+                response = client.list_configuration_settings(
+                    key_filter="sample_key_*",
+                    label_filter="sample_label_*",
+                    page_etag=page_etags[index] if index < len(page_etags) else None,
+                ).by_page(continuation_token=continuation_token)
+                next(response)
+                print("No change found.")
+                continuation_token = response.continuation_token
+                for item in response._current_page:
+                    print(f"Key: {item.key}, Label: {item.label}")
+            except ResourceNotModifiedError as e:
+                print("This page has changes.")
+                link = e.response.headers.get('Link', None)
+                continuation_token = link[1:link.index(">")] if link else None
+                
+            index += 1
+            
 
         # clean up
         print("*************************clean up**************************")
