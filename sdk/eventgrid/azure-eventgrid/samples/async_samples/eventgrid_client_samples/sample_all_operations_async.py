@@ -36,7 +36,7 @@ async def run():
     async with client:
         # Publish a CloudEvent
         try:
-            await client.publish_cloud_events(
+            await clientpublish(
                 topic_name=TOPIC_NAME, body=cloud_event_reject
             )
         except HttpResponseError:
@@ -45,7 +45,7 @@ async def run():
         # Publish a list of CloudEvents
         try:
             list_of_cloud_events = [cloud_event_release, cloud_event_ack]
-            await client.publish_cloud_events(
+            await clientpublish(
                 topic_name=TOPIC_NAME, body=list_of_cloud_events
             )
         except HttpResponseError:

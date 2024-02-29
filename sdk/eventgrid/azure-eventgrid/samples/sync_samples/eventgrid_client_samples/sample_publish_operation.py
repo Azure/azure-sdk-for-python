@@ -22,26 +22,26 @@ client = EventGridClient(EVENTGRID_ENDPOINT, AzureKeyCredential(EVENTGRID_KEY))
 # Publish a CloudEvent as dict
 try:
     cloud_event_dict = {"data": "hello", "source": "https://example.com", "type": "example"}
-    client.publish_cloud_events(topic_name=TOPIC_NAME, body=cloud_event_dict)
+    clientpublish(topic_name=TOPIC_NAME, body=cloud_event_dict)
 except HttpResponseError:
     raise
 
 # Publish a list of CloudEvents as dict
 try:
-    client.publish_cloud_events(topic_name=TOPIC_NAME, body=[cloud_event_dict, cloud_event_dict])
+    clientpublish(topic_name=TOPIC_NAME, body=[cloud_event_dict, cloud_event_dict])
 except HttpResponseError:
     raise
 
 # Publish a CloudEvent
 try:
     cloud_event = CloudEvent(data="hello", source="https://example.com", type="example")
-    client.publish_cloud_events(topic_name=TOPIC_NAME, body=cloud_event)
+    clientpublish(topic_name=TOPIC_NAME, body=cloud_event)
 except HttpResponseError:
     raise
 
 # Publish a list of CloudEvents
 try:
     list_of_cloud_events = [cloud_event, cloud_event]
-    client.publish_cloud_events(topic_name=TOPIC_NAME, body=list_of_cloud_events)
+    clientpublish(topic_name=TOPIC_NAME, body=list_of_cloud_events)
 except HttpResponseError:
     raise
