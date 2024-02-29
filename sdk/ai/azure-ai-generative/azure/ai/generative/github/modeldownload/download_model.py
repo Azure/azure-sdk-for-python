@@ -57,9 +57,9 @@ def download_blob_to_local(blob_sas_url, local_folder):
         print(f"Error copying blob to local folder: {e}")
         return None
 
-def download_model(modelAssetId, gitHubAuthToken, localDestinationPath, env = 'test'):
+def download_model(model_asset_id, github_auth_token, local_destination_path, enviroment = 'test'):
     try:
-        model_entity, blob_sas_uri = get_registry_model_details_for_non_azure_accounts(modelAssetId, gitHubAuthToken, env)
+        model_entity, blob_sas_uri = get_registry_model_details_for_non_azure_accounts(model_asset_id, github_auth_token, enviroment)
         if model_entity and blob_sas_uri:
             print("Model Entity:", model_entity)
             print()
@@ -68,7 +68,7 @@ def download_model(modelAssetId, gitHubAuthToken, localDestinationPath, env = 't
         else:
             print("Failed to fetch model details.")            
         
-        copied_file_path = download_blob_to_local(blob_sas_uri, localDestinationPath)
+        copied_file_path = download_blob_to_local(blob_sas_uri, local_destination_path)
         if copied_file_path:
             print(f"The blob has been downloaded to folder: {copied_file_path}")
         else:
@@ -80,18 +80,18 @@ def download_model(modelAssetId, gitHubAuthToken, localDestinationPath, env = 't
 # Example usage
 if __name__ == "__main__":
     # sample modelAssetId for test
-    # modelAssetId = "azureml://registries/testFeed/models/testModelb67845316abe49839cec18f3ab61fd8f/versions/alphanumericVersion1"
-    modelAssetId = "your model assetid"
+    # modelAssetId = "azureml://registries/testFeed/models/testModel67845316abe49839cec18f3ab61fd8f/versions/alphanumericVersion1"
+    model_asset_id = "your model asset id"
     
     # github token
-    gitHubAuthToken = "you git hub token"
+    github_auth_token = "you git hub token"
     
     # sample local folder
     #localDestinationPath = "C:\\PythonVirtualEnv\\venv1\\BlobDownLoad"
-    localDestinationPath = "your local download path"
+    local_destination_path = "your local download path"
     
-    # sample env. eithe 'test' or 'prod'
-    env = 'test'
+    # sample enviroment. either 'test' or 'prod'
+    enviroment = 'test'
     
     # call download_model
-    download_model(modelAssetId, gitHubAuthToken, localDestinationPath, env)
+    download_model(model_asset_id, github_auth_token, local_destination_path, enviroment)
