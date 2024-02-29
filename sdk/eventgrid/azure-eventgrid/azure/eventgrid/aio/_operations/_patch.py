@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.rest import HttpRequest, AsyncHttpResponse
 from azure.core.utils import case_insensitive_dict
 from ...models._patch import ReceiveResult, ReceiveDetails
-from ..._operations._patch import _to_http_request
+from ..._operations._patch import _to_http_request, use_standard_only
 from ._operations import EventGridClientOperationsMixin as OperationsMixin
 from ... import models as _models
 from ..._model_base import _deserialize
@@ -29,7 +29,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 class EventGridClientOperationsMixin(OperationsMixin):
 
     @overload
-    async def publish_cloud_events(
+    async def publish(
         self,
         topic_name: str,
         body: List[CloudEvent],
@@ -61,7 +61,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         """
 
     @overload
-    async def publish_cloud_events(
+    async def publish(
         self,
         topic_name: str,
         body: CloudEvent,
@@ -93,7 +93,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         """
 
     @overload
-    async def publish_cloud_events(
+    async def publish(
         self,
         topic_name: str,
         body: Dict[str, Any],
@@ -125,7 +125,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         """
 
     @overload
-    async def publish_cloud_events(
+    async def publish(
         self,
         topic_name: str,
         body: List[Dict[str, Any]],
@@ -157,7 +157,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         """
 
     @distributed_trace_async
-    async def publish_cloud_events(
+    async def publish(
         self,
         topic_name: str,
         body: Union[List[CloudEvent], CloudEvent, List[Dict[str, Any]], Dict[str, Any]],
@@ -186,31 +186,34 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        
-        # Check that the body is a CloudEvent or list of CloudEvents even if dict
-        if isinstance(body, dict) or (isinstance(body, list) and isinstance(body[0], dict)):
-            try:
-                if isinstance(body, list):
-                    body = [CloudEvent.from_dict(event) for event in body]
-                else:
-                    body = CloudEvent.from_dict(body)
-            except AttributeError:
+        if self._config.level == "Basic":
+            self._client.send(body, **kwargs)
+        else:
+            # Check that the body is a CloudEvent or list of CloudEvents even if dict
+            if isinstance(body, dict) or (isinstance(body, list) and isinstance(body[0], dict)):
+                try:
+                    if isinstance(body, list):
+                        body = [CloudEvent.from_dict(event) for event in body]
+                    else:
+                        body = CloudEvent.from_dict(body)
+                except AttributeError:
+                    raise TypeError("Incorrect type for body. Expected CloudEvent,"
+                                    " list of CloudEvents, dict, or list of dicts."
+                                    " If dict passed, must follow the CloudEvent format.")
+
+
+            if isinstance(body, CloudEvent):
+                kwargs["content_type"] = "application/cloudevents+json; charset=utf-8"
+                await self._publish(topic_name, body, self._config.api_version, binary_mode, **kwargs)
+            elif isinstance(body, list):
+                kwargs["content_type"] = "application/cloudevents-batch+json; charset=utf-8"
+                await self._publish(topic_name, body, self._config.api_version, binary_mode, **kwargs)
+            else:
                 raise TypeError("Incorrect type for body. Expected CloudEvent,"
                                 " list of CloudEvents, dict, or list of dicts."
                                 " If dict passed, must follow the CloudEvent format.")
 
-
-        if isinstance(body, CloudEvent):
-            kwargs["content_type"] = "application/cloudevents+json; charset=utf-8"
-            await self._publish(topic_name, body, self._config.api_version, binary_mode, **kwargs)
-        elif isinstance(body, list):
-            kwargs["content_type"] = "application/cloudevents-batch+json; charset=utf-8"
-            await self._publish(topic_name, body, self._config.api_version, binary_mode, **kwargs)
-        else:
-            raise TypeError("Incorrect type for body. Expected CloudEvent,"
-                            " list of CloudEvents, dict, or list of dicts."
-                            " If dict passed, must follow the CloudEvent format.")
-
+    @use_standard_only
     @distributed_trace_async
     async def receive_cloud_events(
         self,
@@ -262,6 +265,74 @@ class EventGridClientOperationsMixin(OperationsMixin):
             )
         receive_result_deserialized = ReceiveResult(value=detail_items)
         return receive_result_deserialized
+
+
+    @use_standard_only
+    @distributed_trace_async
+    async def acknowledge_cloud_events(
+        self,
+        topic_name: str,
+        event_subscription_name: str,
+        acknowledge_options: Union[_models.AcknowledgeOptions, JSON, IO],
+        **kwargs: Any
+    ) -> _models.AcknowledgeResult:
+        return await self._acknowledge_cloud_events(
+            topic_name,
+            event_subscription_name,
+            acknowledge_options,
+            **kwargs
+        )
+    
+    @use_standard_only
+    @distributed_trace_async
+    async def release_cloud_events(
+        self,
+        topic_name: str,
+        event_subscription_name: str,
+        release_options: Union[_models.ReleaseOptions, JSON, IO],
+        *,
+        release_delay_in_seconds: Optional[Union[int, _models.ReleaseDelay]] = None,
+        **kwargs: Any
+    ) -> _models.ReleaseResult:
+        return await self._release_cloud_events(
+            topic_name,
+            event_subscription_name,
+            release_options,
+            release_delay_in_seconds=release_delay_in_seconds,
+            **kwargs
+        )
+
+    @use_standard_only
+    @distributed_trace_async
+    async def reject_cloud_events(
+        self,
+        topic_name: str,
+        event_subscription_name: str,
+        reject_options: Union[_models.RejectOptions, JSON, IO],
+        **kwargs: Any
+    ) -> _models.RejectResult:
+        return await self._reject_cloud_events(
+            topic_name,
+            event_subscription_name,
+            reject_options,
+            **kwargs
+        )
+    
+    @use_standard_only
+    @distributed_trace_async
+    async def renew_cloud_event_locks(
+        self,
+        topic_name: str,
+        event_subscription_name: str,
+        renew_lock_options: Union[_models.RenewLockOptions, JSON, IO],
+        **kwargs: Any
+    ) -> _models.RenewCloudEventLocksResult:
+        return await self._renew_cloud_event_locks(
+            topic_name,
+            event_subscription_name,
+            renew_lock_options,
+            **kwargs
+        )
 
     async def _publish(self, topic_name: str, event: Any, api_version, binary_mode, **kwargs: Any) -> None:
 
