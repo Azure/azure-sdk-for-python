@@ -1,6 +1,6 @@
 # Release History
 
-## 17.3.0 (2024-03-18)
+## 17.3.0 (2024-03-19)
 
 ### Features Added
 
