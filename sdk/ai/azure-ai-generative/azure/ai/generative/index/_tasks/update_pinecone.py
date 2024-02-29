@@ -138,7 +138,7 @@ def create_index_from_raw_embeddings(
         if not isinstance(connection_credential, AzureKeyCredential):
             raise ValueError(
                 "Expected credential to Pinecone index to be an AzureKeyCredential, "
-                + f"instead got: {type(connection_credential)}"
+                f"instead got: {type(connection_credential)}"
             )
 
         create_pinecone_index_sdk(pinecone_config, connection_credential.key, embeddings=emb)

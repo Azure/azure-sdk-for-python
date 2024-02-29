@@ -580,10 +580,12 @@ def main(_args, _logger, activity_logger):  # pylint: disable=too-many-locals
                 "error"
             ] = f"{e.__class__.__name__}: Floats quota has been exceeded for this service."
         elif "Cannot find nested property" in exception_str:
-            error_msg_1 = f'The vector index provided "{acs_config["index_name"]}" has a different schema '
-            error_msg_2 = "than outlined in this components description. "
-            error_msg_3 = "This can happen if a different embedding model was used previously when updating this index."
-            _logger.error(error_msg_1 + error_msg_2 + error_msg_3)
+            error_msg = (
+                f'The vector index provided "{acs_config["index_name"]}" has a different schema '
+                "than outlined in this components description. "
+                "This can happen if a different embedding model was used previously when updating this index."
+            )
+            _logger.error(error_msg)
             activity_logger.activity_info["error_classification"] = "UserError"
             activity_logger.activity_info["error"] = f"{e.__class__.__name__}: Cannot find nested property"
         elif "Failed to upload" in exception_str:
