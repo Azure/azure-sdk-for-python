@@ -4,6 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 import binascii
+import functools
 from datetime import datetime
 from typing import Any, Dict, List, Mapping, Optional, Union, cast, overload
 from typing_extensions import Literal
@@ -19,12 +20,13 @@ from azure.core.exceptions import (
     ResourceModifiedError,
     ResourceNotModifiedError,
 )
+from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.utils import CaseInsensitiveDict
 from ._azure_appconfiguration_error import ResourceReadOnlyError
 from ._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
 from ._generated import AzureAppConfiguration
 from ._generated.models import SnapshotUpdateParameters, SnapshotStatus
-from ._models import ConfigurationSetting, ConfigurationSettingsFilter, ConfigurationSnapshot
+from ._models import ConfigurationSetting, ConfigurationSettingsFilter, ConfigurationSnapshot, ConfigurationSettingPropertiesPaged
 from ._utils import (
     prep_if_match,
     prep_if_none_match,
@@ -109,23 +111,39 @@ class AzureAppConfigurationClient:
             id_credential=id_credential,
             **kwargs,
         )
+    
+    @distributed_trace
+    def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs) -> HttpResponse:
+        """Runs a network request using the client's existing pipeline.
+
+        The request URL can be relative to the vault URL. The service API version used for the request is the same as
+        the client's unless otherwise specified. This method does not raise if the response is an error; to raise an
+        exception, call `raise_for_status()` on the returned response object. For more information about how to send
+        custom requests with this method, see https://aka.ms/azsdk/dpcodegen/python/send_request.
+
+        :param request: The network request you want to make.
+        :type request: ~azure.core.rest.HttpRequest
+
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
+
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.rest.HttpResponse
+        """
+        return self._impl._send_request(request, stream=stream, **kwargs)
 
     @overload
     def list_configuration_settings(
         self,
         *,
-        page_etags: Optional[List[str]] = None,
         key_filter: Optional[str] = None,
         label_filter: Optional[str] = None,
         accept_datetime: Optional[Union[datetime, str]] = None,
         fields: Optional[List[str]] = None,
         **kwargs: Any,
-    ) -> Union[ItemPaged[ConfigurationSetting], List[Optional[ConfigurationSetting]]]:
+    ) -> ItemPaged[ConfigurationSetting]:
         """List the configuration settings stored in the configuration service, optionally filtered by
         key, label and accept_datetime.
 
-        :keyword page_etags: the page etags to compare with the targeted resource's etag.
-        :paramtype page_etags: list[str] or None
         :keyword key_filter: filter results based on their keys. '*' can be
             used as wildcard in the beginning or end of the filter
         :paramtype key_filter: str or None
@@ -177,7 +195,7 @@ class AzureAppConfigurationClient:
     @distributed_trace
     def list_configuration_settings(
         self, *args, **kwargs
-    ) -> Union[ItemPaged[ConfigurationSetting], List[Optional[ItemPaged[ConfigurationSetting]]]]:
+    ) -> ItemPaged[ConfigurationSetting]:
         accept_datetime = kwargs.pop("accept_datetime", None)
         if isinstance(accept_datetime, datetime):
             accept_datetime = str(accept_datetime)
@@ -185,7 +203,6 @@ class AzureAppConfigurationClient:
         if select:
             select = ["locked" if x == "read_only" else x for x in select]
         snapshot_name = kwargs.pop("snapshot_name", None)
-        page_etags = kwargs.pop("page_etags", None)
 
         try:
             if snapshot_name is not None:
@@ -200,59 +217,24 @@ class AzureAppConfigurationClient:
             key_filter, kwargs = get_key_filter(*args, **kwargs)
             label_filter, kwargs = get_label_filter(*args, **kwargs)
             
-            if page_etags is None:
-                return self._impl.get_key_values(  # type: ignore
-                    key=key_filter,
-                    label=label_filter,
-                    accept_datetime=accept_datetime,
-                    select=select,
-                    cls=kwargs.pop("cls", lambda objs: [ConfigurationSetting._from_generated(x) for x in objs]),
-                    **kwargs,
-                )
-                                    
-            result = []
-            continuation_token = None
-            index = 0
-            try:
-                response = self._impl.get_key_values(  # type: ignore
-                    key=key_filter,
-                    label=label_filter,
-                    accept_datetime=accept_datetime,
-                    select=select,
-                    if_none_match=page_etags[index],
-                    cls=kwargs.pop("cls", lambda objs: [ConfigurationSetting._from_generated(x) for x in objs]),
-                    **kwargs,
-                ).by_page()
-                response.next()
-                result.append(response._current_page)
-                continuation_token = response.continuation_token
-            except ResourceNotModifiedError as e:
-                result.append(None)
-                link = e.response.headers.get('Link', None)
-                continuation_token = link[1:link.index(">")] if link else None
-            index += 1
-            
-            while continuation_token:
-                try:
-                    response = self._impl.get_key_values(  # type: ignore
-                        key=key_filter,
-                        label=label_filter,
-                        accept_datetime=accept_datetime,
-                        select=select,
-                        if_none_match=page_etags[index] if index < len(page_etags) else None,
-                        cls=kwargs.pop("cls", lambda objs: [ConfigurationSetting._from_generated(x) for x in objs]),
-                        **kwargs,
-                    ).by_page(continuation_token = continuation_token)
-                    response.next()
-                    result.append(response._current_page)
-                    continuation_token = response.continuation_token
-                except ResourceNotModifiedError as e:
-                    result.append(None)
-                    link = e.response.headers.get('Link', None)
-                    continuation_token = link[1:link.index(">")] if link else None
-                index += 1
-                
-            return result
+            # command = functools.partial(self._impl.get_key_values, **kwargs)
+            # return ItemPaged(
+            #     command,
+            #     key=key_filter,
+            #     label=label_filter,
+            #     accept_datetime=accept_datetime,
+            #     select=select,
+            #     cls=kwargs.pop("cls", lambda objs: [ConfigurationSetting._from_generated(x) for x in objs]),
+            #     page_iterator_class=ConfigurationSettingPropertiesPaged,
+            # )
+            return self._impl.get_key_values(  # type: ignore
+                key=key_filter,
+                label=label_filter,
+                accept_datetime=accept_datetime,
+                select=select,
+                cls=kwargs.pop("cls", lambda objs: [ConfigurationSetting._from_generated(x) for x in objs]),
+                **kwargs,
+            )
         except binascii.Error as exc:
             raise binascii.Error("Connection string secret has incorrect padding") from exc
     

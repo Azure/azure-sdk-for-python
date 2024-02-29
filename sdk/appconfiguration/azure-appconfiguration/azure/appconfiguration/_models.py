@@ -4,10 +4,11 @@
 # ------------------------------------
 import json
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Union, cast
+from typing import Any, Dict, List, Optional, Union, cast, Callable
 from typing_extensions import Literal
 
 from azure.core.rest import HttpResponse
+from azure.core.paging import PageIterator
 from ._generated._serialization import Model
 from ._generated.models import (
     KeyValue,
@@ -535,3 +536,49 @@ class ConfigurationSnapshot:  # pylint: disable=too-many-instance-attributes
             retention_period=self.retention_period,
             tags=self.tags,
         )
+
+
+class ConfigurationSettingPropertiesPaged(PageIterator):
+    """An iterable of ConfigurationSetting properties."""
+
+    page_etag: str
+    """The etag of current page."""
+    continuation_token: Optional[str]
+    """The continuation token needed by get_next()."""
+
+    def __init__(self, command: Callable, **kwargs: Any) -> None:
+        super(ConfigurationSettingPropertiesPaged, self).__init__(
+            self._get_next_cb,
+            self._extract_data_cb,
+            continuation_token=kwargs.get("continuation_token"),
+        )
+        self._command = command
+        self._key = kwargs.get("key_filter")
+        self._label = kwargs.get("label_filter")
+        self._accept_datetime = kwargs.get("accept_datetime")
+        self._select = kwargs.get("select")
+        self._cls = kwargs.get("cls")
+        self._response = None
+
+    def _get_next_cb(self, continuation_token, **kwargs):  # pylint: disable=inconsistent-return-statements
+        if continuation_token is None:
+            return self._command
+        response =  self._command(
+            key=self._key,
+            label=self._label,
+            accept_datetime=self._accept_datetime,
+            select=self._select,
+            cls=self._cls,
+        )
+        self._response = response
+        self.page_etag = response.http_response.headers['Etag']
+        return response
+
+    def _extract_data_cb(self, pipeline_response):
+        # convert result
+        # return pipeline_response
+        deserialized = AzureAppConfigurationMixinABC._deserialize("KeyValueListResult", pipeline_response)
+        list_of_elem = deserialized.items
+        if self.cls:
+            list_of_elem = cls(list_of_elem)  # type: ignore
+        return deserialized.next_link or None, iter(list_of_elem)
