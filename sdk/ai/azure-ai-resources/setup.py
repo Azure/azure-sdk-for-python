@@ -77,8 +77,7 @@ setup(
         "mmh3>4",
         "requests>=2.31.0",
         "azure-search-documents==11.4.0b11",
-        "numpy>=1.21.0",
-        "tqdm<5.0.0"
+        "numpy>=1.21.0"
     ],
     project_urls={
         "Bug Reports": "https://github.com/Azure/azure-sdk-for-python/issues",
