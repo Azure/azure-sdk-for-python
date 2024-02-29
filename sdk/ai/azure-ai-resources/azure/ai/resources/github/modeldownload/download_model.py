@@ -57,9 +57,9 @@ def download_blob_to_local(blob_sas_url, local_folder):
         print(f"Error copying blob to local folder: {e}")
         return None
 
-def download_model(model_asset_id, github_auth_token, local_destination_path, enviroment = 'test'):
+def download_model(model_asset_id, github_auth_token, local_destination_path, environment = 'test'):
     try:
-        model_entity, blob_sas_uri = get_registry_model_details_for_non_azure_accounts(model_asset_id, github_auth_token, enviroment)
+        model_entity, blob_sas_uri = get_registry_model_details_for_non_azure_accounts(model_asset_id, github_auth_token, environment)
         if model_entity and blob_sas_uri:
             print(f"Model Entity: {model_entity} \n")
             print(f"Blob SAS URI: {blob_sas_uri} \n")
@@ -88,8 +88,8 @@ if __name__ == "__main__":
     #localDestinationPath = "C:\\PythonVirtualEnv\\venv1\\BlobDownLoad"
     local_destination_path = "your local download path"
     
-    # sample enviroment. either 'test' or 'prod'
-    enviroment = 'test'
+    # sample environment. either 'test' or 'prod'
+    environment = 'test'
     
     # call download_model
-    download_model(model_asset_id, github_auth_token, local_destination_path, enviroment)
+    download_model(model_asset_id, github_auth_token, local_destination_path, environment)
