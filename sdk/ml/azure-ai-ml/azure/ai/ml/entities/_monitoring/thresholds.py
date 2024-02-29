@@ -108,9 +108,6 @@ class NumericalDriftMetrics(RestTranslatableMixin):
     def defaults(cls) -> "NumericalDriftMetrics":
         return cls._get_default_thresholds()
 
-    def get_name_and_threshold(self) -> Tuple:
-        return self._find_name_and_threshold()
-
 
 class CategoricalDriftMetrics(RestTranslatableMixin):
     """Categorical Drift Metrics
@@ -204,7 +201,7 @@ class DataDriftMetricThreshold(MetricThreshold):
     def _to_rest_object(self) -> DataDriftMetricThresholdBase:
         thresholds = []
         if self.numerical:
-            num_metric_name, num_threshold = self.numerical.get_name_and_threshold()
+            num_metric_name, num_threshold = self.numerical._find_name_and_threshold()
             thresholds.append(
                 NumericalDataDriftMetricThreshold(
                     metric=snake_to_camel(num_metric_name),
@@ -212,7 +209,7 @@ class DataDriftMetricThreshold(MetricThreshold):
                 )
             )
         if self.categorical:
-            cat_metric_name, cat_threshold = self.categorical.get_name_and_threshold()
+            cat_metric_name, cat_threshold = self.categorical._find_name_and_threshold()
             thresholds.append(
                 CategoricalDataDriftMetricThreshold(
                     metric=snake_to_camel(cat_metric_name),
@@ -279,7 +276,7 @@ class PredictionDriftMetricThreshold(MetricThreshold):
     def _to_rest_object(self) -> PredictionDriftMetricThresholdBase:
         thresholds = []
         if self.numerical:
-            num_metric_name, num_threshold = self.numerical.get_name_and_threshold()
+            num_metric_name, num_threshold = self.numerical._find_name_and_threshold()
             thresholds.append(
                 NumericalPredictionDriftMetricThreshold(
                     metric=snake_to_camel(num_metric_name),
@@ -287,7 +284,7 @@ class PredictionDriftMetricThreshold(MetricThreshold):
                 )
             )
         if self.categorical:
-            cat_metric_name, cat_threshold = self.categorical.get_name_and_threshold()
+            cat_metric_name, cat_threshold = self.categorical._find_name_and_threshold()
             thresholds.append(
                 CategoricalPredictionDriftMetricThreshold(
                     metric=snake_to_camel(cat_metric_name),
@@ -404,10 +401,6 @@ class DataQualityMetricsNumerical(RestTranslatableMixin):
             out_of_bounds_rate=0.0,
         )
 
-    @classmethod
-    def defaults(cls) -> "DataQualityMetricsNumerical":
-        return cls._get_default_thresholds()
-
 
 class DataQualityMetricsCategorical(RestTranslatableMixin):
     """Data Quality Categorical Metrics
@@ -479,10 +472,6 @@ class DataQualityMetricsCategorical(RestTranslatableMixin):
             data_type_error_rate=0.0,
             out_of_bounds_rate=0.0,
         )
-
-    @classmethod
-    def defaults(cls) -> "DataQualityMetricsCategorical":
-        return cls._get_default_thresholds()
 
 
 class DataQualityMetricThreshold(MetricThreshold):
