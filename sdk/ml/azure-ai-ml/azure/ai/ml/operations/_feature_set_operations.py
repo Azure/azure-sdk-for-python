@@ -125,7 +125,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_activity(logger, "FeatureSet.Get", ActivityType.PUBLICAPI)
-    def get(self, name: str, version: str, **kwargs: Dict) -> Optional[FeatureSet]:  # type: ignore
+    def get(self, name: str, version: str, **kwargs: Dict) -> FeatureSet:  # type: ignore
         """Get the specified FeatureSet asset.
 
         :param name: Name of FeatureSet asset.
@@ -139,7 +139,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
         """
         try:
             featureset_version_resource = self._get(name, version, **kwargs)
-            return FeatureSet._from_rest_object(featureset_version_resource)
+            return FeatureSet._from_rest_object(featureset_version_resource)  # type: ignore[return-value]
         except (ValidationException, SchemaValidationError) as ex:
             log_and_raise_error(ex)
 
@@ -334,9 +334,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_activity(logger, "FeatureSet.GetFeature", ActivityType.PUBLICAPI)
-    def get_feature(
-        self, feature_set_name: str, version: str, *, feature_name: str, **kwargs: Dict
-    ) -> Optional["Feature"]:
+    def get_feature(self, feature_set_name: str, version: str, *, feature_name: str, **kwargs: Dict) -> "Feature":
         """Get Feature
 
         :param feature_set_name: Feature set name.
@@ -360,7 +358,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
             **kwargs,
         )
 
-        return Feature._from_rest_object(feature)
+        return Feature._from_rest_object(feature)  # type: ignore[return-value]
 
     @distributed_trace
     @monitor_with_activity(logger, "FeatureSet.Archive", ActivityType.PUBLICAPI)

@@ -403,10 +403,10 @@ class ModelOperations(_ScopeDependentOperations):
 
         :param name: Name of model asset.
         :type name: str
-        :keyword version: Version of model asset.
-        :paramtype version: str
-        :keyword label: Label of the model asset. (mutually exclusive with version)
-        :paramtype label: str
+        :param version: Version of model asset.
+        :type version: str
+        :param label: Label of the model asset. (mutually exclusive with version)
+        :type label: str
 
         .. admonition:: Example:
 
@@ -439,10 +439,10 @@ class ModelOperations(_ScopeDependentOperations):
 
         :param name: Name of model asset.
         :type name: str
-        :keyword version: Version of model asset.
-        :paramtype version: str
-        :keyword label: Label of the model asset. (mutually exclusive with version)
-        :paramtype label: str
+        :param version: Version of model asset.
+        :type version: str
+        :param label: Label of the model asset. (mutually exclusive with version)
+        :type label: str
 
         .. admonition:: Example:
 
