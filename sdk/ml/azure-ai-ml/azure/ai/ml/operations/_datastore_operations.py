@@ -241,6 +241,7 @@ class DatastoreOperations(_ScopeDependentOperations):
         mode: str = "ro_mount",
         debug: bool = False,
         persistent: bool = False,
+        **kwargs,
     ) -> None:
         """Mount a datastore to a local path, so that you can access data inside it
         under a local path with any tools of your choice.
@@ -296,6 +297,7 @@ class DatastoreOperations(_ScopeDependentOperations):
                     )
                 ],
                 api_version="2021-01-01",
+                **kwargs,
             )
             print(f"Mount requested [name: {mount_name}]. Waiting for completion ...")
             while True:
