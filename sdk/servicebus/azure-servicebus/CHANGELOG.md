@@ -1,12 +1,10 @@
 # Release History
 
-## 7.11.5 (Unreleased)
+## 7.12.0 (2023-02-06)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
+- Updated `max_wait_time` on the ServiceBusReceiver constructor to additionally configure the server timeout for Session-Enabled/Queues/Topics when NEXT_AVAILABLE_SESSION is set, allowing users to set a different timeout than the default 65 seconds when accepting a session.
 
 ### Other Changes
 
