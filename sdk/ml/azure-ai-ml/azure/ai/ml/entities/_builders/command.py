@@ -172,6 +172,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         resources: Optional[JobResourceConfiguration] = None,
         services: Optional[Dict] = None,
         queue_settings: Optional[QueueSettings] = None,
+        default_datastore: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
         # validate init params are valid type
@@ -203,6 +204,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         self._resources = resources
         self._services = services
         self.queue_settings = queue_settings
+        self.default_datastore = default_datastore
 
         if isinstance(self.component, CommandComponent):
             self.resources = self.resources or self.component.resources
@@ -731,6 +733,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
                 creation_context=self.creation_context,
                 parameters=self.parameters,
                 queue_settings=self.queue_settings,
+                default_datastore=self.default_datastore,
             )
 
         return CommandJob(
