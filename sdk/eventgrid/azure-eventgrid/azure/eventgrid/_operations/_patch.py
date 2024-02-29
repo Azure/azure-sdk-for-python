@@ -21,7 +21,6 @@ from ._operations import EventGridClientOperationsMixin as OperationsMixin
 from .._model_base import _deserialize 
 from ..models._patch import ReceiveResult, ReceiveDetails
 from .. import models as _models
-from functools import wraps
 
 from .._serialization import Serializer
 if sys.version_info >= (3, 9):
@@ -35,14 +34,9 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dic
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
-def use_standard_only(func):
+def use_standard_only():
     """Use the standard client only."""
-    @wraps(func)
-    def wrapper(self, *args, **kwargs):
-        if self._config.level == "Basic":
-            raise ValueError("The basic client is not supported for this operation.")
-        return func(self, *args, **kwargs)
-    return wrapper
+    raise ValueError("The basic client is not supported for this operation.")
 
 class EventGridClientOperationsMixin(OperationsMixin):
     @overload
@@ -205,7 +199,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
 
         if self._config.level == "Basic":
             # do ga stuff
-            self._client.send(body, **kwargs)
+            pass
 
         elif self._config.level == "Standard":
             # Check that the body is a CloudEvent or list of CloudEvents even if dict
