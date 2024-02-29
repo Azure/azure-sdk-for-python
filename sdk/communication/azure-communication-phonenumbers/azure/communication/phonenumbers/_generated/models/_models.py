@@ -130,13 +130,19 @@ class OfferingsResponse(_serialization.Model):
 class OperatorDetails(_serialization.Model):
     """Represents metadata describing the operator of a phone number.
 
-    :ivar name: Name of the phone operator.
+    All required parameters must be populated in order to send to server.
+
+    :ivar name: Name of the phone operator. Required.
     :vartype name: str
     :ivar mobile_network_code: Mobile Network Code.
     :vartype mobile_network_code: str
     :ivar mobile_country_code: Mobile Country Code.
     :vartype mobile_country_code: str
     """
+
+    _validation = {
+        "name": {"required": True},
+    }
 
     _attribute_map = {
         "name": {"key": "name", "type": "str"},
@@ -147,13 +153,13 @@ class OperatorDetails(_serialization.Model):
     def __init__(
         self,
         *,
-        name: Optional[str] = None,
+        name: str,
         mobile_network_code: Optional[str] = None,
         mobile_country_code: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword name: Name of the phone operator.
+        :keyword name: Name of the phone operator. Required.
         :paramtype name: str
         :keyword mobile_network_code: Mobile Network Code.
         :paramtype mobile_network_code: str
@@ -178,12 +184,12 @@ class OperatorInformation(_serialization.Model):
     :vartype national_format: str
     :ivar international_format: International format of the phone number.
     :vartype international_format: str
-    :ivar number_type: Type of service associated with the phone number. Known values are:
-     "unavailable", "other", "geographic", and "mobile".
-    :vartype number_type: str or ~azure.communication.phonenumbers.models.OperatorNumberType
     :ivar iso_country_code: ISO 3166-1 two character ('alpha-2') code associated with the phone
      number.
     :vartype iso_country_code: str
+    :ivar number_type: Type of service associated with the phone number. Known values are:
+     "unknown", "other", "geographic", and "mobile".
+    :vartype number_type: str or ~azure.communication.phonenumbers.models.OperatorNumberType
     :ivar operator_details: Represents metadata describing the operator of a phone number.
     :vartype operator_details: ~azure.communication.phonenumbers.models.OperatorDetails
     """
@@ -196,8 +202,8 @@ class OperatorInformation(_serialization.Model):
         "phone_number": {"key": "phoneNumber", "type": "str"},
         "national_format": {"key": "nationalFormat", "type": "str"},
         "international_format": {"key": "internationalFormat", "type": "str"},
-        "number_type": {"key": "numberType", "type": "str"},
         "iso_country_code": {"key": "isoCountryCode", "type": "str"},
+        "number_type": {"key": "numberType", "type": "str"},
         "operator_details": {"key": "operatorDetails", "type": "OperatorDetails"},
     }
 
@@ -207,8 +213,8 @@ class OperatorInformation(_serialization.Model):
         phone_number: str,
         national_format: Optional[str] = None,
         international_format: Optional[str] = None,
-        number_type: Optional[Union[str, "_models.OperatorNumberType"]] = None,
         iso_country_code: Optional[str] = None,
+        number_type: Optional[Union[str, "_models.OperatorNumberType"]] = None,
         operator_details: Optional["_models.OperatorDetails"] = None,
         **kwargs: Any
     ) -> None:
@@ -219,12 +225,12 @@ class OperatorInformation(_serialization.Model):
         :paramtype national_format: str
         :keyword international_format: International format of the phone number.
         :paramtype international_format: str
-        :keyword number_type: Type of service associated with the phone number. Known values are:
-         "unavailable", "other", "geographic", and "mobile".
-        :paramtype number_type: str or ~azure.communication.phonenumbers.models.OperatorNumberType
         :keyword iso_country_code: ISO 3166-1 two character ('alpha-2') code associated with the phone
          number.
         :paramtype iso_country_code: str
+        :keyword number_type: Type of service associated with the phone number. Known values are:
+         "unknown", "other", "geographic", and "mobile".
+        :paramtype number_type: str or ~azure.communication.phonenumbers.models.OperatorNumberType
         :keyword operator_details: Represents metadata describing the operator of a phone number.
         :paramtype operator_details: ~azure.communication.phonenumbers.models.OperatorDetails
         """
@@ -232,8 +238,8 @@ class OperatorInformation(_serialization.Model):
         self.phone_number = phone_number
         self.national_format = national_format
         self.international_format = international_format
-        self.number_type = number_type
         self.iso_country_code = iso_country_code
+        self.number_type = number_type
         self.operator_details = operator_details
 
 
@@ -264,11 +270,17 @@ class OperatorInformationOptions(_serialization.Model):
 class OperatorInformationRequest(_serialization.Model):
     """Represents a search request for operator information for the given phone numbers.
 
-    :ivar phone_numbers: Phone number(s) whose operator information is being requested.
+    All required parameters must be populated in order to send to server.
+
+    :ivar phone_numbers: Phone number(s) whose operator information is being requested. Required.
     :vartype phone_numbers: list[str]
     :ivar options: Represents options to modify a search request for operator information.
     :vartype options: ~azure.communication.phonenumbers.models.OperatorInformationOptions
     """
+
+    _validation = {
+        "phone_numbers": {"required": True},
+    }
 
     _attribute_map = {
         "phone_numbers": {"key": "phoneNumbers", "type": "[str]"},
@@ -276,14 +288,11 @@ class OperatorInformationRequest(_serialization.Model):
     }
 
     def __init__(
-        self,
-        *,
-        phone_numbers: Optional[List[str]] = None,
-        options: Optional["_models.OperatorInformationOptions"] = None,
-        **kwargs: Any
+        self, *, phone_numbers: List[str], options: Optional["_models.OperatorInformationOptions"] = None, **kwargs: Any
     ) -> None:
         """
         :keyword phone_numbers: Phone number(s) whose operator information is being requested.
+         Required.
         :paramtype phone_numbers: list[str]
         :keyword options: Represents options to modify a search request for operator information.
         :paramtype options: ~azure.communication.phonenumbers.models.OperatorInformationOptions

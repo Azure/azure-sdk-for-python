@@ -19,7 +19,7 @@ class BillingFrequency(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class OperatorNumberType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of service associated with the phone number."""
 
-    UNAVAILABLE = "unavailable"
+    UNKNOWN = "unknown"
     OTHER = "other"
     GEOGRAPHIC = "geographic"
     MOBILE = "mobile"
