@@ -167,6 +167,19 @@ class SearchIndexerSkillset:
         """
         return cls._from_generated(_SearchIndexerSkillset.from_dict(data, content_type=content_type))
 
+    def __eq__(self, other: Any) -> bool:
+        """Compare objects by comparing all attributes."""
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        return False
+
+    def __ne__(self, other: Any) -> bool:
+        """Compare objects by comparing all attributes."""
+        return not self.__eq__(other)
+
+    def __str__(self) -> str:
+        return str(self.__dict__)
+
 
 class EntityRecognitionSkillVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the Entity Recognition skill version to use."""
@@ -515,6 +528,19 @@ class AnalyzeTextOptions:
         :raises: DeserializationError if something went wrong
         """
         return cls._from_analyze_request(AnalyzeRequest.from_dict(data, content_type=content_type))
+
+    def __eq__(self, other: Any) -> bool:
+        """Compare objects by comparing all attributes."""
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        return False
+
+    def __ne__(self, other: Any) -> bool:
+        """Compare objects by comparing all attributes."""
+        return not self.__eq__(other)
+
+    def __str__(self) -> str:
+        return str(self.__dict__)
 
 
 class CustomAnalyzer(LexicalAnalyzer):
