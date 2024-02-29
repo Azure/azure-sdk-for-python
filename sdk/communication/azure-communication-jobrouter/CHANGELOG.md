@@ -1,4 +1,16 @@
 # Release History
+## 1.1.0b1 (Unreleased)
+
+This is the beta release of Azure Communication Job Router Python SDK. For more information, please see the [README][read_me].
+
+This is a Public Preview version, so breaking changes are possible in subsequent releases as we improve the product. To provide feedback, please submit an issue in our [Azure SDK for Python GitHub repo][issues].
+
+### Features Added
+- `JobRouterClient`
+  - `upsert_worker`
+    - keyword argument `max_concurrent_offers: Optional[int]` added.
+- `RouterWorker`
+  - Add `max_concurrent_offers`
 
 ## 1.0.0 (2023-11-01)
 
