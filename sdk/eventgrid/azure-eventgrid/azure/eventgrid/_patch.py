@@ -69,11 +69,12 @@ class EventGridClient(InternalEventGridClient):
         if _policies is None:
             _policies = [policies.RequestIdPolicy(**kwargs),self._config.headers_policy,self._config.user_agent_policy,self._config.proxy_policy,policies.ContentDecodePolicy(**kwargs),self._config.redirect_policy,self._config.retry_policy,self._config.authentication_policy,self._config.custom_hook_policy,self._config.logging_policy,policies.DistributedTracingPolicy(**kwargs),policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,self._config.http_logging_policy]
         
-        if level == ClientLevel.BASIC:
+        if level == ClientLevel.BASIC and endpoint.endswith("/api/events"):
             self._client = EventGridPublisherClient(endpoint, credential, api_version=api_version, **kwargs)
-        else:
+        elif level == ClientLevel.STANDARD and not endpoint.endswith("/api/events"):
             self._client: PipelineClient = PipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
-
+        else:
+            raise ValueError("Invalid endpoint provided for level specified. Please provide a valid endpoint for the level specified.")
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
