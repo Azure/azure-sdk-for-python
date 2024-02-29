@@ -443,7 +443,6 @@ class NotificationMessagesClientOperationsMixin(   # pylint: disable=name-too-lo
             'cls', None
         )
 
-        
         _request = build_notification_messages_download_media_request(
             id=id,
             api_version=self._config.api_version,
@@ -471,7 +470,8 @@ class NotificationMessagesClientOperationsMixin(   # pylint: disable=name-too-lo
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
+        response_headers['x-ms-client-request-id']=self._deserialize('str',
+                                                                    response.headers.get('x-ms-client-request-id'))
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -484,7 +484,7 @@ class NotificationMessagesClientOperationsMixin(   # pylint: disable=name-too-lo
         return deserialized  # type: ignore
 
 
-class MessageTemplateClientOperationsMixin( 
+class MessageTemplateClientOperationsMixin(
     MessageTemplateClientMixinABC
 ):
 
@@ -542,7 +542,6 @@ class MessageTemplateClientOperationsMixin(
         error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
-                
                 _request = build_message_template_list_templates_request(
                     channel_id=channel_id,
                     maxpagesize=maxpagesize,
