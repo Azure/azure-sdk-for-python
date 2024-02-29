@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b23 (Unreleased)
+## 1.0.0b23 (2024-02-28)
 
 ### Features Added
 
@@ -10,10 +10,8 @@
     ([#34141](https://github.com/Azure/azure-sdk-for-python/pull/34141))
 - Add application.ver to part A fields
     ([#34401](https://github.com/Azure/azure-sdk-for-python/pull/34401))
-
-### Breaking Changes
-
-### Bugs Fixed
+- Add `APPLICATIONINSIGHTS_METRIC_NAMESPACE_OPT_IN`
+    ([#34463](https://github.com/Azure/azure-sdk-for-python/pull/34463))
 
 ### Other Changes
 
