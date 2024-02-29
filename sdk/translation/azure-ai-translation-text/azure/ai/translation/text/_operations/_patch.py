@@ -10,8 +10,8 @@ from typing import Any, IO, List, Optional, overload, Union
 from .. import models as _models
 from ._operations import TextTranslationClientOperationsMixin as TextTranslationClientOperationsMixinGenerated
 
-class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinGenerated):
 
+class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinGenerated):
     @overload
     def translate(
         self,
@@ -226,7 +226,8 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
                 from_script=from_script,
                 to_script=to_script,
                 allow_fallback=allow_fallback,
-                **kwargs)
+                **kwargs
+            )
         else:
             return super().translate(
                 request_body=request_body,
@@ -243,7 +244,8 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
                 from_script=from_script,
                 to_script=to_script,
                 allow_fallback=allow_fallback,
-                **kwargs)
+                **kwargs
+            )
 
     @overload
     def transliterate(
@@ -328,7 +330,8 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
                 from_script=from_script,
                 to_script=to_script,
                 client_trace_id=client_trace_id,
-                **kwargs)
+                **kwargs
+            )
         else:
             return super().transliterate(
                 request_body=request_body,
@@ -336,7 +339,8 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
                 from_script=from_script,
                 to_script=to_script,
                 client_trace_id=client_trace_id,
-                **kwargs)
+                **kwargs
+            )
 
     @overload
     def find_sentence_boundaries(
@@ -423,14 +427,12 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
                 language=language,
                 script=script,
                 client_trace_id=client_trace_id,
-                **kwargs)
+                **kwargs
+            )
         else:
             return super().find_sentence_boundaries(
-                request_body=request_body,
-                language=language,
-                script=script,
-                client_trace_id=client_trace_id,
-                **kwargs)
+                request_body=request_body, language=language, script=script, client_trace_id=client_trace_id, **kwargs
+            )
 
     @overload
     def lookup_dictionary_entries(
@@ -567,16 +569,21 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
                 from_parameter=from_parameter,
                 to=to,
                 client_trace_id=client_trace_id,
-                **kwargs)
+                **kwargs
+            )
         else:
             return super().lookup_dictionary_entries(
                 request_body=request_body,
                 from_parameter=from_parameter,
                 to=to,
                 client_trace_id=client_trace_id,
-                **kwargs)
+                **kwargs
+            )
 
-__all__: List[str] = ["TextTranslationClientOperationsMixin"]  # Add all objects you want publicly available to users at this package level
+
+__all__: List[str] = [
+    "TextTranslationClientOperationsMixin"
+]  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():
