@@ -60,7 +60,7 @@ class EnvironmentVariableLoader(AzureMgmtPreparer):
             client = os.environ.get(f"{self.directory.upper()}_CLIENT_ID")
             secret = os.environ.get(f"{self.directory.upper()}_CLIENT_SECRET")
 
-            # If the environment variables are not all set, check if user-based authentication is requested
+            # If environment variables are not all set, check if user-based authentication is requested
             if not all(x is not None for x in [tenant, client, secret]):
                 use_pwsh = os.environ.get("AZURE_TEST_USE_PWSH_AUTH", "false")
                 use_cli = os.environ.get("AZURE_TEST_USE_CLI_AUTH", "false")
@@ -73,17 +73,24 @@ class EnvironmentVariableLoader(AzureMgmtPreparer):
                         "'AZURE_TEST_USE_PWSH_AUTH' or 'AZURE_TEST_USE_CLI_AUTH' to 'true'."
                     )
 
-                _logger.info(
-                    "Environment variables for service principal credentials not set but user-based authentication "
-                    "requested. Setting fake value(s) for missing variable(s)."
+                _logger.debug(
+                    "Environment variables for service principal credentials are not all set but user-based "
+                    f"authentication was requested. Updating 'AZURE_*' variables to match '{self.directory.upper()}_*'."
                 )
-                tenant = "fake-tenant" if tenant is None else tenant
-                client = "fake-client" if client is None else client
-                secret = "fake-secret" if secret is None else secret
 
-            os.environ["AZURE_TENANT_ID"] = tenant
-            os.environ["AZURE_CLIENT_ID"] = client
-            os.environ["AZURE_CLIENT_SECRET"] = secret
+            # Set environment vars to directory values (and unset vars if directory vars are missing)
+            if tenant is not None:
+                os.environ["AZURE_TENANT_ID"] = tenant
+            else:
+                os.environ.pop("AZURE_TENANT_ID", None)
+            if client is not None:
+                os.environ["AZURE_CLIENT_ID"] = client
+            else:
+                os.environ.pop("AZURE_CLIENT_ID", None)
+            if secret is not None:
+                os.environ["AZURE_CLIENT_SECRET"] = secret
+            else:
+                os.environ.pop("AZURE_CLIENT_SECRET", None)
 
     def create_resource(self, name, **kwargs):
         load_dotenv(find_dotenv())
