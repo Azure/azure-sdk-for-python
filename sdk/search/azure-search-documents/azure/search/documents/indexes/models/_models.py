@@ -840,6 +840,19 @@ class SearchResourceEncryptionKey:
         """
         return cls._from_generated(_SearchResourceEncryptionKey.from_dict(data, content_type=content_type))
 
+    def __eq__(self, other: Any) -> bool:
+        """Compare objects by comparing all attributes."""
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        return False
+
+    def __ne__(self, other: Any) -> bool:
+        """Compare objects by comparing all attributes."""
+        return not self.__eq__(other)
+
+    def __str__(self) -> str:
+        return str(self.__dict__)
+
 
 class SynonymMap:
     """Represents a synonym map definition.
@@ -941,6 +954,19 @@ class SynonymMap:
         :raises: DeserializationError if something went wrong
         """
         return cls._from_generated(_SynonymMap.from_dict(data, content_type=content_type))
+
+    def __eq__(self, other: Any) -> bool:
+        """Compare objects by comparing all attributes."""
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        return False
+
+    def __ne__(self, other: Any) -> bool:
+        """Compare objects by comparing all attributes."""
+        return not self.__eq__(other)
+
+    def __str__(self) -> str:
+        return str(self.__dict__)
 
 
 class SearchIndexerDataSourceConnection:
@@ -1071,6 +1097,19 @@ class SearchIndexerDataSourceConnection:
         :raises: DeserializationError if something went wrong
         """
         return cls._from_generated(_SearchIndexerDataSource.from_dict(data, content_type=content_type))
+
+    def __eq__(self, other: Any) -> bool:
+        """Compare objects by comparing all attributes."""
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        return False
+
+    def __ne__(self, other: Any) -> bool:
+        """Compare objects by comparing all attributes."""
+        return not self.__eq__(other)
+
+    def __str__(self) -> str:
+        return str(self.__dict__)
 
 
 def pack_analyzer(analyzer):
