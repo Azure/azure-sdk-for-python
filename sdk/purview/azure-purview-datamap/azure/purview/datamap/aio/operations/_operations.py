@@ -11,7 +11,14 @@ import json
 import sys
 from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, overload
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, ResourceNotModifiedError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    ResourceNotModifiedError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -20,17 +27,115 @@ from azure.core.utils import case_insensitive_dict
 from ... import _model_base, models as _models
 from ..._model_base import SdkJSONEncoder, _deserialize
 from ..._vendor import prepare_multipart_form_data
-from ...operations._operations import build_discovery_auto_complete_request, build_discovery_query_request, build_discovery_suggest_request, build_entity_add_classification_request, build_entity_add_classifications_by_unique_attribute_request, build_entity_add_classifications_request, build_entity_add_label_request, build_entity_add_labels_by_unique_attribute_request, build_entity_add_or_update_business_metadata_attributes_request, build_entity_add_or_update_business_metadata_request, build_entity_batch_create_or_update_request, build_entity_batch_delete_request, build_entity_batch_get_by_unique_attributes_request, build_entity_batch_set_classifications_request, build_entity_create_or_update_request, build_entity_delete_by_unique_attribute_request, build_entity_delete_request, build_entity_get_business_metadata_template_request, build_entity_get_by_ids_request, build_entity_get_by_unique_attribute_request, build_entity_get_classification_request, build_entity_get_classifications_request, build_entity_get_header_request, build_entity_get_request, build_entity_import_business_metadata_request, build_entity_move_entities_to_collection_request, build_entity_remove_business_metadata_attributes_request, build_entity_remove_business_metadata_request, build_entity_remove_classification_by_unique_attribute_request, build_entity_remove_classification_request, build_entity_remove_labels_by_unique_attribute_request, build_entity_remove_labels_request, build_entity_set_labels_by_unique_attribute_request, build_entity_set_labels_request, build_entity_update_attribute_by_id_request, build_entity_update_by_unique_attribute_request, build_entity_update_classifications_request, build_entity_update_classifications_unique_by_attribute_request, build_glossary_assign_term_to_entities_request, build_glossary_batch_get_request, build_glossary_create_categories_request, build_glossary_create_category_request, build_glossary_create_request, build_glossary_create_term_request, build_glossary_create_terms_request, build_glossary_delete_category_request, build_glossary_delete_request, build_glossary_delete_term_assignment_from_entities_request, build_glossary_delete_term_request, build_glossary_get_categories_headers_request, build_glossary_get_categories_request, build_glossary_get_category_request, build_glossary_get_category_terms_request, build_glossary_get_detailed_request, build_glossary_get_entities_assigned_with_term_request, build_glossary_get_related_categories_request, build_glossary_get_related_terms_request, build_glossary_get_request, build_glossary_get_term_headers_request, build_glossary_get_term_request, build_glossary_get_terms_request, build_glossary_partial_update_category_request, build_glossary_partial_update_request, build_glossary_partial_update_term_request, build_glossary_update_category_request, build_glossary_update_request, build_glossary_update_term_request, build_lineage_get_by_unique_attribute_request, build_lineage_get_next_page_request, build_lineage_get_request, build_relationship_create_request, build_relationship_delete_request, build_relationship_get_request, build_relationship_update_request, build_type_definition_batch_create_request, build_type_definition_batch_delete_request, build_type_definition_batch_update_request, build_type_definition_delete_request, build_type_definition_get_business_metadata_by_id_request, build_type_definition_get_business_metadata_by_name_request, build_type_definition_get_by_id_request, build_type_definition_get_by_name_request, build_type_definition_get_classification_by_id_request, build_type_definition_get_classification_by_name_request, build_type_definition_get_entity_by_id_request, build_type_definition_get_entity_by_name_request, build_type_definition_get_enum_by_id_request, build_type_definition_get_enum_by_name_request, build_type_definition_get_headers_request, build_type_definition_get_relationship_by_id_request, build_type_definition_get_relationship_by_name_request, build_type_definition_get_request, build_type_definition_get_struct_by_id_request, build_type_definition_get_struct_by_name_request, build_type_definition_get_term_template_by_id_request, build_type_definition_get_term_template_by_name_request
+from ...operations._operations import (
+    build_discovery_auto_complete_request,
+    build_discovery_query_request,
+    build_discovery_suggest_request,
+    build_entity_add_classification_request,
+    build_entity_add_classifications_by_unique_attribute_request,
+    build_entity_add_classifications_request,
+    build_entity_add_label_request,
+    build_entity_add_labels_by_unique_attribute_request,
+    build_entity_add_or_update_business_metadata_attributes_request,
+    build_entity_add_or_update_business_metadata_request,
+    build_entity_batch_create_or_update_request,
+    build_entity_batch_delete_request,
+    build_entity_batch_get_by_unique_attributes_request,
+    build_entity_batch_set_classifications_request,
+    build_entity_create_or_update_request,
+    build_entity_delete_by_unique_attribute_request,
+    build_entity_delete_request,
+    build_entity_get_business_metadata_template_request,
+    build_entity_get_by_ids_request,
+    build_entity_get_by_unique_attribute_request,
+    build_entity_get_classification_request,
+    build_entity_get_classifications_request,
+    build_entity_get_header_request,
+    build_entity_get_request,
+    build_entity_import_business_metadata_request,
+    build_entity_move_entities_to_collection_request,
+    build_entity_remove_business_metadata_attributes_request,
+    build_entity_remove_business_metadata_request,
+    build_entity_remove_classification_by_unique_attribute_request,
+    build_entity_remove_classification_request,
+    build_entity_remove_labels_by_unique_attribute_request,
+    build_entity_remove_labels_request,
+    build_entity_set_labels_by_unique_attribute_request,
+    build_entity_set_labels_request,
+    build_entity_update_attribute_by_id_request,
+    build_entity_update_by_unique_attribute_request,
+    build_entity_update_classifications_request,
+    build_entity_update_classifications_unique_by_attribute_request,
+    build_glossary_assign_term_to_entities_request,
+    build_glossary_batch_get_request,
+    build_glossary_create_categories_request,
+    build_glossary_create_category_request,
+    build_glossary_create_request,
+    build_glossary_create_term_request,
+    build_glossary_create_terms_request,
+    build_glossary_delete_category_request,
+    build_glossary_delete_request,
+    build_glossary_delete_term_assignment_from_entities_request,
+    build_glossary_delete_term_request,
+    build_glossary_get_categories_headers_request,
+    build_glossary_get_categories_request,
+    build_glossary_get_category_request,
+    build_glossary_get_category_terms_request,
+    build_glossary_get_detailed_request,
+    build_glossary_get_entities_assigned_with_term_request,
+    build_glossary_get_related_categories_request,
+    build_glossary_get_related_terms_request,
+    build_glossary_get_request,
+    build_glossary_get_term_headers_request,
+    build_glossary_get_term_request,
+    build_glossary_get_terms_request,
+    build_glossary_partial_update_category_request,
+    build_glossary_partial_update_request,
+    build_glossary_partial_update_term_request,
+    build_glossary_update_category_request,
+    build_glossary_update_request,
+    build_glossary_update_term_request,
+    build_lineage_get_by_unique_attribute_request,
+    build_lineage_get_next_page_request,
+    build_lineage_get_request,
+    build_relationship_create_request,
+    build_relationship_delete_request,
+    build_relationship_get_request,
+    build_relationship_update_request,
+    build_type_definition_batch_create_request,
+    build_type_definition_batch_delete_request,
+    build_type_definition_batch_update_request,
+    build_type_definition_delete_request,
+    build_type_definition_get_business_metadata_by_id_request,
+    build_type_definition_get_business_metadata_by_name_request,
+    build_type_definition_get_by_id_request,
+    build_type_definition_get_by_name_request,
+    build_type_definition_get_classification_by_id_request,
+    build_type_definition_get_classification_by_name_request,
+    build_type_definition_get_entity_by_id_request,
+    build_type_definition_get_entity_by_name_request,
+    build_type_definition_get_enum_by_id_request,
+    build_type_definition_get_enum_by_name_request,
+    build_type_definition_get_headers_request,
+    build_type_definition_get_relationship_by_id_request,
+    build_type_definition_get_relationship_by_name_request,
+    build_type_definition_get_request,
+    build_type_definition_get_struct_by_id_request,
+    build_type_definition_get_struct_by_name_request,
+    build_type_definition_get_term_template_by_id_request,
+    build_type_definition_get_term_template_by_name_request,
+)
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
-JSON = MutableMapping[str, Any] # pylint: disable=unsubscriptable-object
-T = TypeVar('T')
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class EntityOperations:   # pylint: disable=too-many-public-methods
+
+class EntityOperations:  # pylint: disable=too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -46,9 +151,6 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-
-
 
     @overload
     async def create_or_update(
@@ -889,7 +991,6 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
                 }
         """
 
-
     @distributed_trace_async
     async def create_or_update(
         self,
@@ -1301,17 +1402,18 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[_models.EntityMutationResult] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.EntityMutationResult] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -1330,40 +1432,33 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.EntityMutationResult,
-                response.json()
-            )
+            deserialized = _deserialize(_models.EntityMutationResult, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-
 
     @distributed_trace_async
     async def get_by_ids(
@@ -1608,18 +1703,18 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AtlasEntitiesWithExtInfo] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.AtlasEntitiesWithExtInfo] = kwargs.pop("cls", None)
 
-        
         _request = build_entity_get_by_ids_request(
             guid=guid,
             min_ext_info=min_ext_info,
@@ -1629,40 +1724,33 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.AtlasEntitiesWithExtInfo,
-                response.json()
-            )
+            deserialized = _deserialize(_models.AtlasEntitiesWithExtInfo, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-
 
     @overload
     async def batch_create_or_update(
@@ -2517,7 +2605,6 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
                 }
         """
 
-
     @distributed_trace_async
     async def batch_create_or_update(
         self,
@@ -2941,17 +3028,18 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[_models.EntityMutationResult] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.EntityMutationResult] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -2970,48 +3058,36 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.EntityMutationResult,
-                response.json()
-            )
+            deserialized = _deserialize(_models.EntityMutationResult, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace_async
-    async def batch_delete(
-        self,
-        *,
-        guid: List[str],
-        **kwargs: Any
-    ) -> _models.EntityMutationResult:
+    async def batch_delete(self, *, guid: List[str], **kwargs: Any) -> _models.EntityMutationResult:
         # pylint: disable=line-too-long
         """Delete a list of entities in bulk identified by their GUIDs or unique
         attributes.
@@ -3197,66 +3273,55 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.EntityMutationResult] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.EntityMutationResult] = kwargs.pop("cls", None)
 
-        
         _request = build_entity_batch_delete_request(
             guid=guid,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.EntityMutationResult,
-                response.json()
-            )
+            deserialized = _deserialize(_models.EntityMutationResult, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @overload
     async def add_classification(  # pylint: disable=inconsistent-return-statements
-        self,
-        body: _models.ClassificationAssociateOptions,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: _models.ClassificationAssociateOptions, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         # pylint: disable=line-too-long
         """Associate a classification to multiple entities in bulk.
@@ -3306,11 +3371,7 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
 
     @overload
     async def add_classification(  # pylint: disable=inconsistent-return-statements
-        self,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Associate a classification to multiple entities in bulk.
 
@@ -3326,11 +3387,7 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
 
     @overload
     async def add_classification(  # pylint: disable=inconsistent-return-statements
-        self,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Associate a classification to multiple entities in bulk.
 
@@ -3344,12 +3401,9 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-
     @distributed_trace_async
     async def add_classification(  # pylint: disable=inconsistent-return-statements
-        self,
-        body: Union[_models.ClassificationAssociateOptions, JSON, IO[bytes]],
-        **kwargs: Any
+        self, body: Union[_models.ClassificationAssociateOptions, JSON, IO[bytes]], **kwargs: Any
     ) -> None:
         # pylint: disable=line-too-long
         """Associate a classification to multiple entities in bulk.
@@ -3395,17 +3449,18 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[None] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -3421,30 +3476,26 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if cls:
-            return cls(pipeline_response, None, {}) # type: ignore
-
-
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
     async def get(
@@ -3677,18 +3728,18 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AtlasEntityWithExtInfo] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.AtlasEntityWithExtInfo] = kwargs.pop("cls", None)
 
-        
         _request = build_entity_get_request(
             guid=guid,
             min_ext_info=min_ext_info,
@@ -3697,49 +3748,37 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.AtlasEntityWithExtInfo,
-                response.json()
-            )
+            deserialized = _deserialize(_models.AtlasEntityWithExtInfo, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace_async
     async def update_attribute_by_id(
-        self,
-        guid: str,
-        body: Any,
-        *,
-        name: str,
-        **kwargs: Any
+        self, guid: str, body: Any, *, name: str, **kwargs: Any
     ) -> _models.EntityMutationResult:
         # pylint: disable=line-too-long
         """Update entity partially - create or update entity attribute identified by its
@@ -3933,17 +3972,18 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))
-        cls: ClsType[_models.EntityMutationResult] = kwargs.pop(
-            'cls', None
-        )
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
+        cls: ClsType[_models.EntityMutationResult] = kwargs.pop("cls", None)
 
         _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
@@ -3956,47 +3996,36 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.EntityMutationResult,
-                response.json()
-            )
+            deserialized = _deserialize(_models.EntityMutationResult, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace_async
-    async def delete(
-        self,
-        guid: str,
-        **kwargs: Any
-    ) -> _models.EntityMutationResult:
+    async def delete(self, guid: str, **kwargs: Any) -> _models.EntityMutationResult:
         # pylint: disable=line-too-long
         """Delete an entity identified by its GUID.
 
@@ -4181,65 +4210,55 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.EntityMutationResult] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.EntityMutationResult] = kwargs.pop("cls", None)
 
-        
         _request = build_entity_delete_request(
             guid=guid,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.EntityMutationResult,
-                response.json()
-            )
+            deserialized = _deserialize(_models.EntityMutationResult, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace_async
     async def get_classification(
-        self,
-        guid: str,
-        classification_name: str,
-        **kwargs: Any
+        self, guid: str, classification_name: str, **kwargs: Any
     ) -> _models.AtlasClassification:
         # pylint: disable=line-too-long
         """Get classification for a given entity represented by a GUID.
@@ -4280,18 +4299,18 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AtlasClassification] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.AtlasClassification] = kwargs.pop("cls", None)
 
-        
         _request = build_entity_get_classification_request(
             guid=guid,
             classification_name=classification_name,
@@ -4299,47 +4318,37 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.AtlasClassification,
-                response.json()
-            )
+            deserialized = _deserialize(_models.AtlasClassification, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace_async
     async def remove_classification(  # pylint: disable=inconsistent-return-statements
-        self,
-        guid: str,
-        classification_name: str,
-        **kwargs: Any
+        self, guid: str, classification_name: str, **kwargs: Any
     ) -> None:
         """Delete a given classification from an existing entity represented by a GUID.
 
@@ -4352,18 +4361,18 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
-        
         _request = build_entity_remove_classification_request(
             guid=guid,
             classification_name=classification_name,
@@ -4371,37 +4380,29 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if cls:
-            return cls(pipeline_response, None, {}) # type: ignore
-
-
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
-    async def get_classifications(
-        self,
-        guid: str,
-        **kwargs: Any
-    ) -> _models.AtlasClassifications:
+    async def get_classifications(self, guid: str, **kwargs: Any) -> _models.AtlasClassifications:
         # pylint: disable=line-too-long
         """List classifications for a given entity represented by a GUID.
 
@@ -4428,58 +4429,51 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AtlasClassifications] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.AtlasClassifications] = kwargs.pop("cls", None)
 
-        
         _request = build_entity_get_classifications_request(
             guid=guid,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.AtlasClassifications,
-                response.json()
-            )
+            deserialized = _deserialize(_models.AtlasClassifications, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-
 
     @overload
     async def add_classifications(  # pylint: disable=inconsistent-return-statements
@@ -4537,12 +4531,7 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
 
     @overload
     async def add_classifications(  # pylint: disable=inconsistent-return-statements
-        self,
-        guid: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, guid: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Add classifications to an existing entity represented by a GUID.
 
@@ -4558,13 +4547,9 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-
     @distributed_trace_async
     async def add_classifications(  # pylint: disable=inconsistent-return-statements
-        self,
-        guid: str,
-        body: Union[List[_models.AtlasClassification], IO[bytes]],
-        **kwargs: Any
+        self, guid: str, body: Union[List[_models.AtlasClassification], IO[bytes]], **kwargs: Any
     ) -> None:
         """Add classifications to an existing entity represented by a GUID.
 
@@ -4578,17 +4563,18 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[None] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -4605,30 +4591,26 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if cls:
-            return cls(pipeline_response, None, {}) # type: ignore
-
-
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     async def update_classifications(  # pylint: disable=inconsistent-return-statements
@@ -4686,12 +4668,7 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
 
     @overload
     async def update_classifications(  # pylint: disable=inconsistent-return-statements
-        self,
-        guid: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, guid: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Update classifications to an existing entity represented by a guid.
 
@@ -4707,13 +4684,9 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-
     @distributed_trace_async
     async def update_classifications(  # pylint: disable=inconsistent-return-statements
-        self,
-        guid: str,
-        body: Union[List[_models.AtlasClassification], IO[bytes]],
-        **kwargs: Any
+        self, guid: str, body: Union[List[_models.AtlasClassification], IO[bytes]], **kwargs: Any
     ) -> None:
         """Update classifications to an existing entity represented by a guid.
 
@@ -4727,17 +4700,18 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[None] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -4754,30 +4728,26 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if cls:
-            return cls(pipeline_response, None, {}) # type: ignore
-
-
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
     async def get_by_unique_attribute(
@@ -5028,18 +4998,18 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AtlasEntityWithExtInfo] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.AtlasEntityWithExtInfo] = kwargs.pop("cls", None)
 
-        
         _request = build_entity_get_by_unique_attribute_request(
             type_name=type_name,
             min_ext_info=min_ext_info,
@@ -5049,40 +5019,33 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.AtlasEntityWithExtInfo,
-                response.json()
-            )
+            deserialized = _deserialize(_models.AtlasEntityWithExtInfo, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-
 
     @overload
     async def update_by_unique_attribute(
@@ -5941,7 +5904,6 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
                 }
         """
 
-
     @distributed_trace_async
     async def update_by_unique_attribute(
         self,
@@ -6359,17 +6321,18 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[_models.EntityMutationResult] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.EntityMutationResult] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -6387,48 +6350,37 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.EntityMutationResult,
-                response.json()
-            )
+            deserialized = _deserialize(_models.EntityMutationResult, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace_async
     async def delete_by_unique_attribute(
-        self,
-        type_name: str,
-        *,
-        attribute: Optional[str] = None,
-        **kwargs: Any
+        self, type_name: str, *, attribute: Optional[str] = None, **kwargs: Any
     ) -> _models.EntityMutationResult:
         # pylint: disable=line-too-long
         """Delete an entity identified by its type and unique attributes.
@@ -6629,18 +6581,18 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.EntityMutationResult] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.EntityMutationResult] = kwargs.pop("cls", None)
 
-        
         _request = build_entity_delete_by_unique_attribute_request(
             type_name=type_name,
             attribute=attribute,
@@ -6648,49 +6600,37 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.EntityMutationResult,
-                response.json()
-            )
+            deserialized = _deserialize(_models.EntityMutationResult, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace_async
     async def remove_classification_by_unique_attribute(  # pylint: disable=inconsistent-return-statements,name-too-long
-        self,
-        type_name: str,
-        classification_name: str,
-        *,
-        attribute: Optional[str] = None,
-        **kwargs: Any
+        self, type_name: str, classification_name: str, *, attribute: Optional[str] = None, **kwargs: Any
     ) -> None:
         """Delete a given classification from an entity identified by its type and unique
         attributes.
@@ -6708,18 +6648,18 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
-        
         _request = build_entity_remove_classification_by_unique_attribute_request(
             type_name=type_name,
             classification_name=classification_name,
@@ -6728,30 +6668,26 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if cls:
-            return cls(pipeline_response, None, {}) # type: ignore
-
-
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     async def add_classifications_by_unique_attribute(  # pylint: disable=inconsistent-return-statements
@@ -6839,7 +6775,6 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-
 
     @distributed_trace_async
     async def add_classifications_by_unique_attribute(  # pylint: disable=inconsistent-return-statements
@@ -6866,17 +6801,18 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[None] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -6894,30 +6830,26 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if cls:
-            return cls(pipeline_response, None, {}) # type: ignore
-
-
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     async def update_classifications_unique_by_attribute(  # pylint: disable=inconsistent-return-statements,name-too-long
@@ -7006,7 +6938,6 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-
     @distributed_trace_async
     async def update_classifications_unique_by_attribute(  # pylint: disable=inconsistent-return-statements,name-too-long
         self,
@@ -7032,17 +6963,18 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[None] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -7060,38 +6992,30 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if cls:
-            return cls(pipeline_response, None, {}) # type: ignore
-
-
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     async def batch_set_classifications(
-        self,
-        body: _models.AtlasEntityHeaders,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: _models.AtlasEntityHeaders, *, content_type: str = "application/json", **kwargs: Any
     ) -> List[str]:
         # pylint: disable=line-too-long
         """Set classifications on entities in bulk.
@@ -7199,11 +7123,7 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
 
     @overload
     async def batch_set_classifications(
-        self,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> List[str]:
         """Set classifications on entities in bulk.
 
@@ -7227,11 +7147,7 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
 
     @overload
     async def batch_set_classifications(
-        self,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> List[str]:
         """Set classifications on entities in bulk.
 
@@ -7253,12 +7169,9 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
                 ]
         """
 
-
     @distributed_trace_async
     async def batch_set_classifications(
-        self,
-        body: Union[_models.AtlasEntityHeaders, JSON, IO[bytes]],
-        **kwargs: Any
+        self, body: Union[_models.AtlasEntityHeaders, JSON, IO[bytes]], **kwargs: Any
     ) -> List[str]:
         # pylint: disable=line-too-long
         """Set classifications on entities in bulk.
@@ -7361,17 +7274,18 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
                 ]
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[List[str]] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[List[str]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -7387,40 +7301,33 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                List[str],
-                response.json()
-            )
+            deserialized = _deserialize(List[str], response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-
 
     @distributed_trace_async
     async def batch_get_by_unique_attributes(
@@ -7688,18 +7595,18 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AtlasEntitiesWithExtInfo] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.AtlasEntitiesWithExtInfo] = kwargs.pop("cls", None)
 
-        
         _request = build_entity_batch_get_by_unique_attributes_request(
             type_name=type_name,
             min_ext_info=min_ext_info,
@@ -7709,47 +7616,36 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.AtlasEntitiesWithExtInfo,
-                response.json()
-            )
+            deserialized = _deserialize(_models.AtlasEntitiesWithExtInfo, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace_async
-    async def get_header(
-        self,
-        guid: str,
-        **kwargs: Any
-    ) -> _models.AtlasEntityHeader:
+    async def get_header(self, guid: str, **kwargs: Any) -> _models.AtlasEntityHeader:
         # pylint: disable=line-too-long
         """Get entity header given its GUID.
 
@@ -7833,67 +7729,55 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AtlasEntityHeader] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.AtlasEntityHeader] = kwargs.pop("cls", None)
 
-        
         _request = build_entity_get_header_request(
             guid=guid,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.AtlasEntityHeader,
-                response.json()
-            )
+            deserialized = _deserialize(_models.AtlasEntityHeader, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @overload
     async def remove_business_metadata(  # pylint: disable=inconsistent-return-statements
-        self,
-        guid: str,
-        body: Dict[str, Dict[str, Any]],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, guid: str, body: Dict[str, Dict[str, Any]], *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Remove business metadata from an entity.
 
@@ -7921,12 +7805,7 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
 
     @overload
     async def remove_business_metadata(  # pylint: disable=inconsistent-return-statements
-        self,
-        guid: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, guid: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Remove business metadata from an entity.
 
@@ -7942,13 +7821,9 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-
     @distributed_trace_async
     async def remove_business_metadata(  # pylint: disable=inconsistent-return-statements
-        self,
-        guid: str,
-        body: Union[Dict[str, Dict[str, Any]], IO[bytes]],
-        **kwargs: Any
+        self, guid: str, body: Union[Dict[str, Dict[str, Any]], IO[bytes]], **kwargs: Any
     ) -> None:
         """Remove business metadata from an entity.
 
@@ -7962,17 +7837,18 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[None] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -7989,30 +7865,26 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if cls:
-            return cls(pipeline_response, None, {}) # type: ignore
-
-
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     async def add_or_update_business_metadata(  # pylint: disable=inconsistent-return-statements
@@ -8077,7 +7949,6 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-
 
     @distributed_trace_async
     async def add_or_update_business_metadata(  # pylint: disable=inconsistent-return-statements
@@ -8103,17 +7974,18 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[None] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -8131,30 +8003,26 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if cls:
-            return cls(pipeline_response, None, {}) # type: ignore
-
-
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     async def remove_business_metadata_attributes(  # pylint: disable=inconsistent-return-statements
@@ -8216,14 +8084,9 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-
     @distributed_trace_async
     async def remove_business_metadata_attributes(  # pylint: disable=inconsistent-return-statements
-        self,
-        business_metadata_name: str,
-        guid: str,
-        body: Union[Dict[str, Any], IO[bytes]],
-        **kwargs: Any
+        self, business_metadata_name: str, guid: str, body: Union[Dict[str, Any], IO[bytes]], **kwargs: Any
     ) -> None:
         """Delete business metadata attributes from an entity.
 
@@ -8239,17 +8102,18 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[None] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -8267,30 +8131,26 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if cls:
-            return cls(pipeline_response, None, {}) # type: ignore
-
-
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     async def add_or_update_business_metadata_attributes(  # pylint: disable=inconsistent-return-statements,name-too-long
@@ -8352,14 +8212,9 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-
     @distributed_trace_async
     async def add_or_update_business_metadata_attributes(  # pylint: disable=inconsistent-return-statements,name-too-long
-        self,
-        business_metadata_name: str,
-        guid: str,
-        body: Union[Dict[str, Any], IO[bytes]],
-        **kwargs: Any
+        self, business_metadata_name: str, guid: str, body: Union[Dict[str, Any], IO[bytes]], **kwargs: Any
     ) -> None:
         """Add or update business metadata attributes.
 
@@ -8375,17 +8230,18 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[None] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -8403,36 +8259,29 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if cls:
-            return cls(pipeline_response, None, {}) # type: ignore
-
-
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
-    async def get_business_metadata_template(
-        self,
-        **kwargs: Any
-    ) -> bytes:
+    async def get_business_metadata_template(self, **kwargs: Any) -> bytes:
         """Get the sample Template for uploading/creating bulk BusinessMetaData.
 
         :return: bytes
@@ -8440,58 +8289,54 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[bytes] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[bytes] = kwargs.pop("cls", None)
 
-        
         _request = build_entity_get_business_metadata_template_request(
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", True)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
-        await response.read()
-        deserialized = response.content
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = await response.read()
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @overload
     async def import_business_metadata(
-        self,
-        body: _models.BusinessMetadataOptions,
-        **kwargs: Any
+        self, body: _models.BusinessMetadataOptions, **kwargs: Any
     ) -> _models.BulkImportResult:
         """Upload the file for creating Business Metadata in BULK.
 
@@ -8533,11 +8378,7 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def import_business_metadata(
-        self,
-        body: JSON,
-        **kwargs: Any
-    ) -> _models.BulkImportResult:
+    async def import_business_metadata(self, body: JSON, **kwargs: Any) -> _models.BulkImportResult:
         """Upload the file for creating Business Metadata in BULK.
 
         :param body: Required.
@@ -8572,12 +8413,9 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
                 }
         """
 
-
     @distributed_trace_async
     async def import_business_metadata(
-        self,
-        body: Union[_models.BusinessMetadataOptions, JSON],
-        **kwargs: Any
+        self, body: Union[_models.BusinessMetadataOptions, JSON], **kwargs: Any
     ) -> _models.BulkImportResult:
         """Upload the file for creating Business Metadata in BULK.
 
@@ -8618,23 +8456,20 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.BulkImportResult] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.BulkImportResult] = kwargs.pop("cls", None)
 
-        _body = (
-            body.as_dict()
-            if isinstance(body, _model_base.Model) else
-            body
-        )
-        _file_fields: List[str] = ['file']
+        _body = body.as_dict() if isinstance(body, _model_base.Model) else body
+        _file_fields: List[str] = ["file"]
         _data_fields: List[str] = []
         _files, _data = prepare_multipart_form_data(_body, _file_fields, _data_fields)
 
@@ -8645,49 +8480,37 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.BulkImportResult,
-                response.json()
-            )
+            deserialized = _deserialize(_models.BulkImportResult, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @overload
     async def remove_labels(  # pylint: disable=inconsistent-return-statements
-        self,
-        guid: str,
-        body: Optional[List[str]] = None,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, guid: str, body: Optional[List[str]] = None, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Delete given labels to a given entity.
 
@@ -8713,12 +8536,7 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
 
     @overload
     async def remove_labels(  # pylint: disable=inconsistent-return-statements
-        self,
-        guid: str,
-        body: Optional[IO[bytes]] = None,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, guid: str, body: Optional[IO[bytes]] = None, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Delete given labels to a given entity.
 
@@ -8734,13 +8552,9 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-
     @distributed_trace_async
     async def remove_labels(  # pylint: disable=inconsistent-return-statements
-        self,
-        guid: str,
-        body: Optional[Union[List[str], IO[bytes]]] = None,
-        **kwargs: Any
+        self, guid: str, body: Optional[Union[List[str], IO[bytes]]] = None, **kwargs: Any
     ) -> None:
         """Delete given labels to a given entity.
 
@@ -8754,17 +8568,18 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[None] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -8784,39 +8599,30 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if cls:
-            return cls(pipeline_response, None, {}) # type: ignore
-
-
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     async def set_labels(  # pylint: disable=inconsistent-return-statements
-        self,
-        guid: str,
-        body: Optional[List[str]] = None,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, guid: str, body: Optional[List[str]] = None, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Set labels to a given entity.
 
@@ -8842,12 +8648,7 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
 
     @overload
     async def set_labels(  # pylint: disable=inconsistent-return-statements
-        self,
-        guid: str,
-        body: Optional[IO[bytes]] = None,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, guid: str, body: Optional[IO[bytes]] = None, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Set labels to a given entity.
 
@@ -8863,13 +8664,9 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-
     @distributed_trace_async
     async def set_labels(  # pylint: disable=inconsistent-return-statements
-        self,
-        guid: str,
-        body: Optional[Union[List[str], IO[bytes]]] = None,
-        **kwargs: Any
+        self, guid: str, body: Optional[Union[List[str], IO[bytes]]] = None, **kwargs: Any
     ) -> None:
         """Set labels to a given entity.
 
@@ -8883,17 +8680,18 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[None] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -8913,39 +8711,30 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if cls:
-            return cls(pipeline_response, None, {}) # type: ignore
-
-
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     async def add_label(  # pylint: disable=inconsistent-return-statements
-        self,
-        guid: str,
-        body: Optional[List[str]] = None,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, guid: str, body: Optional[List[str]] = None, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Add given labels to a given entity.
 
@@ -8971,12 +8760,7 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
 
     @overload
     async def add_label(  # pylint: disable=inconsistent-return-statements
-        self,
-        guid: str,
-        body: Optional[IO[bytes]] = None,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, guid: str, body: Optional[IO[bytes]] = None, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Add given labels to a given entity.
 
@@ -8992,13 +8776,9 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-
     @distributed_trace_async
     async def add_label(  # pylint: disable=inconsistent-return-statements
-        self,
-        guid: str,
-        body: Optional[Union[List[str], IO[bytes]]] = None,
-        **kwargs: Any
+        self, guid: str, body: Optional[Union[List[str], IO[bytes]]] = None, **kwargs: Any
     ) -> None:
         """Add given labels to a given entity.
 
@@ -9012,17 +8792,18 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[None] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -9042,30 +8823,26 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if cls:
-            return cls(pipeline_response, None, {}) # type: ignore
-
-
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     async def remove_labels_by_unique_attribute(  # pylint: disable=inconsistent-return-statements
@@ -9154,7 +8931,6 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-
 
     @distributed_trace_async
     async def remove_labels_by_unique_attribute(  # pylint: disable=inconsistent-return-statements
@@ -9193,17 +8969,18 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[None] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -9224,30 +9001,26 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if cls:
-            return cls(pipeline_response, None, {}) # type: ignore
-
-
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     async def set_labels_by_unique_attribute(  # pylint: disable=inconsistent-return-statements
@@ -9340,7 +9113,6 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-
 
     @distributed_trace_async
     async def set_labels_by_unique_attribute(  # pylint: disable=inconsistent-return-statements
@@ -9381,17 +9153,18 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[None] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -9412,30 +9185,26 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if cls:
-            return cls(pipeline_response, None, {}) # type: ignore
-
-
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     async def add_labels_by_unique_attribute(  # pylint: disable=inconsistent-return-statements
@@ -9529,7 +9298,6 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-
     @distributed_trace_async
     async def add_labels_by_unique_attribute(  # pylint: disable=inconsistent-return-statements
         self,
@@ -9569,17 +9337,18 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[None] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -9600,30 +9369,26 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if cls:
-            return cls(pipeline_response, None, {}) # type: ignore
-
-
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     async def move_entities_to_collection(
@@ -9833,12 +9598,7 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
 
     @overload
     async def move_entities_to_collection(
-        self,
-        body: JSON,
-        *,
-        collection_id: str,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: JSON, *, collection_id: str, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EntityMutationResult:
         # pylint: disable=line-too-long
         """Move existing entities to the target collection.
@@ -10031,12 +9791,7 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
 
     @overload
     async def move_entities_to_collection(
-        self,
-        body: IO[bytes],
-        *,
-        collection_id: str,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: IO[bytes], *, collection_id: str, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EntityMutationResult:
         # pylint: disable=line-too-long
         """Move existing entities to the target collection.
@@ -10227,14 +9982,9 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
                 }
         """
 
-
     @distributed_trace_async
     async def move_entities_to_collection(
-        self,
-        body: Union[_models.MoveEntitiesOptions, JSON, IO[bytes]],
-        *,
-        collection_id: str,
-        **kwargs: Any
+        self, body: Union[_models.MoveEntitiesOptions, JSON, IO[bytes]], *, collection_id: str, **kwargs: Any
     ) -> _models.EntityMutationResult:
         # pylint: disable=line-too-long
         """Move existing entities to the target collection.
@@ -10430,17 +10180,18 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[_models.EntityMutationResult] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.EntityMutationResult] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -10458,41 +10209,36 @@ class EntityOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.EntityMutationResult,
-                response.json()
-            )
+            deserialized = _deserialize(_models.EntityMutationResult, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
 
-class GlossaryOperations:   # pylint: disable=too-many-public-methods
+class GlossaryOperations:  # pylint: disable=too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10508,9 +10254,6 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-
-
 
     @distributed_trace_async
     async def batch_get(
@@ -10628,18 +10371,18 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
                 ]
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.AtlasGlossary]] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[List[_models.AtlasGlossary]] = kwargs.pop("cls", None)
 
-        
         _request = build_glossary_batch_get_request(
             limit=limit,
             offset=offset,
@@ -10650,48 +10393,37 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                List[_models.AtlasGlossary],
-                response.json()
-            )
+            deserialized = _deserialize(List[_models.AtlasGlossary], response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @overload
     async def create(
-        self,
-        body: _models.AtlasGlossary,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: _models.AtlasGlossary, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AtlasGlossary:
         # pylint: disable=line-too-long
         """Create a glossary.
@@ -10851,11 +10583,7 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
 
     @overload
     async def create(
-        self,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AtlasGlossary:
         # pylint: disable=line-too-long
         """Create a glossary.
@@ -10945,11 +10673,7 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
 
     @overload
     async def create(
-        self,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AtlasGlossary:
         # pylint: disable=line-too-long
         """Create a glossary.
@@ -11037,13 +10761,8 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
                 }
         """
 
-
     @distributed_trace_async
-    async def create(
-        self,
-        body: Union[_models.AtlasGlossary, JSON, IO[bytes]],
-        **kwargs: Any
-    ) -> _models.AtlasGlossary:
+    async def create(self, body: Union[_models.AtlasGlossary, JSON, IO[bytes]], **kwargs: Any) -> _models.AtlasGlossary:
         # pylint: disable=line-too-long
         """Create a glossary.
 
@@ -11197,17 +10916,18 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[_models.AtlasGlossary] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AtlasGlossary] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -11223,48 +10943,37 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.AtlasGlossary,
-                response.json()
-            )
+            deserialized = _deserialize(_models.AtlasGlossary, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @overload
     async def create_categories(
-        self,
-        body: List[_models.AtlasGlossaryCategory],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: List[_models.AtlasGlossaryCategory], *, content_type: str = "application/json", **kwargs: Any
     ) -> List[_models.AtlasGlossaryCategory]:
         # pylint: disable=line-too-long
         """Create glossary category in bulk.
@@ -11470,11 +11179,7 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
 
     @overload
     async def create_categories(
-        self,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> List[_models.AtlasGlossaryCategory]:
         # pylint: disable=line-too-long
         """Create glossary category in bulk.
@@ -11585,12 +11290,9 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
                 ]
         """
 
-
     @distributed_trace_async
     async def create_categories(
-        self,
-        body: Union[List[_models.AtlasGlossaryCategory], IO[bytes]],
-        **kwargs: Any
+        self, body: Union[List[_models.AtlasGlossaryCategory], IO[bytes]], **kwargs: Any
     ) -> List[_models.AtlasGlossaryCategory]:
         # pylint: disable=line-too-long
         """Create glossary category in bulk.
@@ -11699,17 +11401,18 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
                 ]
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[List[_models.AtlasGlossaryCategory]] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[List[_models.AtlasGlossaryCategory]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -11725,48 +11428,37 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                List[_models.AtlasGlossaryCategory],
-                response.json()
-            )
+            deserialized = _deserialize(List[_models.AtlasGlossaryCategory], response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @overload
     async def create_category(
-        self,
-        body: _models.AtlasGlossaryCategory,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: _models.AtlasGlossaryCategory, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AtlasGlossaryCategory:
         # pylint: disable=line-too-long
         """Create a glossary category.
@@ -11950,11 +11642,7 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
 
     @overload
     async def create_category(
-        self,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AtlasGlossaryCategory:
         # pylint: disable=line-too-long
         """Create a glossary category.
@@ -12056,11 +11744,7 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
 
     @overload
     async def create_category(
-        self,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AtlasGlossaryCategory:
         # pylint: disable=line-too-long
         """Create a glossary category.
@@ -12160,12 +11844,9 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
                 }
         """
 
-
     @distributed_trace_async
     async def create_category(
-        self,
-        body: Union[_models.AtlasGlossaryCategory, JSON, IO[bytes]],
-        **kwargs: Any
+        self, body: Union[_models.AtlasGlossaryCategory, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.AtlasGlossaryCategory:
         # pylint: disable=line-too-long
         """Create a glossary category.
@@ -12344,17 +12025,18 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[_models.AtlasGlossaryCategory] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AtlasGlossaryCategory] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -12370,47 +12052,36 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.AtlasGlossaryCategory,
-                response.json()
-            )
+            deserialized = _deserialize(_models.AtlasGlossaryCategory, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace_async
-    async def get_category(
-        self,
-        category_id: str,
-        **kwargs: Any
-    ) -> _models.AtlasGlossaryCategory:
+    async def get_category(self, category_id: str, **kwargs: Any) -> _models.AtlasGlossaryCategory:
         # pylint: disable=line-too-long
         """Get specific glossary category by its GUID.
 
@@ -12506,58 +12177,51 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AtlasGlossaryCategory] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.AtlasGlossaryCategory] = kwargs.pop("cls", None)
 
-        
         _request = build_glossary_get_category_request(
             category_id=category_id,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.AtlasGlossaryCategory,
-                response.json()
-            )
+            deserialized = _deserialize(_models.AtlasGlossaryCategory, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-
 
     @overload
     async def update_category(
@@ -12752,12 +12416,7 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
 
     @overload
     async def update_category(
-        self,
-        category_id: str,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, category_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AtlasGlossaryCategory:
         # pylint: disable=line-too-long
         """Update the given glossary category by its GUID.
@@ -12861,12 +12520,7 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
 
     @overload
     async def update_category(
-        self,
-        category_id: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, category_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AtlasGlossaryCategory:
         # pylint: disable=line-too-long
         """Update the given glossary category by its GUID.
@@ -12968,13 +12622,9 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
                 }
         """
 
-
     @distributed_trace_async
     async def update_category(
-        self,
-        category_id: str,
-        body: Union[_models.AtlasGlossaryCategory, JSON, IO[bytes]],
-        **kwargs: Any
+        self, category_id: str, body: Union[_models.AtlasGlossaryCategory, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.AtlasGlossaryCategory:
         # pylint: disable=line-too-long
         """Update the given glossary category by its GUID.
@@ -13155,17 +12805,18 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[_models.AtlasGlossaryCategory] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AtlasGlossaryCategory] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -13182,46 +12833,37 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.AtlasGlossaryCategory,
-                response.json()
-            )
+            deserialized = _deserialize(_models.AtlasGlossaryCategory, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace_async
     async def delete_category(  # pylint: disable=inconsistent-return-statements
-        self,
-        category_id: str,
-        **kwargs: Any
+        self, category_id: str, **kwargs: Any
     ) -> None:
         """Delete a glossary category.
 
@@ -13232,57 +12874,48 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
-        
         _request = build_glossary_delete_category_request(
             category_id=category_id,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if cls:
-            return cls(pipeline_response, None, {}) # type: ignore
-
-
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     async def partial_update_category(
-        self,
-        category_id: str,
-        body: Dict[str, str],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, category_id: str, body: Dict[str, str], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AtlasGlossaryCategory:
         # pylint: disable=line-too-long
         """Update the glossary category partially. So far we only supports partial
@@ -13393,12 +13026,7 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
 
     @overload
     async def partial_update_category(
-        self,
-        category_id: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, category_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AtlasGlossaryCategory:
         # pylint: disable=line-too-long
         """Update the glossary category partially. So far we only supports partial
@@ -13502,13 +13130,9 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
                 }
         """
 
-
     @distributed_trace_async
     async def partial_update_category(
-        self,
-        category_id: str,
-        body: Union[Dict[str, str], IO[bytes]],
-        **kwargs: Any
+        self, category_id: str, body: Union[Dict[str, str], IO[bytes]], **kwargs: Any
     ) -> _models.AtlasGlossaryCategory:
         # pylint: disable=line-too-long
         """Update the glossary category partially. So far we only supports partial
@@ -13609,17 +13233,18 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[_models.AtlasGlossaryCategory] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AtlasGlossaryCategory] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -13636,40 +13261,33 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.AtlasGlossaryCategory,
-                response.json()
-            )
+            deserialized = _deserialize(_models.AtlasGlossaryCategory, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-
 
     @distributed_trace_async
     async def get_related_categories(
@@ -13716,18 +13334,18 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[Dict[str, List[_models.AtlasRelatedCategoryHeader]]] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[Dict[str, List[_models.AtlasRelatedCategoryHeader]]] = kwargs.pop("cls", None)
 
-        
         _request = build_glossary_get_related_categories_request(
             category_id=category_id,
             limit=limit,
@@ -13737,40 +13355,33 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                Dict[str, List[_models.AtlasRelatedCategoryHeader]],
-                response.json()
-            )
+            deserialized = _deserialize(Dict[str, List[_models.AtlasRelatedCategoryHeader]], response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-
 
     @distributed_trace_async
     async def get_category_terms(
@@ -13816,18 +13427,18 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
                 ]
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.AtlasRelatedTermHeader]] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[List[_models.AtlasRelatedTermHeader]] = kwargs.pop("cls", None)
 
-        
         _request = build_glossary_get_category_terms_request(
             category_id=category_id,
             limit=limit,
@@ -13837,40 +13448,33 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                List[_models.AtlasRelatedTermHeader],
-                response.json()
-            )
+            deserialized = _deserialize(List[_models.AtlasRelatedTermHeader], response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-
 
     @overload
     async def create_term(
@@ -15285,7 +14889,6 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
                 }
         """
 
-
     @distributed_trace_async
     async def create_term(
         self,
@@ -15975,17 +15578,18 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[_models.AtlasGlossaryTerm] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AtlasGlossaryTerm] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -16002,47 +15606,36 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.AtlasGlossaryTerm,
-                response.json()
-            )
+            deserialized = _deserialize(_models.AtlasGlossaryTerm, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace_async
-    async def get_term(
-        self,
-        term_id: str,
-        **kwargs: Any
-    ) -> _models.AtlasGlossaryTerm:
+    async def get_term(self, term_id: str, **kwargs: Any) -> _models.AtlasGlossaryTerm:
         # pylint: disable=line-too-long
         """Get a specific glossary term by its GUID.
 
@@ -16389,18 +15982,18 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AtlasGlossaryTerm] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.AtlasGlossaryTerm] = kwargs.pop("cls", None)
 
-        
         _request = build_glossary_get_term_request(
             term_id=term_id,
             api_version=self._config.api_version,
@@ -16408,40 +16001,33 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.AtlasGlossaryTerm,
-                response.json()
-            )
+            deserialized = _deserialize(_models.AtlasGlossaryTerm, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-
 
     @overload
     async def update_term(
@@ -17865,7 +17451,6 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
                 }
         """
 
-
     @distributed_trace_async
     async def update_term(
         self,
@@ -18558,17 +18143,18 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[_models.AtlasGlossaryTerm] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AtlasGlossaryTerm] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -18587,47 +18173,36 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.AtlasGlossaryTerm,
-                response.json()
-            )
+            deserialized = _deserialize(_models.AtlasGlossaryTerm, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace_async
-    async def delete_term(  # pylint: disable=inconsistent-return-statements
-        self,
-        term_id: str,
-        **kwargs: Any
-    ) -> None:
+    async def delete_term(self, term_id: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
         """Delete a glossary term.
 
         :param term_id: The globally unique identifier for glossary term. Required.
@@ -18637,48 +18212,44 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
-        
         _request = build_glossary_delete_term_request(
             term_id=term_id,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if cls:
-            return cls(pipeline_response, None, {}) # type: ignore
-
-
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     async def partial_update_term(
@@ -19414,7 +18985,6 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
                     ]
                 }
         """
-
 
     @distributed_trace_async
     async def partial_update_term(
@@ -19777,17 +19347,18 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[_models.AtlasGlossaryTerm] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AtlasGlossaryTerm] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -19806,40 +19377,33 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.AtlasGlossaryTerm,
-                response.json()
-            )
+            deserialized = _deserialize(_models.AtlasGlossaryTerm, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-
 
     @overload
     async def create_terms(
@@ -21008,7 +20572,6 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
                 ]
         """
 
-
     @distributed_trace_async
     async def create_terms(
         self,
@@ -21404,17 +20967,18 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
                 ]
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[List[_models.AtlasGlossaryTerm]] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[List[_models.AtlasGlossaryTerm]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -21432,40 +20996,33 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                List[_models.AtlasGlossaryTerm],
-                response.json()
-            )
+            deserialized = _deserialize(List[_models.AtlasGlossaryTerm], response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-
 
     @distributed_trace_async
     async def get_entities_assigned_with_term(
@@ -21524,18 +21081,18 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
                 ]
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.AtlasRelatedObjectId]] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[List[_models.AtlasRelatedObjectId]] = kwargs.pop("cls", None)
 
-        
         _request = build_glossary_get_entities_assigned_with_term_request(
             term_id=term_id,
             limit=limit,
@@ -21545,40 +21102,33 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                List[_models.AtlasRelatedObjectId],
-                response.json()
-            )
+            deserialized = _deserialize(List[_models.AtlasRelatedObjectId], response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-
 
     @overload
     async def assign_term_to_entities(  # pylint: disable=inconsistent-return-statements
@@ -21642,12 +21192,7 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
 
     @overload
     async def assign_term_to_entities(  # pylint: disable=inconsistent-return-statements
-        self,
-        term_id: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, term_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Assign the given term to the provided list of related objects. Recommend using
         small batches with multiple API calls.
@@ -21669,13 +21214,9 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-
     @distributed_trace_async
     async def assign_term_to_entities(  # pylint: disable=inconsistent-return-statements
-        self,
-        term_id: str,
-        body: Union[List[_models.AtlasRelatedObjectId], IO[bytes]],
-        **kwargs: Any
+        self, term_id: str, body: Union[List[_models.AtlasRelatedObjectId], IO[bytes]], **kwargs: Any
     ) -> None:
         """Assign the given term to the provided list of related objects. Recommend using
         small batches with multiple API calls.
@@ -21695,17 +21236,18 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[None] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -21722,30 +21264,26 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if cls:
-            return cls(pipeline_response, None, {}) # type: ignore
-
-
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     async def delete_term_assignment_from_entities(  # pylint: disable=inconsistent-return-statements
@@ -21804,12 +21342,7 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
 
     @overload
     async def delete_term_assignment_from_entities(  # pylint: disable=inconsistent-return-statements
-        self,
-        term_id: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, term_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Delete the term assignment for the given list of related objects.
 
@@ -21826,13 +21359,9 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-
     @distributed_trace_async
     async def delete_term_assignment_from_entities(  # pylint: disable=inconsistent-return-statements
-        self,
-        term_id: str,
-        body: Union[List[_models.AtlasRelatedObjectId], IO[bytes]],
-        **kwargs: Any
+        self, term_id: str, body: Union[List[_models.AtlasRelatedObjectId], IO[bytes]], **kwargs: Any
     ) -> None:
         """Delete the term assignment for the given list of related objects.
 
@@ -21846,17 +21375,18 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[None] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -21873,30 +21403,26 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if cls:
-            return cls(pipeline_response, None, {}) # type: ignore
-
-
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
     async def get_related_terms(
@@ -21947,18 +21473,18 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[Dict[str, List[_models.AtlasRelatedTermHeader]]] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[Dict[str, List[_models.AtlasRelatedTermHeader]]] = kwargs.pop("cls", None)
 
-        
         _request = build_glossary_get_related_terms_request(
             term_id=term_id,
             limit=limit,
@@ -21969,47 +21495,36 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                Dict[str, List[_models.AtlasRelatedTermHeader]],
-                response.json()
-            )
+            deserialized = _deserialize(Dict[str, List[_models.AtlasRelatedTermHeader]], response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace_async
-    async def get(
-        self,
-        glossary_id: str,
-        **kwargs: Any
-    ) -> _models.AtlasGlossary:
+    async def get(self, glossary_id: str, **kwargs: Any) -> _models.AtlasGlossary:
         # pylint: disable=line-too-long
         """Get a specific Glossary by its GUID.
 
@@ -22093,58 +21608,51 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AtlasGlossary] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.AtlasGlossary] = kwargs.pop("cls", None)
 
-        
         _request = build_glossary_get_request(
             glossary_id=glossary_id,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.AtlasGlossary,
-                response.json()
-            )
+            deserialized = _deserialize(_models.AtlasGlossary, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-
 
     @overload
     async def update(
@@ -22519,7 +22027,6 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
                 }
         """
 
-
     @distributed_trace_async
     async def update(
         self,
@@ -22687,17 +22194,18 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[_models.AtlasGlossary] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AtlasGlossary] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -22716,47 +22224,36 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.AtlasGlossary,
-                response.json()
-            )
+            deserialized = _deserialize(_models.AtlasGlossary, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace_async
-    async def delete(  # pylint: disable=inconsistent-return-statements
-        self,
-        glossary_id: str,
-        **kwargs: Any
-    ) -> None:
+    async def delete(self, glossary_id: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
         """Delete a glossary. Will delete underlying terms/categories together. Recommend
         separate delete terms and categories.
 
@@ -22767,48 +22264,44 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
-        
         _request = build_glossary_delete_request(
             glossary_id=glossary_id,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if cls:
-            return cls(pipeline_response, None, {}) # type: ignore
-
-
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
     async def get_categories(
@@ -22933,18 +22426,18 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
                 ]
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.AtlasGlossaryCategory]] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[List[_models.AtlasGlossaryCategory]] = kwargs.pop("cls", None)
 
-        
         _request = build_glossary_get_categories_request(
             glossary_id=glossary_id,
             limit=limit,
@@ -22954,40 +22447,33 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                List[_models.AtlasGlossaryCategory],
-                response.json()
-            )
+            deserialized = _deserialize(List[_models.AtlasGlossaryCategory], response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-
 
     @distributed_trace_async
     async def get_categories_headers(
@@ -23031,18 +22517,18 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
                 ]
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.AtlasRelatedCategoryHeader]] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[List[_models.AtlasRelatedCategoryHeader]] = kwargs.pop("cls", None)
 
-        
         _request = build_glossary_get_categories_headers_request(
             glossary_id=glossary_id,
             limit=limit,
@@ -23052,47 +22538,36 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                List[_models.AtlasRelatedCategoryHeader],
-                response.json()
-            )
+            deserialized = _deserialize(List[_models.AtlasRelatedCategoryHeader], response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace_async
-    async def get_detailed(
-        self,
-        glossary_id: str,
-        **kwargs: Any
-    ) -> _models.AtlasGlossaryExtInfo:
+    async def get_detailed(self, glossary_id: str, **kwargs: Any) -> _models.AtlasGlossaryExtInfo:
         # pylint: disable=line-too-long
         """Get a specific glossary with detailed information. This API is not
         recommend.
@@ -23697,18 +23172,18 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AtlasGlossaryExtInfo] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.AtlasGlossaryExtInfo] = kwargs.pop("cls", None)
 
-        
         _request = build_glossary_get_detailed_request(
             glossary_id=glossary_id,
             api_version=self._config.api_version,
@@ -23716,40 +23191,33 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.AtlasGlossaryExtInfo,
-                response.json()
-            )
+            deserialized = _deserialize(_models.AtlasGlossaryExtInfo, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-
 
     @overload
     async def partial_update(
@@ -23974,7 +23442,6 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
                 }
         """
 
-
     @distributed_trace_async
     async def partial_update(
         self,
@@ -24080,17 +23547,18 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[_models.AtlasGlossary] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AtlasGlossary] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -24109,40 +23577,33 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.AtlasGlossary,
-                response.json()
-            )
+            deserialized = _deserialize(_models.AtlasGlossary, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-
 
     @distributed_trace_async
     async def get_terms(
@@ -24545,18 +24006,18 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
                 ]
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.AtlasGlossaryTerm]] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[List[_models.AtlasGlossaryTerm]] = kwargs.pop("cls", None)
 
-        
         _request = build_glossary_get_terms_request(
             glossary_id=glossary_id,
             limit=limit,
@@ -24567,40 +24028,33 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                List[_models.AtlasGlossaryTerm],
-                response.json()
-            )
+            deserialized = _deserialize(List[_models.AtlasGlossaryTerm], response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-
 
     @distributed_trace_async
     async def get_term_headers(
@@ -24647,18 +24101,18 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
                 ]
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.AtlasRelatedTermHeader]] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[List[_models.AtlasRelatedTermHeader]] = kwargs.pop("cls", None)
 
-        
         _request = build_glossary_get_term_headers_request(
             glossary_id=glossary_id,
             limit=limit,
@@ -24668,41 +24122,36 @@ class GlossaryOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                List[_models.AtlasRelatedTermHeader],
-                response.json()
-            )
+            deserialized = _deserialize(List[_models.AtlasRelatedTermHeader], response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
 
-class DiscoveryOperations: 
+class DiscoveryOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -24719,16 +24168,9 @@ class DiscoveryOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-
-
-
     @overload
     async def query(
-        self,
-        body: _models.QueryOptions,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: _models.QueryOptions, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.QueryResult:
         # pylint: disable=line-too-long
         """Get data using search.
@@ -24955,13 +24397,7 @@ class DiscoveryOperations:
         """
 
     @overload
-    async def query(
-        self,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.QueryResult:
+    async def query(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.QueryResult:
         # pylint: disable=line-too-long
         """Get data using search.
 
@@ -25144,11 +24580,7 @@ class DiscoveryOperations:
 
     @overload
     async def query(
-        self,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.QueryResult:
         # pylint: disable=line-too-long
         """Get data using search.
@@ -25330,13 +24762,8 @@ class DiscoveryOperations:
                 }
         """
 
-
     @distributed_trace_async
-    async def query(
-        self,
-        body: Union[_models.QueryOptions, JSON, IO[bytes]],
-        **kwargs: Any
-    ) -> _models.QueryResult:
+    async def query(self, body: Union[_models.QueryOptions, JSON, IO[bytes]], **kwargs: Any) -> _models.QueryResult:
         # pylint: disable=line-too-long
         """Get data using search.
 
@@ -25558,17 +24985,18 @@ class DiscoveryOperations:
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[_models.QueryResult] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.QueryResult] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -25585,48 +25013,37 @@ class DiscoveryOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.QueryResult,
-                response.json()
-            )
+            deserialized = _deserialize(_models.QueryResult, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @overload
     async def suggest(
-        self,
-        body: _models.SuggestOptions,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: _models.SuggestOptions, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.SuggestResult:
         # pylint: disable=line-too-long
         """Get search suggestions by query criteria.
@@ -25729,11 +25146,7 @@ class DiscoveryOperations:
 
     @overload
     async def suggest(
-        self,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.SuggestResult:
         # pylint: disable=line-too-long
         """Get search suggestions by query criteria.
@@ -25825,11 +25238,7 @@ class DiscoveryOperations:
 
     @overload
     async def suggest(
-        self,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.SuggestResult:
         # pylint: disable=line-too-long
         """Get search suggestions by query criteria.
@@ -25919,12 +25328,9 @@ class DiscoveryOperations:
                 }
         """
 
-
     @distributed_trace_async
     async def suggest(
-        self,
-        body: Union[_models.SuggestOptions, JSON, IO[bytes]],
-        **kwargs: Any
+        self, body: Union[_models.SuggestOptions, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.SuggestResult:
         # pylint: disable=line-too-long
         """Get search suggestions by query criteria.
@@ -26022,17 +25428,18 @@ class DiscoveryOperations:
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[_models.SuggestResult] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.SuggestResult] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -26049,48 +25456,37 @@ class DiscoveryOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.SuggestResult,
-                response.json()
-            )
+            deserialized = _deserialize(_models.SuggestResult, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @overload
     async def auto_complete(
-        self,
-        body: _models.AutoCompleteOptions,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: _models.AutoCompleteOptions, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AutoCompleteResult:
         # pylint: disable=line-too-long
         """Get auto complete options.
@@ -26131,11 +25527,7 @@ class DiscoveryOperations:
 
     @overload
     async def auto_complete(
-        self,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AutoCompleteResult:
         """Get auto complete options.
 
@@ -26165,11 +25557,7 @@ class DiscoveryOperations:
 
     @overload
     async def auto_complete(
-        self,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AutoCompleteResult:
         """Get auto complete options.
 
@@ -26197,12 +25585,9 @@ class DiscoveryOperations:
                 }
         """
 
-
     @distributed_trace_async
     async def auto_complete(
-        self,
-        body: Union[_models.AutoCompleteOptions, JSON, IO[bytes]],
-        **kwargs: Any
+        self, body: Union[_models.AutoCompleteOptions, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.AutoCompleteResult:
         # pylint: disable=line-too-long
         """Get auto complete options.
@@ -26238,17 +25623,18 @@ class DiscoveryOperations:
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[_models.AutoCompleteResult] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AutoCompleteResult] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -26265,41 +25651,36 @@ class DiscoveryOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.AutoCompleteResult,
-                response.json()
-            )
+            deserialized = _deserialize(_models.AutoCompleteResult, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
 
-class LineageOperations: 
+class LineageOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -26316,17 +25697,9 @@ class LineageOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-
-
-
     @distributed_trace_async
     async def get(
-        self,
-        guid: str,
-        *,
-        direction: Union[str, _models.LineageDirection],
-        depth: Optional[int] = None,
-        **kwargs: Any
+        self, guid: str, *, direction: Union[str, _models.LineageDirection], depth: Optional[int] = None, **kwargs: Any
     ) -> _models.AtlasLineageInfo:
         # pylint: disable=line-too-long
         """Get lineage info of the entity specified by GUID.
@@ -26459,18 +25832,18 @@ class LineageOperations:
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AtlasLineageInfo] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.AtlasLineageInfo] = kwargs.pop("cls", None)
 
-        
         _request = build_lineage_get_request(
             guid=guid,
             direction=direction,
@@ -26479,40 +25852,33 @@ class LineageOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.AtlasLineageInfo,
-                response.json()
-            )
+            deserialized = _deserialize(_models.AtlasLineageInfo, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-
 
     @distributed_trace_async
     async def get_next_page(
@@ -26657,18 +26023,18 @@ class LineageOperations:
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AtlasLineageInfo] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.AtlasLineageInfo] = kwargs.pop("cls", None)
 
-        
         _request = build_lineage_get_next_page_request(
             guid=guid,
             direction=direction,
@@ -26679,40 +26045,33 @@ class LineageOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.AtlasLineageInfo,
-                response.json()
-            )
+            deserialized = _deserialize(_models.AtlasLineageInfo, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-
 
     @distributed_trace_async
     async def get_by_unique_attribute(
@@ -26874,18 +26233,18 @@ class LineageOperations:
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AtlasLineageInfo] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.AtlasLineageInfo] = kwargs.pop("cls", None)
 
-        
         _request = build_lineage_get_by_unique_attribute_request(
             type_name=type_name,
             direction=direction,
@@ -26895,41 +26254,36 @@ class LineageOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.AtlasLineageInfo,
-                response.json()
-            )
+            deserialized = _deserialize(_models.AtlasLineageInfo, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
 
-class RelationshipOperations: 
+class RelationshipOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -26946,16 +26300,9 @@ class RelationshipOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-
-
-
     @overload
     async def create(
-        self,
-        body: _models.AtlasRelationship,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: _models.AtlasRelationship, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AtlasRelationship:
         """Create a new relationship between entities.
 
@@ -27044,11 +26391,7 @@ class RelationshipOperations:
 
     @overload
     async def create(
-        self,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AtlasRelationship:
         """Create a new relationship between entities.
 
@@ -27102,11 +26445,7 @@ class RelationshipOperations:
 
     @overload
     async def create(
-        self,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AtlasRelationship:
         """Create a new relationship between entities.
 
@@ -27158,12 +26497,9 @@ class RelationshipOperations:
                 }
         """
 
-
     @distributed_trace_async
     async def create(
-        self,
-        body: Union[_models.AtlasRelationship, JSON, IO[bytes]],
-        **kwargs: Any
+        self, body: Union[_models.AtlasRelationship, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.AtlasRelationship:
         """Create a new relationship between entities.
 
@@ -27247,17 +26583,18 @@ class RelationshipOperations:
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[_models.AtlasRelationship] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AtlasRelationship] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -27273,48 +26610,37 @@ class RelationshipOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.AtlasRelationship,
-                response.json()
-            )
+            deserialized = _deserialize(_models.AtlasRelationship, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @overload
     async def update(
-        self,
-        body: _models.AtlasRelationship,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: _models.AtlasRelationship, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AtlasRelationship:
         """Update an existing relationship between entities.
 
@@ -27403,11 +26729,7 @@ class RelationshipOperations:
 
     @overload
     async def update(
-        self,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AtlasRelationship:
         """Update an existing relationship between entities.
 
@@ -27461,11 +26783,7 @@ class RelationshipOperations:
 
     @overload
     async def update(
-        self,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AtlasRelationship:
         """Update an existing relationship between entities.
 
@@ -27517,12 +26835,9 @@ class RelationshipOperations:
                 }
         """
 
-
     @distributed_trace_async
     async def update(
-        self,
-        body: Union[_models.AtlasRelationship, JSON, IO[bytes]],
-        **kwargs: Any
+        self, body: Union[_models.AtlasRelationship, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.AtlasRelationship:
         """Update an existing relationship between entities.
 
@@ -27606,17 +26921,18 @@ class RelationshipOperations:
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[_models.AtlasRelationship] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AtlasRelationship] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -27632,48 +26948,37 @@ class RelationshipOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.AtlasRelationship,
-                response.json()
-            )
+            deserialized = _deserialize(_models.AtlasRelationship, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace_async
     async def get(
-        self,
-        guid: str,
-        *,
-        extended_info: Optional[bool] = None,
-        **kwargs: Any
+        self, guid: str, *, extended_info: Optional[bool] = None, **kwargs: Any
     ) -> _models.AtlasRelationshipWithExtInfo:
         # pylint: disable=line-too-long
         """Get relationship information between entities by its GUID.
@@ -27809,18 +27114,18 @@ class RelationshipOperations:
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AtlasRelationshipWithExtInfo] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.AtlasRelationshipWithExtInfo] = kwargs.pop("cls", None)
 
-        
         _request = build_relationship_get_request(
             guid=guid,
             extended_info=extended_info,
@@ -27828,47 +27133,36 @@ class RelationshipOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.AtlasRelationshipWithExtInfo,
-                response.json()
-            )
+            deserialized = _deserialize(_models.AtlasRelationshipWithExtInfo, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace_async
-    async def delete(  # pylint: disable=inconsistent-return-statements
-        self,
-        guid: str,
-        **kwargs: Any
-    ) -> None:
+    async def delete(self, guid: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
         """Delete a relationship between entities by its GUID.
 
         :param guid: The globally unique identifier of the relationship. Required.
@@ -27878,49 +27172,47 @@ class RelationshipOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
-        
         _request = build_relationship_delete_request(
             guid=guid,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if cls:
-            return cls(pipeline_response, None, {}) # type: ignore
+            return cls(pipeline_response, None, {})  # type: ignore
 
 
-class TypeDefinitionOperations:   # pylint: disable=too-many-public-methods
+class TypeDefinitionOperations:  # pylint: disable=too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -27937,15 +27229,8 @@ class TypeDefinitionOperations:   # pylint: disable=too-many-public-methods
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-
-
-
     @distributed_trace_async
-    async def get_business_metadata_by_id(
-        self,
-        guid: str,
-        **kwargs: Any
-    ) -> _models.AtlasBusinessMetadataDef:
+    async def get_business_metadata_by_id(self, guid: str, **kwargs: Any) -> _models.AtlasBusinessMetadataDef:
         # pylint: disable=line-too-long
         """Get the businessMetadata definition for the given guid.
 
@@ -28068,65 +27353,54 @@ class TypeDefinitionOperations:   # pylint: disable=too-many-public-methods
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AtlasBusinessMetadataDef] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.AtlasBusinessMetadataDef] = kwargs.pop("cls", None)
 
-        
         _request = build_type_definition_get_business_metadata_by_id_request(
             guid=guid,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.AtlasBusinessMetadataDef,
-                response.json()
-            )
+            deserialized = _deserialize(_models.AtlasBusinessMetadataDef, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace_async
-    async def get_business_metadata_by_name(
-        self,
-        name: str,
-        **kwargs: Any
-    ) -> _models.AtlasBusinessMetadataDef:
+    async def get_business_metadata_by_name(self, name: str, **kwargs: Any) -> _models.AtlasBusinessMetadataDef:
         # pylint: disable=line-too-long
         """Get the businessMetadata definition by it's name (unique).
 
@@ -28249,65 +27523,54 @@ class TypeDefinitionOperations:   # pylint: disable=too-many-public-methods
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AtlasBusinessMetadataDef] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.AtlasBusinessMetadataDef] = kwargs.pop("cls", None)
 
-        
         _request = build_type_definition_get_business_metadata_by_name_request(
             name=name,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.AtlasBusinessMetadataDef,
-                response.json()
-            )
+            deserialized = _deserialize(_models.AtlasBusinessMetadataDef, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace_async
-    async def get_classification_by_id(
-        self,
-        guid: str,
-        **kwargs: Any
-    ) -> _models.AtlasClassificationDef:
+    async def get_classification_by_id(self, guid: str, **kwargs: Any) -> _models.AtlasClassificationDef:
         # pylint: disable=line-too-long
         """Get the classification definition for the given GUID.
 
@@ -28448,65 +27711,54 @@ class TypeDefinitionOperations:   # pylint: disable=too-many-public-methods
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AtlasClassificationDef] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.AtlasClassificationDef] = kwargs.pop("cls", None)
 
-        
         _request = build_type_definition_get_classification_by_id_request(
             guid=guid,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.AtlasClassificationDef,
-                response.json()
-            )
+            deserialized = _deserialize(_models.AtlasClassificationDef, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace_async
-    async def get_classification_by_name(
-        self,
-        name: str,
-        **kwargs: Any
-    ) -> _models.AtlasClassificationDef:
+    async def get_classification_by_name(self, name: str, **kwargs: Any) -> _models.AtlasClassificationDef:
         # pylint: disable=line-too-long
         """Get the classification definition by its name (unique).
 
@@ -28647,65 +27899,54 @@ class TypeDefinitionOperations:   # pylint: disable=too-many-public-methods
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AtlasClassificationDef] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.AtlasClassificationDef] = kwargs.pop("cls", None)
 
-        
         _request = build_type_definition_get_classification_by_name_request(
             name=name,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.AtlasClassificationDef,
-                response.json()
-            )
+            deserialized = _deserialize(_models.AtlasClassificationDef, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace_async
-    async def get_entity_by_id(
-        self,
-        guid: str,
-        **kwargs: Any
-    ) -> _models.AtlasEntityDef:
+    async def get_entity_by_id(self, guid: str, **kwargs: Any) -> _models.AtlasEntityDef:
         # pylint: disable=line-too-long
         """Get the Entity definition for the given GUID.
 
@@ -28874,65 +28115,54 @@ class TypeDefinitionOperations:   # pylint: disable=too-many-public-methods
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AtlasEntityDef] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.AtlasEntityDef] = kwargs.pop("cls", None)
 
-        
         _request = build_type_definition_get_entity_by_id_request(
             guid=guid,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.AtlasEntityDef,
-                response.json()
-            )
+            deserialized = _deserialize(_models.AtlasEntityDef, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace_async
-    async def get_entity_by_name(
-        self,
-        name: str,
-        **kwargs: Any
-    ) -> _models.AtlasEntityDef:
+    async def get_entity_by_name(self, name: str, **kwargs: Any) -> _models.AtlasEntityDef:
         # pylint: disable=line-too-long
         """Get the entity definition by its name (unique).
 
@@ -29101,65 +28331,54 @@ class TypeDefinitionOperations:   # pylint: disable=too-many-public-methods
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AtlasEntityDef] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.AtlasEntityDef] = kwargs.pop("cls", None)
 
-        
         _request = build_type_definition_get_entity_by_name_request(
             name=name,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.AtlasEntityDef,
-                response.json()
-            )
+            deserialized = _deserialize(_models.AtlasEntityDef, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace_async
-    async def get_enum_by_id(
-        self,
-        guid: str,
-        **kwargs: Any
-    ) -> _models.AtlasEnumDef:
+    async def get_enum_by_id(self, guid: str, **kwargs: Any) -> _models.AtlasEnumDef:
         # pylint: disable=line-too-long
         """Get the enum definition for the given GUID.
 
@@ -29255,65 +28474,54 @@ class TypeDefinitionOperations:   # pylint: disable=too-many-public-methods
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AtlasEnumDef] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.AtlasEnumDef] = kwargs.pop("cls", None)
 
-        
         _request = build_type_definition_get_enum_by_id_request(
             guid=guid,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.AtlasEnumDef,
-                response.json()
-            )
+            deserialized = _deserialize(_models.AtlasEnumDef, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace_async
-    async def get_enum_by_name(
-        self,
-        name: str,
-        **kwargs: Any
-    ) -> _models.AtlasEnumDef:
+    async def get_enum_by_name(self, name: str, **kwargs: Any) -> _models.AtlasEnumDef:
         # pylint: disable=line-too-long
         """Get the enum definition by its name (unique).
 
@@ -29409,65 +28617,54 @@ class TypeDefinitionOperations:   # pylint: disable=too-many-public-methods
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AtlasEnumDef] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.AtlasEnumDef] = kwargs.pop("cls", None)
 
-        
         _request = build_type_definition_get_enum_by_name_request(
             name=name,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.AtlasEnumDef,
-                response.json()
-            )
+            deserialized = _deserialize(_models.AtlasEnumDef, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace_async
-    async def get_relationship_by_id(
-        self,
-        guid: str,
-        **kwargs: Any
-    ) -> _models.AtlasRelationshipDef:
+    async def get_relationship_by_id(self, guid: str, **kwargs: Any) -> _models.AtlasRelationshipDef:
         # pylint: disable=line-too-long
         """Get the relationship definition for the given GUID.
 
@@ -29622,65 +28819,54 @@ class TypeDefinitionOperations:   # pylint: disable=too-many-public-methods
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AtlasRelationshipDef] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.AtlasRelationshipDef] = kwargs.pop("cls", None)
 
-        
         _request = build_type_definition_get_relationship_by_id_request(
             guid=guid,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.AtlasRelationshipDef,
-                response.json()
-            )
+            deserialized = _deserialize(_models.AtlasRelationshipDef, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace_async
-    async def get_relationship_by_name(
-        self,
-        name: str,
-        **kwargs: Any
-    ) -> _models.AtlasRelationshipDef:
+    async def get_relationship_by_name(self, name: str, **kwargs: Any) -> _models.AtlasRelationshipDef:
         # pylint: disable=line-too-long
         """Get the relationship definition by its name (unique).
 
@@ -29835,65 +29021,54 @@ class TypeDefinitionOperations:   # pylint: disable=too-many-public-methods
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AtlasRelationshipDef] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.AtlasRelationshipDef] = kwargs.pop("cls", None)
 
-        
         _request = build_type_definition_get_relationship_by_name_request(
             name=name,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.AtlasRelationshipDef,
-                response.json()
-            )
+            deserialized = _deserialize(_models.AtlasRelationshipDef, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace_async
-    async def get_struct_by_id(
-        self,
-        guid: str,
-        **kwargs: Any
-    ) -> _models.AtlasStructDef:
+    async def get_struct_by_id(self, guid: str, **kwargs: Any) -> _models.AtlasStructDef:
         # pylint: disable=line-too-long
         """Get the struct definition for the given GUID.
 
@@ -30015,65 +29190,54 @@ class TypeDefinitionOperations:   # pylint: disable=too-many-public-methods
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AtlasStructDef] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.AtlasStructDef] = kwargs.pop("cls", None)
 
-        
         _request = build_type_definition_get_struct_by_id_request(
             guid=guid,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.AtlasStructDef,
-                response.json()
-            )
+            deserialized = _deserialize(_models.AtlasStructDef, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace_async
-    async def get_struct_by_name(
-        self,
-        name: str,
-        **kwargs: Any
-    ) -> _models.AtlasStructDef:
+    async def get_struct_by_name(self, name: str, **kwargs: Any) -> _models.AtlasStructDef:
         # pylint: disable=line-too-long
         """Get the struct definition by its name (unique).
 
@@ -30195,65 +29359,54 @@ class TypeDefinitionOperations:   # pylint: disable=too-many-public-methods
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AtlasStructDef] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.AtlasStructDef] = kwargs.pop("cls", None)
 
-        
         _request = build_type_definition_get_struct_by_name_request(
             name=name,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.AtlasStructDef,
-                response.json()
-            )
+            deserialized = _deserialize(_models.AtlasStructDef, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace_async
-    async def get_by_id(
-        self,
-        guid: str,
-        **kwargs: Any
-    ) -> _models.AtlasTypeDef:
+    async def get_by_id(self, guid: str, **kwargs: Any) -> _models.AtlasTypeDef:
         # pylint: disable=line-too-long
         """Get the type definition for the given GUID.
 
@@ -30479,65 +29632,54 @@ class TypeDefinitionOperations:   # pylint: disable=too-many-public-methods
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AtlasTypeDef] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.AtlasTypeDef] = kwargs.pop("cls", None)
 
-        
         _request = build_type_definition_get_by_id_request(
             guid=guid,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.AtlasTypeDef,
-                response.json()
-            )
+            deserialized = _deserialize(_models.AtlasTypeDef, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace_async
-    async def get_by_name(
-        self,
-        name: str,
-        **kwargs: Any
-    ) -> _models.AtlasTypeDef:
+    async def get_by_name(self, name: str, **kwargs: Any) -> _models.AtlasTypeDef:
         # pylint: disable=line-too-long
         """Get the type definition by its name (unique).
 
@@ -30763,65 +29905,54 @@ class TypeDefinitionOperations:   # pylint: disable=too-many-public-methods
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AtlasTypeDef] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.AtlasTypeDef] = kwargs.pop("cls", None)
 
-        
         _request = build_type_definition_get_by_name_request(
             name=name,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.AtlasTypeDef,
-                response.json()
-            )
+            deserialized = _deserialize(_models.AtlasTypeDef, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace_async
-    async def delete(  # pylint: disable=inconsistent-return-statements
-        self,
-        name: str,
-        **kwargs: Any
-    ) -> None:
+    async def delete(self, name: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
         """Delete API for type identified by its name.
 
         :param name: The name of the type. Required.
@@ -30831,48 +29962,44 @@ class TypeDefinitionOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
-        
         _request = build_type_definition_delete_request(
             name=name,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if cls:
-            return cls(pipeline_response, None, {}) # type: ignore
-
-
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
     async def get(
@@ -31848,18 +30975,18 @@ class TypeDefinitionOperations:   # pylint: disable=too-many-public-methods
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AtlasTypesDef] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.AtlasTypesDef] = kwargs.pop("cls", None)
 
-        
         _request = build_type_definition_get_request(
             include_term_template=include_term_template,
             type=type,
@@ -31868,48 +30995,37 @@ class TypeDefinitionOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.AtlasTypesDef,
-                response.json()
-            )
+            deserialized = _deserialize(_models.AtlasTypesDef, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @overload
     async def batch_create(
-        self,
-        body: _models.AtlasTypesDef,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: _models.AtlasTypesDef, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AtlasTypesDef:
         # pylint: disable=line-too-long
         """Create all atlas type definitions in bulk, only new definitions will be
@@ -33825,11 +32941,7 @@ class TypeDefinitionOperations:   # pylint: disable=too-many-public-methods
 
     @overload
     async def batch_create(
-        self,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AtlasTypesDef:
         # pylint: disable=line-too-long
         """Create all atlas type definitions in bulk, only new definitions will be
@@ -34798,11 +33910,7 @@ class TypeDefinitionOperations:   # pylint: disable=too-many-public-methods
 
     @overload
     async def batch_create(
-        self,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AtlasTypesDef:
         # pylint: disable=line-too-long
         """Create all atlas type definitions in bulk, only new definitions will be
@@ -35769,12 +34877,9 @@ class TypeDefinitionOperations:   # pylint: disable=too-many-public-methods
                 }
         """
 
-
     @distributed_trace_async
     async def batch_create(
-        self,
-        body: Union[_models.AtlasTypesDef, JSON, IO[bytes]],
-        **kwargs: Any
+        self, body: Union[_models.AtlasTypesDef, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.AtlasTypesDef:
         # pylint: disable=line-too-long
         """Create all atlas type definitions in bulk, only new definitions will be
@@ -37685,17 +36790,18 @@ class TypeDefinitionOperations:   # pylint: disable=too-many-public-methods
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[_models.AtlasTypesDef] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AtlasTypesDef] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -37711,48 +36817,37 @@ class TypeDefinitionOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.AtlasTypesDef,
-                response.json()
-            )
+            deserialized = _deserialize(_models.AtlasTypesDef, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @overload
     async def batch_update(
-        self,
-        body: _models.AtlasTypesDef,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: _models.AtlasTypesDef, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AtlasTypesDef:
         # pylint: disable=line-too-long
         """Update all types in bulk, changes detected in the type definitions would be
@@ -39667,11 +38762,7 @@ class TypeDefinitionOperations:   # pylint: disable=too-many-public-methods
 
     @overload
     async def batch_update(
-        self,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AtlasTypesDef:
         # pylint: disable=line-too-long
         """Update all types in bulk, changes detected in the type definitions would be
@@ -40639,11 +39730,7 @@ class TypeDefinitionOperations:   # pylint: disable=too-many-public-methods
 
     @overload
     async def batch_update(
-        self,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AtlasTypesDef:
         # pylint: disable=line-too-long
         """Update all types in bulk, changes detected in the type definitions would be
@@ -41609,12 +40696,9 @@ class TypeDefinitionOperations:   # pylint: disable=too-many-public-methods
                 }
         """
 
-
     @distributed_trace_async
     async def batch_update(
-        self,
-        body: Union[_models.AtlasTypesDef, JSON, IO[bytes]],
-        **kwargs: Any
+        self, body: Union[_models.AtlasTypesDef, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.AtlasTypesDef:
         # pylint: disable=line-too-long
         """Update all types in bulk, changes detected in the type definitions would be
@@ -43524,17 +42608,18 @@ class TypeDefinitionOperations:   # pylint: disable=too-many-public-methods
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[_models.AtlasTypesDef] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AtlasTypesDef] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -43550,48 +42635,37 @@ class TypeDefinitionOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.AtlasTypesDef,
-                response.json()
-            )
+            deserialized = _deserialize(_models.AtlasTypesDef, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @overload
     async def batch_delete(  # pylint: disable=inconsistent-return-statements
-        self,
-        body: _models.AtlasTypesDef,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: _models.AtlasTypesDef, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         # pylint: disable=line-too-long
         """Delete API for all types in bulk.
@@ -44558,11 +43632,7 @@ class TypeDefinitionOperations:   # pylint: disable=too-many-public-methods
 
     @overload
     async def batch_delete(  # pylint: disable=inconsistent-return-statements
-        self,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Delete API for all types in bulk.
 
@@ -44578,11 +43648,7 @@ class TypeDefinitionOperations:   # pylint: disable=too-many-public-methods
 
     @overload
     async def batch_delete(  # pylint: disable=inconsistent-return-statements
-        self,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Delete API for all types in bulk.
 
@@ -44596,12 +43662,9 @@ class TypeDefinitionOperations:   # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-
     @distributed_trace_async
     async def batch_delete(  # pylint: disable=inconsistent-return-statements
-        self,
-        body: Union[_models.AtlasTypesDef, JSON, IO[bytes]],
-        **kwargs: Any
+        self, body: Union[_models.AtlasTypesDef, JSON, IO[bytes]], **kwargs: Any
     ) -> None:
         # pylint: disable=line-too-long
         """Delete API for all types in bulk.
@@ -45563,17 +44626,18 @@ class TypeDefinitionOperations:   # pylint: disable=too-many-public-methods
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[None] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -45589,30 +44653,26 @@ class TypeDefinitionOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if cls:
-            return cls(pipeline_response, None, {}) # type: ignore
-
-
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
     async def get_headers(
@@ -45653,18 +44713,18 @@ class TypeDefinitionOperations:   # pylint: disable=too-many-public-methods
                 ]
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.AtlasTypeDefHeader]] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[List[_models.AtlasTypeDefHeader]] = kwargs.pop("cls", None)
 
-        
         _request = build_type_definition_get_headers_request(
             include_term_template=include_term_template,
             type=type,
@@ -45673,47 +44733,36 @@ class TypeDefinitionOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                List[_models.AtlasTypeDefHeader],
-                response.json()
-            )
+            deserialized = _deserialize(List[_models.AtlasTypeDefHeader], response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace_async
-    async def get_term_template_by_id(
-        self,
-        guid: str,
-        **kwargs: Any
-    ) -> _models.TermTemplateDef:
+    async def get_term_template_by_id(self, guid: str, **kwargs: Any) -> _models.TermTemplateDef:
         # pylint: disable=line-too-long
         """Get the term template definition for the given GUID.
 
@@ -45835,18 +44884,18 @@ class TypeDefinitionOperations:   # pylint: disable=too-many-public-methods
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.TermTemplateDef] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.TermTemplateDef] = kwargs.pop("cls", None)
 
-        
         _request = build_type_definition_get_term_template_by_id_request(
             guid=guid,
             api_version=self._config.api_version,
@@ -45854,47 +44903,36 @@ class TypeDefinitionOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.TermTemplateDef,
-                response.json()
-            )
+            deserialized = _deserialize(_models.TermTemplateDef, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace_async
-    async def get_term_template_by_name(
-        self,
-        name: str,
-        **kwargs: Any
-    ) -> _models.TermTemplateDef:
+    async def get_term_template_by_name(self, name: str, **kwargs: Any) -> _models.TermTemplateDef:
         # pylint: disable=line-too-long
         """Get the term template definition by its name (unique).
 
@@ -46016,18 +45054,18 @@ class TypeDefinitionOperations:   # pylint: disable=too-many-public-methods
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.TermTemplateDef] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.TermTemplateDef] = kwargs.pop("cls", None)
 
-        
         _request = build_type_definition_get_term_template_by_name_request(
             name=name,
             api_version=self._config.api_version,
@@ -46035,37 +45073,30 @@ class TypeDefinitionOperations:   # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AtlasErrorResponse,  response.json())
+            error = _deserialize(_models.AtlasErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.TermTemplateDef,
-                response.json()
-            )
+            deserialized = _deserialize(_models.TermTemplateDef, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-

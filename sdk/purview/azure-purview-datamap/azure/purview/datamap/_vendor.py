@@ -25,10 +25,12 @@ FileType = Union[
 
 FilesType = Union[Mapping[str, FileType], Sequence[Tuple[str, FileType]]]
 
+
 def serialize_multipart_data_entry(data_entry: Any) -> Any:
     if isinstance(data_entry, (list, tuple, dict, Model)):
         return json.dumps(data_entry, cls=SdkJSONEncoder, exclude_readonly=True)
     return data_entry
+
 
 def prepare_multipart_form_data(
     body: Mapping[str, Any], multipart_fields: List[str], data_fields: List[str]
@@ -38,7 +40,7 @@ def prepare_multipart_form_data(
     for multipart_field in multipart_fields:
         multipart_entry = body.get(multipart_field)
         if isinstance(multipart_entry, list):
-            files.extend([(multipart_field, e) for e in multipart_entry ])
+            files.extend([(multipart_field, e) for e in multipart_entry])
         elif multipart_entry:
             files.append((multipart_field, multipart_entry))
 

@@ -11,8 +11,7 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class AtlasTermAssignmentStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Status for term assignment.
-    """
+    """Status for term assignment."""
 
     DISCOVERED = "DISCOVERED"
     """The status is discovered."""
@@ -29,9 +28,9 @@ class AtlasTermAssignmentStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     OTHER = "OTHER"
     """Other status."""
 
+
 class AtlasTermRelationshipStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Status for atlas term relationship.
-    """
+    """Status for atlas term relationship."""
 
     DRAFT = "DRAFT"
     """draft"""
@@ -44,9 +43,9 @@ class AtlasTermRelationshipStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     OTHER = "OTHER"
     """other"""
 
+
 class BusinessAttributeUpdateBehavior(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Enum for business attribute update behavior.
-    """
+    """Enum for business attribute update behavior."""
 
     IGNORE = "ignore"
     """Ignore the business attribute payload for update."""
@@ -55,9 +54,9 @@ class BusinessAttributeUpdateBehavior(str, Enum, metaclass=CaseInsensitiveEnumMe
     MERGE = "merge"
     """Merge the business attributes. Business attributes will not be updated if not provided."""
 
+
 class CardinalityValue(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Cardinality.
-    """
+    """Cardinality."""
 
     SINGLE = "SINGLE"
     """single"""
@@ -66,27 +65,27 @@ class CardinalityValue(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SET = "SET"
     """set"""
 
+
 class EntityStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Status - can be active or deleted.
-    """
+    """Status - can be active or deleted."""
 
     ACTIVE = "ACTIVE"
     """The status is active."""
     DELETED = "DELETED"
     """The status is deleted."""
 
+
 class ImportStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Status for import.
-    """
+    """Status for import."""
 
     SUCCESS = "SUCCESS"
     """Success"""
     FAILED = "FAILED"
     """Failed"""
 
+
 class LineageDirection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Lineage direction.
-    """
+    """Lineage direction."""
 
     INPUT = "INPUT"
     """input"""
@@ -95,9 +94,9 @@ class LineageDirection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     BOTH = "BOTH"
     """both"""
 
+
 class RelationshipCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Relationship Category.
-    """
+    """Relationship Category."""
 
     ASSOCIATION = "ASSOCIATION"
     """association"""
@@ -106,9 +105,9 @@ class RelationshipCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     COMPOSITION = "COMPOSITION"
     """composition"""
 
+
 class RoundingMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Rounding Mode.
-    """
+    """Rounding Mode."""
 
     UP = "UP"
     """up"""
@@ -127,18 +126,18 @@ class RoundingMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     UNNECESSARY = "UNNECESSARY"
     """unnecessary"""
 
+
 class SearchSortOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Search sort order.
-    """
+    """Search sort order."""
 
     ASCEND = "asc"
     """Use ascending order for sorting"""
     DESCEND = "desc"
     """Use descending order for sorting"""
 
+
 class SortType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type for sorting.
-    """
+    """Type for sorting."""
 
     NONE = "NONE"
     """No sorting order"""
@@ -147,18 +146,18 @@ class SortType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DESCEND = "DESC"
     """Use descending order for sorting"""
 
+
 class StatusAtlasRelationship(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Status for atlas relationship.
-    """
+    """Status for atlas relationship."""
 
     ACTIVE = "ACTIVE"
     """active"""
     DELETED = "DELETED"
     """deleted"""
 
+
 class TermStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Status for term.
-    """
+    """Status for term."""
 
     DRAFT = "Draft"
     """draft"""
@@ -169,9 +168,9 @@ class TermStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     EXPIRED = "Expired"
     """expired"""
 
+
 class TypeCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type Category.
-    """
+    """Type Category."""
 
     PRIMITIVE = "PRIMITIVE"
     """primitive"""
