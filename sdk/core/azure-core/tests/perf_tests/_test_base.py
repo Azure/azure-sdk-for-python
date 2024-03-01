@@ -59,9 +59,9 @@ class _ServiceTest(PerfStressTest):
         self.account_key = self.get_from_env("AZURE_STORAGE_ACCOUNT_KEY")
         async_transport_types = {"aiohttp": AioHttpTransport, "requests": AsyncioRequestsTransport}
         sync_transport_types = {"requests": RequestsTransport}
-        self.tenant_id = os.environ["CORE_TENANT_ID"]
-        self.client_id = os.environ["CORE_CLIENT_ID"]
-        self.client_secret = os.environ["CORE_CLIENT_SECRET"]
+        self.tenant_id = os.environ["AZURE-CORE_TENANT_ID"]
+        self.client_id = os.environ["AZURE-CORE_CLIENT_ID"]
+        self.client_secret = os.environ["AZURE-CORE_CLIENT_SECRET"]
         self.storage_scope = "https://storage.azure.com/.default"
 
         # defaults transports
