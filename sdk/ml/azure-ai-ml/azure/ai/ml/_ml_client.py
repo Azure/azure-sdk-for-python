@@ -317,9 +317,11 @@ class MLClient:
 
         self._service_client_04_2023 = ServiceClient042023(
             credential=self._credential,
-            subscription_id=self._ws_operation_scope._subscription_id
-            if registry_reference
-            else self._operation_scope._subscription_id,
+            subscription_id=(
+                self._ws_operation_scope._subscription_id
+                if registry_reference
+                else self._operation_scope._subscription_id
+            ),
             base_url=base_url,
             **kwargs,
         )
@@ -358,9 +360,11 @@ class MLClient:
 
         self._service_client_10_2022_preview = ServiceClient102022Preview(
             credential=self._credential,
-            subscription_id=self._ws_operation_scope._subscription_id
-            if registry_reference
-            else self._operation_scope._subscription_id,
+            subscription_id=(
+                self._ws_operation_scope._subscription_id
+                if registry_reference
+                else self._operation_scope._subscription_id
+            ),
             base_url=base_url,
             **kwargs,
         )
@@ -381,45 +385,55 @@ class MLClient:
 
         self._service_client_04_2023_preview = ServiceClient042023Preview(
             credential=self._credential,
-            subscription_id=self._ws_operation_scope._subscription_id
-            if registry_reference
-            else self._operation_scope._subscription_id,
+            subscription_id=(
+                self._ws_operation_scope._subscription_id
+                if registry_reference
+                else self._operation_scope._subscription_id
+            ),
             base_url=base_url,
             **kwargs,
         )
 
         self._service_client_06_2023_preview = ServiceClient062023Preview(
             credential=self._credential,
-            subscription_id=self._ws_operation_scope._subscription_id
-            if registry_reference
-            else self._operation_scope._subscription_id,
+            subscription_id=(
+                self._ws_operation_scope._subscription_id
+                if registry_reference
+                else self._operation_scope._subscription_id
+            ),
             base_url=base_url,
             **kwargs,
         )
 
         self._service_client_08_2023_preview = ServiceClient082023Preview(
             credential=self._credential,
-            subscription_id=self._ws_operation_scope._subscription_id
-            if registry_reference
-            else self._operation_scope._subscription_id,
+            subscription_id=(
+                self._ws_operation_scope._subscription_id
+                if registry_reference
+                else self._operation_scope._subscription_id
+            ),
             base_url=base_url,
             **kwargs,
         )
 
         self._service_client_10_2023 = ServiceClient102023(
             credential=self._credential,
-            subscription_id=self._ws_operation_scope._subscription_id
-            if registry_reference
-            else self._operation_scope._subscription_id,
+            subscription_id=(
+                self._ws_operation_scope._subscription_id
+                if registry_reference
+                else self._operation_scope._subscription_id
+            ),
             base_url=base_url,
             **kwargs,
         )
 
         self._service_client_01_2024_preview = ServiceClient012024Preview(
             credential=self._credential,
-            subscription_id=self._ws_operation_scope._subscription_id
-            if registry_reference
-            else self._operation_scope._subscription_id,
+            subscription_id=(
+                self._ws_operation_scope._subscription_id
+                if registry_reference
+                else self._operation_scope._subscription_id
+            ),
             base_url=base_url,
             **kwargs,
         )
@@ -484,9 +498,11 @@ class MLClient:
         self._models = ModelOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_10_2021_dataplanepreview
-            if registry_name or registry_reference
-            else self._service_client_08_2023_preview,
+            (
+                self._service_client_10_2021_dataplanepreview
+                if registry_name or registry_reference
+                else self._service_client_08_2023_preview
+            ),
             self._datastores,
             self._operation_container,
             requests_pipeline=self._requests_pipeline,

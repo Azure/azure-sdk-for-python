@@ -82,6 +82,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/storagecache/resource-manager/Microsoft.StorageCache/stable/2023-05-01/examples/Caches_CreateOrUpdate_ldap_only.json
+# x-ms-original-file: specification/storagecache/resource-manager/Microsoft.StorageCache/preview/2023-11-01-preview/examples/Caches_CreateOrUpdate_ldap_only.json
 if __name__ == "__main__":
     main()

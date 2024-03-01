@@ -161,6 +161,8 @@ def get_execution_service_response(
 
 
 def is_local_run(job_definition: JobBaseData) -> bool:
+    if not job_definition.properties.services:
+        return False
     local = job_definition.properties.services.get("Local", None)
     return local is not None and EXECUTION_SERVICE_URL_KEY in local.endpoint
 

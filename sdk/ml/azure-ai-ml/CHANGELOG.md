@@ -1,5 +1,15 @@
 # Release History
 
+## 1.15.0 (unreleased)
+
+### Features Added
+
+### Bugs Fixed
+
+### Breaking Changes
+
+### Other Changes
+
 ## 1.14.0 (unreleased)
 
 ### Features Added
@@ -20,7 +30,7 @@
 
 - Support for Python 3.12
 
-## 1.13.0 (unreleased)
+## 1.13.0 (2024-01-29)
 
 ### Features Added
 

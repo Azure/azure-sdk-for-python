@@ -24,8 +24,7 @@ class Metric:
         "gpt_fluency", 
         "gpt_coherence",
         "gpt_relevance", 
-        "f1_score",
-        "ada_similarity"
+        "f1_score"
         }
 
     # Content harm metric set
