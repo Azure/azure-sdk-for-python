@@ -44,7 +44,7 @@ setup(
     license='MIT License',
     # ensure that the development status reflects the status of your package
     classifiers=[
-        "Development Status :: 5 - Production/Stable",
+        "Development Status :: 4 - Beta",
 
         'Programming Language :: Python',
         "Programming Language :: Python :: 3 :: Only",

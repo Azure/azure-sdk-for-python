@@ -1,14 +1,12 @@
 # Release History
 
-## 1.1.1 (Unreleased)
+## 1.2.0b3 (2024-01-29)
 
 ### Features Added
+- Added support for API version `2023-10-01-preview`, This gives us functionality for Do Not Resell Consent Changes.
+- Users will now be able to purchase from countries like `IT`, `AT`, `FR`, `NO`, `PT`. They can do so by agreeing not to resell phone numbers by setting consentToNotResellNumbers to true.
+- Added support for 10DLC changes.
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 1.1.0 (2023-03-28)
 
