@@ -124,7 +124,7 @@
 /sdk/contentsafety/                                                  @mengaims @JieZhou000
 
 # ServiceLabel: %Health Insights
-# PRLabel: %Health Insights
+# PRLabel: %Cognitive - Health Insights
 /sdk/healthinsights/                                                 @koen-mertens @tomsft
 
 # AzureSdkOwners: @mccoyp
