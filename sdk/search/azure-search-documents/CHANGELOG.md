@@ -10,7 +10,7 @@
 
 ### Bugs Fixed
 
-- Fixed the issue that `SearchIndexerSkillset`, `SearchField`, `SearchIndex`, `AnalyzeTextOptions`, `SearchResourceEncryptionKey`, `SynonymMap`, `SearchIndexerDataSourceConnection` could not be serialized.
+- Fixed the issue that `SearchIndexerSkillset`, `SearchField`, `SearchIndex`, `AnalyzeTextOptions`, `SearchResourceEncryptionKey`, `SynonymMap`, `SearchIndexerDataSourceConnection` could not be serialized and `as_dict` did not work.
 
 ### Other Changes
 
