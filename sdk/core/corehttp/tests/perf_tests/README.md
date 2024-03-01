@@ -20,8 +20,8 @@ AZURE_STORAGE_TABLES_ENDPOINT=<The Storage Tables endpoint in the format 'https:
 ### Setup for perf test runs
 
 ```cmd
-(env) ~/azure-core> pip install -r dev_requirements.txt
-(env) ~/azure-core> pip install .
+(env) ~/core/corehttp> pip install -r dev_requirements.txt
+(env) ~/core/corehttp> pip install .
 ```
 
 ## Test commands
@@ -29,8 +29,8 @@ AZURE_STORAGE_TABLES_ENDPOINT=<The Storage Tables endpoint in the format 'https:
 When `devtools_testutils` is installed, you will have access to the `perfstress` command line tool, which will scan the current module for runable perf tests. Only a specific test can be run at a time (i.e. there is no "run all" feature).
 
 ```cmd
-(env) ~/azure-core> cd tests
-(env) ~/azure-core/tests> perfstress
+(env) ~/core/corehttp> cd tests
+(env) ~/core/corehttp/tests> perfstress
 ```
 
 Using the `perfstress` command alone will list the available perf tests found.
@@ -62,15 +62,16 @@ The options that are available for all Core perf tests:
 - `--transport` - By default, uses AiohttpTransport ("aiohttp") for async. By default, uses RequestsTransport ("requests") for sync. All options:
   - For async:
     - `"aiohttp"`: AiohttpTransport (default)
-    - `"requests"`: AsyncioRequestsTransport
+    - `"httpx"`: AsyncHttpXTransport
   - For sync:
     - `"requests"`: RequestsTransport (default)
+    - `"httpx"`: HttpXTransport
 - `--use-entra-id` - Flag to pass in to use Microsoft Entra ID as the authentication. By default, set to False.
 - `--size=10240` - Size of request content (in bytes). Defaults to 10240. (Not used by `ListEntitiesPageableTest`.)
 - `--policies` - List of policies to pass in to the pipeline. Options:
   - None: No extra policies passed in, except for authentication policy. This is the default.
   - 'all': All policies added automatically by autorest.
-  - 'policy1,policy2': Comma-separated list of policies, such as 'RetryPolicy,HttpLoggingPolicy'"
+  - 'policy1,policy2': Comma-separated list of policies, such as 'RetryPolicy,UserAgentPolicy'"
 
 #### Additional ListEntitiesPageableTest command line options
 
@@ -82,5 +83,5 @@ The options that are additionally available for `ListEntitiesPageableTest`:
 ## Example command
 
 ```cmd
-(env) ~/azure-core> perfstress DownloadBinaryDataTest --use-entra-id --transport requests --size=20480 --parallel=2
+(env) ~/core/corehttp> perfstress DownloadBinaryDataTest --use-entra-id --transport httpx --size=20480 --parallel=2
 ```

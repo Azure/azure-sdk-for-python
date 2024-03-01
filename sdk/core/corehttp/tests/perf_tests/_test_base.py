@@ -10,30 +10,24 @@ import random
 
 from devtools_testutils.perfstress_tests import PerfStressTest
 
-from azure.core import PipelineClient, AsyncPipelineClient
-from azure.core.pipeline import Pipeline, AsyncPipeline
-from azure.core.pipeline.transport import (
-    RequestsTransport,
-    AioHttpTransport,
-    AsyncioRequestsTransport,
-)
-from azure.core.pipeline.policies import (
+from corehttp.runtime import PipelineClient, AsyncPipelineClient
+from corehttp.runtime.pipeline import Pipeline, AsyncPipeline
+from corehttp.transport.aiohttp import AioHttpTransport
+from corehttp.transport.requests import RequestsTransport
+from corehttp.transport.httpx import HttpXTransport, AsyncHttpXTransport
+from corehttp.runtime.policies import (
     UserAgentPolicy,
     HeadersPolicy,
     ProxyPolicy,
     NetworkTraceLoggingPolicy,
-    HttpLoggingPolicy,
     RetryPolicy,
-    CustomHookPolicy,
-    RedirectPolicy,
     AsyncRetryPolicy,
-    AsyncRedirectPolicy,
     BearerTokenCredentialPolicy,
     AsyncBearerTokenCredentialPolicy,
 )
-import azure.core.pipeline.policies as policies
-from azure.core.credentials import AzureNamedKeyCredential
-from azure.core.exceptions import (
+import corehttp.runtime.policies as policies
+from corehttp.credentials import ServiceNamedKeyCredential
+from corehttp.exceptions import (
     ClientAuthenticationError,
     ResourceExistsError,
     ResourceNotFoundError,
@@ -57,11 +51,11 @@ class _ServiceTest(PerfStressTest):
         super().__init__(arguments)
         self.account_name = self.get_from_env("AZURE_STORAGE_ACCOUNT_NAME")
         self.account_key = self.get_from_env("AZURE_STORAGE_ACCOUNT_KEY")
-        async_transport_types = {"aiohttp": AioHttpTransport, "requests": AsyncioRequestsTransport}
-        sync_transport_types = {"requests": RequestsTransport}
-        self.tenant_id = os.environ["CORE_TENANT_ID"]
-        self.client_id = os.environ["CORE_CLIENT_ID"]
-        self.client_secret = os.environ["CORE_CLIENT_SECRET"]
+        async_transport_types = {"aiohttp": AioHttpTransport, "httpx": AsyncHttpXTransport}
+        sync_transport_types = {"requests": RequestsTransport, "httpx": HttpXTransport}
+        self.tenant_id = os.environ["COREHTTP_TENANT_ID"]
+        self.client_id = os.environ["COREHTTP_CLIENT_ID"]
+        self.client_secret = os.environ["COREHTTP_CLIENT_SECRET"]
         self.storage_scope = "https://storage.azure.com/.default"
 
         # defaults transports
@@ -75,14 +69,16 @@ class _ServiceTest(PerfStressTest):
                 try:
                     self.sync_transport = sync_transport_types[self.args.transport]
                 except KeyError:
-                    raise ValueError(f"Invalid sync transport:{self.args.transport}\n Valid options are:\n- requests\n")
+                    raise ValueError(
+                        f"Invalid sync transport:{self.args.transport}\n Valid options are:\n- requests\n- httpx\n"
+                    )
             # if async, override async default
             else:
                 try:
                     self.async_transport = async_transport_types[self.args.transport]
                 except KeyError:
                     raise ValueError(
-                        f"Invalid async transport:{self.args.transport}\n Valid options are:\n- aiohttp\n- requests\n"
+                        f"Invalid async transport:{self.args.transport}\n Valid options are:\n- aiohttp\n- httpx\n"
                     )
 
         self.error_map = {
@@ -98,10 +94,7 @@ class _ServiceTest(PerfStressTest):
             HeadersPolicy,
             ProxyPolicy,
             NetworkTraceLoggingPolicy,
-            HttpLoggingPolicy,
             RetryPolicy,
-            CustomHookPolicy,
-            RedirectPolicy,
         ]
 
         if self.args.policies is None:
@@ -119,7 +112,7 @@ class _ServiceTest(PerfStressTest):
                     policy = getattr(policies, p)
                 except AttributeError as exc:
                     raise ValueError(
-                        f"Azure Core has no policy named {exc.name}. Please use policies from the following list: {policies.__all__}"
+                        f"Corehttp has no policy named {exc.name}. Please use policies from the following list: {policies.__all__}"
                     ) from exc
                 sync_policies.append(policy(sdk_moniker=self.sdk_moniker))
             sync_pipeline = Pipeline(transport=self.sync_transport(), policies=sync_policies)
@@ -131,10 +124,7 @@ class _ServiceTest(PerfStressTest):
             HeadersPolicy,
             ProxyPolicy,
             NetworkTraceLoggingPolicy,
-            HttpLoggingPolicy,
             AsyncRetryPolicy,
-            CustomHookPolicy,
-            AsyncRedirectPolicy,
         ]
         if self.args.policies is None:
             # if None, only auth policy is passed in
@@ -152,7 +142,7 @@ class _ServiceTest(PerfStressTest):
                     policy = getattr(policies, p)
                 except AttributeError as exc:
                     raise ValueError(
-                        f"Azure Core has no policy named {exc.name}. Please use policies from the following list: {policies.__all__}"
+                        f"Corehttp has no policy named {exc.name}. Please use policies from the following list: {policies.__all__}"
                     ) from exc
                 async_policies.append(policy(sdk_moniker=self.sdk_moniker))
             async_pipeline = AsyncPipeline(transport=self.async_transport(), policies=async_policies)
@@ -163,7 +153,7 @@ class _ServiceTest(PerfStressTest):
             # if tables, create table credential policy, else blob policy
             if "tables" in self.sdk_moniker:
                 self.sync_auth_policy = TableSharedKeyCredentialPolicy(
-                    AzureNamedKeyCredential(self.account_name, self.account_key)
+                    ServiceNamedKeyCredential(self.account_name, self.account_key)
                 )
                 self.async_auth_policy = self.sync_auth_policy
             else:
@@ -182,8 +172,8 @@ class _ServiceTest(PerfStressTest):
             "--transport",
             nargs="?",
             type=str,
-            help="""Underlying HttpTransport type. Defaults to `aiohttp` if async, `requests` if sync. Other possible values for async:\n"""
-            """ - `requests`\n""",
+            help="""Underlying HttpTransport type. Defaults to `aiohttp` if async, `requests` if sync. Other possible values for sync/async:\n"""
+            """ - `httpx`\n""",
             default=None,
         )
         parser.add_argument(
@@ -196,7 +186,7 @@ class _ServiceTest(PerfStressTest):
             help="""List of policies to pass in to the pipeline. Options:"""
             """\n- None: No extra policies passed in, except for authentication policy. This is the default."""
             """\n- 'all': All policies added automatically by autorest."""
-            """\n- 'policy1,policy2': Comma-separated list of policies, such as 'RetryPolicy,HttpLoggingPolicy'""",
+            """\n- 'policy1,policy2': Comma-separated list of policies, such as 'RetryPolicy,UserAgentPolicy'""",
             default=None,
         )
         parser.add_argument(
