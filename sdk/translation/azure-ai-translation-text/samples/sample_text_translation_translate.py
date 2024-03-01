@@ -144,8 +144,9 @@ def get_text_translation_multiple_inputs():
             )
 
     except HttpResponseError as exception:
-        print(f"Error Code: {exception.error.code}")
-        print(f"Message: {exception.error.message}")
+        if exception.error is not None:
+            print(f"Error Code: {exception.error.code}")
+            print(f"Message: {exception.error.message}")
     # [END get_text_translation_multiple_inputs]
 
 
@@ -168,8 +169,9 @@ def get_text_translation_multiple_languages():
                 print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
 
     except HttpResponseError as exception:
-        print(f"Error Code: {exception.error.code}")
-        print(f"Message: {exception.error.message}")
+        if exception.error is not None:
+            print(f"Error Code: {exception.error.code}")
+            print(f"Message: {exception.error.message}")
     # [END get_text_translation_multiple_languages]
 
 
@@ -193,8 +195,9 @@ def get_text_translation_type():
                 print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
 
     except HttpResponseError as exception:
-        print(f"Error Code: {exception.error.code}")
-        print(f"Message: {exception.error.message}")
+        if exception.error is not None:
+            print(f"Error Code: {exception.error.code}")
+            print(f"Message: {exception.error.message}")
     # [END get_text_translation_type]
 
 
@@ -218,8 +221,9 @@ def get_text_translation_exclude():
                 print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
 
     except HttpResponseError as exception:
-        print(f"Error Code: {exception.error.code}")
-        print(f"Message: {exception.error.message}")
+        if exception.error is not None:
+            print(f"Error Code: {exception.error.code}")
+            print(f"Message: {exception.error.message}")
     # [END get_text_translation_exclude]
 
 
@@ -242,8 +246,9 @@ def get_text_translation_entity():
                 print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
 
     except HttpResponseError as exception:
-        print(f"Error Code: {exception.error.code}")
-        print(f"Message: {exception.error.message}")
+        if exception.error is not None:
+            print(f"Error Code: {exception.error.code}")
+            print(f"Message: {exception.error.message}")
     # [END get_text_translation_entity]
 
 
@@ -273,8 +278,9 @@ def get_text_translation_profanity():
                 print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
 
     except HttpResponseError as exception:
-        print(f"Error Code: {exception.error.code}")
-        print(f"Message: {exception.error.message}")
+        if exception.error is not None:
+            print(f"Error Code: {exception.error.code}")
+            print(f"Message: {exception.error.message}")
     # [END get_text_translation_profanity]
 
 
@@ -302,8 +308,9 @@ def get_text_translation_alignment():
                     print(f"Alignments: {translated_text.alignment.proj}")
 
     except HttpResponseError as exception:
-        print(f"Error Code: {exception.error.code}")
-        print(f"Message: {exception.error.message}")
+        if exception.error is not None:
+            print(f"Error Code: {exception.error.code}")
+            print(f"Message: {exception.error.message}")
     # [END get_text_translation_alignment]
 
 
@@ -332,8 +339,9 @@ def get_text_translation_sentence_length():
                     print(f"Translated Sentence length: {translated_text.sent_len.trans_sent_len}")
 
     except HttpResponseError as exception:
-        print(f"Error Code: {exception.error.code}")
-        print(f"Message: {exception.error.message}")
+        if exception.error is not None:
+            print(f"Error Code: {exception.error.code}")
+            print(f"Message: {exception.error.message}")
     # [END get_text_translation_sentence_length]
 
 
@@ -357,6 +365,7 @@ def get_text_translation_custom():
                 print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
 
     except HttpResponseError as exception:
-        print(f"Error Code: {exception.error.code}")
-        print(f"Message: {exception.error.message}")
+        if exception.error is not None:
+            print(f"Error Code: {exception.error.code}")
+            print(f"Message: {exception.error.message}")
     # [END get_text_translation_custom]

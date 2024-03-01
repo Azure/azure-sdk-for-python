@@ -83,6 +83,7 @@ def get_text_sentence_boundaries_auto():
                 print(boundary)
 
     except HttpResponseError as exception:
-        print(f"Error Code: {exception.error.code}")
-        print(f"Message: {exception.error.message}")
+        if exception.error is not None:
+            print(f"Error Code: {exception.error.code}")
+            print(f"Message: {exception.error.message}")
     # [END get_text_sentence_boundaries_auto]

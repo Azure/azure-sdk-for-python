@@ -34,7 +34,7 @@ For some of these operations you can create a new `TextTranslationClient` withou
 <!-- SNIPPET: sample_text_translation_client.create_text_translation_client_with_endpoint -->
 
 ```python
-text_translator = TextTranslationClient(endpoint)
+text_translator = TextTranslationClient(endpoint=endpoint)
 ```
 
 <!-- END SNIPPET -->
@@ -49,7 +49,7 @@ The appropriate constructor is invoked in each sample to create a `TextTranslati
 
 ```python
 credential = TranslatorCredential(apikey, region)
-text_translator = TextTranslationClient(credential, endpoint=endpoint)
+text_translator = TextTranslationClient(credential=credential, endpoint=endpoint)
 ```
 
 <!-- END SNIPPET -->
@@ -329,8 +329,9 @@ try:
         )
 
 except HttpResponseError as exception:
-    print(f"Error Code: {exception.error.code}")
-    print(f"Message: {exception.error.message}")
+    if exception.error is not None:
+        print(f"Error Code: {exception.error.code}")
+        print(f"Message: {exception.error.message}")
 ```
 
 <!-- END SNIPPET -->
@@ -359,8 +360,9 @@ try:
             print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
 
 except HttpResponseError as exception:
-    print(f"Error Code: {exception.error.code}")
-    print(f"Message: {exception.error.message}")
+    if exception.error is not None:
+        print(f"Error Code: {exception.error.code}")
+        print(f"Message: {exception.error.message}")
 ```
 
 <!-- END SNIPPET -->
@@ -390,8 +392,9 @@ try:
             print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
 
 except HttpResponseError as exception:
-    print(f"Error Code: {exception.error.code}")
-    print(f"Message: {exception.error.message}")
+    if exception.error is not None:
+        print(f"Error Code: {exception.error.code}")
+        print(f"Message: {exception.error.message}")
 ```
 
 <!-- END SNIPPET -->
@@ -421,8 +424,9 @@ try:
             print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
 
 except HttpResponseError as exception:
-    print(f"Error Code: {exception.error.code}")
-    print(f"Message: {exception.error.message}")
+    if exception.error is not None:
+        print(f"Error Code: {exception.error.code}")
+        print(f"Message: {exception.error.message}")
 ```
 
 <!-- END SNIPPET -->
@@ -453,8 +457,9 @@ try:
             print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
 
 except HttpResponseError as exception:
-    print(f"Error Code: {exception.error.code}")
-    print(f"Message: {exception.error.message}")
+    if exception.error is not None:
+        print(f"Error Code: {exception.error.code}")
+        print(f"Message: {exception.error.message}")
 ```
 
 <!-- END SNIPPET -->
@@ -492,8 +497,9 @@ try:
             print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
 
 except HttpResponseError as exception:
-    print(f"Error Code: {exception.error.code}")
-    print(f"Message: {exception.error.message}")
+    if exception.error is not None:
+        print(f"Error Code: {exception.error.code}")
+        print(f"Message: {exception.error.message}")
 ```
 
 <!-- END SNIPPET -->
@@ -527,8 +533,9 @@ try:
                 print(f"Alignments: {translated_text.alignment.proj}")
 
 except HttpResponseError as exception:
-    print(f"Error Code: {exception.error.code}")
-    print(f"Message: {exception.error.message}")
+    if exception.error is not None:
+        print(f"Error Code: {exception.error.code}")
+        print(f"Message: {exception.error.message}")
 ```
 
 <!-- END SNIPPET -->
@@ -563,8 +570,9 @@ try:
                 print(f"Translated Sentence length: {translated_text.sent_len.trans_sent_len}")
 
 except HttpResponseError as exception:
-    print(f"Error Code: {exception.error.code}")
-    print(f"Message: {exception.error.message}")
+    if exception.error is not None:
+        print(f"Error Code: {exception.error.code}")
+        print(f"Message: {exception.error.message}")
 ```
 
 <!-- END SNIPPET -->
@@ -598,8 +606,9 @@ try:
             print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
 
 except HttpResponseError as exception:
-    print(f"Error Code: {exception.error.code}")
-    print(f"Message: {exception.error.message}")
+    if exception.error is not None:
+        print(f"Error Code: {exception.error.code}")
+        print(f"Message: {exception.error.message}")
 ```
 
 <!-- END SNIPPET -->
@@ -700,8 +709,9 @@ try:
             print(boundary)
 
 except HttpResponseError as exception:
-    print(f"Error Code: {exception.error.code}")
-    print(f"Message: {exception.error.message}")
+    if exception.error is not None:
+        print(f"Error Code: {exception.error.code}")
+        print(f"Message: {exception.error.message}")
 ```
 
 <!-- END SNIPPET -->

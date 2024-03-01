@@ -130,8 +130,8 @@ class TextTranslationClient(ServiceClientGenerated):
 
     def __init__(
         self,
-        credential: Union[AzureKeyCredential, TokenCredential, TranslatorCredential],
         *,
+        credential: Optional[Union[AzureKeyCredential, TokenCredential, TranslatorCredential]] = None,
         endpoint: Optional[str] = None,
         api_version="3.0",
         **kwargs
