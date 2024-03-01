@@ -29,7 +29,7 @@ from azure.core.credentials import TokenCredential
 from azure.core.tracing.decorator import distributed_trace
 
 ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
+module_logger = ops_logger.module_logger
 
 
 class VirtualClusterOperations:
@@ -63,7 +63,7 @@ class VirtualClusterOperations:
         )
 
     @distributed_trace
-    @monitor_with_activity(logger, "VirtualCluster.List", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "VirtualCluster.List", ActivityType.PUBLICAPI)
     def list(self, *, scope: Optional[str] = None) -> Iterable[Dict]:
         """List virtual clusters a user has access to.
 
@@ -96,7 +96,7 @@ class VirtualClusterOperations:
             ) from e
 
     @distributed_trace
-    @monitor_with_activity(logger, "VirtualCluster.ListJobs", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "VirtualCluster.ListJobs", ActivityType.PUBLICAPI)
     def list_jobs(self, name: str) -> Iterable[Job]:
         """List of jobs that target the virtual cluster
 
@@ -139,7 +139,7 @@ class VirtualClusterOperations:
         )
 
     @distributed_trace
-    @monitor_with_activity(logger, "VirtualCluster.Get", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "VirtualCluster.Get", ActivityType.PUBLICAPI)
     def get(self, name: str) -> Dict:
         """
         Get a virtual cluster resource. If name is provided, the virtual cluster
