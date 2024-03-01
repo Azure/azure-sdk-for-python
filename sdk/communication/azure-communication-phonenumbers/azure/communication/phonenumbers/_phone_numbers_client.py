@@ -438,7 +438,7 @@ class PhoneNumbersClient(object):
         )
 
     @distributed_trace
-    def search_operator_information(
+    def search_operator_information( # type: OperatorInformationResult
         self,
         phone_numbers,  # type: PhoneNumberSearchType
         options: Optional[OperatorInformationOptions] = None,
@@ -449,6 +449,8 @@ class PhoneNumbersClient(object):
 
         :param phone_numbers: The phone number(s) whose operator information should be searched
         :type phone_numbers: str or List[str]
+        :param options: Options for the operator information search
+        :type options: ~azure.communication.phonenumbers.models.OperatorInformationOptions
         :return: A search result containing operator information associated with the requested phone numbers
         :rtype: ~azure.communication.phonenumbers.models.OperatorInformationResult
         """
