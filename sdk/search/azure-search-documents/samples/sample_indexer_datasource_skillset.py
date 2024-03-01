@@ -116,7 +116,7 @@ def sample_indexer_workflow():
     print("Index is created")
 
     # we pass the data source, skillsets and targeted index to build an indexer
-    configuration = IndexingParametersConfiguration(parsingMode="jsonArray")
+    configuration = IndexingParametersConfiguration(parsing_mode="jsonArray", query_timeout=None)
     parameters = IndexingParameters(configuration=configuration)
     indexer = SearchIndexer(
         name="hotel-data-indexer",
