@@ -189,13 +189,12 @@ class AzureMLSDKLogHandler(AzureLogHandler):
             time=utils.timestamp_to_iso_str(record.created),
         )
 
-
         properties = {
             "process": record.processName,
             "module": record.module,
             "level": record.levelname,
             "activity_id": record.properties.get("activity_id", "00000000-0000-0000-0000-000000000000"),
-            "client-request-id": record.properties.get("client_request_id", "00000000-0000-0000-0000-000000000000"),                      
+            "client-request-id": record.properties.get("client_request_id", "00000000-0000-0000-0000-000000000000"),
             "span_id": record.spanId,
             "trace_id": record.traceId,
         }
