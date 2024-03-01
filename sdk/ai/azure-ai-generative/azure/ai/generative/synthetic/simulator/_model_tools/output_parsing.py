@@ -141,7 +141,7 @@ def try_decode_json(example: str, label_keys: List[str]) -> Dict[str, Any]:
             ), f"Failed to decode example.  No label keys found in example: {example_dict}"
 
             return example_dict
-        except ValueError as e:
+        except Exception as e:  # pylint: disable=broad-except
             last_error = e
 
     if last_error is not None:
