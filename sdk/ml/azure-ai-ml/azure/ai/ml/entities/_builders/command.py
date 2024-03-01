@@ -169,11 +169,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         environment_variables: Optional[Dict] = None,
         resources: Optional[JobResourceConfiguration] = None,
         services: Optional[
-            Optional[
-                Dict[
-                    str, Union[JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService]
-                ]
-            ]
+            Dict[str, Union[JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService]]
         ] = None,
         queue_settings: Optional[QueueSettings] = None,
         **kwargs: Any,
@@ -182,7 +178,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
 
         # resolve normal dict to dict[str, JobService]
-        services = _resolve_job_services(services)  # type: ignore[arg-type]
+        services = _resolve_job_services(services)
         kwargs.pop("type", None)
         self._parameters: dict = kwargs.pop("parameters", {})
         BaseNode.__init__(
@@ -286,7 +282,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
 
         :rtype: ~azure.ai.ml.entities.JobResourceConfiguration
         """
-        return self._resources  # type: ignore[return-value]
+        return cast(JobResourceConfiguration, self._resources)
 
     @resources.setter
     def resources(self, value: Union[Dict, JobResourceConfiguration]) -> None:
@@ -859,8 +855,8 @@ class Command(BaseNode, NodeWithGroupInputMixin):
             outputs=from_rest_data_outputs(rest_command_job.outputs),
         )
         command_job._id = obj.id
-        command_job.resources = JobResourceConfiguration._from_rest_object(  # type: ignore[assignment]
-            rest_command_job.resources
+        command_job.resources = cast(
+            JobResourceConfiguration, JobResourceConfiguration._from_rest_object(rest_command_job.resources)
         )
         command_job.limits = CommandJobLimits._from_rest_object(rest_command_job.limits)
         command_job.queue_settings = QueueSettings._from_rest_object(rest_command_job.queue_settings)
@@ -945,7 +941,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
 
 
 @overload
-def _resolve_job_services(services: None) -> None:
+def _resolve_job_services(services: Optional[Dict]):
     ...
 
 
