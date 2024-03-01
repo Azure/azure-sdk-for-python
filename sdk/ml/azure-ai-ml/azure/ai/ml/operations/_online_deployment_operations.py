@@ -47,7 +47,7 @@ from ._local_deployment_helper import _LocalDeploymentHelper
 from ._operation_orchestrator import OperationOrchestrator
 
 ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
+module_logger = ops_logger.module_logger
 
 
 class OnlineDeploymentOperations(_ScopeDependentOperations):
@@ -77,7 +77,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         self._init_kwargs = kwargs
 
     @distributed_trace
-    @monitor_with_activity(logger, "OnlineDeployment.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "OnlineDeployment.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
     def begin_create_or_update(
         self,
         deployment: OnlineDeployment,
@@ -216,7 +216,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
                 raise ex
 
     @distributed_trace
-    @monitor_with_activity(logger, "OnlineDeployment.Get", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "OnlineDeployment.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, endpoint_name: str, *, local: Optional[bool] = False) -> OnlineDeployment:
         """Get a deployment resource.
 
@@ -247,7 +247,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         return deployment
 
     @distributed_trace
-    @monitor_with_activity(logger, "OnlineDeployment.Delete", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "OnlineDeployment.Delete", ActivityType.PUBLICAPI)
     def begin_delete(self, name: str, endpoint_name: str, *, local: Optional[bool] = False) -> LROPoller[None]:
         """Delete a deployment.
 
@@ -272,7 +272,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         )
 
     @distributed_trace
-    @monitor_with_activity(logger, "OnlineDeployment.GetLogs", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "OnlineDeployment.GetLogs", ActivityType.PUBLICAPI)
     def get_logs(
         self,
         name: str,
@@ -317,7 +317,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         )
 
     @distributed_trace
-    @monitor_with_activity(logger, "OnlineDeployment.List", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "OnlineDeployment.List", ActivityType.PUBLICAPI)
     def list(self, endpoint_name: str, *, local: bool = False) -> ItemPaged[OnlineDeployment]:
         """List a deployment resource.
 

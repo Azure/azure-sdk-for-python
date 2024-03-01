@@ -4,7 +4,7 @@
 import asyncio
 import logging
 
-from openai import AsyncAzureOpenAI
+from openai import AsyncAzureOpenAI, AzureOpenAI
 from openai.types.chat.chat_completion import ChatCompletion
 
 from azure.ai.generative.evaluate._user_agent import USER_AGENT
@@ -25,8 +25,8 @@ class AzureOpenAIClient:
         self._azure_deployment = openai_params.get("azure_deployment", None)\
             if openai_params.get("azure_deployment", None) else openai_params.get("deployment_id", None)
 
-        self._client = AsyncAzureOpenAI(
-            azure_endpoint=self._azure_endpoint,
+        self._client = AzureOpenAI(
+            azure_endpoint=self._azure_endpoint.strip("/"),
             api_version=self._api_version,
             api_key=self._api_key,
             default_headers={
@@ -35,19 +35,18 @@ class AzureOpenAIClient:
             },
         )
 
-    async def bounded_chat_completion(self, messages):
-        async with semaphore:
-            try:
-                result = await self._client.with_options(max_retries=5).chat.completions.create(
-                    model=self._azure_deployment,
-                    messages=messages,
-                    temperature=0,
-                    seed=0,
-                )
-                return result
-            except Exception as ex:
-                LOGGER.debug(f"Failed to call llm with exception :  {str(ex)}")
-                return ex
+    def bounded_chat_completion(self, messages): 
+        try:
+            result = self._client.with_options(max_retries=5).chat.completions.create(
+                model=self._azure_deployment,
+                messages=messages,
+                temperature=0,
+                seed=0,
+            )
+            return result
+        except Exception as ex:
+            LOGGER.debug(f"Failed to call llm with exception :  {str(ex)}")
+            return ex
 
     @staticmethod
     def get_chat_completion_content_from_response(response):
