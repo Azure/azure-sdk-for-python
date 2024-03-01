@@ -266,13 +266,13 @@ class FlowComponent(Component, AdditionalIncludesMixin):
             # we don't need to rebase additional_includes as we have updated base_path
             with open(Path(self.base_path, self._flow), "r", encoding="utf-8") as f:
                 flow_content = yaml.safe_load(f.read())
-                additional_includes = flow_content.get("additional_includes", None)
-                environment_variables_from_flow = flow_content.get("environment_variables", {})
-                for key, value in (environment_variables or {}).items():
-                    environment_variables_from_flow[key] = value
-                environment_variables = environment_variables_from_flow
+            additional_includes = flow_content.get("additional_includes", None)
+            # environment variables in run.yaml have higher priority than those in flow.dag.yaml
+            self._environment_variables = flow_content.get("environment_variables", {})
+            self._environment_variables.update(environment_variables or {})
+        else:
+            self._environment_variables = environment_variables or {}
 
-        self._environment_variables = environment_variables or {}
         self._additional_includes = additional_includes or []
 
         # unlike other Component, code is a private property in FlowComponent and
