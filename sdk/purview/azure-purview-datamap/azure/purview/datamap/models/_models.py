@@ -7,21 +7,15 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-import sys
 from typing import Any, Dict, List, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .. import _model_base
 from .._model_base import rest_field
-
-if sys.version_info >= (3, 9):
-    from collections.abc import MutableMapping
-else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+from .._vendor import FileType
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
-JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
 class AtlasAttributeDef(_model_base.Model):  # pylint: disable=too-many-instance-attributes
@@ -84,6 +78,7 @@ class AtlasAttributeDef(_model_base.Model):  # pylint: disable=too-many-instance
     values_min_count: Optional[int] = rest_field(name="valuesMinCount")
     """The minimum count of the values."""
 
+
     @overload
     def __init__(
         self,
@@ -111,8 +106,10 @@ class AtlasAttributeDef(_model_base.Model):  # pylint: disable=too-many-instance
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class AtlasBusinessMetadataDef(_model_base.Model):  # pylint: disable=too-many-instance-attributes
@@ -185,6 +182,7 @@ class AtlasBusinessMetadataDef(_model_base.Model):  # pylint: disable=too-many-i
     attribute_defs: Optional[List["_models.AtlasAttributeDef"]] = rest_field(name="attributeDefs")
     """An array of attribute definitions."""
 
+
     @overload
     def __init__(
         self,
@@ -214,8 +212,10 @@ class AtlasBusinessMetadataDef(_model_base.Model):  # pylint: disable=too-many-i
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class AtlasClassification(_model_base.Model):
@@ -256,6 +256,7 @@ class AtlasClassification(_model_base.Model):
     validity_periods: Optional[List["_models.TimeBoundary"]] = rest_field(name="validityPeriods")
     """An array of time boundaries indicating validity periods."""
 
+
     @overload
     def __init__(
         self,
@@ -277,8 +278,10 @@ class AtlasClassification(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class AtlasClassificationDef(_model_base.Model):  # pylint: disable=too-many-instance-attributes
@@ -320,21 +323,21 @@ class AtlasClassificationDef(_model_base.Model):  # pylint: disable=too-many-ins
      that
      classifications can
      only be applied to those entityTypes.
-
+    
      Any subtypes of the entity types inherit the restriction.
-
+    
      Any classificationDef subtypes inherit the parents entityTypes restrictions.
-
+    
      Any classificationDef subtypes can further restrict the parents entityTypes
      restrictions by specifying a subset of the entityTypes.
-
+    
      An empty entityTypes list when there are no parent restrictions means there are no
      restrictions.
-
+    
      An empty entityTypes list when there are parent
      restrictions means that the subtype picks up the parents
      restrictions.
-
+    
      If a list of entityTypes are supplied, where one inherits
      from another, this will be rejected. This should encourage cleaner
      classificationsDefs.
@@ -404,6 +407,7 @@ class AtlasClassificationDef(_model_base.Model):  # pylint: disable=too-many-ins
     super_types: Optional[List[str]] = rest_field(name="superTypes")
     """An array of super types."""
 
+
     @overload
     def __init__(
         self,
@@ -436,8 +440,10 @@ class AtlasClassificationDef(_model_base.Model):  # pylint: disable=too-many-ins
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class AtlasClassifications(_model_base.Model):
@@ -472,6 +478,7 @@ class AtlasClassifications(_model_base.Model):
     total_count: Optional[int] = rest_field(name="totalCount")
     """The total count of items."""
 
+
     @overload
     def __init__(
         self,
@@ -492,8 +499,10 @@ class AtlasClassifications(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class AtlasConstraintDef(_model_base.Model):
@@ -509,6 +518,7 @@ class AtlasConstraintDef(_model_base.Model):
     """The parameters of the constraint definition."""
     type: Optional[str] = rest_field()
     """The type of the constraint."""
+
 
     @overload
     def __init__(
@@ -526,8 +536,10 @@ class AtlasConstraintDef(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class AtlasEntitiesWithExtInfo(_model_base.Model):
@@ -545,6 +557,7 @@ class AtlasEntitiesWithExtInfo(_model_base.Model):
     entities: Optional[List["_models.AtlasEntity"]] = rest_field()
     """An array of entities."""
 
+
     @overload
     def __init__(
         self,
@@ -561,8 +574,10 @@ class AtlasEntitiesWithExtInfo(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class AtlasEntity(_model_base.Model):  # pylint: disable=too-many-instance-attributes
@@ -664,6 +679,7 @@ class AtlasEntity(_model_base.Model):  # pylint: disable=too-many-instance-attri
     contacts: Optional[Dict[str, List["_models.ContactInfo"]]] = rest_field()
     """The dictionary of contacts for entities. Key could be Expert or Owner."""
 
+
     @overload
     def __init__(
         self,
@@ -699,8 +715,10 @@ class AtlasEntity(_model_base.Model):  # pylint: disable=too-many-instance-attri
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class AtlasEntityDef(_model_base.Model):  # pylint: disable=too-many-instance-attributes
@@ -783,10 +801,9 @@ class AtlasEntityDef(_model_base.Model):  # pylint: disable=too-many-instance-at
     """An array of sub types."""
     super_types: Optional[List[str]] = rest_field(name="superTypes")
     """An array of super types."""
-    relationship_attribute_defs: Optional[List["_models.AtlasRelationshipAttributeDef"]] = rest_field(
-        name="relationshipAttributeDefs"
-    )
+    relationship_attribute_defs: Optional[List["_models.AtlasRelationshipAttributeDef"]] = rest_field(name="relationshipAttributeDefs")
     """An array of relationship attributes."""
+
 
     @overload
     def __init__(
@@ -820,8 +837,10 @@ class AtlasEntityDef(_model_base.Model):  # pylint: disable=too-many-instance-at
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class AtlasEntityHeader(_model_base.Model):  # pylint: disable=too-many-instance-attributes
@@ -880,6 +899,7 @@ class AtlasEntityHeader(_model_base.Model):  # pylint: disable=too-many-instance
     """Status of the entity - can be active or deleted. Deleted entities are not
      removed. Known values are: \"ACTIVE\" and \"DELETED\"."""
 
+
     @overload
     def __init__(
         self,
@@ -906,8 +926,10 @@ class AtlasEntityHeader(_model_base.Model):  # pylint: disable=too-many-instance
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class AtlasEntityHeaders(_model_base.Model):
@@ -919,6 +941,7 @@ class AtlasEntityHeaders(_model_base.Model):
 
     guid_header_map: Optional[Dict[str, "_models.AtlasEntityHeader"]] = rest_field(name="guidHeaderMap")
     """The description of the guid header map,."""
+
 
     @overload
     def __init__(
@@ -935,8 +958,10 @@ class AtlasEntityHeaders(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class AtlasEntityWithExtInfo(_model_base.Model):
@@ -954,6 +979,7 @@ class AtlasEntityWithExtInfo(_model_base.Model):
     entity: Optional["_models.AtlasEntity"] = rest_field()
     """An instance of an entity - like hive_table, hive_database."""
 
+
     @overload
     def __init__(
         self,
@@ -970,8 +996,10 @@ class AtlasEntityWithExtInfo(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class AtlasEnumDef(_model_base.Model):  # pylint: disable=too-many-instance-attributes
@@ -1048,6 +1076,7 @@ class AtlasEnumDef(_model_base.Model):  # pylint: disable=too-many-instance-attr
     element_defs: Optional[List["_models.AtlasEnumElementDef"]] = rest_field(name="elementDefs")
     """An array of enum element definitions."""
 
+
     @overload
     def __init__(
         self,
@@ -1078,8 +1107,10 @@ class AtlasEnumDef(_model_base.Model):  # pylint: disable=too-many-instance-attr
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class AtlasEnumElementDef(_model_base.Model):
@@ -1100,6 +1131,7 @@ class AtlasEnumElementDef(_model_base.Model):
     value: Optional[str] = rest_field()
     """The value of the enum element definition."""
 
+
     @overload
     def __init__(
         self,
@@ -1117,8 +1149,10 @@ class AtlasEnumElementDef(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class AtlasErrorResponse(_model_base.Model):
@@ -1139,6 +1173,7 @@ class AtlasErrorResponse(_model_base.Model):
     error_message: Optional[str] = rest_field(name="errorMessage")
     """The error message."""
 
+
     @overload
     def __init__(
         self,
@@ -1156,8 +1191,10 @@ class AtlasErrorResponse(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class AtlasGlossary(_model_base.Model):  # pylint: disable=too-many-instance-attributes
@@ -1226,6 +1263,7 @@ class AtlasGlossary(_model_base.Model):  # pylint: disable=too-many-instance-att
     usage: Optional[str] = rest_field()
     """The usage of the glossary."""
 
+
     @overload
     def __init__(
         self,
@@ -1255,8 +1293,10 @@ class AtlasGlossary(_model_base.Model):  # pylint: disable=too-many-instance-att
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class AtlasGlossaryCategory(_model_base.Model):  # pylint: disable=too-many-instance-attributes
@@ -1325,6 +1365,7 @@ class AtlasGlossaryCategory(_model_base.Model):  # pylint: disable=too-many-inst
     terms: Optional[List["_models.AtlasRelatedTermHeader"]] = rest_field()
     """An array of related term headers."""
 
+
     @overload
     def __init__(
         self,
@@ -1354,8 +1395,10 @@ class AtlasGlossaryCategory(_model_base.Model):  # pylint: disable=too-many-inst
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class AtlasGlossaryExtInfo(_model_base.Model):  # pylint: disable=too-many-instance-attributes
@@ -1432,6 +1475,7 @@ class AtlasGlossaryExtInfo(_model_base.Model):  # pylint: disable=too-many-insta
     term_info: Optional[Dict[str, "_models.AtlasGlossaryTerm"]] = rest_field(name="termInfo")
     """The glossary term information."""
 
+
     @overload
     def __init__(
         self,
@@ -1463,8 +1507,10 @@ class AtlasGlossaryExtInfo(_model_base.Model):  # pylint: disable=too-many-insta
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class AtlasGlossaryHeader(_model_base.Model):
@@ -1485,6 +1531,7 @@ class AtlasGlossaryHeader(_model_base.Model):
     relation_guid: Optional[str] = rest_field(name="relationGuid")
     """The GUID of the relationship."""
 
+
     @overload
     def __init__(
         self,
@@ -1502,8 +1549,10 @@ class AtlasGlossaryHeader(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class AtlasGlossaryTerm(_model_base.Model):  # pylint: disable=too-many-instance-attributes
@@ -1666,6 +1715,7 @@ class AtlasGlossaryTerm(_model_base.Model):  # pylint: disable=too-many-instance
     valid_values_for: Optional[List["_models.AtlasRelatedTermHeader"]] = rest_field(name="validValuesFor")
     """An array of related term headers as valid values for other records."""
 
+
     @overload
     def __init__(
         self,
@@ -1717,8 +1767,10 @@ class AtlasGlossaryTerm(_model_base.Model):  # pylint: disable=too-many-instance
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class AtlasLineageInfo(_model_base.Model):
@@ -1764,6 +1816,7 @@ class AtlasLineageInfo(_model_base.Model):
     relations: Optional[List["_models.LineageRelation"]] = rest_field()
     """An array of lineage relations."""
 
+
     @overload
     def __init__(
         self,
@@ -1787,8 +1840,10 @@ class AtlasLineageInfo(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class AtlasObjectId(_model_base.Model):
@@ -1809,6 +1864,7 @@ class AtlasObjectId(_model_base.Model):
     unique_attributes: Optional[Dict[str, Any]] = rest_field(name="uniqueAttributes")
     """The unique attributes of the object."""
 
+
     @overload
     def __init__(
         self,
@@ -1826,8 +1882,10 @@ class AtlasObjectId(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class AtlasRelatedCategoryHeader(_model_base.Model):
@@ -1856,6 +1914,7 @@ class AtlasRelatedCategoryHeader(_model_base.Model):
     relation_guid: Optional[str] = rest_field(name="relationGuid")
     """The GUID of the relationship."""
 
+
     @overload
     def __init__(
         self,
@@ -1875,8 +1934,10 @@ class AtlasRelatedCategoryHeader(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class AtlasRelatedObjectId(_model_base.Model):
@@ -1928,6 +1989,7 @@ class AtlasRelatedObjectId(_model_base.Model):
     relationship_status: Optional[Union[str, "_models.StatusAtlasRelationship"]] = rest_field(name="relationshipStatus")
     """The enum of relationship status. Known values are: \"ACTIVE\" and \"DELETED\"."""
 
+
     @overload
     def __init__(
         self,
@@ -1951,8 +2013,10 @@ class AtlasRelatedObjectId(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class AtlasRelatedTermHeader(_model_base.Model):
@@ -1991,6 +2055,7 @@ class AtlasRelatedTermHeader(_model_base.Model):
     term_guid: Optional[str] = rest_field(name="termGuid")
     """The GUID of the term."""
 
+
     @overload
     def __init__(
         self,
@@ -2012,8 +2077,10 @@ class AtlasRelatedTermHeader(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class AtlasRelationship(_model_base.Model):  # pylint: disable=too-many-instance-attributes
@@ -2083,6 +2150,7 @@ class AtlasRelationship(_model_base.Model):  # pylint: disable=too-many-instance
     version: Optional[int] = rest_field()
     """The version of the relationship."""
 
+
     @overload
     def __init__(
         self,
@@ -2112,8 +2180,10 @@ class AtlasRelationship(_model_base.Model):  # pylint: disable=too-many-instance
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class AtlasRelationshipAttributeDef(_model_base.Model):  # pylint: disable=too-many-instance-attributes
@@ -2187,6 +2257,7 @@ class AtlasRelationshipAttributeDef(_model_base.Model):  # pylint: disable=too-m
     relationship_type_name: Optional[str] = rest_field(name="relationshipTypeName")
     """The name of the relationship type."""
 
+
     @overload
     def __init__(
         self,
@@ -2216,8 +2287,10 @@ class AtlasRelationshipAttributeDef(_model_base.Model):  # pylint: disable=too-m
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class AtlasRelationshipDef(_model_base.Model):  # pylint: disable=too-many-instance-attributes
@@ -2242,19 +2315,19 @@ class AtlasRelationshipDef(_model_base.Model):  # pylint: disable=too-many-insta
     RelationshipDefs introduce new attributes to the entity
     instances. For example
     EntityDef A might have attributes attr1,attr2,attr3
-
+    
     EntityDef B might have attributes attr4,attr5,attr6
     RelationshipDef
     AtoB might define 2 ends
-
+    
     end1:  type A, name attr7
     end2:  type B, name attr8
-
+    
     When an instance of EntityDef A is created, it
     will have attributes attr1,attr2,attr3,attr7
     When an instance of EntityDef
     B is created, it will have attributes attr4,attr5,attr6,attr8
-
+    
     In this way
     relationshipDefs can be authored separately from entityDefs and can inject
     relationship attributes into
@@ -2359,9 +2432,7 @@ class AtlasRelationshipDef(_model_base.Model):  # pylint: disable=too-many-insta
      relationship is defined by a type, an
      attribute name, cardinality and whether
      it  is the container end of the relationship."""
-    relationship_category: Optional[Union[str, "_models.RelationshipCategory"]] = rest_field(
-        name="relationshipCategory"
-    )
+    relationship_category: Optional[Union[str, "_models.RelationshipCategory"]] = rest_field(name="relationshipCategory")
     """The Relationship category determines the style of relationship around
      containment and lifecycle.
      UML terminology is used for the values.
@@ -2373,6 +2444,7 @@ class AtlasRelationshipDef(_model_base.Model):  # pylint: disable=too-many-insta
      values are: \"ASSOCIATION\", \"AGGREGATION\", and \"COMPOSITION\"."""
     relationship_label: Optional[str] = rest_field(name="relationshipLabel")
     """The label of the relationship."""
+
 
     @overload
     def __init__(
@@ -2407,8 +2479,10 @@ class AtlasRelationshipDef(_model_base.Model):  # pylint: disable=too-many-insta
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class AtlasRelationshipEndDef(_model_base.Model):
@@ -2446,6 +2520,7 @@ class AtlasRelationshipEndDef(_model_base.Model):
     type: Optional[str] = rest_field()
     """The type of the relationship end."""
 
+
     @overload
     def __init__(
         self,
@@ -2466,8 +2541,10 @@ class AtlasRelationshipEndDef(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class AtlasRelationshipWithExtInfo(_model_base.Model):
@@ -2483,6 +2560,7 @@ class AtlasRelationshipWithExtInfo(_model_base.Model):
     """The referred entity header."""
     relationship: Optional["_models.AtlasRelationship"] = rest_field()
     """Atlas relationship instance."""
+
 
     @overload
     def __init__(
@@ -2500,8 +2578,10 @@ class AtlasRelationshipWithExtInfo(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class AtlasStruct(_model_base.Model):
@@ -2523,6 +2603,7 @@ class AtlasStruct(_model_base.Model):
     last_modified_t_s: Optional[str] = rest_field(name="lastModifiedTS")
     """ETag for concurrency control."""
 
+
     @overload
     def __init__(
         self,
@@ -2540,8 +2621,10 @@ class AtlasStruct(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class AtlasStructDef(_model_base.Model):  # pylint: disable=too-many-instance-attributes
@@ -2614,6 +2697,7 @@ class AtlasStructDef(_model_base.Model):  # pylint: disable=too-many-instance-at
     attribute_defs: Optional[List["_models.AtlasAttributeDef"]] = rest_field(name="attributeDefs")
     """An array of attribute definitions."""
 
+
     @overload
     def __init__(
         self,
@@ -2643,8 +2727,10 @@ class AtlasStructDef(_model_base.Model):  # pylint: disable=too-many-instance-at
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class AtlasTermAssignmentHeader(_model_base.Model):
@@ -2691,6 +2777,7 @@ class AtlasTermAssignmentHeader(_model_base.Model):
     term_guid: Optional[str] = rest_field(name="termGuid")
     """The GUID of the term."""
 
+
     @overload
     def __init__(
         self,
@@ -2714,8 +2801,10 @@ class AtlasTermAssignmentHeader(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class AtlasTermCategorizationHeader(_model_base.Model):
@@ -2746,6 +2835,7 @@ class AtlasTermCategorizationHeader(_model_base.Model):
     """The status of term relationship. Known values are: \"DRAFT\", \"ACTIVE\", \"DEPRECATED\",
      \"OBSOLETE\", and \"OTHER\"."""
 
+
     @overload
     def __init__(
         self,
@@ -2765,8 +2855,10 @@ class AtlasTermCategorizationHeader(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class AtlasTypeDef(_model_base.Model):  # pylint: disable=too-many-instance-attributes
@@ -2806,21 +2898,21 @@ class AtlasTypeDef(_model_base.Model):  # pylint: disable=too-many-instance-attr
      that
      classifications can
      only be applied to those entityTypes.
-
+    
      Any subtypes of the entity types inherit the restriction.
-
+    
      Any classificationDef subtypes inherit the parents entityTypes restrictions.
-
+    
      Any classificationDef subtypes can further restrict the parents entityTypes
      restrictions by specifying a subset of the entityTypes.
-
+    
      An empty entityTypes list when there are no parent restrictions means there are no
      restrictions.
-
+    
      An empty entityTypes list when there are parent
      restrictions means that the subtype picks up the parents
      restrictions.
-
+    
      If a list of entityTypes are supplied, where one inherits
      from another, this will be rejected. This should encourage cleaner
      classificationsDefs.
@@ -2850,10 +2942,10 @@ class AtlasTypeDef(_model_base.Model):  # pylint: disable=too-many-instance-attr
      around
      containment and lifecycle.
      UML terminology is used for the values.
-
+    
      ASSOCIATION is a relationship with no containment.
      COMPOSITION and AGGREGATION are containment relationships.
-
+    
      The difference being in the lifecycles of the container and its children.
      In the COMPOSITION case, the children cannot exist without the container.
      For AGGREGATION, the life cycles of the container and children are totally independent. Known
@@ -2921,9 +3013,7 @@ class AtlasTypeDef(_model_base.Model):  # pylint: disable=too-many-instance-attr
     """An array of sub types."""
     super_types: Optional[List[str]] = rest_field(name="superTypes")
     """An array of super types."""
-    relationship_attribute_defs: Optional[List["_models.AtlasRelationshipAttributeDef"]] = rest_field(
-        name="relationshipAttributeDefs"
-    )
+    relationship_attribute_defs: Optional[List["_models.AtlasRelationshipAttributeDef"]] = rest_field(name="relationshipAttributeDefs")
     """An array of relationship attributes."""
     default_value: Optional[str] = rest_field(name="defaultValue")
     """The default value."""
@@ -2939,9 +3029,7 @@ class AtlasTypeDef(_model_base.Model):  # pylint: disable=too-many-instance-attr
      relationship is defined by a type, an
      attribute name, cardinality and whether
      it  is the container end of the relationship."""
-    relationship_category: Optional[Union[str, "_models.RelationshipCategory"]] = rest_field(
-        name="relationshipCategory"
-    )
+    relationship_category: Optional[Union[str, "_models.RelationshipCategory"]] = rest_field(name="relationshipCategory")
     """The Relationship category determines the style of relationship around
      containment and lifecycle.
      UML terminology is used for the values.
@@ -2957,6 +3045,7 @@ class AtlasTypeDef(_model_base.Model):  # pylint: disable=too-many-instance-attr
     """The label of the relationship."""
     attribute_defs: Optional[List["_models.AtlasAttributeDef"]] = rest_field(name="attributeDefs")
     """An array of attribute definitions."""
+
 
     @overload
     def __init__(
@@ -2997,8 +3086,10 @@ class AtlasTypeDef(_model_base.Model):  # pylint: disable=too-many-instance-attr
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class AtlasTypeDefHeader(_model_base.Model):
@@ -3023,6 +3114,7 @@ class AtlasTypeDefHeader(_model_base.Model):
     name: Optional[str] = rest_field()
     """The name of the type definition."""
 
+
     @overload
     def __init__(
         self,
@@ -3040,8 +3132,10 @@ class AtlasTypeDefHeader(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class AtlasTypesDef(_model_base.Model):
@@ -3078,6 +3172,7 @@ class AtlasTypesDef(_model_base.Model):
     term_template_defs: Optional[List["_models.TermTemplateDef"]] = rest_field(name="termTemplateDefs")
     """An array of term template definitions."""
 
+
     @overload
     def __init__(
         self,
@@ -3099,8 +3194,10 @@ class AtlasTypesDef(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class AutoCompleteOptions(_model_base.Model):
@@ -3125,6 +3222,7 @@ class AutoCompleteOptions(_model_base.Model):
     filter: Optional[Any] = rest_field()
     """The filter for the autocomplete request."""
 
+
     @overload
     def __init__(
         self,
@@ -3142,8 +3240,10 @@ class AutoCompleteOptions(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class AutoCompleteResult(_model_base.Model):
@@ -3155,6 +3255,7 @@ class AutoCompleteResult(_model_base.Model):
 
     value: Optional[List["_models.AutoCompleteResultValue"]] = rest_field()
     """The result value."""
+
 
     @overload
     def __init__(
@@ -3171,8 +3272,10 @@ class AutoCompleteResult(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class AutoCompleteResultValue(_model_base.Model):
@@ -3188,6 +3291,7 @@ class AutoCompleteResultValue(_model_base.Model):
     """The completed term or phrase."""
     query_plus_text: Optional[str] = rest_field(name="queryPlusText")
     """The completed search query text."""
+
 
     @overload
     def __init__(
@@ -3205,8 +3309,10 @@ class AutoCompleteResultValue(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class BulkImportResult(_model_base.Model):
@@ -3222,6 +3328,7 @@ class BulkImportResult(_model_base.Model):
     """failed importInfoList."""
     success_import_info_list: Optional[List["_models.ImportInfo"]] = rest_field(name="successImportInfoList")
     """successful importInfoList."""
+
 
     @overload
     def __init__(
@@ -3239,8 +3346,44 @@ class BulkImportResult(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
+
+
+class BusinessMetadataOptions(_model_base.Model):
+    """Business metadata to send to the service.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar file: InputStream of file. Required.
+    :vartype file: bytes
+    """
+
+    file: FileType = rest_field(is_multipart_file_input=True)
+    """InputStream of file. Required."""
+
+
+    @overload
+    def __init__(
+        self,
+        *,
+        file: FileType,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class ClassificationAssociateOptions(_model_base.Model):
@@ -3259,6 +3402,7 @@ class ClassificationAssociateOptions(_model_base.Model):
     entity_guids: Optional[List[str]] = rest_field(name="entityGuids")
     """The GUID of the entity."""
 
+
     @overload
     def __init__(
         self,
@@ -3275,8 +3419,10 @@ class ClassificationAssociateOptions(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class ContactInfo(_model_base.Model):
@@ -3292,6 +3438,7 @@ class ContactInfo(_model_base.Model):
     """Azure Active Directory object Id."""
     info: Optional[str] = rest_field()
     """additional information to describe this contact."""
+
 
     @overload
     def __init__(
@@ -3309,8 +3456,10 @@ class ContactInfo(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class ContactSearchResultValue(_model_base.Model):
@@ -3333,6 +3482,7 @@ class ContactSearchResultValue(_model_base.Model):
     """The type of the contact. It can be Expert or Owner for an entity. It can be
      Expert or Steward for a glossary term."""
 
+
     @overload
     def __init__(
         self,
@@ -3350,8 +3500,10 @@ class ContactSearchResultValue(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class DateFormat(_model_base.Model):
@@ -3396,6 +3548,7 @@ class DateFormat(_model_base.Model):
     time_zone: Optional["_models.TimeZone"] = rest_field(name="timeZone")
     """The timezone information."""
 
+
     @overload
     def __init__(
         self,
@@ -3419,8 +3572,10 @@ class DateFormat(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class EntityMutationResult(_model_base.Model):
@@ -3441,6 +3596,7 @@ class EntityMutationResult(_model_base.Model):
     partial_updated_entities: Optional[List["_models.AtlasEntityHeader"]] = rest_field(name="partialUpdatedEntities")
     """An array of entity headers that partially updated."""
 
+
     @overload
     def __init__(
         self,
@@ -3458,8 +3614,10 @@ class EntityMutationResult(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class ImportInfo(_model_base.Model):
@@ -3484,6 +3642,7 @@ class ImportInfo(_model_base.Model):
     remarks: Optional[str] = rest_field()
     """remarks."""
 
+
     @overload
     def __init__(
         self,
@@ -3502,8 +3661,10 @@ class ImportInfo(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class LineageRelation(_model_base.Model):
@@ -3524,6 +3685,7 @@ class LineageRelation(_model_base.Model):
     to_entity_id: Optional[str] = rest_field(name="toEntityId")
     """The GUID of to-entity."""
 
+
     @overload
     def __init__(
         self,
@@ -3541,8 +3703,10 @@ class LineageRelation(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class MoveEntitiesOptions(_model_base.Model):
@@ -3554,6 +3718,7 @@ class MoveEntitiesOptions(_model_base.Model):
 
     entity_guids: Optional[List[str]] = rest_field(name="entityGuids")
     """An array of entity guids to be moved to target collection."""
+
 
     @overload
     def __init__(
@@ -3570,8 +3735,10 @@ class MoveEntitiesOptions(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class NumberFormat(_model_base.Model):  # pylint: disable=too-many-instance-attributes
@@ -3638,6 +3805,7 @@ class NumberFormat(_model_base.Model):  # pylint: disable=too-many-instance-attr
     """The enum of rounding mode. Known values are: \"UP\", \"DOWN\", \"CEILING\", \"FLOOR\",
      \"HALF_UP\", \"HALF_DOWN\", \"HALF_EVEN\", and \"UNNECESSARY\"."""
 
+
     @overload
     def __init__(
         self,
@@ -3666,8 +3834,10 @@ class NumberFormat(_model_base.Model):  # pylint: disable=too-many-instance-attr
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class ParentRelation(_model_base.Model):
@@ -3688,6 +3858,7 @@ class ParentRelation(_model_base.Model):
     parent_entity_id: Optional[str] = rest_field(name="parentEntityId")
     """The GUID of parent entity."""
 
+
     @overload
     def __init__(
         self,
@@ -3705,8 +3876,10 @@ class ParentRelation(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class PurviewObjectId(_model_base.Model):
@@ -3747,6 +3920,7 @@ class PurviewObjectId(_model_base.Model):
     properties: Optional[Dict[str, Any]] = rest_field()
     """Dictionary of :code:`<any>`."""
 
+
     @overload
     def __init__(
         self,
@@ -3769,8 +3943,10 @@ class PurviewObjectId(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class QueryOptions(_model_base.Model):
@@ -3812,6 +3988,7 @@ class QueryOptions(_model_base.Model):
     taxonomy_setting: Optional["_models.SearchTaxonomySetting"] = rest_field(name="taxonomySetting")
     """The taxonomy setting for search."""
 
+
     @overload
     def __init__(
         self,
@@ -3833,8 +4010,10 @@ class QueryOptions(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class QueryResult(_model_base.Model):
@@ -3871,6 +4050,7 @@ class QueryResult(_model_base.Model):
     value: Optional[List["_models.SearchResultValue"]] = rest_field()
     """Search result value."""
 
+
     @overload
     def __init__(
         self,
@@ -3890,8 +4070,10 @@ class QueryResult(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class ResourceLink(_model_base.Model):
@@ -3907,6 +4089,7 @@ class ResourceLink(_model_base.Model):
     """Display name for url."""
     url: Optional[str] = rest_field()
     """web url. http or https."""
+
 
     @overload
     def __init__(
@@ -3924,8 +4107,10 @@ class ResourceLink(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class SearchFacetItem(_model_base.Model):
@@ -3946,6 +4131,7 @@ class SearchFacetItem(_model_base.Model):
     sort: Optional["_models.SearchFacetSort"] = rest_field()
     """Define the sorting criteria for items."""
 
+
     @overload
     def __init__(
         self,
@@ -3963,8 +4149,10 @@ class SearchFacetItem(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class SearchFacetItemValue(_model_base.Model):
@@ -3980,6 +4168,7 @@ class SearchFacetItemValue(_model_base.Model):
     """The count of the facet item."""
     value: Optional[str] = rest_field()
     """The name of the facet item."""
+
 
     @overload
     def __init__(
@@ -3997,8 +4186,10 @@ class SearchFacetItemValue(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class SearchFacetResultValue(_model_base.Model):
@@ -4049,6 +4240,7 @@ class SearchFacetResultValue(_model_base.Model):
     term_template: Optional[List["_models.SearchFacetItemValue"]] = rest_field(name="termTemplate")
     """Term template."""
 
+
     @overload
     def __init__(
         self,
@@ -4073,8 +4265,10 @@ class SearchFacetResultValue(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class SearchFacetSort(_model_base.Model):
@@ -4090,6 +4284,7 @@ class SearchFacetSort(_model_base.Model):
     """Order by count. Known values are: \"asc\" and \"desc\"."""
     value: Optional[Union[str, "_models.SearchSortOrder"]] = rest_field()
     """Order by value. Known values are: \"asc\" and \"desc\"."""
+
 
     @overload
     def __init__(
@@ -4107,8 +4302,10 @@ class SearchFacetSort(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class SearchHighlights(_model_base.Model):
@@ -4140,6 +4337,7 @@ class SearchHighlights(_model_base.Model):
     entity_type: Optional[List[str]] = rest_field(name="entityType")
     """Entity type."""
 
+
     @overload
     def __init__(
         self,
@@ -4159,8 +4357,10 @@ class SearchHighlights(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class SearchResultValue(_model_base.Model):  # pylint: disable=too-many-instance-attributes
@@ -4271,6 +4471,7 @@ class SearchResultValue(_model_base.Model):  # pylint: disable=too-many-instance
     long_description: Optional[str] = rest_field(name="longDescription")
     """The definition of the term."""
 
+
     @overload
     def __init__(
         self,
@@ -4307,8 +4508,10 @@ class SearchResultValue(_model_base.Model):  # pylint: disable=too-many-instance
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class SearchTaxonomySetting(_model_base.Model):
@@ -4324,6 +4527,7 @@ class SearchTaxonomySetting(_model_base.Model):
     """Asset types."""
     facet: Optional["_models.SearchFacetItem"] = rest_field()
     """The content of a search facet result item."""
+
 
     @overload
     def __init__(
@@ -4341,8 +4545,10 @@ class SearchTaxonomySetting(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class SuggestOptions(_model_base.Model):
@@ -4371,6 +4577,7 @@ class SuggestOptions(_model_base.Model):
     filter: Optional[Any] = rest_field()
     """The filter for the search."""
 
+
     @overload
     def __init__(
         self,
@@ -4388,8 +4595,10 @@ class SuggestOptions(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class SuggestResult(_model_base.Model):
@@ -4401,6 +4610,7 @@ class SuggestResult(_model_base.Model):
 
     value: Optional[List["_models.SuggestResultValue"]] = rest_field()
     """The result value."""
+
 
     @overload
     def __init__(
@@ -4417,8 +4627,10 @@ class SuggestResult(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class SuggestResultValue(_model_base.Model):  # pylint: disable=too-many-instance-attributes
@@ -4524,6 +4736,7 @@ class SuggestResultValue(_model_base.Model):  # pylint: disable=too-many-instanc
     long_description: Optional[str] = rest_field(name="longDescription")
     """The definition of the term."""
 
+
     @overload
     def __init__(
         self,
@@ -4560,8 +4773,10 @@ class SuggestResultValue(_model_base.Model):  # pylint: disable=too-many-instanc
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class TermSearchResultValue(_model_base.Model):
@@ -4582,6 +4797,7 @@ class TermSearchResultValue(_model_base.Model):
     guid: Optional[str] = rest_field()
     """The GUID of the term."""
 
+
     @overload
     def __init__(
         self,
@@ -4599,8 +4815,10 @@ class TermSearchResultValue(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class TermTemplateDef(_model_base.Model):  # pylint: disable=too-many-instance-attributes
@@ -4673,6 +4891,7 @@ class TermTemplateDef(_model_base.Model):  # pylint: disable=too-many-instance-a
     attribute_defs: Optional[List["_models.AtlasAttributeDef"]] = rest_field(name="attributeDefs")
     """An array of attribute definitions."""
 
+
     @overload
     def __init__(
         self,
@@ -4702,8 +4921,10 @@ class TermTemplateDef(_model_base.Model):  # pylint: disable=too-many-instance-a
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class TimeBoundary(_model_base.Model):
@@ -4724,6 +4945,7 @@ class TimeBoundary(_model_base.Model):
     time_zone: Optional[str] = rest_field(name="timeZone")
     """The timezone of the time boundary."""
 
+
     @overload
     def __init__(
         self,
@@ -4741,8 +4963,10 @@ class TimeBoundary(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
 
 
 class TimeZone(_model_base.Model):
@@ -4775,6 +4999,7 @@ class TimeZone(_model_base.Model):
     raw_offset: Optional[int] = rest_field(name="rawOffset")
     """The raw offset of the timezone."""
 
+
     @overload
     def __init__(
         self,
@@ -4795,5 +5020,7 @@ class TimeZone(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+ 
+ 
