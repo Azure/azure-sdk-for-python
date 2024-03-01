@@ -96,10 +96,8 @@ class HealthInsightsSyncSamples:
 
         # Health Insights Radiology Insights
         try:
-            request_time = datetime.datetime(2024, 2, 20, 0, 0, 0, 0, tzinfo=datetime.timezone.utc)
             poller = radiology_insights_client.begin_infer_radiology_insights(
                 radiology_insights_data,
-                headers={"Repeatability-First-Sent": request_time.strftime("%a, %d %b %Y %H:%M:%S GMT")},
             )
             radiology_insights_result = poller.result()
             self.display_critical_results(radiology_insights_result)

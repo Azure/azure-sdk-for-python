@@ -97,13 +97,9 @@ class HealthInsightsSamples:
         # Construct the request with the patient and configuration
         radiology_insights_data = models.RadiologyInsightsData(patients=[patient1], configuration=configuration)
 
-        # Health Insights Radiology Insights
         try:
-            # poller = await radiology_insights_client.begin_infer_radiology_insights(radiology_insights_data)
-            request_time = datetime.datetime(2024, 2, 20, 0, 0, 0, 0, tzinfo=datetime.timezone.utc)
             poller = await radiology_insights_client.begin_infer_radiology_insights(
                 radiology_insights_data,
-                headers={"Repeatability-First-Sent": request_time.strftime("%a, %d %b %Y %H:%M:%S GMT")},
             )
             radiology_insights_result = await poller.result()
             self.display_critical_results(radiology_insights_result)
