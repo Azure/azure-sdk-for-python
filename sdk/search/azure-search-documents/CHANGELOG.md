@@ -1,8 +1,6 @@
 # Release History
 
-## 11.6.0b2 (Unreleased)
-
-### Features Added
+## 11.6.0b2 (2024-03-05)
 
 ### Breaking Changes
 
@@ -10,9 +8,11 @@
 
 ### Bugs Fixed
 
-- Fixed the issue that `SearchIndexerSkillset`, `SearchField`, `SearchIndex`, `AnalyzeTextOptions`, `SearchResourceEncryptionKey`, `SynonymMap`, `SearchIndexerDataSourceConnection` could not be serialized.
+- Fixed the issue that `SearchIndexerSkillset`, `SearchField`, `SearchIndex`, `AnalyzeTextOptions`, `SearchResourceEncryptionKey`, `SynonymMap`, `SearchIndexerDataSourceConnection` could not be serialized and `as_dict` did not work.
 
 ### Other Changes
+
+- Default to API version `V2024_03_01_PREVIEW`
 
 ## 11.6.0b1 (2024-01-31)
 
