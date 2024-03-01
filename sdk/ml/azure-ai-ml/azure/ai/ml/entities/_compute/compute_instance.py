@@ -167,6 +167,10 @@ class ComputeInstance(Compute):
     :type enable_sso: bool
     :param enable_root_access: Enable or disable root access. Defaults to True.
     :type enable_root_access: bool
+    :param release_quota_on_stop: Release quota on stop. Defaults to False.
+    :type release_quota_on_stop: bool
+    :param enable_os_patching: Enable or disable OS patching. Defaults to False.
+    :type enable_os_patching: bool
 
     .. admonition:: Example:
 
@@ -198,6 +202,8 @@ class ComputeInstance(Compute):
         custom_applications: Optional[List[CustomApplications]] = None,
         enable_sso: bool = True,
         enable_root_access: bool = True,
+        release_quota_on_stop: bool = False,
+        enable_os_patching: bool = False,
         **kwargs: Any,
     ) -> None:
         kwargs[TYPE] = ComputeType.COMPUTEINSTANCE
@@ -226,6 +232,8 @@ class ComputeInstance(Compute):
         self.enable_node_public_ip = enable_node_public_ip
         self.enable_sso = enable_sso
         self.enable_root_access = enable_root_access
+        self.release_quota_on_stop = release_quota_on_stop
+        self.enable_os_patching = enable_os_patching
         self.custom_applications = custom_applications
         self.subnet = None
 
@@ -308,6 +316,8 @@ class ComputeInstance(Compute):
             enable_node_public_ip=self.enable_node_public_ip,
             enable_sso=self.enable_sso,
             enable_root_access=self.enable_root_access,
+            release_quota_on_stop=self.release_quota_on_stop,
+            enable_os_patching=self.enable_os_patching,
         )
         compute_instance_prop.schedules = self.schedules._to_rest_object() if self.schedules else None
         compute_instance_prop.setup_scripts = self.setup_scripts._to_rest_object() if self.setup_scripts else None
@@ -453,6 +463,12 @@ class ComputeInstance(Compute):
             enable_root_access=prop.properties.enable_root_access
             if (prop.properties and prop.properties.enable_root_access is not None)
             else True,
+            release_quota_on_stop=prop.properties.release_quota_on_stop
+            if (prop.properties and prop.properties.release_quota_on_stop is not None)
+            else False,
+            enable_os_patching=prop.properties.enable_os_patching
+            if (prop.properties and prop.properties.enable_os_patching is not None)
+            else False,
         )
         return response
 
