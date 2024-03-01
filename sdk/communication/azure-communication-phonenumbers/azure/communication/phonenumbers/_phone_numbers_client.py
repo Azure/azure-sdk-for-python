@@ -438,7 +438,7 @@ class PhoneNumbersClient(object):
         )
 
     @distributed_trace
-    def search_operator_information( # type: OperatorInformationResult
+    def search_operator_information(
         self,
         phone_numbers,  # type: PhoneNumberSearchType
         options: Optional[OperatorInformationOptions] = None,
