@@ -619,6 +619,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         # assert on the number of converted jobs to make sure we didn't drop the parallel job
         assert len(created_job.jobs.items()) == 3
 
+    @pytest.mark.skip("Will renable when parallel e2e recording issue is fixed")
     def test_pipeline_job_with_command_job_with_dataset_short_uri(
         self, client: MLClient, randstr: Callable[[str], str]
     ) -> None:

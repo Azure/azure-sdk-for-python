@@ -818,7 +818,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
             obj["limits"] = CommandJobLimits._from_rest_object(obj["limits"])
 
         if "identity" in obj and obj["identity"]:
-            obj["identity"] = _BaseJobIdentityConfiguration._load(obj["identity"])
+            obj["identity"] = _BaseJobIdentityConfiguration._from_rest_object(obj["identity"])
 
         if "queue_settings" in obj and obj["queue_settings"]:
             obj["queue_settings"] = QueueSettings._from_rest_object(obj["queue_settings"])
