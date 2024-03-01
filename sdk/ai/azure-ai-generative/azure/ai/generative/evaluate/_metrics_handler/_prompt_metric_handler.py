@@ -1,16 +1,17 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-import asyncio
+from concurrent.futures.thread import ThreadPoolExecutor
 import logging
 import pandas as pd
-import tqdm.asyncio
-from numpy import NaN
 
+from numpy import NaN
+import tqdm
 from .._client.openai_client import AzureOpenAIClient
 from .._metric_handler import MetricHandler
 from ..metrics._custom_metric import PromptMetric
 from ..metrics._parsers import JsonParser, NumberParser
+
 
 LOGGER = logging.getLogger(__name__)
 
@@ -96,43 +97,101 @@ class PromptMetricHandler(MetricHandler):
 
         return result
 
-    async def _compute_metric_row(self, metric, data):
+    def _compute_metric_row(self, metric, data):
         message = self._convert_metric_to_message(metric, data)
-        response = await self._client.bounded_chat_completion(message)
+        response = self._client.bounded_chat_completion(message)
         content = self._client.get_chat_completion_content_from_response(response)
         result = self._parser_response(content if content is not None else response, metric)
         return result
 
-    async def _compute_metric(self, metric):
+    def _compute_metric(self, metric):
         data = self._get_data_for_metric(metric)
-        tasks = []
-        for row_data in data:
-            task = asyncio.ensure_future(self._compute_metric_row(metric, row_data))
-            tasks.append(task)
 
-        responses = await asyncio.gather(*tasks, return_exceptions=True)
-        results = {"artifacts": {}, "metrics": {}}
-        for key in responses[0].keys():
-            results["artifacts"].update({key: [row[key] for row in responses]})
+        row_metric_futures = []
+        row_metric_results = []
+
+        with ThreadPoolExecutor(thread_name_prefix="code_metrics_row") as thread_pool:
+            for item in data:
+                row_metric_futures.append(thread_pool.submit(self._compute_metric_row, metric, data=item))
+
+            for row_metric_future in row_metric_futures:
+                row_metric_results.append(row_metric_future.result())
+
+            results = {"artifacts": {}, "metrics": {}}
+
+            if isinstance(row_metric_results[0], dict):
+                for key in row_metric_results[0].keys():
+                    results["artifacts"].update({key: [row[key] for row in row_metric_results]})
+            else:
+                results["artifacts"].update({metric.name: row_metric_results})
+
+        # tasks = []
+        # for row_data in data:
+        #     task = asyncio.ensure_future(
+        #         self._compute_metric_row(metric, row_data)
+        #     )
+        #     tasks.append(task)
+
+        # responses = await asyncio.gather(*tasks, return_exceptions=True)
+        # results = {"artifacts": {}, "metrics": {}}
+        # for key in responses[0].keys():
+        #     results["artifacts"].update({
+        #         key: [row[key] for row in responses]
+        #     })
 
         return results
 
-    async def _compute_metrics(self):
-        tasks = []
-        metrics_dict = {"artifacts": {}, "metrics": {}}
-        for metric in self.metrics:
-            task = asyncio.ensure_future(self._compute_metric(metric))
-            tasks.append(task)
+    def _compute_metrics(self, metrics):
 
-        # responses = await asyncio.gather(*tasks, return_exceptions=True)
-        responses = await tqdm.asyncio.tqdm.gather(*tasks)
-        for response in responses:
-            for k, v in metrics_dict.items():
-                v.update(response[k])
+        metrics_dict = {"artifacts": {}, "metrics": {}}
+        metric_results_futures = {}
+        with tqdm.tqdm(total=len(metrics)) as progress_bar:
+            with ThreadPoolExecutor(thread_name_prefix="prompt_metrics") as thread_pool:
+                for metric in self.metrics:
+                    metric_results_futures.update(
+                        {
+                            metric.name: thread_pool.submit(
+                                self._compute_metric,
+                                metric,
+                            )
+                        }
+                    )
+
+                for metric_name, metric_result_future in metric_results_futures.items():
+                    try:
+                        metric_result = metric_result_future.result()
+                        metrics_dict["artifacts"].update(metric_result["artifacts"])
+                        if "metrics" in metric_result.keys() and metric_result["metrics"] is not None:
+                            metrics_dict["metrics"].update(metric_result["metrics"])
+                        progress_bar.update(1)
+                    except Exception as ex:  # pylint: disable=broad-except
+                        progress_bar.update(1)
+                        _msg = (
+                            f"Error calculating value for {metric_name}, "
+                            f"failed with error {str(ex)} : "
+                            f"Stack trace : {str(ex.__traceback__)}"
+                        )
+                        LOGGER.info(_msg)
 
         return metrics_dict
 
+        # tasks = []
+        # metrics_dict = {"artifacts": {}, "metrics": {}}
+        # for metric in self.metrics:
+        #     task = asyncio.ensure_future(
+        #         self._compute_metric(metric)
+        #     )
+        #     tasks.append(task)
+
+        # # responses = await asyncio.gather(*tasks, return_exceptions=True)
+        # responses = await tqdm.asyncio.tqdm.gather(*tasks)
+        # for response in responses:
+        #     for k, v in metrics_dict.items():
+        #         v.update(response[k])
+
+        # return metrics_dict
+
     def calculate_metrics(self):
         LOGGER.info("Calculating prompt metric %s", [metric.name for metric in self.metrics])
-        result = asyncio.run(self._compute_metrics(), debug=True)
+        result = self._compute_metrics(self.metrics)
         return result
