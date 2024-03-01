@@ -7,3 +7,4 @@
 -e ../azure-ai-generative[faiss,hugging_face,langchain,index,qa_generation,simulator,evaluate,promptflow]
 pytest
 pytest-xdist
+openai>=1.4.0

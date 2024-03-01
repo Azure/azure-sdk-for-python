@@ -6,4 +6,4 @@
 pytest
 pytest-xdist
 httpx
-openai>1
+openai>=1.4.0
