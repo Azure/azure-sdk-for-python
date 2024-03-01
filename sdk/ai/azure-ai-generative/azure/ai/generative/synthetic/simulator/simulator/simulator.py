@@ -219,7 +219,8 @@ class Simulator:
         api_call_retry_limit: int = 3,
         api_call_retry_sleep_sec: int = 1,
         api_call_delay_sec: float = 0,
-        concurrent_async_task: int = 3
+        concurrent_async_task: int = 3,
+        simulation_result_limit: int = 3,
     ):
         """Asynchronously simulate conversations using the provided template and parameters
 
@@ -241,6 +242,8 @@ class Simulator:
         :paramtype api_call_delay_sec: float, optional
         :keyword concurrent_async_task: The maximum number of asynchronous tasks to run concurrently. Defaults to 3.
         :paramtype concurrent_async_task: int, optional
+        :keyword simulation_result_limit: The maximum number of simulation results to return. Defaults to 3.
+        :paramtype simulation_result_limit: int, optional
 
         :return: A list of dictionaries containing the simulation results.
         :rtype: List[Dict]
@@ -271,7 +274,6 @@ class Simulator:
         semaphore = asyncio.Semaphore(concurrent_async_task)
         sim_results = []
         tasks = []
-
         for t in templates:
             for p in t.template_parameters:
                 if jailbreak:
@@ -293,6 +295,12 @@ class Simulator:
                         )
                     )
                 )
+
+                if len(tasks) >= simulation_result_limit:
+                    break
+
+            if len(tasks) >= simulation_result_limit:
+                break
 
         sim_results = await asyncio.gather(*tasks)
 
@@ -324,6 +332,8 @@ class Simulator:
             api_call_delay_sec (float, optional): The time in seconds to wait between API calls. Defaults to 0.
             concurrent_async_task (int, optional): The maximum number of asynchronous tasks to run concurrently.
                 Defaults to 3.
+            simulation_result_limit (int, optional): The maximum number of simulation results to return. Defaults to 3.
+
         Returns:
             List[Dict]: A list of dictionaries containing the simulation results.
 

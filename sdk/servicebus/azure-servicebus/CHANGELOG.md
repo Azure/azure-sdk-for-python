@@ -1,16 +1,15 @@
 # Release History
 
-## 7.11.5 (Unreleased)
+## 7.12.0 (2024-02-06)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
+- Updated `max_wait_time` on the ServiceBusReceiver constructor allowing users to change the default server timeout of 65 seconds when accepting a session on a Session-Enabled/Queues/Topics if NEXT_AVAILABLE_SESSION is used.
 
 ### Other Changes
 
 - Updated minimum `azure-core` version to 1.28.0.
+- Updated network trace logging to replace `None` values in AMQP connection info with empty strings as per the OpenTelemetry specification ([#32190](https://github.com/Azure/azure-sdk-for-python/issues/32190)).
 
 ## 7.11.4 (2023-11-13)
 

@@ -1,6 +1,6 @@
 parameters:
 - name: LanguageVersion
-  displayName: LanguageVersion (3.8, 3.9, 3.10, 3.11)
+  displayName: LanguageVersion (3.8, 3.9, 3.10, 3.11, 3.12)
   type: string
   default: '3.11'
 - name: PackageVersions
@@ -28,7 +28,7 @@ extends:
   template: /eng/pipelines/templates/jobs/perf.yml
   parameters:
     TimeoutInMinutes: 720
-    ServiceDirectory: core 
+    ServiceDirectory: core/corehttp
     LanguageVersion: ${{ parameters.LanguageVersion }}
     PackageVersions: ${{ parameters.PackageVersions }}
     Tests: ${{ parameters.Tests }}

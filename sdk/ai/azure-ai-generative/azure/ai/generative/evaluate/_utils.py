@@ -67,6 +67,7 @@ def run_pf_flow_with_dict_list(flow_path, data: List[Dict], flow_params=None):
             data=tmp_path,
             column_mapping=column_mapping,
             environment_variables=env_vars,
+            stream=True,
             **flow_params
         )
 

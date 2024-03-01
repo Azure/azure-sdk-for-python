@@ -1,5 +1,6 @@
 import constants
 import numpy as np
+import re
 
 def get_cred():
     from mlflow.tracking import MlflowClient
@@ -29,3 +30,10 @@ def get_harm_severity_level(harm_score: int) -> str:
         if harm_score >= harm_score_range[0] and harm_score <= harm_score_range[1]:
             return harm_level.name
     return np.nan
+
+def is_valid_string(input_string: str) -> bool:
+    # if input_string contains any letter or number, 
+    # it is a valid string
+    if not input_string:
+        return False
+    return bool(re.search(r'\d|\w', input_string))
