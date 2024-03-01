@@ -438,10 +438,13 @@ class PhoneNumbersClient(object):
             options:Optional[OperatorInformationOptions]=None, #type: OperatorInformationOptions
             **kwargs  # type: Any
     ) -> OperatorInformationResult:
-        """Searches for operator information for a given list of phone numbers.
+        """
+        Searches for operator information for a given list of phone numbers.
 
         :param phone_numbers: The phone number(s) whose operator information should be searched
-        :type phone_numbers: str or list[str]
+        :type phone_numbers: str or List[str]
+        :param options: Options for the operator information search
+        :type options: ~azure.communication.phonenumbers.models.OperatorInformationOptions
         :return: A search result containing operator information associated with the requested phone numbers
         :rtype: ~azure.communication.phonenumbers.models.OperatorInformationResult
         """
