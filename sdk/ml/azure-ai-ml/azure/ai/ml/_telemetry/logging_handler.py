@@ -183,14 +183,21 @@ class AzureMLSDKLogHandler(AzureLogHandler):
         if self._is_telemetry_collection_disabled:
             return None
 
-        envelope = create_envelope(self.options.instrumentation_key, record)
+        envelope = Envelope(
+            iKey=self.options.instrumentation_key,
+            tags=dict(utils.azure_monitor_context),
+            time=utils.timestamp_to_iso_str(record.created),
+        )
+
 
         properties = {
             "process": record.processName,
             "module": record.module,
             "level": record.levelname,
-            "operation_id": envelope.tags.get("ai.ml.operation.id"),
-            "operation_parent_id": envelope.tags.get("ai.ml.operation.parentId"),
+            "activity_id": record.properties.get("activity_id", "00000000-0000-0000-0000-000000000000"),
+            "client-request-id": record.properties.get("client_request_id", "00000000-0000-0000-0000-000000000000"),                      
+            "span_id": record.spanId,
+            "trace_id": record.traceId,
         }
 
         if hasattr(record, "custom_dimensions") and isinstance(record.custom_dimensions, dict):
@@ -247,21 +254,3 @@ class AzureMLSDKLogHandler(AzureLogHandler):
             )
             envelope.data = Data(baseData=data, baseType="MessageData")
         return envelope
-
-
-def create_envelope(instrumentation_key, record):
-    envelope = Envelope(
-        iKey=instrumentation_key,
-        tags=dict(utils.azure_monitor_context),
-        time=utils.timestamp_to_iso_str(record.created),
-    )
-    envelope.tags["ai.ml.operation.id"] = getattr(
-        record,
-        "traceId",
-        "00000000000000000000000000000000",
-    )
-    envelope.tags[
-        "ai.ml.operation.parentId"
-    ] = f"|{envelope.tags.get('ai.ml.operation.id')}.{getattr(record, 'spanId', '0000000000000000')}"
-
-    return envelope
