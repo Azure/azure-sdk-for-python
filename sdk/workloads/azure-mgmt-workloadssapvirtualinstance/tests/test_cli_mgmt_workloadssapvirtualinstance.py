@@ -13,7 +13,6 @@ from azure.mgmt.authorization import AuthorizationManagementClient
 from azure.mgmt.network import NetworkManagementClient
 from azure.mgmt.compute import ComputeManagementClient
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
-import uuid
 import time
 
 AZURE_LOCATION = "eastus"
@@ -37,16 +36,32 @@ class TestMgmtWorkloadsSapVirtualInstance(AzureMgmtRecordedTestCase):
         return (user_assigned_identity_creation.id, user_assigned_identity_creation.principal_id)
     
     def create_role_assignment_for_identity(self, subscription, group_name, principal_id):
+        role_definition_creation = self.authorization_client.role_definitions.create_or_update(
+            scope=f"/subscriptions/{subscription}/resourceGroups/{group_name}", 
+            role_definition_id="66666666-6666-6666-6666-666666666666", 
+            role_definition={
+                "properties": {
+                    "roleName": "saprole",
+                    "assignableScopes": [f"/subscriptions/{subscription}/resourceGroups/{group_name}"],
+                    "permissions": [{"actions": ["*"]}]}}
+        )
+        
         self.authorization_client.role_assignments.create(
-            scope=f"subscriptions/{subscription}/resourceGroups/{group_name}",
-            role_assignment_name=str(uuid.uuid4()),
+            scope=f"/subscriptions/{subscription}/resourceGroups/{group_name}",
+            role_assignment_name="66666666-6666-6666-6666-666666666666",
             parameters={
                 "properties": {
                     "principalId": principal_id,
                     "principalType": "ServicePrincipal",
-                    "roleDefinitionId": f"/subscriptions/{subscription}/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c",
+                    "roleDefinitionId": role_definition_creation.id,
                 }
             },
+        )
+    
+    def delete_role_assignment(self, subscription, group_name):
+        self.authorization_client.role_assignments.delete(
+            scope=f"/subscriptions/{subscription}/resourceGroups/{group_name}",
+            role_assignment_name="66666666-6666-6666-6666-666666666666",
         )
 
     def create_virtual_network(self, group_name, location, network_name, subnet_name):
@@ -63,7 +78,7 @@ class TestMgmtWorkloadsSapVirtualInstance(AzureMgmtRecordedTestCase):
 
         subnet_creation = self.network_client.subnets.begin_create_or_update(
             group_name,
-            network_name,
+            virtual_network_creation.name,
             subnet_name,
             {'address_prefix': '10.0.0.0/24'}
         ).result()
@@ -149,4 +164,6 @@ class TestMgmtWorkloadsSapVirtualInstance(AzureMgmtRecordedTestCase):
 
         dict = {"key1":"val1"}
         updateBody = UpdateSAPVirtualInstanceRequest(tags = dict)
-        result = self.mgmt_client.sap_virtual_instances.begin_update(resource_group.name, SAP_VIRTUAL_INSTANCE_NAME, updateBody)
+        result = self.mgmt_client.sap_virtual_instances.begin_update(resource_group.name, SAP_VIRTUAL_INSTANCE_NAME, updateBody).result()
+
+        self.delete_role_assignment(SUBSCRIPTION_ID, resource_group.name)
