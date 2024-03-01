@@ -439,10 +439,10 @@ class PhoneNumbersClient(object):
 
     @distributed_trace
     def search_operator_information(
-        self,
-        phone_numbers,  # type: PhoneNumberSearchType
-        options: Optional[OperatorInformationOptions] = None,
-        **kwargs  # type: Any
+            self,
+            phone_numbers,  # type: PhoneNumberSearchType
+            options:Optional[OperatorInformationOptions]=None, #type: OperatorInformationOptions
+            **kwargs  # type: Any
     ) -> OperatorInformationResult:
         """
         Searches for operator information for a given list of phone numbers.
