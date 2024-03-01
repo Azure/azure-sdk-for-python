@@ -14,7 +14,7 @@ from azure.mgmt.confluent import ConfluentManagementClient
     pip install azure-identity
     pip install azure-mgmt-confluent
 # USAGE
-    python organization_get.py
+    python organization_get_cluster_by_id.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,13 +29,15 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.organization.get(
+    response = client.organization.get_cluster_by_id(
         resource_group_name="myResourceGroup",
         organization_name="myOrganization",
+        environment_id="env-12132",
+        cluster_id="dlz-f3a90de",
     )
     print(response)
 
 
-# x-ms-original-file: specification/confluent/resource-manager/Microsoft.Confluent/stable/2024-02-13/examples/Organization_Get.json
+# x-ms-original-file: specification/confluent/resource-manager/Microsoft.Confluent/stable/2024-02-13/examples/Organization_GetClusterById.json
 if __name__ == "__main__":
     main()
