@@ -193,7 +193,7 @@ stages:
                 in_batch: ${{ parameters.release_azure_core }}
                 checkout:
                 - package: azure-core
-                  version: 1.29.5
+                  version: 1.30.0
                 - package: azure-mgmt-core
                   version: 1.4.0
                 - package: azure-common
@@ -207,13 +207,13 @@ stages:
                 in_batch: true
                 checkout:
                 - package: msal
-                  download_uri: https://files.pythonhosted.org/packages/df/55/2e3047c723a2e3ed880b8a37ab020419c2bae1c0ba3b994fefe0508cb351/msal-1.25.0.tar.gz
+                  download_uri: https://files.pythonhosted.org/packages/bb/45/c4dfbe24dd546d141287fa26476ce3206d461d8e4a24be77c84b835e647d/msal-1.26.0.tar.gz
               - name: msal-extensions
                 common_root: msal
                 in_batch: true
                 checkout:
                 - package: msal-extensions
-                  download_uri: https://files.pythonhosted.org/packages/33/5e/2e23593c67df0b21ffb141c485ca0ae955569203d7ff5064040af968cb81/msal-extensions-1.0.0.tar.gz
+                  download_uri: https://files.pythonhosted.org/packages/cb/ba/618771542cdc4bc5314c395076c397d67e2bdcd88564c6ca712a2497d1c6/msal-extensions-1.1.0.tar.gz
               - name: azure-identity
                 service: identity
                 in_batch: ${{ parameters.release_azure_identity }}
@@ -228,7 +228,7 @@ stages:
                 - package: azure-storage-blob
                   version: 12.19.0
                 - package: azure-storage-queue
-                  version: 12.8.0
+                  version: 12.9.0
                 - package: azure-storage-file-share
                   version: 12.15.0
                 - package: azure-storage-file-datalake
@@ -240,7 +240,7 @@ stages:
                 - "conda-forge"
                 checkout:
                 - package: azure-ai-ml
-                  version: 1.12.1
+                  version: 1.13.0
               - name: azure-ai-formrecognizer
                 common_root: azure
                 service: formrecognizer
@@ -291,11 +291,11 @@ stages:
                 in_batch: ${{ parameters.release_azure_communication }}
                 checkout:
                 - package: azure-communication-chat
-                  version: 1.1.0
+                  version: 1.2.0
                 - package: azure-communication-email
                   version: 1.0.0
                 - package: azure-communication-identity
-                  version: 1.3.1
+                  version: 1.5.0
                 - package: azure-communication-phonenumbers
                   version: 1.1.0
                 - package: azure-communication-sms
@@ -329,7 +329,7 @@ stages:
                 in_batch: ${{ parameters.release_azure_data_tables }}
                 checkout:
                 - package: azure-data-tables
-                  version: 12.4.4
+                  version: 12.5.0
               - name: azure-developer-loadtesting
                 service: loadtesting
                 in_batch: ${{ parameters.release_azure_developer_loadtesting }}
@@ -347,7 +347,7 @@ stages:
                 in_batch: ${{ parameters.release_azure_eventgrid }}
                 checkout: 
                 - package: azure-eventgrid
-                  version: 4.16.0
+                  version: 4.17.0
               - name: azure-eventhub
                 service: eventhub
                 common_root: azure/eventhub
@@ -358,7 +358,7 @@ stages:
                 - package: azure-eventhub-checkpointstoreblob-aio
                   version: 1.1.4
                 - package: azure-eventhub
-                  version: 5.11.5
+                  version: 5.11.6
               - name: azure-iot-deviceupdate
                 service: deviceupdate
                 in_batch: ${{ parameters.release_azure_iot_deviceupdate }}
@@ -371,13 +371,13 @@ stages:
                 in_batch: ${{ parameters.release_azure_keyvault }}
                 checkout:
                 - package: azure-keyvault-administration
-                  version: 4.3.0
+                  version: 4.4.0
                 - package: azure-keyvault-certificates
-                  version: 4.7.0
-                - package: azure-keyvault-keys
                   version: 4.8.0
+                - package: azure-keyvault-keys
+                  version: 4.9.0
                 - package: azure-keyvault-secrets
-                  version: 4.7.0
+                  version: 4.8.0
               - name: azure-messaging-webpubsubservice
                 service: webpubsub
                 in_batch: ${{ parameters.release_azure_messaging_webpubsubservice }}
@@ -395,7 +395,7 @@ stages:
                 in_batch: ${{ parameters.release_azure_monitor_query }}
                 checkout:
                 - package: azure-monitor-query
-                  version: 1.2.0
+                  version: 1.2.1
               - name: azure-schemaregistry
                 service: schemaregistry
                 common_root: azure/schemaregistry
@@ -432,6 +432,8 @@ stages:
                   version: 9.0.0
                 - package: azure-mgmt-alertsmanagement
                   version: 1.0.0
+                - package: azure-mgmt-apicenter
+                  version: 1.0.0
                 - package: azure-mgmt-apimanagement
                   version: 4.0.0
                 - package: azure-mgmt-appconfiguration
@@ -441,7 +443,7 @@ stages:
                 - package: azure-mgmt-applicationinsights
                   version: 4.0.0
                 - package: azure-mgmt-appplatform
-                  version: 8.0.0
+                  version: 9.0.0
                 - package: azure-mgmt-attestation
                   version: 1.0.0
                 - package: azure-mgmt-authorization
@@ -461,7 +463,7 @@ stages:
                 - package: azure-mgmt-baremetalinfrastructure
                   version: 1.0.0
                 - package: azure-mgmt-batch
-                  version: 17.1.0
+                  version: 17.2.0
                 - package: azure-mgmt-billing
                   version: 6.0.0
                 - package: azure-mgmt-botservice
@@ -479,7 +481,7 @@ stages:
                 - package: azure-mgmt-communication
                   version: 2.0.0
                 - package: azure-mgmt-compute
-                  version: 30.3.0
+                  version: 30.5.0
                 - package: azure-mgmt-confidentialledger
                   version: 1.0.0
                 - package: azure-mgmt-confluent
@@ -493,11 +495,11 @@ stages:
                 - package: azure-mgmt-containerregistry
                   version: 10.3.0
                 - package: azure-mgmt-containerservice
-                  version: 28.0.0
+                  version: 29.1.0
                 - package: azure-mgmt-containerservicefleet
                   version: 1.0.0
                 - package: azure-mgmt-cosmosdb
-                  version: 9.3.0
+                  version: 9.4.0
                 - package: azure-mgmt-costmanagement
                   version: 4.0.1
                 - package: azure-mgmt-customproviders
@@ -513,23 +515,21 @@ stages:
                 - package: azure-mgmt-datadog
                   version: 2.1.0
                 - package: azure-mgmt-datafactory
-                  version: 4.0.0
-                - package: azure-mgmt-datalake-store
-                  version: 1.0.0
+                  version: 5.0.0
                 - package: azure-mgmt-datamigration
                   version: 10.0.0
                 - package: azure-mgmt-dataprotection
-                  version: 1.2.0
+                  version: 1.3.0
                 - package: azure-mgmt-datashare
                   version: 1.0.0
                 - package: azure-mgmt-deploymentmanager
                   version: 1.0.0
                 - package: azure-mgmt-desktopvirtualization
-                  version: 1.0.0
+                  version: 1.1.0
                 - package: azure-mgmt-devcenter
                   version: 1.0.0
                 - package: azure-mgmt-deviceupdate
-                  version: 1.0.0
+                  version: 1.1.0
                 - package: azure-mgmt-devtestlabs
                   version: 9.0.0
                 - package: azure-mgmt-digitaltwins
@@ -543,6 +543,8 @@ stages:
                 - package: azure-mgmt-edgeorder
                   version: 1.0.0
                 - package: azure-mgmt-elastic
+                  version: 1.0.0
+                - package: azure-mgmt-elasticsan
                   version: 1.0.0
                 - package: azure-mgmt-eventgrid
                   version: 10.2.0
@@ -561,17 +563,19 @@ stages:
                 - package: azure-mgmt-hdinsight
                   version: 9.0.0
                 - package: azure-mgmt-healthcareapis
-                  version: 1.1.0
+                  version: 2.0.0
                 - package: azure-mgmt-hybridcompute
                   version: 8.0.0
                 - package: azure-mgmt-hybridconnectivity
+                  version: 1.0.0
+                - package: azure-mgmt-hybridcontainerservice
                   version: 1.0.0
                 - package: azure-mgmt-hybridkubernetes
                   version: 1.1.0
                 - package: azure-mgmt-hybridnetwork
                   version: 2.0.0
                 - package: azure-mgmt-imagebuilder
-                  version: 1.2.0
+                  version: 1.3.0
                 - package: azure-mgmt-iothub
                   version: 3.0.0
                 - package: azure-mgmt-iothubprovisioningservices
@@ -621,7 +625,9 @@ stages:
                 - package: azure-mgmt-netapp
                   version: 11.0.0
                 - package: azure-mgmt-network
-                  version: 25.1.0
+                  version: 25.3.0
+                - package: azure-mgmt-networkanalytics
+                  version: 1.0.0
                 - package: azure-mgmt-networkcloud
                   version: 1.0.0
                 - package: azure-mgmt-newrelicobservability
@@ -657,9 +663,9 @@ stages:
                 - package: azure-mgmt-recoveryservices
                   version: 2.5.0
                 - package: azure-mgmt-recoveryservicesbackup
-                  version: 7.0.0
+                  version: 9.0.0
                 - package: azure-mgmt-recoveryservicessiterecovery
-                  version: 1.1.0
+                  version: 1.2.0
                 - package: azure-mgmt-redhatopenshift
                   version: 1.4.0
                 - package: azure-mgmt-redis
@@ -679,7 +685,7 @@ stages:
                 - package: azure-mgmt-search
                   version: 9.1.0
                 - package: azure-mgmt-security
-                  version: 5.0.0
+                  version: 6.0.0
                 - package: azure-mgmt-securityinsight
                   version: 1.0.0
                 - package: azure-mgmt-selfhelp
@@ -689,7 +695,7 @@ stages:
                 - package: azure-mgmt-servicebus
                   version: 8.2.0
                 - package: azure-mgmt-servicefabric
-                  version: 2.0.0
+                  version: 2.1.0
                 - package: azure-mgmt-servicelinker
                   version: 1.1.0
                 - package: azure-mgmt-servicenetworking
