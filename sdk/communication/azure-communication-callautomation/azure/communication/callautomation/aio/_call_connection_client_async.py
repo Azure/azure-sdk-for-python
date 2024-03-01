@@ -48,11 +48,9 @@ from .._generated.models import (
     MuteParticipantsRequest,
     CancelAddParticipantRequest,
     CustomCallingContext,
-    StartHoldMusicRequest,
     StartTranscriptionRequest,
     StopTranscriptionRequest,
-    UpdateTranscriptionRequest,
-    StopHoldMusicRequest
+    UpdateTranscriptionRequest
 )
 from .._generated.models._enums import RecognizeInputType
 from .._shared.auth_policy_utils import get_authentication_policy
@@ -864,72 +862,6 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             **kwargs
         )
         return CancelAddParticipantOperationResult._from_generated(response) # pylint:disable=protected-access
-
-    @distributed_trace_async
-    async def start_hold_music(
-        self,
-        target_participant: 'CommunicationIdentifier',
-        play_source: Union['FileSource', 'TextSource', 'SsmlSource'],
-        *,
-        loop: bool = True,
-        operation_context: Optional[str] = None,
-        **kwargs
-    ) -> None:
-        """Hold participant from call while playing music.
-        :param play_source: A PlaySource representing the source to play.
-        :type play_source: ~azure.communication.callautomation.FileSource or
-         ~azure.communication.callautomation.TextSource or
-         ~azure.communication.callautomation.SsmlSource or
-         list[~azure.communication.callautomation.FileSource or
-          ~azure.communication.callautomation.TextSource or
-          ~azure.communication.callautomation.SsmlSource]
-        :param target_participant: The targets to play media to. Default value is 'all', to play media
-         to all participants in the call.
-        :type target_participant: list[~azure.communication.callautomation.CommunicationIdentifier]
-        :keyword loop: Whether the media should be repeated until stopped.
-        :paramtype loop: bool
-        :keyword operation_context: Value that can be used to track this call and its associated events.
-        :paramtype operation_context: str or None
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-        hold_request = StartHoldMusicRequest(
-            play_source_info=play_source._to_generated(),  # pylint:disable=protected-access
-            target_participant=serialize_identifier(target_participant),
-            operation_context=operation_context,
-            loop=loop,
-            **kwargs
-        )
-        await self._call_media_client.start_hold_music(self._call_connection_id, hold_request)
-
-    @distributed_trace_async
-    async def stop_hold_music(
-        self,
-        target_participant: 'CommunicationIdentifier',
-        *,
-        operation_context: Optional[str] = None,
-        **kwargs
-    ) -> None:
-        """Remove hold from participant.
-
-        :param target_participant: The targets to play media to. Default value is 'all', to play media
-         to all participants in the call.
-        :type target_participant: list[~azure.communication.callautomation.CommunicationIdentifier]
-        :keyword operation_context: Value that can be used to track this call and its associated events.
-        :paramtype operation_context: str or None
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-        stop_hold_request = StopHoldMusicRequest(
-            target_participant=serialize_identifier(target_participant),
-            operation_context=operation_context,
-            **kwargs
-        )
-        await self._call_media_client.stop_hold_music(self._call_connection_id, stop_hold_request)
 
     @distributed_trace_async
     async def start_transcription(

@@ -6,7 +6,6 @@
 from typing import List, Optional, Union, TYPE_CHECKING
 from ._generated.models import (
     CallLocator,
-    MediaStreamingConfiguration as MediaStreamingConfigurationRest,
     TranscriptionConfiguration as TranscriptionConfigurationRest,
     FileSource as FileSourceInternal,
     TextSource as TextSourceInternal,
@@ -29,9 +28,6 @@ from ._utils import (
 )
 if TYPE_CHECKING:
     from ._generated.models._enums  import (
-        MediaStreamingTransportType,
-        MediaStreamingContentType,
-        MediaStreamingAudioChannelType,
         TranscriptionTransportType,
         CallConnectionState,
         RecordingState,
@@ -298,48 +294,6 @@ class SsmlSource:
                 ssml_text=self.ssml_text,
                 custom_voice_endpoint_id=self.custom_voice_endpoint_id),
             play_source_cache_id=self.play_source_cache_id
-        )
-
-class MediaStreamingConfiguration:
-    """Configuration of Media streaming.
-
-    :param transport_url: Transport URL for media streaming.
-    :type transport_url: str
-    :param transport_type: The type of transport to be used for media streaming.
-    :type transport_type: str or ~azure.communication.callautomation.MediaStreamingTransportType
-    :param content_type: Content type to stream, eg. audio, audio/video.
-    :type content_type: str or ~azure.communication.callautomation.MediaStreamingContentType
-    :param audio_channel_type: Audio channel type to stream, eg. unmixed audio, mixed audio.
-    :type audio_channel_type: str or ~azure.communication.callautomation.MediaStreamingAudioChannelType
-    """
-
-    transport_url: str
-    """Transport URL for media streaming."""
-    transport_type: Union[str, 'MediaStreamingTransportType']
-    """The type of transport to be used for media streaming."""
-    content_type: Union[str, 'MediaStreamingContentType']
-    """Content type to stream, eg. audio, audio/video."""
-    audio_channel_type: Union[str, 'MediaStreamingAudioChannelType']
-    """Audio channel type to stream, eg. unmixed audio, mixed audio."""
-
-    def __init__(
-        self,
-        transport_url: str,
-        transport_type: Union[str, 'MediaStreamingTransportType'],
-        content_type: Union[str, 'MediaStreamingContentType'],
-        audio_channel_type: Union[str, 'MediaStreamingAudioChannelType']
-    ):
-        self.transport_url = transport_url
-        self.transport_type = transport_type
-        self.content_type = content_type
-        self.audio_channel_type = audio_channel_type
-
-    def to_generated(self):
-        return MediaStreamingConfigurationRest(
-            transport_url=self.transport_url,
-            transport_type=self.transport_type,
-            content_type=self.content_type,
-            audio_channel_type=self.audio_channel_type
         )
 
 class TranscriptionConfiguration:

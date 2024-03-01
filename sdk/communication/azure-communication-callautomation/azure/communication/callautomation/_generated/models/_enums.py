@@ -52,13 +52,13 @@ class CommunicationIdentifierModelKind(str, Enum, metaclass=CaseInsensitiveEnumM
     COMMUNICATION_USER = "communicationUser"
     PHONE_NUMBER = "phoneNumber"
     MICROSOFT_TEAMS_USER = "microsoftTeamsUser"
+    MICROSOFT_TEAMS_APP = "microsoftTeamsApp"
 
 
 class DialogInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Determines the type of the dialog."""
 
     POWER_VIRTUAL_AGENTS = "powerVirtualAgents"
-    AZURE_OPEN_AI = "azureOpenAI"
 
 
 class DtmfTone(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -80,25 +80,6 @@ class DtmfTone(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     D = "d"
     POUND = "pound"
     ASTERISK = "asterisk"
-
-
-class MediaStreamingAudioChannelType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Audio channel type to stream, eg. unmixed audio, mixed audio."""
-
-    MIXED = "mixed"
-    UNMIXED = "unmixed"
-
-
-class MediaStreamingContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Content type to stream, eg. audio, audio/video."""
-
-    AUDIO = "audio"
-
-
-class MediaStreamingTransportType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of transport to be used for media streaming, eg. Websocket."""
-
-    WEBSOCKET = "websocket"
 
 
 class PlaySourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -155,21 +136,6 @@ class RecordingState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ACTIVE = "active"
     INACTIVE = "inactive"
-
-
-class RecordingStorage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Defines the type of external storage."""
-
-    ACS = "acs"
-    BLOB_STORAGE = "blobStorage"
-
-
-class RecordingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """RecordingType."""
-
-    ACS = "acs"
-    TEAMS = "teams"
-    TEAMS_COMPLIANCE = "teamsCompliance"
 
 
 class TranscriptionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
