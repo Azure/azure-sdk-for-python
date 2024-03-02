@@ -14,6 +14,7 @@ import pytest
 from azure.storage.blob._shared.streams import (
     StructuredMessageConstants,
     StructuredMessageDecodeStream,
+    StructuredMessageEncodeStream,
     StructuredMessageError,
     StructuredMessageProperties,
 )
@@ -42,7 +43,7 @@ def _build_structured_message(
     if isinstance(segment_size, list):
         segment_count = len(segment_size)
     else:
-        segment_count = 1 if segment_size == 0 else math.ceil(len(data) / segment_size)
+        segment_count = math.ceil(len(data) / segment_size) or 1
     segment_footer_length = StructuredMessageConstants.CRC64_LENGTH if StructuredMessageProperties.CRC64 in flags else 0
 
     message_length = (
@@ -52,6 +53,7 @@ def _build_structured_message(
         (StructuredMessageConstants.CRC64_LENGTH if StructuredMessageProperties.CRC64 in flags else 0))
 
     message = BytesIO()
+    message_crc = 0
 
     # Message Header
     message.write(b'\x01')  # Version
@@ -63,26 +65,23 @@ def _build_structured_message(
     if len(data) == 0:
         crc = 0 if StructuredMessageProperties.CRC64 in flags else None
         _write_segment(1, data, crc, message)
-        message.seek(0, 0)
-        return message, message_length
+    else:
+        # Segments
+        segment_sizes = segment_size if isinstance(segment_size, list) else [segment_size] * segment_count
+        offset = 0
+        for i in range(1, segment_count + 1):
+            size = segment_sizes[i - 1]
+            segment_data = data[offset: offset + size]
+            offset += size
 
-    # Segments
-    segment_sizes = segment_size if isinstance(segment_size, list) else [segment_size] * segment_count
-    offset = 0
-    message_crc = 0
-    for i in range(1, segment_count + 1):
-        size = segment_sizes[i - 1]
-        segment_data = data[offset: offset + size]
-        offset += size
+            segment_crc = None
+            if StructuredMessageProperties.CRC64 in flags:
+                segment_crc = crc64.compute_crc64(segment_data, 0)
+                if i == invalidate_crc_segment:
+                    segment_crc += 5
+            _write_segment(i, segment_data, segment_crc, message)
 
-        segment_crc = None
-        if StructuredMessageProperties.CRC64 in flags:
-            segment_crc = crc64.compute_crc64(segment_data, 0)
-            if i == invalidate_crc_segment:
-                segment_crc += 5
-        _write_segment(i, segment_data, segment_crc, message)
-
-        message_crc = crc64.compute_crc64(segment_data, message_crc)
+            message_crc = crc64.compute_crc64(segment_data, message_crc)
 
     # Message footer
     if StructuredMessageProperties.CRC64 in flags:
@@ -92,6 +91,102 @@ def _build_structured_message(
 
     message.seek(0, 0)
     return message, message_length
+
+
+class TestStructuredMessageEncodeStream:
+    def test_read_past_end(self):
+        data = os.urandom(10)
+        inner_stream = BytesIO(data)
+
+        stream = StructuredMessageEncodeStream(inner_stream, len(data), StructuredMessageProperties.CRC64)
+        expected = _build_structured_message(data, len(data), StructuredMessageProperties.CRC64)[0].getvalue()
+
+        result = stream.read(100)
+        assert result == expected
+
+        result = stream.read(100)
+        assert result == b''
+
+    @pytest.mark.parametrize("size, segment_size, flags", [
+        (0, 1, StructuredMessageProperties.NONE),
+        (0, 1, StructuredMessageProperties.CRC64),
+        (10, 1, StructuredMessageProperties.NONE),
+        (10, 1, StructuredMessageProperties.CRC64),
+        (1024, 1024, StructuredMessageProperties.NONE),
+        (1024, 1024, StructuredMessageProperties.CRC64),
+        (1024, 512, StructuredMessageProperties.NONE),
+        (1024, 512, StructuredMessageProperties.CRC64),
+        (1024, 200, StructuredMessageProperties.NONE),
+        (1024, 200, StructuredMessageProperties.CRC64),
+        (123456, 1234, StructuredMessageProperties.NONE),
+        (123456, 1234, StructuredMessageProperties.CRC64),
+        (10 * 1024 * 1024, 4 * 1024 * 1024, StructuredMessageProperties.NONE),
+        (10 * 1024 * 1024, 4 * 1024 * 1024, StructuredMessageProperties.CRC64),
+    ])
+    def test_read_all(self, size, segment_size, flags):
+        data = os.urandom(size)
+        inner_stream = BytesIO(data)
+
+        stream = StructuredMessageEncodeStream(inner_stream, len(data), flags, segment_size=segment_size)
+        actual = stream.read()
+
+        expected = _build_structured_message(data, segment_size, flags)[0].getvalue()
+        assert actual == expected
+
+    @pytest.mark.parametrize("size, segment_size, chunk_size, flags", [
+        (10, 10, 1, StructuredMessageProperties.NONE),
+        (10, 10, 1, StructuredMessageProperties.CRC64),
+        (1024, 512, 512, StructuredMessageProperties.NONE),
+        (1024, 512, 512, StructuredMessageProperties.CRC64),
+        (1024, 512, 123, StructuredMessageProperties.NONE),
+        (1024, 512, 123, StructuredMessageProperties.CRC64),
+        (1024, 200, 512, StructuredMessageProperties.NONE),
+        (1024, 200, 512, StructuredMessageProperties.CRC64),
+        (12345, 678, 90, StructuredMessageProperties.NONE),
+        (12345, 678, 90, StructuredMessageProperties.CRC64),
+        (10 * 1024 * 1024, 4 * 1024 * 1024, 1 * 1024 * 1024, StructuredMessageProperties.NONE),
+        (10 * 1024 * 1024, 4 * 1024 * 1024, 1 * 1024 * 1024, StructuredMessageProperties.CRC64),
+    ])
+    def test_read_chunks(self, size, segment_size, chunk_size, flags):
+        data = os.urandom(size)
+        inner_stream = BytesIO(data)
+
+        stream = StructuredMessageEncodeStream(inner_stream, len(data), flags, segment_size=segment_size)
+
+        read = 0
+        content = b''
+        while read < len(stream):
+            chunk = stream.read(chunk_size)
+            content += chunk
+            read += chunk_size
+
+        expected = _build_structured_message(data, segment_size, flags)[0].getvalue()
+        assert content == expected
+
+    @pytest.mark.parametrize("data_size", [100, 1024, 10 * 1024, 100 * 1024])
+    def test_random_reads(self, data_size):
+        data = os.urandom(data_size)
+        inner_stream = BytesIO(data)
+
+        segment_size = data_size // 3
+        stream = StructuredMessageEncodeStream(
+            inner_stream,
+            len(data),
+            StructuredMessageProperties.CRC64,
+            segment_size=segment_size)
+
+        count = 0
+        content = b''
+        stream_size = len(stream)
+        while count < stream_size:
+            read_size = random.randint(10, stream_size // 3)
+            read_size = min(read_size, stream_size - count)
+
+            content += stream.read(read_size)
+            count += read_size
+
+        expected = _build_structured_message(data, segment_size, StructuredMessageProperties.CRC64)[0].getvalue()
+        assert content == expected
 
 
 class TestStructuredMessageDecodeStream:
@@ -112,8 +207,8 @@ class TestStructuredMessageDecodeStream:
         assert result == b''
 
     @pytest.mark.parametrize("size, segment_size, flags", [
-        (0, 0, StructuredMessageProperties.NONE),
-        (0, 0, StructuredMessageProperties.CRC64),
+        (0, 1, StructuredMessageProperties.NONE),
+        (0, 1, StructuredMessageProperties.CRC64),
         (10, 1, StructuredMessageProperties.NONE),
         (10, 1, StructuredMessageProperties.CRC64),
         (1024, 1024, StructuredMessageProperties.NONE),
