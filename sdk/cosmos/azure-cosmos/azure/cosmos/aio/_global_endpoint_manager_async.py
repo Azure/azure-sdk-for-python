@@ -94,6 +94,7 @@ class _GlobalEndpointManager(object):
                     raise e
 
     async def _refresh_endpoint_list_private(self, database_account=None, **kwargs):
+        self.refresh_needed = False
         if database_account:
             self.location_cache.perform_on_database_account_read(database_account)
         else:
@@ -105,7 +106,6 @@ class _GlobalEndpointManager(object):
                 database_account = await self._GetDatabaseAccount(**kwargs)
                 self.location_cache.perform_on_database_account_read(database_account)
                 self.last_refresh_time = self.location_cache.current_time_millis()
-        self.refresh_needed = False
 
     async def _GetDatabaseAccount(self, **kwargs):
         """Gets the database account.
