@@ -1,10 +1,6 @@
 ## Release History
 
-### 4.5.2b5 (Unreleased)
-
-#### Features Added
-
-#### Breaking Changes
+### 4.5.2b5 (2024-03-02)
 
 #### Bugs Fixed
 * Fixed bug with async lock not properly releasing on async global endpoint manager. see [PR 34579](https://github.com/Azure/azure-sdk-for-python/pull/34579).
