@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
+import io
 import math
 import os
 import random
@@ -230,3 +230,61 @@ class TestStructuredMessageDecodeStream:
                 stream.read(512)
 
         assert 'CRC64 mismatch' in str(e.value)
+
+    @pytest.mark.parametrize("flags", [StructuredMessageProperties.NONE, StructuredMessageProperties.CRC64])
+    def test_invalid_message_version(self, flags):
+        data = os.urandom(1024)
+        message_stream, length = _build_structured_message(data, 512, flags)
+
+        # Stream already set to front
+        message_stream.write(b'\xFF')
+
+        stream = StructuredMessageDecodeStream(message_stream, length)
+        with pytest.raises(StructuredMessageError):
+            stream.read()
+
+    @pytest.mark.parametrize("flags", [StructuredMessageProperties.NONE, StructuredMessageProperties.CRC64])
+    def test_incorrect_content_length(self, flags):
+        data = os.urandom(1024)
+        message_stream, length = _build_structured_message(data, 512, flags)
+
+        message_stream.seek(1, io.SEEK_SET)
+        message_stream.write(int.to_bytes(1234567, 8, 'little'))
+        message_stream.seek(0, io.SEEK_SET)
+
+        stream = StructuredMessageDecodeStream(message_stream, length)
+        with pytest.raises(StructuredMessageError):
+            stream.read()
+
+    @pytest.mark.parametrize("segment_count", [2, 123])  # Correct value: 4
+    @pytest.mark.parametrize("flags", [StructuredMessageProperties.NONE, StructuredMessageProperties.CRC64])
+    def test_incorrect_segment_count(self, segment_count, flags):
+        data = os.urandom(1024)
+        message_stream, length = _build_structured_message(data, 256, flags)
+
+        message_stream.seek(11, io.SEEK_SET)
+        message_stream.write(int.to_bytes(segment_count, 2, 'little'))
+        message_stream.seek(0, io.SEEK_SET)
+
+        stream = StructuredMessageDecodeStream(message_stream, length)
+        with pytest.raises(StructuredMessageError):
+            stream.read()
+
+    @pytest.mark.parametrize("segment_number", [1, 123])  # Correct value: 2
+    @pytest.mark.parametrize("flags", [StructuredMessageProperties.NONE, StructuredMessageProperties.CRC64])
+    def test_incorrect_segment_number(self, segment_number, flags):
+        data = os.urandom(1024)
+        message_stream, length = _build_structured_message(data, 256, flags)
+
+        # Change the second segment to be the incorrect number
+        position = (StructuredMessageConstants.V1_HEADER_LENGTH +
+                    StructuredMessageConstants.V1_SEGMENT_HEADER_LENGTH +
+                    256 +
+                    (StructuredMessageConstants.CRC64_LENGTH if StructuredMessageProperties.CRC64 in flags else 0))
+        message_stream.seek(position, io.SEEK_SET)
+        message_stream.write(int.to_bytes(segment_number, 2, 'little'))
+        message_stream.seek(0, io.SEEK_SET)
+
+        stream = StructuredMessageDecodeStream(message_stream, length)
+        with pytest.raises(StructuredMessageError):
+            stream.read()
