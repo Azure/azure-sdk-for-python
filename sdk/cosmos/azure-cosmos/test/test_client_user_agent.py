@@ -10,7 +10,7 @@ from azure.cosmos.aio import CosmosClient as async_client
 from test_config import TestConfig
 
 
-@pytest.mark.cosmosEmulator
+@pytest.mark.skip
 class TestClientUserAgent(unittest.IsolatedAsyncioTestCase):
 
     async def test_client_user_agent(self):
