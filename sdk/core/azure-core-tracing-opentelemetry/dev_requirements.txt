@@ -6,3 +6,4 @@ opentelemetry-instrumentation-requests>=0.32b0
 requests
 azure-storage-blob
 -e ../../servicebus/azure-servicebus
+-e ../../eventhub/azure-eventhub

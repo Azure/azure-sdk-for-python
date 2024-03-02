@@ -41,4 +41,6 @@ def config():
         "servicebus_queue_name": os.environ.get("AZURE_SERVICEBUS_QUEUE_NAME"),
         "servicebus_topic_name": os.environ.get("AZURE_SERVICEBUS_TOPIC_NAME"),
         "servicebus_subscription_name": os.environ.get("AZURE_SERVICEBUS_SUBSCRIPTION_NAME"),
+        "eventhub_connection_string": os.environ.get("AZURE_EVENTHUB_CONNECTION_STRING"),
+        "eventhub_name": os.environ.get("AZURE_EVENTHUB_NAME"),
     }
