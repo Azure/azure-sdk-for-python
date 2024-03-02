@@ -161,7 +161,7 @@ class QADataGenerator:
         api_key = "OPENAI_API_KEY"
         api_base = "OPENAI_API_BASE"
         if version.parse(openai.version.VERSION) >= version.parse("1.0.0"):
-            api_key = "AZURE_OPENAI_KEY"
+            api_key = "AZURE_OPENAI_API_KEY"
             api_base = "AZURE_OPENAI_ENDPOINT"        
         self._chat_completion_params = dict(
             # AOAI connection params
