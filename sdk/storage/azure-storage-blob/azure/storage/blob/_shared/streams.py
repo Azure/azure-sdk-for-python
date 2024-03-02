@@ -249,8 +249,9 @@ class StructuredMessageEncodeStream:
         content = self._inner_stream.read(read_size)
         output.write(content)
 
-        self._segment_crc64 = crc64.compute_crc64(content, self._segment_crc64)
-        self._message_crc64 = crc64.compute_crc64(content, self._message_crc64)
+        if StructuredMessageProperties.CRC64 in self.flags:
+            self._segment_crc64 = crc64.compute_crc64(content, self._segment_crc64)
+            self._message_crc64 = crc64.compute_crc64(content, self._message_crc64)
 
         self._content_offset += read_size
         self._current_region_offset += read_size
