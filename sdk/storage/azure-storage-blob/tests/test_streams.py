@@ -288,3 +288,37 @@ class TestStructuredMessageDecodeStream:
         stream = StructuredMessageDecodeStream(message_stream, length)
         with pytest.raises(StructuredMessageError):
             stream.read()
+
+    @pytest.mark.parametrize("segment_size", [123, 345])  # Correct value: 256
+    @pytest.mark.parametrize("flags", [StructuredMessageProperties.NONE, StructuredMessageProperties.CRC64])
+    def test_incorrect_segment_size(self, segment_size, flags):
+        data = os.urandom(1024)
+        message_stream, length = _build_structured_message(data, 256, flags)
+
+        # Change the second segment to be the incorrect size
+        position = (StructuredMessageConstants.V1_HEADER_LENGTH +
+                    StructuredMessageConstants.V1_SEGMENT_HEADER_LENGTH +
+                    256 +
+                    (StructuredMessageConstants.CRC64_LENGTH if StructuredMessageProperties.CRC64 in flags else 0) +
+                    2)
+        message_stream.seek(position, io.SEEK_SET)
+        message_stream.write(int.to_bytes(segment_size, 2, 'little'))
+        message_stream.seek(0, io.SEEK_SET)
+
+        stream = StructuredMessageDecodeStream(message_stream, length)
+        with pytest.raises(StructuredMessageError):
+            stream.read()
+
+    @pytest.mark.parametrize("segment_size", [123, 345])  # Correct value: 256
+    @pytest.mark.parametrize("flags", [StructuredMessageProperties.NONE, StructuredMessageProperties.CRC64])
+    def test_incorrect_segment_size_single_segment(self, segment_size, flags):
+        data = os.urandom(256)
+        message_stream, length = _build_structured_message(data, 256, flags)
+
+        message_stream.seek(15, io.SEEK_SET)
+        message_stream.write(int.to_bytes(segment_size, 2, 'little'))
+        message_stream.seek(0, io.SEEK_SET)
+
+        stream = StructuredMessageDecodeStream(message_stream, length)
+        with pytest.raises(StructuredMessageError):
+            stream.read()
