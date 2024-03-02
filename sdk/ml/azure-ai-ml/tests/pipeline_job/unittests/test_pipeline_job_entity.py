@@ -1984,7 +1984,7 @@ class TestPipelineJobEntity:
         assert actual_dict["jobs"] == {
             "hello_world_component": {
                 "computeId": "cpu-cluster",
-                "identity": {"type": "user_identity"},
+                "identity": {"identity_type": "UserIdentity"},
                 "inputs": {
                     "component_in_number": {"job_input_type": "literal", "value": "${{parent.inputs.job_in_number}}"},
                     "component_in_path": {"job_input_type": "literal", "value": "${{parent.inputs.job_in_path}}"},
@@ -1994,7 +1994,7 @@ class TestPipelineJobEntity:
             },
             "hello_world_component_2": {
                 "computeId": "cpu-cluster",
-                "identity": {"type": "aml_token"},
+                "identity": {"identity_type": "AMLToken"},
                 "inputs": {
                     "component_in_number": {
                         "job_input_type": "literal",
@@ -2007,7 +2007,7 @@ class TestPipelineJobEntity:
             },
             "hello_world_component_3": {
                 "computeId": "cpu-cluster",
-                "identity": {"type": "user_identity"},
+                "identity": {"identity_type": "UserIdentity"},
                 "inputs": {
                     "component_in_number": {
                         "job_input_type": "literal",
