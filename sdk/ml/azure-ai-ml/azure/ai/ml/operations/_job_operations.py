@@ -30,8 +30,8 @@ from azure.ai.ml._restclient.runhistory.models import Run
 from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient022023Preview
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase, ListViewType, UserIdentity
 from azure.ai.ml._restclient.v2023_08_01_preview.models import JobType as RestJobType
-from azure.ai.ml._restclient.v2024_01_01_preview.models import JobType as RestJobType_20240101
 from azure.ai.ml._restclient.v2024_01_01_preview.models import JobBase as JobBase_2401
+from azure.ai.ml._restclient.v2024_01_01_preview.models import JobType as RestJobType_20240101
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -72,8 +72,8 @@ from azure.ai.ml.entities._builders import BaseNode, Command, Spark
 from azure.ai.ml.entities._datastore._constants import WORKSPACE_BLOB_STORE
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
-from azure.ai.ml.entities._job.finetuning.finetuning_job import FineTuningJob
 from azure.ai.ml.entities._job.base_job import _BaseJob
+from azure.ai.ml.entities._job.finetuning.finetuning_job import FineTuningJob
 from azure.ai.ml.entities._job.import_job import ImportJob
 from azure.ai.ml.entities._job.job import _is_pipeline_child_job
 from azure.ai.ml.entities._job.parallel.parallel_job import ParallelJob
@@ -365,7 +365,7 @@ class JobOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_telemetry_mixin(logger, "Job.ShowServices", ActivityType.PUBLICAPI)
-    def show_services(self, name: str, node_index: int = 0) -> Optional[Dict]:
+    def show_services(self, name: str, node_index: int = 0) -> Optional[Dict[str, ServiceInstance]]:
         """Gets services associated with a job's node.
 
         :param name: The name of the job.

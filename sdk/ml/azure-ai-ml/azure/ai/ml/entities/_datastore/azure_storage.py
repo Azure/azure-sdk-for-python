@@ -5,7 +5,7 @@
 # pylint: disable=protected-access,no-member
 
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Union
 
 from azure.ai.ml._azure_environments import _get_storage_endpoint_from_metadata
 from azure.ai.ml._restclient.v2023_04_01_preview.models import AzureBlobDatastore as RestAzureBlobDatastore
@@ -17,6 +17,7 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import Datastore as Data
 from azure.ai.ml._restclient.v2023_04_01_preview.models import DatastoreType
 from azure.ai.ml._schema._datastore import AzureBlobSchema, AzureDataLakeGen2Schema, AzureFileSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
+from azure.ai.ml.entities._credentials import AccountKeyConfiguration, SasTokenConfiguration
 from azure.ai.ml.entities._datastore.datastore import Datastore
 from azure.ai.ml.entities._datastore.utils import from_rest_datastore_credentials
 from azure.ai.ml.entities._util import load_from_dict
@@ -44,7 +45,8 @@ class AzureFileDatastore(Datastore):
     :param properties: The asset property dictionary.
     :type properties: dict[str, str]
     :param credentials: Credentials to use for Azure ML workspace to connect to the storage.
-    :type credentials: Union[AccountKeySection, SasSection]
+    :type credentials: Union[~azure.ai.ml.entities.AccountKeyConfiguration,
+        ~azure.ai.ml.entities.SasTokenConfiguration]
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
     """
@@ -60,7 +62,7 @@ class AzureFileDatastore(Datastore):
         endpoint: str = _get_storage_endpoint_from_metadata(),
         protocol: str = HTTPS,
         properties: Optional[Dict] = None,
-        credentials: Any,
+        credentials: Union[AccountKeyConfiguration, SasTokenConfiguration],
         **kwargs: Any
     ):
         kwargs[TYPE] = DatastoreType.AZURE_FILE
@@ -259,7 +261,7 @@ class AzureDataLakeGen2Datastore(Datastore):
         endpoint: str = _get_storage_endpoint_from_metadata(),
         protocol: str = HTTPS,
         properties: Optional[Dict] = None,
-        credentials: Any = None,
+        credentials: Optional[Union[AccountKeyConfiguration, SasTokenConfiguration]] = None,
         **kwargs: Any
     ):
         kwargs[TYPE] = DatastoreType.AZURE_DATA_LAKE_GEN2

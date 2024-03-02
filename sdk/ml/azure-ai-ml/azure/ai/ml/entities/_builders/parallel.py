@@ -9,10 +9,12 @@ import json
 import logging
 import os
 import re
+from enum import Enum
 from typing import Any, Dict, List, Optional, Tuple, Type, Union, cast
 
 from marshmallow import INCLUDE, Schema
 
+from azure.ai.ml import Input
 from azure.ai.ml._schema.core.fields import NestedField, UnionField
 from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema, ManagedIdentitySchema, UserIdentitySchema
 from azure.ai.ml.entities._credentials import (
@@ -23,6 +25,7 @@ from azure.ai.ml.entities._credentials import (
 )
 from azure.ai.ml.entities._job.job import Job
 from azure.ai.ml.entities._job.parallel.run_function import RunFunction
+from azure.ai.ml.entities._job.pipeline._io import NodeOutput
 
 from ..._schema import PathAwareSchema
 from ..._utils.utils import is_data_binding_expression
@@ -108,7 +111,7 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):  # pylint: disable=too-many-i
         *,
         component: Union[ParallelComponent, str],
         compute: Optional[str] = None,
-        inputs: Optional[Dict] = None,
+        inputs: Optional[Dict[str, Union[NodeOutput, Input, str, bool, int, float, Enum, Input]]] = None,
         outputs: Optional[Dict[str, Union[str, Output, "Output"]]] = None,
         retry_settings: Optional[Union[RetrySettings, Dict]] = None,
         logging_level: Optional[str] = None,
