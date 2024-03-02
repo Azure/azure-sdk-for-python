@@ -7,6 +7,7 @@
 #### Breaking Changes
 
 #### Bugs Fixed
+* Fixed bug with async lock not properly releasing on async global endpoint manager.
 
 #### Other Changes
 * Marked `computed_properties` keyword as provisional, un-marked `continuation_token_limit` as provisional. See [PR 34207](https://github.com/Azure/azure-sdk-for-python/pull/34207).
