@@ -18,6 +18,7 @@ from azure.ai.ml.constants._deployment import BatchDeploymentOutputAction
 from azure.ai.ml.entities._assets import Environment, Model
 from azure.ai.ml.entities._deployment.batch_deployment import BatchDeployment
 from azure.ai.ml.entities._deployment.deployment import Deployment
+from azure.ai.ml.entities._deployment.batch_deployment_base_model import BatchDeploymentBaseModel
 from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
@@ -27,7 +28,7 @@ from .model_batch_deployment_settings import ModelBatchDeploymentSettings
 
 
 @experimental
-class ModelBatchDeployment(Deployment):
+class ModelBatchDeployment(BatchDeploymentBaseModel):
     """Job Definition entity.
 
     :param type: Job definition type. Allowed value is: pipeline
@@ -72,16 +73,16 @@ class ModelBatchDeployment(Deployment):
         super().__init__(
             name=name,
             endpoint_name=endpoint_name,
-            properties=properties,
-            code_path=code_path,
-            scoring_script=scoring_script,
-            environment=environment,
-            model=model,
             description=description,
+            type="model",
             tags=tags,
-            code_configuration=code_configuration,
             **kwargs,
         )
+        self.code_configuration = code_configuration
+        self.model = model
+        self.environment = environment
+        self.code_path = code_path
+        self.properties = properties
         self.compute = compute
         self.resources = resources
         if settings is not None:

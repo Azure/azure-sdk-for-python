@@ -22,12 +22,12 @@ from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE
 from azure.ai.ml.entities import PipelineComponent
 from azure.ai.ml.entities._builders import BaseNode
 from azure.ai.ml.entities._component.component import Component
-from azure.ai.ml.entities._resource import Resource
+from azure.ai.ml.entities._deployment.batch_deployment_base_model import BatchDeploymentBaseModel
 from azure.ai.ml.entities._util import load_from_dict
 
 
 @experimental
-class PipelineComponentBatchDeployment(Resource):
+class PipelineComponentBatchDeployment(BatchDeploymentBaseModel):
     """Pipeline Component Batch Deployment entity.
 
     :param type: Job definition type. Allowed value: "pipeline"
@@ -61,9 +61,8 @@ class PipelineComponentBatchDeployment(Resource):
         **kwargs: Any,  # pylint: disable=unused-argument
     ):
         self._type = kwargs.pop("type", None)
-        super().__init__(name=name, tags=tags, description=description, **kwargs)
+        super().__init__(name=name, endpoint_name=endpoint_name, type="pipeline", tags=tags, description=description, **kwargs)
         self.component = component
-        self.endpoint_name = endpoint_name
         self.settings = settings
         self.job_definition = job_definition
 

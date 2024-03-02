@@ -9,19 +9,23 @@ from typing import Any
 
 from marshmallow import fields, post_load
 
-from azure.ai.ml._schema.core.fields import ComputeField, NestedField, StringTransformedEnum
+from azure.ai.ml._schema.core.fields import ArmVersionedStr, ComputeField, NestedField, RegistryStr, StringTransformedEnum, UnionField
 from azure.ai.ml._schema.job_resource_configuration import JobResourceConfigurationSchema
-from azure.ai.ml._schema._deployment.deployment import DeploymentSchema
+from azure.ai.ml._schema._deployment.batch.batch_deployment_base_model_schema import BatchDeploymentBaseModelSchema
+from azure.ai.ml._schema.assets.environment import AnonymousEnvironmentSchema, EnvironmentSchema
+from azure.ai.ml._schema.assets.model import AnonymousModelSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.constants._deployment import BatchDeploymentType
 from azure.ai.ml._schema import ExperimentalField
 from .model_batch_deployment_settings import ModelBatchDeploymentSettingsSchema
+from azure.ai.ml.constants._common import AzureMLResourceType
 
+from azure.ai.ml._schema._deployment.code_configuration_schema import CodeConfigurationSchema
 
 module_logger = logging.getLogger(__name__)
 
 
-class ModelBatchDeploymentSchema(DeploymentSchema):
+class ModelBatchDeploymentSchema(BatchDeploymentBaseModelSchema):
     compute = ComputeField(required=True)
     error_threshold = fields.Int(
         metadata={
@@ -36,7 +40,31 @@ class ModelBatchDeploymentSchema(DeploymentSchema):
     type = StringTransformedEnum(
         allowed_values=[BatchDeploymentType.PIPELINE, BatchDeploymentType.MODEL], required=False
     )
-
+    id = fields.Str()
+    properties = fields.Dict()
+    model = UnionField(
+        [
+            RegistryStr(azureml_type=AzureMLResourceType.MODEL),
+            ArmVersionedStr(azureml_type=AzureMLResourceType.MODEL, allow_default_version=True),
+            NestedField(AnonymousModelSchema),
+        ],
+        metadata={"description": "Reference to the model asset for the endpoint deployment."},
+    )
+    code_configuration = NestedField(
+        CodeConfigurationSchema,
+        metadata={"description": "Code configuration for the endpoint deployment."},
+    )
+    environment = UnionField(
+        [
+            RegistryStr(azureml_type=AzureMLResourceType.ENVIRONMENT),
+            ArmVersionedStr(azureml_type=AzureMLResourceType.ENVIRONMENT, allow_default_version=True),
+            NestedField(EnvironmentSchema),
+            NestedField(AnonymousEnvironmentSchema),
+        ]
+    )
+    environment_variables = fields.Dict(
+        metadata={"description": "Environment variables configuration for the deployment."}
+    )
     settings = ExperimentalField(NestedField(ModelBatchDeploymentSettingsSchema))
 
     @post_load
