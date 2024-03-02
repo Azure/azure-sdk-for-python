@@ -198,9 +198,6 @@ class BufferedProducer:
                 break
         # after finishing flushing, reset cur batch and put it into the buffer
         self._last_send_time = time.time()
-        #reset curr_buffered
-        self._cur_buffered_len = 0
-        self._cur_batch = EventDataBatch(self._max_message_size_on_link, amqp_transport=self._amqp_transport)
         _LOGGER.info("Partition %r finished flushing.", self.partition_id)
 
     async def check_max_wait_time_worker(self):

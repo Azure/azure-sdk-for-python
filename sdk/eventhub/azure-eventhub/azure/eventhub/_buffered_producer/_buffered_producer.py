@@ -144,6 +144,7 @@ class BufferedProducer:
             _LOGGER.info("Partition: %r started flushing.", self.partition_id)
             if self._cur_batch:  # if there is batch, enqueue it to the buffer first
                 self._buffered_queue.put(self._cur_batch)
+                self._cur_batch = EventDataBatch(self._max_message_size_on_link, amqp_transport=self._amqp_transport)
             while self._buffered_queue.qsize() > 0:
                 remaining_time = timeout_time - time.time() if timeout_time else None
                 if (remaining_time and remaining_time > 0) or remaining_time is None:
@@ -195,9 +196,6 @@ class BufferedProducer:
                     break
             # after finishing flushing, reset cur batch and put it into the buffer
             self._last_send_time = time.time()
-            #reset buffered count
-            self._cur_buffered_len = 0
-            self._cur_batch = EventDataBatch(self._max_message_size_on_link, amqp_transport=self._amqp_transport)
             _LOGGER.info("Partition %r finished flushing.", self.partition_id)
 
     def check_max_wait_time_worker(self):
