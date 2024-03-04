@@ -661,7 +661,7 @@ class MLIndex:
                 if isinstance(embeddings_container, str) and "://" in embeddings_container:
                     from fsspec.core import url_to_fs
 
-                    _, _ = url_to_fs(embeddings_container)
+                    url_to_fs(embeddings_container)
                 else:
                     embeddings_container = Path(embeddings_container)
                     previous_embeddings_dir_name = None

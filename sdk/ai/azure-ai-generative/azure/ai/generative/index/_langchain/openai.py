@@ -67,7 +67,7 @@ def patch_openai_embedding_retries(logger, activity_logger, max_seconds_retrying
     # Copied from
     # https://github.com/hwchase17/langchain/blob/
     # 511c12dd3985ce682226371c12f8fa70d8c9a8e1/langchain/embeddings/openai.py#L34
-    def _create_retry_decorator():
+    def _create_retry_decorator(embeddings):  # pylint: disable=unused-argument
         import openai
         from packaging import version
 

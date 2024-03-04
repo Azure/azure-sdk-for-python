@@ -30,8 +30,8 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
 
         super().__init__(name=name, *args, **kwargs)
 
-    def format_request_data(self, message: List[dict], **request_params):  # type: ignore[override]
-        request_data = {"messages": message, **self.get_model_params()}
+    def format_request_data(self, prompt: List[dict], **request_params):  # type: ignore[override]
+        request_data = {"messages": prompt, **self.get_model_params()}
         request_data.update(request_params)
         return request_data
 
