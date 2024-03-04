@@ -92,11 +92,13 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
     @distributed_trace
     @monitor_with_activity(ops_logger, "WorkspaceHub.Get", ActivityType.PUBLICAPI)
     # pylint: disable=arguments-renamed, arguments-differ
-    def get(self, name: str, **kwargs: Dict) -> Optional[WorkspaceHub]:
+    def get(self, name: str, **kwargs: Dict) -> WorkspaceHub:
         """Get a Workspace WorkspaceHub by name.
 
         :param name: Name of the WorkspaceHub.
         :type name: str
+        :raises ~azure.core.exceptions.HttpResponseError: Raised if the corresponding name and version cannot be
+            retrieved from the service.
         :return: The WorkspaceHub with the provided name.
         :rtype: ~azure.ai.ml.entities.WorkspaceHub
 

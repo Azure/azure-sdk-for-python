@@ -161,7 +161,7 @@ class AzureBlobDatastore(Datastore):
         endpoint: Optional[str] = None,
         protocol: str = HTTPS,
         properties: Optional[Dict] = None,
-        credentials: Any = None,
+        credentials: Optional[Union[AccountKeyConfiguration, SasTokenConfiguration]] = None,
         **kwargs: Any
     ):
         kwargs[TYPE] = DatastoreType.AZURE_BLOB
@@ -198,7 +198,7 @@ class AzureBlobDatastore(Datastore):
             name=datastore_resource.name,
             id=datastore_resource.id,
             account_name=properties.account_name,
-            credentials=from_rest_datastore_credentials(properties.credentials),
+            credentials=from_rest_datastore_credentials(properties.credentials),  # type: ignore[arg-type]
             endpoint=properties.endpoint,
             protocol=properties.protocol,
             container_name=properties.container_name,

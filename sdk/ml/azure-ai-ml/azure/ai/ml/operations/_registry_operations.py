@@ -72,13 +72,15 @@ class RegistryOperations:
         )
 
     @monitor_with_activity(ops_logger, "Registry.Get", ActivityType.PUBLICAPI)
-    def get(self, name: Optional[str] = None) -> Optional[Registry]:
+    def get(self, name: Optional[str] = None) -> Registry:
         """Get a registry by name.
 
         :param name: Name of the registry.
         :type name: str
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Registry name cannot be
             successfully validated. Details will be provided in the error message.
+        :raises ~azure.core.exceptions.HttpResponseError: Raised if the corresponding name and version cannot be
+            retrieved from the service.
         :return: The registry with the provided name.
         :rtype: ~azure.ai.ml.entities.Registry
         """
