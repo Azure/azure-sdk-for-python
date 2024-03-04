@@ -14,6 +14,7 @@ from .._constants import EnvironmentVariables
 from .._internal import within_credential_chain
 from .._internal.get_token_mixin import GetTokenMixin
 from .._internal.managed_identity_client import ManagedIdentityClient
+from .._internal.msal_managed_identity_client import MsalManagedIdentityClient
 
 
 IMDS_AUTHORITY = "http://169.254.169.254"
@@ -54,16 +55,11 @@ def _check_forbidden_response(ex: HttpResponseError) -> None:
             raise CredentialUnavailableError(message=error_message) from ex
 
 
-class ImdsCredential(GetTokenMixin):
+class ImdsCredential(MsalManagedIdentityClient):
     def __init__(self, **kwargs: Any) -> None:
-        super(ImdsCredential, self).__init__()
+        managed_identity = self.get_managed_identity(**kwargs)
 
-        self._client = ManagedIdentityClient(_get_request, **dict(PIPELINE_SETTINGS, **kwargs))
-        if EnvironmentVariables.AZURE_POD_IDENTITY_AUTHORITY_HOST in os.environ:
-            self._endpoint_available: Optional[bool] = True
-        else:
-            self._endpoint_available = None
-        self._user_assigned_identity = "client_id" in kwargs or "identity_config" in kwargs
+        super(ImdsCredential, self).__init__(managed_identity=managed_identity, **kwargs)
 
     def __enter__(self) -> "ImdsCredential":
         self._client.__enter__()
