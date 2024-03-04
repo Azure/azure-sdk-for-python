@@ -6,7 +6,6 @@
 from typing import List, Optional, Union, TYPE_CHECKING
 from ._generated.models import (
     CallLocator,
-    MediaStreamingConfiguration as MediaStreamingConfigurationRest,
     TranscriptionConfiguration as TranscriptionConfigurationRest,
     FileSource as FileSourceInternal,
     TextSource as TextSourceInternal,
@@ -29,9 +28,6 @@ from ._utils import (
 )
 if TYPE_CHECKING:
     from ._generated.models._enums  import (
-        MediaStreamingTransportType,
-        MediaStreamingContentType,
-        MediaStreamingAudioChannelType,
         TranscriptionTransportType,
         CallConnectionState,
         RecordingState,
@@ -299,49 +295,6 @@ class SsmlSource:
                 custom_voice_endpoint_id=self.custom_voice_endpoint_id),
             play_source_cache_id=self.play_source_cache_id
         )
-
-class MediaStreamingConfiguration:
-    """Configuration of Media streaming.
-
-    :param transport_url: Transport URL for media streaming.
-    :type transport_url: str
-    :param transport_type: The type of transport to be used for media streaming.
-    :type transport_type: str or ~azure.communication.callautomation.MediaStreamingTransportType
-    :param content_type: Content type to stream, eg. audio, audio/video.
-    :type content_type: str or ~azure.communication.callautomation.MediaStreamingContentType
-    :param audio_channel_type: Audio channel type to stream, eg. unmixed audio, mixed audio.
-    :type audio_channel_type: str or ~azure.communication.callautomation.MediaStreamingAudioChannelType
-    """
-
-    transport_url: str
-    """Transport URL for media streaming."""
-    transport_type: Union[str, 'MediaStreamingTransportType']
-    """The type of transport to be used for media streaming."""
-    content_type: Union[str, 'MediaStreamingContentType']
-    """Content type to stream, eg. audio, audio/video."""
-    audio_channel_type: Union[str, 'MediaStreamingAudioChannelType']
-    """Audio channel type to stream, eg. unmixed audio, mixed audio."""
-
-    def __init__(
-        self,
-        transport_url: str,
-        transport_type: Union[str, 'MediaStreamingTransportType'],
-        content_type: Union[str, 'MediaStreamingContentType'],
-        audio_channel_type: Union[str, 'MediaStreamingAudioChannelType']
-    ):
-        self.transport_url = transport_url
-        self.transport_type = transport_type
-        self.content_type = content_type
-        self.audio_channel_type = audio_channel_type
-
-    def to_generated(self):
-        return MediaStreamingConfigurationRest(
-            transport_url=self.transport_url,
-            transport_type=self.transport_type,
-            content_type=self.content_type,
-            audio_channel_type=self.audio_channel_type
-        )
-
 class TranscriptionConfiguration:
     """Configuration of live transcription.
 
@@ -399,8 +352,6 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
     :paramtype call_connection_state: str or ~azure.communication.callautomation.CallConnectionState
     :keyword callback_url: The callback URL.
     :paramtype callback_url: str
-    :keyword media_subscription_id: SubscriptionId for media streaming.
-    :paramtype media_subscription_id: str
     :keyword source_caller_id_number:
      The source caller Id, a phone number, that's shown to the
      PSTN participant being invited.
@@ -426,8 +377,6 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
     """The state of the call."""
     callback_url: Optional[str]
     """The callback URL."""
-    media_subscription_id: Optional[str]
-    """SubscriptionId for media streaming."""
     source_caller_id_number: Optional[PhoneNumberIdentifier]
     """The source caller Id, a phone number, that's shown to the
      PSTN participant being invited.
@@ -449,7 +398,6 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
         targets: Optional[List[CommunicationIdentifier]] = None,
         call_connection_state: Optional[Union[str, 'CallConnectionState']] = None,
         callback_url: Optional[str] = None,
-        media_subscription_id: Optional[str] = None,
         source_caller_id_number: Optional[PhoneNumberIdentifier] = None,
         source_display_name: Optional[str] = None,
         source: Optional[CommunicationIdentifier] = None,
@@ -461,7 +409,6 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
         self.targets = targets
         self.call_connection_state = call_connection_state
         self.callback_url = callback_url
-        self.media_subscription_id = media_subscription_id
         self.source_caller_id_number = source_caller_id_number
         self.source_display_name = source_display_name
         self.source = source
@@ -480,7 +427,6 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
             targets=target_models,
             call_connection_state=call_connection_properties_generated.call_connection_state,
             callback_url=call_connection_properties_generated.callback_uri,
-            media_subscription_id=call_connection_properties_generated.media_subscription_id,
             source_caller_id_number=deserialize_phone_identifier(
             call_connection_properties_generated.source_caller_id_number)
             if call_connection_properties_generated.source_caller_id_number

@@ -178,12 +178,11 @@ class TestCallAutomationClient(unittest.TestCase):
             transport=Mock(send=mock_send)
         )
         call_automation_client.redirect_call(self.incoming_call_context, call_redirect_to)
-        call_automation_client.redirect_call(self.incoming_call_context, user, voip_headers={"foo": "bar"})
+        call_automation_client.redirect_call(self.incoming_call_context, user)
         with pytest.raises(ValueError) as e:
             call_automation_client.redirect_call(
                 self.incoming_call_context,
                 user,
-                voip_headers={"foo": "bar"},
                 source_display_name="baz"
             )
         assert "unexpected kwargs" in str(e.value)
