@@ -17,7 +17,7 @@ def _fmt(timestamp):
 
 
 def _now():
-    return datetime.datetime.utcnow()
+    return datetime.datetime.now(tz=datetime.timezone.utc)
 
 
 def _seconds(seconds):
