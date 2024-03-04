@@ -68,7 +68,7 @@ class ParameterizedCommand:
 
     def __init__(
         self,
-        command: Union[str, None] = "",
+        command: Optional[str] = "",
         resources: Optional[Union[dict, JobResourceConfiguration]] = None,
         code: Optional[Union[str, os.PathLike]] = None,
         environment_variables: Optional[Dict] = None,
