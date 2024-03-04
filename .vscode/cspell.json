@@ -451,7 +451,9 @@
     "aiter",
     "solft",
     "amltmp",
-    "amltemp"
+    "amltemp",
+    "deserializers",
+    "dicom",
   ],
   "overrides": [
     {
@@ -1705,6 +1707,17 @@
       "words": [
         "ctxt",
         "wday"
+      ]
+    },
+    {
+      "filename": "sdk/healthinsights/azure-healthinsights-radiologyinsights/**",
+      "words": [
+        "ctxt",
+        "mros",
+        "Nify",
+        "loinc",
+        "wday",
+        "SNOMED"
       ]
     }
   ],

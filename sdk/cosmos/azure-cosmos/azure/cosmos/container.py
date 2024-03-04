@@ -55,7 +55,7 @@ __all__ = ("ContainerProxy",)
 # pylint: disable=too-many-lines
 # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
 
-PartitionKeyType = Union[str, int, float, bool, List[Union[str, int, float, bool]], Type[NonePartitionKeyValue]]
+PartitionKeyType = Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], Type[NonePartitionKeyValue]]  # pylint: disable=line-too-long
 
 
 class ContainerProxy:  # pylint: disable=too-many-public-methods
@@ -822,7 +822,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     def delete_item(  # pylint:disable=docstring-missing-param
         self,
         item: Union[Mapping[str, Any], str],
-        partition_key: Optional[PartitionKeyType],
+        partition_key: PartitionKeyType,
         populate_query_metrics: Optional[bool] = None,
         pre_trigger_include: Optional[str] = None,
         post_trigger_include: Optional[str] = None,
@@ -1040,7 +1040,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     def get_conflict(
         self,
         conflict: Union[str, Mapping[str, Any]],
-        partition_key: Optional[PartitionKeyType],
+        partition_key: PartitionKeyType,
         **kwargs: Any
     ) -> Dict[str, Any]:
         """Get the conflict identified by `conflict`.
