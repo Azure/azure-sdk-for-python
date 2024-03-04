@@ -39,11 +39,6 @@ if TYPE_CHECKING:
         PurchasedPhoneNumber,
     )
 
-PhoneNumberSearchType = Union[
-    str,
-    List[str],
-]
-
 class PhoneNumbersClient(object):
     """A client to interact with the AzureCommunicationService Phone Numbers gateway.
 
@@ -431,7 +426,7 @@ class PhoneNumbersClient(object):
     @distributed_trace
     def search_operator_information(
             self,
-            phone_numbers,  # type: PhoneNumberSearchType
+            phone_numbers,  # type: Union [ str, List[str] ]
             options:Optional[OperatorInformationOptions]=None, #type: OperatorInformationOptions
             **kwargs  # type: Any
     ) -> OperatorInformationResult:
@@ -445,7 +440,7 @@ class PhoneNumbersClient(object):
         :rtype: ~azure.communication.phonenumbers.models.OperatorInformationResult
         """
         if not isinstance(phone_numbers, list):
-            phone_numbers = cast(PhoneNumberSearchType, [ phone_numbers ])
+            phone_numbers = [ phone_numbers ]
         if options is None:
             options = OperatorInformationOptions(include_additional_operator_details=False)
         request = OperatorInformationRequest(phone_numbers = phone_numbers, options = options)
