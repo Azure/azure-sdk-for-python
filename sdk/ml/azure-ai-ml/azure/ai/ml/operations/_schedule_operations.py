@@ -293,30 +293,6 @@ class ScheduleOperations(_ScopeDependentOperations):
         schedule._is_enabled = False
         return self.begin_create_or_update(schedule, **kwargs)
 
-    @distributed_trace
-    @monitor_with_activity(ops_logger, "Schedule.Trigger", ActivityType.PUBLICAPI)
-    def trigger(
-        self,
-        name: str,
-        **kwargs: Any,
-    ) -> ScheduleTriggerResult:
-        """Trigger a schedule once.
-
-        :param name: Schedule name.
-        :type name: str
-        :return: TriggerRunSubmissionDto, or the result of cls(response)
-        :rtype: ~azure.ai.ml.entities.ScheduleTriggerResult
-        """
-        schedule_time = kwargs.pop("schedule_time", datetime.now(timezone.utc).isoformat())
-        return self.schedule_trigger_service_client.trigger(
-            name=name,
-            resource_group_name=self._operation_scope.resource_group_name,
-            workspace_name=self._workspace_name,
-            body=TriggerOnceRequest(schedule_time=schedule_time),
-            cls=lambda _, obj, __: ScheduleTriggerResult._from_rest_object(obj),
-            **kwargs,
-        )
-
     def _resolve_monitor_schedule_arm_id(  # pylint:disable=too-many-branches,too-many-statements
         self, schedule: MonitorSchedule
     ) -> None:
