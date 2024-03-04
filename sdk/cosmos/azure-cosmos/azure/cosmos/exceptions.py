@@ -76,8 +76,8 @@ class CosmosBatchOperationError(HttpResponseError):
     :ivar message: Error message.
     :vartype message: str
     :ivar operation_responses: List of failed operations' responses.
-    :vartype operation_responses: Sequence[Union[Tuple[str, Tuple[Any, ...]],
-        Tuple[str, Tuple[Any, ...], Dict[str, Any]]]]
+    :vartype operation_responses:
+        Sequence[Union[Tuple[str, Tuple[Any, ...]], Tuple[str, Tuple[Any, ...], Dict[str, Any]]]]
     .. admonition:: Example:
 
         .. literalinclude:: ../samples/document_management.py
