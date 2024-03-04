@@ -118,10 +118,10 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         :paramtype default: Union[str, int, float, bool]
         :keyword min: The minimum value for the input. If a value smaller than the minimum is passed to the job, the job
             execution will fail.
-        :paramtype min: Union[int, float]
+        :paramtype min: Optional[float]
         :keyword max: The maximum value for the input. If a value larger than the maximum is passed to a job, the job
             execution will fail.
-        :paramtype max: Union[int, float]
+        :paramtype max: Optional[float]
         :keyword optional: Specifies if the input is optional.
         :paramtype optional: bool
         :keyword description: Description of the input
@@ -150,10 +150,10 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         :paramtype default: Union[str, int, float, bool]
         :keyword min: The minimum value for the input. If a value smaller than the minimum is passed to the job, the job
             execution will fail.
-        :paramtype min: Union[int, float]
+        :paramtype min: Optional[int]
         :keyword max: The maximum value for the input. If a value larger than the maximum is passed to a job, the job
             execution will fail.
-        :paramtype max: Union[int, float]
+        :paramtype max: Optional[int]
         :keyword optional: Specifies if the input is optional.
         :paramtype optional: bool
         :keyword description: Description of the input
