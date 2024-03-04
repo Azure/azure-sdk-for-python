@@ -17,32 +17,27 @@ from azure.identity.aio import (
     get_bearer_token_provider as get_bearer_token_provider_async,
 )
 
+
+# for pytest.parametrize
 GA = "2023-05-15"
 PREVIEW = "2024-02-15-preview"
 LATEST = PREVIEW
 
-# for pytest.parametrize
 AZURE = "azure"
 OPENAI = "openai"
 AZURE_AD = "azuread"
-ALL = [AZURE, AZURE_AD, OPENAI]
 WHISPER_AZURE = "whisper_azure"
 WHISPER_AZURE_AD = "whisper_azuread"
-WHISPER_ALL = [WHISPER_AZURE, WHISPER_AZURE_AD, OPENAI]
 TTS_OPENAI = "tts_openai"
 TTS_AZURE = "tts_azure"
 TTS_AZURE_AD = "tts_azuread"
-TTS_ALL = [TTS_AZURE, TTS_AZURE_AD, TTS_OPENAI]
 DALLE_AZURE = "dalle_azure"
 DALLE_AZURE_AD = "dalle_azuread"
-DALLE_ALL = [DALLE_AZURE, DALLE_AZURE_AD, OPENAI]
 GPT_4_AZURE = "gpt_4_azure"
 GPT_4_AZURE_AD = "gpt_4_azuread"
 GPT_4_OPENAI = "gpt_4_openai"
-GPT_4_ALL = [GPT_4_AZURE, GPT_4_AZURE_AD, GPT_4_OPENAI]
 ASST_AZURE = "asst_azure"
 ASST_AZUREAD = "asst_azuread"
-ASST_ALL = [ASST_AZURE, ASST_AZUREAD, GPT_4_OPENAI]
 
 # Environment variable keys
 ENV_AZURE_OPENAI_ENDPOINT = "AZ_OPENAI_ENDPOINT"
