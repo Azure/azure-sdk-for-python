@@ -139,7 +139,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
         """
         try:
             featureset_version_resource = self._get(name, version, **kwargs)
-            return FeatureSet._from_rest_object(featureset_version_resource)
+            return FeatureSet._from_rest_object(featureset_version_resource)  # type: ignore[return-value]
         except (ValidationException, SchemaValidationError) as ex:
             log_and_raise_error(ex)
 
@@ -360,7 +360,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
             **kwargs,
         )
 
-        return Feature._from_rest_object(feature)
+        return Feature._from_rest_object(feature)  # type: ignore[return-value]
 
     @distributed_trace
     @monitor_with_activity(ops_logger, "FeatureSet.Archive", ActivityType.PUBLICAPI)
