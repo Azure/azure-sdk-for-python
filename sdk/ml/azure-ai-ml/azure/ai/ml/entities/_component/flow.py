@@ -409,7 +409,7 @@ class FlowComponent(Component, AdditionalIncludesMixin):
     def _func(self, **kwargs: Any) -> "Parallel":  # pylint: disable=invalid-overridden-method
         from azure.ai.ml.entities._builders.parallel import Parallel
 
-        with self._inputs._fit_inputs(kwargs):  # pylint: disable=protected-access
+        with self._inputs._fit_inputs(kwargs):  # type: ignore[attr-defined]
             # pylint: disable=not-callable
             return super()._func(**kwargs)  # type: ignore
 
