@@ -18,7 +18,7 @@ from .utils import _remove_empty_values
 
 
 class Output(_InputOutputBase):
-    _IO_KEYS = ["name", "version", "path", "type", "mode", "description", "early_available"]
+    _IO_KEYS = ["name", "version", "path", "path_on_compute", "type", "mode", "description", "early_available"]
 
     @overload
     def __init__(
@@ -51,6 +51,8 @@ class Output(_InputOutputBase):
             * 'rw_mount': Read-write mount the data
             * 'upload': Upload the data from the compute target
             * 'direct': Pass in the URI as a string
+        :paramtype mode: Optional[str]
+        :keyword path_on_compute: The access path of the data output for compute
         :paramtype mode: Optional[str]
         :keyword description: The description of the output.
         :paramtype description: Optional[str]
@@ -115,6 +117,7 @@ class Output(_InputOutputBase):
         path: Optional[str] = None,
         mode: Optional[str] = None,
         description: Optional[str] = None,
+        path_on_compute: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
         super(Output, self).__init__(type=type)
@@ -125,6 +128,7 @@ class Output(_InputOutputBase):
         self._is_primitive_type = self.type in IOConstants.PRIMITIVE_STR_2_TYPE
         self.description = description
         self.path = path
+        self.path_on_compute = path_on_compute
         self.mode = mode
         # use this field to mark Output for early node orchestrate, currently hide in kwargs
         self.early_available = kwargs.pop("early_available", None)

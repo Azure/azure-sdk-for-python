@@ -8,6 +8,9 @@ from unittest.mock import patch
 
 import pydash
 import pytest
+from test_configs.dsl_pipeline import data_binding_expression
+from test_utilities.utils import assert_job_cancel, omit_with_wildcard, prepare_dsl_curated
+
 from azure.ai.ml import (
     AmlTokenConfiguration,
     Input,
@@ -50,8 +53,6 @@ from azure.ai.ml.exceptions import (
     UserErrorException,
     ValidationException,
 )
-from test_configs.dsl_pipeline import data_binding_expression
-from test_utilities.utils import assert_job_cancel, omit_with_wildcard, prepare_dsl_curated
 
 from .._util import _DSL_TIMEOUT_SECOND, get_predecessors
 
@@ -959,7 +960,7 @@ class TestDSLPipeline:
             side_effect=mock_arm_id,
         ):
             with mock.patch(
-                "azure.ai.ml._restclient.v2022_10_01.operations.ComponentVersionsOperations.create_or_update",
+                "azure.ai.ml._restclient.v2024_01_01_preview.operations.ComponentVersionsOperations.create_or_update",
                 side_effect=mock_create,
             ):
                 with mock.patch.object(Component, "_from_rest_object", side_effect=mock_from_rest):

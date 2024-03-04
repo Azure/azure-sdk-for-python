@@ -7,6 +7,7 @@
 - Workspace Connection has new read-only subclass: AzureBlobStoreWorkspaceConnectionSchema.
 - Workspace Connection supports 2 new types under main class: gen 2 and azure_one_lake.
 - Workspace Connection LIST operation can return data connections via new optional flag: include_data_connections.
+- Support `ml_client.schedules.trigger(name='my_schedule')` function to trigger a schedule once.
 
 ### Bugs Fixed
 - Fix pipeline job `outputs` not load correctly when `component: <local-file>` exists in pipeline job yaml.
