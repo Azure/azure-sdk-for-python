@@ -92,8 +92,8 @@ class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
 
         super().__init__(**kwargs)
 
-        self.inputs = inputs
-        self.outputs = outputs
+        self.inputs = inputs  # type: ignore[assignment]
+        self.outputs = outputs  # type: ignore[assignment]
         self.identity = identity
 
     def _to_dict(self) -> Dict:

@@ -81,7 +81,7 @@ class PipelineComponent(Component):
             display_name=display_name,
             inputs=inputs,
             outputs=outputs,
-            is_deterministic=is_deterministic,
+            is_deterministic=is_deterministic,  # type: ignore[arg-type]
             **kwargs,
         )
         self._jobs = self._process_jobs(jobs) if jobs else {}
