@@ -88,7 +88,7 @@ class RegistryOperations:
         registry_name = self._check_registry_name(name)
         resource_group = self._resource_group_name
         obj = self._operation.get(resource_group, registry_name)
-        return Registry._from_rest_object(obj)
+        return Registry._from_rest_object(obj)  # type: ignore[return-value]
 
     def _check_registry_name(self, name: Optional[str]) -> str:
         registry_name = name or self._default_registry_name

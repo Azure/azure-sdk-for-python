@@ -98,7 +98,7 @@ class AzureFileDatastore(Datastore):
             name=datastore_resource.name,
             id=datastore_resource.id,
             account_name=properties.account_name,
-            credentials=from_rest_datastore_credentials(properties.credentials),
+            credentials=from_rest_datastore_credentials(properties.credentials),  # type: ignore[arg-type]
             endpoint=properties.endpoint,
             protocol=properties.protocol,
             file_share_name=properties.file_share_name,
@@ -300,7 +300,7 @@ class AzureDataLakeGen2Datastore(Datastore):
             name=datastore_resource.name,
             id=datastore_resource.id,
             account_name=properties.account_name,
-            credentials=from_rest_datastore_credentials(properties.credentials),
+            credentials=from_rest_datastore_credentials(properties.credentials),  # type: ignore[arg-type]
             endpoint=properties.endpoint,
             protocol=properties.protocol,
             filesystem=properties.filesystem,

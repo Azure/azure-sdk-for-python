@@ -74,7 +74,7 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
             **kwargs,
         )
 
-        return WorkspaceConnection._from_rest_object(rest_obj=obj)
+        return WorkspaceConnection._from_rest_object(rest_obj=obj)  # type: ignore[return-value]
 
     @monitor_with_activity(ops_logger, "WorkspaceConnections.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(
