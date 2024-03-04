@@ -120,7 +120,7 @@ def _validate_metrics(metrics, task_type):
 
 
 @distributed_trace
-@monitor_with_activity(activity_logger, "Evaluate", ActivityType.PUBLICAPI)
+@monitor_with_activity(package_logger, "Evaluate", ActivityType.PUBLICAPI)
 def evaluate(
         *,
         evaluation_name: Optional[str] = None,
@@ -468,14 +468,14 @@ def log_param_and_tag(key, value):
 
 
 @distributed_trace
-@monitor_with_activity(activity_logger, "LogPropertyAndTag", ActivityType.PUBLICAPI)
+@monitor_with_activity(package_logger, "LogPropertyAndTag", ActivityType.PUBLICAPI)
 def log_property_and_tag(key, value, logger=LOGGER):
     _write_properties_to_run_history({key: value}, logger)
     mlflow.set_tag(key, value)
 
 
 @distributed_trace
-@monitor_with_activity(activity_logger, "LogProperty", ActivityType.PUBLICAPI)
+@monitor_with_activity(package_logger, "LogProperty", ActivityType.PUBLICAPI)
 def log_property(key, value, logger=LOGGER):
     _write_properties_to_run_history({key: value}, logger)
 
