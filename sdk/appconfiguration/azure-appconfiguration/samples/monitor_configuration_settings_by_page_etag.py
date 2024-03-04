@@ -47,7 +47,7 @@ def main():
         #     print("No change found.")
         # if first_page_response.status_code == 200:
         #     print("This page has changes.")
-        #     items = json.loads(bytearray(response.content))["items"]
+        #     items = first_page_response.json()["items"]
         #     for item in items:
         #         print(f"Key: {item['key']}, Label: {item['label']}")
         
@@ -66,7 +66,7 @@ def main():
         #         print("No change found.")
         #     if response.status_code == 200:
         #         print("This page has changes.")
-        #         items = json.loads(bytearray(response.content))["items"]
+        #         items = response.json()["items"]
         #         for item in items:
         #             print(f"Key: {item['key']}, Label: {item['label']}")
         #     link = response.headers.get('Link', None)
@@ -143,7 +143,7 @@ def main():
         #     print("No change found.")
         # if first_page_response.status_code == 200:
         #     print("This page has changes.")
-        #     items = json.loads(bytearray(first_page_response.content))["items"]
+        #     items = first_page_response.json()["items"]
         #     for item in items:
         #         print(f"Key: {item['key']}, Label: {item['label']}")
         
@@ -162,7 +162,7 @@ def main():
         #         print("No change found.")
         #     if response.status_code == 200:
         #         print("This page has changes.")
-        #         items = json.loads(bytearray(response.content))["items"]
+        #         items = response.json()["items"]
         #         for item in items:
         #             print(f"Key: {item['key']}, Label: {item['label']}")
         #     link = response.headers.get('Link', None)
