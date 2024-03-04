@@ -126,7 +126,7 @@ if TYPE_CHECKING:
     from azure.ai.ml.operations import DatastoreOperations
 
 ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
+module_logger = ops_logger.module_logger
 
 
 class JobOperations(_ScopeDependentOperations):
@@ -257,7 +257,7 @@ class JobOperations(_ScopeDependentOperations):
         return self._api_base_url
 
     @distributed_trace
-    @monitor_with_activity(logger, "Job.List", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Job.List", ActivityType.PUBLICAPI)
     def list(
         self,
         *,
@@ -323,7 +323,7 @@ class JobOperations(_ScopeDependentOperations):
             return None
 
     @distributed_trace
-    @monitor_with_telemetry_mixin(logger, "Job.Get", ActivityType.PUBLICAPI)
+    @monitor_with_telemetry_mixin(ops_logger, "Job.Get", ActivityType.PUBLICAPI)
     def get(self, name: str) -> Job:
         """Gets a job resource.
 
@@ -361,7 +361,7 @@ class JobOperations(_ScopeDependentOperations):
         return job
 
     @distributed_trace
-    @monitor_with_telemetry_mixin(logger, "Job.ShowServices", ActivityType.PUBLICAPI)
+    @monitor_with_telemetry_mixin(ops_logger, "Job.ShowServices", ActivityType.PUBLICAPI)
     def show_services(self, name: str, node_index: int = 0) -> Optional[Dict]:
         """Gets services associated with a job's node.
 
@@ -393,7 +393,7 @@ class JobOperations(_ScopeDependentOperations):
         }
 
     @distributed_trace
-    @monitor_with_activity(logger, "Job.Cancel", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Job.Cancel", ActivityType.PUBLICAPI)
     def begin_cancel(self, name: str, **kwargs: Any) -> LROPoller[None]:
         """Cancels a job.
 
@@ -483,7 +483,7 @@ class JobOperations(_ScopeDependentOperations):
         return None
 
     @distributed_trace
-    @monitor_with_telemetry_mixin(logger, "Job.Validate", ActivityType.PUBLICAPI)
+    @monitor_with_telemetry_mixin(ops_logger, "Job.Validate", ActivityType.PUBLICAPI)
     def validate(self, job: Job, *, raise_on_failure: bool = False, **kwargs: Any) -> ValidationResult:
         """Validates a Job object before submitting to the service. Anonymous assets may be created if there are inline
         defined entities such as Component, Environment, and Code. Only pipeline jobs are supported for validation
@@ -507,7 +507,7 @@ class JobOperations(_ScopeDependentOperations):
         """
         return self._validate(job, raise_on_failure=raise_on_failure, **kwargs)
 
-    @monitor_with_telemetry_mixin(logger, "Job.Validate", ActivityType.INTERNALCALL)
+    @monitor_with_telemetry_mixin(ops_logger, "Job.Validate", ActivityType.INTERNALCALL)
     def _validate(
         self, job: Job, *, raise_on_failure: bool = False, **kwargs: Any  # pylint:disable=unused-argument
     ) -> ValidationResult:
@@ -578,7 +578,7 @@ class JobOperations(_ScopeDependentOperations):
         return job._try_raise(validation_result, raise_error=raise_on_failure)  # pylint: disable=protected-access
 
     @distributed_trace
-    @monitor_with_telemetry_mixin(logger, "Job.CreateOrUpdate", ActivityType.PUBLICAPI)
+    @monitor_with_telemetry_mixin(ops_logger, "Job.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(
         self,
         job: Job,
@@ -746,7 +746,7 @@ class JobOperations(_ScopeDependentOperations):
         self._create_or_update_with_different_version_api(rest_job_resource=job_object)
 
     @distributed_trace
-    @monitor_with_telemetry_mixin(logger, "Job.Archive", ActivityType.PUBLICAPI)
+    @monitor_with_telemetry_mixin(ops_logger, "Job.Archive", ActivityType.PUBLICAPI)
     def archive(self, name: str) -> None:
         """Archives a job.
 
@@ -767,7 +767,7 @@ class JobOperations(_ScopeDependentOperations):
         self._archive_or_restore(name=name, is_archived=True)
 
     @distributed_trace
-    @monitor_with_telemetry_mixin(logger, "Job.Restore", ActivityType.PUBLICAPI)
+    @monitor_with_telemetry_mixin(ops_logger, "Job.Restore", ActivityType.PUBLICAPI)
     def restore(self, name: str) -> None:
         """Restores an archived job.
 
@@ -788,7 +788,7 @@ class JobOperations(_ScopeDependentOperations):
         self._archive_or_restore(name=name, is_archived=False)
 
     @distributed_trace
-    @monitor_with_activity(logger, "Job.Stream", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Job.Stream", ActivityType.PUBLICAPI)
     def stream(self, name: str) -> None:
         """Streams the logs of a running job.
 
@@ -815,7 +815,7 @@ class JobOperations(_ScopeDependentOperations):
         )
 
     @distributed_trace
-    @monitor_with_activity(logger, "Job.Download", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Job.Download", ActivityType.PUBLICAPI)
     def download(
         self,
         name: str,
