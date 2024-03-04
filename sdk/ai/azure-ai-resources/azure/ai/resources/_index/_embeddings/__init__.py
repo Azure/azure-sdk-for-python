@@ -229,7 +229,7 @@ class EmbeddingsContainer:
         config = parse_model_uri(uri, **kwargs)
         kwargs["credential"] = credential
         return EmbeddingsContainer(**{**config, **kwargs})
-    
+
     @staticmethod
     def from_metadata(metadata: dict) -> "EmbeddingsContainer":
         """Create an embeddings object from metadata."""

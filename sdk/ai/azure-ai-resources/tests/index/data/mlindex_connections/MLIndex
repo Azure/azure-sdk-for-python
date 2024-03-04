@@ -1,0 +1,8 @@
+embeddings:
+  connection:
+    key: CUSTOM-OPENAI-API-KEY
+  connection_type: environment
+index:
+  connection:
+    key: ACS-PROD-KEY
+  connection_type: environment

@@ -1004,8 +1004,8 @@ class EmbeddingsContainer:
             FaissClass = FAISS
             import_faiss_or_so_help_me = dependable_faiss_import
         elif engine.endswith("indexes.faiss.FaissAndDocStore"):
-            from azure.ai.generative.index._docstore import FileBasedDocstore
-            from azure.ai.generative.index._indexes.faiss import FaissAndDocStore, import_faiss_or_so_help_me  # type: ignore[no-redef]
+            from azure.ai.generative.index._docstore import FileBasedDocstore  # TODO: refer to resources
+            from azure.ai.resources._index._indexes.faiss import FaissAndDocStore, import_faiss_or_so_help_me  # type: ignore[no-redef]
 
             def add_doc(doc_id, emb_doc, documents):
                 documents.append(

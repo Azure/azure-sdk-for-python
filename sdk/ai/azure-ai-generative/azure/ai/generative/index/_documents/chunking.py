@@ -45,7 +45,10 @@ class ChunkedDocument:
         """Flatten the chunked document."""
         chunks = []
         for i, chunk in enumerate(self.chunks):
-            chunk.metadata["source"]["chunk_id"] = str(i)
+            if "source" in chunk.metadata:
+                chunk.metadata["source"]["chunk_id"] = str(i)
+            else:
+                self.metadata["source"] = {"chunk_id": str(i)}
             chunks.append(chunk)
         return chunks
 
