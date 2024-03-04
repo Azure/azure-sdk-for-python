@@ -124,7 +124,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
         :rtype: FeatureStore
         """
 
-        feature_store = None
+        feature_store: Any = None
         resource_group = kwargs.get("resource_group") or self._resource_group_name
         rest_workspace_obj = kwargs.get("rest_workspace_obj", None) or self._operation.get(resource_group, name)
         if rest_workspace_obj and rest_workspace_obj.kind and rest_workspace_obj.kind.lower() == FEATURE_STORE_KIND:

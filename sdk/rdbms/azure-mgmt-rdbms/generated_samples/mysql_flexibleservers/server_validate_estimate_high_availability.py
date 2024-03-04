@@ -7,14 +7,14 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.redisenterprise import RedisEnterpriseManagementClient
+from azure.mgmt.rdbms.mysql_flexibleservers import MySQLManagementClient
 
 """
 # PREREQUISITES
     pip install azure-identity
-    pip install azure-mgmt-redisenterprise
+    pip install azure-mgmt-rdbms
 # USAGE
-    python redis_enterprise_skus_list.py
+    python server_validate_estimate_high_availability.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -24,18 +24,19 @@ from azure.mgmt.redisenterprise import RedisEnterpriseManagementClient
 
 
 def main():
-    client = RedisEnterpriseManagementClient(
+    client = MySQLManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subid",
+        subscription_id="ffffffff-ffff-ffff-ffff-ffffffffffff",
     )
 
-    response = client.skus.list(
-        location="westus2",
+    response = client.servers.validate_estimate_high_availability(
+        resource_group_name="TestGroup",
+        server_name="testserver",
+        parameters={"expectedStandbyAvailabilityZone": "1"},
     )
-    for item in response:
-        print(item)
+    print(response)
 
 
-# x-ms-original-file: specification/redisenterprise/resource-manager/Microsoft.Cache/preview/2023-03-01-preview/examples/RedisEnterpriseSkusList.json
+# x-ms-original-file: specification/mysql/resource-manager/Microsoft.DBforMySQL/FlexibleServers/preview/2023-12-01-preview/examples/ServerValidateEstimateHighAvailability.json
 if __name__ == "__main__":
     main()
