@@ -12,14 +12,13 @@ class _QuickpulseState(Enum):
     """Current state of quickpulse service.
     The numerical value represents the ping/post interval in ms for those states.
     """
-
+    OFFLINE = 0
     PING_SHORT = _SHORT_PING_INTERVAL_SECONDS
     PING_LONG = _LONG_PING_INTERVAL_SECONDS
     POST_SHORT = _POST_INTERVAL_SECONDS
 
 
-_GLOBAL_QUICKPULSE_STATE = _QuickpulseState.PING_SHORT
-
+_GLOBAL_QUICKPULSE_STATE = _QuickpulseState.OFFLINE
 
 def _set_global_quickpulse_state(state: _QuickpulseState):
     global _GLOBAL_QUICKPULSE_STATE
@@ -28,3 +27,18 @@ def _set_global_quickpulse_state(state: _QuickpulseState):
 
 def _get_global_quickpulse_state() -> _QuickpulseState:
     return _GLOBAL_QUICKPULSE_STATE
+
+
+def is_quick_pulse_enabled() -> bool:
+    return _get_global_quickpulse_state() is not _QuickpulseState.OFFLINE
+
+
+def _is_ping_state() -> bool:
+    return _get_global_quickpulse_state() in (
+        _QuickpulseState.PING_SHORT,
+        _QuickpulseState.PING_LONG
+    )
+
+
+def _is_post_state():
+    return _get_global_quickpulse_state() is _QuickpulseState.POST_SHORT

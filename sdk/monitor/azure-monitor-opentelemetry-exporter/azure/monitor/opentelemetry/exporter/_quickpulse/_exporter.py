@@ -1,7 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-from datetime import datetime, timezone
-from typing import Any, List, Optional
+from typing import Any, Optional
 
 from opentelemetry.context import (
     _SUPPRESS_INSTRUMENTATION_KEY,
@@ -17,11 +16,7 @@ from opentelemetry.sdk.metrics import (
     ObservableUpDownCounter,
     UpDownCounter,
 )
-from opentelemetry.sdk.metrics._internal.point import (
-    NumberDataPoint,
-    HistogramDataPoint,
-    MetricsData,
-)
+from opentelemetry.sdk.metrics._internal.point import MetricsData
 from opentelemetry.sdk.metrics.export import (
     AggregationTemporality,
     MetricExporter,
@@ -35,18 +30,17 @@ from azure.monitor.opentelemetry.exporter._quickpulse._constants import (
     _LONG_PING_INTERVAL_SECONDS,
     _POST_CANCEL_INTERVAL_SECONDS,
     _POST_INTERVAL_SECONDS,
-    _QUICKPULSE_METRIC_NAME_MAPPINGS,
 )
 from azure.monitor.opentelemetry.exporter._quickpulse._generated._client import QuickpulseClient
-from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import (
-    DocumentIngress,
-    MetricPoint,
-    MonitoringDataPoint,
-)
+from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import MonitoringDataPoint
 from azure.monitor.opentelemetry.exporter._quickpulse._state import (
     _get_global_quickpulse_state,
+    _is_ping_state,
     _set_global_quickpulse_state,
     _QuickpulseState,
+)
+from azure.monitor.opentelemetry.exporter._quickpulse._utils import (
+    _metric_to_quick_pulse_data_points,
 )
 from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser
 from azure.monitor.opentelemetry.exporter._utils import _ticks_since_dot_net_epoch, PeriodicTask
@@ -217,7 +211,7 @@ class _QuickpulseMetricReader(MetricReader):
         self._worker.start()
 
     def _ticker(self) -> None:
-        if self._is_ping_state():
+        if _is_ping_state():
             # Send a ping if elapsed number of request meets the threshold
             if self._elapsed_num_seconds % _get_global_quickpulse_state().value == 0:
                 print("pinging...")
@@ -281,44 +275,3 @@ class _QuickpulseMetricReader(MetricReader):
     def shutdown(self, timeout_millis: float = 30_000, **kwargs) -> None:
         self._worker.cancel()
         self._worker.join()
-
-    def _is_ping_state(self):
-        return _get_global_quickpulse_state() in (
-            _QuickpulseState.PING_SHORT,
-            _QuickpulseState.PING_LONG
-        )
-
-def _metric_to_quick_pulse_data_points(  # pylint: disable=too-many-nested-blocks
-    metrics_data: OTMetricsData,
-    base_monitoring_data_point: MonitoringDataPoint,
-    documents: Optional[List[DocumentIngress]],
-) -> List[MonitoringDataPoint]:
-    metric_points = []
-    for resource_metric in metrics_data.resource_metrics:
-        for scope_metric in resource_metric.scope_metrics:
-            for metric in scope_metric.metrics:
-                for point in metric.data.data_points:
-                    if point is not None:
-                        metric_point = MetricPoint(
-                            name=_QUICKPULSE_METRIC_NAME_MAPPINGS[metric.name.lower()],
-                            weight=1,
-                        )
-                        if isinstance(point, HistogramDataPoint):
-                            metric_point.value = point.sum
-                        elif isinstance(point, NumberDataPoint):
-                            metric_point.value = point.value
-                        else:
-                            metric_point.value = 0
-                        metric_points.append(metric_point)
-    return [
-        MonitoringDataPoint(
-            version=base_monitoring_data_point.version,
-            instance=base_monitoring_data_point.instance,
-            role_name=base_monitoring_data_point.role_name,
-            machine_name=base_monitoring_data_point.machine_name,
-            stream_id=base_monitoring_data_point.stream_id,
-            timestamp=datetime.now(tz=timezone.utc),
-            metrics=metric_points,
-            documents=documents,
-        )
-    ]
