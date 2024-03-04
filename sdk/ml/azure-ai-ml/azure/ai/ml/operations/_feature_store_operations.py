@@ -113,11 +113,13 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
     @distributed_trace
     @monitor_with_activity(ops_logger, "FeatureStore.Get", ActivityType.PUBLICAPI)
     # pylint: disable=arguments-renamed
-    def get(self, name: str, **kwargs: Any) -> Optional[FeatureStore]:
+    def get(self, name: str, **kwargs: Any) -> FeatureStore:
         """Get a feature store by name.
 
         :param name: Name of the feature store.
         :type name: str
+        :raises ~azure.core.exceptions.HttpResponseError: Raised if the corresponding name and version cannot be
+            retrieved from the service.
         :return: The feature store with the provided name.
         :rtype: FeatureStore
         """

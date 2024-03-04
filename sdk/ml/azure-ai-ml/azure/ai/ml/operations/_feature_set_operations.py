@@ -125,7 +125,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_activity(ops_logger, "FeatureSet.Get", ActivityType.PUBLICAPI)
-    def get(self, name: str, version: str, **kwargs: Dict) -> Optional[FeatureSet]:  # type: ignore
+    def get(self, name: str, version: str, **kwargs: Dict) -> FeatureSet:  # type: ignore
         """Get the specified FeatureSet asset.
 
         :param name: Name of FeatureSet asset.
@@ -134,6 +134,8 @@ class FeatureSetOperations(_ScopeDependentOperations):
         :type version: str
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if FeatureSet cannot be successfully
             identified and retrieved. Details will be provided in the error message.
+        :raises ~azure.core.exceptions.HttpResponseError: Raised if the corresponding name and version cannot be
+            retrieved from the service.
         :return: FeatureSet asset object.
         :rtype: ~azure.ai.ml.entities.FeatureSet
         """
