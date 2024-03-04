@@ -89,19 +89,6 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         *,
-        type: Literal["uri_folder"] = "uri_folder",
-        path: Optional[str] = None,
-        mode: Optional[str] = None,
-        optional: Optional[bool] = None,
-        description: Optional[str] = None,
-        **kwargs: Any,
-    ) -> None:
-        """"""
-
-    @overload
-    def __init__(
-        self,
-        *,
         type: Literal["number"] = "number",
         default: Optional[float] = None,
         min: Optional[float] = None,

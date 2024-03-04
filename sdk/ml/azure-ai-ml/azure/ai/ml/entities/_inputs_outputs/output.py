@@ -34,55 +34,6 @@ class Output(_InputOutputBase):
     @overload
     def __init__(
         self,
-        type: Literal["uri_folder"] = "uri_folder",
-        path: Optional[str] = None,
-        mode: Optional[str] = None,
-        description: Optional[str] = None,
-    ) -> None:
-        # pylint: disable=line-too-long
-        """Define an output.
-
-        :keyword type: The type of the data output. Accepted values are 'uri_folder', 'uri_file', 'mltable',
-            'mlflow_model', 'custom_model', and user-defined types. Defaults to 'uri_folder'.
-        :paramtype type: str
-        :keyword path: The remote path where the output should be stored.
-        :paramtype path: Optional[str]
-        :keyword mode: The access mode of the data output. Accepted values are
-            * 'rw_mount': Read-write mount the data
-            * 'upload': Upload the data from the compute target
-            * 'direct': Pass in the URI as a string
-        :paramtype mode: Optional[str]
-        :keyword description: The description of the output.
-        :paramtype description: Optional[str]
-        :keyword name: The name to be used to register the output as a Data or Model asset. A name can be set without
-            setting a version.
-        :paramtype name: str
-        :keyword version: The version used to register the output as a Data or Model asset. A version can be set only
-            when name is set.
-        :paramtype version: str
-        :keyword is_control: Determine if the output is a control output.
-        :paramtype is_control: bool
-        :keyword early_available: Mark the output for early node orchestration.
-        :paramtype early_available: bool
-        :keyword intellectual_property: Intellectual property associated with the output.
-            It can be an instance of `IntellectualProperty` or a dictionary that will be used to create an instance.
-        :paramtype intellectual_property: Union[~azure.ai.ml.entities._assets.intellectual_property.IntellectualProperty,
-
-            dict]
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/ml_samples_misc.py
-                :start-after: [START create_inputs_outputs]
-                :end-before: [END create_inputs_outputs]
-                :language: python
-                :dedent: 8
-                :caption: Creating a CommandJob with a folder output.
-        """
-
-    @overload
-    def __init__(
-        self,
         type: Literal["uri_file"] = "uri_file",
         path: Optional[str] = None,
         mode: Optional[str] = None,
@@ -109,7 +60,7 @@ class Output(_InputOutputBase):
         :paramtype version: str
         """
 
-    def __init__(
+    def __init__(  # type: ignore[misc]
         self,
         *,
         type: str = AssetTypes.URI_FOLDER,
@@ -118,6 +69,46 @@ class Output(_InputOutputBase):
         description: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
+        """Define an output.
+
+        :keyword type: The type of the data output. Accepted values are 'uri_folder', 'uri_file', 'mltable',
+            'mlflow_model', 'custom_model', and user-defined types. Defaults to 'uri_folder'.
+        :paramtype type: str
+        :keyword path: The remote path where the output should be stored.
+        :paramtype path: Optional[str]
+        :keyword mode: The access mode of the data output. Accepted values are
+            * 'rw_mount': Read-write mount the data
+            * 'upload': Upload the data from the compute target
+            * 'direct': Pass in the URI as a string
+        :paramtype mode: Optional[str]
+        :keyword description: The description of the output.
+        :paramtype description: Optional[str]
+        :keyword name: The name to be used to register the output as a Data or Model asset. A name can be set without
+            setting a version.
+        :paramtype name: str
+        :keyword version: The version used to register the output as a Data or Model asset. A version can be set only
+            when name is set.
+        :paramtype version: str
+        :keyword is_control: Determine if the output is a control output.
+        :paramtype is_control: bool
+        :keyword early_available: Mark the output for early node orchestration.
+        :paramtype early_available: bool
+        :keyword intellectual_property: Intellectual property associated with the output.
+            It can be an instance of `IntellectualProperty` or a dictionary that will be used to create an instance.
+        :paramtype intellectual_property: Union[
+            ~azure.ai.ml.entities._assets.intellectual_property.IntellectualProperty,
+            dict
+            ]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/ml_samples_misc.py
+                :start-after: [START create_inputs_outputs]
+                :end-before: [END create_inputs_outputs]
+                :language: python
+                :dedent: 8
+                :caption: Creating a CommandJob with a folder output.
+        """
         super(Output, self).__init__(type=type)
         # As an annotation, it is not allowed to initialize the _port_name.
         self._port_name = None
