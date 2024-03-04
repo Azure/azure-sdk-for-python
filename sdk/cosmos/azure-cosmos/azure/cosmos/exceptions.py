@@ -69,11 +69,15 @@ class CosmosBatchOperationError(HttpResponseError):
     """A transactional batch request to the Azure Cosmos database service has failed.
 
     :ivar int error_index: Index of operation within the batch that caused the error.
-    :ivar dict[str, Any] headers: Error headers.
-    :ivar int status_code: HTTP response code.
-    :ivar str message: Error message.
+    :ivar headers: Error headers.
+    :vartype headers: dict[str, Any]
+    :ivar status_code: HTTP response code.
+    :vartype status_code: int
+    :ivar message: Error message.
+    :vartype message: str
     :ivar operation_responses: List of failed operations' responses.
-    :type operation_responses: Sequence[Union[Tuple[str, Tuple[Any, ...]], Tuple[str, Tuple[Any, ...], Dict[str, Any]]]]
+    :vartype operation_responses: Sequence[Union[Tuple[str, Tuple[Any, ...]],
+        Tuple[str, Tuple[Any, ...], Dict[str, Any]]]]
     .. admonition:: Example:
 
         .. literalinclude:: ../samples/document_management.py
