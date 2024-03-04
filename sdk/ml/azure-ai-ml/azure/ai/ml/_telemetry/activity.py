@@ -283,8 +283,11 @@ def monitor_with_activity(
                         logger.package_logger, activity_name or f.__name__, activity_type, custom_dimensions
                     ):
                         return f(*args, **kwargs)
-            else:
+            elif hasattr(logger, "package_logger"):
                 with log_activity(logger.package_logger, activity_name or f.__name__, activity_type, custom_dimensions):
+                    return f(*args, **kwargs)
+            else:
+                with log_activity(logger, activity_name or f.__name__, activity_type, custom_dimensions):
                     return f(*args, **kwargs)
 
         return wrapper
