@@ -31,8 +31,8 @@ audio_test_file = pathlib.Path(__file__).parent / "./assets/hello.m4a"
 class TestModuleClient(AzureRecordedTestCase):
 
     @configure
-    @pytest.mark.parametrize("api_type", [AZURE])
-    def test_module_client_env_vars_key(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, LATEST)])
+    def test_module_client_env_vars_key(self, client, api_type, api_version, **kwargs):
         with reload():
             os.environ["AZURE_OPENAI_ENDPOINT"] = os.getenv(ENV_AZURE_OPENAI_ENDPOINT)
             os.environ["OPENAI_API_VERSION"] = LATEST
@@ -59,8 +59,8 @@ class TestModuleClient(AzureRecordedTestCase):
                 del os.environ["OPENAI_API_TYPE"]
 
     @configure
-    @pytest.mark.parametrize("api_type", [AZURE])
-    def test_module_client_env_vars_token(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, LATEST)])
+    def test_module_client_env_vars_token(self, client, api_type, api_version, **kwargs):
         with reload():
             os.environ["AZURE_OPENAI_ENDPOINT"] = os.getenv(ENV_AZURE_OPENAI_ENDPOINT)
             os.environ["OPENAI_API_VERSION"] = LATEST
@@ -87,8 +87,8 @@ class TestModuleClient(AzureRecordedTestCase):
                 del os.environ["OPENAI_API_TYPE"]
 
     @configure
-    @pytest.mark.parametrize("api_type", [AZURE])
-    def test_module_client_ad_token_provider(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, LATEST)])
+    def test_module_client_ad_token_provider(self, client, api_type, api_version, **kwargs):
         with reload():
             openai.api_type= "azure"
             openai.azure_endpoint = os.getenv(ENV_AZURE_OPENAI_ENDPOINT)
@@ -110,8 +110,8 @@ class TestModuleClient(AzureRecordedTestCase):
 
 
     @configure
-    @pytest.mark.parametrize("api_type", [AZURE])
-    def test_module_client_ad_token(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, LATEST)])
+    def test_module_client_ad_token(self, client, api_type, api_version, **kwargs):
         with reload():
             openai.api_type= "azure"
             openai.azure_endpoint = os.getenv(ENV_AZURE_OPENAI_ENDPOINT)
@@ -133,8 +133,8 @@ class TestModuleClient(AzureRecordedTestCase):
 
 
     @configure
-    @pytest.mark.parametrize("api_type", [AZURE])
-    def test_module_client_completions(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, LATEST)])
+    def test_module_client_completions(self, client, api_type, api_version, **kwargs):
         with reload():
             openai.api_type= "azure"
             openai.azure_endpoint = os.getenv(ENV_AZURE_OPENAI_ENDPOINT)
@@ -155,8 +155,8 @@ class TestModuleClient(AzureRecordedTestCase):
             assert completion.choices[0].text is not None
 
     @configure
-    @pytest.mark.parametrize("api_type", [AZURE])
-    def test_module_client_chat_completions(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, LATEST)])
+    def test_module_client_chat_completions(self, client, api_type, api_version, **kwargs):
         with reload():
             openai.api_type= "azure"
             openai.azure_endpoint = os.getenv(ENV_AZURE_OPENAI_ENDPOINT)
@@ -183,8 +183,8 @@ class TestModuleClient(AzureRecordedTestCase):
             assert completion.choices[0].message.role
 
     @configure
-    @pytest.mark.parametrize("api_type", [AZURE])
-    def test_module_client_embeddings(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, LATEST)])
+    def test_module_client_embeddings(self, client, api_type, api_version, **kwargs):
         with reload():
             openai.api_type= "azure"
             openai.azure_endpoint = os.getenv(ENV_AZURE_OPENAI_ENDPOINT)
@@ -202,8 +202,8 @@ class TestModuleClient(AzureRecordedTestCase):
             assert len(embedding.data[0].embedding) > 0
 
     @configure
-    @pytest.mark.parametrize("api_type", [AZURE])
-    def test_module_client_models(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, LATEST)])
+    def test_module_client_models(self, client, api_type, api_version, **kwargs):
         with reload():
             openai.api_type= "azure"
             openai.azure_endpoint = os.getenv(ENV_AZURE_OPENAI_ENDPOINT)
@@ -218,8 +218,8 @@ class TestModuleClient(AzureRecordedTestCase):
             assert model.id
 
     @configure
-    @pytest.mark.parametrize("api_type", [AZURE])
-    def test_module_client_audio(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, LATEST)])
+    def test_module_client_audio(self, client, api_type, api_version, **kwargs):
         with reload():
             openai.api_type= "azure"
             openai.azure_endpoint = os.getenv(ENV_AZURE_OPENAI_NORTHCENTRALUS_ENDPOINT)

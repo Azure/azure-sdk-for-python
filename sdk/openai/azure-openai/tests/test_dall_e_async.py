@@ -6,15 +6,18 @@
 import pytest
 import openai
 from devtools_testutils import AzureRecordedTestCase
-from conftest import DALLE_AZURE, OPENAI, DALLE_ALL, configure_async
+from conftest import configure_async, DALLE_AZURE, OPENAI, DALLE_AZURE_AD, PREVIEW, GA
 
 
 class TestDallEAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", DALLE_ALL)
-    async def test_image_create(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(DALLE_AZURE, PREVIEW), (DALLE_AZURE_AD, PREVIEW), (OPENAI, "v1")]
+    )
+    async def test_image_create(self, client_async, api_type, api_version, **kwargs):
         image = await client_async.images.generate(
             prompt="a cute baby seal",
             **kwargs,
@@ -26,8 +29,8 @@ class TestDallEAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [OPENAI, DALLE_AZURE])
-    async def test_image_create_n(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(DALLE_AZURE, PREVIEW), (OPENAI, "v1")])
+    async def test_image_create_n(self, client_async, api_type, api_version, **kwargs):
         image = await client_async.images.generate(
             prompt="a cute baby seal",
             n=1,
@@ -41,8 +44,8 @@ class TestDallEAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [OPENAI, DALLE_AZURE])
-    async def test_image_create_size(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(DALLE_AZURE, PREVIEW), (OPENAI, "v1")])
+    async def test_image_create_size(self, client_async, api_type, api_version, **kwargs):
         image = await client_async.images.generate(
             prompt="a cute baby seal",
             size="1024x1024",
@@ -55,8 +58,8 @@ class TestDallEAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [OPENAI, DALLE_AZURE])
-    async def test_image_create_response_format(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(DALLE_AZURE, PREVIEW), (OPENAI, "v1")])
+    async def test_image_create_response_format(self, client_async, api_type, api_version, **kwargs):
         image = await client_async.images.generate(
             prompt="a cute baby seal",
             response_format="b64_json",
@@ -69,8 +72,8 @@ class TestDallEAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [OPENAI, DALLE_AZURE])
-    async def test_image_create_user(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(DALLE_AZURE, PREVIEW), (OPENAI, "v1")])
+    async def test_image_create_user(self, client_async, api_type, api_version, **kwargs):
         image = await client_async.images.generate(
             prompt="a cute baby seal",
             user="krista",
@@ -83,8 +86,8 @@ class TestDallEAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [OPENAI, DALLE_AZURE])
-    async def test_image_create_quality(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(DALLE_AZURE, PREVIEW), (OPENAI, "v1")])
+    async def test_image_create_quality(self, client_async, api_type, api_version, **kwargs):
         image = await client_async.images.generate(
             prompt="a cute baby seal",
             quality="standard",
@@ -97,8 +100,8 @@ class TestDallEAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [OPENAI, DALLE_AZURE])
-    async def test_image_create_style(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(DALLE_AZURE, PREVIEW), (OPENAI, "v1")])
+    async def test_image_create_style(self, client_async, api_type, api_version, **kwargs):
         image = await client_async.images.generate(
             prompt="a cute baby seal",
             style="vivid",

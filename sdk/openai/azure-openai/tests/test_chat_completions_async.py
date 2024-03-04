@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+import os
 import pytest
 import json
 import openai
@@ -10,11 +11,15 @@ from devtools_testutils import AzureRecordedTestCase
 from conftest import (
     AZURE,
     OPENAI,
-    ALL,
     AZURE_AD,
     GPT_4_AZURE,
     GPT_4_OPENAI,
-    configure_async
+    configure_async,
+    GA,
+    PREVIEW,
+    ENV_AZURE_OPENAI_SEARCH_ENDPOINT,
+    ENV_AZURE_OPENAI_SEARCH_KEY,
+    ENV_AZURE_OPENAI_SEARCH_INDEX
 )
 
 
@@ -22,8 +27,11 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", ALL)
-    async def test_chat_completion(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(AZURE, GA), (AZURE, PREVIEW), (AZURE_AD, GA), (AZURE_AD, PREVIEW), (OPENAI, "v1")]
+    )
+    async def test_chat_completion(self, client_async, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": "Who won the world series in 2020?"}
@@ -45,8 +53,11 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
-    async def test_streamed_chat_completions(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(AZURE, GA), (AZURE, PREVIEW), (OPENAI, "v1")]
+    )
+    async def test_streamed_chat_completions(self, client_async, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": "How do I bake a chocolate cake?"}
@@ -67,8 +78,11 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
-    async def test_chat_completion_max_tokens(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(AZURE, GA), (AZURE, PREVIEW), (OPENAI, "v1")]
+    )
+    async def test_chat_completion_max_tokens(self, client_async, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": "Who won the world series in 2020?"}
@@ -91,8 +105,11 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
-    async def test_chat_completion_temperature(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(AZURE, GA), (AZURE, PREVIEW), (OPENAI, "v1")]
+    )
+    async def test_chat_completion_temperature(self, client_async, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": "Who won the world series in 2020?"}
@@ -115,8 +132,11 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
-    async def test_chat_completion_top_p(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(AZURE, GA), (AZURE, PREVIEW), (OPENAI, "v1")]
+    )
+    async def test_chat_completion_top_p(self, client_async, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": "Who won the world series in 2020?"}
@@ -139,8 +159,11 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
-    async def test_chat_completion_n(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(AZURE, GA), (AZURE, PREVIEW), (OPENAI, "v1")]
+    )
+    async def test_chat_completion_n(self, client_async, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": "Who won the world series in 2020?"}
@@ -164,8 +187,11 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
-    async def test_chat_completion_stop(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(AZURE, GA), (AZURE, PREVIEW), (OPENAI, "v1")]
+    )
+    async def test_chat_completion_stop(self, client_async, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": "Who won the world series in 2020?"}
@@ -187,8 +213,11 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
-    async def test_chat_completion_token_penalty(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(AZURE, GA), (AZURE, PREVIEW), (OPENAI, "v1")]
+    )
+    async def test_chat_completion_token_penalty(self, client_async, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": "Who won the world series in 2020?"}
@@ -216,8 +245,11 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
-    async def test_chat_completion_user(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(AZURE, GA), (AZURE, PREVIEW), (OPENAI, "v1")]
+    )
+    async def test_chat_completion_user(self, client_async, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": "Who won the world series in 2020?"}
@@ -244,8 +276,11 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
-    async def test_chat_completion_logit_bias(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(AZURE, GA), (AZURE, PREVIEW), (OPENAI, "v1")]
+    )
+    async def test_chat_completion_logit_bias(self, client_async, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": "What color is the ocean?"}
@@ -271,8 +306,8 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [AZURE])
-    async def test_chat_completion_rai_annotations(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, PREVIEW)])
+    async def test_chat_completion_rai_annotations(self, client_async, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": "how do I rob a bank with violence?"}
@@ -284,9 +319,15 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
                 messages=messages,
                 **kwargs
             )
-        err = json.loads(e.value.response.text)
-        assert err["error"]["code"] == "content_filter"
-        content_filter_result = err["error"]["innererror"]["content_filter_result"]
+        e = e.value
+        assert e.code == "content_filter"
+        assert e.message is not None
+        assert e.status_code == 400
+        err = e.body
+        assert err["code"] == "content_filter"
+        assert err["param"] == "prompt"
+        assert err["message"] is not None
+        content_filter_result = err["innererror"]["content_filter_result"]
         assert content_filter_result["hate"]["filtered"] is False
         assert content_filter_result["hate"]["severity"] == "safe"
         assert content_filter_result["self_harm"]["filtered"] is False
@@ -302,12 +343,9 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
             messages=messages,
             **kwargs
         )
-        # prompt content filter result in "model_extra" for azure
-        try:
-            prompt_filter_result = completion.model_extra["prompt_annotations"][0]["content_filter_results"]
-        except:
-            prompt_filter_result = completion.model_extra["prompt_filter_results"][0]["content_filter_results"]
 
+        # prompt filter results
+        prompt_filter_result = completion.prompt_filter_results[0]["content_filter_results"]
         assert prompt_filter_result["hate"]["filtered"] is False
         assert prompt_filter_result["hate"]["severity"] == "safe"
         assert prompt_filter_result["self_harm"]["filtered"] is False
@@ -318,7 +356,7 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
         assert prompt_filter_result["violence"]["severity"] == "safe"
 
         # output content filter result
-        output_filter_result = completion.choices[0].model_extra["content_filter_results"]
+        output_filter_result = completion.choices[0].content_filter_results
         assert output_filter_result["hate"]["filtered"] is False
         assert output_filter_result["hate"]["severity"] == "safe"
         assert output_filter_result["self_harm"]["filtered"] is False
@@ -330,8 +368,11 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [OPENAI, AZURE])
-    async def test_chat_completion_functions(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(AZURE, PREVIEW), (OPENAI, "v1")]
+    )
+    async def test_chat_completion_functions(self, client_async, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "Don't make assumptions about what values to plug into functions. Ask for clarification if a user request is ambiguous."},
             {"role": "user", "content": "What's the weather like today in Seattle?"}
@@ -380,12 +421,7 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
         assert "Seattle" in function_call.arguments
 
         if api_type == "azure":
-            # prompt content filter result in "model_extra" for azure
-            try:
-                prompt_filter_result = completion.model_extra["prompt_annotations"][0]["content_filter_results"]
-            except:
-                prompt_filter_result = completion.model_extra["prompt_filter_results"][0]["content_filter_results"]
-
+            prompt_filter_result = completion.prompt_filter_results[0]["content_filter_results"]
             assert prompt_filter_result["hate"]["filtered"] is False
             assert prompt_filter_result["hate"]["severity"] == "safe"
             assert prompt_filter_result["self_harm"]["filtered"] is False
@@ -414,7 +450,7 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
 
         if api_type == "azure":
             # output content filter result
-            output_filter_result = function_completion.choices[0].model_extra["content_filter_results"]
+            output_filter_result = function_completion.choices[0].content_filter_results
             assert output_filter_result["hate"]["filtered"] is False
             assert output_filter_result["hate"]["severity"] == "safe"
             assert output_filter_result["self_harm"]["filtered"] is False
@@ -426,8 +462,11 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [OPENAI, AZURE])
-    async def test_chat_completion_functions_stream(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(AZURE, PREVIEW), (OPENAI, "v1")]
+    )
+    async def test_chat_completion_functions_stream(self, client_async, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "Don't make assumptions about what values to plug into functions. Ask for clarification if a user request is ambiguous."},
             {"role": "user", "content": "What's the weather like today in Seattle?"}
@@ -498,8 +537,11 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [OPENAI, AZURE])
-    async def test_chat_completion_given_function(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(AZURE, PREVIEW), (OPENAI, "v1")]
+    )
+    async def test_chat_completion_given_function(self, client_async, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "Don't make assumptions about what values to plug into functions. Ask for clarification if a user request is ambiguous."},
             {"role": "user", "content": "What's the weather like today in Seattle?"}
@@ -585,8 +627,8 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [AZURE])
-    async def test_chat_completion_functions_rai(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, PREVIEW)])
+    async def test_chat_completion_functions_rai(self, client_async, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "Don't make assumptions about what values to plug into functions. Ask for clarification if a user request is ambiguous."},
             {"role": "user", "content": "how do I rob a bank with violence?"}
@@ -620,9 +662,15 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
                 functions=functions,
                 **kwargs
             )
-        err = json.loads(e.value.response.text)
-        assert err["error"]["code"] == "content_filter"
-        content_filter_result = err["error"]["innererror"]["content_filter_result"]
+        e = e.value
+        assert e.code == "content_filter"
+        assert e.message is not None
+        assert e.status_code == 400
+        err = e.body
+        assert err["code"] == "content_filter"
+        assert err["param"] == "prompt"
+        assert err["message"] is not None
+        content_filter_result = err["innererror"]["content_filter_result"]
         assert content_filter_result["hate"]["filtered"] is False
         assert content_filter_result["hate"]["severity"] == "safe"
         assert content_filter_result["self_harm"]["filtered"] is False
@@ -645,9 +693,15 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
                 functions=functions,
                 **kwargs
             )
-        err = json.loads(e.value.response.text)
-        assert err["error"]["code"] == "content_filter"
-        content_filter_result = err["error"]["innererror"]["content_filter_result"]
+        e = e.value
+        assert e.code == "content_filter"
+        assert e.message is not None
+        assert e.status_code == 400
+        err = e.body
+        assert err["code"] == "content_filter"
+        assert err["param"] == "prompt"
+        assert err["message"] is not None
+        content_filter_result = err["innererror"]["content_filter_result"]
         assert content_filter_result["hate"]["filtered"] is False
         assert content_filter_result["hate"]["severity"] == "safe"
         assert content_filter_result["self_harm"]["filtered"] is False
@@ -659,8 +713,8 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [AZURE, AZURE_AD])
-    async def test_chat_completion_byod(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, PREVIEW), (AZURE_AD, PREVIEW)])
+    async def test_chat_completion_byod(self, client_async, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": "How is Azure machine learning different than Azure OpenAI?"}
@@ -671,11 +725,11 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
             extra_body={
                 "data_sources":[
                     {
-                        "type": "AzureCognitiveSearch",
+                        "type": "azure_search",
                         "parameters": {
-                            "endpoint": azure_openai_creds["search_endpoint"],
-                            "key": azure_openai_creds["search_key"],
-                            "indexName": azure_openai_creds["search_index"]
+                            "endpoint": os.environ[ENV_AZURE_OPENAI_SEARCH_ENDPOINT],
+                            "key": os.environ[ENV_AZURE_OPENAI_SEARCH_KEY],
+                            "indexName": os.environ[ENV_AZURE_OPENAI_SEARCH_INDEX]
                         }
                     }
                 ],
@@ -696,8 +750,8 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [AZURE])
-    async def test_streamed_chat_completions_byod(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, PREVIEW)])
+    async def test_streamed_chat_completions_byod(self, client_async, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": "How is Azure machine learning different than Azure OpenAI?"}
@@ -708,11 +762,11 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
             extra_body={
                 "data_sources":[
                     {
-                        "type": "AzureCognitiveSearch",
+                        "type": "azure_search",
                         "parameters": {
-                            "endpoint": azure_openai_creds["search_endpoint"],
-                            "key": azure_openai_creds["search_key"],
-                            "indexName": azure_openai_creds["search_index"]
+                            "endpoint": os.environ[ENV_AZURE_OPENAI_SEARCH_ENDPOINT],
+                            "key": os.environ[ENV_AZURE_OPENAI_SEARCH_KEY],
+                            "indexName": os.environ[ENV_AZURE_OPENAI_SEARCH_INDEX]
                         }
                     }
                 ],
@@ -738,8 +792,8 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [GPT_4_AZURE, GPT_4_OPENAI])
-    async def test_chat_completion_seed(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")])
+    async def test_chat_completion_seed(self, client_async, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": "Why is the sky blue?"}
@@ -752,8 +806,8 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [GPT_4_AZURE, GPT_4_OPENAI])
-    async def test_chat_completion_json_response(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, GA), (GPT_4_OPENAI, "v1")])
+    async def test_chat_completion_json_response(self, client_async, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": "Who won the world series in 2020? Return in json with answer as the key."}
@@ -776,8 +830,8 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [GPT_4_AZURE])
-    async def test_chat_completion_block_list_term(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")])
+    async def test_chat_completion_block_list_term(self, client_async, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": "What is the best time of year to pick pineapple?"}
@@ -804,8 +858,8 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [GPT_4_AZURE, GPT_4_OPENAI])
-    async def test_chat_completion_tools(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")])
+    async def test_chat_completion_tools(self, client_async, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "Don't make assumptions about what values to plug into tools. Ask for clarification if a user request is ambiguous."},
             {"role": "user", "content": "What's the weather like today in Seattle?"}
@@ -873,8 +927,8 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [GPT_4_AZURE, GPT_4_OPENAI])
-    async def test_chat_completion_tools_stream(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")])
+    async def test_chat_completion_tools_stream(self, client_async, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "Don't make assumptions about what values to plug into tools. Ask for clarification if a user request is ambiguous."},
             {"role": "user", "content": "What's the weather like today in Seattle?"}
@@ -964,8 +1018,8 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [GPT_4_AZURE, GPT_4_OPENAI])
-    async def test_chat_completion_tools_parallel_func(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")])
+    async def test_chat_completion_tools_parallel_func(self, client_async, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "Don't make assumptions about what values to plug into tools. Ask for clarification if a user request is ambiguous."},
             {"role": "user", "content": "What's the weather like today in Seattle and Los Angeles?"}
@@ -1049,8 +1103,8 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [OPENAI, GPT_4_AZURE])
-    async def test_chat_completion_vision(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")])
+    async def test_chat_completion_vision(self, client_async, api_type, api_version, **kwargs):
         completion = await client_async.chat.completions.create(
             model="gpt-4-vision-preview",
             messages=[
@@ -1074,8 +1128,8 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [OPENAI, GPT_4_AZURE])
-    async def test_chat_completion_logprobs(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")])
+    async def test_chat_completion_logprobs(self, client_async, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": "Who won the world series in 2020?"}

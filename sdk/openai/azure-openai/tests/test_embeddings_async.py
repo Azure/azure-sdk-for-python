@@ -6,15 +6,18 @@
 import pytest
 import openai
 from devtools_testutils import AzureRecordedTestCase
-from conftest import configure_async, AZURE, OPENAI, ALL
+from conftest import configure_async, AZURE, OPENAI, AZURE_AD, PREVIEW, GA
 
 
 class TestEmbeddingsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", ALL)
-    async def test_embedding(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(AZURE, GA), (AZURE, PREVIEW), (AZURE_AD, GA), (AZURE_AD, PREVIEW), (OPENAI, "v1")]
+    )
+    async def test_embedding(self, client_async, api_type, api_version, **kwargs):
 
         embedding = await client_async.embeddings.create(input="hello world", **kwargs)
         assert embedding.object == "list"
@@ -28,8 +31,11 @@ class TestEmbeddingsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
-    async def test_embedding_batched(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(AZURE, GA), (AZURE, PREVIEW), (OPENAI, "v1")]
+    )
+    async def test_embedding_batched(self, client_async, api_type, api_version, **kwargs):
 
         embedding = await client_async.embeddings.create(input=["hello world", "second input"], **kwargs)
         assert embedding.object == "list"
@@ -43,8 +49,11 @@ class TestEmbeddingsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
-    async def test_embedding_user(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(AZURE, GA), (AZURE, PREVIEW), (OPENAI, "v1")]
+    )
+    async def test_embedding_user(self, client_async, api_type, api_version, **kwargs):
 
         embedding = await client_async.embeddings.create(input="hello world", user="krista", **kwargs)
         assert embedding.object == "list"

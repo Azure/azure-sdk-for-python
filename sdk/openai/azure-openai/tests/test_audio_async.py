@@ -8,7 +8,7 @@ import pytest
 import pathlib
 import uuid
 from devtools_testutils import AzureRecordedTestCase
-from conftest import WHISPER_AZURE, OPENAI, WHISPER_ALL, configure_async, TTS_OPENAI, TTS_AZURE, TTS_AZURE_AD
+from conftest import WHISPER_AZURE, OPENAI, WHISPER_AZURE_AD, PREVIEW, GA, configure_async, TTS_OPENAI, TTS_AZURE, TTS_AZURE_AD
 
 audio_test_file = pathlib.Path(__file__).parent / "./assets/hello.m4a"
 audio_long_test_file = pathlib.Path(__file__).parent / "./assets/wikipediaOcelot.wav"
@@ -18,8 +18,11 @@ class TestAudioAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", WHISPER_ALL)
-    async def test_transcribe(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(WHISPER_AZURE, PREVIEW), (WHISPER_AZURE_AD, PREVIEW), (OPENAI, "v1")]
+    )
+    async def test_transcribe(self, client_async, api_type, api_version, **kwargs):
 
         result = await client_async.audio.transcriptions.create(
             file=open(audio_test_file, "rb"),
@@ -29,8 +32,8 @@ class TestAudioAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [WHISPER_AZURE, OPENAI])
-    async def test_transcribe_raw(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(WHISPER_AZURE, PREVIEW), (OPENAI, "v1")])
+    async def test_transcribe_raw(self, client_async, api_type, api_version, **kwargs):
 
         result = await client_async.audio.transcriptions.create(
             # file=open(audio_test_file, "rb").read(),
@@ -42,8 +45,11 @@ class TestAudioAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", WHISPER_ALL)
-    async def test_translate(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(WHISPER_AZURE, PREVIEW), (WHISPER_AZURE_AD, PREVIEW), (OPENAI, "v1")]
+    )
+    async def test_translate(self, client_async, api_type, api_version, **kwargs):
 
         result = await client_async.audio.translations.create(
             file=open(audio_test_file, "rb"),
@@ -53,8 +59,8 @@ class TestAudioAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [WHISPER_AZURE, OPENAI])
-    async def test_translate_raw(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(WHISPER_AZURE, PREVIEW), (OPENAI, "v1")])
+    async def test_translate_raw(self, client_async, api_type, api_version, **kwargs):
 
         result = await client_async.audio.translations.create(
             # file=open(audio_test_file, "rb").read(),
@@ -66,8 +72,8 @@ class TestAudioAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [WHISPER_AZURE, OPENAI])
-    async def test_transcribe_verbose(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(WHISPER_AZURE, PREVIEW), (OPENAI, "v1")])
+    async def test_transcribe_verbose(self, client_async, api_type, api_version, **kwargs):
 
         result = await client_async.audio.transcriptions.create(
             file=open(audio_long_test_file, "rb"),
@@ -99,8 +105,8 @@ class TestAudioAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [WHISPER_AZURE, OPENAI])
-    async def test_transcribe_text(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(WHISPER_AZURE, PREVIEW), (OPENAI, "v1")])
+    async def test_transcribe_text(self, client_async, api_type, api_version, **kwargs):
 
         result = await client_async.audio.transcriptions.create(
             file=open(audio_test_file, "rb"),
@@ -111,8 +117,8 @@ class TestAudioAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [WHISPER_AZURE, OPENAI])
-    async def test_transcribe_srt(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(WHISPER_AZURE, PREVIEW), (OPENAI, "v1")])
+    async def test_transcribe_srt(self, client_async, api_type, api_version, **kwargs):
 
         result = await client_async.audio.transcriptions.create(
             file=open(audio_test_file, "rb"),
@@ -123,8 +129,8 @@ class TestAudioAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [WHISPER_AZURE, OPENAI])
-    async def test_transcribe_vtt(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(WHISPER_AZURE, PREVIEW), (OPENAI, "v1")])
+    async def test_transcribe_vtt(self, client_async, api_type, api_version, **kwargs):
 
         result = await client_async.audio.transcriptions.create(
             file=open(audio_test_file, "rb"),
@@ -135,8 +141,8 @@ class TestAudioAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [WHISPER_AZURE, OPENAI])
-    async def test_translate_verbose(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(WHISPER_AZURE, PREVIEW), (OPENAI, "v1")])
+    async def test_translate_verbose(self, client_async, api_type, api_version, **kwargs):
 
         result = await client_async.audio.translations.create(
             file=open(audio_long_test_file, "rb"),
@@ -168,8 +174,8 @@ class TestAudioAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [WHISPER_AZURE, OPENAI])
-    async def test_translate_text(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(WHISPER_AZURE, PREVIEW), (OPENAI, "v1")])
+    async def test_translate_text(self, client_async, api_type, api_version, **kwargs):
 
         result = await client_async.audio.translations.create(
             file=open(audio_test_file, "rb"),
@@ -180,8 +186,8 @@ class TestAudioAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [WHISPER_AZURE, OPENAI])
-    async def test_translate_srt(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(WHISPER_AZURE, PREVIEW), (OPENAI, "v1")])
+    async def test_translate_srt(self, client_async, api_type, api_version, **kwargs):
 
         result = await client_async.audio.translations.create(
             file=open(audio_test_file, "rb"),
@@ -192,8 +198,8 @@ class TestAudioAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [WHISPER_AZURE, OPENAI])
-    async def test_translate_vtt(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(WHISPER_AZURE, PREVIEW), (OPENAI, "v1")])
+    async def test_translate_vtt(self, client_async, api_type, api_version, **kwargs):
 
         result = await client_async.audio.translations.create(
             file=open(audio_test_file, "rb"),
@@ -204,8 +210,8 @@ class TestAudioAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [WHISPER_AZURE, OPENAI])
-    async def test_transcribe_options(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(WHISPER_AZURE, PREVIEW), (OPENAI, "v1")])
+    async def test_transcribe_options(self, client_async, api_type, api_version, **kwargs):
 
         result = await client_async.audio.transcriptions.create(
             file=open(audio_test_file, "rb"),
@@ -218,8 +224,8 @@ class TestAudioAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [WHISPER_AZURE, OPENAI])
-    async def test_translate_options(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(WHISPER_AZURE, PREVIEW), (OPENAI, "v1")])
+    async def test_translate_options(self, client_async, api_type, api_version, **kwargs):
 
         result = await client_async.audio.translations.create(
             file=open(audio_test_file, "rb"),
@@ -231,8 +237,11 @@ class TestAudioAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [TTS_OPENAI, TTS_AZURE, TTS_AZURE_AD])
-    async def test_tts(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(TTS_AZURE, PREVIEW), (TTS_AZURE_AD, PREVIEW), (TTS_OPENAI, "v1")]
+    )
+    async def test_tts(self, client_async, api_type, api_version, **kwargs):
 
         speech_file_path = pathlib.Path(__file__).parent / f"{uuid.uuid4()}.mp3"
         try:
@@ -250,8 +259,8 @@ class TestAudioAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [TTS_OPENAI, TTS_AZURE])
-    async def test_tts_hd(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(TTS_AZURE, PREVIEW), (TTS_OPENAI, "v1")])
+    async def test_tts_hd(self, client_async, api_type, api_version, **kwargs):
 
         async with client_async.audio.speech.with_streaming_response.create(
             voice="echo",
@@ -262,8 +271,8 @@ class TestAudioAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [TTS_OPENAI, TTS_AZURE])
-    async def test_tts_response_format(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(TTS_AZURE, PREVIEW), (TTS_OPENAI, "v1")])
+    async def test_tts_response_format(self, client_async, api_type, api_version, **kwargs):
 
         speech_file_path = pathlib.Path(__file__).parent / f"{uuid.uuid4()}.flac"
         try:
@@ -282,8 +291,8 @@ class TestAudioAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [TTS_OPENAI, TTS_AZURE])
-    async def test_tts_speed(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(TTS_AZURE, PREVIEW), (TTS_OPENAI, "v1")])
+    async def test_tts_speed(self, client_async, api_type, api_version, **kwargs):
 
         speech_file_path = pathlib.Path(__file__).parent / f"{uuid.uuid4()}.mp3"
         try:

@@ -25,8 +25,8 @@ class TestClientAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [AZURE])
-    async def test_chat_completion_bad_deployment(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, LATEST)])
+    async def test_chat_completion_bad_deployment(self, client_async, api_type, api_version, **kwargs):
 
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
@@ -40,8 +40,8 @@ class TestClientAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [AZURE])
-    async def test_chat_completion_endpoint_deployment(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, LATEST)])
+    async def test_chat_completion_endpoint_deployment(self, client_async, api_type, api_version, **kwargs):
 
         client = openai.AsyncAzureOpenAI(
             azure_endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
@@ -77,8 +77,8 @@ class TestClientAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [AZURE])
-    async def test_chat_completion_base_url(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, LATEST)])
+    async def test_chat_completion_base_url(self, client_async, api_type, api_version, **kwargs):
 
         client = openai.AsyncAzureOpenAI(
             base_url=f"{os.getenv(ENV_AZURE_OPENAI_ENDPOINT)}/openai/deployments/{ENV_AZURE_OPENAI_CHAT_COMPLETIONS_NAME}",
@@ -106,8 +106,8 @@ class TestClientAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [AZURE])
-    async def test_client_str_token(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, LATEST)])
+    async def test_client_str_token(self, client_async, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": "Who won the world series in 2020?"}
@@ -136,8 +136,8 @@ class TestClientAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [AZURE])
-    async def test_client_no_api_key(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, LATEST)])
+    async def test_client_no_api_key(self, client_async, api_type, api_version, **kwargs):
 
         with pytest.raises(openai.OpenAIError) as e:
             openai.AsyncAzureOpenAI(
@@ -149,8 +149,8 @@ class TestClientAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [AZURE])
-    async def test_client_bad_token(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, LATEST)])
+    async def test_client_bad_token(self, client_async, api_type, api_version, **kwargs):
 
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
@@ -167,8 +167,8 @@ class TestClientAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [AZURE])
-    async def test_client_bad_token_provider(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, LATEST)])
+    async def test_client_bad_token_provider(self, client_async, api_type, api_version, **kwargs):
 
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
@@ -186,8 +186,8 @@ class TestClientAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [AZURE])
-    async def test_client_env_vars_key(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, LATEST)])
+    async def test_client_env_vars_key(self, client_async, api_type, api_version, **kwargs):
         with reload():
             os.environ["AZURE_OPENAI_ENDPOINT"] = os.getenv(ENV_AZURE_OPENAI_ENDPOINT)
             os.environ["OPENAI_API_VERSION"] = LATEST
@@ -219,8 +219,8 @@ class TestClientAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [AZURE])
-    async def test_client_env_vars_token(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, LATEST)])
+    async def test_client_env_vars_token(self, client_async, api_type, api_version, **kwargs):
         with reload():
             os.environ["AZURE_OPENAI_ENDPOINT"] = os.getenv(ENV_AZURE_OPENAI_ENDPOINT)
             os.environ["OPENAI_API_VERSION"] = LATEST

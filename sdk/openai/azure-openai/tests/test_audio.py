@@ -8,7 +8,7 @@ import pytest
 import pathlib
 import uuid
 from devtools_testutils import AzureRecordedTestCase
-from conftest import WHISPER_AZURE, OPENAI, WHISPER_ALL, configure, TTS_OPENAI, TTS_AZURE, TTS_AZURE_AD
+from conftest import WHISPER_AZURE, OPENAI, WHISPER_AZURE_AD, PREVIEW, GA, configure, TTS_OPENAI, TTS_AZURE, TTS_AZURE_AD
 
 audio_test_file = pathlib.Path(__file__).parent / "./assets/hello.m4a"
 audio_long_test_file = pathlib.Path(__file__).parent / "./assets/wikipediaOcelot.wav"
@@ -16,8 +16,11 @@ audio_long_test_file = pathlib.Path(__file__).parent / "./assets/wikipediaOcelot
 class TestAudio(AzureRecordedTestCase):
 
     @configure
-    @pytest.mark.parametrize("api_type", WHISPER_ALL)
-    def test_transcribe(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(WHISPER_AZURE, PREVIEW), (WHISPER_AZURE_AD, PREVIEW), (OPENAI, "v1")]
+    )
+    def test_transcribe(self, client, api_type, api_version, **kwargs):
 
         result = client.audio.transcriptions.create(
             file=open(audio_test_file, "rb"),
@@ -26,8 +29,8 @@ class TestAudio(AzureRecordedTestCase):
         assert result.text == "Hello."
 
     @configure
-    @pytest.mark.parametrize("api_type", [WHISPER_AZURE, OPENAI])
-    def test_transcribe_raw(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(WHISPER_AZURE, PREVIEW), (OPENAI, "v1")])
+    def test_transcribe_raw(self, client, api_type, api_version, **kwargs):
 
         result = client.audio.transcriptions.create(
             # file=open(audio_test_file, "rb").read(),
@@ -38,8 +41,11 @@ class TestAudio(AzureRecordedTestCase):
         assert result.text == "Hello."
 
     @configure
-    @pytest.mark.parametrize("api_type", WHISPER_ALL)
-    def test_translate(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(WHISPER_AZURE, PREVIEW), (WHISPER_AZURE_AD, PREVIEW), (OPENAI, "v1")]
+    )
+    def test_translate(self, client, api_type, api_version, **kwargs):
 
         result = client.audio.translations.create(
             file=open(audio_test_file, "rb"),
@@ -48,8 +54,8 @@ class TestAudio(AzureRecordedTestCase):
         assert result.text == "Hello."
 
     @configure
-    @pytest.mark.parametrize("api_type", [WHISPER_AZURE, OPENAI])
-    def test_translate_raw(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(WHISPER_AZURE, PREVIEW), (OPENAI, "v1")])
+    def test_translate_raw(self, client, api_type, api_version, **kwargs):
 
         result = client.audio.translations.create(
             # file=open(audio_test_file, "rb").read(),
@@ -60,8 +66,8 @@ class TestAudio(AzureRecordedTestCase):
         assert result.text == "Hello."
 
     @configure
-    @pytest.mark.parametrize("api_type", [WHISPER_AZURE, OPENAI])
-    def test_transcribe_verbose(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(WHISPER_AZURE, PREVIEW), (OPENAI, "v1")])
+    def test_transcribe_verbose(self, client, api_type, api_version, **kwargs):
 
         result = client.audio.transcriptions.create(
             file=open(audio_long_test_file, "rb"),
@@ -92,8 +98,8 @@ class TestAudio(AzureRecordedTestCase):
             assert segment["no_speech_prob"] is not None
 
     @configure
-    @pytest.mark.parametrize("api_type", [WHISPER_AZURE, OPENAI])
-    def test_transcribe_text(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(WHISPER_AZURE, PREVIEW), (OPENAI, "v1")])
+    def test_transcribe_text(self, client, api_type, api_version, **kwargs):
 
         result = client.audio.transcriptions.create(
             file=open(audio_test_file, "rb"),
@@ -103,8 +109,8 @@ class TestAudio(AzureRecordedTestCase):
         assert result == "Hello.\n"
 
     @configure
-    @pytest.mark.parametrize("api_type", [WHISPER_AZURE, OPENAI])
-    def test_transcribe_srt(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(WHISPER_AZURE, PREVIEW), (OPENAI, "v1")])
+    def test_transcribe_srt(self, client, api_type, api_version, **kwargs):
 
         result = client.audio.transcriptions.create(
             file=open(audio_test_file, "rb"),
@@ -114,8 +120,8 @@ class TestAudio(AzureRecordedTestCase):
         assert result == "1\n00:00:00,000 --> 00:00:02,000\nHello.\n\n\n"
 
     @configure
-    @pytest.mark.parametrize("api_type", [WHISPER_AZURE, OPENAI])
-    def test_transcribe_vtt(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(WHISPER_AZURE, PREVIEW), (OPENAI, "v1")])
+    def test_transcribe_vtt(self, client, api_type, api_version, **kwargs):
 
         result = client.audio.transcriptions.create(
             file=open(audio_test_file, "rb"),
@@ -125,8 +131,8 @@ class TestAudio(AzureRecordedTestCase):
         assert result == "WEBVTT\n\n00:00:00.000 --> 00:00:02.000\nHello.\n\n"
 
     @configure
-    @pytest.mark.parametrize("api_type", [WHISPER_AZURE, OPENAI])
-    def test_translate_verbose(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(WHISPER_AZURE, PREVIEW), (OPENAI, "v1")])
+    def test_translate_verbose(self, client, api_type, api_version, **kwargs):
 
         result = client.audio.translations.create(
             file=open(audio_long_test_file, "rb"),
@@ -157,8 +163,8 @@ class TestAudio(AzureRecordedTestCase):
             assert segment["no_speech_prob"] is not None
 
     @configure
-    @pytest.mark.parametrize("api_type", [WHISPER_AZURE, OPENAI])
-    def test_translate_text(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(WHISPER_AZURE, PREVIEW), (OPENAI, "v1")])
+    def test_translate_text(self, client, api_type, api_version, **kwargs):
 
         result = client.audio.translations.create(
             file=open(audio_test_file, "rb"),
@@ -168,8 +174,8 @@ class TestAudio(AzureRecordedTestCase):
         assert result == "Hello.\n"
 
     @configure
-    @pytest.mark.parametrize("api_type", [WHISPER_AZURE, OPENAI])
-    def test_translate_srt(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(WHISPER_AZURE, PREVIEW), (OPENAI, "v1")])
+    def test_translate_srt(self, client, api_type, api_version, **kwargs):
 
         result = client.audio.translations.create(
             file=open(audio_test_file, "rb"),
@@ -179,8 +185,8 @@ class TestAudio(AzureRecordedTestCase):
         assert result == "1\n00:00:00,000 --> 00:00:02,000\nHello.\n\n\n"
 
     @configure
-    @pytest.mark.parametrize("api_type", [WHISPER_AZURE, OPENAI])
-    def test_translate_vtt(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(WHISPER_AZURE, PREVIEW), (OPENAI, "v1")])
+    def test_translate_vtt(self, client, api_type, api_version, **kwargs):
 
         result = client.audio.translations.create(
             file=open(audio_test_file, "rb"),
@@ -190,8 +196,8 @@ class TestAudio(AzureRecordedTestCase):
         assert result == "WEBVTT\n\n00:00:00.000 --> 00:00:02.000\nHello.\n\n"
 
     @configure
-    @pytest.mark.parametrize("api_type", [WHISPER_AZURE, OPENAI])
-    def test_transcribe_options(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(WHISPER_AZURE, PREVIEW), (OPENAI, "v1")])
+    def test_transcribe_options(self, client, api_type, api_version, **kwargs):
 
         result = client.audio.transcriptions.create(
             file=open(audio_test_file, "rb"),
@@ -203,8 +209,8 @@ class TestAudio(AzureRecordedTestCase):
         assert result.text == "Hello"
 
     @configure
-    @pytest.mark.parametrize("api_type", [WHISPER_AZURE, OPENAI])
-    def test_translate_options(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(WHISPER_AZURE, PREVIEW), (OPENAI, "v1")])
+    def test_translate_options(self, client, api_type, api_version, **kwargs):
 
         result = client.audio.translations.create(
             file=open(audio_test_file, "rb"),
@@ -215,8 +221,11 @@ class TestAudio(AzureRecordedTestCase):
         assert result.text == "Hello"
 
     @configure
-    @pytest.mark.parametrize("api_type", [TTS_OPENAI, TTS_AZURE, TTS_AZURE_AD])
-    def test_tts(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(TTS_AZURE, PREVIEW), (TTS_AZURE_AD, PREVIEW), (TTS_OPENAI, "v1")]
+    )
+    def test_tts(self, client, api_type, api_version, **kwargs):
 
         speech_file_path = pathlib.Path(__file__).parent / f"{uuid.uuid4()}.mp3"
         try:
@@ -233,8 +242,8 @@ class TestAudio(AzureRecordedTestCase):
             os.remove(speech_file_path)
 
     @configure
-    @pytest.mark.parametrize("api_type", [TTS_OPENAI, TTS_AZURE])
-    def test_tts_hd_streaming(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(TTS_AZURE, PREVIEW), (TTS_OPENAI, "v1")])
+    def test_tts_hd_streaming(self, client, api_type, api_version, **kwargs):
 
         with client.audio.speech.with_streaming_response.create(
             voice="echo",
@@ -245,8 +254,8 @@ class TestAudio(AzureRecordedTestCase):
 
 
     @configure
-    @pytest.mark.parametrize("api_type", [TTS_OPENAI, TTS_AZURE])
-    def test_tts_response_format(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(TTS_AZURE, PREVIEW), (TTS_OPENAI, "v1")])
+    def test_tts_response_format(self, client, api_type, api_version, **kwargs):
 
         speech_file_path = pathlib.Path(__file__).parent / f"{uuid.uuid4()}.flac"
         try:
@@ -264,8 +273,8 @@ class TestAudio(AzureRecordedTestCase):
             os.remove(speech_file_path)
 
     @configure
-    @pytest.mark.parametrize("api_type", [TTS_OPENAI, TTS_AZURE])
-    def test_tts_speed(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(TTS_AZURE, PREVIEW), (TTS_OPENAI, "v1")])
+    def test_tts_speed(self, client, api_type, api_version, **kwargs):
 
         speech_file_path = pathlib.Path(__file__).parent / f"{uuid.uuid4()}.mp3"
         try:
