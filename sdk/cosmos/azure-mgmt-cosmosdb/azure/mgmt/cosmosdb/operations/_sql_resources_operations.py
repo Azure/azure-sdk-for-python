@@ -45,7 +45,7 @@ def build_list_sql_databases_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -80,7 +80,7 @@ def build_get_sql_database_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -116,7 +116,7 @@ def build_create_update_sql_database_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-15-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -154,7 +154,7 @@ def build_delete_sql_database_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-15-preview"))
     # Construct URL
     _url = kwargs.pop(
         "template_url",
@@ -185,7 +185,7 @@ def build_get_sql_database_throughput_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -221,7 +221,7 @@ def build_update_sql_database_throughput_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-15-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -260,7 +260,7 @@ def build_migrate_sql_database_to_autoscale_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -296,7 +296,7 @@ def build_migrate_sql_database_to_manual_throughput_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -332,7 +332,7 @@ def build_list_client_encryption_keys_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -373,7 +373,7 @@ def build_get_client_encryption_key_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -415,7 +415,7 @@ def build_create_update_client_encryption_key_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-15-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -455,7 +455,7 @@ def build_list_sql_containers_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -496,7 +496,7 @@ def build_get_sql_container_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -538,7 +538,7 @@ def build_create_update_sql_container_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-15-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -582,7 +582,7 @@ def build_delete_sql_container_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-15-preview"))
     # Construct URL
     _url = kwargs.pop(
         "template_url",
@@ -614,7 +614,7 @@ def build_sql_database_partition_merge_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-15-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -658,7 +658,7 @@ def build_list_sql_container_partition_merge_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-15-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -703,7 +703,7 @@ def build_get_sql_container_throughput_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -745,7 +745,7 @@ def build_update_sql_container_throughput_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-15-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -790,7 +790,7 @@ def build_migrate_sql_container_to_autoscale_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -832,7 +832,7 @@ def build_migrate_sql_container_to_manual_throughput_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -869,7 +869,7 @@ def build_sql_database_retrieve_throughput_distribution_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-15-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -908,7 +908,7 @@ def build_sql_database_redistribute_throughput_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-15-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -952,7 +952,7 @@ def build_sql_container_retrieve_throughput_distribution_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-15-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -997,7 +997,7 @@ def build_sql_container_redistribute_throughput_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-15-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -1042,7 +1042,7 @@ def build_list_sql_stored_procedures_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1085,7 +1085,7 @@ def build_get_sql_stored_procedure_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1129,7 +1129,7 @@ def build_create_update_sql_stored_procedure_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-15-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -1175,7 +1175,7 @@ def build_delete_sql_stored_procedure_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-15-preview"))
     # Construct URL
     _url = kwargs.pop(
         "template_url",
@@ -1213,7 +1213,7 @@ def build_list_sql_user_defined_functions_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1256,7 +1256,7 @@ def build_get_sql_user_defined_function_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1300,7 +1300,7 @@ def build_create_update_sql_user_defined_function_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-15-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -1346,7 +1346,7 @@ def build_delete_sql_user_defined_function_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-15-preview"))
     # Construct URL
     _url = kwargs.pop(
         "template_url",
@@ -1384,7 +1384,7 @@ def build_list_sql_triggers_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1427,7 +1427,7 @@ def build_get_sql_trigger_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1471,7 +1471,7 @@ def build_create_update_sql_trigger_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-15-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -1517,7 +1517,7 @@ def build_delete_sql_trigger_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-15-preview"))
     # Construct URL
     _url = kwargs.pop(
         "template_url",
@@ -1550,7 +1550,7 @@ def build_get_sql_role_definition_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1586,7 +1586,7 @@ def build_create_update_sql_role_definition_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-15-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -1625,7 +1625,7 @@ def build_delete_sql_role_definition_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1661,7 +1661,7 @@ def build_list_sql_role_definitions_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1696,7 +1696,7 @@ def build_get_sql_role_assignment_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1732,7 +1732,7 @@ def build_create_update_sql_role_assignment_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-15-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -1771,7 +1771,7 @@ def build_delete_sql_role_assignment_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1807,7 +1807,7 @@ def build_list_sql_role_assignments_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1847,7 +1847,7 @@ def build_retrieve_continuous_backup_information_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-15-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
