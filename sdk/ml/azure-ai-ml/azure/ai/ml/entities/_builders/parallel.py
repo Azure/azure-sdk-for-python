@@ -110,7 +110,7 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):  # pylint: disable=too-many-i
         compute: Optional[str] = None,
         inputs: Optional[Dict] = None,
         outputs: Optional[Dict[str, Union[str, Output, "Output"]]] = None,
-        retry_settings: Optional[Union[RetrySettings, Dict]] = None,
+        retry_settings: Optional[Union[RetrySettings, Dict[str, str]]] = None,
         logging_level: Optional[str] = None,
         max_concurrency_per_instance: Optional[int] = None,
         error_threshold: Optional[int] = None,
@@ -132,7 +132,8 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):  # pylint: disable=too-many-i
 
         if isinstance(component, FlowComponent):
             # make input definition fit actual inputs for flow component
-            with component._inputs._fit_inputs(inputs):  # pylint: disable=protected-access
+            # pylint: disable=protected-access
+            with component._inputs._fit_inputs(inputs):  # type: ignore[attr-defined]
                 BaseNode.__init__(
                     self,
                     type=NodeType.PARALLEL,
