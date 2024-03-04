@@ -1,5 +1,11 @@
 # Release History
 
+## 12.19.1 (2024-03-04)
+
+### Bugs Fixed
+- Fixed an issue where under rare circumstances, full downloads of sparse Page Blobs could result in the
+downloaded content containing up to one "chunk" of extra `\x00` at the end due to an optimization error.
+
 ## 12.19.0 (2023-11-07)
 
 ### Features Added
