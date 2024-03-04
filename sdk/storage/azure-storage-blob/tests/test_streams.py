@@ -333,6 +333,7 @@ class TestStructuredMessageDecodeStream:
 
         # Stream already set to front
         message_stream.write(b'\xFF')
+        message_stream.seek(0, io.SEEK_SET)
 
         stream = StructuredMessageDecodeStream(message_stream, length)
         with pytest.raises(StructuredMessageError):
