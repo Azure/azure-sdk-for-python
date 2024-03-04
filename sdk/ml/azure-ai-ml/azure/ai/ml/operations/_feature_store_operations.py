@@ -113,7 +113,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
     @distributed_trace
     @monitor_with_activity(ops_logger, "FeatureStore.Get", ActivityType.PUBLICAPI)
     # pylint: disable=arguments-renamed
-    def get(self, name: str, **kwargs: Any) -> Optional[FeatureStore]:
+    def get(self, name: str, **kwargs: Any) -> FeatureStore:
         """Get a feature store by name.
 
         :param name: Name of the feature store.
@@ -122,7 +122,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
         :rtype: FeatureStore
         """
 
-        feature_store = None
+        feature_store: Any = None
         resource_group = kwargs.get("resource_group") or self._resource_group_name
         rest_workspace_obj = kwargs.get("rest_workspace_obj", None) or self._operation.get(resource_group, name)
         if rest_workspace_obj and rest_workspace_obj.kind and rest_workspace_obj.kind.lower() == FEATURE_STORE_KIND:
