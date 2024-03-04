@@ -19,7 +19,7 @@ from .._utils._azureml_polling import AzureMLPolling
 from ..constants._common import LROConfigurations, Scope
 
 ops_logger = OpsLogger(__name__)
-module_logger = ops_logger.module_logger
+logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 
 
 class RegistryOperations:
@@ -47,7 +47,7 @@ class RegistryOperations:
         self.containerRegistry = "none"
         self._init_kwargs = kwargs
 
-    @monitor_with_activity(ops_logger, "Registry.List", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Registry.List", ActivityType.PUBLICAPI)
     def list(self, *, scope: str = Scope.RESOURCE_GROUP) -> Iterable[Registry]:
         """List all registries that the user has access to in the current resource group or subscription.
 
@@ -71,7 +71,7 @@ class RegistryOperations:
             ),
         )
 
-    @monitor_with_activity(ops_logger, "Registry.Get", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Registry.Get", ActivityType.PUBLICAPI)
     def get(self, name: Optional[str] = None) -> Optional[Registry]:
         """Get a registry by name.
 
@@ -117,7 +117,7 @@ class RegistryOperations:
             path_format_arguments=path_format_arguments,
         )
 
-    @monitor_with_activity(ops_logger, "Registry.BeginCreate", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Registry.BeginCreate", ActivityType.PUBLICAPI)
     def begin_create(
         self,
         registry: Registry,
@@ -149,7 +149,7 @@ class RegistryOperations:
 
         return poller
 
-    @monitor_with_activity(ops_logger, "Registry.BeginDelete", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Registry.BeginDelete", ActivityType.PUBLICAPI)
     def begin_delete(self, *, name: str, **kwargs: Dict) -> LROPoller[None]:
         """Delete a registry if it exists. Returns nothing on a successful operation.
 

@@ -46,7 +46,7 @@ from azure.core.tracing.decorator import distributed_trace
 from ._workspace_operations_base import WorkspaceOperationsBase
 
 ops_logger = OpsLogger(__name__)
-module_logger = ops_logger.module_logger
+logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 
 
 class FeatureStoreOperations(WorkspaceOperationsBase):
@@ -77,7 +77,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
         self._workspace_connection_operation = service_client.workspace_connections
 
     @distributed_trace
-    @monitor_with_activity(ops_logger, "FeatureStore.List", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "FeatureStore.List", ActivityType.PUBLICAPI)
     # pylint: disable=unused-argument
     def list(self, *, scope: str = Scope.RESOURCE_GROUP, **kwargs: Dict) -> Iterable[FeatureStore]:
         """List all feature stores that the user has access to in the current
@@ -111,7 +111,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
         )
 
     @distributed_trace
-    @monitor_with_activity(ops_logger, "FeatureStore.Get", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "FeatureStore.Get", ActivityType.PUBLICAPI)
     # pylint: disable=arguments-renamed
     def get(self, name: str, **kwargs: Any) -> Optional[FeatureStore]:
         """Get a feature store by name.
@@ -185,7 +185,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
         return feature_store
 
     @distributed_trace
-    @monitor_with_activity(ops_logger, "FeatureStore.BeginCreate", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "FeatureStore.BeginCreate", ActivityType.PUBLICAPI)
     # pylint: disable=arguments-differ
     def begin_create(
         self,
@@ -250,7 +250,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
         )
 
     @distributed_trace
-    @monitor_with_activity(ops_logger, "FeatureStore.BeginUpdate", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "FeatureStore.BeginUpdate", ActivityType.PUBLICAPI)
     # pylint: disable=arguments-renamed
     # pylint: disable=too-many-locals, too-many-branches, too-many-statements
     def begin_update(
@@ -479,7 +479,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
         )
 
     @distributed_trace
-    @monitor_with_activity(ops_logger, "FeatureStore.BeginDelete", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "FeatureStore.BeginDelete", ActivityType.PUBLICAPI)
     def begin_delete(self, name: str, *, delete_dependent_resources: bool = False, **kwargs: Any) -> LROPoller[None]:
         """Delete a FeatureStore.
 
@@ -502,7 +502,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
         return super().begin_delete(name=name, delete_dependent_resources=delete_dependent_resources, **kwargs)
 
     @distributed_trace
-    @monitor_with_activity(ops_logger, "FeatureStore.BeginProvisionNetwork", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "FeatureStore.BeginProvisionNetwork", ActivityType.PUBLICAPI)
     @experimental
     def begin_provision_network(
         self,

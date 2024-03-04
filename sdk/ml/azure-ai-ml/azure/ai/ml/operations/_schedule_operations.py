@@ -49,7 +49,7 @@ from ._job_ops_helper import stream_logs_until_completion
 from ._operation_orchestrator import OperationOrchestrator
 
 ops_logger = OpsLogger(__name__)
-module_logger = ops_logger.module_logger
+logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 
 
 class ScheduleOperations(_ScopeDependentOperations):
@@ -116,7 +116,7 @@ class ScheduleOperations(_ScopeDependentOperations):
         )
 
     @distributed_trace
-    @monitor_with_activity(ops_logger, "Schedule.List", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Schedule.List", ActivityType.PUBLICAPI)
     def list(
         self,
         *,
@@ -172,7 +172,7 @@ class ScheduleOperations(_ScopeDependentOperations):
         )
 
     @distributed_trace
-    @monitor_with_activity(ops_logger, "Schedule.Delete", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Schedule.Delete", ActivityType.PUBLICAPI)
     def begin_delete(
         self,
         name: str,
@@ -196,7 +196,7 @@ class ScheduleOperations(_ScopeDependentOperations):
         return poller
 
     @distributed_trace
-    @monitor_with_telemetry_mixin(ops_logger, "Schedule.Get", ActivityType.PUBLICAPI)
+    @monitor_with_telemetry_mixin(logger, "Schedule.Get", ActivityType.PUBLICAPI)
     def get(
         self,
         name: str,
@@ -219,7 +219,7 @@ class ScheduleOperations(_ScopeDependentOperations):
         )
 
     @distributed_trace
-    @monitor_with_telemetry_mixin(ops_logger, "Schedule.CreateOrUpdate", ActivityType.PUBLICAPI)
+    @monitor_with_telemetry_mixin(logger, "Schedule.CreateOrUpdate", ActivityType.PUBLICAPI)
     def begin_create_or_update(
         self,
         schedule: Schedule,
@@ -258,7 +258,7 @@ class ScheduleOperations(_ScopeDependentOperations):
         return poller
 
     @distributed_trace
-    @monitor_with_activity(ops_logger, "Schedule.Enable", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Schedule.Enable", ActivityType.PUBLICAPI)
     def begin_enable(
         self,
         name: str,
@@ -276,7 +276,7 @@ class ScheduleOperations(_ScopeDependentOperations):
         return self.begin_create_or_update(schedule, **kwargs)
 
     @distributed_trace
-    @monitor_with_activity(ops_logger, "Schedule.Disable", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Schedule.Disable", ActivityType.PUBLICAPI)
     def begin_disable(
         self,
         name: str,

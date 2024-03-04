@@ -20,7 +20,7 @@ from azure.ai.ml.entities._workspace.connections.workspace_connection import Wor
 from azure.core.credentials import TokenCredential
 
 ops_logger = OpsLogger(__name__)
-module_logger = ops_logger.module_logger
+logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 
 
 class WorkspaceConnectionsOperations(_ScopeDependentOperations):
@@ -46,7 +46,7 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
         self._credentials = credentials
         self._init_kwargs = kwargs
 
-    @monitor_with_activity(ops_logger, "WorkspaceConnections.Get", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "WorkspaceConnections.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, **kwargs: Dict) -> Optional[WorkspaceConnection]:
         """Get a workspace connection by name.
 
@@ -74,7 +74,7 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
 
         return WorkspaceConnection._from_rest_object(rest_obj=obj)
 
-    @monitor_with_activity(ops_logger, "WorkspaceConnections.CreateOrUpdate", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "WorkspaceConnections.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(
         self, workspace_connection: WorkspaceConnection, **kwargs: Any
     ) -> Optional[WorkspaceConnection]:
@@ -105,7 +105,7 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
         )
         return WorkspaceConnection._from_rest_object(rest_obj=response)
 
-    @monitor_with_activity(ops_logger, "WorkspaceConnections.Delete", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "WorkspaceConnections.Delete", ActivityType.PUBLICAPI)
     def delete(self, name: str) -> None:
         """Delete the workspace connection.
 
@@ -128,7 +128,7 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
             **self._scope_kwargs,
         )
 
-    @monitor_with_activity(ops_logger, "WorkspaceConnections.List", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "WorkspaceConnections.List", ActivityType.PUBLICAPI)
     def list(
         self,
         connection_type: Optional[str] = None,

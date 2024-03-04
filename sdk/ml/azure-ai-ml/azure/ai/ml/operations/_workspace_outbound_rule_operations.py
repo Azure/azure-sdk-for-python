@@ -15,7 +15,7 @@ from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
 
 ops_logger = OpsLogger(__name__)
-module_logger = ops_logger.module_logger
+logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 
 
 class WorkspaceOutboundRuleOperations:
@@ -42,7 +42,7 @@ class WorkspaceOutboundRuleOperations:
         self._credentials = credentials
         self._init_kwargs = kwargs
 
-    @monitor_with_activity(ops_logger, "WorkspaceOutboundRule.Get", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "WorkspaceOutboundRule.Get", ActivityType.PUBLICAPI)
     def get(self, workspace_name: str, outbound_rule_name: str, **kwargs: Any) -> OutboundRule:
         """Get a workspace OutboundRule by name.
 
@@ -71,7 +71,7 @@ class WorkspaceOutboundRuleOperations:
         res: OutboundRule = OutboundRule._from_rest_object(obj.properties, name=obj.name)  # type: ignore
         return res
 
-    @monitor_with_activity(ops_logger, "WorkspaceOutboundRule.BeginCreate", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "WorkspaceOutboundRule.BeginCreate", ActivityType.PUBLICAPI)
     def begin_create(self, workspace_name: str, rule: OutboundRule, **kwargs: Any) -> LROPoller[OutboundRule]:
         """Create a Workspace OutboundRule.
 
@@ -116,7 +116,7 @@ class WorkspaceOutboundRuleOperations:
         module_logger.info("Create request initiated for outbound rule with name: %s\n", rule.name)
         return poller
 
-    @monitor_with_activity(ops_logger, "WorkspaceOutboundRule.BeginUpdate", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "WorkspaceOutboundRule.BeginUpdate", ActivityType.PUBLICAPI)
     def begin_update(self, workspace_name: str, rule: OutboundRule, **kwargs: Any) -> LROPoller[OutboundRule]:
         """Update a Workspace OutboundRule.
 
@@ -161,7 +161,7 @@ class WorkspaceOutboundRuleOperations:
         module_logger.info("Update request initiated for outbound rule with name: %s\n", rule.name)
         return poller
 
-    @monitor_with_activity(ops_logger, "WorkspaceOutboundRule.List", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "WorkspaceOutboundRule.List", ActivityType.PUBLICAPI)
     def list(self, workspace_name: str, **kwargs: Any) -> Iterable[OutboundRule]:
         """List Workspace OutboundRules.
 
@@ -191,7 +191,7 @@ class WorkspaceOutboundRuleOperations:
         ]
         return result  # type: ignore
 
-    @monitor_with_activity(ops_logger, "WorkspaceOutboundRule.Remove", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "WorkspaceOutboundRule.Remove", ActivityType.PUBLICAPI)
     def begin_remove(self, workspace_name: str, outbound_rule_name: str, **kwargs: Any) -> LROPoller[None]:
         """Remove a Workspace OutboundRule.
 
