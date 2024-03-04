@@ -432,7 +432,7 @@ class PhoneNumbersClient(object):
         )
 
     @distributed_trace
-    def search_operator_information( #type: OperatorInformationResult
+    def search_operator_information(
             self,
             phone_numbers,  # type: PhoneNumberSearchType
             options:Optional[OperatorInformationOptions]=None, #type: OperatorInformationOptions
@@ -448,7 +448,7 @@ class PhoneNumbersClient(object):
         if not isinstance(phone_numbers, list):
             phone_numbers = cast(PhoneNumberSearchType, [ phone_numbers ])
         if options is None:
-            options = OperatorInformationOptions(include_additional_phone_and_operator_details=False)
+            options = OperatorInformationOptions(include_additional_operator_details=False)
         request = OperatorInformationRequest(phone_numbers = phone_numbers, options=options)
         return self._phone_number_client.phone_numbers.operator_information_search(
             request,
