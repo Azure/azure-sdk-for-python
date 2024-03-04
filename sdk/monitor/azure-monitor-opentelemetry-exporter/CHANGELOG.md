@@ -1,17 +1,34 @@
 # Release History
 
-## 1.0.0b23 (Unreleased)
+## 1.0.0b24 (Unreleased)
 
 ### Features Added
-
-- Add device.* to part A fields
-    ([#34229](https://github.com/Azure/azure-sdk-for-python/pull/34229))
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.0.0b23 (2024-02-28)
+
+### Features Added
+
+- Add device.* to part A fields
+    ([#34229](https://github.com/Azure/azure-sdk-for-python/pull/34229))
+- Add live metrics exporting functionality
+    ([#34141](https://github.com/Azure/azure-sdk-for-python/pull/34141))
+- Add application.ver to part A fields
+    ([#34401](https://github.com/Azure/azure-sdk-for-python/pull/34401))
+- Add `APPLICATIONINSIGHTS_METRIC_NAMESPACE_OPT_IN`
+    ([#34463](https://github.com/Azure/azure-sdk-for-python/pull/34463))
+
+### Other Changes
+
+- Add attachType character to sdkVersion prefix
+    ([#34226](https://github.com/Azure/azure-sdk-for-python/pull/34226))
+- Add AKS scenarios to statsbeat metric and sdkVersion prefix
+    ([#34427](https://github.com/Azure/azure-sdk-for-python/pull/34427))
 
 ## 1.0.0b22 (2024-02-01)
 

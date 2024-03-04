@@ -77,6 +77,9 @@ from ._models_py3 import UniformInt64RangePartitionSchemeDescription
 from ._models_py3 import UpgradableVersionPathResult
 from ._models_py3 import UpgradableVersionsDescription
 from ._models_py3 import UserAssignedIdentity
+from ._models_py3 import VMSize
+from ._models_py3 import VMSizeResource
+from ._models_py3 import VMSizesResult
 
 from ._service_fabric_management_client_enums import AddOnFeatures
 from ._service_fabric_management_client_enums import ArmServicePackageActivationMode
@@ -179,6 +182,9 @@ __all__ = [
     "UpgradableVersionPathResult",
     "UpgradableVersionsDescription",
     "UserAssignedIdentity",
+    "VMSize",
+    "VMSizeResource",
+    "VMSizesResult",
     "AddOnFeatures",
     "ArmServicePackageActivationMode",
     "ArmUpgradeFailureAction",

@@ -34,6 +34,7 @@
     "sdk/ai/**/index/**",
     "sdk/ai/azure-ai-generative/tests/**",
     "sdk/ai/azure-ai-resources/azure/ai/resources/_index/_langchain/vendor/**",
+    "sdk/ai/azure-ai-resources/azure/ai/resources/_restclient/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-autosuggest/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-customimagesearch/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-customsearch/**",
@@ -450,7 +451,9 @@
     "aiter",
     "solft",
     "amltmp",
-    "amltemp"
+    "amltemp",
+    "deserializers",
+    "dicom",
   ],
   "overrides": [
     {
@@ -549,6 +552,12 @@
       "words": [
         "Rlcw",
         "Jwcmlud"
+      ]
+    },
+    {
+      "filename": "sdk/identity/azure-identity/tests/*.py",
+      "words": [
+        "infile"
       ]
     },
     {
@@ -1708,6 +1717,17 @@
         "deserializers",
         "ctxt",
         "wday"
+      ]
+    },
+    {
+      "filename": "sdk/healthinsights/azure-healthinsights-radiologyinsights/**",
+      "words": [
+        "ctxt",
+        "mros",
+        "Nify",
+        "loinc",
+        "wday",
+        "SNOMED"
       ]
     }
   ],

@@ -29,8 +29,9 @@ from azure.ai.ml._restclient.runhistory import AzureMachineLearningWorkspaces as
 from azure.ai.ml._restclient.runhistory.models import Run
 from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient022023Preview
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase, ListViewType, UserIdentity
-from azure.ai.ml._restclient.v2023_08_01_preview.models import JobBase as JobBase_2308
 from azure.ai.ml._restclient.v2023_08_01_preview.models import JobType as RestJobType
+from azure.ai.ml._restclient.v2024_01_01_preview.models import JobType as RestJobType_20240101
+from azure.ai.ml._restclient.v2024_01_01_preview.models import JobBase as JobBase_2401
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -71,6 +72,7 @@ from azure.ai.ml.entities._builders import BaseNode, Command, Spark
 from azure.ai.ml.entities._datastore._constants import WORKSPACE_BLOB_STORE
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
+from azure.ai.ml.entities._job.finetuning.finetuning_job import FineTuningJob
 from azure.ai.ml.entities._job.base_job import _BaseJob
 from azure.ai.ml.entities._job.import_job import ImportJob
 from azure.ai.ml.entities._job.job import _is_pipeline_child_job
@@ -126,7 +128,7 @@ if TYPE_CHECKING:
     from azure.ai.ml.operations import DatastoreOperations
 
 ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
+module_logger = ops_logger.module_logger
 
 
 class JobOperations(_ScopeDependentOperations):
@@ -158,6 +160,7 @@ class JobOperations(_ScopeDependentOperations):
     ) -> None:
         super(JobOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
+
         self._operation_2023_02_preview = service_client_02_2023_preview.jobs
         self._service_client = service_client_02_2023_preview
         self._all_operations = all_operations
@@ -175,7 +178,7 @@ class JobOperations(_ScopeDependentOperations):
             self._all_operations, self._operation_scope, self._operation_config
         )  # pylint: disable=line-too-long
 
-        self.service_client_08_2023_preview = kwargs.pop("service_client_08_2023_preview", None)
+        self.service_client_01_2024_preview = kwargs.pop("service_client_01_2024_preview", None)
         self._kwargs = kwargs
 
         self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
@@ -257,7 +260,7 @@ class JobOperations(_ScopeDependentOperations):
         return self._api_base_url
 
     @distributed_trace
-    @monitor_with_activity(logger, "Job.List", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Job.List", ActivityType.PUBLICAPI)
     def list(
         self,
         *,
@@ -323,7 +326,7 @@ class JobOperations(_ScopeDependentOperations):
             return None
 
     @distributed_trace
-    @monitor_with_telemetry_mixin(logger, "Job.Get", ActivityType.PUBLICAPI)
+    @monitor_with_telemetry_mixin(ops_logger, "Job.Get", ActivityType.PUBLICAPI)
     def get(self, name: str) -> Job:
         """Gets a job resource.
 
@@ -361,7 +364,7 @@ class JobOperations(_ScopeDependentOperations):
         return job
 
     @distributed_trace
-    @monitor_with_telemetry_mixin(logger, "Job.ShowServices", ActivityType.PUBLICAPI)
+    @monitor_with_telemetry_mixin(ops_logger, "Job.ShowServices", ActivityType.PUBLICAPI)
     def show_services(self, name: str, node_index: int = 0) -> Optional[Dict]:
         """Gets services associated with a job's node.
 
@@ -393,7 +396,7 @@ class JobOperations(_ScopeDependentOperations):
         }
 
     @distributed_trace
-    @monitor_with_activity(logger, "Job.Cancel", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Job.Cancel", ActivityType.PUBLICAPI)
     def begin_cancel(self, name: str, **kwargs: Any) -> LROPoller[None]:
         """Cancels a job.
 
@@ -483,7 +486,7 @@ class JobOperations(_ScopeDependentOperations):
         return None
 
     @distributed_trace
-    @monitor_with_telemetry_mixin(logger, "Job.Validate", ActivityType.PUBLICAPI)
+    @monitor_with_telemetry_mixin(ops_logger, "Job.Validate", ActivityType.PUBLICAPI)
     def validate(self, job: Job, *, raise_on_failure: bool = False, **kwargs: Any) -> ValidationResult:
         """Validates a Job object before submitting to the service. Anonymous assets may be created if there are inline
         defined entities such as Component, Environment, and Code. Only pipeline jobs are supported for validation
@@ -507,7 +510,7 @@ class JobOperations(_ScopeDependentOperations):
         """
         return self._validate(job, raise_on_failure=raise_on_failure, **kwargs)
 
-    @monitor_with_telemetry_mixin(logger, "Job.Validate", ActivityType.INTERNALCALL)
+    @monitor_with_telemetry_mixin(ops_logger, "Job.Validate", ActivityType.INTERNALCALL)
     def _validate(
         self, job: Job, *, raise_on_failure: bool = False, **kwargs: Any  # pylint:disable=unused-argument
     ) -> ValidationResult:
@@ -578,7 +581,7 @@ class JobOperations(_ScopeDependentOperations):
         return job._try_raise(validation_result, raise_error=raise_on_failure)  # pylint: disable=protected-access
 
     @distributed_trace
-    @monitor_with_telemetry_mixin(logger, "Job.CreateOrUpdate", ActivityType.PUBLICAPI)
+    @monitor_with_telemetry_mixin(ops_logger, "Job.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(
         self,
         job: Job,
@@ -695,7 +698,7 @@ class JobOperations(_ScopeDependentOperations):
             # request for submitting to ES. Once we request to ES and start the run, we
             # need to put the same body to MFE to append user tags etc.
             if rest_job_resource.properties.job_type == RestJobType.PIPELINE:
-                job_object = self._get_job_2308(rest_job_resource.name)
+                job_object = self._get_job_2401(rest_job_resource.name)
             else:
                 job_object = self._get_job(rest_job_resource.name)
             if result.properties.tags is not None:
@@ -719,11 +722,13 @@ class JobOperations(_ScopeDependentOperations):
     ) -> JobBase:
         service_client_operation = self._operation_2023_02_preview
         # Upgrade api from 2023-04-01-preview to 2023-08-01 for pipeline job
+        if rest_job_resource.properties.job_type == RestJobType_20240101.FINE_TUNING:
+            service_client_operation = self.service_client_01_2024_preview.jobs
         if rest_job_resource.properties.job_type == RestJobType.PIPELINE:
-            service_client_operation = self.service_client_08_2023_preview.jobs
+            service_client_operation = self.service_client_01_2024_preview.jobs
 
         if rest_job_resource.properties.job_type == RestJobType.SWEEP:
-            service_client_operation = self.service_client_08_2023_preview.jobs
+            service_client_operation = self.service_client_01_2024_preview.jobs
 
         result = service_client_operation.create_or_update(
             id=rest_job_resource.name,
@@ -738,7 +743,7 @@ class JobOperations(_ScopeDependentOperations):
     def _archive_or_restore(self, name: str, is_archived: bool) -> None:
         job_object = self._get_job(name)
         if job_object.properties.job_type == RestJobType.PIPELINE:
-            job_object = self._get_job_2308(name)
+            job_object = self._get_job_2401(name)
         if _is_pipeline_child_job(job_object):
             raise PipelineChildJobError(job_id=job_object.id)
         job_object.properties.is_archived = is_archived
@@ -746,7 +751,7 @@ class JobOperations(_ScopeDependentOperations):
         self._create_or_update_with_different_version_api(rest_job_resource=job_object)
 
     @distributed_trace
-    @monitor_with_telemetry_mixin(logger, "Job.Archive", ActivityType.PUBLICAPI)
+    @monitor_with_telemetry_mixin(ops_logger, "Job.Archive", ActivityType.PUBLICAPI)
     def archive(self, name: str) -> None:
         """Archives a job.
 
@@ -767,7 +772,7 @@ class JobOperations(_ScopeDependentOperations):
         self._archive_or_restore(name=name, is_archived=True)
 
     @distributed_trace
-    @monitor_with_telemetry_mixin(logger, "Job.Restore", ActivityType.PUBLICAPI)
+    @monitor_with_telemetry_mixin(ops_logger, "Job.Restore", ActivityType.PUBLICAPI)
     def restore(self, name: str) -> None:
         """Restores an archived job.
 
@@ -788,7 +793,7 @@ class JobOperations(_ScopeDependentOperations):
         self._archive_or_restore(name=name, is_archived=False)
 
     @distributed_trace
-    @monitor_with_activity(logger, "Job.Stream", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Job.Stream", ActivityType.PUBLICAPI)
     def stream(self, name: str) -> None:
         """Streams the logs of a running job.
 
@@ -815,7 +820,7 @@ class JobOperations(_ScopeDependentOperations):
         )
 
     @distributed_trace
-    @monitor_with_activity(logger, "Job.Download", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Job.Download", ActivityType.PUBLICAPI)
     def download(
         self,
         name: str,
@@ -1029,10 +1034,10 @@ class JobOperations(_ScopeDependentOperations):
             **self._kwargs,
         )
 
-    # Upgrade api from 2023-04-01-preview to 2023-08-01 for pipeline job
-    # We can remove this function once `_get_job` function has also been upgraded to 2023-08-01 api
-    def _get_job_2308(self, name: str) -> JobBase_2308:
-        service_client_operation = self.service_client_08_2023_preview.jobs
+    # Upgrade api from 2023-04-01-preview to 2024-01-01-preview for pipeline job
+    # We can remove this function once `_get_job` function has also been upgraded to the same version with pipeline
+    def _get_job_2401(self, name: str) -> JobBase_2401:
+        service_client_operation = self.service_client_01_2024_preview.jobs
         return service_client_operation.get(
             id=name,
             resource_group_name=self._operation_scope.resource_group_name,
@@ -1073,6 +1078,8 @@ class JobOperations(_ScopeDependentOperations):
             # as they are part of the pipeline component
         elif isinstance(job, AutoMLJob):
             self._resolve_automl_job_inputs(job)
+        elif isinstance(job, FineTuningJob):
+            self._resolve_finetuning_job_inputs(job)
         elif isinstance(job, Spark):
             self._resolve_job_inputs(job._job_inputs.values(), job._base_path)
         elif isinstance(job, Command):
@@ -1102,6 +1109,20 @@ class JobOperations(_ScopeDependentOperations):
                 self._resolve_job_input(job.validation_data, job._base_path)
             if hasattr(job, "test_data") and job.test_data is not None:
                 self._resolve_job_input(job.test_data, job._base_path)
+
+    def _resolve_finetuning_job_inputs(self, job: FineTuningJob) -> None:
+        """This method resolves the inputs for FineTuning jobs.
+
+        :param job: the job resource entity
+        :type job: FineTuningJob
+        """
+        from azure.ai.ml.entities._job.finetuning.finetuning_vertical import FineTuningVertical
+
+        if isinstance(job, FineTuningVertical):
+            # self._resolve_job_input(job.model, job._base_path)
+            self._resolve_job_input(job.training_data, job._base_path)
+            if job.validation_data is not None:
+                self._resolve_job_input(job.validation_data, job._base_path)
 
     def _resolve_azureml_id(self, job: Job) -> Job:
         """This method converts ARM id to name or name:version for nested
@@ -1325,6 +1346,8 @@ class JobOperations(_ScopeDependentOperations):
             job = self._resolve_arm_id_for_automl_job(job, resolver, inside_pipeline=False)
         elif isinstance(job, PipelineJob):
             job = self._resolve_arm_id_for_pipeline_job(job, resolver)
+        elif isinstance(job, FineTuningJob):
+            pass
         else:
             msg = f"Non supported job type: {type(job)}"
             raise ValidationException(
