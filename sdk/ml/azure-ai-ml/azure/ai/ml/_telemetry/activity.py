@@ -23,7 +23,6 @@ from uuid import uuid4
 
 from marshmallow import ValidationError
 
-from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils.utils import _is_user_error_from_exception_type, _is_user_error_from_status_code, _str_to_bool
 from azure.ai.ml.exceptions import ErrorCategory, MlException
 from azure.core.exceptions import HttpResponseError
@@ -261,8 +260,8 @@ def monitor_with_activity(
     To monitor, use the ``@monitor_with_activity`` decorator. As an alternative, you can also wrap the
     logical block of code with the ``log_activity()`` method.
 
-    :param logger: The operations logging class, containing loggers and tracer for the package and module
-    :type logger: ~azure.ai.ml._utils._logger_utils.OpsLogger
+    :param logger: The logger adapter.
+    :type logger: logging.LoggerAdapter
     :param activity_name: The name of the activity. The name should be unique per the wrapped logical code block.
     :type activity_name: str
     :param activity_type: One of PUBLICAPI, INTERNALCALL, or CLIENTPROXY which represent an incoming API call,
@@ -276,16 +275,8 @@ def monitor_with_activity(
     def monitor(f):
         @functools.wraps(f)
         def wrapper(*args, **kwargs):
-            tracer = logger.package_tracer if isinstance(logger, OpsLogger) else None
-            if tracer:
-                with tracer.span():
-                    with log_activity(
-                        logger.package_logger, activity_name or f.__name__, activity_type, custom_dimensions
-                    ):
-                        return f(*args, **kwargs)
-            else:
-                with log_activity(logger.package_logger, activity_name or f.__name__, activity_type, custom_dimensions):
-                    return f(*args, **kwargs)
+            with log_activity(logger, activity_name or f.__name__, activity_type, custom_dimensions):
+                return f(*args, **kwargs)
 
         return wrapper
 
@@ -309,7 +300,7 @@ def monitor_with_telemetry_mixin(
     will collect from return value.
     To monitor, use the ``@monitor_with_telemetry_mixin`` decorator.
 
-    :param logger: The operations logging class, containing loggers and tracer for the package and module
+    :param logger: The logger adapter.
     :type logger: logging.LoggerAdapter
     :param activity_name: The name of the activity. The name should be unique per the wrapped logical code block.
     :type activity_name: str
@@ -323,8 +314,6 @@ def monitor_with_telemetry_mixin(
     :type extra_keys: list[str]
     :return:
     """
-
-    logger = logger.package_logger if isinstance(logger, OpsLogger) else logger
 
     def monitor(f):
         def _collect_from_parameters(f, args, kwargs, extra_keys):

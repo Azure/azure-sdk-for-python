@@ -10,7 +10,7 @@ import os
 from functools import singledispatch
 from itertools import product
 from pathlib import Path
-from typing import Any, Dict, Optional, Tuple, TypeVar, Union
+from typing import Any, Optional, Tuple, TypeVar, Union
 
 from azure.ai.ml._azure_environments import (
     CloudArgumentKeys,
@@ -269,12 +269,12 @@ class MLClient:
 
         user_agent = kwargs.get("user_agent", None)
 
-        app_insights_handler: Tuple = get_appinsights_log_handler(
+        app_insights_handler = get_appinsights_log_handler(
             user_agent,
             **{"properties": properties},
             enable_telemetry=self._operation_config.enable_telemetry,
         )
-        app_insights_handler_kwargs: Dict[str, Tuple] = {"app_insights_handler": app_insights_handler}
+        app_insights_handler_kwargs = {"app_insights_handler": app_insights_handler}
 
         base_url = _get_base_url_from_metadata(cloud_name=cloud_name, is_local_mfe=True)
         self._base_url = base_url
@@ -442,7 +442,7 @@ class MLClient:
             self._service_client_10_2022_preview,
             self._operation_container,
             self._credential,
-            **app_insights_handler_kwargs,  # type: ignore[arg-type]
+            **app_insights_handler_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.REGISTRY, self._registries)  # type: ignore[arg-type]
 
@@ -463,7 +463,7 @@ class MLClient:
             self._operation_scope,
             self._operation_config,
             self._service_client_08_2023_preview,
-            **app_insights_handler_kwargs,  # type: ignore[arg-type]
+            **app_insights_handler_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.COMPUTE, self._compute)
         self._datastores = DatastoreOperations(
@@ -471,7 +471,7 @@ class MLClient:
             operation_config=self._operation_config,
             serviceclient_2023_04_01_preview=self._service_client_04_2023_preview,
             serviceclient_2024_01_01_preview=self._service_client_01_2024_preview,
-            **ops_kwargs,  # type: ignore[arg-type]
+            **ops_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.DATASTORE, self._datastores)
         self._models = ModelOperations(
@@ -487,7 +487,7 @@ class MLClient:
             workspace_rg=self._ws_rg,
             workspace_sub=self._ws_sub,
             registry_reference=registry_reference,
-            **app_insights_handler_kwargs,  # type: ignore[arg-type]
+            **app_insights_handler_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.MODEL, self._models)
         self._code = CodeOperations(
@@ -495,7 +495,7 @@ class MLClient:
             self._operation_config,
             self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_04_2023,
             self._datastores,
-            **ops_kwargs,  # type: ignore[arg-type]
+            **ops_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.CODE, self._code)
         self._environments = EnvironmentOperations(
@@ -503,7 +503,7 @@ class MLClient:
             self._operation_config,
             self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_04_2023_preview,
             self._operation_container,
-            **ops_kwargs,  # type: ignore[arg-type]
+            **ops_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.ENVIRONMENT, self._environments)
         self._local_endpoint_helper = _LocalEndpointHelper(requests_pipeline=self._requests_pipeline)
@@ -516,7 +516,7 @@ class MLClient:
             self._local_endpoint_helper,
             self._credential,
             requests_pipeline=self._requests_pipeline,
-            **ops_kwargs,  # type: ignore[arg-type]
+            **ops_kwargs,
         )
         self._batch_endpoints = BatchEndpointOperations(
             self._operation_scope,
@@ -526,7 +526,7 @@ class MLClient:
             self._credential,
             requests_pipeline=self._requests_pipeline,
             service_client_09_2020_dataplanepreview=self._service_client_09_2020_dataplanepreview,
-            **ops_kwargs,  # type: ignore[arg-type]
+            **ops_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.BATCH_ENDPOINT, self._batch_endpoints)
         self._operation_container.add(AzureMLResourceType.ONLINE_ENDPOINT, self._online_endpoints)
@@ -537,7 +537,7 @@ class MLClient:
             self._operation_container,
             self._local_deployment_helper,
             self._credential,
-            **ops_kwargs,  # type: ignore[arg-type]
+            **ops_kwargs,
         )
         self._batch_deployments = BatchDeploymentOperations(
             self._operation_scope,
@@ -569,7 +569,7 @@ class MLClient:
             self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_10_2022,
             self._operation_container,
             self._preflight,
-            **ops_kwargs,  # type: ignore[arg-type]
+            **ops_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.COMPONENT, self._components)
         self._jobs = JobOperations(
@@ -602,7 +602,7 @@ class MLClient:
                 self._operation_scope,
                 self._credential,
                 _service_client_kwargs=kwargs,
-                **ops_kwargs,  # type: ignore[arg-type]
+                **ops_kwargs,
             )
             self._operation_container.add(
                 AzureMLResourceType.VIRTUALCLUSTER, self._virtual_clusters  # type: ignore[arg-type]
@@ -615,7 +615,7 @@ class MLClient:
             self._service_client_08_2023_preview,
             self._operation_container,
             self._credential,
-            **app_insights_handler_kwargs,  # type: ignore[arg-type]
+            **app_insights_handler_kwargs,
         )
 
         self._featuresets = FeatureSetOperations(
@@ -624,14 +624,14 @@ class MLClient:
             self._service_client_10_2023,
             self._service_client_08_2023_preview,
             self._datastores,
-            **ops_kwargs,  # type: ignore[arg-type]
+            **ops_kwargs,
         )
 
         self._featurestoreentities = FeatureStoreEntityOperations(
             self._operation_scope,
             self._operation_config,
             self._service_client_10_2023,
-            **ops_kwargs,  # type: ignore[arg-type]
+            **ops_kwargs,
         )
 
         self._workspace_hubs = WorkspaceHubOperations(
@@ -639,7 +639,7 @@ class MLClient:
             self._service_client_08_2023_preview,
             self._operation_container,
             self._credential,
-            **app_insights_handler_kwargs,  # type: ignore[arg-type]
+            **app_insights_handler_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.WORKSPACE_HUB, self._workspace_hubs)  # type: ignore[arg-type]
 
