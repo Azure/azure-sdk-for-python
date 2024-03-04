@@ -66,8 +66,24 @@ class CosmosAccessConditionFailedError(CosmosHttpResponseError):
 
 
 class CosmosBatchOperationError(HttpResponseError):
-    """A transactional batch request to the Azure Cosmos database service has failed."""
+    """A transactional batch request to the Azure Cosmos database service has failed.
 
+    :ivar int error_index: Index of operation within the batch that caused the error.
+    :ivar dict[str, Any] headers: Error headers.
+    :ivar int status_code: HTTP response code.
+    :ivar str message: Error message.
+    :ivar operation_responses: List of failed operations' responses.
+    :type operation_responses: Sequence[Union[Tuple[str, Tuple[Any, ...]], Tuple[str, Tuple[Any, ...], Dict[str, Any]]]]
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/document_management.py
+            :start-after: [START handle_batch_error]
+            :end-before: [END handle_batch_error]
+            :language: python
+            :dedent: 0
+            :caption: Handle a CosmosBatchOperationError:
+            :name: handle_batch_error
+    """
     def __init__(
             self,
             error_index=None,
@@ -76,22 +92,6 @@ class CosmosBatchOperationError(HttpResponseError):
             message=None,
             operation_responses=None,
             **kwargs):
-        """
-        :ivar int error_index: Index of operation within the batch that caused the error.
-        :ivar dict[str, Any] headers: Error headers.
-        :ivar int status_code: HTTP response code.
-        :ivar str message: Error message.
-        :ivar list operation_responses: List of failed operations' responses.
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/document_management.py
-                :start-after: [START handle_batch_error]
-                :end-before: [END handle_batch_error]
-                :language: python
-                :dedent: 0
-                :caption: Handle a CosmosBatchOperationError:
-                :name: handle_batch_error
-        """
         self.error_index = error_index
         self.headers = headers
         self.sub_status = None
