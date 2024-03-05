@@ -2,13 +2,12 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-import os
 from pathlib import Path
 from typing import Optional, Union
 from azure.core.credentials import TokenCredential
-from azure.ai.resources.entities import Index
 
 from ._mlindex import MLIndex as DataplaneMLIndex
+
 
 def get_langchain_embeddings_from_index(
     path: Optional[Union[str, Path]],

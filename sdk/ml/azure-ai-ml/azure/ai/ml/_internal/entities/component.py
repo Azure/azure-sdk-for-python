@@ -115,7 +115,7 @@ class InternalComponent(Component, AdditionalIncludesMixin):
             tags=tags,
             properties=properties,
             display_name=display_name,
-            is_deterministic=is_deterministic,
+            is_deterministic=is_deterministic,  # type: ignore[arg-type]
             inputs=inputs,
             outputs=outputs,
             yaml_str=yaml_str,

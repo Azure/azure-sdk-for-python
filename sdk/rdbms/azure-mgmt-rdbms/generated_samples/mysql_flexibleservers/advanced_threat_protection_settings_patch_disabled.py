@@ -38,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/mysql/resource-manager/Microsoft.DBforMySQL/FlexibleServers/preview/2023-10-01-preview/examples/AdvancedThreatProtectionSettingsPatchDisabled.json
+# x-ms-original-file: specification/mysql/resource-manager/Microsoft.DBforMySQL/FlexibleServers/preview/2023-12-01-preview/examples/AdvancedThreatProtectionSettingsPatchDisabled.json
 if __name__ == "__main__":
     main()

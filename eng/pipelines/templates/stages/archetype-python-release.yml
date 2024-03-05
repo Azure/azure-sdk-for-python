@@ -53,6 +53,10 @@ stages:
                         ServiceDirectory: ${{parameters.ServiceDirectory}}
                         ArtifactLocation: $(Pipeline.Workspace)/${{parameters.ArtifactName}}
 
+                    - script: |
+                        python -m pip install "./tools/azure-sdk-tools"
+                      displayName: Install tool dependencies
+
                     - task: PythonScript@0
                       displayName: Verify CI enabled
                       condition: succeeded()
