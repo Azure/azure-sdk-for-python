@@ -485,7 +485,7 @@ class TestCallMediaClient(unittest.TestCase):
         self.call_connection_client.unhold(target_participant=self.target_user,
                                           operation_context=operation_context)
 
-        expected_hold_request = HoldRequest(
+        expected_hold_request = UnholdRequest(
             target_participant=[serialize_identifier(self.target_user)],
             operation_context=operation_context
         )
