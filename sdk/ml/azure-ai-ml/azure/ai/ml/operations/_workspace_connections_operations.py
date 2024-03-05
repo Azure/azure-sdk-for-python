@@ -47,11 +47,13 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
         self._init_kwargs = kwargs
 
     @monitor_with_activity(ops_logger, "WorkspaceConnections.Get", ActivityType.PUBLICAPI)
-    def get(self, name: str, **kwargs: Dict) -> Optional[WorkspaceConnection]:
+    def get(self, name: str, **kwargs: Dict) -> WorkspaceConnection:
         """Get a workspace connection by name.
 
         :param name: Name of the workspace connection.
         :type name: str
+        :raises ~azure.core.exceptions.HttpResponseError: Raised if the corresponding name and version cannot be
+            retrieved from the service.
         :return: The workspace connection with the provided name.
         :rtype: ~azure.ai.ml.entities.WorkspaceConnection
 
@@ -72,7 +74,7 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
             **kwargs,
         )
 
-        return WorkspaceConnection._from_rest_object(rest_obj=obj)
+        return WorkspaceConnection._from_rest_object(rest_obj=obj)  # type: ignore[return-value]
 
     @monitor_with_activity(ops_logger, "WorkspaceConnections.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(
