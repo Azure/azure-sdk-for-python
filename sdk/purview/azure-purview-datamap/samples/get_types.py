@@ -7,7 +7,7 @@ logging.basicConfig(level=logging.DEBUG)
 LOG = logging.getLogger()
 
 # Set the values of the client ID, tenant ID, and client secret of the AAD application as environment variables:
-# AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET
+# PURVIEW_CLIENT_ID, PURVIEW_TENANT_ID, PURVIEW_CLIENT_SECRET
 try:
     endpoint = os.environ["PURVIEW_ENDPOINT"]
     tenantId = os.environ["PURVIEW_TENANT_ID"]
