@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-import copy
 import os
 import json
 import random
@@ -690,7 +689,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         :rtype: KeysView[str]
         """
         with self._update_lock:
-            return copy.deepcopy(self._dict).keys()
+            return self._dict.keys()
 
     def items(self) -> ItemsView[str, Union[str, Mapping[str, Any]]]:
         """
@@ -701,7 +700,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         :rtype: ItemsView[str, Union[str, Mapping[str, Any]]]
         """
         with self._update_lock:
-            return copy.deepcopy(self._dict).items()
+            return self._dict.items()
 
     def values(self) -> ValuesView[Union[str, Mapping[str, Any]]]:
         """
@@ -713,7 +712,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         :rtype: ValuesView[Union[str, Mapping[str, Any]]]
         """
         with self._update_lock:
-            return copy.deepcopy((self._dict)).values()
+            return (self._dict).values()
 
     @overload
     def get(self, key: str, default: None = None) -> Union[str, JSON, None]:
@@ -734,7 +733,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         :rtype: Union[str, JSON]
         """
         with self._update_lock:
-            return copy.deepcopy(self._dict).get(key, default)
+            return self._dict.get(key, default)
 
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, AzureAppConfigurationProvider):
