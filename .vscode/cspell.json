@@ -682,37 +682,37 @@
     },
     {
       "filename": "sdk/core/azure-core-tracing-opentelemetry/**",
-      "words": ["ctxt", "somethingstuid"]
+      "words": [ "ctxt", "somethingstuid" ]
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-conversations/**",
-      "words": ["conv", "summ"],
+      "words": [ "conv", "summ" ],
       "caseSensitive": false
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-conversations/doc/*.rst",
-      "words": ["undoc"]
+      "words": [ "undoc" ]
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-conversations/azure/ai/language/conversations/**/_serialization.py",
-      "words": ["ctxt", "wday", "mday", "astimezone", "unflattened", "JSONify", "deseralize"]
+      "words": [ "ctxt", "wday", "mday", "astimezone", "unflattened", "JSONify", "deseralize" ]
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-questionanswering/**",
-      "words": ["qnas", "qnamaker", "ADTO"],
+      "words": [ "qnas", "qnamaker", "ADTO" ],
       "caseSensitive": false
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-questionanswering/tests/test_query_text*.py",
-      "words": ["groovin", "Olufsen"]
+      "words": [ "groovin", "Olufsen" ]
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-questionanswering/azure/ai/language/questionanswering/**/_serialization.py",
-      "words": ["ctxt", "wday", "mday", "astimezone", "unflattened", "JSONify", "deseralize"]
+      "words": [ "ctxt", "wday", "mday", "astimezone", "unflattened", "JSONify", "deseralize" ]
     },
     {
       "filename": "sdk/cognitiveservices/azure-cognitiveservices-language-spellcheck/tests/*.py",
-      "words": ["Apim", "cognituve"]
+      "words": [ "Apim", "cognituve" ]
     },
     {
       "filename": "sdk/communication/**",
@@ -1110,7 +1110,7 @@
     },
     {
       "filename": "sdk/loadtestservice/azure-developer-loadtesting/azure/developer/loadtesting/**",
-      "words":[
+      "words": [
         "vusers"
       ]
     },
@@ -1288,7 +1288,7 @@
     },
     {
       "filename": "sdk/attestation/azure-security-attestation/tests/conftest.py",
-      "words":[
+      "words": [
         "sharedwus"
       ]
     },
@@ -1316,8 +1316,8 @@
         "resouce",
         "nnumeral"
       ]
-     },
-     {
+    },
+    {
       "filename": "sdk/storage/azure-storage-file-share/**",
       "words": [
         "XSMB",
@@ -1511,7 +1511,7 @@
         "jsonify",
         "ints",
         "inirudebwoy",
-	"mghextreme"
+        "mghextreme"
       ]
     },
     {
@@ -1662,8 +1662,8 @@
         "Nify",
         "ctxt",
         "unflattened",
-	      "deseralize",
-	      "wday"
+        "deseralize",
+        "wday"
       ]
     },
     {
@@ -1718,6 +1718,16 @@
     {
       "filename": "sdk/iothub/azure-iot-deviceprovisioning/azure/iot/deviceprovisioning/_serialization.py",
       "words": [
+        "ctxt",
+        "wday"
+      ]
+    },
+    {
+      "filename": "sdk/purview/azure-purview-datamap/azure/purview/datamap/*.py",
+      "words": [
+        "mros",
+        "Nify",
+        "deserializers",
         "ctxt",
         "wday"
       ]
