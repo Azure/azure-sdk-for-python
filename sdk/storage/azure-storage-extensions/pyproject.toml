@@ -14,7 +14,7 @@ bandit = false
 suppressed_skip_warnings = ["*"]
 
 [tool.cibuildwheel]
-build = ["cp38*", "cp39*", "cp310*", "cp311*", "cp312*", "pp38*", "pp39*", "pp310*"]
+build = ["cp38*", "pp38*", "pp39*", "pp310*"]
 test-requires = "pytest"
 test-command = "pytest {project}/tests"
 test-skip = "*-macosx_arm64"
@@ -24,6 +24,7 @@ archs = "x86_64 aarch64"
 
 [tool.cibuildwheel.macos]
 archs = "x86_64 arm64"
+environment = "CFLAGS='-Wno-implicit-function-declaration'"
 
 [tool.cibuildwheel.windows]
 archs = "AMD64"

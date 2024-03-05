@@ -451,7 +451,9 @@
     "aiter",
     "solft",
     "amltmp",
-    "amltemp"
+    "amltemp",
+    "deserializers",
+    "dicom",
   ],
   "overrides": [
     {
@@ -1272,6 +1274,19 @@
       ]
     },
     {
+      "filename": "sdk/openai/azure-openai/**",
+      "words": [
+        "azuread",
+        "AZUREAD",
+        "dall",
+        "Lepardus",
+        "WEBVTT",
+        "logit",
+        "byod",
+        "logprobs"
+      ]
+    },
+    {
       "filename": "sdk/attestation/azure-security-attestation/tests/conftest.py",
       "words":[
         "sharedwus"
@@ -1705,6 +1720,17 @@
       "words": [
         "ctxt",
         "wday"
+      ]
+    },
+    {
+      "filename": "sdk/healthinsights/azure-healthinsights-radiologyinsights/**",
+      "words": [
+        "ctxt",
+        "mros",
+        "Nify",
+        "loinc",
+        "wday",
+        "SNOMED"
       ]
     }
   ],

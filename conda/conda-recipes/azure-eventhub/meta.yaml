@@ -19,7 +19,6 @@ requirements:
     - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - pip
     - python
-    - uamqp >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - requests-oauthlib >=0.5.0
     - aiohttp
   run:
@@ -27,7 +26,6 @@ requirements:
     - cryptography
     - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - python
-    - uamqp >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - requests-oauthlib >=0.5.0
     - aiohttp
 

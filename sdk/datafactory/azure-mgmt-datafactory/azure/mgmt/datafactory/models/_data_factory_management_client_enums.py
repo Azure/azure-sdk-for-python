@@ -728,13 +728,6 @@ class SalesforceV2SinkWriteBehavior(str, Enum, metaclass=CaseInsensitiveEnumMeta
     UPSERT = "Upsert"
 
 
-class SalesforceV2SourceReadBehavior(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The Salesforce read behavior for the operation."""
-
-    QUERY = "query"
-    QUERY_ALL = "queryAll"
-
-
 class SapCloudForCustomerSinkWriteBehavior(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The write behavior for the operation. Default is 'Insert'."""
 
@@ -839,6 +832,14 @@ class SftpAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     BASIC = "Basic"
     SSH_PUBLIC_KEY = "SshPublicKey"
     MULTI_FACTOR = "MultiFactor"
+
+
+class SnowflakeAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type used for authentication. Type: string."""
+
+    BASIC = "Basic"
+    KEY_PAIR = "KeyPair"
+    AAD_SERVICE_PRINCIPAL = "AADServicePrincipal"
 
 
 class SparkAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
