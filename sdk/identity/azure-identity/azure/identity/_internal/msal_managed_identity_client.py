@@ -7,6 +7,7 @@ from typing import Any, Union, Dict
 import msal
 
 from .msal_client import MsalClient
+from .._internal import _scopes_to_resource
 
 
 class MsalManagedIdentityClient:  # pylint: disable=too-many-instance-attributes
@@ -35,8 +36,9 @@ class MsalManagedIdentityClient:  # pylint: disable=too-many-instance-attributes
         self.__exit__()
 
     def get_token(self, *scopes: str, **kwargs: Any) -> Dict[str, Any]:
-        return self._msal_client.acquire_token_for_client(*scopes)
-    
+        resource = _scopes_to_resource(*scopes)
+        return self._msal_client.acquire_token_for_client(resource)
+
     def get_managed_identity(self, **kwargs: Any) -> msal.ManagedIdentity:
         if "client_id" in kwargs:
             return msal.UserAssignedManagedIdentity(client_id=kwargs["client_id"])
