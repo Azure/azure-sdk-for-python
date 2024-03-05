@@ -28,6 +28,7 @@ from .._generated.models import (
     SearchIndexerDataSource as _SearchIndexerDataSource,
     SearchIndexerIndexProjections,
     SearchIndexerKnowledgeStore,
+    SearchIndexerSkill,
     SearchIndexerSkillset as _SearchIndexerSkillset,
     SentimentSkillLanguage,
     SentimentSkillV3 as _SentimentSkillV3,
@@ -256,6 +257,7 @@ class EntityRecognitionSkill:
     :vartype skill_version: ~azure.search.documents.indexes.models.EntityRecognitionSkillVersion
     """
 
+    # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         *,
@@ -272,6 +274,7 @@ class EntityRecognitionSkill:
         skill_version: EntityRecognitionSkillVersion = EntityRecognitionSkillVersion.V3,
         **kwargs: Any
     ) -> None:
+        # pylint:disable=unused-argument
         self.skill_version = skill_version
         self.odata_type = self.skill_version
         self.name = name
@@ -305,7 +308,7 @@ class EntityRecognitionSkill:
         return None
 
     @classmethod
-    def _from_generated(cls, skill):
+    def _from_generated(cls, skill) -> Optional["EntityRecognitionSkill"]:
         if not skill:
             return None
         kwargs = skill.as_dict()
@@ -322,7 +325,7 @@ class EntityRecognitionSkill:
         return self._to_generated().serialize(keep_readonly=keep_readonly, **kwargs)  # type: ignore
 
     @classmethod
-    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> "EntityRecognitionSkill":
+    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Optional["EntityRecognitionSkill"]:
         """Parse a str using the RestAPI syntax and return a EntityRecognitionSkill instance.
 
         :param str data: A str using RestAPI structure. JSON by default.
@@ -347,7 +350,7 @@ class EntityRecognitionSkill:
         cls,
         data: Any,
         content_type: Optional[str] = None,
-    ) -> "EntityRecognitionSkill":
+    ) -> Optional["EntityRecognitionSkill"]:
         """Parse a dict using given key extractor return a model.
 
         :param dict data: A dict using RestAPI structure
@@ -452,6 +455,7 @@ class SentimentSkill:
         skill_version: SentimentSkillVersion = SentimentSkillVersion.V3,
         **kwargs: Any
     ) -> None:
+        # pylint:disable=unused-argument
         self.skill_version = skill_version
         self.odata_type = self.skill_version
         self.name = name
@@ -482,7 +486,7 @@ class SentimentSkill:
         return None
 
     @classmethod
-    def _from_generated(cls, skill):
+    def _from_generated(cls, skill) -> Optional["SentimentSkill"]:
         if not skill:
             return None
         kwargs = skill.as_dict()
@@ -499,7 +503,7 @@ class SentimentSkill:
         return self._to_generated().serialize(keep_readonly=keep_readonly, **kwargs)  # type: ignore
 
     @classmethod
-    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> "SentimentSkill":
+    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Optional["SentimentSkill"]:
         """Parse a str using the RestAPI syntax and return a SentimentSkill instance.
 
         :param str data: A str using RestAPI structure. JSON by default.
@@ -524,7 +528,7 @@ class SentimentSkill:
         cls,
         data: Any,
         content_type: Optional[str] = None,
-    ) -> "SentimentSkill":
+    ) -> Optional["SentimentSkill"]:
         """Parse a dict using given key extractor return a model.
 
         :param dict data: A dict using RestAPI structure
@@ -738,6 +742,7 @@ class CustomAnalyzer:
         char_filters: Optional[List[Union[str, CharFilterName]]] = None,
         **kwargs: Any
     ) -> None:
+        # pylint:disable=unused-argument
         self.odata_type = "#Microsoft.Azure.Search.CustomAnalyzer"
         self.name = name
         self.tokenizer_name = tokenizer_name
@@ -754,7 +759,7 @@ class CustomAnalyzer:
         )
 
     @classmethod
-    def _from_generated(cls, custom_analyzer):
+    def _from_generated(cls, custom_analyzer) -> Optional["CustomAnalyzer"]:
         if not custom_analyzer:
             return None
         return cls(
@@ -774,7 +779,7 @@ class CustomAnalyzer:
         return self._to_generated().serialize(keep_readonly=keep_readonly, **kwargs)  # type: ignore
 
     @classmethod
-    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> "CustomAnalyzer":
+    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Optional["CustomAnalyzer"]:
         """Parse a str using the RestAPI syntax and return a CustomAnalyzer instance.
 
         :param str data: A str using RestAPI structure. JSON by default.
@@ -799,7 +804,7 @@ class CustomAnalyzer:
         cls,
         data: Any,
         content_type: Optional[str] = None,
-    ) -> "CustomAnalyzer":
+    ) -> Optional["CustomAnalyzer"]:
         """Parse a dict using given key extractor return a model.
 
         :param dict data: A dict using RestAPI structure
@@ -862,11 +867,12 @@ class PatternAnalyzer:
         *,
         name: str,
         lower_case_terms: bool = True,
-        pattern: str = "\W+",
+        pattern: str = r"\W+",
         flags: Optional[Union[List[str], List[RegexFlags]]] = None,
         stopwords: Optional[List[str]] = None,
         **kwargs: Any
     ) -> None:
+        # pylint:disable=unused-argument
         self.odata_type = "#Microsoft.Azure.Search.PatternAnalyzer"
         self.name = name
         self.lower_case_terms = lower_case_terms
@@ -888,7 +894,7 @@ class PatternAnalyzer:
         )
 
     @classmethod
-    def _from_generated(cls, pattern_analyzer):
+    def _from_generated(cls, pattern_analyzer) -> Optional["PatternAnalyzer"]:
         if not pattern_analyzer:
             return None
         if not pattern_analyzer.flags:
@@ -912,7 +918,7 @@ class PatternAnalyzer:
         return self._to_generated().serialize(keep_readonly=keep_readonly, **kwargs)  # type: ignore
 
     @classmethod
-    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> "PatternAnalyzer":
+    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Optional["PatternAnalyzer"]:
         """Parse a str using the RestAPI syntax and return a PatternAnalyzer instance.
 
         :param str data: A str using RestAPI structure. JSON by default.
@@ -937,7 +943,7 @@ class PatternAnalyzer:
         cls,
         data: Any,
         content_type: Optional[str] = None,
-    ) -> "PatternAnalyzer":
+    ) -> Optional["PatternAnalyzer"]:
         """Parse a dict using given key extractor return a model.
 
         :param dict data: A dict using RestAPI structure
@@ -998,11 +1004,12 @@ class PatternTokenizer:
         self,
         *,
         name: str,
-        pattern: str = "\W+",
+        pattern: str = r"\W+",
         flags: Optional[Union[str, RegexFlags]] = None,
         group: int = -1,
         **kwargs: Any
     ) -> None:
+        # pylint:disable=unused-argument
         self.odata_type = "#Microsoft.Azure.Search.PatternTokenizer"
         self.name = name
         self.pattern = pattern
@@ -1022,7 +1029,7 @@ class PatternTokenizer:
         )
 
     @classmethod
-    def _from_generated(cls, pattern_tokenizer):
+    def _from_generated(cls, pattern_tokenizer) -> Optional["PatternTokenizer"]:
         if not pattern_tokenizer:
             return None
         if not pattern_tokenizer.flags:
@@ -1045,7 +1052,7 @@ class PatternTokenizer:
         return self._to_generated().serialize(keep_readonly=keep_readonly, **kwargs)  # type: ignore
 
     @classmethod
-    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> "PatternTokenizer":
+    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Optional["PatternTokenizer"]:
         """Parse a str using the RestAPI syntax and return a PatternTokenizer instance.
 
         :param str data: A str using RestAPI structure. JSON by default.
@@ -1070,7 +1077,7 @@ class PatternTokenizer:
         cls,
         data: Any,
         content_type: Optional[str] = None,
-    ) -> "PatternTokenizer":
+    ) -> Optional["PatternTokenizer"]:
         """Parse a dict using given key extractor return a model.
 
         :param dict data: A dict using RestAPI structure
