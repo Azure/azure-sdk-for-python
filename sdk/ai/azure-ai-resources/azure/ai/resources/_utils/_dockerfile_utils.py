@@ -54,7 +54,7 @@ def create_dockerfile(
         create_chat_scoring_script(scoring_path, model.chat_module)  # type: ignore[arg-type]
     shutil.copytree(model.path, str(to_copy_dir), dirs_exist_ok=True)
 
-    with open(f"{str(output)}/Dockerfile", "w+") as f:
+    with open(f"{str(output)}/Dockerfile", "w+", encoding="utf-8") as f:
         if type == "chat":
             formatted_dockerfile = CHAT_COMPLETION_DOCKERFILE.format(
                 model.conda_file,

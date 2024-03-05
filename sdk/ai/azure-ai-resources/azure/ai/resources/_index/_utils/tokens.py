@@ -6,19 +6,24 @@ import contextlib
 import os
 from functools import lru_cache
 from pathlib import Path
-from typing import Callable, Optional, Union
+from typing import Callable, Generator, Optional, Union
 
 utils_path = Path(__file__).parent
 tiktoken_encodings_path = utils_path / "encodings"
 
 
 @contextlib.contextmanager
-def tiktoken_cache_dir(cache_dir: Optional[Union[str, Path]] = "default"):
+def tiktoken_cache_dir(cache_dir: Optional[Union[str, Path]] = "default") -> Generator:
     """
     Set TikToken cache directory in environment while in context.
 
     Default cache_dir is the encodings cached in `azure.ai.resources._index._utils.encodings`.
     cl100k_base and gpt2 encodings are cached.
+
+    :param cache_dir: The cache directory path. Default is "default", which represents the default cache directory.
+    :type cache_dir: Optional[Union[str, Path]]
+    :return: Generator yielding None.
+    :rtype: Generator
     """
     if cache_dir == "default":
         cache_dir = tiktoken_encodings_path
@@ -51,21 +56,44 @@ class TikTokenEstimator:
 
     def __init__(self, encoding: str = "cl100k_base"):
         """Initialize TikTokenEstimator."""
-        import tiktoken
+        import tiktoken  # pylint: disable=import-error
 
         with tiktoken_cache_dir():
             self.encoder = tiktoken.get_encoding(encoding)
 
     def estimate(self, text: str) -> int:
-        """Estimate the number of tokens in the text."""
+        """
+        Estimate the number of tokens in the text.
+
+        :param text: The text to estimate token count.
+        :type text: str
+        :return: The estimated number of tokens in the text.
+        :rtype: int
+        """
         return len(self.encoder.encode(text, disallowed_special=(), allowed_special="all"))
 
     def truncate(self, text: str, max_tokens: int) -> str:
-        """Truncate the text to the max number of tokens."""
+        """
+        Truncate the text to the max number of tokens.
+
+        :param text: The text to be truncated.
+        :type text: str
+        :param max_tokens: The maximum number of tokens allowed.
+        :type max_tokens: int
+        :return: The truncated text.
+        :rtype: str
+        """
         return self.encoder.decode(self.encoder.encode(text, disallowed_special=(), allowed_special="all")[:max_tokens])
 
 
 @lru_cache(maxsize=1)
 def token_length_function(encoding: str = "cl100k_base") -> Callable[[str], int]:
-    """Get the token length function."""
+    """
+    Get the token length function.
+
+    :param encoding: The encoding type (default is "cl100k_base").
+    :type encoding: str
+    :return: A callable function that estimates token length.
+    :rtype: Callable[[str], int]
+    """
     return TikTokenEstimator(encoding).estimate

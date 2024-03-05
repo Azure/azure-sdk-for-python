@@ -226,6 +226,8 @@ def create_envelope(instrumentation_key, record):
         "traceId",
         "00000000000000000000000000000000",
     )
-    envelope.tags["ai.resources.operation.parentId"] = f"|{envelope.tags.get('ai.resources.operation.id')}.{getattr(record, 'spanId', '0000000000000000')}"
+    parent_id = envelope.tags.get('ai.resources.operation.id')
+    span_id = getattr(record, 'spanId', '0000000000000000')
+    envelope.tags["ai.resources.operation.parentId"] = f"|{parent_id}.{span_id}"
 
     return envelope

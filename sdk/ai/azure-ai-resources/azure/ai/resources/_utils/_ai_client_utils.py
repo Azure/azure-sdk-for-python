@@ -11,6 +11,7 @@ from typing import Optional, Dict, Union
 from azure.ai.ml._file_utils.file_utils import traverse_up_path_and_find_file
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
+
 def find_config_file_path(
     path: Optional[Union[os.PathLike, str]] = None,
     file_name: Optional[str] = None,
@@ -52,8 +53,9 @@ def find_config_file_path(
                 target=ErrorTarget.GENERAL,
                 error_category=ErrorCategory.USER_ERROR,
             )
-    
+
     return config_file_path  # type: ignore[return-value]
+
 
 def get_config_info(config_file_path: Union[str, os.PathLike]) -> Dict[str, str]:
     with open(config_file_path, encoding="utf-8-sig") as config_file:
