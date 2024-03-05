@@ -169,7 +169,7 @@ jobs:
 
     pool:
       name: azsdk-pool-mms-ubuntu-2004-general
-      vmImage: azsdk-pool-mms-ubuntu-2004-1espt
+      image: azsdk-pool-mms-ubuntu-2004-1espt
       os: linux
 
     steps:
@@ -195,7 +195,7 @@ jobs:
 
     pool:
       name: azsdk-pool-mms-ubuntu-2004-general
-      vmImage: azsdk-pool-mms-ubuntu-2004-1espt
+      image: azsdk-pool-mms-ubuntu-2004-1espt
       os: linux
 
     steps:
