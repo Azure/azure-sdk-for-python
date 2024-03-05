@@ -12,67 +12,73 @@ parameters:
   DocValidationImageId: "azuresdkimages.azurecr.io/pyrefautocr:latest"
 
 stages:
-  - ${{ each artifact in parameters.Artifacts }}:
-    - stage:
-      displayName: 'Release: ${{artifact.name}}'
-      dependsOn: "${{parameters.DependsOn}}"
-      condition: and(succeeded(), ne(variables['SetDevVersion'], 'true'), ne(variables['Skip.Release'], 'true'), ne(variables['Build.Repository.Name'], 'Azure/azure-sdk-for-python-pr'))
-      jobs:
-        - deployment: TagRepository
-          displayName: "Create release tag"
-          condition: ne(variables['Skip.TagRepository'], 'true')
-          environment: github
+  - ${{if and(in(variables['Build.Reason'], 'Manual', ''), eq(variables['System.TeamProject'], 'internal'))}}:
+    - ${{ each artifact in parameters.Artifacts }}:
+      - stage:
+        displayName: 'Release: ${{artifact.name}}'
+        dependsOn: ${{parameters.DependsOn}}
+        condition: and(succeeded(), ne(variables['SetDevVersion'], 'true'), ne(variables['Skip.Release'], 'true'), ne(variables['Build.Repository.Name'], 'Azure/azure-sdk-for-python-pr'))
+        jobs:
+          - deployment: TagRepository
+            displayName: "Create release tag"
+            condition: ne(variables['Skip.TagRepository'], 'true')
+            environment: github
 
-          pool:
-            vmImage: azsdk-pool-mms-ubuntu-2004-1espt
-            name: azsdk-pool-mms-ubuntu-2004-general
-            os: linux
+            pool:
+              image: azsdk-pool-mms-ubuntu-2004-1espt
+              name: azsdk-pool-mms-ubuntu-2004-general
+              os: linux
 
-          strategy:
-            runOnce:
-              deploy:
-                steps:
-                  - checkout: self
-                  - template: /eng/common/pipelines/templates/steps/retain-run.yml@self
-                  - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml@self
-                    parameters:
-                      PackageName: "azure-template"
-                      ServiceDirectory: "template"
-                      TestPipeline: ${{ parameters.TestPipeline }}
+            strategy:
+              runOnce:
+                deploy:
+                  steps:
+                    - checkout: self
+                    - template: /eng/common/pipelines/templates/steps/retain-run.yml
+                    - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
+                      parameters:
+                        PackageName: "azure-template"
+                        ServiceDirectory: "template"
+                        TestPipeline: ${{ parameters.TestPipeline }}
 
-                  - ${{if ne(artifact.skipVerifyChangeLog, 'true')}}:
-                      - template: /eng/common/pipelines/templates/steps/verify-changelog.yml@self
+                    - ${{if ne(artifact.skipVerifyChangeLog, 'true')}}:
+                      - template: /eng/common/pipelines/templates/steps/verify-changelog.yml
                         parameters:
                           PackageName: ${{artifact.name}}
                           ServiceName: ${{parameters.ServiceDirectory}}
                           ForRelease: true
 
-                  - template: /eng/common/pipelines/templates/steps/verify-restapi-spec-location.yml@self
-                    parameters:
-                      PackageName: ${{artifact.name}}
-                      ServiceDirectory: ${{parameters.ServiceDirectory}}
-                      ArtifactLocation: $(Pipeline.Workspace)/${{parameters.ArtifactName}}
+                    - template: /eng/common/pipelines/templates/steps/verify-restapi-spec-location.yml
+                      parameters:
+                        PackageName: ${{artifact.name}}
+                        ServiceDirectory: ${{parameters.ServiceDirectory}}
+                        ArtifactLocation: $(Pipeline.Workspace)/${{parameters.ArtifactName}}
 
-                  - script: |
-                      python -m pip install "./tools/azure-sdk-tools"
-                    displayName: Install tool dependencies
+                    - script: |
+                        python -m pip install "./tools/azure-sdk-tools"
+                      displayName: Install tool dependencies
 
-                  - task: PythonScript@0
-                    displayName: Verify CI enabled
-                    condition: succeeded()
-                    inputs:
-                      scriptPath: 'scripts/devops_tasks/verify_ci_enabled.py'
-                      arguments: '--package-name ${{ artifact.name }} --service ${{ parameters.ServiceDirectory }}'
+                    - task: PythonScript@0
+                      displayName: Verify CI enabled
+                      condition: succeeded()
+                      inputs:
+                        scriptPath: 'scripts/devops_tasks/verify_ci_enabled.py'
+                        arguments: '--package-name ${{ artifact.name }} --service ${{ parameters.ServiceDirectory }}'
 
-                  - template: /eng/common/pipelines/templates/steps/create-tags-and-git-release.yml@self
-                    parameters:
-                      ArtifactLocation: $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}
-                      PackageRepository: PyPI
-                      ReleaseSha: $(Build.SourceVersion)
-                      RepoId: Azure/azure-sdk-for-python
-                      WorkingDirectory: $(System.DefaultWorkingDirectory)
+                    - pwsh: |
+                        Get-ChildItem -Recurse $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}
+                      workingDirectory: $(Pipeline.Workspace)
+                      displayName: Output Visible Artifacts
 
-        - ${{if ne(artifact.skipPublishPackage, 'true')}}:
+                    - template: /eng/common/pipelines/templates/steps/create-tags-and-git-release.yml
+                      parameters:
+                        ArtifactLocation: $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}
+                        PackageRepository: PyPI
+                        ReleaseSha: $(Build.SourceVersion)
+                        RepoId: Azure/azure-sdk-for-python
+                        WorkingDirectory: $(System.DefaultWorkingDirectory)
+
+          - ${{if ne(artifact.skipPublishPackage, 'true')}}:
             - deployment: PublishPackage
               displayName: "Publish to PyPI"
               condition: and(succeeded(), ne(variables['Skip.PublishPackage'], 'true'))
@@ -80,9 +86,9 @@ stages:
               dependsOn: TagRepository
 
               pool:
-                vmImage: azsdk-pool-mms-ubuntu-2004-1espt
+                image: azsdk-pool-mms-ubuntu-2004-1espt
                 name: azsdk-pool-mms-ubuntu-2004-general
-                os: 'linux'
+                os: linux
 
               strategy:
                 runOnce:
@@ -96,9 +102,9 @@ stages:
                       - task: UsePythonVersion@0
                         inputs:
                           versionSpec: '3.9'
+
                       - script: |
                           set -e
-
                           python -m pip install -r eng/release_requirements.txt
                         displayName: Install Release Dependencies
 
@@ -116,7 +122,6 @@ stages:
 
                       - pwsh: |
                           $esrpDirectory = "$(Pipeline.Workspace)/esrp-release/${{parameters.ArtifactName}}/${{artifact.name}}"
-
                           New-Item -ItemType Directory -Force -Path $esrpDirectory
 
                           Get-ChildItem -Path "$(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}" `
@@ -141,14 +146,13 @@ stages:
 
                       - script: |
                           set -e
-
                           twine upload --repository ${{parameters.DevFeedName}} --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}/*.whl
                           echo "Uploaded whl to devops feed"
                           twine upload --repository ${{parameters.DevFeedName}} --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}/*.tar.gz
                           echo "Uploaded sdist to devops feed"
                         displayName: 'Publish package to feed: ${{parameters.DevFeedName}}'
 
-        - ${{if ne(artifact.skipPublishDocs, 'true')}}:
+          - ${{if ne(artifact.skipPublishDocs, 'true')}}:
             - deployment: PublishGitHubIODocs
               displayName: Publish Docs to GitHubIO Blob Storage
               condition: and(succeeded(), ne(variables['Skip.PublishDocs'], 'true'))
@@ -156,14 +160,16 @@ stages:
               dependsOn: PublishPackage
 
               pool:
-                name: azsdk-pool-mms-ubuntu-2004-general
-                vmImage: azsdk-pool-mms-ubuntu-2004-1espt
-                os: linux
+                name: azsdk-pool-mms-win-2022-general
+                image: azsdk-pool-mms-win-2022-1espt
+                os: windows
+
               strategy:
                 runOnce:
                   deploy:
                     steps:
                       - checkout: self
+
                       - pwsh: |
                           Get-ChildItem -Recurse $(Pipeline.Workspace)/${{parameters.DocArtifact}}/${{artifact.name}}
                         workingDirectory: $(Pipeline.Workspace)
@@ -179,43 +185,42 @@ stages:
                           # we override the regular script path because we have cloned the build tools repo as a separate artifact.
                           ScriptPath: 'eng/common/scripts/copy-docs-to-blobstorage.ps1'
 
-        - ${{if ne(artifact.skipPublishDocMs, 'true')}}:
-            - deployment: PublishDocs
-              displayName: Docs.MS Release
-              condition: and(succeeded(), ne(variables['Skip.PublishDocs'], 'true'))
-              environment: githubio
-              dependsOn: PublishPackage
+          - ${{if ne(artifact.skipPublishDocMs, 'true')}}:
+                - deployment: PublishDocs
+                  displayName: Docs.MS Release
+                  condition: and(succeeded(), ne(variables['Skip.PublishDocs'], 'true'))
+                  environment: githubio
+                  dependsOn: PublishPackage
 
-              pool:
-                name: azsdk-pool-mms-ubuntu-2004-general
-                vmImage: azsdk-pool-mms-ubuntu-2004-1espt
-                os: linux
+                  pool:
+                    image: azsdk-pool-mms-ubuntu-2004-1espt
+                    name: azsdk-pool-mms-ubuntu-2004-general
+                    os: linux
 
-              strategy:
-                runOnce:
-                  deploy:
-                    steps:
-                      - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml@self
-                        parameters:
-                          Paths:
-                            - sdk/**/*.md
-                            - .github/CODEOWNERS
-                      - download: current
-                      - template: /eng/common/pipelines/templates/steps/update-docsms-metadata.yml@self
-                        parameters:
-                          PackageInfoLocations:
-                            - $(Pipeline.Workspace)/${{parameters.ArtifactName}}/PackageInfo/${{artifact.name}}.json
-                          WorkingDirectory: $(System.DefaultWorkingDirectory)
-                          TargetDocRepoOwner: ${{parameters.TargetDocRepoOwner}}
-                          TargetDocRepoName: ${{parameters.TargetDocRepoName}}
-                          Language: 'python'
-                          SparseCheckoutPaths:
-                            - docs-ref-services/
-                            - metadata/
-                          PackageSourceOverride: ${{parameters.PackageSourceOverride}}
-                          DocValidationImageId: ${{parameters.DocValidationImageId}}
-
-        - ${{if ne(artifact.skipPublishDocGithubIo, 'true')}}:
+                  strategy:
+                    runOnce:
+                      deploy:
+                        steps:
+                          - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
+                            parameters:
+                              Paths:
+                                - sdk/**/*.md
+                                - .github/CODEOWNERS
+                          - download: current
+                          - template: /eng/common/pipelines/templates/steps/update-docsms-metadata.yml
+                            parameters:
+                              PackageInfoLocations:
+                                - $(Pipeline.Workspace)/${{parameters.ArtifactName}}/PackageInfo/${{artifact.name}}.json
+                              WorkingDirectory: $(System.DefaultWorkingDirectory)
+                              TargetDocRepoOwner: ${{parameters.TargetDocRepoOwner}}
+                              TargetDocRepoName: ${{parameters.TargetDocRepoName}}
+                              Language: 'python'
+                              SparseCheckoutPaths:
+                                - docs-ref-services/
+                                - metadata/
+                              PackageSourceOverride: ${{parameters.PackageSourceOverride}}
+                              DocValidationImageId: ${{parameters.DocValidationImageId}}
+          - ${{if ne(artifact.skipPublishDocGithubIo, 'true')}}:
             - deployment: UpdatePackageVersion
               displayName: "Update Package Version"
               condition: and(succeeded(), ne(variables['Skip.UpdatePackageVersion'], 'true'))
@@ -223,8 +228,8 @@ stages:
               dependsOn: PublishPackage
 
               pool:
+                image: azsdk-pool-mms-ubuntu-2004-1espt
                 name: azsdk-pool-mms-ubuntu-2004-general
-                vmImage: azsdk-pool-mms-ubuntu-2004-1espt
                 os: linux
 
               strategy:
@@ -233,105 +238,103 @@ stages:
                     steps:
                       - checkout: self
                       - task: UsePythonVersion@0
-                      - script: >
+                      - script: |
                           python -m pip install "./tools/azure-sdk-tools[build]"
                         displayName: Install versioning tool dependencies
-                      - pwsh: >
+                      - pwsh: |
                           sdk_increment_version --package-name ${{ artifact.name }} --service ${{ parameters.ServiceDirectory }}
                         displayName: Increment package version
-                      - template: /eng/common/pipelines/templates/steps/create-pull-request.yml@self
+                      - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
                         parameters:
                           RepoName: azure-sdk-for-python
                           PRBranchName: increment-package-version-${{ parameters.ServiceDirectory }}-$(Build.BuildId)
                           CommitMsg: "Increment package version after release of ${{ artifact.name }}"
                           PRTitle: "Increment version for ${{ parameters.ServiceDirectory }} releases"
                           CloseAfterOpenForTesting: '${{ parameters.TestPipeline }}'
-        # todo: update the smoke test matrix as necessary.
-        # - ${{if and(eq(variables['Build.Reason'], 'Manual'), eq(variables['System.TeamProject'], 'internal'))}}:
-        #     - template: /eng/pipelines/templates/jobs/smoke.tests.yml@self
-        #       parameters:
-        #         Daily: false
-        #         ArtifactName: ${{ parameters.ArtifactName }}
-        #         Artifact: ${{ artifact }}
+          - ${{if and(eq(variables['Build.Reason'], 'Manual'), eq(variables['System.TeamProject'], 'internal'))}}:
+            - template: /eng/pipelines/templates/jobs/smoke.tests.yml
+              parameters:
+                Daily: false
+                ArtifactName: ${{ parameters.ArtifactName }}
+                Artifact: ${{ artifact }}
+
 
   - stage: Integration
-    dependsOn: "${{parameters.DependsOn}}"
+    dependsOn: ${{parameters.DependsOn}}
     condition: succeededOrFailed('${{parameters.DependsOn}}')
     jobs:
-      - job: PublishPackages
-        displayName: "Publish package to daily feed"
-        condition: or(eq(variables['SetDevVersion'], 'true'), and(eq(variables['Build.Reason'],'Schedule'), eq(variables['System.TeamProject'], 'internal')))
-        pool:
-          name: azsdk-pool-mms-ubuntu-2004-general
-          vmImage: azsdk-pool-mms-ubuntu-2004-1espt
-          os: linux
-        steps:
-          - checkout: none
-          - download: current
-            artifact: ${{parameters.ArtifactName}}
-            timeoutInMinutes: 5
-          - task: UsePythonVersion@0
-          - script: >
-              set -e
+    - job: PublishPackages
+      displayName: "Publish package to daily feed"
+      condition: or(eq(variables['SetDevVersion'], 'true'), and(eq(variables['Build.Reason'],'Schedule'), eq(variables['System.TeamProject'], 'internal')))
+      pool:
+        image: azsdk-pool-mms-ubuntu-2004-1espt
+        name: azsdk-pool-mms-ubuntu-2004-general
+        os: linux
+      steps:
+      - checkout: none
+      - download: current
+        artifact: ${{parameters.ArtifactName}}
+        timeoutInMinutes: 5
+      - task: UsePythonVersion@0
+      - script: |
+          set -e
+          python -m pip install twine
+        displayName: Install Twine
 
-              python -m pip install twine
-            displayName: Install Twine
+      - template: ../steps/auth-dev-feed.yml
+        parameters:
+          DevFeedName: ${{ parameters.DevFeedName }}
 
-          - template: /eng/pipelines/templates/steps/auth-dev-feed.yml@self
-            parameters:
-              DevFeedName: ${{ parameters.DevFeedName }}
+      - ${{ each artifact in parameters.Artifacts }}:
+        - ${{if ne(artifact.skipPublishDevFeed, 'true')}}:
 
-          - ${{ each artifact in parameters.Artifacts }}:
-            - ${{if ne(artifact.skipPublishDevFeed, 'true')}}:
-              - pwsh: >
-                  $fileCount = (Get-ChildItem $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}} | ? {$_.Name -match "-[0-9]*.[0-9]*.[0-9]*a[0-9]*" } | Measure-Object).Count
+          - pwsh: |
+              $fileCount = (Get-ChildItem $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}} | ? {$_.Name -match "-[0-9]*.[0-9]*.[0-9]*a[0-9]*" } | Measure-Object).Count
 
-                  if ($fileCount -eq 0) {
-                    Write-Host "No alpha packages for ${{artifact.name}} to publish."
-                    exit 0
-                  }
+              if ($fileCount -eq 0) {
+                Write-Host "No alpha packages for ${{artifact.name}} to publish."
+                exit 0
+              }
 
-                  twine upload --repository $(DevFeedName) --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}/*-*a*.whl
-                  echo "Uploaded whl to devops feed $(DevFeedName)"
+              twine upload --repository $(DevFeedName) --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}/*-*a*.whl
+              echo "Uploaded whl to devops feed $(DevFeedName)"
+              twine upload --repository $(DevFeedName) --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}/*-*a*.tar.gz
+              echo "Uploaded sdist to devops feed $(DevFeedName)"
+            displayName: 'Publish ${{artifact.name}} alpha package'
 
-                  twine upload --repository $(DevFeedName) --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}/*-*a*.tar.gz
-                  echo "Uploaded sdist to devops feed $(DevFeedName)"
-                displayName: 'Publish ${{artifact.name}} alpha package'
+    - job: PublishDocsToNightlyBranch
+      dependsOn: PublishPackages
+      condition: or(eq(variables['SetDevVersion'], 'true'), and(eq(variables['Build.Reason'],'Schedule'), eq(variables['System.TeamProject'], 'internal')))
+      pool:
+        image: azsdk-pool-mms-ubuntu-2004-1espt
+        name: azsdk-pool-mms-ubuntu-2004-general
+        os: linux
+      steps:
+        - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
+          parameters:
+            Paths:
+              - sdk/**/*.md
+              - .github/CODEOWNERS
+        - download: current
+        - pwsh: |
+            Get-ChildItem -Recurse $(Pipeline.Workspace)/${{parameters.ArtifactName}}/
+          displayName: Show visible artifacts
 
-      - job: PublishDocsToNightlyBranch
-        dependsOn: PublishPackages
-        condition: or(eq(variables['SetDevVersion'], 'true'), and(eq(variables['Build.Reason'],'Schedule'), eq(variables['System.TeamProject'], 'internal')))
-        pool:
-          name: azsdk-pool-mms-ubuntu-2004-general
-          vmImage: azsdk-pool-mms-ubuntu-2004-1espt
-          os: linux
-        steps:
-          - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml@self
-            parameters:
-              Paths:
-                - sdk/**/*.md
-                - .github/CODEOWNERS
-          - download: current
-          - pwsh: >
-              Get-ChildItem -Recurse $(Pipeline.Workspace)/${{parameters.ArtifactName}}/
-            displayName: Show visible artifacts
+        - template: /eng/common/pipelines/templates/steps/update-docsms-metadata.yml
+          parameters:
+            PackageInfoLocations:
+              - ${{ each artifact in parameters.Artifacts }}:
+                - ${{if ne(artifact.skipPublishDocMs, 'true')}}:
+                  - $(Pipeline.Workspace)/${{parameters.ArtifactName}}/PackageInfo/${{artifact.name}}.json
+            WorkingDirectory: $(System.DefaultWorkingDirectory)
+            TargetDocRepoOwner: ${{parameters.TargetDocRepoOwner}}
+            TargetDocRepoName: ${{parameters.TargetDocRepoName}}
+            Language: 'python'
+            DailyDocsBuild: true
+            SparseCheckoutPaths:
+              - docs-ref-services/
+              - metadata/
+            PackageSourceOverride: ${{parameters.PackageSourceOverride}}
+            DocValidationImageId: ${{parameters.DocValidationImageId}}
 
-          - template: /eng/common/pipelines/templates/steps/update-docsms-metadata.yml@self
-            parameters:
-              PackageInfoLocations:
-                - ${{ each artifact in parameters.Artifacts }}:
-                    - ${{if ne(artifact.skipPublishDocMs, 'true')}}:
-                        - $(Pipeline.Workspace)/${{parameters.ArtifactName}}/PackageInfo/${{artifact.name}}.json
-              WorkingDirectory: $(System.DefaultWorkingDirectory)
-              TargetDocRepoOwner: ${{parameters.TargetDocRepoOwner}}
-              TargetDocRepoName: ${{parameters.TargetDocRepoName}}
-              Language: 'python'
-              DailyDocsBuild: true
-              SparseCheckoutPaths:
-                - docs-ref-services/
-                - metadata/
-              PackageSourceOverride: ${{parameters.PackageSourceOverride}}
-              DocValidationImageId: ${{parameters.DocValidationImageId}}
-
-          - template: /eng/common/pipelines/templates/steps/docsms-ensure-validation.yml@self
-
+        - template: /eng/common/pipelines/templates/steps/docsms-ensure-validation.yml
