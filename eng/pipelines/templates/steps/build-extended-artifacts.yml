@@ -81,7 +81,7 @@ steps:
 
   - ${{ parameters.BeforePublishSteps }}
 
-  - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+  - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
     parameters:
       ArtifactPath: '$(Build.ArtifactStagingDirectory)'
       ArtifactName: 'packages_extended'
@@ -91,7 +91,7 @@ steps:
       Write-Output "##vso[task.setvariable variable=DirectoryExists]$directoryExists"
     displayName: Check if docs directory exists
   
-  - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+  - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
     parameters:
       ArtifactPath: '$(Build.SourcesDirectory)/_docs'
       CustomCondition: and(${{ parameters.BuildDocs }}, eq(variables['DirectoryExists'], 'True'))

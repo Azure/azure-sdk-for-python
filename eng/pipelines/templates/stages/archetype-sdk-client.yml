@@ -94,9 +94,6 @@ extends:
         name: azsdk-pool-mms-win-2022-1es-pt
         image: azsdk-pool-mms-win-2022-1espt
         os: windows
-      eslint:
-        enabled: false
-        justificationForDisabling: "ESLint injected task has failures because it uses an old version of mkdirp. We should not fail for tools not controlled by the repo. See: https://dev.azure.com/azure-sdk/internal/_build/results?buildId=3499746&"
       codeql:
         compiled:
           enabled: false

@@ -154,7 +154,7 @@ jobs:
           artifactName: 'packages_linux'
           targetPath: $(Build.ArtifactStagingDirectory)/packages
 
-      - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+      - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
         parameters:
           ArtifactPath: '$(Build.ArtifactStagingDirectory)/packages'
           ArtifactName: 'packages'
@@ -227,7 +227,7 @@ jobs:
         ValidateFormatting: ${{ parameters.ValidateFormatting }}
         GenerateApiReviewForManualOnly: ${{ parameters.GenerateApiReviewForManualOnly }}
 
-  - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
+  - template: /eng/common/pipelines/templates/jobs/generate-job-matrix.yml
     parameters:
       JobTemplatePath: /eng/pipelines/templates/jobs/ci.tests.yml
       OsVmImage: azsdk-pool-mms-ubuntu-2004-1espt
@@ -254,7 +254,7 @@ jobs:
         UnsupportedToxEnvironments: ${{ parameters.UnsupportedToxEnvironments }}
         TestProxy: ${{ parameters.TestProxy }}
 
-  - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
+  - template: /eng/common/pipelines/templates/jobs/generate-job-matrix.yml
     parameters:
       JobTemplatePath: /eng/pipelines/templates/jobs/regression.yml
       OsVmImage: azsdk-pool-mms-ubuntu-2004-1espt
