@@ -47,6 +47,16 @@ stages:
                           ServiceName: ${{parameters.ServiceDirectory}}
                           ForRelease: true
 
+                    - template: /eng/common/pipelines/templates/steps/verify-restapi-spec-location.yml
+                      parameters:
+                        PackageName: ${{artifact.name}}
+                        ServiceDirectory: ${{parameters.ServiceDirectory}}
+                        ArtifactLocation: $(Pipeline.Workspace)/${{parameters.ArtifactName}}
+
+                    - script: |
+                        python -m pip install "./tools/azure-sdk-tools"
+                      displayName: Install tool dependencies
+
                     - task: PythonScript@0
                       displayName: Verify CI enabled
                       condition: succeeded()

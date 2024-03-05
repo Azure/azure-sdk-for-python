@@ -29,6 +29,7 @@ from azure.monitor.opentelemetry.exporter._generated.models import (
     TelemetryItem,
 )
 from azure.monitor.opentelemetry.exporter._constants import (
+    _AZURE_MONITOR_DISTRO_VERSION_ARG,
     _INVALID_STATUS_CODES,
     _REACHED_INGESTION_STATUS_CODES,
     _REDIRECT_STATUS_CODES,
@@ -94,12 +95,17 @@ class BaseExporter:
         self._storage_max_size = kwargs.get('storage_max_size', 50 * 1024 * 1024)  # Maximum size in bytes (default 50MiB)
         self._storage_min_retry_interval = kwargs.get('storage_min_retry_interval', 60)  # minimum retry interval in seconds
         temp_suffix = self._instrumentation_key or ""
-        default_storage_directory = os.path.join(
-            tempfile.gettempdir(), _AZURE_TEMPDIR_PREFIX, _TEMPDIR_PREFIX + temp_suffix
-        )
-        self._storage_directory = kwargs.get('storage_directory', default_storage_directory)  # Storage path in which to store retry files.
+        if 'storage_directory' in kwargs:
+            self._storage_directory = kwargs.get('storage_directory')
+        elif not self._disable_offline_storage:
+            self._storage_directory = os.path.join(
+                tempfile.gettempdir(), _AZURE_TEMPDIR_PREFIX, _TEMPDIR_PREFIX + temp_suffix
+            )
+        else:
+            self._storage_directory = None
         self._storage_retention_period = kwargs.get('storage_retention_period', 48 * 60 * 60)  # Retention period in seconds (default 48 hrs)
         self._timeout = kwargs.get('timeout', 10.0)  # networking timeout in seconds
+        self._distro_version = kwargs.get(_AZURE_MONITOR_DISTRO_VERSION_ARG, '')  # If set, indicates the exporter is instantiated via Azure monitor OpenTelemetry distro. Versions corresponds to distro version.
 
         config = AzureMonitorClientConfiguration(self._endpoint, **kwargs)
         policies = [
@@ -316,9 +322,9 @@ class BaseExporter:
                             from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat import shutdown_statsbeat_metrics
                             shutdown_statsbeat_metrics()
                             # pylint: disable=lost-exception
-                            return ExportResult.FAILED_NOT_RETRYABLE
+                            return ExportResult.FAILED_NOT_RETRYABLE  # pylint: disable=W0012,W0134
                 # pylint: disable=lost-exception
-                return result
+                return result  # pylint: disable=W0012,W0134
 
         # No spans to export
         self._consecutive_redirects = 0

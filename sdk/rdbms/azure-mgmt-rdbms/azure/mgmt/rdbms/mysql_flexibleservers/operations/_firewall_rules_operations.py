@@ -59,7 +59,9 @@ def build_create_or_update_request(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
         "serverName": _SERIALIZER.url("server_name", server_name, "str", pattern=r"^[a-z0-9][-a-z0-9]*(?<!-)$"),
-        "firewallRuleName": _SERIALIZER.url("firewall_rule_name", firewall_rule_name, "str"),
+        "firewallRuleName": _SERIALIZER.url(
+            "firewall_rule_name", firewall_rule_name, "str", pattern=r"^[a-zA-Z0-9][-_a-zA-Z0-9]{0,79}(?<!-)$"
+        ),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -95,7 +97,9 @@ def build_delete_request(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
         "serverName": _SERIALIZER.url("server_name", server_name, "str", pattern=r"^[a-z0-9][-a-z0-9]*(?<!-)$"),
-        "firewallRuleName": _SERIALIZER.url("firewall_rule_name", firewall_rule_name, "str"),
+        "firewallRuleName": _SERIALIZER.url(
+            "firewall_rule_name", firewall_rule_name, "str", pattern=r"^[a-zA-Z0-9][-_a-zA-Z0-9]{0,79}(?<!-)$"
+        ),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -129,7 +133,9 @@ def build_get_request(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
         "serverName": _SERIALIZER.url("server_name", server_name, "str", pattern=r"^[a-z0-9][-a-z0-9]*(?<!-)$"),
-        "firewallRuleName": _SERIALIZER.url("firewall_rule_name", firewall_rule_name, "str"),
+        "firewallRuleName": _SERIALIZER.url(
+            "firewall_rule_name", firewall_rule_name, "str", pattern=r"^[a-zA-Z0-9][-_a-zA-Z0-9]{0,79}(?<!-)$"
+        ),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore

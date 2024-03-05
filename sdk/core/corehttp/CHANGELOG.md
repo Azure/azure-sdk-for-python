@@ -1,5 +1,24 @@
 # Release History
 
+## 1.0.0b5 (2024-02-29)
+
+### Other Changes
+
+- Accept float for `retry_after` header.
+
+## 1.0.0b4 (2024-02-23)
+
+### Other Changes
+
+- Relax type checking in `Pipeline` constructors to only check that each user-supplied policy object has either a `send` method or both an `on_request` and `on_response` method. This allows for more flexible policy implementations. [#34296](https://github.com/Azure/azure-sdk-for-python/pull/34296)
+
+## 1.0.0b3 (2024-02-01)
+
+### Features Added
+
+- Support tuple input for `files` values to `corehttp.rest.HttpRequest` #34082
+- Support simultaneous `files` and `data` field entry into `corehttp.rest.HttpRequest` #34082
+
 ## 1.0.0b2 (2023-11-14)
 
 ### Features Added

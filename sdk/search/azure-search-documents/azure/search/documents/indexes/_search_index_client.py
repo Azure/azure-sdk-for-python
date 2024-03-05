@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 from typing import Any, List, Union, Optional, MutableMapping, cast
 
+from azure.core.rest import HttpRequest, HttpResponse
 from azure.core import MatchConditions
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.tracing.decorator import distributed_trace
@@ -384,8 +385,8 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         the SynonymMap model must be provided instead of the name. It is enough to provide
         the name of the synonym map to delete unconditionally.
 
-        :param name: The synonym map name or object to delete
-        :type name: str or ~azure.search.documents.indexes.models.SynonymMap
+        :param synonym_map: The synonym map name or object to delete
+        :type synonym_map: str or ~azure.search.documents.indexes.models.SynonymMap
         :keyword match_condition: The match condition to use upon the etag
         :paramtype match_condition: ~azure.core.MatchConditions
 
@@ -614,3 +615,16 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
             alias_name=alias.name, alias=alias, prefer="return=representation", error_map=error_map, **kwargs
         )
         return result  # pylint:disable=protected-access
+
+    @distributed_trace
+    def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs) -> HttpResponse:
+        """Runs a network request using the client's existing pipeline.
+
+        :param request: The network request you want to make.
+        :type request: ~azure.core.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.rest.HttpResponse
+        """
+        request.headers = self._merge_client_headers(request.headers)
+        return self._client._send_request(request, stream=stream, **kwargs)  # pylint:disable=protected-access

@@ -47,7 +47,7 @@ async def analyze_query_fields():
     # [START analyze_query_fields]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence.aio import DocumentIntelligenceClient
-    from azure.ai.documentintelligence.models import AnalyzeDocumentRequest, DocumentAnalysisFeature
+    from azure.ai.documentintelligence.models import AnalyzeDocumentRequest, DocumentAnalysisFeature, AnalyzeResult
 
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
@@ -63,16 +63,20 @@ async def analyze_query_fields():
             features=[DocumentAnalysisFeature.QUERY_FIELDS],
             query_fields=["Address", "InvoiceNumber"],
         )
-        result = await poller.result()
+        result: AnalyzeResult = await poller.result()
     print("Here are extra fields in result:\n")
-    for doc in result.documents:
-        print(f"Address: {doc.fields['Address'].value_string}")
-        print(f"Invoice number: {doc.fields['InvoiceNumber'].value_string}")
+    if result.documents:
+        for doc in result.documents:
+            if doc.fields and doc.fields["Address"]:
+                print(f"Address: {doc.fields['Address'].value_string}")
+            if doc.fields and doc.fields["InvoiceNumber"]:
+                print(f"Invoice number: {doc.fields['InvoiceNumber'].value_string}")
     # [END analyze_query_fields]
 
 
 async def main():
     await analyze_query_fields()
+
 
 if __name__ == "__main__":
     from azure.core.exceptions import HttpResponseError

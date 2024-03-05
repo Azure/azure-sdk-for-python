@@ -5,23 +5,26 @@
 
 from typing import Any, Dict, Optional
 
-from azure.ai.ml._utils.utils import camel_to_snake
+from azure.ai.ml._utils.utils import camel_to_snake, _snake_to_camel
 from azure.ai.ml.entities import WorkspaceConnection
 from azure.ai.ml.entities._credentials import ApiKeyConfiguration
 from azure.core.credentials import TokenCredential
-from azure.ai.ml._restclient.v2023_06_01_preview.models import ConnectionCategory
-
+from azure.ai.ml._restclient.v2023_08_01_preview.models import ConnectionCategory
+from azure.ai.ml.constants._common import (
+    WorkspaceConnectionTypes,
+)
 
 class BaseConnection:
-    """A connection to a specific external AI system. This is a base class and should not be
-    instantiated directly. Use the child classes that are specialized for connections to different services.
+    """A connection to a another system or service. This is a base class and should only be directly 
+    used to cover the simplest of connection types that don't merit their own subclass.
 
     :param name: The name of the connection
     :type name: str
     :param target: The URL or ARM resource ID of the external resource.
     :type target: str
     :param type: The type of connection this represents. Acceptable values include:
-        "azure_open_ai", "cognitive_service", and "cognitive_search".
+        "azure_open_ai", "cognitive_service", "cognitive_search",
+        "git", "azure_blob", and "custom".
     :type type: str
     :param credentials: The credentials for authenticating to the external resource.
     :type credentials: ~azure.ai.ml.entities.ApiKeyConfiguration
@@ -32,8 +35,7 @@ class BaseConnection:
     :param id: The connection's resource id.
     :type id: str
     :param is_shared: For connections created for a project, this determines if the connection
-        is shared amongst other connections with that project's parent AI resource.
-        Defaults to true.
+        is shared amongst other connections with that project's parent AI resource. Defaults to True.
     :type is_shared: bool
     """
 
@@ -47,10 +49,13 @@ class BaseConnection:
         **kwargs,
     ):
         # Sneaky short-circuit to allow direct v2 WS conn injection without any
-        # polymorphic required argument hassles.
+        # polymorphic-argument hassles.
+        # See _from_v2_workspace_connection for usage.
         if kwargs.pop("make_empty", False):
             return
         
+        # Dev note: this is an important line, as is quietly changes the internal object from
+        # A WorkspaceConnection to the relevant subclass if needed.
         conn_class = WorkspaceConnection._get_entity_class_from_type(type)
         self._workspace_connection = conn_class(
             target=target,
@@ -70,33 +75,63 @@ class BaseConnection:
         :return: The converted connection.
         :rtype: ~azure.ai.resources.entities.Connection
         """
-        # It's simpler to create a placeholder connection, then overwrite the internal WC.
-        # We don't need to worry about the potentially changing WC fields this way.
         conn_class = cls._get_ai_connection_class_from_type(workspace_connection.type)
-        conn = conn_class(type="a", target="a", credentials=None, name="a", make_empty=True, api_version=None, api_type=None, kind=None)
+        # This slightly-cheeky init is just a placeholder that is immediately replaced
+        # with a directly-injected v2 connection object.
+        # Since all connection class initializers have kwargs, we can just throw a kitchen sink's
+        # worth of inputs to satisfy all possible subclass input requirements.
+        conn = conn_class(
+            type="a",
+            target="a",
+            credentials=None,
+            name="a",
+            make_empty=True,
+            api_version=None,
+            api_type=None,
+            kind=None,
+            account_name="a",
+            container_name="a",
+        )
         conn._workspace_connection = workspace_connection
         return conn
     
     @classmethod
     def _get_ai_connection_class_from_type(cls,  conn_type: str):
-        ''' Given a connection type string, get the corresponding AI SDK object via class
+        """Given a connection type string, get the corresponding AI SDK object via class
         comparisons. Accounts for any potential camel/snake/capitalization issues. Returns
         the BaseConnection class if no match is found.
-        '''
+
+        :param conn_type: The type of the connection as a string. Should match one of the
+            supported connection category values.
+        :type conn_type: str
+        """
         #import here to avoid circular import
         from .connection_subtypes import (
             AzureOpenAIConnection,
             AzureAISearchConnection,
             AzureAIServiceConnection,
+            GitHubConnection,
+            CustomConnection,
+            AzureBlobStoreConnection
         )
     
-        cat = camel_to_snake(conn_type).lower()
-        if cat == camel_to_snake(ConnectionCategory.AZURE_OPEN_AI).lower():
-            return AzureOpenAIConnection
-        elif cat == camel_to_snake(ConnectionCategory.COGNITIVE_SEARCH).lower():
-            return AzureAISearchConnection
-        elif cat == camel_to_snake(ConnectionCategory.COGNITIVE_SERVICE).lower():
-            return AzureAIServiceConnection
+        # Custom accounts for both "custom_keys" and "custom" as conversion types in case of
+        # improper input.
+        # All values are lower-cased to normalize input.
+        # TODO replace azure blob with conn category when available.
+        CONNECTION_CATEGORY_TO_SUBCLASS_MAP = {
+            ConnectionCategory.AZURE_OPEN_AI.lower(): AzureOpenAIConnection,
+            ConnectionCategory.COGNITIVE_SEARCH.lower(): AzureAISearchConnection,
+            ConnectionCategory.COGNITIVE_SERVICE.lower(): AzureAIServiceConnection,
+            ConnectionCategory.GIT.lower(): GitHubConnection,
+            "azureblob": AzureBlobStoreConnection, # TODO replace with conn category when available
+            ConnectionCategory.CUSTOM_KEYS.lower(): CustomConnection, 
+            WorkspaceConnectionTypes.CUSTOM.lower(): CustomConnection
+        }
+        # snake and lower-case inputted type to match the map.
+        cat = _snake_to_camel(conn_type).lower()
+        if cat in CONNECTION_CATEGORY_TO_SUBCLASS_MAP:
+            return CONNECTION_CATEGORY_TO_SUBCLASS_MAP[cat]
         return BaseConnection
 
 
@@ -194,7 +229,7 @@ class BaseConnection:
 
     @property
     def tags(self) -> Dict[str, Any]:
-        """tags for the connection.
+        """Tags for the connection.
 
         :return: This connection's tags.
         :rtype: Dict[str, Any]
@@ -236,18 +271,18 @@ class BaseConnection:
 
     @property
     def is_shared(self) -> bool:
-        """Get the Boolean describing if this connection is shared
-            amongst its cohort within a workspace hub. Only applicable for connections
-            that are project-scoped on creation.
+        """Get the Boolean describing if this connection is shared amongst its cohort within a workspace hub.
+        Only applicable for connections that are project-scoped on creation.
+
         :rtype: bool
         """
         return self._workspace_connection.is_shared
 
     @is_shared.setter
     def is_shared(self, value: bool):
-        """The is_shared determines if this connection is shared amongst other
-            lean workspaces within its parent workspace hub. Only applicable for connections
-            that are project-scoped on creation.
+        """The is_shared determines if this connection is shared amongst other lean workspaces within its parent
+        workspace hub. Only applicable for connections that are project-scoped on creation.
+
         :type value: bool
         """
         if not value:
@@ -255,7 +290,7 @@ class BaseConnection:
         self._workspace_connection.is_shared = value
 
     def set_current_environment(self, credential: Optional[TokenCredential] = None):
-        """Sets the current environment to use the connection. To use AAD auth for AzureOpenAI connetion, pass in a credential object.
+        """Sets the current environment to use the connection. To use AAD auth for AzureOpenAI connection, pass in a credential object.
         Only certain types of connections make use of this function. Those that don't will raise an error if this is called.
 
         :param credential: Optional credential to use for the connection. If not provided, the connection's credentials will be used.

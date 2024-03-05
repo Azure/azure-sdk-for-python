@@ -3,9 +3,10 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import logging
-import time
-from typing import Any, Callable, Optional, Union
+from typing import Any, Callable, cast, Optional, Union
 
+from azure.core.pipeline import PipelineResponse
+from azure.core.pipeline.transport import HttpTransport
 from azure.core.polling import PollingMethod
 from azure.keyvault.certificates._models import KeyVaultCertificate, CertificateOperation
 
@@ -13,7 +14,10 @@ logger = logging.getLogger(__name__)
 
 
 class CreateCertificatePoller(PollingMethod):
-    def __init__(self, get_certificate_command: Callable, interval: int = 5) -> None:
+    def __init__(
+            self, pipeline_response: PipelineResponse, get_certificate_command: Callable, interval: int = 5
+        ) -> None:
+        self._pipeline_response = pipeline_response
         self._command: Optional[Callable] = None
         self._resource: Optional[Union[CertificateOperation, KeyVaultCertificate]] = None
         self._pending_certificate_op: Optional[CertificateOperation] = None
@@ -32,7 +36,9 @@ class CreateCertificatePoller(PollingMethod):
             while not self.finished():
                 self._update_status()
                 if not self.finished():
-                    time.sleep(self._polling_interval)
+                    # We should always ask the client's transport to sleep, instead of sleeping directly
+                    transport: HttpTransport = cast(HttpTransport, self._pipeline_response.context.transport)
+                    transport.sleep(self._polling_interval)
             operation = self._pending_certificate_op
             if operation and operation.status and operation.status.lower() == "completed":
                 self._resource = self._get_certificate_command()

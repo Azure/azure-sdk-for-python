@@ -14,7 +14,7 @@ class AuthorizationCodeCredential(AsyncContextManager, GetTokenMixin):
     """Authenticates by redeeming an authorization code previously obtained from Microsoft Entra ID.
 
     See `Microsoft Entra ID documentation
-    <https://learn.microsoft.com/azure/active-directory/develop/v2-oauth2-auth-code-flow>`_ for more information
+    <https://learn.microsoft.com/azure/active-directory/develop/v2-oauth2-auth-code-flow>`__ for more information
     about the authentication flow.
 
     :param str tenant_id: ID of the application's Microsoft Entra tenant. Also called its "directory" ID.

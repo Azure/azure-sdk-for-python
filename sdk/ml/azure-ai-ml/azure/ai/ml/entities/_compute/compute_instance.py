@@ -7,7 +7,7 @@
 import logging
 import re
 import warnings
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import AssignedUser
 from azure.ai.ml._restclient.v2023_08_01_preview.models import ComputeInstance as CIRest
@@ -58,11 +58,11 @@ class ComputeInstanceSshSettings:
         self,
         *,
         ssh_key_value: Optional[str] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         self.ssh_key_value = ssh_key_value
-        self._ssh_port = kwargs.pop("ssh_port", None)
-        self._admin_username = kwargs.pop("admin_username", None)
+        self._ssh_port: str = kwargs.pop("ssh_port", None)
+        self._admin_username: str = kwargs.pop("admin_username", None)
 
     @property
     def admin_username(self) -> str:
@@ -131,7 +131,8 @@ class ComputeInstance(Compute):
     :type network_settings: Optional[~azure.ai.ml.entities.NetworkSettings]
     :param ssh_settings: SSH settings for the compute instance.
     :type ssh_settings: Optional[~azure.ai.ml.entities.ComputeInstanceSshSettings]
-    :param ssh_public_access_enabled: State of the public SSH port. Defaults to None. Possible values are:
+    :param ssh_public_access_enabled: State of the public SSH port. Defaults to None.
+        Possible values are:
 
         * False - Indicates that the public ssh port is closed on all nodes of the cluster.
         * True - Indicates that the public ssh port is open on all nodes of the cluster.
@@ -153,8 +154,10 @@ class ComputeInstance(Compute):
     :type idle_time_before_shutdown_minutes: Optional[int]
     :param enable_node_public_ip: Enable or disable node public IP address provisioning. Defaults to True.
         Possible values are:
+
             * True - Indicates that the compute nodes will have public IPs provisioned.
             * False - Indicates that the compute nodes will have a private endpoint and no public IPs.
+
     :type enable_node_public_ip: Optional[bool]
     :param setup_scripts: Details of customized scripts to execute for setting up the cluster.
     :type setup_scripts: Optional[~azure.ai.ml.entities.SetupScripts]
@@ -195,13 +198,13 @@ class ComputeInstance(Compute):
         custom_applications: Optional[List[CustomApplications]] = None,
         enable_sso: bool = True,
         enable_root_access: bool = True,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         kwargs[TYPE] = ComputeType.COMPUTEINSTANCE
-        self._state = kwargs.pop("state", None)
-        self._last_operation = kwargs.pop("last_operation", None)
-        self._os_image_metadata = kwargs.pop("os_image_metadata", None)
-        self._services = kwargs.pop("services", None)
+        self._state: str = kwargs.pop("state", None)
+        self._last_operation: dict = kwargs.pop("last_operation", None)
+        self._os_image_metadata: ImageMetadata = kwargs.pop("os_image_metadata", None)
+        self._services: list = kwargs.pop("services", None)
         super().__init__(
             name=name,
             location=kwargs.pop("location", None),
@@ -327,7 +330,8 @@ class ComputeInstance(Compute):
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        return ComputeInstanceSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = ComputeInstanceSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return res
 
     def _set_full_subnet_name(self, subscription_id: str, rg: str) -> None:
         if self.network_settings:
@@ -401,7 +405,6 @@ class ComputeInstance(Compute):
             custom_applications = []
             for app in prop.properties.custom_services:
                 custom_applications.append(CustomApplications._from_rest_object(app))
-
         response = ComputeInstance(
             name=rest_obj.name,
             id=rest_obj.id,
@@ -421,7 +424,9 @@ class ComputeInstance(Compute):
             services=[app.as_dict() for app in prop.properties.applications]
             if prop.properties and prop.properties.applications
             else None,
-            created_on=prop.additional_properties.get("createdOn", None),
+            created_on=rest_obj.properties.created_on.strftime("%Y-%m-%dT%H:%M:%S.%f%z")
+            if rest_obj.properties and rest_obj.properties.created_on is not None
+            else None,
             create_on_behalf_of=create_on_behalf_of,
             network_settings=network_settings,
             ssh_settings=ssh_settings,
@@ -452,12 +457,12 @@ class ComputeInstance(Compute):
         return response
 
     @classmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, **kwargs) -> "ComputeInstance":
+    def _load_from_dict(cls, data: Dict, context: Dict, **kwargs: Any) -> "ComputeInstance":
         loaded_data = load_from_dict(ComputeInstanceSchema, data, context, **kwargs)
         return ComputeInstance(**loaded_data)
 
 
-def _ssh_public_access_to_bool(value: str) -> bool:
+def _ssh_public_access_to_bool(value: str) -> Optional[bool]:
     if value.lower() == "disabled":
         return False
     if value.lower() == "enabled":

@@ -4,7 +4,9 @@
 
 # pylint: disable=protected-access
 
-from typing import Dict, Iterable
+import time
+import uuid
+from typing import Dict, Iterable, Optional, cast
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
@@ -12,14 +14,17 @@ from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
 from azure.ai.ml._restclient.v2023_04_01_preview.models import Datastore as DatastoreData
 from azure.ai.ml._restclient.v2023_04_01_preview.models import DatastoreSecrets, NoneDatastoreCredentials
+from azure.ai.ml._restclient.v2024_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012024Preview
+from azure.ai.ml._restclient.v2024_01_01_preview.models import ComputeInstanceDataMount
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities._datastore.datastore import Datastore
 from azure.ai.ml.exceptions import ValidationException
 
 ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
+module_logger = ops_logger.module_logger
 
 
 class DatastoreOperations(_ScopeDependentOperations):
@@ -43,15 +48,17 @@ class DatastoreOperations(_ScopeDependentOperations):
         operation_scope: OperationScope,
         operation_config: OperationConfig,
         serviceclient_2023_04_01_preview: ServiceClient042023Preview,
-        **kwargs: Dict
+        serviceclient_2024_01_01_preview: ServiceClient012024Preview,
+        **kwargs: Dict,
     ):
         super(DatastoreOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
         self._operation = serviceclient_2023_04_01_preview.datastores
+        self._compute_operation = serviceclient_2024_01_01_preview.compute
         self._credential = serviceclient_2023_04_01_preview._config.credential
         self._init_kwargs = kwargs
 
-    @monitor_with_activity(logger, "Datastore.List", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Datastore.List", ActivityType.PUBLICAPI)
     def list(self, *, include_secrets: bool = False) -> Iterable[Datastore]:
         """Lists all datastores and associated information within a workspace.
 
@@ -70,28 +77,31 @@ class DatastoreOperations(_ScopeDependentOperations):
                 :caption: List datastore example.
         """
 
-        def _list_helper(datastore_resource, include_secrets: bool):
+        def _list_helper(datastore_resource: Datastore, include_secrets: bool) -> Datastore:
             if include_secrets:
                 self._fetch_and_populate_secret(datastore_resource)
             return Datastore._from_rest_object(datastore_resource)
 
-        return self._operation.list(
-            resource_group_name=self._operation_scope.resource_group_name,
-            workspace_name=self._workspace_name,
-            cls=lambda objs: [_list_helper(obj, include_secrets) for obj in objs],
-            **self._init_kwargs
+        return cast(
+            Iterable[Datastore],
+            self._operation.list(
+                resource_group_name=self._operation_scope.resource_group_name,
+                workspace_name=self._workspace_name,
+                cls=lambda objs: [_list_helper(obj, include_secrets) for obj in objs],
+                **self._init_kwargs,
+            ),
         )
 
-    @monitor_with_activity(logger, "Datastore.ListSecrets", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Datastore.ListSecrets", ActivityType.PUBLICAPI)
     def _list_secrets(self, name: str) -> DatastoreSecrets:
         return self._operation.list_secrets(
             name=name,
             resource_group_name=self._operation_scope.resource_group_name,
             workspace_name=self._workspace_name,
-            **self._init_kwargs
+            **self._init_kwargs,
         )
 
-    @monitor_with_activity(logger, "Datastore.Delete", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Datastore.Delete", ActivityType.PUBLICAPI)
     def delete(self, name: str) -> None:
         """Deletes a datastore reference with the given name from the workspace. This method does not delete the actual
         datastore or underlying data in the datastore.
@@ -113,11 +123,11 @@ class DatastoreOperations(_ScopeDependentOperations):
             name=name,
             resource_group_name=self._operation_scope.resource_group_name,
             workspace_name=self._workspace_name,
-            **self._init_kwargs
+            **self._init_kwargs,
         )
 
-    @monitor_with_activity(logger, "Datastore.Get", ActivityType.PUBLICAPI)
-    def get(self, name: str, *, include_secrets: bool = False) -> Datastore:
+    @monitor_with_activity(ops_logger, "Datastore.Get", ActivityType.PUBLICAPI)
+    def get(self, name: str, *, include_secrets: bool = False) -> Datastore:  # type: ignore
         """Returns information about the datastore referenced by the given name.
 
         :param name: Datastore name
@@ -141,7 +151,7 @@ class DatastoreOperations(_ScopeDependentOperations):
                 name=name,
                 resource_group_name=self._operation_scope.resource_group_name,
                 workspace_name=self._workspace_name,
-                **self._init_kwargs
+                **self._init_kwargs,
             )
             if include_secrets:
                 self._fetch_and_populate_secret(datastore_resource)
@@ -156,8 +166,8 @@ class DatastoreOperations(_ScopeDependentOperations):
             secrets = self._list_secrets(datastore_resource.name)
             datastore_resource.properties.credentials.secrets = secrets
 
-    @monitor_with_activity(logger, "Datastore.GetDefault", ActivityType.PUBLICAPI)
-    def get_default(self, *, include_secrets: bool = False) -> Datastore:
+    @monitor_with_activity(ops_logger, "Datastore.GetDefault", ActivityType.PUBLICAPI)
+    def get_default(self, *, include_secrets: bool = False) -> Datastore:  # type: ignore
         """Returns the workspace's default datastore.
 
         :keyword include_secrets: Include datastore secrets in the returned datastore, defaults to False
@@ -179,7 +189,7 @@ class DatastoreOperations(_ScopeDependentOperations):
                 resource_group_name=self._operation_scope.resource_group_name,
                 workspace_name=self._workspace_name,
                 is_default=True,
-                **self._init_kwargs
+                **self._init_kwargs,
             ).next()
             if include_secrets:
                 self._fetch_and_populate_secret(datastore_resource)
@@ -187,8 +197,8 @@ class DatastoreOperations(_ScopeDependentOperations):
         except (ValidationException, SchemaValidationError) as ex:
             log_and_raise_error(ex)
 
-    @monitor_with_activity(logger, "Datastore.CreateOrUpdate", ActivityType.PUBLICAPI)
-    def create_or_update(self, datastore: Datastore) -> Datastore:
+    @monitor_with_activity(ops_logger, "Datastore.CreateOrUpdate", ActivityType.PUBLICAPI)
+    def create_or_update(self, datastore: Datastore) -> Datastore:  # type: ignore
         """Attaches the passed in datastore to the workspace or updates the datastore if it already exists.
 
         :param datastore: The configuration of the datastore to attach.
@@ -220,3 +230,92 @@ class DatastoreOperations(_ScopeDependentOperations):
                 log_and_raise_error(ex)
             else:
                 raise ex
+
+    @monitor_with_activity(ops_logger, "Datastore.Mount", ActivityType.PUBLICAPI)
+    @experimental
+    def mount(
+        self,
+        path: str,
+        mount_point: Optional[str] = None,
+        mode: str = "ro_mount",
+        debug: bool = False,
+        persistent: bool = False,
+        **_kwargs,
+    ) -> None:
+        """Mount a datastore to a local path, so that you can access data inside it
+        under a local path with any tools of your choice.
+
+        :param path: The data store path to mount, in the form of `<name>` or `azureml://datastores/<name>`.
+        :type path: str
+        :param mount_point: A local path used as mount point.
+        :type mount_point: str
+        :param mode: Mount mode, either `ro_mount` (read-only) or `rw_mount` (read-write).
+        :type mode: str
+        :param debug: Whether to enable verbose logging.
+        :type debug: bool
+        :param persistent: Whether to persist the mount after reboot. Applies only when running on Compute Instance,
+                where the 'CI_NAME' environment variable is set."
+        :type persistent: bool
+        :return: None
+        """
+
+        assert mode in ["ro_mount", "rw_mount"], "mode should be either `ro_mount` or `rw_mount`"
+        read_only = mode == "ro_mount"
+
+        import os
+
+        ci_name = os.environ.get("CI_NAME")
+        assert not persistent or (
+            persistent and ci_name is not None
+        ), "persistent mount is only supported on Compute Instance, where the 'CI_NAME' environment variable is set."
+
+        try:
+            from azureml.dataprep import rslex_fuse_subprocess_wrapper
+        except ImportError as exc:
+            raise Exception(
+                "Mount operations requires package azureml-dataprep-rslex installed. "
+                + "You can install it with Azure ML SDK with `pip install azure-ai-ml[mount]`."
+            ) from exc
+
+        uri = rslex_fuse_subprocess_wrapper.build_datastore_uri(
+            self._operation_scope._subscription_id, self._resource_group_name, self._workspace_name, path
+        )
+        if persistent and ci_name is not None:
+            mount_name = f"unified_mount_{str(uuid.uuid4()).replace('-', '')}"
+            self._compute_operation.update_data_mounts(
+                self._resource_group_name,
+                self._workspace_name,
+                ci_name,
+                [
+                    ComputeInstanceDataMount(
+                        source=uri,
+                        source_type="URI",
+                        mount_name=mount_name,
+                        mount_action="Mount",
+                        mount_path=mount_point or "",
+                    )
+                ],
+                api_version="2021-01-01",
+            )
+            print(f"Mount requested [name: {mount_name}]. Waiting for completion ...")
+            while True:
+                compute = self._compute_operation.get(self._resource_group_name, self._workspace_name, ci_name)
+                mounts = compute.properties.properties.data_mounts
+                try:
+                    mount = [mount for mount in mounts if mount.mount_name == mount_name][0]
+                    if mount.mount_state == "Mounted":
+                        print(f"Mounted [name: {mount_name}].")
+                        break
+                    if mount.mount_state == "MountRequested":
+                        pass
+                    elif mount.mount_state == "MountFailed":
+                        raise Exception(f"Mount failed [name: {mount_name}]: {mount.error}")
+                    else:
+                        raise Exception(f"Got unexpected mount state [name: {mount_name}]: {mount.mount_state}")
+                except IndexError:
+                    pass
+                time.sleep(5)
+        else:
+            rslex_fuse_subprocess_wrapper.start_fuse_mount_subprocess(
+                uri, mount_point, read_only, debug, credential=self._operation._config.credential
+            )

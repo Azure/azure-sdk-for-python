@@ -4,7 +4,6 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from copy import copy
 from flask import (
     Response,
     Blueprint,
@@ -147,3 +146,50 @@ def multipart_request():
         body_as_str.encode("ascii"),
         content_type="multipart/mixed; boundary=batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed",
     )
+
+
+@multipart_api.route("/tuple-input-multiple-same-name", methods=["POST"])
+def tuple_input_multiple_same_name():
+    assert_with_message("content type", multipart_header_start, request.content_type[: len(multipart_header_start)])
+
+    files = request.files.getlist("file")
+    assert_with_message("num files", 2, len(files))
+
+    file1 = files[0]
+    assert_with_message("file content type", "image/pdf", file1.content_type)
+    assert_with_message("filename", "firstFileName", file1.filename)
+
+    file2 = files[1]
+    assert_with_message("file content type", "image/png", file2.content_type)
+    assert_with_message("filename", "secondFileName", file2.filename)
+    return Response(status=200)
+
+
+@multipart_api.route("/tuple-input-multiple-same-name-with-tuple-file-value", methods=["POST"])
+def test_input_multiple_same_name_with_tuple_file_value():
+    assert_with_message("content type", multipart_header_start, request.content_type[: len(multipart_header_start)])
+
+    images = request.files.getlist("images")
+    assert_with_message("num images", 2, len(images))
+
+    tuple_image = images[0]
+    assert_with_message("image content type", "image/png", tuple_image.content_type)
+    assert_with_message("filename", "foo.png", tuple_image.filename)
+
+    single_image = images[1]
+    assert_with_message("file content type", "application/octet-stream", single_image.content_type)
+    assert_with_message("filename", "foo.png", single_image.filename)
+    return Response(status=200)
+
+
+@multipart_api.route("/data-and-file-input-same-name", methods=["POST"])
+def data_and_file_input_same_name():
+    assert_with_message("content type", multipart_header_start, request.content_type[: len(multipart_header_start)])
+
+    # use call to this function to check files
+    tuple_input_multiple_same_name()
+
+    assert_with_message("data items num", 1, len(request.form.keys()))
+    assert_with_message("message", "Hello, world!", request.form["message"])
+
+    return Response(status=200)

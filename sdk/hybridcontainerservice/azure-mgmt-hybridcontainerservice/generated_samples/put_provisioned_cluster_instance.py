@@ -38,7 +38,14 @@ def main():
             },
             "properties": {
                 "agentPoolProfiles": [
-                    {"count": 1, "name": "default-nodepool-1", "osType": "Linux", "vmSize": "Standard_A4_v2"}
+                    {
+                        "count": 1,
+                        "name": "default-nodepool-1",
+                        "nodeLabels": {"env": "dev", "goal": "test"},
+                        "nodeTaints": ["env=prod:NoSchedule", "sku=gpu:NoSchedule"],
+                        "osType": "Linux",
+                        "vmSize": "Standard_A4_v2",
+                    }
                 ],
                 "cloudProviderProfile": {
                     "infraNetworkProfile": {
@@ -47,14 +54,8 @@ def main():
                         ]
                     }
                 },
-                "controlPlane": {
-                    "count": 1,
-                    "linuxProfile": {
-                        "ssh": {"publicKeys": [{"keyData": "ssh-rsa AAAAB1NzaC1yc2EAAAADAQABAAACAQCY......"}]}
-                    },
-                    "osType": "Linux",
-                    "vmSize": "Standard_A4_v2",
-                },
+                "clusterVMAccessProfile": {"authorizedIPRanges": "127.0.0.1,127.0.0.2"},
+                "controlPlane": {"count": 1, "vmSize": "Standard_A4_v2"},
                 "kubernetesVersion": "v1.20.5",
                 "licenseProfile": {"azureHybridBenefit": "NotApplicable"},
                 "linuxProfile": {
@@ -67,6 +68,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/hybridaks/resource-manager/Microsoft.HybridContainerService/preview/2023-11-15-preview/examples/PutProvisionedClusterInstance.json
+# x-ms-original-file: specification/hybridaks/resource-manager/Microsoft.HybridContainerService/stable/2024-01-01/examples/PutProvisionedClusterInstance.json
 if __name__ == "__main__":
     main()

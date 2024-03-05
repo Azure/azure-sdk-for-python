@@ -25,13 +25,13 @@ if TYPE_CHECKING:
 class SecurityCenter:  # pylint: disable=client-accepts-api-version-keyword
     """API spec for Microsoft.Security (Azure Security Center) resource provider.
 
-    :ivar settings: SettingsOperations operations
-    :vartype settings: azure.mgmt.security.v2021_06_01.aio.operations.SettingsOperations
     :ivar assessments_metadata: AssessmentsMetadataOperations operations
     :vartype assessments_metadata:
      azure.mgmt.security.v2021_06_01.aio.operations.AssessmentsMetadataOperations
     :ivar assessments: AssessmentsOperations operations
     :vartype assessments: azure.mgmt.security.v2021_06_01.aio.operations.AssessmentsOperations
+    :ivar settings: SettingsOperations operations
+    :vartype settings: azure.mgmt.security.v2021_06_01.aio.operations.SettingsOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: Azure subscription ID. Required.
@@ -57,11 +57,13 @@ class SecurityCenter:  # pylint: disable=client-accepts-api-version-keyword
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.settings = SettingsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.assessments_metadata = AssessmentsMetadataOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-06-01"
         )
-        self.assessments = AssessmentsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.assessments = AssessmentsOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2021-06-01"
+        )
+        self.settings = SettingsOperations(self._client, self._config, self._serialize, self._deserialize, "2021-06-01")
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.

@@ -44,7 +44,7 @@ def main():
                 "administratorLogin": "cloudsa",
                 "administratorLoginPassword": "your_password",
                 "availabilityZone": "1",
-                "backup": {"backupRetentionDays": 7, "geoRedundantBackup": "Disabled"},
+                "backup": {"backupIntervalHours": 24, "backupRetentionDays": 7, "geoRedundantBackup": "Disabled"},
                 "createMode": "Default",
                 "dataEncryption": {
                     "geoBackupKeyURI": "https://test-geo.vault.azure.net/keys/key/c8a92236622244c0a4fdb892666f671a",
@@ -64,6 +64,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/mysql/resource-manager/Microsoft.DBforMySQL/FlexibleServers/preview/2023-06-01-preview/examples/ServerCreateWithBYOK.json
+# x-ms-original-file: specification/mysql/resource-manager/Microsoft.DBforMySQL/FlexibleServers/preview/2023-12-01-preview/examples/ServerCreateWithBYOK.json
 if __name__ == "__main__":
     main()

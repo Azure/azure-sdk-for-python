@@ -107,12 +107,16 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         indexer: SearchIndexer,
         *,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
+        skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
+        disable_cache_reprocessing_change_detection: Optional[bool] = None,
         **kwargs: Any
     ) -> SearchIndexer:
         """Creates a new indexer or updates a indexer if it already exists.
 
         :param indexer: The definition of the indexer to create or update.
         :type indexer: ~azure.search.documents.indexes.models.SearchIndexer
+        :keyword match_condition: The match condition to use upon the etag
+        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements.
         :paramtype skip_indexer_reset_requirement_for_cache: bool
         :keyword disable_cache_reprocessing_change_detection: Disables cache reprocessing change
@@ -126,7 +130,13 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         kwargs.update(access_condition)
         name = indexer.name
         result = await self._client.indexers.create_or_update(
-            indexer_name=name, indexer=indexer, prefer="return=representation", error_map=error_map, **kwargs
+            indexer_name=name,
+            indexer=indexer,
+            prefer="return=representation",
+            error_map=error_map,
+            skip_indexer_reset_requirement_for_cache=skip_indexer_reset_requirement_for_cache,
+            disable_cache_reprocessing_change_detection=disable_cache_reprocessing_change_detection,
+            **kwargs
         )
         return result
 
@@ -203,8 +213,8 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         must be provided instead of the name. It is enough to provide
         the name of the indexer to delete unconditionally.
 
-        :param name: The name or the indexer object to delete.
-        :type name: str or ~azure.search.documents.indexes.models.SearchIndexer
+        :param indexer: The name or the indexer object to delete.
+        :type indexer: str or ~azure.search.documents.indexes.models.SearchIndexer
         :keyword match_condition: The match condition to use upon the etag
         :paramtype match_condition: ~azure.core.MatchConditions
 
@@ -266,7 +276,12 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
     @distributed_trace_async
     async def reset_documents(
-        self, indexer: Union[str, SearchIndexer], keys_or_ids: DocumentKeysOrIds, **kwargs: Any
+        self,
+        indexer: Union[str, SearchIndexer],
+        keys_or_ids: DocumentKeysOrIds,
+        *,
+        overwrite: bool = False,
+        **kwargs: Any
     ) -> None:
         """Resets specific documents in the datasource to be selectively re-ingested by the indexer.
 
@@ -287,7 +302,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
             name = indexer.name  # type: ignore
         except AttributeError:
             name = indexer
-        await self._client.indexers.reset_docs(name, **kwargs)
+        await self._client.indexers.reset_docs(name, overwrite=overwrite, **kwargs)
         return
 
     @distributed_trace_async
@@ -343,6 +358,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         data_source_connection: SearchIndexerDataSourceConnection,
         *,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
+        skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
         **kwargs: Any
     ) -> SearchIndexerDataSourceConnection:
         """Creates a new data source connection or updates a data source connection if it already exists.
@@ -369,6 +385,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
             data_source=packed_data_source,
             prefer="return=representation",
             error_map=error_map,
+            skip_indexer_reset_requirement_for_cache=skip_indexer_reset_requirement_for_cache,
             **kwargs
         )
         return SearchIndexerDataSourceConnection._from_generated(result)
@@ -570,6 +587,8 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         skillset: SearchIndexerSkillset,
         *,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
+        skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
+        disable_cache_reprocessing_change_detection: Optional[bool] = None,
         **kwargs: Any
     ) -> SearchIndexerSkillset:
         # pylint:disable=protected-access
@@ -599,6 +618,8 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
             skillset=skillset_gen,
             prefer="return=representation",
             error_map=error_map,
+            skip_indexer_reset_requirement_for_cache=skip_indexer_reset_requirement_for_cache,
+            disable_cache_reprocessing_change_detection=disable_cache_reprocessing_change_detection,
             **kwargs
         )
         return SearchIndexerSkillset._from_generated(result)  # pylint:disable=protected-access

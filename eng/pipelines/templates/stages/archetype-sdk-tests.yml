@@ -92,6 +92,9 @@ parameters:
   - name: TestProxy
     type: boolean
     default: false
+  - name: ToxTestEnv
+    type: string
+    default: 'whl'
 
 stages:
 - ${{ each cloud in parameters.CloudConfig }}:
@@ -126,6 +129,7 @@ stages:
               BuildDocs: ${{ parameters.BuildDocs }}
               TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
               TestProxy: ${{ parameters.TestProxy }}
+              ToxTestEnv: ${{ parameters.ToxTestEnv }}
             MatrixConfigs:
               # Enumerate platforms and additional platforms based on supported clouds (sparse platform<-->cloud matrix).
               - ${{ each config in parameters.MatrixConfigs }}:

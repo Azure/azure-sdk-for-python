@@ -17,9 +17,9 @@ class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class AddonPhase(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Observed phase of the addon on the target cluster. Possible values include: 'pending',
-    'provisioning', 'provisioning {HelmChartInstalled}', 'provisioning {MSICertificateDownloaded}',
-    'provisioned', 'deleting', 'failed', 'upgrading'.
+    """Observed phase of the addon or component on the provisioned cluster. Possible values include:
+    'pending', 'provisioning', 'provisioning {HelmChartInstalled}', 'provisioning
+    {MSICertificateDownloaded}', 'provisioned', 'deleting', 'failed', 'upgrading'.
     """
 
     PENDING = "pending"
@@ -33,7 +33,7 @@ class AddonPhase(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class AzureHybridBenefit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Indicates whether Azure Hybrid Benefit is opted in."""
+    """Indicates whether Azure Hybrid Benefit is opted in. Default value is false."""
 
     TRUE = "True"
     FALSE = "False"
@@ -49,19 +49,40 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     KEY = "Key"
 
 
+class Expander(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """If not specified, the default is 'random'. See `expanders
+    <https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/FAQ.md#what-are-expanders>`_
+    for more information.
+    """
+
+    LEAST_WASTE = "least-waste"
+    """Selects the node group that will have the least idle CPU (if tied, unused memory) after
+    #: scale-up. This is useful when you have different classes of nodes, for example, high CPU or
+    #: high memory nodes, and only want to expand those when there are pending pods that need a lot of
+    #: those resources."""
+    MOST_PODS = "most-pods"
+    """Selects the node group that would be able to schedule the most pods when scaling up. This is
+    #: useful when you are using nodeSelector to make sure certain pods land on certain nodes. Note
+    #: that this won't cause the autoscaler to select bigger nodes vs. smaller, as it can add multiple
+    #: smaller nodes at once."""
+    PRIORITY = "priority"
+    """Selects the node group that has the highest priority assigned by the user. It's configuration
+    #: is described in more details `here
+    #: <https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/expander/priority/readme.md>`_."""
+    RANDOM = "random"
+    """Used when you don't have a particular need for the node groups to scale differently."""
+
+
 class ExtendedLocationTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The extended location type."""
+    """The extended location type. Allowed value: 'CustomLocation'."""
 
     CUSTOM_LOCATION = "CustomLocation"
 
 
 class NetworkPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """NetworkPolicy - Network policy used for building Kubernetes network. Possible values include:
-    'calico', 'flannel'. Default is 'calico'.
-    """
+    """Network policy used for building Kubernetes network. Possible values include: 'calico'."""
 
     CALICO = "calico"
-    FLANNEL = "flannel"
 
 
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -88,7 +109,7 @@ class OSSKU(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class OsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The particular KubernetesVersion's Image's OS Type (Linux, Windows)."""
+    """The particular KubernetesVersion Image OS Type (Linux, Windows)."""
 
     WINDOWS = "Windows"
     LINUX = "Linux"
@@ -100,11 +121,11 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
     CANCELED = "Canceled"
-    IN_PROGRESS = "InProgress"
+    PENDING = "Pending"
+    CREATING = "Creating"
     DELETING = "Deleting"
     UPDATING = "Updating"
     ACCEPTED = "Accepted"
-    CREATED = "Created"
 
 
 class ResourceProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -113,10 +134,9 @@ class ResourceProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
     CANCELED = "Canceled"
+    PENDING = "Pending"
     CREATING = "Creating"
     DELETING = "Deleting"
     UPDATING = "Updating"
     UPGRADING = "Upgrading"
-    IN_PROGRESS = "InProgress"
     ACCEPTED = "Accepted"
-    CREATED = "Created"

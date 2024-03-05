@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from abc import ABC
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     LogVerbosity,
@@ -62,8 +62,8 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         *,
         task_type: str,
         primary_metric: str,
-        training_data: Input,
-        validation_data: Input,
+        training_data: Optional[Input],
+        validation_data: Optional[Input],
         target_column_name: Optional[str] = None,
         log_verbosity: Optional[str] = None,
         featurization: Optional[NlpFeaturizationSettings] = None,
@@ -71,10 +71,15 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         sweep: Optional[NlpSweepSettings] = None,
         training_parameters: Optional[NlpFixedParameters] = None,
         search_space: Optional[List[NlpSearchSpace]] = None,
-        **kwargs,
+        **kwargs: Any,
     ):
-        super().__init__(task_type, training_data=training_data, validation_data=validation_data, **kwargs)
+        self._training_parameters: Optional[NlpFixedParameters] = None
+
+        super().__init__(
+            task_type, training_data=training_data, validation_data=validation_data, **kwargs  # type: ignore
+        )
         self.log_verbosity = log_verbosity
+        self._primary_metric: str = ""
         self.primary_metric = primary_metric
 
         self.target_column_name = target_column_name
@@ -86,7 +91,7 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         self._search_space = search_space
 
     @property
-    def training_parameters(self) -> NlpFixedParameters:
+    def training_parameters(self) -> Optional[NlpFixedParameters]:
         """Parameters that are used for all submitted jobs.
 
         :return: fixed training parameters for NLP jobs
@@ -114,7 +119,7 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
             self.set_training_parameters(**value)
 
     @property
-    def search_space(self) -> List[NlpSearchSpace]:
+    def search_space(self) -> Optional[List[NlpSearchSpace]]:
         """Search space(s) to sweep over for NLP sweep jobs
 
         :return: list of search spaces to sweep over for NLP jobs
@@ -145,7 +150,9 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
                 error_category=ErrorCategory.USER_ERROR,
             )
 
-        self._search_space = [cast_to_specific_search_space(item, NlpSearchSpace, self.task_type) for item in value]
+        self._search_space = [
+            cast_to_specific_search_space(item, NlpSearchSpace, self.task_type) for item in value  # type: ignore
+        ]
 
     @property
     def primary_metric(self) -> str:
@@ -157,7 +164,7 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         return self._primary_metric
 
     @primary_metric.setter
-    def primary_metric(self, value):
+    def primary_metric(self, value: str) -> None:
         self._primary_metric = value
 
     @property
@@ -170,7 +177,7 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         return self._log_verbosity
 
     @log_verbosity.setter
-    def log_verbosity(self, value: Union[str, LogVerbosity]):
+    def log_verbosity(self, value: Union[str, LogVerbosity]) -> None:
         self._log_verbosity = None if value is None else LogVerbosity[camel_to_snake(value).upper()]
 
     @property
@@ -198,7 +205,7 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
             self.set_limits(**value)
 
     @property
-    def sweep(self) -> NlpSweepSettings:
+    def sweep(self) -> Optional[NlpSweepSettings]:
         """Sweep settings used for NLP job
 
         :return: sweep settings
@@ -222,7 +229,7 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
             self.set_sweep(**value)
 
     @property
-    def featurization(self) -> NlpFeaturizationSettings:
+    def featurization(self) -> Optional[NlpFeaturizationSettings]:
         """Featurization settings used for NLP job
 
         :return: featurization settings
@@ -295,7 +302,7 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         *,
         sampling_algorithm: Union[str, SamplingAlgorithmType],
         early_termination: Optional[EarlyTerminationPolicy] = None,
-    ):
+    ) -> None:
         """Define sweep configuration for AutoML NLP job
 
         :keyword sampling_algorithm: Required. Specifies type of hyperparameter sampling algorithm.
@@ -417,10 +424,12 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         self._search_space = self._search_space or []
         if isinstance(value, list):
             self._search_space.extend(
-                [cast_to_specific_search_space(item, NlpSearchSpace, self.task_type) for item in value]
+                [cast_to_specific_search_space(item, NlpSearchSpace, self.task_type) for item in value]  # type: ignore
             )
         else:
-            self._search_space.append(cast_to_specific_search_space(value, NlpSearchSpace, self.task_type))
+            self._search_space.append(
+                cast_to_specific_search_space(value, NlpSearchSpace, self.task_type)  # type: ignore
+            )
 
     @classmethod
     def _get_search_space_from_str(cls, search_space_str: Optional[str]) -> Optional[List]:
@@ -428,17 +437,17 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
             return [NlpSearchSpace._from_rest_object(entry) for entry in search_space_str if entry is not None]
         return None
 
-    def _restore_data_inputs(self):
+    def _restore_data_inputs(self) -> None:
         """Restore MLTableJobInputs to Inputs within data_settings.
 
         self.training_data and self.validation_data should reflect what user passed in (Input) Once we get response back
         from service (as MLTableJobInput), we should set responsible ones back to Input
         """
         super()._restore_data_inputs()
-        self.training_data = self.training_data if self.training_data else None
-        self.validation_data = self.validation_data if self.validation_data else None
+        self.training_data = self.training_data if self.training_data else None  # type: ignore
+        self.validation_data = self.validation_data if self.validation_data else None  # type: ignore
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, AutoMLNLPJob):
             return NotImplemented
 
@@ -454,5 +463,5 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
             and self._search_space == other._search_space
         )
 
-    def __ne__(self, other):
+    def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)

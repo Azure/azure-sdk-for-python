@@ -76,6 +76,7 @@ class ErrorTarget:
     DEPLOYMENT = "Deployment"
     ENDPOINT = "Endpoint"
     AUTOML = "AutoML"
+    FINETUNING = "FineTuning"
     PIPELINE = "Pipeline"
     SWEEP_JOB = "SweepJob"
     GENERAL = "General"

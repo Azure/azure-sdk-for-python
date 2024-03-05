@@ -31,6 +31,10 @@ steps:
     parameters:
       versionSpec: '${{ parameters.PythonVersion }}'
 
+  - template: set-dev-build.yml
+    parameters:
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
+
   - pwsh: |
       $ErrorActionPreference = 'Stop'
       $PSNativeCommandUseErrorActionPreference = $true
@@ -107,11 +111,6 @@ steps:
         --service="${{ parameters.ServiceDirectory }}"
         --toxenv="samples"
     env: ${{ parameters.EnvVars }}
-
-  - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
-    parameters:
-      ArtifactPath: '$(Build.SourcesDirectory)/.logs'
-      ArtifactName: '$(System.StageName)_$(Agent.JobName)_logs'
 
   - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
     parameters:

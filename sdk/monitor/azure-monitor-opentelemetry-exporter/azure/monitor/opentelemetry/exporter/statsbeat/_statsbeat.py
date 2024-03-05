@@ -5,6 +5,7 @@ import threading
 
 from opentelemetry.sdk.metrics import MeterProvider
 from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
+from opentelemetry.sdk.resources import Resource
 
 from azure.monitor.opentelemetry.exporter.statsbeat._exporter import _StatsBeatExporter
 from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics import _StatsbeatMetrics
@@ -51,7 +52,10 @@ def collect_statsbeat_metrics(exporter) -> None:
                 statsbeat_exporter,
                 export_interval_millis=_get_stats_short_export_interval() * 1000,  # 15m by default
             )
-            mp = MeterProvider(metric_readers=[reader])
+            mp = MeterProvider(
+                metric_readers=[reader],
+                resource=Resource.get_empty(),
+            )
             # long_interval_threshold represents how many collects for short interval
             # should have passed before a long interval collect
             long_interval_threshold = _get_stats_long_export_interval() // _get_stats_short_export_interval()
@@ -62,6 +66,7 @@ def collect_statsbeat_metrics(exporter) -> None:
                 exporter._disable_offline_storage,
                 long_interval_threshold,
                 exporter._credential is not None,
+                exporter._distro_version,
             )
         # Export some initial stats on program start
         mp.force_flush()

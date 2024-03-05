@@ -2,17 +2,17 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import os
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from azure.ai.ml.constants._component import ComponentSource
 from azure.ai.ml.entities._component.parallel_component import ParallelComponent
-from azure.ai.ml.entities._deployment.deployment_settings import BatchRetrySettings
-from azure.ai.ml.entities._job.parallel.run_function import RunFunction
 from azure.ai.ml.entities._credentials import (
     AmlTokenConfiguration,
     ManagedIdentityConfiguration,
     UserIdentityConfiguration,
 )
+from azure.ai.ml.entities._deployment.deployment_settings import BatchRetrySettings
+from azure.ai.ml.entities._job.parallel.run_function import RunFunction
 
 from .command_func import _parse_input, _parse_inputs_outputs, _parse_output
 from .parallel import Parallel
@@ -45,7 +45,7 @@ def parallel_run_function(
     shm_size: Optional[str] = None,
     identity: Optional[Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]] = None,
     is_deterministic: bool = True,
-    **kwargs,
+    **kwargs: Any,
 ) -> Parallel:
     """Create a Parallel object which can be used inside dsl.pipeline as a function and can also be created as a
     standalone parallel job.
@@ -53,7 +53,7 @@ def parallel_run_function(
     For an example of using ParallelRunStep, see the notebook
     https://aka.ms/parallel-example-notebook
 
-    .. remarks::
+    .. note::
 
         To use parallel_run_function:
 
@@ -205,30 +205,55 @@ def parallel_run_function(
     component = kwargs.pop("component", None)
 
     if component is None:
-        component = ParallelComponent(
-            base_path=os.getcwd(),  # base path should be current folder
-            name=name,
-            tags=tags,
-            code=task.code,
-            display_name=display_name,
-            description=description,
-            inputs=component_inputs,
-            outputs=component_outputs,
-            retry_settings=retry_settings,
-            logging_level=logging_level,
-            max_concurrency_per_instance=max_concurrency_per_instance,
-            error_threshold=error_threshold,
-            mini_batch_error_threshold=mini_batch_error_threshold,
-            task=task,
-            mini_batch_size=mini_batch_size,
-            partition_keys=partition_keys,
-            input_data=input_data,
-            _source=ComponentSource.BUILDER,
-            is_deterministic=is_deterministic,
-            **kwargs,
-        )
+        if task is None:
+            component = ParallelComponent(
+                base_path=os.getcwd(),  # base path should be current folder
+                name=name,
+                tags=tags,
+                code=None,
+                display_name=display_name,
+                description=description,
+                inputs=component_inputs,
+                outputs=component_outputs,
+                retry_settings=retry_settings,  # type: ignore[arg-type]
+                logging_level=logging_level,
+                max_concurrency_per_instance=max_concurrency_per_instance,
+                error_threshold=error_threshold,
+                mini_batch_error_threshold=mini_batch_error_threshold,
+                task=task,
+                mini_batch_size=mini_batch_size,
+                partition_keys=partition_keys,
+                input_data=input_data,
+                _source=ComponentSource.BUILDER,
+                is_deterministic=is_deterministic,
+                **kwargs,
+            )
+        else:
+            component = ParallelComponent(
+                base_path=os.getcwd(),  # base path should be current folder
+                name=name,
+                tags=tags,
+                code=task.code,
+                display_name=display_name,
+                description=description,
+                inputs=component_inputs,
+                outputs=component_outputs,
+                retry_settings=retry_settings,  # type: ignore[arg-type]
+                logging_level=logging_level,
+                max_concurrency_per_instance=max_concurrency_per_instance,
+                error_threshold=error_threshold,
+                mini_batch_error_threshold=mini_batch_error_threshold,
+                task=task,
+                mini_batch_size=mini_batch_size,
+                partition_keys=partition_keys,
+                input_data=input_data,
+                _source=ComponentSource.BUILDER,
+                is_deterministic=is_deterministic,
+                **kwargs,
+            )
 
-    parallel_obj = Parallel(  # pylint: disable=abstract-class-instantiated
+    # pylint: disable=abstract-class-instantiated
+    parallel_obj = Parallel(
         component=component,
         name=name,
         description=description,
@@ -241,7 +266,7 @@ def parallel_run_function(
         outputs=job_outputs,
         identity=identity,
         environment_variables=environment_variables,
-        retry_settings=retry_settings,
+        retry_settings=retry_settings,  # type: ignore[arg-type]
         logging_level=logging_level,
         max_concurrency_per_instance=max_concurrency_per_instance,
         error_threshold=error_threshold,

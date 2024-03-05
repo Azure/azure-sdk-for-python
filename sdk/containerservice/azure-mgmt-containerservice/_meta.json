@@ -1,5 +1,5 @@
 {
-  "commit": "c8d98ad576b439cf4377d8d17122d2e9e831ff9e",
+  "commit": "7b07cc90244d4a2e850cdf3d9c7e200242cc2677",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "autorest": "3.9.7",
   "use": [
@@ -77,5 +77,8 @@
   "package-preview-2023-10": "2023-11-15 06:05:35 +0800 8cd51b5240f4773621ec74346b6f5fb13f2c0e83 preview/2023-10-02-preview/managedClusters.json",
   "package-2023-09": "2023-10-20 10:06:44 +0800 8c49a56458eeb093c0a6dee16e9b71ccdda0a888 stable/2023-09-01/managedClusters.json",
   "package-preview-2023-09": "2023-10-25 17:47:27 +0800 a032c2413b49d297196a0c64393e862433fccbb1 preview/2023-09-02-preview/managedClusters.json",
-  "package-preview-2023-08": "2023-09-29 00:37:40 +0800 657bda014dd85860f8d5eb3fefd00e6888a9259b preview/2023-08-02-preview/managedClusters.json"
+  "package-preview-2023-08": "2023-09-29 00:37:40 +0800 657bda014dd85860f8d5eb3fefd00e6888a9259b preview/2023-08-02-preview/managedClusters.json",
+  "package-2023-11": "2024-01-18 03:51:18 +0800 ebf29a8107ea2d7f65c2d74bf9196ec672ed18c2 stable/2023-11-01/managedClusters.json",
+  "package-2024-01": "2024-02-19 13:08:53 +0800 477b483e1b6d4f343432c238c417a1ab47de858b stable/2024-01-01/managedClusters.json",
+  "package-preview-2023-11": "2024-02-02 00:15:59 +0800 eca452ea5bedf668299276087531e98558540e3c preview/2023-11-02-preview/managedClusters.json"
 }

@@ -55,7 +55,7 @@ async def analyze_languages():
     # [START analyze_languages]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence.aio import DocumentIntelligenceClient
-    from azure.ai.documentintelligence.models import DocumentAnalysisFeature
+    from azure.ai.documentintelligence.models import DocumentAnalysisFeature, AnalyzeResult
 
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
@@ -71,14 +71,17 @@ async def analyze_languages():
                 features=[DocumentAnalysisFeature.LANGUAGES],
                 content_type="application/octet-stream",
             )
-        result = await poller.result()
+        result: AnalyzeResult = await poller.result()
 
     print("----Languages detected in the document----")
-    print(f"Detected {len(result.languages)} languages:")
-    for lang_idx, lang in enumerate(result.languages):
-        print(f"- Language #{lang_idx}: locale '{lang.locale}'")
-        print(f"  Confidence: {lang.confidence}")
-        print(f"  Text: '{','.join([result.content[span.offset : span.offset + span.length] for span in lang.spans])}'")
+    if result.languages:
+        print(f"Detected {len(result.languages)} languages:")
+        for lang_idx, lang in enumerate(result.languages):
+            print(f"- Language #{lang_idx}: locale '{lang.locale}'")
+            print(f"  Confidence: {lang.confidence}")
+            print(
+                f"  Text: '{','.join([result.content[span.offset : span.offset + span.length] for span in lang.spans])}'"
+            )
 
     print("----------------------------------------")
     # [END analyze_languages]

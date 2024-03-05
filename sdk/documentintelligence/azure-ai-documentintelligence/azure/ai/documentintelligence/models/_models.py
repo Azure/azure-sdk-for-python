@@ -1029,6 +1029,7 @@ class OperationDetails(_model_base.Model):
     :vartype error: ~azure.ai.documentintelligence.models.Error
     """
 
+    __mapping__: Dict[str, _model_base.Model] = {}
     operation_id: str = rest_field(name="operationId", visibility=["read", "create"])
     """Operation ID. Required."""
     status: Union[str, "_models.OperationStatus"] = rest_field()
@@ -1346,8 +1347,8 @@ class DocumentFieldSchema(_model_base.Model):
     :vartype description: str
     :ivar example: Example field content.
     :vartype example: str
-    :ivar items: Field type schema of each array element.
-    :vartype items: ~azure.ai.documentintelligence.models.DocumentFieldSchema
+    :ivar items_property: Field type schema of each array element.
+    :vartype items_property: ~azure.ai.documentintelligence.models.DocumentFieldSchema
     :ivar properties: Named sub-fields of the object field.
     :vartype properties: dict[str, ~azure.ai.documentintelligence.models.DocumentFieldSchema]
     """
@@ -1360,7 +1361,7 @@ class DocumentFieldSchema(_model_base.Model):
     """Field description."""
     example: Optional[str] = rest_field()
     """Example field content."""
-    items: Optional["_models.DocumentFieldSchema"] = rest_field()
+    items_property: Optional["_models.DocumentFieldSchema"] = rest_field(name="items")
     """Field type schema of each array element."""
     properties: Optional[Dict[str, "_models.DocumentFieldSchema"]] = rest_field()
     """Named sub-fields of the object field."""
@@ -1372,7 +1373,7 @@ class DocumentFieldSchema(_model_base.Model):
         type: Union[str, "_models.DocumentFieldType"],
         description: Optional[str] = None,
         example: Optional[str] = None,
-        items: Optional["_models.DocumentFieldSchema"] = None,
+        items_property: Optional["_models.DocumentFieldSchema"] = None,
         properties: Optional[Dict[str, "_models.DocumentFieldSchema"]] = None,
     ):
         ...
@@ -1726,13 +1727,13 @@ class DocumentList(_model_base.Model):
 
     :ivar spans: Location of the list in the reading order concatenated content. Required.
     :vartype spans: list[~azure.ai.documentintelligence.models.DocumentSpan]
-    :ivar items: Items in the list. Required.
-    :vartype items: list[~azure.ai.documentintelligence.models.DocumentListItem]
+    :ivar items_property: Items in the list. Required.
+    :vartype items_property: list[~azure.ai.documentintelligence.models.DocumentListItem]
     """
 
     spans: List["_models.DocumentSpan"] = rest_field()
     """Location of the list in the reading order concatenated content. Required."""
-    items: List["_models.DocumentListItem"] = rest_field()
+    items_property: List["_models.DocumentListItem"] = rest_field(name="items")
     """Items in the list. Required."""
 
     @overload
@@ -1740,7 +1741,7 @@ class DocumentList(_model_base.Model):
         self,
         *,
         spans: List["_models.DocumentSpan"],
-        items: List["_models.DocumentListItem"],
+        items_property: List["_models.DocumentListItem"],
     ):
         ...
 

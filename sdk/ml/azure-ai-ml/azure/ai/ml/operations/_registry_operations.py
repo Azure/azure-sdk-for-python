@@ -4,11 +4,10 @@
 
 # pylint: disable=protected-access,unused-argument
 
-from typing import Dict, Iterable, Optional
+from typing import Dict, Iterable, Optional, cast
 
 from azure.ai.ml._restclient.v2022_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
-
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities import Registry
@@ -20,7 +19,7 @@ from .._utils._azureml_polling import AzureMLPolling
 from ..constants._common import LROConfigurations, Scope
 
 ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
+module_logger = ops_logger.module_logger
 
 
 class RegistryOperations:
@@ -48,7 +47,7 @@ class RegistryOperations:
         self.containerRegistry = "none"
         self._init_kwargs = kwargs
 
-    @monitor_with_activity(logger, "Registry.List", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Registry.List", ActivityType.PUBLICAPI)
     def list(self, *, scope: str = Scope.RESOURCE_GROUP) -> Iterable[Registry]:
         """List all registries that the user has access to in the current resource group or subscription.
 
@@ -58,15 +57,21 @@ class RegistryOperations:
         :rtype: ~azure.core.paging.ItemPaged[Registry]
         """
         if scope.lower() == Scope.SUBSCRIPTION:
-            return self._operation.list_by_subscription(
-                cls=lambda objs: [Registry._from_rest_object(obj) for obj in objs]
+            return cast(
+                Iterable[Registry],
+                self._operation.list_by_subscription(
+                    cls=lambda objs: [Registry._from_rest_object(obj) for obj in objs]
+                ),
             )
-        return self._operation.list(
-            cls=lambda objs: [Registry._from_rest_object(obj) for obj in objs],
-            resource_group_name=self._resource_group_name,
+        return cast(
+            Iterable[Registry],
+            self._operation.list(
+                cls=lambda objs: [Registry._from_rest_object(obj) for obj in objs],
+                resource_group_name=self._resource_group_name,
+            ),
         )
 
-    @monitor_with_activity(logger, "Registry.Get", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Registry.Get", ActivityType.PUBLICAPI)
     def get(self, name: Optional[str] = None) -> Registry:
         """Get a registry by name.
 
@@ -74,6 +79,8 @@ class RegistryOperations:
         :type name: str
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Registry name cannot be
             successfully validated. Details will be provided in the error message.
+        :raises ~azure.core.exceptions.HttpResponseError: Raised if the corresponding name and version cannot be
+            retrieved from the service.
         :return: The registry with the provided name.
         :rtype: ~azure.ai.ml.entities.Registry
         """
@@ -81,9 +88,9 @@ class RegistryOperations:
         registry_name = self._check_registry_name(name)
         resource_group = self._resource_group_name
         obj = self._operation.get(resource_group, registry_name)
-        return Registry._from_rest_object(obj)
+        return Registry._from_rest_object(obj)  # type: ignore[return-value]
 
-    def _check_registry_name(self, name) -> str:
+    def _check_registry_name(self, name: Optional[str]) -> str:
         registry_name = name or self._default_registry_name
         if not registry_name:
             msg = "Please provide a registry name or use a MLClient with a registry name set."
@@ -112,7 +119,7 @@ class RegistryOperations:
             path_format_arguments=path_format_arguments,
         )
 
-    @monitor_with_activity(logger, "Registry.BeginCreate", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Registry.BeginCreate", ActivityType.PUBLICAPI)
     def begin_create(
         self,
         registry: Registry,
@@ -138,13 +145,13 @@ class RegistryOperations:
             resource_group_name=self._resource_group_name,
             registry_name=registry.name,
             body=registry_data,
-            polling=self._get_polling(registry.name),
+            polling=self._get_polling(str(registry.name)),
             cls=lambda response, deserialized, headers: Registry._from_rest_object(deserialized),
         )
 
         return poller
 
-    @monitor_with_activity(logger, "Registry.BeginDelete", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Registry.BeginDelete", ActivityType.PUBLICAPI)
     def begin_delete(self, *, name: str, **kwargs: Dict) -> LROPoller[None]:
         """Delete a registry if it exists. Returns nothing on a successful operation.
 

@@ -321,23 +321,23 @@ class TestOpentelemetryWrapper:
             setattr(response, "status_code", 200)
             wrapped_class.set_http_attributes(request)
             assert wrapped_class.span_instance.kind == OpenTelemetrySpanKind.CLIENT
-            assert wrapped_class.span_instance.attributes.get("http.method") == request.method
+            assert wrapped_class.span_instance.attributes.get("http.request.method") == request.method
             assert wrapped_class.span_instance.attributes.get("component") == "http"
-            assert wrapped_class.span_instance.attributes.get("http.url") == request.url
-            assert wrapped_class.span_instance.attributes.get("http.status_code") == 504
+            assert wrapped_class.span_instance.attributes.get("url.full") == request.url
+            assert wrapped_class.span_instance.attributes.get("http.response.status_code") == 504
             assert wrapped_class.span_instance.attributes.get("user_agent.original") is None
 
             request.headers["User-Agent"] = "some user agent"
             request.url = "http://foo.bar:8080/path"
             wrapped_class.set_http_attributes(request, response)
-            assert wrapped_class.span_instance.attributes.get("http.status_code") == response.status_code
+            assert wrapped_class.span_instance.attributes.get("http.response.status_code") == response.status_code
             assert wrapped_class.span_instance.attributes.get("user_agent.original") == request.headers.get(
                 "User-Agent"
             )
 
             if wrapped_class.span_instance.attributes.get("net.peer.name"):
-                assert wrapped_class.span_instance.attributes.get("net.peer.name") == "foo.bar"
-                assert wrapped_class.span_instance.attributes.get("net.peer.port") == 8080
+                assert wrapped_class.span_instance.attributes.get("server.address") == "foo.bar"
+                assert wrapped_class.span_instance.attributes.get("server.port") == 8080
 
     def test_span_kind(self, tracer):
         with tracer.start_as_current_span("Root") as parent:

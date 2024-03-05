@@ -647,8 +647,11 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
             process_storage_error(error)
 
     @distributed_trace
-    def list_blobs(self, name_starts_with=None, include=None, **kwargs):
-        # type: (Optional[str], Optional[Union[str, List[str]]], **Any) -> AsyncItemPaged[BlobProperties]
+    def list_blobs(
+        self, name_starts_with: Optional[str] = None,
+        include: Optional[Union[str, List[str]]] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged[BlobProperties]:
         """Returns a generator to list the blobs under the specified container.
         The generator will lazily follow the continuation tokens returned by
         the service.
@@ -679,6 +682,10 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
                 :dedent: 12
                 :caption: List the blobs in the container.
         """
+        if kwargs.pop('prefix', None):
+            raise ValueError("Passing 'prefix' has no effect on filtering, " +
+                             "please use the 'name_starts_with' parameter instead.")
+
         if include and not isinstance(include, list):
             include = [include]
 
@@ -718,6 +725,10 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
         :returns: An iterable (auto-paging) response of blob names as strings.
         :rtype: ~azure.core.async_paging.AsyncItemPaged[str]
         """
+        if kwargs.pop('prefix', None):
+            raise ValueError("Passing 'prefix' has no effect on filtering, " +
+                             "please use the 'name_starts_with' parameter instead.")
+
         name_starts_with = kwargs.pop('name_starts_with', None)
         results_per_page = kwargs.pop('results_per_page', None)
         timeout = kwargs.pop('timeout', None)
@@ -739,12 +750,11 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
 
     @distributed_trace
     def walk_blobs(
-            self, name_starts_with=None, # type: Optional[str]
-            include=None, # type: Optional[Union[List[str], str]]
-            delimiter="/", # type: str
-            **kwargs # type: Optional[Any]
-        ):
-        # type: (...) -> AsyncItemPaged[BlobProperties]
+        self, name_starts_with: Optional[str] = None,
+        include: Optional[Union[List[str], str]] = None,
+        delimiter: str = "/",
+        **kwargs: Any
+        ) -> AsyncItemPaged[BlobProperties]:
         """Returns a generator to list the blobs under the specified container.
         The generator will lazily follow the continuation tokens returned by
         the service. This operation will list blobs in accordance with a hierarchy,
@@ -772,6 +782,10 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
         :returns: An iterable (auto-paging) response of BlobProperties.
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.blob.BlobProperties]
         """
+        if kwargs.pop('prefix', None):
+            raise ValueError("Passing 'prefix' has no effect on filtering, " +
+                             "please use the 'name_starts_with' parameter instead.")
+
         if include and not isinstance(include, list):
             include = [include]
 

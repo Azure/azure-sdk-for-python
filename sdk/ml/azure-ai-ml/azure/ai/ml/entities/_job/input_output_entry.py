@@ -4,7 +4,7 @@
 
 import collections.abc
 import logging
-from typing import Optional, Union
+from typing import Any, Optional, Union
 
 from azure.ai.ml.constants import InputOutputModes
 from azure.ai.ml.entities._assets import Data
@@ -15,10 +15,10 @@ module_logger = logging.getLogger(__name__)
 
 class InputOutputEntry(DictMixin):
     def __init__(
-        self,
+        self,  # pylint: disable=unused-argument
         data: Optional[Union[str, "Data"]] = None,
         mode: Optional[str] = InputOutputModes.MOUNT,
-        **kwargs,  # pylint: disable=unused-argument
+        **kwargs: Any,
     ):
         # Data will be either a dataset id, inline dataset definition
         self.data = data

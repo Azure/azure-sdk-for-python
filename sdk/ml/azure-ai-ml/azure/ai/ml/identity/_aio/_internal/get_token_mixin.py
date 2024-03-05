@@ -25,7 +25,7 @@ class GetTokenMixin(abc.ABC):
         self._last_request_time = 0
 
         # https://github.com/python/mypy/issues/5887
-        super(GetTokenMixin, self).__init__(*args, **kwargs)  # type: ignore
+        super(GetTokenMixin, self).__init__(*args, **kwargs)
 
     @abc.abstractmethod
     # pylint: disable-next=docstring-missing-param

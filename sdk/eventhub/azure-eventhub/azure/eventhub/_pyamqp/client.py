@@ -181,7 +181,7 @@ class AMQPClient(
             "remote_idle_timeout_empty_frame_send_ratio", None
         )
         self._network_trace = kwargs.pop("network_trace", False)
-        self._network_trace_params = {"amqpConnection": None, "amqpSession": None, "amqpLink": None}
+        self._network_trace_params = {"amqpConnection": "", "amqpSession": "", "amqpLink": ""}
 
         # Session settings
         self._outgoing_window = kwargs.pop("outgoing_window", OUTGOING_WINDOW)
@@ -377,8 +377,8 @@ class AMQPClient(
             except RuntimeError:  # Probably thread failed to start in .open()
                 logging.debug("Keep alive thread failed to join.", exc_info=True)
             self._keep_alive_thread = None
-        self._network_trace_params["amqpConnection"] = None
-        self._network_trace_params["amqpSession"] = None
+        self._network_trace_params["amqpConnection"] = ""
+        self._network_trace_params["amqpSession"] = ""
 
     def auth_complete(self):
         """Whether the authentication handshake is complete during
@@ -827,7 +827,7 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         if not self._link:
             self._link = self._session.create_receiver_link(
                 source_address=self.source,
-                link_credit=self._link_credit,
+                link_credit=self._link_credit,  # link_credit=0 on flow frame sent before client is ready
                 send_settle_mode=self._send_settle_mode,
                 rcv_settle_mode=self._receive_settle_mode,
                 max_message_size=self._max_message_size,

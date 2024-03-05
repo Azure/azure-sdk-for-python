@@ -52,6 +52,7 @@ class ComplianceResultsOperations:
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
 
     @distributed_trace
     def list(self, scope: str, **kwargs: Any) -> AsyncIterable["_models.ComplianceResult"]:
@@ -70,7 +71,7 @@ class ComplianceResultsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2017-08-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2017-08-01"))
         cls: ClsType[_models.ComplianceResultList] = kwargs.pop("cls", None)
 
         error_map = {
@@ -162,7 +163,7 @@ class ComplianceResultsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2017-08-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2017-08-01"))
         cls: ClsType[_models.ComplianceResult] = kwargs.pop("cls", None)
 
         request = build_get_request(

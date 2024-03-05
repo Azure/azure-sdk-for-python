@@ -319,14 +319,19 @@ class SecretClient(KeyVaultClientBase):
         polling_interval = kwargs.pop("_polling_interval", None)
         if polling_interval is None:
             polling_interval = 2
-        deleted_secret = DeletedSecret._from_deleted_secret_bundle(
-            self._client.delete_secret(self.vault_url, name, **kwargs)
+        pipeline_response, deleted_secret_bundle = self._client.delete_secret(
+            vault_base_url=self.vault_url,
+            secret_name=name,
+            cls=lambda pipeline_response, deserialized, _: (pipeline_response, deserialized),
+            **kwargs,
         )
+        deleted_secret = DeletedSecret._from_deleted_secret_bundle(deleted_secret_bundle)
 
         command = partial(self.get_deleted_secret, name=name, **kwargs)
         polling_method = DeleteRecoverPollingMethod(
             # no recovery ID means soft-delete is disabled, in which case we initialize the poller as finished
             finished=deleted_secret.recovery_id is None,
+            pipeline_response=pipeline_response,
             command=command,
             final_resource=deleted_secret,
             interval=polling_interval,
@@ -442,12 +447,20 @@ class SecretClient(KeyVaultClientBase):
         polling_interval = kwargs.pop("_polling_interval", None)
         if polling_interval is None:
             polling_interval = 2
-        recovered_secret = SecretProperties._from_secret_bundle(
-            self._client.recover_deleted_secret(self.vault_url, name, **kwargs)
+        pipeline_response, recovered_secret_bundle = self._client.recover_deleted_secret(
+            vault_base_url=self.vault_url,
+            secret_name=name,
+            cls=lambda pipeline_response, deserialized, _: (pipeline_response, deserialized),
+            **kwargs,
         )
+        recovered_secret = SecretProperties._from_secret_bundle(recovered_secret_bundle)
 
         command = partial(self.get_secret, name=name, **kwargs)
         polling_method = DeleteRecoverPollingMethod(
-            finished=False, command=command, final_resource=recovered_secret, interval=polling_interval,
+            finished=False,
+            pipeline_response=pipeline_response,
+            command=command,
+            final_resource=recovered_secret,
+            interval=polling_interval,
         )
         return KeyVaultOperationPoller(polling_method)

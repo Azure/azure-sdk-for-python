@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Mapping
+from typing import Mapping, Optional
 
 
 class OverrideDefinition(dict):
@@ -11,7 +11,7 @@ class OverrideDefinition(dict):
 
 def get_override_definition_from_schema(
     schema: str,  # pylint: disable=unused-argument
-) -> Mapping[str, OverrideDefinition]:
+) -> Optional[Mapping[str, OverrideDefinition]]:
     """Ger override definition from a json schema.
 
     :param schema: Json schema of component job.

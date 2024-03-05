@@ -28,8 +28,7 @@ MANAGEMENT_PACKAGE_IDENTIFIERS = [
     "azure-ai-anomalydetector",
 ]
 
-NO_TESTS_ALLOWED = [
-]
+NO_TESTS_ALLOWED = []
 
 
 META_PACKAGES = ["azure", "azure-mgmt", "azure-keyvault"]
@@ -282,6 +281,27 @@ def get_package_from_repo(pkg_name: str, repo_root: str = None) -> ParsedSetup:
     return None
 
 
+def get_package_from_repo_or_folder(req: str, prebuilt_wheel_dir: str = None) -> str:
+    """Takes a package name and a possible prebuilt wheel directory. Attempts to resolve a wheel that matches the package name, and if it can't,
+    attempts to find the package within the repo to install directly from path on disk.
+
+    During a CI build, it is preferred that the package is installed from a prebuilt wheel directory, as multiple CI environments attempting to install the relative
+    req can cause inconsistent installation issues during parallel tox environment execution.
+    """
+
+    local_package = get_package_from_repo(req)
+
+    if prebuilt_wheel_dir and os.path.exists(prebuilt_wheel_dir):
+        prebuilt_package = discover_prebuilt_package(prebuilt_wheel_dir, local_package.setup_filename, "wheel")
+        if prebuilt_package:
+            # return the first package found, there should only be a single one matching given that our prebuilt wheel directory
+            # is populated by the replacement of dev_reqs.txt with the prebuilt wheels
+            # ref tox_harness replace_dev_reqs() calls
+            return os.path.join(prebuilt_wheel_dir, prebuilt_package[0])
+
+    return local_package.folder
+
+
 def get_version_from_repo(pkg_name: str, repo_root: str = None) -> str:
     pkg_info = get_package_from_repo(pkg_name, repo_root)
     if pkg_info:
@@ -315,7 +335,7 @@ def get_base_version(pkg_name: str) -> str:
         exit(1)
 
 
-def process_requires(setup_py_path: str):
+def process_requires(setup_py_path: str, is_dev_build: bool = False):
     """
     This method processes a setup.py's package requirements to verify if all required packages are available on PyPI.
     If any azure sdk package is not available on PyPI then requirement will be updated to refer to the sdk "dev_identifier".
@@ -335,7 +355,7 @@ def process_requires(setup_py_path: str):
         pkg_name = req.key
         spec = SpecifierSet(str(req).replace(pkg_name, ""))
 
-        if not is_required_version_on_pypi(pkg_name, spec):
+        if not is_required_version_on_pypi(pkg_name, spec) or is_dev_build:
             old_req = str(req)
             version = get_version_from_repo(pkg_name)
             base_version = get_base_version(pkg_name)
@@ -411,6 +431,7 @@ def pip_install(requirements: List[str], include_dependencies: bool = True, pyth
 
     return True
 
+
 def pip_uninstall(requirements: List[str], python_executable: str) -> bool:
     """
     Attempts to invoke an install operation using the invoking python's pip. Empty requirements are auto-success.
@@ -480,7 +501,7 @@ def pytest(args: [], cwd: str = None, python_executable: str = None) -> bool:
         result = subprocess.run(commands, cwd=cwd)
     else:
         result = subprocess.run(commands)
-    
+
     return result.returncode == 0
 
 

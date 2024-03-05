@@ -22,8 +22,11 @@ class AIResourceOperations:
     """AIResourceOperations.
 
     You should not instantiate this class directly. Instead, you should
-    create an MLClient instance that instantiates it for you and
+    create an AIClient instance that instantiates it for you and
     attaches it as an attribute.
+
+    :param ml_client: The Azure Machine Learning client
+    :type ml_client: ~azure.ai.ml.MLClient
     """
 
     # TODO add operation scope at init level?
@@ -36,11 +39,11 @@ class AIResourceOperations:
     def get(self, *, name: str, **kwargs) -> AIResource:
         """Get an AI resource by name.
 
-        :keyword name: Name of the AI resource.
+        :keyword name: The AI resource name
         :paramtype name: str
 
         :return: The AI resource with the provided name.
-        :rtype: AIResource
+        :rtype: ~azure.ai.resources.entities.AIResource
         """
         workspace_hub = self._ml_client._workspace_hubs.get(name=name, **kwargs)
         resource = AIResource._from_v2_workspace_hub(workspace_hub)
@@ -55,7 +58,7 @@ class AIResourceOperations:
         :paramtype scope: str
 
         :return: An iterator like instance of AI resource objects
-        :rtype: Iterable[AIResource]
+        :rtype: Iterable[~azure.ai.resources.entities.AIResource]
         """
         return [AIResource._from_v2_workspace_hub(wh) for wh in self._ml_client._workspace_hubs.list(scope=scope)]
 
@@ -105,11 +108,13 @@ class AIResourceOperations:
     def begin_update(
         self, *, ai_resource: AIResource, update_dependent_resources: bool = False, **kwargs
     ) -> LROPoller[AIResource]:
-        """Update the name, description, tags, PNA, manageNetworkSettings, or encryption of a Resource
+        """Update the name, description, tags, PNA, manageNetworkSettings, 
+        container registry, or encryption of a Resource.
 
         :keyword ai_resource: AI resource definition.
         :paramtype ai_resource: ~azure.ai.resources.entities.AIResource
         :keyword update_dependent_resources: Whether to update dependent resources. Defaults to False.
+            This must be set to true in order to update the container registry.
         :paramtype update_dependent_resources: boolean
         :return: An instance of LROPoller that returns the updated AI resource.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.resources.entities.AIResource]
@@ -133,7 +138,8 @@ class AIResourceOperations:
         :keyword delete_dependent_resources: Whether to delete dependent resources associated with the AI resource.
         :paramtype delete_dependent_resources: bool
         :keyword permanently_delete: AI resource are soft-deleted by default to allow recovery of data.
-            Set this flag to true to override the soft-delete behavior and permanently delete your AI resource.
+            Defaults to False. Set this flag to true to override the soft-delete behavior and permanently delete your
+            AI resource.
         :paramtype permanently_delete: bool
         :return: A poller to track the operation status.
         :rtype: ~azure.core.polling.LROPoller[None]

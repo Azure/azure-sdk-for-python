@@ -7,7 +7,7 @@
 import random
 import re
 import subprocess
-from typing import Dict, Optional
+from typing import Any, Dict, Optional
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
@@ -47,7 +47,7 @@ from ._local_deployment_helper import _LocalDeploymentHelper
 from ._operation_orchestrator import OperationOrchestrator
 
 ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
+module_logger = ops_logger.module_logger
 
 
 class OnlineDeploymentOperations(_ScopeDependentOperations):
@@ -77,7 +77,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         self._init_kwargs = kwargs
 
     @distributed_trace
-    @monitor_with_activity(logger, "OnlineDeployment.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "OnlineDeployment.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
     def begin_create_or_update(
         self,
         deployment: OnlineDeployment,
@@ -86,7 +86,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         vscode_debug: bool = False,
         skip_script_validation: bool = False,
         local_enable_gpu: bool = False,
-        **kwargs,
+        **kwargs: Any,
     ) -> LROPoller[OnlineDeployment]:
         """Create or update a deployment.
 
@@ -155,8 +155,8 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
                 not skip_script_validation
                 and deployment
                 and deployment.code_configuration
-                and not deployment.code_configuration.code.startswith(ARM_ID_PREFIX)
-                and not re.match(AMLVersionedArmId.REGEX_PATTERN, deployment.code_configuration.code)
+                and not deployment.code_configuration.code.startswith(ARM_ID_PREFIX)  # type: ignore[union-attr]
+                and not re.match(AMLVersionedArmId.REGEX_PATTERN, deployment.code_configuration.code)  # type: ignore
             ):
                 validate_scoring_script(deployment)
 
@@ -189,7 +189,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
                     deployment = package_deployment(deployment, self._all_operations.all_operations["models"])
                     module_logger.info("\nStarting deployment")
 
-                deployment_rest = deployment._to_rest_object(location=location)
+                deployment_rest = deployment._to_rest_object(location=location)  # type: ignore
 
                 poller = self._online_deployment.begin_create_or_update(
                     resource_group_name=self._resource_group_name,
@@ -216,7 +216,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
                 raise ex
 
     @distributed_trace
-    @monitor_with_activity(logger, "OnlineDeployment.Get", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "OnlineDeployment.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, endpoint_name: str, *, local: Optional[bool] = False) -> OnlineDeployment:
         """Get a deployment resource.
 
@@ -247,7 +247,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         return deployment
 
     @distributed_trace
-    @monitor_with_activity(logger, "OnlineDeployment.Delete", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "OnlineDeployment.Delete", ActivityType.PUBLICAPI)
     def begin_delete(self, name: str, endpoint_name: str, *, local: Optional[bool] = False) -> LROPoller[None]:
         """Delete a deployment.
 
@@ -272,7 +272,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         )
 
     @distributed_trace
-    @monitor_with_activity(logger, "OnlineDeployment.GetLogs", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "OnlineDeployment.GetLogs", ActivityType.PUBLICAPI)
     def get_logs(
         self,
         name: str,
@@ -303,19 +303,21 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
                 endpoint_name=endpoint_name, deployment_name=name, lines=lines
             )
         if container_type:
-            container_type = self._validate_deployment_log_container_type(container_type)
+            container_type = self._validate_deployment_log_container_type(container_type)  # type: ignore
         log_request = DeploymentLogsRequest(container_type=container_type, tail=lines)
-        return self._online_deployment.get_logs(
-            resource_group_name=self._resource_group_name,
-            workspace_name=self._workspace_name,
-            endpoint_name=endpoint_name,
-            deployment_name=name,
-            body=log_request,
-            **self._init_kwargs,
-        ).content
+        return str(
+            self._online_deployment.get_logs(
+                resource_group_name=self._resource_group_name,
+                workspace_name=self._workspace_name,
+                endpoint_name=endpoint_name,
+                deployment_name=name,
+                body=log_request,
+                **self._init_kwargs,
+            ).content
+        )
 
     @distributed_trace
-    @monitor_with_activity(logger, "OnlineDeployment.List", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "OnlineDeployment.List", ActivityType.PUBLICAPI)
     def list(self, endpoint_name: str, *, local: bool = False) -> ItemPaged[OnlineDeployment]:
         """List a deployment resource.
 
@@ -336,7 +338,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
             **self._init_kwargs,
         )
 
-    def _validate_deployment_log_container_type(self, container_type):
+    def _validate_deployment_log_container_type(self, container_type: EndpointDeploymentLogContainerType) -> str:
         if container_type == EndpointDeploymentLogContainerType.INFERENCE_SERVER:
             return EndpointDeploymentLogContainerType.INFERENCE_SERVER_REST
 
@@ -357,7 +359,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
             error_type=ValidationErrorType.INVALID_VALUE,
         )
 
-    def _get_ARM_deployment_name(self, name: str):
+    def _get_ARM_deployment_name(self, name: str) -> str:
         random.seed(version=2)
         return f"{self._workspace_name}-{name}-{random.randint(1, 10000000)}"
 
@@ -369,9 +371,11 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         :return: The workspace location
         :rtype: str
         """
-        return self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].get(self._workspace_name).location
+        return str(
+            self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].get(self._workspace_name).location
+        )
 
-    def _get_local_endpoint_mode(self, vscode_debug):
+    def _get_local_endpoint_mode(self, vscode_debug: Any) -> LocalEndpointMode:
         return LocalEndpointMode.VSCodeDevContainer if vscode_debug else LocalEndpointMode.DetachedContainer
 
     def _register_collection_data_assets(self, deployment: OnlineDeployment) -> None:

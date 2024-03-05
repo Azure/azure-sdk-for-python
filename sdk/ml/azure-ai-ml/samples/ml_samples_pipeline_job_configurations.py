@@ -71,7 +71,7 @@ class PipelineConfigurationOptions(object):
         ml_client.jobs.create_or_update(pipeline_job, experiment_name="pipeline_samples", compute="cpu-cluster")
         # [END configure_pipeline]
 
-        # [START configure_PipelineJob_and_PipelineJobSettings]
+        # [START configure_pipeline_job_and_settings]
         from azure.ai.ml.entities import PipelineJob, PipelineJobSettings
 
         pipeline_job = PipelineJob(
@@ -84,7 +84,7 @@ class PipelineConfigurationOptions(object):
             jobs={"component1": component_func(component_in_number=1.0, component_in_path=uri_file_input)},
         )
         ml_client.jobs.create_or_update(pipeline_job)
-        # [END configure_PipelineJob_and_PipelineJobSettings]
+        # [END configure_pipeline_job_and_settings]
 
 
 if __name__ == "__main__":

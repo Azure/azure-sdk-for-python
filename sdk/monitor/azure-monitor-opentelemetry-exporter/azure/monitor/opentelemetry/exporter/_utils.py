@@ -1,6 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+import datetime
 import locale
 from os import environ
 from os.path import isdir
@@ -17,7 +18,12 @@ from opentelemetry.util.types import Attributes
 
 from azure.monitor.opentelemetry.exporter._generated.models import ContextTagKeys, TelemetryItem
 from azure.monitor.opentelemetry.exporter._version import VERSION as ext_version
-from azure.monitor.opentelemetry.exporter._constants import _INSTRUMENTATIONS_BIT_MAP
+from azure.monitor.opentelemetry.exporter._constants import (
+    _INSTRUMENTATIONS_BIT_MAP,
+    _WEBSITE_SITE_NAME,
+    _FUNCTIONS_WORKER_RUNTIME,
+    _AKS_ARM_NAMESPACE_ID,
+)
 
 
 opentelemetry_version = ""
@@ -35,25 +41,56 @@ except ImportError:
     ).version
 
 
-def _is_on_app_service():
-    return "WEBSITE_SITE_NAME" in environ
+# Azure App Service
 
+def _is_on_app_service():
+    return environ.get(_WEBSITE_SITE_NAME) is not None
+
+def _is_on_functions():
+    return environ.get(_FUNCTIONS_WORKER_RUNTIME) is not None
 
 def _is_attach_enabled():
     return isdir("/agents/python/")
 
 
+# AKS
+
+def _is_on_aks():
+    return _AKS_ARM_NAMESPACE_ID in environ
+
+
 def _get_sdk_version_prefix():
     sdk_version_prefix = ''
-    if _is_on_app_service() and _is_attach_enabled():
-        os = 'u'
-        system = platform.system()
-        if system == "Linux":
-            os = 'l'
-        elif system == "Windows":
-            os = 'w'
-        sdk_version_prefix = "a{}_".format(os)
+    rp = 'u'
+    if _is_on_functions():
+        rp = 'f'
+    elif _is_on_app_service():
+        rp = 'a'
+    # TODO: Add VM scenario outside statsbeat
+    # elif _is_on_vm():
+    #     rp = 'v'
+    elif _is_on_aks():
+        rp = 'k'
+
+    os = 'u'
+    system = platform.system()
+    if system == "Linux":
+        os = 'l'
+    elif system == "Windows":
+        os = 'w'
+
+    attach_type = 'm'
+    if _is_attach_enabled():
+        attach_type = 'i'
+    sdk_version_prefix = "{}{}{}_".format(rp, os, attach_type)
+
     return sdk_version_prefix
+
+
+def _get_sdk_version():
+    return "{}py{}:otel{}:ext{}".format(
+        _get_sdk_version_prefix(), platform.python_version(), opentelemetry_version, ext_version
+    )
 
 
 def _getlocale():
@@ -75,9 +112,7 @@ azure_monitor_context = {
     ContextTagKeys.AI_DEVICE_LOCALE: _getlocale(),
     ContextTagKeys.AI_DEVICE_OS_VERSION: platform.version(),
     ContextTagKeys.AI_DEVICE_TYPE: "Other",
-    ContextTagKeys.AI_INTERNAL_SDK_VERSION: "{}py{}:otel{}:ext{}".format(
-        _get_sdk_version_prefix(), platform.python_version(), opentelemetry_version, ext_version
-    ),
+    ContextTagKeys.AI_INTERNAL_SDK_VERSION: _get_sdk_version(),
 }
 
 
@@ -90,6 +125,23 @@ def ns_to_duration(nanoseconds: int):
     return "{:d}.{:02d}:{:02d}:{:02d}.{:03d}".format(
         days, hours, minutes, seconds, microseconds
     )
+
+
+# Replicate .netDateTime.Ticks(), which is the UTC time, expressed as the number
+# of 100-nanosecond intervals that have elapsed since 12:00:00 midnight on
+# January 1, 0001.
+def _ticks_since_dot_net_epoch():
+    # Since time.time() is the elapsed time since UTC January 1, 1970, we have
+    # to shift this start time, and  then multiply by 10^7 to get the number of
+    # 100-nanosecond intervals
+    shift_time = int(
+        (
+            datetime.datetime(1970, 1, 1, 0, 0, 0) -
+            datetime.datetime(1, 1, 1, 0, 0, 0)).total_seconds()
+        ) * (10 ** 7)
+    # Add shift time to 100-ns intervals since time.time()
+    return int(time.time() * (10**7)) + shift_time
+
 
 _INSTRUMENTATIONS_BIT_MASK = 0
 _INSTRUMENTATIONS_BIT_MASK_LOCK = threading.Lock()
@@ -161,6 +213,10 @@ def _populate_part_a_fields(resource: Resource):
         service_name = resource.attributes.get(ResourceAttributes.SERVICE_NAME)
         service_namespace = resource.attributes.get(ResourceAttributes.SERVICE_NAMESPACE)
         service_instance_id = resource.attributes.get(ResourceAttributes.SERVICE_INSTANCE_ID)
+        device_id = resource.attributes.get(ResourceAttributes.DEVICE_ID)
+        device_model = resource.attributes.get(ResourceAttributes.DEVICE_MODEL_NAME)
+        device_make = resource.attributes.get(ResourceAttributes.DEVICE_MANUFACTURER)
+        app_version = resource.attributes.get(ResourceAttributes.SERVICE_VERSION)
         if service_name:
             if service_namespace:
                 tags[ContextTagKeys.AI_CLOUD_ROLE] = str(service_namespace) + \
@@ -172,6 +228,15 @@ def _populate_part_a_fields(resource: Resource):
         else:
             tags[ContextTagKeys.AI_CLOUD_ROLE_INSTANCE] = platform.node()  # hostname default
         tags[ContextTagKeys.AI_INTERNAL_NODE_NAME] = tags[ContextTagKeys.AI_CLOUD_ROLE_INSTANCE]
+        if device_id:
+            tags[ContextTagKeys.AI_DEVICE_ID] = device_id # type: ignore
+        if device_model:
+            tags[ContextTagKeys.AI_DEVICE_MODEL] = device_model # type: ignore
+        if device_make:
+            tags[ContextTagKeys.AI_DEVICE_OEM_NAME] = device_make # type: ignore
+        if app_version:
+            tags[ContextTagKeys.AI_APPLICATION_VER] = app_version # type: ignore
+
     return tags
 
 # pylint: disable=W0622
@@ -190,3 +255,11 @@ def _filter_custom_properties(properties: Attributes, filter=None) -> Dict[str, 
             continue
         truncated_properties[key] = str(val)[:8192]
     return truncated_properties
+
+
+class Singleton(type):
+    _instance = None
+    def __call__(cls, *args, **kwargs):
+        if not cls._instance:
+            cls._instance = super(Singleton, cls).__call__(*args, **kwargs)
+        return cls._instance

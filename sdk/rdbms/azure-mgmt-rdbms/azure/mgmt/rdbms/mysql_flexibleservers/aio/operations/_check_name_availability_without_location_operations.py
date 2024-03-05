@@ -121,7 +121,7 @@ class CheckNameAvailabilityWithoutLocationOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-12-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-12-01-preview"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NameAvailability] = kwargs.pop("cls", None)
 
@@ -155,7 +155,8 @@ class CheckNameAvailabilityWithoutLocationOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("NameAvailability", pipeline_response)
 
