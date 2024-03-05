@@ -96,7 +96,7 @@ stages:
                       - task: UsePythonVersion@0
                         inputs:
                           versionSpec: '3.9'
-                      - script: >
+                      - script: |
                           set -e
 
                           python -m pip install -r eng/release_requirements.txt
@@ -114,7 +114,7 @@ stages:
                         inputs:
                           artifactFeeds: ${{parameters.DevFeedName}}
 
-                      - pwsh: >
+                      - pwsh: |
                           $esrpDirectory = "$(Pipeline.Workspace)/esrp-release/${{parameters.ArtifactName}}/${{artifact.name}}"
 
                           New-Item -ItemType Directory -Force -Path $esrpDirectory
@@ -139,7 +139,7 @@ stages:
                           MainPublisher: 'ESRPRELPACMANTEST'
                           DomainTenantId: '72f988bf-86f1-41af-91ab-2d7cd011db47'
 
-                      - script: >
+                      - script: |
                           set -e
 
                           twine upload --repository ${{parameters.DevFeedName}} --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}/*.whl
@@ -164,7 +164,7 @@ stages:
                   deploy:
                     steps:
                       - checkout: self
-                      - pwsh: >
+                      - pwsh: |
                           Get-ChildItem -Recurse $(Pipeline.Workspace)/${{parameters.DocArtifact}}/${{artifact.name}}
                         workingDirectory: $(Pipeline.Workspace)
                         displayName: Output Visible Artifacts
@@ -282,21 +282,21 @@ stages:
               DevFeedName: ${{ parameters.DevFeedName }}
 
           - ${{ each artifact in parameters.Artifacts }}:
-              - ${{if ne(artifact.skipPublishDevFeed, 'true')}}:
-                  - pwsh: >
-                      $fileCount = (Get-ChildItem $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}} | ? {$_.Name -match "-[0-9]*.[0-9]*.[0-9]*a[0-9]*" } | Measure-Object).Count
+            - ${{if ne(artifact.skipPublishDevFeed, 'true')}}:
+              - pwsh: >
+                  $fileCount = (Get-ChildItem $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}} | ? {$_.Name -match "-[0-9]*.[0-9]*.[0-9]*a[0-9]*" } | Measure-Object).Count
 
-                      if ($fileCount -eq 0) {
-                        Write-Host "No alpha packages for ${{artifact.name}} to publish."
-                        exit 0
-                      }
+                  if ($fileCount -eq 0) {
+                    Write-Host "No alpha packages for ${{artifact.name}} to publish."
+                    exit 0
+                  }
 
-                      twine upload --repository $(DevFeedName) --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}/*-*a*.whl
-                      echo "Uploaded whl to devops feed $(DevFeedName)"
-                      twine upload --repository $(DevFeedName) --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}/*-*a*.tar.gz
+                  twine upload --repository $(DevFeedName) --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}/*-*a*.whl
+                  echo "Uploaded whl to devops feed $(DevFeedName)"
 
-                      echo "Uploaded sdist to devops feed $(DevFeedName)"
-                    displayName: 'Publish ${{artifact.name}} alpha package'
+                  twine upload --repository $(DevFeedName) --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}/*-*a*.tar.gz
+                  echo "Uploaded sdist to devops feed $(DevFeedName)"
+                displayName: 'Publish ${{artifact.name}} alpha package'
 
       - job: PublishDocsToNightlyBranch
         dependsOn: PublishPackages
