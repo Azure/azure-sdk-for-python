@@ -20,7 +20,7 @@ def merge_dicts(dict1: Dict[str, Any], dict2: Dict[str, Any]) -> Dict[str, Any]:
     :return: The merged dictionary.
     :rtype: Dict[str, Any]
     """
-    result = defaultdict(dict)
+    result: defaultdict = defaultdict(dict)
 
     for d in (dict1, dict2):
         for key, value in d.items():
