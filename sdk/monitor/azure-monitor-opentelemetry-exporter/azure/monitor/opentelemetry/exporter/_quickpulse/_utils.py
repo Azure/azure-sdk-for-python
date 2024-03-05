@@ -3,25 +3,29 @@
 from datetime import datetime, timedelta, timezone
 from typing import List, Optional, Union
 
-from opentelemetry.trace import SpanKind
-from opentelemetry.util.types import Attributes
-from opentelemetry.semconv.trace import SpanAttributes
+from opentelemetry.sdk._logs import LogData
 from opentelemetry.sdk.metrics._internal.point import (
     NumberDataPoint,
     HistogramDataPoint,
 )
 from opentelemetry.sdk.metrics.export import MetricsData as OTMetricsData
 from opentelemetry.sdk.trace import ReadableSpan
+from opentelemetry.semconv.trace import SpanAttributes
+from opentelemetry.trace import SpanKind
+from opentelemetry.util.types import Attributes
+
 from azure.monitor.opentelemetry.exporter._quickpulse._constants import (
     _DocumentIngressDocumentType,
     _QUICKPULSE_METRIC_NAME_MAPPINGS,
 )
 from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import (
     DocumentIngress,
+    Exception as ExceptionDocument,
     MetricPoint,
     MonitoringDataPoint,
     RemoteDependency as RemoteDependencyDocument,
     Request as RequestDocument,
+    Trace as TraceDocument,
 )
 def _metric_to_quick_pulse_data_points(  # pylint: disable=too-many-nested-blocks
     metrics_data: OTMetricsData,
@@ -83,6 +87,22 @@ def _get_span_document(span: ReadableSpan) -> Union[RemoteDependencyDocument, Re
             url=url,
             response_code=code,
             duration=_ns_to_iso8601_string(duration),
+        )
+    return document
+
+def _get_log_record_document(log_data: LogData) -> Union[ExceptionDocument, TraceDocument]:
+    exc_type = log_data.log_record.attributes.get(SpanAttributes.EXCEPTION_TYPE)
+    exc_message = log_data.log_record.attributes.get(SpanAttributes.EXCEPTION_MESSAGE)
+    if exc_type is not None or exc_message is not None:
+        document = ExceptionDocument(
+            document_type=_DocumentIngressDocumentType.Exception,
+            exception_type=exc_type,
+            exception_message=exc_message,
+        )
+    else:
+        document = TraceDocument(
+            document_type=_DocumentIngressDocumentType.Trace,
+            message=log_data.log_record.body,
         )
     return document
 

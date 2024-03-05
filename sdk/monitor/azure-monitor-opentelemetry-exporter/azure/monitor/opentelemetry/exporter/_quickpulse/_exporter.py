@@ -46,13 +46,10 @@ from azure.monitor.opentelemetry.exporter._connection_string_parser import Conne
 from azure.monitor.opentelemetry.exporter._utils import _ticks_since_dot_net_epoch, PeriodicTask
 
 
-_APPLICATION_INSIGHTS_METRIC_TEMPORALITIES = {
+_QUICKPULSE_METRIC_TEMPORALITIES = {
+    # Use DELTA temporalities because we want to reset the counts every collection interval
     Counter: AggregationTemporality.DELTA,
     Histogram: AggregationTemporality.DELTA,
-    ObservableCounter: AggregationTemporality.DELTA,
-    ObservableGauge: AggregationTemporality.CUMULATIVE,
-    ObservableUpDownCounter: AggregationTemporality.CUMULATIVE,
-    UpDownCounter: AggregationTemporality.CUMULATIVE,
 }
 
 
@@ -89,7 +86,7 @@ class _QuickpulseExporter(MetricExporter):
 
         MetricExporter.__init__(
             self,
-            preferred_temporality=_APPLICATION_INSIGHTS_METRIC_TEMPORALITIES, # type: ignore
+            preferred_temporality=_QUICKPULSE_METRIC_TEMPORALITIES, # type: ignore
         )
 
     def export(

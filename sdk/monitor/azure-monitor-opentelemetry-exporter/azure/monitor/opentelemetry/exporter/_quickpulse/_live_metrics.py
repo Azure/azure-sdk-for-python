@@ -3,17 +3,20 @@
 import platform
 from typing import Any, Optional
 
-from opentelemetry.trace import SpanKind
-from opentelemetry.semconv.trace import SpanAttributes
+from opentelemetry.sdk._logs import LogData
 from opentelemetry.sdk.metrics import MeterProvider
+from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import ReadableSpan
 from opentelemetry.sdk.trace.id_generator import RandomIdGenerator
-from opentelemetry.sdk.resources import Resource
+from opentelemetry.semconv.trace import SpanAttributes
+from opentelemetry.trace import SpanKind
+
 from azure.monitor.opentelemetry.exporter._generated.models import ContextTagKeys
 from azure.monitor.opentelemetry.exporter._quickpulse._constants import (
     _DEPENDENCY_DURATION_NAME,
     _DEPENDENCY_FAILURE_RATE_NAME,
     _DEPENDENCY_RATE_NAME,
+    _EXCEPTION_RATE_NAME,
     _REQUEST_DURATION_NAME,
     _REQUEST_FAILURE_RATE_NAME,
     _REQUEST_RATE_NAME,
@@ -29,6 +32,7 @@ from azure.monitor.opentelemetry.exporter._quickpulse._state import (
     _set_global_quickpulse_state,
 )
 from azure.monitor.opentelemetry.exporter._quickpulse._utils import (
+    _get_log_record_document,
     _get_span_document,
 )
 from azure.monitor.opentelemetry.exporter._utils import (
@@ -39,7 +43,7 @@ from azure.monitor.opentelemetry.exporter._utils import (
 
 
 def enable_live_metrics(**kwargs: Any) -> None:
-    """Azure Monitor base exporter for OpenTelemetry.
+    """Live metrics entry point.
 
     :keyword str connection_string: The connection string used for your Application Insights resource.
     :keyword Resource resource: The OpenTelemetry Resource used for this Python application.
@@ -48,10 +52,18 @@ def enable_live_metrics(**kwargs: Any) -> None:
     _QuickpulseManager(kwargs.get('connection_string'), kwargs.get('resource'))
 
 
+# Used by _QuickpulseSpanProcessor to record live metrics on span record
 def record_span(span: ReadableSpan) -> None:
     qpm = _QuickpulseManager._instance
     if qpm:
         qpm._record_span(span)
+
+
+# Used by _QuickpulseLogRecordProcessor to record live metrics on log data record
+def record_log_record(log_data: LogData) -> None:
+    qpm = _QuickpulseManager._instance
+    if qpm:
+        qpm._record_log_record(log_data)
 
 
 class _QuickpulseManager(metaclass=Singleton):
@@ -108,13 +120,21 @@ class _QuickpulseManager(metaclass=Singleton):
             "dep/sec",
             "live metrics dependency failure rate per second"
         )
+        self._exception_rate_counter = self._meter.create_counter(
+            _EXCEPTION_RATE_NAME[0],
+            "exc/sec",
+            "live metrics exception rate per second"
+        )
 
-    def _record_span(self, span: ReadableSpan):
+    def _record_span(self, span: ReadableSpan) -> None:
+        # Only record if in post state
         if _is_post_state():
+            # TODO: Include DocumentIngress in payload
             document = _get_span_document(span)
             duration_ms = (span.end_time - span.start_time) / 1e9
-            status_code = str(span.attributes.get(SpanAttributes.HTTP_STATUS_CODE), "")
-            success = status_code == "200"
+            # status_code = str(span.attributes.get(SpanAttributes.HTTP_STATUS_CODE), "")
+            # success = status_code == "200"
+            success = span.status.is_ok
 
             if span.kind in (SpanKind.SERVER, SpanKind.CONSUMER):
                 if success:
@@ -128,6 +148,15 @@ class _QuickpulseManager(metaclass=Singleton):
                 else:
                     self._dependency_failure_rate_counter.add(1)
 
-        
-
-# def record_span_for_quickpulse()
+    def _record_log_record(self, log_data: LogData) -> None:
+        # Only record if in post state
+        if _is_post_state():
+            if log_data.log_record:
+                log_record = log_data.log_record
+                if log_record.attributes:
+                    # TODO: Include DocumentIngress in payload
+                    document = _get_log_record_document(log_data)
+                    exc_type = log_record.attributes.get(SpanAttributes.EXCEPTION_TYPE)
+                    exc_message = log_record.attributes.get(SpanAttributes.EXCEPTION_MESSAGE)
+                    if exc_type is not None or exc_message is not None:
+                        self._exception_rate_counter.add(1)
