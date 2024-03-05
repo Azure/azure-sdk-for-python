@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING, Optional, cast, List, Union
+from typing import TYPE_CHECKING, Optional, Union
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
 from ._generated._client import PhoneNumbersClient as PhoneNumbersClientGen

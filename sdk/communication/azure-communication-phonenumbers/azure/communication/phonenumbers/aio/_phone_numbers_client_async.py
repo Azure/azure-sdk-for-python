@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING, List, Optional, cast, Union
+from typing import TYPE_CHECKING, Optional, Union
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from .._generated.aio._client import PhoneNumbersClient as PhoneNumbersClientGen
