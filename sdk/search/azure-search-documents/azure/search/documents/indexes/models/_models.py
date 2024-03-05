@@ -5,28 +5,34 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Any, List, Optional, MutableMapping
+from typing import Any, List, Optional, MutableMapping, Union
 from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 from .._generated.models import (
-    LexicalAnalyzer,
-    LexicalTokenizer,
     AnalyzeRequest,
+    AzureActiveDirectoryApplicationCredentials,
+    CharFilterName,
+    CognitiveServicesAccount,
     CustomAnalyzer as _CustomAnalyzer,
+    DataSourceCredentials,
+    EntityCategory,
+    EntityRecognitionSkillLanguage,
     EntityRecognitionSkillV3 as _EntityRecognitionSkillV3,
+    InputFieldMappingEntry,
+    LexicalTokenizerName,
+    OutputFieldMappingEntry,
     PatternAnalyzer as _PatternAnalyzer,
     PatternTokenizer as _PatternTokenizer,
+    RegexFlags,
     SearchResourceEncryptionKey as _SearchResourceEncryptionKey,
     SearchIndexerDataSource as _SearchIndexerDataSource,
-    SearchIndexerSkill,
+    SearchIndexerIndexProjections,
+    SearchIndexerKnowledgeStore,
     SearchIndexerSkillset as _SearchIndexerSkillset,
+    SentimentSkillLanguage,
     SentimentSkillV3 as _SentimentSkillV3,
     SynonymMap as _SynonymMap,
-    DataSourceCredentials,
-    AzureActiveDirectoryApplicationCredentials,
-    CognitiveServicesAccount,
-    SearchIndexerKnowledgeStore,
-    SearchIndexerIndexProjections,
+    TokenFilterName,
 )
 
 DELIMITER = "|"
@@ -201,7 +207,7 @@ class EntityRecognitionSkillVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta
     LATEST = V3
 
 
-class EntityRecognitionSkill(SearchIndexerSkill):
+class EntityRecognitionSkill:
     """Using the Text Analytics API, extracts entities of different types from text.
 
     All required parameters must be populated in order to send to Azure.
@@ -250,40 +256,34 @@ class EntityRecognitionSkill(SearchIndexerSkill):
     :vartype skill_version: ~azure.search.documents.indexes.models.EntityRecognitionSkillVersion
     """
 
-    _validation = {
-        "odata_type": {"required": True},
-        "inputs": {"required": True},
-        "outputs": {"required": True},
-        "minimum_precision": {"maximum": 1, "minimum": 0},
-    }
-
-    _attribute_map = {
-        "odata_type": {"key": "@odata\\.type", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "description": {"key": "description", "type": "str"},
-        "context": {"key": "context", "type": "str"},
-        "inputs": {"key": "inputs", "type": "[InputFieldMappingEntry]"},
-        "outputs": {"key": "outputs", "type": "[OutputFieldMappingEntry]"},
-        "categories": {"key": "categories", "type": "[str]"},
-        "default_language_code": {"key": "defaultLanguageCode", "type": "str"},
-        "include_typeless_entities": {"key": "includeTypelessEntities", "type": "bool"},
-        "minimum_precision": {"key": "minimumPrecision", "type": "float"},
-        "model_version": {"key": "modelVersion", "type": "str"},
-        "skill_version": {"key": "skillVersion", "type": "str"},
-    }
-
-    def __init__(self, **kwargs):
-        # pop skill_version from kwargs to avoid warning in msrest
-        skill_version = kwargs.pop("skill_version", EntityRecognitionSkillVersion.V3)
-
-        super(EntityRecognitionSkill, self).__init__(**kwargs)
+    def __init__(
+        self,
+        *,
+        inputs: List[InputFieldMappingEntry],
+        outputs: List[OutputFieldMappingEntry],
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        context: Optional[str] = None,
+        categories: Optional[List[Union[str, EntityCategory]]] = None,
+        default_language_code: Optional[Union[str, EntityRecognitionSkillLanguage]] = None,
+        include_typeless_entities: Optional[bool] = None,
+        minimum_precision: Optional[float] = None,
+        model_version: Optional[str] = None,
+        skill_version: EntityRecognitionSkillVersion = EntityRecognitionSkillVersion.V3,
+        **kwargs: Any
+    ) -> None:
         self.skill_version = skill_version
         self.odata_type = self.skill_version
-        self.categories = kwargs.get("categories", None)
-        self.default_language_code = kwargs.get("default_language_code", None)
-        self.minimum_precision = kwargs.get("minimum_precision", None)
-        self.include_typeless_entities = kwargs.get("include_typeless_entities", None)
-        self.model_version = kwargs.get("model_version", None)
+        self.name = name
+        self.description = description
+        self.context = context
+        self.inputs = inputs
+        self.outputs = outputs
+        self.categories = categories
+        self.default_language_code = default_language_code
+        self.include_typeless_entities = include_typeless_entities
+        self.minimum_precision = minimum_precision
+        self.model_version = model_version
 
     def _to_generated(self):
         if self.skill_version in [
@@ -291,10 +291,12 @@ class EntityRecognitionSkill(SearchIndexerSkill):
             EntityRecognitionSkillVersion.LATEST,
         ]:
             return _EntityRecognitionSkillV3(
+                odata_type=self.odata_type,
+                name=self.name,
+                description=self.description,
+                context=self.context,
                 inputs=self.inputs,
                 outputs=self.outputs,
-                name=self.name,
-                odata_type=self.odata_type,
                 categories=self.categories,
                 default_language_code=self.default_language_code,
                 minimum_precision=self.minimum_precision,
@@ -311,6 +313,74 @@ class EntityRecognitionSkill(SearchIndexerSkill):
             return EntityRecognitionSkill(skill_version=EntityRecognitionSkillVersion.V3, **kwargs)
         return None
 
+    def serialize(self, keep_readonly: bool = False, **kwargs: Any) -> MutableMapping[str, Any]:
+        """Return the JSON that would be sent to server from this model.
+        :param bool keep_readonly: If you want to serialize the readonly attributes
+        :returns: A dict JSON compatible object
+        :rtype: dict
+        """
+        return self._to_generated().serialize(keep_readonly=keep_readonly, **kwargs)  # type: ignore
+
+    @classmethod
+    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> "EntityRecognitionSkill":
+        """Parse a str using the RestAPI syntax and return a EntityRecognitionSkill instance.
+
+        :param str data: A str using RestAPI structure. JSON by default.
+        :param str content_type: JSON by default, set application/xml if XML.
+        :returns: A EntityRecognitionSkill instance
+        :rtype: EntityRecognitionSkill
+        :raises: DeserializationError if something went wrong
+        """
+        return cls._from_generated(_EntityRecognitionSkillV3.deserialize(data, content_type=content_type))
+
+    def as_dict(self, keep_readonly: bool = True, **kwargs: Any) -> MutableMapping[str, Any]:
+        """Return a dict that can be serialized using json.dump.
+
+        :param bool keep_readonly: If you want to serialize the readonly attributes
+        :returns: A dict JSON compatible object
+        :rtype: dict
+        """
+        return self._to_generated().as_dict(keep_readonly=keep_readonly, **kwargs)  # type: ignore
+
+    @classmethod
+    def from_dict(
+        cls,
+        data: Any,
+        content_type: Optional[str] = None,
+    ) -> "EntityRecognitionSkill":
+        """Parse a dict using given key extractor return a model.
+
+        :param dict data: A dict using RestAPI structure
+        :param str content_type: JSON by default, set application/xml if XML.
+        :returns: A EntityRecognitionSkill instance
+        :rtype: EntityRecognitionSkill
+        :raises: DeserializationError if something went wrong
+        """
+        return cls._from_generated(_EntityRecognitionSkillV3.from_dict(data, content_type=content_type))
+
+    def __eq__(self, other: Any) -> bool:
+        """Compare objects by comparing all attributes.
+
+        :param Any other: the object to compare with
+        :returns: True if all attributes are equal, else False
+        :rtype: bool
+        """
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        return False
+
+    def __ne__(self, other: Any) -> bool:
+        """Compare objects by comparing all attributes.
+
+        :param Any other: the object to compare with
+        :returns: False if all attributes are equal, else True
+        :rtype: bool
+        """
+        return not self.__eq__(other)
+
+    def __str__(self) -> str:
+        return str(self.__dict__)
+
 
 class SentimentSkillVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the Sentiment Skill version to use."""
@@ -322,7 +392,7 @@ class SentimentSkillVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     LATEST = V3
 
 
-class SentimentSkill(SearchIndexerSkill):
+class SentimentSkill:
     """V1: Text analytics positive-negative sentiment analysis, scored as a floating point value in a range of zero
     to 1.
     V3: Using the Text Analytics API, evaluates unstructured text and for each record, provides sentiment labels
@@ -368,35 +438,30 @@ class SentimentSkill(SearchIndexerSkill):
     :vartype skill_version: ~azure.search.documents.indexes.models.SentimentSkillVersion
     """
 
-    _validation = {
-        "odata_type": {"required": True},
-        "inputs": {"required": True},
-        "outputs": {"required": True},
-    }
-
-    _attribute_map = {
-        "odata_type": {"key": "@odata\\.type", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "description": {"key": "description", "type": "str"},
-        "context": {"key": "context", "type": "str"},
-        "inputs": {"key": "inputs", "type": "[InputFieldMappingEntry]"},
-        "outputs": {"key": "outputs", "type": "[OutputFieldMappingEntry]"},
-        "default_language_code": {"key": "defaultLanguageCode", "type": "str"},
-        "include_opinion_mining": {"key": "includeOpinionMining", "type": "bool"},
-        "model_version": {"key": "modelVersion", "type": "str"},
-        "skill_version": {"key": "skillVersion", "type": "str"},
-    }
-
-    def __init__(self, **kwargs):
-        # pop skill_version from kwargs to avoid warning in msrest
-        skill_version = kwargs.pop("skill_version", SentimentSkillVersion.V3)
-
-        super(SentimentSkill, self).__init__(**kwargs)
+    def __init__(
+        self,
+        *,
+        inputs: List[InputFieldMappingEntry],
+        outputs: List[OutputFieldMappingEntry],
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        context: Optional[str] = None,
+        default_language_code: Optional[Union[str, SentimentSkillLanguage]] = None,
+        include_opinion_mining: bool = False,
+        model_version: Optional[str] = None,
+        skill_version: SentimentSkillVersion = SentimentSkillVersion.V3,
+        **kwargs: Any
+    ) -> None:
         self.skill_version = skill_version
         self.odata_type = self.skill_version
-        self.default_language_code = kwargs.get("default_language_code", None)
-        self.include_opinion_mining = kwargs.get("include_opinion_mining", None)
-        self.model_version = kwargs.get("model_version", None)
+        self.name = name
+        self.description = description
+        self.context = context
+        self.inputs = inputs
+        self.outputs = outputs
+        self.default_language_code = default_language_code
+        self.include_opinion_mining = include_opinion_mining
+        self.model_version = model_version
 
     def _to_generated(self):
         if self.skill_version in [
@@ -408,6 +473,8 @@ class SentimentSkill(SearchIndexerSkill):
                 outputs=self.outputs,
                 name=self.name,
                 odata_type=self.odata_type,
+                description=self.description,
+                context=self.context,
                 default_language_code=self.default_language_code,
                 include_opinion_mining=self.include_opinion_mining,
                 model_version=self.model_version,
@@ -422,6 +489,74 @@ class SentimentSkill(SearchIndexerSkill):
         if isinstance(skill, _SentimentSkillV3):
             return SentimentSkill(skill_version=SentimentSkillVersion.V3, **kwargs)
         return None
+
+    def serialize(self, keep_readonly: bool = False, **kwargs: Any) -> MutableMapping[str, Any]:
+        """Return the JSON that would be sent to server from this model.
+        :param bool keep_readonly: If you want to serialize the readonly attributes
+        :returns: A dict JSON compatible object
+        :rtype: dict
+        """
+        return self._to_generated().serialize(keep_readonly=keep_readonly, **kwargs)  # type: ignore
+
+    @classmethod
+    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> "SentimentSkill":
+        """Parse a str using the RestAPI syntax and return a SentimentSkill instance.
+
+        :param str data: A str using RestAPI structure. JSON by default.
+        :param str content_type: JSON by default, set application/xml if XML.
+        :returns: A SentimentSkill instance
+        :rtype: SentimentSkill
+        :raises: DeserializationError if something went wrong
+        """
+        return cls._from_generated(_SentimentSkillV3.deserialize(data, content_type=content_type))
+
+    def as_dict(self, keep_readonly: bool = True, **kwargs: Any) -> MutableMapping[str, Any]:
+        """Return a dict that can be serialized using json.dump.
+
+        :param bool keep_readonly: If you want to serialize the readonly attributes
+        :returns: A dict JSON compatible object
+        :rtype: dict
+        """
+        return self._to_generated().as_dict(keep_readonly=keep_readonly, **kwargs)  # type: ignore
+
+    @classmethod
+    def from_dict(
+        cls,
+        data: Any,
+        content_type: Optional[str] = None,
+    ) -> "SentimentSkill":
+        """Parse a dict using given key extractor return a model.
+
+        :param dict data: A dict using RestAPI structure
+        :param str content_type: JSON by default, set application/xml if XML.
+        :returns: A SentimentSkill instance
+        :rtype: SentimentSkill
+        :raises: DeserializationError if something went wrong
+        """
+        return cls._from_generated(_SentimentSkillV3.from_dict(data, content_type=content_type))
+
+    def __eq__(self, other: Any) -> bool:
+        """Compare objects by comparing all attributes.
+
+        :param Any other: the object to compare with
+        :returns: True if all attributes are equal, else False
+        :rtype: bool
+        """
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        return False
+
+    def __ne__(self, other: Any) -> bool:
+        """Compare objects by comparing all attributes.
+
+        :param Any other: the object to compare with
+        :returns: False if all attributes are equal, else True
+        :rtype: bool
+        """
+        return not self.__eq__(other)
+
+    def __str__(self) -> str:
+        return str(self.__dict__)
 
 
 class AnalyzeTextOptions:
@@ -563,7 +698,7 @@ class AnalyzeTextOptions:
         return str(self.__dict__)
 
 
-class CustomAnalyzer(LexicalAnalyzer):
+class CustomAnalyzer:
     """Allows you to take control over the process of converting text into indexable/searchable tokens.
     It's a user-defined configuration consisting of a single predefined tokenizer and one or more filters.
     The tokenizer is responsible for breaking text into tokens, and the filters for modifying tokens
@@ -594,26 +729,20 @@ class CustomAnalyzer(LexicalAnalyzer):
     :vartype char_filters: list[str]
     """
 
-    _validation = {
-        "odata_type": {"required": True},
-        "name": {"required": True},
-        "tokenizer_name": {"required": True},
-    }
-
-    _attribute_map = {
-        "odata_type": {"key": "@odata\\.type", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "tokenizer_name": {"key": "tokenizerName", "type": "str"},
-        "token_filters": {"key": "tokenFilters", "type": "[str]"},
-        "char_filters": {"key": "charFilters", "type": "[str]"},
-    }
-
-    def __init__(self, **kwargs):
-        super(CustomAnalyzer, self).__init__(**kwargs)
+    def __init__(
+        self,
+        *,
+        name: str,
+        tokenizer_name: Union[str, LexicalTokenizerName],
+        token_filters: Optional[List[Union[str, TokenFilterName]]] = None,
+        char_filters: Optional[List[Union[str, CharFilterName]]] = None,
+        **kwargs: Any
+    ) -> None:
         self.odata_type = "#Microsoft.Azure.Search.CustomAnalyzer"
-        self.tokenizer_name = kwargs["tokenizer_name"]
-        self.token_filters = kwargs.get("token_filters", None)
-        self.char_filters = kwargs.get("char_filters", None)
+        self.name = name
+        self.tokenizer_name = tokenizer_name
+        self.token_filters = token_filters
+        self.char_filters = char_filters
 
     def _to_generated(self):
         return _CustomAnalyzer(
@@ -636,8 +765,76 @@ class CustomAnalyzer(LexicalAnalyzer):
             char_filters=custom_analyzer.char_filters,
         )
 
+    def serialize(self, keep_readonly: bool = False, **kwargs: Any) -> MutableMapping[str, Any]:
+        """Return the JSON that would be sent to server from this model.
+        :param bool keep_readonly: If you want to serialize the readonly attributes
+        :returns: A dict JSON compatible object
+        :rtype: dict
+        """
+        return self._to_generated().serialize(keep_readonly=keep_readonly, **kwargs)  # type: ignore
 
-class PatternAnalyzer(LexicalAnalyzer):
+    @classmethod
+    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> "CustomAnalyzer":
+        """Parse a str using the RestAPI syntax and return a CustomAnalyzer instance.
+
+        :param str data: A str using RestAPI structure. JSON by default.
+        :param str content_type: JSON by default, set application/xml if XML.
+        :returns: A CustomAnalyzer instance
+        :rtype: CustomAnalyzer
+        :raises: DeserializationError if something went wrong
+        """
+        return cls._from_generated(_CustomAnalyzer.deserialize(data, content_type=content_type))
+
+    def as_dict(self, keep_readonly: bool = True, **kwargs: Any) -> MutableMapping[str, Any]:
+        """Return a dict that can be serialized using json.dump.
+
+        :param bool keep_readonly: If you want to serialize the readonly attributes
+        :returns: A dict JSON compatible object
+        :rtype: dict
+        """
+        return self._to_generated().as_dict(keep_readonly=keep_readonly, **kwargs)  # type: ignore
+
+    @classmethod
+    def from_dict(
+        cls,
+        data: Any,
+        content_type: Optional[str] = None,
+    ) -> "CustomAnalyzer":
+        """Parse a dict using given key extractor return a model.
+
+        :param dict data: A dict using RestAPI structure
+        :param str content_type: JSON by default, set application/xml if XML.
+        :returns: A CustomAnalyzer instance
+        :rtype: CustomAnalyzer
+        :raises: DeserializationError if something went wrong
+        """
+        return cls._from_generated(_CustomAnalyzer.from_dict(data, content_type=content_type))
+
+    def __eq__(self, other: Any) -> bool:
+        """Compare objects by comparing all attributes.
+
+        :param Any other: the object to compare with
+        :returns: True if all attributes are equal, else False
+        :rtype: bool
+        """
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        return False
+
+    def __ne__(self, other: Any) -> bool:
+        """Compare objects by comparing all attributes.
+
+        :param Any other: the object to compare with
+        :returns: False if all attributes are equal, else True
+        :rtype: bool
+        """
+        return not self.__eq__(other)
+
+    def __str__(self) -> str:
+        return str(self.__dict__)
+
+
+class PatternAnalyzer:
     """Flexibly separates text into terms via a regular expression.
     This analyzer is implemented using Apache Lucene.
 
@@ -660,24 +857,22 @@ class PatternAnalyzer(LexicalAnalyzer):
     :vartype stopwords: list[str]
     """
 
-    _validation = {"odata_type": {"required": True}, "name": {"required": True}}
-
-    _attribute_map = {
-        "odata_type": {"key": "@odata\\.type", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "lower_case_terms": {"key": "lowercase", "type": "bool"},
-        "pattern": {"key": "pattern", "type": "str"},
-        "flags": {"key": "flags", "type": "[str]"},
-        "stopwords": {"key": "stopwords", "type": "[str]"},
-    }
-
-    def __init__(self, **kwargs):
-        super(PatternAnalyzer, self).__init__(**kwargs)
+    def __init__(
+        self,
+        *,
+        name: str,
+        lower_case_terms: bool = True,
+        pattern: str = "\W+",
+        flags: Optional[Union[List[str], List[RegexFlags]]] = None,
+        stopwords: Optional[List[str]] = None,
+        **kwargs: Any
+    ) -> None:
         self.odata_type = "#Microsoft.Azure.Search.PatternAnalyzer"
-        self.lower_case_terms = kwargs.get("lower_case_terms", True)
-        self.pattern = kwargs.get("pattern", r"\W+")
-        self.flags = kwargs.get("flags", None)
-        self.stopwords = kwargs.get("stopwords", None)
+        self.name = name
+        self.lower_case_terms = lower_case_terms
+        self.pattern = pattern
+        self.flags = flags
+        self.stopwords = stopwords
 
     def _to_generated(self):
         if not self.flags:
@@ -708,8 +903,76 @@ class PatternAnalyzer(LexicalAnalyzer):
             stopwords=pattern_analyzer.stopwords,
         )
 
+    def serialize(self, keep_readonly: bool = False, **kwargs: Any) -> MutableMapping[str, Any]:
+        """Return the JSON that would be sent to server from this model.
+        :param bool keep_readonly: If you want to serialize the readonly attributes
+        :returns: A dict JSON compatible object
+        :rtype: dict
+        """
+        return self._to_generated().serialize(keep_readonly=keep_readonly, **kwargs)  # type: ignore
 
-class PatternTokenizer(LexicalTokenizer):
+    @classmethod
+    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> "PatternAnalyzer":
+        """Parse a str using the RestAPI syntax and return a PatternAnalyzer instance.
+
+        :param str data: A str using RestAPI structure. JSON by default.
+        :param str content_type: JSON by default, set application/xml if XML.
+        :returns: A PatternAnalyzer instance
+        :rtype: PatternAnalyzer
+        :raises: DeserializationError if something went wrong
+        """
+        return cls._from_generated(_PatternAnalyzer.deserialize(data, content_type=content_type))
+
+    def as_dict(self, keep_readonly: bool = True, **kwargs: Any) -> MutableMapping[str, Any]:
+        """Return a dict that can be serialized using json.dump.
+
+        :param bool keep_readonly: If you want to serialize the readonly attributes
+        :returns: A dict JSON compatible object
+        :rtype: dict
+        """
+        return self._to_generated().as_dict(keep_readonly=keep_readonly, **kwargs)  # type: ignore
+
+    @classmethod
+    def from_dict(
+        cls,
+        data: Any,
+        content_type: Optional[str] = None,
+    ) -> "PatternAnalyzer":
+        """Parse a dict using given key extractor return a model.
+
+        :param dict data: A dict using RestAPI structure
+        :param str content_type: JSON by default, set application/xml if XML.
+        :returns: A PatternAnalyzer instance
+        :rtype: PatternAnalyzer
+        :raises: DeserializationError if something went wrong
+        """
+        return cls._from_generated(_PatternAnalyzer.from_dict(data, content_type=content_type))
+
+    def __eq__(self, other: Any) -> bool:
+        """Compare objects by comparing all attributes.
+
+        :param Any other: the object to compare with
+        :returns: True if all attributes are equal, else False
+        :rtype: bool
+        """
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        return False
+
+    def __ne__(self, other: Any) -> bool:
+        """Compare objects by comparing all attributes.
+
+        :param Any other: the object to compare with
+        :returns: False if all attributes are equal, else True
+        :rtype: bool
+        """
+        return not self.__eq__(other)
+
+    def __str__(self) -> str:
+        return str(self.__dict__)
+
+
+class PatternTokenizer:
     """Tokenizer that uses regex pattern matching to construct distinct tokens.
     This tokenizer is implemented using Apache Lucene.
 
@@ -731,22 +994,20 @@ class PatternTokenizer(LexicalTokenizer):
     :vartype group: int
     """
 
-    _validation = {"odata_type": {"required": True}, "name": {"required": True}}
-
-    _attribute_map = {
-        "odata_type": {"key": "@odata\\.type", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "pattern": {"key": "pattern", "type": "str"},
-        "flags": {"key": "flags", "type": "[str]"},
-        "group": {"key": "group", "type": "int"},
-    }
-
-    def __init__(self, **kwargs):
-        super(PatternTokenizer, self).__init__(**kwargs)
+    def __init__(
+        self,
+        *,
+        name: str,
+        pattern: str = "\W+",
+        flags: Optional[Union[str, RegexFlags]] = None,
+        group: int = -1,
+        **kwargs: Any
+    ) -> None:
         self.odata_type = "#Microsoft.Azure.Search.PatternTokenizer"
-        self.pattern = kwargs.get("pattern", r"\W+")
-        self.flags = kwargs.get("flags", None)
-        self.group = kwargs.get("group", -1)
+        self.name = name
+        self.pattern = pattern
+        self.flags = flags
+        self.group = group
 
     def _to_generated(self):
         if not self.flags:
@@ -774,6 +1035,74 @@ class PatternTokenizer(LexicalTokenizer):
             flags=flags,
             group=pattern_tokenizer.group,
         )
+
+    def serialize(self, keep_readonly: bool = False, **kwargs: Any) -> MutableMapping[str, Any]:
+        """Return the JSON that would be sent to server from this model.
+        :param bool keep_readonly: If you want to serialize the readonly attributes
+        :returns: A dict JSON compatible object
+        :rtype: dict
+        """
+        return self._to_generated().serialize(keep_readonly=keep_readonly, **kwargs)  # type: ignore
+
+    @classmethod
+    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> "PatternTokenizer":
+        """Parse a str using the RestAPI syntax and return a PatternTokenizer instance.
+
+        :param str data: A str using RestAPI structure. JSON by default.
+        :param str content_type: JSON by default, set application/xml if XML.
+        :returns: A PatternTokenizer instance
+        :rtype: PatternTokenizer
+        :raises: DeserializationError if something went wrong
+        """
+        return cls._from_generated(_PatternTokenizer.deserialize(data, content_type=content_type))
+
+    def as_dict(self, keep_readonly: bool = True, **kwargs: Any) -> MutableMapping[str, Any]:
+        """Return a dict that can be serialized using json.dump.
+
+        :param bool keep_readonly: If you want to serialize the readonly attributes
+        :returns: A dict JSON compatible object
+        :rtype: dict
+        """
+        return self._to_generated().as_dict(keep_readonly=keep_readonly, **kwargs)  # type: ignore
+
+    @classmethod
+    def from_dict(
+        cls,
+        data: Any,
+        content_type: Optional[str] = None,
+    ) -> "PatternTokenizer":
+        """Parse a dict using given key extractor return a model.
+
+        :param dict data: A dict using RestAPI structure
+        :param str content_type: JSON by default, set application/xml if XML.
+        :returns: A PatternTokenizer instance
+        :rtype: PatternTokenizer
+        :raises: DeserializationError if something went wrong
+        """
+        return cls._from_generated(_PatternTokenizer.from_dict(data, content_type=content_type))
+
+    def __eq__(self, other: Any) -> bool:
+        """Compare objects by comparing all attributes.
+
+        :param Any other: the object to compare with
+        :returns: True if all attributes are equal, else False
+        :rtype: bool
+        """
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        return False
+
+    def __ne__(self, other: Any) -> bool:
+        """Compare objects by comparing all attributes.
+
+        :param Any other: the object to compare with
+        :returns: False if all attributes are equal, else True
+        :rtype: bool
+        """
+        return not self.__eq__(other)
+
+    def __str__(self) -> str:
+        return str(self.__dict__)
 
 
 class SearchResourceEncryptionKey:
