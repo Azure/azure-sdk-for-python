@@ -32,30 +32,43 @@ import uuid
 
 job_name = f"iris-dataset-job-{str(uuid.uuid4())}"
 
+
 class EndpointsConfigurationOptions(object):
     def ml_endpoints_config_0(self):
+        
+        
         # [START model_batch_deployment_config]
-        from azure.ai.ml.entities import ModelBatchDeployment, ModelBatchDeploymentSettings, CodeConfiguration
+        from azure.ai.ml.entities import ModelBatchDeployment, ModelBatchDeploymentSettings, CodeConfiguration, BatchRetrySettings
 
         deployment = ModelBatchDeployment(
-            name="mnist-torch-dpl",
-            description="A deployment using Torch to solve the MNIST classification dataset.",
+            name="batch-deployment",
+            description="This is a sample batch deployment.",
             endpoint_name="endpoint_name",
-            model=model,
+            model="model_name",
             code_configuration=CodeConfiguration(
                 code="deployment-torch/code/", scoring_script="batch_driver.py"
             ),
-            environment=env,
+            environment="environment_name",
             compute="compute_name",
             settings=ModelBatchDeploymentSettings(
                 max_concurrency_per_instance=2,
                 mini_batch_size=10,
                 instance_count=2,
-                output_action=BatchDeploymentOutputAction.APPEND_ROW,
                 output_file_name="predictions.csv",
                 retry_settings=BatchRetrySettings(max_retries=3, timeout=30),
                 logging_level="info",
             ),
+            tags={"tag1": "value1", "tag2": "value2"},
+            properties={"prop1": "value1", "prop2": "value2"},
+            compute="cpu-cluster",
+            logging_level="info",
+            mini_batch_size=10,
+            max_concurrency_per_instance=2,
         )
 
         # [END model_batch_deployment_config]
+
+
+if __name__ == "__main__":
+    sample = EndpointsConfigurationOptions()
+    sample.ml_endpoints_config_0()

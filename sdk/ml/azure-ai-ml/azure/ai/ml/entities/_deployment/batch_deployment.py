@@ -82,6 +82,15 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
     :type instance_count: typing.Optional[int]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if BatchDeployment cannot be successfully validated.
         Details will be provided in the error message.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_endpoint_deployment_configs.py
+            :start-after: [START model_batch_deployment_config]
+            :end-before: [END model_batch_deployment_config]
+            :language: python
+            :dedent: 8
+            :caption: Create a batch deployment.
     """
 
     def __init__(
