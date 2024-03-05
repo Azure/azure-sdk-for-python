@@ -424,7 +424,7 @@ class Simulator:
 
     def _to_chat_protocol(self, template, conversation_history, template_parameters):
         messages = []
-
+        
         for i, m in enumerate(conversation_history):
             message = {"content": m.message, "role": m.role.value}
             if len(template.context_key) > 0:
@@ -432,6 +432,8 @@ class Simulator:
                     template_parameters, template.context_key, i
                 )
                 message["context"] = citations
+            elif "full_response" in m.__dict__ and "context" in m.full_response:
+                message["context"] = m.full_response["context"]
             messages.append(message)
 
         return {
