@@ -47,7 +47,7 @@ class TestDACAnalyzeLayout(DocumentIntelligenceTest):
     def test_layout_stream_transform_pdf(self, client):
         with open(self.invoice_pdf, "rb") as fd:
             document = fd.read()
-        
+
         def callback(raw_response, _, headers):
             return raw_response
 
@@ -60,7 +60,7 @@ class TestDACAnalyzeLayout(DocumentIntelligenceTest):
         )
         raw_response = poller.result()
         raw_analyze_result = AnalyzeResultOperation._deserialize(raw_response.http_response.json(), []).analyze_result
-        
+
         poller = client.begin_analyze_document(
             "prebuilt-layout",
             document,
@@ -68,20 +68,22 @@ class TestDACAnalyzeLayout(DocumentIntelligenceTest):
             content_type="application/octet-stream",
         )
         returned_model = poller.result()
-                
+
         assert returned_model.model_id == raw_analyze_result.model_id
         assert returned_model.api_version == raw_analyze_result.api_version
         assert returned_model.content == raw_analyze_result.content
-        
+
         assert len(returned_model.pages) == len(raw_analyze_result.pages)
         assert len(returned_model.tables) == len(raw_analyze_result.tables)
         assert len(returned_model.paragraphs) == len(raw_analyze_result.paragraphs)
         assert len(returned_model.styles) == len(raw_analyze_result.styles)
-        
+
         self.assertDocumentPagesTransformCorrect(returned_model.pages, raw_analyze_result.pages)
         self.assertDocumentTransformCorrect(returned_model.documents, raw_analyze_result.documents)
         self.assertDocumentTablesTransformCorrect(returned_model.tables, raw_analyze_result.tables)
-        self.assertDocumentKeyValuePairsTransformCorrect(returned_model.key_value_pairs, raw_analyze_result.key_value_pairs)
+        self.assertDocumentKeyValuePairsTransformCorrect(
+            returned_model.key_value_pairs, raw_analyze_result.key_value_pairs
+        )
         self.assertDocumentStylesTransformCorrect(returned_model.styles, raw_analyze_result.styles)
 
     @skip_flaky_test
@@ -94,7 +96,7 @@ class TestDACAnalyzeLayout(DocumentIntelligenceTest):
 
         def callback(raw_response, _, headers):
             return raw_response
-        
+
         poller = client.begin_analyze_document(
             "prebuilt-layout",
             document,
@@ -103,27 +105,29 @@ class TestDACAnalyzeLayout(DocumentIntelligenceTest):
         )
         raw_response = poller.result()
         raw_analyze_result = AnalyzeResultOperation._deserialize(raw_response.http_response.json(), []).analyze_result
-        
+
         poller = client.begin_analyze_document(
             "prebuilt-layout",
             document,
             content_type="application/octet-stream",
         )
         returned_model = poller.result()
-        
+
         assert returned_model.model_id == raw_analyze_result.model_id
         assert returned_model.api_version == raw_analyze_result.api_version
         assert returned_model.content == raw_analyze_result.content
-        
+
         assert len(returned_model.pages) == len(raw_analyze_result.pages)
         assert len(returned_model.tables) == len(raw_analyze_result.tables)
         assert len(returned_model.paragraphs) == len(raw_analyze_result.paragraphs)
         assert len(returned_model.styles) == len(raw_analyze_result.styles)
-        
+
         self.assertDocumentPagesTransformCorrect(returned_model.pages, raw_analyze_result.pages)
         self.assertDocumentTransformCorrect(returned_model.documents, raw_analyze_result.documents)
         self.assertDocumentTablesTransformCorrect(returned_model.tables, raw_analyze_result.tables)
-        self.assertDocumentKeyValuePairsTransformCorrect(returned_model.key_value_pairs, raw_analyze_result.key_value_pairs)
+        self.assertDocumentKeyValuePairsTransformCorrect(
+            returned_model.key_value_pairs, raw_analyze_result.key_value_pairs
+        )
         self.assertDocumentStylesTransformCorrect(returned_model.styles, raw_analyze_result.styles)
 
     @skip_flaky_test
@@ -136,7 +140,7 @@ class TestDACAnalyzeLayout(DocumentIntelligenceTest):
 
         def callback(raw_response, _, headers):
             return raw_response
-        
+
         poller = client.begin_analyze_document(
             "prebuilt-layout",
             document,
@@ -145,27 +149,29 @@ class TestDACAnalyzeLayout(DocumentIntelligenceTest):
         )
         raw_response = poller.result()
         raw_analyze_result = AnalyzeResultOperation._deserialize(raw_response.http_response.json(), []).analyze_result
-        
+
         poller = client.begin_analyze_document(
             "prebuilt-layout",
             document,
             content_type="application/octet-stream",
         )
         returned_model = poller.result()
-        
+
         assert returned_model.model_id == raw_analyze_result.model_id
         assert returned_model.api_version == raw_analyze_result.api_version
         assert returned_model.content == raw_analyze_result.content
-        
+
         assert len(returned_model.pages) == len(raw_analyze_result.pages)
         assert len(returned_model.tables) == len(raw_analyze_result.tables)
         assert len(returned_model.paragraphs) == len(raw_analyze_result.paragraphs)
         assert len(returned_model.styles) == len(raw_analyze_result.styles)
-        
+
         self.assertDocumentPagesTransformCorrect(returned_model.pages, raw_analyze_result.pages)
         self.assertDocumentTransformCorrect(returned_model.documents, raw_analyze_result.documents)
         self.assertDocumentTablesTransformCorrect(returned_model.tables, raw_analyze_result.tables)
-        self.assertDocumentKeyValuePairsTransformCorrect(returned_model.key_value_pairs, raw_analyze_result.key_value_pairs)
+        self.assertDocumentKeyValuePairsTransformCorrect(
+            returned_model.key_value_pairs, raw_analyze_result.key_value_pairs
+        )
         self.assertDocumentStylesTransformCorrect(returned_model.styles, raw_analyze_result.styles)
 
     @pytest.mark.live_test_only
