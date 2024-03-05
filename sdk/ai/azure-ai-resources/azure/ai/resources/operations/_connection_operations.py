@@ -22,7 +22,7 @@ class ConnectionOperations:
     create an AIClient instance that instantiates it for you and
     attaches it as an attribute.
 
-    :param resource_ml_client: The Azure Machine Learning client for the AI resource
+    :param resource_ml_client: The Azure Machine Learning client for the AI hub.
     :type resource_ml_client: ~azure.ai.ml.MLClient
     :param project_ml_client: The Azure Machine Learning client for the project
     :type project_ml_client: ~azure.ai.ml.MLClient
@@ -38,7 +38,7 @@ class ConnectionOperations:
     def list(
         self,
         connection_type: Optional[str] = None,
-        scope: str = OperationScope.AI_RESOURCE,
+        scope: str = OperationScope.AI_HUB,
         include_data_connections: bool = False,
     ) -> Iterable[BaseConnection]:
         """List all connection assets in a project.
@@ -46,8 +46,8 @@ class ConnectionOperations:
         :param connection_type: If set, return only connections of the specified type.
         :type connection_type: str
         :param scope: The scope of the operation, which determines if the operation will list all connections
-            that are available to the AI Client's AI Resource or just those available to the project.
-            Defaults to AI resource-level scoping.
+            that are available to the AI Client's AI hub or just those available to the project.
+            Defaults to AI hub-level scoping.
         :type scope: ~azure.ai.resources.constants.OperationScope
         :param include_data_connections: If true, also return data connections. Defaults to False.
         :type include_data_connections: bool
@@ -55,7 +55,7 @@ class ConnectionOperations:
         :return: An iterator of connection objects
         :rtype: Iterable[Connection]
         """
-        client = self._resource_ml_client if scope == OperationScope.AI_RESOURCE else self._project_ml_client
+        client = self._resource_ml_client if scope == OperationScope.AI_HUB else self._project_ml_client
 
         operation_result = client._workspace_connections.list(
             connection_type=connection_type,
@@ -66,20 +66,20 @@ class ConnectionOperations:
 
     @distributed_trace
     @monitor_with_activity(logger, "Connection.Get", ActivityType.PUBLICAPI)
-    def get(self, name: str, scope: str = OperationScope.AI_RESOURCE, **kwargs) -> BaseConnection:
+    def get(self, name: str, scope: str = OperationScope.AI_HUB, **kwargs) -> BaseConnection:
         """Get a connection by name.
 
         :param name: Name of the connection.
         :type name: str
         :param scope: The scope of the operation, which determines if the operation will search among 
-            all connections that are available to the AI Client's AI Resource or just those available to the project.
-            Defaults to AI resource-level scoping.
+            all connections that are available to the AI Client's AI hub or just those available to the project.
+            Defaults to AI hub-level scoping.
         :type scope: ~azure.ai.resources.constants.OperationScope
 
         :return: The connection with the provided name.
         :rtype: Connection
         """
-        client = self._resource_ml_client if scope == OperationScope.AI_RESOURCE else self._project_ml_client
+        client = self._resource_ml_client if scope == OperationScope.AI_HUB else self._project_ml_client
         workspace_connection = client._workspace_connections.get(name=name, **kwargs)
         connection = BaseConnection._from_v2_workspace_connection(workspace_connection)
 
@@ -97,19 +97,19 @@ class ConnectionOperations:
 
     @distributed_trace
     @monitor_with_activity(logger, "Connection.CreateOrUpdate", ActivityType.PUBLICAPI)
-    def create_or_update(self, connection: BaseConnection, scope: str = OperationScope.AI_RESOURCE, **kwargs) -> BaseConnection:
+    def create_or_update(self, connection: BaseConnection, scope: str = OperationScope.AI_HUB, **kwargs) -> BaseConnection:
         """Create or update a connection.
 
         :param connection: Connection definition
             or object which can be translated to a connection.
         :type connection: Connection
         :param scope: The scope of the operation, which determines if the created connection is managed by
-            an AI Resource or directly by a project. Defaults to AI resource-level scoping.
+            an AI hub or directly by a project. Defaults to AI hub-level scoping.
         :type scope: ~azure.ai.resources.constants.OperationScope
         :return: Created or updated connection.
         :rtype: Connection
         """
-        client = self._resource_ml_client if scope == OperationScope.AI_RESOURCE else self._project_ml_client
+        client = self._resource_ml_client if scope == OperationScope.AI_HUB else self._project_ml_client
         response = client._workspace_connections.create_or_update(
             workspace_connection=connection._workspace_connection, **kwargs
         )
@@ -118,15 +118,15 @@ class ConnectionOperations:
 
     @distributed_trace
     @monitor_with_activity(logger, "Connection.Delete", ActivityType.PUBLICAPI)
-    def delete(self, name: str, scope: str = OperationScope.AI_RESOURCE) -> None:
+    def delete(self, name: str, scope: str = OperationScope.AI_HUB) -> None:
         """Delete the connection.
 
         :param name: Name of the connection to delete.
         :type name: str
         :param scope: The scope of the operation, which determines if the operation should search amongst
-            the connections available to the AI Client's AI Resource for the target connection, or through
-            the connections available to the project. Defaults to AI resource-level scoping.
+            the connections available to the AI Client's AI hub for the target connection, or through
+            the connections available to the project. Defaults to AI hub-level scoping.
         :type scope: ~azure.ai.resources.constants.OperationScope
         """
-        client = self._resource_ml_client if scope == OperationScope.AI_RESOURCE else self._project_ml_client
+        client = self._resource_ml_client if scope == OperationScope.AI_HUB else self._project_ml_client
         return client._workspace_connections.delete(name=name)

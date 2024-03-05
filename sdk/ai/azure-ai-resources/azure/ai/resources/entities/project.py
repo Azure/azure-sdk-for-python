@@ -10,12 +10,12 @@ from azure.ai.ml.entities import Workspace
 
 # Effectively a lightweight wrapper around a v2 SDK workspace
 class Project:
-    """A Project is a lightweight object for orchestrating AI applications, and is parented by an AI resource.
+    """A Project is a lightweight object for orchestrating AI applications, and is parented by an AI hub.
     
     :param name: The name of the project.
     :type name: str
-    :param ai_resource: The AI resource parent of the project.
-    :type ai_resource: str
+    :param ai_hub: The AI hub parent of the project.
+    :type ai_hub: str
     :param description: The description of the project.
     :type description: Optional[str]
     :param tags: Tags associated with the project.
@@ -32,7 +32,7 @@ class Project:
         self,
         *,
         name: str,
-        ai_resource: str,
+        ai_hub: str,
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         display_name: Optional[str] = None,
@@ -42,7 +42,7 @@ class Project:
     ) -> None:
         self._workspace = Workspace(
             name=name,
-            workspace_hub=ai_resource,
+            workspace_hub=ai_hub,
             description=description,
             tags=tags,
             display_name=display_name,
@@ -63,7 +63,7 @@ class Project:
         """
         # It's simpler to create a placeholder internal workspace, then overwrite the internal WC.
         # We don't need to worry about the potentially changing WC fields this way.
-        project = cls(name="a", ai_resource="a")
+        project = cls(name="a", ai_hub="a")
         project._workspace = workspace
         return project
 
@@ -89,19 +89,19 @@ class Project:
         self._workspace.name = value
 
     @property
-    def ai_resource(self) -> str:
-        """The AI resource parent of the project.
+    def ai_hub(self) -> str:
+        """The AI hub parent of the project.
 
-        :return: Name of the AI resource.
+        :return: Name of the AI hub.
         :rtype: str
         """
         return self._workspace.workspace_hub
 
-    @ai_resource.setter
-    def ai_resource(self, value: str):
-        """Set the AI resource of the project.
+    @ai_hub.setter
+    def ai_hub(self, value: str):
+        """Set the AI hub of the project.
 
-        :param value: The AI resource to assign to the project.
+        :param value: The AI hub to assign to the project.
         :type value: str
         """
         if not value:

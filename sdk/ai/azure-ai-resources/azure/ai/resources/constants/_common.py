@@ -33,8 +33,8 @@ class IndexType(object):
 class OperationScope:
     """An enumeration of values for the scope of an AIClient's operations.
     
-    Some AIClient operations can be applied to either the client's AI resource
+    Some AIClient operations can be applied to either the client's AI Hub
     or its project. For such operations, these values are used to determine that scope.
     """
-    AI_RESOURCE = "ai_resource"
+    AI_HUB = "ai_hub"
     PROJECT = "project"

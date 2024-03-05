@@ -6,7 +6,7 @@ __path__ = __import__("pkgutil").extend_path(__path__, __name__)  # type: ignore
 
 
 from ._acs_output_config import ACSOutputConfig
-from ._ai_resource_operations import AIResourceOperations
+from ._ai_hub_operations import AIHubOperations
 from ._connection_operations import ConnectionOperations
 from ._single_deployment_operations import SingleDeploymentOperations
 from ._azure_open_ai_deployment_operations import AzureOpenAIDeploymentOperations
@@ -27,7 +27,7 @@ __all__ = [
     "ACSOutputConfig",
     "ProjectOperations",
     "PFOperations",
-    "AIResourceOperations",
+    "AIHubOperations",
     "SingleDeploymentOperations",
     "DataOperations",
     "ModelOperations",

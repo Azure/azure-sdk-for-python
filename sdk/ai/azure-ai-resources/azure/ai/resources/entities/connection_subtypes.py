@@ -20,7 +20,7 @@ from .base_connection import BaseConnection
 
 class AzureOpenAIConnection(BaseConnection):
     """A Connection for Azure Open AI. Note: This object usually shouldn't be created manually by users.
-    To get the default AzureOpenAIConnection for an AI Resource, use an AIClient object to call the
+    To get the default AzureOpenAIConnection for an AI hub, use an AIClient object to call the
     'get_default_aoai_connection' function.
 
     :param name: Name of the connection.
@@ -34,7 +34,7 @@ class AzureOpenAIConnection(BaseConnection):
     :param api_type: The api type that this connection was created for. Defaults to "Azure" and currently rarely changes.
     :type api_type: str
     :param is_shared: For connections created for a project, this determines if the connection
-        is shared amongst other connections with that project's parent AI resource. Defaults to True.
+        is shared amongst other connections with that project's parent AI hub. Defaults to True.
     :type is_shared: bool
     :param tags: Tag dictionary. Tags can be added, removed, and updated.
     :type tags: dict
@@ -161,7 +161,7 @@ class AzureAISearchConnection(BaseConnection):
     :param api_version: The api version that this connection was created for. Only applies to certain connection types.
     :type api_version: Optional[str]
     :param is_shared: For connections created for a project, this determines if the connection
-        is shared amongst other connections with that project's parent AI resource. Defaults to True.
+        is shared amongst other connections with that project's parent AI hub. Defaults to True.
     :type is_shared: bool
     :param tags: Tag dictionary. Tags can be added, removed, and updated.
     :type tags: dict
@@ -219,7 +219,7 @@ class AzureAISearchConnection(BaseConnection):
 
 class AzureAIServiceConnection(BaseConnection):
     """A Connection for an Azure Cognitive Service. Note: This object usually shouldn't be created manually by users.
-    To get the default AzureOpenAIConnection for an AI Resource, use an AIClient object to call the
+    To get the default AzureOpenAIConnection for an AI hub, use an AIClient object to call the
     'get_default_content_safety_connection' function.
 
     :param name: Name of the connection.
@@ -234,7 +234,7 @@ class AzureAIServiceConnection(BaseConnection):
         "AzureOpenAI", "ContentSafety", and "Speech".
     :type kind: str
     :param is_shared: For connections created for a project, this determines if the connection
-        is shared amongst other connections with that project's parent AI resource. Defaults to True.
+        is shared amongst other connections with that project's parent AI hub. Defaults to True.
     :type is_shared: bool
     :param tags: Tag dictionary. Tags can be added, removed, and updated.
     :type tags: dict
@@ -302,7 +302,7 @@ class GitHubConnection(BaseConnection):
     :param credentials: The credentials for authenticating the external resource.
     :type credentials: ~azure.ai.ml.entities.ApiKeyConfiguration
     :param is_shared: For connections created for a project, this determines if the connection
-        is shared amongst other connections with that project's parent AI resource. Defaults to True.
+        is shared amongst other connections with that project's parent AI hub. Defaults to True.
     :type is_shared: bool
     :param tags: Tag dictionary. Tags can be added, removed, and updated.
     :type tags: dict
@@ -332,7 +332,7 @@ class AzureBlobStoreConnection(BaseConnection):
     :param account_name: The account name of the connection.
     :type account_name: str
     :param is_shared: For connections created for a project, this determines if the connection
-        is shared amongst other connections with that project's parent AI resource. Defaults to True.
+        is shared amongst other connections with that project's parent AI hub. Defaults to True.
     :type is_shared: bool
     :param tags: Tag dictionary. Tags can be added, removed, and updated.
     :type tags: dict
@@ -404,7 +404,7 @@ class CustomConnection(BaseConnection):
     :param credentials: The credentials for authenticating the external resource.
     :type credentials: ~azure.ai.ml.entities.ApiKeyConfiguration
     :param is_shared: For connections created for a project, this determines if the connection
-        is shared amongst other connections with that project's parent AI resource. Defaults to True.
+        is shared amongst other connections with that project's parent AI hub. Defaults to True.
     :type is_shared: bool
     :param tags: Tag dictionary. Tags can be added, removed, and updated.
     :type tags: dict

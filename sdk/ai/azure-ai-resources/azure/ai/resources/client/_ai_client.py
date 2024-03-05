@@ -26,7 +26,7 @@ from .._restclient._azure_open_ai._client import MachineLearningServicesClient
 from .._project_scope import OperationScope
 from .._user_agent import USER_AGENT
 from azure.ai.resources.operations import (
-    AIResourceOperations,
+    AIHubOperations,
     ConnectionOperations,
     SingleDeploymentOperations,
     MLIndexOperations,
@@ -51,8 +51,8 @@ class AIClient:
     :type subscription_id: str
     :param resource_group_name: The name of the resource group.
     :type resource_group_name: str
-    :param ai_resource_name: The name of the AI resource.
-    :type ai_resource_name: Optional[str]
+    :param ai_hub_name: The name of the AI hub.
+    :type ai_hub_name: Optional[str]
     :param project_name: The name of the AI project.
     :type project_name: Optional[str]
     """
@@ -61,7 +61,7 @@ class AIClient:
         credential: TokenCredential,
         subscription_id: str,
         resource_group_name: str,  # Consider changing to a team name
-        ai_resource_name: Optional[str] = None,
+        ai_hub_name: Optional[str] = None,
         project_name: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
@@ -72,8 +72,8 @@ class AIClient:
             "subscription_id": subscription_id,
             "resource_group_name": resource_group_name,
         }
-        if ai_resource_name:
-            properties.update({"ai_resource_name": ai_resource_name})
+        if ai_hub_name:
+            properties.update({"ai_hub_name": ai_hub_name})
         if project_name:
             properties.update({"project_name": project_name})
             
@@ -92,7 +92,7 @@ class AIClient:
         self._scope = OperationScope(
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
-            ai_resource_name=ai_resource_name,
+            ai_hub_name=ai_hub_name,
             project_name=project_name,
         )
 
@@ -106,15 +106,15 @@ class AIClient:
         )
 
         if project_name:
-            ai_resource_name = ai_resource_name or self._ml_client.workspaces.get(project_name).workspace_hub.split("/")[-1]
+            ai_hub_name = ai_hub_name or self._ml_client.workspaces.get(project_name).workspace_hub.split("/")[-1]
 
-        # Client scoped to the AI Resource for operations that need AI resource-scoping
+        # Client scoped to the AI hub for operations that need AI hub-scoping
         # instead of project scoping.
-        self._ai_resource_ml_client = MLClient(
+        self._ai_hub_ml_client = MLClient(
             credential=credential,
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
-            workspace_name=ai_resource_name,
+            workspace_name=ai_hub_name,
             **kwargs,
         )
 
@@ -139,10 +139,10 @@ class AIClient:
         )
         # TODO add scoping to allow connections to:
         # - Create project-scoped connections
-        # For now, connections are AI resource-scoped.
-        self._connections = ConnectionOperations(resource_ml_client=self._ai_resource_ml_client, project_ml_client=self._ml_client, **app_insights_handler_kwargs)
+        # For now, connections are AI hub-scoped.
+        self._connections = ConnectionOperations(resource_ml_client=self._ai_hub_ml_client, project_ml_client=self._ml_client, **app_insights_handler_kwargs)
         self._mlindexes = MLIndexOperations(self._ml_client, **app_insights_handler_kwargs)
-        self._ai_resources = AIResourceOperations(self._ml_client, **app_insights_handler_kwargs)
+        self._ai_hubs = AIHubOperations(self._ml_client, **app_insights_handler_kwargs)
         self._single_deployments = SingleDeploymentOperations(self._ml_client, self._connections, **app_insights_handler_kwargs)
         self._azure_open_ai_deployments = AzureOpenAIDeploymentOperations(self._ml_client, ai_services_client)
         self._data = DataOperations(self._ml_client)
@@ -198,13 +198,13 @@ class AIClient:
         )
 
     @property
-    def ai_resources(self) -> AIResourceOperations:
-        """A collection of AI resource-related operations.
+    def ai_hubs(self) -> AIHubOperations:
+        """A collection of AI hub-related operations.
 
-        :return: A class containing AI resource-related operations.
-        :rtype: ~azure.ai.resources.operations.AIResourceOperations
+        :return: A class containing AI hub-related operations.
+        :rtype: ~azure.ai.resources.operations.AIHubOperations
         """
-        return self._ai_resources
+        return self._ai_hubs
 
     @property
     def projects(self) -> ProjectOperations:
@@ -218,10 +218,10 @@ class AIClient:
     @property
     def connections(self) -> ConnectionOperations:
         """A collection of connection-related operations.
-
+        
         .. note::
             Unlike other operation handles, the connections handle
-            is scoped to the AIClient's AI Resource, and not the project.
+            is scoped to the AIClient's AI Hub, and not the project.
             SDK support for project-scoped connections does not exist yet.
 
         :return: A class containing connection-related operations.
@@ -311,13 +311,13 @@ class AIClient:
         return self._scope.project_name
     
     @property
-    def ai_resource_name(self) -> Optional[str]:
-        """The name of the AI Resource where resource-dependent operations will be executed.
+    def ai_hub_name(self) -> Optional[str]:
+        """The name of the AI Hub where hub-dependent operations will be executed.
 
-        :return: The name of the AI Resource where resource-dependent operations will be executed.
+        :return: The name of the AI Hub where hub-dependent operations will be executed.
         :rtype: Optional[str]
         """
-        return self._scope.ai_resource_name
+        return self._scope.ai_hub_name
 
     @property
     def tracking_uri(self) -> str:

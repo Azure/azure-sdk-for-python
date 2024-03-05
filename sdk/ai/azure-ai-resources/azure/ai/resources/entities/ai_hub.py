@@ -12,34 +12,34 @@ from azure.ai.ml.entities._workspace_hub.workspace_hub_config import WorkspaceHu
 
 
 # Effectively a lightweight wrapper around a v2 WorkspaceHub
-class AIResource:
-    """An AI Resource, which serves as a container for projects and other AI-related objects
+class AIHub:
+    """An AI Hub, which serves as a container for projects and other AI-related objects
 
-    :param name: The name for the AI resource.
+    :param name: The name for the AI hub.
     :type name: str
-    :param description: The description of the AI resource.
+    :param description: The description of the AI hub.
     :type description: Optional[str]
-    :param tags: The tags for the AI resource.
+    :param tags: The tags for the AI hub.
     :type tags: Optional[Dict[str, str]]
-    :param display_name: The display name for the AI resource.
+    :param display_name: The display name for the AI hub.
     :type display_name: Optional[str]
-    :param location: The location for the AI resource.
+    :param location: The location for the AI hub.
     :type location: Optional[str]
-    :param resource_group: The resource group associated with the AI resource.
+    :param resource_group: The resource group associated with the AI hub.
     :type resource_group: Optional[str]
-    :param managed_network: The managed network associated with the AI resource.
+    :param managed_network: The managed network associated with the AI hub.
     :type managed_network: Optional[~azure.ai.ml.entities._workspace.networking.ManagedNetwork]
-    :param storage_account: The storage account associated with the AI resource.
+    :param storage_account: The storage account associated with the AI hub.
     :type storage_account: Optional[str]
-    :param customer_managed_key: The customer managed key associated with the AI resource.
+    :param customer_managed_key: The customer managed key associated with the AI hub.
     :type customer_managed_key: Optional[~azure.ai.ml.entities.CustomerManagedKey]
-    :param public_network_access: The public network access associated with the AI resource.
+    :param public_network_access: The public network access associated with the AI hub.
     :type public_network_access: Optional[str]
-    :param identity: The identity associated with the AI resource.
+    :param identity: The identity associated with the AI hub.
     :type identity: Optional[~azure.ai.ml.entities.IdentityConfiguration]
-    :param container_registry: The container registry associated with the AI resource.
+    :param container_registry: The container registry associated with the AI hub.
     :type container_registry: Optional[str]
-    :param primary_user_assigned_identity: The primary user assigned identity associated with the AI resource.
+    :param primary_user_assigned_identity: The primary user assigned identity associated with the AI hub.
     :type primary_user_assigned_identity: Optional[str]
     :param default_project_resource_group: The default project's resource group.
     :type default_project_resource_group: Optional[str]
@@ -86,43 +86,43 @@ class AIResource:
         )
 
     @classmethod
-    def _from_v2_workspace_hub(cls, workspace_hub: WorkspaceHub) -> "AIResource":
+    def _from_v2_workspace_hub(cls, workspace_hub: WorkspaceHub) -> "AIHub":
         """Create a connection from a v2 AML SDK workspace hub. For internal use.
 
         :param workspace_hub: The workspace connection object to convert into a workspace.
         :type workspace_hub: ~azure.ai.ml.entities.WorkspaceConnection
-        :return: The converted AI resource.
-        :rtype: ~azure.ai.resources.entities.AIResource
+        :return: The converted AI hub.
+        :rtype: ~azure.ai.resources.entities.AIHub
         """
-        # It's simpler to create a placeholder resource, then overwrite the internal WC.
+        # It's simpler to create a placeholder hub, then overwrite the internal WC.
         # We don't need to worry about the potentially changing WC fields this way.
-        resource = cls(name="a")
-        resource._workspace_hub = workspace_hub
-        return resource
+        hub = cls(name="a")
+        hub._workspace_hub = workspace_hub
+        return hub
 
     @property
     def id(self) -> str:
-        """The workspace hub ID. Read-only, set by the backend.
+        """The AI hub ID. Read-only, set by the backend.
 
-        :return: The workspace hub ID.
+        :return: The AI hub ID.
         :rtype: str
         """
         return self._workspace_hub.id
     
     @property
     def name(self) -> str:
-        """The workspace hub name.
+        """The AI hub name.
 
-        :return: The workspace hub name.
+        :return: The AI hub name.
         :rtype: str
         """
         return self._workspace_hub.name
 
     @name.setter
     def name(self, value: str):
-        """Sets the workspace hub name.
+        """Sets the AI hub name.
 
-        :param value: The name to assign the workspace hub.
+        :param value: The name to assign the AI hub.
         :type value: str
         """
         if not value:
@@ -131,18 +131,18 @@ class AIResource:
 
     @property
     def description(self) -> str:
-        """The workspace hub description.
+        """The AI hub description.
 
-        :return: The workspace hub description.
+        :return: The AI hub description.
         :rtype: str
         """
         return self._workspace_hub.description
 
     @description.setter
     def description(self, value: str):
-        """Sets the description of the workspace hub.
+        """Sets the description of the AI hub.
 
-        :param value: The description to assign the workspace hub.
+        :param value: The description to assign the AI hub.
         :type value: str
         """
         if not value:
@@ -151,18 +151,18 @@ class AIResource:
 
     @property
     def tags(self) -> Optional[Dict[str, str]]:
-        """Tags for the workspace hub.
+        """Tags for the AI hub.
 
-        :return: The tags of the workspace hub.
+        :return: The tags of the AI hub.
         :rtype: str
         """
         return self._workspace_hub.tags
 
     @tags.setter
     def tags(self, value: Optional[Dict[str, str]]):
-        """Sets the tags on the workspace hub.
+        """Sets the tags on the AI hub.
 
-        :param value: The tags to assign to the workspace hub.
+        :param value: The tags to assign to the AI hub.
         :type value: str
         """
         if not value:
@@ -171,18 +171,18 @@ class AIResource:
 
     @property
     def display_name(self) -> str:
-        """The workspace hub's display name.
+        """The AI hub's display name.
 
-        :return: The display name of the workspace hub.
+        :return: The display name of the AI hub.
         :rtype: str
         """
         return self._workspace_hub.display_name
 
     @display_name.setter
     def display_name(self, value: str):
-        """Sets the display name of the workspace hub.
+        """Sets the display name of the AI hub.
 
-        :param value: The display name to assign to the workspace hub.
+        :param value: The display name to assign to the AI hub.
         :type value: str
         """
         if not value:
@@ -191,18 +191,18 @@ class AIResource:
 
     @property
     def location(self) -> str:
-        """The workspace hub location.
+        """The AI hub location.
 
-        :return: The location of the workspace hub.
+        :return: The location of the AI hub.
         :rtype: str
         """
         return self._workspace_hub.location
 
     @location.setter
     def location(self, value: str):
-        """Sets the location of the workspace hub.
+        """Sets the location of the AI hub.
 
-        :param value: The location to assign to the workspace hub.
+        :param value: The location to assign to the AI hub.
         :type value: str
         """
         if not value:
@@ -211,18 +211,18 @@ class AIResource:
 
     @property
     def resource_group(self) -> str:
-        """The workspace hub's resource group.
+        """The AI hub's resource group.
 
-        :return: The name of the resource group associated with the workspace hub.
+        :return: The name of the resource group associated with the AI hub.
         :rtype: str
         """
         return self._workspace_hub.resource_group
 
     @resource_group.setter
     def resource_group(self, value: str):
-        """Sets the workspace hub's resource group.
+        """Sets the AI hub's resource group.
 
-        :param value: The name of the resource group to associate with the workspace hub.
+        :param value: The name of the resource group to associate with the AI hub.
         :type value: str
         """
         if not value:
@@ -231,18 +231,18 @@ class AIResource:
 
     @property
     def managed_network(self) -> Optional[ManagedNetwork]:
-        """The managed network to which the workspace hub is connected.
+        """The managed network to which the AI hub is connected.
 
-        :return: The name of the managed network associated with the workspace hub.
+        :return: The name of the managed network associated with the AI hub.
         :rtype: Optional[~azure.ai.ml.entities._workspace.networking.ManagedNetwork]
         """
         return self._workspace_hub.managed_network
 
     @managed_network.setter
     def managed_network(self, value: Optional[ManagedNetwork]):
-        """Sets the managed network to associate the workspace hub with
+        """Sets the managed network to associate the AI hub with.
 
-        :param value: The name of the managed network to associate the workspace hub with.
+        :param value: The name of the managed network to associate the AI hub with.
         :type value: Optional[~azure.ai.ml.entities._workspace.networking.ManagedNetwork]
         """
         if not value:
@@ -251,18 +251,18 @@ class AIResource:
 
     @property
     def storage_account(self) -> str:
-        """The storage account for the workspace hub.
+        """The storage account for the AI hub.
 
-        :return: The name of the storage account associated with the workspace hub.
+        :return: The name of the storage account associated with the AI hub.
         :rtype: str
         """
         return self._workspace_hub.storage_account
 
     @storage_account.setter
     def storage_account(self, value: str):
-        """Sets the storage account for the workspace hub.
+        """Sets the storage account for the AI hub.
 
-        :param value: The name of the storage account to associate with the workspace hub.
+        :param value: The name of the storage account to associate with the AI hub.
         :type value: str
         """
         if not value:
@@ -272,27 +272,27 @@ class AIResource:
     # read only so no setter
     @property
     def existing_workspaces(self) -> List[str]:
-        """The existing workspaces related to the workspace hub.
+        """The existing projects related to the AI hub.
 
-        :return: The names of the existing workspaces related to the workspace hub.
+        :return: The names of the existing projects related to the AI hub.
         :rtype: List[str]
         """
         return self._workspace_hub.existing_workspaces
 
     @property
     def customer_managed_key(self) -> Optional[CustomerManagedKey]:
-        """The customer managed key associated with the workspace hub.
+        """The customer managed key associated with the AI hub.
 
-        :return: The customer managed key associated with the workspace hub.
+        :return: The customer managed key associated with the AI hub.
         :rtype: Optional[~azure.ai.ml.entities.CustomerManagedKey]
         """
         return self._workspace_hub.customer_managed_key
 
     @customer_managed_key.setter
     def customer_managed_key(self, value: Optional[CustomerManagedKey]):
-        """Sets the customer managed key associated with the workspace hub.
+        """Sets the customer managed key associated with the AI hub.
 
-        :param value: The customer managed key to associate with the workspace hub.
+        :param value: The customer managed key to associate with the AI hub.
         :type value: Optional[~azure.ai.ml.entities.CustomerManagedKey]
         """
         if not value:
@@ -301,18 +301,18 @@ class AIResource:
 
     @property
     def public_network_access(self) -> str:
-        """The public network access to assign to the workspace hub.
+        """The public network access to assign to the AI hub.
 
-        :return: The public network access to assign to the workspace hub.
+        :return: The public network access to assign to the AI hub.
         :rtype: str
         """
         return self._workspace_hub.public_network_access
 
     @public_network_access.setter
     def public_network_access(self, value: str):
-        """Sets the public network access for the workspace hub.
+        """Sets the public network access for the AI hub.
 
-        :param value: The public network access for the workspace hub
+        :param value: The public network access for the AI hub
         :type value: str
         """
         if not value:
@@ -321,18 +321,18 @@ class AIResource:
 
     @property
     def identity(self) -> Optional[IdentityConfiguration]:
-        """The identity associated with the workspace hub.
+        """The identity associated with the AI hub.
 
-        :return: The identity associated with the workspace hub.
+        :return: The identity associated with the AI hub.
         :rtype: Optional[~azure.ai.ml.entities.IdentityConfiguration]
         """
         return self._workspace_hub.identity
 
     @identity.setter
     def identity(self, value: Optional[IdentityConfiguration]):
-        """Sets the identity associated with the workspace hub.
+        """Sets the identity associated with the AI hub.
 
-        :param value: The identity to associate with the workspace hub.
+        :param value: The identity to associate with the AI hub.
         :type value: Optional[~azure.ai.ml.entities.IdentityConfiguration]
         """
         if not value:
@@ -341,16 +341,16 @@ class AIResource:
 
     @property
     def container_registry(self) -> str:
-        """The container registry associated with the workspace hub.
+        """The container registry associated with the AI hub.
 
-        :return: The container registry associated with the workspace hub.
+        :return: The container registry associated with the AI hub.
         :rtype: str
         """
         return self._workspace_hub.container_registry
     
     @container_registry.setter
     def container_registry(self, value: str):
-        """Sets the container registry for the workspace hub.
+        """Sets the container registry for the AI hub.
 
         :param value: The container registry to assign to the resource.
         :type value: str
@@ -361,16 +361,16 @@ class AIResource:
 
     @property
     def primary_user_assigned_identity(self) -> str:
-        """The primary user assigned identity associated with the workspace hub.
+        """The primary user assigned identity associated with the AI hub.
 
-        :return: The primary user assigned identity associated with the workspace hub.
+        :return: The primary user assigned identity associated with the AI hub.
         :rtype: str
         """
         return self._workspace_hub.primary_user_assigned_identity
 
     @primary_user_assigned_identity.setter
     def primary_user_assigned_identity(self, value: str):
-        """Sets the primary user assigned identity for the workspace hub.
+        """Sets the primary user assigned identity for the AI hub.
 
         :param value: The primary user assigned identity to assign to the resource.
         :type value: str
@@ -382,18 +382,18 @@ class AIResource:
     # Read only so no setter.
     @property
     def enable_data_isolation(self) -> bool:
-        """Whether or not data isolation is enabled for the workspace hub.
+        """Whether or not data isolation is enabled for the AI hub.
 
-        :return: Boolean value indicating whether or not data isolation is enabled for the workspace hub.
+        :return: Boolean value indicating whether or not data isolation is enabled for the AI hub.
         :rtype: bool
         """
         return self._workspace_hub.enable_data_isolation
 
     @property
     def default_project_resource_group(self) -> str:
-        """The default project's resource group.
+        """The default project's AI group.
 
-        :return: The name of the default project's resource group.
+        :return: The name of the default project's AI group.
         :rtype: str
         """
         return self._workspace_hub.workspace_hub_config.default_workspace_resource_group

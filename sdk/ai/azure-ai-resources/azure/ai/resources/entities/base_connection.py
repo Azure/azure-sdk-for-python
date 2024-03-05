@@ -35,7 +35,7 @@ class BaseConnection:
     :param id: The connection's resource id.
     :type id: str
     :param is_shared: For connections created for a project, this determines if the connection
-        is shared amongst other connections with that project's parent AI resource. Defaults to True.
+        is shared amongst other connections with that project's parent AI hub. Defaults to True.
     :type is_shared: bool
     """
 

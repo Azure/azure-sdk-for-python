@@ -8,6 +8,9 @@
 
 ### Breaking Changes
 
+- MAJOR: `~azure.ai.resources.entities.AIResource` entity renamed to `~azure.ai.resources.entities.AIHub`.
+  This includes all field names that reference this entity as well. Ex: inputs named `ai_resource_name` renamed to `ai_hub_name`.
+
 ### Bugs Fixed
 - Connections docstrings now discuss scope field.
 
