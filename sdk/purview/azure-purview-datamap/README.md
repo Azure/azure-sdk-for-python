@@ -3,7 +3,7 @@ Microsoft Purview Data Map provides the foundation for data discovery and data g
 
 ## Getting started
 
-### Installating the package
+### Installing the package
 
 ```bash
 python -m pip install azure-purview-datamap
