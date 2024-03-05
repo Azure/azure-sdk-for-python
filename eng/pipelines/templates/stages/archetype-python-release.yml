@@ -53,16 +53,16 @@ stages:
                       ServiceDirectory: ${{parameters.ServiceDirectory}}
                       ArtifactLocation: $(Pipeline.Workspace)/${{parameters.ArtifactName}}
 
-                    - script: |
-                        python -m pip install "./tools/azure-sdk-tools"
-                      displayName: Install tool dependencies
+                  - script: |
+                      python -m pip install "./tools/azure-sdk-tools"
+                    displayName: Install tool dependencies
 
-                    - task: PythonScript@0
-                      displayName: Verify CI enabled
-                      condition: succeeded()
-                      inputs:
-                        scriptPath: 'scripts/devops_tasks/verify_ci_enabled.py'
-                        arguments: '--package-name ${{ artifact.name }} --service ${{ parameters.ServiceDirectory }}'
+                  - task: PythonScript@0
+                    displayName: Verify CI enabled
+                    condition: succeeded()
+                    inputs:
+                      scriptPath: 'scripts/devops_tasks/verify_ci_enabled.py'
+                      arguments: '--package-name ${{ artifact.name }} --service ${{ parameters.ServiceDirectory }}'
 
                   - template: /eng/common/pipelines/templates/steps/create-tags-and-git-release.yml@self
                     parameters:
