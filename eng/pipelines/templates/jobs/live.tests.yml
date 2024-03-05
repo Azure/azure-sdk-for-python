@@ -94,7 +94,7 @@ jobs:
     steps:
       - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
         parameters:
-          AgentImage: {{ parameters.OSName }}
+          AgentImage: ${{ parameters.OSName }}
 
       - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
         parameters:
