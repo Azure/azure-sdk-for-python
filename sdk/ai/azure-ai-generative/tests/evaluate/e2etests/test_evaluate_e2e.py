@@ -163,14 +163,15 @@ class TestEvaluate(AzureRecordedTestCase):
         assert "answer_length_random" in columns_in_tabular_data
 
     def test_task_type_chat(self, e2e_openai_api_base, e2e_openai_api_key, e2e_openai_completion_deployment_name, tmpdir):
+        data_path = os.path.join(pathlib.Path(__file__).parent.parent.resolve(), "data")
+        data_file = os.path.join(data_path, "rag_conversation_data.jsonl")
 
-        data_path = os.getcwd() + "/rag_conversation_data.jsonl"
         with tmpdir.as_cwd():
             output_path = tmpdir + "/evaluation_output"
 
             result = evaluate(  # This will log metric/artifacts using mlflow
                 evaluation_name="rag-chat-1",
-                data=data_path,
+                data=data_file,
                 task_type="chat",
                 model_config={
                     "api_version": "2023-07-01-preview",
