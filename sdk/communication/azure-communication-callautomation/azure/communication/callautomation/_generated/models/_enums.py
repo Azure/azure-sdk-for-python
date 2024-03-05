@@ -52,6 +52,7 @@ class CommunicationIdentifierModelKind(str, Enum, metaclass=CaseInsensitiveEnumM
     COMMUNICATION_USER = "communicationUser"
     PHONE_NUMBER = "phoneNumber"
     MICROSOFT_TEAMS_USER = "microsoftTeamsUser"
+    MICROSOFT_TEAMS_APP = "microsoftTeamsApp"
 
 
 class DialogInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
