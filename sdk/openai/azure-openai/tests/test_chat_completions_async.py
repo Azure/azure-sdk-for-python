@@ -13,6 +13,7 @@ from conftest import (
     OPENAI,
     AZURE_AD,
     GPT_4_AZURE,
+    GPT_4_AZURE_AD,
     GPT_4_OPENAI,
     configure_async,
     GA,
@@ -713,7 +714,7 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type, api_version", [(AZURE, PREVIEW), (AZURE_AD, PREVIEW)])
+    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, PREVIEW), (GPT_4_AZURE_AD, PREVIEW)])
     async def test_chat_completion_byod(self, client_async, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
@@ -750,7 +751,7 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type, api_version", [(AZURE, PREVIEW)])
+    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, PREVIEW)])
     async def test_streamed_chat_completions_byod(self, client_async, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
@@ -1128,7 +1129,7 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")])
+    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_OPENAI, "v1")])
     async def test_chat_completion_logprobs(self, client_async, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},

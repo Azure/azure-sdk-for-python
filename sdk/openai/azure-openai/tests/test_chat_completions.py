@@ -13,6 +13,7 @@ from conftest import (
     OPENAI,
     AZURE_AD,
     GPT_4_AZURE,
+    GPT_4_AZURE_AD,
     GPT_4_OPENAI,
     configure,
     GA,
@@ -697,7 +698,7 @@ class TestChatCompletions(AzureRecordedTestCase):
         assert content_filter_result["violence"]["severity"] is not None
 
     @configure
-    @pytest.mark.parametrize("api_type, api_version", [(AZURE, PREVIEW), (AZURE_AD, PREVIEW)])
+    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, PREVIEW), (GPT_4_AZURE_AD, PREVIEW)])
     def test_chat_completion_byod(self, client, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
@@ -733,7 +734,7 @@ class TestChatCompletions(AzureRecordedTestCase):
         assert completion.choices[0].message.context["intent"]
 
     @configure
-    @pytest.mark.parametrize("api_type, api_version", [(AZURE, PREVIEW)])
+    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, PREVIEW)])
     def test_streamed_chat_completions_byod(self, client, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
@@ -1103,7 +1104,7 @@ class TestChatCompletions(AzureRecordedTestCase):
         assert completion.choices[0].message.role
 
     @configure
-    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")])
+    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_OPENAI, "v1")])
     def test_chat_completion_logprobs(self, client, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
