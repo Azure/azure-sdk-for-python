@@ -20,7 +20,7 @@ from azure.ai.ml.entities._workspace.connections.workspace_connection import Wor
 from azure.core.credentials import TokenCredential
 
 ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
+module_logger = ops_logger.module_logger
 
 
 class WorkspaceConnectionsOperations(_ScopeDependentOperations):
@@ -46,7 +46,7 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
         self._credentials = credentials
         self._init_kwargs = kwargs
 
-    @monitor_with_activity(logger, "WorkspaceConnections.Get", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "WorkspaceConnections.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, **kwargs: Dict) -> Optional[WorkspaceConnection]:
         """Get a workspace connection by name.
 
@@ -74,7 +74,7 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
 
         return WorkspaceConnection._from_rest_object(rest_obj=obj)
 
-    @monitor_with_activity(logger, "WorkspaceConnections.CreateOrUpdate", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "WorkspaceConnections.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(
         self, workspace_connection: WorkspaceConnection, **kwargs: Any
     ) -> Optional[WorkspaceConnection]:
@@ -105,7 +105,7 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
         )
         return WorkspaceConnection._from_rest_object(rest_obj=response)
 
-    @monitor_with_activity(logger, "WorkspaceConnections.Delete", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "WorkspaceConnections.Delete", ActivityType.PUBLICAPI)
     def delete(self, name: str) -> None:
         """Delete the workspace connection.
 
@@ -128,15 +128,20 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
             **self._scope_kwargs,
         )
 
-    @monitor_with_activity(logger, "WorkspaceConnections.List", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "WorkspaceConnections.List", ActivityType.PUBLICAPI)
     def list(
         self,
+        *,
         connection_type: Optional[str] = None,
+        include_data_connections: bool = False,
+        **kwargs: Any,
     ) -> Iterable[WorkspaceConnection]:
         """List all workspace connections for a workspace.
 
-        :param connection_type: Type of workspace connection to list.
-        :type connection_type: Optional[str]
+        :keyword connection_type: Type of workspace connection to list.
+        :paramtype connection_type: Optional[str]
+        :keyword include_data_connections: If true, also return data connections. Defaults to False.
+        :paramtype include_data_connections: bool
         :return: An iterator like instance of workspace connection objects
         :rtype: Iterable[~azure.ai.ml.entities.WorkspaceConnection]
 
@@ -149,6 +154,13 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
                 :dedent: 8
                 :caption: Lists all connections for a workspace for a certain type, in this case "git".
         """
+
+        if include_data_connections:
+            if "params" in kwargs:
+                kwargs["params"]["includeAll"] = "true"
+            else:
+                kwargs["params"] = {"includeAll": "true"}
+
         return cast(
             Iterable[WorkspaceConnection],
             self._operation.list(
@@ -156,5 +168,6 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
                 cls=lambda objs: [WorkspaceConnection._from_rest_object(obj) for obj in objs],
                 category=_snake_to_camel(connection_type) if connection_type else connection_type,
                 **self._scope_kwargs,
+                **kwargs,
             ),
         )

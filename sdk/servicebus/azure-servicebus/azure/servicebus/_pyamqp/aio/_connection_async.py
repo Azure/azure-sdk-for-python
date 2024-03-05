@@ -116,7 +116,7 @@ class Connection:  # pylint:disable=too-many-instance-attributes
             custom_endpoint = f"{custom_parsed_url.hostname}:{custom_port}{custom_parsed_url.path}"
         self._container_id: str = container_id or str(uuid.uuid4())
         self._network_trace = network_trace
-        self._network_trace_params = {"amqpConnection": self._container_id, "amqpSession": None, "amqpLink": None}
+        self._network_trace_params = {"amqpConnection": self._container_id, "amqpSession": "", "amqpLink": ""}
 
         transport = kwargs.get("transport")
         self._transport_type = transport_type
@@ -533,7 +533,7 @@ class Connection:  # pylint:disable=too-many-instance-attributes
             self._error = AMQPConnectionError(
                 condition=frame[0][0], description=frame[0][1], info=frame[0][2]
             )
-            _LOGGER.error(
+            _LOGGER.warning(
                 "Connection closed with error: %r", frame[0],
                 extra=self._network_trace_params
             )

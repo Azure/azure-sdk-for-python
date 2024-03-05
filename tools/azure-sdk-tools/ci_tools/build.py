@@ -181,20 +181,11 @@ def create_package(
     dist = get_artifact_directory(dest_folder)
     setup_parsed = ParsedSetup.from_path(setup_directory_or_file)
 
-    if setup_parsed.ext_modules:
-        run([sys.executable, "-m", "cibuildwheel", "--output-dir", dist], cwd=setup_parsed.folder, check=True)
-
-    logger.debug(level=logging.INFO, msg=f"Attempting to build {setup_parsed.name} using python{sys.version}.")
-
     if enable_wheel:
-        run(
-            [sys.executable, "setup.py", "bdist_wheel", "-d", dist],
-            cwd=setup_parsed.folder,
-            check=True
-        )
+        if setup_parsed.ext_modules:
+            run([sys.executable, "-m", "cibuildwheel", "--output-dir", dist], cwd=setup_parsed.folder, check=True)
+        else:
+            run([sys.executable, "setup.py", "bdist_wheel", "-d", dist], cwd=setup_parsed.folder, check=True)
+
     if enable_sdist:
-        run(
-            [sys.executable, "setup.py", "sdist", "-d", dist],
-            cwd=setup_parsed.folder,
-            check=True
-        )
+        run([sys.executable, "setup.py", "sdist", "-d", dist], cwd=setup_parsed.folder, check=True)

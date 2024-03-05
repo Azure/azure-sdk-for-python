@@ -1,14 +1,14 @@
 # Release History
 
-## 1.16.0b2 (Unreleased)
+## 1.16.0b2 (2024-03-05)
 
 ### Features Added
 
-### Breaking Changes
+- Added pickling support. ([#34134](https://github.com/Azure/azure-sdk-for-python/pull/34134))
 
 ### Bugs Fixed
 
-### Other Changes
+- Fixed an issue in `AzurePowerShellCredential` where if `pwsh` isn't available and the Command Prompt language is not English, it would not fall back to `powershell`. ([#34271](https://github.com/Azure/azure-sdk-for-python/pull/34271))
 
 ## 1.16.0b1 (2024-02-06)
 

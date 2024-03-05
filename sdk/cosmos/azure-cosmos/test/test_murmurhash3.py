@@ -1,38 +1,22 @@
 # The MIT License (MIT)
-# Copyright (c) 2014 Microsoft Corporation
+# Copyright (c) Microsoft Corporation. All rights reserved.
 
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
-
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
-import unittest
-import pytest
 import struct
+import unittest
 
-pytestmark = pytest.mark.cosmosEmulator
+import pytest
+
+from azure.cosmos._cosmos_integers import _UInt128
 from azure.cosmos._cosmos_murmurhash3 import murmurhash3_128
-from azure.cosmos._cosmos_integers import UInt128
 
-@pytest.mark.usefixtures("teardown")
-class MurmurHash3Test(unittest.TestCase):
+
+@pytest.mark.cosmosEmulator
+class TestMurmurHash3(unittest.TestCase):
     """Python Murmurhash3 Tests and its compatibility with backend implementation..
         """
     string_low_value = 2792699143512860960
     string_high_value = 15069672278200047189
-    test_seed = UInt128(0, 0)
+    test_seed = _UInt128(0, 0)
     float_low_value = 16628891264555680919
     float_high_value = 12953474369317462
 

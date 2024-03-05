@@ -108,6 +108,42 @@ class RouterWorkerSamples(object):
 
         # [END create_worker]
 
+    def create_worker_w_limit_concurrent_offers(self):
+        connection_string = self.endpoint
+        worker_id = self._worker_id
+        # [START create_worker_w_limit_concurrent_offers]
+        from azure.communication.jobrouter import (
+            JobRouterClient,
+        )
+        from azure.communication.jobrouter.models import (
+            RouterWorker,
+            RouterChannel,
+        )
+
+        # set `connection_string` to an existing ACS endpoint
+        router_client = JobRouterClient.from_connection_string(conn_str=connection_string)
+        print("JobRouterClient created successfully!")
+
+        router_worker: RouterWorker = router_client.upsert_worker(
+            worker_id,
+            RouterWorker(
+                capacity=100,
+                queues=["worker-q-1", "worker-q-2"],
+                channels=[
+                    RouterChannel(channel_id="WebChat", capacity_cost_per_job=1),
+                    RouterChannel(channel_id="WebChatEscalated", capacity_cost_per_job=20),
+                    RouterChannel(channel_id="Voip", capacity_cost_per_job=100),
+                ],
+                labels={"Location": "NA", "English": 7, "O365": True, "Xbox_Support": False},
+                tags={"Name": "John Doe", "Department": "IT_HelpDesk"},
+                max_concurrent_offers=1,
+            ),
+        )
+
+        print(f"Router worker successfully created with id: {router_worker.id}")
+
+        # [END create_worker_w_limit_concurrent_offers]
+
     def update_worker(self):
         connection_string = self.endpoint
         worker_id = self._worker_id
@@ -235,6 +271,7 @@ if __name__ == "__main__":
     sample.setup_distribution_policy()
     sample.setup_queues()
     sample.create_worker()
+    sample.create_worker_w_limit_concurrent_offers()
     sample.update_worker()
     sample.get_worker()
     sample.register_worker()

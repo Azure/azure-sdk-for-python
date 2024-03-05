@@ -160,7 +160,7 @@ class DatabaseProxy(object):
     async def create_container(
         self,
         id: str,
-        partition_key: Optional[PartitionKey],
+        partition_key: PartitionKey,
         *,
         indexing_policy: Optional[Dict[str, str]] = None,
         default_ttl: Optional[int] = None,
@@ -194,8 +194,8 @@ class DatabaseProxy(object):
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword match_condition: The match condition to use upon the etag.
         :paramtype match_condition: ~azure.core.MatchConditions
-        :keyword List[Dict[str, str]] computed_properties: Sets The computed properties for this container in the Azure
-            Cosmos DB Service. For more Information on how to use computed properties visit
+        :keyword List[Dict[str, str]] computed_properties: **provisional** Sets The computed properties for this
+            container in the Azure Cosmos DB Service. For more Information on how to use computed properties visit
             `here: https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/query/computed-properties?tabs=dotnet`
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
@@ -265,7 +265,7 @@ class DatabaseProxy(object):
     @distributed_trace_async
     async def create_container_if_not_exists(
         self,
-        id: str,  # pylint: disable=redefined-builtin
+        id: str,
         partition_key: PartitionKey,
         **kwargs: Any
     ) -> ContainerProxy:
@@ -291,8 +291,8 @@ class DatabaseProxy(object):
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword match_condition: The match condition to use upon the etag.
         :paramtype match_condition: ~azure.core.MatchConditions
-        :keyword List[Dict[str, str]] computed_properties: Sets The computed properties for this container in the Azure
-            Cosmos DB Service. For more Information on how to use computed properties visit
+        :keyword List[Dict[str, str]] computed_properties: **provisional** Sets The computed properties for this
+            container in the Azure Cosmos DB Service. For more Information on how to use computed properties visit
             `here: https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/query/computed-properties?tabs=dotnet`
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
@@ -479,14 +479,14 @@ class DatabaseProxy(object):
         :keyword match_condition: The match condition to use upon the etag.
         :paramtype match_condition: ~azure.core.MatchConditions
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be replaced.
-            This includes if the container with given id does not exist.
         :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
             None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL.  Please
             note that analytical storage can only be enabled on Synapse Link enabled accounts.
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :returns: A `ContainerProxy` instance representing the container after replace completed.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be replaced.
+            This includes if the container with given id does not exist.
         :rtype: ~azure.cosmos.aio.ContainerProxy
 
         .. admonition:: Example:

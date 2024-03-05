@@ -53,16 +53,16 @@ stages:
                       ServiceDirectory: ${{parameters.ServiceDirectory}}
                       ArtifactLocation: $(Pipeline.Workspace)/${{parameters.ArtifactName}}
 
-                  - task: PythonScript@0
-                    displayName: Verify CI enabled
-                    condition: succeeded()
-                    inputs:
-                      scriptPath: 'scripts/devops_tasks/verify_ci_enabled.py'
-                      arguments: '--package-name ${{ artifact.name }} --service ${{ parameters.ServiceDirectory }}'
-                  - pwsh: >
-                      Get-ChildItem -Recurse $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}
-                    workingDirectory: $(Pipeline.Workspace)
-                    displayName: Output Visible Artifacts
+                    - script: |
+                        python -m pip install "./tools/azure-sdk-tools"
+                      displayName: Install tool dependencies
+
+                    - task: PythonScript@0
+                      displayName: Verify CI enabled
+                      condition: succeeded()
+                      inputs:
+                        scriptPath: 'scripts/devops_tasks/verify_ci_enabled.py'
+                        arguments: '--package-name ${{ artifact.name }} --service ${{ parameters.ServiceDirectory }}'
 
                   - template: /eng/common/pipelines/templates/steps/create-tags-and-git-release.yml@self
                     parameters:
@@ -113,17 +113,15 @@ stages:
                         displayName: 'Authenticate to feed: ${{parameters.DevFeedName}}'
                         inputs:
                           artifactFeeds: ${{parameters.DevFeedName}}
+
                       - pwsh: >
                           $esrpDirectory = "$(Pipeline.Workspace)/esrp-release/${{parameters.ArtifactName}}/${{artifact.name}}"
 
                           New-Item -ItemType Directory -Force -Path $esrpDirectory
 
-
-
                           Get-ChildItem -Path "$(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}" `
                             | Where-Object { ($_.Name -like "*.tar.gz" -or $_.Name -like "*.whl") } `
                             | Copy-Item -Destination $esrpDirectory
-
 
                           Get-ChildItem $esrpDirectory
                         displayName: Isolate files for ESRP Publish
@@ -140,15 +138,13 @@ stages:
                           ServiceEndpointUrl: 'https://api.esrp.microsoft.com'
                           MainPublisher: 'ESRPRELPACMANTEST'
                           DomainTenantId: '72f988bf-86f1-41af-91ab-2d7cd011db47'
+
                       - script: >
                           set -e
 
                           twine upload --repository ${{parameters.DevFeedName}} --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}/*.whl
-
                           echo "Uploaded whl to devops feed"
-
                           twine upload --repository ${{parameters.DevFeedName}} --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}/*.tar.gz
-
                           echo "Uploaded sdist to devops feed"
                         displayName: 'Publish package to feed: ${{parameters.DevFeedName}}'
 

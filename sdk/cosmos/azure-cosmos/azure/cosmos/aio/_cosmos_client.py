@@ -66,6 +66,7 @@ def _build_auth(credential: CredentialType) -> CredentialDict:
             "such as ClientSecretCredential).")
     return auth
 
+
 def _build_connection_policy(kwargs: Dict[str, Any]) -> ConnectionPolicy:
     # pylint: disable=protected-access
     policy = kwargs.pop('connection_policy', None) or ConnectionPolicy()
