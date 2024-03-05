@@ -432,9 +432,14 @@ class Simulator:
                     template_parameters, template.context_key, i
                 )
                 message["context"] = citations
-            elif "full_response" in m.__dict__ and "context" in m.full_response:
+            elif "context" in m.full_response:
+                # adding context for adv_qa
                 message["context"] = m.full_response["context"]
             messages.append(message)
+
+        template_parameters['metadata'] = {}        
+        if "ch_template_placeholder" in template_parameters:
+            del template_parameters["ch_template_placeholder"]
 
         return {
             "template_parameters": template_parameters,
