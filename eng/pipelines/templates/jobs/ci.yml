@@ -75,7 +75,7 @@ jobs:
         name: azsdk-pool-mms-ubuntu-2004-general
         imageName: azsdk-pool-mms-ubuntu-2004-1espt
         vmImage: azsdk-pool-mms-ubuntu-2004-1espt
-        demands: ImageOverride -equals azsdk-pool-mms-ubuntu-2004-1espt
+        demands: "ImageOverride -equals azsdk-pool-mms-ubuntu-2004-1espt"
         os: linux
 
       steps:
