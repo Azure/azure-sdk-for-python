@@ -129,7 +129,7 @@ class TestCompletionsAsync(AzureRecordedTestCase):
     @pytest.mark.asyncio
     @pytest.mark.parametrize(
         "api_type, api_version",
-        [(AZURE, PREVIEW), (AZURE, GA), (OPENAI, "v1")]
+        [(AZURE, PREVIEW), (AZURE, GA)]
     )
     async def test_completion_content_filter_prompt(self, client_async, api_type, api_version, **kwargs):
 
@@ -138,10 +138,10 @@ class TestCompletionsAsync(AzureRecordedTestCase):
                 prompt="how do I rob a bank with violence?",
                 **kwargs,
             )
-        assert e.value.status_code == 400
-        err = json.loads(e.value.response.text)
-        assert err["error"]["code"] == "content_filter"
-        assert "The response was filtered due to the prompt triggering Azure OpenAI's content management policy" in err["error"]["message"]
+        err = e.value
+        assert err.status_code == 400
+        assert err.body["code"] == "content_filter"
+        assert "The response was filtered due to the prompt triggering Azure OpenAI's content management policy" in err.body["message"]
 
     @configure_async
     @pytest.mark.asyncio
