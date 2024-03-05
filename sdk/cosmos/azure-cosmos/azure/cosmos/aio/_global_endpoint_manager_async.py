@@ -83,29 +83,29 @@ class _GlobalEndpointManager(object):
         await self.refresh_endpoint_list(database_account)
 
     async def refresh_endpoint_list(self, database_account, **kwargs):
-        async with self.refresh_lock:
-            # if refresh is not needed or refresh is already taking place, return
-            if not self.refresh_needed:
-                return
-            try:
-                await self._refresh_endpoint_list_private(database_account, **kwargs)
-            except Exception as e:
-                raise e
+        if self.refresh_needed:
+            async with self.refresh_lock:
+                # if refresh is not needed or refresh is already taking place, return
+                if not self.refresh_needed:
+                    return
+                try:
+                    await self._refresh_endpoint_list_private(database_account, **kwargs)
+                except Exception as e:
+                    raise e
 
     async def _refresh_endpoint_list_private(self, database_account=None, **kwargs):
+        self.refresh_needed = False
         if database_account:
             self.location_cache.perform_on_database_account_read(database_account)
-            self.refresh_needed = False
-
-        if (
-            self.location_cache.should_refresh_endpoints()
-            and self.location_cache.current_time_millis() - self.last_refresh_time > self.refresh_time_interval_in_ms
-        ):
-            if not database_account:
+        else:
+            if (
+                self.location_cache.should_refresh_endpoints()
+                and
+                self.location_cache.current_time_millis() - self.last_refresh_time > self.refresh_time_interval_in_ms
+            ):
                 database_account = await self._GetDatabaseAccount(**kwargs)
                 self.location_cache.perform_on_database_account_read(database_account)
                 self.last_refresh_time = self.location_cache.current_time_millis()
-                self.refresh_needed = False
 
     async def _GetDatabaseAccount(self, **kwargs):
         """Gets the database account.

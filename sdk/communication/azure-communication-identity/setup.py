@@ -8,7 +8,7 @@ import re
 # your package.
 
 # this setup.py is set up in a specific way to keep the azure* and azure-mgmt-* namespaces WORKING all the way
-# up from python 3.7. Reference here: https://github.com/Azure/azure-sdk-for-python/wiki/Azure-packaging
+# up from python 3.8. Reference here: https://github.com/Azure/azure-sdk-for-python/wiki/Azure-packaging
 
 PACKAGE_NAME = "azure-communication-identity"
 PACKAGE_PPRINT_NAME = "Communication Identity Service"
