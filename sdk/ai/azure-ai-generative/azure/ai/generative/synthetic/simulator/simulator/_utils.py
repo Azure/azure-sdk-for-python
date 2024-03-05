@@ -16,13 +16,19 @@ class JsonLineList(list):
         for item in self:
             user_message = None
             assistant_message = None
+            context = None
             for message in item['messages']:
                 if message['role'] == 'user':
                     user_message = message['content']
                 elif message['role'] == 'assistant':
                     assistant_message = message['content']
+                if 'context' in message:
+                    context = message['context']
             if user_message and assistant_message:
-                json_lines += json.dumps({'question': user_message, 'answer': assistant_message}) + "\n"
+                if context:
+                    json_lines += json.dumps({'question': user_message, 'answer': assistant_message, 'context': context}) + "\n"
+                else:
+                    json_lines += json.dumps({'question': user_message, 'answer': assistant_message}) + "\n"
         return json_lines
 
         
