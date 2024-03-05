@@ -871,7 +871,6 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         target_participant: 'CommunicationIdentifier',
         play_source: Union['FileSource', 'TextSource', 'SsmlSource'],
         *,
-        loop: bool = True,
         operation_context: Optional[str] = None,
         **kwargs
     ) -> None:
@@ -886,8 +885,6 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         :param target_participant: The targets to play media to. Default value is 'all', to play media
          to all participants in the call.
         :type target_participant: list[~azure.communication.callautomation.CommunicationIdentifier]
-        :keyword loop: Whether the media should be repeated until stopped.
-        :paramtype loop: bool
         :keyword operation_context: Value that can be used to track this call and its associated events.
         :paramtype operation_context: str or None
         :return: None
@@ -899,7 +896,6 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             play_source_info=play_source._to_generated(),  # pylint:disable=protected-access
             target_participant=serialize_identifier(target_participant),
             operation_context=operation_context,
-            loop=loop,
             **kwargs
         )
         await self._call_media_client.start_hold_music(self._call_connection_id, hold_request)

@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -862,7 +863,6 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         target_participant: 'CommunicationIdentifier',
         play_source: Union['FileSource', 'TextSource', 'SsmlSource'],
         *,
-        loop: bool = True,
         operation_context: Optional[str] = None,
         **kwargs
     ) -> None:
@@ -890,7 +890,6 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             play_source_info=play_source._to_generated(),  # pylint:disable=protected-access
             target_participant=serialize_identifier(target_participant),
             operation_context=operation_context,
-            loop=loop,
             **kwargs
         )
         self._call_media_client.start_hold_music(self._call_connection_id, hold_request)

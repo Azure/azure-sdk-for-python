@@ -377,8 +377,7 @@ class TestCallMediaClient(unittest.TestCase):
 
         expected_hold_request = StartHoldMusicRequest(
             play_source_info=play_source._to_generated(),
-            target_participant=serialize_identifier(self.target_user),
-            loop=True
+            target_participant=serialize_identifier(self.target_user)
         )
         mock_hold.assert_called_once()
         actual_hold_request = mock_hold.call_args[0][1]
@@ -387,7 +386,6 @@ class TestCallMediaClient(unittest.TestCase):
         self.assertEqual(expected_hold_request.play_source_info.file.uri, actual_hold_request.play_source_info.file.uri)
         self.assertEqual(expected_hold_request.play_source_info.play_source_cache_id, actual_hold_request.play_source_info.play_source_cache_id)
         self.assertEqual(expected_hold_request.target_participant['raw_id'], actual_hold_request.target_participant['raw_id'])
-        self.assertEqual(expected_hold_request.loop, actual_hold_request.loop)
 
     def test_stop_hold_music(self):
         mock_hold = Mock()
