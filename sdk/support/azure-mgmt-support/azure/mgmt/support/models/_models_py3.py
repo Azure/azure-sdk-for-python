@@ -8,9 +8,15 @@
 # --------------------------------------------------------------------------
 
 import datetime
+import sys
 from typing import Any, List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
+
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -243,6 +249,41 @@ class CheckNameAvailabilityOutput(_serialization.Model):
         self.name_available = None
         self.reason = None
         self.message = None
+
+
+class ClassificationService(_serialization.Model):
+    """Service Classification result object.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar service_id: Azure resource Id of the service.
+    :vartype service_id: str
+    :ivar display_name: Localized name of the azure service.
+    :vartype display_name: str
+    :ivar resource_types: List of applicable ARM resource types for this service.
+    :vartype resource_types: list[str]
+    """
+
+    _validation = {
+        "service_id": {"readonly": True},
+        "display_name": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "service_id": {"key": "serviceId", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "resource_types": {"key": "resourceTypes", "type": "[str]"},
+    }
+
+    def __init__(self, *, resource_types: Optional[List[str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword resource_types: List of applicable ARM resource types for this service.
+        :paramtype resource_types: list[str]
+        """
+        super().__init__(**kwargs)
+        self.service_id = None
+        self.display_name = None
+        self.resource_types = resource_types
 
 
 class CommunicationDetails(_serialization.Model):
@@ -573,11 +614,11 @@ class FileDetails(ProxyResource):
     :ivar created_on: Time in UTC (ISO 8601 format) when file workspace was created.
     :vartype created_on: ~datetime.datetime
     :ivar chunk_size: Size of each chunk.
-    :vartype chunk_size: float
+    :vartype chunk_size: int
     :ivar file_size: Size of the file to be uploaded.
-    :vartype file_size: float
+    :vartype file_size: int
     :ivar number_of_chunks: Number of chunks to be uploaded.
-    :vartype number_of_chunks: float
+    :vartype number_of_chunks: int
     """
 
     _validation = {
@@ -594,26 +635,26 @@ class FileDetails(ProxyResource):
         "type": {"key": "type", "type": "str"},
         "system_data": {"key": "systemData", "type": "SystemData"},
         "created_on": {"key": "properties.createdOn", "type": "iso-8601"},
-        "chunk_size": {"key": "properties.chunkSize", "type": "float"},
-        "file_size": {"key": "properties.fileSize", "type": "float"},
-        "number_of_chunks": {"key": "properties.numberOfChunks", "type": "float"},
+        "chunk_size": {"key": "properties.chunkSize", "type": "int"},
+        "file_size": {"key": "properties.fileSize", "type": "int"},
+        "number_of_chunks": {"key": "properties.numberOfChunks", "type": "int"},
     }
 
     def __init__(
         self,
         *,
-        chunk_size: Optional[float] = None,
-        file_size: Optional[float] = None,
-        number_of_chunks: Optional[float] = None,
+        chunk_size: Optional[int] = None,
+        file_size: Optional[int] = None,
+        number_of_chunks: Optional[int] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword chunk_size: Size of each chunk.
-        :paramtype chunk_size: float
+        :paramtype chunk_size: int
         :keyword file_size: Size of the file to be uploaded.
-        :paramtype file_size: float
+        :paramtype file_size: int
         :keyword number_of_chunks: Number of chunks to be uploaded.
-        :paramtype number_of_chunks: float
+        :paramtype number_of_chunks: int
         """
         super().__init__(**kwargs)
         self.created_on = None
@@ -695,6 +736,60 @@ class FileWorkspaceDetails(ProxyResource):
         super().__init__(**kwargs)
         self.created_on = None
         self.expiration_time = None
+
+
+class LookUpResourceIdRequest(_serialization.Model):
+    """The look up resource Id request body.
+
+    :ivar identifier: The System generated Id that is unique. Use supportTicketId property for
+     Microsoft.Support/supportTickets resource type.
+    :vartype identifier: str
+    :ivar type: The type of resource. Default value is "Microsoft.Support/supportTickets".
+    :vartype type: str
+    """
+
+    _attribute_map = {
+        "identifier": {"key": "identifier", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        identifier: Optional[str] = None,
+        type: Optional[Literal["Microsoft.Support/supportTickets"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword identifier: The System generated Id that is unique. Use supportTicketId property for
+         Microsoft.Support/supportTickets resource type.
+        :paramtype identifier: str
+        :keyword type: The type of resource. Default value is "Microsoft.Support/supportTickets".
+        :paramtype type: str
+        """
+        super().__init__(**kwargs)
+        self.identifier = identifier
+        self.type = type
+
+
+class LookUpResourceIdResponse(_serialization.Model):
+    """The look up resource id response.
+
+    :ivar resource_id: The resource Id of support resource type.
+    :vartype resource_id: str
+    """
+
+    _attribute_map = {
+        "resource_id": {"key": "resourceId", "type": "str"},
+    }
+
+    def __init__(self, *, resource_id: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword resource_id: The resource Id of support resource type.
+        :paramtype resource_id: str
+        """
+        super().__init__(**kwargs)
+        self.resource_id = resource_id
 
 
 class MessageProperties(_serialization.Model):
@@ -851,12 +946,18 @@ class ProblemClassification(_serialization.Model):
     :ivar secondary_consent_enabled: This property indicates whether secondary consent is present
      for problem classification.
     :vartype secondary_consent_enabled: list[~azure.mgmt.support.models.SecondaryConsentEnabled]
+    :ivar metadata: String-to-string dictionary for additional metadata.
+    :vartype metadata: dict[str, str]
+    :ivar parent_problem_classification: Reference to the parent problem classification which has
+     same structure as problem classification.
+    :vartype parent_problem_classification: ~azure.mgmt.support.models.ProblemClassification
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "metadata": {"readonly": True},
     }
 
     _attribute_map = {
@@ -865,6 +966,11 @@ class ProblemClassification(_serialization.Model):
         "type": {"key": "type", "type": "str"},
         "display_name": {"key": "properties.displayName", "type": "str"},
         "secondary_consent_enabled": {"key": "properties.secondaryConsentEnabled", "type": "[SecondaryConsentEnabled]"},
+        "metadata": {"key": "properties.metadata", "type": "{str}"},
+        "parent_problem_classification": {
+            "key": "properties.parentProblemClassification",
+            "type": "ProblemClassification",
+        },
     }
 
     def __init__(
@@ -872,6 +978,7 @@ class ProblemClassification(_serialization.Model):
         *,
         display_name: Optional[str] = None,
         secondary_consent_enabled: Optional[List["_models.SecondaryConsentEnabled"]] = None,
+        parent_problem_classification: Optional["_models.ProblemClassification"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -880,6 +987,9 @@ class ProblemClassification(_serialization.Model):
         :keyword secondary_consent_enabled: This property indicates whether secondary consent is
          present for problem classification.
         :paramtype secondary_consent_enabled: list[~azure.mgmt.support.models.SecondaryConsentEnabled]
+        :keyword parent_problem_classification: Reference to the parent problem classification which
+         has same structure as problem classification.
+        :paramtype parent_problem_classification: ~azure.mgmt.support.models.ProblemClassification
         """
         super().__init__(**kwargs)
         self.id = None
@@ -887,6 +997,130 @@ class ProblemClassification(_serialization.Model):
         self.type = None
         self.display_name = display_name
         self.secondary_consent_enabled = secondary_consent_enabled
+        self.metadata = None
+        self.parent_problem_classification = parent_problem_classification
+
+
+class ProblemClassificationsClassificationInput(_serialization.Model):
+    """Input to problem classification Classification API.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar issue_summary: Natural language description of the customer’s issue. Required.
+    :vartype issue_summary: str
+    :ivar resource_id: ARM resource Id of the resource that is having the issue.
+    :vartype resource_id: str
+    """
+
+    _validation = {
+        "issue_summary": {"required": True},
+    }
+
+    _attribute_map = {
+        "issue_summary": {"key": "issueSummary", "type": "str"},
+        "resource_id": {"key": "resourceId", "type": "str"},
+    }
+
+    def __init__(self, *, issue_summary: str, resource_id: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword issue_summary: Natural language description of the customer’s issue. Required.
+        :paramtype issue_summary: str
+        :keyword resource_id: ARM resource Id of the resource that is having the issue.
+        :paramtype resource_id: str
+        """
+        super().__init__(**kwargs)
+        self.issue_summary = issue_summary
+        self.resource_id = resource_id
+
+
+class ProblemClassificationsClassificationOutput(_serialization.Model):
+    """Output of the problem classification Classification API.
+
+    :ivar problem_classification_results: Set of problem classification objects classified.
+    :vartype problem_classification_results:
+     list[~azure.mgmt.support.models.ProblemClassificationsClassificationResult]
+    """
+
+    _attribute_map = {
+        "problem_classification_results": {
+            "key": "problemClassificationResults",
+            "type": "[ProblemClassificationsClassificationResult]",
+        },
+    }
+
+    def __init__(
+        self,
+        *,
+        problem_classification_results: Optional[List["_models.ProblemClassificationsClassificationResult"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword problem_classification_results: Set of problem classification objects classified.
+        :paramtype problem_classification_results:
+         list[~azure.mgmt.support.models.ProblemClassificationsClassificationResult]
+        """
+        super().__init__(**kwargs)
+        self.problem_classification_results = problem_classification_results
+
+
+class ProblemClassificationsClassificationResult(_serialization.Model):
+    """ProblemClassification Classification result object.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar problem_id: Identifier that may be used for solution discovery or some other purposes.
+    :vartype problem_id: str
+    :ivar title: Title of the problem classification result.
+    :vartype title: str
+    :ivar description: Description of the problem classification result.
+    :vartype description: str
+    :ivar service_id: Identifier of the service associated with this problem classification result.
+    :vartype service_id: str
+    :ivar problem_classification_id: Identifier that may be used for support ticket creation.
+    :vartype problem_classification_id: str
+    :ivar service_id_related_service_id: Azure resource Id of the service.
+    :vartype service_id_related_service_id: str
+    :ivar display_name: Localized name of the azure service.
+    :vartype display_name: str
+    :ivar resource_types: List of applicable ARM resource types for this service.
+    :vartype resource_types: list[str]
+    """
+
+    _validation = {
+        "problem_id": {"readonly": True},
+        "title": {"readonly": True},
+        "description": {"readonly": True},
+        "service_id": {"readonly": True},
+        "problem_classification_id": {"readonly": True},
+        "service_id_related_service_id": {"readonly": True},
+        "display_name": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "problem_id": {"key": "problemId", "type": "str"},
+        "title": {"key": "title", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "service_id": {"key": "serviceId", "type": "str"},
+        "problem_classification_id": {"key": "problemClassificationId", "type": "str"},
+        "service_id_related_service_id": {"key": "relatedService.serviceId", "type": "str"},
+        "display_name": {"key": "relatedService.displayName", "type": "str"},
+        "resource_types": {"key": "relatedService.resourceTypes", "type": "[str]"},
+    }
+
+    def __init__(self, *, resource_types: Optional[List[str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword resource_types: List of applicable ARM resource types for this service.
+        :paramtype resource_types: list[str]
+        """
+        super().__init__(**kwargs)
+        self.problem_id = None
+        self.title = None
+        self.description = None
+        self.service_id = None
+        self.problem_classification_id = None
+        self.service_id_related_service_id = None
+        self.display_name = None
+        self.resource_types = resource_types
 
 
 class ProblemClassificationsListResult(_serialization.Model):
@@ -1055,12 +1289,15 @@ class Service(_serialization.Model):
     :vartype display_name: str
     :ivar resource_types: ARM Resource types.
     :vartype resource_types: list[str]
+    :ivar metadata: Metadata about the service, only visible for 1P clients.
+    :vartype metadata: dict[str, str]
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "metadata": {"readonly": True},
     }
 
     _attribute_map = {
@@ -1069,6 +1306,7 @@ class Service(_serialization.Model):
         "type": {"key": "type", "type": "str"},
         "display_name": {"key": "properties.displayName", "type": "str"},
         "resource_types": {"key": "properties.resourceTypes", "type": "[str]"},
+        "metadata": {"key": "properties.metadata", "type": "{str}"},
     }
 
     def __init__(
@@ -1086,6 +1324,120 @@ class Service(_serialization.Model):
         self.type = None
         self.display_name = display_name
         self.resource_types = resource_types
+        self.metadata = None
+
+
+class ServiceClassificationAnswer(ClassificationService):
+    """Service Classification result object.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar service_id: Azure resource Id of the service.
+    :vartype service_id: str
+    :ivar display_name: Localized name of the azure service.
+    :vartype display_name: str
+    :ivar resource_types: List of applicable ARM resource types for this service.
+    :vartype resource_types: list[str]
+    :ivar child_service: Child service.
+    :vartype child_service: ~azure.mgmt.support.models.ClassificationService
+    """
+
+    _validation = {
+        "service_id": {"readonly": True},
+        "display_name": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "service_id": {"key": "serviceId", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "resource_types": {"key": "resourceTypes", "type": "[str]"},
+        "child_service": {"key": "childService", "type": "ClassificationService"},
+    }
+
+    def __init__(
+        self,
+        *,
+        resource_types: Optional[List[str]] = None,
+        child_service: Optional["_models.ClassificationService"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword resource_types: List of applicable ARM resource types for this service.
+        :paramtype resource_types: list[str]
+        :keyword child_service: Child service.
+        :paramtype child_service: ~azure.mgmt.support.models.ClassificationService
+        """
+        super().__init__(resource_types=resource_types, **kwargs)
+        self.child_service = child_service
+
+
+class ServiceClassificationOutput(_serialization.Model):
+    """Output of the service classification API.
+
+    :ivar service_classification_results: Set of problem classification objects classified.
+    :vartype service_classification_results:
+     list[~azure.mgmt.support.models.ServiceClassificationAnswer]
+    """
+
+    _attribute_map = {
+        "service_classification_results": {
+            "key": "serviceClassificationResults",
+            "type": "[ServiceClassificationAnswer]",
+        },
+    }
+
+    def __init__(
+        self,
+        *,
+        service_classification_results: Optional[List["_models.ServiceClassificationAnswer"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword service_classification_results: Set of problem classification objects classified.
+        :paramtype service_classification_results:
+         list[~azure.mgmt.support.models.ServiceClassificationAnswer]
+        """
+        super().__init__(**kwargs)
+        self.service_classification_results = service_classification_results
+
+
+class ServiceClassificationRequest(_serialization.Model):
+    """Input to problem classification Classification API.
+
+    :ivar issue_summary: Natural language description of the customer’s issue.
+    :vartype issue_summary: str
+    :ivar resource_id: ARM resource Id of the resource that is having the issue.
+    :vartype resource_id: str
+    :ivar additional_context: Additional information in the form of a string.
+    :vartype additional_context: str
+    """
+
+    _attribute_map = {
+        "issue_summary": {"key": "issueSummary", "type": "str"},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "additional_context": {"key": "additionalContext", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        issue_summary: Optional[str] = None,
+        resource_id: Optional[str] = None,
+        additional_context: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword issue_summary: Natural language description of the customer’s issue.
+        :paramtype issue_summary: str
+        :keyword resource_id: ARM resource Id of the resource that is having the issue.
+        :paramtype resource_id: str
+        :keyword additional_context: Additional information in the form of a string.
+        :paramtype additional_context: str
+        """
+        super().__init__(**kwargs)
+        self.issue_summary = issue_summary
+        self.resource_id = resource_id
+        self.additional_context = additional_context
 
 
 class ServiceLevelAgreement(_serialization.Model):
@@ -1245,7 +1597,6 @@ class SupportTicketDetails(_serialization.Model):  # pylint: disable=too-many-in
         "name": {"readonly": True},
         "type": {"readonly": True},
         "problem_classification_display_name": {"readonly": True},
-        "enrollment_id": {"readonly": True},
         "support_plan_type": {"readonly": True},
         "support_plan_display_name": {"readonly": True},
         "service_display_name": {"readonly": True},
@@ -1293,6 +1644,7 @@ class SupportTicketDetails(_serialization.Model):  # pylint: disable=too-many-in
         description: Optional[str] = None,
         problem_classification_id: Optional[str] = None,
         severity: Optional[Union[str, "_models.SeverityLevel"]] = None,
+        enrollment_id: Optional[str] = None,
         require24_x7_response: Optional[bool] = None,
         advanced_diagnostic_consent: Optional[Union[str, "_models.Consent"]] = None,
         problem_scoping_questions: Optional[str] = None,
@@ -1324,6 +1676,8 @@ class SupportTicketDetails(_serialization.Model):  # pylint: disable=too-many-in
          level in the Azure portal is reserved only for our Premium customers. Known values are:
          "minimal", "moderate", "critical", and "highestcriticalimpact".
         :paramtype severity: str or ~azure.mgmt.support.models.SeverityLevel
+        :keyword enrollment_id: Enrollment Id associated with the support ticket.
+        :paramtype enrollment_id: str
         :keyword require24_x7_response: Indicates if this requires a 24x7 response from Azure.
         :paramtype require24_x7_response: bool
         :keyword advanced_diagnostic_consent: Advanced diagnostic consent to be updated on the support
@@ -1369,7 +1723,7 @@ class SupportTicketDetails(_serialization.Model):  # pylint: disable=too-many-in
         self.problem_classification_id = problem_classification_id
         self.problem_classification_display_name = None
         self.severity = severity
-        self.enrollment_id = None
+        self.enrollment_id = enrollment_id
         self.require24_x7_response = require24_x7_response
         self.advanced_diagnostic_consent = advanced_diagnostic_consent
         self.problem_scoping_questions = problem_scoping_questions
@@ -1673,20 +2027,20 @@ class UploadFile(_serialization.Model):
     :ivar content: File Content in base64 encoded format.
     :vartype content: str
     :ivar chunk_index: Index of the uploaded chunk (Index starts at 0).
-    :vartype chunk_index: float
+    :vartype chunk_index: int
     """
 
     _attribute_map = {
         "content": {"key": "content", "type": "str"},
-        "chunk_index": {"key": "chunkIndex", "type": "float"},
+        "chunk_index": {"key": "chunkIndex", "type": "int"},
     }
 
-    def __init__(self, *, content: Optional[str] = None, chunk_index: Optional[float] = None, **kwargs: Any) -> None:
+    def __init__(self, *, content: Optional[str] = None, chunk_index: Optional[int] = None, **kwargs: Any) -> None:
         """
         :keyword content: File Content in base64 encoded format.
         :paramtype content: str
         :keyword chunk_index: Index of the uploaded chunk (Index starts at 0).
-        :paramtype chunk_index: float
+        :paramtype chunk_index: int
         """
         super().__init__(**kwargs)
         self.content = content

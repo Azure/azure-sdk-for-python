@@ -29,13 +29,13 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.support_ticket_chat_transcripts_no_subscription.list(
+    response = client.chat_transcripts_no_subscription.list(
         support_ticket_name="testticket",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: specification/support/resource-manager/Microsoft.Support/preview/2022-09-01-preview/examples/ListChatTranscriptsForSupportTicket.json
+# x-ms-original-file: specification/support/resource-manager/Microsoft.Support/preview/2023-06-01-preview/examples/ListChatTranscriptsForSupportTicket.json
 if __name__ == "__main__":
     main()
