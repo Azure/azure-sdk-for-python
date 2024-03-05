@@ -136,7 +136,7 @@ extends:
                   - stage: ${{ cloud.key }}_${{ parameters.JobName }}
                     dependsOn: []
                     jobs:
-                      - template: /eng/common/pipelines/templates/jobs/generate-job-matrix.yml
+                      - template: /eng/common/pipelines/templates/jobs/generate-job-matrix.yml@self
                         parameters:
                           SparseCheckoutPaths:
                             - sdk/${{ parameters.ServiceDirectory }}/**/*.json
@@ -181,7 +181,7 @@ extends:
                             Location: ${{ coalesce(parameters.Location, cloud.value.Location) }}
                             Cloud: ${{ cloud.key }}
 
-      - template: /eng/pipelines/templates/stages/python-analyze-weekly.yml
+      - template: /eng/pipelines/templates/stages/python-analyze-weekly.yml@self
         parameters:
           BuildTargetingString: ${{ parameters.BuildTargetingString }}
           ServiceDirectory: ${{ parameters.ServiceDirectory }}
