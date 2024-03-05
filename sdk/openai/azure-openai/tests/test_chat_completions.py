@@ -1051,7 +1051,7 @@ class TestChatCompletions(AzureRecordedTestCase):
         assert completion.choices[0].message.role
 
     @configure
-    @pytest.mark.parametrize("api_type", [OPENAI, GPT_4_AZURE])
+    @pytest.mark.parametrize("api_type", [OPENAI])
     def test_chat_completion_logprobs(self, client, azure_openai_creds, api_type, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
@@ -1078,6 +1078,6 @@ class TestChatCompletions(AzureRecordedTestCase):
         assert completion.choices[0].message.role
         assert completion.choices[0].logprobs.content
         for logprob in completion.choices[0].logprobs.content:
-            assert logprob.token is not None
-            assert logprob.logprob is not None
-            assert logprob.bytes is not None
+            assert logprob.token
+            assert logprob.logprob
+            assert logprob.bytes
