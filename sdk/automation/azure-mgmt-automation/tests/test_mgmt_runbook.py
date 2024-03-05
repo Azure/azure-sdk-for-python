@@ -28,5 +28,4 @@ class TestMgmtRunbook(AzureMgmtRecordedTestCase):
         account_name = self.create_automation_account(resource_group.name, AZURE_LOCATION, ACCOUNT_NAME)
         runbook_name = self.create_runbook(resource_group.name, AZURE_LOCATION, account_name, RUNBOOK_NAME)
         
-        body = self.mgmt_client.runbook.get_content(resource_group.name, account_name, runbook_name)
-        result = self.mgmt_client._deserialize("IO", body)
+        result = self.mgmt_client.runbook.get_content(resource_group.name, account_name, runbook_name)
