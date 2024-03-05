@@ -23,7 +23,8 @@ class Output(_InputOutputBase):
     @overload
     def __init__(
         self,
-        type: Any,
+        *,
+        type: str,
         path: Optional[str] = None,
         mode: Optional[str] = None,
         description: Optional[str] = None,
@@ -34,6 +35,7 @@ class Output(_InputOutputBase):
     @overload
     def __init__(
         self,
+        *,
         type: Literal["uri_folder"] = "uri_folder",
         path: Optional[str] = None,
         mode: Optional[str] = None,
@@ -83,6 +85,7 @@ class Output(_InputOutputBase):
     @overload
     def __init__(
         self,
+        *,
         type: Literal["uri_file"] = "uri_file",
         path: Optional[str] = None,
         mode: Optional[str] = None,
@@ -111,6 +114,7 @@ class Output(_InputOutputBase):
 
     def __init__(
         self,
+        *,
         type: str = AssetTypes.URI_FOLDER,
         path: Optional[str] = None,
         mode: Optional[str] = None,

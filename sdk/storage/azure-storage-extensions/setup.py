@@ -6,6 +6,18 @@
 
 import os
 from setuptools import setup, Extension
+from wheel.bdist_wheel import bdist_wheel
+
+
+class bdist_wheel_abi3(bdist_wheel):
+    """Override bdist_wheel tag behavior to add abi3 tag."""
+    def get_tag(self):
+        python, abi, plat = super().get_tag()
+
+        if python.startswith("cp"):
+            return python, "abi3", plat
+        return python, abi, plat
+
 
 PACKAGE_NAME = "azure-storage-extensions"
 PACKAGE_PPRINT_NAME = "Azure Storage Extensions"
@@ -43,7 +55,9 @@ setup(
         Extension(
             'crc64',
             [os.path.join(package_folder_path, "crc64", "crc64module.c")],
+            define_macros=[("Py_LIMITED_API", "3")],
             py_limited_api=True
         ),
     ],
+    cmdclass={"bdist_wheel": bdist_wheel_abi3},
 )
