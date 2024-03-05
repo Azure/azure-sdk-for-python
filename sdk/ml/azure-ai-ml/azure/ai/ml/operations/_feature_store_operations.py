@@ -118,6 +118,8 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
 
         :param name: Name of the feature store.
         :type name: str
+        :raises ~azure.core.exceptions.HttpResponseError: Raised if the corresponding name and version cannot be
+            retrieved from the service.
         :return: The feature store with the provided name.
         :rtype: FeatureStore
         """
