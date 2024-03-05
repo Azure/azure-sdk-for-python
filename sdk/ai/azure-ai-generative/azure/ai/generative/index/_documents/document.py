@@ -19,7 +19,7 @@ class DocumentSource:
     def __post_init__(self):
         """Normalize path and url to use forward slashes."""
         self.filename = self.filename.replace("\\", "/")
-        if self.url.startswith("file://"):
+        if self.url and self.url.startswith("file://"):
             self.url = self.url.replace("\\", "/")
 
     def get_metadata(self) -> dict:

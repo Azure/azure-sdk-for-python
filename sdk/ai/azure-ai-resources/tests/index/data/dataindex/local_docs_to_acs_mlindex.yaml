@@ -1,0 +1,26 @@
+$schema: http://azureml/sdk-2-0/DataIndex.json
+type: uri_folder
+name: mlindex_docs_aoai_acs
+description: Python embedded with text-embedding-ada-002 and indexed in Azure Cognitive Search.
+
+source:
+  input_data:
+    type: uri_folder
+    path: ./tests/index/data/dataindex/documents
+  chunk_size: 200
+  citation_url: "https://github.com/Azure/azureml-examples/tree/main/sdk/python/generative-ai/rag/refresh"
+  citation_url_replacement_regex:
+    match_pattern: '(.*)/articles/(.*)(\.[^.]+)$'
+    replacement_pattern: '\1/\2'
+
+embedding:
+  model: azure_open_ai://deployment/text-embedding-ada-002/model/text-embedding-ada-002
+  connection: azureml-rag-oai
+  cache_path: azureml://datastores/workspaceblobstore/paths/embeddings_cache/mlindex_docs_aoai_acs
+
+index:
+  type: acs
+  connection: azureml:azureml-rag-acs
+  name: mlindex_docs_aoai
+
+path: azureml://datastores/workspaceblobstore/paths/indexes/mlindex_docs_aoai_acs/{name}

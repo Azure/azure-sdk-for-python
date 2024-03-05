@@ -13,6 +13,7 @@ azure-appconfiguration
 azure-core-tracing-opentelemetry
 azure-keyvault-secrets
 azure-monitor-opentelemetry-exporter
+azure-search-documents
 azureml-telemetry
 cryptography
 msrestazure
@@ -67,3 +68,8 @@ yarl
 azure-identity
 openai
 wrapt
+mmh3
+fsspec
+tiktoken
+numpy
+tpqm
