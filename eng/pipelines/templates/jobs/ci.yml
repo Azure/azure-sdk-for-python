@@ -72,7 +72,7 @@ jobs:
       timeoutInMinutes: 90
 
       pool:
-        name: azsdk-pool-mms-ubuntu-2004-1es-pt
+        name: azsdk-pool-mms-ubuntu-2004-general
         vmImage: azsdk-pool-mms-ubuntu-2004-1espt
         os: linux
 
@@ -95,19 +95,19 @@ jobs:
       strategy:
         matrix:
           Linux:
-            imageName: 'azsdk-pool-mms-ubuntu-2004-1espt'
-            poolName: 'azsdk-pool-mms-ubuntu-2004-1es-pt'
-            ArtifactName: 'linux'
+            imageName: azsdk-pool-mms-ubuntu-2004-1espt
+            poolname: azsdk-pool-mms-ubuntu-2004-general
+            ArtifactName: linux
             os: linux
           Windows:
-            imageName: 'azsdk-pool-mms-win-2022-1espt'
-            poolName: 'azsdk-pool-mms-win-2022-1es-pt'
-            ArtifactName: 'windows'
+            imageName: azsdk-pool-mms-win-2022-1espt
+            poolName: azsdk-pool-mms-win-2022-1es-pt
+            ArtifactName: windows
             os: windows
           Mac:
-            imageName: 'macos-11'
+            imageName: macos-11
             poolName: 'Azure Pipelines'
-            ArtifactName: 'mac'
+            ArtifactName: mac
             os: macos
 
       pool:
@@ -168,7 +168,7 @@ jobs:
     timeoutInMinutes: 90
 
     pool:
-      name: azsdk-pool-mms-ubuntu-2004-1es-pt
+      name: azsdk-pool-mms-ubuntu-2004-general
       vmImage: azsdk-pool-mms-ubuntu-2004-1espt
       os: linux
 
@@ -194,7 +194,7 @@ jobs:
       - 'Build_Extended'
 
     pool:
-      name: azsdk-pool-mms-ubuntu-2004-1es-pt
+      name: azsdk-pool-mms-ubuntu-2004-general
       vmImage: azsdk-pool-mms-ubuntu-2004-1espt
       os: linux
 

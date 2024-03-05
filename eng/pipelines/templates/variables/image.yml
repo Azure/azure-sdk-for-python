@@ -2,9 +2,9 @@
 
 variables:
   - name: LINUXPOOL
-    value: azsdk-pool-mms-ubuntu-2004-1es-pt
+    value: azsdk-pool-mms-ubuntu-2004-general
   - name: WINDOWSPOOL
-    value: azsdk-pool-mms-win-2022-1es-pt
+    value: azsdk-pool-mms-win-2022-general
   - name: MACPOOL
     value: Azure Pipelines
 

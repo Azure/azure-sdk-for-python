@@ -24,9 +24,9 @@ stages:
           environment: github
 
           pool:
-            imageName: 'azsdk-pool-mms-ubuntu-2004-1espt'
-            name: 'azsdk-pool-mms-ubuntu-2004-1es-pt'
-            os: 'linux'
+            vmImage: azsdk-pool-mms-ubuntu-2004-1espt
+            name: azsdk-pool-mms-ubuntu-2004-general
+            os: linux
 
           strategy:
             runOnce:
@@ -80,8 +80,8 @@ stages:
               dependsOn: TagRepository
 
               pool:
-                imageName: 'azsdk-pool-mms-ubuntu-2004-1espt'
-                name: 'azsdk-pool-mms-ubuntu-2004-1es-pt'
+                vmImage: azsdk-pool-mms-ubuntu-2004-1espt
+                name: azsdk-pool-mms-ubuntu-2004-general
                 os: 'linux'
 
               strategy:
@@ -156,7 +156,7 @@ stages:
               dependsOn: PublishPackage
 
               pool:
-                name: azsdk-pool-mms-ubuntu-2004-1es-pt
+                name: azsdk-pool-mms-ubuntu-2004-general
                 vmImage: azsdk-pool-mms-ubuntu-2004-1espt
                 os: linux
               strategy:
@@ -169,7 +169,7 @@ stages:
                         workingDirectory: $(Pipeline.Workspace)
                         displayName: Output Visible Artifacts
 
-                      - template: /eng/common/pipelines/templates/steps/publish-blobs.yml@self
+                      - template: /eng/common/pipelines/templates/steps/publish-blobs.yml
                         parameters:
                           FolderForUpload: '$(Pipeline.Workspace)/${{parameters.DocArtifact}}/${{artifact.name}}'
                           BlobSASKey: '$(azure-sdk-docs-prod-sas)'
@@ -187,7 +187,7 @@ stages:
               dependsOn: PublishPackage
 
               pool:
-                name: azsdk-pool-mms-ubuntu-2004-1es-pt
+                name: azsdk-pool-mms-ubuntu-2004-general
                 vmImage: azsdk-pool-mms-ubuntu-2004-1espt
                 os: linux
 
@@ -223,7 +223,7 @@ stages:
               dependsOn: PublishPackage
 
               pool:
-                name: azsdk-pool-mms-ubuntu-2004-1es-pt
+                name: azsdk-pool-mms-ubuntu-2004-general
                 vmImage: azsdk-pool-mms-ubuntu-2004-1espt
                 os: linux
 
@@ -262,7 +262,7 @@ stages:
         displayName: "Publish package to daily feed"
         condition: or(eq(variables['SetDevVersion'], 'true'), and(eq(variables['Build.Reason'],'Schedule'), eq(variables['System.TeamProject'], 'internal')))
         pool:
-          name: azsdk-pool-mms-ubuntu-2004-1es-pt
+          name: azsdk-pool-mms-ubuntu-2004-general
           vmImage: azsdk-pool-mms-ubuntu-2004-1espt
           os: linux
         steps:
@@ -302,7 +302,7 @@ stages:
         dependsOn: PublishPackages
         condition: or(eq(variables['SetDevVersion'], 'true'), and(eq(variables['Build.Reason'],'Schedule'), eq(variables['System.TeamProject'], 'internal')))
         pool:
-          name: azsdk-pool-mms-ubuntu-2004-1es-pt
+          name: azsdk-pool-mms-ubuntu-2004-general
           vmImage: azsdk-pool-mms-ubuntu-2004-1espt
           os: linux
         steps:
