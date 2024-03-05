@@ -1,20 +1,17 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-import json
-from json import JSONDecodeError
-
-import numpy as np
-import pandas as pd
+from concurrent.futures.thread import ThreadPoolExecutor
 import logging
-from numpy import NaN
+import pandas as pd
 
+from numpy import NaN
+import tqdm
 from .._client.openai_client import AzureOpenAIClient
 from .._metric_handler import MetricHandler
 from ..metrics._custom_metric import PromptMetric
 from ..metrics._parsers import JsonParser, NumberParser
-from concurrent.futures.thread import ThreadPoolExecutor
-import tqdm
+
 
 LOGGER = logging.getLogger(__name__)
 
@@ -23,13 +20,13 @@ SUPPORTED_PARSERS = [JsonParser, NumberParser]
 
 class PromptMetricHandler(MetricHandler):
     def __init__(
-            self,
-            task_type,
-            prediction_data,
-            test_data,
-            input_output_data,
-            metrics_mapping=None,
-            metrics=None,
+        self,
+        task_type,
+        prediction_data,
+        test_data,
+        input_output_data,
+        metrics_mapping=None,
+        metrics=None,
     ):
         super().__init__(
             task_type=task_type,
@@ -46,9 +43,9 @@ class PromptMetricHandler(MetricHandler):
     def _validate(self):
         supported_list = [isinstance(metric, PromptMetric) for metric in self.metrics]
         if not all(supported_list):
-            raise Exception \
-                (f"{self.__class__.__name__} supports only {PromptMetric.__class__.__name__} type of metrics")
-
+            raise Exception(
+                f"{self.__class__.__name__} supports only {PromptMetric.__class__.__name__} type of metrics"
+            )
 
     def _convert_metric_to_message(self, metric, data):
         from jinja2 import Template
@@ -57,10 +54,7 @@ class PromptMetricHandler(MetricHandler):
 
         prompt_as_string = template.render(data)
 
-        message = [{
-            "role": "user",
-            "content": prompt_as_string
-        }]
+        message = [{"role": "user", "content": prompt_as_string}]
 
         return message
 
@@ -78,8 +72,7 @@ class PromptMetricHandler(MetricHandler):
 
             pd_list.append(data_source[[data_column]].rename(columns={data_column: param}))
 
-        data_as_jsonl = pd.concat(pd_list, axis=1, verify_integrity=True) \
-            .to_dict(orient="records")
+        data_as_jsonl = pd.concat(pd_list, axis=1, verify_integrity=True).to_dict(orient="records")
 
         return data_as_jsonl
 
@@ -118,10 +111,8 @@ class PromptMetricHandler(MetricHandler):
         row_metric_results = []
 
         with ThreadPoolExecutor(thread_name_prefix="code_metrics_row") as thread_pool:
-            for i in range(0, len(data)):
-                row_metric_futures.append(thread_pool.submit(
-                    self._compute_metric_row, metric, data=data[i]
-                ))
+            for item in data:
+                row_metric_futures.append(thread_pool.submit(self._compute_metric_row, metric, data=item))
 
             for row_metric_future in row_metric_futures:
                 row_metric_results.append(row_metric_future.result())
@@ -130,13 +121,9 @@ class PromptMetricHandler(MetricHandler):
 
             if isinstance(row_metric_results[0], dict):
                 for key in row_metric_results[0].keys():
-                    results["artifacts"].update({
-                        key: [row[key] for row in row_metric_results]
-                    })
+                    results["artifacts"].update({key: [row[key] for row in row_metric_results]})
             else:
-                results["artifacts"].update(
-                    {metric.name: row_metric_results}
-                )
+                results["artifacts"].update({metric.name: row_metric_results})
 
         # tasks = []
         # for row_data in data:
@@ -161,10 +148,14 @@ class PromptMetricHandler(MetricHandler):
         with tqdm.tqdm(total=len(metrics)) as progress_bar:
             with ThreadPoolExecutor(thread_name_prefix="prompt_metrics") as thread_pool:
                 for metric in self.metrics:
-                    metric_values = []
-                    metric_results_futures.update({metric.name: thread_pool.submit(
-                        self._compute_metric, metric,
-                    )})
+                    metric_results_futures.update(
+                        {
+                            metric.name: thread_pool.submit(
+                                self._compute_metric,
+                                metric,
+                            )
+                        }
+                    )
 
                 for metric_name, metric_result_future in metric_results_futures.items():
                     try:
@@ -173,12 +164,15 @@ class PromptMetricHandler(MetricHandler):
                         if "metrics" in metric_result.keys() and metric_result["metrics"] is not None:
                             metrics_dict["metrics"].update(metric_result["metrics"])
                         progress_bar.update(1)
-                    except Exception as ex:
+                    except Exception as ex:  # pylint: disable=broad-except
                         progress_bar.update(1)
-                        LOGGER.info(
-                            f"Error calculating value for {metric_name}, failed with error {str(ex)} : Stack trace : {str(ex.__traceback__)}")
-                        
-                    
+                        _msg = (
+                            f"Error calculating value for {metric_name}, "
+                            f"failed with error {str(ex)} : "
+                            f"Stack trace : {str(ex.__traceback__)}"
+                        )
+                        LOGGER.info(_msg)
+
         return metrics_dict
 
         # tasks = []
@@ -198,6 +192,6 @@ class PromptMetricHandler(MetricHandler):
         # return metrics_dict
 
     def calculate_metrics(self):
-        LOGGER.info(f"Calculating prompt metric {[metric.name for metric in self.metrics]}")
+        LOGGER.info("Calculating prompt metric %s", [metric.name for metric in self.metrics])
         result = self._compute_metrics(self.metrics)
         return result
