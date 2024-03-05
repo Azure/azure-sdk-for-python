@@ -52,7 +52,7 @@ class CallbackConversationBot(ConversationBot):
 
         self.logger.info(f"Parsed callback response")
 
-        return response, {}, time_taken, response
+        return response, {}, time_taken, result
 
     def _to_chat_protocol(self, template, conversation_history, template_parameters):
         messages = []
