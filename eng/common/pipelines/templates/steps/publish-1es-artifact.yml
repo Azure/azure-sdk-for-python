@@ -22,6 +22,7 @@ steps:
       }
     condition: and(succeededOrFailed(), ${{ parameters.CustomCondition }})
     displayName: Set Artifact Name $(Agent.JobStatus)
+
   - task: 1ES.PublishPipelineArtifact@1
     condition: and(succeededOrFailed(), ${{ parameters.CustomCondition }})
     displayName: 'Publish ${{ parameters.ArtifactName }} Artifacts'
