@@ -12,23 +12,24 @@ from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 import pytest
 
 
-span_exporter = InMemorySpanExporter()
+class TracingTestHelper:
+    def __init__(self, tracer, exporter):
+        self.tracer = tracer
+        self.exporter = exporter
 
 
-@pytest.fixture(scope="session")
-def tracer():
-    processor = SimpleSpanProcessor(span_exporter)
+@pytest.fixture(scope="session", autouse=True)
+def enable_tracing():
     provider = TracerProvider()
-    provider.add_span_processor(processor)
     trace.set_tracer_provider(provider)
-
-    return provider.get_tracer(__name__)
 
 
 @pytest.fixture(scope="function")
-def exporter():
-    span_exporter.clear()
-    return span_exporter
+def tracing_helper() -> TracingTestHelper:
+    span_exporter = InMemorySpanExporter()
+    processor = SimpleSpanProcessor(span_exporter)
+    trace.get_tracer_provider().add_span_processor(processor)
+    return TracingTestHelper(trace.get_tracer(__name__), span_exporter)
 
 
 @pytest.fixture(scope="session")

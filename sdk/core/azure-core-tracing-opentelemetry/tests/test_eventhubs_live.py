@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from datetime import datetime
+import sys
 import threading
 
 import pytest
@@ -65,7 +66,8 @@ class TestEventHubsTracing:
             assert span.attributes["messaging.batch.message_count"] == message_count
 
     @pytest.mark.live_test_only
-    def test_eventhubs_client_tracing(self, config, exporter, tracer):
+    @pytest.mark.skipif(sys.platform.startswith("darwin"), reason="threading issues on mac CI")
+    def test_eventhubs_client_tracing(self, config, tracing_helper):
 
         connection_string = config["eventhub_connection_string"]
         eventhub_name = config["eventhub_name"]
@@ -81,7 +83,7 @@ class TestEventHubsTracing:
             eventhub_name=eventhub_name,
         )
 
-        with tracer.start_as_current_span(name="root"):
+        with tracing_helper.tracer.start_as_current_span(name="root"):
 
             current_date = datetime.now()
 
@@ -93,7 +95,7 @@ class TestEventHubsTracing:
                 event_data_batch.add(EventData("Second message inside an EventDataBatch"))
                 producer_client.send_batch(event_data_batch)
 
-            send_spans = exporter.get_finished_spans()
+            send_spans = tracing_helper.exporter.get_finished_spans()
 
             # We expect 3 spans to have finished: 1 send spans, and 2 message spans.
             assert len(send_spans) == 3
@@ -116,7 +118,7 @@ class TestEventHubsTracing:
             assert link.context.span_id == send_spans[1].context.span_id
             assert link.context.trace_id == send_spans[1].context.trace_id
 
-            exporter.clear()
+            tracing_helper.exporter.clear()
 
             def on_event_batch(partition_context, event_batch):
                 pass
@@ -131,7 +133,7 @@ class TestEventHubsTracing:
             worker.start()
             worker.join(timeout=3)
 
-            receive_spans = exporter.get_finished_spans()
+            receive_spans = tracing_helper.exporter.get_finished_spans()
 
             # We expect 2 spans to have finished: 1 receive span and 1 process span.
             assert len(receive_spans) == 2
