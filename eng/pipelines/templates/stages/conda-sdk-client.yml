@@ -170,16 +170,16 @@ extends:
           suppressionsFile: $(Build.SourcesDirectory)/eng/CredScanSuppression.json
           scanFolder: $(Build.SourcesDirectory)/credscan.tsv
           toolVersion: 2.3.12.23
-          baselineFiles: $(Build.SourcesDirectory)/eng/<language>.gdnbaselines
+          baselineFiles: $(Build.SourcesDirectory)/eng/python.gdnbaselines
 
     stages:
       - stage: Build_Dependencies
         displayName: Build Platform-Specific Binary Conda Packages
         variables:
-          - template: /eng/pipelines/templates/variables/globals.yml
+          - template: /eng/pipelines/templates/variables/globals.yml@self
 
         jobs:
-          - template: ../jobs/build-conda-dependencies.yml
+          - template: eng/pipelines/templates/jobs/build-conda-dependencies.yml@self
             parameters:
               CondaArtifacts:
                 - name: uamqp
@@ -198,7 +198,7 @@ extends:
         displayName: Build Universal Conda Packages
         dependsOn: Build_Dependencies
         variables:
-          - template: /eng/pipelines/templates/variables/globals.yml
+          - template: /eng/pipelines/templates/variables/globals.yml@self
 
         jobs:
           - job: 'Build'
@@ -222,7 +222,7 @@ extends:
                 artifact: mac_conda
                 timeoutInMinutes: 5
 
-              - template: ../steps/build-conda-artifacts.yml
+              - template: /eng/pipelines/templates/steps/build-conda-artifacts.yml@self
                 parameters:
                   Arguments: '--channel "$(Pipeline.Workspace)/mac_conda" "$(Pipeline.Workspace)/windows_conda" "$(Pipeline.Workspace)/linux_conda"'
 
