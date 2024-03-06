@@ -9,7 +9,7 @@ jobs:
   timeoutInMinutes: 90
   pool:
     name: azsdk-pool-mms-win-2022-general
-    vmImage: azsdk-pool-mms-win-2022-1espt
+    image: azsdk-pool-mms-win-2022-1espt
     os: windows
   variables:
     VS_INSTALLER_URL: "https://aka.ms/vs/17/release/vs_enterprise.exe"
