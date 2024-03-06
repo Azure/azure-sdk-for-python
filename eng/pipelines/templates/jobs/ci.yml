@@ -89,7 +89,7 @@ jobs:
           Artifacts: ${{ parameters.Artifacts }}
 
   - ${{ if eq(parameters['AdvancedBuild'], true) }}:
-     - job: 'Build_Linux'
+    - job: 'Build_Linux'
       timeoutInMinutes: 90
 
       pool:
