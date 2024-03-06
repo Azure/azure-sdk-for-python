@@ -5,13 +5,36 @@ import json
 
 
 class JsonLineList(list):
+    """
+    A util to manage a list of JSON lines.
+    """
     def to_json_lines(self):
+        """
+        Converts the list to a string of JSON lines.
+
+        Each item in the list is converted to a JSON string 
+        and appended to the result string with a newline.
+
+        """
         json_lines = ""
         for item in self:
             json_lines += json.dumps(item) + "\n"
         return json_lines
 
     def to_eval_qa_json_lines(self):
+        """
+        Converts the list to a string of JSON lines suitable for evaluation in a Q&A format.
+        Each item in the list is expected to be a dictionary with 
+        'messages' key. The 'messages' value is a list of
+        dictionaries, each with a 'role' key and a 'content' key. 
+        The 'role' value should be either 'user' or 'assistant',
+        and the 'content' value should be a string. 
+        If a 'context' key is present in the message, its value is also included
+        in the output.
+        
+        Returns:
+            str: A string of JSON lines.
+        """
         json_lines = ""
         for item in self:
             user_message = None
