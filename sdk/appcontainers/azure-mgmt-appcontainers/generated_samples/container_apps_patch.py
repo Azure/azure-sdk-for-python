@@ -118,6 +118,8 @@ def main():
                     },
                     "serviceBinds": [
                         {
+                            "clientType": "dotnet",
+                            "customizedKeys": {"DesiredKey": "defaultKey"},
                             "name": "service",
                             "serviceId": "/subscriptions/34adfa4f-cedf-4dc0-ba29-b6d1a69ab345/resourceGroups/rg/providers/Microsoft.App/containerApps/service",
                         }
@@ -130,6 +132,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2023-05-01/examples/ContainerApps_Patch.json
+# x-ms-original-file: specification/app/resource-manager/Microsoft.App/preview/2023-11-02-preview/examples/ContainerApps_Patch.json
 if __name__ == "__main__":
     main()

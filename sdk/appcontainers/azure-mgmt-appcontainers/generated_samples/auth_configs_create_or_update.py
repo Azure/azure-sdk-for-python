@@ -35,6 +35,10 @@ def main():
         auth_config_name="current",
         auth_config_envelope={
             "properties": {
+                "encryptionSettings": {
+                    "containerAppAuthEncryptionSecretName": "testEncryptionSecretName",
+                    "containerAppAuthSigningSecretName": "testSigningSecretName",
+                },
                 "globalValidation": {"unauthenticatedClientAction": "AllowAnonymous"},
                 "identityProviders": {
                     "facebook": {"registration": {"appId": "123", "appSecretSettingName": "facebook-secret"}}
@@ -46,6 +50,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2023-05-01/examples/AuthConfigs_CreateOrUpdate.json
+# x-ms-original-file: specification/app/resource-manager/Microsoft.App/preview/2023-11-02-preview/examples/AuthConfigs_CreateOrUpdate.json
 if __name__ == "__main__":
     main()
