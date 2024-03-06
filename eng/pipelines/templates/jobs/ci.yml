@@ -77,11 +77,11 @@ jobs:
         os: linux
 
       steps:
-      - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml@self
+      - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
         parameters:
           BuildTargetingString: ${{ parameters.BuildTargetingString }}
 
-      - template: ../steps/build-package-artifacts.yml@self
+      - template: ../steps/build-package-artifacts.yml
         parameters:
           ServiceDirectory: ${{ parameters.ServiceDirectory }}
           BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
@@ -98,11 +98,11 @@ jobs:
         os: linux
 
       steps:
-      - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml@self
+      - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
         parameters:
           BuildTargetingString: ${{ parameters.BuildTargetingString }}
 
-      - template: ../steps/build-package-artifacts.yml@self
+      - template: ../steps/build-package-artifacts.yml
         parameters:
           ServiceDirectory: ${{ parameters.ServiceDirectory }}
           BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
@@ -119,11 +119,11 @@ jobs:
         os: windows
 
       steps:
-      - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml@self
+      - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
         parameters:
           BuildTargetingString: ${{ parameters.BuildTargetingString }}
 
-      - template: ../steps/build-package-artifacts.yml@self
+      - template: ../steps/build-package-artifacts.yml
         parameters:
           ServiceDirectory: ${{ parameters.ServiceDirectory }}
           BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
@@ -140,11 +140,11 @@ jobs:
         os: macOS
 
       steps:
-      - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml@self
+      - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
         parameters:
           BuildTargetingString: ${{ parameters.BuildTargetingString }}
 
-      - template: ../steps/build-package-artifacts.yml@self
+      - template: ../steps/build-package-artifacts.yml
         parameters:
           ServiceDirectory: ${{ parameters.ServiceDirectory }}
           BeforePublishSteps: ${{ parameters.BeforePublishSteps }}

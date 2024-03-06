@@ -99,6 +99,9 @@ parameters:
   - name: TestProxy
     type: boolean
     default: false
+  - name: ToxTestEnv
+    type: string
+    default: 'whl'
 
 extends:
   ${{ if eq(variables['System.TeamProject'], 'internal') }}:
@@ -163,6 +166,7 @@ extends:
                             BuildDocs: ${{ parameters.BuildDocs }}
                             TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
                             TestProxy: ${{ parameters.TestProxy }}
+                            ToxTestEnv: ${{ parameters.ToxTestEnv }}
                           MatrixConfigs:
                             # Enumerate platforms and additional platforms based on supported clouds (sparse platform<-->cloud matrix).
                             - ${{ each config in parameters.MatrixConfigs }}:
