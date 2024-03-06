@@ -45,7 +45,8 @@ class AzureFileDatastore(Datastore):
     :param properties: The asset property dictionary.
     :type properties: dict[str, str]
     :param credentials: Credentials to use for Azure ML workspace to connect to the storage.
-    :type credentials: Union[AccountKeySection, SasSection]
+    :type credentials: Union[~azure.ai.ml.entities.AccountKeyConfiguration,
+        ~azure.ai.ml.entities.SasTokenConfiguration]
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
     """
@@ -61,7 +62,7 @@ class AzureFileDatastore(Datastore):
         endpoint: str = _get_storage_endpoint_from_metadata(),
         protocol: str = HTTPS,
         properties: Optional[Dict] = None,
-        credentials: Any,
+        credentials: Union[AccountKeyConfiguration, SasTokenConfiguration],
         **kwargs: Any
     ):
         kwargs[TYPE] = DatastoreType.AZURE_FILE
@@ -97,7 +98,7 @@ class AzureFileDatastore(Datastore):
             name=datastore_resource.name,
             id=datastore_resource.id,
             account_name=properties.account_name,
-            credentials=from_rest_datastore_credentials(properties.credentials),
+            credentials=from_rest_datastore_credentials(properties.credentials),  # type: ignore[arg-type]
             endpoint=properties.endpoint,
             protocol=properties.protocol,
             file_share_name=properties.file_share_name,
@@ -260,7 +261,7 @@ class AzureDataLakeGen2Datastore(Datastore):
         endpoint: str = _get_storage_endpoint_from_metadata(),
         protocol: str = HTTPS,
         properties: Optional[Dict] = None,
-        credentials: Any = None,
+        credentials: Optional[Union[AccountKeyConfiguration, SasTokenConfiguration]] = None,
         **kwargs: Any
     ):
         kwargs[TYPE] = DatastoreType.AZURE_DATA_LAKE_GEN2
@@ -299,7 +300,7 @@ class AzureDataLakeGen2Datastore(Datastore):
             name=datastore_resource.name,
             id=datastore_resource.id,
             account_name=properties.account_name,
-            credentials=from_rest_datastore_credentials(properties.credentials),
+            credentials=from_rest_datastore_credentials(properties.credentials),  # type: ignore[arg-type]
             endpoint=properties.endpoint,
             protocol=properties.protocol,
             filesystem=properties.filesystem,
