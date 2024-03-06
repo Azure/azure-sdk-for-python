@@ -26,6 +26,9 @@
     "resource_group_name": {
         "value": ""
     },
+    "location": {
+        "value": ""
+    },
     "update_offline_store_role_assignment": {
         "value": "false"
     },
