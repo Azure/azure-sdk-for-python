@@ -11,7 +11,7 @@ steps:
         arguments: >
           -ArtifactList ('${{ convertToJson(parameters.Artifacts) }}' | ConvertFrom-Json | Select-Object Name)
           -ArtifactPath ${{ parameters.ArtifactPath }}
-          -APIViewUri ${{ parameters.APIViewUri }}
+          -APIViewUri $(azuresdk-apiview-uri)
           -APIKey $(azuresdk-apiview-apikey)
           -ConfigFileDir '${{ parameters.ConfigFileDir }}'
           -BuildId $(Build.BuildId)
