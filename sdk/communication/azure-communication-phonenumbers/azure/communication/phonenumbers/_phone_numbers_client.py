@@ -106,6 +106,7 @@ class PhoneNumbersClient(object):
     def begin_purchase_phone_numbers(
             self,
             search_id,  # type: str
+            *,
             consent_dnr=False, # type: bool
             **kwargs  # type: Any
     ):

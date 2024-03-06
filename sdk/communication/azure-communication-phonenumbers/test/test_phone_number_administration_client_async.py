@@ -221,7 +221,7 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
             )
             phone_number_to_buy = await search_poller.result()
             purchase_poller = await phone_number_client.begin_purchase_phone_numbers(
-                phone_number_to_buy.search_id, consent_dnr=True, polling=True)
+            phone_number_to_buy.search_id, no_resale_concent=True, polling=True)
 
             await purchase_poller.result()
             assert purchase_poller.status() == PhoneNumberOperationStatus.SUCCEEDED.value
@@ -275,7 +275,7 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
             )
             phone_number_to_buy = await search_poller.result()
             purchase_poller = await self.phone_number_client.begin_purchase_phone_numbers(
-                phone_number_to_buy.search_id, consent_dnr=True, polling=True)
+                phone_number_to_buy.search_id, no_resale_concent=True, polling=True)
 
             await purchase_poller.result()
             assert purchase_poller.status() == PhoneNumberOperationStatus.SUCCEEDED.value
