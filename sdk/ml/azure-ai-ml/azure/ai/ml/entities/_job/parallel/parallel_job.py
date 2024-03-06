@@ -92,8 +92,8 @@ class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
 
         super().__init__(**kwargs)
 
-        self.inputs = inputs
-        self.outputs = outputs
+        self.inputs = inputs  # type: ignore[assignment]
+        self.outputs = outputs  # type: ignore[assignment]
         self.identity = identity
 
     def _to_dict(self) -> Dict:
@@ -200,8 +200,8 @@ class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
             component=component,
             compute=self.compute,
             # Need to supply the inputs with double curly.
-            inputs=self.inputs,
-            outputs=self.outputs,
+            inputs=self.inputs,  # type: ignore[arg-type]
+            outputs=self.outputs,  # type: ignore[arg-type]
             mini_batch_size=self.mini_batch_size,
             partition_keys=self.partition_keys,
             input_data=self.input_data,

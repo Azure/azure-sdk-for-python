@@ -5,11 +5,17 @@
 # needed for 'list' type annotations on 3.8
 from __future__ import annotations
 
-from typing import Callable, Dict, List, Union, Optional, Sequence, Any
+from typing import Callable, Dict, List, Union, Optional, Any
+import logging
+import os
+import asyncio
+import threading
+import json
+import random
+
 from azure.ai.generative.synthetic.simulator._conversation import (
     ConversationBot,
     ConversationRole,
-    ConversationTurn,
     simulate_conversation,
 )
 from azure.ai.generative.synthetic.simulator._model_tools.models import (
@@ -18,16 +24,12 @@ from azure.ai.generative.synthetic.simulator._model_tools.models import (
 )
 from azure.ai.generative.synthetic.simulator import _template_dir as template_dir
 from azure.ai.generative.synthetic.simulator._model_tools import (
-    OpenAIChatCompletionsModel,
     LLMBase,
     ManagedIdentityAPITokenManager,
 )
 from azure.ai.generative.synthetic.simulator.templates.simulator_templates import (
     SimulatorTemplates,
     Template,
-)
-from azure.ai.generative.synthetic.simulator.simulator._simulation_request_dto import (
-    SimulationRequestDTO,
 )
 from azure.ai.generative.synthetic.simulator.simulator._token_manager import (
     PlainTokenManager,
@@ -47,13 +49,6 @@ from azure.ai.generative.synthetic.simulator._rai_rest_client.rai_client import 
 )
 
 from azure.ai.generative.synthetic.simulator.simulator._utils import JsonLineList
-
-import logging
-import os
-import asyncio
-import threading
-import json
-import random
 
 BASIC_MD = os.path.join(template_dir, "basic.md")  # type: ignore[has-type]
 USER_MD = os.path.join(template_dir, "user.md")  # type: ignore[has-type]
@@ -83,9 +78,7 @@ class Simulator:
         if (ai_client is None and simulator_connection is None) or (
             ai_client is not None and simulator_connection is not None
         ):
-            raise ValueError(
-                "One and only one of the parameters [ai_client, simulator_connection] has to be set."
-            )
+            raise ValueError("One and only one of the parameters [ai_client, simulator_connection] has to be set.")
 
         if simulate_callback is None:
             raise ValueError("Callback cannot be None.")
@@ -94,9 +87,7 @@ class Simulator:
             raise ValueError("Callback has to be an async function.")
 
         self.ai_client = ai_client
-        self.simulator_connection = self._to_openai_chat_completion_model(
-            simulator_connection
-        )
+        self.simulator_connection = self._to_openai_chat_completion_model(simulator_connection)
         self.adversarial = False
         self.rai_client = None
         if ai_client:
@@ -122,10 +113,7 @@ class Simulator:
             temperature=0.0,
         )
 
-    def _to_openai_chat_completion_model(
-        self, 
-        config: "AzureOpenAIModelConfiguration" # type: ignore[name-defined]
-    ):
+    def _to_openai_chat_completion_model(self, config: "AzureOpenAIModelConfiguration"):  # type: ignore[name-defined]
         if config is None:
             return None
         token_manager = PlainTokenManager(
@@ -161,8 +149,8 @@ class Simulator:
                 instantiation_parameters=instantiation_parameters,
             )
         if role == ConversationRole.ASSISTANT:
-            dummy_model = lambda: None
-            dummy_model.name = "dummy_model" # type: ignore[attr-defined]
+            dummy_model = lambda: None  # pylint: disable=unnecessary-lambda-assignment
+            dummy_model.name = "dummy_model"  # type: ignore[attr-defined]
             return CallbackConversationBot(
                 callback=self.simulate_callback,
                 role=role,
@@ -180,26 +168,19 @@ class Simulator:
             instantiation_parameters=instantiation_parameters,
         )
 
-    def _setup_bot(
-        self, role: Union[str, ConversationRole], template: "Template", parameters: dict
-    ):
+    def _setup_bot(self, role: Union[str, ConversationRole], template: "Template", parameters: dict):
         if role == ConversationRole.ASSISTANT:
             return self._create_bot(role, str(template), parameters)
-        elif role == ConversationRole.USER:
+        if role == ConversationRole.USER:
             if template.content_harm:
-                return self._create_bot(
-                    role, str(template), parameters, template.template_name
-                )
+                return self._create_bot(role, str(template), parameters, template.template_name)
 
-            return self._create_bot(
-                role, str(template), parameters, model=self.simulator_connection
-            )
+            return self._create_bot(role, str(template), parameters, model=self.simulator_connection)
+        return None
 
     def _ensure_service_dependencies(self):
         if self.rai_client is None:
-            raise ValueError(
-                "Simulation options require rai services but ai client is not provided."
-            )
+            raise ValueError("Simulation options require rai services but ai client is not provided.")
 
     def _join_conversation_starter(self, parameters, to_join):
         key = "conversation_starter"
@@ -214,12 +195,13 @@ class Simulator:
         self,
         template: "Template",
         max_conversation_turns: int,
-        parameters: List[dict] = [],
+        parameters: Optional[List[dict]] = None,
         jailbreak: bool = False,
         api_call_retry_limit: int = 3,
-        api_call_retry_sleep_sec: int = 1,
+        api_call_retry_sleep_sec: int = 1,  # pylint: disable=unused-argument
         api_call_delay_sec: float = 0,
-        concurrent_async_task: int = 3
+        concurrent_async_task: int = 3,
+        simulation_result_limit: int = 3,
     ):
         """Asynchronously simulate conversations using the provided template and parameters
 
@@ -229,7 +211,7 @@ class Simulator:
         :paramtype max_conversation_turns: int
         :keyword parameters: A list of dictionaries containing the parameter values to be used in the simulations.
             Defaults to an empty list.
-        :paramtype parameters: list[dict], optional
+        :paramtype parameters: Optional[List[dict]]
         :keyword jailbreak: If set to True, allows breaking out of the conversation flow defined by the template.
             Defaults to False.
         :paramtype jailbreak: bool, optional
@@ -241,6 +223,8 @@ class Simulator:
         :paramtype api_call_delay_sec: float, optional
         :keyword concurrent_async_task: The maximum number of asynchronous tasks to run concurrently. Defaults to 3.
         :paramtype concurrent_async_task: int, optional
+        :keyword simulation_result_limit: The maximum number of simulation results to return. Defaults to 3.
+        :paramtype simulation_result_limit: int, optional
 
         :return: A list of dictionaries containing the simulation results.
         :rtype: List[Dict]
@@ -248,22 +232,19 @@ class Simulator:
         Note: api_call_* parameters are only valid for simulation_connection defined.
         The parameters cannot be used to configure behavior for calling user provided callback.
         """
+        if parameters is None:
+            parameters = []
         if not isinstance(template, Template):
-            raise ValueError(
-                f"Please use simulator to construct template. Found {type(template)}"
-            )
+            raise ValueError(f"Please use simulator to construct template. Found {type(template)}")
 
         if not isinstance(parameters, list):
-            raise ValueError(
-                f"Expect parameters to be a list of dictionary, but found {type(parameters)}"
-            )
+            raise ValueError(f"Expect parameters to be a list of dictionary, but found {type(parameters)}")
 
         if template.content_harm:
             self._ensure_service_dependencies()
             self.adversarial = True
-            templates = await self.template_handler._get_ch_template_collections(
-                template.template_name
-            )
+            # pylint: disable=protected-access
+            templates = await self.template_handler._get_ch_template_collections(template.template_name)
         else:
             template.template_parameters = parameters
             templates = [template]
@@ -271,15 +252,12 @@ class Simulator:
         semaphore = asyncio.Semaphore(concurrent_async_task)
         sim_results = []
         tasks = []
-
         for t in templates:
             for p in t.template_parameters:
                 if jailbreak:
                     self._ensure_service_dependencies()
-                    jailbreak_dataset = await self.rai_client.get_jailbreaks_dataset() # type: ignore[union-attr]
-                    p = self._join_conversation_starter(
-                        p, random.choice(jailbreak_dataset)
-                    )
+                    jailbreak_dataset = await self.rai_client.get_jailbreaks_dataset()  # type: ignore[union-attr]
+                    p = self._join_conversation_starter(p, random.choice(jailbreak_dataset))
 
                 tasks.append(
                     asyncio.create_task(
@@ -294,6 +272,12 @@ class Simulator:
                     )
                 )
 
+                if len(tasks) >= simulation_result_limit:
+                    break
+
+            if len(tasks) >= simulation_result_limit:
+                break
+
         sim_results = await asyncio.gather(*tasks)
 
         return JsonLineList(sim_results)
@@ -302,34 +286,35 @@ class Simulator:
         self,
         template: "Template",
         max_conversation_turns: int,
-        parameters: dict = {},
+        parameters: Optional[dict] = None,
         api_call_retry_limit: int = 3,
         api_call_retry_sleep_sec: int = 1,
         api_call_delay_sec: float = 0,
         sem: "asyncio.Semaphore" = asyncio.Semaphore(3),
-    ):
+    ) -> List[Dict]:
         """
         Asynchronously simulate conversations using the provided template and parameters.
 
-        Args:
-            template (Template): An instance of the Template class defining the conversation structure.
-            max_conversation_turns (int): The maximum number of conversation turns to simulate.
-            parameters (list[dict], optional): A list of dictionaries containing the parameter values to be used in
-                the simulations. Defaults to an empty list.
-            jailbreak (bool, optional): If set to True, allows breaking out of the conversation flow defined by the
-                template. Defaults to False.
-            api_call_retry_limit (int, optional): The maximum number of API call retries in case of errors.
-                Defaults to 3.
-            api_call_retry_sleep_sec (int, optional): The time in seconds to wait between API call retries. Defaults to 1.
-            api_call_delay_sec (float, optional): The time in seconds to wait between API calls. Defaults to 0.
-            concurrent_async_task (int, optional): The maximum number of asynchronous tasks to run concurrently.
-                Defaults to 3.
-        Returns:
-            List[Dict]: A list of dictionaries containing the simulation results.
-
-        Raises:
-            Exception: If an error occurs during the simulation process.
+        :param template: An instance of the Template class defining the conversation structure.
+        :type template: Template
+        :param max_conversation_turns: The maximum number of conversation turns to simulate.
+        :type max_conversation_turns: int
+        :param parameters: A list of dictionaries containing the parameter values to be used in the simulations.
+        :type parameters: Optional[dict]
+        :param api_call_retry_limit: The maximum number of API call retries in case of errors.
+        :type api_call_retry_limit: int, optional
+        :param api_call_retry_sleep_sec: The time in seconds to wait between API call retries.
+        :type api_call_retry_sleep_sec: int, optional
+        :param api_call_delay_sec: The time in seconds to wait between API calls.
+        :type api_call_delay_sec: float, optional
+        :param sem: The maximum number of asynchronous tasks to run concurrently.
+        :type sem: asyncio.Semaphore, optional
+        :return: A list of dictionaries containing the simulation results.
+        :rtype: List[Dict]
+        :raises Exception: If an error occurs during the simulation process.
         """
+        if parameters is None:
+            parameters = {}
         # create user bot
         user_bot = self._setup_bot(ConversationRole.USER, template, parameters)
         system_bot = self._setup_bot(ConversationRole.ASSISTANT, template, parameters)
@@ -345,7 +330,7 @@ class Simulator:
         )
         async with sem:
             async with asyncHttpClient.client as session:
-                conversation_id, conversation_history = await simulate_conversation(
+                _, conversation_history = await simulate_conversation(
                     bots=bots,
                     session=session,
                     turn_limit=max_conversation_turns,
@@ -370,9 +355,7 @@ class Simulator:
                 else:
                     for k, v in parameters[c_key].items():
                         if k not in ["callback_citations", "callback_citation_key"]:
-                            citations.append(
-                                {"id": k, "content": self._to_citation_content(v)}
-                            )
+                            citations.append({"id": k, "content": self._to_citation_content(v)})
             else:
                 citations.append(
                     {
@@ -386,13 +369,10 @@ class Simulator:
     def _to_citation_content(self, obj):
         if isinstance(obj, str):
             return obj
-        else:
-            return json.dumps(obj)
+        return json.dumps(obj)
 
-    def _get_callback_citations(
-        self, callback_citations: dict, turn_num: Optional[int] = None
-    ):
-        if turn_num == None:
+    def _get_callback_citations(self, callback_citations: dict, turn_num: Optional[int] = None):
+        if turn_num is None:
             return []
         current_turn_citations = []
         current_turn_str = "turn_" + str(turn_num)
@@ -400,9 +380,7 @@ class Simulator:
             citations = callback_citations[current_turn_str]
             if isinstance(citations, dict):
                 for k, v in citations.items():
-                    current_turn_citations.append(
-                        {"id": k, "content": self._to_citation_content(v)}
-                    )
+                    current_turn_citations.append({"id": k, "content": self._to_citation_content(v)})
             else:
                 current_turn_citations.append(
                     {
@@ -418,9 +396,7 @@ class Simulator:
         for i, m in enumerate(conversation_history):
             message = {"content": m.message, "role": m.role.value}
             if len(template.context_key) > 0:
-                citations = self._get_citations(
-                    template_parameters, template.context_key, i
-                )
+                citations = self._get_citations(template_parameters, template.context_key, i)
                 message["context"] = citations
             messages.append(message)
 
@@ -435,13 +411,15 @@ class Simulator:
         results,
         template: "Template",
         max_conversation_turns: int,
-        parameters: List[dict] = [],
+        parameters: Optional[List[dict]] = None,
         jailbreak: bool = False,
         api_call_retry_limit: int = 3,
         api_call_retry_sleep_sec: int = 1,
         api_call_delay_sec: float = 0,
         concurrent_async_task: int = 1,
     ):
+        if parameters is None:
+            parameters = []
         result = asyncio.run(
             self.simulate_async(
                 template=template,
@@ -460,7 +438,7 @@ class Simulator:
         self,
         template: "Template",
         max_conversation_turns: int,
-        parameters: List[dict] = [],
+        parameters: Optional[List[dict]] = None,
         jailbreak: bool = False,
         api_call_retry_limit: int = 3,
         api_call_retry_sleep_sec: int = 1,
@@ -474,18 +452,21 @@ class Simulator:
         :param max_conversation_turns: The maximum number of conversation turns to simulate.
         :type max_conversation_turns: int
         :param parameters: A list of dictionaries where each dictionary contains parameters specific to a single turn.
-        :type parameters: List[dict], optional
+        :type parameters: Optional[List[dict]]
         :param jailbreak: A flag to determine if the simulation should continue when encountering API errors.
         :type jailbreak: bool, optional
         :param api_call_retry_limit: The maximum number of retries for API calls upon encountering an error.
         :type api_call_retry_limit: int, optional
         :param api_call_retry_sleep_sec: The number of seconds to wait between retry attempts of an API call.
         :type api_call_retry_sleep_sec: int, optional
-        :param api_call_delay_sec: The number of seconds to wait before making a new API call to simulate conversation delay.
+        :param api_call_delay_sec: The number of seconds to wait
+               before making a new API call to simulate conversation delay.
         :type api_call_delay_sec: float, optional
         :return: The outcome of the simulated conversations as a list.
         :rtype: List[Dict]
         """
+        if parameters is None:
+            parameters = []
         results = [None]
         concurrent_async_task = 1
 
@@ -517,9 +498,11 @@ class Simulator:
         **kwargs,
     ):
         """
-        Creates an instance from a function that defines certain behaviors or configurations, along with connections to simulation and AI services.
+        Creates an instance from a function that defines certain behaviors or configurations,
+        along with connections to simulation and AI services.
 
-        :param fn: The function to be used for configuring or defining behavior. This function should accept a single argument and return a dictionary of configurations.
+        :param fn: The function to be used for configuring or defining behavior.
+                   This function should accept a single argument and return a dictionary of configurations.
         :type fn: Callable[[Any], dict]
         :param simulator_connection: Configuration for the connection to the simulation service, if any.
         :type simulator_connection: AzureOpenAIModelConfiguration, optional
@@ -534,13 +517,8 @@ class Simulator:
         if hasattr(fn, "__wrapped__"):
             func_module = fn.__wrapped__.__module__
             func_name = fn.__wrapped__.__name__
-            if (
-                func_module == "openai.resources.chat.completions"
-                and func_name == "create"
-            ):
-                return Simulator._from_openai_chat_completions(
-                    fn, simulator_connection, ai_client, **kwargs
-                )
+            if func_module == "openai.resources.chat.completions" and func_name == "create":
+                return Simulator._from_openai_chat_completions(fn, simulator_connection, ai_client, **kwargs)
 
         return Simulator(
             simulator_connection=simulator_connection,
@@ -549,9 +527,7 @@ class Simulator:
         )
 
     @staticmethod
-    def _from_openai_chat_completions(
-        fn: Callable[[Any], dict], simulator_connection=None, ai_client=None, **kwargs
-    ):
+    def _from_openai_chat_completions(fn: Callable[[Any], dict], simulator_connection=None, ai_client=None, **kwargs):
         return Simulator(
             simulator_connection=simulator_connection,
             ai_client=ai_client,
@@ -574,7 +550,7 @@ class Simulator:
         return callback
 
     @staticmethod
-    def from_pf_path(
+    def from_pf_path(  # pylint: disable=unused-argument
         pf_path: str,
         simulator_connection: "AzureOpenAIModelConfiguration" = None,  # type: ignore[name-defined]
         ai_client: "AIClient" = None,  # type: ignore[name-defined]
@@ -589,20 +565,22 @@ class Simulator:
         :type simulator_connection: AzureOpenAIModelConfiguration, optional
         :param ai_client: The AI client to be used for interacting with AI services.
         :type ai_client: AIClient, optional
-        :return: An instance of the class configured with the specified policy file, simulation connection, and AI client.
+        :return: An instance of the class configured with the specified policy file,
+                 simulation connection, and AI client.
         :rtype: The class which this static method is part of.
         :return: An instance of simulator configured with the specified function, simulation connection, and AI client.
         :rtype: Simulator
         :raises ValueError: If both `simulator_connection` and `ai_client` are not provided (i.e., both are None).
 
-        Any additional keyword arguments (`**kwargs`) will be passed to the underlying configuration or initialization methods.
+        Any additional keyword arguments (`**kwargs`) will be passed to the underlying configuration
+        or initialization methods.
         """
         try:
             from promptflow import load_flow
-        except:
+        except EnvironmentError as env_err:
             raise EnvironmentError(
                 "Unable to import from promptflow. Have you installed promptflow in the python environment?"
-            )
+            ) from env_err
         flow = load_flow(pf_path)
         return Simulator(
             simulator_connection=simulator_connection,
@@ -612,7 +590,7 @@ class Simulator:
 
     @staticmethod
     def _wrap_pf(flow):
-        flow_ex = flow._init_executable()
+        flow_ex = flow._init_executable()  # pylint: disable=protected-access
         for k, v in flow_ex.inputs.items():
             if v.is_chat_history:
                 chat_history_key = k
@@ -640,9 +618,7 @@ class Simulator:
                 input_data[chat_history_key] = all_messages
 
             response = flow.invoke(input_data).output
-            chat_protocol_message["messages"].append(
-                {"role": "assistant", "content": response[chat_output_key]}
-            )
+            chat_protocol_message["messages"].append({"role": "assistant", "content": response[chat_output_key]})
 
             return chat_protocol_message
 
@@ -671,27 +647,22 @@ class Simulator:
 
         :raises ValueError: If both or neither of the parameters 'template' and 'template_path' are set.
 
-        One of 'template' or 'template_path' must be provided to create a template. If 'template' is provided, it is used directly; if 'template_path' is provided, the content is read from the file at that path.
+        One of 'template' or 'template_path' must be provided to create a template. If 'template' is provided,
+        it is used directly; if 'template_path' is provided, the content is read from the file at that path.
         """
-        if (template is None and template_path is None) or (
-            template is not None and template_path is not None
-        ):
-            raise ValueError(
-                "One and only one of the parameters [template, template_path] has to be set."
-            )
+        if (template is None and template_path is None) or (template is not None and template_path is not None):
+            raise ValueError("One and only one of the parameters [template, template_path] has to be set.")
 
         if template is not None:
             return Template(template_name=name, text=template, context_key=context_key)
 
         if template_path is not None:
-            with open(template_path, "r") as f:
+            with open(template_path, "r", encoding="utf-8") as f:
                 tc = f.read()
 
             return Template(template_name=name, text=tc, context_key=context_key)
 
-        raise ValueError(
-            "Condition not met for creating template, please check examples and parameter list."
-        )
+        raise ValueError("Condition not met for creating template, please check examples and parameter list.")
 
     @staticmethod
     def get_template(template_name: str):

@@ -326,22 +326,6 @@ def prep_directory(path: str) -> str:
     return path
 
 
-def get_output(command: str, working_directory: str) -> None:
-    try:
-        command = shlex.split(command)
-        wd = working_directory.replace("\\", "/")
-
-        p = subprocess.Popen(command, cwd=wd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        output, err = p.communicate()
-        print(str(output.decode()))
-        print(str(err.decode()))
-        if p.returncode > 0:
-            raise CalledProcessError(p.returncode, output=str(output) + str(err))
-    except CalledProcessError as e:
-        print(str(e))
-        raise
-
-
 def invoke_command(command: str, working_directory: str) -> None:
     try:
         command = shlex.split(command)
@@ -533,15 +517,21 @@ def assemble_source(conda_configurations: List[CondaConfiguration], repo_root: s
 
 
 def prep_and_create_environment(environment_dir: str) -> None:
-    prep_directory(environment_dir)
+    environment_dir = prep_directory(environment_dir)
 
     with open(os.path.join(environment_dir, "environment.yml"), "w", encoding="utf-8") as f:
         f.write(CONDA_ENV_FILE)
 
-    invoke_command(f'conda env create --prefix "{environment_dir}"', environment_dir)
-    invoke_command(
-        f'conda install --yes --quiet --prefix "{environment_dir}" conda-build conda-verify typing-extensions conda-index',
-        environment_dir,
+    subprocess.run(["conda", "env", "create", "--prefix", environment_dir], cwd=environment_dir, check=True)
+    subprocess.run(
+        ["conda", "install", "--yes", "--quiet", "--prefix", environment_dir, "conda-build", "conda-verify", "typing-extensions", "conda-index"],
+        cwd=environment_dir,
+        check=True
+    )
+    subprocess.run(
+        ["conda", "run", "--prefix", environment_dir, "conda", "list"],
+        cwd=environment_dir,
+        check=True
     )
 
 
@@ -581,9 +571,9 @@ def build_conda_packages(
     if additional_channel_folders:
         for channel in additional_channel_folders:
             copy_channel_files(conda_output_dir, channel)
-            invoke_command(f'conda run --prefix "{conda_env_dir}" conda index {conda_output_dir}', repo_root)
+            subprocess.run(["conda", "run", "--prefix", conda_env_dir, "python", "-m", "conda_index", conda_output_dir], cwd=repo_root, check=True)
     else:
-        invoke_command(f'conda run --prefix "{conda_env_dir}" conda index {conda_output_dir}', repo_root)
+        subprocess.run(["conda", "run", "--prefix", conda_env_dir, "python", "-m", "conda_index", conda_output_dir], cwd=repo_root, check=True)
 
     for conda_build in conda_configurations:
         conda_build_folder = os.path.join(conda_sdist_dir, conda_build.name).replace("\\", "/")
@@ -602,14 +592,16 @@ def invoke_conda_build(
     optional_py_version: str = None,
     channels: List[str] = [],
 ) -> None:
-    channel_suffix = " ".join([f'-c "{channel}"' for channel in channels])
-    command = f'conda run --prefix "{conda_env_dir}" conda-build . --output-folder "{conda_output_dir}" -c "{conda_output_dir}" {channel_suffix}'
+
+    command = ["conda", "run", "--prefix", conda_env_dir, "conda-build", ".", "--output-folder", conda_output_dir, "-c", conda_output_dir]
+    for channel in channels:
+        command.extend(["-c", channel])
 
     if optional_py_version:
-        command += f" --py {optional_py_version}"
+        command.extend(["--py", f"{optional_py_version}"])
 
     print(f"Calling '{command}' in folder {conda_build_folder}.")
-    get_output(command, conda_build_folder)
+    subprocess.run(command, cwd=conda_build_folder, check=True)
 
 
 def check_conda_config():
@@ -632,14 +624,30 @@ def entrypoint():
         "--config",
         dest="config",
         help="The json blob describing which conda packages should be assembled.",
-        required=True,
+        required=False,
+    )
+
+    parser.add_argument(
+        "-f",
+        "--file",
+        dest="config_file",
+        help="A file describing where",
+        required=False,
     )
 
     parser.add_argument("--channel", dest="channel", action="extend", nargs="+", type=str)
 
     args = parser.parse_args()
 
-    json_configs = json.loads(args.config)
+    if (not args.config and not args.config_file):
+        raise argparse.ArgumentError("config arg", "One of either -c (--config) or -f (--file) argument must be provided.")
+
+    if args.config_file:
+        with open(args.config_file, "r") as f:
+            content = f.read()
+            json_configs = json.loads(content)
+    else:
+        json_configs = json.loads(args.config)
 
     check_conda_config()
 
