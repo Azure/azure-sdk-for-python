@@ -4,7 +4,7 @@
 
 # pylint: disable=protected-access
 from os import PathLike
-from typing import IO, Any, AnyStr, Callable, Dict, List, Optional, Union, cast
+from typing import IO, Any, AnyStr, Dict, List, Optional, Union, cast
 
 from marshmallow import ValidationError
 
@@ -19,7 +19,7 @@ from ._validation import PathAwareSchemaValidatableMixin, ValidationResult, Vali
 def validate_common(
     cls: Any,
     path: Union[str, PathLike, IO[AnyStr]],
-    validate_func: Callable,
+    validate_func: Any,
     params_override: Optional[List[Dict]] = None,
 ) -> ValidationResult:
     params_override = params_override or []
