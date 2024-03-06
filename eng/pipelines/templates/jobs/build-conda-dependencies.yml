@@ -9,7 +9,8 @@ jobs:
   timeoutInMinutes: 90
   pool:
     name: azsdk-pool-mms-win-2022-general
-    vmImage: MMS2022
+    vmImage: azsdk-pool-mms-win-2022-1espt
+    os: windows
   variables:
     VS_INSTALLER_URL: "https://aka.ms/vs/17/release/vs_enterprise.exe"
     VS_INSTALLER_PATH: "$(Build.BinariesDirectory)/vs_enterprise.exe"
@@ -84,7 +85,9 @@ jobs:
   timeoutInMinutes: 90
   pool:
     name: azsdk-pool-mms-ubuntu-2004-general
-    vmImage: MMSUbuntu20.04
+    image: azsdk-pool-mms-ubuntu-2004-1espt
+    os: linux
+
   steps:
     - bash: |
         sudo apt-get install -y build-essential
@@ -101,6 +104,7 @@ jobs:
   pool:
     name: Azure Pipelines
     vmImage: macos-11
+    os: macOS
   variables:
     MacOSXDeploymentTarget: '10.9'
     OpenSSLDir: $(Agent.BuildDirectory)/openssl-macosx$(MacOSXDeploymentTarget)
