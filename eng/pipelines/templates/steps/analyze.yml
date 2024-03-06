@@ -146,6 +146,11 @@ steps:
       GenerateApiReviewForManualOnly: ${{ parameters.GenerateApiReviewForManualOnly }}
       ArtifactName: "packages_extended"
 
+  - template: /eng/common/pipelines/templates/steps/validate-all-packages.yml
+    parameters:
+      Artifacts: ${{ parameters.Artifacts }}
+      ArtifactName: "packages_extended"
+
   - template: /eng/common/pipelines/templates/steps/detect-api-changes.yml
     parameters:
       Artifacts: ${{ parameters.Artifacts }}

@@ -4,11 +4,15 @@
 param (
   [Parameter(Mandatory = $true)]  
   [string]$PackageName,
-  [string]$ArtifactPath,
-  [string]$SettingsPath,
+  [Parameter(Mandatory = $true)] 
+  [string]$ArtifactPath,  
+  [Parameter(Mandatory=$True)]
+  [string] $APIViewUri,
+  [Parameter(Mandatory=$True)]
+  [string] $APIKey,
   [string]$BuildId,
   [string]$PipelineUrl,
-  [string]$IgnoreFailures = $false
+  [bool]$IgnoreFailures = $false
 )
 Set-StrictMode -Version 3
 
@@ -82,26 +86,6 @@ function ValidateChangeLog($changeLogPath, $versionString)
     return $validationStatus
 }
 
-function ValidateReadme($repoRoot, $scanPaths, $settingsPath)
-{
-    $validationStatus = [ValidationStatus]::new("Readme Validation", "Success")
-    try
-    {
-        $readmeOutPut = $( $readmeValidationStatus = & Verify-Readme.ps1 -RepoRoot $repoRoot -ScanPaths $scanPaths -SettingsPath $settingsPath 2>&1 )
-        if ($readmeValidationStatus -ne '0')
-        {
-            $validationStatus.Status = "Failed"
-            $validationStatus.Message = $readmeOutPut
-        }
-    }
-    catch
-    {
-        $validationStatus.Status = "Failed"
-        $validationStatus.Message = $_.Exception.Message
-    }    
-    return $validationStatus
-}
-
 function VerifyAPIReview($packageDetails, $packageName, $packageVersion, $language)
 {
     $packageDetails.APIReviewValidation = [ValidationStatus]::new("API Review Approval", "Pending")
@@ -109,17 +93,7 @@ function VerifyAPIReview($packageDetails, $packageName, $packageVersion, $langua
 
     try
     {
-        az account show *> $null
-        if (!$?) {
-            Write-Host 'Running az login...'
-            az login *> $null
-        }
-        $apiviewUrl = az keyvault secret show --name "APIURL" --vault-name "AzureSDKPrepRelease-KV" --query "value" --output "tsv"
-        $apiviewKey = az keyvault secret show --name "APIKEY" --vault-name "AzureSDKPrepRelease-KV" --query "value" --output "tsv"
-
-        # API review and package name approval validation status
-        Write-Host $apiviewUrl
-        $errOutput = $( $apireviewStatus = & Check-ApiReviewStatus -PackageName $packageName -packageVersion $packageVersion -Language $language -url $apiviewUrl -apiKey $apiviewKey) 2>&1
+        $errOutput = $( $apireviewStatus = & Check-ApiReviewStatus -PackageName $packageName -packageVersion $packageVersion -Language $language -url $APIViewUri -apiKey $APIKey) 2>&1
         Write-Host "API Review status: $apireviewStatus"
         Write-Host "APi review status check output(if any): $($errOutput)"
         $packageDetails.APIReviewValidation.Message = $errOutput
@@ -200,8 +174,8 @@ function CreateUpdatePackageWorkItem($pkgInfo)
     
     if ($LASTEXITCODE -ne 0)
     {
-        Write-Error "Updating of the Devops Release WorkItem failed."
-        exit 1
+        Write-Host "Update of the Devops Release WorkItem failed."
+        return $false
     }
 }
 
@@ -216,8 +190,8 @@ function UpdateValidationStatus($pkgvalidationDetails)
 
     if (!$workItem)
     {
-        Write-Error "No work item found for package [$pkgName]."
-        return
+        Write-Host"No work item found for package [$pkgName]."
+        return $false
     }
 
     $changeLogStatus = $pkgValidationDetails.ChangeLogValidation.Status
@@ -248,6 +222,7 @@ function UpdateValidationStatus($pkgvalidationDetails)
     #todo include pipeline details
     $workItem = UpdateWorkItem -id $workItem.id -fields $fields
     Write-Host "[$($workItem.id)]$LanguageDisplayName - $pkgName($versionMajorMinor) - Updated"
+    return $true
 }
 
 # Read package property file and identify all packages to process
@@ -264,7 +239,7 @@ Write-Host "Checking if we need to create or update work item for package $packa
 $isShipped = IsVersionShipped $packageName $versionString
 if ($isShipped) {
     Write-Host "Package work item already exists for version [$versionString] that is marked as shipped. Skipping the update of package work item."
-    exit 0
+    exit 1
 }
 
 Write-Host "Validating package $packageName with version $versionString."
@@ -286,10 +261,13 @@ $tokenFile = Join-Path $ArtifactPath "$PackageName-Validation.json"
 $output | Out-File -FilePath $tokenFile -Encoding utf8
 
 # Create DevOps work item
-CreateUpdatePackageWorkItem $pkgInfo
+$updatedWi = CreateUpdatePackageWorkItem $pkgInfo
 
 # Update validation status in package work item
-UpdateValidationStatus $pkgValidationDetails
+if ($updatedWi) {
+    Write-Host "Updating validation status in package work item."
+    $updatedWi = UpdateValidationStatus $pkgValidationDetails        
+}
 
 # Fail the build if any of the validation fails
 if (!$IgnoreFailures)
@@ -298,9 +276,10 @@ if (!$IgnoreFailures)
         $pkgValidationDetails.ChangeLogValidation.Status -eq "Failed" -or
         $pkgValidationDetails.ReadmeValidation.Status -eq "Failed" -or
         $pkgValidationDetails.APIReviewValidation.Status -eq "Pending" -or
-        $pkgValidationDetails.PackageNameValidation.Status -eq "Pending")
+        $pkgValidationDetails.PackageNameValidation.Status -eq "Pending" -or
+        !$updatedWi)
     {
-        Write-Host "Validation failed for package $PackageName"
+        Write-Error "Validation failed for package $PackageName"
         exit 1
     }
 }
