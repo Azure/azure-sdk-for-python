@@ -10,7 +10,7 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class DevBoxActionDelayResultStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class DevBoxActionDelayStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The result of the delay operation on this action."""
 
     SUCCEEDED = "Succeeded"
@@ -121,9 +121,13 @@ class OperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates whether operation status is running, completed, canceled or failed."""
 
     RUNNING = "Running"
+    """Operation is in progress"""
     COMPLETED = "Completed"
+    """Operation is completed with success"""
     CANCELED = "Canceled"
+    """Operation was canceled"""
     FAILED = "Failed"
+    """Operation failed"""
 
 
 class OSType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
