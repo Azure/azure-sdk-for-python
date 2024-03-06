@@ -60,6 +60,9 @@ parameters:
     default: false
   - name: OSName
     type: string
+  - name: ToxTestEnv
+    type: string
+    default: 'whl'
 
 jobs:
   - job:
@@ -139,7 +142,7 @@ jobs:
           PostSteps: ${{ parameters.PostSteps }}
           PythonVersion: $(PythonVersion)
           OSVmImage: $(OSVmImage)
-          ToxTestEnv: "whl"
+          ToxTestEnv: ${{ parameters.ToxTestEnv }}
           AdditionalTestArgs: ${{ parameters.AdditionalTestArgs }}
           TestMarkArgument: ${{ parameters.TestMarkArgument }}
           InjectedPackages: ${{ parameters.InjectedPackages }}
