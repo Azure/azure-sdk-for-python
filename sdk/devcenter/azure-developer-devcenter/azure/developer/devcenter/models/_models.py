@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Any, List, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Dict, List, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .. import _model_base
 from .._model_base import rest_field
@@ -21,32 +21,16 @@ if TYPE_CHECKING:
 class Catalog(_model_base.Model):
     """A catalog.
 
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
     All required parameters must be populated in order to send to server.
 
     :ivar name: Name of the catalog. Required.
     :vartype name: str
     """
 
-    name: str = rest_field()
+    name: str = rest_field(visibility=["read"])
     """Name of the catalog. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: str,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
 
 
 class DevBox(_model_base.Model):  # pylint: disable=too-many-instance-attributes
@@ -72,8 +56,8 @@ class DevBox(_model_base.Model):  # pylint: disable=too-many-instance-attributes
     :ivar action_state: The current action state of the Dev Box. This is state is based on previous
      action performed by user.
     :vartype action_state: str
-    :ivar power_state: The current power state of the Dev Box. Required. Known values are:
-     "Unknown", "Running", "Deallocated", "PoweredOff", and "Hibernated".
+    :ivar power_state: The current power state of the Dev Box. Known values are: "Unknown",
+     "Running", "Deallocated", "PoweredOff", and "Hibernated".
     :vartype power_state: str or ~azure.developer.devcenter.models.PowerState
     :ivar unique_id: A unique identifier for the Dev Box. This is a GUID-formatted string (e.g.
      00000000-0000-0000-0000-000000000000).
@@ -120,8 +104,8 @@ class DevBox(_model_base.Model):  # pylint: disable=too-many-instance-attributes
     action_state: Optional[str] = rest_field(name="actionState", visibility=["read"])
     """The current action state of the Dev Box. This is state is based on previous
      action performed by user."""
-    power_state: Union[str, "_models.PowerState"] = rest_field(name="powerState", visibility=["read"])
-    """The current power state of the Dev Box. Required. Known values are: \"Unknown\", \"Running\",
+    power_state: Optional[Union[str, "_models.PowerState"]] = rest_field(name="powerState", visibility=["read"])
+    """The current power state of the Dev Box. Known values are: \"Unknown\", \"Running\",
      \"Deallocated\", \"PoweredOff\", and \"Hibernated\"."""
     unique_id: Optional[str] = rest_field(name="uniqueId", visibility=["read"])
     """A unique identifier for the Dev Box. This is a GUID-formatted string (e.g.
@@ -144,7 +128,7 @@ class DevBox(_model_base.Model):  # pylint: disable=too-many-instance-attributes
     created_time: Optional[datetime.datetime] = rest_field(name="createdTime", visibility=["read"], format="rfc3339")
     """Creation time of this Dev Box."""
     local_administrator: Optional[Union[str, "_models.LocalAdministratorStatus"]] = rest_field(
-        name="localAdministrator"
+        name="localAdministrator", visibility=["read", "create"]
     )
     """Indicates whether the owner of the Dev Box is a local administrator. Known values are:
      \"Enabled\" and \"Disabled\"."""
@@ -230,7 +214,7 @@ class DevBoxActionDelayResult(_model_base.Model):
     :vartype name: str
     :ivar result: The result of the delay operation on this action. Required. Known values are:
      "Succeeded" and "Failed".
-    :vartype result: str or ~azure.developer.devcenter.models.DevBoxActionDelayResultStatus
+    :vartype result: str or ~azure.developer.devcenter.models.DevBoxActionDelayStatus
     :ivar action: The delayed action.
     :vartype action: ~azure.developer.devcenter.models.DevBoxAction
     :ivar error: Information about the error that occurred. Only populated on error.
@@ -239,7 +223,7 @@ class DevBoxActionDelayResult(_model_base.Model):
 
     name: str = rest_field()
     """The name of the action. Required."""
-    result: Union[str, "_models.DevBoxActionDelayResultStatus"] = rest_field()
+    result: Union[str, "_models.DevBoxActionDelayStatus"] = rest_field()
     """The result of the delay operation on this action. Required. Known values are: \"Succeeded\" and
      \"Failed\"."""
     action: Optional["_models.DevBoxAction"] = rest_field()
@@ -252,7 +236,7 @@ class DevBoxActionDelayResult(_model_base.Model):
         self,
         *,
         name: str,
-        result: Union[str, "_models.DevBoxActionDelayResultStatus"],
+        result: Union[str, "_models.DevBoxActionDelayStatus"],
         action: Optional["_models.DevBoxAction"] = None,
         error: Optional["_models.Error"] = None,
     ):
@@ -308,8 +292,8 @@ class Environment(_model_base.Model):
     All required parameters must be populated in order to send to server.
 
     :ivar parameters: Parameters object for the environment.
-    :vartype parameters: any
-    :ivar name: Environment name.
+    :vartype parameters: dict[str, any]
+    :ivar name: Environment name. Required.
     :vartype name: str
     :ivar environment_type: Environment type. Required.
     :vartype environment_type: str
@@ -331,10 +315,10 @@ class Environment(_model_base.Model):
     :vartype error: ~azure.developer.devcenter.models.Error
     """
 
-    parameters: Optional[Any] = rest_field()
+    parameters: Optional[Dict[str, Any]] = rest_field()
     """Parameters object for the environment."""
-    name: Optional[str] = rest_field(visibility=["read"])
-    """Environment name."""
+    name: str = rest_field(visibility=["read"])
+    """Environment name. Required."""
     environment_type: str = rest_field(name="environmentType", visibility=["read", "create"])
     """Environment type. Required."""
     user: Optional[str] = rest_field(visibility=["read"])
@@ -362,7 +346,7 @@ class Environment(_model_base.Model):
         environment_type: str,
         catalog_name: str,
         environment_definition_name: str,
-        parameters: Optional[Any] = None,
+        parameters: Optional[Dict[str, Any]] = None,
     ):
         ...
 
@@ -380,6 +364,8 @@ class Environment(_model_base.Model):
 class EnvironmentDefinition(_model_base.Model):
     """An environment definition.
 
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
     All required parameters must be populated in order to send to server.
 
     :ivar id: The ID of the environment definition. Required.
@@ -393,14 +379,14 @@ class EnvironmentDefinition(_model_base.Model):
     :ivar parameters: Input parameters passed to an environment.
     :vartype parameters: list[~azure.developer.devcenter.models.EnvironmentDefinitionParameter]
     :ivar parameters_schema: JSON schema defining the parameters object passed to an environment.
-    :vartype parameters_schema: bytes
+    :vartype parameters_schema: any
     :ivar template_path: Path to the Environment Definition entrypoint file.
     :vartype template_path: str
     """
 
     id: str = rest_field()
     """The ID of the environment definition. Required."""
-    name: str = rest_field()
+    name: str = rest_field(visibility=["read"])
     """Name of the environment definition. Required."""
     catalog_name: str = rest_field(name="catalogName")
     """Name of the catalog. Required."""
@@ -408,7 +394,7 @@ class EnvironmentDefinition(_model_base.Model):
     """A short description of the environment definition."""
     parameters: Optional[List["_models.EnvironmentDefinitionParameter"]] = rest_field()
     """Input parameters passed to an environment."""
-    parameters_schema: Optional[bytes] = rest_field(name="parametersSchema", format="base64")
+    parameters_schema: Optional[Any] = rest_field(name="parametersSchema")
     """JSON schema defining the parameters object passed to an environment."""
     template_path: Optional[str] = rest_field(name="templatePath")
     """Path to the Environment Definition entrypoint file."""
@@ -418,11 +404,10 @@ class EnvironmentDefinition(_model_base.Model):
         self,
         *,
         id: str,  # pylint: disable=redefined-builtin
-        name: str,
         catalog_name: str,
         description: Optional[str] = None,
         parameters: Optional[List["_models.EnvironmentDefinitionParameter"]] = None,
-        parameters_schema: Optional[bytes] = None,
+        parameters_schema: Optional[Any] = None,
         template_path: Optional[str] = None,
     ):
         ...
@@ -450,7 +435,7 @@ class EnvironmentDefinitionParameter(_model_base.Model):
     :ivar description: Description of the parameter.
     :vartype description: str
     :ivar default: Default value of the parameter.
-    :vartype default: any
+    :vartype default: str
     :ivar type: A string of one of the basic JSON types (number, integer, array, object,
      boolean, string). Required. Known values are: "array", "boolean", "integer", "number",
      "object", and "string".
@@ -470,7 +455,7 @@ class EnvironmentDefinitionParameter(_model_base.Model):
     """Display name of the parameter."""
     description: Optional[str] = rest_field()
     """Description of the parameter."""
-    default: Optional[Any] = rest_field()
+    default: Optional[str] = rest_field()
     """Default value of the parameter."""
     type: Union[str, "_models.ParameterType"] = rest_field()
     """A string of one of the basic JSON types (number, integer, array, object,
@@ -493,7 +478,7 @@ class EnvironmentDefinitionParameter(_model_base.Model):
         required: bool,
         name: Optional[str] = None,
         description: Optional[str] = None,
-        default: Optional[Any] = None,
+        default: Optional[str] = None,
         read_only: Optional[bool] = None,
         allowed: Optional[List[str]] = None,
     ):
@@ -718,9 +703,11 @@ class InnerError(_model_base.Model):
 class OperationDetails(_model_base.Model):
     """The current status of an async operation.
 
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
     All required parameters must be populated in order to send to server.
 
-    :ivar id: Fully qualified ID for the operation status.
+    :ivar id: Fully qualified ID for the operation status. Required.
     :vartype id: str
     :ivar name: The operation id name.
     :vartype name: str
@@ -741,8 +728,8 @@ class OperationDetails(_model_base.Model):
     :vartype error: ~azure.developer.devcenter.models.Error
     """
 
-    id: Optional[str] = rest_field()
-    """Fully qualified ID for the operation status."""
+    id: str = rest_field(visibility=["read"])
+    """Fully qualified ID for the operation status. Required."""
     name: Optional[str] = rest_field()
     """The operation id name."""
     status: Union[str, "_models.OperationStatus"] = rest_field()
@@ -766,7 +753,6 @@ class OperationDetails(_model_base.Model):
         self,
         *,
         status: Union[str, "_models.OperationStatus"],
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         resource_id: Optional[str] = None,
         start_time: Optional[datetime.datetime] = None,
@@ -983,7 +969,7 @@ class Schedule(_model_base.Model):
     :ivar frequency: The frequency of this scheduled task. Required. "Daily"
     :vartype frequency: str or ~azure.developer.devcenter.models.ScheduledFrequency
     :ivar time: The target time to trigger the action. The format is HH:MM. Required.
-    :vartype time: ~datetime.time
+    :vartype time: str
     :ivar time_zone: The IANA timezone id at which the schedule should execute. Required.
     :vartype time_zone: str
     """
@@ -994,7 +980,7 @@ class Schedule(_model_base.Model):
     """Supported type this scheduled task represents. Required. \"StopDevBox\""""
     frequency: Union[str, "_models.ScheduledFrequency"] = rest_field()
     """The frequency of this scheduled task. Required. \"Daily\""""
-    time: datetime.time = rest_field()
+    time: str = rest_field()
     """The target time to trigger the action. The format is HH:MM. Required."""
     time_zone: str = rest_field(name="timeZone")
     """The IANA timezone id at which the schedule should execute. Required."""
@@ -1005,7 +991,7 @@ class Schedule(_model_base.Model):
         *,
         type: Union[str, "_models.ScheduledType"],
         frequency: Union[str, "_models.ScheduledFrequency"],
-        time: datetime.time,
+        time: str,
         time_zone: str,
     ):
         ...

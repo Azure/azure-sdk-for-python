@@ -46,9 +46,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_dev_center_list_projects_request(
-    *, filter: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
-) -> HttpRequest:
+def build_dev_center_list_projects_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -60,10 +58,6 @@ def build_dev_center_list_projects_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if filter is not None:
-        _params["filter"] = _SERIALIZER.query("filter", filter, "str")
-    if top is not None:
-        _params["top"] = _SERIALIZER.query("top", top, "int")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -95,9 +89,7 @@ def build_dev_center_get_project_request(project_name: str, **kwargs: Any) -> Ht
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dev_center_list_pools_request(
-    project_name: str, *, filter: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
-) -> HttpRequest:
+def build_dev_center_list_pools_request(project_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -114,10 +106,6 @@ def build_dev_center_list_pools_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if filter is not None:
-        _params["filter"] = _SERIALIZER.query("filter", filter, "str")
-    if top is not None:
-        _params["top"] = _SERIALIZER.query("top", top, "int")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -150,9 +138,7 @@ def build_dev_center_get_pool_request(project_name: str, pool_name: str, **kwarg
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dev_center_list_schedules_request(
-    project_name: str, pool_name: str, *, filter: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
-) -> HttpRequest:
+def build_dev_center_list_schedules_request(project_name: str, pool_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -170,10 +156,6 @@ def build_dev_center_list_schedules_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if filter is not None:
-        _params["filter"] = _SERIALIZER.query("filter", filter, "str")
-    if top is not None:
-        _params["top"] = _SERIALIZER.query("top", top, "int")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -209,9 +191,7 @@ def build_dev_center_get_schedule_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dev_center_list_all_dev_boxes_request(  # pylint: disable=name-too-long
-    *, filter: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
-) -> HttpRequest:
+def build_dev_center_list_all_dev_boxes_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -223,10 +203,6 @@ def build_dev_center_list_all_dev_boxes_request(  # pylint: disable=name-too-lon
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if filter is not None:
-        _params["filter"] = _SERIALIZER.query("filter", filter, "str")
-    if top is not None:
-        _params["top"] = _SERIALIZER.query("top", top, "int")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -235,7 +211,7 @@ def build_dev_center_list_all_dev_boxes_request(  # pylint: disable=name-too-lon
 
 
 def build_dev_center_list_all_dev_boxes_by_user_request(  # pylint: disable=name-too-long
-    user_id: str, *, filter: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
+    user_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -253,10 +229,6 @@ def build_dev_center_list_all_dev_boxes_by_user_request(  # pylint: disable=name
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if filter is not None:
-        _params["filter"] = _SERIALIZER.query("filter", filter, "str")
-    if top is not None:
-        _params["top"] = _SERIALIZER.query("top", top, "int")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -264,9 +236,7 @@ def build_dev_center_list_all_dev_boxes_by_user_request(  # pylint: disable=name
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dev_center_list_dev_boxes_request(
-    project_name: str, user_id: str, *, filter: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
-) -> HttpRequest:
+def build_dev_center_list_dev_boxes_request(project_name: str, user_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -284,10 +254,6 @@ def build_dev_center_list_dev_boxes_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if filter is not None:
-        _params["filter"] = _SERIALIZER.query("filter", filter, "str")
-    if top is not None:
-        _params["top"] = _SERIALIZER.query("top", top, "int")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -642,7 +608,7 @@ def build_dev_center_delay_all_dev_box_actions_request(  # pylint: disable=name-
 
 
 def build_dev_center_list_all_environments_request(  # pylint: disable=name-too-long
-    project_name: str, *, top: Optional[int] = None, **kwargs: Any
+    project_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -660,8 +626,6 @@ def build_dev_center_list_all_environments_request(  # pylint: disable=name-too-
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if top is not None:
-        _params["top"] = _SERIALIZER.query("top", top, "int")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -670,7 +634,7 @@ def build_dev_center_list_all_environments_request(  # pylint: disable=name-too-
 
 
 def build_dev_center_list_environments_request(  # pylint: disable=name-too-long
-    project_name: str, user_id: str, *, top: Optional[int] = None, **kwargs: Any
+    project_name: str, user_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -689,8 +653,6 @@ def build_dev_center_list_environments_request(  # pylint: disable=name-too-long
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if top is not None:
-        _params["top"] = _SERIALIZER.query("top", top, "int")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -785,9 +747,7 @@ def build_dev_center_delete_environment_request(  # pylint: disable=name-too-lon
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dev_center_list_catalogs_request(
-    project_name: str, *, top: Optional[int] = None, **kwargs: Any
-) -> HttpRequest:
+def build_dev_center_list_catalogs_request(project_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -804,8 +764,6 @@ def build_dev_center_list_catalogs_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if top is not None:
-        _params["top"] = _SERIALIZER.query("top", top, "int")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -839,7 +797,7 @@ def build_dev_center_get_catalog_request(project_name: str, catalog_name: str, *
 
 
 def build_dev_center_list_environment_definitions_request(  # pylint: disable=name-too-long
-    project_name: str, *, top: Optional[int] = None, **kwargs: Any
+    project_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -857,8 +815,6 @@ def build_dev_center_list_environment_definitions_request(  # pylint: disable=na
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if top is not None:
-        _params["top"] = _SERIALIZER.query("top", top, "int")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -867,7 +823,7 @@ def build_dev_center_list_environment_definitions_request(  # pylint: disable=na
 
 
 def build_dev_center_list_environment_definitions_by_catalog_request(  # pylint: disable=name-too-long
-    project_name: str, catalog_name: str, *, top: Optional[int] = None, **kwargs: Any
+    project_name: str, catalog_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -886,8 +842,6 @@ def build_dev_center_list_environment_definitions_by_catalog_request(  # pylint:
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if top is not None:
-        _params["top"] = _SERIALIZER.query("top", top, "int")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -924,7 +878,7 @@ def build_dev_center_get_environment_definition_request(  # pylint: disable=name
 
 
 def build_dev_center_list_environment_types_request(  # pylint: disable=name-too-long
-    project_name: str, *, top: Optional[int] = None, **kwargs: Any
+    project_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -942,8 +896,6 @@ def build_dev_center_list_environment_types_request(  # pylint: disable=name-too
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if top is not None:
-        _params["top"] = _SERIALIZER.query("top", top, "int")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -953,17 +905,10 @@ def build_dev_center_list_environment_types_request(  # pylint: disable=name-too
 
 class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disable=too-many-public-methods
     @distributed_trace
-    def list_projects(
-        self, *, filter: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
-    ) -> Iterable["_models.Project"]:
+    def list_projects(self, **kwargs: Any) -> Iterable["_models.Project"]:
         # pylint: disable=line-too-long
         """Lists all projects.
 
-        :keyword filter: An OData filter clause to apply to the operation. Default value is None.
-        :paramtype filter: str
-        :keyword top: The maximum number of resources to return from the operation. Example: 'top=10'.
-         Default value is None.
-        :paramtype top: int
         :return: An iterator like instance of Project
         :rtype: ~azure.core.paging.ItemPaged[~azure.developer.devcenter.models.Project]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -996,8 +941,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
             if not next_link:
 
                 _request = build_dev_center_list_projects_request(
-                    filter=filter,
-                    top=top,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -1062,7 +1005,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         # pylint: disable=line-too-long
         """Gets a project.
 
-        :param project_name: The DevCenter Project upon which to execute operations. Required.
+        :param project_name: Name of the project. Required.
         :type project_name: str
         :return: Project. The Project is compatible with MutableMapping
         :rtype: ~azure.developer.devcenter.models.Project
@@ -1127,19 +1070,12 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_pools(
-        self, project_name: str, *, filter: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
-    ) -> Iterable["_models.Pool"]:
+    def list_pools(self, project_name: str, **kwargs: Any) -> Iterable["_models.Pool"]:
         # pylint: disable=line-too-long
         """Lists available pools.
 
-        :param project_name: The DevCenter Project upon which to execute operations. Required.
+        :param project_name: Name of the project. Required.
         :type project_name: str
-        :keyword filter: An OData filter clause to apply to the operation. Default value is None.
-        :paramtype filter: str
-        :keyword top: The maximum number of resources to return from the operation. Example: 'top=10'.
-         Default value is None.
-        :paramtype top: int
         :return: An iterator like instance of Pool
         :rtype: ~azure.core.paging.ItemPaged[~azure.developer.devcenter.models.Pool]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1224,8 +1160,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
                 _request = build_dev_center_list_pools_request(
                     project_name=project_name,
-                    filter=filter,
-                    top=top,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -1290,9 +1224,9 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         # pylint: disable=line-too-long
         """Gets a pool.
 
-        :param project_name: The DevCenter Project upon which to execute operations. Required.
+        :param project_name: Name of the project. Required.
         :type project_name: str
-        :param pool_name: The name of a pool of Dev Boxes. Required.
+        :param pool_name: Pool name. Required.
         :type pool_name: str
         :return: Pool. The Pool is compatible with MutableMapping
         :rtype: ~azure.developer.devcenter.models.Pool
@@ -1409,26 +1343,13 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_schedules(
-        self,
-        project_name: str,
-        pool_name: str,
-        *,
-        filter: Optional[str] = None,
-        top: Optional[int] = None,
-        **kwargs: Any
-    ) -> Iterable["_models.Schedule"]:
+    def list_schedules(self, project_name: str, pool_name: str, **kwargs: Any) -> Iterable["_models.Schedule"]:
         """Lists available schedules for a pool.
 
-        :param project_name: The DevCenter Project upon which to execute operations. Required.
+        :param project_name: Name of the project. Required.
         :type project_name: str
-        :param pool_name: The name of a pool of Dev Boxes. Required.
+        :param pool_name: Pool name. Required.
         :type pool_name: str
-        :keyword filter: An OData filter clause to apply to the operation. Default value is None.
-        :paramtype filter: str
-        :keyword top: The maximum number of resources to return from the operation. Example: 'top=10'.
-         Default value is None.
-        :paramtype top: int
         :return: An iterator like instance of Schedule
         :rtype: ~azure.core.paging.ItemPaged[~azure.developer.devcenter.models.Schedule]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1441,8 +1362,8 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                     "frequency": "str",  # The frequency of this scheduled task. Required.
                       "Daily"
                     "name": "str",  # Display name for the Schedule. Required.
-                    "time": "12:30:00",  # The target time to trigger the action. The format is
-                      HH:MM. Required.
+                    "time": "str",  # The target time to trigger the action. The format is HH:MM.
+                      Required.
                     "timeZone": "str",  # The IANA timezone id at which the schedule should
                       execute. Required.
                     "type": "str"  # Supported type this scheduled task represents. Required.
@@ -1468,8 +1389,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                 _request = build_dev_center_list_schedules_request(
                     project_name=project_name,
                     pool_name=pool_name,
-                    filter=filter,
-                    top=top,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -1533,11 +1452,11 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
     def get_schedule(self, project_name: str, pool_name: str, schedule_name: str, **kwargs: Any) -> _models.Schedule:
         """Gets a schedule.
 
-        :param project_name: The DevCenter Project upon which to execute operations. Required.
+        :param project_name: Name of the project. Required.
         :type project_name: str
-        :param pool_name: The name of a pool of Dev Boxes. Required.
+        :param pool_name: Pool name. Required.
         :type pool_name: str
-        :param schedule_name: The name of a schedule. Required.
+        :param schedule_name: Display name for the Schedule. Required.
         :type schedule_name: str
         :return: Schedule. The Schedule is compatible with MutableMapping
         :rtype: ~azure.developer.devcenter.models.Schedule
@@ -1551,8 +1470,8 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                     "frequency": "str",  # The frequency of this scheduled task. Required.
                       "Daily"
                     "name": "str",  # Display name for the Schedule. Required.
-                    "time": "12:30:00",  # The target time to trigger the action. The format is
-                      HH:MM. Required.
+                    "time": "str",  # The target time to trigger the action. The format is HH:MM.
+                      Required.
                     "timeZone": "str",  # The IANA timezone id at which the schedule should
                       execute. Required.
                     "type": "str"  # Supported type this scheduled task represents. Required.
@@ -1609,17 +1528,10 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_all_dev_boxes(
-        self, *, filter: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
-    ) -> Iterable["_models.DevBox"]:
+    def list_all_dev_boxes(self, **kwargs: Any) -> Iterable["_models.DevBox"]:
         # pylint: disable=line-too-long
         """Lists Dev Boxes that the caller has access to in the DevCenter.
 
-        :keyword filter: An OData filter clause to apply to the operation. Default value is None.
-        :paramtype filter: str
-        :keyword top: The maximum number of resources to return from the operation. Example: 'top=10'.
-         Default value is None.
-        :paramtype top: int
         :return: An iterator like instance of DevBox
         :rtype: ~azure.core.paging.ItemPaged[~azure.developer.devcenter.models.DevBox]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1632,9 +1544,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                     "name": "str",  # Display name for the Dev Box. Required.
                     "poolName": "str",  # The name of the Dev Box pool this machine belongs to.
                       Required.
-                    "powerState": "str",  # The current power state of the Dev Box. Required.
-                      Known values are: "Unknown", "Running", "Deallocated", "PoweredOff", and
-                      "Hibernated".
                     "actionState": "str",  # Optional. The current action state of the Dev Box.
                       This is state is based on previous action performed by user.
                     "createdTime": "2020-02-20 00:00:00",  # Optional. Creation time of this Dev
@@ -1691,6 +1600,9 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                       This will be the same region as the Virtual Network it is attached to.
                     "osType": "str",  # Optional. The operating system type of this Dev Box.
                       "Windows"
+                    "powerState": "str",  # Optional. The current power state of the Dev Box.
+                      Known values are: "Unknown", "Running", "Deallocated", "PoweredOff", and
+                      "Hibernated".
                     "projectName": "str",  # Optional. Name of the project this Dev Box belongs
                       to.
                     "provisioningState": "str",  # Optional. The current provisioning state of
@@ -1726,8 +1638,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
             if not next_link:
 
                 _request = build_dev_center_list_all_dev_boxes_request(
-                    filter=filter,
-                    top=top,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -1788,20 +1698,13 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_all_dev_boxes_by_user(
-        self, user_id: str, *, filter: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
-    ) -> Iterable["_models.DevBox"]:
+    def list_all_dev_boxes_by_user(self, user_id: str, **kwargs: Any) -> Iterable["_models.DevBox"]:
         # pylint: disable=line-too-long
         """Lists Dev Boxes in the Dev Center for a particular user.
 
         :param user_id: The AAD object id of the user. If value is 'me', the identity is taken from the
          authentication context. Required.
         :type user_id: str
-        :keyword filter: An OData filter clause to apply to the operation. Default value is None.
-        :paramtype filter: str
-        :keyword top: The maximum number of resources to return from the operation. Example: 'top=10'.
-         Default value is None.
-        :paramtype top: int
         :return: An iterator like instance of DevBox
         :rtype: ~azure.core.paging.ItemPaged[~azure.developer.devcenter.models.DevBox]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1814,9 +1717,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                     "name": "str",  # Display name for the Dev Box. Required.
                     "poolName": "str",  # The name of the Dev Box pool this machine belongs to.
                       Required.
-                    "powerState": "str",  # The current power state of the Dev Box. Required.
-                      Known values are: "Unknown", "Running", "Deallocated", "PoweredOff", and
-                      "Hibernated".
                     "actionState": "str",  # Optional. The current action state of the Dev Box.
                       This is state is based on previous action performed by user.
                     "createdTime": "2020-02-20 00:00:00",  # Optional. Creation time of this Dev
@@ -1873,6 +1773,9 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                       This will be the same region as the Virtual Network it is attached to.
                     "osType": "str",  # Optional. The operating system type of this Dev Box.
                       "Windows"
+                    "powerState": "str",  # Optional. The current power state of the Dev Box.
+                      Known values are: "Unknown", "Running", "Deallocated", "PoweredOff", and
+                      "Hibernated".
                     "projectName": "str",  # Optional. Name of the project this Dev Box belongs
                       to.
                     "provisioningState": "str",  # Optional. The current provisioning state of
@@ -1909,8 +1812,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
                 _request = build_dev_center_list_all_dev_boxes_by_user_request(
                     user_id=user_id,
-                    filter=filter,
-                    top=top,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -1971,9 +1872,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_dev_boxes(
-        self, project_name: str, user_id: str, *, filter: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
-    ) -> Iterable["_models.DevBox"]:
+    def list_dev_boxes(self, project_name: str, user_id: str, **kwargs: Any) -> Iterable["_models.DevBox"]:
         # pylint: disable=line-too-long
         """Lists Dev Boxes in the project for a particular user.
 
@@ -1982,11 +1881,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         :param user_id: The AAD object id of the user. If value is 'me', the identity is taken from the
          authentication context. Required.
         :type user_id: str
-        :keyword filter: An OData filter clause to apply to the operation. Default value is None.
-        :paramtype filter: str
-        :keyword top: The maximum number of resources to return from the operation. Example: 'top=10'.
-         Default value is None.
-        :paramtype top: int
         :return: An iterator like instance of DevBox
         :rtype: ~azure.core.paging.ItemPaged[~azure.developer.devcenter.models.DevBox]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1999,9 +1893,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                     "name": "str",  # Display name for the Dev Box. Required.
                     "poolName": "str",  # The name of the Dev Box pool this machine belongs to.
                       Required.
-                    "powerState": "str",  # The current power state of the Dev Box. Required.
-                      Known values are: "Unknown", "Running", "Deallocated", "PoweredOff", and
-                      "Hibernated".
                     "actionState": "str",  # Optional. The current action state of the Dev Box.
                       This is state is based on previous action performed by user.
                     "createdTime": "2020-02-20 00:00:00",  # Optional. Creation time of this Dev
@@ -2058,6 +1949,9 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                       This will be the same region as the Virtual Network it is attached to.
                     "osType": "str",  # Optional. The operating system type of this Dev Box.
                       "Windows"
+                    "powerState": "str",  # Optional. The current power state of the Dev Box.
+                      Known values are: "Unknown", "Running", "Deallocated", "PoweredOff", and
+                      "Hibernated".
                     "projectName": "str",  # Optional. Name of the project this Dev Box belongs
                       to.
                     "provisioningState": "str",  # Optional. The current provisioning state of
@@ -2095,8 +1989,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                 _request = build_dev_center_list_dev_boxes_request(
                     project_name=project_name,
                     user_id=user_id,
-                    filter=filter,
-                    top=top,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -2161,12 +2053,12 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         # pylint: disable=line-too-long
         """Gets a Dev Box.
 
-        :param project_name: The DevCenter Project upon which to execute operations. Required.
+        :param project_name: Name of the project. Required.
         :type project_name: str
         :param user_id: The AAD object id of the user. If value is 'me', the identity is taken from the
          authentication context. Required.
         :type user_id: str
-        :param dev_box_name: The name of a Dev Box. Required.
+        :param dev_box_name: Display name for the Dev Box. Required.
         :type dev_box_name: str
         :return: DevBox. The DevBox is compatible with MutableMapping
         :rtype: ~azure.developer.devcenter.models.DevBox
@@ -2180,9 +2072,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                     "name": "str",  # Display name for the Dev Box. Required.
                     "poolName": "str",  # The name of the Dev Box pool this machine belongs to.
                       Required.
-                    "powerState": "str",  # The current power state of the Dev Box. Required.
-                      Known values are: "Unknown", "Running", "Deallocated", "PoweredOff", and
-                      "Hibernated".
                     "actionState": "str",  # Optional. The current action state of the Dev Box.
                       This is state is based on previous action performed by user.
                     "createdTime": "2020-02-20 00:00:00",  # Optional. Creation time of this Dev
@@ -2239,6 +2128,9 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                       This will be the same region as the Virtual Network it is attached to.
                     "osType": "str",  # Optional. The operating system type of this Dev Box.
                       "Windows"
+                    "powerState": "str",  # Optional. The current power state of the Dev Box.
+                      Known values are: "Unknown", "Running", "Deallocated", "PoweredOff", and
+                      "Hibernated".
                     "projectName": "str",  # Optional. Name of the project this Dev Box belongs
                       to.
                     "provisioningState": "str",  # Optional. The current provisioning state of
@@ -2311,7 +2203,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         project_name: str,
         user_id: str,
         dev_box_name: str,
-        dev_box: Union[_models.DevBox, JSON, IO[bytes]],
+        body: Union[_models.DevBox, JSON, IO[bytes]],
         **kwargs: Any
     ) -> JSON:
         error_map = {
@@ -2330,10 +2222,10 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(dev_box, (IOBase, bytes)):
-            _content = dev_box
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
         else:
-            _content = json.dumps(dev_box, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_dev_center_create_dev_box_request(
             project_name=project_name,
@@ -2386,7 +2278,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         project_name: str,
         user_id: str,
         dev_box_name: str,
-        dev_box: _models.DevBox,
+        body: _models.DevBox,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2394,15 +2286,16 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         # pylint: disable=line-too-long
         """Creates or replaces a Dev Box.
 
-        :param project_name: The DevCenter Project upon which to execute operations. Required.
+        :param project_name: The DevCenter Project upon which to execute the operation. Required.
         :type project_name: str
         :param user_id: The AAD object id of the user. If value is 'me', the identity is taken from the
          authentication context. Required.
         :type user_id: str
         :param dev_box_name: The name of a Dev Box. Required.
         :type dev_box_name: str
-        :param dev_box: Represents a environment. Required.
-        :type dev_box: ~azure.developer.devcenter.models.DevBox
+        :param body: Represents the body request of a Dev Box creation. Dev Box Pool name is required.
+         Optionally set the owner of the Dev Box as local administrator. Required.
+        :type body: ~azure.developer.devcenter.models.DevBox
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2415,13 +2308,10 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
             .. code-block:: python
 
                 # JSON input template you can fill out and use as your body input.
-                dev_box = {
+                body = {
                     "name": "str",  # Display name for the Dev Box. Required.
                     "poolName": "str",  # The name of the Dev Box pool this machine belongs to.
                       Required.
-                    "powerState": "str",  # The current power state of the Dev Box. Required.
-                      Known values are: "Unknown", "Running", "Deallocated", "PoweredOff", and
-                      "Hibernated".
                     "actionState": "str",  # Optional. The current action state of the Dev Box.
                       This is state is based on previous action performed by user.
                     "createdTime": "2020-02-20 00:00:00",  # Optional. Creation time of this Dev
@@ -2478,6 +2368,9 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                       This will be the same region as the Virtual Network it is attached to.
                     "osType": "str",  # Optional. The operating system type of this Dev Box.
                       "Windows"
+                    "powerState": "str",  # Optional. The current power state of the Dev Box.
+                      Known values are: "Unknown", "Running", "Deallocated", "PoweredOff", and
+                      "Hibernated".
                     "projectName": "str",  # Optional. Name of the project this Dev Box belongs
                       to.
                     "provisioningState": "str",  # Optional. The current provisioning state of
@@ -2501,9 +2394,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                     "name": "str",  # Display name for the Dev Box. Required.
                     "poolName": "str",  # The name of the Dev Box pool this machine belongs to.
                       Required.
-                    "powerState": "str",  # The current power state of the Dev Box. Required.
-                      Known values are: "Unknown", "Running", "Deallocated", "PoweredOff", and
-                      "Hibernated".
                     "actionState": "str",  # Optional. The current action state of the Dev Box.
                       This is state is based on previous action performed by user.
                     "createdTime": "2020-02-20 00:00:00",  # Optional. Creation time of this Dev
@@ -2560,6 +2450,9 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                       This will be the same region as the Virtual Network it is attached to.
                     "osType": "str",  # Optional. The operating system type of this Dev Box.
                       "Windows"
+                    "powerState": "str",  # Optional. The current power state of the Dev Box.
+                      Known values are: "Unknown", "Running", "Deallocated", "PoweredOff", and
+                      "Hibernated".
                     "projectName": "str",  # Optional. Name of the project this Dev Box belongs
                       to.
                     "provisioningState": "str",  # Optional. The current provisioning state of
@@ -2585,7 +2478,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         project_name: str,
         user_id: str,
         dev_box_name: str,
-        dev_box: JSON,
+        body: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2593,15 +2486,16 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         # pylint: disable=line-too-long
         """Creates or replaces a Dev Box.
 
-        :param project_name: The DevCenter Project upon which to execute operations. Required.
+        :param project_name: The DevCenter Project upon which to execute the operation. Required.
         :type project_name: str
         :param user_id: The AAD object id of the user. If value is 'me', the identity is taken from the
          authentication context. Required.
         :type user_id: str
         :param dev_box_name: The name of a Dev Box. Required.
         :type dev_box_name: str
-        :param dev_box: Represents a environment. Required.
-        :type dev_box: JSON
+        :param body: Represents the body request of a Dev Box creation. Dev Box Pool name is required.
+         Optionally set the owner of the Dev Box as local administrator. Required.
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2618,9 +2512,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                     "name": "str",  # Display name for the Dev Box. Required.
                     "poolName": "str",  # The name of the Dev Box pool this machine belongs to.
                       Required.
-                    "powerState": "str",  # The current power state of the Dev Box. Required.
-                      Known values are: "Unknown", "Running", "Deallocated", "PoweredOff", and
-                      "Hibernated".
                     "actionState": "str",  # Optional. The current action state of the Dev Box.
                       This is state is based on previous action performed by user.
                     "createdTime": "2020-02-20 00:00:00",  # Optional. Creation time of this Dev
@@ -2677,6 +2568,9 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                       This will be the same region as the Virtual Network it is attached to.
                     "osType": "str",  # Optional. The operating system type of this Dev Box.
                       "Windows"
+                    "powerState": "str",  # Optional. The current power state of the Dev Box.
+                      Known values are: "Unknown", "Running", "Deallocated", "PoweredOff", and
+                      "Hibernated".
                     "projectName": "str",  # Optional. Name of the project this Dev Box belongs
                       to.
                     "provisioningState": "str",  # Optional. The current provisioning state of
@@ -2702,7 +2596,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         project_name: str,
         user_id: str,
         dev_box_name: str,
-        dev_box: IO[bytes],
+        body: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2710,15 +2604,16 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         # pylint: disable=line-too-long
         """Creates or replaces a Dev Box.
 
-        :param project_name: The DevCenter Project upon which to execute operations. Required.
+        :param project_name: The DevCenter Project upon which to execute the operation. Required.
         :type project_name: str
         :param user_id: The AAD object id of the user. If value is 'me', the identity is taken from the
          authentication context. Required.
         :type user_id: str
         :param dev_box_name: The name of a Dev Box. Required.
         :type dev_box_name: str
-        :param dev_box: Represents a environment. Required.
-        :type dev_box: IO[bytes]
+        :param body: Represents the body request of a Dev Box creation. Dev Box Pool name is required.
+         Optionally set the owner of the Dev Box as local administrator. Required.
+        :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2735,9 +2630,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                     "name": "str",  # Display name for the Dev Box. Required.
                     "poolName": "str",  # The name of the Dev Box pool this machine belongs to.
                       Required.
-                    "powerState": "str",  # The current power state of the Dev Box. Required.
-                      Known values are: "Unknown", "Running", "Deallocated", "PoweredOff", and
-                      "Hibernated".
                     "actionState": "str",  # Optional. The current action state of the Dev Box.
                       This is state is based on previous action performed by user.
                     "createdTime": "2020-02-20 00:00:00",  # Optional. Creation time of this Dev
@@ -2794,6 +2686,9 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                       This will be the same region as the Virtual Network it is attached to.
                     "osType": "str",  # Optional. The operating system type of this Dev Box.
                       "Windows"
+                    "powerState": "str",  # Optional. The current power state of the Dev Box.
+                      Known values are: "Unknown", "Running", "Deallocated", "PoweredOff", and
+                      "Hibernated".
                     "projectName": "str",  # Optional. Name of the project this Dev Box belongs
                       to.
                     "provisioningState": "str",  # Optional. The current provisioning state of
@@ -2819,22 +2714,23 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         project_name: str,
         user_id: str,
         dev_box_name: str,
-        dev_box: Union[_models.DevBox, JSON, IO[bytes]],
+        body: Union[_models.DevBox, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.DevBox]:
         # pylint: disable=line-too-long
         """Creates or replaces a Dev Box.
 
-        :param project_name: The DevCenter Project upon which to execute operations. Required.
+        :param project_name: The DevCenter Project upon which to execute the operation. Required.
         :type project_name: str
         :param user_id: The AAD object id of the user. If value is 'me', the identity is taken from the
          authentication context. Required.
         :type user_id: str
         :param dev_box_name: The name of a Dev Box. Required.
         :type dev_box_name: str
-        :param dev_box: Represents a environment. Is one of the following types: DevBox, JSON,
-         IO[bytes] Required.
-        :type dev_box: ~azure.developer.devcenter.models.DevBox or JSON or IO[bytes]
+        :param body: Represents the body request of a Dev Box creation. Dev Box Pool name is required.
+         Optionally set the owner of the Dev Box as local administrator. Is one of the following types:
+         DevBox, JSON, IO[bytes] Required.
+        :type body: ~azure.developer.devcenter.models.DevBox or JSON or IO[bytes]
         :return: An instance of LROPoller that returns DevBox. The DevBox is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.developer.devcenter.models.DevBox]
@@ -2844,13 +2740,10 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
             .. code-block:: python
 
                 # JSON input template you can fill out and use as your body input.
-                dev_box = {
+                body = {
                     "name": "str",  # Display name for the Dev Box. Required.
                     "poolName": "str",  # The name of the Dev Box pool this machine belongs to.
                       Required.
-                    "powerState": "str",  # The current power state of the Dev Box. Required.
-                      Known values are: "Unknown", "Running", "Deallocated", "PoweredOff", and
-                      "Hibernated".
                     "actionState": "str",  # Optional. The current action state of the Dev Box.
                       This is state is based on previous action performed by user.
                     "createdTime": "2020-02-20 00:00:00",  # Optional. Creation time of this Dev
@@ -2907,6 +2800,9 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                       This will be the same region as the Virtual Network it is attached to.
                     "osType": "str",  # Optional. The operating system type of this Dev Box.
                       "Windows"
+                    "powerState": "str",  # Optional. The current power state of the Dev Box.
+                      Known values are: "Unknown", "Running", "Deallocated", "PoweredOff", and
+                      "Hibernated".
                     "projectName": "str",  # Optional. Name of the project this Dev Box belongs
                       to.
                     "provisioningState": "str",  # Optional. The current provisioning state of
@@ -2930,9 +2826,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                     "name": "str",  # Display name for the Dev Box. Required.
                     "poolName": "str",  # The name of the Dev Box pool this machine belongs to.
                       Required.
-                    "powerState": "str",  # The current power state of the Dev Box. Required.
-                      Known values are: "Unknown", "Running", "Deallocated", "PoweredOff", and
-                      "Hibernated".
                     "actionState": "str",  # Optional. The current action state of the Dev Box.
                       This is state is based on previous action performed by user.
                     "createdTime": "2020-02-20 00:00:00",  # Optional. Creation time of this Dev
@@ -2989,6 +2882,9 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                       This will be the same region as the Virtual Network it is attached to.
                     "osType": "str",  # Optional. The operating system type of this Dev Box.
                       "Windows"
+                    "powerState": "str",  # Optional. The current power state of the Dev Box.
+                      Known values are: "Unknown", "Running", "Deallocated", "PoweredOff", and
+                      "Hibernated".
                     "projectName": "str",  # Optional. Name of the project this Dev Box belongs
                       to.
                     "provisioningState": "str",  # Optional. The current provisioning state of
@@ -3020,7 +2916,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                 project_name=project_name,
                 user_id=user_id,
                 dev_box_name=dev_box_name,
-                dev_box=dev_box,
+                body=body,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -3140,6 +3036,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
                 # response body for status code(s): 202
                 response == {
+                    "id": "str",  # Fully qualified ID for the operation status. Required.
                     "status": "str",  # Provisioning state of the resource. Required. Known
                       values are: "Running", "Completed", "Canceled", and "Failed".
                     "endTime": "2020-02-20 00:00:00",  # Optional. The end time of the operation.
@@ -3158,7 +3055,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                         },
                         "target": "str"  # Optional. The target of the error.
                     },
-                    "id": "str",  # Optional. Fully qualified ID for the operation status.
                     "name": "str",  # Optional. The operation id name.
                     "percentComplete": 0.0,  # Optional. Percent of the operation that is
                       complete.
@@ -3281,12 +3177,12 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         # pylint: disable=line-too-long
         """Starts a Dev Box.
 
-        :param project_name: The DevCenter Project upon which to execute operations. Required.
+        :param project_name: Name of the project. Required.
         :type project_name: str
         :param user_id: The AAD object id of the user. If value is 'me', the identity is taken from the
          authentication context. Required.
         :type user_id: str
-        :param dev_box_name: The name of a Dev Box. Required.
+        :param dev_box_name: Display name for the Dev Box. Required.
         :type dev_box_name: str
         :return: An instance of LROPoller that returns OperationDetails. The OperationDetails is
          compatible with MutableMapping
@@ -3298,6 +3194,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
                 # response body for status code(s): 202
                 response == {
+                    "id": "str",  # Fully qualified ID for the operation status. Required.
                     "status": "str",  # Provisioning state of the resource. Required. Known
                       values are: "Running", "Completed", "Canceled", and "Failed".
                     "endTime": "2020-02-20 00:00:00",  # Optional. The end time of the operation.
@@ -3316,7 +3213,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                         },
                         "target": "str"  # Optional. The target of the error.
                     },
-                    "id": "str",  # Optional. Fully qualified ID for the operation status.
                     "name": "str",  # Optional. The operation id name.
                     "percentComplete": 0.0,  # Optional. Percent of the operation that is
                       complete.
@@ -3441,12 +3337,12 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         # pylint: disable=line-too-long
         """Stops a Dev Box.
 
-        :param project_name: The DevCenter Project upon which to execute operations. Required.
+        :param project_name: Name of the project. Required.
         :type project_name: str
         :param user_id: The AAD object id of the user. If value is 'me', the identity is taken from the
          authentication context. Required.
         :type user_id: str
-        :param dev_box_name: The name of a Dev Box. Required.
+        :param dev_box_name: Display name for the Dev Box. Required.
         :type dev_box_name: str
         :keyword hibernate: Optional parameter to hibernate the dev box. Default value is None.
         :paramtype hibernate: bool
@@ -3460,6 +3356,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
                 # response body for status code(s): 202
                 response == {
+                    "id": "str",  # Fully qualified ID for the operation status. Required.
                     "status": "str",  # Provisioning state of the resource. Required. Known
                       values are: "Running", "Completed", "Canceled", and "Failed".
                     "endTime": "2020-02-20 00:00:00",  # Optional. The end time of the operation.
@@ -3478,7 +3375,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                         },
                         "target": "str"  # Optional. The target of the error.
                     },
-                    "id": "str",  # Optional. Fully qualified ID for the operation status.
                     "name": "str",  # Optional. The operation id name.
                     "percentComplete": 0.0,  # Optional. Percent of the operation that is
                       complete.
@@ -3601,12 +3497,12 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         # pylint: disable=line-too-long
         """Restarts a Dev Box.
 
-        :param project_name: The DevCenter Project upon which to execute operations. Required.
+        :param project_name: Name of the project. Required.
         :type project_name: str
         :param user_id: The AAD object id of the user. If value is 'me', the identity is taken from the
          authentication context. Required.
         :type user_id: str
-        :param dev_box_name: The name of a Dev Box. Required.
+        :param dev_box_name: Display name for the Dev Box. Required.
         :type dev_box_name: str
         :return: An instance of LROPoller that returns OperationDetails. The OperationDetails is
          compatible with MutableMapping
@@ -3618,6 +3514,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
                 # response body for status code(s): 202
                 response == {
+                    "id": "str",  # Fully qualified ID for the operation status. Required.
                     "status": "str",  # Provisioning state of the resource. Required. Known
                       values are: "Running", "Completed", "Canceled", and "Failed".
                     "endTime": "2020-02-20 00:00:00",  # Optional. The end time of the operation.
@@ -3636,7 +3533,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                         },
                         "target": "str"  # Optional. The target of the error.
                     },
-                    "id": "str",  # Optional. Fully qualified ID for the operation status.
                     "name": "str",  # Optional. The operation id name.
                     "percentComplete": 0.0,  # Optional. Percent of the operation that is
                       complete.
@@ -3783,12 +3679,12 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
     ) -> Iterable["_models.DevBoxAction"]:
         """Lists actions on a Dev Box.
 
-        :param project_name: The DevCenter Project upon which to execute operations. Required.
+        :param project_name: Name of the project. Required.
         :type project_name: str
         :param user_id: The AAD object id of the user. If value is 'me', the identity is taken from the
          authentication context. Required.
         :type user_id: str
-        :param dev_box_name: The name of a Dev Box. Required.
+        :param dev_box_name: Display name for the Dev Box. Required.
         :type dev_box_name: str
         :return: An iterator like instance of DevBoxAction
         :rtype: ~azure.core.paging.ItemPaged[~azure.developer.devcenter.models.DevBoxAction]
@@ -3896,14 +3792,14 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
     ) -> _models.DevBoxAction:
         """Gets an action.
 
-        :param project_name: The DevCenter Project upon which to execute operations. Required.
+        :param project_name: Name of the project. Required.
         :type project_name: str
         :param user_id: The AAD object id of the user. If value is 'me', the identity is taken from the
          authentication context. Required.
         :type user_id: str
-        :param dev_box_name: The name of a Dev Box. Required.
+        :param dev_box_name: Display name for the Dev Box. Required.
         :type dev_box_name: str
-        :param action_name: The name of an action that will take place on a Dev Box. Required.
+        :param action_name: The name of the action. Required.
         :type action_name: str
         :return: DevBoxAction. The DevBoxAction is compatible with MutableMapping
         :rtype: ~azure.developer.devcenter.models.DevBoxAction
@@ -3982,14 +3878,14 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
     ) -> None:
         """Skips an occurrence of an action.
 
-        :param project_name: The DevCenter Project upon which to execute operations. Required.
+        :param project_name: Name of the project. Required.
         :type project_name: str
         :param user_id: The AAD object id of the user. If value is 'me', the identity is taken from the
          authentication context. Required.
         :type user_id: str
-        :param dev_box_name: The name of a Dev Box. Required.
+        :param dev_box_name: Display name for the Dev Box. Required.
         :type dev_box_name: str
-        :param action_name: The name of an action that will take place on a Dev Box. Required.
+        :param action_name: The name of the action. Required.
         :type action_name: str
         :return: None
         :rtype: None
@@ -4051,14 +3947,14 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
     ) -> _models.DevBoxAction:
         """Delays the occurrence of an action.
 
-        :param project_name: The DevCenter Project upon which to execute operations. Required.
+        :param project_name: Name of the project. Required.
         :type project_name: str
         :param user_id: The AAD object id of the user. If value is 'me', the identity is taken from the
          authentication context. Required.
         :type user_id: str
-        :param dev_box_name: The name of a Dev Box. Required.
+        :param dev_box_name: Display name for the Dev Box. Required.
         :type dev_box_name: str
-        :param action_name: The name of an action that will take place on a Dev Box. Required.
+        :param action_name: The name of the action. Required.
         :type action_name: str
         :keyword delay_until: The time to delay the Dev Box action or actions until. Required.
         :paramtype delay_until: ~datetime.datetime
@@ -4141,12 +4037,12 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         # pylint: disable=line-too-long
         """Delays all actions.
 
-        :param project_name: The DevCenter Project upon which to execute operations. Required.
+        :param project_name: Name of the project. Required.
         :type project_name: str
         :param user_id: The AAD object id of the user. If value is 'me', the identity is taken from the
          authentication context. Required.
         :type user_id: str
-        :param dev_box_name: The name of a Dev Box. Required.
+        :param dev_box_name: Display name for the Dev Box. Required.
         :type dev_box_name: str
         :keyword delay_until: The time to delay the Dev Box action or actions until. Required.
         :paramtype delay_until: ~datetime.datetime
@@ -4273,17 +4169,12 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_all_environments(
-        self, project_name: str, *, top: Optional[int] = None, **kwargs: Any
-    ) -> Iterable["_models.Environment"]:
+    def list_all_environments(self, project_name: str, **kwargs: Any) -> Iterable["_models.Environment"]:
         # pylint: disable=line-too-long
         """Lists the environments for a project.
 
         :param project_name: The DevCenter Project upon which to execute operations. Required.
         :type project_name: str
-        :keyword top: The maximum number of resources to return from the operation. Example: 'top=10'.
-         Default value is None.
-        :paramtype top: int
         :return: An iterator like instance of Environment
         :rtype: ~azure.core.paging.ItemPaged[~azure.developer.devcenter.models.Environment]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4297,6 +4188,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                     "environmentDefinitionName": "str",  # Name of the environment definition.
                       Required.
                     "environmentType": "str",  # Environment type. Required.
+                    "name": "str",  # Environment name. Required.
                     "error": {
                         "code": "str",  # One of a server-defined set of error codes.
                           Required.
@@ -4312,8 +4204,9 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                         },
                         "target": "str"  # Optional. The target of the error.
                     },
-                    "name": "str",  # Optional. Environment name.
-                    "parameters": {},  # Optional. Parameters object for the environment.
+                    "parameters": {
+                        "str": {}  # Optional. Parameters object for the environment.
+                    },
                     "provisioningState": "str",  # Optional. The provisioning state of the
                       environment. Known values are: "Succeeded", "Failed", "Canceled", "Creating",
                       "Accepted", "Deleting", "Updating", "Preparing", "Running", "Syncing",
@@ -4342,7 +4235,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
                 _request = build_dev_center_list_all_environments_request(
                     project_name=project_name,
-                    top=top,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -4403,9 +4295,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_environments(
-        self, project_name: str, user_id: str, *, top: Optional[int] = None, **kwargs: Any
-    ) -> Iterable["_models.Environment"]:
+    def list_environments(self, project_name: str, user_id: str, **kwargs: Any) -> Iterable["_models.Environment"]:
         # pylint: disable=line-too-long
         """Lists the environments for a project and user.
 
@@ -4414,9 +4304,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         :param user_id: The AAD object id of the user. If value is 'me', the identity is taken from the
          authentication context. Required.
         :type user_id: str
-        :keyword top: The maximum number of resources to return from the operation. Example: 'top=10'.
-         Default value is None.
-        :paramtype top: int
         :return: An iterator like instance of Environment
         :rtype: ~azure.core.paging.ItemPaged[~azure.developer.devcenter.models.Environment]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4430,6 +4317,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                     "environmentDefinitionName": "str",  # Name of the environment definition.
                       Required.
                     "environmentType": "str",  # Environment type. Required.
+                    "name": "str",  # Environment name. Required.
                     "error": {
                         "code": "str",  # One of a server-defined set of error codes.
                           Required.
@@ -4445,8 +4333,9 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                         },
                         "target": "str"  # Optional. The target of the error.
                     },
-                    "name": "str",  # Optional. Environment name.
-                    "parameters": {},  # Optional. Parameters object for the environment.
+                    "parameters": {
+                        "str": {}  # Optional. Parameters object for the environment.
+                    },
                     "provisioningState": "str",  # Optional. The provisioning state of the
                       environment. Known values are: "Succeeded", "Failed", "Canceled", "Creating",
                       "Accepted", "Deleting", "Updating", "Preparing", "Running", "Syncing",
@@ -4476,7 +4365,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                 _request = build_dev_center_list_environments_request(
                     project_name=project_name,
                     user_id=user_id,
-                    top=top,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -4543,12 +4431,12 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         # pylint: disable=line-too-long
         """Gets an environment.
 
-        :param project_name: The DevCenter Project upon which to execute operations. Required.
+        :param project_name: Name of the project. Required.
         :type project_name: str
         :param user_id: The AAD object id of the user. If value is 'me', the identity is taken from the
          authentication context. Required.
         :type user_id: str
-        :param environment_name: The name of the environment. Required.
+        :param environment_name: Environment name. Required.
         :type environment_name: str
         :return: Environment. The Environment is compatible with MutableMapping
         :rtype: ~azure.developer.devcenter.models.Environment
@@ -4563,6 +4451,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                     "environmentDefinitionName": "str",  # Name of the environment definition.
                       Required.
                     "environmentType": "str",  # Environment type. Required.
+                    "name": "str",  # Environment name. Required.
                     "error": {
                         "code": "str",  # One of a server-defined set of error codes.
                           Required.
@@ -4578,8 +4467,9 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                         },
                         "target": "str"  # Optional. The target of the error.
                     },
-                    "name": "str",  # Optional. Environment name.
-                    "parameters": {},  # Optional. Parameters object for the environment.
+                    "parameters": {
+                        "str": {}  # Optional. Parameters object for the environment.
+                    },
                     "provisioningState": "str",  # Optional. The provisioning state of the
                       environment. Known values are: "Succeeded", "Failed", "Canceled", "Creating",
                       "Accepted", "Deleting", "Updating", "Preparing", "Running", "Syncing",
@@ -4746,6 +4636,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                     "environmentDefinitionName": "str",  # Name of the environment definition.
                       Required.
                     "environmentType": "str",  # Environment type. Required.
+                    "name": "str",  # Environment name. Required.
                     "error": {
                         "code": "str",  # One of a server-defined set of error codes.
                           Required.
@@ -4761,8 +4652,9 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                         },
                         "target": "str"  # Optional. The target of the error.
                     },
-                    "name": "str",  # Optional. Environment name.
-                    "parameters": {},  # Optional. Parameters object for the environment.
+                    "parameters": {
+                        "str": {}  # Optional. Parameters object for the environment.
+                    },
                     "provisioningState": "str",  # Optional. The provisioning state of the
                       environment. Known values are: "Succeeded", "Failed", "Canceled", "Creating",
                       "Accepted", "Deleting", "Updating", "Preparing", "Running", "Syncing",
@@ -4779,6 +4671,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                     "environmentDefinitionName": "str",  # Name of the environment definition.
                       Required.
                     "environmentType": "str",  # Environment type. Required.
+                    "name": "str",  # Environment name. Required.
                     "error": {
                         "code": "str",  # One of a server-defined set of error codes.
                           Required.
@@ -4794,8 +4687,9 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                         },
                         "target": "str"  # Optional. The target of the error.
                     },
-                    "name": "str",  # Optional. Environment name.
-                    "parameters": {},  # Optional. Parameters object for the environment.
+                    "parameters": {
+                        "str": {}  # Optional. Parameters object for the environment.
+                    },
                     "provisioningState": "str",  # Optional. The provisioning state of the
                       environment. Known values are: "Succeeded", "Failed", "Canceled", "Creating",
                       "Accepted", "Deleting", "Updating", "Preparing", "Running", "Syncing",
@@ -4847,6 +4741,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                     "environmentDefinitionName": "str",  # Name of the environment definition.
                       Required.
                     "environmentType": "str",  # Environment type. Required.
+                    "name": "str",  # Environment name. Required.
                     "error": {
                         "code": "str",  # One of a server-defined set of error codes.
                           Required.
@@ -4862,8 +4757,9 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                         },
                         "target": "str"  # Optional. The target of the error.
                     },
-                    "name": "str",  # Optional. Environment name.
-                    "parameters": {},  # Optional. Parameters object for the environment.
+                    "parameters": {
+                        "str": {}  # Optional. Parameters object for the environment.
+                    },
                     "provisioningState": "str",  # Optional. The provisioning state of the
                       environment. Known values are: "Succeeded", "Failed", "Canceled", "Creating",
                       "Accepted", "Deleting", "Updating", "Preparing", "Running", "Syncing",
@@ -4915,6 +4811,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                     "environmentDefinitionName": "str",  # Name of the environment definition.
                       Required.
                     "environmentType": "str",  # Environment type. Required.
+                    "name": "str",  # Environment name. Required.
                     "error": {
                         "code": "str",  # One of a server-defined set of error codes.
                           Required.
@@ -4930,8 +4827,9 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                         },
                         "target": "str"  # Optional. The target of the error.
                     },
-                    "name": "str",  # Optional. Environment name.
-                    "parameters": {},  # Optional. Parameters object for the environment.
+                    "parameters": {
+                        "str": {}  # Optional. Parameters object for the environment.
+                    },
                     "provisioningState": "str",  # Optional. The provisioning state of the
                       environment. Known values are: "Succeeded", "Failed", "Canceled", "Creating",
                       "Accepted", "Deleting", "Updating", "Preparing", "Running", "Syncing",
@@ -4979,6 +4877,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                     "environmentDefinitionName": "str",  # Name of the environment definition.
                       Required.
                     "environmentType": "str",  # Environment type. Required.
+                    "name": "str",  # Environment name. Required.
                     "error": {
                         "code": "str",  # One of a server-defined set of error codes.
                           Required.
@@ -4994,8 +4893,9 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                         },
                         "target": "str"  # Optional. The target of the error.
                     },
-                    "name": "str",  # Optional. Environment name.
-                    "parameters": {},  # Optional. Parameters object for the environment.
+                    "parameters": {
+                        "str": {}  # Optional. Parameters object for the environment.
+                    },
                     "provisioningState": "str",  # Optional. The provisioning state of the
                       environment. Known values are: "Succeeded", "Failed", "Canceled", "Creating",
                       "Accepted", "Deleting", "Updating", "Preparing", "Running", "Syncing",
@@ -5012,6 +4912,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                     "environmentDefinitionName": "str",  # Name of the environment definition.
                       Required.
                     "environmentType": "str",  # Environment type. Required.
+                    "name": "str",  # Environment name. Required.
                     "error": {
                         "code": "str",  # One of a server-defined set of error codes.
                           Required.
@@ -5027,8 +4928,9 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                         },
                         "target": "str"  # Optional. The target of the error.
                     },
-                    "name": "str",  # Optional. Environment name.
-                    "parameters": {},  # Optional. Parameters object for the environment.
+                    "parameters": {
+                        "str": {}  # Optional. Parameters object for the environment.
+                    },
                     "provisioningState": "str",  # Optional. The provisioning state of the
                       environment. Known values are: "Succeeded", "Failed", "Canceled", "Creating",
                       "Accepted", "Deleting", "Updating", "Preparing", "Running", "Syncing",
@@ -5177,6 +5079,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
                 # response body for status code(s): 202
                 response == {
+                    "id": "str",  # Fully qualified ID for the operation status. Required.
                     "status": "str",  # Provisioning state of the resource. Required. Known
                       values are: "Running", "Completed", "Canceled", and "Failed".
                     "endTime": "2020-02-20 00:00:00",  # Optional. The end time of the operation.
@@ -5195,7 +5098,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                         },
                         "target": "str"  # Optional. The target of the error.
                     },
-                    "id": "str",  # Optional. Fully qualified ID for the operation status.
                     "name": "str",  # Optional. The operation id name.
                     "percentComplete": 0.0,  # Optional. Percent of the operation that is
                       complete.
@@ -5262,16 +5164,11 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         )
 
     @distributed_trace
-    def list_catalogs(
-        self, project_name: str, *, top: Optional[int] = None, **kwargs: Any
-    ) -> Iterable["_models.Catalog"]:
+    def list_catalogs(self, project_name: str, **kwargs: Any) -> Iterable["_models.Catalog"]:
         """Lists all of the catalogs available for a project.
 
-        :param project_name: The DevCenter Project upon which to execute operations. Required.
+        :param project_name: Name of the project. Required.
         :type project_name: str
-        :keyword top: The maximum number of resources to return from the operation. Example: 'top=10'.
-         Default value is None.
-        :paramtype top: int
         :return: An iterator like instance of Catalog
         :rtype: ~azure.core.paging.ItemPaged[~azure.developer.devcenter.models.Catalog]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5302,7 +5199,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
                 _request = build_dev_center_list_catalogs_request(
                     project_name=project_name,
-                    top=top,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -5366,9 +5262,9 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
     def get_catalog(self, project_name: str, catalog_name: str, **kwargs: Any) -> _models.Catalog:
         """Gets the specified catalog within the project.
 
-        :param project_name: The DevCenter Project upon which to execute operations. Required.
+        :param project_name: Name of the project. Required.
         :type project_name: str
-        :param catalog_name: The name of the catalog. Required.
+        :param catalog_name: Name of the catalog. Required.
         :type catalog_name: str
         :return: Catalog. The Catalog is compatible with MutableMapping
         :rtype: ~azure.developer.devcenter.models.Catalog
@@ -5432,16 +5328,13 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
     @distributed_trace
     def list_environment_definitions(
-        self, project_name: str, *, top: Optional[int] = None, **kwargs: Any
+        self, project_name: str, **kwargs: Any
     ) -> Iterable["_models.EnvironmentDefinition"]:
         # pylint: disable=line-too-long
         """Lists all environment definitions available for a project.
 
         :param project_name: The DevCenter Project upon which to execute operations. Required.
         :type project_name: str
-        :keyword top: The maximum number of resources to return from the operation. Example: 'top=10'.
-         Default value is None.
-        :paramtype top: int
         :return: An iterator like instance of EnvironmentDefinition
         :rtype: ~azure.core.paging.ItemPaged[~azure.developer.devcenter.models.EnvironmentDefinition]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5467,7 +5360,8 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                             "allowed": [
                                 "str"  # Optional. An array of allowed values.
                             ],
-                            "default": {},  # Optional. Default value of the parameter.
+                            "default": "str",  # Optional. Default value of the
+                              parameter.
                             "description": "str",  # Optional. Description of the
                               parameter.
                             "name": "str",  # Optional. Display name of the parameter.
@@ -5475,8 +5369,8 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                               is read-only.  If true, default should have a value.
                         }
                     ],
-                    "parametersSchema": bytes("bytes", encoding="utf-8"),  # Optional. JSON
-                      schema defining the parameters object passed to an environment.
+                    "parametersSchema": {},  # Optional. JSON schema defining the parameters
+                      object passed to an environment.
                     "templatePath": "str"  # Optional. Path to the Environment Definition
                       entrypoint file.
                 }
@@ -5499,7 +5393,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
                 _request = build_dev_center_list_environment_definitions_request(
                     project_name=project_name,
-                    top=top,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -5561,7 +5454,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
     @distributed_trace
     def list_environment_definitions_by_catalog(
-        self, project_name: str, catalog_name: str, *, top: Optional[int] = None, **kwargs: Any
+        self, project_name: str, catalog_name: str, **kwargs: Any
     ) -> Iterable["_models.EnvironmentDefinition"]:
         # pylint: disable=line-too-long
         """Lists all environment definitions available within a catalog.
@@ -5570,9 +5463,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         :type project_name: str
         :param catalog_name: The name of the catalog. Required.
         :type catalog_name: str
-        :keyword top: The maximum number of resources to return from the operation. Example: 'top=10'.
-         Default value is None.
-        :paramtype top: int
         :return: An iterator like instance of EnvironmentDefinition
         :rtype: ~azure.core.paging.ItemPaged[~azure.developer.devcenter.models.EnvironmentDefinition]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5598,7 +5488,8 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                             "allowed": [
                                 "str"  # Optional. An array of allowed values.
                             ],
-                            "default": {},  # Optional. Default value of the parameter.
+                            "default": "str",  # Optional. Default value of the
+                              parameter.
                             "description": "str",  # Optional. Description of the
                               parameter.
                             "name": "str",  # Optional. Display name of the parameter.
@@ -5606,8 +5497,8 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                               is read-only.  If true, default should have a value.
                         }
                     ],
-                    "parametersSchema": bytes("bytes", encoding="utf-8"),  # Optional. JSON
-                      schema defining the parameters object passed to an environment.
+                    "parametersSchema": {},  # Optional. JSON schema defining the parameters
+                      object passed to an environment.
                     "templatePath": "str"  # Optional. Path to the Environment Definition
                       entrypoint file.
                 }
@@ -5631,7 +5522,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                 _request = build_dev_center_list_environment_definitions_by_catalog_request(
                     project_name=project_name,
                     catalog_name=catalog_name,
-                    top=top,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -5698,11 +5588,11 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         # pylint: disable=line-too-long
         """Get an environment definition from a catalog.
 
-        :param project_name: The DevCenter Project upon which to execute operations. Required.
+        :param project_name: Name of the project. Required.
         :type project_name: str
-        :param catalog_name: The name of the catalog. Required.
+        :param catalog_name: Name of the catalog. Required.
         :type catalog_name: str
-        :param definition_name: The name of the environment definition. Required.
+        :param definition_name: Name of the environment definition. Required.
         :type definition_name: str
         :return: EnvironmentDefinition. The EnvironmentDefinition is compatible with MutableMapping
         :rtype: ~azure.developer.devcenter.models.EnvironmentDefinition
@@ -5729,7 +5619,8 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                             "allowed": [
                                 "str"  # Optional. An array of allowed values.
                             ],
-                            "default": {},  # Optional. Default value of the parameter.
+                            "default": "str",  # Optional. Default value of the
+                              parameter.
                             "description": "str",  # Optional. Description of the
                               parameter.
                             "name": "str",  # Optional. Display name of the parameter.
@@ -5737,8 +5628,8 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                               is read-only.  If true, default should have a value.
                         }
                     ],
-                    "parametersSchema": bytes("bytes", encoding="utf-8"),  # Optional. JSON
-                      schema defining the parameters object passed to an environment.
+                    "parametersSchema": {},  # Optional. JSON schema defining the parameters
+                      object passed to an environment.
                     "templatePath": "str"  # Optional. Path to the Environment Definition
                       entrypoint file.
                 }
@@ -5793,17 +5684,12 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_environment_types(
-        self, project_name: str, *, top: Optional[int] = None, **kwargs: Any
-    ) -> Iterable["_models.EnvironmentType"]:
+    def list_environment_types(self, project_name: str, **kwargs: Any) -> Iterable["_models.EnvironmentType"]:
         # pylint: disable=line-too-long
         """Lists all environment types configured for a project.
 
         :param project_name: The DevCenter Project upon which to execute operations. Required.
         :type project_name: str
-        :keyword top: The maximum number of resources to return from the operation. Example: 'top=10'.
-         Default value is None.
-        :paramtype top: int
         :return: An iterator like instance of EnvironmentType
         :rtype: ~azure.core.paging.ItemPaged[~azure.developer.devcenter.models.EnvironmentType]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5839,7 +5725,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
                 _request = build_dev_center_list_environment_types_request(
                     project_name=project_name,
-                    top=top,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,

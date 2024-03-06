@@ -28,7 +28,7 @@ from ._models import Schedule
 from ._models import StopOnDisconnectConfiguration
 from ._models import StorageProfile
 
-from ._enums import DevBoxActionDelayResultStatus
+from ._enums import DevBoxActionDelayStatus
 from ._enums import DevBoxActionType
 from ._enums import DevBoxProvisioningState
 from ._enums import EnvironmentProvisioningState
@@ -70,7 +70,7 @@ __all__ = [
     "Schedule",
     "StopOnDisconnectConfiguration",
     "StorageProfile",
-    "DevBoxActionDelayResultStatus",
+    "DevBoxActionDelayStatus",
     "DevBoxActionType",
     "DevBoxProvisioningState",
     "EnvironmentProvisioningState",
