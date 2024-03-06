@@ -145,7 +145,8 @@ class AzureBlobDatastore(Datastore):
     :param properties: The asset property dictionary.
     :type properties: dict[str, str]
     :param credentials: Credentials to use for Azure ML workspace to connect to the storage.
-    :type credentials: Union[AccountKeySection, SasSection]
+    :type credentials: Union[~azure.ai.ml.entities.AccountKeyConfiguration,
+        ~azure.ai.ml.entities.SasTokenConfiguration]
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
     """
@@ -243,7 +244,8 @@ class AzureDataLakeGen2Datastore(Datastore):
     :param protocol: Protocol to use to connect with the Azure storage account
     :type protocol: str
     :param credentials: Credentials to use for Azure ML workspace to connect to the storage.
-    :type credentials: Union[ServicePrincipalConfiguration, CertificateConfiguration]
+    :type credentials: Union[~azure.ai.ml.entities.AccountKeyConfiguration,
+        ~azure.ai.ml.entities.SasTokenConfiguration]
     :param properties: The asset property dictionary.
     :type properties: dict[str, str]
     :param kwargs: A dictionary of additional configuration parameters.

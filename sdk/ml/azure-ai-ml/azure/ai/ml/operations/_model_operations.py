@@ -285,10 +285,10 @@ class ModelOperations(_ScopeDependentOperations):
 
         :param name: Name of the model.
         :type name: str
-        :keyword version: Version of the model.
-        :paramtype version: str
-        :keyword label: Label of the model. (mutually exclusive with version)
-        :paramtype label: str
+        :param version: Version of the model.
+        :type version: str
+        :param label: Label of the model. (mutually exclusive with version)
+        :type label: str
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Model cannot be successfully validated.
             Details will be provided in the error message.
         :return: Model asset object.
@@ -329,9 +329,9 @@ class ModelOperations(_ScopeDependentOperations):
         :type name: str
         :param version: Version of the model.
         :type version: str
-        :keyword download_path: Local path as download destination, defaults to current working directory of the current
+        :param download_path: Local path as download destination, defaults to current working directory of the current
             user. Contents will be overwritten.
-        :paramtype download_path: Union[PathLike, str]
+        :type download_path: Union[PathLike, str]
         :raises ResourceNotFoundError: if can't find a model matching provided name.
         """
 
@@ -473,10 +473,10 @@ class ModelOperations(_ScopeDependentOperations):
     ) -> Iterable[Model]:
         """List all model assets in workspace.
 
-        :keyword name: Name of the model.
-        :paramtype name: Optional[str]
-        :keyword stage: The Model stage
-        :paramtype stage: Optional[str]
+        :param name: Name of the model.
+        :type name: Optional[str]
+        :param stage: The Model stage
+        :type stage: Optional[str]
         :keyword list_view_type: View type for including/excluding (for example) archived models.
             Defaults to :attr:`ListViewType.ACTIVE_ONLY`.
         :paramtype list_view_type: ListViewType
