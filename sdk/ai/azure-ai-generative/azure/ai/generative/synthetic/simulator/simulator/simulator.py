@@ -392,7 +392,6 @@ class Simulator:
 
     def _to_chat_protocol(self, template, conversation_history, template_parameters):
         messages = []
-        
         for i, m in enumerate(conversation_history):
             message = {"content": m.message, "role": m.role.value}
             if len(template.context_key) > 0:
@@ -402,8 +401,7 @@ class Simulator:
                 # adding context for adv_qa
                 message["context"] = m.full_response["context"]
             messages.append(message)
-
-        template_parameters['metadata'] = {}        
+        template_parameters['metadata'] = {}
         if "ch_template_placeholder" in template_parameters:
             del template_parameters["ch_template_placeholder"]
 
