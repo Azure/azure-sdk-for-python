@@ -23,15 +23,16 @@ from azure.ai.ml.entities._deployment.deployment_settings import BatchRetrySetti
 from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
+from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 from .code_configuration import CodeConfiguration
-from .deployment import Deployment
+from .batch_deployment_base_model import BatchDeploymentBaseModel
 
 module_logger = logging.getLogger(__name__)
 
 
-class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attributes
+class BatchDeployment(BatchDeploymentBaseModel):  # pylint: disable=too-many-instance-attributes
     """Batch endpoint deployment entity.
 
     :param name: the name of the batch deployment
@@ -113,6 +114,9 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
         **kwargs: Any,
     ) -> None:
         self._provisioning_state: Optional[str] = kwargs.pop("provisioning_state", None)
+        self._id : Optional[str] = kwargs.pop("id",None )
+        self._creation_context : Optional[SystemData] = kwargs.pop("creation_context", None)
+        
 
         super(BatchDeployment, self).__init__(
             name=name,
@@ -120,15 +124,15 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
             properties=properties,
             tags=tags,
             description=description,
-            model=model,
-            code_configuration=code_configuration,
-            environment=environment,
-            environment_variables=environment_variables,
-            code_path=code_path,
-            scoring_script=scoring_script,
             **kwargs,
         )
 
+        self.model=model,
+        self.code_configuration=code_configuration,
+        self.environment=environment,
+        self.environment_variables=environment_variables,
+        self.code_path=code_path,
+        self.scoring_script=scoring_script,
         self.compute = compute
         self.resources = resources
         self.output_action = output_action
@@ -252,6 +256,9 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
     def _from_rest_object(  # pylint: disable=arguments-renamed
         cls, deployment: BatchDeploymentData
     ) -> BatchDeploymentData:
+        import debugpy
+        debugpy.connect(('localhost', 5678))
+        debugpy.breakpoint()
         modelId = deployment.properties.model.asset_id if deployment.properties.model else None
         code_configuration = (
             CodeConfiguration._from_rest_code_configuration(deployment.properties.code_configuration)

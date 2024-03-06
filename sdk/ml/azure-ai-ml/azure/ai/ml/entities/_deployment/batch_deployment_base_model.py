@@ -67,15 +67,6 @@ class BatchDeploymentBaseModel(Resource, RestTranslatableMixin):
         self.endpoint_name = endpoint_name
         self.type = type
 
-    @property
-    def type(self) -> Optional[str]:
-        """
-        Type of deployment.
-
-        :rtype: str
-        """
-        return self._type
-
 
     def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs: Any) -> None:
         """Dump the deployment content into a file in yaml format.
@@ -97,7 +88,7 @@ class BatchDeploymentBaseModel(Resource, RestTranslatableMixin):
         pass
     # How do which api and rest objects do we want to except for this _from_rest function ?
 
-    
+
     # @classmethod
     # def _from_rest_object(
     #     cls, deployment_rest_object: Union[OnlineDeploymentData, BatchDeploymentData]
