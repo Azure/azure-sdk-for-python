@@ -126,7 +126,7 @@ class PhoneNumbersClient(object):
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         """
         purchase_request = PhoneNumberPurchaseRequest(
-            search_id=search_id, 
+            search_id=search_id,
             consent_to_not_resell_numbers=no_resale_consent
             )
 
