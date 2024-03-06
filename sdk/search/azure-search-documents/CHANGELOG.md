@@ -9,6 +9,7 @@
 ### Bugs Fixed
 
 - Fixed the issue that `SearchIndexerSkillset`, `SearchField`, `SearchIndex`, `AnalyzeTextOptions`, `SearchResourceEncryptionKey`, `SynonymMap`, `SearchIndexerDataSourceConnection` could not be serialized and `as_dict` did not work.
+- Fixed the issue that `context` was missing for `EntityRecognitionSkill` and `SentimentSkill`. #34623
 
 ### Other Changes
 
