@@ -1,19 +1,15 @@
 trigger: none
 
-parameters:
-  - name: Services
-    type: object
-    default:
-      - azure-keyvault-secrets
-      - azure-keyvault-certificates
-
 extends:
     template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       ServiceDirectory: keyvault
-      Packages: ${{ parameters.Services }}
+      BuildTargetingString: "azure-keyvault-keys"
+      JobName: azure_keyvault_keys
       SupportedClouds: 'Public,UsGov,China'
       TestTimeoutInMinutes: 240
+      TestResourceDirectories: 
+        - keyvault/
       CloudConfig:
         Public:
           SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
@@ -26,6 +22,17 @@ extends:
           MatrixFilters:
             - ArmTemplateParameters=^(?!.*enableHsm.*true)
           Location: chinanorth3
+      ${{ if contains(variables['Build.DefinitionName'], 'tests-weekly') }}:
+        # Test azure-keyvault-keys on Managed HSM for weekly tests only
+        AdditionalMatrixConfigs:
+          - Name: keyvault_hsm_matrix_addons
+            Path: sdk/keyvault/azure-keyvault-keys/platform-matrix.json
+            Selection: sparse
+            GenerateVMJobs: true
+      ${{ if not(contains(variables['Build.DefinitionName'], 'tests-weekly')) }}:
+        # For nightly tests, don't run live azure-keyvault-administration jobs since they require Managed HSM
+        MatrixFilters:
+          - OSVmImage=NonexistentImage
       EnvVars:
         AZURE_TEST_RUN_LIVE: true
         AZURE_SKIP_LIVE_RECORDING: 'True'
