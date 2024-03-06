@@ -305,8 +305,8 @@ class PredictionDriftMetricThreshold(MetricThreshold):
     @classmethod
     def _get_default_thresholds(cls) -> "PredictionDriftMetricThreshold":
         return cls(
-            numerical=NumericalDriftMetrics.defaults(),
-            categorical=CategoricalDriftMetrics.defaults(),
+            numerical=NumericalDriftMetrics._get_default_thresholds(),
+            categorical=CategoricalDriftMetrics._get_default_thresholds(),
         )
 
     def __eq__(self, other: Any) -> bool:
