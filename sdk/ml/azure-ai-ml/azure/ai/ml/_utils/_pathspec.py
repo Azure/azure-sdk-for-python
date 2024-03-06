@@ -119,7 +119,15 @@ class RegexPattern(Pattern):
             assert include is None, ("include:{!r} must be null when pattern:{!r} is a string.").format(
                 include, pattern
             )
-            regex, include = self.pattern_to_regex(pattern)
+            pattern_str: str
+            if isinstance(pattern, bytes):
+                pattern_str = pattern.decode()
+            else:
+                pattern_str = pattern
+
+            regex: PatternHint[str]
+            regex, include = self.pattern_to_regex(pattern_str)
+
             # NOTE: Make sure to allow a null regular expression to be
             # returned for a null-operation.
             if include is not None:
@@ -146,11 +154,11 @@ class RegexPattern(Pattern):
         pattern.
         """
 
-    def __eq__(self, other: "RegexPattern") -> bool:
+    def __eq__(self, other: object) -> bool:
         """Tests the equality of this regex pattern with *other*
 
         :param other: The regex pattern to test against
-        :type other: RegexPattern
+        :type other: object
         :return: Return True if :attr:`~Pattern.include` and :attr:`~RegexPattern.regex`
             are equal. False otherwise.
         :rtype: bool
@@ -176,7 +184,9 @@ class RegexPattern(Pattern):
         return None
 
     @classmethod
-    def pattern_to_regex(cls, pattern: str) -> Tuple[str, bool]:
+    def pattern_to_regex(
+        cls, pattern: str  # pylint: disable=unused-argument
+    ) -> Tuple[PatternHint[str], Optional[bool]]:
         """Convert the pattern into an uncompiled regular expression.
 
         :param pattern: The pattern to convert into a regular expression.
@@ -184,13 +194,14 @@ class RegexPattern(Pattern):
         :return: Returns the uncompiled regular expression (:class:`str` or :data:`None`),
             and whether matched files should be included (:data:`True`),
             excluded (:data:`False`), or is a null-operation (:data:`None`).
-        :rtype: Tuple[str, bool]
+        :rtype: Tuple[typing.Pattern[str], Optional[bool]]
 
         .. NOTE::
 
             The default implementation simply returns *pattern* and :data:`True`.
         """
-        return pattern, True
+        regex_pattern: PatternHint[str]
+        return regex_pattern, True  # pylint: disable=used-before-assignment
 
 
 @dataclasses.dataclass()
@@ -227,10 +238,10 @@ class GitWildMatchPattern(RegexPattern):
 
     @classmethod
     # pylint: disable=too-many-branches,too-many-statements
-    def pattern_to_regex(
+    def pattern_to_regex(  # type: ignore[override]
         cls,
         pattern: AnyStr,
-    ) -> Tuple[Optional[AnyStr], Optional[bool]]:
+    ) -> Tuple[Optional[Union[str, bytes]], Optional[bool]]:
         """Convert the pattern into a regular expression.
 
         :param pattern: Pattern to convert into a regular expression.
@@ -240,41 +251,44 @@ class GitWildMatchPattern(RegexPattern):
             or :data:`None`)
           * whether matched files should be included (:data:`True`), excluded (:data:`False`), or if it is a
             null-operation (:data:`None`).
-        :rtype: Tuple[Optional[AnyStr], Optional[bool]]
+        :rtype: Tuple[Optional[Union[str, bytes]], Optional[bool]]
         """
+        pattern_str: str
         if isinstance(pattern, str):
             return_type = str
+            pattern_str = pattern
         elif isinstance(pattern, bytes):
             return_type = bytes
-            pattern = pattern.decode(_BYTES_ENCODING)
+            pattern_str = pattern.decode(_BYTES_ENCODING)
         else:
             raise TypeError(f"pattern:{pattern!r} is not a unicode or byte string.")
 
-        original_pattern = pattern
-        pattern = pattern.strip()
+        original_pattern = pattern_str
+        pattern_str = pattern_str.strip()
+        regex: Optional[Union[str, bytes]]
 
-        if pattern.startswith("#"):
+        if pattern_str.startswith("#"):
             # A pattern starting with a hash ('#') serves as a comment
             # (neither includes nor excludes files). Escape the hash with a
             # back-slash to match a literal hash (i.e., '\#').
             regex = None
             include = None
 
-        elif pattern == "/":
+        elif pattern_str == "/":
             # EDGE CASE: According to `git check-ignore` (v2.4.1), a single
             # '/' does not match any file.
             regex = None
             include = None
 
-        elif pattern:
-            if pattern.startswith("!"):
+        elif pattern_str:
+            if pattern_str.startswith("!"):
                 # A pattern starting with an exclamation mark ('!') negates the
                 # pattern (exclude instead of include). Escape the exclamation
                 # mark with a back-slash to match a literal exclamation mark
                 # (i.e., '\!').
                 include = False
                 # Remove leading exclamation mark.
-                pattern = pattern[1:]
+                pattern_str = pattern_str[1:]
             else:
                 include = True
 
@@ -283,7 +297,7 @@ class GitWildMatchPattern(RegexPattern):
             override_regex = None
 
             # Split pattern into segments.
-            pattern_segs = pattern.split("/")
+            pattern_segs = pattern_str.split("/")
 
             # Normalize pattern to make processing easier.
 
@@ -526,7 +540,7 @@ class GitWildMatchPattern(RegexPattern):
         return regex
 
     @staticmethod
-    def escape(s: AnyStr) -> AnyStr:
+    def escape(s: AnyStr) -> Union[str, bytes]:
         """Escape special characters in the given string.
 
         :param s:  a filename or a string that you want to escape, usually before adding it to a ".gitignore".

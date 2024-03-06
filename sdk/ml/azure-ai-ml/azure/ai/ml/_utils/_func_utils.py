@@ -6,7 +6,7 @@ import logging
 import sys
 from contextlib import contextmanager
 from types import CodeType, FrameType, FunctionType, MethodType
-from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, Iterator, List, Optional, Tuple, Union
 
 from azure.ai.ml._utils.utils import is_bytecode_optimization_enabled
 
@@ -67,7 +67,7 @@ class PersistentLocalsFunctionProfilerBuilder(PersistentLocalsFunctionBuilder):
     @staticmethod
     @contextmanager
     # pylint: disable-next=docstring-missing-return,docstring-missing-rtype
-    def _replace_sys_profiler(profiler: Callable[[FrameType, str, Any], None]) -> Iterable[None]:
+    def _replace_sys_profiler(profiler: Callable[[FrameType, str, Any], None]) -> Iterator[None]:
         """A context manager which replaces sys profiler to given profiler.
 
         :param profiler: The profile function.
@@ -123,7 +123,7 @@ class PersistentLocalsFunction(object):
         :param _self: If original func is a method, _self should be provided, which is the instance of the method.
         :param skip_locals: A list of local variables to skip when saving the locals.
         """
-        self._locals = {}
+        self._locals: Dict = {}
         self._self = _self
         # make function an instance method
         self._func = MethodType(_func, self)
@@ -162,10 +162,10 @@ try:
     from bytecode import Bytecode, Instr, Label
 
     class PersistentLocalsFunctionBytecodeBuilder(PersistentLocalsFunctionBuilder):
-        _template_separators = []
-        _template_separators_before_body = []
-        _template_separators_after_body = []
-        _template_body = []
+        _template_separators: List = []
+        _template_separators_before_body: List = []
+        _template_separators_after_body: List = []
+        _template_body: List = []
         _template_tail = None
         __initialized = False
 
@@ -266,7 +266,7 @@ try:
             :return: Generated code
             :rtype: CodeType
             """
-            fn_code = Bytecode.from_code(base_func.__code__)
+            fn_code = Bytecode.from_code(base_func.__code__)  # type: ignore[union-attr]
             fn_code.clear()
             fn_code.extend(instructions)
             fn_code.argcount += 1
@@ -306,7 +306,7 @@ try:
                     return None
 
             pieces = []
-            last_piece = []
+            last_piece: List = []
             cur_separator = get_next_separator()
             for instr in instructions:
                 if cls.is_instr_equal(instr, cur_separator):
@@ -376,7 +376,9 @@ try:
             else:
                 pieces = cls._get_pieces(instructions, cls._template_separators_before_body)
 
-            reversed_pieces = cls._get_pieces(reversed(pieces.pop()), reversed(cls._template_separators_after_body))
+            reversed_pieces = cls._get_pieces(
+                list(reversed(pieces.pop())), list(reversed(cls._template_separators_after_body))
+            )
 
             while reversed_pieces:
                 pieces.append(list(reversed(reversed_pieces.pop())))
@@ -391,11 +393,14 @@ try:
                 self._split_instructions_based_on_template(self.get_instructions(func)),
                 self._template_separators,
             ):
-                generated_instructions.extend(template_piece)
-                generated_instructions.extend(input_piece)
+                if template_piece is not None:
+                    generated_instructions.extend(template_piece)
+                if input_piece is not None:
+                    generated_instructions.extend(input_piece)
                 if separator is not None:
                     generated_instructions.append(separator)
-            generated_instructions.extend(self._template_tail)
+
+            generated_instructions.extend(self._template_tail)  # type: ignore[arg-type]
             return generated_instructions
 
         def _build_func(self, func: Union[FunctionType, MethodType]) -> PersistentLocalsFunction:
@@ -430,7 +435,7 @@ try:
             """
             generated_func = FunctionType(
                 self._create_code(self._build_instructions(func), func),
-                func.__globals__,
+                func.__globals__,  # type: ignore[union-attr]
                 func.__name__,
                 func.__defaults__,
                 func.__closure__,
@@ -448,7 +453,7 @@ try:
 
 except ImportError:
     # Fall back to the profiler implementation
-    class PersistentLocalsFunctionBytecodeBuilder(PersistentLocalsFunctionProfilerBuilder):
+    class PersistentLocalsFunctionBytecodeBuilder(PersistentLocalsFunctionProfilerBuilder):  # type: ignore[no-redef]
         pass
 
 

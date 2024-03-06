@@ -5,7 +5,7 @@
 import json
 import logging
 import traceback
-from typing import Dict, Optional, Tuple, Union, NoReturn
+from typing import Dict, NoReturn, Optional, Tuple, Union
 
 from colorama import Fore, Style, init
 from marshmallow.exceptions import ValidationError as SchemaValidationError
@@ -107,7 +107,8 @@ def format_details_section(
     }
 
     if hasattr(error, "message"):
-        error_types[error.error_type] = True
+        if hasattr(error, "error_type"):
+            error_types[error.error_type] = True
         details += f"\n\n{Fore.RED}(x) {error.message}{Fore.RESET}\n"
     else:
         if (
@@ -313,7 +314,7 @@ def log_and_raise_error(error: Exception, debug: bool = False, yaml_operation: b
 
     # use an f-string to automatically call str() on error
     if debug:
-        module_logger.error(traceback.print_exc())
+        module_logger.error(traceback.print_exc())  # type: ignore[func-returns-value]
 
     if isinstance(error, SchemaValidationError):
         module_logger.debug(traceback.format_exc())

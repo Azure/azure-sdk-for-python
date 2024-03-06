@@ -5,7 +5,7 @@
 # pylint: disable=protected-access,redefined-builtin
 
 from abc import ABC
-from typing import Any, Dict, List, Optional, Union, Type
+from typing import Any, Dict, List, Optional, Type, Union
 
 from azure.ai.ml._azure_environments import _get_active_directory_url_from_metadata
 from azure.ai.ml._restclient.v2022_01_01_preview.models import Identity as RestIdentityConfiguration
@@ -56,16 +56,10 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import (
 from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     WorkspaceConnectionApiKey as RestWorkspaceConnectionApiKey,
 )
-from azure.ai.ml._utils._experimental import experimental
-from azure.ai.ml._utils.utils import camel_to_snake, snake_to_pascal, _snake_to_camel
-from azure.ai.ml.constants._common import CommonYamlFields, IdentityType
-from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin, YamlTranslatableMixin
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, JobException, ValidationErrorType, ValidationException
-
 from azure.ai.ml._restclient.v2023_08_01_preview.models import (
-    ConnectionAuthType,
     AccessKeyAuthTypeWorkspaceConnectionProperties,
     ApiKeyAuthWorkspaceConnectionProperties,
+    ConnectionAuthType,
     ManagedIdentityAuthTypeWorkspaceConnectionProperties,
     NoneAuthTypeWorkspaceConnectionProperties,
     PATAuthTypeWorkspaceConnectionProperties,
@@ -73,6 +67,11 @@ from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     ServicePrincipalAuthTypeWorkspaceConnectionProperties,
     UsernamePasswordAuthTypeWorkspaceConnectionProperties,
 )
+from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml._utils.utils import _snake_to_camel, camel_to_snake, snake_to_pascal
+from azure.ai.ml.constants._common import CommonYamlFields, IdentityType
+from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin, YamlTranslatableMixin
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, JobException, ValidationErrorType, ValidationException
 
 
 class _BaseIdentityConfiguration(ABC, DictMixin, RestTranslatableMixin):

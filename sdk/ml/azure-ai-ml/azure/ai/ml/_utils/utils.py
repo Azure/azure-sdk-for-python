@@ -28,7 +28,7 @@ from uuid import UUID
 
 import isodate
 import pydash
-import yaml
+import yaml  # type: ignore[import]
 
 from azure.ai.ml._restclient.v2022_05_01.models import ListViewType, ManagedServiceIdentity
 from azure.ai.ml._scope_dependent_operations import OperationScope
@@ -76,7 +76,7 @@ def _snake_to_pascal_convert(text: str) -> str:
     return string.capwords(text.replace("_", " ")).replace(" ", "")
 
 
-def snake_to_pascal(text: Optional[str]) -> str:
+def snake_to_pascal(text: Optional[str]) -> Optional[str]:
     """Convert snake name to pascal.
 
     :param text: String to convert
@@ -270,7 +270,7 @@ def load_json(file_path: Optional[Union[str, os.PathLike]]) -> Dict:
     # exceptions.py via _get_mfe_url_override
 
     try:
-        with open(file_path, "r", encoding=DefaultOpenEncoding.READ) as f:
+        with open(file_path, "r", encoding=DefaultOpenEncoding.READ) as f:  # type: ignore[arg-type]
             cfg = json.load(f)
     except OSError as e:  # FileNotFoundError introduced in Python 3
         msg = "No such file or directory: {}"
@@ -321,7 +321,7 @@ def load_yaml(source: Optional[Union[AnyStr, PathLike, IO]]) -> Dict:
             ) from e
     else:
         # source is a subclass of IO
-        if not source.readable():
+        if not source.readable():  # type: ignore[union-attr]
             msg = "File Permissions Error: The already-open \n\n inputted file is not readable."
             raise ValidationException(
                 message=msg,
@@ -331,13 +331,13 @@ def load_yaml(source: Optional[Union[AnyStr, PathLike, IO]]) -> Dict:
                 error_type=ValidationErrorType.INVALID_VALUE,
             )
 
-        cm = nullcontext(enter_result=source)
+        cm = nullcontext(enter_result=source)  # type: ignore[assignment]
 
     with cm as f:
         try:
             return yaml.safe_load(f)
         except yaml.YAMLError as e:
-            msg = f"Error while parsing yaml file: {source} \n\n {str(e)}"
+            msg = f"Error while parsing yaml file: {source} \n\n {str(e)}"  # type: ignore[str-bytes-safe]
             raise ValidationException(
                 message=msg,
                 no_personal_data_message="Error while parsing yaml file",
@@ -424,7 +424,10 @@ def dump_yaml_to_file(
             ) from e
     else:
         # dest is a subclass of IO
-        if not dest.writable():  # dest is misformatted stream or file
+
+        dest_io: Union[bytes, Any, IO[Any]] = dest
+        if not dest_io.writable():  # type: ignore[union-attr]
+            # dest is misformatted stream or file
             msg = "File Permissions Error: The already-open \n\n inputted file is not writable."
             raise ValidationException(
                 message=msg,
@@ -433,7 +436,7 @@ def dump_yaml_to_file(
                 target=ErrorTarget.GENERAL,
                 error_type=ValidationErrorType.CANNOT_PARSE,
             )
-        cm = nullcontext(enter_result=dest)
+        cm = nullcontext(enter_result=dest_io)  # type: ignore[assignment]
 
     with cm as f:
         try:
@@ -493,7 +496,7 @@ def is_url(value: Union[PathLike, str]) -> bool:
 
 
 # Resolve an URL to long form if it is an azureml short from datastore URL, otherwise return the same value
-def resolve_short_datastore_url(value: Union[PathLike, str], workspace: OperationScope) -> str:
+def resolve_short_datastore_url(value: Union[PathLike, str], workspace: OperationScope) -> Union[PathLike, str]:
     """Resolve an URL to long form if it is an azureml short from datastore URL, otherwise return the same value.
 
     :param value: The URL to resolve
@@ -501,7 +504,7 @@ def resolve_short_datastore_url(value: Union[PathLike, str], workspace: Operatio
     :param workspace: The workspace
     :type workspace: OperationScope
     :return: The resolved URL
-    :rtype: str
+    :rtype: Union[PathLike, str]
     """
     from azure.ai.ml.exceptions import ValidationException
 
@@ -543,7 +546,7 @@ def is_mlflow_uri(value: Union[PathLike, str]) -> bool:
         return False
 
 
-def validate_ml_flow_folder(path: str, model_type: string) -> None:
+def validate_ml_flow_folder(path: str, model_type: str) -> None:
     """Validate that the path is a valid ml flow folder.
 
     :param path: The path to validate
@@ -590,7 +593,7 @@ def is_valid_uuid(test_uuid: str) -> bool:
 
 
 @singledispatch
-def from_iso_duration_format(duration: Optional[Any] = None) -> int:  # pylint: disable=unused-argument
+def from_iso_duration_format(duration: Optional[Any] = None) -> None:  # pylint: disable=unused-argument
     """Convert ISO duration format to seconds.
 
     :param duration: The duration to convert
@@ -622,15 +625,18 @@ def to_iso_duration_format_mins(time_in_mins: Optional[Union[int, float]]) -> st
     return isodate.duration_isoformat(timedelta(minutes=time_in_mins)) if time_in_mins else None
 
 
-def from_iso_duration_format_mins(duration: Optional[str]) -> int:
+def from_iso_duration_format_mins(duration: Optional[str]) -> Optional[int]:
     """Convert ISO duration format to minutes.
 
     :param duration: The duration to convert
     :type duration: Optional[str]
     :return: The converted duration
-    :rtype: int
+    :rtype: Optional[int]
     """
-    return int(from_iso_duration_format(duration) / 60) if duration else None
+    converted_duration = from_iso_duration_format(duration)
+    if converted_duration:
+        return int(converted_duration) / 60
+    return None
 
 
 def to_iso_duration_format(time_in_seconds: Optional[Union[int, float]]) -> str:
@@ -655,15 +661,18 @@ def to_iso_duration_format_ms(time_in_ms: Optional[Union[int, float]]) -> str:
     return isodate.duration_isoformat(timedelta(milliseconds=time_in_ms)) if time_in_ms else None
 
 
-def from_iso_duration_format_ms(duration: Optional[str]) -> int:
+def from_iso_duration_format_ms(duration: Optional[str]) -> Optional[int]:
     """Convert ISO duration format to milliseconds.
 
     :param duration: The duration to convert
     :type duration: Optional[str]
-    :return: The converted duration
-    :rtype: int
+    :return: The converted duration or None if duration is None
+    :rtype: Optional[int]
     """
-    return from_iso_duration_format(duration) * 1000 if duration else None
+    converted_duration = from_iso_duration_format(duration)
+    if converted_duration:
+        return int(converted_duration) * 1000
+    return None
 
 
 def to_iso_duration_format_days(time_in_days: Optional[int]) -> str:
@@ -678,7 +687,7 @@ def to_iso_duration_format_days(time_in_days: Optional[int]) -> str:
 
 
 @singledispatch
-def from_iso_duration_format_days(duration: Optional[Any] = None) -> int:  # pylint: disable=unused-argument
+def from_iso_duration_format_days(duration: Optional[Any] = None) -> None:  # pylint: disable=unused-argument
     return None
 
 
@@ -732,7 +741,7 @@ def _get_workspace_base_url(workspace_operations: Any, workspace_name: str, requ
     return all_urls[API_URL_KEY]
 
 
-def _get_mfe_base_url_from_batch_endpoint(endpoint: "BatchEndpoint") -> str:
+def _get_mfe_base_url_from_batch_endpoint(endpoint: "BatchEndpoint") -> str:  # type: ignore[name-defined]
     return endpoint.scoring_uri.split("/subscriptions/")[0]
 
 
@@ -761,11 +770,11 @@ def modified_operation_client(operation_to_modify, url_to_use):
             operation_to_modify._client._base_url = original_api_base_url
 
 
-def from_iso_duration_format_min_sec(duration: Optional[str]) -> str:
+def from_iso_duration_format_min_sec(duration: str) -> str:
     """Convert ISO duration format to min:sec format.
 
     :param duration: The duration to convert
-    :type duration: Optional[str]
+    :type duration: str
     :return: The converted duration
     :rtype: str
     """
@@ -809,7 +818,7 @@ def convert_identity_dict(
             if identity.user_assigned_identities:
                 if isinstance(identity.user_assigned_identities, dict):  # if the identity is already in right format
                     return identity
-                ids = {}
+                ids: Dict[str, Dict] = {}
                 for id in identity.user_assigned_identities:  # pylint: disable=redefined-builtin
                     ids[id["resource_id"]] = {}
                 identity.user_assigned_identities = ids
@@ -913,7 +922,7 @@ def retry(
     failure_msg: str,
     logger: Any,
     max_attempts: int = 1,
-    delay_multiplier: int = 0.25,
+    delay_multiplier: float = 0.25,
 ) -> Callable:
     """Retry a function if it fails.
 
@@ -926,7 +935,7 @@ def retry(
     :param max_attempts: Maximum number of attempts.
     :type max_attempts: int
     :param delay_multiplier: Multiplier for delay between attempts.
-    :type delay_multiplier: int
+    :type delay_multiplier: float
     :return: Decorated function.
     :rtype: Callable
     """
@@ -1388,7 +1397,7 @@ def get_versioned_base_directory_for_cache() -> Path:
 
 
 # pylint: disable-next=name-too-long
-def get_resource_and_group_name_from_resource_id(armstr: str) -> str:
+def get_resource_and_group_name_from_resource_id(armstr: str) -> Tuple[str, Optional[str]]:
     if armstr.find("/") == -1:
         return armstr, None
     return armstr.split("/")[-1], armstr.split("/")[-5]

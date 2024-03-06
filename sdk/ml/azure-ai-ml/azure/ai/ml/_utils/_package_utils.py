@@ -6,21 +6,17 @@
 
 import logging
 
-
-from azure.ai.ml.entities import BatchDeployment, OnlineDeployment, Deployment
+from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.models import PackageRequest as DataPlanePackageRequest
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
-    PackageRequest,
-    CodeConfiguration,
-    BaseEnvironmentId,
-    AzureMLOnlineInferencingServer,
     AzureMLBatchInferencingServer,
+    AzureMLOnlineInferencingServer,
+    BaseEnvironmentId,
+    CodeConfiguration,
+    PackageRequest,
 )
-from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.models import (
-    PackageRequest as DataPlanePackageRequest,
-)
-from azure.ai.ml.constants._common import REGISTRY_URI_FORMAT
-
 from azure.ai.ml._utils._logger_utils import initialize_logger_info
+from azure.ai.ml.constants._common import REGISTRY_URI_FORMAT
+from azure.ai.ml.entities import BatchDeployment, Deployment, OnlineDeployment
 
 module_logger = logging.getLogger(__name__)
 initialize_logger_info(module_logger, terminator="")

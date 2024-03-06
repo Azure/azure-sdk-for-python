@@ -19,7 +19,6 @@ from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Tuple, Un
 
 from colorama import Fore
 from tqdm import TqdmWarning, tqdm
-from typing_extensions import Literal
 
 from azure.ai.ml._artifacts._constants import (
     AML_IGNORE_FILE_NAME,
@@ -71,7 +70,6 @@ from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 if TYPE_CHECKING:
     from azure.ai.ml.operations import ComponentOperations, DataOperations, EnvironmentOperations, ModelOperations
 
-hash_type = type(hashlib.md5())  # nosec
 
 module_logger = logging.getLogger(__name__)
 
@@ -88,7 +86,7 @@ class IgnoreFile(object):
         """
         path = Path(file_path).resolve() if file_path else None
         self._path = path
-        self._path_spec = None
+        self._path_spec: Optional[List[GitWildMatchPattern]] = None
 
     def exists(self) -> bool:
         """Checks if ignore file exists.
@@ -98,11 +96,11 @@ class IgnoreFile(object):
         return self._file_exists()
 
     def _file_exists(self) -> bool:
-        return self._path and self._path.exists()
+        return bool(self._path and self._path.exists())
 
     @property
-    def base_path(self) -> Path:
-        return self._path.parent
+    def base_path(self) -> Optional[Path]:
+        return self._path.parent if self._path else None
 
     def _get_ignore_list(self) -> List[str]:
         """Get ignore list from ignore file contents.
@@ -112,7 +110,7 @@ class IgnoreFile(object):
         """
         if not self.exists():
             return []
-        if self._file_exists():
+        if self._file_exists() and self._path:
             with open(self._path, "r", encoding=DefaultOpenEncoding.READ) as fh:
                 return [line.rstrip() for line in fh if line]
         return []
@@ -125,7 +123,7 @@ class IgnoreFile(object):
         """
         return [GitWildMatchPattern(ignore) for ignore in self._get_ignore_list()]
 
-    def _get_rel_path(self, file_path: Union[str, os.PathLike]) -> Optional[str]:
+    def _get_rel_path(self, file_path: Optional[Union[str, os.PathLike]]) -> Optional[str]:
         """Get relative path of given file_path.
 
         :param file_path: A file path
@@ -133,7 +131,11 @@ class IgnoreFile(object):
         :return: file_path relative to base_path, if computable. None otherwise
         :rtype: Optional[str]
         """
-        file_path = Path(file_path).absolute()
+        if file_path:
+            file_path = Path(file_path).absolute()
+        else:
+            return None
+
         try:
             # use os.path.relpath instead of Path.relative_to in case file_path is not a child of self.base_path
             return os.path.relpath(file_path, self.base_path)
@@ -141,7 +143,7 @@ class IgnoreFile(object):
             # 2 paths are on different drives
             return None
 
-    def is_file_excluded(self, file_path: Union[str, os.PathLike]) -> bool:
+    def is_file_excluded(self, file_path: Optional[Union[str, PathLike]]) -> bool:
         """Checks if given file_path is excluded.
 
         :param file_path: File path to be checked against ignore file specifications
@@ -168,7 +170,7 @@ class IgnoreFile(object):
         return matched
 
     @property
-    def path(self) -> Union[Path, str]:
+    def path(self) -> Optional[Union[Path, str]]:
         return self._path
 
 
@@ -222,26 +224,35 @@ def _validate_path(path: Union[str, os.PathLike], _type: str) -> None:
 def _parse_name_version(
     name: Optional[str] = None, version_as_int: bool = True
 ) -> Tuple[Optional[str], Optional[Union[str, int]]]:
+    version: Optional[Union[str, int]]
+
     if not name:
         return None, None
 
     token_list = name.split(":")
     if len(token_list) == 1:
         return name, None
-    *name, version = token_list
+
+    name = ":".join(token_list[:-1])
+    version = token_list[-1]
+
     if version_as_int:
         version = int(version)
-    return ":".join(name), version
+    return name, version
 
 
-def _get_file_hash(filename: Union[str, os.PathLike], _hash: hash_type) -> hash_type:
+def _get_file_hash(
+    filename: Union[str, os.PathLike], _hash: "_hashlib.HASH"  # type: ignore[name-defined]
+) -> "_hashlib.HASH":  # type: ignore[name-defined]
     with open(str(filename), "rb") as f:
         for chunk in iter(lambda: f.read(CHUNK_SIZE), b""):
             _hash.update(chunk)
     return _hash
 
 
-def _get_dir_hash(directory: Union[str, os.PathLike], _hash: hash_type, ignore_file: IgnoreFile) -> hash_type:
+def _get_dir_hash(
+    directory: Union[str, os.PathLike], _hash: "_hashlib.HASH", ignore_file: IgnoreFile  # type: ignore[name-defined]
+) -> "_hashlib.HASH":  # type: ignore[name-defined]
     dir_contents = Path(directory).iterdir()
     sorted_contents = sorted(dir_contents, key=lambda path: str(path).lower())
     for path in sorted_contents:
@@ -294,7 +305,7 @@ def get_object_hash(path: Union[str, os.PathLike], ignore_file: IgnoreFile = Ign
         if os.path.islink(path):  # ensure we're hashing the contents of the linked file
             path = _resolve_path(Path(path))
         object_hash = _get_file_hash(filename=path, _hash=_hash)
-    return str(object_hash.hexdigest())
+    return str(object_hash.hexdigest())  # type: ignore[attr-defined]
 
 
 def get_content_hash_version():
@@ -344,7 +355,7 @@ def get_content_hash(path: Union[str, os.PathLike], ignore_file: IgnoreFile = Ig
 
 def get_upload_files_from_folder(
     path: Union[str, os.PathLike], *, prefix: str = "", ignore_file: IgnoreFile = IgnoreFile()
-) -> List[str]:
+) -> List[Tuple[str, str]]:
     path = Path(path)
     upload_paths = []
     for root, _, files in os.walk(path, followlinks=True):
@@ -413,19 +424,19 @@ def traverse_directory(  # pylint: disable=unused-argument
     # Normalize Windows paths. Note that path should be resolved first as long part will be converted to a shortcut in
     # Windows. For example, C:\Users\too-long-user-name\test will be converted to C:\Users\too-lo~1\test by default.
     # Refer to https://en.wikipedia.org/wiki/8.3_filename for more details.
-    root = Path(root).resolve().absolute()
+    absolute_root = Path(root).resolve().absolute()
 
     # filter out files excluded by the ignore file
     # TODO: inner ignore file won't take effect. A merged IgnoreFile need to be generated in code resolution.
     origin_file_paths = [
-        root.joinpath(filename)
+        absolute_root.joinpath(filename)
         for filename in files
-        if not ignore_file.is_file_excluded(root.joinpath(filename).as_posix())
+        if not ignore_file.is_file_excluded(absolute_root.joinpath(filename).as_posix())
     ]
 
     result = []
     for origin_file_path in origin_file_paths:
-        relative_path = origin_file_path.relative_to(root)
+        relative_path = origin_file_path.relative_to(absolute_root)
         result.append((_resolve_path(origin_file_path).as_posix(), Path(prefix).joinpath(relative_path).as_posix()))
     return result
 
@@ -448,7 +459,7 @@ def generate_asset_id(asset_hash: str, include_directory=True) -> str:
 
 
 def get_directory_size(
-    root: Union[str, os.PathLike], ignore_file: IgnoreFile = IgnoreFile(None)
+    root: Union[str, bytes], ignore_file: IgnoreFile = IgnoreFile(None)
 ) -> Tuple[int, Dict[str, int]]:
     """Returns total size of a directory and a dictionary itemizing each sub- path and its size.
 
@@ -464,9 +475,9 @@ def get_directory_size(
     """
     total_size = 0
     size_list = {}
-    for dirpath, _, filenames in os.walk(root, followlinks=True):
+    for dirpath, _, filenames in os.walk(root, followlinks=True):  # type: ignore[type-var]
         for name in filenames:
-            full_path = os.path.join(dirpath, name)
+            full_path = os.path.join(dirpath, name)  # type: ignore[call-overload]
             # Don't count files that are excluded by an ignore file
             if ignore_file.is_file_excluded(full_path):
                 continue
@@ -476,14 +487,18 @@ def get_directory_size(
                 # ensure we're counting the size of the linked file
                 # os.readlink returns a file path relative to dirpath, and must be
                 # re-joined to get a workable result
-                path_size = os.path.getsize(os.path.join(dirpath, os.readlink(convert_windows_path_to_unix(full_path))))
+                path_size = os.path.getsize(
+                    os.path.join(
+                        dirpath, os.readlink(convert_windows_path_to_unix(full_path))
+                    )  # type: ignore[call-overload]
+                )  # type: ignore[call-overload]
             size_list[full_path] = path_size
             total_size += path_size
     return total_size, size_list
 
 
 def upload_file(
-    storage_client: Union["BlobStorageClient", "Gen2StorageClient"],
+    storage_client: Union["BlobStorageClient", "Gen2StorageClient"],  # type: ignore[name-defined]
     source: str,
     dest: Optional[str] = None,
     msg: Optional[str] = None,
@@ -521,9 +536,9 @@ def upload_file(
     ):  # Only for Gen2StorageClient, Blob Storage doesn't have true directories
         if in_directory:
             storage_client.temp_sub_directory_client = None
-            file_name_tail = dest.split(os.path.sep)[-1]
+            file_name_tail = dest.split(os.path.sep)[-1]  # type: ignore[union-attr]
             # Indexing from 2 because the first two parts of the remote path will always be LocalUpload/<asset_id>
-            all_sub_folders = dest.split(os.path.sep)[2:-1]
+            all_sub_folders = dest.split(os.path.sep)[2:-1]  # type: ignore[union-attr]
 
             # Create remote directories for each nested directory if file is in a nested directory
             for sub_folder in all_sub_folders:
@@ -536,7 +551,11 @@ def upload_file(
                         sub_folder
                     )
 
-            storage_client.file_client = storage_client.temp_sub_directory_client.create_file(file_name_tail)
+            storage_client.file_client = (
+                storage_client.temp_sub_directory_client.create_file(  # type:ignore[union-attr]
+                    file_name_tail
+                )
+            )
         else:
             storage_client.file_client = storage_client.directory_client.create_file(source.split("/")[-1])
 
@@ -550,7 +569,7 @@ def upload_file(
                 msg += Fore.GREEN + f" ({round(file_size_in_mb, 2)} MBs)"
             cntx_manager = FileUploadProgressBar(msg=msg)
         else:
-            cntx_manager = suppress()
+            cntx_manager = suppress()  # type: ignore[assignment]
 
         with cntx_manager as c:
             callback = c.update_to if (show_progress and not in_directory) else None
@@ -577,7 +596,7 @@ def upload_file(
 
 
 def upload_directory(
-    storage_client: Union["BlobStorageClient", "Gen2StorageClient"],
+    storage_client: Union["BlobStorageClient", "Gen2StorageClient"],  # type: ignore[name-defined]
     source: Union[str, os.PathLike],
     dest: str,
     msg: str,
@@ -614,7 +633,7 @@ def upload_directory(
         )
 
     # Enumerate all files in the given directory and compose paths for them to be uploaded to in the remote storage
-    upload_paths = get_upload_files_from_folder(
+    upload_paths: List[Tuple[str, str]] = get_upload_files_from_folder(
         source_path,
         prefix=prefix,
         ignore_file=ignore_file,
@@ -663,7 +682,7 @@ def upload_directory(
                 storage_client=storage_client,
                 source=src,
                 dest=dest,
-                size=size_dict.get(src),
+                size=size_dict.get(src, 0),
                 in_directory=True,
                 show_progress=show_progress,
             ): (src, dest)
@@ -723,7 +742,7 @@ def _get_next_version_from_container(
     container_operation: Any,
     resource_group_name: str,
     workspace_name: str,
-    registry_name: str = None,
+    registry_name: Optional[str] = None,
     **kwargs,
 ) -> str:
     try:
@@ -802,7 +821,7 @@ def _get_latest(
     resource_group_name: str,
     workspace_name: Optional[str] = None,
     registry_name: Optional[str] = None,
-    order_by: Literal[OrderString.CREATED_AT, OrderString.CREATED_AT_DESC] = OrderString.CREATED_AT_DESC,
+    order_by: OrderString = OrderString.CREATED_AT_DESC,
     **kwargs,
 ) -> Union[ModelVersionData, DataVersionBaseData]:
     """Retrieve the latest version of the asset with the given name.
@@ -819,8 +838,9 @@ def _get_latest(
     :type workspace_name: Optional[str]
     :param registry_name: The registry name
     :type registry_name: Optional[str]
-    :param order_by: Specifies how to order the results. Defaults to :attr:`OrderString.CREATED_AT_DESC`
-    :type order_by: Literal[OrderString.CREATED_AT, OrderString.CREATED_AT_DESC]
+    :param order_by: Specifies how to order the results. Accepted values are OrderString.CREATED_AT and
+        OrderString.CREATED_AT_DESC]. Defaults to `OrderString.CREATED_AT_DESC`.
+    :type order_by: ~azure.ai.ml.constants._common.OrderString
     :return: The latest version of the requested asset
     :rtype: Union[ModelVersionData, DataVersionBaseData]
     """
@@ -1007,7 +1027,7 @@ def _resolve_label_to_asset(
 
 
 def _check_or_modify_auto_delete_setting(
-    autoDeleteSetting: Union[Dict, "AutoDeleteSetting"],
+    autoDeleteSetting: Union[Dict, "AutoDeleteSetting"],  # type: ignore[name-defined]
 ):
     if autoDeleteSetting is not None:
         if hasattr(autoDeleteSetting, "condition"):
@@ -1019,24 +1039,26 @@ def _check_or_modify_auto_delete_setting(
 
 
 def _validate_workspace_managed_datastore(path: Optional[Union[str, PathLike]]) -> Optional[Union[str, PathLike]]:
-    # block cumtomer specified path on managed datastore
-    if path.startswith(WORKSPACE_MANAGED_DATASTORE_WITH_SLASH) or path == WORKSPACE_MANAGED_DATASTORE:
-        path = path.rstrip("/")
+    # block customer specified path on managed datastore
+    if path:
+        path = str(path)
+        if path.startswith(WORKSPACE_MANAGED_DATASTORE_WITH_SLASH) or path == WORKSPACE_MANAGED_DATASTORE:
+            path = path.rstrip("/")
 
-        if path != WORKSPACE_MANAGED_DATASTORE:
-            raise AssetPathException(
-                message=INVALID_MANAGED_DATASTORE_PATH_ERROR_NO_PERSONAL_DATA,
-                tartget=ErrorTarget.DATA,
-                no_personal_data_message=INVALID_MANAGED_DATASTORE_PATH_ERROR_NO_PERSONAL_DATA,
-                error_category=ErrorCategory.USER_ERROR,
-            )
+            if path != WORKSPACE_MANAGED_DATASTORE:
+                raise AssetPathException(
+                    message=INVALID_MANAGED_DATASTORE_PATH_ERROR_NO_PERSONAL_DATA,
+                    tartget=ErrorTarget.DATA,
+                    no_personal_data_message=INVALID_MANAGED_DATASTORE_PATH_ERROR_NO_PERSONAL_DATA,
+                    error_category=ErrorCategory.USER_ERROR,
+                )
 
-        return path + "/paths"
+            return path + "/paths"
     return path
 
 
 def _validate_auto_delete_setting_in_data_output(
-    auto_delete_setting: Optional[Union[Dict, "AutoDeleteSetting"]]
+    auto_delete_setting: Optional[Union[Dict, "AutoDeleteSetting"]]  # type: ignore[name-defined]
 ) -> None:
     # avoid specifying auto_delete_setting in job output now
     if auto_delete_setting:
@@ -1056,7 +1078,7 @@ class FileUploadProgressBar(tqdm):
 
     def update_to(self, response):
         current = response.context["upload_stream_current"]
-        self.total = response.context["data_stream_total"]
+        self.total = response.context["data_stream_total"]  # disable=attribute-defined-outside-init
         if current:
             self.update(current - self.n)
 

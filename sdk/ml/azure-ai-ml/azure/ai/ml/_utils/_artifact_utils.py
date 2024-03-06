@@ -14,9 +14,10 @@ from collections import defaultdict
 from io import BytesIO
 from pathlib import Path
 from threading import Lock
-from typing import Iterable, List, Optional, Union
+from typing import Any, List, Optional, Tuple, Union
 
 from typing_extensions import Literal
+
 from azure.ai.ml.constants._common import DefaultOpenEncoding
 
 from ._http_utils import HttpPipeline
@@ -168,8 +169,9 @@ class ArtifactCache:
         from azure.identity import DefaultAzureCredential
 
         if not organization:
-            organization, _ = self.get_organization_project_by_git()
+            organization_project: Tuple[str, Any] = self.get_organization_project_by_git()
 
+        organization = organization or organization_project[0]
         organization_pattern = r"https:\/\/(.*)\.visualstudio\.com"
         result = re.findall(pattern=organization_pattern, string=organization)
         if result:
@@ -199,7 +201,7 @@ class ArtifactCache:
                 url, headers=header
             )
             if response.status_code == 200:
-                artifacts_tool_path = tempfile.mktemp()  # nosec B306
+                artifacts_tool_path = Path(tempfile.mktemp())  # nosec B306
                 artifacts_tool_uri = response.json()["uri"]
                 response = requests_pipeline.get(artifacts_tool_uri)  # pylint: disable=too-many-function-args
                 with zipfile.ZipFile(BytesIO(response.content)) as zip_file:
@@ -211,7 +213,7 @@ class ArtifactCache:
 
     def _download_artifacts(
         self,
-        download_cmd: Iterable[str],
+        download_cmd: List[Optional[str]],
         organization: Optional[str],
         name: str,
         version: str,
@@ -221,7 +223,7 @@ class ArtifactCache:
         """Download artifacts with retry.
 
         :param download_cmd: The command used to download the artifact
-        :type download_cmd: Iterable[str]
+        :type download_cmd: List[Optional[str]]
         :param organization: The artifact organization
         :type organization: Optional[str]
         :param name: The package name
@@ -242,7 +244,7 @@ class ArtifactCache:
 
             retries += 1
             result = subprocess.run(
-                download_cmd,
+                download_cmd,  # type: ignore[arg-type]
                 capture_output=True,
                 encoding="utf-8",
                 check=False,
@@ -278,7 +280,9 @@ class ArtifactCache:
         if checksum_path.exists():
             with open(checksum_path, "r", encoding=DefaultOpenEncoding.READ) as f:
                 checksum = f.read()
-                file_list = [os.path.join(root, f) for root, _, files in os.walk(path) for f in files]
+                file_list: List[Union[os.PathLike, str]] = [
+                    os.path.join(root, f) for root, _, files in os.walk(path) for f in files
+                ]
                 artifact_hash = self.hash_files_content(file_list)
                 return checksum == artifact_hash
         return False
@@ -380,7 +384,7 @@ class ArtifactCache:
         :rtype: Path
         """
         tempdir = tempfile.mktemp()  # nosec B306
-        download_cmd = [
+        download_cmd: List[Optional[str]] = [
             shutil.which("az"),
             "artifacts",
             "universal",
@@ -402,7 +406,7 @@ class ArtifactCache:
             download_cmd.extend(["--project", project])
         _logger.info("Start downloading artifacts %s:%s from %s.", name, version, feed)
         result = subprocess.run(
-            download_cmd,
+            download_cmd,  # type: ignore[arg-type]
             capture_output=True,
             encoding="utf-8",
             check=False,
@@ -434,7 +438,9 @@ class ArtifactCache:
                 / version
             )
             artifact_package_path.parent.mkdir(exist_ok=True, parents=True)
-            file_list = [os.path.join(root, f) for root, _, files in os.walk(tempdir) for f in files]
+            file_list: List[Union[os.PathLike, str]] = [
+                os.path.join(root, f) for root, _, files in os.walk(tempdir) for f in files
+            ]
             artifact_hash = self.hash_files_content(file_list)
             os.rename(tempdir, artifact_package_path)
             temp_checksum_file = os.path.join(tempfile.mkdtemp(), f"{version}_{self.POSTFIX_CHECKSUM}")

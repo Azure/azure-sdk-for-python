@@ -74,16 +74,14 @@ class AMLVersionedArmId(object):
 def get_datastore_arm_id(
     datastore_name: Optional[str] = None, operation_scope: Optional[OperationScope] = None
 ) -> Optional[str]:
-    return (
-        DATASTORE_RESOURCE_ID.format(
+    if datastore_name and operation_scope:
+        return DATASTORE_RESOURCE_ID.format(
             operation_scope.subscription_id,
             operation_scope.resource_group_name,
             operation_scope.workspace_name,
             datastore_name,
         )
-        if datastore_name
-        else None
-    )
+    return None
 
 
 class AMLLabelledArmId(object):
@@ -293,7 +291,7 @@ def _parse_endpoint_name_from_deployment_id(deployment_id: str) -> str:
     return match.group(5)
 
 
-def parse_AzureML_id(name: str) -> Tuple[str, str, str]:
+def parse_AzureML_id(name: str) -> Tuple[str, Optional[str], Optional[str]]:
     if name.startswith(ARM_ID_PREFIX):
         name = name[len(ARM_ID_PREFIX) :]
 

@@ -3,8 +3,9 @@
 # ---------------------------------------------------------
 
 import logging
+import os
 import re
-from typing import Optional, Tuple, Union
+from typing import Any, Optional, Tuple, Union
 
 from azure.ai.ml._artifacts._blob_storage_helper import BlobStorageClient
 from azure.ai.ml._artifacts._constants import STORAGE_URI_REGEX
@@ -33,18 +34,20 @@ class AzureMLDatastorePathUri:
     """Parser for an azureml:// datastore path URI, e.g.: azureml://datastores/mydatastore/paths/images/dogs'.
 
     :param uri: The AzureML datastore path URI.
-    :type uri: str
+    :type uri: Union[os.PathLike[Any], str]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if the AzureML datastore
         path URI is incorrectly formatted.
     '
     """
 
-    def __init__(self, uri: str):
+    def __init__(self, uri: Union[os.PathLike, str]):  # pylint: disable=too-many-statements
+        uri = str(uri)
         if uri.startswith(FILE_PREFIX):
             uri = uri[len(FILE_PREFIX) :]
         elif uri.startswith(FOLDER_PREFIX):
             uri = uri[len(FOLDER_PREFIX) :]
         self.uri = uri
+        self.uri_type: Optional[str]
 
         short_uri_match = re.match(SHORT_URI_REGEX_FORMAT, uri)
         ml_flow_uri_match = re.match(MLFLOW_URI_REGEX_FORMAT, uri)
@@ -177,7 +180,7 @@ def get_storage_client(
     return client_builders[storage_type](credential, container_name, account_url)
 
 
-def get_artifact_path_from_storage_url(blob_url: str, container_name: dict) -> str:
+def get_artifact_path_from_storage_url(blob_url: str, container_name: str) -> str:
     split_blob_url = blob_url.split(container_name)
     if len(split_blob_url) > 1:
         path = split_blob_url[-1]
@@ -187,7 +190,7 @@ def get_artifact_path_from_storage_url(blob_url: str, container_name: dict) -> s
     return blob_url
 
 
-def get_ds_name_and_path_prefix(asset_uri: str, registry_name: Optional[str] = None) -> Tuple[str, str]:
+def get_ds_name_and_path_prefix(asset_uri: str, registry_name: Optional[str] = None) -> Tuple[Optional[str], Any]:
     if registry_name:
         try:
             split_paths = re.findall(STORAGE_URI_REGEX, asset_uri)

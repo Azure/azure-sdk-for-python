@@ -3,26 +3,19 @@
 # ---------------------------------------------------------
 
 import logging
-from typing import Tuple, Optional
+from typing import Optional, Tuple
 
 from typing_extensions import Literal
 
-from azure.ai.ml._restclient.registry_discovery import (
-    AzureMachineLearningWorkspaces as ServiceClientRegistryDiscovery,
-)
-from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
-    AzureMachineLearningWorkspaces,
-)
+from azure.ai.ml._azure_environments import _get_default_cloud_name, _get_registry_discovery_endpoint_from_metadata
+from azure.ai.ml._restclient.registry_discovery import AzureMachineLearningWorkspaces as ServiceClientRegistryDiscovery
+from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import AzureMachineLearningWorkspaces
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.models import (
     BlobReferenceSASRequestDto,
     TemporaryDataReferenceRequestDto,
 )
 from azure.ai.ml.constants._common import REGISTRY_ASSET_ID
 from azure.core.exceptions import HttpResponseError
-from azure.ai.ml._azure_environments import (
-    _get_default_cloud_name,
-    _get_registry_discovery_endpoint_from_metadata,
-)
 
 module_logger = logging.getLogger(__name__)
 
@@ -46,15 +39,20 @@ class RegistryDiscovery:
         self._base_url = None
         self.workspace_region = kwargs.get("workspace_location", None)
 
-    def _get_registry_details(self) -> str:
+    def _get_registry_details(self) -> None:
         response = self.service_client_registry_discovery_client.registry_management_non_workspace.registry_management_non_workspace(  # pylint: disable=line-too-long
             self.registry_name
         )
         if self.workspace_region:
             _check_region_fqdn(self.workspace_region, response)
-            self._base_url = f"https://cert-{self.workspace_region}.experiments.azureml.net/{MFE_PATH_PREFIX}"
+            self._base_url = (
+                f"https://cert-{self.workspace_region}.experiments.azureml.net/"
+                f"{MFE_PATH_PREFIX}"  # type: ignore[assignment]
+            )
         else:
-            self._base_url = f"{response.primary_region_resource_provider_uri}{MFE_PATH_PREFIX}"
+            self._base_url = (
+                f"{response.primary_region_resource_provider_uri}" f"{MFE_PATH_PREFIX}"  # type: ignore[assignment]
+            )
         self._subscription_id = response.subscription_id
         self._resource_group = response.resource_group
 
@@ -72,25 +70,25 @@ class RegistryDiscovery:
         return service_client_10_2021_dataplanepreview
 
     @property
-    def subscription_id(self) -> str:
+    def subscription_id(self) -> Optional[str]:
         """The subscription id of the registry.
 
         :return: Subscription Id
-        :rtype: str
+        :rtype: Optional[str]
         """
         return self._subscription_id
 
     @property
-    def resource_group(self) -> str:
+    def resource_group(self) -> Optional[str]:
         """The resource group of the registry.
 
         :return: Resource Group
-        :rtype: str
+        :rtype: Optional[str]
         """
         return self._resource_group
 
 
-def get_sas_uri_for_registry_asset(service_client, name, version, resource_group, registry, body) -> str:
+def get_sas_uri_for_registry_asset(service_client, name, version, resource_group, registry, body) -> Optional[str]:
     """Get sas_uri for registry asset.
 
     :param service_client: Service client
@@ -105,7 +103,7 @@ def get_sas_uri_for_registry_asset(service_client, name, version, resource_group
     :type registry: str
     :param body: Request body
     :type body: TemporaryDataReferenceRequestDto
-    :rtype: str
+    :rtype: Optional[str]
     """
     sas_uri = None
     try:
