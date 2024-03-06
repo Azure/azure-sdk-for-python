@@ -13,6 +13,7 @@ from ._models import (
 )
 from .._model_base import rest_discriminator, rest_field
 
+
 class AnalyzeDocumentRequest(GeneratedAnalyzeDocumentRequest):
     """Document analysis parameters.
 
@@ -35,7 +36,7 @@ class AnalyzeDocumentRequest(GeneratedAnalyzeDocumentRequest):
         bytes_source: Optional[bytes] = None,
     ):
         ...
-    
+
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
@@ -63,11 +64,15 @@ class ClassifyDocumentRequest(GeneratedClassifyDocumentRequest):
         bytes_source: Optional[bytes] = None,
     ):
         ...
-    
+
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
-__all__: List[str] = ["AnalyzeDocumentRequest", "ClassifyDocumentRequest"]  # Add all objects you want publicly available to users at this package level
+
+__all__: List[str] = [
+    "AnalyzeDocumentRequest",
+    "ClassifyDocumentRequest",
+]  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():
