@@ -15,7 +15,7 @@ from json import (
     dumps,
     loads,
 )
-from typing import Any, BinaryIO, Callable, Dict, Optional, Tuple, TYPE_CHECKING
+from typing import Any, Callable, Dict, IO, Optional, Tuple, TYPE_CHECKING
 from typing import OrderedDict as TypedOrderedDict
 from typing_extensions import Protocol
 
@@ -220,11 +220,11 @@ class GCMBlobEncryptionStream:
     """
     def __init__(
         self, content_encryption_key: bytes,
-        data_stream: BinaryIO,
+        data_stream: IO[bytes],
     ) -> None:
         """
         :param bytes content_encryption_key: The encryption key to use.
-        :param BinaryIO data_stream: The data stream to read data from.
+        :param IO[bytes] data_stream: The data stream to read data from.
         """
         self.content_encryption_key = content_encryption_key
         self.data_stream = data_stream
@@ -736,7 +736,7 @@ def _decrypt_message(
     return decrypted_data
 
 
-def encrypt_blob(blob: bytes, key_encryption_key: KeyEncryptionKey, version: str) -> Tuple[str, bytes]:
+def encrypt_blob(blob_stream: IO[bytes], key_encryption_key: KeyEncryptionKey, version: str) -> Tuple[str, bytes]:
     """
     Encrypts the given blob using the given encryption protocol version.
     Wraps the generated content-encryption-key using the user-provided key-encryption-key (kek).
@@ -744,8 +744,8 @@ def encrypt_blob(blob: bytes, key_encryption_key: KeyEncryptionKey, version: str
     only be used when a blob is small enough for single shot upload. Encrypting larger blobs
     is done as a part of the upload_data_chunks method.
 
-    :param bytes blob:
-        The blob to be encrypted.
+    :param IO[bytes] blob_stream:
+        The blob stream to be encrypted.
     :param KeyEncryptionKey key_encryption_key:
         The user-provided key-encryption-key. Must implement the following methods:
         wrap_key(key)
@@ -759,7 +759,7 @@ def encrypt_blob(blob: bytes, key_encryption_key: KeyEncryptionKey, version: str
     :rtype: (str, bytes)
     """
 
-    _validate_not_none('blob', blob)
+    _validate_not_none('blob', blob_stream)
     _validate_not_none('key_encryption_key', key_encryption_key)
     _validate_key_encryption_key_wrap(key_encryption_key)
 
@@ -767,6 +767,7 @@ def encrypt_blob(blob: bytes, key_encryption_key: KeyEncryptionKey, version: str
         # AES256 uses 256 bit (32 byte) keys and always with 16 byte blocks
         content_encryption_key = os.urandom(32)
         initialization_vector = os.urandom(16)
+        blob = blob_stream.read()
 
         cipher = _generate_AES_CBC_cipher(content_encryption_key, initialization_vector)
 
@@ -783,9 +784,7 @@ def encrypt_blob(blob: bytes, key_encryption_key: KeyEncryptionKey, version: str
         content_encryption_key = os.urandom(32)
         initialization_vector = None
 
-        data = BytesIO(blob)
-        encryption_stream = GCMBlobEncryptionStream(content_encryption_key, data)
-
+        encryption_stream = GCMBlobEncryptionStream(content_encryption_key, blob_stream)
         encrypted_data = encryption_stream.read()
 
     else:

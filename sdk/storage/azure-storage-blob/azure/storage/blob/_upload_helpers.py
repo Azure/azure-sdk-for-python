@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 from io import SEEK_SET, UnsupportedOperation
-from typing import TypeVar, TYPE_CHECKING
+from typing import IO, TypeVar, Union, TYPE_CHECKING
 
 from azure.core.exceptions import ResourceExistsError, ResourceModifiedError, HttpResponseError
 
@@ -64,7 +64,6 @@ def _any_conditions(modified_access_conditions=None, **kwargs):  # pylint: disab
 
 def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statements
         client=None,
-        data=None,
         stream=None,
         length=None,
         overwrite=None,
@@ -92,15 +91,17 @@ def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statements
 
         # Do single put if the size is smaller than or equal config.max_single_put_size
         if adjusted_count is not None and (adjusted_count <= blob_settings.max_single_put_size):
-            try:
-                data = data.read(length)
-                if not isinstance(data, bytes):
-                    raise TypeError('Blob data should be of type bytes.')
-            except AttributeError:
-                pass
+            # Test the output type of the stream
+            read_type = stream.read(0)
+            if not isinstance(read_type, bytes):
+                raise TypeError('Blob data should be of type bytes.')
+
+            data: Union[bytes, IO[bytes]]
             if encryption_options.get('key'):
-                encryption_data, data = encrypt_blob(data, encryption_options['key'], encryption_options['version'])
+                encryption_data, data = encrypt_blob(stream, encryption_options['key'], encryption_options['version'])
                 headers['x-ms-meta-encryptiondata'] = encryption_data
+            else:
+                data = stream
 
             response = client.upload(
                 body=data,
