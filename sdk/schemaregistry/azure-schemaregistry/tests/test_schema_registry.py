@@ -86,6 +86,10 @@ if is_livetest != "true":  # protobuf changes have not been rolled out
     format_params.append(protobuf_args)
     format_ids.append(PROTOBUF_FORMAT)
 
+# TODO: remove when protobuf changes have been rolled out
+format_params_no_protobuf = [avro_args, json_args, custom_args]
+format_ids_no_protobuf = [AVRO_FORMAT, JSON_FORMAT, CUSTOM_FORMAT]
+
 
 class ArgPasser:
     def __call__(self, fn):
@@ -397,7 +401,8 @@ class TestSchemaRegistry(AzureRecordedTestCase):
         assert schema_properties.format == format
 
     @SchemaRegistryEnvironmentVariableLoader()
-    @pytest.mark.parametrize("format, schema_str", format_params, ids=format_ids)
+    # TODO: add back all after protobuf changes have been rolled out
+    @pytest.mark.parametrize("format, schema_str", format_params_no_protobuf, ids=format_ids_no_protobuf)
     @ArgPasser()
     @recorded_by_proxy
     def test_schema_internal_ops_list(self, format, schema_str, **kwargs):
