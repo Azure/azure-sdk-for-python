@@ -1,3 +1,13 @@
+parameters:
+  - name: Daily
+    default: true
+  - name: Artifact
+    type: object
+    default: {}
+  - name: ArtifactName
+    type: string
+    default: "not-specified"
+
 steps:
   - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
     parameters:

@@ -105,7 +105,10 @@ jobs:
 
     steps:
       - template: /eng/pipelines/templates/steps/smoke-test-steps.yml
-
+        parameters:
+          Artifact: ${{ parameters.Artifact }}
+          ArtifactName: ${{ parameters.ArtifactName }}
+          Daily: ${{ parameters.Daily }}
 
   - ${{ if eq(parameters.Daily, true) }}:
     - job: run_smoke_test_windows
@@ -144,7 +147,6 @@ jobs:
         name: $(Pool)
         image: $(OSVmImage)
         os: windows
-
       variables:
         - template: /eng/pipelines/templates/variables/globals.yml
         - name: Location
@@ -160,9 +162,12 @@ jobs:
             value: $(Build.SourcesDirectory)/common/smoketest/requirements.txt
           ${{ if eq(parameters.Daily, false) }}:
             value: $(Build.SourcesDirectory)/common/smoketest/requirements-release.txt
-
       steps:
         - template: /eng/pipelines/templates/steps/smoke-test-steps.yml
+          parameters:
+            Artifact: ${{ parameters.Artifact }}
+            ArtifactName: ${{ parameters.ArtifactName }}
+            Daily: ${{ parameters.Daily }}
 
     - job: run_smoke_test_macos
       displayName: Run Smoke Test MacOS
@@ -207,3 +212,7 @@ jobs:
 
       steps:
         - template: /eng/pipelines/templates/steps/smoke-test-steps.yml
+          parameters:
+            Artifact: ${{ parameters.Artifact }}
+            ArtifactName: ${{ parameters.ArtifactName }}
+            Daily: ${{ parameters.Daily }}
