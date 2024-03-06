@@ -10,7 +10,7 @@ class JsonLineList(list):
         for item in self:
             json_lines += json.dumps(item) + "\n"
         return json_lines
-    
+
     def to_eval_qa_json_lines(self):
         json_lines = ""
         for item in self:
@@ -30,5 +30,3 @@ class JsonLineList(list):
                 else:
                     json_lines += json.dumps({'question': user_message, 'answer': assistant_message}) + "\n"
         return json_lines
-
-        
