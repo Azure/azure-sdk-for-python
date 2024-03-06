@@ -44,7 +44,7 @@ jobs:
         Python_38_Linux (AzureCloud):
           PythonVersion: '3.8'
           Pool: "azsdk-pool-mms-ubuntu-2004-general"
-          OSVmImage: "MMSUbuntu20.04"
+          OSVmImage: azsdk-pool-mms-ubuntu-2004-1espt
           SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
           ArmTemplateParameters: $(azureCloudArmParameters)
         ${{ if eq(parameters.Daily, true) }}:
@@ -107,104 +107,103 @@ jobs:
       - template: /eng/pipelines/templates/steps/smoke-test-steps.yml
 
 
-  - job: run_smoke_test_windows
-    displayName: Run Smoke Test Windows
-    ${{ if eq(parameters.Daily, false) }}:
-      dependsOn: smoke_test_eligibility
-      condition: and(succeeded(), eq(dependencies.smoke_test_eligibility.outputs['output_eligibility.RunSmokeTests'], true))
-    strategy:
-      matrix:
-        ${{ if eq(parameters.Daily, true) }}:
-          Python_37_Windows (AzureCloud):
-            PythonVersion: '3.7'
-            Pool: azsdk-pool-mms-win-2022-general
-            OSVmImage: azsdk-pool-mms-win-2022-1espt
-            SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
-            ArmTemplateParameters: $(azureCloudArmParameters)
-          Python_38_Windows (AzureCloud):
-            PythonVersion: '3.8'
-            Pool: azsdk-pool-mms-win-2022-general
-            OSVmImage: azsdk-pool-mms-win-2022-1espt
-            SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
-            ArmTemplateParameters: $(azureCloudArmParameters)
-          Python_37_Windows (AzureUSGovernment):
-            PythonVersion: '3.7'
-            Pool: azsdk-pool-mms-win-2022-general
-            OSVmImage: azsdk-pool-mms-win-2022-1espt
-            SubscriptionConfiguration: $(sub-config-gov-test-resources)
-            ArmTemplateParameters: $(azureUSGovernmentArmParameters)
-          Python_37_Windows (AzureChinaCloud):
-            PythonVersion: '3.7'
-            Pool: azsdk-pool-mms-win-2022-general
-            OSVmImage: azsdk-pool-mms-win-2022-1espt
-            SubscriptionConfiguration: $(sub-config-cn-test-resources)
-            Location: 'chinanorth'
-            ArmTemplateParameters: $(azureChinaCloudArmParameters)
-    pool:
-      name: $(Pool)
-      image: $(OSVmImage)
-      os: windows
+  - ${{ if eq(parameters.Daily, true) }}:
+    - job: run_smoke_test_windows
+      displayName: Run Smoke Test Windows
+      ${{ if eq(parameters.Daily, false) }}:
+        dependsOn: smoke_test_eligibility
+        condition: and(succeeded(), eq(dependencies.smoke_test_eligibility.outputs['output_eligibility.RunSmokeTests'], true))
+      strategy:
+        matrix:
+            Python_37_Windows (AzureCloud):
+              PythonVersion: '3.7'
+              Pool: azsdk-pool-mms-win-2022-general
+              OSVmImage: azsdk-pool-mms-win-2022-1espt
+              SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
+              ArmTemplateParameters: $(azureCloudArmParameters)
+            Python_38_Windows (AzureCloud):
+              PythonVersion: '3.8'
+              Pool: azsdk-pool-mms-win-2022-general
+              OSVmImage: azsdk-pool-mms-win-2022-1espt
+              SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
+              ArmTemplateParameters: $(azureCloudArmParameters)
+            Python_37_Windows (AzureUSGovernment):
+              PythonVersion: '3.7'
+              Pool: azsdk-pool-mms-win-2022-general
+              OSVmImage: azsdk-pool-mms-win-2022-1espt
+              SubscriptionConfiguration: $(sub-config-gov-test-resources)
+              ArmTemplateParameters: $(azureUSGovernmentArmParameters)
+            Python_37_Windows (AzureChinaCloud):
+              PythonVersion: '3.7'
+              Pool: azsdk-pool-mms-win-2022-general
+              OSVmImage: azsdk-pool-mms-win-2022-1espt
+              SubscriptionConfiguration: $(sub-config-cn-test-resources)
+              Location: 'chinanorth'
+              ArmTemplateParameters: $(azureChinaCloudArmParameters)
+      pool:
+        name: $(Pool)
+        image: $(OSVmImage)
+        os: windows
 
-    variables:
-      - template: /eng/pipelines/templates/variables/globals.yml
-      - name: Location
-        value: ''
-      - name: azureCloudArmParameters
-        value: "@{ storageEndpointSuffix = 'core.windows.net'; azureCloud = 'AzureCloud'; }"
-      - name: azureUSGovernmentArmParameters
-        value: "@{ storageEndpointSuffix = 'core.usgovcloudapi.net'; azureCloud = 'AzureUSGovernment'; }"
-      - name: azureChinaCloudArmParameters
-        value: "@{ storageEndpointSuffix = 'core.chinacloudapi.cn'; azureCloud = 'AzureChinaCloud'; }"
-      - name: requirements
-        ${{ if eq(parameters.Daily, true) }}:
-          value: $(Build.SourcesDirectory)/common/smoketest/requirements.txt
-        ${{ if eq(parameters.Daily, false) }}:
-          value: $(Build.SourcesDirectory)/common/smoketest/requirements-release.txt
+      variables:
+        - template: /eng/pipelines/templates/variables/globals.yml
+        - name: Location
+          value: ''
+        - name: azureCloudArmParameters
+          value: "@{ storageEndpointSuffix = 'core.windows.net'; azureCloud = 'AzureCloud'; }"
+        - name: azureUSGovernmentArmParameters
+          value: "@{ storageEndpointSuffix = 'core.usgovcloudapi.net'; azureCloud = 'AzureUSGovernment'; }"
+        - name: azureChinaCloudArmParameters
+          value: "@{ storageEndpointSuffix = 'core.chinacloudapi.cn'; azureCloud = 'AzureChinaCloud'; }"
+        - name: requirements
+          ${{ if eq(parameters.Daily, true) }}:
+            value: $(Build.SourcesDirectory)/common/smoketest/requirements.txt
+          ${{ if eq(parameters.Daily, false) }}:
+            value: $(Build.SourcesDirectory)/common/smoketest/requirements-release.txt
 
-    steps:
-      - template: /eng/pipelines/templates/steps/smoke-test-steps.yml
+      steps:
+        - template: /eng/pipelines/templates/steps/smoke-test-steps.yml
 
-  - job: run_smoke_test_macos
-    displayName: Run Smoke Test MacOS
-    ${{ if eq(parameters.Daily, false) }}:
-      dependsOn: smoke_test_eligibility
-      condition: and(succeeded(), eq(dependencies.smoke_test_eligibility.outputs['output_eligibility.RunSmokeTests'], true))
-    strategy:
-      matrix:
-        ${{ if eq(parameters.Daily, true) }}:
-          Python_37_Mac (AzureCloud):
-            PythonVersion: '3.7'
-            Pool: Azure Pipelines
-            OSVmImage: macos-11
-            SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
-            ArmTemplateParameters: $(azureCloudArmParameters)
-          Python_38_Mac (AzureCloud):
-            PythonVersion: '3.8'
-            Pool: Azure Pipelines
-            OSVmImage: macos-11
-            SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
-            ArmTemplateParameters: $(azureCloudArmParameters)
+    - job: run_smoke_test_macos
+      displayName: Run Smoke Test MacOS
+      ${{ if eq(parameters.Daily, false) }}:
+        dependsOn: smoke_test_eligibility
+        condition: and(succeeded(), eq(dependencies.smoke_test_eligibility.outputs['output_eligibility.RunSmokeTests'], true))
+      strategy:
+        matrix:
+            Python_37_Mac (AzureCloud):
+              PythonVersion: '3.7'
+              Pool: Azure Pipelines
+              OSVmImage: macos-11
+              SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
+              ArmTemplateParameters: $(azureCloudArmParameters)
+            Python_38_Mac (AzureCloud):
+              PythonVersion: '3.8'
+              Pool: Azure Pipelines
+              OSVmImage: macos-11
+              SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
+              ArmTemplateParameters: $(azureCloudArmParameters)
 
-    pool:
-      name: $(Pool)
-      vmImage: $(OSVmImage)
-      os: macOS
+      pool:
+        name: $(Pool)
+        vmImage: $(OSVmImage)
+        os: macOS
 
-    variables:
-      - template: /eng/pipelines/templates/variables/globals.yml
-      - name: Location
-        value: ''
-      - name: azureCloudArmParameters
-        value: "@{ storageEndpointSuffix = 'core.windows.net'; azureCloud = 'AzureCloud'; }"
-      - name: azureUSGovernmentArmParameters
-        value: "@{ storageEndpointSuffix = 'core.usgovcloudapi.net'; azureCloud = 'AzureUSGovernment'; }"
-      - name: azureChinaCloudArmParameters
-        value: "@{ storageEndpointSuffix = 'core.chinacloudapi.cn'; azureCloud = 'AzureChinaCloud'; }"
-      - name: requirements
-        ${{ if eq(parameters.Daily, true) }}:
-          value: $(Build.SourcesDirectory)/common/smoketest/requirements.txt
-        ${{ if eq(parameters.Daily, false) }}:
-          value: $(Build.SourcesDirectory)/common/smoketest/requirements-release.txt
+      variables:
+        - template: /eng/pipelines/templates/variables/globals.yml
+        - name: Location
+          value: ''
+        - name: azureCloudArmParameters
+          value: "@{ storageEndpointSuffix = 'core.windows.net'; azureCloud = 'AzureCloud'; }"
+        - name: azureUSGovernmentArmParameters
+          value: "@{ storageEndpointSuffix = 'core.usgovcloudapi.net'; azureCloud = 'AzureUSGovernment'; }"
+        - name: azureChinaCloudArmParameters
+          value: "@{ storageEndpointSuffix = 'core.chinacloudapi.cn'; azureCloud = 'AzureChinaCloud'; }"
+        - name: requirements
+          ${{ if eq(parameters.Daily, true) }}:
+            value: $(Build.SourcesDirectory)/common/smoketest/requirements.txt
+          ${{ if eq(parameters.Daily, false) }}:
+            value: $(Build.SourcesDirectory)/common/smoketest/requirements-release.txt
 
-    steps:
-      - template: /eng/pipelines/templates/steps/smoke-test-steps.yml
+      steps:
+        - template: /eng/pipelines/templates/steps/smoke-test-steps.yml
