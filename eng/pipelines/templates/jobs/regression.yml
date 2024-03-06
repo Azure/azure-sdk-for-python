@@ -25,6 +25,8 @@ parameters:
   - name: BuildTargetingString
     type: string
     default: 'azure-*'
+  - name: OSName
+    type: string
 
 # The variable $(DependentService) is set from the matrix configuration.
 
@@ -54,6 +56,7 @@ jobs:
     pool:
       name: $(Pool)
       vmImage: $(OSVmImage)
+      os: ${{ parameters.OSName }}
 
     ${{ if eq(parameters.UsePlatformContainer, 'true') }}:
       # Add a default so the job doesn't fail when the matrix is empty
