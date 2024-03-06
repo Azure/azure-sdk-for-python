@@ -31,5 +31,7 @@ class JsonLineList(list):
                         'answer': assistant_message, 
                         'context': context}) + "\n"
                 else:
-                    json_lines += json.dumps({'question': user_message, 'answer': assistant_message}) + "\n"
+                    json_lines += json.dumps({
+                        'question': user_message, 
+                        'answer': assistant_message}) + "\n"
         return json_lines
