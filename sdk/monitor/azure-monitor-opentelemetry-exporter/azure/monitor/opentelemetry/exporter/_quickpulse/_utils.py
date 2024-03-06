@@ -43,7 +43,10 @@ def _metric_to_quick_pulse_data_points(  # pylint: disable=too-many-nested-block
                             weight=1,
                         )
                         if isinstance(point, HistogramDataPoint):
-                            metric_point.value = point.sum
+                            if point.count > 0:
+                                metric_point.value = point.sum / point.count
+                            else:
+                                metric_point.value = 0
                         elif isinstance(point, NumberDataPoint):
                             metric_point.value = point.value
                         else:
