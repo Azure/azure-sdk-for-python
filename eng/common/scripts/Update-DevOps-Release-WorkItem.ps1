@@ -18,7 +18,7 @@ param(
   [string]$devops_pat = $env:DEVOPS_PAT,
   [bool]$inRelease = $true
 )
-#Requires -Version 7
+#Requires -Version 6.0
 Set-StrictMode -Version 3
 
 if (!(Get-Command az -ErrorAction SilentlyContinue)) {
