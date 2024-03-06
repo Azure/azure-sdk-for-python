@@ -34,7 +34,7 @@ jobs:
           env:
             RunSmokeTests: $(RunSmokeTests)
 
-  - job: run_smoke_test
+  - job: run_smoke_test_linux
     displayName: Run Smoke Test Linux
     ${{ if eq(parameters.Daily, false) }}:
       dependsOn: smoke_test_eligibility
@@ -108,7 +108,7 @@ jobs:
 
 
 
-  - job: run_smoke_test
+  - job: run_smoke_test_windows
     displayName: Run Smoke Test Windows
     ${{ if eq(parameters.Daily, false) }}:
       dependsOn: smoke_test_eligibility
@@ -165,7 +165,7 @@ jobs:
     steps:
       - template: /eng/pipelines/templates/steps/smoke-test-steps.yml
 
-  - job: run_smoke_test
+  - job: run_smoke_test_macos
     displayName: Run Smoke Test MacOS
     ${{ if eq(parameters.Daily, false) }}:
       dependsOn: smoke_test_eligibility
