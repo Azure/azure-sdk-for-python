@@ -132,8 +132,7 @@ class _QuickpulseManager(metaclass=Singleton):
             # TODO: Include DocumentIngress in payload
             document = _get_span_document(span)
             duration_ms = (span.end_time - span.start_time) / 1e9
-            # status_code = str(span.attributes.get(SpanAttributes.HTTP_STATUS_CODE), "")
-            # success = status_code == "200"
+            # TODO: Spec out what "success" is
             success = span.status.is_ok
 
             if span.kind in (SpanKind.SERVER, SpanKind.CONSUMER):

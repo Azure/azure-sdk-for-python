@@ -11,10 +11,6 @@ from opentelemetry.context import (
 from opentelemetry.sdk.metrics import (
     Counter,
     Histogram,
-    ObservableCounter,
-    ObservableGauge,
-    ObservableUpDownCounter,
-    UpDownCounter,
 )
 from opentelemetry.sdk.metrics._internal.point import MetricsData
 from opentelemetry.sdk.metrics.export import (
