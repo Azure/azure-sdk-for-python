@@ -141,7 +141,7 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
         """List all workspace connections for a workspace.
 
         :param connection_type: Type of workspace connection to list.
-        :paramtype connection_type: Optional[str]
+        :type connection_type: Optional[str]
         :keyword include_data_connections: If true, also return data connections. Defaults to False.
         :paramtype include_data_connections: bool
         :return: An iterator like instance of workspace connection objects
