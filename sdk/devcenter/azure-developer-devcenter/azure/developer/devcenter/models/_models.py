@@ -84,7 +84,7 @@ class DevBox(_model_base.Model):  # pylint: disable=too-many-instance-attributes
      Virtual Network it is attached to.
     :vartype location: str
     :ivar os_type: The operating system type of this Dev Box. "Windows"
-    :vartype os_type: str or ~azure.developer.devcenter.models.OsType
+    :vartype os_type: str or ~azure.developer.devcenter.models.OSType
     :ivar user: The AAD object id of the user this Dev Box is assigned to.
     :vartype user: str
     :ivar hardware_profile: Information about the Dev Box's hardware resources.
@@ -97,7 +97,7 @@ class DevBox(_model_base.Model):  # pylint: disable=too-many-instance-attributes
     :vartype created_time: ~datetime.datetime
     :ivar local_administrator: Indicates whether the owner of the Dev Box is a local administrator.
      Known values are: "Enabled" and "Disabled".
-    :vartype local_administrator: str or ~azure.developer.devcenter.models.LocalAdminStatus
+    :vartype local_administrator: str or ~azure.developer.devcenter.models.LocalAdministratorStatus
     """
 
     name: str = rest_field(visibility=["read"])
@@ -131,7 +131,7 @@ class DevBox(_model_base.Model):  # pylint: disable=too-many-instance-attributes
     location: Optional[str] = rest_field(visibility=["read"])
     """Azure region where this Dev Box is located. This will be the same region as the
      Virtual Network it is attached to."""
-    os_type: Optional[Union[str, "_models.OsType"]] = rest_field(name="osType", visibility=["read"])
+    os_type: Optional[Union[str, "_models.OSType"]] = rest_field(name="osType", visibility=["read"])
     """The operating system type of this Dev Box. \"Windows\""""
     user: Optional[str] = rest_field(visibility=["read"])
     """The AAD object id of the user this Dev Box is assigned to."""
@@ -143,7 +143,9 @@ class DevBox(_model_base.Model):  # pylint: disable=too-many-instance-attributes
     """Information about the image used for this Dev Box."""
     created_time: Optional[datetime.datetime] = rest_field(name="createdTime", visibility=["read"], format="rfc3339")
     """Creation time of this Dev Box."""
-    local_administrator: Optional[Union[str, "_models.LocalAdminStatus"]] = rest_field(name="localAdministrator")
+    local_administrator: Optional[Union[str, "_models.LocalAdministratorStatus"]] = rest_field(
+        name="localAdministrator"
+    )
     """Indicates whether the owner of the Dev Box is a local administrator. Known values are:
      \"Enabled\" and \"Disabled\"."""
 
@@ -152,7 +154,7 @@ class DevBox(_model_base.Model):  # pylint: disable=too-many-instance-attributes
         self,
         *,
         pool_name: str,
-        local_administrator: Optional[Union[str, "_models.LocalAdminStatus"]] = None,
+        local_administrator: Optional[Union[str, "_models.LocalAdministratorStatus"]] = None,
     ):
         ...
 
@@ -522,7 +524,7 @@ class EnvironmentType(_model_base.Model):
     :vartype deployment_target_id: str
     :ivar status: Indicates whether this environment type is enabled for use in this project.
      Required. Known values are: "Enabled" and "Disabled".
-    :vartype status: str or ~azure.developer.devcenter.models.EnvironmentTypeEnableStatus
+    :vartype status: str or ~azure.developer.devcenter.models.EnvironmentTypeStatus
     """
 
     name: str = rest_field()
@@ -531,7 +533,7 @@ class EnvironmentType(_model_base.Model):
     """Id of a subscription or management group that the environment type will be
      mapped to. The environment's resources will be deployed into this subscription
      or management group. Required."""
-    status: Union[str, "_models.EnvironmentTypeEnableStatus"] = rest_field()
+    status: Union[str, "_models.EnvironmentTypeStatus"] = rest_field()
     """Indicates whether this environment type is enabled for use in this project. Required. Known
      values are: \"Enabled\" and \"Disabled\"."""
 
@@ -541,7 +543,7 @@ class EnvironmentType(_model_base.Model):
         *,
         name: str,
         deployment_target_id: str,
-        status: Union[str, "_models.EnvironmentTypeEnableStatus"],
+        status: Union[str, "_models.EnvironmentTypeStatus"],
     ):
         ...
 
@@ -724,7 +726,7 @@ class OperationDetails(_model_base.Model):
     :vartype name: str
     :ivar status: Provisioning state of the resource. Required. Known values are: "Running",
      "Completed", "Canceled", and "Failed".
-    :vartype status: str or ~azure.developer.devcenter.models.OperationStatusValue
+    :vartype status: str or ~azure.developer.devcenter.models.OperationStatus
     :ivar resource_id: The id of the resource.
     :vartype resource_id: str
     :ivar start_time: The start time of the operation.
@@ -743,7 +745,7 @@ class OperationDetails(_model_base.Model):
     """Fully qualified ID for the operation status."""
     name: Optional[str] = rest_field()
     """The operation id name."""
-    status: Union[str, "_models.OperationStatusValue"] = rest_field()
+    status: Union[str, "_models.OperationStatus"] = rest_field()
     """Provisioning state of the resource. Required. Known values are: \"Running\", \"Completed\",
      \"Canceled\", and \"Failed\"."""
     resource_id: Optional[str] = rest_field(name="resourceId")
@@ -763,7 +765,7 @@ class OperationDetails(_model_base.Model):
     def __init__(
         self,
         *,
-        status: Union[str, "_models.OperationStatusValue"],
+        status: Union[str, "_models.OperationStatus"],
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         resource_id: Optional[str] = None,
@@ -811,7 +813,7 @@ class Pool(_model_base.Model):
     :ivar location: Azure region where Dev Boxes in the pool are located. Required.
     :vartype location: str
     :ivar os_type: The operating system type of Dev Boxes in this pool. "Windows"
-    :vartype os_type: str or ~azure.developer.devcenter.models.OsType
+    :vartype os_type: str or ~azure.developer.devcenter.models.OSType
     :ivar hardware_profile: Hardware settings for the Dev Boxes created in this pool.
     :vartype hardware_profile: ~azure.developer.devcenter.models.HardwareProfile
     :ivar hibernate_support: Indicates whether hibernate is enabled/disabled or unknown. Known
@@ -824,7 +826,7 @@ class Pool(_model_base.Model):
     :ivar local_administrator: Indicates whether owners of Dev Boxes in this pool are local
      administrators on
      the Dev Boxes. Known values are: "Enabled" and "Disabled".
-    :vartype local_administrator: str or ~azure.developer.devcenter.models.LocalAdminStatus
+    :vartype local_administrator: str or ~azure.developer.devcenter.models.LocalAdministratorStatus
     :ivar stop_on_disconnect: Stop on disconnect configuration settings for Dev Boxes created in
      this pool.
     :vartype stop_on_disconnect: ~azure.developer.devcenter.models.StopOnDisconnectConfiguration
@@ -838,7 +840,7 @@ class Pool(_model_base.Model):
     """Pool name. Required."""
     location: str = rest_field()
     """Azure region where Dev Boxes in the pool are located. Required."""
-    os_type: Optional[Union[str, "_models.OsType"]] = rest_field(name="osType")
+    os_type: Optional[Union[str, "_models.OSType"]] = rest_field(name="osType")
     """The operating system type of Dev Boxes in this pool. \"Windows\""""
     hardware_profile: Optional["_models.HardwareProfile"] = rest_field(name="hardwareProfile")
     """Hardware settings for the Dev Boxes created in this pool."""
@@ -849,7 +851,9 @@ class Pool(_model_base.Model):
     """Storage settings for Dev Box created in this pool."""
     image_reference: Optional["_models.ImageReference"] = rest_field(name="imageReference")
     """Image settings for Dev Boxes create in this pool."""
-    local_administrator: Optional[Union[str, "_models.LocalAdminStatus"]] = rest_field(name="localAdministrator")
+    local_administrator: Optional[Union[str, "_models.LocalAdministratorStatus"]] = rest_field(
+        name="localAdministrator"
+    )
     """Indicates whether owners of Dev Boxes in this pool are local administrators on
      the Dev Boxes. Known values are: \"Enabled\" and \"Disabled\"."""
     stop_on_disconnect: Optional["_models.StopOnDisconnectConfiguration"] = rest_field(name="stopOnDisconnect")
@@ -865,12 +869,12 @@ class Pool(_model_base.Model):
         *,
         location: str,
         health_status: Union[str, "_models.PoolHealthStatus"],
-        os_type: Optional[Union[str, "_models.OsType"]] = None,
+        os_type: Optional[Union[str, "_models.OSType"]] = None,
         hardware_profile: Optional["_models.HardwareProfile"] = None,
         hibernate_support: Optional[Union[str, "_models.HibernateSupport"]] = None,
         storage_profile: Optional["_models.StorageProfile"] = None,
         image_reference: Optional["_models.ImageReference"] = None,
-        local_administrator: Optional[Union[str, "_models.LocalAdminStatus"]] = None,
+        local_administrator: Optional[Union[str, "_models.LocalAdministratorStatus"]] = None,
         stop_on_disconnect: Optional["_models.StopOnDisconnectConfiguration"] = None,
     ):
         ...
@@ -1024,14 +1028,14 @@ class StopOnDisconnectConfiguration(_model_base.Model):
 
     :ivar status: Indicates whether the feature to stop the devbox on disconnect once the grace
      period has lapsed is enabled. Required. Known values are: "Enabled" and "Disabled".
-    :vartype status: str or ~azure.developer.devcenter.models.StopOnDisconnectEnableStatus
+    :vartype status: str or ~azure.developer.devcenter.models.StopOnDisconnectStatus
     :ivar grace_period_minutes: The specified time in minutes to wait before stopping a Dev Box
      once disconnect
      is detected.
     :vartype grace_period_minutes: int
     """
 
-    status: Union[str, "_models.StopOnDisconnectEnableStatus"] = rest_field()
+    status: Union[str, "_models.StopOnDisconnectStatus"] = rest_field()
     """Indicates whether the feature to stop the devbox on disconnect once the grace
      period has lapsed is enabled. Required. Known values are: \"Enabled\" and \"Disabled\"."""
     grace_period_minutes: Optional[int] = rest_field(name="gracePeriodMinutes")
@@ -1042,7 +1046,7 @@ class StopOnDisconnectConfiguration(_model_base.Model):
     def __init__(
         self,
         *,
-        status: Union[str, "_models.StopOnDisconnectEnableStatus"],
+        status: Union[str, "_models.StopOnDisconnectStatus"],
         grace_period_minutes: Optional[int] = None,
     ):
         ...

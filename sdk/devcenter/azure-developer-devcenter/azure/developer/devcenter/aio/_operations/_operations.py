@@ -190,8 +190,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
         :param project_name: The DevCenter Project upon which to execute operations. Required.
         :type project_name: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: Project. The Project is compatible with MutableMapping
         :rtype: ~azure.developer.devcenter.models.Project
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -422,8 +420,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         :type project_name: str
         :param pool_name: The name of a pool of Dev Boxes. Required.
         :type pool_name: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: Pool. The Pool is compatible with MutableMapping
         :rtype: ~azure.developer.devcenter.models.Pool
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -671,8 +667,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         :type pool_name: str
         :param schedule_name: The name of a schedule. Required.
         :type schedule_name: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: Schedule. The Schedule is compatible with MutableMapping
         :rtype: ~azure.developer.devcenter.models.Schedule
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1302,8 +1296,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         :type user_id: str
         :param dev_box_name: The name of a Dev Box. Required.
         :type dev_box_name: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: DevBox. The DevBox is compatible with MutableMapping
         :rtype: ~azure.developer.devcenter.models.DevBox
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1542,13 +1534,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns DevBox. The DevBox is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.developer.devcenter.models.DevBox]
@@ -1748,13 +1733,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns DevBox. The DevBox is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.developer.devcenter.models.DevBox]
@@ -1872,13 +1850,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns DevBox. The DevBox is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.developer.devcenter.models.DevBox]
@@ -1992,16 +1963,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         :param dev_box: Represents a environment. Is one of the following types: DevBox, JSON,
          IO[bytes] Required.
         :type dev_box: ~azure.developer.devcenter.models.DevBox or JSON or IO[bytes]
-        :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
-         value is None.
-        :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns DevBox. The DevBox is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.developer.devcenter.models.DevBox]
@@ -2298,13 +2259,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         :type user_id: str
         :param dev_box_name: The name of a Dev Box. Required.
         :type dev_box_name: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns OperationDetails. The OperationDetails is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.developer.devcenter.models.OperationDetails]
@@ -2464,13 +2418,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         :type user_id: str
         :param dev_box_name: The name of a Dev Box. Required.
         :type dev_box_name: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns OperationDetails. The OperationDetails is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.developer.devcenter.models.OperationDetails]
@@ -2634,13 +2581,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         :type dev_box_name: str
         :keyword hibernate: Optional parameter to hibernate the dev box. Default value is None.
         :paramtype hibernate: bool
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns OperationDetails. The OperationDetails is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.developer.devcenter.models.OperationDetails]
@@ -2800,13 +2740,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         :type user_id: str
         :param dev_box_name: The name of a Dev Box. Required.
         :type dev_box_name: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns OperationDetails. The OperationDetails is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.developer.devcenter.models.OperationDetails]
@@ -2914,8 +2847,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         :type user_id: str
         :param dev_box_name: The name of a Dev Box. Required.
         :type dev_box_name: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: RemoteConnection. The RemoteConnection is compatible with MutableMapping
         :rtype: ~azure.developer.devcenter.models.RemoteConnection
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3107,8 +3038,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         :type dev_box_name: str
         :param action_name: The name of an action that will take place on a Dev Box. Required.
         :type action_name: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: DevBoxAction. The DevBoxAction is compatible with MutableMapping
         :rtype: ~azure.developer.devcenter.models.DevBoxAction
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3266,8 +3195,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         :type action_name: str
         :keyword delay_until: The time to delay the Dev Box action or actions until. Required.
         :paramtype delay_until: ~datetime.datetime
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: DevBoxAction. The DevBoxAction is compatible with MutableMapping
         :rtype: ~azure.developer.devcenter.models.DevBoxAction
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3757,8 +3684,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         :type user_id: str
         :param environment_name: The name of the environment. Required.
         :type environment_name: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: Environment. The Environment is compatible with MutableMapping
         :rtype: ~azure.developer.devcenter.models.Environment
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3941,13 +3866,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns Environment. The Environment is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.developer.devcenter.models.Environment]
@@ -4049,13 +3967,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns Environment. The Environment is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.developer.devcenter.models.Environment]
@@ -4124,13 +4035,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns Environment. The Environment is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.developer.devcenter.models.Environment]
@@ -4195,16 +4099,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         :param body: Represents an environment. Is one of the following types: Environment, JSON,
          IO[bytes] Required.
         :type body: ~azure.developer.devcenter.models.Environment or JSON or IO[bytes]
-        :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
-         value is None.
-        :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns Environment. The Environment is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.developer.devcenter.models.Environment]
@@ -4408,13 +4302,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         :type user_id: str
         :param environment_name: The name of the environment. Required.
         :type environment_name: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns OperationDetails. The OperationDetails is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.developer.devcenter.models.OperationDetails]
@@ -4619,8 +4506,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         :type project_name: str
         :param catalog_name: The name of the catalog. Required.
         :type catalog_name: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: Catalog. The Catalog is compatible with MutableMapping
         :rtype: ~azure.developer.devcenter.models.Catalog
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4957,8 +4842,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         :type catalog_name: str
         :param definition_name: The name of the environment definition. Required.
         :type definition_name: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: EnvironmentDefinition. The EnvironmentDefinition is compatible with MutableMapping
         :rtype: ~azure.developer.devcenter.models.EnvironmentDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
