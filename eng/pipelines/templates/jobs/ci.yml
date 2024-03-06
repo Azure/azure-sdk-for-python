@@ -114,8 +114,8 @@ jobs:
       timeoutInMinutes: 90
 
       pool:
-        name: azsdk-pool-mms-win-2022-1espt
-        image: azsdk-pool-mms-win-2022-1es-pt
+        name: azsdk-pool-mms-win-2022-general
+        image: azsdk-pool-mms-win-2022-1espt
         os: windows
 
       steps:
@@ -189,10 +189,10 @@ jobs:
   - job: 'Build_Extended'
     displayName: Build Extended
     dependsOn:
-      - ${{ if ne(parameters['AdvancedBuild'], true) }}:
-        - 'Build'
       - ${{ if eq(parameters['AdvancedBuild'], true) }}:
         - 'CoalesceBuildArtifacts'
+      - ${{ else }}:
+        - 'Build'
       
     timeoutInMinutes: 90
 
