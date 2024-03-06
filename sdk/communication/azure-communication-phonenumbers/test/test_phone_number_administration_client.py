@@ -230,7 +230,7 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
         )
         phone_number_to_buy = search_poller.result()
         purchase_poller = self.phone_number_client.begin_purchase_phone_numbers(
-        phone_number_to_buy.search_id, no_resale_concent=True, polling=True)
+        phone_number_to_buy.search_id, no_resale_consent=True, polling=True)
         purchase_poller.result()
         assert purchase_poller.status() == PhoneNumberOperationStatus.SUCCEEDED.value
 
@@ -247,7 +247,7 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
             sms=PhoneNumberCapabilityType.NONE
         )
         search_poller = self.phone_number_client.begin_search_available_phone_numbers(
-            "US",
+            "CA",
             PhoneNumberType.TOLL_FREE,
             PhoneNumberAssignmentType.APPLICATION,
             capabilities,
@@ -257,7 +257,7 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
 
         with pytest.raises(Exception) as ex:
             self.phone_number_client.begin_purchase_phone_numbers(
-                phone_number_to_buy.search_id, no_resale_concent=False, polling=True)
+                phone_number_to_buy.search_id, no_resale_consent=False, polling=True)
         # purchase_poller.result()
         # assert purchase_poller.status() == PhoneNumberOperationStatus.FAILED.value
         assert is_client_error_status_code(

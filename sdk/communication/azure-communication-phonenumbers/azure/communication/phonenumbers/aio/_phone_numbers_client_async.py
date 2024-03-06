@@ -107,7 +107,7 @@ class PhoneNumbersClient(object):
             self,
             search_id,  # type: str
             *,
-            no_resale_concent=False, # type: bool
+            no_resale_consent=False, # type: bool
             **kwargs  # type: Any
     ):
         # type: (...) -> AsyncLROPoller[None]
@@ -115,7 +115,7 @@ class PhoneNumbersClient(object):
 
         :param search_id: The search id.
         :type search_id: str
-        :param consent_to_not_resell_numbers/no_resale_concent: The consent Provided To Not Resell Phone Numbers.
+        :param consent_to_not_resell_numbers/no_resale_consent: The consent Provided To Not Resell Phone Numbers.
         :type consent_to_not_resell_numbers: bool
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
@@ -125,7 +125,10 @@ class PhoneNumbersClient(object):
             for LRO operations if no Retry-After header is present.
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         """
-        purchase_request = PhoneNumberPurchaseRequest(search_id=search_id, consent_to_not_resell_numbers=no_resale_concent)
+        purchase_request = PhoneNumberPurchaseRequest(
+            search_id=search_id, 
+            consent_to_not_resell_numbers=no_resale_consent
+            )
 
         polling_interval = kwargs.pop(
             'polling_interval', _DEFAULT_POLLING_INTERVAL_IN_SECONDS)
