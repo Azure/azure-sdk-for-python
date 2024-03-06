@@ -59,7 +59,6 @@ setup(
     classifiers=[
         "Development Status :: 4 - Beta",
         'Programming Language :: Python',
-        'Programming Language :: Python :: 3 :: Only',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
@@ -82,11 +81,11 @@ setup(
     },
     python_requires=">=3.8",
     install_requires=[
-        "azure-core>=1.28.0",
-        "fixedint>=0.1.6",
+        "azure-core<2.0.0,>=1.28.0",
+        "fixedint==0.1.6",
         "msrest>=0.6.10",
-        "opentelemetry-api>=1.21",
-        "opentelemetry-sdk>=1.21",
+        "opentelemetry-api~=1.21",
+        "opentelemetry-sdk~=1.21",
     ],
     entry_points={
         "opentelemetry_traces_exporter": [
