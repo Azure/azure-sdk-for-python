@@ -253,6 +253,68 @@ class EndpointsDeploymentsConfigurationOptions(object):
         )
         # [END pipeline_component_batch_deployment_config]
 
+        # [START managed_online_endpoint_config]
+        from azure.ai.ml.entities import ManagedOnlineEndpoint
+
+        managed_online_endpoint = ManagedOnlineEndpoint(
+            name="managed_online_endpoint",
+            endpoint_name="endpoint_name",
+            description="This is a sample managed online endpoint.",
+            tags={"tag1": "value1", "tag2": "value2"},
+            properties={"prop1": "value1", "prop2": "value2"},
+            model="model_name",
+            environment="environment_name",
+            code_configuration=codeConfig,
+            app_insights_enabled=True,
+            scale_settings=scale_settings,
+            request_settings=online_request_settings,
+            liveness_settings=probe_settings,
+            readiness_settings=probe_settings,
+            environment_variables={"env1": "value1", "env2": "value2"},
+            instance_type="Standard_D2_v2",
+            instance_count=2,
+            egress_public_network_acess="enabled",
+            code_path="code_path",
+            scoring_script="scoring_script",
+            data_collector=data_collector,
+        )
+        # [END managed_online_endpoint_config]
+
+        # [START kubernetes_online_deployment_config]
+        from azure.ai.ml.entities import KubernetesOnlineDeployment
+
+        kubernetes_online_deployment = KubernetesOnlineDeployment(
+            name="kubernetes_online_deployment",
+            endpoint_name="endpoint_name",
+            description="This is a sample kubernetes online deployment.",
+            tags={"tag1": "value1", "tag2": "value2"},
+            properties={"prop1": "value1", "prop2": "value2"},
+            model="model_name",
+            environment="environment_name",
+            app_insights_enabled=True,
+            scale_settings=scale_settings,
+            request_settings=online_request_settings,
+            liveness_settings=probe_settings,
+            readiness_settings=probe_settings,
+            environment_variables={"env1": "value1", "env2": "value2"},
+            code_configuration=codeConfig,
+            instance_type="Standard_D2_v2",
+            instance_count=2,
+            code_path="code_path",
+            scoring_script="scoring_script",
+        )
+        # [END kubernetes_online_deployment_config]
+
+        # [START kubernetes_online_endpoint_config]
+        from azure.ai.ml.entities import KubernetesOnlineEndpoint
+
+        kubernetes_online_endpoint = KubernetesOnlineEndpoint(
+            name="kubernetes_online_endpoint",
+            tags={"tag1": "value1", "tag2": "value2"},
+            properties={"prop1": "value1", "prop2": "value2"},
+            description="This is a sample kubernetes online endpoint.",
+            
+
 
 if __name__ == "__main__":
     sample = EndpointsDeploymentsConfigurationOptions()
