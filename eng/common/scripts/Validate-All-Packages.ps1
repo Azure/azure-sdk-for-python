@@ -15,6 +15,7 @@ Param (
 )
 
 Set-StrictMode -Version 3
+. (Join-Path $PSScriptRoot common.ps1)
 
 function ProcessPackage($PackageName)
 {
