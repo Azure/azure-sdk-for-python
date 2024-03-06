@@ -1,6 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+# pylint: disable=C0303
 """
 This module contains a utility class for managing a list of JSON lines.
 """
@@ -14,7 +15,6 @@ class JsonLineList(list):
     def to_json_lines(self):
         """
         Converts the list to a string of JSON lines.
-
         Each item in the list is converted to a JSON string 
         and appended to the result string with a newline.
         
