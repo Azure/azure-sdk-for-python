@@ -1,12 +1,15 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 from enum import Enum
+from typing import List
 
 from azure.monitor.opentelemetry.exporter._quickpulse._constants import (
     _LONG_PING_INTERVAL_SECONDS,
     _POST_INTERVAL_SECONDS,
     _SHORT_PING_INTERVAL_SECONDS,
 )
+from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import DocumentIngress
+
 
 class _QuickpulseState(Enum):
     """Current state of quickpulse service.
@@ -19,6 +22,7 @@ class _QuickpulseState(Enum):
 
 
 _GLOBAL_QUICKPULSE_STATE = _QuickpulseState.OFFLINE
+_QUICKPULSE_DOCUMENTS = []
 
 def _set_global_quickpulse_state(state: _QuickpulseState):
     global _GLOBAL_QUICKPULSE_STATE
@@ -29,7 +33,7 @@ def _get_global_quickpulse_state() -> _QuickpulseState:
     return _GLOBAL_QUICKPULSE_STATE
 
 
-def is_quick_pulse_enabled() -> bool:
+def is_quickpulse_enabled() -> bool:
     return _get_global_quickpulse_state() is not _QuickpulseState.OFFLINE
 
 
@@ -42,3 +46,21 @@ def _is_ping_state() -> bool:
 
 def _is_post_state():
     return _get_global_quickpulse_state() is _QuickpulseState.POST_SHORT
+
+
+def _append_quickpulse_document(document: DocumentIngress):
+    global _QUICKPULSE_DOCUMENTS
+    # Limit risk of memory leak by limiting doc length to something manageable
+    if len(_QUICKPULSE_DOCUMENTS) > 20:
+        try:
+            _QUICKPULSE_DOCUMENTS.pop(0)
+        except IndexError:
+            pass
+    _QUICKPULSE_DOCUMENTS.append(document)
+
+
+def _get_and_clear_quickpulse_documents() -> List[DocumentIngress]:
+    global _QUICKPULSE_DOCUMENTS
+    documents = list(_QUICKPULSE_DOCUMENTS)
+    _QUICKPULSE_DOCUMENTS = []
+    return documents

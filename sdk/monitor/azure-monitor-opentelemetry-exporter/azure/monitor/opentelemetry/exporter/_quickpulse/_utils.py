@@ -71,7 +71,7 @@ def _get_span_document(span: ReadableSpan) -> Union[RemoteDependencyDocument, Re
     grpc_status_code = span.attributes.get(SpanAttributes.RPC_GRPC_STATUS_CODE)
     span_kind = span.kind
     url = _get_url(span_kind, span.attributes)
-    if span_kind in (SpanKind.CLIENT, SpanKind.PRODUCER):
+    if span_kind in (SpanKind.CLIENT, SpanKind.PRODUCER, SpanKind.INTERNAL):
         document = RemoteDependencyDocument(
             document_type=_DocumentIngressDocumentType.RemoteDependency,
             name=span.name,

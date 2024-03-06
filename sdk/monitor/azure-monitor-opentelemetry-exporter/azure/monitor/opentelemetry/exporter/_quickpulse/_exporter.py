@@ -33,6 +33,7 @@ from azure.monitor.opentelemetry.exporter._quickpulse._state import (
     _get_global_quickpulse_state,
     _is_ping_state,
     _set_global_quickpulse_state,
+    _get_and_clear_quickpulse_documents,
     _QuickpulseState,
 )
 from azure.monitor.opentelemetry.exporter._quickpulse._utils import (
@@ -107,7 +108,7 @@ class _QuickpulseExporter(MetricExporter):
         data_points = _metric_to_quick_pulse_data_points(
             metrics_data,
             base_monitoring_data_point=base_monitoring_data_point,
-            documents=kwargs.get("documents"),
+            documents=_get_and_clear_quickpulse_documents(),
         )
 
         token = attach(set_value(_SUPPRESS_INSTRUMENTATION_KEY, True))
@@ -257,7 +258,6 @@ class _QuickpulseMetricReader(MetricReader):
             metrics_data,
             timeout_millis=timeout_millis,
             base_monitoring_data_point=self._base_monitoring_data_point,
-            documents=[],
         )
         if result is MetricExportResult.FAILURE:
             # There is currently no way to propagate unsuccessful metric post so

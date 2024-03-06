@@ -29,6 +29,7 @@ from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import M
 from azure.monitor.opentelemetry.exporter._quickpulse._state import (
     _QuickpulseState,
     _is_post_state,
+    _append_quickpulse_document,
     _set_global_quickpulse_state,
 )
 from azure.monitor.opentelemetry.exporter._quickpulse._utils import (
@@ -129,8 +130,8 @@ class _QuickpulseManager(metaclass=Singleton):
     def _record_span(self, span: ReadableSpan) -> None:
         # Only record if in post state
         if _is_post_state():
-            # TODO: Include DocumentIngress in payload
             document = _get_span_document(span)
+            _append_quickpulse_document(document)
             duration_ms = (span.end_time - span.start_time) / 1e9
             # TODO: Spec out what "success" is
             success = span.status.is_ok
@@ -153,8 +154,8 @@ class _QuickpulseManager(metaclass=Singleton):
             if log_data.log_record:
                 log_record = log_data.log_record
                 if log_record.attributes:
-                    # TODO: Include DocumentIngress in payload
                     document = _get_log_record_document(log_data)
+                    _append_quickpulse_document(document)
                     exc_type = log_record.attributes.get(SpanAttributes.EXCEPTION_TYPE)
                     exc_message = log_record.attributes.get(SpanAttributes.EXCEPTION_MESSAGE)
                     if exc_type is not None or exc_message is not None:
