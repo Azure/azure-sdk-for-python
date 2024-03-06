@@ -543,9 +543,7 @@ class ConfigurationSettingPropertiesPaged(PageIterator):
 
     page_etag: str
     """The etag of current page."""
-    continuation_token: Optional[str]
-    """The continuation token needed by get_next()."""
-
+    
     def __init__(self, command: Callable, **kwargs: Any) -> None:
         super(ConfigurationSettingPropertiesPaged, self).__init__(
             self._get_next_cb,
@@ -558,27 +556,33 @@ class ConfigurationSettingPropertiesPaged(PageIterator):
         self._accept_datetime = kwargs.get("accept_datetime")
         self._select = kwargs.get("select")
         self._cls = kwargs.get("cls")
-        self._response = None
 
+    
     def _get_next_cb(self, continuation_token, **kwargs):  # pylint: disable=inconsistent-return-statements
-        if continuation_token is None:
-            return self._command
-        response =  self._command(
+        
+        response = self._command(
             key=self._key,
             label=self._label,
             accept_datetime=self._accept_datetime,
             select=self._select,
             cls=self._cls,
-        )
-        self._response = response
-        self.page_etag = response.http_response.headers['Etag']
+        ).by_page(continuation_token=continuation_token)
+        # print(f"continuation_token: {continuation_token}")
+        next(response)
+        if response._did_a_call_already:
+            self.page_etag = response._response.http_response.headers['Etag']
         return response
+
 
     def _extract_data_cb(self, pipeline_response):
         # convert result
-        # return pipeline_response
-        deserialized = AzureAppConfigurationMixinABC._deserialize("KeyValueListResult", pipeline_response)
-        list_of_elem = deserialized.items
-        if self.cls:
-            list_of_elem = cls(list_of_elem)  # type: ignore
-        return deserialized.next_link or None, iter(list_of_elem)
+        
+        # self.etag, deserialized = pipeline_response
+        # breakpoint()
+        # if self._cls:
+        #     list_of_elem = [self._cls(e) for e in pipeline_response.items]  # type: ignore
+        # else:
+        #     list_of_elem = iter(pipeline_response.items)
+        # return pipeline_response.next_link or None, list_of_elem
+        
+        return pipeline_response.continuation_token, pipeline_response._current_page

@@ -135,7 +135,6 @@ class AzureAppConfigurationClient:
     def list_configuration_settings(
         self,
         *,
-        page_etag: Optional[str] = None,
         key_filter: Optional[str] = None,
         label_filter: Optional[str] = None,
         accept_datetime: Optional[Union[datetime, str]] = None,
@@ -145,8 +144,6 @@ class AzureAppConfigurationClient:
         """List the configuration settings stored in the configuration service, optionally filtered by
         key, label and accept_datetime.
 
-        :keyword page_etag: the page etags to compare with the targeted resource's etag.
-        :paramtype page_etag: str or None
         :keyword key_filter: filter results based on their keys. '*' can be
             used as wildcard in the beginning or end of the filter
         :paramtype key_filter: str or None
@@ -219,37 +216,26 @@ class AzureAppConfigurationClient:
             
             key_filter, kwargs = get_key_filter(*args, **kwargs)
             label_filter, kwargs = get_label_filter(*args, **kwargs)
-            page_etag = kwargs.pop("page_etag", None)
             
-            if page_etag is None:
-                # command = functools.partial(self._impl.get_key_values, **kwargs)
-                # return ItemPaged(
-                #     command,
-                #     key=key_filter,
-                #     label=label_filter,
-                #     accept_datetime=accept_datetime,
-                #     select=select,
-                #     cls=kwargs.pop("cls", lambda objs: [ConfigurationSetting._from_generated(x) for x in objs]),
-                #     page_iterator_class=ConfigurationSettingPropertiesPaged,
-                # )
-                return self._impl.get_key_values(  # type: ignore
-                    key=key_filter,
-                    label=label_filter,
-                    accept_datetime=accept_datetime,
-                    select=select,
-                    cls=kwargs.pop("cls", lambda objs: [ConfigurationSetting._from_generated(x) for x in objs]),
-                    **kwargs,
-                )
-            
-            return self._impl.get_key_values(  # type: ignore
+            command = functools.partial(self._impl.get_key_values, **kwargs)
+            return ItemPaged(
+                command,
                 key=key_filter,
                 label=label_filter,
                 accept_datetime=accept_datetime,
                 select=select,
-                if_none_match=page_etag,
                 cls=kwargs.pop("cls", lambda objs: [ConfigurationSetting._from_generated(x) for x in objs]),
-                **kwargs,
+                page_iterator_class=ConfigurationSettingPropertiesPaged,
             )
+            # return self._impl.get_key_values(  # type: ignore
+            #     key=key_filter,
+            #     label=label_filter,
+            #     accept_datetime=accept_datetime,
+            #     select=select,
+            #     cls=kwargs.pop("cls", lambda objs: [ConfigurationSetting._from_generated(x) for x in objs]),
+            #     **kwargs,
+            # )
+
         except binascii.Error as exc:
             raise binascii.Error("Connection string secret has incorrect padding") from exc
     
