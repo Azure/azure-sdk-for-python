@@ -45,7 +45,7 @@ class CallbackConversationBot(ConversationBot):
 
         self.logger.info("Parsed callback response")
 
-        return response, {}, time_taken, response
+        return response, {}, time_taken, result
 
     # pylint: disable=unused-argument
     def _to_chat_protocol(self, template, conversation_history, template_parameters):
