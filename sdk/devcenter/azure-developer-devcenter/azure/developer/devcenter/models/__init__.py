@@ -32,18 +32,18 @@ from ._enums import DevBoxActionDelayResultStatus
 from ._enums import DevBoxActionType
 from ._enums import DevBoxProvisioningState
 from ._enums import EnvironmentProvisioningState
-from ._enums import EnvironmentTypeEnableStatus
+from ._enums import EnvironmentTypeStatus
 from ._enums import HibernateSupport
-from ._enums import LocalAdminStatus
-from ._enums import OperationStatusValue
-from ._enums import OsType
+from ._enums import LocalAdministratorStatus
+from ._enums import OSType
+from ._enums import OperationStatus
 from ._enums import ParameterType
 from ._enums import PoolHealthStatus
 from ._enums import PowerState
 from ._enums import ScheduledFrequency
 from ._enums import ScheduledType
 from ._enums import SkuName
-from ._enums import StopOnDisconnectEnableStatus
+from ._enums import StopOnDisconnectStatus
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
@@ -74,18 +74,18 @@ __all__ = [
     "DevBoxActionType",
     "DevBoxProvisioningState",
     "EnvironmentProvisioningState",
-    "EnvironmentTypeEnableStatus",
+    "EnvironmentTypeStatus",
     "HibernateSupport",
-    "LocalAdminStatus",
-    "OperationStatusValue",
-    "OsType",
+    "LocalAdministratorStatus",
+    "OSType",
+    "OperationStatus",
     "ParameterType",
     "PoolHealthStatus",
     "PowerState",
     "ScheduledFrequency",
     "ScheduledType",
     "SkuName",
-    "StopOnDisconnectEnableStatus",
+    "StopOnDisconnectStatus",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

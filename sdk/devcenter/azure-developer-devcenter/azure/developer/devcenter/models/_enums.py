@@ -86,7 +86,7 @@ class EnvironmentProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     """The environment storage provisioning failed."""
 
 
-class EnvironmentTypeEnableStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class EnvironmentTypeStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates whether an environment type is enabled for use in a project."""
 
     ENABLED = "Enabled"
@@ -108,7 +108,7 @@ class HibernateSupport(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Hibernate is not supported by the operating system."""
 
 
-class LocalAdminStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class LocalAdministratorStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates whether owners of Dev Boxes in a pool are local administrators on the Dev Boxes."""
 
     ENABLED = "Enabled"
@@ -117,7 +117,7 @@ class LocalAdminStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Owners of Dev Boxes in the pool are not local administrators on the Dev Boxes."""
 
 
-class OperationStatusValue(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class OperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates whether operation status is running, completed, canceled or failed."""
 
     RUNNING = "Running"
@@ -126,7 +126,7 @@ class OperationStatusValue(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FAILED = "Failed"
 
 
-class OsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class OSType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The operating system type."""
 
     WINDOWS = "Windows"
@@ -243,7 +243,7 @@ class SkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """AMD, 32 vCPU, 128 GB RAM, 2048 GB Storage"""
 
 
-class StopOnDisconnectEnableStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class StopOnDisconnectStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates whether the feature to stop the devbox on disconnect once the grace period has lapsed
     is enabled.
     """
