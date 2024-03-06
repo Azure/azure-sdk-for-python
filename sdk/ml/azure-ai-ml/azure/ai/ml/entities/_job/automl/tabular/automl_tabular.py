@@ -147,7 +147,7 @@ class AutoMLTabular(AutoMLVertical, ABC):
         :param value: str or LogVerbosity
         :type value: typing.Union[str, LogVerbosity]
         """
-        self._log_verbosity = None if value is None else LogVerbosity[camel_to_snake(value).upper()]
+        self._log_verbosity = None if value is None else LogVerbosity[str(camel_to_snake(value)).upper()]
 
     @property
     def limits(self) -> Optional[TabularLimitSettings]:

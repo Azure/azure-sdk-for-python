@@ -77,7 +77,7 @@ class ImageInstanceSegmentationJob(AutoMLImageObjectDetectionBase):
         self._primary_metric = (
             ImageInstanceSegmentationJob._DEFAULT_PRIMARY_METRIC
             if value is None
-            else InstanceSegmentationPrimaryMetrics[camel_to_snake(value).upper()]
+            else InstanceSegmentationPrimaryMetrics[str(camel_to_snake(value)).upper()]
         )
 
     def _to_rest_object(self) -> JobBase:

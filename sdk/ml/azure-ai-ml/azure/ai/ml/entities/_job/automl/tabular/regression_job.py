@@ -66,7 +66,7 @@ class RegressionJob(AutoMLTabular):
         self._primary_metric = (
             RegressionJob._DEFAULT_PRIMARY_METRIC
             if value is None
-            else RegressionPrimaryMetrics[camel_to_snake(value).upper()]
+            else RegressionPrimaryMetrics[str(camel_to_snake(value)).upper()]
         )
 
     @property

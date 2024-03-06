@@ -367,8 +367,8 @@ class ValidationException(MlException):
         no_personal_data_message: str,
         *args,
         error_type: ValidationErrorType = ValidationErrorType.GENERIC,
-        target: ErrorTarget = ErrorTarget.UNKNOWN,
-        error_category: ErrorCategory = ErrorCategory.USER_ERROR,
+        target: Union[str, ErrorCategory] = ErrorTarget.UNKNOWN,
+        error_category: Union[str, ErrorCategory] = ErrorCategory.USER_ERROR,
         **kwargs,
     ):
         """Class for all exceptions raised as part of client-side schema validation.

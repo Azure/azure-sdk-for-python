@@ -75,7 +75,7 @@ class ImageObjectDetectionJob(AutoMLImageObjectDetectionBase):
         self._primary_metric = (
             ImageObjectDetectionJob._DEFAULT_PRIMARY_METRIC
             if value is None
-            else ObjectDetectionPrimaryMetrics[camel_to_snake(value).upper()]
+            else ObjectDetectionPrimaryMetrics[str(camel_to_snake(value)).upper()]
         )
 
     def _to_rest_object(self) -> JobBase:
