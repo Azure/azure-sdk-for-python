@@ -7,17 +7,15 @@
 from typing import Any, Optional, cast
 
 from azure.ai.ml import Input
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
-from azure.ai.ml._restclient.v2024_01_01_preview.models import (
-    ModelProvider as RestModelProvider,
-    FineTuningVertical as RestFineTuningVertical,
-    UriFileJobInput,
-    MLFlowModelJobInput,
-)
-from azure.ai.ml.constants._common import AssetTypes
-from azure.ai.ml._utils.utils import camel_to_snake
-from azure.ai.ml.entities._job.finetuning.finetuning_job import FineTuningJob
+from azure.ai.ml._restclient.v2024_01_01_preview.models import FineTuningVertical as RestFineTuningVertical
+from azure.ai.ml._restclient.v2024_01_01_preview.models import MLFlowModelJobInput
+from azure.ai.ml._restclient.v2024_01_01_preview.models import ModelProvider as RestModelProvider
+from azure.ai.ml._restclient.v2024_01_01_preview.models import UriFileJobInput
 from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml._utils.utils import camel_to_snake
+from azure.ai.ml.constants._common import AssetTypes
+from azure.ai.ml.entities._job.finetuning.finetuning_job import FineTuningJob
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 
 @experimental
@@ -108,7 +106,7 @@ class FineTuningVertical(FineTuningJob):
         :param value: The model provider.
         :type value: str
         """
-        self._model_provider = RestModelProvider[camel_to_snake(value).upper()] if value else None
+        self._model_provider = RestModelProvider[str(camel_to_snake(value)).upper()] if value else None
 
     @property
     def training_data(self) -> Input:

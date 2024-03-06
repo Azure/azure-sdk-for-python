@@ -113,8 +113,8 @@ class MlException(AzureError):
         message: str,
         no_personal_data_message: str,
         *args,
-        target: ErrorTarget = ErrorTarget.UNKNOWN,
-        error_category: ErrorCategory = ErrorCategory.UNKNOWN,
+        target: Union[str, ErrorTarget] = ErrorTarget.UNKNOWN,
+        error_category: Union[str, ErrorTarget] = ErrorCategory.UNKNOWN,
         **kwargs,
     ):
         self._error_category = error_category
@@ -214,8 +214,8 @@ class ComponentException(MlException):
         message: str,
         no_personal_data_message: str,
         *args,
-        target: ErrorTarget = ErrorTarget.UNKNOWN,
-        error_category: ErrorCategory = ErrorCategory.UNKNOWN,
+        target: Union[str, ErrorTarget] = ErrorTarget.UNKNOWN,
+        error_category: Union[str, ErrorTarget] = ErrorCategory.UNKNOWN,
         **kwargs,
     ):
         super(ComponentException, self).__init__(
@@ -247,8 +247,8 @@ class JobException(MlException):
         message: str,
         no_personal_data_message: str,
         *args,
-        target: ErrorTarget = ErrorTarget.UNKNOWN,
-        error_category: ErrorCategory = ErrorCategory.UNKNOWN,
+        target: Union[str, ErrorTarget] = ErrorTarget.UNKNOWN,
+        error_category: Union[str, ErrorTarget] = ErrorCategory.UNKNOWN,
         **kwargs,
     ):
         super(JobException, self).__init__(
@@ -346,8 +346,8 @@ class ScheduleException(MlException):
         message: str,
         no_personal_data_message: str,
         *args,
-        target: ErrorTarget = ErrorTarget.UNKNOWN,
-        error_category: ErrorCategory = ErrorCategory.UNKNOWN,
+        target: Union[str, ErrorCategory] = ErrorTarget.UNKNOWN,
+        error_category: Union[str, ErrorCategory] = ErrorCategory.UNKNOWN,
         **kwargs,
     ):
         super(ScheduleException, self).__init__(

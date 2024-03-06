@@ -49,7 +49,7 @@ def get_model_artifacts(
         raise RequiredLocalArtifactsNotFoundError(
             endpoint_name=endpoint_name,
             required_artifact="model.path",
-            required_artifact_type=str,
+            required_artifact_type=str,  # type: ignore[arg-type]
             deployment_name=deployment.name,
         )
     _model: Model = deployment.model  # type: ignore[assignment]
@@ -76,9 +76,9 @@ def _get_cloud_model_artifacts(model_operations: ModelOperations, model: str, do
         version = model._version
         model_asset = model
     else:
-        name, version = parse_prefixed_name_version(model)
+        name, version = parse_prefixed_name_version(model)  # type: ignore[assignment]
         model_asset = model_operations.get(name=name, version=version)
-    model_uri_path = AzureMLDatastorePathUri(model_asset.path)
+    model_uri_path = AzureMLDatastorePathUri(str(model_asset.path))
     path = Path(model_uri_path.path)
     starts_with = path if path.is_dir() else path.parent
     return (

@@ -363,7 +363,7 @@ class ComponentOperations(_ScopeDependentOperations):
             version = DEFAULT_COMPONENT_VERSION
 
         if label:
-            return _resolve_label_to_asset(self, name, label)
+            return cast(Component, _resolve_label_to_asset(self, name, label))
 
         result = self._get_component_version(name, version)
         component = Component._from_rest_object(result)
@@ -599,7 +599,7 @@ class ComponentOperations(_ScopeDependentOperations):
         # future creation operations, which breaks version auto increment mechanism.
         if self._registry_name and not component.version and component._auto_increment_version:
             component.version = _get_next_version_from_container(
-                name=component.name,
+                name=str(component.name),
                 container_operation=self._container_operation,
                 resource_group_name=self._operation_scope.resource_group_name,
                 workspace_name=self._workspace_name,
@@ -1112,7 +1112,7 @@ class ComponentOperations(_ScopeDependentOperations):
         # request level in-memory cache can be a better solution for other type of assets as they are
         # relatively simple and of small number of distinct instances
         component_cache = CachedNodeResolver(
-            resolver=resolver,
+            resolver=resolver,  # type: ignore[arg-type]
             client_key=self._get_client_key(),
         )
 

@@ -7,7 +7,7 @@
 import random
 import re
 import subprocess
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, cast
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
@@ -186,7 +186,9 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
                 location = self._get_workspace_location()
                 is_package_model = deployment.package_model if hasattr(deployment, "package_model") else False
                 if kwargs.pop("package_model", False) or is_package_model:
-                    deployment = package_deployment(deployment, self._all_operations.all_operations["models"])
+                    deployment = cast(
+                        OnlineDeployment, package_deployment(deployment, self._all_operations.all_operations["models"])
+                    )
                     module_logger.info("\nStarting deployment")
 
                 deployment_rest = deployment._to_rest_object(location=location)  # type: ignore
