@@ -16,7 +16,6 @@ steps:
           -ConfigFileDir '${{ parameters.ConfigFileDir }}'
           -BuildId $(Build.BuildId)
           -PipelineUrl $(Build.BuildUri)
-          -IgnoreFailures (eq($(Build.Reason),'Manual'))
         pwsh: true
         workingDirectory: $(Pipeline.Workspace)
       displayName: Validate packages and update work items
