@@ -1,5 +1,15 @@
 # Release History
 
+## 7.12.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 7.12.0 (2024-03-06)
 
 ### Features Added
