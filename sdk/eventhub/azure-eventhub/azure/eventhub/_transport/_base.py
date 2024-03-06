@@ -3,14 +3,51 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 from __future__ import annotations
-from typing import Tuple, Union, TYPE_CHECKING
+from typing import Tuple, Union, TYPE_CHECKING, Optional, Any, Dict, Callable
 from abc import ABC, abstractmethod
 
 if TYPE_CHECKING:
+    from logging import Logger
+    from .._configuration import Configuration
+    from .._producer import EventHubProducer
+    from .._consumer import EventHubConsumer
+    from .._common import EventData
+    from .._consumer_client import EventHubConsumerClient
+    from .._client_base import _Address, ClientBase
+    from ..amqp._amqp_message import AmqpAnnotatedMessage
+
     try:
-        from uamqp import types as uamqp_types
+        from uamqp.types import AMQPSymbol as uamqp_Types_AMQPSymbol
+        from uamqp.constants import (
+            ConnectionState as uamqp_ConnectionState
+        )
+        from uamqp import (
+            Message as uamqp_Message,
+            BatchMessage as uamqp_BatchMessage,
+            AMQPClient as uamqp_AMQPClient,
+            Connection as uamqp_Connection,
+            Source as uamqp_Source,
+            ReceiveClient as uamqp_ReceiveClient,
+        )
+        from uamqp.authentication import JWTTokenAuth as uamqp_JWTTokenAuth
+
     except ImportError:
-        uamqp_types = None
+        pass
+
+    from .._pyamqp import (
+        AMQPClient as pyamqp_AMQPClient,
+        Connection as pyamqp_Connection,
+        ReceiveClient as pyamqp_ReceiveClient,
+    )
+    from .._pyamqp.message import (
+        Message as pyamqp_Message,
+        BatchMessage as pyamqp_BatchMessage,
+    )
+    from .._pyamqp.endpoints import Source as pyamqp_Source
+    from .._pyamqp.authentication import JWTTokenAuth as pyamqp_JWTTokenAuth
+    from .._pyamqp.constants import (
+        ConnectionState as pyamqp_ConnectionState
+    )
 
 class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
     """
@@ -23,20 +60,25 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
     MAX_FRAME_SIZE_BYTES: int
     MAX_MESSAGE_LENGTH_BYTES: int
     TIMEOUT_FACTOR: int
-    CONNECTION_CLOSING_STATES: Tuple
+    CONNECTION_CLOSING_STATES: Tuple[
+        Union["uamqp_ConnectionState", pyamqp_ConnectionState],
+        Union["uamqp_ConnectionState", pyamqp_ConnectionState],
+        Union["uamqp_ConnectionState", pyamqp_ConnectionState],
+        Union["uamqp_ConnectionState", pyamqp_ConnectionState],
+        Optional[Union["uamqp_ConnectionState", pyamqp_ConnectionState]]]
     TRANSPORT_IDENTIFIER: str
 
     # define symbols
-    PRODUCT_SYMBOL: Union[uamqp_types.AMQPSymbol, str, bytes]
-    VERSION_SYMBOL: Union[uamqp_types.AMQPSymbol, str, bytes]
-    FRAMEWORK_SYMBOL: Union[uamqp_types.AMQPSymbol, str, bytes]
-    PLATFORM_SYMBOL: Union[uamqp_types.AMQPSymbol, str, bytes]
-    USER_AGENT_SYMBOL: Union[uamqp_types.AMQPSymbol, str, bytes]
-    PROP_PARTITION_KEY_AMQP_SYMBOL: Union[uamqp_types.AMQPSymbol, str, bytes]
+    PRODUCT_SYMBOL: Union[uamqp_Types_AMQPSymbol, str, bytes]
+    VERSION_SYMBOL: Union[uamqp_Types_AMQPSymbol, str, bytes]
+    FRAMEWORK_SYMBOL: Union[uamqp_Types_AMQPSymbol, str, bytes]
+    PLATFORM_SYMBOL: Union[uamqp_Types_AMQPSymbol, str, bytes]
+    USER_AGENT_SYMBOL: Union[uamqp_Types_AMQPSymbol, str, bytes]
+    PROP_PARTITION_KEY_AMQP_SYMBOL: Union[uamqp_Types_AMQPSymbol, str, bytes]
 
     @staticmethod
     @abstractmethod
-    def build_message(**kwargs):
+    def build_message(**kwargs: Any) -> Union[uamqp_Message, pyamqp_Message]:
         """
         Creates a uamqp.Message or pyamqp.Message with given arguments.
         :rtype: ~uamqp.Message or ~pyamqp.message.Message
@@ -44,7 +86,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def build_batch_message(**kwargs):
+    def build_batch_message(**kwargs: Any) -> Union[uamqp_BatchMessage, pyamqp_BatchMessage]:
         """
         Creates a uamqp.BatchMessage or pyamqp.BatchMessage with given arguments.
         :rtype: ~uamqp.BatchMessage or ~pyamqp.message.BatchMessage
@@ -52,7 +94,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def to_outgoing_amqp_message(annotated_message):
+    def to_outgoing_amqp_message(annotated_message: AmqpAnnotatedMessage) -> Union[uamqp_Message, pyamqp_Message]:
         """
         Converts an AmqpAnnotatedMessage into an Amqp Message.
         :param AmqpAnnotatedMessage annotated_message: AmqpAnnotatedMessage to convert.
@@ -61,7 +103,10 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def update_message_app_properties(message, key, value):
+    def update_message_app_properties(
+        message: Union[uamqp_Message, pyamqp_Message],
+        key: Union[str, bytes], value: str
+    ) -> Union[uamqp_Message, pyamqp_Message]:
         """
         Adds the given key/value to the application properties of the message.
         :param ~uamqp.Message or ~pyamqp.message.Message message: Message.
@@ -72,7 +117,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def get_message_encoded_size(message):
+    def get_message_encoded_size(message: Union[uamqp_Message, pyamqp_Message]) -> int:
         """
         Gets the message encoded size given an underlying Message.
         :param ~uamqp.Message or ~pyamqp.message.Message message: Message to get encoded size of.
@@ -81,7 +126,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def get_remote_max_message_size(handler):
+    def get_remote_max_message_size(handler: Union[uamqp_AMQPClient, pyamqp_AMQPClient]) -> int:
         """
         Returns max peer message size.
         :param ~pyamqp.AMQPClient or ~uamqp.AMQPClient handler: Client to get remote max message size on link from.
@@ -90,7 +135,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def create_retry_policy(config):
+    def create_retry_policy(config: Configuration) -> None:
         """
         Creates the error retry policy.
         :param ~azure.eventhub._configuration.Configuration config: Configuration.
@@ -98,7 +143,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def create_link_properties(link_properties):
+    def create_link_properties(link_properties: Dict[bytes, int]) -> Dict[bytes, int]:
         """
         Creates and returns the link properties.
         :param dict[bytes, int] link_properties: The dict of symbols and corresponding values.
@@ -107,7 +152,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def create_connection(**kwargs):
+    def create_connection(**kwargs: Any):
         """
         Creates and returns the uamqp Connection object.
         :keyword str host: The hostname, used by uamqp.
@@ -126,7 +171,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def close_connection(connection):
+    def close_connection(connection: Union[uamqp_Connection, pyamqp_Connection]):
         """
         Closes existing connection.
         :param connection: uamqp or pyamqp Connection.
@@ -135,7 +180,9 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def get_connection_state(connection):
+    def get_connection_state(
+        connection: Union[uamqp_Connection, pyamqp_Connection]
+    ) -> Union["uamqp_ConnectionState", pyamqp_ConnectionState]:
         """
         Gets connection state.
         :param connection: uamqp or pyamqp Connection.
@@ -144,7 +191,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def create_send_client(*, config, **kwargs):
+    def create_send_client(*, config: Configuration, **kwargs: Any):
         """
         Creates and returns the send client.
         :keyword ~azure.eventhub._configuration.Configuration config: The configuration.
@@ -162,18 +209,27 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def send_messages(producer, timeout_time, last_exception, logger):
+    def send_messages(
+        producer: EventHubProducer,
+        timeout_time: Optional[float],
+        last_exception: Optional[Exception],
+        logger: Logger
+    ):
         """
         Handles sending of event data messages.
         :param ~azure.eventhub._producer.EventHubProducer producer: The producer with handler to send messages.
-        :param int timeout_time: Timeout time.
-        :param Exception last_exception: Exception to raise if message timed out. Only used by uamqp transport.
+        :param float or none timeout_time: Timeout time.
+        :param Exception or none last_exception: Exception to raise if message timed out. Only used by uamqp transport.
         :param logging.Logger logger: Logger.
         """
 
     @staticmethod
     @abstractmethod
-    def set_message_partition_key(message, partition_key, **kwargs):
+    def set_message_partition_key(
+        message: Union[uamqp_Message, pyamqp_Message],
+        partition_key: Optional[Union[str, bytes]],
+        **kwargs: Any
+    ):
         """Set the partition key as an annotation on a uamqp message.
 
         :param ~uamqp.Message or ~pyamqp.message.Message message: The message to update.
@@ -182,7 +238,11 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def add_batch(event_data_batch, outgoing_event_data, event_data):
+    def add_batch(
+        event_data_batch: Union[uamqp_BatchMessage, pyamqp_BatchMessage],
+        outgoing_event_data: EventData,
+        event_data: EventData
+    ):
         """
         Add EventData to the data body of the BatchMessage.
         :param ~pyamqp.message.BatchMessage or ~uamqp.BatchMessage event_data_batch: BatchMessage to add data to.
@@ -192,7 +252,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def create_source(source, offset, selector):
+    def create_source(source: Union[uamqp_Source, pyamqp_Source], offset: int, selector: bytes):
         """
         Creates and returns the Source.
 
@@ -203,7 +263,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def create_receive_client(*, config, **kwargs):
+    def create_receive_client(*, config: Configuration, **kwargs: Any):
         """
         Creates and returns the receive client.
         :keyword ~azure.eventhub._configuration.Configuration config: The configuration.
@@ -226,7 +286,12 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def open_receive_client(*, handler, client, auth):
+    def open_receive_client(
+        *,
+        handler: Union[uamqp_ReceiveClient, pyamqp_ReceiveClient],
+        client: EventHubConsumerClient,
+        auth: Union[uamqp_JWTTokenAuth, pyamqp_JWTTokenAuth]
+    ):
         """
         Opens the receive client.
         :keyword ~uamqp.ReceiveClient or ~pyamqp.ReceiveClient handler: The receive client.
@@ -236,7 +301,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def check_link_stolen(consumer, exception):
+    def check_link_stolen(consumer: EventHubConsumer, exception: Exception):
         """
         Checks if link stolen and handles exception.
         :param ~azure.eventhub._consumer.EventHubConsumer consumer: The EventHubConsumer.
@@ -245,7 +310,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def create_token_auth(auth_uri, get_token, token_type, config, **kwargs):
+    def create_token_auth(auth_uri: str, get_token: Callable, token_type: bytes, config: Configuration, **kwargs: Any):
         """
         Creates the JWTTokenAuth.
         :param str auth_uri: The auth uri to pass to JWTTokenAuth.
@@ -260,7 +325,11 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def create_mgmt_client(address, mgmt_auth, config):
+    def create_mgmt_client(
+        address: _Address,
+        mgmt_auth: Union[uamqp_JWTTokenAuth, pyamqp_JWTTokenAuth],
+        config: Configuration
+    ):
         """
         Creates and returns the mgmt AMQP client.
         :param _Address address: Required. The Address.
@@ -270,7 +339,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def get_updated_token(mgmt_auth):
+    def get_updated_token(mgmt_auth: Union[uamqp_JWTTokenAuth, pyamqp_JWTTokenAuth]):
         """
         Return updated auth token.
         :param ~pyamqp.authentication.JWTTokenAuth or uamqp.authentication.JWTTokenAuth mgmt_auth: Auth.
@@ -278,7 +347,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def mgmt_client_request(mgmt_client, mgmt_msg, **kwargs):
+    def mgmt_client_request(mgmt_client: Union[uamqp_AMQPClient, pyamqp_AMQPClient], mgmt_msg: str, **kwargs: Any):
         """
         Send mgmt request.
         :param ~uamqp.AMQPClient or ~pyamqp.AMQPClient mgmt_client: Client to send request with.
@@ -291,7 +360,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def get_error(status_code, description):
+    def get_error(status_code: int, description: str):
         """
         Gets error corresponding to status code.
         :param int status_code: Status code.
@@ -300,7 +369,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def check_timeout_exception(base, exception):
+    def check_timeout_exception(base: ClientBase, exception: Exception):
         """
         Checks if timeout exception.
         :param ~azure.eventhub._client_base.ClientBase base: ClientBase.

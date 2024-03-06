@@ -4,3 +4,11 @@ mypy = false
 pyright = false
 type_check_samples = false
 verifytypes = false
+
+[[tool.azure-sdk-build.optional]]
+name = "main"
+install = ["git+https://github.com/openai/openai-python@main"]
+
+[[tool.azure-sdk-build.optional]]
+name = "released"
+install = ["openai"]

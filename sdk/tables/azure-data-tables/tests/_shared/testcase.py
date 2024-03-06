@@ -59,28 +59,6 @@ class FakeTokenCredential(object):
 
 
 class TableTestCase(object):
-    def storage_connection_string(self, account, key):
-        endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX", DEFAULT_STORAGE_ENDPOINT_SUFFIX)
-        return (
-            "DefaultEndpointsProtocol=https;AccountName="
-            + account
-            + ";AccountKey="
-            + str(key)
-            + ";EndpointSuffix="
-            + endpoint_suffix
-        )
-
-    def cosmos_connection_string(self, account, key):
-        endpoint_suffix = os.getenv("TABLES_COSMOS_ENDPOINT_SUFFIX", DEFAULT_COSMOS_ENDPOINT_SUFFIX)
-        return (
-            "DefaultEndpointsProtocol=https;AccountName="
-            + account
-            + ";AccountKey="
-            + str(key)
-            + ";EndpointSuffix="
-            + endpoint_suffix
-        )
-
     def account_url(self, account, endpoint_type):
         """Return an url of storage account.
 
@@ -122,6 +100,13 @@ class TableTestCase(object):
 
     def generate_fake_token_credential(self):
         return FakeTokenCredential()
+
+    def get_datetime(self):
+        return datetime(year=2022, month=4, day=1, hour=9, minute=30, second=45, tzinfo=timezone.utc)
+
+    def set_uuid_variable(self, variables, name, uuid_param):
+        uuid_string = variables.setdefault(name, str(uuid_param))
+        return uuid.UUID(uuid_string)
 
     def _get_table_reference(self, prefix=TEST_TABLE_PREFIX):
         table_name = self.get_resource_name(prefix)

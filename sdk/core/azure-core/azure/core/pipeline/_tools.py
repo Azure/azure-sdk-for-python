@@ -23,14 +23,19 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import TYPE_CHECKING
+from __future__ import annotations
+from typing import TYPE_CHECKING, Union, Callable, TypeVar
+from typing_extensions import TypeGuard, ParamSpec
 
 if TYPE_CHECKING:
-    from typing import Any
-    from azure.core.rest import HttpResponse as RestHttpResponse
+    from azure.core.rest import HttpResponse, HttpRequest, AsyncHttpResponse
 
 
-def await_result(func, *args, **kwargs):
+P = ParamSpec("P")
+T = TypeVar("T")
+
+
+def await_result(func: Callable[P, T], *args: P.args, **kwargs: P.kwargs) -> T:
     """If func returns an awaitable, raise that this runner can't handle it.
 
     :param func: The function to run.
@@ -47,7 +52,7 @@ def await_result(func, *args, **kwargs):
     return result
 
 
-def is_rest(obj) -> bool:
+def is_rest(obj: object) -> TypeGuard[Union[HttpRequest, HttpResponse, AsyncHttpResponse]]:
     """Return whether a request or a response is a rest request / response.
 
     Checking whether the response has the object content can sometimes result
@@ -63,7 +68,7 @@ def is_rest(obj) -> bool:
     return hasattr(obj, "is_stream_consumed") or hasattr(obj, "content")
 
 
-def handle_non_stream_rest_response(response: "RestHttpResponse") -> None:
+def handle_non_stream_rest_response(response: HttpResponse) -> None:
     """Handle reading and closing of non stream rest responses.
     For our new rest responses, we have to call .read() and .close() for our non-stream
     responses. This way, we load in the body for users to access.

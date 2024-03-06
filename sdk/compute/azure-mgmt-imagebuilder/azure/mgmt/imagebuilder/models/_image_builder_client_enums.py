@@ -19,6 +19,13 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     KEY = "Key"
 
 
+class OnBuildError(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Error handling behavior upon build failure."""
+
+    CLEANUP = "cleanup"
+    ABORT = "abort"
+
+
 class ProvisioningErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Error code of the provisioning failure."""
 

@@ -47,17 +47,13 @@ A [PowerShell script][transition_script] in the `azure-sdk-tools` repository wil
 assets repo, removing recordings from the language repo, and creating an `assets.json` file for the package you're
 migrating.
 
-This script -- [`generate-assets-json.ps1`][generate_assets_json] -- should be run once per package, and can be used
-either directly from an `azure-sdk-tools` repo clone or with a local download of the script. To download the script to
-your current working directory, use the following PowerShell command:
-
-```PowerShell
-Invoke-WebRequest -OutFile "generate-assets-json.ps1" https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/eng/common/testproxy/transition-scripts/generate-assets-json.ps1
-```
+This script -- [`generate-assets-json.ps1`][generate_assets_json] -- should be run once per package.
 
 ### Migration script prerequisites
 
 - The targeted library is already migrated to use the test proxy.
+- The test proxy is available locally, with an executable inside a `.proxy` folder at the root of your Python repo.
+  - If the tool isn't present, it'll be automatically set up by running the library's tests in playback mode.
 - Git version > 2.30.0 is to on the machine and in the path. Git is used by the script and test proxy.
 - [PowerShell Core][powershell] >= 7.0 is installed.
 - Global [git config settings][git_setup] are configured for `user.name` and `user.email`.
@@ -68,16 +64,24 @@ Invoke-WebRequest -OutFile "generate-assets-json.ps1" https://raw.githubusercont
 
 In a PowerShell window:
 
-1. Set your working directory to the root of the package you're migrating (`sdk/{service}/{package}`) -- for example:
+1. Add the test proxy executable to `PATH` if it's not already present. This can be done by adding the path to the
+  `.proxy` folder at the base of your Python repo. For example, if the Python repo is at `C:\azure-sdk-for-python`,
+  you can add the test proxy to `PATH` for the current session by running:
+
+```PowerShell
+$env:Path += ';C:\azure-sdk-for-python\.proxy'
+```
+
+2. Set your working directory to the root of the package you're migrating (`sdk/{service}/{package}`) -- for example:
 
 ```PowerShell
 cd C:\azure-sdk-for-python\sdk\keyvault\azure-keyvault-keys
 ```
 
-2. Run the following command:
+3. Run the following command:
 
 ```PowerShell
-<path-to-script>/generate-assets-json.ps1 -InitialPush
+..\..\..\eng\common\testproxy\onboarding\generate-assets-json.ps1 -InitialPush
 ```
 
 If you run `git status` from within the language repo, you should see:
@@ -118,8 +122,8 @@ For more details, refer to the documentation in [tests.md][recording_updates].
 
 [azure_sdk_assets]: https://github.com/Azure/azure-sdk-assets
 [detailed_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/documentation/asset-sync/README.md
-[generate_assets_json]: https://github.com/Azure/azure-sdk-for-python/blob/main/eng/common/testproxy/transition-scripts/generate-assets-json.ps1
+[generate_assets_json]: https://github.com/Azure/azure-sdk-for-python/blob/main/eng/common/testproxy/onboarding/generate-assets-json.ps1
 [git_setup]: https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup
 [powershell]: https://learn.microsoft.com/powershell/scripting/install/installing-powershell?view=powershell-latest
 [recording_updates]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#update-test-recordings
-[transition_script]: https://github.com/Azure/azure-sdk-for-python/tree/main/eng/common/testproxy/transition-scripts
+[transition_script]: https://github.com/Azure/azure-sdk-for-python/tree/main/eng/common/testproxy/onboarding

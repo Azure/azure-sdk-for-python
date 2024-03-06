@@ -15,6 +15,6 @@ class TestWorkflowSmokeAsync(WorkflowAsyncTest):
     @recorded_by_proxy_async
     async def test_smoke_async(self, workflow_endpoint):
         client = self.create_async_client(endpoint=workflow_endpoint)
-        response = client.list_workflows()
+        response = client.workflows.list()
         result = [item async for item in response]
         assert len(result) >= 1

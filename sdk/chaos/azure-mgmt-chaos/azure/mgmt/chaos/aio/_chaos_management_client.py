@@ -19,6 +19,7 @@ from .operations import (
     CapabilitiesOperations,
     CapabilityTypesOperations,
     ExperimentsOperations,
+    OperationStatusesOperations,
     Operations,
     TargetTypesOperations,
     TargetsOperations,
@@ -29,7 +30,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class ChaosManagementClient:  # pylint: disable=client-accepts-api-version-keyword
+class ChaosManagementClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """Chaos Management Client.
 
     :ivar capabilities: CapabilitiesOperations operations
@@ -38,6 +39,8 @@ class ChaosManagementClient:  # pylint: disable=client-accepts-api-version-keywo
     :vartype capability_types: azure.mgmt.chaos.aio.operations.CapabilityTypesOperations
     :ivar experiments: ExperimentsOperations operations
     :vartype experiments: azure.mgmt.chaos.aio.operations.ExperimentsOperations
+    :ivar operation_statuses: OperationStatusesOperations operations
+    :vartype operation_statuses: azure.mgmt.chaos.aio.operations.OperationStatusesOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.chaos.aio.operations.Operations
     :ivar target_types: TargetTypesOperations operations
@@ -50,9 +53,11 @@ class ChaosManagementClient:  # pylint: disable=client-accepts-api-version-keywo
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2023-04-15-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2024-01-01". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+     Retry-After header is present.
     """
 
     def __init__(
@@ -76,6 +81,9 @@ class ChaosManagementClient:  # pylint: disable=client-accepts-api-version-keywo
             self._client, self._config, self._serialize, self._deserialize
         )
         self.experiments = ExperimentsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.operation_statuses = OperationStatusesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.target_types = TargetTypesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.targets = TargetsOperations(self._client, self._config, self._serialize, self._deserialize)

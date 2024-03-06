@@ -1235,7 +1235,7 @@ class ManagedHsmSku(_serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar family: SKU Family of the managed HSM Pool. Required. "B"
+    :ivar family: SKU Family of the managed HSM Pool. "B"
     :vartype family: str or ~azure.mgmt.keyvault.v2021_10_01.models.ManagedHsmSkuFamily
     :ivar name: SKU of the managed HSM Pool. Required. Known values are: "Standard_B1",
      "Custom_B32", and "Custom_B6".
@@ -1255,12 +1255,12 @@ class ManagedHsmSku(_serialization.Model):
     def __init__(
         self,
         *,
-        family: Union[str, "_models.ManagedHsmSkuFamily"],
+        family: Union[str, "_models.ManagedHsmSkuFamily"] = "B",
         name: Union[str, "_models.ManagedHsmSkuName"],
         **kwargs: Any
     ) -> None:
         """
-        :keyword family: SKU Family of the managed HSM Pool. Required. "B"
+        :keyword family: SKU Family of the managed HSM Pool. "B"
         :paramtype family: str or ~azure.mgmt.keyvault.v2021_10_01.models.ManagedHsmSkuFamily
         :keyword name: SKU of the managed HSM Pool. Required. Known values are: "Standard_B1",
          "Custom_B32", and "Custom_B6".

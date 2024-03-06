@@ -16,23 +16,36 @@ from opentelemetry.environment_variables import (
 from opentelemetry.instrumentation.environment_variables import (
     OTEL_PYTHON_DISABLED_INSTRUMENTATIONS,
 )
-from opentelemetry.sdk.environment_variables import OTEL_TRACES_SAMPLER_ARG
+from opentelemetry.sdk.environment_variables import (
+    OTEL_EXPERIMENTAL_RESOURCE_DETECTORS,
+    OTEL_TRACES_SAMPLER_ARG,
+)
+from opentelemetry.sdk.resources import Resource
 
 from azure.monitor.opentelemetry._constants import (
-    DISABLE_AZURE_CORE_TRACING_ARG,
+    _AZURE_APP_SERVICE_RESOURCE_DETECTOR_NAME,
+    _AZURE_VM_RESOURCE_DETECTOR_NAME,
+    _FULLY_SUPPORTED_INSTRUMENTED_LIBRARIES,
+    _PREVIEW_INSTRUMENTED_LIBRARIES,
     DISABLE_LOGGING_ARG,
     DISABLE_METRICS_ARG,
     DISABLE_TRACING_ARG,
-    DISABLED_INSTRUMENTATIONS_ARG,
+    DISTRO_VERSION_ARG,
+    INSTRUMENTATION_OPTIONS_ARG,
+    LOGGER_NAME_ARG,
+    RESOURCE_ARG,
     SAMPLING_RATIO_ARG,
+    SPAN_PROCESSORS_ARG,
 )
 from azure.monitor.opentelemetry._types import ConfigurationValue
+from azure.monitor.opentelemetry._version import VERSION
 
 
 _INVALID_FLOAT_MESSAGE = "Value of %s must be a float. Defaulting to %s: %s"
-_INVALID_INT_MESSAGE = "Value of %s must be a integer. Defaulting to %s: %s"
-
-
+_SUPPORTED_RESOURCE_DETECTORS = (
+    _AZURE_APP_SERVICE_RESOURCE_DETECTOR_NAME,
+    _AZURE_VM_RESOURCE_DETECTOR_NAME,
+)
 # TODO: remove when sampler uses env var instead
 SAMPLING_RATIO_ENV_VAR = OTEL_TRACES_SAMPLER_ARG
 
@@ -45,13 +58,16 @@ def _get_configurations(**kwargs) -> Dict[str, ConfigurationValue]:
 
     for key, val in kwargs.items():
         configurations[key] = val
+    configurations[DISTRO_VERSION_ARG] = VERSION
 
     _default_disable_logging(configurations)
     _default_disable_metrics(configurations)
     _default_disable_tracing(configurations)
-    _default_disabled_instrumentations(configurations)
+    _default_logger_name(configurations)
+    _default_resource(configurations)
     _default_sampling_ratio(configurations)
-    _default_disable_azure_core_tracing(configurations)
+    _default_instrumentation_options(configurations)
+    _default_span_processors(configurations)
 
     return configurations
 
@@ -80,17 +96,17 @@ def _default_disable_tracing(configurations):
     configurations[DISABLE_TRACING_ARG] = default
 
 
-def _default_disabled_instrumentations(configurations):
-    disabled_instrumentation = environ.get(
-        OTEL_PYTHON_DISABLED_INSTRUMENTATIONS, []
+def _default_logger_name(configurations):
+    if LOGGER_NAME_ARG not in configurations:
+        configurations[LOGGER_NAME_ARG] = ""
+
+
+def _default_resource(configurations):
+    environ.setdefault(
+        OTEL_EXPERIMENTAL_RESOURCE_DETECTORS,
+        ",".join(_SUPPORTED_RESOURCE_DETECTORS)
     )
-    if isinstance(disabled_instrumentation, str):
-        disabled_instrumentation = disabled_instrumentation.split(",")
-        # to handle users entering "requests , flask" or "requests, flask" with spaces
-        disabled_instrumentation = [
-            x.strip() for x in disabled_instrumentation
-        ]
-    configurations[DISABLED_INSTRUMENTATIONS_ARG] = disabled_instrumentation
+    configurations[RESOURCE_ARG] = Resource.create()
 
 
 # TODO: remove when sampler uses env var instead
@@ -109,6 +125,47 @@ def _default_sampling_ratio(configurations):
     configurations[SAMPLING_RATIO_ARG] = default
 
 
-# TODO: Placeholder for future configuration
-def _default_disable_azure_core_tracing(configurations):
-    configurations[DISABLE_AZURE_CORE_TRACING_ARG] = False
+def _default_instrumentation_options(configurations):
+    otel_disabled_instrumentations = _get_otel_disabled_instrumentations()
+
+    merged_instrumentation_options = {}
+    instrumentation_options = configurations.get(INSTRUMENTATION_OPTIONS_ARG, {})
+    for lib_name in _FULLY_SUPPORTED_INSTRUMENTED_LIBRARIES:
+        disabled_by_env_var = lib_name in otel_disabled_instrumentations
+        options = {"enabled": not disabled_by_env_var}
+        options.update(instrumentation_options.get(lib_name, {}))
+        merged_instrumentation_options[lib_name] = options
+    for lib_name in _PREVIEW_INSTRUMENTED_LIBRARIES:
+        options = {"enabled": False}
+        options.update(instrumentation_options.get(lib_name, {}))
+        merged_instrumentation_options[lib_name] = options
+
+    configurations[INSTRUMENTATION_OPTIONS_ARG] = merged_instrumentation_options
+
+
+def _default_span_processors(configurations):
+    if SPAN_PROCESSORS_ARG not in configurations:
+        configurations[SPAN_PROCESSORS_ARG] = []
+
+
+def _get_otel_disabled_instrumentations():
+    disabled_instrumentation = environ.get(
+        OTEL_PYTHON_DISABLED_INSTRUMENTATIONS, ""
+    )
+    disabled_instrumentation = disabled_instrumentation.split(",")
+    # to handle users entering "requests , flask" or "requests, flask" with spaces
+    disabled_instrumentation = [
+        x.strip() for x in disabled_instrumentation
+    ]
+    return disabled_instrumentation
+
+def _is_instrumentation_enabled(configurations, lib_name):
+    if INSTRUMENTATION_OPTIONS_ARG not in configurations:
+        return False
+    instrumentation_options = configurations[INSTRUMENTATION_OPTIONS_ARG]
+    if not lib_name in instrumentation_options:
+        return False
+    library_options = instrumentation_options[lib_name]
+    if "enabled" not in library_options:
+        return False
+    return library_options["enabled"] is True

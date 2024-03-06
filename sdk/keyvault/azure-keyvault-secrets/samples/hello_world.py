@@ -4,6 +4,7 @@
 # ------------------------------------
 import datetime
 import os
+
 from azure.keyvault.secrets import SecretClient
 from azure.identity import DefaultAzureCredential
 
@@ -43,12 +44,14 @@ client = SecretClient(vault_url=VAULT_URL, credential=credential)
 print("\n.. Create Secret")
 expires = datetime.datetime.utcnow() + datetime.timedelta(days=365)
 secret = client.set_secret("helloWorldSecretName", "helloWorldSecretValue", expires_on=expires)
+assert secret.name
 print(f"Secret with name '{secret.name}' created with value '{secret.value}'")
 print(f"Secret with name '{secret.name}' expires on '{secret.properties.expires_on}'")
 
 # Let's get the bank secret using its name
 print("\n.. Get a Secret by name")
 bank_secret = client.get_secret(secret.name)
+assert bank_secret.properties.expires_on
 print(f"Secret with name '{bank_secret.name}' was found with value '{bank_secret.value}'.")
 
 # After one year, the bank account is still active, we need to update the expiry time of the secret.
@@ -63,8 +66,8 @@ print(f"Secret with name '{secret.name}' was updated to expire on '{updated_secr
 # Bank forced a password update for security purposes. Let's change the value of the secret in the Key Vault.
 # To achieve this, we need to create a new version of the secret in the Key Vault. The update operation cannot
 # change the value of the secret.
-secret = client.set_secret(secret.name, "newSecretValue")
-print(f"Secret with name '{secret.name}' created with value '{secret.value}'")
+new_secret = client.set_secret(secret.name, "newSecretValue")
+print(f"Secret with name '{new_secret.name}' created with value '{new_secret.value}'")
 
 # The bank account was closed, need to delete its credentials from the Key Vault.
 print("\n.. Deleting Secret...")

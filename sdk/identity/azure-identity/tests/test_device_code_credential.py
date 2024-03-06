@@ -53,7 +53,7 @@ def test_authenticate():
     access_token = "***"
     scope = "scope"
 
-    # mock AAD response with id token
+    # mock Microsoft Entra ID response with id token
     object_id = "object-id"
     home_tenant = "home-tenant-id"
     username = "me@work.com"

@@ -4,7 +4,8 @@
 # ------------------------------------
 import asyncio
 import os
-from azure.keyvault.certificates import CertificatePolicy
+
+from azure.keyvault.certificates import CertificatePolicy, KeyVaultCertificate
 from azure.keyvault.certificates.aio import CertificateClient
 from azure.identity.aio import DefaultAzureCredential
 
@@ -69,6 +70,7 @@ async def run_sample():
     bank_certificate = await client.create_certificate(
         certificate_name=bank_cert_name, policy=CertificatePolicy.get_default(), tags=tags
     )
+    assert isinstance(bank_certificate, KeyVaultCertificate) and bank_certificate.properties
     print(
         f"Certificate with name '{bank_certificate.name}' was created again with tags "
         f"'{bank_certificate.properties.tags}'"

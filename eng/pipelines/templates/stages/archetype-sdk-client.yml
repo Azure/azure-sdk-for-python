@@ -5,9 +5,6 @@ parameters:
 - name: Artifacts
   type: object
   default: []
-- name: CondaArtifacts
-  type: object
-  default: []
 - name: TestPipeline
   type: boolean
   default: false
@@ -75,6 +72,9 @@ parameters:
 - name: GenerateApiReviewForManualOnly
   type: boolean
   default: false
+- name: AdvancedBuild
+  type: boolean
+  default: false
 
 variables:
   - template: /eng/pipelines/templates/variables/globals.yml
@@ -86,7 +86,6 @@ stages:
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         Artifacts: ${{ parameters.Artifacts }}
-        CondaArtifacts: ${{ parameters.CondaArtifacts }}
         ${{ if eq(parameters.ServiceDirectory, 'template') }}:
           TestPipeline: true
         BeforeTestSteps: ${{ parameters.BeforeTestSteps }}
@@ -110,6 +109,7 @@ stages:
         ValidateFormatting: ${{ parameters.ValidateFormatting }}
         TestProxy: ${{ parameters.TestProxy }}
         GenerateApiReviewForManualOnly: ${{ parameters.GenerateApiReviewForManualOnly }}
+        AdvancedBuild: ${{ parameters.AdvancedBuild }}
 
   # The Prerelease and Release stages are conditioned on whether we are building a pull request and the branch.
   - ${{if and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['System.TeamProject'], 'internal'))}}:
@@ -125,15 +125,3 @@ stages:
         TargetDocRepoOwner: ${{ parameters.TargetDocRepoOwner }}
         TargetDocRepoName: ${{ parameters.TargetDocRepoName }}
         DevFeedName: ${{ parameters.DevFeedName }}
-
-  # The Prerelease and Release stages are conditioned on whether we are building a pull request and the branch.
-  - ${{if and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['System.TeamProject'], 'internal'))}}:
-    - template: archetype-conda-release.yml
-      parameters:
-        DependsOn: Build
-        ServiceDirectory: ${{ parameters.ServiceDirectory }}
-        CondaArtifacts: ${{ parameters.CondaArtifacts }}
-        ArtifactName: conda
-        ${{ if eq(parameters.ServiceDirectory, 'template') }}:
-          TestPipeline: true
-

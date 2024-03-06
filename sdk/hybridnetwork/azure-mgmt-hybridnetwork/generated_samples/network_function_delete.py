@@ -29,13 +29,12 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.network_functions.begin_delete(
+    client.network_functions.begin_delete(
         resource_group_name="rg",
         network_function_name="testNf",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/hybridnetwork/resource-manager/Microsoft.HybridNetwork/preview/2022-01-01-preview/examples/NetworkFunctionDelete.json
+# x-ms-original-file: specification/hybridnetwork/resource-manager/Microsoft.HybridNetwork/stable/2023-09-01/examples/NetworkFunctionDelete.json
 if __name__ == "__main__":
     main()

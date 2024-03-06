@@ -4,9 +4,11 @@
 # ------------------------------------
 import time
 from functools import partial
+from unittest import mock
 
 import pytest
 from azure.core.exceptions import ResourceExistsError
+from azure.keyvault.administration import KeyVaultBackupClient
 from azure.keyvault.administration._internal import parse_folder_url
 from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 
@@ -50,9 +52,10 @@ class TestBackupClientTests(KeyVaultTestCase):
         sas_token = kwargs.pop("sas_token")
 
         # backup the vault
-        backup_poller = client.begin_backup(container_uri, sas_token)
+        backup_poller = client.begin_backup(blob_storage_url=container_uri, sas_token=sas_token)
 
         # create a new poller from a continuation token
+        # pass `sas_token` as a positional parameter to ensure backwards compatibility
         token = backup_poller.continuation_token()
         rehydrated = client.begin_backup(container_uri, sas_token, continuation_token=token)
 
@@ -62,9 +65,10 @@ class TestBackupClientTests(KeyVaultTestCase):
         assert backup_operation.folder_url == rehydrated_operation.folder_url
 
         # restore the backup
-        restore_poller = client.begin_restore(backup_operation.folder_url, sas_token)
+        restore_poller = client.begin_restore(folder_url=backup_operation.folder_url, sas_token=sas_token)
 
         # create a new poller from a continuation token
+        # pass `sas_token` as a positional parameter to ensure backwards compatibility
         token = restore_poller.continuation_token()
         rehydrated = client.begin_restore(backup_operation.folder_url, sas_token, continuation_token=token)
 
@@ -108,8 +112,6 @@ class TestBackupClientTests(KeyVaultTestCase):
     @recorded_by_proxy
     def test_backup_client_polling(self, client, **kwargs):
         set_bodiless_matcher()
-        # if not self.is_live:
-        #     pytest.skip("Poller requests are incompatible with vcrpy in playback")
 
         # backup the vault
         container_uri = kwargs.pop("container_uri")
@@ -159,6 +161,37 @@ class TestBackupClientTests(KeyVaultTestCase):
 
         if self.is_live:
             time.sleep(60)  # additional waiting to avoid conflicts with resources in other tests
+
+
+def test_backup_restore_managed_identity():
+    """Try first with a non-MI credential to authenticate the client."""
+    # backup
+    mock_client = mock.Mock()
+    client = KeyVaultBackupClient("https://vault-url.vault.azure.net", mock.Mock())
+    client._client = mock_client
+    client.begin_backup("container_uri", use_managed_identity=True)
+
+    called_with = mock_client.begin_full_backup.call_args
+    assert "use_managed_identity" not in called_with[1]  # ensure we pop off the kwarg correctly
+    sas_token_parameters = called_with[1]["azure_storage_blob_container_uri"]
+    assert sas_token_parameters.use_managed_identity is True
+
+    # full restore
+    client.begin_restore("folder_uri", use_managed_identity=True)
+    called_with = mock_client.begin_full_restore_operation.call_args
+    assert "use_managed_identity" not in called_with[1]  # ensure we pop off the kwarg correctly
+    restore_details = called_with[1]["restore_blob_details"]
+    sas_token_parameters = restore_details.sas_token_parameters
+    assert sas_token_parameters.use_managed_identity is True
+
+    # selective restore
+    client.begin_restore("folder_uri", use_managed_identity=True, key_name="key-name")
+    called_with = mock_client.begin_selective_key_restore_operation.call_args
+    assert "use_managed_identity" not in called_with[1]  # ensure we pop off the kwarg correctly
+    assert called_with[1]["key_name"] == "key-name"
+    restore_details = called_with[1]["restore_blob_details"]
+    sas_token_parameters = restore_details.sas_token_parameters
+    assert sas_token_parameters.use_managed_identity is True
 
 
 @pytest.mark.parametrize(

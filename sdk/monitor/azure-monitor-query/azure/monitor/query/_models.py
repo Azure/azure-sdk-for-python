@@ -345,8 +345,8 @@ class LogsBatchQuery:
         headers = {"Prefer": prefer}
         timespan_iso = construct_iso8601(timespan)
         additional_workspaces = kwargs.pop("additional_workspaces", None)
-        self.id = str(uuid.uuid4())
-        self.body = {
+        self.id: str = str(uuid.uuid4())
+        self.body: Dict[str, Any] = {
             "query": query,
             "timespan": timespan_iso,
             "workspaces": additional_workspaces,

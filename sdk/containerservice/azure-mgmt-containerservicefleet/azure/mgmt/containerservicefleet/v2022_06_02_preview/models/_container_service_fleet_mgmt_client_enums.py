@@ -29,22 +29,34 @@ class FleetMemberProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     """The provisioning state of the last accepted operation."""
 
     SUCCEEDED = "Succeeded"
+    """Resource has been created."""
     FAILED = "Failed"
+    """Resource creation failed."""
     CANCELED = "Canceled"
+    """Resource creation was canceled."""
     JOINING = "Joining"
+    """The provisioning state of a member joining a fleet."""
     LEAVING = "Leaving"
+    """The provisioning state of a member leaving a fleet."""
     UPDATING = "Updating"
+    """The provisioning state of a member being updated."""
 
 
 class FleetProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The provisioning state of the last accepted operation."""
 
     SUCCEEDED = "Succeeded"
+    """Resource has been created."""
     FAILED = "Failed"
+    """Resource creation failed."""
     CANCELED = "Canceled"
+    """Resource creation was canceled."""
     CREATING = "Creating"
+    """The provisioning state of a fleet being created."""
     UPDATING = "Updating"
+    """The provisioning state of a fleet being updated."""
     DELETING = "Deleting"
+    """The provisioning state of a fleet being deleted."""
 
 
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):

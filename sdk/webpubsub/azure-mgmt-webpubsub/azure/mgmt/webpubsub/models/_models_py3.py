@@ -707,6 +707,34 @@ class EventNameFilter(EventListenerFilter):
         self.user_event_pattern = user_event_pattern
 
 
+class IPRule(_serialization.Model):
+    """An IP rule.
+
+    :ivar value: An IP or CIDR or ServiceTag.
+    :vartype value: str
+    :ivar action: Azure Networking ACL Action. Known values are: "Allow" and "Deny".
+    :vartype action: str or ~azure.mgmt.webpubsub.models.ACLAction
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "str"},
+        "action": {"key": "action", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: Optional[str] = None, action: Optional[Union[str, "_models.ACLAction"]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: An IP or CIDR or ServiceTag.
+        :paramtype value: str
+        :keyword action: Azure Networking ACL Action. Known values are: "Allow" and "Deny".
+        :paramtype action: str or ~azure.mgmt.webpubsub.models.ACLAction
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.action = action
+
+
 class LiveTraceCategory(_serialization.Model):
     """Live trace category configuration of a Microsoft.SignalRService resource.
 
@@ -1669,6 +1697,14 @@ class Replica(TrackedResource):
     :ivar provisioning_state: Provisioning state of the resource. Known values are: "Unknown",
      "Succeeded", "Failed", "Canceled", "Running", "Creating", "Updating", "Deleting", and "Moving".
     :vartype provisioning_state: str or ~azure.mgmt.webpubsub.models.ProvisioningState
+    :ivar region_endpoint_enabled: Enable or disable the regional endpoint. Default to "Enabled".
+     When it's Disabled, new connections will not be routed to this endpoint, however existing
+     connections will not be affected.
+    :vartype region_endpoint_enabled: str
+    :ivar resource_stopped: Stop or start the resource.  Default to "false".
+     When it's true, the data plane of the resource is shutdown.
+     When it's false, the data plane of the resource is started.
+    :vartype resource_stopped: str
     """
 
     _validation = {
@@ -1689,6 +1725,8 @@ class Replica(TrackedResource):
         "location": {"key": "location", "type": "str"},
         "sku": {"key": "sku", "type": "ResourceSku"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "region_endpoint_enabled": {"key": "properties.regionEndpointEnabled", "type": "str"},
+        "resource_stopped": {"key": "properties.resourceStopped", "type": "str"},
     }
 
     def __init__(
@@ -1697,6 +1735,8 @@ class Replica(TrackedResource):
         location: str,
         tags: Optional[Dict[str, str]] = None,
         sku: Optional["_models.ResourceSku"] = None,
+        region_endpoint_enabled: str = "Enabled",
+        resource_stopped: str = "false",
         **kwargs: Any
     ) -> None:
         """
@@ -1706,10 +1746,21 @@ class Replica(TrackedResource):
         :paramtype location: str
         :keyword sku: The billing information of the resource.
         :paramtype sku: ~azure.mgmt.webpubsub.models.ResourceSku
+        :keyword region_endpoint_enabled: Enable or disable the regional endpoint. Default to
+         "Enabled".
+         When it's Disabled, new connections will not be routed to this endpoint, however existing
+         connections will not be affected.
+        :paramtype region_endpoint_enabled: str
+        :keyword resource_stopped: Stop or start the resource.  Default to "false".
+         When it's true, the data plane of the resource is shutdown.
+         When it's false, the data plane of the resource is started.
+        :paramtype resource_stopped: str
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.sku = sku
         self.provisioning_state = None
+        self.region_endpoint_enabled = region_endpoint_enabled
+        self.resource_stopped = resource_stopped
 
 
 class ReplicaList(_serialization.Model):
@@ -2655,12 +2706,19 @@ class WebPubSubNetworkACLs(_serialization.Model):
     :vartype public_network: ~azure.mgmt.webpubsub.models.NetworkACL
     :ivar private_endpoints: ACLs for requests from private endpoints.
     :vartype private_endpoints: list[~azure.mgmt.webpubsub.models.PrivateEndpointACL]
+    :ivar ip_rules: IP rules for filtering public traffic.
+    :vartype ip_rules: list[~azure.mgmt.webpubsub.models.IPRule]
     """
+
+    _validation = {
+        "ip_rules": {"max_items": 30, "min_items": 0},
+    }
 
     _attribute_map = {
         "default_action": {"key": "defaultAction", "type": "str"},
         "public_network": {"key": "publicNetwork", "type": "NetworkACL"},
         "private_endpoints": {"key": "privateEndpoints", "type": "[PrivateEndpointACL]"},
+        "ip_rules": {"key": "ipRules", "type": "[IPRule]"},
     }
 
     def __init__(
@@ -2669,6 +2727,7 @@ class WebPubSubNetworkACLs(_serialization.Model):
         default_action: Optional[Union[str, "_models.ACLAction"]] = None,
         public_network: Optional["_models.NetworkACL"] = None,
         private_endpoints: Optional[List["_models.PrivateEndpointACL"]] = None,
+        ip_rules: Optional[List["_models.IPRule"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2678,11 +2737,14 @@ class WebPubSubNetworkACLs(_serialization.Model):
         :paramtype public_network: ~azure.mgmt.webpubsub.models.NetworkACL
         :keyword private_endpoints: ACLs for requests from private endpoints.
         :paramtype private_endpoints: list[~azure.mgmt.webpubsub.models.PrivateEndpointACL]
+        :keyword ip_rules: IP rules for filtering public traffic.
+        :paramtype ip_rules: list[~azure.mgmt.webpubsub.models.IPRule]
         """
         super().__init__(**kwargs)
         self.default_action = default_action
         self.public_network = public_network
         self.private_endpoints = private_endpoints
+        self.ip_rules = ip_rules
 
 
 class WebPubSubResource(TrackedResource):  # pylint: disable=too-many-instance-attributes
@@ -2760,6 +2822,16 @@ class WebPubSubResource(TrackedResource):  # pylint: disable=too-many-instance-a
      Enable or disable aad auth
      When set as true, connection with AuthType=aad won't work.
     :vartype disable_aad_auth: bool
+    :ivar region_endpoint_enabled: Enable or disable the regional endpoint. Default to "Enabled".
+     When it's Disabled, new connections will not be routed to this endpoint, however existing
+     connections will not be affected.
+     This property is replica specific. Disable the regional endpoint without replica is not
+     allowed.
+    :vartype region_endpoint_enabled: str
+    :ivar resource_stopped: Stop or start the resource.  Default to "false".
+     When it's true, the data plane of the resource is shutdown.
+     When it's false, the data plane of the resource is started.
+    :vartype resource_stopped: str
     """
 
     _validation = {
@@ -2814,6 +2886,8 @@ class WebPubSubResource(TrackedResource):  # pylint: disable=too-many-instance-a
         "public_network_access": {"key": "properties.publicNetworkAccess", "type": "str"},
         "disable_local_auth": {"key": "properties.disableLocalAuth", "type": "bool"},
         "disable_aad_auth": {"key": "properties.disableAadAuth", "type": "bool"},
+        "region_endpoint_enabled": {"key": "properties.regionEndpointEnabled", "type": "str"},
+        "resource_stopped": {"key": "properties.resourceStopped", "type": "str"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -2831,6 +2905,8 @@ class WebPubSubResource(TrackedResource):  # pylint: disable=too-many-instance-a
         public_network_access: str = "Enabled",
         disable_local_auth: bool = False,
         disable_aad_auth: bool = False,
+        region_endpoint_enabled: str = "Enabled",
+        resource_stopped: str = "false",
         **kwargs: Any
     ) -> None:
         """
@@ -2867,6 +2943,17 @@ class WebPubSubResource(TrackedResource):  # pylint: disable=too-many-instance-a
          Enable or disable aad auth
          When set as true, connection with AuthType=aad won't work.
         :paramtype disable_aad_auth: bool
+        :keyword region_endpoint_enabled: Enable or disable the regional endpoint. Default to
+         "Enabled".
+         When it's Disabled, new connections will not be routed to this endpoint, however existing
+         connections will not be affected.
+         This property is replica specific. Disable the regional endpoint without replica is not
+         allowed.
+        :paramtype region_endpoint_enabled: str
+        :keyword resource_stopped: Stop or start the resource.  Default to "false".
+         When it's true, the data plane of the resource is shutdown.
+         When it's false, the data plane of the resource is started.
+        :paramtype resource_stopped: str
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.sku = sku
@@ -2888,6 +2975,8 @@ class WebPubSubResource(TrackedResource):  # pylint: disable=too-many-instance-a
         self.public_network_access = public_network_access
         self.disable_local_auth = disable_local_auth
         self.disable_aad_auth = disable_aad_auth
+        self.region_endpoint_enabled = region_endpoint_enabled
+        self.resource_stopped = resource_stopped
 
 
 class WebPubSubResourceList(_serialization.Model):

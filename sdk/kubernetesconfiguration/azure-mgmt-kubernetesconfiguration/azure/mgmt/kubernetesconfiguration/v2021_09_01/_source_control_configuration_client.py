@@ -62,11 +62,13 @@ class SourceControlConfigurationClient:  # pylint: disable=client-accepts-api-ve
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.extensions = ExtensionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.operation_status = OperationStatusOperations(
-            self._client, self._config, self._serialize, self._deserialize
+        self.extensions = ExtensionsOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2021-09-01"
         )
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.operation_status = OperationStatusOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2021-09-01"
+        )
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize, "2021-09-01")
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.

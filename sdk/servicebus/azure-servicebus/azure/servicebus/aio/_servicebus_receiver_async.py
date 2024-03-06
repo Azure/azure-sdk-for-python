@@ -5,14 +5,22 @@
 #pylint: disable=too-many-lines
 
 import asyncio
-import collections
+from collections.abc import AsyncIterator
 import datetime
 import functools
 import logging
 import time
 import warnings
 from enum import Enum
-from typing import Any, List, Optional, AsyncIterator, Union, TYPE_CHECKING, cast
+from typing import (
+    Any,
+    List,
+    Optional,
+    AsyncIterator as AsyncIteratorType,
+    Union,
+    TYPE_CHECKING,
+    cast
+)
 
 from ..exceptions import MessageLockLostError
 from ._servicebus_session_async import ServiceBusSession
@@ -73,7 +81,7 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMixin):
+class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
     """The ServiceBusReceiver class defines a high level interface for
     receiving messages from the Azure Service Bus Queue or Topic Subscription.
 
@@ -109,8 +117,12 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
      if the client fails to process the message.
      The default mode is PEEK_LOCK.
     :paramtype receive_mode: Union[~azure.servicebus.ServiceBusReceiveMode, str]
-    :keyword Optional[float] max_wait_time: The timeout in seconds between received messages after which the receiver
-     will automatically stop receiving. The default value is None, meaning no timeout.
+    :keyword Optional[float] max_wait_time:  The timeout in seconds to wait for the first and subsequent
+     messages to arrive. If no messages arrive, and no timeout is specified, this call will not return
+     until the connection is closed. The default value is None, meaning no timeout. On a sessionful
+     queue/topic when NEXT_AVAILABLE_SESSION is specified, this will act as the timeout for connecting
+     to a session. If connection errors are occurring due to write timing out,the connection timeout
+     value may need to be adjusted. See the `socket_timeout` optional parameter for more details.
     :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
     :keyword transport_type: The type of transport protocol that will be used for communicating with
      the Service Bus service. Default is `TransportType.Amqp`.
@@ -127,8 +139,12 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
      performance but increase the chance that messages will expire while they are cached if they're not
      processed fast enough.
      The default value is 0, meaning messages will be received from the service and processed one at a time.
-     In the case of prefetch_count being 0, `ServiceBusReceiver.receive` would try to cache `max_message_count`
-     (if provided) within its request to the service.
+     In the case of prefetch_count being 0, `ServiceBusReceiver.receive_messages` would try to cache
+     `max_message_count` (if provided) within its request to the service.
+     **WARNING: If prefetch_count > 0 and RECEIVE_AND_DELETE mode is used, all prefetched messages will stay in
+     the in-memory prefetch buffer until they're received into the application. If the application ends before
+     the messages are received into the application, those messages will be lost and unable to be recovered.
+     Therefore, it's recommended that PEEK_LOCK mode be used with prefetch.
     :keyword str client_identifier: A string-based identifier to uniquely identify the client instance.
      Service Bus will associate it with some error messages for easier correlation of errors. If not specified,
      a unique id will be generated.
@@ -155,7 +171,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         **kwargs: Any
     ) -> None:
         self._session_id = None
-        self._message_iter: Optional[AsyncIterator[Union["uamqp_Message", "pyamqp_Message"]]] = (
+        self._message_iter: Optional[AsyncIteratorType[Union["uamqp_Message", "pyamqp_Message"]]] = (
             None
         )
         self._amqp_transport: "AmqpTransportAsync"
@@ -231,10 +247,19 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             self
         )
 
-    def __aiter__(self):
+    async def __aenter__(self) -> "ServiceBusReceiver":
+        if self._shutdown.is_set():
+            raise ValueError(
+                "The handler has already been shutdown. Please use ServiceBusClient to "
+                "create a new instance."
+            )
+        await self._open_with_retry()
+        return self
+
+    def __aiter__(self) -> AsyncIteratorType[ServiceBusReceivedMessage]:
         return self._iter_contextual_wrapper()
 
-    async def _inner_anext(self, wait_time=None):
+    async def _inner_anext(self, wait_time: Optional[float] = None) -> ServiceBusReceivedMessage:
         # We do this weird wrapping such that an imperitive next() call, and a generator-based iter both trace sanely.
         self._check_live()
         while True:
@@ -244,7 +269,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                 self._message_iter = None
                 raise
 
-    async def __anext__(self):
+    async def __anext__(self) -> ServiceBusReceivedMessage:
         try:
             self._receive_context.set()
             message = await self._inner_anext()
@@ -273,8 +298,12 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
          if the client fails to process the message.
          The default mode is PEEK_LOCK.
         :paramtype receive_mode: Union[~azure.servicebus.ServiceBusReceiveMode, str]
-        :keyword Optional[float] max_wait_time: The timeout in seconds between received messages after which the
-         receiver will automatically stop receiving. The default value is None, meaning no timeout.
+        :keyword Optional[float] max_wait_time:  The timeout in seconds to wait for the first and subsequent
+         messages to arrive. If no messages arrive, and no timeout is specified, this call will not return
+         until the connection is closed. The default value is None, meaning no timeout. On a sessionful
+         queue/topic when NEXT_AVAILABLE_SESSION is specified, this will act as the timeout for connecting
+         to a session. If connection errors are occurring due to write timing out,the connection timeout
+         value may need to be adjusted. See the `socket_timeout` optional parameter for more details.
         :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
         :keyword transport_type: The type of transport protocol that will be used for communicating with
          the Service Bus service. Default is `TransportType.Amqp`.
@@ -288,8 +317,12 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
          performance but increase the chance that messages will expire while they are cached if they're not
          processed fast enough.
          The default value is 0, meaning messages will be received from the service and processed one at a time.
-         In the case of prefetch_count being 0, `ServiceBusReceiver.receive` would try to cache `max_message_count`
-         (if provided) within its request to the service.
+         In the case of prefetch_count being 0, `ServiceBusReceiver.receive_messages` would try to cache
+         `max_message_count` (if provided) within its request to the service.
+         **WARNING: If prefetch_count > 0 and RECEIVE_AND_DELETE mode is used, all prefetched messages will stay in
+         the in-memory prefetch buffer until they're received into the application. If the application ends before
+         the messages are received into the application, those messages will be lost and unable to be recovered.
+         Therefore, it's recommended that PEEK_LOCK mode be used with prefetch.
         :rtype: ~azure.servicebus.aio.ServiceBusReceiver
 
         :raises ~azure.servicebus.ServiceBusAuthenticationError: Indicates an issue in token/identity validity.
@@ -329,19 +362,26 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             timeout=self._max_wait_time * self._amqp_transport.TIMEOUT_FACTOR
             if self._max_wait_time
             else 0,
-            link_credit=self._prefetch_count,
-            # If prefetch is 1, then keep_alive coroutine serves as keep receiving for releasing messages
+            # set link_credit to at least 1 so that messages can be received
+            link_credit=self._prefetch_count + 1,
+            # If prefetch is 0, then keep_alive coroutine frequently listens on the connection for messages and
+            # releases right away, since no "prefetched" messages should be in the internal buffer.
             keep_alive_interval=self._config.keep_alive
-            if self._prefetch_count != 1
+            if self._prefetch_count != 0
             else 5,
             shutdown_after_timeout=False,
             link_properties = {CONSUMER_IDENTIFIER:self._name}
         )
-        if self._prefetch_count == 1:
+        # When prefetch is 0 and receive mode is PEEK_LOCK, release messages when they're received.
+        # This will stop messages from expiring in the buffer and incrementing delivery count of a message.
+        # If RECEIVE_AND_DELETE mode, messages are settled and removed from the Service Bus entity immediately,
+        # so the regular _message_received callback should be used. This will ensure that all messages are added
+        # to the internal buffer since they cannot be re-received, even if not received during an active receive call.
+        if self._prefetch_count == 0 and self._receive_mode == ServiceBusReceiveMode.PEEK_LOCK:
             # pylint: disable=protected-access
             self._amqp_transport.set_handler_message_received_async(self)
 
-    async def _open(self):
+    async def _open(self) -> None:
         # pylint: disable=protected-access
         if self._running:
             return
@@ -390,8 +430,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             if len(batch) >= max_message_count:
                 return [self._build_received_message(message) for message in batch]
 
-            # Dynamically issue link credit if max_message_count > 1 when the prefetch_count is the default value 1
-            if max_message_count and self._prefetch_count == 1 and max_message_count > 1:
+            # Dynamically issue link credit if max_message_count >= 1 when the prefetch_count is the default value 0
+            if max_message_count and self._prefetch_count == 0 and max_message_count >= 1:
                 link_credit_needed = max_message_count - len(batch)
                 await self._amqp_transport.reset_link_credit_async(amqp_receive_client, link_credit_needed)
 
@@ -569,7 +609,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
 
     def _get_streaming_message_iter(
         self, max_wait_time: Optional[float] = None
-    ) -> AsyncIterator[ServiceBusReceivedMessage]:
+    ) -> AsyncIteratorType[ServiceBusReceivedMessage]:
         """Receive messages from an iterator indefinitely, or if a max_wait_time is specified, until
         such a timeout occurs.
 
@@ -617,7 +657,9 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         :param Optional[float] max_wait_time: Maximum time to wait in seconds for the first message to arrive.
          If no messages arrive, and no timeout is specified, this call will not return
          until the connection is closed. If specified, and no messages arrive within the
-         timeout period, an empty list will be returned.
+         timeout period, an empty list will be returned. NOTE: Setting max_wait_time on receive_messages
+         when NEXT_AVAILABLE_SESSION is specified will not impact the timeout for connecting to a session.
+         Please use max_wait_time on the constructor to set the timeout for connecting to a session.
         :return: A list of messages received. If no messages are available, this will be an empty list.
         :rtype: list[~azure.servicebus.aio.ServiceBusReceivedMessage]
 
@@ -637,7 +679,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         if max_message_count is not None and max_message_count <= 0:
             raise ValueError("The max_message_count must be greater than 0")
         start_time = time.time_ns()
-        messages = await self._do_retryable_operation(
+        messages: List[ServiceBusReceivedMessage] = await self._do_retryable_operation(
             self._receive,
             max_message_count=max_message_count,
             timeout=max_wait_time,

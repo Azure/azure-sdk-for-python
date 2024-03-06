@@ -40,7 +40,8 @@ from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 # Simple console exporter
 exporter = ConsoleSpanExporter()
 span_processor = SimpleSpanProcessor(exporter)
-trace.get_tracer_provider().add_span_processor(span_processor)
+# see issue https://github.com/open-telemetry/opentelemetry-python/issues/3713
+trace.get_tracer_provider().add_span_processor(span_processor)  # type: ignore
 
 # Example with Servicebus SDKs
 from azure.servicebus import ServiceBusClient, ServiceBusMessage

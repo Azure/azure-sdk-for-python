@@ -29,14 +29,13 @@ def main():
         subscription_id="34adfa4f-cedf-4dc0-ba29-b6d1a69ab345",
     )
 
-    response = client.static_sites.begin_delete_static_site_custom_domain(
+    client.static_sites.begin_delete_static_site_custom_domain(
         resource_group_name="rg",
         name="testStaticSite0",
         domain_name="custom.domain.net",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/web/resource-manager/Microsoft.Web/stable/2022-09-01/examples/DeleteStaticSiteCustomDomain.json
+# x-ms-original-file: specification/web/resource-manager/Microsoft.Web/stable/2023-01-01/examples/DeleteStaticSiteCustomDomain.json
 if __name__ == "__main__":
     main()

@@ -10,6 +10,7 @@ from azure.ai.ml import MLClient, load_workspace
 from azure.ai.ml.entities._workspace.workspace import Workspace
 from azure.ai.ml.entities._workspace.networking import (
     FqdnDestination,
+    ManagedNetwork,
     PrivateEndpointDestination,
     ServiceTagDestination,
 )
@@ -194,7 +195,7 @@ class TestWorkspaceOutboundRules(AzureRecordedTestCase):
             {"display_name": wps_display_name},
         ]
         wps = load_workspace(None, params_override=params_override)
-        wps.managed_network = ManagedNetwork(IsolationMode.ALLOW_INTERNET_OUTBOUND)
+        wps.managed_network = ManagedNetwork(isolation_mode=IsolationMode.ALLOW_INTERNET_OUTBOUND)
 
         # test creation
         workspace_poller = client.workspaces.begin_create(workspace=wps)

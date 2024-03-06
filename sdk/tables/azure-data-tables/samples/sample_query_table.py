@@ -24,6 +24,7 @@ USAGE:
 import os
 import copy
 import random
+from typing import Any, Dict
 from dotenv import find_dotenv, load_dotenv
 from azure.data.tables import TableClient
 
@@ -31,13 +32,11 @@ from azure.data.tables import TableClient
 class SampleTablesQuery(object):
     def __init__(self):
         load_dotenv(find_dotenv())
-        self.access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
-        self.endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
-        self.account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
-        self.endpoint = "{}.table.{}".format(self.account_name, self.endpoint_suffix)
-        self.connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
-            self.account_name, self.access_key, self.endpoint_suffix
-        )
+        self.access_key = os.environ["TABLES_PRIMARY_STORAGE_ACCOUNT_KEY"]
+        self.endpoint_suffix = os.environ["TABLES_STORAGE_ENDPOINT_SUFFIX"]
+        self.account_name = os.environ["TABLES_STORAGE_ACCOUNT_NAME"]
+        self.endpoint = f"{self.account_name}.table.{self.endpoint_suffix}"
+        self.connection_string = f"DefaultEndpointsProtocol=https;AccountName={self.account_name};AccountKey={self.access_key};EndpointSuffix={self.endpoint_suffix}"
         self.table_name = "SampleQueryTable"
 
     def insert_random_entities(self):
@@ -46,7 +45,7 @@ class SampleTablesQuery(object):
         brands = ["Crayola", "Sharpie", "Chameleon"]
         colors = ["red", "blue", "orange", "yellow"]
         names = ["marker", "pencil", "pen"]
-        entity_template = {
+        entity_template: Dict[str, Any] = {
             "PartitionKey": "pk",
             "RowKey": "row",
         }
@@ -63,7 +62,7 @@ class SampleTablesQuery(object):
                 e["Name"] = random.choice(names)
                 e["Brand"] = random.choice(brands)
                 e["Color"] = random.choice(colors)
-                e["Value"] = random.randint(0, 100)  # type: ignore[assignment]
+                e["Value"] = random.randint(0, 100)
                 table_client.create_entity(entity=e)
 
     def sample_query_entities(self):
@@ -74,23 +73,12 @@ class SampleTablesQuery(object):
             try:
                 print("Basic sample:")
                 print("Entities with name: marker")
-                parameters = {"name": "marker"}
+                parameters: Dict[str, Any] = {"name": "marker"}
                 name_filter = "Name eq @name"
                 queried_entities = table_client.query_entities(
                     query_filter=name_filter, select=["Brand", "Color"], parameters=parameters
                 )
 
-                for entity_chosen in queried_entities:
-                    print(entity_chosen)
-
-                print("Sample for querying entities withtout metadata:")
-                print("Entities with name: marker")
-                parameters = {"name": "marker"}
-                name_filter = "Name eq @name"
-                headers = {"Accept": "application/json;odata=nometadata"}
-                queried_entities = table_client.query_entities(
-                    query_filter=name_filter, select=["Brand", "Color"], parameters=parameters, headers=headers
-                )
                 for entity_chosen in queried_entities:
                     print(entity_chosen)
 
@@ -106,7 +94,7 @@ class SampleTablesQuery(object):
 
                 print("Sample for querying entities' values:")
                 print("Entities with 25 < Value < 50")
-                parameters = {"lower": 25, "upper": 50}  # type: ignore
+                parameters = {"lower": 25, "upper": 50}
                 name_filter = "Value gt @lower and Value lt @upper"
                 queried_entities = table_client.query_entities(
                     query_filter=name_filter, select=["Value"], parameters=parameters

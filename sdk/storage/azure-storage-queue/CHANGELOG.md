@@ -1,8 +1,57 @@
 # Release History
 
-## 12.7.0 (Unreleased)
+## 12.10.0b1 (Unreleased)
+
+This version and all future versions will require Python 3.8+. Python 3.7 is no longer supported.
 
 ### Features Added
+- The `services` parameter has been added to the `generate_account_sas` API, which enables the ability to generate SAS
+tokens to be used with multiple services. By default, the SAS token service scope will default to the current service.
+
+### Bugs Fixed
+- Bumped dependency of `typing-extensions` to `>=4.6.0` to avoid potential `TypeError` with `typing.TypeVar` on
+Python 3.12.
+- Fixed an issue where authentication errors could raise `AttributeError` instead of `ClientAuthenticationError` when
+using async OAuth credentials.
+
+## 12.9.0 (2023-12-05)
+
+### Other Changes
+- Updated type hints across the entire package and enabled MyPy to run during CI. Some public types may have been adjusted if they were previously erroneous or incomplete.
+
+## 12.8.0 (2023-11-07)
+
+### Features Added
+- Stable release of features from 12.18.0b1
+
+## 12.8.0b1 (2023-10-17)
+
+### Features Added
+- Added `audience` as an optional keyword that can be specified on APIs that have a `credential` parameter. This
+keyword only has an effect when the credential provided is of type `TokenCredential`.
+
+## 12.7.3 (2023-10-10)
+
+### Bugs Fixed
+- Fixed an issue when an invalid type was provided for `credential` during client construction, the
+`__str__` of the object would be present in the exception message and therefore potentially logged.
+
+## 12.7.2 (2023-09-25)
+
+### Bugs Fixed
+- Fixed an issue where `user_agent` was being ignored on `send_message`, `receive_message`, `receive_messages`,
+`update_message`, and `peek_messages` if client was configured for encryption.
+
+## 12.7.1 (2023-09-13)
+
+### Bugs Fixed
+- Fixed breaking `KeyError: 'sdk_moniker'` in `create_configuration`.
+NOTE: This is not an exported method and therefore should not be imported/called directly.
+
+## 12.7.0 (2023-09-12)
+
+### Features Added
+- Stable release of features from 12.7.0b1
 
 ## 12.7.0b1 (2023-08-08)
 
@@ -70,7 +119,7 @@ an Account SAS with certain service level operations.
 also included a change to how account SAS is generated to reflect a change made to the service in SAS generation for
 service version 2020-12-06.
 - Updated documentation for `receive_messages()` to explain iterator behavior and life-cycle.
-- Added a sample to `queue_samples_message.py` (and async-equivalent) showcasing the use of `max_messages` in `receive_messages()`. 
+- Added a sample to `queue_samples_message.py` (and async-equivalent) showcasing the use of `max_messages` in `receive_messages()`.
 
 ## 12.2.0 (2022-03-08)
 

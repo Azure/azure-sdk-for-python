@@ -5,6 +5,8 @@
 
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
+from azure.ai.ml._restclient.v2023_10_01.models import ListViewType
+
 from ._assets import IPProtectionLevel
 from ._common import AssetTypes, InputOutputModes, ModelType, Scope, TimeZone
 from ._component import ParallelTaskType
@@ -20,16 +22,16 @@ from ._job import (
     NlpModels,
     TabularTrainingMode,
 )
-from ._registry import AcrAccountSku, StorageAccountType
-from ._workspace import ManagedServiceIdentityType
 from ._monitoring import (
-    MonitorSignalType,
+    MonitorDatasetContext,
+    MonitorFeatureType,
     MonitorMetricName,
     MonitorModelType,
-    MonitorFeatureType,
-    MonitorDatasetContext,
+    MonitorSignalType,
     MonitorTargetTasks,
 )
+from ._registry import AcrAccountSku, StorageAccountType
+from ._workspace import ManagedServiceIdentityType
 
 TabularTrainingMode.__module__ = __name__
 
@@ -60,4 +62,5 @@ __all__ = [
     "MonitorDatasetContext",
     "MonitorTargetTasks",
     "IPProtectionLevel",
+    "ListViewType",
 ]

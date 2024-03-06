@@ -55,13 +55,12 @@ for example_file in all_files:
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.autosummary', 'sphinx.ext.doctest',
-              'sphinx.ext.viewcode', 'sphinx.ext.intersphinx', 'sphinx.ext.napoleon']
+              'sphinx.ext.viewcode', 'sphinx.ext.intersphinx', 'sphinx.ext.napoleon',
+              'myst_parser', 'sphinxcontrib.jquery']
 
 intersphinx_mapping = {
     # Dependencies
-    'python': ('https://docs.python.org/3.8', ('/usr/share/doc/python3-doc/html/objects.inv', None)),
-    'msrestazure': ('http://msrestazure.readthedocs.io/en/latest/', None),
-    'msrest': ('http://msrest.readthedocs.io/en/latest/', None),
+    'python': ('https://docs.python.org/3.11', ('/usr/share/doc/python3-doc/html/objects.inv', None)),
     'requests': ('https://requests.kennethreitz.org/en/master/', None),
     'aiohttp': ('https://aiohttp.readthedocs.io/en/stable/', None),
     'trio': ('https://trio.readthedocs.io/en/stable/', None),
@@ -76,9 +75,6 @@ autodoc_member_order = 'groupwise'
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
-source_parsers = {
-   '.md': 'recommonmark.parser.CommonMarkParser',
-}
 
 # The suffix of source filenames.
 source_suffix = ['.rst', '.md']
@@ -280,3 +276,8 @@ latex_documents = [
 
 # If false, no module index is generated.
 #latex_domain_indices = True
+
+# Used my myst-parser
+# https://myst-parser.readthedocs.io/en/latest/syntax/optional.html#syntax-header-anchors
+# Controls allowable header anchors in markdown files. Value allows header anchors for h1 - h6
+myst_heading_anchors = 6

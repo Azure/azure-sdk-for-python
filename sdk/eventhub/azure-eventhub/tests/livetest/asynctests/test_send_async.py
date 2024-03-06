@@ -34,6 +34,16 @@ from azure.eventhub._pyamqp.message import Properties
 from azure.eventhub._pyamqp.authentication import SASTokenAuth
 from azure.eventhub._pyamqp.client import ReceiveClient
 from azure.eventhub._pyamqp.error import AMQPConnectionError
+from azure.eventhub._utils import transform_outbound_single_message
+try:
+    import uamqp
+    from uamqp import compat
+    from azure.eventhub.aio._transport._uamqp_transport_async import UamqpTransportAsync as UamqpTransport
+except (ModuleNotFoundError, ImportError):
+    uamqp = None
+    UamqpTransport = None
+
+from azure.eventhub.aio._transport._pyamqp_transport_async import PyamqpTransportAsync as PyamqpTransport
 
 
 @pytest.mark.liveTest
@@ -529,3 +539,49 @@ async def test_send_with_callback_async(connstr_receivers, uamqp_transport):
         assert sent_events[-1][1] == "0"
 
         assert not on_error.err
+
+@pytest.mark.parametrize("keep_alive", [None, 30, 60])
+@pytest.mark.liveTest
+@pytest.mark.asyncio
+async def test_send_with_keep_alive_async(connstr_receivers, keep_alive, uamqp_transport):
+    connection_str, receivers = connstr_receivers
+    client = EventHubProducerClient.from_connection_string(connection_str, keep_alive=keep_alive, uamqp_transport=uamqp_transport)
+    assert client._producers["all-partitions"]._keep_alive == keep_alive
+
+
+@pytest.mark.parametrize("keep_alive", [None, 5, 30])
+@pytest.mark.liveTest
+@pytest.mark.asyncio
+async def test_send_long_wait_idle_timeout(connstr_receivers, keep_alive, uamqp_transport):
+    if uamqp_transport:
+        amqp_transport = UamqpTransport
+        retry_total = 3
+    else:
+        amqp_transport = PyamqpTransport
+        retry_total = 0
+    connection_str, receivers = connstr_receivers
+    client = EventHubProducerClient.from_connection_string(connection_str, keep_alive=keep_alive, idle_timeout=10, retry_total=retry_total, uamqp_transport=uamqp_transport)
+    sender = client._create_producer(partition_id="0")
+    async with sender:
+        await sender._open_with_retry()
+        ed = EventData('data')
+        ed = transform_outbound_single_message(ed, EventData, amqp_transport.to_outgoing_amqp_message)
+        sender._unsent_events = [ed._message]
+        # hit idle timeout error
+        await asyncio.sleep(11)
+
+        if uamqp_transport:
+            sender._unsent_events[0].on_send_complete = sender._on_outcome
+            if keep_alive !=5:
+                with pytest.raises((uamqp.errors.ConnectionClose,
+                                        uamqp.errors.MessageHandlerError, OperationTimeoutError)):
+                    await sender._send_event_data()
+            else:
+                await sender._send_event_data()
+
+        if not uamqp_transport:
+            if keep_alive == 5:
+                await sender._send_event_data()
+            else:
+                with pytest.raises(AMQPConnectionError):
+                    await sender._send_event_data()

@@ -1,34 +1,32 @@
 parameters:
-  CondaArtifacts: []
-  TestPipeline: false
-  DependsOn: Build
-  ArtifactName: 'not-specified'
-  ServiceDirectory: 'not-specified'
-
+- name: CondaArtifacts
+  type: object
+- name: DependsOn
+  type: string
+  default: Build
 
 stages:
-  - ${{if and(eq(variables['Build.Reason'], 'Manual'), eq(variables['System.TeamProject'], 'internal'))}}:
-    - ${{ each artifact in parameters.CondaArtifacts }}:
-      - stage: Release_${{ replace(artifact.name, '-', '_') }}_To_Blob
-        displayName: 'Conda Release: ${{artifact.name}}'
-        dependsOn: ${{parameters.DependsOn}}
-        condition: and(succeeded(), ne(variables['SetDevVersion'], 'true'), ne(variables['Skip.Release'], 'true'), ne(variables['Build.Repository.Name'], 'Azure/azure-sdk-for-python-pr'))
-        jobs:
-          - deployment: CondaRelease
-            displayName: "Publish Conda Artifacts"
-            condition: ne(variables['Skip.TagRepository'], 'true')
-            environment: pypi
+  # - ${{if and(eq(variables['Build.Reason'], 'Manual'), eq(variables['System.TeamProject'], 'internal'))}}:
+  - stage: Release
+    displayName: 'Conda Release'
+    dependsOn: ${{parameters.DependsOn}}
+    condition: and(succeeded(), ne(variables['SetDevVersion'], 'true'), ne(variables['Skip.Release'], 'true'), ne(variables['Build.Repository.Name'], 'Azure/azure-sdk-for-python-pr'))
+    jobs:
+      - deployment: CondaRelease
+        displayName: "Publish Conda Artifact"
+        # environment: pypi
 
-            pool:
-              name: azsdk-pool-mms-ubuntu-2004-general
-              vmImage: MMSUbuntu20.04
+        pool:
+          name: azsdk-pool-mms-ubuntu-2004-general
+          vmImage: MMSUbuntu20.04
 
-            strategy:
-              runOnce:
-                deploy:
-                  steps:
-                    - checkout: self
-                    - pwsh: |
-                        Get-ChildItem -Recurse $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}
-                      workingDirectory: $(Pipeline.Workspace)
-                      displayName: Output Visible Conda Artifacts
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                - ${{ each artifact in parameters.CondaArtifacts }}:
+                  - pwsh: |
+                      Write-Host "${{ artifact.name }} is ${{ artifact.inBatch }}"
+                    workingDirectory: $(Pipeline.Workspace)
+                    displayName: Output Visible Conda Artifact

@@ -56,6 +56,9 @@ class DataLakeDirectoryClient(PathClient):
     :keyword str api_version:
         The Storage API version to use for requests. Default value is the most recent service version that is
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
+    :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
+        authentication. Only has an effect when credential is of type TokenCredential. The value could be
+        https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
 
     .. admonition:: Example:
 
@@ -105,15 +108,9 @@ class DataLakeDirectoryClient(PathClient):
         :param directory_name:
             The name of directory to interact with. The directory is under file system.
         :type directory_name: str
-        :param credential:
-            The credentials with which to authenticate. This is optional if the
-            account URL already has a SAS token, or the connection string already has shared
-            access key values. The value can be a SAS token string,
-            an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
-            an account shared access key, or an instance of a TokenCredentials class from azure.identity.
-            Credentials provided here will take precedence over those in the connection string.
-            If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
-            should be the storage account key.
+        :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
+            authentication. Only has an effect when credential is of type TokenCredential. The value could be
+            https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
         :return: a DataLakeDirectoryClient
         :rtype: ~azure.storage.filedatalake.DataLakeDirectoryClient
         """

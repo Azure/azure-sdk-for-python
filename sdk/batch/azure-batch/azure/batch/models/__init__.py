@@ -135,6 +135,7 @@ try:
     from ._models_py3 import JobUpdateOptions
     from ._models_py3 import JobUpdateParameter
     from ._models_py3 import LinuxUserConfiguration
+    from ._models_py3 import ManagedDisk
     from ._models_py3 import MetadataItem
     from ._models_py3 import MountConfiguration
     from ._models_py3 import MultiInstanceSettings
@@ -189,6 +190,8 @@ try:
     from ._models_py3 import ResourceFile
     from ._models_py3 import ResourceStatistics
     from ._models_py3 import Schedule
+    from ._models_py3 import SecurityProfile
+    from ._models_py3 import ServiceArtifactReference
     from ._models_py3 import StartTask
     from ._models_py3 import StartTaskInformation
     from ._models_py3 import SubtaskInformation
@@ -219,6 +222,7 @@ try:
     from ._models_py3 import TaskTerminateOptions
     from ._models_py3 import TaskUpdateOptions
     from ._models_py3 import TaskUpdateParameter
+    from ._models_py3 import UefiSettings
     from ._models_py3 import UploadBatchServiceLogsConfiguration
     from ._models_py3 import UploadBatchServiceLogsResult
     from ._models_py3 import UsageStatistics
@@ -357,6 +361,7 @@ except (SyntaxError, ImportError):
     from ._models import JobUpdateOptions
     from ._models import JobUpdateParameter
     from ._models import LinuxUserConfiguration
+    from ._models import ManagedDisk
     from ._models import MetadataItem
     from ._models import MountConfiguration
     from ._models import MultiInstanceSettings
@@ -411,6 +416,8 @@ except (SyntaxError, ImportError):
     from ._models import ResourceFile
     from ._models import ResourceStatistics
     from ._models import Schedule
+    from ._models import SecurityProfile
+    from ._models import ServiceArtifactReference
     from ._models import StartTask
     from ._models import StartTaskInformation
     from ._models import SubtaskInformation
@@ -441,6 +448,7 @@ except (SyntaxError, ImportError):
     from ._models import TaskTerminateOptions
     from ._models import TaskUpdateOptions
     from ._models import TaskUpdateParameter
+    from ._models import UefiSettings
     from ._models import UploadBatchServiceLogsConfiguration
     from ._models import UploadBatchServiceLogsResult
     from ._models import UsageStatistics
@@ -488,6 +496,7 @@ from ._batch_service_client_enums import (
     DiskEncryptionTarget,
     NodePlacementPolicyType,
     DiffDiskPlacement,
+    SecurityTypes,
     DynamicVNetAssignmentScope,
     InboundEndpointProtocol,
     NetworkSecurityGroupRuleAccess,
@@ -645,6 +654,7 @@ __all__ = [
     'JobUpdateOptions',
     'JobUpdateParameter',
     'LinuxUserConfiguration',
+    'ManagedDisk',
     'MetadataItem',
     'MountConfiguration',
     'MultiInstanceSettings',
@@ -699,6 +709,8 @@ __all__ = [
     'ResourceFile',
     'ResourceStatistics',
     'Schedule',
+    'SecurityProfile',
+    'ServiceArtifactReference',
     'StartTask',
     'StartTaskInformation',
     'SubtaskInformation',
@@ -729,6 +741,7 @@ __all__ = [
     'TaskTerminateOptions',
     'TaskUpdateOptions',
     'TaskUpdateParameter',
+    'UefiSettings',
     'UploadBatchServiceLogsConfiguration',
     'UploadBatchServiceLogsResult',
     'UsageStatistics',
@@ -775,6 +788,7 @@ __all__ = [
     'DiskEncryptionTarget',
     'NodePlacementPolicyType',
     'DiffDiskPlacement',
+    'SecurityTypes',
     'DynamicVNetAssignmentScope',
     'InboundEndpointProtocol',
     'NetworkSecurityGroupRuleAccess',

@@ -10,7 +10,7 @@ from opentelemetry._logs import get_logger_provider, set_logger_provider
 from opentelemetry.instrumentation.dependencies import (
     get_dist_dependency_conflicts,
 )
-from opentelemetry.instrumentation.instrumentor import (
+from opentelemetry.instrumentation.instrumentor import ( # type: ignore
     BaseInstrumentor,
 )
 from opentelemetry.metrics import set_meter_provider
@@ -18,6 +18,7 @@ from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
 from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
 from opentelemetry.sdk.metrics import MeterProvider
 from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
+from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from opentelemetry.trace import get_tracer_provider, set_tracer_provider
@@ -26,12 +27,15 @@ from pkg_resources import iter_entry_points  # type: ignore
 from azure.core.settings import settings
 from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
 from azure.monitor.opentelemetry._constants import (
-    DISABLE_AZURE_CORE_TRACING_ARG,
+    _ALL_SUPPORTED_INSTRUMENTED_LIBRARIES,
+    _AZURE_SDK_INSTRUMENTATION_NAME,
     DISABLE_LOGGING_ARG,
     DISABLE_METRICS_ARG,
     DISABLE_TRACING_ARG,
-    DISABLED_INSTRUMENTATIONS_ARG,
+    LOGGER_NAME_ARG,
+    RESOURCE_ARG,
     SAMPLING_RATIO_ARG,
+    SPAN_PROCESSORS_ARG,
 )
 from azure.monitor.opentelemetry._types import ConfigurationValue
 from azure.monitor.opentelemetry.exporter import (  # pylint: disable=import-error,no-name-in-module
@@ -40,22 +44,15 @@ from azure.monitor.opentelemetry.exporter import (  # pylint: disable=import-err
     AzureMonitorMetricExporter,
     AzureMonitorTraceExporter,
 )
-from azure.monitor.opentelemetry._util.configurations import _get_configurations
+from azure.monitor.opentelemetry._util.configurations import (
+    _get_configurations,
+    _is_instrumentation_enabled,
+)
 
 _logger = getLogger(__name__)
 
-_SUPPORTED_INSTRUMENTED_LIBRARIES = (
-    "django",
-    "fastapi",
-    "flask",
-    "psycopg2",
-    "requests",
-    "urllib",
-    "urllib3",
-)
 
-
-def configure_azure_monitor(**kwargs) -> None:
+def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
     """This function works as a configuration layer that allows the
     end user to configure OpenTelemetry and Azure monitor components. The
     configuration can be done via arguments passed to this function.
@@ -66,6 +63,14 @@ def configure_azure_monitor(**kwargs) -> None:
     :paramtype credential: ~azure.core.credentials.TokenCredential or None
     :keyword bool disable_offline_storage: Boolean value to determine whether to disable storing failed
      telemetry records for retry. Defaults to `False`.
+    :keyword str logger_name: The name of the Python logger that telemetry will be collected.
+    :keyword dict instrumentation_options: A nested dictionary that determines which instrumentations
+     to enable or disable.  Instrumentations are referred to by their Library Names. For example,
+     `{"azure_sdk": {"enabled": False}, "flask": {"enabled": False}, "django": {"enabled": True}}`
+     will disable Azure Core Tracing and the Flask instrumentation but leave Django and the other default
+     instrumentations enabled.
+    :keyword list[~opentelemetry.sdk.trace.SpanProcessor] span_processors: List of `SpanProcessor` objects
+     to process every span prior to exporting. Will be run sequentially.
     :keyword str storage_directory: Storage directory in which to store retry files. Defaults to
      `<tempfile.gettempdir()>/Microsoft/AzureMonitor/opentelemetry-python-<your-instrumentation-key>`.
     :rtype: None
@@ -96,53 +101,58 @@ def configure_azure_monitor(**kwargs) -> None:
 
 
 def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
+    resource: Resource = configurations[RESOURCE_ARG] # type: ignore
     sampling_ratio = configurations[SAMPLING_RATIO_ARG]
     tracer_provider = TracerProvider(
         sampler=ApplicationInsightsSampler(sampling_ratio=cast(float, sampling_ratio)),
+        resource=resource
     )
     set_tracer_provider(tracer_provider)
+    for span_processor in configurations[SPAN_PROCESSORS_ARG]: # type: ignore
+        get_tracer_provider().add_span_processor(span_processor) # type: ignore
     trace_exporter = AzureMonitorTraceExporter(**configurations)
-    span_processor = BatchSpanProcessor(
+    bsp = BatchSpanProcessor(
         trace_exporter,
     )
-    get_tracer_provider().add_span_processor(span_processor)
-    disable_azure_core_tracing = configurations[DISABLE_AZURE_CORE_TRACING_ARG]
-    if not disable_azure_core_tracing:
+    get_tracer_provider().add_span_processor(bsp) # type: ignore
+    if _is_instrumentation_enabled(configurations, _AZURE_SDK_INSTRUMENTATION_NAME):
         settings.tracing_implementation = OpenTelemetrySpan
 
 
 def _setup_logging(configurations: Dict[str, ConfigurationValue]):
-    logger_provider = LoggerProvider()
+    resource: Resource = configurations[RESOURCE_ARG] # type: ignore
+    logger_provider = LoggerProvider(resource=resource)
     set_logger_provider(logger_provider)
     log_exporter = AzureMonitorLogExporter(**configurations)
     log_record_processor = BatchLogRecordProcessor(
         log_exporter,
     )
-    get_logger_provider().add_log_record_processor(log_record_processor)
+    get_logger_provider().add_log_record_processor(log_record_processor) # type: ignore
     handler = LoggingHandler(logger_provider=get_logger_provider())
-    getLogger().addHandler(handler)
+    logger_name: str = configurations[LOGGER_NAME_ARG] # type: ignore
+    getLogger(logger_name).addHandler(handler)
 
 
 def _setup_metrics(configurations: Dict[str, ConfigurationValue]):
+    resource: Resource = configurations[RESOURCE_ARG] # type: ignore
     metric_exporter = AzureMonitorMetricExporter(**configurations)
     reader = PeriodicExportingMetricReader(metric_exporter)
     meter_provider = MeterProvider(
         metric_readers=[reader],
+        resource=resource
     )
     set_meter_provider(meter_provider)
 
 
 def _setup_instrumentations(configurations: Dict[str, ConfigurationValue]):
-    disabled_instrumentations = configurations[DISABLED_INSTRUMENTATIONS_ARG]
-
     # use pkg_resources for now until https://github.com/open-telemetry/opentelemetry-python/pull/3168 is merged
     for entry_point in iter_entry_points(
         "opentelemetry_instrumentor"
     ):
         lib_name = entry_point.name
-        if lib_name not in _SUPPORTED_INSTRUMENTED_LIBRARIES:
+        if lib_name not in _ALL_SUPPORTED_INSTRUMENTED_LIBRARIES:
             continue
-        if entry_point.name in disabled_instrumentations:
+        if not _is_instrumentation_enabled(configurations, lib_name):
             _logger.debug(
                 "Instrumentation skipped for library %s", entry_point.name
             )

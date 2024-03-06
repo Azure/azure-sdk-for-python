@@ -1,0 +1,59 @@
+{% set name = "azure-servicebus" %}
+
+package:
+  name: "{{ name|lower }}"
+  version: {{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+
+source:
+  url: {{ environ.get('SERVICEBUS_SOURCE_DISTRIBUTION', '') }}
+
+build:
+  noarch: python
+  number: 0
+  script: "{{ PYTHON }} -m pip install . -vv"
+
+requirements:
+  host:
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - isodate
+    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - pip
+    - python
+    - requests-oauthlib >=0.5.0
+    - six >=1.11.0
+    - aiohttp
+    - isodate
+  run:
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - isodate
+    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - python
+    - requests-oauthlib >=0.5.0
+    - six >=1.11.0
+    - aiohttp
+    - isodate
+
+test:
+  imports:
+    - azure.servicebus
+    - azure.servicebus._common
+    - azure.servicebus.aio
+    - azure.servicebus.aio.management
+    - azure.servicebus.management
+
+about:
+  home: "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/servicebus/azure-servicebus"
+  license: MIT
+  license_family: MIT
+  license_file: 
+  summary: "Microsoft Azure Service Bus Client Library for Python"
+  description: |
+    Azure Service Bus is a high performance cloud-managed messaging service for providing real-time 
+    and fault-tolerant communication between distributed senders and receivers.
+    Please see https://aka.ms/azsdk/conda/releases/servicebus for version details.
+  doc_url: 
+  dev_url: 
+
+extra:
+  recipe-maintainers:
+    - xiangyan99

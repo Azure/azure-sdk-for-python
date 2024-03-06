@@ -36,6 +36,7 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/Azure/azure-sdk-for-python",
+    keywords="azure, azure sdk",
     author="Microsoft Corporation",
     author_email="azuresdkengsysadmins@microsoft.com",
     license="MIT License",
@@ -85,6 +86,6 @@ setup(
     },
     project_urls={
         "Bug Reports": "https://github.com/Azure/azure-sdk-for-python/issues",
-        "Source": "https://github.com/Azure/azure-sdk-python",
+        "Source": "https://github.com/Azure/azure-sdk-for-python",
     },
 )

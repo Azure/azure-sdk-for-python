@@ -18,7 +18,7 @@ class ComputeRuntime(RestTranslatableMixin):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../../samples/ml_samples_compute.py
+        .. literalinclude:: ../samples/ml_samples_compute.py
             :start-after: [START compute_runtime]
             :end-before: [END compute_runtime]
             :language: python
@@ -37,7 +37,7 @@ class ComputeRuntime(RestTranslatableMixin):
         return RestComputeRuntimeDto(spark_runtime_version=self.spark_runtime_version)
 
     @classmethod
-    def _from_rest_object(cls, obj: RestComputeRuntimeDto) -> "ComputeRuntime":
+    def _from_rest_object(cls, obj: RestComputeRuntimeDto) -> Optional["ComputeRuntime"]:
         if not obj:
             return None
         return ComputeRuntime(spark_runtime_version=obj.spark_runtime_version)

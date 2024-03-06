@@ -16,6 +16,7 @@ from azure.identity._credentials.azure_cli import CLI_NOT_FOUND, NOT_LOGGED_IN
 from azure.core.exceptions import ClientAuthenticationError
 import pytest
 
+from helpers import INVALID_CHARACTERS
 from helpers_async import get_completed_future
 from test_cli_credential import TEST_ERROR_OUTPUTS
 
@@ -44,6 +45,25 @@ async def test_multiple_scopes():
 
     with pytest.raises(ValueError):
         await AzureCliCredential().get_token("one scope", "and another")
+
+
+async def test_invalid_tenant_id():
+    """Invalid tenant IDs should raise ValueErrors."""
+
+    for c in INVALID_CHARACTERS:
+        with pytest.raises(ValueError):
+            AzureCliCredential(tenant_id="tenant" + c)
+
+        with pytest.raises(ValueError):
+            await AzureCliCredential().get_token("scope", tenant_id="tenant" + c)
+
+
+async def test_invalid_scopes():
+    """Scopes with invalid characters should raise ValueErrors."""
+
+    for c in INVALID_CHARACTERS:
+        with pytest.raises(ValueError):
+            await AzureCliCredential().get_token("https://scope" + c)
 
 
 async def test_close():
@@ -97,6 +117,50 @@ async def test_get_token():
     assert token.token == access_token
     assert type(token.expires_on) == int
     assert token.expires_on == expected_expires_on
+
+
+async def test_expires_on_used():
+    """Test that 'expires_on' is preferred over 'expiresOn'."""
+    expires_on = 1602015811
+    successful_output = json.dumps(
+        {
+            "expiresOn": datetime.fromtimestamp(1555555555).strftime("%Y-%m-%d %H:%M:%S.%f"),
+            "expires_on": expires_on,
+            "accessToken": "access token",
+            "subscription": "some-guid",
+            "tenant": "some-guid",
+            "tokenType": "Bearer",
+        }
+    )
+
+    with mock.patch("shutil.which", return_value="az"):
+        with mock.patch(SUBPROCESS_EXEC, mock_exec(successful_output)):
+            credential = AzureCliCredential()
+            token = await credential.get_token("scope")
+
+    assert token.expires_on == expires_on
+
+
+async def test_expires_on_string():
+    """Test that 'expires_on' still works if it's a string."""
+    expires_on = 1602015811
+    successful_output = json.dumps(
+        {
+            "expires_on": f"{expires_on}",
+            "accessToken": "access token",
+            "subscription": "some-guid",
+            "tenant": "some-guid",
+            "tokenType": "Bearer",
+        }
+    )
+
+    with mock.patch("shutil.which", return_value="az"):
+        with mock.patch(SUBPROCESS_EXEC, mock_exec(successful_output)):
+            credential = AzureCliCredential()
+            token = await credential.get_token("scope")
+
+    assert type(token.expires_on) == int
+    assert token.expires_on == expires_on
 
 
 async def test_cli_not_installed():

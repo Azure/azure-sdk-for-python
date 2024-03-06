@@ -1,6 +1,0 @@
-include README.rst
-include LICENSE.txt
-include tox.ini
-recursive-include tests *
-recursive-exclude * __pycache__
-recursive-exclude * *.py[co]

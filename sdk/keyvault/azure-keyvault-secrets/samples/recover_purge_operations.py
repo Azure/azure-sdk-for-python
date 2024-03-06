@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
+
 from azure.keyvault.secrets import SecretClient
 from azure.identity import DefaultAzureCredential
 
@@ -40,6 +41,8 @@ client = SecretClient(vault_url=VAULT_URL, credential=credential)
 print("\n.. Create Secret")
 bank_secret = client.set_secret("recoverPurgeBankSecretName", "recoverPurgeSecretValue1")
 storage_secret = client.set_secret("recoverPurgeStorageSecretName", "recoverPurgeSecretValue2")
+assert bank_secret.name
+assert storage_secret.name
 print(f"Secret with name '{bank_secret.name}' was created.")
 print(f"Secret with name '{storage_secret.name}' was created.")
 

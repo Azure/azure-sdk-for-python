@@ -12,6 +12,7 @@ import os
 import random
 import re
 import string
+import sys
 import tempfile
 import time
 import warnings
@@ -719,6 +720,18 @@ def _get_mfe_base_url_from_registry_discovery_service(
     return all_urls[API_URL_KEY]
 
 
+def _get_workspace_base_url(workspace_operations: Any, workspace_name: str, requests_pipeline: HttpPipeline) -> str:
+    discovery_url = workspace_operations.get(workspace_name).discovery_url
+
+    all_urls = json.loads(
+        download_text_from_url(
+            discovery_url,
+            create_requests_pipeline_with_retry(requests_pipeline=requests_pipeline),
+        )
+    )
+    return all_urls[API_URL_KEY]
+
+
 def _get_mfe_base_url_from_batch_endpoint(endpoint: "BatchEndpoint") -> str:
     return endpoint.scoring_uri.split("/subscriptions/")[0]
 
@@ -1013,6 +1026,23 @@ def is_private_preview_enabled():
     :rtype: bool
     """
     return os.getenv(AZUREML_PRIVATE_FEATURES_ENV_VAR) in ["True", "true", True]
+
+
+def is_bytecode_optimization_enabled():
+    """Check if bytecode optimization is enabled:
+    1) bytecode package is installed
+    2) private preview is enabled
+    3) python version is between 3.6 and 3.11
+
+    :return: True if bytecode optimization is enabled, False otherwise.
+    :rtype: bool
+    """
+    try:
+        import bytecode  # pylint: disable=unused-import
+
+        return is_private_preview_enabled() and (3, 6) < sys.version_info < (3, 12)
+    except ImportError:
+        return False
 
 
 def is_on_disk_cache_enabled():
@@ -1355,6 +1385,20 @@ def get_versioned_base_directory_for_cache() -> Path:
     from azure.ai.ml._version import VERSION
 
     return get_base_directory_for_cache().joinpath(VERSION)
+
+
+# pylint: disable-next=name-too-long
+def get_resource_and_group_name_from_resource_id(armstr: str) -> str:
+    if armstr.find("/") == -1:
+        return armstr, None
+    return armstr.split("/")[-1], armstr.split("/")[-5]
+
+
+# pylint: disable-next=name-too-long
+def get_resource_group_name_from_resource_group_id(armstr: str) -> str:
+    if armstr.find("/") == -1:
+        return armstr
+    return armstr.split("/")[-1]
 
 
 def extract_name_and_version(azureml_id: str) -> Dict[str, str]:

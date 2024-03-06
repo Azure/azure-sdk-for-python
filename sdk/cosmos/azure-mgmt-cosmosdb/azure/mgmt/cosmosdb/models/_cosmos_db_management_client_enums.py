@@ -39,6 +39,21 @@ class AuthenticationMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     LDAP = "Ldap"
 
 
+class AutoReplicate(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The form of AutoReplicate that is being used by this cluster."""
+
+    NONE = "None"
+    SYSTEM_KEYSPACES = "SystemKeyspaces"
+    ALL_KEYSPACES = "AllKeyspaces"
+
+
+class AzureConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """How to connect to the azure services needed for running the cluster."""
+
+    NONE = "None"
+    VPN = "VPN"
+
+
 class BackupPolicyMigrationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Describes the status of migration between backup policy types."""
 
@@ -55,6 +70,15 @@ class BackupPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CONTINUOUS = "Continuous"
 
 
+class BackupState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current state of the backup."""
+
+    INITIATED = "Initiated"
+    IN_PROGRESS = "InProgress"
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+
+
 class BackupStorageRedundancy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum to indicate type of backup storage redundancy."""
 
@@ -68,6 +92,24 @@ class CheckNameAvailabilityReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     INVALID = "Invalid"
     ALREADY_EXISTS = "AlreadyExists"
+
+
+class ClusterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the cluster. If set to Production, some operations might not be permitted on cluster."""
+
+    PRODUCTION = "Production"
+    NON_PRODUCTION = "NonProduction"
+
+
+class CommandStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status of the command."""
+
+    DONE = "Done"
+    RUNNING = "Running"
+    ENQUEUE = "Enqueue"
+    PROCESSING = "Processing"
+    FINISHED = "Finished"
+    FAILED = "Failed"
 
 
 class CompositePathSortOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -142,6 +184,13 @@ class DataTransferComponent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AZURE_BLOB_STORAGE = "AzureBlobStorage"
 
 
+class DataTransferJobMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Mode of job execution."""
+
+    OFFLINE = "Offline"
+    ONLINE = "Online"
+
+
 class DataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The datatype for which the indexing behavior is applied to."""
 
@@ -161,6 +210,13 @@ class DefaultConsistencyLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     BOUNDED_STALENESS = "BoundedStaleness"
     STRONG = "Strong"
     CONSISTENT_PREFIX = "ConsistentPrefix"
+
+
+class DefaultPriorityLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum to indicate default priorityLevel of requests."""
+
+    HIGH = "High"
+    LOW = "Low"
 
 
 class EnableFullTextQuery(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -335,6 +391,7 @@ class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
+    SECURED_BY_PERIMETER = "SecuredByPerimeter"
 
 
 class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -360,6 +417,14 @@ class RoleDefinitionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     BUILT_IN_ROLE = "BuiltInRole"
     CUSTOM_ROLE = "CustomRole"
+
+
+class ScheduledEventStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """How the nodes in the cluster react to scheduled events."""
+
+    IGNORE = "Ignore"
+    STOP_ANY = "StopAny"
+    STOP_BY_RACK = "StopByRack"
 
 
 class ServerVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -416,6 +481,10 @@ class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     INTERNALLY_READY = "InternallyReady"
     ONLINE = "Online"
     DELETING = "Deleting"
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    CANCELED = "Canceled"
+    UPDATING = "Updating"
 
 
 class ThroughputPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

@@ -77,7 +77,7 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
         if self._sort_orders:
             self._document_producer_comparator = document_producer._OrderByDocumentProducerComparator(self._sort_orders)
         else:
-            self._document_producer_comparator = document_producer._PartitionKeyRangeDocumentProduerComparator()
+            self._document_producer_comparator = document_producer._PartitionKeyRangeDocumentProducerComparator()
 
         # will be a list of (partition_min, partition_max) tuples
         targetPartitionRanges = self._get_target_partition_key_range()

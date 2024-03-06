@@ -1066,9 +1066,23 @@ class TestStorageBlobEncryptionV2(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
+        kek = KeyWrapper('key1')
+        self.enable_encryption_v2(kek)
 
         app_id = 'TestAppId'
-        kek = KeyWrapper('key1')
+        content = b'Hello World Encrypted!'
+
+        def assert_user_agent(request):
+            start = f'{app_id} azstorage-clientsideencryption/2.0 '
+            assert request.http_request.headers['User-Agent'].startswith(start)
+
+        # Test method level keyword
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+
+        blob.upload_blob(content, overwrite=True, raw_request_hook=assert_user_agent, user_agent=app_id)
+        blob.download_blob(raw_request_hook=assert_user_agent, user_agent=app_id).readall()
+
+        # Test client constructor level keyword
         bsc = BlobServiceClient(
             self.bsc.url,
             credential=storage_account_key,
@@ -1077,13 +1091,7 @@ class TestStorageBlobEncryptionV2(StorageRecordedTestCase):
             key_encryption_key=kek,
             user_agent=app_id)
 
-        def assert_user_agent(request):
-            start = f'{app_id} azstorage-clientsideencryption/2.0 '
-            assert request.http_request.headers['User-Agent'].startswith(start)
-
         blob = bsc.get_blob_client(self.container_name, self._get_blob_reference())
-        content = b'Hello World Encrypted!'
 
-        # Act
         blob.upload_blob(content, overwrite=True, raw_request_hook=assert_user_agent)
         blob.download_blob(raw_request_hook=assert_user_agent).readall()

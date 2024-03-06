@@ -46,6 +46,24 @@ stages:
                           PackageName: ${{artifact.name}}
                           ServiceName: ${{parameters.ServiceDirectory}}
                           ForRelease: true
+
+                    - template: /eng/common/pipelines/templates/steps/verify-restapi-spec-location.yml
+                      parameters:
+                        PackageName: ${{artifact.name}}
+                        ServiceDirectory: ${{parameters.ServiceDirectory}}
+                        ArtifactLocation: $(Pipeline.Workspace)/${{parameters.ArtifactName}}
+
+                    - script: |
+                        python -m pip install "./tools/azure-sdk-tools"
+                      displayName: Install tool dependencies
+
+                    - task: PythonScript@0
+                      displayName: Verify CI enabled
+                      condition: succeeded()
+                      inputs:
+                        scriptPath: 'scripts/devops_tasks/verify_ci_enabled.py'
+                        arguments: '--package-name ${{ artifact.name }} --service ${{ parameters.ServiceDirectory }}'
+
                     - pwsh: |
                         Get-ChildItem -Recurse $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}
                       workingDirectory: $(Pipeline.Workspace)
@@ -86,7 +104,6 @@ stages:
                       - script: |
                           set -e
                           python -m pip install -r eng/release_requirements.txt
-                          python -m pip install tools/azure-sdk-tools
                         displayName: Install Release Dependencies
 
                       - task: PythonScript@0

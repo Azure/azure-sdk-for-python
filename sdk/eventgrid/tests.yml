@@ -5,10 +5,12 @@ stages:
     parameters:
       ServiceDirectory: eventgrid
       BuildTargetingString: azure-eventgrid*
-      TestProxy: true
       MatrixReplace:
         - TestSamples=.*/true
       EnvVars:
+        TEST_MODE: 'RunLiveNoRecord'
+        AZURE_TEST_RUN_LIVE: 'true'
+        AZURE_SKIP_LIVE_RECORDING: 'True'
         AZURE_STORAGE_CONNECTION_STRING: $(python-storage-blob-connection-string)
         AZURE_SUBSCRIPTION_ID: $(azure-subscription-id)
         AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)

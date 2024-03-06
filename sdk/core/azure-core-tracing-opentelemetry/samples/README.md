@@ -12,11 +12,12 @@ urlFragment: azure-core-tracing-opentelemetry-samples
 These code samples show using the tracing OpenTelemetry integration with few services including servicebus, storage and eventgrid. A simple console span exporter is used in this example to export the calls. However, the code to use the azure monitor exporter has also been provided and commented in each sample.
 
 * Trace Storage Calls to create a container: [sample_storage.py][python-sample-storage]
-* Trace Eventgrid calls to publish an event : [sample_eventgrid.py][python-sample-eventgrid]
-* Trace Servicebus calls to send messages to queue : [sample_servicebus.py][python-sample-servicebus]
-* Trace Servicebus calls to receive messages from a queue : [sample_receive_sb.py][python-sample-servicebus-receive]
-* Trace calls to send data to Eventhub : [sample_eventhubs.py][python-sample-eventhub-send]
-* Trace calls to receive data from EventHub : [sample_receive_eh.py][python-sample-eventhub-receive]
+* Trace Eventgrid calls to publish an event: [sample_eventgrid.py][python-sample-eventgrid]
+* Trace Servicebus calls to send messages to queue: [sample_servicebus.py][python-sample-servicebus]
+* Trace Servicebus calls to receive messages from a queue: [sample_receive_sb.py][python-sample-servicebus-receive]
+* Trace calls to send data to Eventhub: [sample_eventhubs.py][python-sample-eventhub-send]
+* Trace calls to receive data from EventHub: [sample_receive_eh.py][python-sample-eventhub-receive]
+* Create a custom span processor to filter out spans: [sample_custom_span_processor.py][python-sample-custom-span-processor]
 
 It is assumed that the relevant SDKs are installed along with this extension. Below are the relevant packages which can be found in PyPI.
 
@@ -32,3 +33,4 @@ It is assumed that the relevant SDKs are installed along with this extension. Be
 [python-sample-servicebus-receive]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core-tracing-opentelemetry/samples/sample_receive_sb.py
 [python-sample-eventhub-send]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core-tracing-opentelemetry/samples/sample_eventhubs.py
 [python-sample-eventhub-receive]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core-tracing-opentelemetry/samples/sample_receive_eh.py
+[python-sample-custom-span-processor]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core-tracing-opentelemetry/samples/sample_custom_span_processor.py

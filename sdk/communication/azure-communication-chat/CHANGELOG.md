@@ -1,20 +1,33 @@
 # Release History
 
-## 1.2.0b1 (Unreleased)
+## 1.3.0b1 (Unreleased)
 
 ### Features Added
-- Added support for proactive refreshing of tokens
-- `CommunicationTokenCredential` exposes a new boolean keyword argument `proactive_refresh` that defaults to `False`. If set to `True`, the refreshing of the token will be scheduled in the background ensuring continuous authentication state.
-- Added disposal function `close` for `CommunicationTokenCredential`.
-- Added `identifier_from_raw_id` and ensured that `CommunicationIdentifier.raw_id` is populated on creation. Together, these can be used to translate between a `CommunicationIdentifier` and its underlying canonical raw ID representation. Developers can now use the raw ID as an encoded format for identifiers to store in their databases or as stable keys in general.
-- Added support for a new communication identifier `MicrosoftBotIdentifier`.
+
+- Added support for a new communication identifier `MicrosoftTeamsAppIdentifier`.
 
 ### Breaking Changes
-- Introduction of `MicrosoftBotIdentifier` is a breaking change. It will affect code that relied on using `UnknownIdentifier` with a raw_id starting with `28:` 
 
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.2.0 (2023-12-04)
+
+### Features Added
+
+- Added the support to receive inline images from Microsoft Teams users in an interoperability Chat with new type `ChatAttachment`
+- Added support for proactive refreshing of tokens
+- `CommunicationTokenCredential` exposes a new boolean keyword argument `proactive_refresh` that defaults to `False`. If set to `True`, the refreshing of the token will be scheduled in the background ensuring continuous authentication state.
+- Added disposal function `close` for `CommunicationTokenCredential`.
+- Added `identifier_from_raw_id` and ensured that `CommunicationIdentifier.raw_id` is populated on creation. Together, these can be used to translate between a `CommunicationIdentifier` and its underlying canonical raw ID representation. Developers can now use the raw ID as an encoded format for identifiers to store in their databases or as stable keys in general.
+
+### Bugs Fixed
+
+- Fixed bug where invalid participants were not being correctly deserialized in the response of `create_chat_thread`.
+
+### Other Changes
+
 Python 2.7 is no longer supported. Please use Python version 3.7 or later. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).
 
 ## 1.1.0 (2021-09-15)

@@ -5,7 +5,6 @@ import os
 from pathlib import Path
 from subprocess import check_call
 
-from azure_devtools.ci_tools.git_tools import get_diff_file_list
 from .package_utils import create_package, change_log_generate, extract_breaking_change
 
 _LOGGER = logging.getLogger(__name__)

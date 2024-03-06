@@ -11,7 +11,7 @@ urlFragment: ml-samples
 # Azure Machine Learning Client Library for Python Samples
 
 These are code samples that show common scenario operations with the Azure Machine Learning Client Library for Python.
-Their main purpose is to be used in inline examples for class and methods throughout the codebase like below:
+Their main purpose is to be used in inline examples for class and methods throughout the codebase that render alongside our reference documentation on [learn.microsoft.com](https://learn.microsoft.com/python/api/azure-ai-ml/?view=azure-python).
 
 ```markdown
 .. admonition:: Example:
@@ -21,18 +21,14 @@ Their main purpose is to be used in inline examples for class and methods throug
         :end-before: [END create_ml_client_from_config_default]
         :language: python
         :dedent: 8
-        :caption: Creating an MLClient from a file named "config.json" in directory "src".
+        :caption: Creating an MLClient from a file named "config.json"
+            in directory "src".
 ```
 
-If adding or updating
-a public class or method, please add or update the example. Double-check that you have the correct path for literalinclude::. It needs to be relative to the file you are adding the admonition to (e.g. in this case, the MLClient code is in sdk\ml\azure-ai-ml\ so the path to the samples folder has to be ../samples/ml_samples_authentication.py). Each samples file is run during the azure-sdk-for-python Build CI to ensure that examples are up-to-date and functioning.
+If adding or updating a public class or method, please add or update the example as well. Double-check that you have the correct path for `literalinclude::`. In the Sphinx build, each module is only one directory level away from azure-ai-ml, so the `literalinclude` path should always be `../samples/<sample file name>`.
 
+Each samples file is run during the azure-sdk-for-python Build CI to ensure that examples are up-to-date and functioning.
 
-* [ml_samples_authentication.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ml/azure-ai-ml/samples/ml_samples_authentication.py)
-* [ml_samples_cloud_configurations](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ml/azure-ai-ml/samples/ml_samples_cloud_configurations.py)
-* [ml_samples_misc](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ml/azure-ai-ml/samples/ml_samples_misc.py)
-* [ml_samples_spark_configurations](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ml/azure-ai-ml/samples/ml_samples_spark_configurations.py)
-* [ml_samples_sweep_configurations](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ml/azure-ai-ml/samples/ml_samples_sweep_configurations.py)
 
 ## Prerequisites
 

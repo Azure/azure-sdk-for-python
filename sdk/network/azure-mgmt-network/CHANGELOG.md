@@ -1,5 +1,32 @@
 # Release History
 
+## 25.3.0 (2024-02-22)
+
+### Features Added
+
+  - Model BastionHost has a new parameter zones
+
+## 25.2.0 (2023-12-18)
+
+### Features Added
+
+  - Added operation NetworkManagementClientOperationsMixin.begin_delete_bastion_shareable_link_by_token
+  - Added operation NetworkSecurityPerimetersOperations.patch
+  - Model ApplicationGatewayListener has a new parameter host_names
+  - Model FirewallPolicyIntrusionDetection has a new parameter profile
+  - Model NetworkVirtualAppliance has a new parameter internet_ingress_public_ips
+
+## 25.1.0 (2023-09-15)
+
+### Features Added
+
+  - Model BastionHost has a new parameter network_acls
+  - Model BastionHost has a new parameter virtual_network
+  - Model FirewallPolicy has a new parameter size
+  - Model FirewallPolicyRuleCollectionGroup has a new parameter size
+  - Model Subnet has a new parameter default_outbound_access
+  - Model VirtualNetworkGateway has a new parameter auto_scale_configuration
+
 ## 25.0.0 (2023-08-18)
 
 ### Features Added

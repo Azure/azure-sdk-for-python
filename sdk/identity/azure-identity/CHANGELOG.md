@@ -1,25 +1,88 @@
 # Release History
 
-## 1.15.0b1 (Unreleased)
+## 1.16.0b3 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.16.0b2 (2024-03-05)
+
+### Features Added
+
+- Added pickling support. ([#34134](https://github.com/Azure/azure-sdk-for-python/pull/34134))
+
+### Bugs Fixed
+
+- Fixed an issue in `AzurePowerShellCredential` where if `pwsh` isn't available and the Command Prompt language is not English, it would not fall back to `powershell`. ([#34271](https://github.com/Azure/azure-sdk-for-python/pull/34271))
+
+## 1.16.0b1 (2024-02-06)
+
+### Bugs Fixed
+
+- Fixed the bug that `ClientAssertionCredential` constructor fails if kwargs are provided. ([#33673](https://github.com/Azure/azure-sdk-for-python/issues/33673))
+- `ManagedIdentityCredential` is more lenient with the error message it matches when falling through to the next credential in the chain in the case that Docker Desktop returns a 403 response when attempting to access the IMDS endpoint. ([#33928](https://github.com/Azure/azure-sdk-for-python/pull/33928))
+
+### Other Changes
+
+- `AzureCliCredential` utilizes the new `expires_on` property returned by `az` CLI versions >= 2.54.0 to determine token expiration. ([#33947](https://github.com/Azure/azure-sdk-for-python/issues/33947))
+- Azure-identity is supported on Python 3.8 or later.
+
+## 1.15.0 (2023-10-26)
+
+### Features Added
+
+- Added bearer token provider.  ([#32655](https://github.com/Azure/azure-sdk-for-python/pull/32655))
+
+### Bugs Fixed
+
+- Fixed issue InteractiveBrowserCredential does not hand over to next credential in chain if no browser is supported.([#32276](https://github.com/Azure/azure-sdk-for-python/pull/32276))
+
+## 1.15.0b2 (2023-10-12)
+
+### Features Added
+
+- Added `enable_support_logging` as a keyword argument to credentials using MSAL's `PublicClientApplication`. This allows additional support logging which may contain PII. ([#32135](https://github.com/Azure/azure-sdk-for-python/pull/32135))
+
+### Breaking Changes
+
+> These changes do not impact the API of stable versions such as 1.14.0.
+> Only code written against a beta version such as 1.15.0b1 may be affected.
+- Windows Web Account Manager (WAM) Brokered Authentication is moved into another package.
+
+### Bugs Fixed
+
+- `ManagedIdentityCredential` will now correctly retry when the instance metadata endpoint returns a 410 response.  ([#32200](https://github.com/Azure/azure-sdk-for-python/pull/32200))
+
+## 1.14.1 (2023-10-09)
+
+### Bugs Fixed
+
+- Bug fixes for developer credentials
+
+## 1.15.0b1 (2023-09-12)
 
 ### Features Added
 
 - Added Windows Web Account Manager (WAM) Brokered Authentication support.
-- Added `enable_msa_passthrough` suppport for `InteractiveBrowserCredential`. By default `InteractiveBrowserCredential` only lists AAD accounts. If you set `enable_msa_passthrough` to `True`, it lists both AAD accounts and MSA outlook.com accounts that are logged in to Windows.
-
-### Breaking Changes
+- Added `enable_msa_passthrough` suppport for `InteractiveBrowserCredential`. By default `InteractiveBrowserCredential` only lists Microsoft Entra accounts. If you set `enable_msa_passthrough` to `True`, it lists both Microsoft Entra accounts and MSA outlook.com accounts that are logged in to Windows.
 
 ### Bugs Fixed
 
 - Ensure `AzurePowershellCredential` calls PowerShell with the `-NoProfile` flag to avoid loading user profiles for more consistent behavior.  ([#31682](https://github.com/Azure/azure-sdk-for-python/pull/31682))
 - Fixed an issue with subprocess-based developer credentials (such as AzureCliCredential) where the process would sometimes hang waiting for user input.  ([#31534](https://github.com/Azure/azure-sdk-for-python/pull/31534))
 - Fixed an issue with `ClientAssertionCredential` not properly checking if CAE should be enabled.  ([#31544](https://github.com/Azure/azure-sdk-for-python/pull/31544))
+- `ManagedIdentityCredential` will fall through to the next credential in the chain in the case that Docker Desktop returns a 403 response when attempting to access the IMDS endpoint.  ([#31824](https://github.com/Azure/azure-sdk-for-python/pull/31824))
 
 ### Other Changes
 
 - Update typing of async credentials to match the `AsyncTokenCredential` protocol.
 - If within `DefaultAzureCredential`, `EnvironmentCredential` will now use log level INFO instead of WARNING to inform users of an incomplete environment configuration.  ([#31814](https://github.com/Azure/azure-sdk-for-python/pull/31814))
-- Strengthened `AzureCliCredential` and `AzureDeveloperCliCredential` error checking when determining if a user is logged in or not. Now, if an AADSTS error exists in the error, the full error message is propagated instead of a canned error message. ([#30047](https://github.com/Azure/azure-sdk-for-python/pull/30047))
+- Strengthened `AzureCliCredential` and `AzureDeveloperCliCredential` error checking when determining if a user is logged in or not. Now, if an `AADSTS` error exists in the error, the full error message is propagated instead of a canned error message. ([#30047](https://github.com/Azure/azure-sdk-for-python/pull/30047))
 - `ManagedIdentityCredential` instances using IMDS will now be allowed to continue sending requests to the IMDS endpoint even after previous attempts failed. This is to prevent credential instances from potentially being permanently disabled after a temporary network failure.
 - IMDS endpoint probes in `ManagedIdentityCredential` will now only occur when inside a credential chain such as `DefaultAzureCredential`. This probe request timeout has been increased to 1 second from 0.3 seconds to reduce the likelihood of false negatives.
 
@@ -77,7 +140,7 @@
 ### Features Added
 
 - Changed parameter from `instance_discovery` to `disable_instance_discovery` to make it more explicit.
-- Service principal credentials now enable support for [Continuous Access Evaluation (CAE)](https://learn.microsoft.com/azure/active-directory/conditional-access/concept-continuous-access-evaluation-workload). This indicates to Azure Active Directory that your application can handle CAE claims challenges.
+- Service principal credentials now enable support for [Continuous Access Evaluation (CAE)](https://learn.microsoft.com/azure/active-directory/conditional-access/concept-continuous-access-evaluation-workload). This indicates to Microsoft Entra ID that your application can handle CAE claims challenges.
 
 ## 1.13.0b2 (2023-02-07)
 
@@ -805,8 +868,8 @@ its use in national clouds
 ## 1.0.0b4 (2019-10-07)
 ### New features:
 - `AuthorizationCodeCredential` authenticates with a previously obtained
-authorization code. See Azure Active Directory's
-[authorization code documentation](https://docs.microsoft.com/azure/active-directory/develop/v2-oauth2-auth-code-flow)
+authorization code. See Microsoft Entra's
+[authorization code documentation](https://learn.microsoft.com/azure/active-directory/develop/v2-oauth2-auth-code-flow)
 for more information about this authentication flow.
 - Multi-cloud support: client credentials accept the authority of an Azure Active
 Directory authentication endpoint as an `authority` keyword argument. Known
@@ -878,5 +941,5 @@ See the
 for more details. User authentication will be added in an upcoming preview
 release.
 
-This release supports only global Azure Active Directory tenants, i.e. those
+This release supports only global Microsoft Entra tenants, i.e. those
 using the https://login.microsoftonline.com authentication endpoint.

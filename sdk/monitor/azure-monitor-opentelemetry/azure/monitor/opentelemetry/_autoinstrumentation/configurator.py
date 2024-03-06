@@ -5,7 +5,6 @@
 # --------------------------------------------------------------------------
 
 
-import logging
 from warnings import warn
 
 from opentelemetry.sdk._configuration import _OTelSDKConfigurator
@@ -16,9 +15,12 @@ from azure.monitor.opentelemetry._constants import (
 )
 from azure.monitor.opentelemetry._diagnostics.diagnostic_logging import (
     AzureDiagnosticLogging,
+    _ATTACH_FAILURE_CONFIGURATOR,
+    _ATTACH_SUCCESS_CONFIGURATOR,
 )
-
-_logger = logging.getLogger(__name__)
+from azure.monitor.opentelemetry._diagnostics.status_logger import (
+    AzureStatusLogger,
+)
 
 
 class AzureMonitorConfigurator(_OTelSDKConfigurator):
@@ -26,15 +28,15 @@ class AzureMonitorConfigurator(_OTelSDKConfigurator):
         if not _is_attach_enabled():
             warn(_PREVIEW_ENTRY_POINT_WARNING)
         try:
-            AzureDiagnosticLogging.enable(_logger)
             super()._configure(**kwargs)
-        except ValueError as e:
-            _logger.error(
-                "Azure Monitor Configurator failed during configuration due to a ValueError: %s", e
+            AzureStatusLogger.log_status(True)
+            AzureDiagnosticLogging.info(
+                "Azure Monitor Configurator configured successfully.",
+                _ATTACH_SUCCESS_CONFIGURATOR
             )
-            raise e
         except Exception as e:
-            _logger.error(
-                "Azure Monitor Configurator failed during configuration: %s", e
+            AzureDiagnosticLogging.error(
+                "Azure Monitor Configurator failed during configuration: %s" % str(e),
+                _ATTACH_FAILURE_CONFIGURATOR,
             )
             raise e

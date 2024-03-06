@@ -1,5 +1,68 @@
 # Release History
 
+## 9.0.0 (2024-01-24)
+
+### Features Added
+
+  - Added operation group FetchTieringCostOperations
+  - Added operation group GetTieringCostOperationResultOperations
+  - Added operation group TieringCostOperationStatusOperations
+  - Model AzureFileShareProtectionPolicy has a new parameter vault_retention_policy
+  - Model AzureWorkloadSAPHanaPointInTimeRestoreWithRehydrateRequest has a new parameter snapshot_restore_parameters
+  - Model AzureWorkloadSAPHanaPointInTimeRestoreWithRehydrateRequest has a new parameter target_resource_group_name
+  - Model AzureWorkloadSAPHanaPointInTimeRestoreWithRehydrateRequest has a new parameter user_assigned_managed_identity_details
+  - Model AzureWorkloadSAPHanaRestoreWithRehydrateRequest has a new parameter snapshot_restore_parameters
+  - Model AzureWorkloadSAPHanaRestoreWithRehydrateRequest has a new parameter target_resource_group_name
+  - Model AzureWorkloadSAPHanaRestoreWithRehydrateRequest has a new parameter user_assigned_managed_identity_details
+  - Model AzureWorkloadSQLPointInTimeRestoreWithRehydrateRequest has a new parameter snapshot_restore_parameters
+  - Model AzureWorkloadSQLPointInTimeRestoreWithRehydrateRequest has a new parameter target_resource_group_name
+  - Model AzureWorkloadSQLPointInTimeRestoreWithRehydrateRequest has a new parameter user_assigned_managed_identity_details
+  - Model AzureWorkloadSQLRestoreWithRehydrateRequest has a new parameter snapshot_restore_parameters
+  - Model AzureWorkloadSQLRestoreWithRehydrateRequest has a new parameter target_resource_group_name
+  - Model AzureWorkloadSQLRestoreWithRehydrateRequest has a new parameter user_assigned_managed_identity_details
+  - Model SubProtectionPolicy has a new parameter snapshot_backup_additional_details
+
+### Breaking Changes
+
+  - Parameter resource_guard_resource_id of model ResourceGuardProxyBase is now required
+
+## 8.0.0 (2024-01-15)
+
+### Features Added
+
+  - Model AzureVmWorkloadSAPHanaDBInstanceProtectedItem has a new parameter vault_id
+  - Model BackupStatusResponse has a new parameter acquire_storage_account_lock
+  - Model BackupStatusResponse has a new parameter protected_items_count
+
+### Breaking Changes
+
+  - Renamed operation ProtectionContainersOperations.register to ProtectionContainersOperations.begin_register
+
+## 7.0.0 (2023-09-18)
+
+### Features Added
+
+  - Added operation RecoveryPointsCrrOperations.get
+  - Model AzureVmWorkloadProtectableItem has a new parameter is_protectable
+  - Model AzureVmWorkloadSAPAseSystemProtectableItem has a new parameter is_protectable
+  - Model AzureVmWorkloadSAPHanaDBInstance has a new parameter is_protectable
+  - Model AzureVmWorkloadSAPHanaDBInstanceProtectedItem has a new parameter nodes_list
+  - Model AzureVmWorkloadSAPHanaDBInstanceProtectedItem has a new parameter soft_delete_retention_period_in_days
+  - Model AzureVmWorkloadSAPHanaDatabaseProtectableItem has a new parameter is_protectable
+  - Model AzureVmWorkloadSAPHanaHSRProtectableItem has a new parameter is_protectable
+  - Model AzureVmWorkloadSAPHanaSystemProtectableItem has a new parameter is_protectable
+  - Model AzureVmWorkloadSQLAvailabilityGroupProtectableItem has a new parameter is_protectable
+  - Model AzureVmWorkloadSQLAvailabilityGroupProtectableItem has a new parameter nodes_list
+  - Model AzureVmWorkloadSQLDatabaseProtectableItem has a new parameter is_protectable
+  - Model AzureVmWorkloadSQLInstanceProtectableItem has a new parameter is_protectable
+  - Model BackupResourceVaultConfig has a new parameter soft_delete_retention_period_in_days
+  - Model DistributedNodesInfo has a new parameter source_resource_id
+  - Model InquiryValidation has a new parameter protectable_item_count
+
+### Breaking Changes
+
+  - Model AzureVmWorkloadSAPHanaDBInstanceProtectedItem no longer has parameter soft_delete_retention_period
+
 ## 6.0.0 (2023-05-04)
 
 ### Features Added

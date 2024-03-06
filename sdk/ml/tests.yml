@@ -8,14 +8,19 @@ parameters:
       Public:
         SubscriptionConfiguration: $(python-ml-subscription-scope-configuration)
         Location: eastus2euap
-
+        MatrixReplace:
+          - TestSamples=.*/true
+  - name: TestTimeoutInMinutes
+    type: number
+    default: 270
+  
 stages:
   - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       ServiceDirectory: ml
       MatrixReplace:
         - TestSamples=.*/true
-      TestTimeoutInMinutes: 270
+      TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
       TestMarkArgument: ${{ parameters.TestMarkArgument }}
       CloudConfig: ${{ parameters.CloudConfig }}
       EnvVars:

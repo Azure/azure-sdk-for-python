@@ -40,6 +40,7 @@ from typing import (
     TypeVar,
     Generic,
     Dict,
+    NoReturn,
     TYPE_CHECKING,
 )
 from typing_extensions import Protocol, runtime_checkable
@@ -79,7 +80,7 @@ __all__ = [
 ]
 
 
-def raise_with_traceback(exception: Callable, *args: Any, **kwargs: Any) -> None:
+def raise_with_traceback(exception: Callable, *args: Any, message: str = "", **kwargs: Any) -> NoReturn:
     """Raise exception with a specified traceback.
     This MUST be called inside a "except" clause.
 
@@ -89,7 +90,6 @@ def raise_with_traceback(exception: Callable, *args: Any, **kwargs: Any) -> None
     :param any args: Any additional args to be included with exception.
     :keyword str message: Message to be associated with the exception. If omitted, defaults to an empty string.
     """
-    message = kwargs.pop("message", "")
     exc_type, exc_value, exc_traceback = sys.exc_info()
     # If not called inside an "except", exc_type will be None. Assume it will not happen
     if exc_type is None:
@@ -113,18 +113,18 @@ class _HttpResponseCommonAPI(Protocol):
 
     @property
     def reason(self) -> Optional[str]:
-        pass
+        ...
 
     @property
     def status_code(self) -> Optional[int]:
-        pass
+        ...
 
     def text(self) -> str:
-        pass
+        ...
 
     @property
     def request(self) -> object:  # object as type, since all we need is str() on it
-        pass
+        ...
 
 
 class ErrorMap(Generic[KeyType, ValueType]):
@@ -171,25 +171,29 @@ class ODataV4Format:
 
     Example of JSON:
 
-    error: {
-        "code": "ValidationError",
-        "message": "One or more fields contain incorrect values: ",
-        "details": [
-            {
+    .. code-block:: json
+
+        {
+            "error": {
                 "code": "ValidationError",
-                "target": "representation",
-                "message": "Parsing error(s): String '' does not match regex pattern '^[^{}/ :]+(?: :\\\\d+)?$'.
-                Path 'host', line 1, position 297."
-            },
-            {
-                "code": "ValidationError",
-                "target": "representation",
-                "message": "Parsing error(s): The input OpenAPI file is not valid for the OpenAPI specificate
-                https: //github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md
-                (schema https://github.com/OAI/OpenAPI-Specification/blob/master/schemas/v2.0/schema.json)."
+                "message": "One or more fields contain incorrect values: ",
+                "details": [
+                    {
+                        "code": "ValidationError",
+                        "target": "representation",
+                        "message": "Parsing error(s): String '' does not match regex pattern '^[^{}/ :]+(?: :\\\\d+)?$'.
+                        Path 'host', line 1, position 297."
+                    },
+                    {
+                        "code": "ValidationError",
+                        "target": "representation",
+                        "message": "Parsing error(s): The input OpenAPI file is not valid for the OpenAPI specificate
+                        https: //github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md
+                        (schema https://github.com/OAI/OpenAPI-Specification/blob/master/schemas/v2.0/schema.json)."
+                    }
+                ]
             }
-        ]
-    }
+        }
 
     :param dict json_object: A Python dict representing a ODataV4 JSON
     :ivar str ~.code: Its value is a service-defined error code.

@@ -32,11 +32,14 @@ def main():
     response = client.projects.begin_update(
         resource_group_name="rg1",
         project_name="DevProject",
-        body={"properties": {"description": "This is my first project."}, "tags": {"CostCenter": "R&D"}},
+        body={
+            "properties": {"description": "This is my first project.", "displayName": "Dev"},
+            "tags": {"CostCenter": "R&D"},
+        },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/devcenter/resource-manager/Microsoft.DevCenter/stable/2023-04-01/examples/Projects_Patch.json
+# x-ms-original-file: specification/devcenter/resource-manager/Microsoft.DevCenter/preview/2023-10-01-preview/examples/Projects_Patch.json
 if __name__ == "__main__":
     main()

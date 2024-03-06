@@ -5,6 +5,8 @@
 # pylint: disable=too-many-lines
 import functools
 import time
+import math
+import random
 import datetime
 from datetime import timezone
 from typing import Optional, Tuple, cast, List, TYPE_CHECKING, Any, Callable, Dict, Union, Iterator, Type
@@ -29,7 +31,7 @@ from .._pyamqp.utils import amqp_long_value, amqp_array_value, amqp_string_value
 from .._pyamqp._encode import encode_payload
 from .._pyamqp._decode import decode_payload
 from .._pyamqp.message import Message, BatchMessage, Header, Properties
-from .._pyamqp.authentication import JWTTokenAuth
+from .._pyamqp.authentication import AccessToken, JWTTokenAuth
 from .._pyamqp.endpoints import Source
 from .._pyamqp._connection import Connection, _CLOSING_STATES
 
@@ -66,6 +68,8 @@ from .._common.constants import (
     ERROR_CODE_ENTITY_ALREADY_EXISTS,
     ERROR_CODE_PRECONDITION_FAILED,
     ServiceBusReceiveMode,
+    OPERATION_TIMEOUT,
+    NEXT_AVAILABLE_SESSION,
 )
 
 from ..exceptions import (
@@ -96,6 +100,7 @@ if TYPE_CHECKING:
     from .._common._configuration import Configuration
     from .._pyamqp.performatives import AttachFrame, TransferFrame
     from .._pyamqp.client import AMQPClient
+    from .._pyamqp.message import MessageDict
 
 
 class _ServiceBusErrorPolicy(RetryPolicy):
@@ -210,26 +215,26 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     @staticmethod
     def get_message_delivery_tag(
         _, frame: "TransferFrame"
-    ) -> str:  # pylint: disable=unused-argument
+    ) -> Optional[bytes]:
         """
         Gets delivery tag of a Message.
         :param any _: Ignored.
         :param ~pyamqp.performatives.TransferFrame frame: Frame to get delivery_tag from for pyamqp.Message.
         :return: Delivery tag of the message.
-        :rtype: str
+        :rtype: bytes or None
         """
         return frame[2] if frame else None
 
     @staticmethod
     def get_message_delivery_id(
         _, frame: "TransferFrame"
-    ) -> str:  # pylint: disable=unused-argument
+    ) -> Optional[int]:
         """
         Gets delivery id of a Message.
         :param any _: Ignored.
         :param ~pyamqp.performatives.TransferFrame frame: Message to get delivery_id from for pyamqp.Message.
         :return: Delivery id of the message.
-        :rtype: str
+        :rtype: int or None
         """
         return frame[1] if frame else None
 
@@ -356,7 +361,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         """
         if not message.application_properties:
             message = message._replace(application_properties={})
-        message.application_properties.setdefault(key, value)
+        cast(Dict[Union[str, bytes], Any], message.application_properties).setdefault(key, value)
         return message
 
     @staticmethod
@@ -367,7 +372,9 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :return: Batch message encoded size.
         :rtype: int
         """
-        return utils.get_message_encoded_size(BatchMessage(*message))
+        # casting to TypedDict with named fields to allow for unpacking with *
+        message_list = cast("MessageDict", message)
+        return utils.get_message_encoded_size(BatchMessage(*message_list))
 
     @staticmethod
     def get_message_encoded_size(message: "Message") -> int:
@@ -567,6 +574,28 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         config = receiver._config   # pylint: disable=protected-access
         source = kwargs.pop("source")
         receive_mode = kwargs.pop("receive_mode")
+        link_properties = kwargs.pop("link_properties")
+
+        # When NEXT_AVAILABLE_SESSION is set, the default time to wait to connect to a session is 65 seconds.
+        # If there are no messages in the topic/queue the client will wait for 65 seconds for an AttachFrame
+        # frame from the service before raising an OperationTimeoutError due to failure to connect.
+        # max_wait_time, if specified, will allow the user to wait for fewer or more than 65 seconds to
+        # connect to a session.
+        if receiver._session_id == NEXT_AVAILABLE_SESSION and receiver._max_wait_time: # pylint: disable=protected-access
+            timeout_in_ms = receiver._max_wait_time * 1000 # pylint: disable=protected-access
+            open_receive_link_base_jitter_in_ms = 100
+            open_recieve_link_buffer_in_ms = 20
+            open_receive_link_buffer_threshold_in_ms = 1000
+            jitter_base_in_ms = min(timeout_in_ms * 0.01, open_receive_link_base_jitter_in_ms)
+            timeout_in_ms = math.floor(timeout_in_ms - jitter_base_in_ms * random.random())
+            if timeout_in_ms >= open_receive_link_buffer_threshold_in_ms:
+                timeout_in_ms -= open_recieve_link_buffer_in_ms
+
+            # If we have specified a client-side timeout, assure that it is encoded as an uint
+            link_properties[OPERATION_TIMEOUT] = amqp_uint_value(timeout_in_ms)
+
+        kwargs["link_properties"] = link_properties
+
         return ReceiveClient(
             config.hostname,
             source,
@@ -666,13 +695,19 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             receiver._receive_context.clear()
 
     @staticmethod
-    def enhanced_message_received(
+    def enhanced_message_received(  # pylint: disable=arguments-differ
         receiver: "ServiceBusReceiver",
         frame: "AttachFrame",
         message: "Message"
     ) -> None:
-        """
-        Receiver enhanced_message_received callback.
+        """Callback run on receipt of every message.
+
+        Releases messages from the internal buffer when there is no active receive call. In PEEKLOCK mode,
+        this helps avoid messages from expiring in the buffer and incrementing the delivery count of a message.
+
+        Should not be used with RECEIVE_AND_DELETE mode, since those messages are settled right away and removed
+        from the Service Bus entity.
+
         :param ~azure.servicebus.ServiceBusReceiver receiver: The receiver object.
         :param ~pyamqp.performatives.AttachFrame frame: The attach frame.
         :param ~pyamqp.message.Message message: The received message.
@@ -682,19 +717,20 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         if receiver._receive_context.is_set():
             receiver._handler._received_messages.put((frame, message))
         else:
+            # If receive_message or receive iterator is not being called, release message passed to callback.
             receiver._handler.settle_messages(frame[1], 'released')
 
     @staticmethod
     def build_received_message(
         receiver: "ServiceBusReceiver",
         message_type: Type["ServiceBusReceivedMessage"],
-        received: "Message"
+        received: Tuple["TransferFrame", "Message"],
     ) -> "ServiceBusReceivedMessage":
         """
         Build ServiceBusReceivedMessage.
         :param ~azure.servicebus.ServiceBusReceiver receiver: The receiver object.
         :param type message_type: The type of message to build.
-        :param ~pyamqp.message.Message received: The received message.
+        :param tuple[~pyamqp.performatives.TransferFrame, ~pyamqp.message.Message] received: The received message.
         :return: The built ServiceBusReceivedMessage.
         :rtype: ~azure.servicebus.ServiceBusReceivedMessage
         """
@@ -742,35 +778,42 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         dead_letter_error_description: Optional[str] = None,
     ) -> None:
         # pylint: disable=protected-access
-        if settle_operation == MESSAGE_COMPLETE:
-            return handler.settle_messages(message._delivery_id, 'accepted')
-        if settle_operation == MESSAGE_ABANDON:
-            return handler.settle_messages(
-                message._delivery_id,
-                'modified',
-                delivery_failed=True,
-                undeliverable_here=False
-            )
-        if settle_operation == MESSAGE_DEAD_LETTER:
-            return handler.settle_messages(
-                message._delivery_id,
-                'rejected',
-                error=AMQPError(
-                    condition=DEADLETTERNAME,
-                    description=dead_letter_error_description,
-                    info={
-                        RECEIVER_LINK_DEAD_LETTER_REASON: dead_letter_reason,
-                        RECEIVER_LINK_DEAD_LETTER_ERROR_DESCRIPTION: dead_letter_error_description,
-                    }
+        try:
+            if settle_operation == MESSAGE_COMPLETE:
+                return handler.settle_messages(message._delivery_id, 'accepted')
+            if settle_operation == MESSAGE_ABANDON:
+                return handler.settle_messages(
+                    message._delivery_id,
+                    'modified',
+                    delivery_failed=True,
+                    undeliverable_here=False
                 )
-            )
-        if settle_operation == MESSAGE_DEFER:
-            return handler.settle_messages(
-                message._delivery_id,
-                'modified',
-                delivery_failed=True,
-                undeliverable_here=True
-            )
+            if settle_operation == MESSAGE_DEAD_LETTER:
+                return handler.settle_messages(
+                    message._delivery_id,
+                    'rejected',
+                    error=AMQPError(
+                        condition=DEADLETTERNAME,
+                        description=dead_letter_error_description,
+                        info={
+                            RECEIVER_LINK_DEAD_LETTER_REASON: dead_letter_reason,
+                            RECEIVER_LINK_DEAD_LETTER_ERROR_DESCRIPTION: dead_letter_error_description,
+                        }
+                    )
+                )
+            if settle_operation == MESSAGE_DEFER:
+                return handler.settle_messages(
+                    message._delivery_id,
+                    'modified',
+                    delivery_failed=True,
+                    undeliverable_here=True
+                )
+        except AttributeError as ae:
+            raise RuntimeError("handler is not initialized and cannot complete the message") from ae
+
+        except AMQPConnectionError as e:
+            raise RuntimeError("Connection lost during settle operation.") from e
+
         raise ValueError(
             f"Unsupported settle operation type: {settle_operation}"
         )
@@ -793,13 +836,14 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :rtype: list[~azure.servicebus.ServiceBusReceivedMessage]
         """
         parsed = []
-        for m in message.value[b"messages"]:
-            wrapped = decode_payload(memoryview(m[b"message"]))
-            parsed.append(
-                message_type(
-                    wrapped, **kwargs
+        if message.value:
+            for m in message.value[b"messages"]:
+                wrapped = decode_payload(memoryview(m[b"message"]))
+                parsed.append(
+                    message_type(
+                        wrapped, **kwargs
+                    )
                 )
-            )
         return parsed
 
     @staticmethod
@@ -814,7 +858,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     @staticmethod
     def create_token_auth(
         auth_uri: str,
-        get_token: Callable,
+        get_token: Callable[..., AccessToken],
         token_type: bytes,
         config: "Configuration",
         **kwargs: Any
@@ -852,7 +896,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     @staticmethod
     def create_mgmt_msg(
         message: "Message",
-        application_properties: Dict[str, Any],
+        application_properties: Optional[Dict[Union[str, bytes], Any]],
         config: "Configuration",
         reply_to: str,
         **kwargs: Any
@@ -865,7 +909,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :param str reply_to: Reply to.
         :rtype: ~pyamqp.message.Message
         """
-        return Message( # type: ignore # TODO: fix mypy error
+        return Message(
             value=message,
             properties=Properties(
                 reply_to=reply_to,
@@ -909,8 +953,8 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     @staticmethod
     def _handle_amqp_exception_with_condition(
         logger: "Logger",
-        condition: Optional["ErrorCondition"],
-        description: str,
+        condition: Optional[Union[bytes, "ErrorCondition"]],
+        description: Optional[Union[str, bytes]] = None,
         exception: Optional["AMQPException"] = None,
         status_code: Optional[str] = None,
         *,

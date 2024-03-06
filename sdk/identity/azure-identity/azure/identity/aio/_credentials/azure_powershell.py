@@ -17,7 +17,7 @@ from ..._credentials.azure_powershell import (
     raise_for_error,
     parse_token,
 )
-from ..._internal import resolve_tenant
+from ..._internal import resolve_tenant, validate_tenant_id, validate_scope
 
 
 class AzurePowerShellCredential(AsyncContextManager):
@@ -48,7 +48,8 @@ class AzurePowerShellCredential(AsyncContextManager):
         additionally_allowed_tenants: Optional[List[str]] = None,
         process_timeout: int = 10,
     ) -> None:
-
+        if tenant_id:
+            validate_tenant_id(tenant_id)
         self.tenant_id = tenant_id
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
         self._process_timeout = process_timeout
@@ -83,6 +84,11 @@ class AzurePowerShellCredential(AsyncContextManager):
         if sys.platform.startswith("win") and not isinstance(asyncio.get_event_loop(), asyncio.ProactorEventLoop):
             return _SyncCredential().get_token(*scopes, tenant_id=tenant_id, **kwargs)
 
+        if tenant_id:
+            validate_tenant_id(tenant_id)
+        for scope in scopes:
+            validate_scope(scope)
+
         tenant_id = resolve_tenant(
             default_tenant=self.tenant_id,
             tenant_id=tenant_id,
@@ -102,12 +108,19 @@ async def run_command_line(command_line: List[str], timeout: int) -> str:
     try:
         proc = await start_process(command_line)
         stdout, stderr = await asyncio.wait_for(proc.communicate(), 10)
-        if sys.platform.startswith("win") and b"' is not recognized" in stderr:
+        if sys.platform.startswith("win") and (b"' is not recognized" in stderr or proc.returncode == 9009):
             # pwsh.exe isn't on the path; try powershell.exe
             command_line[-1] = command_line[-1].replace("pwsh", "powershell", 1)
             proc = await start_process(command_line)
             stdout, stderr = await asyncio.wait_for(proc.communicate(), timeout)
 
+    except asyncio.TimeoutError as ex:
+        proc.kill()
+        raise CredentialUnavailableError(
+            message="Timed out waiting for Azure PowerShell.\n"
+            "To mitigate this issue, please refer to the troubleshooting guidelines here at "
+            "https://aka.ms/azsdk/python/identity/powershellcredential/troubleshoot."
+        ) from ex
     except OSError as ex:
         # failed to execute "cmd" or "/bin/sh"; Azure PowerShell may or may not be installed
         error = CredentialUnavailableError(
@@ -116,13 +129,6 @@ async def run_command_line(command_line: List[str], timeout: int) -> str:
             "https://aka.ms/azsdk/python/identity/powershellcredential/troubleshoot.".format(command_line[0])
         )
         raise error from ex
-    except asyncio.TimeoutError as ex:
-        proc.kill()
-        raise CredentialUnavailableError(
-            message="Timed out waiting for Azure PowerShell.\n"
-            "To mitigate this issue, please refer to the troubleshooting guidelines here at "
-            "https://aka.ms/azsdk/python/identity/powershellcredential/troubleshoot."
-        ) from ex
 
     decoded_stdout = stdout.decode()
 

@@ -1,0 +1,18 @@
+command: pip freeze
+environment:
+  conda_file: ./simple_train_conda.yml
+  image: mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04
+name: "test1"
+display_name: "test_display_name"
+compute: "azureml:cpu-cluster"
+experiment_name: mfe-test1
+identity:
+  type: aml_token
+tags:
+  empty_tag:
+properties:
+  empty_property:
+inputs:
+  hello_input:
+    type: uri_folder
+    path: ../data

@@ -45,6 +45,7 @@ async def run_sample():
         if setting.setting_type == KeyVaultSettingType.BOOLEAN:
             boolean_setting = setting
         print(f"{setting.name}: {setting.value} (type: {setting.setting_type})")
+    assert boolean_setting
 
     # Now, let's flip the value of a boolean setting
     # The `value` property is a string, but you can get the value of a boolean setting as a bool with `getboolean`

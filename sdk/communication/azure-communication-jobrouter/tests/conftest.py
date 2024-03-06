@@ -34,60 +34,55 @@ from devtools_testutils import (
     add_header_regex_sanitizer,
     set_default_session_settings,
     add_uri_regex_sanitizer,
-    add_body_key_sanitizer
+    add_body_key_sanitizer,
 )
-from router_test_constants import (
-    SANITIZED,
-    FAKE_FUNCTION_URI,
-    FAKE_ENDPOINT,
-    FAKE_CONNECTION_STRING
-)
+from router_test_constants import SANITIZED, FAKE_FUNCTION_URI, FAKE_ENDPOINT, FAKE_CONNECTION_STRING
 from azure.communication.jobrouter._shared.utils import parse_connection_str
 
 
 # fixture needs to be visible from conftest
 
 # autouse=True will trigger this fixture on each pytest run, even if it's not explicitly used by a test method
-@pytest.fixture(scope = "session", autouse = True)
+@pytest.fixture(scope="session", autouse=True)
 def start_proxy(test_proxy):
     set_default_session_settings()
 
-    communication_connection_string = os.getenv("COMMUNICATION_LIVETEST_DYNAMIC_CONNECTION_STRING",
-                                                FAKE_CONNECTION_STRING)
+    communication_connection_string = os.getenv(
+        "COMMUNICATION_LIVETEST_DYNAMIC_CONNECTION_STRING", FAKE_CONNECTION_STRING
+    )
 
-    add_general_regex_sanitizer(regex = communication_connection_string,
-                                value = FAKE_CONNECTION_STRING)
+    add_general_regex_sanitizer(regex=communication_connection_string, value=FAKE_CONNECTION_STRING)
 
     endpoint, _ = parse_connection_str(communication_connection_string)
-    add_general_regex_sanitizer(regex = endpoint, value = FAKE_ENDPOINT)
+    add_general_regex_sanitizer(regex=endpoint, value=FAKE_ENDPOINT)
 
-    add_header_regex_sanitizer(key = "repeatability-first-sent", value = SANITIZED)
-    add_header_regex_sanitizer(key = "repeatability-request-id", value = SANITIZED)
-    add_header_regex_sanitizer(key = "x-ms-content-sha256", value = SANITIZED)
-    add_header_regex_sanitizer(key = "etag", value = SANITIZED)
+    add_header_regex_sanitizer(key="repeatability-first-sent", value=SANITIZED)
+    add_header_regex_sanitizer(key="repeatability-request-id", value=SANITIZED)
+    add_header_regex_sanitizer(key="x-ms-content-sha256", value=SANITIZED)
+    add_header_regex_sanitizer(key="etag", value=SANITIZED)
 
-    add_body_key_sanitizer(json_path = "$..access_token", value = "access_token")
-    add_body_key_sanitizer(json_path = "$..primaryKey", value = "primaryKey")
-    add_body_key_sanitizer(json_path = "$..secondaryKey", value = "secondaryKey")
-    add_body_key_sanitizer(json_path = "$..etag", value = SANITIZED)
-    add_body_key_sanitizer(json_path = "$..functionUri", value = FAKE_FUNCTION_URI)
-    add_body_key_sanitizer(json_path = "$..functionKey", value = SANITIZED)
-    add_body_key_sanitizer(json_path = "$..appKey", value = SANITIZED)
-    add_body_key_sanitizer(json_path = "$..clientId", value = SANITIZED)
+    add_body_key_sanitizer(json_path="$..access_token", value="access_token")
+    add_body_key_sanitizer(json_path="$..primaryKey", value="primaryKey")
+    add_body_key_sanitizer(json_path="$..secondaryKey", value="secondaryKey")
+    add_body_key_sanitizer(json_path="$..etag", value=SANITIZED)
+    add_body_key_sanitizer(json_path="$..functionUri", value=FAKE_FUNCTION_URI)
+    add_body_key_sanitizer(json_path="$..functionKey", value=SANITIZED)
+    add_body_key_sanitizer(json_path="$..appKey", value=SANITIZED)
+    add_body_key_sanitizer(json_path="$..clientId", value=SANITIZED)
     return
 
 
-@pytest.fixture(scope = "function", autouse = True)
+@pytest.fixture(scope="function", autouse=True)
 def initialize_test(request):
     if request.node.originalname is None:
         # tox throws error otherwise
-        test_name = os.environ.get('PYTEST_CURRENT_TEST').split(':')[-1].split(' ')[0]
+        test_name = os.environ.get("PYTEST_CURRENT_TEST").split(":")[-1].split(" ")[0]
         request.cls._testMethodName = test_name
     else:
         request.cls._testMethodName = request.node.originalname
 
 
-@pytest.fixture(scope = "class", autouse = True)
+@pytest.fixture(scope="class", autouse=True)
 def initialize_class(request):
     request.cls.queue_ids = {}  # type: Dict[str, List[str]]
     request.cls.distribution_policy_ids = {}  # type: Dict[str, List[str]]

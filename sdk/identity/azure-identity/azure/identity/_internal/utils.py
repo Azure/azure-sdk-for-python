@@ -5,6 +5,7 @@
 import os
 import logging
 from contextvars import ContextVar
+from string import ascii_letters, digits
 from typing import List, Optional
 
 from urllib.parse import urlparse
@@ -16,6 +17,9 @@ within_credential_chain = ContextVar("within_credential_chain", default=False)
 within_dac = ContextVar("within_dac", default=False)
 
 _LOGGER = logging.getLogger(__name__)
+
+VALID_TENANT_ID_CHARACTERS = frozenset(ascii_letters + digits + "-.")
+VALID_SCOPE_CHARACTERS = frozenset(ascii_letters + digits + "_-.:/")
 
 
 def normalize_authority(authority: str) -> str:
@@ -43,24 +47,37 @@ def get_default_authority() -> str:
     return normalize_authority(authority)
 
 
-VALID_TENANT_ID_CHARACTERS = frozenset("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz" + "0123456789" + "-.")
+def validate_scope(scope: str) -> None:
+    """Raise ValueError if scope is empty or contains a character invalid for a scope
+
+    :param str scope: scope to validate
+    :raises: ValueError if scope is empty or contains a character invalid for a scope.
+    """
+    if not scope or any(c not in VALID_SCOPE_CHARACTERS for c in scope):
+        raise ValueError(
+            "An invalid scope was provided. Only alphanumeric characters, '.', '-', '_', ':', and '/' are allowed."
+        )
 
 
 def validate_tenant_id(tenant_id: str) -> None:
     """Raise ValueError if tenant_id is empty or contains a character invalid for a tenant ID.
 
-    :param str tenant_id: tenant id to validate
+    :param str tenant_id: tenant ID to validate
     :raises: ValueError if tenant_id is empty or contains a character invalid for a tenant ID.
     """
     if not tenant_id or any(c not in VALID_TENANT_ID_CHARACTERS for c in tenant_id):
         raise ValueError(
-            "Invalid tenant id provided. You can locate your tenant id by following the instructions here: "
-            + "https://docs.microsoft.com/partner-center/find-ids-and-domain-names"
+            "Invalid tenant ID provided. You can locate your tenant ID by following the instructions here: "
+            + "https://learn.microsoft.com/partner-center/find-ids-and-domain-names"
         )
 
 
 def resolve_tenant(
-    default_tenant: str, tenant_id: Optional[str] = None, *, additionally_allowed_tenants: List[str] = [], **_
+    default_tenant: str,
+    tenant_id: Optional[str] = None,
+    *,
+    additionally_allowed_tenants: Optional[List[str]] = None,
+    **_
 ) -> str:
     """Returns the correct tenant for a token request given a credential's configuration.
 
@@ -84,6 +101,8 @@ def resolve_tenant(
         return default_tenant
     if not default_tenant:
         return tenant_id
+    if additionally_allowed_tenants is None:
+        additionally_allowed_tenants = []
     if "*" in additionally_allowed_tenants or tenant_id in additionally_allowed_tenants:
         _LOGGER.info(
             "A token was requested for a different tenant than was configured on the credential, "

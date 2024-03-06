@@ -125,6 +125,12 @@ class TestAutoMLImageClassification(AzureRecordedTestCase):
                 sampling_algorithm="Grid",
                 early_termination=BanditPolicy(evaluation_interval=2, slack_factor=0.2, delay_evaluation=6),
             )
+
+            image_classification_job_individual = copy.deepcopy(image_classification_job)
+            image_classification_job_individual.set_training_parameters(
+                model_name="microsoft/beit-base-patch16-224", number_of_epochs=1
+            )
+            image_classification_job_reuse = copy.deepcopy(image_classification_job_individual)
         else:
             # Configure runtime sweep job search space
             image_classification_job_sweep.extend_search_space(
@@ -157,13 +163,23 @@ class TestAutoMLImageClassification(AzureRecordedTestCase):
 
         # Trigger sweep job and then AutoMode job
         submitted_job_sweep = client.jobs.create_or_update(image_classification_job_sweep)
-        if not components:
+        if components:
+            submitted_job_individual_components = client.jobs.create_or_update(image_classification_job_individual)
+            submitted_job_components_reuse = client.jobs.create_or_update(image_classification_job_reuse)
+        else:
             submitted_job_automode = client.jobs.create_or_update(image_classification_job_automode)
 
         # Assert completion of sweep job
         assert_final_job_status(submitted_job_sweep, client, ImageClassificationJob, JobStatus.COMPLETED, deadline=3600)
 
-        if not components:
+        if components:
+            assert_final_job_status(
+                submitted_job_individual_components, client, ImageClassificationJob, JobStatus.COMPLETED, deadline=3600
+            )
+            assert_final_job_status(
+                submitted_job_components_reuse, client, ImageClassificationJob, JobStatus.COMPLETED, deadline=3600
+            )
+        else:
             # Assert completion of Automode job
             assert_final_job_status(
                 submitted_job_automode, client, ImageClassificationJob, JobStatus.COMPLETED, deadline=3600

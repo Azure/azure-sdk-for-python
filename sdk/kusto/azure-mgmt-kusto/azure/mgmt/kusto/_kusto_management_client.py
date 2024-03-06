@@ -29,6 +29,7 @@ from .operations import (
     OperationsResultsOperations,
     PrivateEndpointConnectionsOperations,
     PrivateLinkResourcesOperations,
+    SandboxCustomImagesOperations,
     ScriptsOperations,
     SkusOperations,
 )
@@ -65,6 +66,8 @@ class KustoManagementClient:  # pylint: disable=client-accepts-api-version-keywo
      azure.mgmt.kusto.operations.DatabasePrincipalAssignmentsOperations
     :ivar scripts: ScriptsOperations operations
     :vartype scripts: azure.mgmt.kusto.operations.ScriptsOperations
+    :ivar sandbox_custom_images: SandboxCustomImagesOperations operations
+    :vartype sandbox_custom_images: azure.mgmt.kusto.operations.SandboxCustomImagesOperations
     :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
     :vartype private_endpoint_connections:
      azure.mgmt.kusto.operations.PrivateEndpointConnectionsOperations
@@ -85,7 +88,7 @@ class KustoManagementClient:  # pylint: disable=client-accepts-api-version-keywo
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2023-05-02". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2023-08-15". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -125,6 +128,9 @@ class KustoManagementClient:  # pylint: disable=client-accepts-api-version-keywo
             self._client, self._config, self._serialize, self._deserialize
         )
         self.scripts = ScriptsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.sandbox_custom_images = SandboxCustomImagesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )

@@ -21,11 +21,16 @@ class TestModelPackageSchema:
         file = Path("tests/test_configs/model_package/model_package_simple.yml")
         model_pack = load_model_package(source=file)
         assert model_pack.name == "diabetes-online-mlflow"
-        model_pack.inferencing_server.type == "azureml_online"
-        model_pack.model_configuration.mode == "download"
+        assert model_pack.inferencing_server.type == "azureml_online"
+        assert model_pack.model_configuration.mode == "download"
 
     def test_model_package_with_online_deployment(self) -> None:
         file = Path("tests/test_configs/model_package/online_deployment_registry_package.yml")
         deployment = load_online_deployment(source=file)
         assert deployment.environment == "azureml://registries/bani-euap/environments/testv1/versions/20"
-        deployment.model = "azureml://registries/bani-euap/models/demo_ml/versions/1"
+        assert deployment.model == "azureml://registries/bani-euap/models/demo_ml/versions/1"
+
+    def test_model_package_schema(self) -> None:
+        file = Path("tests/test_configs/model_package/model_package_config_copy.yml")
+        deployment = load_model_package(source=file)
+        assert deployment.model_configuration.mode == "copy"

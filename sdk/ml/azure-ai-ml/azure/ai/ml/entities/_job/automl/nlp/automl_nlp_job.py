@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from abc import ABC
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     LogVerbosity,
@@ -25,13 +25,45 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationExcepti
 
 # pylint: disable=too-many-instance-attributes,protected-access
 class AutoMLNLPJob(AutoMLVertical, ABC):
+    """Base class for AutoML NLP jobs.
+
+    You should not instantiate this class directly. Instead you should
+    create classes for specific NLP Jobs.
+
+    :param task_type: NLP task type, must be one of 'TextClassification',
+        'TextClassificationMultilabel', or 'TextNER'
+    :type task_type: str
+    :param primary_metric: Primary metric to display from NLP job
+    :type primary_metric: str
+    :param training_data: Training data
+    :type training_data: Input
+    :param validation_data: Validation data
+    :type validation_data: Input
+    :param target_column_name: Column name of the target column, defaults to None
+    :type target_column_name: Optional[str]
+    :param log_verbosity: The degree of verbosity used in logging, defaults to None,
+        must be one of 'NotSet', 'Debug', 'Info', 'Warning', 'Error', 'Critical', or None
+    :type log_verbosity: Optional[str]
+    :param featurization: Featurization settings used for NLP job, defaults to None
+    :type featurization: Optional[~azure.ai.ml.automl.NlpFeaturizationSettings]
+    :param limits: Limit settings for NLP jobs, defaults to None
+    :type limits: Optional[~azure.ai.ml.automl.NlpLimitSettings]
+    :param sweep: Sweep settings used for NLP job, defaults to None
+    :type sweep: Optional[~azure.ai.ml.automl.NlpSweepSettings]
+    :param training_parameters: Fixed parameters for the training of all candidates.
+        , defaults to None
+    :type training_parameters: Optional[~azure.ai.ml.automl.NlpFixedParameters]
+    :param search_space: Search space(s) to sweep over for NLP sweep jobs, defaults to None
+    :type search_space: Optional[List[~azure.ai.ml.automl.NlpSearchSpace]]
+    """
+
     def __init__(
         self,
         *,
         task_type: str,
         primary_metric: str,
-        training_data: Input,
-        validation_data: Input,
+        training_data: Optional[Input],
+        validation_data: Optional[Input],
         target_column_name: Optional[str] = None,
         log_verbosity: Optional[str] = None,
         featurization: Optional[NlpFeaturizationSettings] = None,
@@ -39,10 +71,15 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         sweep: Optional[NlpSweepSettings] = None,
         training_parameters: Optional[NlpFixedParameters] = None,
         search_space: Optional[List[NlpSearchSpace]] = None,
-        **kwargs,
+        **kwargs: Any,
     ):
-        super().__init__(task_type, training_data=training_data, validation_data=validation_data, **kwargs)
+        self._training_parameters: Optional[NlpFixedParameters] = None
+
+        super().__init__(
+            task_type, training_data=training_data, validation_data=validation_data, **kwargs  # type: ignore
+        )
         self.log_verbosity = log_verbosity
+        self._primary_metric: str = ""
         self.primary_metric = primary_metric
 
         self.target_column_name = target_column_name
@@ -54,7 +91,12 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         self._search_space = search_space
 
     @property
-    def training_parameters(self) -> NlpFixedParameters:
+    def training_parameters(self) -> Optional[NlpFixedParameters]:
+        """Parameters that are used for all submitted jobs.
+
+        :return: fixed training parameters for NLP jobs
+        :rtype: ~azure.ai.ml.automl.NlpFixedParameters
+        """
         return self._training_parameters
 
     @training_parameters.setter
@@ -77,7 +119,12 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
             self.set_training_parameters(**value)
 
     @property
-    def search_space(self) -> List[NlpSearchSpace]:
+    def search_space(self) -> Optional[List[NlpSearchSpace]]:
+        """Search space(s) to sweep over for NLP sweep jobs
+
+        :return: list of search spaces to sweep over for NLP jobs
+        :rtype: List[~azure.ai.ml.automl.NlpSearchSpace]
+        """
         return self._search_space
 
     @search_space.setter
@@ -103,26 +150,43 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
                 error_category=ErrorCategory.USER_ERROR,
             )
 
-        self._search_space = [cast_to_specific_search_space(item, NlpSearchSpace, self.task_type) for item in value]
+        self._search_space = [
+            cast_to_specific_search_space(item, NlpSearchSpace, self.task_type) for item in value  # type: ignore
+        ]
 
     @property
-    def primary_metric(self):
+    def primary_metric(self) -> str:
+        """Primary metric to display from NLP job
+
+        :return: primary metric to display
+        :rtype: str
+        """
         return self._primary_metric
 
     @primary_metric.setter
-    def primary_metric(self, value):
+    def primary_metric(self, value: str) -> None:
         self._primary_metric = value
 
     @property
     def log_verbosity(self) -> LogVerbosity:
+        """Log verbosity configuration
+
+        :return: the degree of verbosity used in logging
+        :rtype: ~azure.mgmt.machinelearningservices.models.LogVerbosity
+        """
         return self._log_verbosity
 
     @log_verbosity.setter
-    def log_verbosity(self, value: Union[str, LogVerbosity]):
+    def log_verbosity(self, value: Union[str, LogVerbosity]) -> None:
         self._log_verbosity = None if value is None else LogVerbosity[camel_to_snake(value).upper()]
 
     @property
     def limits(self) -> NlpLimitSettings:
+        """Limit settings for NLP jobs
+
+        :return: limit configuration for NLP job
+        :rtype: ~azure.ai.ml.automl.NlpLimitSettings
+        """
         return self._limits
 
     @limits.setter
@@ -141,7 +205,12 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
             self.set_limits(**value)
 
     @property
-    def sweep(self) -> NlpSweepSettings:
+    def sweep(self) -> Optional[NlpSweepSettings]:
+        """Sweep settings used for NLP job
+
+        :return: sweep settings
+        :rtype: ~azure.ai.ml.automl.NlpSweepSettings
+        """
         return self._sweep
 
     @sweep.setter
@@ -160,7 +229,12 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
             self.set_sweep(**value)
 
     @property
-    def featurization(self) -> NlpFeaturizationSettings:
+    def featurization(self) -> Optional[NlpFeaturizationSettings]:
+        """Featurization settings used for NLP job
+
+        :return: featurization settings
+        :rtype: ~azure.ai.ml.automl.NlpFeaturizationSettings
+        """
         return self._featurization
 
     @featurization.setter
@@ -179,6 +253,15 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
             self.set_featurization(**value)
 
     def set_data(self, *, training_data: Input, target_column_name: str, validation_data: Input) -> None:
+        """Define data configuration for NLP job
+
+        :keyword training_data: Training data
+        :type training_data: ~azure.ai.ml.Input
+        :keyword target_column_name: Column name of the target column.
+        :type target_column_name: str
+        :keyword validation_data: Validation data
+        :type validation_data: ~azure.ai.ml.Input
+        """
         # Properties for NlpVerticalDataSettings
         self.target_column_name = target_column_name
         self.training_data = training_data
@@ -193,6 +276,19 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         timeout_minutes: Optional[int] = None,
         trial_timeout_minutes: Optional[int] = None,
     ) -> None:
+        """Define limit configuration for AutoML NLP job
+
+        :keyword max_trials: Maximum number of AutoML iterations, defaults to 1
+        :type max_trials: int, optional
+        :keyword max_concurrent_trials: Maximum number of concurrent AutoML iterations, defaults to 1
+        :type max_concurrent_trials: int, optional
+        :keyword max_nodes: Maximum number of nodes used for sweep, defaults to 1
+        :type max_nodes: int, optional
+        :keyword timeout_minutes: Timeout for the AutoML job, defaults to None
+        :type timeout_minutes: Optional[int]
+        :keyword trial_timeout_minutes: Timeout for each AutoML trial, defaults to None
+        :type trial_timeout_minutes: Optional[int]
+        """
         self._limits = NlpLimitSettings(
             max_trials=max_trials,
             max_concurrent_trials=max_concurrent_trials,
@@ -206,13 +302,15 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         *,
         sampling_algorithm: Union[str, SamplingAlgorithmType],
         early_termination: Optional[EarlyTerminationPolicy] = None,
-    ):
-        """Sweep settings for all AutoML NLP tasks.
+    ) -> None:
+        """Define sweep configuration for AutoML NLP job
 
         :keyword sampling_algorithm: Required. Specifies type of hyperparameter sampling algorithm.
-        Possible values include: "Grid", "Random", and "Bayesian".
-        :keyword early_termination: Optional early termination policy to end poorly performing training candidates.
-        :return: None.
+            Possible values include: "Grid", "Random", and "Bayesian".
+        :type sampling_algorithm: Union[str, ~azure.ai.ml.automl.SamplingAlgorithmType]
+        :keyword early_termination: Optional. early termination policy to end poorly performing training candidates,
+            defaults to None.
+        :type early_termination: Optional[~azure.mgmt.machinelearningservices.models.EarlyTerminationPolicy]
         """
         if self._sweep:
             self._sweep.sampling_algorithm = sampling_algorithm
@@ -237,22 +335,31 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         """Fix certain training parameters throughout the training procedure for all candidates.
 
         :keyword gradient_accumulation_steps: number of steps over which to accumulate gradients before a backward
-        pass. This must be a positive integer.
-        :keyword learning_rate: initial learning rate. Must be a float in (0, 1).
+            pass. This must be a positive integer., defaults to None
+        :type gradient_accumulation_steps: Optional[int]
+        :keyword learning_rate: initial learning rate. Must be a float in (0, 1)., defaults to None
+        :type learning_rate: Optional[float]
         :keyword learning_rate_scheduler: the type of learning rate scheduler. Must choose from 'linear', 'cosine',
-        'cosine_with_restarts', 'polynomial', 'constant', and 'constant_with_warmup'.
+            'cosine_with_restarts', 'polynomial', 'constant', and 'constant_with_warmup'., defaults to None
+        :type learning_rate_scheduler: Optional[Union[str, ~azure.ai.ml.automl.NlpLearningRateScheduler]]
         :keyword model_name: the model name to use during training. Must choose from 'bert-base-cased',
-        'bert-base-uncased', 'bert-base-multilingual-cased', 'bert-base-german-cased', 'bert-large-cased',
-        'bert-large-uncased', 'distilbert-base-cased', 'distilbert-base-uncased', 'roberta-base', 'roberta-large',
-        'distilroberta-base', 'xlm-roberta-base', 'xlm-roberta-large', xlnet-base-cased', and 'xlnet-large-cased'.
-        :keyword number_of_epochs: the number of epochs to train with. Must be a positive integer.
-        :keyword training_batch_size: the batch size during training. Must be a positive integer.
-        :keyword validation_batch_size: the batch size during validation. Must be a positive integer.
+            'bert-base-uncased', 'bert-base-multilingual-cased', 'bert-base-german-cased', 'bert-large-cased',
+            'bert-large-uncased', 'distilbert-base-cased', 'distilbert-base-uncased', 'roberta-base', 'roberta-large',
+            'distilroberta-base', 'xlm-roberta-base', 'xlm-roberta-large', xlnet-base-cased', and 'xlnet-large-cased'.,
+            defaults to None
+        :type model_name: Optional[str]
+        :keyword number_of_epochs: the number of epochs to train with. Must be a positive integer., defaults to None
+        :type number_of_epochs: Optional[int]
+        :keyword training_batch_size: the batch size during training. Must be a positive integer., defaults to None
+        :type training_batch_size: Optional[int]
+        :keyword validation_batch_size: the batch size during validation. Must be a positive integer., defaults to None
+        :type validation_batch_size: Optional[int]
         :keyword warmup_ratio: ratio of total training steps used for a linear warmup from 0 to learning_rate.
-        Must be a float in [0, 1].
+            Must be a float in [0, 1]., defaults to None
+        :type warmup_ratio: Optional[float]
         :keyword weight_decay: value of weight decay when optimizer is sgd, adam, or adamw. This must be a float in
-        the range [0, 1].
-        :return: None.
+            the range [0, 1]., defaults to None
+        :type weight_decay: Optional[float]
         """
         self._training_parameters = self._training_parameters or NlpFixedParameters()
 
@@ -299,24 +406,30 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         )
 
     def set_featurization(self, *, dataset_language: Optional[str] = None) -> None:
+        """Define featurization configuration for AutoML NLP job.
+
+        :keyword dataset_language: Language of the dataset, defaults to None
+        :type dataset_language: Optional[str]
+        """
         self._featurization = NlpFeaturizationSettings(
             dataset_language=dataset_language,
         )
 
     def extend_search_space(self, value: Union[SearchSpace, List[SearchSpace]]) -> None:
-        """Add (a) search space(s) for this AutoML NLP job.
+        """Add (a) search space(s) for an AutoML NLP job.
 
         :param value: either a SearchSpace object or a list of SearchSpace objects with nlp-specific parameters.
-        :type value: Union[SearchSpace, List[SearchSpace]]
-        :return: None.
+        :type value: Union[~azure.ai.ml.automl.SearchSpace, List[~azure.ai.ml.automl.SearchSpace]]
         """
         self._search_space = self._search_space or []
         if isinstance(value, list):
             self._search_space.extend(
-                [cast_to_specific_search_space(item, NlpSearchSpace, self.task_type) for item in value]
+                [cast_to_specific_search_space(item, NlpSearchSpace, self.task_type) for item in value]  # type: ignore
             )
         else:
-            self._search_space.append(cast_to_specific_search_space(value, NlpSearchSpace, self.task_type))
+            self._search_space.append(
+                cast_to_specific_search_space(value, NlpSearchSpace, self.task_type)  # type: ignore
+            )
 
     @classmethod
     def _get_search_space_from_str(cls, search_space_str: Optional[str]) -> Optional[List]:
@@ -324,17 +437,17 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
             return [NlpSearchSpace._from_rest_object(entry) for entry in search_space_str if entry is not None]
         return None
 
-    def _restore_data_inputs(self):
+    def _restore_data_inputs(self) -> None:
         """Restore MLTableJobInputs to Inputs within data_settings.
 
         self.training_data and self.validation_data should reflect what user passed in (Input) Once we get response back
         from service (as MLTableJobInput), we should set responsible ones back to Input
         """
         super()._restore_data_inputs()
-        self.training_data = self.training_data if self.training_data else None
-        self.validation_data = self.validation_data if self.validation_data else None
+        self.training_data = self.training_data if self.training_data else None  # type: ignore
+        self.validation_data = self.validation_data if self.validation_data else None  # type: ignore
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, AutoMLNLPJob):
             return NotImplemented
 
@@ -350,5 +463,5 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
             and self._search_space == other._search_space
         )
 
-    def __ne__(self, other):
+    def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)

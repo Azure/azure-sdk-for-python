@@ -3,7 +3,12 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from azure.search.documents.indexes.models import ComplexField, SearchableField, SimpleField, SearchFieldDataType
+from azure.search.documents.indexes.models import (
+    ComplexField,
+    SearchableField,
+    SimpleField,
+    SearchFieldDataType,
+)
 
 
 def test_edm_contents():
@@ -32,6 +37,9 @@ class TestComplexField:
         assert fld.search_analyzer_name is None
         assert fld.index_analyzer_name is None
         assert fld.synonym_map_names is None
+
+        generated_field = fld._to_generated()
+        assert generated_field.retrievable is None
 
     def test_collection(self):
         fld = ComplexField(name="foo", fields=[], collection=True)

@@ -43,7 +43,7 @@ class AccessPolicy(_serialization.Model):
     }
     _xml_map = {"name": "AccessPolicy"}
 
-    def __init__(self, *, start: str, expiry: str, permission: str, **kwargs):
+    def __init__(self, *, start: str, expiry: str, permission: str, **kwargs: Any) -> None:
         """
         :keyword start: The start datetime from which the policy is active. Required.
         :paramtype start: str
@@ -111,8 +111,8 @@ class CorsRule(_serialization.Model):
         allowed_headers: str,
         exposed_headers: str,
         max_age_in_seconds: int,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword allowed_origins: The origin domains that are permitted to make a request against the
          service via CORS. The origin domain is the domain from which the request originates. Note that
@@ -167,8 +167,12 @@ class GeoReplication(_serialization.Model):
     _xml_map = {"name": "GeoReplication"}
 
     def __init__(
-        self, *, status: Union[str, "_models.GeoReplicationStatusType"], last_sync_time: datetime.datetime, **kwargs
-    ):
+        self,
+        *,
+        status: Union[str, "_models.GeoReplicationStatusType"],
+        last_sync_time: datetime.datetime,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword status: The status of the secondary location. Required. Known values are: "live",
          "bootstrap", and "unavailable".
@@ -225,8 +229,8 @@ class Logging(_serialization.Model):
         read: bool,
         write: bool,
         retention_policy: "_models.RetentionPolicy",
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword version: The version of Analytics to configure. Required.
         :paramtype version: str
@@ -281,8 +285,8 @@ class Metrics(_serialization.Model):
         version: Optional[str] = None,
         include_apis: Optional[bool] = None,
         retention_policy: Optional["_models.RetentionPolicy"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword version: The version of Analytics to configure.
         :paramtype version: str
@@ -324,7 +328,7 @@ class RetentionPolicy(_serialization.Model):
     }
     _xml_map = {"name": "RetentionPolicy"}
 
-    def __init__(self, *, enabled: bool, days: Optional[int] = None, **kwargs):
+    def __init__(self, *, enabled: bool, days: Optional[int] = None, **kwargs: Any) -> None:
         """
         :keyword enabled: Indicates whether a retention policy is enabled for the service. Required.
         :paramtype enabled: bool
@@ -363,8 +367,8 @@ class SignedIdentifier(_serialization.Model):
         *,
         id: str,  # pylint: disable=redefined-builtin
         access_policy: Optional["_models.AccessPolicy"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: A unique id. Required.
         :paramtype id: str
@@ -390,7 +394,9 @@ class TableEntityQueryResponse(_serialization.Model):
         "value": {"key": "value", "type": "[{object}]"},
     }
 
-    def __init__(self, *, odata_metadata: Optional[str] = None, value: Optional[List[Dict[str, Any]]] = None, **kwargs):
+    def __init__(
+        self, *, odata_metadata: Optional[str] = None, value: Optional[List[Dict[str, Any]]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword odata_metadata: The metadata response of the table.
         :paramtype odata_metadata: str
@@ -413,7 +419,7 @@ class TableProperties(_serialization.Model):
         "table_name": {"key": "TableName", "type": "str"},
     }
 
-    def __init__(self, *, table_name: Optional[str] = None, **kwargs):
+    def __init__(self, *, table_name: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword table_name: The name of the table to create.
         :paramtype table_name: str
@@ -441,8 +447,8 @@ class TableQueryResponse(_serialization.Model):
         *,
         odata_metadata: Optional[str] = None,
         value: Optional[List["_models.TableResponseProperties"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword odata_metadata: The metadata response of the table.
         :paramtype odata_metadata: str
@@ -481,8 +487,8 @@ class TableResponseProperties(_serialization.Model):
         odata_type: Optional[str] = None,
         odata_id: Optional[str] = None,
         odata_edit_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword table_name: The name of the table.
         :paramtype table_name: str
@@ -531,8 +537,8 @@ class TableResponse(TableResponseProperties):
         odata_id: Optional[str] = None,
         odata_edit_link: Optional[str] = None,
         odata_metadata: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword table_name: The name of the table.
         :paramtype table_name: str
@@ -562,7 +568,7 @@ class TableServiceError(_serialization.Model):
         "message": {"key": "Message", "type": "str", "xml": {"name": "Message"}},
     }
 
-    def __init__(self, *, message: Optional[str] = None, **kwargs):
+    def __init__(self, *, message: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword message: The error message.
         :paramtype message: str
@@ -605,8 +611,8 @@ class TableServiceProperties(_serialization.Model):
         hour_metrics: Optional["_models.Metrics"] = None,
         minute_metrics: Optional["_models.Metrics"] = None,
         cors: Optional[List["_models.CorsRule"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword logging: Azure Analytics Logging settings.
         :paramtype logging: ~azure.table.models.Logging
@@ -638,7 +644,7 @@ class TableServiceStats(_serialization.Model):
     }
     _xml_map = {"name": "StorageServiceStats"}
 
-    def __init__(self, *, geo_replication: Optional["_models.GeoReplication"] = None, **kwargs):
+    def __init__(self, *, geo_replication: Optional["_models.GeoReplication"] = None, **kwargs: Any) -> None:
         """
         :keyword geo_replication: Geo-Replication information for the Secondary Storage Service.
         :paramtype geo_replication: ~azure.table.models.GeoReplication

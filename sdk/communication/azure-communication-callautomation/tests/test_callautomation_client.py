@@ -49,7 +49,6 @@ class TestCallAutomationClient(unittest.TestCase):
         # make invitation
         call_invite = CallInvite(
             target=user,
-            voip_headers={"foo": "bar"},
             source_display_name="baz"
         )
         call_automation_client = CallAutomationClient(
@@ -64,7 +63,6 @@ class TestCallAutomationClient(unittest.TestCase):
 
         call_invite = CallInvite(
             target=user,
-            voip_headers={"foo": "bar"},
             source_display_name="WRONG"
         )
         call_connection_properties = call_automation_client.create_call(
@@ -171,7 +169,6 @@ class TestCallAutomationClient(unittest.TestCase):
         user = CommunicationUserIdentifier(self.communication_user_id)
         call_redirect_to = CallInvite(
             target=user,
-            voip_headers={"foo": "bar"},
             source_display_name="baz"
         )
 

@@ -4,7 +4,7 @@ from azure.eventhub._pyamqp import Connection
 
 
 def test_connection_begin_session():
-    connection = Connection("fake.host.com")
+    connection = Connection("sb://fake.host.com")
     connection._process_outgoing_frame = Mock(return_value=None)
     # create session on the Connection
     session = connection.create_session(network_trace=False)
@@ -24,7 +24,7 @@ def test_connection_begin_session():
 
 
 def test_connection_end_session_on_timeout():
-    connection = Connection("fake.host.com")
+    connection = Connection("sb://fake.host.com")
     connection._process_outgoing_frame = Mock(return_value=None)
     # create session on the Connection
     session = connection.create_session(network_trace=False)

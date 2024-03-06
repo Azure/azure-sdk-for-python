@@ -1,0 +1,51 @@
+{% set name = "msal" %}
+
+package:
+  name: "{{ name|lower }}"
+  version: {{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+
+source:
+  url: {{ environ.get('MSAL_SOURCE_DISTRIBUTION', '') }}
+
+build:
+  noarch: python
+  number: 0
+  script: "{{ PYTHON }} -m pip install . -vv"
+
+requirements:
+  host:
+    - cryptography
+    - pip
+    - pyjwt
+    - python
+    - requests
+  run:
+    - cryptography
+    - pyjwt
+    - python
+    - requests
+
+test:
+  imports:
+    - msal
+    - msal.oauth2cli
+
+about:
+  home: "https://github.com/AzureAD/microsoft-authentication-library-for-python"
+  license: MIT
+  license_family: MIT
+  license_file: 
+  summary: "The Microsoft Authentication Library (MSAL) for Python library enables your app to access the Microsoft Cloud by supporting authentication of users with Microsoft Azure Active Directory accounts (AAD) and Microsoft Accounts (MSA) using industry standard OAuth2 and OpenID Connect."
+  description: |
+    The Microsoft Authentication Library for Python enables applications to integrate with 
+    the Microsoft identity platform. It allows you to sign in users or apps with Microsoft 
+    identities (Azure AD, Microsoft Accounts and Azure AD B2C accounts) and obtain tokens 
+    to call Microsoft APIs such as Microsoft Graph or your own APIs registered with the 
+    Microsoft identity platform. It is built using industry standard OAuth2 and OpenID Connect protocols.
+    Please see https://aka.ms/azsdk/conda/releases/msal for version details.
+  doc_url: 
+  dev_url: 
+
+extra:
+  recipe-maintainers:
+    - xiangyan99

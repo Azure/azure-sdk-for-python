@@ -9,7 +9,7 @@ import json
 import calendar
 from typing import cast, Tuple, Optional
 from datetime import datetime
-from msrest.serialization import TZ_UTC
+from azure.core.serialization import TZ_UTC
 from azure.core.credentials import AccessToken
 
 
@@ -87,9 +87,7 @@ def create_access_token(token):
         payload = json.loads(padded_base64_payload)
         return AccessToken(
             token,
-            _convert_datetime_to_utc_int(
-                datetime.fromtimestamp(payload["exp"], TZ_UTC)
-            ),
+            _convert_datetime_to_utc_int(datetime.fromtimestamp(payload["exp"], TZ_UTC)),
         )
     except ValueError as val_error:
         raise ValueError(token_parse_err_msg) from val_error

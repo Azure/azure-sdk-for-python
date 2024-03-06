@@ -13,6 +13,8 @@ omitted_paths:
   - sdk/nspkg/*
   - sdk/**/swagger/*
   - sdk/ml/azure-ai-ml/tests/*
+  - sdk/vision/azure-ai-vision-imageanalysis/tests/*
+  - sdk/storage/azure-storage-extensions/*
 
 language: python
 root_check_enabled: True
@@ -103,6 +105,7 @@ known_content_issues:
   - ['sdk/appconfiguration/azure-appconfiguration/swagger/README.md', '#4554']
   - ['sdk/attestation/azure-security-attestation/swagger/README.md', '#4554']
   - ['sdk/core/azure-core/tests/testserver_tests/coretestserver/README.rst', '#4554']
+  - ['sdk/core/corehttp/tests/testserver_tests/coretestserver/README.rst', '#4554']
   - ['sdk/media/azure-media-analytics-edge/README.md', '#4554']
   - ['sdk/remoterendering/azure-mixedreality-remoterendering/README.md', '#4554']
   - ['sdk/modelsrepository/azure-iot-modelsrepository/README.md', '#4554']
@@ -115,6 +118,8 @@ known_content_issues:
   - ['sdk/core/azure-common/README.rst', 'common']
   - ['sdk/core/azure-core/README.md', 'common']
   - ['sdk/core/azure-core/samples/README.md', 'common']
+  - ['sdk/core/corehttp/README.md', 'common']
+  - ['sdk/core/corehttp/samples/README.md', 'common']
   - ['sdk/search/azure-search-documents/README.md', 'common']
   - ['sdk/storage/azure-storage-blob/samples/README.md', 'common']
   - ['sdk/storage/azure-storage-file-datalake/samples/README.md', 'common']
@@ -153,6 +158,7 @@ known_content_issues:
   - ['sdk/appconfiguration/azure-appconfiguration/swagger/README.md', '#4554']
   - ['sdk/core/azure-core/tests/testserver_tests/coretestserver/README.md', '#4554']
   - ['sdk/core/azure-core-experimental/README.md', '#4554']
+  - ['sdk/identity/azure-identity-broker/README.md', '#4554']
 package_indexing_exclusion_list:
   - 'azure-sdk-tools'
   - 'azure-template'

@@ -1420,6 +1420,12 @@ class CloudPool(Model):
      'simplified'
     :vartype current_node_communication_mode: str or
      ~azure.batch.models.NodeCommunicationMode
+    :param resource_tags: The user-defined tags to be associated with the
+     Azure Batch Pool. When specified, these tags are propagated to the backing
+     Azure resources associated with the pool. This property can only be
+     specified when the Batch account was created with the poolAllocationMode
+     property set to 'UserSubscription'.
+    :type resource_tags: dict[str, str]
     """
 
     _validation = {
@@ -1465,9 +1471,10 @@ class CloudPool(Model):
         'identity': {'key': 'identity', 'type': 'BatchPoolIdentity'},
         'target_node_communication_mode': {'key': 'targetNodeCommunicationMode', 'type': 'NodeCommunicationMode'},
         'current_node_communication_mode': {'key': 'currentNodeCommunicationMode', 'type': 'NodeCommunicationMode'},
+        'resource_tags': {'key': 'resourceTags', 'type': '{str}'},
     }
 
-    def __init__(self, *, id: str=None, display_name: str=None, url: str=None, e_tag: str=None, last_modified=None, creation_time=None, state=None, state_transition_time=None, allocation_state=None, allocation_state_transition_time=None, vm_size: str=None, cloud_service_configuration=None, virtual_machine_configuration=None, resize_timeout=None, resize_errors=None, current_dedicated_nodes: int=None, current_low_priority_nodes: int=None, target_dedicated_nodes: int=None, target_low_priority_nodes: int=None, enable_auto_scale: bool=None, auto_scale_formula: str=None, auto_scale_evaluation_interval=None, auto_scale_run=None, enable_inter_node_communication: bool=None, network_configuration=None, start_task=None, certificate_references=None, application_package_references=None, application_licenses=None, task_slots_per_node: int=None, task_scheduling_policy=None, user_accounts=None, metadata=None, stats=None, mount_configuration=None, identity=None, target_node_communication_mode=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, display_name: str=None, url: str=None, e_tag: str=None, last_modified=None, creation_time=None, state=None, state_transition_time=None, allocation_state=None, allocation_state_transition_time=None, vm_size: str=None, cloud_service_configuration=None, virtual_machine_configuration=None, resize_timeout=None, resize_errors=None, current_dedicated_nodes: int=None, current_low_priority_nodes: int=None, target_dedicated_nodes: int=None, target_low_priority_nodes: int=None, enable_auto_scale: bool=None, auto_scale_formula: str=None, auto_scale_evaluation_interval=None, auto_scale_run=None, enable_inter_node_communication: bool=None, network_configuration=None, start_task=None, certificate_references=None, application_package_references=None, application_licenses=None, task_slots_per_node: int=None, task_scheduling_policy=None, user_accounts=None, metadata=None, stats=None, mount_configuration=None, identity=None, target_node_communication_mode=None, resource_tags=None, **kwargs) -> None:
         super(CloudPool, self).__init__(**kwargs)
         self.id = id
         self.display_name = display_name
@@ -1507,6 +1514,7 @@ class CloudPool(Model):
         self.identity = identity
         self.target_node_communication_mode = target_node_communication_mode
         self.current_node_communication_mode = None
+        self.resource_tags = resource_tags
 
 
 class CloudServiceConfiguration(Model):
@@ -2677,7 +2685,7 @@ class DataDisk(Model):
     :type disk_size_gb: int
     :param storage_account_type: The storage Account type to be used for the
      data disk. If omitted, the default is "standard_lrs". Possible values
-     include: 'StandardLRS', 'PremiumLRS'
+     include: 'StandardLRS', 'PremiumLRS', 'StandardSSDLRS'
     :type storage_account_type: str or ~azure.batch.models.StorageAccountType
     """
 
@@ -2757,7 +2765,7 @@ class DiffDiskSettings(Model):
 class DiskEncryptionConfiguration(Model):
     """The disk encryption configuration applied on compute nodes in the pool.
     Disk encryption configuration is not supported on Linux pool created with
-    Shared Image Gallery Image.
+    Azure Compute Gallery Image.
 
     :param targets: If omitted, no disks on the compute nodes in the pool will
      be encrypted. On Linux pool, only "TemporaryDisk" is supported; on Windows
@@ -3429,8 +3437,8 @@ class ImageInformation(Model):
 
 
 class ImageReference(Model):
-    """A reference to an Azure Virtual Machines Marketplace Image or a Shared
-    Image Gallery Image. To get the list of all Azure Marketplace Image
+    """A reference to an Azure Virtual Machines Marketplace Image or a Azure
+    Compute Gallery Image. To get the list of all Azure Marketplace Image
     references verified by Azure Batch, see the 'List Supported Images'
     operation.
 
@@ -3447,7 +3455,7 @@ class ImageReference(Model):
      version of an Image. If omitted, the default is 'latest'.
     :type version: str
     :param virtual_machine_image_id: This property is mutually exclusive with
-     other ImageReference properties. The Shared Image Gallery Image must have
+     other ImageReference properties. The Azure Compute Gallery Image must have
      replicas in the same region and must be in the same subscription as the
      Azure Batch account. If the image version is not specified in the imageId,
      the latest version will be used. For information about the firewall
@@ -6487,6 +6495,23 @@ class LinuxUserConfiguration(Model):
         self.ssh_private_key = ssh_private_key
 
 
+class ManagedDisk(Model):
+    """ManagedDisk.
+
+    :param storage_account_type: The storage account type for managed disk.
+     Possible values include: 'StandardLRS', 'PremiumLRS', 'StandardSSDLRS'
+    :type storage_account_type: str or ~azure.batch.models.StorageAccountType
+    """
+
+    _attribute_map = {
+        'storage_account_type': {'key': 'storageAccountType', 'type': 'StorageAccountType'},
+    }
+
+    def __init__(self, *, storage_account_type=None, **kwargs) -> None:
+        super(ManagedDisk, self).__init__(**kwargs)
+        self.storage_account_type = storage_account_type
+
+
 class MetadataItem(Model):
     """A name-value pair associated with a Batch service resource.
 
@@ -7110,15 +7135,36 @@ class OSDisk(Model):
     :param ephemeral_os_disk_settings: Specifies the ephemeral Disk Settings
      for the operating system disk used by the compute node (VM).
     :type ephemeral_os_disk_settings: ~azure.batch.models.DiffDiskSettings
+    :param caching: Specifies the caching requirements. Possible values are:
+     None, ReadOnly, ReadWrite. The default values are: None for Standard
+     storage. ReadOnly for Premium storage. Possible values include: 'none',
+     'readOnly', 'readWrite'
+    :type caching: str or ~azure.batch.models.CachingType
+    :param managed_disk: The managed disk parameters.
+    :type managed_disk: ~azure.batch.models.ManagedDisk
+    :param disk_size_gb: The initial disk size in GB when creating new OS
+     disk.
+    :type disk_size_gb: int
+    :param write_accelerator_enabled: Specifies whether writeAccelerator
+     should be enabled or disabled on the disk.
+    :type write_accelerator_enabled: bool
     """
 
     _attribute_map = {
         'ephemeral_os_disk_settings': {'key': 'ephemeralOSDiskSettings', 'type': 'DiffDiskSettings'},
+        'caching': {'key': 'caching', 'type': 'CachingType'},
+        'managed_disk': {'key': 'managedDisk', 'type': 'ManagedDisk'},
+        'disk_size_gb': {'key': 'diskSizeGB', 'type': 'int'},
+        'write_accelerator_enabled': {'key': 'writeAcceleratorEnabled', 'type': 'bool'},
     }
 
-    def __init__(self, *, ephemeral_os_disk_settings=None, **kwargs) -> None:
+    def __init__(self, *, ephemeral_os_disk_settings=None, caching=None, managed_disk=None, disk_size_gb: int=None, write_accelerator_enabled: bool=None, **kwargs) -> None:
         super(OSDisk, self).__init__(**kwargs)
         self.ephemeral_os_disk_settings = ephemeral_os_disk_settings
+        self.caching = caching
+        self.managed_disk = managed_disk
+        self.disk_size_gb = disk_size_gb
+        self.write_accelerator_enabled = write_accelerator_enabled
 
 
 class OutputFile(Model):
@@ -7436,6 +7482,12 @@ class PoolAddParameter(Model):
      include: 'default', 'classic', 'simplified'
     :type target_node_communication_mode: str or
      ~azure.batch.models.NodeCommunicationMode
+    :param resource_tags: The user-defined tags to be associated with the
+     Azure Batch Pool. When specified, these tags are propagated to the backing
+     Azure resources associated with the pool. This property can only be
+     specified when the Batch account was created with the poolAllocationMode
+     property set to 'UserSubscription'.
+    :type resource_tags: dict[str, str]
     """
 
     _validation = {
@@ -7467,9 +7519,10 @@ class PoolAddParameter(Model):
         'metadata': {'key': 'metadata', 'type': '[MetadataItem]'},
         'mount_configuration': {'key': 'mountConfiguration', 'type': '[MountConfiguration]'},
         'target_node_communication_mode': {'key': 'targetNodeCommunicationMode', 'type': 'NodeCommunicationMode'},
+        'resource_tags': {'key': 'resourceTags', 'type': '{str}'},
     }
 
-    def __init__(self, *, id: str, vm_size: str, display_name: str=None, cloud_service_configuration=None, virtual_machine_configuration=None, resize_timeout=None, target_dedicated_nodes: int=None, target_low_priority_nodes: int=None, enable_auto_scale: bool=None, auto_scale_formula: str=None, auto_scale_evaluation_interval=None, enable_inter_node_communication: bool=None, network_configuration=None, start_task=None, certificate_references=None, application_package_references=None, application_licenses=None, task_slots_per_node: int=None, task_scheduling_policy=None, user_accounts=None, metadata=None, mount_configuration=None, target_node_communication_mode=None, **kwargs) -> None:
+    def __init__(self, *, id: str, vm_size: str, display_name: str=None, cloud_service_configuration=None, virtual_machine_configuration=None, resize_timeout=None, target_dedicated_nodes: int=None, target_low_priority_nodes: int=None, enable_auto_scale: bool=None, auto_scale_formula: str=None, auto_scale_evaluation_interval=None, enable_inter_node_communication: bool=None, network_configuration=None, start_task=None, certificate_references=None, application_package_references=None, application_licenses=None, task_slots_per_node: int=None, task_scheduling_policy=None, user_accounts=None, metadata=None, mount_configuration=None, target_node_communication_mode=None, resource_tags=None, **kwargs) -> None:
         super(PoolAddParameter, self).__init__(**kwargs)
         self.id = id
         self.display_name = display_name
@@ -7494,6 +7547,7 @@ class PoolAddParameter(Model):
         self.metadata = metadata
         self.mount_configuration = mount_configuration
         self.target_node_communication_mode = target_node_communication_mode
+        self.resource_tags = resource_tags
 
 
 class PoolDeleteOptions(Model):
@@ -8487,6 +8541,12 @@ class PoolSpecification(Model):
      include: 'default', 'classic', 'simplified'
     :type target_node_communication_mode: str or
      ~azure.batch.models.NodeCommunicationMode
+    :param resource_tags: The user-defined tags to be associated with the
+     Azure Batch Pool. When specified, these tags are propagated to the backing
+     Azure resources associated with the pool. This property can only be
+     specified when the Batch account was created with the poolAllocationMode
+     property set to 'UserSubscription'.
+    :type resource_tags: dict[str, str]
     """
 
     _validation = {
@@ -8516,9 +8576,10 @@ class PoolSpecification(Model):
         'metadata': {'key': 'metadata', 'type': '[MetadataItem]'},
         'mount_configuration': {'key': 'mountConfiguration', 'type': '[MountConfiguration]'},
         'target_node_communication_mode': {'key': 'targetNodeCommunicationMode', 'type': 'NodeCommunicationMode'},
+        'resource_tags': {'key': 'resourceTags', 'type': '{str}'},
     }
 
-    def __init__(self, *, vm_size: str, display_name: str=None, cloud_service_configuration=None, virtual_machine_configuration=None, task_slots_per_node: int=None, task_scheduling_policy=None, resize_timeout=None, target_dedicated_nodes: int=None, target_low_priority_nodes: int=None, enable_auto_scale: bool=None, auto_scale_formula: str=None, auto_scale_evaluation_interval=None, enable_inter_node_communication: bool=None, network_configuration=None, start_task=None, certificate_references=None, application_package_references=None, application_licenses=None, user_accounts=None, metadata=None, mount_configuration=None, target_node_communication_mode=None, **kwargs) -> None:
+    def __init__(self, *, vm_size: str, display_name: str=None, cloud_service_configuration=None, virtual_machine_configuration=None, task_slots_per_node: int=None, task_scheduling_policy=None, resize_timeout=None, target_dedicated_nodes: int=None, target_low_priority_nodes: int=None, enable_auto_scale: bool=None, auto_scale_formula: str=None, auto_scale_evaluation_interval=None, enable_inter_node_communication: bool=None, network_configuration=None, start_task=None, certificate_references=None, application_package_references=None, application_licenses=None, user_accounts=None, metadata=None, mount_configuration=None, target_node_communication_mode=None, resource_tags=None, **kwargs) -> None:
         super(PoolSpecification, self).__init__(**kwargs)
         self.display_name = display_name
         self.vm_size = vm_size
@@ -8542,6 +8603,7 @@ class PoolSpecification(Model):
         self.metadata = metadata
         self.mount_configuration = mount_configuration
         self.target_node_communication_mode = target_node_communication_mode
+        self.resource_tags = resource_tags
 
 
 class PoolStatistics(Model):
@@ -9090,6 +9152,62 @@ class Schedule(Model):
         self.do_not_run_after = do_not_run_after
         self.start_window = start_window
         self.recurrence_interval = recurrence_interval
+
+
+class SecurityProfile(Model):
+    """Specifies the security profile settings for the virtual machine or virtual
+    machine scale set.
+
+    :param security_type: Possible values include: 'trustedLaunch'
+    :type security_type: str or ~azure.batch.models.SecurityTypes
+    :param encryption_at_host: This property can be used by user in the
+     request to enable or disable the Host Encryption for the virtual machine
+     or virtual machine scale set. This will enable the encryption for all the
+     disks including Resource/Temp disk at host itself.
+    :type encryption_at_host: bool
+    :param uefi_settings: Specifies the security settings like secure boot and
+     vTPM used while creating the virtual machine. Specifies the security
+     settings like secure boot and vTPM used while creating the virtual
+     machine.
+    :type uefi_settings: ~azure.batch.models.UefiSettings
+    """
+
+    _attribute_map = {
+        'security_type': {'key': 'securityType', 'type': 'SecurityTypes'},
+        'encryption_at_host': {'key': 'encryptionAtHost', 'type': 'bool'},
+        'uefi_settings': {'key': 'uefiSettings', 'type': 'UefiSettings'},
+    }
+
+    def __init__(self, *, security_type=None, encryption_at_host: bool=None, uefi_settings=None, **kwargs) -> None:
+        super(SecurityProfile, self).__init__(**kwargs)
+        self.security_type = security_type
+        self.encryption_at_host = encryption_at_host
+        self.uefi_settings = uefi_settings
+
+
+class ServiceArtifactReference(Model):
+    """Specifies the service artifact reference id used to set same image version
+    for all virtual machines in the scale set when using 'latest' image
+    version.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. The service artifact reference id in the form of
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/galleries/{galleryName}/serviceArtifacts/{serviceArtifactName}/vmArtifactsProfiles/{vmArtifactsProfilesName}
+    :type id: str
+    """
+
+    _validation = {
+        'id': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(self, *, id: str, **kwargs) -> None:
+        super(ServiceArtifactReference, self).__init__(**kwargs)
+        self.id = id
 
 
 class StartTask(Model):
@@ -10648,6 +10766,29 @@ class TaskUpdateParameter(Model):
         self.constraints = constraints
 
 
+class UefiSettings(Model):
+    """Specifies the security settings like secure boot and vTPM used while
+    creating the virtual machine.
+
+    :param secure_boot_enabled: Specifies whether secure boot should be
+     enabled on the virtual machine.
+    :type secure_boot_enabled: bool
+    :param v_tpm_enabled: Specifies whether vTPM should be enabled on the
+     virtual machine.
+    :type v_tpm_enabled: bool
+    """
+
+    _attribute_map = {
+        'secure_boot_enabled': {'key': 'secureBootEnabled', 'type': 'bool'},
+        'v_tpm_enabled': {'key': 'vTpmEnabled', 'type': 'bool'},
+    }
+
+    def __init__(self, *, secure_boot_enabled: bool=None, v_tpm_enabled: bool=None, **kwargs) -> None:
+        super(UefiSettings, self).__init__(**kwargs)
+        self.secure_boot_enabled = secure_boot_enabled
+        self.v_tpm_enabled = v_tpm_enabled
+
+
 class UploadBatchServiceLogsConfiguration(Model):
     """The Azure Batch service log files upload configuration for a Compute Node.
 
@@ -10931,6 +11072,16 @@ class VirtualMachineConfiguration(Model):
     :param os_disk: Settings for the operating system disk of the Virtual
      Machine.
     :type os_disk: ~azure.batch.models.OSDisk
+    :param security_profile: Specifies the security profile settings for the
+     virtual machine or virtual machine scale set.
+    :type security_profile: ~azure.batch.models.SecurityProfile
+    :param service_artifact_reference: Specifies the service artifact
+     reference id used to set same image version for all virtual machines in
+     the scale set when using 'latest' image version. The service artifact
+     reference id in the form of
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/galleries/{galleryName}/serviceArtifacts/{serviceArtifactName}/vmArtifactsProfiles/{vmArtifactsProfilesName}
+    :type service_artifact_reference:
+     ~azure.batch.models.ServiceArtifactReference
     """
 
     _validation = {
@@ -10949,9 +11100,11 @@ class VirtualMachineConfiguration(Model):
         'node_placement_configuration': {'key': 'nodePlacementConfiguration', 'type': 'NodePlacementConfiguration'},
         'extensions': {'key': 'extensions', 'type': '[VMExtension]'},
         'os_disk': {'key': 'osDisk', 'type': 'OSDisk'},
+        'security_profile': {'key': 'securityProfile', 'type': 'SecurityProfile'},
+        'service_artifact_reference': {'key': 'serviceArtifactReference', 'type': 'ServiceArtifactReference'},
     }
 
-    def __init__(self, *, image_reference, node_agent_sku_id: str, windows_configuration=None, data_disks=None, license_type: str=None, container_configuration=None, disk_encryption_configuration=None, node_placement_configuration=None, extensions=None, os_disk=None, **kwargs) -> None:
+    def __init__(self, *, image_reference, node_agent_sku_id: str, windows_configuration=None, data_disks=None, license_type: str=None, container_configuration=None, disk_encryption_configuration=None, node_placement_configuration=None, extensions=None, os_disk=None, security_profile=None, service_artifact_reference=None, **kwargs) -> None:
         super(VirtualMachineConfiguration, self).__init__(**kwargs)
         self.image_reference = image_reference
         self.node_agent_sku_id = node_agent_sku_id
@@ -10963,6 +11116,8 @@ class VirtualMachineConfiguration(Model):
         self.node_placement_configuration = node_placement_configuration
         self.extensions = extensions
         self.os_disk = os_disk
+        self.security_profile = security_profile
+        self.service_artifact_reference = service_artifact_reference
 
 
 class VirtualMachineInfo(Model):
@@ -10971,15 +11126,19 @@ class VirtualMachineInfo(Model):
     :param image_reference: The reference to the Azure Virtual Machine's
      Marketplace Image.
     :type image_reference: ~azure.batch.models.ImageReference
+    :param scale_set_vm_resource_id:
+    :type scale_set_vm_resource_id: str
     """
 
     _attribute_map = {
         'image_reference': {'key': 'imageReference', 'type': 'ImageReference'},
+        'scale_set_vm_resource_id': {'key': 'scaleSetVmResourceId', 'type': 'str'},
     }
 
-    def __init__(self, *, image_reference=None, **kwargs) -> None:
+    def __init__(self, *, image_reference=None, scale_set_vm_resource_id: str=None, **kwargs) -> None:
         super(VirtualMachineInfo, self).__init__(**kwargs)
         self.image_reference = image_reference
+        self.scale_set_vm_resource_id = scale_set_vm_resource_id
 
 
 class VMExtension(Model):

@@ -10,12 +10,6 @@ from ._cluster_extension_type_operations import ClusterExtensionTypeOperations
 from ._cluster_extension_types_operations import ClusterExtensionTypesOperations
 from ._extension_type_versions_operations import ExtensionTypeVersionsOperations
 from ._location_extension_types_operations import LocationExtensionTypesOperations
-from ._extensions_operations import ExtensionsOperations
-from ._operation_status_operations import OperationStatusOperations
-from ._flux_configurations_operations import FluxConfigurationsOperations
-from ._flux_config_operation_status_operations import FluxConfigOperationStatusOperations
-from ._source_control_configurations_operations import SourceControlConfigurationsOperations
-from ._operations import Operations
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
@@ -26,12 +20,6 @@ __all__ = [
     "ClusterExtensionTypesOperations",
     "ExtensionTypeVersionsOperations",
     "LocationExtensionTypesOperations",
-    "ExtensionsOperations",
-    "OperationStatusOperations",
-    "FluxConfigurationsOperations",
-    "FluxConfigOperationStatusOperations",
-    "SourceControlConfigurationsOperations",
-    "Operations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

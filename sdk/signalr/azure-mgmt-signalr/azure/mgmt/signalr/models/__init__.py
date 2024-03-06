@@ -14,6 +14,7 @@ from ._models_py3 import Dimension
 from ._models_py3 import ErrorAdditionalInfo
 from ._models_py3 import ErrorDetail
 from ._models_py3 import ErrorResponse
+from ._models_py3 import IPRule
 from ._models_py3 import LiveTraceCategory
 from ._models_py3 import LiveTraceConfiguration
 from ._models_py3 import LogSpecification
@@ -36,6 +37,8 @@ from ._models_py3 import PrivateLinkResourceList
 from ._models_py3 import PrivateLinkServiceConnectionState
 from ._models_py3 import ProxyResource
 from ._models_py3 import RegenerateKeyParameters
+from ._models_py3 import Replica
+from ._models_py3 import ReplicaList
 from ._models_py3 import Resource
 from ._models_py3 import ResourceLogCategory
 from ._models_py3 import ResourceLogConfiguration
@@ -93,6 +96,7 @@ __all__ = [
     "ErrorAdditionalInfo",
     "ErrorDetail",
     "ErrorResponse",
+    "IPRule",
     "LiveTraceCategory",
     "LiveTraceConfiguration",
     "LogSpecification",
@@ -115,6 +119,8 @@ __all__ = [
     "PrivateLinkServiceConnectionState",
     "ProxyResource",
     "RegenerateKeyParameters",
+    "Replica",
+    "ReplicaList",
     "Resource",
     "ResourceLogCategory",
     "ResourceLogConfiguration",

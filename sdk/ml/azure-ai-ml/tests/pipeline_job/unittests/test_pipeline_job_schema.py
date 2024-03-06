@@ -28,6 +28,7 @@ from azure.ai.ml.entities import CommandComponent, Component, Job, PipelineJob, 
 from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.entities._component.datatransfer_component import DataTransferComponent
 from azure.ai.ml.entities._component.parallel_component import ParallelComponent
+from azure.ai.ml.entities._credentials import UserIdentityConfiguration
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job._input_output_helpers import (
     INPUT_MOUNT_MAPPING_FROM_REST,
@@ -649,6 +650,11 @@ class TestPipelineJobSchema:
         component_dict = load_yaml("./tests/test_configs/dsl_pipeline/parallel_component_with_file_input/score.yml")
         self.assert_inline_component(hello_world_component, component_dict)
 
+    def test_pipeline_job_inline_component_file_parallel_with_user_identity(self):
+        test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_inline_file_parallel.yml"
+        job = load_job(test_path)
+        assert isinstance(job.jobs["hello_world_inline_paralleljob"].identity, UserIdentityConfiguration)
+
     @classmethod
     def assert_settings_field(
         cls,
@@ -776,7 +782,7 @@ class TestPipelineJobSchema:
     @pytest.mark.parametrize(
         "test_path,expected_inputs",
         [
-            (
+            pytest.param(
                 "tests/test_configs/pipeline_jobs/pipeline_job_with_sweep_job_with_input_bindings.yml",
                 {
                     "hello_world": {
@@ -793,8 +799,9 @@ class TestPipelineJobSchema:
                         "test2": {"job_input_type": "literal", "value": "${{parent.inputs.job_data_path}}"},
                     },
                 },
+                id="pipeline_job_with_sweep_job_with_input_bindings",
             ),
-            (
+            pytest.param(
                 "tests/test_configs/pipeline_jobs/pipeline_job_with_command_job_with_input_bindings.yml",
                 {
                     "hello_world": {
@@ -819,19 +826,21 @@ class TestPipelineJobSchema:
                         },
                     },
                 },
+                id="pipeline_job_with_command_job_with_input_bindings",
             ),
-            (
+            pytest.param(
                 "tests/test_configs/pipeline_jobs/pipeline_job_with_parallel_job_with_input_bindings.yml",
                 {
                     "hello_world": {
-                        "test1": {
+                        "job_data_path": {
                             "job_input_type": "literal",
                             "value": "${{parent.inputs.job_data_path}}",
                         }
                     },
                 },
+                id="pipeline_job_with_parallel_job_with_input_bindings",
             ),
-            (
+            pytest.param(
                 "tests/test_configs/pipeline_jobs/pipeline_job_with_spark_job_with_input_bindings.yml",
                 {
                     "hello_world": {
@@ -845,6 +854,7 @@ class TestPipelineJobSchema:
                         },
                     }
                 },
+                id="pipeline_job_with_spark_job_with_input_bindings",
             ),
         ],
     )
@@ -869,14 +879,12 @@ class TestPipelineJobSchema:
             assert "Failed to find top level definition for input binding" in str(e.value)
 
         # Check that all inputs are present and are of type Input or are literals
-        for index, input_name in enumerate(yaml_obj["inputs"].keys()):
+        for input_name, input_yaml in yaml_obj["inputs"].items():
             job_obj_input = job.inputs.get(input_name, None)
-            assert job_obj_input is not None
+            assert job_obj_input is not None, f"Input {input_name} not found in loaded job"
             assert isinstance(job_obj_input, PipelineInput)
             job_obj_input = job_obj_input._to_job_input()
-            if index == 0:
-                assert isinstance(job_obj_input, Input)
-            elif index == 1:
+            if isinstance(input_yaml, dict):
                 assert isinstance(job_obj_input, Input)
             else:
                 assert isinstance(job_obj_input, int)
@@ -1832,6 +1840,25 @@ class TestPipelineJobSchema:
         assert "component" not in job_dict
         assert "jobs" in job_dict
         assert "component_a_job" in job_dict["jobs"]
+
+        test_path = "./tests/test_configs/pipeline_jobs/pipeline_component_job_with_overrides.yml"
+        job: PipelineJob = load_job(source=test_path)
+        assert job._validate().passed
+        job_dict = job._to_dict()
+        assert job_dict["outputs"] == {
+            "not_exists": {"path": "azureml://datastores/mock/paths/not_exists.txt", "type": "uri_file"},
+            "output_path": {"path": "azureml://datastores/mock/paths/my_output_file.txt", "type": "uri_file"},
+        }
+
+        # Assert the output_path:None not override original component output value
+        test_path = "./tests/test_configs/pipeline_jobs/pipeline_component_job_with_overrides2.yml"
+        job: PipelineJob = load_job(source=test_path)
+        assert job._validate().passed
+        job_dict = job._to_dict()
+        assert job_dict["outputs"] == {
+            "not_exists": {"path": "azureml://datastores/mock/paths/not_exists.txt", "type": "uri_file"},
+            "output_path": {"type": "uri_folder"},  # uri_folder from component output
+        }
 
     def test_invalid_pipeline_component_job(self):
         test_path = "./tests/test_configs/pipeline_jobs/invalid/invalid_pipeline_component_job.yml"

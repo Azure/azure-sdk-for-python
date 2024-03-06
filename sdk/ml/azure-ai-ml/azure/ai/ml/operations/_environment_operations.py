@@ -5,25 +5,17 @@
 # pylint: disable=protected-access,no-value-for-parameter
 
 from contextlib import contextmanager
-from typing import Any, Iterable, Optional, Union
+from typing import Any, Generator, Iterable, Optional, Union, cast
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
-from azure.ai.ml._utils._experimental import experimental
-from azure.ai.ml._artifacts._artifact_utilities import (
-    _check_and_upload_env_build_context,
-)
+from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_env_build_context
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
-    EnvironmentVersion,
-    ListViewType,
-)
-from azure.ai.ml._restclient.v2023_04_01_preview import (
-    AzureMachineLearningWorkspaces as ServiceClient042023Preview,
-)
+from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
+from azure.ai.ml._restclient.v2023_04_01_preview.models import EnvironmentVersion, ListViewType
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -37,30 +29,20 @@ from azure.ai.ml._utils._asset_utils import (
     _get_next_version_from_container,
     _resolve_label_to_asset,
 )
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils._registry_utils import (
     get_asset_body_for_registry_storage,
-    get_sas_uri_for_registry_asset,
     get_registry_client,
+    get_sas_uri_for_registry_asset,
 )
-
-from azure.ai.ml.constants._common import (
-    ARM_ID_PREFIX,
-    AzureMLResourceType,
-    ASSET_ID_FORMAT,
-)
+from azure.ai.ml.constants._common import ARM_ID_PREFIX, ASSET_ID_FORMAT, AzureMLResourceType
 from azure.ai.ml.entities._assets import Environment, WorkspaceAssetReference
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 from azure.core.exceptions import ResourceNotFoundError
-from azure.ai.ml.exceptions import (
-    ErrorCategory,
-    ErrorTarget,
-    ValidationErrorType,
-    ValidationException,
-)
-
 
 ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
+module_logger = ops_logger.module_logger
 
 
 class EnvironmentOperations(_ScopeDependentOperations):
@@ -105,8 +87,8 @@ class EnvironmentOperations(_ScopeDependentOperations):
         # returns the asset associated with the label
         self._managed_label_resolver = {"latest": self._get_latest_version}
 
-    @monitor_with_activity(logger, "Environment.CreateOrUpdate", ActivityType.PUBLICAPI)
-    def create_or_update(self, environment: Environment) -> Environment:
+    @monitor_with_activity(ops_logger, "Environment.CreateOrUpdate", ActivityType.PUBLICAPI)
+    def create_or_update(self, environment: Environment) -> Environment:  # type: ignore
         """Returns created or updated environment asset.
 
         :param environment: Environment object
@@ -119,7 +101,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START env_operations_create_or_update]
                 :end-before: [END env_operations_create_or_update]
                 :language: python
@@ -214,7 +196,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
                 )
             )
             if not env_rest_obj and self._registry_name:
-                env_rest_obj = self._get(name=environment.name, version=environment.version)
+                env_rest_obj = self._get(name=str(environment.name), version=environment.version)
             return Environment._from_rest_object(env_rest_obj)
         except Exception as ex:  # pylint: disable=broad-except
             if isinstance(ex, SchemaValidationError):
@@ -257,7 +239,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
             )
         )
 
-    @monitor_with_activity(logger, "Environment.Get", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Environment.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, version: Optional[str] = None, label: Optional[str] = None) -> Environment:
         """Returns the specified environment asset.
 
@@ -274,7 +256,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START env_operations_get]
                 :end-before: [END env_operations_get]
                 :language: python
@@ -308,7 +290,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
 
         return Environment._from_rest_object(env_version_resource)
 
-    @monitor_with_activity(logger, "Environment.List", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Environment.List", ActivityType.PUBLICAPI)
     def list(
         self,
         name: Optional[str] = None,
@@ -327,7 +309,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START env_operations_list]
                 :end-before: [END env_operations_list]
                 :language: python
@@ -335,48 +317,55 @@ class EnvironmentOperations(_ScopeDependentOperations):
                 :caption: List example.
         """
         if name:
-            return (
-                self._version_operations.list(
-                    name=name,
+            return cast(
+                Iterable[Environment],
+                (
+                    self._version_operations.list(
+                        name=name,
+                        registry_name=self._registry_name,
+                        cls=lambda objs: [Environment._from_rest_object(obj) for obj in objs],
+                        **self._scope_kwargs,
+                        **self._kwargs,
+                    )
+                    if self._registry_name
+                    else self._version_operations.list(
+                        name=name,
+                        workspace_name=self._workspace_name,
+                        cls=lambda objs: [Environment._from_rest_object(obj) for obj in objs],
+                        list_view_type=list_view_type,
+                        **self._scope_kwargs,
+                        **self._kwargs,
+                    )
+                ),
+            )
+        return cast(
+            Iterable[Environment],
+            (
+                self._containers_operations.list(
                     registry_name=self._registry_name,
-                    cls=lambda objs: [Environment._from_rest_object(obj) for obj in objs],
+                    cls=lambda objs: [Environment._from_container_rest_object(obj) for obj in objs],
                     **self._scope_kwargs,
                     **self._kwargs,
                 )
                 if self._registry_name
-                else self._version_operations.list(
-                    name=name,
+                else self._containers_operations.list(
                     workspace_name=self._workspace_name,
-                    cls=lambda objs: [Environment._from_rest_object(obj) for obj in objs],
+                    cls=lambda objs: [Environment._from_container_rest_object(obj) for obj in objs],
                     list_view_type=list_view_type,
                     **self._scope_kwargs,
                     **self._kwargs,
                 )
-            )
-        return (
-            self._containers_operations.list(
-                registry_name=self._registry_name,
-                cls=lambda objs: [Environment._from_container_rest_object(obj) for obj in objs],
-                **self._scope_kwargs,
-                **self._kwargs,
-            )
-            if self._registry_name
-            else self._containers_operations.list(
-                workspace_name=self._workspace_name,
-                cls=lambda objs: [Environment._from_container_rest_object(obj) for obj in objs],
-                list_view_type=list_view_type,
-                **self._scope_kwargs,
-                **self._kwargs,
-            )
+            ),
         )
 
-    @monitor_with_activity(logger, "Environment.Delete", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Environment.Delete", ActivityType.PUBLICAPI)
     def archive(
         self,
         name: str,
         version: Optional[str] = None,
         label: Optional[str] = None,
-        **kwargs,  # pylint:disable=unused-argument
+        # pylint:disable=unused-argument
+        **kwargs: Any,
     ) -> None:
         """Archive an environment or an environment version.
 
@@ -389,7 +378,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START env_operations_archive]
                 :end-before: [END env_operations_archive]
                 :language: python
@@ -407,13 +396,14 @@ class EnvironmentOperations(_ScopeDependentOperations):
             label=label,
         )
 
-    @monitor_with_activity(logger, "Environment.Restore", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Environment.Restore", ActivityType.PUBLICAPI)
     def restore(
         self,
         name: str,
         version: Optional[str] = None,
         label: Optional[str] = None,
-        **kwargs,  # pylint:disable=unused-argument
+        # pylint:disable=unused-argument
+        **kwargs: Any,
     ) -> None:
         """Restore an archived environment version.
 
@@ -426,7 +416,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START env_operations_restore]
                 :end-before: [END env_operations_restore]
                 :language: python
@@ -464,7 +454,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
         )
         return Environment._from_rest_object(result)
 
-    @monitor_with_activity(logger, "Environment.Share", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Environment.Share", ActivityType.PUBLICAPI)
     @experimental
     def share(
         self,
@@ -519,7 +509,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
 
     @contextmanager
     # pylint: disable-next=docstring-missing-return,docstring-missing-rtype
-    def _set_registry_client(self, registry_name: str) -> Iterable[None]:
+    def _set_registry_client(self, registry_name: str) -> Generator:
         """Sets the registry client for the environment operations.
 
         :param registry_name: Name of the registry.

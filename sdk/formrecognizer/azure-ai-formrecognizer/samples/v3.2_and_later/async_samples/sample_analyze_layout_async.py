@@ -62,10 +62,10 @@ async def analyze_layout_async():
             )
         result = await poller.result()
 
-    for style in result.styles:
-        print(
-            f"Document contains {'handwritten' if style.is_handwritten else 'no handwritten'} content"
-        )
+    if any([style.is_handwritten for style in result.styles]):
+        print("Document contains handwritten content")
+    else:
+        print("Document does not contain handwritten content")
 
     for page in result.pages:
         print(f"----Analyzing layout from page #{page.page_number}----")

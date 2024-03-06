@@ -51,6 +51,7 @@ setup(
     author="Microsoft Corporation",
     author_email="accledgerdevs@microsoft.com",
     url="https://github.com/Azure/azure-sdk-for-python",
+    keywords="azure, azure sdk",
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Programming Language :: Python :: 3 :: Only",
@@ -81,6 +82,6 @@ setup(
     ],
     project_urls={
         'Bug Reports': 'https://github.com/Azure/azure-sdk-for-python/issues',
-        'Source': 'https://github.com/Azure/azure-sdk-python',
+        'Source': 'https://github.com/Azure/azure-sdk-for-python',
     }
 )

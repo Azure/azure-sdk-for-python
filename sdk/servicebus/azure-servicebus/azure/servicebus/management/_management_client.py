@@ -12,6 +12,7 @@ from copy import deepcopy
 from typing import Any, Union, cast, Mapping, Optional, List, TYPE_CHECKING
 from xml.etree.ElementTree import ElementTree
 
+from azure.core import MatchConditions
 from azure.core.paging import ItemPaged
 from azure.core.exceptions import ResourceNotFoundError
 from azure.core.pipeline import Pipeline
@@ -139,11 +140,11 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             **kwargs
         )
 
-    def __enter__(self):
+    def __enter__(self) -> "ServiceBusAdministrationClient":
         self._impl.__enter__()
         return self
 
-    def __exit__(self, *exc_details):
+    def __exit__(self, *exc_details: Any) -> None:
         self._impl.__exit__(*exc_details)
 
     def _build_pipeline(self, **kwargs):
@@ -343,11 +344,11 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :param queue_name: Name of the queue.
         :type queue_name: str
         :keyword authorization_rules: Authorization rules for resource.
-        :paramtype authorization_rules: list[~azure.servicebus.management.AuthorizationRule]
+        :paramtype authorization_rules: list[~azure.servicebus.management.AuthorizationRule] or None
         :keyword auto_delete_on_idle: ISO 8601 timeSpan idle interval after which the queue is
          automatically deleted. The minimum duration is 5 minutes.
          Input value of either type ~datetime.timedelta or string in ISO 8601 duration format like "PT300S" is accepted.
-        :paramtype auto_delete_on_idle: Union[~datetime.timedelta, str]
+        :paramtype auto_delete_on_idle: ~datetime.timedelta or str or one
         :keyword dead_lettering_on_message_expiration: A value that indicates whether this queue has dead
          letter support when a message expires.
         :paramtype dead_lettering_on_message_expiration: bool
@@ -355,11 +356,11 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
          the duration after which the message expires, starting from when the message is sent to Service
          Bus. This is the default value used when TimeToLive is not set on a message itself.
          Input value of either type ~datetime.timedelta or string in ISO 8601 duration format like "PT300S" is accepted.
-        :paramtype default_message_time_to_live: Union[~datetime.timedelta, str]
+        :paramtype default_message_time_to_live: ~datetime.timedelta or str or None
         :keyword duplicate_detection_history_time_window: ISO 8601 timeSpan structure that defines the
          duration of the duplicate detection history. The default value is 10 minutes.
          Input value of either type ~datetime.timedelta or string in ISO 8601 duration format like "PT300S" is accepted.
-        :paramtype duplicate_detection_history_time_window: Union[~datetime.timedelta, str]
+        :paramtype duplicate_detection_history_time_window: ~datetime.timedelta or str or None
         :keyword enable_batched_operations: Value that indicates whether server-side batched operations
          are enabled.
         :paramtype enable_batched_operations: bool
@@ -373,7 +374,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
          that the message is locked for other receivers. The maximum value for LockDuration is 5
          minutes; the default value is 1 minute.
          Input value of either type ~datetime.timedelta or string in ISO 8601 duration format like "PT300S" is accepted.
-        :paramtype lock_duration: Union[~datetime.timedelta, str]
+        :paramtype lock_duration: ~datetime.timedelta or str or None
         :keyword max_delivery_count: The maximum delivery count. A message is automatically deadlettered
          after this number of deliveries. Default value is 10.
         :paramtype max_delivery_count: int
@@ -489,7 +490,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         self._create_forward_to_header_tokens(to_update, kwargs)
         with _handle_response_error():
             self._impl.entity.put(
-                queue.name, request_body, if_match="*", **kwargs  # type: ignore
+                queue.name, request_body, match_condition=MatchConditions.IfPresent, **kwargs  # type: ignore
             )
 
     def delete_queue(self, queue_name: str, **kwargs: Any) -> None:
@@ -735,7 +736,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         request_body = create_entity_body.serialize(is_xml=True)
         with _handle_response_error():
             self._impl.entity.put(
-                topic.name, request_body, if_match="*", **kwargs  # type: ignore
+                topic.name, request_body, match_condition=MatchConditions.IfPresent, **kwargs  # type: ignore
             )
 
     def delete_topic(self, topic_name: str, **kwargs: Any) -> None:
@@ -1004,7 +1005,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         self._create_forward_to_header_tokens(to_update, kwargs)
         with _handle_response_error():
             self._impl.subscription.put(
-                topic_name, subscription.name, request_body, if_match="*", **kwargs
+                topic_name, subscription.name, request_body, match_condition=MatchConditions.IfPresent, **kwargs
             )
 
     def delete_subscription(
@@ -1213,7 +1214,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                 subscription_name,
                 rule.name,
                 request_body,
-                if_match="*",
+                match_condition=MatchConditions.IfPresent,
                 **kwargs
             )
 

@@ -29,10 +29,10 @@ def main():
         subscription_id="fd3c3665-1729-4b7b-9a38-238e83b0f98b",
     )
 
-    response = client.storagecontainers.begin_create_or_update(
+    response = client.storage_containers.begin_create_or_update(
         resource_group_name="test-rg",
-        storagecontainers_name="Default_Container",
-        storagecontainers={
+        storage_container_name="Default_Container",
+        storage_containers={
             "extendedLocation": {
                 "name": "/subscriptions/a95612cb-f1fa-4daa-a4fd-272844fa512c/resourceGroups/dogfoodarc/providers/Microsoft.ExtendedLocation/customLocations/dogfood-location",
                 "type": "CustomLocation",
@@ -44,6 +44,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/azurestackhci/resource-manager/Microsoft.AzureStackHCI/preview/2021-09-01-preview/examples/PutStorageContainer.json
+# x-ms-original-file: specification/azurestackhci/resource-manager/Microsoft.AzureStackHCI/preview/2023-09-01-preview/examples/PutStorageContainer.json
 if __name__ == "__main__":
     main()

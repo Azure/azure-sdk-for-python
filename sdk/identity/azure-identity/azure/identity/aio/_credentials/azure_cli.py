@@ -23,7 +23,7 @@ from ..._credentials.azure_cli import (
     parse_token,
     sanitize_output,
 )
-from ..._internal import _scopes_to_resource, resolve_tenant, within_dac
+from ..._internal import _scopes_to_resource, resolve_tenant, within_dac, validate_tenant_id, validate_scope
 
 
 class AzureCliCredential(AsyncContextManager):
@@ -54,7 +54,8 @@ class AzureCliCredential(AsyncContextManager):
         additionally_allowed_tenants: Optional[List[str]] = None,
         process_timeout: int = 10,
     ) -> None:
-
+        if tenant_id:
+            validate_tenant_id(tenant_id)
         self.tenant_id = tenant_id
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
         self._process_timeout = process_timeout
@@ -87,6 +88,11 @@ class AzureCliCredential(AsyncContextManager):
         # only ProactorEventLoop supports subprocesses on Windows (and it isn't the default loop on Python < 3.8)
         if sys.platform.startswith("win") and not isinstance(asyncio.get_event_loop(), asyncio.ProactorEventLoop):
             return _SyncAzureCliCredential().get_token(*scopes, tenant_id=tenant_id, **kwargs)
+
+        if tenant_id:
+            validate_tenant_id(tenant_id)
+        for scope in scopes:
+            validate_scope(scope)
 
         resource = _scopes_to_resource(*scopes)
         command = COMMAND_LINE.format(resource)
@@ -143,13 +149,13 @@ async def _run_command(command: str, timeout: int) -> str:
         stdout_b, stderr_b = await asyncio.wait_for(proc.communicate(), timeout)
         output = stdout_b.decode()
         stderr = stderr_b.decode()
+    except asyncio.TimeoutError as ex:
+        proc.kill()
+        raise CredentialUnavailableError(message="Timed out waiting for Azure CLI") from ex
     except OSError as ex:
         # failed to execute 'cmd' or '/bin/sh'
         error = CredentialUnavailableError(message="Failed to execute '{}'".format(args[0]))
         raise error from ex
-    except asyncio.TimeoutError as ex:
-        proc.kill()
-        raise CredentialUnavailableError(message="Timed out waiting for Azure CLI") from ex
 
     if proc.returncode == 0:
         return output

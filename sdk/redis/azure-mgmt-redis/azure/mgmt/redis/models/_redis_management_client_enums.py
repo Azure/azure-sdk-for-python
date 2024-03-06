@@ -10,6 +10,35 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class AccessPolicyAssignmentProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of an access policy assignment set."""
+
+    UPDATING = "Updating"
+    SUCCEEDED = "Succeeded"
+    DELETING = "Deleting"
+    DELETED = "Deleted"
+    CANCELED = "Canceled"
+    FAILED = "Failed"
+
+
+class AccessPolicyProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of access policy."""
+
+    UPDATING = "Updating"
+    SUCCEEDED = "Succeeded"
+    DELETING = "Deleting"
+    DELETED = "Deleted"
+    CANCELED = "Canceled"
+    FAILED = "Failed"
+
+
+class AccessPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Built-In or Custom access policy."""
+
+    CUSTOM = "Custom"
+    BUILT_IN = "BuiltIn"
+
+
 class DayOfWeek(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Day of the week when a cache can be patched."""
 
@@ -73,6 +102,7 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     UNLINKING = "Unlinking"
     UNPROVISIONING = "Unprovisioning"
     UPDATING = "Updating"
+    CONFIGURING_AAD = "ConfiguringAAD"
 
 
 class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -130,3 +160,13 @@ class TlsVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ONE0 = "1.0"
     ONE1 = "1.1"
     ONE2 = "1.2"
+
+
+class UpdateChannel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Optional: Specifies the update channel for the monthly Redis updates your Redis Cache will
+    receive. Caches using 'Preview' update channel get latest Redis updates at least 4 weeks ahead
+    of 'Stable' channel caches. Default value is 'Stable'.
+    """
+
+    STABLE = "Stable"
+    PREVIEW = "Preview"

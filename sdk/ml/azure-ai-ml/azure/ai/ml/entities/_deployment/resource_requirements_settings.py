@@ -24,8 +24,7 @@ class ResourceRequirementsSettings(RestTranslatableMixin):
 
     .. admonition:: Example:
 
-
-        .. literalinclude:: ../../../../../samples/ml_samples_misc.py
+        .. literalinclude:: ../samples/ml_samples_misc.py
             :start-after: [START resource_requirements_configuration]
             :end-before: [END resource_requirements_configuration]
             :language: python
@@ -50,7 +49,7 @@ class ResourceRequirementsSettings(RestTranslatableMixin):
     @classmethod
     def _from_rest_object(  # pylint: disable=arguments-renamed
         cls, settings: ContainerResourceRequirements
-    ) -> "ResourceRequirementsSettings":
+    ) -> Optional["ResourceRequirementsSettings"]:
         requests = settings.container_resource_requests
         limits = settings.container_resource_limits
         return (
@@ -62,7 +61,7 @@ class ResourceRequirementsSettings(RestTranslatableMixin):
             else None
         )
 
-    def _merge_with(self, other: "ResourceRequirementsSettings") -> None:
+    def _merge_with(self, other: Optional["ResourceRequirementsSettings"]) -> None:
         if other:
             if self.requests:
                 self.requests._merge_with(other.requests)

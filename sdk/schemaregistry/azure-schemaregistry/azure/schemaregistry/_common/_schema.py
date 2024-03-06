@@ -23,12 +23,26 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Any
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ._constants import SchemaFormat
 
 
 class SchemaProperties(object):
     """
     Meta properties of a schema.
+
+    :keyword id: References specific schema in registry namespace.
+    :paramtype id: str
+    :keyword format: Format for the schema being stored.
+    :paramtype format: ~azure.schemaregistry.SchemaFormat
+    :keyword group_name: Schema group under which schema is stored.
+    :paramtype group_name: str
+    :keyword name: Name of schema.
+    :paramtype name: str
+    :keyword version: Version of schema.
+    :paramtype version: int
 
     :ivar id: References specific schema in registry namespace.
     :vartype id: str
@@ -42,15 +56,22 @@ class SchemaProperties(object):
     :vartype version: int
     """
 
-    def __init__(self, **kwargs):
-        # type: (Any) -> None
-        self.id = kwargs.pop("id")
-        self.format = kwargs.pop("format")
-        self.group_name = kwargs.pop("group_name")
-        self.name = kwargs.pop("name")
-        self.version = kwargs.pop("version")
+    def __init__(
+        self,
+        *,
+        id: str,    # pylint: disable=redefined-builtin
+        format: "SchemaFormat", # pylint: disable=redefined-builtin
+        group_name: str,
+        name: str,
+        version: int,
+    ) -> None:
+        self.id = id
+        self.format = format
+        self.group_name = group_name
+        self.name = name
+        self.version = version
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f"SchemaProperties(id={self.id}, format={self.format}, "
             f"group_name={self.group_name}, name={self.name}, version={self.version})"[
@@ -63,18 +84,24 @@ class Schema(object):
     """
     The schema content of a schema, along with id and meta properties.
 
+    :keyword definition: The content of the schema.
+    :paramtype definition: str
+    :keyword properties: The properties of the schema.
+    :paramtype properties: SchemaProperties
+
     :ivar definition: The content of the schema.
     :vartype definition: str
     :ivar properties: The properties of the schema.
     :vartype properties: SchemaProperties
     """
 
-    def __init__(self, **kwargs):
-        # type: (Any) -> None
-        self.definition = kwargs.pop("definition")
-        self.properties = kwargs.pop("properties")
+    def __init__(
+        self,
+        definition: str,
+        properties: "SchemaProperties",
+    ) -> None:
+        self.definition = definition
+        self.properties = properties
 
-    def __repr__(self):
-        return "Schema(definition={}, properties={})".format(
-            self.definition, self.properties
-        )[:1024]
+    def __repr__(self) -> str:
+        return f"Schema(definition={self.definition}, properties={self.properties})"[:1024]

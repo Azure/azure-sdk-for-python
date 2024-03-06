@@ -6,7 +6,7 @@ import logging
 import asyncio
 import datetime
 import warnings
-from typing import Any, TYPE_CHECKING, Union, List, Optional, Mapping, cast
+from typing import Any, TYPE_CHECKING, Union, List, Optional, Mapping, cast, Iterable
 
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 
@@ -53,7 +53,9 @@ MessageTypes = Union[
     Mapping[str, Any],
     ServiceBusMessage,
     AmqpAnnotatedMessage,
-    List[Union[Mapping[str, Any], ServiceBusMessage, AmqpAnnotatedMessage]],
+    Iterable[Mapping[str, Any]],
+    Iterable[ServiceBusMessage],
+    Iterable[AmqpAnnotatedMessage],
 ]
 MessageObjTypes = Union[
     ServiceBusMessage,
@@ -148,6 +150,15 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         self._create_attribute(**kwargs)
         self._connection = kwargs.get("connection")
         self._handler: Union["pyamqp_SendClientAsync", "uamqp_SendClientAsync"]
+
+    async def __aenter__(self) -> "ServiceBusSender":
+        if self._shutdown.is_set():
+            raise ValueError(
+                "The handler has already been shutdown. Please use ServiceBusClient to "
+                "create a new instance."
+            )
+        await self._open_with_retry()
+        return self
 
     @classmethod
     def _from_connection_string(

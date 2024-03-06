@@ -21,29 +21,33 @@
 
 """Represents a request object.
 """
-
+from typing import Optional
 
 class RequestObject(object):
-    def __init__(self, resource_type, operation_type, endpoint_override=None):
+    def __init__(self, resource_type: str, operation_type: str, endpoint_override: Optional[str] = None) -> None:
         self.resource_type = resource_type
         self.operation_type = operation_type
         self.endpoint_override = endpoint_override
-        self.should_clear_session_token_on_session_read_failure = False
-        self.use_preferred_locations = None
-        self.location_index_to_route = None
-        self.location_endpoint_to_route = None
+        self.should_clear_session_token_on_session_read_failure: bool = False  # pylint: disable=name-too-long
+        self.use_preferred_locations: Optional[bool] = None
+        self.location_index_to_route: Optional[int] = None
+        self.location_endpoint_to_route: Optional[str] = None
 
-    def route_to_location_with_preferred_location_flag(self, location_index, use_preferred_locations):
+    def route_to_location_with_preferred_location_flag(  # pylint: disable=name-too-long
+        self,
+        location_index: int,
+        use_preferred_locations: bool
+    ) -> None:
         self.location_index_to_route = location_index
         self.use_preferred_locations = use_preferred_locations
         self.location_endpoint_to_route = None
 
-    def route_to_location(self, location_endpoint):
+    def route_to_location(self, location_endpoint: str) -> None:
         self.location_index_to_route = None
         self.use_preferred_locations = None
         self.location_endpoint_to_route = location_endpoint
 
-    def clear_route_to_location(self):
+    def clear_route_to_location(self) -> None:
         self.location_index_to_route = None
         self.use_preferred_locations = None
         self.location_endpoint_to_route = None

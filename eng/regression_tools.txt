@@ -2,10 +2,9 @@
 setuptools==67.6.0; python_version >= '3.5'
 virtualenv==20.23.0
 wheel==0.37.0
-Jinja2==2.11.2
+Jinja2==3.1.2
 packaging==23.1
 tox==4.5.0
-twine==3.1.1; python_version >= '3.6'
 pathlib2==2.3.5
 doc-warden==0.7.2
 beautifulsoup4==4.9.1
@@ -13,7 +12,7 @@ pkginfo==1.5.0.1
 pip==20.3.3
 wrapt==1.12.1; python_version <= '3.10'
 wrapt==1.14.1; python_version >= '3.11'
-markupsafe==2.0.1
+MarkupSafe==2.1.3
 typing-extensions<=4.6.3
 
 # locking packages defined as deps from azure-sdk-tools or azure-devtools

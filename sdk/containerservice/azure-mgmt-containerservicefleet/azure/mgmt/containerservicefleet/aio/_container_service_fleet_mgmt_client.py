@@ -53,7 +53,7 @@ class ContainerServiceFleetMgmtClient(MultiApiClientMixin, _SDKClient):
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
-    DEFAULT_API_VERSION = '2023-03-15-preview'
+    DEFAULT_API_VERSION = '2023-10-15'
     _PROFILE_TAG = "azure.mgmt.containerservicefleet.ContainerServiceFleetMgmtClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
@@ -71,6 +71,8 @@ class ContainerServiceFleetMgmtClient(MultiApiClientMixin, _SDKClient):
         profile: KnownProfiles = KnownProfiles.default,
         **kwargs: Any
     ) -> None:
+        if api_version:
+            kwargs.setdefault('api_version', api_version)
         self._config = ContainerServiceFleetMgmtClientConfiguration(credential, subscription_id, **kwargs)
         self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
         super(ContainerServiceFleetMgmtClient, self).__init__(
@@ -90,6 +92,9 @@ class ContainerServiceFleetMgmtClient(MultiApiClientMixin, _SDKClient):
            * 2022-07-02-preview: :mod:`v2022_07_02_preview.models<azure.mgmt.containerservicefleet.v2022_07_02_preview.models>`
            * 2022-06-02-preview: :mod:`v2022_09_02_preview.models<azure.mgmt.containerservicefleet.v2022_09_02_preview.models>`
            * 2023-03-15-preview: :mod:`v2023_03_15_preview.models<azure.mgmt.containerservicefleet.v2023_03_15_preview.models>`
+           * 2023-06-15-preview: :mod:`v2023_06_15_preview.models<azure.mgmt.containerservicefleet.v2023_06_15_preview.models>`
+           * 2023-08-15-preview: :mod:`v2023_08_15_preview.models<azure.mgmt.containerservicefleet.v2023_08_15_preview.models>`
+           * 2023-10-15: :mod:`v2023_10_15.models<azure.mgmt.containerservicefleet.v2023_10_15.models>`
         """
         if api_version == '2022-09-02-preview':
             from ..v2022_06_02_preview import models
@@ -103,6 +108,15 @@ class ContainerServiceFleetMgmtClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2023-03-15-preview':
             from ..v2023_03_15_preview import models
             return models
+        elif api_version == '2023-06-15-preview':
+            from ..v2023_06_15_preview import models
+            return models
+        elif api_version == '2023-08-15-preview':
+            from ..v2023_08_15_preview import models
+            return models
+        elif api_version == '2023-10-15':
+            from ..v2023_10_15 import models
+            return models
         raise ValueError("API version {} is not available".format(api_version))
 
     @property
@@ -113,6 +127,9 @@ class ContainerServiceFleetMgmtClient(MultiApiClientMixin, _SDKClient):
            * 2022-07-02-preview: :class:`FleetMembersOperations<azure.mgmt.containerservicefleet.v2022_07_02_preview.aio.operations.FleetMembersOperations>`
            * 2022-06-02-preview: :class:`FleetMembersOperations<azure.mgmt.containerservicefleet.v2022_09_02_preview.aio.operations.FleetMembersOperations>`
            * 2023-03-15-preview: :class:`FleetMembersOperations<azure.mgmt.containerservicefleet.v2023_03_15_preview.aio.operations.FleetMembersOperations>`
+           * 2023-06-15-preview: :class:`FleetMembersOperations<azure.mgmt.containerservicefleet.v2023_06_15_preview.aio.operations.FleetMembersOperations>`
+           * 2023-08-15-preview: :class:`FleetMembersOperations<azure.mgmt.containerservicefleet.v2023_08_15_preview.aio.operations.FleetMembersOperations>`
+           * 2023-10-15: :class:`FleetMembersOperations<azure.mgmt.containerservicefleet.v2023_10_15.aio.operations.FleetMembersOperations>`
         """
         api_version = self._get_api_version('fleet_members')
         if api_version == '2022-09-02-preview':
@@ -123,10 +140,33 @@ class ContainerServiceFleetMgmtClient(MultiApiClientMixin, _SDKClient):
             from ..v2022_09_02_preview.aio.operations import FleetMembersOperations as OperationClass
         elif api_version == '2023-03-15-preview':
             from ..v2023_03_15_preview.aio.operations import FleetMembersOperations as OperationClass
+        elif api_version == '2023-06-15-preview':
+            from ..v2023_06_15_preview.aio.operations import FleetMembersOperations as OperationClass
+        elif api_version == '2023-08-15-preview':
+            from ..v2023_08_15_preview.aio.operations import FleetMembersOperations as OperationClass
+        elif api_version == '2023-10-15':
+            from ..v2023_10_15.aio.operations import FleetMembersOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'fleet_members'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
+
+    @property
+    def fleet_update_strategies(self):
+        """Instance depends on the API version:
+
+           * 2023-08-15-preview: :class:`FleetUpdateStrategiesOperations<azure.mgmt.containerservicefleet.v2023_08_15_preview.aio.operations.FleetUpdateStrategiesOperations>`
+           * 2023-10-15: :class:`FleetUpdateStrategiesOperations<azure.mgmt.containerservicefleet.v2023_10_15.aio.operations.FleetUpdateStrategiesOperations>`
+        """
+        api_version = self._get_api_version('fleet_update_strategies')
+        if api_version == '2023-08-15-preview':
+            from ..v2023_08_15_preview.aio.operations import FleetUpdateStrategiesOperations as OperationClass
+        elif api_version == '2023-10-15':
+            from ..v2023_10_15.aio.operations import FleetUpdateStrategiesOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'fleet_update_strategies'".format(api_version))
+        self._config.api_version = api_version
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def fleets(self):
@@ -136,6 +176,9 @@ class ContainerServiceFleetMgmtClient(MultiApiClientMixin, _SDKClient):
            * 2022-07-02-preview: :class:`FleetsOperations<azure.mgmt.containerservicefleet.v2022_07_02_preview.aio.operations.FleetsOperations>`
            * 2022-06-02-preview: :class:`FleetsOperations<azure.mgmt.containerservicefleet.v2022_09_02_preview.aio.operations.FleetsOperations>`
            * 2023-03-15-preview: :class:`FleetsOperations<azure.mgmt.containerservicefleet.v2023_03_15_preview.aio.operations.FleetsOperations>`
+           * 2023-06-15-preview: :class:`FleetsOperations<azure.mgmt.containerservicefleet.v2023_06_15_preview.aio.operations.FleetsOperations>`
+           * 2023-08-15-preview: :class:`FleetsOperations<azure.mgmt.containerservicefleet.v2023_08_15_preview.aio.operations.FleetsOperations>`
+           * 2023-10-15: :class:`FleetsOperations<azure.mgmt.containerservicefleet.v2023_10_15.aio.operations.FleetsOperations>`
         """
         api_version = self._get_api_version('fleets')
         if api_version == '2022-09-02-preview':
@@ -146,10 +189,16 @@ class ContainerServiceFleetMgmtClient(MultiApiClientMixin, _SDKClient):
             from ..v2022_09_02_preview.aio.operations import FleetsOperations as OperationClass
         elif api_version == '2023-03-15-preview':
             from ..v2023_03_15_preview.aio.operations import FleetsOperations as OperationClass
+        elif api_version == '2023-06-15-preview':
+            from ..v2023_06_15_preview.aio.operations import FleetsOperations as OperationClass
+        elif api_version == '2023-08-15-preview':
+            from ..v2023_08_15_preview.aio.operations import FleetsOperations as OperationClass
+        elif api_version == '2023-10-15':
+            from ..v2023_10_15.aio.operations import FleetsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'fleets'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def operations(self):
@@ -157,30 +206,48 @@ class ContainerServiceFleetMgmtClient(MultiApiClientMixin, _SDKClient):
 
            * 2022-09-02-preview: :class:`Operations<azure.mgmt.containerservicefleet.v2022_06_02_preview.aio.operations.Operations>`
            * 2023-03-15-preview: :class:`Operations<azure.mgmt.containerservicefleet.v2023_03_15_preview.aio.operations.Operations>`
+           * 2023-06-15-preview: :class:`Operations<azure.mgmt.containerservicefleet.v2023_06_15_preview.aio.operations.Operations>`
+           * 2023-08-15-preview: :class:`Operations<azure.mgmt.containerservicefleet.v2023_08_15_preview.aio.operations.Operations>`
+           * 2023-10-15: :class:`Operations<azure.mgmt.containerservicefleet.v2023_10_15.aio.operations.Operations>`
         """
         api_version = self._get_api_version('operations')
         if api_version == '2022-09-02-preview':
             from ..v2022_06_02_preview.aio.operations import Operations as OperationClass
         elif api_version == '2023-03-15-preview':
             from ..v2023_03_15_preview.aio.operations import Operations as OperationClass
+        elif api_version == '2023-06-15-preview':
+            from ..v2023_06_15_preview.aio.operations import Operations as OperationClass
+        elif api_version == '2023-08-15-preview':
+            from ..v2023_08_15_preview.aio.operations import Operations as OperationClass
+        elif api_version == '2023-10-15':
+            from ..v2023_10_15.aio.operations import Operations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'operations'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def update_runs(self):
         """Instance depends on the API version:
 
            * 2023-03-15-preview: :class:`UpdateRunsOperations<azure.mgmt.containerservicefleet.v2023_03_15_preview.aio.operations.UpdateRunsOperations>`
+           * 2023-06-15-preview: :class:`UpdateRunsOperations<azure.mgmt.containerservicefleet.v2023_06_15_preview.aio.operations.UpdateRunsOperations>`
+           * 2023-08-15-preview: :class:`UpdateRunsOperations<azure.mgmt.containerservicefleet.v2023_08_15_preview.aio.operations.UpdateRunsOperations>`
+           * 2023-10-15: :class:`UpdateRunsOperations<azure.mgmt.containerservicefleet.v2023_10_15.aio.operations.UpdateRunsOperations>`
         """
         api_version = self._get_api_version('update_runs')
         if api_version == '2023-03-15-preview':
             from ..v2023_03_15_preview.aio.operations import UpdateRunsOperations as OperationClass
+        elif api_version == '2023-06-15-preview':
+            from ..v2023_06_15_preview.aio.operations import UpdateRunsOperations as OperationClass
+        elif api_version == '2023-08-15-preview':
+            from ..v2023_08_15_preview.aio.operations import UpdateRunsOperations as OperationClass
+        elif api_version == '2023-10-15':
+            from ..v2023_10_15.aio.operations import UpdateRunsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'update_runs'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     async def close(self):
         await self._client.close()

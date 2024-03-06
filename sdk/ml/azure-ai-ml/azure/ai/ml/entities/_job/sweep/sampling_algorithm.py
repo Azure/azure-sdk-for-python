@@ -2,15 +2,15 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from abc import ABC
-from typing import Optional, Union
+from typing import Any, Optional, Union, cast
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     BayesianSamplingAlgorithm as RestBayesianSamplingAlgorithm,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import GridSamplingAlgorithm as RestGridSamplingAlgorithm
-from azure.ai.ml._restclient.v2023_04_01_preview.models import RandomSamplingAlgorithm as RestRandomSamplingAlgorithm
-from azure.ai.ml._restclient.v2023_04_01_preview.models import SamplingAlgorithm as RestSamplingAlgorithm
-from azure.ai.ml._restclient.v2023_04_01_preview.models import SamplingAlgorithmType
+from azure.ai.ml._restclient.v2023_08_01_preview.models import GridSamplingAlgorithm as RestGridSamplingAlgorithm
+from azure.ai.ml._restclient.v2023_08_01_preview.models import RandomSamplingAlgorithm as RestRandomSamplingAlgorithm
+from azure.ai.ml._restclient.v2023_08_01_preview.models import SamplingAlgorithm as RestSamplingAlgorithm
+from azure.ai.ml._restclient.v2023_08_01_preview.models import SamplingAlgorithmType
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
@@ -24,11 +24,11 @@ class SamplingAlgorithm(ABC, RestTranslatableMixin):
         self.type = None
 
     @classmethod
-    def _from_rest_object(cls, obj: RestSamplingAlgorithm) -> "SamplingAlgorithm":
+    def _from_rest_object(cls, obj: RestSamplingAlgorithm) -> Optional["SamplingAlgorithm"]:
         if not obj:
             return None
 
-        sampling_algorithm = None
+        sampling_algorithm: Any = None
         if obj.sampling_algorithm_type == SamplingAlgorithmType.RANDOM:
             sampling_algorithm = RandomSamplingAlgorithm._from_rest_object(obj)  # pylint: disable=protected-access
 
@@ -38,7 +38,7 @@ class SamplingAlgorithm(ABC, RestTranslatableMixin):
         if obj.sampling_algorithm_type == SamplingAlgorithmType.BAYESIAN:
             sampling_algorithm = BayesianSamplingAlgorithm._from_rest_object(obj)  # pylint: disable=protected-access
 
-        return sampling_algorithm
+        return cast(Optional["SamplingAlgorithm"], sampling_algorithm)
 
 
 class RandomSamplingAlgorithm(SamplingAlgorithm):
@@ -54,8 +54,7 @@ class RandomSamplingAlgorithm(SamplingAlgorithm):
 
     .. admonition:: Example:
 
-
-        .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
+        .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_random_sampling_algorithm]
             :end-before: [END configure_sweep_job_random_sampling_algorithm]
             :language: python
@@ -97,8 +96,7 @@ class GridSamplingAlgorithm(SamplingAlgorithm):
 
     .. admonition:: Example:
 
-
-        .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
+        .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_grid_sampling_algorithm]
             :end-before: [END configure_sweep_job_grid_sampling_algorithm]
             :language: python
@@ -124,8 +122,7 @@ class BayesianSamplingAlgorithm(SamplingAlgorithm):
 
     .. admonition:: Example:
 
-
-        .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
+        .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_bayesian_sampling_algorithm]
             :end-before: [END configure_sweep_job_bayesian_sampling_algorithm]
             :language: python

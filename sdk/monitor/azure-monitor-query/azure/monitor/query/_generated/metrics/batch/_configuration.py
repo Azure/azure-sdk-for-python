@@ -8,13 +8,12 @@
 
 from typing import Any
 
-from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
 
 VERSION = "unknown"
 
 
-class MonitorBatchMetricsClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
+class MonitorBatchMetricsClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
     """Configuration for MonitorBatchMetricsClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -24,14 +23,13 @@ class MonitorBatchMetricsClientConfiguration(Configuration):  # pylint: disable=
      https://eastus.metrics.monitor.azure.com. The region should match the region of the requested
      resources. For global resources, the region should be 'global'. Required.
     :type endpoint: str
-    :keyword api_version: Api Version. Default value is "2023-05-01-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2023-10-01". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, endpoint: str, **kwargs: Any) -> None:
-        super(MonitorBatchMetricsClientConfiguration, self).__init__(**kwargs)
-        api_version: str = kwargs.pop("api_version", "2023-05-01-preview")
+        api_version: str = kwargs.pop("api_version", "2023-10-01")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
@@ -39,6 +37,7 @@ class MonitorBatchMetricsClientConfiguration(Configuration):  # pylint: disable=
         self.endpoint = endpoint
         self.api_version = api_version
         kwargs.setdefault("sdk_moniker", "monitor-query/{}".format(VERSION))
+        self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
 
     def _configure(self, **kwargs: Any) -> None:
@@ -47,7 +46,7 @@ class MonitorBatchMetricsClientConfiguration(Configuration):  # pylint: disable=
         self.proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)
         self.logging_policy = kwargs.get("logging_policy") or policies.NetworkTraceLoggingPolicy(**kwargs)
         self.http_logging_policy = kwargs.get("http_logging_policy") or policies.HttpLoggingPolicy(**kwargs)
-        self.retry_policy = kwargs.get("retry_policy") or policies.RetryPolicy(**kwargs)
         self.custom_hook_policy = kwargs.get("custom_hook_policy") or policies.CustomHookPolicy(**kwargs)
         self.redirect_policy = kwargs.get("redirect_policy") or policies.RedirectPolicy(**kwargs)
+        self.retry_policy = kwargs.get("retry_policy") or policies.RetryPolicy(**kwargs)
         self.authentication_policy = kwargs.get("authentication_policy")

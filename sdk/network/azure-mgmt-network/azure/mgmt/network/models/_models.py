@@ -5913,7 +5913,8 @@ class Subnet(SubResource):  # pylint: disable=too-many-instance-attributes
      "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar private_endpoint_network_policies: Enable or Disable apply network policies on private
-     end point in the subnet. Known values are: "Enabled" and "Disabled".
+     end point in the subnet. Known values are: "Enabled", "Disabled",
+     "NetworkSecurityGroupEnabled", and "RouteTableEnabled".
     :vartype private_endpoint_network_policies: str or
      ~azure.mgmt.network.models.VirtualNetworkPrivateEndpointNetworkPolicies
     :ivar private_link_service_network_policies: Enable or Disable apply network policies on
@@ -5924,6 +5925,10 @@ class Subnet(SubResource):  # pylint: disable=too-many-instance-attributes
      network resource.
     :vartype application_gateway_ip_configurations:
      list[~azure.mgmt.network.models.ApplicationGatewayIPConfiguration]
+    :ivar default_outbound_access: Set this property to false to disable default outbound
+     connectivity for all VMs in the subnet. This property can only be set at the time of subnet
+     creation and cannot be updated for an existing subnet.
+    :vartype default_outbound_access: bool
     """
 
     _validation = {
@@ -5964,9 +5969,10 @@ class Subnet(SubResource):  # pylint: disable=too-many-instance-attributes
             "key": "properties.applicationGatewayIPConfigurations",
             "type": "[ApplicationGatewayIPConfiguration]",
         },
+        "default_outbound_access": {"key": "properties.defaultOutboundAccess", "type": "bool"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
@@ -5988,6 +5994,7 @@ class Subnet(SubResource):  # pylint: disable=too-many-instance-attributes
             str, "_models.VirtualNetworkPrivateLinkServiceNetworkPolicies"
         ] = "Enabled",
         application_gateway_ip_configurations: Optional[List["_models.ApplicationGatewayIPConfiguration"]] = None,
+        default_outbound_access: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -6019,7 +6026,8 @@ class Subnet(SubResource):  # pylint: disable=too-many-instance-attributes
         :keyword delegations: An array of references to the delegations on the subnet.
         :paramtype delegations: list[~azure.mgmt.network.models.Delegation]
         :keyword private_endpoint_network_policies: Enable or Disable apply network policies on private
-         end point in the subnet. Known values are: "Enabled" and "Disabled".
+         end point in the subnet. Known values are: "Enabled", "Disabled",
+         "NetworkSecurityGroupEnabled", and "RouteTableEnabled".
         :paramtype private_endpoint_network_policies: str or
          ~azure.mgmt.network.models.VirtualNetworkPrivateEndpointNetworkPolicies
         :keyword private_link_service_network_policies: Enable or Disable apply network policies on
@@ -6030,6 +6038,10 @@ class Subnet(SubResource):  # pylint: disable=too-many-instance-attributes
          virtual network resource.
         :paramtype application_gateway_ip_configurations:
          list[~azure.mgmt.network.models.ApplicationGatewayIPConfiguration]
+        :keyword default_outbound_access: Set this property to false to disable default outbound
+         connectivity for all VMs in the subnet. This property can only be set at the time of subnet
+         creation and cannot be updated for an existing subnet.
+        :paramtype default_outbound_access: bool
         """
         super().__init__(id=id, **kwargs)
         self.name = name
@@ -6054,6 +6066,7 @@ class Subnet(SubResource):  # pylint: disable=too-many-instance-attributes
         self.private_endpoint_network_policies = private_endpoint_network_policies
         self.private_link_service_network_policies = private_link_service_network_policies
         self.application_gateway_ip_configurations = application_gateway_ip_configurations
+        self.default_outbound_access = default_outbound_access
 
 class SubnetListResult(_serialization.Model):
     """Response for ListSubnets API service callRetrieves all subnet that belongs to a virtual
@@ -6384,6 +6397,9 @@ class VirtualNetworkGateway(Resource):  # pylint: disable=too-many-instance-attr
     :vartype extended_location: ~azure.mgmt.network.models.ExtendedLocation
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
+    :ivar auto_scale_configuration: Autoscale configuration for virutal network gateway.
+    :vartype auto_scale_configuration:
+     ~azure.mgmt.network.models.VirtualNetworkGatewayAutoScaleConfiguration
     :ivar ip_configurations: IP configurations for virtual network gateway.
     :vartype ip_configurations:
      list[~azure.mgmt.network.models.VirtualNetworkGatewayIPConfiguration]
@@ -6472,6 +6488,10 @@ class VirtualNetworkGateway(Resource):  # pylint: disable=too-many-instance-attr
         "tags": {"key": "tags", "type": "{str}"},
         "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
         "etag": {"key": "etag", "type": "str"},
+        "auto_scale_configuration": {
+            "key": "properties.autoScaleConfiguration",
+            "type": "VirtualNetworkGatewayAutoScaleConfiguration",
+        },
         "ip_configurations": {"key": "properties.ipConfigurations", "type": "[VirtualNetworkGatewayIPConfiguration]"},
         "gateway_type": {"key": "properties.gatewayType", "type": "str"},
         "vpn_type": {"key": "properties.vpnType", "type": "str"},
@@ -6508,6 +6528,7 @@ class VirtualNetworkGateway(Resource):  # pylint: disable=too-many-instance-attr
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         extended_location: Optional["_models.ExtendedLocation"] = None,
+        auto_scale_configuration: Optional["_models.VirtualNetworkGatewayAutoScaleConfiguration"] = None,
         ip_configurations: Optional[List["_models.VirtualNetworkGatewayIPConfiguration"]] = None,
         gateway_type: Optional[Union[str, "_models.VirtualNetworkGatewayType"]] = None,
         vpn_type: Optional[Union[str, "_models.VpnType"]] = None,
@@ -6540,6 +6561,9 @@ class VirtualNetworkGateway(Resource):  # pylint: disable=too-many-instance-attr
         :paramtype tags: dict[str, str]
         :keyword extended_location: The extended location of type local virtual network gateway.
         :paramtype extended_location: ~azure.mgmt.network.models.ExtendedLocation
+        :keyword auto_scale_configuration: Autoscale configuration for virutal network gateway.
+        :paramtype auto_scale_configuration:
+         ~azure.mgmt.network.models.VirtualNetworkGatewayAutoScaleConfiguration
         :keyword ip_configurations: IP configurations for virtual network gateway.
         :paramtype ip_configurations:
          list[~azure.mgmt.network.models.VirtualNetworkGatewayIPConfiguration]
@@ -6607,6 +6631,7 @@ class VirtualNetworkGateway(Resource):  # pylint: disable=too-many-instance-attr
         super().__init__(id=id, location=location, tags=tags, **kwargs)
         self.extended_location = extended_location
         self.etag = None
+        self.auto_scale_configuration = auto_scale_configuration
         self.ip_configurations = ip_configurations
         self.gateway_type = gateway_type
         self.vpn_type = vpn_type
@@ -7045,11 +7070,11 @@ class VirtualNetworkGatewaySku(_serialization.Model):
 
     :ivar name: Gateway SKU name. Known values are: "Basic", "HighPerformance", "Standard",
      "UltraPerformance", "VpnGw1", "VpnGw2", "VpnGw3", "VpnGw4", "VpnGw5", "VpnGw1AZ", "VpnGw2AZ",
-     "VpnGw3AZ", "VpnGw4AZ", "VpnGw5AZ", "ErGw1AZ", "ErGw2AZ", and "ErGw3AZ".
+     "VpnGw3AZ", "VpnGw4AZ", "VpnGw5AZ", "ErGw1AZ", "ErGw2AZ", "ErGw3AZ", and "ErGwScale".
     :vartype name: str or ~azure.mgmt.network.models.VirtualNetworkGatewaySkuName
     :ivar tier: Gateway SKU tier. Known values are: "Basic", "HighPerformance", "Standard",
      "UltraPerformance", "VpnGw1", "VpnGw2", "VpnGw3", "VpnGw4", "VpnGw5", "VpnGw1AZ", "VpnGw2AZ",
-     "VpnGw3AZ", "VpnGw4AZ", "VpnGw5AZ", "ErGw1AZ", "ErGw2AZ", and "ErGw3AZ".
+     "VpnGw3AZ", "VpnGw4AZ", "VpnGw5AZ", "ErGw1AZ", "ErGw2AZ", "ErGw3AZ", and "ErGwScale".
     :vartype tier: str or ~azure.mgmt.network.models.VirtualNetworkGatewaySkuTier
     :ivar capacity: The capacity.
     :vartype capacity: int
@@ -7075,11 +7100,11 @@ class VirtualNetworkGatewaySku(_serialization.Model):
         """
         :keyword name: Gateway SKU name. Known values are: "Basic", "HighPerformance", "Standard",
          "UltraPerformance", "VpnGw1", "VpnGw2", "VpnGw3", "VpnGw4", "VpnGw5", "VpnGw1AZ", "VpnGw2AZ",
-         "VpnGw3AZ", "VpnGw4AZ", "VpnGw5AZ", "ErGw1AZ", "ErGw2AZ", and "ErGw3AZ".
+         "VpnGw3AZ", "VpnGw4AZ", "VpnGw5AZ", "ErGw1AZ", "ErGw2AZ", "ErGw3AZ", and "ErGwScale".
         :paramtype name: str or ~azure.mgmt.network.models.VirtualNetworkGatewaySkuName
         :keyword tier: Gateway SKU tier. Known values are: "Basic", "HighPerformance", "Standard",
          "UltraPerformance", "VpnGw1", "VpnGw2", "VpnGw3", "VpnGw4", "VpnGw5", "VpnGw1AZ", "VpnGw2AZ",
-         "VpnGw3AZ", "VpnGw4AZ", "VpnGw5AZ", "ErGw1AZ", "ErGw2AZ", and "ErGw3AZ".
+         "VpnGw3AZ", "VpnGw4AZ", "VpnGw5AZ", "ErGw1AZ", "ErGw2AZ", "ErGw3AZ", and "ErGwScale".
         :paramtype tier: str or ~azure.mgmt.network.models.VirtualNetworkGatewaySkuTier
         """
         super().__init__(**kwargs)
@@ -22204,7 +22229,8 @@ class WebApplicationFirewallCustomRule(_serialization.Model):
     :vartype match_conditions: list[~azure.mgmt.network.models.MatchCondition]
     :ivar group_by_user_session: List of user session identifier group by clauses.
     :vartype group_by_user_session: list[~azure.mgmt.network.models.GroupByUserSession]
-    :ivar action: Type of Actions. Required. Known values are: "Allow", "Block", and "Log".
+    :ivar action: Type of Actions. Required. Known values are: "Allow", "Block", "Log", and
+     "JSChallenge".
     :vartype action: str or ~azure.mgmt.network.models.WebApplicationFirewallAction
     """
 
@@ -22270,7 +22296,8 @@ class WebApplicationFirewallCustomRule(_serialization.Model):
         :keyword group_by_user_session: List of user session identifier group by clauses.
         :paramtype group_by_user_session:
          list[~azure.mgmt.network.models.GroupByUserSession]
-        :keyword action: Type of Actions. Required. Known values are: "Allow", "Block", and "Log".
+        :keyword action: Type of Actions. Required. Known values are: "Allow", "Block", "Log", and
+         "JSChallenge".
         :paramtype action: str or ~azure.mgmt.network.models.WebApplicationFirewallAction
         """
         super().__init__(**kwargs)
@@ -22904,6 +22931,8 @@ class BastionHost(Resource):  # pylint: disable=too-many-instance-attributes
     :vartype location: str
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
+    :ivar zones: A list of availability zones denoting where the resource needs to come from.
+    :vartype zones: list[str]
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
     :ivar sku: The sku of this Bastion Host.
@@ -22913,6 +22942,12 @@ class BastionHost(Resource):  # pylint: disable=too-many-instance-attributes
      list[~azure.mgmt.network.models.BastionHostIPConfiguration]
     :ivar dns_name: FQDN for the endpoint on which bastion host is accessible.
     :vartype dns_name: str
+    :ivar virtual_network: Reference to an existing virtual network required for Developer Bastion
+     Host only.
+    :vartype virtual_network: ~azure.mgmt.network.models.SubResource
+    :ivar network_acls:
+    :vartype network_acls:
+     ~azure.mgmt.network.models.BastionHostPropertiesFormatNetworkAcls
     :ivar provisioning_state: The provisioning state of the bastion host resource. Known values
      are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
@@ -22946,10 +22981,13 @@ class BastionHost(Resource):  # pylint: disable=too-many-instance-attributes
         "type": {"key": "type", "type": "str"},
         "location": {"key": "location", "type": "str"},
         "tags": {"key": "tags", "type": "{str}"},
+        "zones": {"key": "zones", "type": "[str]"},
         "etag": {"key": "etag", "type": "str"},
         "sku": {"key": "sku", "type": "Sku"},
         "ip_configurations": {"key": "properties.ipConfigurations", "type": "[BastionHostIPConfiguration]"},
         "dns_name": {"key": "properties.dnsName", "type": "str"},
+        "virtual_network": {"key": "properties.virtualNetwork", "type": "SubResource"},
+        "network_acls": {"key": "properties.networkAcls", "type": "BastionHostPropertiesFormatNetworkAcls"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "scale_units": {"key": "properties.scaleUnits", "type": "int"},
         "disable_copy_paste": {"key": "properties.disableCopyPaste", "type": "bool"},
@@ -22966,9 +23004,12 @@ class BastionHost(Resource):  # pylint: disable=too-many-instance-attributes
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
+        zones: Optional[List[str]] = None,
         sku: Optional["_models.Sku"] = None,
         ip_configurations: Optional[List["_models.BastionHostIPConfiguration"]] = None,
         dns_name: Optional[str] = None,
+        virtual_network: Optional["_models.SubResource"] = None,
+        network_acls: Optional["_models.BastionHostPropertiesFormatNetworkAcls"] = None,
         scale_units: Optional[int] = None,
         disable_copy_paste: bool = False,
         enable_file_copy: bool = False,
@@ -22985,6 +23026,8 @@ class BastionHost(Resource):  # pylint: disable=too-many-instance-attributes
         :paramtype location: str
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
+        :keyword zones: A list of availability zones denoting where the resource needs to come from.
+        :paramtype zones: list[str]
         :keyword sku: The sku of this Bastion Host.
         :paramtype sku: ~azure.mgmt.network.models.Sku
         :keyword ip_configurations: IP configuration of the Bastion Host resource.
@@ -22992,6 +23035,12 @@ class BastionHost(Resource):  # pylint: disable=too-many-instance-attributes
          list[~azure.mgmt.network.models.BastionHostIPConfiguration]
         :keyword dns_name: FQDN for the endpoint on which bastion host is accessible.
         :paramtype dns_name: str
+        :keyword virtual_network: Reference to an existing virtual network required for Developer
+         Bastion Host only.
+        :paramtype virtual_network: ~azure.mgmt.network.models.SubResource
+        :keyword network_acls:
+        :paramtype network_acls:
+         ~azure.mgmt.network.models.BastionHostPropertiesFormatNetworkAcls
         :keyword scale_units: The scale units for the Bastion Host resource.
         :paramtype scale_units: int
         :keyword disable_copy_paste: Enable/Disable Copy/Paste feature of the Bastion Host resource.
@@ -23008,10 +23057,13 @@ class BastionHost(Resource):  # pylint: disable=too-many-instance-attributes
         :paramtype enable_kerberos: bool
         """
         super().__init__(id=id, location=location, tags=tags, **kwargs)
+        self.zones = zones
         self.etag = None
         self.sku = sku
         self.ip_configurations = ip_configurations
         self.dns_name = dns_name
+        self.virtual_network = virtual_network
+        self.network_acls = network_acls
         self.provisioning_state = None
         self.scale_units = scale_units
         self.disable_copy_paste = disable_copy_paste
@@ -24282,6 +24334,9 @@ class FirewallPolicy(Resource):  # pylint: disable=too-many-instance-attributes
     :vartype etag: str
     :ivar identity: The identity of the firewall policy.
     :vartype identity: ~azure.mgmt.network.models.ManagedServiceIdentity
+    :ivar size: A read-only string that represents the size of the FirewallPolicyPropertiesFormat
+     in MB. (ex 0.5MB).
+    :vartype size: str
     :ivar rule_collection_groups: List of references to FirewallPolicyRuleCollectionGroups.
     :vartype rule_collection_groups: list[~azure.mgmt.network.models.SubResource]
     :ivar provisioning_state: The provisioning state of the firewall policy resource. Known values
@@ -24325,6 +24380,7 @@ class FirewallPolicy(Resource):  # pylint: disable=too-many-instance-attributes
         "name": {"readonly": True},
         "type": {"readonly": True},
         "etag": {"readonly": True},
+        "size": {"readonly": True},
         "rule_collection_groups": {"readonly": True},
         "provisioning_state": {"readonly": True},
         "firewalls": {"readonly": True},
@@ -24339,6 +24395,7 @@ class FirewallPolicy(Resource):  # pylint: disable=too-many-instance-attributes
         "tags": {"key": "tags", "type": "{str}"},
         "etag": {"key": "etag", "type": "str"},
         "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
+        "size": {"key": "properties.size", "type": "str"},
         "rule_collection_groups": {"key": "properties.ruleCollectionGroups", "type": "[SubResource]"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "base_policy": {"key": "properties.basePolicy", "type": "SubResource"},
@@ -24419,6 +24476,7 @@ class FirewallPolicy(Resource):  # pylint: disable=too-many-instance-attributes
         super().__init__(id=id, location=location, tags=tags, **kwargs)
         self.etag = None
         self.identity = identity
+        self.size = None
         self.rule_collection_groups = None
         self.provisioning_state = None
         self.base_policy = base_policy
@@ -25908,7 +25966,7 @@ class ManagedRuleOverride(_serialization.Model):
      are: "Disabled" and "Enabled".
     :vartype state: str or ~azure.mgmt.network.models.ManagedRuleEnabledState
     :ivar action: Describes the override action to be applied when rule matches. Known values are:
-     "AnomalyScoring", "Allow", "Block", and "Log".
+     "AnomalyScoring", "Allow", "Block", "Log", and "JSChallenge".
     :vartype action: str or ~azure.mgmt.network.models.ActionType
     """
 
@@ -25937,7 +25995,7 @@ class ManagedRuleOverride(_serialization.Model):
          values are: "Disabled" and "Enabled".
         :paramtype state: str or ~azure.mgmt.network.models.ManagedRuleEnabledState
         :keyword action: Describes the override action to be applied when rule matches. Known values
-         are: "AnomalyScoring", "Allow", "Block", and "Log".
+         are: "AnomalyScoring", "Allow", "Block", "Log", and "JSChallenge".
         :paramtype action: str or ~azure.mgmt.network.models.ActionType
         """
         super().__init__(**kwargs)
@@ -26861,7 +26919,7 @@ class BastionShareableLink(_serialization.Model):
         self.message = None
 
 class BastionShareableLinkListRequest(_serialization.Model):
-    """Post request for all the Bastion Shareable Link endpoints.
+    """Post request for Create/Delete/Get Bastion Shareable Link endpoints.
 
     :ivar vms: List of VM references.
     :vartype vms: list[~azure.mgmt.network.models.BastionShareableLink]
@@ -28213,6 +28271,10 @@ class NetworkVirtualAppliance(Resource):  # pylint: disable=too-many-instance-at
     :ivar additional_nics: Details required for Additional Network Interface.
     :vartype additional_nics:
      list[~azure.mgmt.network.models.VirtualApplianceAdditionalNicProperties]
+    :ivar internet_ingress_public_ips: List of Resource Uri of Public IPs for Internet Ingress
+     Scenario.
+    :vartype internet_ingress_public_ips:
+     list[~azure.mgmt.network.models.InternetIngressPublicIpsProperties]
     :ivar virtual_appliance_sites: List of references to VirtualApplianceSite.
     :vartype virtual_appliance_sites: list[~azure.mgmt.network.models.SubResource]
     :ivar virtual_appliance_connections: List of references to VirtualApplianceConnections.
@@ -28264,6 +28326,10 @@ class NetworkVirtualAppliance(Resource):  # pylint: disable=too-many-instance-at
         "ssh_public_key": {"key": "properties.sshPublicKey", "type": "str"},
         "virtual_appliance_nics": {"key": "properties.virtualApplianceNics", "type": "[VirtualApplianceNicProperties]"},
         "additional_nics": {"key": "properties.additionalNics", "type": "[VirtualApplianceAdditionalNicProperties]"},
+        "internet_ingress_public_ips": {
+            "key": "properties.internetIngressPublicIps",
+            "type": "[InternetIngressPublicIpsProperties]",
+        },
         "virtual_appliance_sites": {"key": "properties.virtualApplianceSites", "type": "[SubResource]"},
         "virtual_appliance_connections": {"key": "properties.virtualApplianceConnections", "type": "[SubResource]"},
         "inbound_security_rules": {"key": "properties.inboundSecurityRules", "type": "[SubResource]"},
@@ -28291,6 +28357,7 @@ class NetworkVirtualAppliance(Resource):  # pylint: disable=too-many-instance-at
         virtual_appliance_asn: Optional[int] = None,
         ssh_public_key: Optional[str] = None,
         additional_nics: Optional[List["_models.VirtualApplianceAdditionalNicProperties"]] = None,
+        internet_ingress_public_ips: Optional[List["_models.InternetIngressPublicIpsProperties"]] = None,
         delegation: Optional["_models.DelegationProperties"] = None,
         partner_managed_resource: Optional["_models.PartnerManagedResourceProperties"] = None,
         **kwargs: Any
@@ -28322,6 +28389,10 @@ class NetworkVirtualAppliance(Resource):  # pylint: disable=too-many-instance-at
         :keyword additional_nics: Details required for Additional Network Interface.
         :paramtype additional_nics:
          list[~azure.mgmt.network.models.VirtualApplianceAdditionalNicProperties]
+        :keyword internet_ingress_public_ips: List of Resource Uri of Public IPs for Internet Ingress
+         Scenario.
+        :paramtype internet_ingress_public_ips:
+         list[~azure.mgmt.network.models.InternetIngressPublicIpsProperties]
         :keyword delegation: The delegation for the Virtual Appliance.
         :paramtype delegation: ~azure.mgmt.network.models.DelegationProperties
         :keyword partner_managed_resource: The delegation for the Virtual Appliance.
@@ -28341,6 +28412,7 @@ class NetworkVirtualAppliance(Resource):  # pylint: disable=too-many-instance-at
         self.ssh_public_key = ssh_public_key
         self.virtual_appliance_nics = None
         self.additional_nics = additional_nics
+        self.internet_ingress_public_ips = internet_ingress_public_ips
         self.virtual_appliance_sites = None
         self.virtual_appliance_connections = None
         self.inbound_security_rules = None
@@ -30337,6 +30409,9 @@ class FirewallPolicyRuleCollectionGroup(SubResource):
     :vartype etag: str
     :ivar type: Rule Group type.
     :vartype type: str
+    :ivar size: A read-only string that represents the size of the
+     FirewallPolicyRuleCollectionGroupProperties in MB. (ex 1.2MB).
+    :vartype size: str
     :ivar priority: Priority of the Firewall Policy Rule Collection Group resource.
     :vartype priority: int
     :ivar rule_collections: Group of Firewall Policy rule collections.
@@ -30350,6 +30425,7 @@ class FirewallPolicyRuleCollectionGroup(SubResource):
     _validation = {
         "etag": {"readonly": True},
         "type": {"readonly": True},
+        "size": {"readonly": True},
         "priority": {"maximum": 65000, "minimum": 100},
         "provisioning_state": {"readonly": True},
     }
@@ -30359,6 +30435,7 @@ class FirewallPolicyRuleCollectionGroup(SubResource):
         "name": {"key": "name", "type": "str"},
         "etag": {"key": "etag", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "size": {"key": "properties.size", "type": "str"},
         "priority": {"key": "properties.priority", "type": "int"},
         "rule_collections": {"key": "properties.ruleCollections", "type": "[FirewallPolicyRuleCollection]"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
@@ -30389,6 +30466,7 @@ class FirewallPolicyRuleCollectionGroup(SubResource):
         self.name = name
         self.etag = None
         self.type = None
+        self.size = None
         self.priority = priority
         self.rule_collections = rule_collections
         self.provisioning_state = None
@@ -32373,9 +32451,16 @@ class FirewallPolicyCertificateAuthority(_serialization.Model):
 class FirewallPolicyIntrusionDetection(_serialization.Model):
     """Configuration for intrusion detection mode and rules.
 
-    :ivar mode: Intrusion detection general state. Known values are: "Off", "Alert", and "Deny".
+    :ivar mode: Intrusion detection general state. When attached to a parent policy, the firewall's
+     effective IDPS mode is the stricter mode of the two. Known values are: "Off", "Alert", and
+     "Deny".
     :vartype mode: str or
      ~azure.mgmt.network.models.FirewallPolicyIntrusionDetectionStateType
+    :ivar profile: IDPS profile name. When attached to a parent policy, the firewall's effective
+     profile is the profile name of the parent policy. Known values are: "Basic", "Standard",
+     "Advanced", and "Extended".
+    :vartype profile: str or
+     ~azure.mgmt.network.models.FirewallPolicyIntrusionDetectionProfileType
     :ivar configuration: Intrusion detection configuration properties.
     :vartype configuration:
      ~azure.mgmt.network.models.FirewallPolicyIntrusionDetectionConfiguration
@@ -32383,6 +32468,7 @@ class FirewallPolicyIntrusionDetection(_serialization.Model):
 
     _attribute_map = {
         "mode": {"key": "mode", "type": "str"},
+        "profile": {"key": "profile", "type": "str"},
         "configuration": {"key": "configuration", "type": "FirewallPolicyIntrusionDetectionConfiguration"},
     }
 
@@ -32390,19 +32476,28 @@ class FirewallPolicyIntrusionDetection(_serialization.Model):
         self,
         *,
         mode: Optional[Union[str, "_models.FirewallPolicyIntrusionDetectionStateType"]] = None,
+        profile: Optional[Union[str, "_models.FirewallPolicyIntrusionDetectionProfileType"]] = None,
         configuration: Optional["_models.FirewallPolicyIntrusionDetectionConfiguration"] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword mode: Intrusion detection general state. Known values are: "Off", "Alert", and "Deny".
+        :keyword mode: Intrusion detection general state. When attached to a parent policy, the
+         firewall's effective IDPS mode is the stricter mode of the two. Known values are: "Off",
+         "Alert", and "Deny".
         :paramtype mode: str or
          ~azure.mgmt.network.models.FirewallPolicyIntrusionDetectionStateType
+        :keyword profile: IDPS profile name. When attached to a parent policy, the firewall's effective
+         profile is the profile name of the parent policy. Known values are: "Basic", "Standard",
+         "Advanced", and "Extended".
+        :paramtype profile: str or
+         ~azure.mgmt.network.models.FirewallPolicyIntrusionDetectionProfileType
         :keyword configuration: Intrusion detection configuration properties.
         :paramtype configuration:
          ~azure.mgmt.network.models.FirewallPolicyIntrusionDetectionConfiguration
         """
         super().__init__(**kwargs)
         self.mode = mode
+        self.profile = profile
         self.configuration = configuration
 
 class FirewallPolicyIntrusionDetectionBypassTrafficSpecifications(_serialization.Model):
@@ -33097,7 +33192,8 @@ class LoadBalancerVipSwapRequestFrontendIPConfiguration(_serialization.Model):
 class Sku(_serialization.Model):
     """The sku of this Bastion Host.
 
-    :ivar name: The name of this Bastion Host. Known values are: "Basic" and "Standard".
+    :ivar name: The name of this Bastion Host. Known values are: "Basic", "Standard", and
+     "Developer".
     :vartype name: str or ~azure.mgmt.network.models.BastionHostSkuName
     """
 
@@ -33107,7 +33203,8 @@ class Sku(_serialization.Model):
 
     def __init__(self, *, name: Union[str, "_models.BastionHostSkuName"] = "Standard", **kwargs: Any) -> None:
         """
-        :keyword name: The name of this Bastion Host. Known values are: "Basic" and "Standard".
+        :keyword name: The name of this Bastion Host. Known values are: "Basic", "Standard", and
+         "Developer".
         :paramtype name: str or ~azure.mgmt.network.models.BastionHostSkuName
         """
         super().__init__(**kwargs)
@@ -37415,6 +37512,35 @@ class SystemData(_serialization.Model):
         self.last_modified_by_type = last_modified_by_type
         self.last_modified_at = last_modified_at
 
+class UpdateTagsRequest(_serialization.Model):
+    """Update tags request.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Network security perimeter identifier.
+    :vartype id: str
+    :ivar tags: List of tags for Network Security Perimeter.
+    :vartype tags: dict[str, str]
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+    }
+
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword tags: List of tags for Network Security Perimeter.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(**kwargs)
+        self.id = None
+        self.tags = tags
+
 class UserRule(BaseUserRule):  # pylint: disable=too-many-instance-attributes
     """Network security user rule.
 
@@ -37909,7 +38035,7 @@ class ApplicationGatewayGlobalConfiguration(_serialization.Model):
         self.enable_request_buffering = enable_request_buffering
         self.enable_response_buffering = enable_response_buffering
 
-class ApplicationGatewayListener(SubResource):
+class ApplicationGatewayListener(SubResource):  # pylint: disable=too-many-instance-attributes
     """Listener of an application gateway.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -37935,6 +38061,9 @@ class ApplicationGatewayListener(SubResource):
     :ivar provisioning_state: The provisioning state of the listener resource. Known values are:
      "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
+    :ivar host_names: List of Server Name Indications(SNI) for TLS Multi-site Listener that allows
+     special wildcard characters as well.
+    :vartype host_names: list[str]
     """
 
     _validation = {
@@ -37954,6 +38083,7 @@ class ApplicationGatewayListener(SubResource):
         "ssl_certificate": {"key": "properties.sslCertificate", "type": "SubResource"},
         "ssl_profile": {"key": "properties.sslProfile", "type": "SubResource"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "host_names": {"key": "properties.hostNames", "type": "[str]"},
     }
 
     def __init__(
@@ -37966,6 +38096,7 @@ class ApplicationGatewayListener(SubResource):
         protocol: Optional[Union[str, "_models.ApplicationGatewayProtocol"]] = None,
         ssl_certificate: Optional["_models.SubResource"] = None,
         ssl_profile: Optional["_models.SubResource"] = None,
+        host_names: Optional[List[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -37985,6 +38116,9 @@ class ApplicationGatewayListener(SubResource):
         :paramtype ssl_certificate: ~azure.mgmt.network.models.SubResource
         :keyword ssl_profile: SSL profile resource of the application gateway.
         :paramtype ssl_profile: ~azure.mgmt.network.models.SubResource
+        :keyword host_names: List of Server Name Indications(SNI) for TLS Multi-site Listener that
+         allows special wildcard characters as well.
+        :paramtype host_names: list[str]
         """
         super().__init__(id=id, **kwargs)
         self.name = name
@@ -37996,6 +38130,7 @@ class ApplicationGatewayListener(SubResource):
         self.ssl_certificate = ssl_certificate
         self.ssl_profile = ssl_profile
         self.provisioning_state = None
+        self.host_names = host_names
 
 class ApplicationGatewayLoadDistributionPolicy(SubResource):
     """Load Distribution Policy of an application gateway.
@@ -39611,126 +39746,6 @@ class NetworkManagerConnectionListResult(_serialization.Model):
         self.value = value
         self.next_link = next_link
 
-class NetworkVirtualApplianceConnection(SubResource):
-    """NetworkVirtualApplianceConnection resource.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar name_properties_name: The name of the resource.
-    :vartype name_properties_name: str
-    :ivar provisioning_state: The provisioning state of the NetworkVirtualApplianceConnection
-     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
-    :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
-    :ivar asn: Network Virtual Appliance ASN.
-    :vartype asn: int
-    :ivar tunnel_identifier: Unique identifier for the connection.
-    :vartype tunnel_identifier: int
-    :ivar bgp_peer_address: List of bgpPeerAddresses for the NVA instances.
-    :vartype bgp_peer_address: list[str]
-    :ivar enable_internet_security: Enable internet security.
-    :vartype enable_internet_security: bool
-    :ivar routing_configuration: The Routing Configuration indicating the associated and propagated
-     route tables on this connection.
-    :vartype routing_configuration: ~azure.mgmt.network.models.RoutingConfigurationNfv
-    """
-
-    _validation = {
-        "provisioning_state": {"readonly": True},
-        "asn": {"maximum": 4294967295, "minimum": 0},
-        "tunnel_identifier": {"maximum": 4294967295, "minimum": 0},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "name_properties_name": {"key": "properties.name", "type": "str"},
-        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
-        "asn": {"key": "properties.asn", "type": "int"},
-        "tunnel_identifier": {"key": "properties.tunnelIdentifier", "type": "int"},
-        "bgp_peer_address": {"key": "properties.bgpPeerAddress", "type": "[str]"},
-        "enable_internet_security": {"key": "properties.enableInternetSecurity", "type": "bool"},
-        "routing_configuration": {"key": "properties.routingConfiguration", "type": "RoutingConfigurationNfv"},
-    }
-
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        name: Optional[str] = None,
-        name_properties_name: Optional[str] = None,
-        asn: Optional[int] = None,
-        tunnel_identifier: Optional[int] = None,
-        bgp_peer_address: Optional[List[str]] = None,
-        enable_internet_security: Optional[bool] = None,
-        routing_configuration: Optional["_models.RoutingConfigurationNfv"] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword id: Resource ID.
-        :paramtype id: str
-        :keyword name: The name of the resource.
-        :paramtype name: str
-        :keyword name_properties_name: The name of the resource.
-        :paramtype name_properties_name: str
-        :keyword asn: Network Virtual Appliance ASN.
-        :paramtype asn: int
-        :keyword tunnel_identifier: Unique identifier for the connection.
-        :paramtype tunnel_identifier: int
-        :keyword bgp_peer_address: List of bgpPeerAddresses for the NVA instances.
-        :paramtype bgp_peer_address: list[str]
-        :keyword enable_internet_security: Enable internet security.
-        :paramtype enable_internet_security: bool
-        :keyword routing_configuration: The Routing Configuration indicating the associated and
-         propagated route tables on this connection.
-        :paramtype routing_configuration:
-         ~azure.mgmt.network.models.RoutingConfigurationNfv
-        """
-        super().__init__(id=id, **kwargs)
-        self.name = name
-        self.name_properties_name = name_properties_name
-        self.provisioning_state = None
-        self.asn = asn
-        self.tunnel_identifier = tunnel_identifier
-        self.bgp_peer_address = bgp_peer_address
-        self.enable_internet_security = enable_internet_security
-        self.routing_configuration = routing_configuration
-
-class NetworkVirtualApplianceConnectionList(_serialization.Model):
-    """NetworkVirtualApplianceConnection list.
-
-    :ivar value: The list of NetworkVirtualAppliance connections.
-    :vartype value: list[~azure.mgmt.network.models.NetworkVirtualApplianceConnection]
-    :ivar next_link: URL to get the next set of results.
-    :vartype next_link: str
-    """
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[NetworkVirtualApplianceConnection]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.NetworkVirtualApplianceConnection"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword value: The list of NetworkVirtualAppliance connections.
-        :paramtype value:
-         list[~azure.mgmt.network.models.NetworkVirtualApplianceConnection]
-        :keyword next_link: URL to get the next set of results.
-        :paramtype next_link: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
 class OrderBy(_serialization.Model):
     """Describes a column to sort.
 
@@ -39985,37 +40000,6 @@ class PrivateEndpointIPConfiguration(_serialization.Model):
         self.group_id = group_id
         self.member_name = member_name
         self.private_ip_address = private_ip_address
-
-class PropagatedRouteTableNfv(_serialization.Model):
-    """Nfv version of the list of RouteTables to advertise the routes to.
-
-    :ivar labels: The list of labels.
-    :vartype labels: list[str]
-    :ivar ids: The list of resource ids of all the RouteTables.
-    :vartype ids: list[~azure.mgmt.network.models.RoutingConfigurationNfvSubResource]
-    """
-
-    _attribute_map = {
-        "labels": {"key": "labels", "type": "[str]"},
-        "ids": {"key": "ids", "type": "[RoutingConfigurationNfvSubResource]"},
-    }
-
-    def __init__(
-        self,
-        *,
-        labels: Optional[List[str]] = None,
-        ids: Optional[List["_models.RoutingConfigurationNfvSubResource"]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword labels: The list of labels.
-        :paramtype labels: list[str]
-        :keyword ids: The list of resource ids of all the RouteTables.
-        :paramtype ids: list[~azure.mgmt.network.models.RoutingConfigurationNfvSubResource]
-        """
-        super().__init__(**kwargs)
-        self.labels = labels
-        self.ids = ids
 
 class PublicIpDdosProtectionStatusResult(_serialization.Model):
     """Response for GetPublicIpAddressDdosProtectionStatusOperation API service call.
@@ -40317,85 +40301,6 @@ class RouteMapRule(_serialization.Model):
         self.match_criteria = match_criteria
         self.actions = actions
         self.next_step_if_matched = next_step_if_matched
-
-class RoutingConfigurationNfv(_serialization.Model):
-    """NFV version of Routing Configuration indicating the associated and propagated route tables for
-    this connection.
-
-    :ivar associated_route_table: The resource id RouteTable associated with this
-     RoutingConfiguration.
-    :vartype associated_route_table:
-     ~azure.mgmt.network.models.RoutingConfigurationNfvSubResource
-    :ivar propagated_route_tables: The list of RouteTables to advertise the routes to.
-    :vartype propagated_route_tables:
-     ~azure.mgmt.network.models.PropagatedRouteTableNfv
-    :ivar inbound_route_map: The resource id of the RouteMap associated with this
-     RoutingConfiguration for inbound learned routes.
-    :vartype inbound_route_map:
-     ~azure.mgmt.network.models.RoutingConfigurationNfvSubResource
-    :ivar outbound_route_map: The resource id of the RouteMap associated with this
-     RoutingConfiguration for outbound advertised routes.
-    :vartype outbound_route_map:
-     ~azure.mgmt.network.models.RoutingConfigurationNfvSubResource
-    """
-
-    _attribute_map = {
-        "associated_route_table": {"key": "associatedRouteTable", "type": "RoutingConfigurationNfvSubResource"},
-        "propagated_route_tables": {"key": "propagatedRouteTables", "type": "PropagatedRouteTableNfv"},
-        "inbound_route_map": {"key": "inboundRouteMap", "type": "RoutingConfigurationNfvSubResource"},
-        "outbound_route_map": {"key": "outboundRouteMap", "type": "RoutingConfigurationNfvSubResource"},
-    }
-
-    def __init__(
-        self,
-        *,
-        associated_route_table: Optional["_models.RoutingConfigurationNfvSubResource"] = None,
-        propagated_route_tables: Optional["_models.PropagatedRouteTableNfv"] = None,
-        inbound_route_map: Optional["_models.RoutingConfigurationNfvSubResource"] = None,
-        outbound_route_map: Optional["_models.RoutingConfigurationNfvSubResource"] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword associated_route_table: The resource id RouteTable associated with this
-         RoutingConfiguration.
-        :paramtype associated_route_table:
-         ~azure.mgmt.network.models.RoutingConfigurationNfvSubResource
-        :keyword propagated_route_tables: The list of RouteTables to advertise the routes to.
-        :paramtype propagated_route_tables:
-         ~azure.mgmt.network.models.PropagatedRouteTableNfv
-        :keyword inbound_route_map: The resource id of the RouteMap associated with this
-         RoutingConfiguration for inbound learned routes.
-        :paramtype inbound_route_map:
-         ~azure.mgmt.network.models.RoutingConfigurationNfvSubResource
-        :keyword outbound_route_map: The resource id of the RouteMap associated with this
-         RoutingConfiguration for outbound advertised routes.
-        :paramtype outbound_route_map:
-         ~azure.mgmt.network.models.RoutingConfigurationNfvSubResource
-        """
-        super().__init__(**kwargs)
-        self.associated_route_table = associated_route_table
-        self.propagated_route_tables = propagated_route_tables
-        self.inbound_route_map = inbound_route_map
-        self.outbound_route_map = outbound_route_map
-
-class RoutingConfigurationNfvSubResource(_serialization.Model):
-    """Reference to RouteTableV3 associated with the connection.
-
-    :ivar resource_uri: Resource ID.
-    :vartype resource_uri: str
-    """
-
-    _attribute_map = {
-        "resource_uri": {"key": "resourceUri", "type": "str"},
-    }
-
-    def __init__(self, *, resource_uri: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword resource_uri: Resource ID.
-        :paramtype resource_uri: str
-        """
-        super().__init__(**kwargs)
-        self.resource_uri = resource_uri
 
 class RoutingIntent(SubResource):
     """The routing intent child resource of a Virtual hub.
@@ -40869,12 +40774,12 @@ class SingleQueryResult(_serialization.Model):  # pylint: disable=too-many-insta
     :ivar mode: The current mode enforced, 0 - Disabled, 1 - Alert, 2 -Deny. Known values are: 0,
      1, and 2.
     :vartype mode: int or ~azure.mgmt.network.models.FirewallPolicyIDPSSignatureMode
-    :ivar severity: Describes the severity of signature: 1 - Low, 2 - Medium, 3 - High. Known
+    :ivar severity: Describes the severity of signature: 1 - High, 2 - Medium, 3 - Low. Known
      values are: 1, 2, and 3.
     :vartype severity: int or
      ~azure.mgmt.network.models.FirewallPolicyIDPSSignatureSeverity
-    :ivar direction: Describes in which direction signature is being enforced: 0 - Inbound, 1 -
-     OutBound, 2 - Bidirectional. Known values are: 0, 1, and 2.
+    :ivar direction: Describes in which direction signature is being enforced: 0 - OutBound, 1 -
+     InBound, 2 - Any, 3 - Internal, 4 - InternalOutbound. Known values are: 0, 1, 2, 3, and 4.
     :vartype direction: int or
      ~azure.mgmt.network.models.FirewallPolicyIDPSSignatureDirection
     :ivar group: Describes the groups the signature belongs to.
@@ -40931,12 +40836,12 @@ class SingleQueryResult(_serialization.Model):  # pylint: disable=too-many-insta
         :keyword mode: The current mode enforced, 0 - Disabled, 1 - Alert, 2 -Deny. Known values are:
          0, 1, and 2.
         :paramtype mode: int or ~azure.mgmt.network.models.FirewallPolicyIDPSSignatureMode
-        :keyword severity: Describes the severity of signature: 1 - Low, 2 - Medium, 3 - High. Known
+        :keyword severity: Describes the severity of signature: 1 - High, 2 - Medium, 3 - Low. Known
          values are: 1, 2, and 3.
         :paramtype severity: int or
          ~azure.mgmt.network.models.FirewallPolicyIDPSSignatureSeverity
-        :keyword direction: Describes in which direction signature is being enforced: 0 - Inbound, 1 -
-         OutBound, 2 - Bidirectional. Known values are: 0, 1, and 2.
+        :keyword direction: Describes in which direction signature is being enforced: 0 - OutBound, 1 -
+         InBound, 2 - Any, 3 - Internal, 4 - InternalOutbound. Known values are: 0, 1, 2, 3, and 4.
         :paramtype direction: int or
          ~azure.mgmt.network.models.FirewallPolicyIDPSSignatureDirection
         :keyword group: Describes the groups the signature belongs to.
@@ -41721,4 +41626,253 @@ class MigratedPools(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.migrated_pools = migrated_pools
+
+class BastionHostPropertiesFormatNetworkAcls(_serialization.Model):
+    """BastionHostPropertiesFormatNetworkAcls.
+
+    :ivar ip_rules: Sets the IP ACL rules for Developer Bastion Host.
+    :vartype ip_rules: list[~azure.mgmt.network.models.IPRule]
+    """
+
+    _attribute_map = {
+        "ip_rules": {"key": "ipRules", "type": "[IPRule]"},
+    }
+
+    def __init__(self, *, ip_rules: Optional[List["_models.IPRule"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword ip_rules: Sets the IP ACL rules for Developer Bastion Host.
+        :paramtype ip_rules: list[~azure.mgmt.network.models.IPRule]
+        """
+        super().__init__(**kwargs)
+        self.ip_rules = ip_rules
+
+class IPRule(_serialization.Model):
+    """IPRule.
+
+    :ivar address_prefix: Specifies the IP or IP range in CIDR format. Only IPV4 address is
+     allowed.
+    :vartype address_prefix: str
+    """
+
+    _attribute_map = {
+        "address_prefix": {"key": "addressPrefix", "type": "str"},
+    }
+
+    def __init__(self, *, address_prefix: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword address_prefix: Specifies the IP or IP range in CIDR format. Only IPV4 address is
+         allowed.
+        :paramtype address_prefix: str
+        """
+        super().__init__(**kwargs)
+        self.address_prefix = address_prefix
+
+class VirtualNetworkGatewayAutoScaleBounds(_serialization.Model):
+    """VirtualNetworkGatewayAutoScaleBounds.
+
+    :ivar min: Minimum scale Units for Autoscale configuration.
+    :vartype min: int
+    :ivar max: Maximum Scale Units for Autoscale configuration.
+    :vartype max: int
+    """
+
+    _attribute_map = {
+        "min": {"key": "min", "type": "int"},
+        "max": {"key": "max", "type": "int"},
+    }
+
+    def __init__(
+        self,
+        *,
+        min: Optional[int] = None,  # pylint: disable=redefined-builtin
+        max: Optional[int] = None,  # pylint: disable=redefined-builtin
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword min: Minimum scale Units for Autoscale configuration.
+        :paramtype min: int
+        :keyword max: Maximum Scale Units for Autoscale configuration.
+        :paramtype max: int
+        """
+        super().__init__(**kwargs)
+        self.min = min
+        self.max = max
+
+class VirtualNetworkGatewayAutoScaleConfiguration(_serialization.Model):
+    """Virtual Network Gateway Autoscale Configuration details.
+
+    :ivar bounds: The bounds of the autoscale configuration.
+    :vartype bounds: ~azure.mgmt.network.models.VirtualNetworkGatewayAutoScaleBounds
+    """
+
+    _attribute_map = {
+        "bounds": {"key": "bounds", "type": "VirtualNetworkGatewayAutoScaleBounds"},
+    }
+
+    def __init__(
+        self, *, bounds: Optional["_models.VirtualNetworkGatewayAutoScaleBounds"] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword bounds: The bounds of the autoscale configuration.
+        :paramtype bounds: ~azure.mgmt.network.models.VirtualNetworkGatewayAutoScaleBounds
+        """
+        super().__init__(**kwargs)
+        self.bounds = bounds
+
+class BastionShareableLinkTokenListRequest(_serialization.Model):
+    """Post request for Delete Bastion Shareable Link By Token endpoint.
+
+    :ivar tokens: List of Bastion Shareable Link Token.
+    :vartype tokens: list[str]
+    """
+
+    _attribute_map = {
+        "tokens": {"key": "tokens", "type": "[str]"},
+    }
+
+    def __init__(self, *, tokens: Optional[List[str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword tokens: List of Bastion Shareable Link Token.
+        :paramtype tokens: list[str]
+        """
+        super().__init__(**kwargs)
+        self.tokens = tokens
+
+class InternetIngressPublicIpsProperties(_serialization.Model):
+    """Resource Uri of Public Ip for Standard Load Balancer Frontend End.
+
+    :ivar id: Resource Uri of Public Ip.
+    :vartype id: str
+    """
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+    }
+
+    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
+        """
+        :keyword id: Resource Uri of Public Ip.
+        :paramtype id: str
+        """
+        super().__init__(**kwargs)
+        self.id = id
+
+class NetworkVirtualApplianceConnection(SubResource):
+    """NetworkVirtualApplianceConnection resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar name_properties_name: The name of the resource.
+    :vartype name_properties_name: str
+    :ivar provisioning_state: The provisioning state of the NetworkVirtualApplianceConnection
+     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+    :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
+    :ivar asn: Network Virtual Appliance ASN.
+    :vartype asn: int
+    :ivar tunnel_identifier: Unique identifier for the connection.
+    :vartype tunnel_identifier: int
+    :ivar bgp_peer_address: List of bgpPeerAddresses for the NVA instances.
+    :vartype bgp_peer_address: list[str]
+    :ivar enable_internet_security: Enable internet security.
+    :vartype enable_internet_security: bool
+    :ivar routing_configuration: The Routing Configuration indicating the associated and propagated
+     route tables on this connection.
+    :vartype routing_configuration: ~azure.mgmt.network.models.RoutingConfiguration
+    """
+
+    _validation = {
+        "provisioning_state": {"readonly": True},
+        "asn": {"maximum": 4294967295, "minimum": 0},
+        "tunnel_identifier": {"maximum": 4294967295, "minimum": 0},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "name_properties_name": {"key": "properties.name", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "asn": {"key": "properties.asn", "type": "int"},
+        "tunnel_identifier": {"key": "properties.tunnelIdentifier", "type": "int"},
+        "bgp_peer_address": {"key": "properties.bgpPeerAddress", "type": "[str]"},
+        "enable_internet_security": {"key": "properties.enableInternetSecurity", "type": "bool"},
+        "routing_configuration": {"key": "properties.routingConfiguration", "type": "RoutingConfiguration"},
+    }
+
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        name: Optional[str] = None,
+        name_properties_name: Optional[str] = None,
+        asn: Optional[int] = None,
+        tunnel_identifier: Optional[int] = None,
+        bgp_peer_address: Optional[List[str]] = None,
+        enable_internet_security: Optional[bool] = None,
+        routing_configuration: Optional["_models.RoutingConfiguration"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword id: Resource ID.
+        :paramtype id: str
+        :keyword name: The name of the resource.
+        :paramtype name: str
+        :keyword name_properties_name: The name of the resource.
+        :paramtype name_properties_name: str
+        :keyword asn: Network Virtual Appliance ASN.
+        :paramtype asn: int
+        :keyword tunnel_identifier: Unique identifier for the connection.
+        :paramtype tunnel_identifier: int
+        :keyword bgp_peer_address: List of bgpPeerAddresses for the NVA instances.
+        :paramtype bgp_peer_address: list[str]
+        :keyword enable_internet_security: Enable internet security.
+        :paramtype enable_internet_security: bool
+        :keyword routing_configuration: The Routing Configuration indicating the associated and
+         propagated route tables on this connection.
+        :paramtype routing_configuration: ~azure.mgmt.network.models.RoutingConfiguration
+        """
+        super().__init__(id=id, **kwargs)
+        self.name = name
+        self.name_properties_name = name_properties_name
+        self.provisioning_state = None
+        self.asn = asn
+        self.tunnel_identifier = tunnel_identifier
+        self.bgp_peer_address = bgp_peer_address
+        self.enable_internet_security = enable_internet_security
+        self.routing_configuration = routing_configuration
+
+class NetworkVirtualApplianceConnectionList(_serialization.Model):
+    """NetworkVirtualApplianceConnection list.
+
+    :ivar value: The list of NetworkVirtualAppliance connections.
+    :vartype value: list[~azure.mgmt.network.models.NetworkVirtualApplianceConnection]
+    :ivar next_link: URL to get the next set of results.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[NetworkVirtualApplianceConnection]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["_models.NetworkVirtualApplianceConnection"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: The list of NetworkVirtualAppliance connections.
+        :paramtype value:
+         list[~azure.mgmt.network.models.NetworkVirtualApplianceConnection]
+        :keyword next_link: URL to get the next set of results.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
 

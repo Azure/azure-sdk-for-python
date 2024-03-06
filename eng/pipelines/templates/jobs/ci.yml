@@ -5,9 +5,6 @@ parameters:
   - name: Artifacts
     type: object
     default: []
-  - name: CondaArtifacts
-    type: object
-    default: []
   - name: TestPipeline
     type: boolean
     default: false
@@ -64,40 +61,106 @@ parameters:
   - name: GenerateApiReviewForManualOnly
     type: boolean
     default: false
+  - name: AdvancedBuild
+    type: boolean
+    default: false
 
 jobs:
-  - job: 'Build'
-    timeoutInMinutes: 90
-    variables:
-      Codeql.Enabled: true
-      Codeql.BuildIdentifier: ${{ parameters.ServiceDirectory }}
-      Codeql.SkipTaskAutoInjection: false
+  
+  - ${{ if eq(parameters['AdvancedBuild'], false) }}:
+    - job: 'Build'
+      timeoutInMinutes: 90
 
-    pool:
-      name: azsdk-pool-mms-ubuntu-2004-general
-      vmImage: MMSUbuntu20.04
+      pool:
+        name: azsdk-pool-mms-ubuntu-2004-general
+        vmImage: MMSUbuntu20.04
 
-    steps:
-    - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
-      parameters:
-        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+      steps:
+      - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
+        parameters:
+          BuildTargetingString: ${{ parameters.BuildTargetingString }}
 
-    - template: ../steps/build-package-artifacts.yml
-      parameters:
-        ServiceDirectory: ${{ parameters.ServiceDirectory }}
-        BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
-        TestPipeline: ${{ parameters.TestPipeline }}
-        Artifacts: ${{ parameters.Artifacts }}
+      - template: ../steps/build-package-artifacts.yml
+        parameters:
+          ServiceDirectory: ${{ parameters.ServiceDirectory }}
+          BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
+          TestPipeline: ${{ parameters.TestPipeline }}
+          Artifacts: ${{ parameters.Artifacts }}
+
+  - ${{ if eq(parameters['AdvancedBuild'], true) }}:
+    - job: 'Build'
+      timeoutInMinutes: 90
+
+      strategy:
+        matrix:
+          Linux:
+            imageName: 'MMSUbuntu22.04'
+            poolName: 'azsdk-pool-mms-ubuntu-2204-general'
+            ArtifactName: 'linux'
+          Windows:
+            imageName: 'MMS2022'
+            poolName: 'azsdk-pool-mms-win-2022-general'
+            ArtifactName: 'windows'
+          Mac:
+            imageName: 'macos-11'
+            poolName: 'Azure Pipelines'
+            ArtifactName: 'mac'
+
+      pool:
+        name: $(poolName)
+        vmImage: $(imageName)
+
+      steps:
+      - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
+        parameters:
+          BuildTargetingString: ${{ parameters.BuildTargetingString }}
+
+      - template: ../steps/build-package-artifacts.yml
+        parameters:
+          ServiceDirectory: ${{ parameters.ServiceDirectory }}
+          BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
+          TestPipeline: ${{ parameters.TestPipeline }}
+          Artifacts: ${{ parameters.Artifacts }}
+          ArtifactSuffix: $(ArtifactName)
+
+    - job: 'CoalesceBuildArtifacts'
+      displayName: Combine Built Artifacts
+      dependsOn: 
+        - 'Build'
+      timeoutInMinutes: 90
+
+      pool:
+        name: azsdk-pool-mms-ubuntu-2004-general
+        vmImage: MMSUbuntu20.04
+
+      steps:
+      - task: DownloadPipelineArtifact@2
+        inputs:
+          artifactName: 'packages_windows'
+          targetPath: $(Build.ArtifactStagingDirectory)/packages
+
+      - task: DownloadPipelineArtifact@2
+        inputs:
+          artifactName: 'packages_mac'
+          targetPath: $(Build.ArtifactStagingDirectory)/packages
+
+      - task: DownloadPipelineArtifact@2
+        inputs:
+          artifactName: 'packages_linux'
+          targetPath: $(Build.ArtifactStagingDirectory)/packages
+
+      - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+        parameters:
+          ArtifactPath: '$(Build.ArtifactStagingDirectory)/packages'
+          ArtifactName: 'packages'
 
   - job: 'Build_Extended'
     displayName: Build Extended
     dependsOn: 
       - 'Build'
+      - ${{ if eq(parameters['AdvancedBuild'], true) }}:
+        - 'CoalesceBuildArtifacts'
     timeoutInMinutes: 90
-    variables:
-      Codeql.Enabled: true
-      Codeql.BuildIdentifier: ${{ parameters.ServiceDirectory }}
-      Codeql.SkipTaskAutoInjection: false
 
     pool:
       name: azsdk-pool-mms-ubuntu-2004-general
@@ -115,12 +178,6 @@ jobs:
         BuildDocs: ${{ parameters.BuildDocs }}
         TestPipeline: ${{ parameters.TestPipeline }}
         Artifacts: ${{ parameters.Artifacts }}
-
-    - template: ../steps/build-conda-artifacts.yml
-      parameters:
-        ServiceDirectory: ${{ parameters.ServiceDirectory }}
-        TestPipeline: ${{ parameters.TestPipeline }}
-        CondaArtifacts: ${{ parameters.CondaArtifacts }}
 
   - job: 'Analyze'
     condition: and(succeededOrFailed(), ne(variables['Skip.Analyze'], 'true'))
@@ -167,6 +224,18 @@ jobs:
     pool:
       name: azsdk-pool-mms-win-2022-general
       vmImage: MMS2022
+
+    variables:
+      Codeql.SkipTaskAutoInjection: false
+      Codeql.Enabled: true
+      Codeql.Language: python
+      Codeql.BuildIdentifier: "${{ parameters.ServiceDirectory }}"
+      Codeql.SourceRoot: "sdk/${{ parameters.ServiceDirectory }}"
+
+    # per the guidance of the codeql team:
+    # https://eng.ms/docs/cloud-ai-platform/devdiv/one-engineering-system-1es/1es-docs/codeql/snippets/codeql-3000-other-issues#timeouts
+    timeoutInMinutes: 360
+
     steps:
       - template: /eng/common/pipelines/templates/steps/credscan.yml
         parameters:
@@ -178,6 +247,8 @@ jobs:
       JobTemplatePath: /eng/pipelines/templates/jobs/ci.tests.yml
       DependsOn:
         - 'Build'
+        - ${{ if eq(parameters['AdvancedBuild'], true) }}:
+          - 'CoalesceBuildArtifacts'
       MatrixConfigs: ${{ parameters.MatrixConfigs }}
       MatrixFilters: ${{ parameters.MatrixFilters }}
       MatrixReplace: ${{ parameters.MatrixReplace }}
@@ -225,6 +296,8 @@ jobs:
         Cloud: Public
       DependsOn:
         - 'Build'
+        - ${{ if eq(parameters['AdvancedBuild'], true) }}:
+          - 'CoalesceBuildArtifacts'
       AdditionalParameters:
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         ServiceDirectory: ${{ parameters.ServiceDirectory }}

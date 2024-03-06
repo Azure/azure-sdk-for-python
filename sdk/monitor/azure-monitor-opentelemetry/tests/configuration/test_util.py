@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from os import environ
 from unittest import TestCase
 from unittest.mock import patch
 
@@ -27,35 +28,71 @@ from opentelemetry.environment_variables import (
     OTEL_METRICS_EXPORTER,
     OTEL_TRACES_EXPORTER,
 )
+from opentelemetry.sdk.environment_variables import OTEL_EXPERIMENTAL_RESOURCE_DETECTORS
+from opentelemetry.sdk.resources import Resource, Attributes
+
+
+TEST_DEFAULT_RESOURCE = Resource({
+    "test.attributes.1": "test_value_1",
+    "test.attributes.2": "test_value_2"
+})
 
 
 class TestUtil(TestCase):
-    def test_get_configurations(self):
+    @patch.dict("os.environ", {}, clear=True)
+    @patch("azure.monitor.opentelemetry._util.configurations._PREVIEW_INSTRUMENTED_LIBRARIES", ("previewlib1", "previewlib2"))
+    @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
+    def test_get_configurations(self, resource_create_mock):
         configurations = _get_configurations(
             connection_string="test_cs",
             credential="test_credential",
         )
 
         self.assertEqual(configurations["connection_string"], "test_cs")
-        self.assertEqual(configurations["disable_azure_core_tracing"], False)
         self.assertEqual(configurations["disable_logging"], False)
         self.assertEqual(configurations["disable_metrics"], False)
         self.assertEqual(configurations["disable_tracing"], False)
-        self.assertEqual(configurations["disabled_instrumentations"], [])
+        self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
+        self.assertEqual(environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS], "azure_app_service,azure_vm")
+        resource_create_mock.assert_called_once_with()
         self.assertEqual(configurations["sampling_ratio"], 1.0)
         self.assertEqual(configurations["credential"], ("test_credential"))
+        self.assertEqual(configurations["instrumentation_options"], {
+            "azure_sdk" : {"enabled": True},
+            "django": {"enabled": True},
+            "fastapi": {"enabled": True},
+            "flask": {"enabled": True},
+            "psycopg2": {"enabled": True},
+            "requests": {"enabled": True},
+            "urllib": {"enabled": True},
+            "urllib3": {"enabled": True},
+            "previewlib1": {"enabled": False},
+            "previewlib2": {"enabled": False},
+        })
         self.assertTrue("storage_directory" not in configurations)
 
     @patch.dict("os.environ", {}, clear=True)
-    def test_get_configurations_defaults(self):
+    @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
+    def test_get_configurations_defaults(self, resource_create_mock):
         configurations = _get_configurations()
 
         self.assertTrue("connection_string" not in configurations)
-        self.assertEqual(configurations["disable_azure_core_tracing"], False)
         self.assertEqual(configurations["disable_logging"], False)
         self.assertEqual(configurations["disable_metrics"], False)
         self.assertEqual(configurations["disable_tracing"], False)
-        self.assertEqual(configurations["disabled_instrumentations"], [])
+        self.assertEqual(configurations["instrumentation_options"], {
+            "azure_sdk" : {"enabled": True},
+            "django" : {"enabled": True},
+            "fastapi" : {"enabled": True},
+            "flask" : {"enabled": True},
+            "psycopg2" : {"enabled": True},
+            "requests": {"enabled": True},
+            "urllib": {"enabled": True},
+            "urllib3": {"enabled": True},
+        })
+        self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
+        self.assertEqual(environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS], "azure_app_service,azure_vm")
+        resource_create_mock.assert_called_once_with()
         self.assertEqual(configurations["sampling_ratio"], 1.0)
         self.assertTrue("credential" not in configurations)
         self.assertTrue("storage_directory" not in configurations)
@@ -63,26 +100,36 @@ class TestUtil(TestCase):
     @patch.dict(
         "os.environ",
         {
-            OTEL_PYTHON_DISABLED_INSTRUMENTATIONS: "flask , requests,fastapi",
+            OTEL_PYTHON_DISABLED_INSTRUMENTATIONS: "flask , requests,fastapi,azure_sdk",
             SAMPLING_RATIO_ENV_VAR: "0.5",
             OTEL_TRACES_EXPORTER: "None",
             OTEL_LOGS_EXPORTER: "none",
             OTEL_METRICS_EXPORTER: "NONE",
+            OTEL_EXPERIMENTAL_RESOURCE_DETECTORS: "custom_resource_detector"
         },
         clear=True,
     )
-    def test_get_configurations_env_vars(self):
+    @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
+    def test_get_configurations_env_vars(self, resource_create_mock):
         configurations = _get_configurations()
 
         self.assertTrue("connection_string" not in configurations)
-        self.assertEqual(configurations["disable_azure_core_tracing"], False)
         self.assertEqual(configurations["disable_logging"], True)
         self.assertEqual(configurations["disable_metrics"], True)
         self.assertEqual(configurations["disable_tracing"], True)
-        self.assertEqual(
-            configurations["disabled_instrumentations"],
-            ["flask", "requests", "fastapi"],
-        )
+        self.assertEqual(configurations["instrumentation_options"], {
+            "azure_sdk" : {"enabled": False},
+            "django" : {"enabled": True},
+            "fastapi" : {"enabled": False},
+            "flask" : {"enabled": False},
+            "psycopg2" : {"enabled": True},
+            "requests": {"enabled": False},
+            "urllib": {"enabled": True},
+            "urllib3": {"enabled": True},
+        })
+        self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
+        self.assertEqual(environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS], "custom_resource_detector")
+        resource_create_mock.assert_called_once_with()
         self.assertEqual(configurations["sampling_ratio"], 0.5)
 
     @patch.dict(
@@ -95,12 +142,73 @@ class TestUtil(TestCase):
         },
         clear=True,
     )
-    def test_get_configurations_env_vars_validation(self):
+    @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
+    def test_get_configurations_env_vars_validation(self, resource_create_mock):
         configurations = _get_configurations()
 
         self.assertTrue("connection_string" not in configurations)
-        self.assertEqual(configurations["disable_azure_core_tracing"], False)
         self.assertEqual(configurations["disable_logging"], False)
         self.assertEqual(configurations["disable_metrics"], False)
         self.assertEqual(configurations["disable_tracing"], False)
         self.assertEqual(configurations["sampling_ratio"], 1.0)
+
+    @patch.dict(
+        "os.environ",
+        {
+            OTEL_PYTHON_DISABLED_INSTRUMENTATIONS: "django , urllib3,previewlib1,azure_sdk",
+        },
+        clear=True,
+    )
+    @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
+    @patch("azure.monitor.opentelemetry._util.configurations._PREVIEW_INSTRUMENTED_LIBRARIES", ("previewlib1", "previewlib2"))
+    def test_merge_instrumentation_options_conflict(self, resource_create_mock):
+        configurations = _get_configurations(
+            instrumentation_options = {
+                "azure_sdk" : {"enabled": True},
+                "django" : {"enabled": True},
+                "fastapi" : {"enabled": True},
+                "flask" : {"enabled": False},
+                "previewlib1": {"enabled": True},
+            }
+        )
+
+        self.assertEqual(configurations["instrumentation_options"], {
+            "azure_sdk" : {"enabled": True}, # Explicit configuration takes priority
+            "django" : {"enabled": True}, # Explicit configuration takes priority
+            "fastapi" : {"enabled": True},
+            "flask" : {"enabled": False},
+            "psycopg2" : {"enabled": True},
+            "previewlib1": {"enabled": True}, # Explicit configuration takes priority
+            "previewlib2": {"enabled": False},
+            "requests": {"enabled": True},
+            "urllib": {"enabled": True},
+            "urllib3": {"enabled": False},
+        })
+
+    @patch.dict("os.environ", {}, clear=True)
+    @patch("azure.monitor.opentelemetry._util.configurations._PREVIEW_INSTRUMENTED_LIBRARIES", ("previewlib1", "previewlib2"))
+    @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
+    def test_merge_instrumentation_options_extra_args(self, resource_create_mock):
+        configurations = _get_configurations(
+            instrumentation_options = {
+                "django" : {"enabled": True},
+                "fastapi" : {"enabled": True, "foo": "bar"},
+                "flask" : {"enabled": False, "foo": "bar"},
+                "psycopg2" : {"foo": "bar"},
+                "previewlib1": {"enabled": True, "foo": "bar"},
+                "previewlib2": {"foo": "bar"},
+            }
+        )
+
+        self.assertEqual(configurations["instrumentation_options"], {
+            "azure_sdk" : {"enabled": True},
+            "django" : {"enabled": True},
+            "fastapi" : {"enabled": True, "foo": "bar"},
+            "flask" : {"enabled": False, "foo": "bar"},
+            "psycopg2" : {"enabled": True, "foo": "bar"},
+            "previewlib1": {"enabled": True, "foo": "bar"},
+            "previewlib2": {"enabled": False, "foo": "bar"},
+            "requests": {"enabled": True},
+            "urllib": {"enabled": True},
+            "urllib3": {"enabled": True},
+        })

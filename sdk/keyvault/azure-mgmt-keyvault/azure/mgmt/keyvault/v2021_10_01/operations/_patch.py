@@ -34,6 +34,7 @@ if sys.version_info >= (3, 8):
 else:
     from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 
+
 class VaultsOperations(_VaultsOperations):
     @distributed_trace
     def list(self, top: Optional[int] = None, **kwargs: Any) -> Iterable["_models.Resource"]:

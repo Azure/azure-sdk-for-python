@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from binascii import hexlify
-from typing import Dict, Optional, Union
+from typing import Callable, Dict, Optional, Union, Any, Mapping, Type, Tuple
 from uuid import UUID
 from datetime import datetime
 from math import isnan
@@ -12,20 +12,20 @@ from enum import Enum
 
 from azure.core import MatchConditions
 
-from ._entity import EdmType
+from ._entity import EdmType, TableEntity
 from ._common_conversion import _encode_base64, _to_utc_datetime
 from ._error import _ERROR_VALUE_TOO_LARGE, _ERROR_TYPE_NOT_SUPPORTED
 
 
-def _get_match_headers(etag, match_condition):
+def _get_match_condition(etag, match_condition):
     if match_condition == MatchConditions.IfNotModified:
         if not etag:
             raise ValueError("IfNotModified must be specified with etag.")
-        return etag
+        return match_condition
     if match_condition == MatchConditions.Unconditionally:
         if etag:
             raise ValueError("Etag is not supported for an Unconditional operation.")
-        return "*"
+        return MatchConditions.IfPresent
     raise ValueError(f"Unsupported match condition: {match_condition}")
 
 
@@ -43,7 +43,7 @@ def _prepare_key(keyvalue: str) -> str:
         raise TypeError("PartitionKey or RowKey must be of type string.") from exc
 
 
-def _parameter_filter_substitution(parameters: Dict[str, str], query_filter: str) -> str:
+def _parameter_filter_substitution(parameters: Optional[Dict[str, str]], query_filter: str) -> str:
     """Replace user defined parameters in filter.
 
     :param parameters: User defined parameters
@@ -144,29 +144,16 @@ def _to_entity_none(value):  # pylint: disable=unused-argument
 
 # Conversion from Python type to a function which returns a tuple of the
 # type string and content string.
-_PYTHON_TO_ENTITY_CONVERSIONS = {
+_PYTHON_TO_ENTITY_CONVERSIONS: Dict[Type, Callable[[Any], Tuple[Optional[EdmType], Any]]] = {
     int: _to_entity_int32,
     bool: _to_entity_bool,
     datetime: _to_entity_datetime,
     float: _to_entity_float,
     UUID: _to_entity_guid,
     Enum: _to_entity_str,
+    str: _to_entity_str,
+    bytes: _to_entity_binary,
 }
-try:
-    _PYTHON_TO_ENTITY_CONVERSIONS.update(
-        {
-            unicode: _to_entity_str,  # type: ignore
-            str: _to_entity_binary,
-            long: _to_entity_int32,  # type: ignore
-        }
-    )
-except NameError:
-    _PYTHON_TO_ENTITY_CONVERSIONS.update(
-        {
-            str: _to_entity_str,
-            bytes: _to_entity_binary,
-        }
-    )
 
 # cspell:ignore Odatatype
 
@@ -177,7 +164,7 @@ except NameError:
 # boolean and int32 have special processing below, as we would not normally add the
 # Odatatype tags for these to keep payload size minimal.
 # This is also necessary for CLI compatibility.
-_EDM_TO_ENTITY_CONVERSIONS = {
+_EDM_TO_ENTITY_CONVERSIONS: Dict[EdmType, Callable[[Any], Tuple[Optional[EdmType], Any]]] = {
     EdmType.BINARY: _to_entity_binary,
     EdmType.BOOLEAN: lambda v: (EdmType.BOOLEAN, v),
     EdmType.DATETIME: _to_entity_datetime,
@@ -189,7 +176,7 @@ _EDM_TO_ENTITY_CONVERSIONS = {
 }
 
 
-def _add_entity_properties(source):
+def _add_entity_properties(source: Union[TableEntity, Mapping[str, Any]]) -> Dict[str, Any]:
     """Converts an entity object to json to send.
     The entity format is:
     {
@@ -210,7 +197,7 @@ def _add_entity_properties(source):
     :param source: A table entity.
     :type source: ~azure.data.tables.TableEntity or Mapping[str, Any]
     :return: An entity with property's metadata in JSON format.
-    :rtype: Mapping[str, Any]
+    :rtype: dict
     """
 
     properties = {}
@@ -220,33 +207,30 @@ def _add_entity_properties(source):
     # set properties type for types we know if value has no type info.
     # if value has type info, then set the type to value.type
     for name, value in to_send.items():
-        mtype = ""
-
+        if value is None:
+            continue
+        mtype: Optional[EdmType] = None
         if isinstance(value, Enum):
-            try:
-                convert = _PYTHON_TO_ENTITY_CONVERSIONS.get(unicode)  # type: ignore
-            except NameError:
-                convert = _PYTHON_TO_ENTITY_CONVERSIONS.get(str)
+            convert = _PYTHON_TO_ENTITY_CONVERSIONS[str]
             mtype, value = convert(value)
         elif isinstance(value, datetime):
             mtype, value = _to_entity_datetime(value)
         elif isinstance(value, tuple):
-            convert = _EDM_TO_ENTITY_CONVERSIONS.get(value[1])
+            if value[0] is None:
+                continue
+            convert = _EDM_TO_ENTITY_CONVERSIONS[EdmType(value[1])]
             mtype, value = convert(value[0])
         else:
-            convert = _PYTHON_TO_ENTITY_CONVERSIONS.get(type(value))
-            if convert is None and value is not None:
-                raise TypeError(_ERROR_TYPE_NOT_SUPPORTED.format(type(value)))
-            if value is None:
-                convert = _to_entity_none
-
+            try:
+                convert = _PYTHON_TO_ENTITY_CONVERSIONS[type(value)]
+            except KeyError:
+                raise TypeError(_ERROR_TYPE_NOT_SUPPORTED.format(type(value))) from None
             mtype, value = convert(value)
 
         # form the property node
-        if value is not None:
-            properties[name] = value
-            if mtype:
-                properties[name + "@odata.type"] = mtype.value
+        properties[name] = value
+        if mtype:
+            properties[name + "@odata.type"] = mtype.value
 
     # generate the entity_body
     return properties

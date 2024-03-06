@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Dict, Optional
+from typing import Any, Dict, Optional
 
 from azure.ai.ml._schema._deployment.online.oversize_data_config_schema import OversizeDataConfigSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
@@ -16,9 +16,10 @@ class OversizeDataConfig:
     """
 
     # pylint: disable=unused-argument
-    def __init__(self, path: Optional[str] = None, **kwargs):
+    def __init__(self, path: Optional[str] = None, **kwargs: Any):
         self.path = path
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        return OversizeDataConfigSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = OversizeDataConfigSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return res

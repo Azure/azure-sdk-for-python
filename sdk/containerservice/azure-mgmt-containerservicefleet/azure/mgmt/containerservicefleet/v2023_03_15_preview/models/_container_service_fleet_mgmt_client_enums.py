@@ -29,22 +29,34 @@ class FleetMemberProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     """The provisioning state of the last accepted operation."""
 
     SUCCEEDED = "Succeeded"
+    """Resource has been created."""
     FAILED = "Failed"
+    """Resource creation failed."""
     CANCELED = "Canceled"
+    """Resource creation was canceled."""
     JOINING = "Joining"
+    """The provisioning state of a member joining a fleet."""
     LEAVING = "Leaving"
+    """The provisioning state of a member leaving a fleet."""
     UPDATING = "Updating"
+    """The provisioning state of a member being updated."""
 
 
 class FleetProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The provisioning state of the last accepted operation."""
 
     SUCCEEDED = "Succeeded"
+    """Resource has been created."""
     FAILED = "Failed"
+    """Resource creation failed."""
     CANCELED = "Canceled"
+    """Resource creation was canceled."""
     CREATING = "Creating"
+    """The provisioning state of a fleet being created."""
     UPDATING = "Updating"
+    """The provisioning state of a fleet being updated."""
     DELETING = "Deleting"
+    """The provisioning state of a fleet being deleted."""
 
 
 class ManagedClusterUpgradeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -70,16 +82,25 @@ class UpdateRunProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The provisioning state of the UpdateRun resource."""
 
     SUCCEEDED = "Succeeded"
+    """Resource has been created."""
     FAILED = "Failed"
+    """Resource creation failed."""
     CANCELED = "Canceled"
+    """Resource creation was canceled."""
 
 
 class UpdateState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The state of the UpdateRun, UpdateStage, UpdateGroup, or MemberUpdate."""
 
     NOT_STARTED = "NotStarted"
+    """The state of an UpdateRun/UpdateStage/UpdateGroup/MemberUpdate that has not been started."""
     RUNNING = "Running"
+    """The state of an UpdateRun/UpdateStage/UpdateGroup/MemberUpdate that is running."""
     STOPPING = "Stopping"
+    """The state of an UpdateRun/UpdateStage/UpdateGroup/MemberUpdate that is being stopped."""
     STOPPED = "Stopped"
+    """The state of an UpdateRun/UpdateStage/UpdateGroup/MemberUpdate that has stopped."""
     FAILED = "Failed"
+    """The state of an UpdateRun/UpdateStage/UpdateGroup/MemberUpdate that has failed."""
     COMPLETED = "Completed"
+    """The state of an UpdateRun/UpdateStage/UpdateGroup/MemberUpdate that has completed."""

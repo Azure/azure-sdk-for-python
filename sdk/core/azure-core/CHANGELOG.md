@@ -1,6 +1,6 @@
 # Release History
 
-## 1.29.4 (Unreleased)
+## 1.30.2 (Unreleased)
 
 ### Features Added
 
@@ -8,10 +8,57 @@
 
 ### Bugs Fixed
 
-- Fixed the issue that some urls trigger an infinite loop. #31346
-- Fixed issue where IndexError was raised if multipart responses did not match the number of requests. #31471
+### Other Changes
+
+## 1.30.1 (2024-02-29)
 
 ### Other Changes
+
+- Accept float for `retry_after` header.  #34203
+
+## 1.30.0 (2024-02-01)
+
+### Features Added
+
+- Support tuple input for file values  to `azure.core.rest.HttpRequest`  #33948
+- Support tuple input to `files` with duplicate field names  `azure.core.rest.HttpRequest`  #34021
+
+## 1.29.7 (2024-01-18)
+
+### Other Changes
+
+- Removed dependency on `anyio`.  #33282
+
+## 1.29.6 (2023-12-14)
+
+### Bugs Fixed
+
+- Adjusted `AsyncBearerTokenCredentialPolicy` to work properly with `trio` concurrency mechanisms.   ([#33307](https://github.com/Azure/azure-sdk-for-python/pull/33307))
+
+### Other Changes
+
+- Added dependency on `anyio` >=3.0,<5.0
+- Bumped minimum dependency on `requests` to 2.21.0.
+
+## 1.29.5 (2023-10-19)
+
+### Bugs Fixed
+
+- Fixed an issue with `multipart/form-data` in the async transport where `data` was not getting encoded into the request body. #32473
+
+### Other Changes
+
+- Use ssl context from aiohttp by default.
+
+## 1.29.4 (2023-09-07)
+
+### Bugs Fixed
+
+- Fixed the issue that some urls trigger an infinite loop. #31346
+- Fixed issue where IndexError was raised if multipart responses did not match the number of requests. #31471
+- Fixed issue unbound variable exception if dict is invalid in CloudEvent.from_dict. #31835
+- Fixed issue asyncBearerTokenCredentialPolicy is not backward compatible with SansIOHTTPPolicy. #31836
+- Fixed issue mypy complains with new version of azure-core. #31564
 
 ## 1.29.3 (2023-08-22)
 

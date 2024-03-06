@@ -1,0 +1,44 @@
+{% set name = "uamqp" %}
+
+package:
+  name: "{{ name|lower }}"
+  version: {{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+
+source:
+  url: {{ environ.get('UAMQP_SOURCE_DISTRIBUTION', '') }}
+
+build:
+  number: 0
+  script: "{{ PYTHON }} -m pip install . -vv"
+
+requirements:
+  host:
+    - certifi >=2017.4.17
+    - pip
+    - python
+    - six
+  run:
+    - certifi >=2017.4.17
+    - python
+    - six
+
+test:
+  imports:
+    - uamqp
+    - uamqp.async_ops
+    - uamqp.authentication
+
+about:
+  home: "https://github.com/Azure/azure-uamqp-python"
+  license: MIT
+  license_family: MIT
+  license_file: 
+  summary: "AMQP 1.0 Client Library for Python"
+  description: |
+    An AMQP 1.0 client library for Python. Please see https://aka.ms/azsdk/conda/releases/uamqp for version details.
+  doc_url: 
+  dev_url: 
+
+extra:
+  recipe-maintainers:
+    - xiangyan99

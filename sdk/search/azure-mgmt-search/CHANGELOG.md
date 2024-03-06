@@ -1,5 +1,14 @@
 # Release History
 
+## 9.1.0 (2023-10-23)
+
+### Features Added
+
+  - Added operation group SearchManagementClientOperationsMixin
+  - Added operation group UsagesOperations
+  - Model SearchService has a new parameter semantic_search
+  - Model SearchServiceUpdate has a new parameter semantic_search
+
 ## 9.0.0 (2023-02-15)
 
 ### Features Added

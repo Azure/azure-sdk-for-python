@@ -2,9 +2,10 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import asyncio
 import datetime
 import os
-import asyncio
+
 from azure.keyvault.secrets.aio import SecretClient
 from azure.identity.aio import DefaultAzureCredential
 
@@ -41,12 +42,14 @@ async def run_sample():
     print("\n.. Create Secret")
     expires_on = datetime.datetime.utcnow() + datetime.timedelta(days=365)
     secret = await client.set_secret("helloWorldSecretNameAsync", "helloWorldSecretValue", expires_on=expires_on)
+    assert secret.name
     print(f"Secret with name '{secret.name}' created with value '{secret.value}'")
     print(f"Secret with name '{secret.name}' expires on '{secret.properties.expires_on}'")
 
     # Let's get the bank secret using its name
     print("\n.. Get a Secret by name")
     bank_secret = await client.get_secret(secret.name)
+    assert bank_secret.properties.expires_on
     print(f"Secret with name '{bank_secret.name}' was found with value '{bank_secret.value}'.")
 
     # After one year, the bank account is still active, we need to update the expiry time of the secret.

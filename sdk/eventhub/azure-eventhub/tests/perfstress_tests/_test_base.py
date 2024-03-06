@@ -6,7 +6,7 @@
 from uuid import uuid4
 from datetime import datetime
 
-from azure_devtools.perfstress_tests import BatchPerfTest, EventPerfTest, get_random_bytes
+from devtools_testutils.perfstress_tests import BatchPerfTest, EventPerfTest, get_random_bytes
 from azure.eventhub import EventHubProducerClient, EventHubConsumerClient, EventData, TransportType
 from azure.eventhub.aio import (
     EventHubProducerClient as AsyncEventHubProducerClient,

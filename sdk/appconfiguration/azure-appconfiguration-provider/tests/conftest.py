@@ -33,5 +33,7 @@ def add_sanitizers(test_proxy):
         value="https://fake-key-vault.vault.azure.net/",
         target=os.environ.get("APPCONFIGURATION_KEY_VAULT_REFERENCE", "https://fake-key-vault.vault.azure.net/"),
     )
-    set_custom_default_matcher(ignored_headers="x-ms-content-sha256")
+
+    add_general_regex_sanitizer(value="api-version=1970-01-01", regex="api-version=.+")
+    set_custom_default_matcher(ignored_headers="x-ms-content-sha256, Accept", excluded_headers="Content-Length")
     add_oauth_response_sanitizer()

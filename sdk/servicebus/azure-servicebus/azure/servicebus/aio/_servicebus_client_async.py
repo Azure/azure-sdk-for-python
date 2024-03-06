@@ -115,7 +115,7 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
                 raise ValueError("To use the uAMQP transport, please install `uamqp>=1.6.3,<2.0.0`.") from None
         self._amqp_transport = UamqpTransportAsync if uamqp_transport else PyamqpTransportAsync
         # If the user provided http:// or sb://, let's be polite and strip that.
-        self.fully_qualified_namespace = strip_protocol_from_uri(
+        self.fully_qualified_namespace: str = strip_protocol_from_uri(
             fully_qualified_namespace.strip()
         )
         self._credential = credential
@@ -140,12 +140,12 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
         self._custom_endpoint_address = kwargs.get('custom_endpoint_address')
         self._connection_verify = kwargs.get("connection_verify")
 
-    async def __aenter__(self):
+    async def __aenter__(self) -> "ServiceBusClient":
         if self._connection_sharing:
             await self._create_connection()
         return self
 
-    async def __aexit__(self, *args):
+    async def __aexit__(self, *args: Any) -> None:
         await self.close()
 
     async def _create_connection(self):
@@ -341,10 +341,12 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
          will be immediately removed from the queue, and cannot be subsequently rejected or re-received if
          the client fails to process the message. The default mode is PEEK_LOCK.
         :paramtype receive_mode: Union[~azure.servicebus.ServiceBusReceiveMode, str]
-        :keyword Optional[float] max_wait_time: The timeout in seconds between received messages after which the
-         receiver will automatically stop receiving. The default value is None, meaning no timeout. If connection
-         errors are occurring due to write timing out, the connection timeout value may need to be adjusted. See
-         the `socket_timeout` optional parameter for more details.
+        :keyword Optional[float] max_wait_time:  The timeout in seconds to wait for the first and subsequent
+         messages to arrive. If no messages arrive, and no timeout is specified, this call will not return
+         until the connection is closed. The default value is None, meaning no timeout. On a sessionful
+         queue/topic when NEXT_AVAILABLE_SESSION is specified, this will act as the timeout for connecting.
+         If connection errors are occurring due to write timing out,the connection timeout
+         value may need to be adjusted. See the `socket_timeout` optional parameter for more details.
         :keyword Optional[~azure.servicebus.aio.AutoLockRenewer] auto_lock_renewer: An
          ~azure.servicebus.aio.AutoLockRenewer can be provided such that messages are automatically registered on
          receipt. If the receiver is a session receiver, it will apply to the session instead.
@@ -353,8 +355,12 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
          performance but increase the chance that messages will expire while they are cached if they're not
          processed fast enough.
          The default value is 0, meaning messages will be received from the service and processed one at a time.
-         In the case of prefetch_count being 0, `ServiceBusReceiver.receive` would try to cache `max_message_count`
-         (if provided) within its request to the service.
+         In the case of prefetch_count being 0, `ServiceBusReceiver.receive_messages` would try to cache
+         `max_message_count` (if provided) within its request to the service.
+         **WARNING: If prefetch_count > 0 and RECEIVE_AND_DELETE mode is used, all prefetched messages will stay in
+         the in-memory prefetch buffer until they're received into the application. If the application ends before
+         the messages are received into the application, those messages will be lost and unable to be recovered.
+         Therefore, it's recommended that PEEK_LOCK mode be used with prefetch.
         :keyword str client_identifier: A string-based identifier to uniquely identify the receiver instance.
          Service Bus will associate it with some error messages for easier correlation of errors.
          If not specified, a unique id will be generated.
@@ -516,10 +522,12 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
          will be immediately removed from the subscription, and cannot be subsequently rejected or re-received if
          the client fails to process the message. The default mode is PEEK_LOCK.
         :paramtype receive_mode: Union[~azure.servicebus.ServiceBusReceiveMode, str]
-        :keyword Optional[float] max_wait_time: The timeout in seconds between received messages after which the
-         receiver will automatically stop receiving. The default value is None, meaning no timeout. If connection
-         errors are occurring due to write timing out, the connection timeout value may need to be adjusted. See
-         the `socket_timeout` optional parameter for more details.
+        :keyword Optional[float] max_wait_time:  The timeout in seconds to wait for the first and subsequent
+         messages to arrive. If no messages arrive, and no timeout is specified, this call will not return
+         until the connection is closed. The default value is None, meaning no timeout. On a sessionful
+         queue/topic when NEXT_AVAILABLE_SESSION is specified, this will act as the timeout for connecting.
+         If connection errors are occurring due to write timing out,the connection timeout
+         value may need to be adjusted. See the `socket_timeout` optional parameter for more details.
         :keyword Optional[~azure.servicebus.aio.AutoLockRenewer] auto_lock_renewer: An
          ~azure.servicebus.aio.AutoLockRenewer can be provided such that messages are automatically registered on
          receipt. If the receiver is a session receiver, it will apply to the session instead.
@@ -528,8 +536,12 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
          performance but increase the chance that messages will expire while they are cached if they're not
          processed fast enough.
          The default value is 0, meaning messages will be received from the service and processed one at a time.
-         In the case of prefetch_count being 0, `ServiceBusReceiver.receive` would try to cache `max_message_count`
-         (if provided) within its request to the service.
+         In the case of prefetch_count being 0, `ServiceBusReceiver.receive_messages` would try to cache
+         `max_message_count` (if provided) within its request to the service.
+         **WARNING: If prefetch_count > 0 and RECEIVE_AND_DELETE mode is used, all prefetched messages will stay in
+         the in-memory prefetch buffer until they're received into the application. If the application ends before
+         the messages are received into the application, those messages will be lost and unable to be recovered.
+         Therefore, it's recommended that PEEK_LOCK mode be used with prefetch.
         :keyword str client_identifier: A string-based identifier to uniquely identify the receiver instance.
          Service Bus will associate it with some error messages for easier correlation of errors.
          If not specified, a unique id will be generated.

@@ -4,6 +4,7 @@
 # ------------------------------------
 import os
 import asyncio
+
 from azure.identity.aio import DefaultAzureCredential
 from azure.keyvault.certificates.aio import CertificateClient
 from azure.keyvault.certificates import AdministratorContact
@@ -52,6 +53,7 @@ async def run_sample():
 
     # Now we get this issuer by name
     issuer1 = await client.get_issuer("issuer1")
+    assert issuer1.admin_contacts
 
     print(issuer1.name)
     print(issuer1.provider)
@@ -68,6 +70,7 @@ async def run_sample():
         AdministratorContact(first_name="Jane", last_name="Doe", email="admin@microsoft.com", phone="4255555555")
     ]
     issuer1 = await client.update_issuer(issuer_name="issuer1", admin_contacts=admin_contacts)
+    assert issuer1.admin_contacts
 
     for contact in issuer1.admin_contacts:
         print(contact.first_name)

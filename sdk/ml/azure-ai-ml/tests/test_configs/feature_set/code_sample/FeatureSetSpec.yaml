@@ -1,0 +1,36 @@
+feature_transformation_code:
+  path: ./code
+  transformer_class: transaction_transform.TransactionFeatureTransformer
+features:
+  - name: transaction_3d_count
+    type: long
+  - name: transaction_amount_3d_sum
+    type: double
+  - name: transaction_amount_3d_avg
+    type: double
+  - name: transaction_7d_count
+    type: long
+  - name: transaction_amount_7d_sum
+    type: double
+  - name: transaction_amount_7d_avg
+    type: double
+index_columns:
+  - name: accountID
+    type: string
+source:
+  path: wasbs://data@azuremlexampledata.blob.core.windows.net/feature-store-prp/datasources/transactions-source/*.parquet
+  source_delay:
+    days: 0
+    hours: 0
+    minutes: 20
+  timestamp_column:
+    name: timestamp
+  type: parquet
+source_lookback:
+  days: 7
+  hours: 0
+  minutes: 0
+temporal_join_lookback:
+  days: 1
+  hours: 0
+  minutes: 0

@@ -1,8 +1,73 @@
 # Release History
 
-## 12.18.0 (Unreleased)
+## 12.20.0b1 (Unreleased)
+
+This version and all future versions will require Python 3.8+. Python 3.7 is no longer supported.
 
 ### Features Added
+- The `services` parameter has been added to the `generate_account_sas` API, which enables the ability to generate SAS
+tokens to be used with multiple services. By default, the SAS token service scope will default to the current service.
+
+### Bugs Fixed
+- Bumped dependency of `typing-extensions` to `>=4.6.0` to avoid potential `TypeError` with `typing.TypeVar` on
+Python 3.12.
+- Fixed an issue where authentication errors could raise `AttributeError` instead of `ClientAuthenticationError` when
+using async OAuth credentials.
+- Fixed an typing issue which incorrectly typed the `readinto` API. The correct input type is `IO[bytes]`.
+- Fixed a typo in the initialization of `completion_time` for the `CopyProperties` model.
+
+### Other Changes
+- Passing `prefix` to the following `ContainerClient` APIs now raises a `ValueError`:
+`list_blobs`, `list_blobs_names`, and `walk_blobs`. This change was made to avoid confusion for filtering results.
+The `name_starts_with` parameter is the correct prameter to pass for filtering.
+
+## 12.19.1 (2024-03-05)
+
+### Bugs Fixed
+- Fixed an issue where under rare circumstances, full downloads of sparse Page Blobs could result in the
+downloaded content containing up to one "chunk" of extra `\x00` at the end due to an optimization error.
+
+## 12.19.0 (2023-11-07)
+
+### Features Added
+- Stable release of features from 12.19.0b1
+
+## 12.19.0b1 (2023-10-17)
+
+### Features Added
+- Added support for service version 2023-11-03.
+- Added `audience` as an optional keyword that can be specified on APIs that have a `credential` parameter. This
+keyword only has an effect when the credential provided is of type `TokenCredential`.
+
+### Bugs Fixed
+- Deprecated `BlobProperties` as a valid input type to the `blob` parameter on the following APIs:
+BlobServiceClient's `get_blob_client`, ContainerClient's `delete_blob`, `download_blob`, and `get_blob_client`.
+This deprecation change also applies to the `name` parameter on ContainerClient's `upload_blob` API. This change
+applies to both sync and async packages but does not apply to the batch equivalent of any of the listed APIs. If a
+`BlobProperties` is provided, a deprecation warning is raised.
+
+## 12.18.3 (2023-10-10)
+
+### Bugs Fixed
+- Fixed an issue when an invalid type was provided for `credential` during client construction, the
+`__str__` of the object would be present in the exception message and therefore potentially logged.
+
+## 12.18.2 (2023-09-25)
+
+### Bugs Fixed
+- Fixed an issue where `user_agent` was being ignored on `upload_blob` or `download_blob` if client was configured
+for encryption.
+
+## 12.18.1 (2023-09-13)
+
+### Bugs Fixed
+- Fixed breaking `KeyError: 'sdk_moniker'` in `create_configuration`.
+NOTE: This is not an exported method and therefore should not be imported/called directly.
+
+## 12.18.0 (2023-09-12)
+
+### Features Added
+- Stable release of features from 12.18.0b1
 
 ## 12.18.0b1 (2023-08-08)
 
@@ -156,7 +221,7 @@ This version and all future versions will require Python 3.6+. Python 2.7 is no 
     - `set_immutability_policy`
 - Encryption Scope is now supported for Sync Blob Copy (`copy_from_url()`).
 - Encryption Scope is now supported as a SAS permission.
-- Added support for blob names containing invalid XML characters. 
+- Added support for blob names containing invalid XML characters.
   Previously \uFFFE and \uFFFF would fail if present in blob name.
 - Added support for listing system containers with get_blob_containers().
 - Added support for `find_blobs_by_tags()` on a container.
@@ -207,7 +272,7 @@ This version and all future versions will require Python 3.6+. Python 2.7 is no 
 
 **Fixes**
 - Blob Client Typing annotation issues have been resolved, specifically `invalid type inference` issues (#19906)
-- Duplicate type signature issue has been resolved (#19739) 
+- Duplicate type signature issue has been resolved (#19739)
 
 ## 12.9.0 (2021-09-15)
 **Stable release of preview features**

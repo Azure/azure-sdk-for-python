@@ -4,7 +4,7 @@
 
 # pylint: disable=protected-access,no-member
 
-from typing import Dict, Optional, Union
+from typing import Any, Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import AutoMLJob as RestAutoMLJob
 from azure.ai.ml._restclient.v2023_04_01_preview.models import ClassificationMultilabelPrimaryMetrics
@@ -25,7 +25,22 @@ from azure.ai.ml.entities._util import load_from_dict
 
 
 class ImageClassificationMultilabelJob(AutoMLImageClassificationBase):
-    """Configuration for AutoML multi-label Image Classification job."""
+    """Configuration for AutoML multi-label Image Classification job.
+
+    :param primary_metric: The primary metric to use for optimization.
+    :type primary_metric: Optional[str, ~azure.ai.ml.automl.ClassificationMultilabelPrimaryMetrics]
+    :param kwargs: Job-specific arguments.
+    :type kwargs: Dict[str, Any]
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_automl_image.py
+            :start-after: [START automl.automl_image_job.image_classification_multilabel_job]
+            :end-before: [END automl.automl_image_job.image_classification_multilabel_job]
+            :language: python
+            :dedent: 8
+            :caption: creating an automl image classification multilabel job
+    """
 
     _DEFAULT_PRIMARY_METRIC = ClassificationMultilabelPrimaryMetrics.IOU
 
@@ -33,13 +48,9 @@ class ImageClassificationMultilabelJob(AutoMLImageClassificationBase):
         self,
         *,
         primary_metric: Optional[Union[str, ClassificationMultilabelPrimaryMetrics]] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
-        """Initialize a new AutoML multi-label Image Classification job.
 
-        :param primary_metric: The primary metric to use for optimization
-        :param kwargs: Job-specific arguments
-        """
         # Extract any super class init settings
         limits = kwargs.pop("limits", None)
         sweep = kwargs.pop("sweep", None)
@@ -58,11 +69,11 @@ class ImageClassificationMultilabelJob(AutoMLImageClassificationBase):
         self.primary_metric = primary_metric or ImageClassificationMultilabelJob._DEFAULT_PRIMARY_METRIC
 
     @property
-    def primary_metric(self):
+    def primary_metric(self) -> Union[str, ClassificationMultilabelPrimaryMetrics]:
         return self._primary_metric
 
     @primary_metric.setter
-    def primary_metric(self, value: Union[str, ClassificationMultilabelPrimaryMetrics]):
+    def primary_metric(self, value: Union[str, ClassificationMultilabelPrimaryMetrics]) -> None:
         if is_data_binding_expression(str(value), ["parent"]):
             self._primary_metric = value
             return
@@ -174,7 +185,7 @@ class ImageClassificationMultilabelJob(AutoMLImageClassificationBase):
         data: Dict,
         context: Dict,
         additional_message: str,
-        **kwargs,
+        **kwargs: Any,
     ) -> "ImageClassificationMultilabelJob":
         from azure.ai.ml._schema.automl.image_vertical.image_classification import ImageClassificationMultilabelSchema
         from azure.ai.ml._schema.pipeline.automl_node import ImageClassificationMultilabelNodeSchema
@@ -214,10 +225,11 @@ class ImageClassificationMultilabelJob(AutoMLImageClassificationBase):
         job.set_data(**data_settings)
         return job
 
-    def _to_dict(self, inside_pipeline=False) -> Dict:  # pylint: disable=arguments-differ
+    def _to_dict(self, inside_pipeline: bool = False) -> Dict:  # pylint: disable=arguments-differ
         from azure.ai.ml._schema.automl.image_vertical.image_classification import ImageClassificationMultilabelSchema
         from azure.ai.ml._schema.pipeline.automl_node import ImageClassificationMultilabelNodeSchema
 
+        schema_dict: dict = {}
         if inside_pipeline:
             schema_dict = ImageClassificationMultilabelNodeSchema(
                 context={BASE_PATH_CONTEXT_KEY: "./", "inside_pipeline": True}
@@ -227,7 +239,7 @@ class ImageClassificationMultilabelJob(AutoMLImageClassificationBase):
 
         return schema_dict
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, ImageClassificationMultilabelJob):
             return NotImplemented
 
@@ -236,5 +248,5 @@ class ImageClassificationMultilabelJob(AutoMLImageClassificationBase):
 
         return self.primary_metric == other.primary_metric
 
-    def __ne__(self, other) -> bool:
+    def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)

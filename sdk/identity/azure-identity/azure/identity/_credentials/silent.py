@@ -47,7 +47,7 @@ class SilentAuthenticationCredential:
         self._additionally_allowed_tenants = kwargs.pop("additionally_allowed_tenants", [])
         self._client = MsalClient(**kwargs)
 
-    def __enter__(self):
+    def __enter__(self) -> "SilentAuthenticationCredential":
         self._client.__enter__()
         return self
 

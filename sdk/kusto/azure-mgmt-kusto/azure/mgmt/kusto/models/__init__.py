@@ -81,6 +81,9 @@ from ._models_py3 import ReadWriteDatabase
 from ._models_py3 import Resource
 from ._models_py3 import ResourceSkuCapabilities
 from ._models_py3 import ResourceSkuZoneDetails
+from ._models_py3 import SandboxCustomImage
+from ._models_py3 import SandboxCustomImagesCheckNameRequest
+from ._models_py3 import SandboxCustomImagesListResult
 from ._models_py3 import Script
 from ._models_py3 import ScriptCheckNameRequest
 from ._models_py3 import ScriptListResult
@@ -115,6 +118,7 @@ from ._kusto_management_client_enums import EventHubDataFormat
 from ._kusto_management_client_enums import IdentityType
 from ._kusto_management_client_enums import IotHubDataFormat
 from ._kusto_management_client_enums import Kind
+from ._kusto_management_client_enums import Language
 from ._kusto_management_client_enums import LanguageExtensionImageName
 from ._kusto_management_client_enums import LanguageExtensionName
 from ._kusto_management_client_enums import MigrationClusterRole
@@ -127,6 +131,7 @@ from ._kusto_management_client_enums import Reason
 from ._kusto_management_client_enums import State
 from ._kusto_management_client_enums import Status
 from ._kusto_management_client_enums import Type
+from ._kusto_management_client_enums import VnetState
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
@@ -207,6 +212,9 @@ __all__ = [
     "Resource",
     "ResourceSkuCapabilities",
     "ResourceSkuZoneDetails",
+    "SandboxCustomImage",
+    "SandboxCustomImagesCheckNameRequest",
+    "SandboxCustomImagesListResult",
     "Script",
     "ScriptCheckNameRequest",
     "ScriptListResult",
@@ -240,6 +248,7 @@ __all__ = [
     "IdentityType",
     "IotHubDataFormat",
     "Kind",
+    "Language",
     "LanguageExtensionImageName",
     "LanguageExtensionName",
     "MigrationClusterRole",
@@ -252,6 +261,7 @@ __all__ = [
     "State",
     "Status",
     "Type",
+    "VnetState",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

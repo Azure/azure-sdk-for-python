@@ -66,6 +66,17 @@ class TestFlowComponent:
 
         assert named_component._to_rest_object().as_dict() == expected_rest_dict
 
+    def test_component_normalize_folder_name(self):
+        target_path = "./tests/test_configs/flows/basic/"
+        with tempfile.TemporaryDirectory() as temp_dir:
+            shutil.copytree(
+                target_path,
+                f"{temp_dir}/basic-with-slash",
+            )
+            target_flow_dag_path = f"{temp_dir}/basic-with-slash/flow.dag.yaml"
+            component = load_component(target_flow_dag_path)
+            assert component.name == "basic_with_slash"
+
     def test_component_load_from_run(self):
         target_path = "./tests/test_configs/flows/runs/basic_run.yml"
 

@@ -5,9 +5,9 @@
 # --------------------------------------------------------------------------
 import pytest
 import copy
-import datetime
 import json
 import re
+from datetime import datetime, timezone
 from azure.core import MatchConditions
 from azure.core.exceptions import (
     ResourceModifiedError,
@@ -18,7 +18,7 @@ from azure.core.exceptions import (
 from azure.appconfiguration import (
     ResourceReadOnlyError,
     ConfigurationSetting,
-    ConfigurationSettingFilter,
+    ConfigurationSettingsFilter,
     SecretReferenceConfigurationSetting,
     FeatureFlagConfigurationSetting,
     FILTER_PERCENTAGE,
@@ -222,9 +222,35 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     @recorded_by_proxy_async
     async def test_list_configuration_settings_key_label(self, appconfiguration_connection_string):
         await self.set_up(appconfiguration_connection_string)
-        items = await self.convert_to_list(self.client.list_configuration_settings(label_filter=LABEL, key_filter=KEY))
+        items = await self.convert_to_list(self.client.list_configuration_settings(KEY, LABEL))
         assert len(items) == 1
         assert all(x.key == KEY and x.label == LABEL for x in items)
+
+        with pytest.raises(TypeError) as ex:
+            await self.client.list_configuration_settings("MyKey1", key_filter="MyKey2")
+        assert (
+            str(ex.value)
+            == "AzureAppConfigurationClient.list_configuration_settings() got multiple values for argument 'key_filter'"
+        )
+        with pytest.raises(TypeError) as ex:
+            await self.client.list_configuration_settings("MyKey", "MyLabel1", label_filter="MyLabel2")
+        assert (
+            str(ex.value)
+            == "AzureAppConfigurationClient.list_configuration_settings() got multiple values for argument 'label_filter'"
+        )
+        with pytest.raises(TypeError) as ex:
+            await self.client.list_configuration_settings("None", key_filter="MyKey")
+        assert (
+            str(ex.value)
+            == "AzureAppConfigurationClient.list_configuration_settings() got multiple values for argument 'key_filter'"
+        )
+        with pytest.raises(TypeError) as ex:
+            await self.client.list_configuration_settings("None", "None", label_filter="MyLabel")
+        assert (
+            str(ex.value)
+            == "AzureAppConfigurationClient.list_configuration_settings() got multiple values for argument 'label_filter'"
+        )
+
         await self.tear_down()
 
     @app_config_decorator_async
@@ -240,7 +266,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     @recorded_by_proxy_async
     async def test_list_configuration_settings_only_key(self, appconfiguration_connection_string):
         await self.set_up(appconfiguration_connection_string)
-        items = await self.convert_to_list(self.client.list_configuration_settings(key_filter=KEY))
+        items = await self.convert_to_list(self.client.list_configuration_settings(KEY))
         assert len(items) == 2
         assert all(x.key == KEY for x in items)
         await self.tear_down()
@@ -338,7 +364,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     @recorded_by_proxy_async
     async def test_list_configuration_settings_only_accepttime(self, appconfiguration_connection_string, **kwargs):
         recorded_variables = kwargs.pop("variables", {})
-        recorded_variables.setdefault("timestamp", str(datetime.datetime.utcnow()))
+        recorded_variables.setdefault("timestamp", str(datetime.utcnow()))
 
         async with self.create_client(appconfiguration_connection_string) as client:
             # Confirm all configuration settings are cleaned up
@@ -351,6 +377,10 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
                 client.list_configuration_settings(accept_datetime=recorded_variables.get("timestamp"))
             )
             assert len(revision) >= 0
+
+            accept_time = datetime(year=2000, month=4, day=1, hour=9, minute=30, second=45, tzinfo=timezone.utc)
+            revision = await self.convert_to_list(client.list_configuration_settings(accept_datetime=accept_time))
+            assert len(revision) == 0
 
         return recorded_variables
 
@@ -884,7 +914,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     async def test_create_snapshot(self, appconfiguration_connection_string):
         await self.set_up(appconfiguration_connection_string)
         snapshot_name = self.get_resource_name("snapshot")
-        filters = [ConfigurationSettingFilter(key=KEY, label=LABEL)]
+        filters = [ConfigurationSettingsFilter(key=KEY, label=LABEL)]
         response = await self.client.begin_create_snapshot(name=snapshot_name, filters=filters)
         created_snapshot = await response.result()
         assert created_snapshot.name == snapshot_name
@@ -903,7 +933,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     async def test_update_snapshot_status(self, appconfiguration_connection_string):
         await self.set_up(appconfiguration_connection_string)
         snapshot_name = self.get_resource_name("snapshot")
-        filters = [ConfigurationSettingFilter(key=KEY, label=LABEL)]
+        filters = [ConfigurationSettingsFilter(key=KEY, label=LABEL)]
         response = await self.client.begin_create_snapshot(name=snapshot_name, filters=filters)
         created_snapshot = await response.result()
         assert created_snapshot.status == "ready"
@@ -921,7 +951,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     async def test_update_snapshot_status_with_etag(self, appconfiguration_connection_string):
         await self.set_up(appconfiguration_connection_string)
         snapshot_name = self.get_resource_name("snapshot")
-        filters = [ConfigurationSettingFilter(key=KEY, label=LABEL)]
+        filters = [ConfigurationSettingsFilter(key=KEY, label=LABEL)]
         response = await self.client.begin_create_snapshot(name=snapshot_name, filters=filters)
         created_snapshot = await response.result()
 
@@ -946,11 +976,11 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
 
         snapshot_name1 = self.get_resource_name("snapshot1")
         snapshot_name2 = self.get_resource_name("snapshot2")
-        filters1 = [ConfigurationSettingFilter(key=KEY)]
+        filters1 = [ConfigurationSettingsFilter(key=KEY)]
         response1 = await self.client.begin_create_snapshot(name=snapshot_name1, filters=filters1)
         created_snapshot1 = await response1.result()
         assert created_snapshot1.status == "ready"
-        filters2 = [ConfigurationSettingFilter(key=KEY, label=LABEL)]
+        filters2 = [ConfigurationSettingsFilter(key=KEY, label=LABEL)]
         response2 = await self.client.begin_create_snapshot(name=snapshot_name2, filters=filters2)
         created_snapshot2 = await response2.result()
         assert created_snapshot2.status == "ready"
@@ -965,12 +995,12 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     async def test_list_snapshot_configuration_settings(self, appconfiguration_connection_string):
         await self.set_up(appconfiguration_connection_string)
         snapshot_name = self.get_resource_name("snapshot")
-        filters = [ConfigurationSettingFilter(key=KEY, label=LABEL)]
+        filters = [ConfigurationSettingsFilter(key=KEY, label=LABEL)]
         response = await self.client.begin_create_snapshot(name=snapshot_name, filters=filters)
         created_snapshot = await response.result()
         assert created_snapshot.status == "ready"
 
-        items = await self.convert_to_list(self.client.list_snapshot_configuration_settings(snapshot_name))
+        items = await self.convert_to_list(self.client.list_configuration_settings(snapshot_name=snapshot_name))
         assert len(items) == 1
 
         await self.tear_down()

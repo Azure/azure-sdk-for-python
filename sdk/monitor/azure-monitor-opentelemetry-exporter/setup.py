@@ -55,11 +55,11 @@ setup(
     author='Microsoft Corporation',
     author_email='ascl@microsoft.com',
     url='https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry-exporter',
+    keywords="azure, azure sdk",
     classifiers=[
         "Development Status :: 4 - Beta",
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
@@ -79,14 +79,13 @@ setup(
     package_data={
         'pytyped': ['py.typed'],
     },
-    python_requires=">=3.7",
+    python_requires=">=3.8",
     install_requires=[
-        "azure-core<2.0.0,>=1.23.0",
+        "azure-core<2.0.0,>=1.28.0",
         "fixedint==0.1.6",
         "msrest>=0.6.10",
-        "opentelemetry-api~=1.19.0",
-        "opentelemetry-sdk~=1.19.0",
-        "importlib-metadata~=6.0; python_version < '3.8'"
+        "opentelemetry-api~=1.21",
+        "opentelemetry-sdk~=1.21",
     ],
     entry_points={
         "opentelemetry_traces_exporter": [

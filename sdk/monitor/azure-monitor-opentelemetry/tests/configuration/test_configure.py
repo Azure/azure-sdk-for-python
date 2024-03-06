@@ -11,19 +11,22 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 import unittest
-from unittest.mock import Mock, patch
+from unittest.mock import Mock, call, patch
+
+from opentelemetry.sdk.resources import Resource
 
 from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
 from azure.monitor.opentelemetry._configure import (
-    _SUPPORTED_INSTRUMENTED_LIBRARIES,
     _setup_instrumentations,
     _setup_logging,
     _setup_metrics,
     _setup_tracing,
     configure_azure_monitor,
 )
+
+
+TEST_RESOURCE = Resource({"foo": "bar"})
 
 
 class TestConfigure(unittest.TestCase):
@@ -83,6 +86,17 @@ class TestConfigure(unittest.TestCase):
             "disable_tracing": True,
             "disable_logging": False,
             "disable_metrics": False,
+            "instrumentation_options": {
+                "flask": {
+                    "enabled": False
+                },
+                "django": {
+                    "enabled": False
+                },
+                "requests": {
+                    "enabled": False
+                },
+            }
         }
         config_mock.return_value = configurations
         configure_azure_monitor()
@@ -204,22 +218,29 @@ class TestConfigure(unittest.TestCase):
         trace_exporter_mock.return_value = trace_exp_init_mock
         bsp_init_mock = Mock()
         bsp_mock.return_value = bsp_init_mock
+        custom_sp = Mock()
 
         configurations = {
             "connection_string": "test_cs",
-            "disable_azure_core_tracing": False,
+            "instrumentation_options": {
+                "azure_sdk": {"enabled": True}
+            },
             "sampling_ratio": 0.5,
+            "span_processors": [custom_sp],
+            "resource": TEST_RESOURCE,
         }
         _setup_tracing(configurations)
         sampler_mock.assert_called_once_with(sampling_ratio=0.5)
         tp_mock.assert_called_once_with(
             sampler=sampler_init_mock,
+            resource=TEST_RESOURCE
         )
         set_tracer_provider_mock.assert_called_once_with(tp_init_mock)
         get_tracer_provider_mock.assert_called()
         trace_exporter_mock.assert_called_once_with(**configurations)
         bsp_mock.assert_called_once_with(trace_exp_init_mock)
-        tp_init_mock.add_span_processor.assert_called_once_with(bsp_init_mock)
+        self.assertEqual(tp_init_mock.add_span_processor.call_count, 2)
+        tp_init_mock.add_span_processor.assert_has_calls([call(custom_sp), call(bsp_init_mock)])
         self.assertEqual(
             azure_core_mock.tracing_implementation, OpenTelemetrySpan
         )
@@ -270,10 +291,12 @@ class TestConfigure(unittest.TestCase):
 
         configurations = {
             "connection_string": "test_cs",
+            "logger_name": "test",
+            "resource": TEST_RESOURCE,
         }
         _setup_logging(configurations)
 
-        lp_mock.assert_called_once_with()
+        lp_mock.assert_called_once_with(resource=TEST_RESOURCE)
         set_logger_provider_mock.assert_called_once_with(lp_init_mock)
         get_logger_provider_mock.assert_called()
         log_exporter_mock.assert_called_once_with(**configurations)
@@ -286,7 +309,7 @@ class TestConfigure(unittest.TestCase):
         logging_handler_mock.assert_called_once_with(
             logger_provider=lp_init_mock
         )
-        get_logger_mock.assert_called_once_with()
+        get_logger_mock.assert_called_once_with("test")
         logger_mock.addHandler.assert_called_once_with(
             logging_handler_init_mock
         )
@@ -320,21 +343,26 @@ class TestConfigure(unittest.TestCase):
 
         configurations = {
             "connection_string": "test_cs",
+            "resource": TEST_RESOURCE,
         }
         _setup_metrics(configurations)
         mp_mock.assert_called_once_with(
             metric_readers=[reader_init_mock],
+            resource=TEST_RESOURCE
         )
         set_meter_provider_mock.assert_called_once_with(mp_init_mock)
         metric_exporter_mock.assert_called_once_with(**configurations)
         reader_mock.assert_called_once_with(metric_exp_init_mock)
 
+    @patch("azure.monitor.opentelemetry._configure._ALL_SUPPORTED_INSTRUMENTED_LIBRARIES", ("test_instr2"))
+    @patch("azure.monitor.opentelemetry._configure._is_instrumentation_enabled")
     @patch("azure.monitor.opentelemetry._configure.get_dist_dependency_conflicts")
     @patch("azure.monitor.opentelemetry._configure.iter_entry_points")
     def test_setup_instrumentations_lib_not_supported(
         self,
         iter_mock,
         dep_mock,
+        enabled_mock,
     ):
         ep_mock = Mock()
         ep2_mock = Mock()
@@ -342,16 +370,19 @@ class TestConfigure(unittest.TestCase):
         instrumentor_mock = Mock()
         instr_class_mock = Mock()
         instr_class_mock.return_value = instrumentor_mock
-        ep_mock.name = "test_instr"
-        ep2_mock.name = _SUPPORTED_INSTRUMENTED_LIBRARIES[0]
+        ep_mock.name = "test_instr1"
+        ep2_mock.name = "test_instr2"
         ep2_mock.load.return_value = instr_class_mock
         dep_mock.return_value = None
-        _setup_instrumentations({"disabled_instrumentations": []})
+        enabled_mock.return_value = True
+        _setup_instrumentations({})
         dep_mock.assert_called_with(ep2_mock.dist)
         ep_mock.load.assert_not_called()
         ep2_mock.load.assert_called_once()
         instrumentor_mock.instrument.assert_called_once()
 
+    @patch("azure.monitor.opentelemetry._configure._ALL_SUPPORTED_INSTRUMENTED_LIBRARIES", ("test_instr"))
+    @patch("azure.monitor.opentelemetry._configure._is_instrumentation_enabled")
     @patch("azure.monitor.opentelemetry._configure._logger")
     @patch("azure.monitor.opentelemetry._configure.get_dist_dependency_conflicts")
     @patch("azure.monitor.opentelemetry._configure.iter_entry_points")
@@ -360,21 +391,25 @@ class TestConfigure(unittest.TestCase):
         iter_mock,
         dep_mock,
         logger_mock,
+        enabled_mock,
     ):
         ep_mock = Mock()
         iter_mock.return_value = (ep_mock,)
         instrumentor_mock = Mock()
         instr_class_mock = Mock()
         instr_class_mock.return_value = instrumentor_mock
-        ep_mock.name = _SUPPORTED_INSTRUMENTED_LIBRARIES[0]
+        ep_mock.name = "test_instr"
         ep_mock.load.return_value = instr_class_mock
         dep_mock.return_value = True
-        _setup_instrumentations({"disabled_instrumentations": []})
+        enabled_mock.return_value = True
+        _setup_instrumentations({})
         dep_mock.assert_called_with(ep_mock.dist)
         ep_mock.load.assert_not_called()
         instrumentor_mock.instrument.assert_not_called()
         logger_mock.debug.assert_called_once()
 
+    @patch("azure.monitor.opentelemetry._configure._ALL_SUPPORTED_INSTRUMENTED_LIBRARIES", ("test_instr"))
+    @patch("azure.monitor.opentelemetry._configure._is_instrumentation_enabled")
     @patch("azure.monitor.opentelemetry._configure._logger")
     @patch("azure.monitor.opentelemetry._configure.get_dist_dependency_conflicts")
     @patch("azure.monitor.opentelemetry._configure.iter_entry_points")
@@ -383,21 +418,25 @@ class TestConfigure(unittest.TestCase):
         iter_mock,
         dep_mock,
         logger_mock,
+        enabled_mock,
     ):
         ep_mock = Mock()
         iter_mock.return_value = (ep_mock,)
         instrumentor_mock = Mock()
         instr_class_mock = Mock()
         instr_class_mock.return_value = instrumentor_mock
-        ep_mock.name = _SUPPORTED_INSTRUMENTED_LIBRARIES[0]
+        ep_mock.name = "test_instr"
         ep_mock.load.side_effect = Exception()
         dep_mock.return_value = None
-        _setup_instrumentations({"disabled_instrumentations": []})
+        enabled_mock.return_value = True
+        _setup_instrumentations({})
         dep_mock.assert_called_with(ep_mock.dist)
         ep_mock.load.assert_called_once()
         instrumentor_mock.instrument.assert_not_called()
         logger_mock.warning.assert_called_once()
 
+    @patch("azure.monitor.opentelemetry._configure._ALL_SUPPORTED_INSTRUMENTED_LIBRARIES", ("test_instr1", "test_instr2"))
+    @patch("azure.monitor.opentelemetry._configure._is_instrumentation_enabled")
     @patch("azure.monitor.opentelemetry._configure._logger")
     @patch("azure.monitor.opentelemetry._configure.get_dist_dependency_conflicts")
     @patch("azure.monitor.opentelemetry._configure.iter_entry_points")
@@ -406,6 +445,7 @@ class TestConfigure(unittest.TestCase):
         iter_mock,
         dep_mock,
         logger_mock,
+        enabled_mock,
     ):
         ep_mock = Mock()
         ep2_mock = Mock()
@@ -413,11 +453,12 @@ class TestConfigure(unittest.TestCase):
         instrumentor_mock = Mock()
         instr_class_mock = Mock()
         instr_class_mock.return_value = instrumentor_mock
-        ep_mock.name = _SUPPORTED_INSTRUMENTED_LIBRARIES[0]
-        ep2_mock.name = _SUPPORTED_INSTRUMENTED_LIBRARIES[1]
+        ep_mock.name = "test_instr1"
+        ep2_mock.name = "test_instr2"
         ep2_mock.load.return_value = instr_class_mock
         dep_mock.return_value = None
-        _setup_instrumentations({"disabled_instrumentations": [ep_mock.name]})
+        enabled_mock.side_effect = [False, True]
+        _setup_instrumentations({})
         dep_mock.assert_called_with(ep2_mock.dist)
         ep_mock.load.assert_not_called()
         ep2_mock.load.assert_called_once()

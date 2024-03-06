@@ -1,8 +1,47 @@
 # Release History
 
-## 12.13.0 (Unreleased)
+## 12.15.0b1 (Unreleased)
+
+This version and all future versions will require Python 3.8+. Python 3.7 is no longer supported.
 
 ### Features Added
+- The `services` parameter has been added to the `generate_account_sas` API, which enables the ability to generate SAS
+tokens to be used with multiple services. By default, the SAS token service scope will default to the current service.
+
+### Bugs Fixed
+- Bumped dependency of `typing-extensions` to `>=4.6.0` to avoid potential `TypeError` with `typing.TypeVar` on
+Python 3.12.
+- Fixed an issue where authentication errors could raise `AttributeError` instead of `ClientAuthenticationError` when
+using async OAuth credentials.
+
+## 12.14.0 (2023-11-07)
+
+### Features Added
+- Stable release of features from 12.14.0b1
+
+## 12.14.0b1 (2023-10-17)
+
+### Features Added
+- Added support for service version 2023-11-03.
+- Added `audience` as an optional keyword that can be specified on APIs that have a `credential` parameter. This
+keyword only has an effect when the credential provided is of type `TokenCredential`.
+
+## 12.13.2 (2023-10-10)
+
+### Bugs Fixed
+- Fixed an issue when an invalid type was provided for `credential` during client construction, the
+`__str__` of the object would be present in the exception message and therefore potentially logged.
+
+## 12.13.1 (2023-09-13)
+
+### Bugs Fixed
+- Fixed breaking `KeyError: 'sdk_moniker'` in `create_configuration`.
+NOTE: This is not an exported method and therefore should not be imported/called directly.
+
+## 12.13.0 (2023-09-12)
+
+### Features Added
+- Stable release of features from 12.13.0b1
 
 ## 12.13.0b1 (2023-08-08)
 
@@ -153,7 +192,7 @@ in a future release.
     - `permanent_delete`
     - `set_immutability_policy`
 **Fixes**
-- `FileSystemProperties` was not subscriptable. Now it is both subscriptable and attributes can also be accessed directly (#20772) 
+- `FileSystemProperties` was not subscriptable. Now it is both subscriptable and attributes can also be accessed directly (#20772)
 - Datalake Client Typing annotation issues have been resolved (#19906)
 
 ## 12.5.0 (2021-09-15)

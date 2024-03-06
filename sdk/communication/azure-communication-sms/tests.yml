@@ -6,6 +6,7 @@ stages:
       BuildTargetingString: 'azure-communication-sms'
       JobName: sms
       ServiceDirectory: communication
+      Clouds: Public,Int
       CloudConfig:
         Public:
           SubscriptionConfigurations:
@@ -14,7 +15,11 @@ stages:
             - $(sub-config-communication-services-sms-cloud-test-resources)
           MatrixReplace:
             - TestSamples=.*/true
-      Clouds: Public
+        Int:
+          SubscriptionConfigurations:
+            - $(sub-config-communication-int-test-resources-common)
+            - $(sub-config-communication-int-test-resources-python)
+            - $(sub-config-communication-sms-int-test-resources)
       EnvVars:
         AZURE_SKIP_LIVE_RECORDING: 'True'
         AZURE_TEST_RUN_LIVE: 'True'

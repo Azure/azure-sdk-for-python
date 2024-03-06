@@ -10,3 +10,5 @@ credentials:
   tenant_id: 72f988bf-86f1-41af-91ab-2d7cd011db47
   client_id: f7152bb4-cfa5-4cc9-9516-c34b65a10d04
   client_secret: -8BJ_7K1~J2BtbK8-z1oZ-28B2.1mH5ZGg
+  resource_url: https://storage.azure.com
+  authority_url: https://login.microsoftonline.com

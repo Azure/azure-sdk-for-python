@@ -23,8 +23,10 @@
 """
 
 import time
+from typing import Optional
 
 from azure.core.exceptions import AzureError, ClientAuthenticationError
+from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.policies import RetryPolicy
 
 from . import exceptions
@@ -49,9 +51,9 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
         Instance of _GlobalEndpointManager class
     :param function function:
         Function to be called wrapped with retries
-    :param (non-keyworded, variable number of arguments list) *args:
-    :param (keyworded, variable number of arguments list) **kwargs:
-
+    :param list args:
+    :returns: the result of running the passed in function as a (result, headers) tuple
+    :rtype: tuple of (dict, dict)
     """
     # instantiate all retry policies here to be applied for each request execution
     endpointDiscovery_retry_policy = _endpoint_discovery_retry_policy.EndpointDiscoveryRetryPolicy(
@@ -76,9 +78,9 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
     )
 
     while True:
+        client_timeout = kwargs.get('timeout')
+        start_time = time.time()
         try:
-            client_timeout = kwargs.get('timeout')
-            start_time = time.time()
             if args:
                 result = ExecuteFunction(function, global_endpoint_manager, *args, **kwargs)
             else:
@@ -110,7 +112,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
                 retry_policy = sessionRetry_policy
             elif exceptions._partition_range_is_gone(e):
                 retry_policy = partition_key_range_gone_retry_policy
-            elif e.status_code == StatusCodes.REQUEST_TIMEOUT or e.status_code == StatusCodes.SERVICE_UNAVAILABLE:
+            elif e.status_code in (StatusCodes.REQUEST_TIMEOUT, e.status_code == StatusCodes.SERVICE_UNAVAILABLE):
                 retry_policy = timeout_failover_retry_policy
 
             # If none of the retry policies applies or there is no retry needed, set the
@@ -139,11 +141,15 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
 
 def ExecuteFunction(function, *args, **kwargs):
     """Stub method so that it can be used for mocking purposes as well.
+    :param Callable function: the function to execute.
+    :param list args: the explicit arguments for the function.
+    :returns: the result of executing the function with the passed in arguments
+    :rtype: tuple(dict, dict)
     """
     return function(*args, **kwargs)
 
-def _configure_timeout(request, absolute, per_request):
-    # type: (azure.core.pipeline.PipelineRequest, Optional[int], int) -> Optional[AzureError]
+
+def _configure_timeout(request: PipelineRequest, absolute: Optional[int], per_request: int) -> None:
     if absolute is not None:
         if absolute <= 0:
             raise exceptions.CosmosClientTimeoutError()
@@ -184,8 +190,8 @@ class ConnectionRetryPolicy(RetryPolicy):
         response = None
         retry_settings = self.configure_retries(request.context.options)
         while retry_active:
+            start_time = time.time()
             try:
-                start_time = time.time()
                 _configure_timeout(request, absolute_timeout, per_request_timeout)
 
                 response = self.next.send(request)

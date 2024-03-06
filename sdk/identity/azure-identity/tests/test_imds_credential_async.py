@@ -98,6 +98,24 @@ async def test_unexpected_error():
         assert error_message in ex.value.message
 
 
+@pytest.mark.parametrize("error_ending", ("network", "host", "foo"))
+async def test_imds_request_failure_docker_desktop(error_ending):
+    """The credential should raise CredentialUnavailableError when a 403 with a specific message is received"""
+
+    error_message = (
+        "connecting to 169.254.169.254:80: connecting to 169.254.169.254:80: dial tcp 169.254.169.254:80: "
+        f"connectex: A socket operation was attempted to an unreachable {error_ending}."  # cspell:disable-line
+    )
+    probe = mock_response(status_code=403, json_payload={"error": error_message})
+    transport = mock.Mock(send=mock.Mock(return_value=get_completed_future(probe)))
+    credential = ImdsCredential(transport=transport)
+
+    with pytest.raises(CredentialUnavailableError) as ex:
+        await credential.get_token("scope")
+
+    assert error_message in ex.value.message
+
+
 async def test_cache():
     scope = "https://foo.bar"
     expired = "this token's expired"
@@ -143,14 +161,14 @@ async def test_cache():
 async def test_retries():
     mock_response = mock.Mock(
         text=lambda encoding=None: b"{}",
-        headers={"content-type": "application/json", "Retry-After": "0"},
+        headers={"content-type": "application/json"},
         content_type="application/json",
     )
     mock_send = mock.Mock(return_value=mock_response)
 
     total_retries = PIPELINE_SETTINGS["retry_total"]
 
-    for status_code in (404, 429, 500):
+    for status_code in (404, 410, 429, 500):
         mock_send.reset_mock()
         mock_response.status_code = status_code
         try:

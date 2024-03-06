@@ -83,11 +83,11 @@ If at any time you want to blow away the tox created virtual environments and st
 
 #### Example `azure-core` mypy
 
-1. Run `tox run -e mypy -c ../../../eng/tox/tox.ini --root sdk/core/azure-core`
+1. Run `tox run -e mypy -c ./eng/tox/tox.ini --root sdk/core/azure-core`
 
 #### Example `azure-storage-blob` tests
 
-2. Execute `tox run -c ../../../eng/tox/tox.ini --root sdk/storage/azure-storage-blob`
+2. Execute `tox run -c ./eng/tox/tox.ini --root sdk/storage/azure-storage-blob`
 
 Note that we didn't provide an `environment` argument for this example. Reason here is that the _default_ environment selected by our common `tox.ini` file is one that runs `pytest`.
 
@@ -187,7 +187,7 @@ When code samples take dependencies, readers should be able to use the material 
 
 Samples may take the following categories of dependencies:
 
-- **Open-source** : Open source offerings that use an [Open Source Initiative (OSI) approved license](https://opensource.org/licenses). Any component whose license isn't OSI-approved is considered a commercial offering. Prefer OSS projects that are members of any of the [OSS foundations that Microsoft is part of](https://opensource.microsoft.com/ecosystem/). Prefer permissive licenses for libraries, like [MIT](https://opensource.org/licenses/MIT) and [Apache 2](https://opensource.org/licenses/Apache-2.0). Copy-left licenses like [GPL](https://opensource.org/licenses/gpl-license) are acceptable for tools, and OSs. [Kubernetes](https://github.com/kubernetes/kubernetes), [Linux](https://github.com/torvalds/linux), and [Newtonsoft.Json](https://github.com/JamesNK/Newtonsoft.Json) are examples of this license type. Links to open source components should be to where the source is hosted, including any applicable license, such as a GitHub repository (or similar).
+- **Open-source** : Open source offerings that use an [Open Source Initiative (OSI) approved license](https://opensource.org/licenses). Any component whose license isn't OSI-approved is considered a commercial offering. Prefer OSS projects that are members of any of the [OSS foundations that Microsoft is part of](https://opensource.microsoft.com/ecosystem/). Prefer permissive licenses for libraries, like [MIT](https://opensource.org/license/MIT) and [Apache 2](https://opensource.org/license/apache-2-0). Copy-left licenses like [GPLv3](https://opensource.org/license/gpl-3-0) are acceptable for tools, and OSs. [Kubernetes](https://github.com/kubernetes/kubernetes), [Linux](https://github.com/torvalds/linux), and [Newtonsoft.Json](https://github.com/JamesNK/Newtonsoft.Json) are examples of this license type. Links to open source components should be to where the source is hosted, including any applicable license, such as a GitHub repository (or similar).
 
 - **Commercial**: Commercial offerings that enable readers to learn from our content without unnecessary extra costs. Typically, the offering has some form of a community edition, or a free trial sufficient for its use in content. A commercial license may be a form of dual-license, or tiered license. Links to commercial components should be to the commercial site for the software, even if the source software is hosted publicly on GitHub (or similar).
 

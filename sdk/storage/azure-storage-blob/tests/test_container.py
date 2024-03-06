@@ -2697,3 +2697,24 @@ class TestStorageContainer(StorageRecordedTestCase):
         assert items_on_page1[1] == 'blob2'
         assert len(items_on_page2) == 1
         assert items_on_page2[0] == 'blob3'
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_storage_account_audience_container_client(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        cc = ContainerClient(self.account_url(storage_account_name, "blob"), 'testcont', storage_account_key)
+        cc.exists()
+
+        # Act
+        token_credential = self.generate_oauth_token()
+        cc = ContainerClient(
+            self.account_url(storage_account_name, "blob"), 'testcont', credential=token_credential,
+            audience=f'https://{storage_account_name}.blob.core.windows.net'
+        )
+
+        # Assert
+        response = cc.exists()
+        assert response is not None

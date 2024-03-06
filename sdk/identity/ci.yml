@@ -40,3 +40,5 @@ extends:
     Artifacts:
      - name: azure-identity
        safeName: azureidentity
+     - name: azure-identity-broker
+       safeName: azureidentitybroker

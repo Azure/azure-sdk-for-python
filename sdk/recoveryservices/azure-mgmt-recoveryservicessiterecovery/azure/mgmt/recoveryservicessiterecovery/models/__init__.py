@@ -19,6 +19,7 @@ from ._models_py3 import A2ACrossClusterMigrationReplicationDetails
 from ._models_py3 import A2AEnableProtectionInput
 from ._models_py3 import A2AEventDetails
 from ._models_py3 import A2AExtendedLocationDetails
+from ._models_py3 import A2AFabricSpecificLocationDetails
 from ._models_py3 import A2APolicyCreationInput
 from ._models_py3 import A2APolicyDetails
 from ._models_py3 import A2AProtectedDiskDetails
@@ -55,7 +56,9 @@ from ._models_py3 import Alert
 from ._models_py3 import AlertCollection
 from ._models_py3 import AlertProperties
 from ._models_py3 import ApplianceCollection
+from ._models_py3 import ApplianceMonitoringDetails
 from ._models_py3 import ApplianceQueryParameter
+from ._models_py3 import ApplianceResourceDetails
 from ._models_py3 import ApplianceSpecificDetails
 from ._models_py3 import ApplyRecoveryPointInput
 from ._models_py3 import ApplyRecoveryPointInputProperties
@@ -91,6 +94,7 @@ from ._models_py3 import CriticalJobHistoryDetails
 from ._models_py3 import CurrentJobDetails
 from ._models_py3 import CurrentScenarioDetails
 from ._models_py3 import DataStore
+from ._models_py3 import DataStoreUtilizationDetails
 from ._models_py3 import DisableProtectionInput
 from ._models_py3 import DisableProtectionInputProperties
 from ._models_py3 import DisableProtectionProviderSpecificInput
@@ -109,6 +113,9 @@ from ._models_py3 import EnableProtectionInput
 from ._models_py3 import EnableProtectionInputProperties
 from ._models_py3 import EnableProtectionProviderSpecificInput
 from ._models_py3 import EncryptionDetails
+from ._models_py3 import ErrorAdditionalInfo
+from ._models_py3 import ErrorDetail
+from ._models_py3 import ErrorResponse
 from ._models_py3 import Event
 from ._models_py3 import EventCollection
 from ._models_py3 import EventProperties
@@ -138,6 +145,7 @@ from ._models_py3 import FailoverJobDetails
 from ._models_py3 import FailoverProcessServerRequest
 from ._models_py3 import FailoverProcessServerRequestProperties
 from ._models_py3 import FailoverReplicationProtectedItemDetails
+from ._models_py3 import GatewayOperationDetails
 from ._models_py3 import GroupTaskDetails
 from ._models_py3 import HealthError
 from ._models_py3 import HealthErrorSummary
@@ -290,6 +298,7 @@ from ._models_py3 import NewProtectionProfile
 from ._models_py3 import NewRecoveryVirtualNetwork
 from ._models_py3 import OSDetails
 from ._models_py3 import OSDiskDetails
+from ._models_py3 import OSUpgradeSupportedVersions
 from ._models_py3 import OSVersionWrapper
 from ._models_py3 import OperationsDiscovery
 from ._models_py3 import OperationsDiscoveryCollection
@@ -494,6 +503,7 @@ from ._models_py3 import VMwareCbtProtectedDiskDetails
 from ._models_py3 import VMwareCbtProtectionContainerMappingDetails
 from ._models_py3 import VMwareCbtResumeReplicationInput
 from ._models_py3 import VMwareCbtResyncInput
+from ._models_py3 import VMwareCbtSecurityProfileProperties
 from ._models_py3 import VMwareCbtTestMigrateInput
 from ._models_py3 import VMwareCbtUpdateDiskInput
 from ._models_py3 import VMwareCbtUpdateMigrationItemInput
@@ -529,6 +539,7 @@ from ._site_recovery_management_client_enums import AgentVersionStatus
 from ._site_recovery_management_client_enums import AlternateLocationRecoveryOption
 from ._site_recovery_management_client_enums import AutoProtectionOfDataDisk
 from ._site_recovery_management_client_enums import AutomationAccountAuthenticationType
+from ._site_recovery_management_client_enums import ChurnOptionSelected
 from ._site_recovery_management_client_enums import DataSyncStatus
 from ._site_recovery_management_client_enums import DisableProtectionReason
 from ._site_recovery_management_client_enums import DiskAccountType
@@ -562,6 +573,7 @@ from ._site_recovery_management_client_enums import RecoveryPointType
 from ._site_recovery_management_client_enums import ReplicationProtectedItemOperation
 from ._site_recovery_management_client_enums import ResyncState
 from ._site_recovery_management_client_enums import RpInMageRecoveryPointType
+from ._site_recovery_management_client_enums import SecurityType
 from ._site_recovery_management_client_enums import SetMultiVmSyncStatus
 from ._site_recovery_management_client_enums import Severity
 from ._site_recovery_management_client_enums import SourceSiteOperations
@@ -587,6 +599,7 @@ __all__ = [
     "A2AEnableProtectionInput",
     "A2AEventDetails",
     "A2AExtendedLocationDetails",
+    "A2AFabricSpecificLocationDetails",
     "A2APolicyCreationInput",
     "A2APolicyDetails",
     "A2AProtectedDiskDetails",
@@ -623,7 +636,9 @@ __all__ = [
     "AlertCollection",
     "AlertProperties",
     "ApplianceCollection",
+    "ApplianceMonitoringDetails",
     "ApplianceQueryParameter",
+    "ApplianceResourceDetails",
     "ApplianceSpecificDetails",
     "ApplyRecoveryPointInput",
     "ApplyRecoveryPointInputProperties",
@@ -659,6 +674,7 @@ __all__ = [
     "CurrentJobDetails",
     "CurrentScenarioDetails",
     "DataStore",
+    "DataStoreUtilizationDetails",
     "DisableProtectionInput",
     "DisableProtectionInputProperties",
     "DisableProtectionProviderSpecificInput",
@@ -677,6 +693,9 @@ __all__ = [
     "EnableProtectionInputProperties",
     "EnableProtectionProviderSpecificInput",
     "EncryptionDetails",
+    "ErrorAdditionalInfo",
+    "ErrorDetail",
+    "ErrorResponse",
     "Event",
     "EventCollection",
     "EventProperties",
@@ -706,6 +725,7 @@ __all__ = [
     "FailoverProcessServerRequest",
     "FailoverProcessServerRequestProperties",
     "FailoverReplicationProtectedItemDetails",
+    "GatewayOperationDetails",
     "GroupTaskDetails",
     "HealthError",
     "HealthErrorSummary",
@@ -858,6 +878,7 @@ __all__ = [
     "NewRecoveryVirtualNetwork",
     "OSDetails",
     "OSDiskDetails",
+    "OSUpgradeSupportedVersions",
     "OSVersionWrapper",
     "OperationsDiscovery",
     "OperationsDiscoveryCollection",
@@ -1062,6 +1083,7 @@ __all__ = [
     "VMwareCbtProtectionContainerMappingDetails",
     "VMwareCbtResumeReplicationInput",
     "VMwareCbtResyncInput",
+    "VMwareCbtSecurityProfileProperties",
     "VMwareCbtTestMigrateInput",
     "VMwareCbtUpdateDiskInput",
     "VMwareCbtUpdateMigrationItemInput",
@@ -1096,6 +1118,7 @@ __all__ = [
     "AlternateLocationRecoveryOption",
     "AutoProtectionOfDataDisk",
     "AutomationAccountAuthenticationType",
+    "ChurnOptionSelected",
     "DataSyncStatus",
     "DisableProtectionReason",
     "DiskAccountType",
@@ -1129,6 +1152,7 @@ __all__ = [
     "ReplicationProtectedItemOperation",
     "ResyncState",
     "RpInMageRecoveryPointType",
+    "SecurityType",
     "SetMultiVmSyncStatus",
     "Severity",
     "SourceSiteOperations",

@@ -1,6 +1,6 @@
 # Release History
 
-## 5.11.5 (Unreleased)
+## 5.11.7 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,26 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+- Updated network trace logging to replace `None` values in AMQP connection info with empty strings as per the OpenTelemetry specification.
+
+## 5.11.6 (2024-02-12)
+
+This version and all future versions will require Python 3.8+. Python 3.7 is no longer supported.
+
+### Features Added
+
+- Added `keep_alive` functionality on EventHubProducerClient to allow for long-living producers. [#33726](https://github.com/Azure/azure-sdk-for-python/issues/33726)
+
+### Other Changes
+
+- Added support for Python 3.12.
+
+## 5.11.5 (2023-11-13)
+
+### Bugs Fixed
+
+- Fixed a pyAMQP error where events split across multiple TransferFrames were depleting the link credit by more than 1 credit per message. ([#32767](https://github.com/Azure/azure-sdk-for-python/pull/32767))
 
 ## 5.11.4 (2023-08-08)
 

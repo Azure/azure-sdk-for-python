@@ -8,7 +8,7 @@ key phrases from input text via the Text Analytics sdk. The telemetry
 will be collected automatically and sent to Application Insights
 via the AzureMonitorTraceExporter
 """
-
+# mypy: disable-error-code="attr-defined"
 import os
 
 # Declare OpenTelemetry as enabled tracing plugin for Azure SDKs

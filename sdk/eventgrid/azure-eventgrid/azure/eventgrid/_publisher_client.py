@@ -54,13 +54,17 @@ if TYPE_CHECKING:
         TokenCredential,
     )
 
+    from cloudevents.http.event import CloudEvent as CNCFCloudEvent
+
 SendType = Union[
     CloudEvent,
     EventGridEvent,
     Dict,
+    "CNCFCloudEvent",
     List[CloudEvent],
     List[EventGridEvent],
     List[Dict],
+    List["CNCFCloudEvent"],
 ]
 
 ListEventType = Union[List[CloudEvent], List[EventGridEvent], List[Dict]]

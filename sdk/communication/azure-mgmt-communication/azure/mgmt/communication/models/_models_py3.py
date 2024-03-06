@@ -251,6 +251,8 @@ class CommunicationServiceResource(TrackedResource):  # pylint: disable=too-many
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
+    :ivar identity: Managed service identity (system assigned and/or user assigned identities).
+    :vartype identity: ~azure.mgmt.communication.models.ManagedServiceIdentity
     :ivar provisioning_state: Provisioning state of the resource. Known values are: "Unknown",
      "Succeeded", "Failed", "Canceled", "Running", "Creating", "Updating", "Deleting", and "Moving".
     :vartype provisioning_state: str or
@@ -290,6 +292,7 @@ class CommunicationServiceResource(TrackedResource):  # pylint: disable=too-many
         "system_data": {"key": "systemData", "type": "SystemData"},
         "tags": {"key": "tags", "type": "{str}"},
         "location": {"key": "location", "type": "str"},
+        "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "host_name": {"key": "properties.hostName", "type": "str"},
         "data_location": {"key": "properties.dataLocation", "type": "str"},
@@ -304,6 +307,7 @@ class CommunicationServiceResource(TrackedResource):  # pylint: disable=too-many
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
         data_location: Optional[str] = None,
         linked_domains: Optional[List[str]] = None,
         **kwargs: Any
@@ -313,12 +317,15 @@ class CommunicationServiceResource(TrackedResource):  # pylint: disable=too-many
         :paramtype tags: dict[str, str]
         :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
+        :keyword identity: Managed service identity (system assigned and/or user assigned identities).
+        :paramtype identity: ~azure.mgmt.communication.models.ManagedServiceIdentity
         :keyword data_location: The location where the communication service stores its data at rest.
         :paramtype data_location: str
         :keyword linked_domains: List of email Domain resource Ids.
         :paramtype linked_domains: list[str]
         """
         super().__init__(tags=tags, location=location, **kwargs)
+        self.identity = identity
         self.provisioning_state = None
         self.host_name = None
         self.data_location = data_location
@@ -389,26 +396,37 @@ class CommunicationServiceResourceUpdate(TaggedResource):
 
     :ivar tags: Tags of the service which is a list of key value pairs that describe the resource.
     :vartype tags: dict[str, str]
+    :ivar identity: Managed service identity (system assigned and/or user assigned identities).
+    :vartype identity: ~azure.mgmt.communication.models.ManagedServiceIdentity
     :ivar linked_domains: List of email Domain resource Ids.
     :vartype linked_domains: list[str]
     """
 
     _attribute_map = {
         "tags": {"key": "tags", "type": "{str}"},
+        "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
         "linked_domains": {"key": "properties.linkedDomains", "type": "[str]"},
     }
 
     def __init__(
-        self, *, tags: Optional[Dict[str, str]] = None, linked_domains: Optional[List[str]] = None, **kwargs: Any
+        self,
+        *,
+        tags: Optional[Dict[str, str]] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
+        linked_domains: Optional[List[str]] = None,
+        **kwargs: Any
     ) -> None:
         """
         :keyword tags: Tags of the service which is a list of key value pairs that describe the
          resource.
         :paramtype tags: dict[str, str]
+        :keyword identity: Managed service identity (system assigned and/or user assigned identities).
+        :paramtype identity: ~azure.mgmt.communication.models.ManagedServiceIdentity
         :keyword linked_domains: List of email Domain resource Ids.
         :paramtype linked_domains: list[str]
         """
         super().__init__(tags=tags, **kwargs)
+        self.identity = identity
         self.linked_domains = linked_domains
 
 
@@ -974,6 +992,70 @@ class LinkNotificationHubParameters(_serialization.Model):
         self.connection_string = connection_string
 
 
+class ManagedServiceIdentity(_serialization.Model):
+    """Managed service identity (system assigned and/or user assigned identities).
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar principal_id: The service principal ID of the system assigned identity. This property
+     will only be provided for a system assigned identity.
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant ID of the system assigned identity. This property will only be
+     provided for a system assigned identity.
+    :vartype tenant_id: str
+    :ivar type: Type of managed service identity (where both SystemAssigned and UserAssigned types
+     are allowed). Required. Known values are: "None", "SystemAssigned", "UserAssigned", and
+     "SystemAssigned,UserAssigned".
+    :vartype type: str or ~azure.mgmt.communication.models.ManagedServiceIdentityType
+    :ivar user_assigned_identities: The set of user assigned identities associated with the
+     resource. The userAssignedIdentities dictionary keys will be ARM resource ids in the form:
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.
+     The dictionary values can be empty objects ({}) in requests.
+    :vartype user_assigned_identities: dict[str,
+     ~azure.mgmt.communication.models.UserAssignedIdentity]
+    """
+
+    _validation = {
+        "principal_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
+        "type": {"required": True},
+    }
+
+    _attribute_map = {
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "user_assigned_identities": {"key": "userAssignedIdentities", "type": "{UserAssignedIdentity}"},
+    }
+
+    def __init__(
+        self,
+        *,
+        type: Union[str, "_models.ManagedServiceIdentityType"],
+        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword type: Type of managed service identity (where both SystemAssigned and UserAssigned
+         types are allowed). Required. Known values are: "None", "SystemAssigned", "UserAssigned", and
+         "SystemAssigned,UserAssigned".
+        :paramtype type: str or ~azure.mgmt.communication.models.ManagedServiceIdentityType
+        :keyword user_assigned_identities: The set of user assigned identities associated with the
+         resource. The userAssignedIdentities dictionary keys will be ARM resource ids in the form:
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.
+         The dictionary values can be empty objects ({}) in requests.
+        :paramtype user_assigned_identities: dict[str,
+         ~azure.mgmt.communication.models.UserAssignedIdentity]
+        """
+        super().__init__(**kwargs)
+        self.principal_id = None
+        self.tenant_id = None
+        self.type = type
+        self.user_assigned_identities = user_assigned_identities
+
+
 class NameAvailabilityParameters(CheckNameAvailabilityRequest):
     """Data POST-ed to the nameAvailability action.
 
@@ -1274,6 +1356,217 @@ class SenderUsernameResourceCollection(_serialization.Model):
         self.next_link = next_link
 
 
+class SuppressionListAddressResource(ProxyResource):
+    """A object that represents a SuppressionList record.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.communication.models.SystemData
+    :ivar email: Email address of the recipient.
+    :vartype email: str
+    :ivar first_name: The first name of the email recipient.
+    :vartype first_name: str
+    :ivar last_name: The last name of the email recipient.
+    :vartype last_name: str
+    :ivar notes: An optional property to provide contextual notes or a description for an address.
+    :vartype notes: str
+    :ivar last_modified: The date the address was last updated in a suppression list.
+    :vartype last_modified: ~datetime.datetime
+    :ivar data_location: The location where the SuppressionListAddress data is stored at rest. This
+     value is inherited from the parent Domains resource.
+    :vartype data_location: str
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "last_modified": {"readonly": True},
+        "data_location": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "email": {"key": "properties.email", "type": "str"},
+        "first_name": {"key": "properties.firstName", "type": "str"},
+        "last_name": {"key": "properties.lastName", "type": "str"},
+        "notes": {"key": "properties.notes", "type": "str"},
+        "last_modified": {"key": "properties.lastModified", "type": "iso-8601"},
+        "data_location": {"key": "properties.dataLocation", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        email: Optional[str] = None,
+        first_name: Optional[str] = None,
+        last_name: Optional[str] = None,
+        notes: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword email: Email address of the recipient.
+        :paramtype email: str
+        :keyword first_name: The first name of the email recipient.
+        :paramtype first_name: str
+        :keyword last_name: The last name of the email recipient.
+        :paramtype last_name: str
+        :keyword notes: An optional property to provide contextual notes or a description for an
+         address.
+        :paramtype notes: str
+        """
+        super().__init__(**kwargs)
+        self.email = email
+        self.first_name = first_name
+        self.last_name = last_name
+        self.notes = notes
+        self.last_modified = None
+        self.data_location = None
+
+
+class SuppressionListAddressResourceCollection(_serialization.Model):
+    """Collection of addresses in a suppression list. Response will include a nextLink if response
+    contains more pages.
+
+    :ivar value: List of suppressed email addresses.
+    :vartype value: list[~azure.mgmt.communication.models.SuppressionListAddressResource]
+    :ivar next_link: The URL the client should use to fetch the next page (per server side paging).
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[SuppressionListAddressResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["_models.SuppressionListAddressResource"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: List of suppressed email addresses.
+        :paramtype value: list[~azure.mgmt.communication.models.SuppressionListAddressResource]
+        :keyword next_link: The URL the client should use to fetch the next page (per server side
+         paging).
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class SuppressionListResource(ProxyResource):
+    """A class representing a SuppressionList resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.communication.models.SystemData
+    :ivar list_name: The the name of the suppression list. This value must match one of the valid
+     sender usernames of the sending domain.
+    :vartype list_name: str
+    :ivar last_updated_time_stamp: The date the resource was last updated.
+    :vartype last_updated_time_stamp: str
+    :ivar created_time_stamp: The date the resource was created.
+    :vartype created_time_stamp: str
+    :ivar data_location: The location where the SuppressionListAddress data is stored at rest. This
+     value is inherited from the parent Domains resource.
+    :vartype data_location: str
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "last_updated_time_stamp": {"readonly": True},
+        "created_time_stamp": {"readonly": True},
+        "data_location": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "list_name": {"key": "properties.listName", "type": "str"},
+        "last_updated_time_stamp": {"key": "properties.lastUpdatedTimeStamp", "type": "str"},
+        "created_time_stamp": {"key": "properties.createdTimeStamp", "type": "str"},
+        "data_location": {"key": "properties.dataLocation", "type": "str"},
+    }
+
+    def __init__(self, *, list_name: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword list_name: The the name of the suppression list. This value must match one of the
+         valid sender usernames of the sending domain.
+        :paramtype list_name: str
+        """
+        super().__init__(**kwargs)
+        self.list_name = list_name
+        self.last_updated_time_stamp = None
+        self.created_time_stamp = None
+        self.data_location = None
+
+
+class SuppressionListResourceCollection(_serialization.Model):
+    """A class representing a Domains SuppressionListResource collection.
+
+    :ivar value: List of SuppressionListResource.
+    :vartype value: list[~azure.mgmt.communication.models.SuppressionListResource]
+    :ivar next_link: The URL the client should use to fetch the next page (per server side paging).
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[SuppressionListResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["_models.SuppressionListResource"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: List of SuppressionListResource.
+        :paramtype value: list[~azure.mgmt.communication.models.SuppressionListResource]
+        :keyword next_link: The URL the client should use to fetch the next page (per server side
+         paging).
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
 class SystemData(_serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
@@ -1372,6 +1665,34 @@ class UpdateDomainRequestParameters(TaggedResource):
         """
         super().__init__(tags=tags, **kwargs)
         self.user_engagement_tracking = user_engagement_tracking
+
+
+class UserAssignedIdentity(_serialization.Model):
+    """User assigned identity properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar principal_id: The principal ID of the assigned identity.
+    :vartype principal_id: str
+    :ivar client_id: The client ID of the assigned identity.
+    :vartype client_id: str
+    """
+
+    _validation = {
+        "principal_id": {"readonly": True},
+        "client_id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "principal_id": {"key": "principalId", "type": "str"},
+        "client_id": {"key": "clientId", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.principal_id = None
+        self.client_id = None
 
 
 class VerificationParameter(_serialization.Model):

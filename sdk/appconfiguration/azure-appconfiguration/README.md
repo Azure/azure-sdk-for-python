@@ -12,11 +12,6 @@ Use the client library for App Configuration to create and manage application co
 | [API reference documentation](https://learn.microsoft.com/python/api/azure-appconfiguration/azure.appconfiguration?view=azure-python)
 | [Product documentation][appconfig_docs]
 
-## _Disclaimer_
-
-_Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
-_Python 3.7 or later is required to use this package. For more details, please refer to [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy)._
-
 ## Getting started
 
 ### Install the package
@@ -29,7 +24,7 @@ pip install azure-appconfiguration
 
 ### Prerequisites
 
-* Python 3.7 or later is required to use this package.
+* Python 3.8 or later is required to use this package.
 * You need an [Azure subscription][azure_sub], and a [Configuration Store][configuration_store] to use this package.
 
 To create a Configuration Store, you can use the Azure Portal or [Azure CLI][azure_cli].
@@ -202,7 +197,7 @@ added_config_setting = client.add_configuration_setting(config_setting)
 ```python
 added_config_setting.value = "new value"
 added_config_setting.content_type = "new content type"
-updated_config_setting = client.set_configuration_setting(config_setting)
+updated_config_setting = client.set_configuration_setting(added_config_setting)
 ```
 
 <!-- END SNIPPET -->
@@ -211,10 +206,10 @@ updated_config_setting = client.set_configuration_setting(config_setting)
 
 Get a previously stored Configuration Setting.
 
-<!-- SNIPPET:hello_world_sample.get_config_setting -->
+<!-- SNIPPET:hello_world_advanced_sample.get_config_setting -->
 
 ```python
-fetched_config_setting = client.get_configuration_setting(key="MyKey")
+fetched_config_setting = client.get_configuration_setting(key="MyKey", label="MyLabel")
 ```
 
 <!-- END SNIPPET -->
@@ -253,9 +248,9 @@ for item in config_settings:
 <!-- SNIPPET:snapshot_samples.create_snapshot -->
 
 ```python
-from azure.appconfiguration import ConfigurationSettingFilter
+from azure.appconfiguration import ConfigurationSettingsFilter
 
-filters = [ConfigurationSettingFilter(key="my_key1", label="my_label1")]
+filters = [ConfigurationSettingsFilter(key="my_key1", label="my_label1")]
 response = client.begin_create_snapshot(name=snapshot_name, filters=filters)
 created_snapshot = response.result()
 print_snapshot(created_snapshot)
@@ -308,10 +303,10 @@ for snapshot in client.list_snapshots():
 
 ### List Configuration Settings of a Snapshot
 
-<!-- SNIPPET:snapshot_samples.list_snapshot_configuration_settings -->
+<!-- SNIPPET:snapshot_samples.list_configuration_settings_for_snapshot -->
 
 ```python
-for config_setting in client.list_snapshot_configuration_settings(name=snapshot_name):
+for config_setting in client.list_configuration_settings(snapshot_name=snapshot_name):
     print_configuration_setting(config_setting)
 ```
 
@@ -339,10 +334,10 @@ client = AzureAppConfigurationClient.from_connection_string(CONNECTION_STRING)
 This async AzureAppConfigurationClient has the same method signatures as the sync ones except that they're async.
 For instance, to retrieve a Configuration Setting asynchronously, async_client can be used:
 
-<!-- SNIPPET:hello_world_sample_async.get_config_setting -->
+<!-- SNIPPET:hello_world_advanced_sample_async.get_config_setting -->
 
 ```python
-fetched_config_setting = await client.get_configuration_setting(key="MyKey")
+fetched_config_setting = await client.get_configuration_setting(key="MyKey", label="MyLabel")
 ```
 
 <!-- END SNIPPET -->
@@ -362,9 +357,9 @@ async for item in config_settings:
 <!-- SNIPPET:snapshot_samples_async.create_snapshot -->
 
 ```python
-from azure.appconfiguration import ConfigurationSettingFilter
+from azure.appconfiguration import ConfigurationSettingsFilter
 
-filters = [ConfigurationSettingFilter(key="my_key1", label="my_label1")]
+filters = [ConfigurationSettingsFilter(key="my_key1", label="my_label1")]
 response = await client.begin_create_snapshot(name=snapshot_name, filters=filters)
 created_snapshot = await response.result()
 print_snapshot(created_snapshot)
@@ -407,10 +402,10 @@ async for snapshot in client.list_snapshots():
 
 <!-- END SNIPPET -->
 
-<!-- SNIPPET:snapshot_samples_async.list_snapshot_configuration_settings -->
+<!-- SNIPPET:snapshot_samples_async.list_configuration_settings_for_snapshot -->
 
 ```python
-async for config_setting in client.list_snapshot_configuration_settings(name=snapshot_name):
+async for config_setting in client.list_configuration_settings(snapshot_name=snapshot_name):
     print_configuration_setting(config_setting)
 ```
 

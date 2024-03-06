@@ -24,7 +24,7 @@
 #
 # --------------------------------------------------------------------------
 import logging
-from typing import Iterator, Optional, Union, TypeVar, overload, TYPE_CHECKING
+from typing import Iterator, Optional, Union, TypeVar, overload, cast, TYPE_CHECKING, MutableMapping
 from urllib3.util.retry import Retry
 from urllib3.exceptions import (
     DecodeError as CoreDecodeError,
@@ -247,6 +247,8 @@ class RequestsTransport(HttpTransport):
     def __init__(self, **kwargs) -> None:
         self.session = kwargs.get("session", None)
         self._session_owner = kwargs.get("session_owner", True)
+        if not self._session_owner and not self.session:
+            raise ValueError("session_owner cannot be False if no session is provided")
         self.connection_config = ConnectionConfiguration(**kwargs)
         self._use_env_settings = kwargs.pop("use_env_settings", True)
 
@@ -274,6 +276,8 @@ class RequestsTransport(HttpTransport):
         if not self.session and self._session_owner:
             self.session = requests.Session()
             self._init_session(self.session)
+        # pyright has trouble to understand that self.session is not None, since we raised at worst in the init
+        self.session = cast(requests.Session, self.session)
 
     def close(self):
         if self._session_owner and self.session:
@@ -282,7 +286,9 @@ class RequestsTransport(HttpTransport):
             self.session = None
 
     @overload
-    def send(self, request: HttpRequest, **kwargs) -> HttpResponse:
+    def send(
+        self, request: HttpRequest, *, proxies: Optional[MutableMapping[str, str]] = None, **kwargs
+    ) -> HttpResponse:
         """Send a rest request and get back a rest response.
 
         :param request: The request object to be sent.
@@ -290,13 +296,13 @@ class RequestsTransport(HttpTransport):
         :return: An HTTPResponse object.
         :rtype: ~azure.core.pipeline.transport.HttpResponse
 
-        :keyword requests.Session session: will override the driver session and use yours.
-         Should NOT be done unless really required. Anything else is sent straight to requests.
-        :keyword dict proxies: will define the proxy to use. Proxy is a dict (protocol, url)
+        :keyword MutableMapping proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
 
     @overload
-    def send(self, request: "RestHttpRequest", **kwargs) -> "RestHttpResponse":
+    def send(
+        self, request: "RestHttpRequest", *, proxies: Optional[MutableMapping[str, str]] = None, **kwargs
+    ) -> "RestHttpResponse":
         """Send an `azure.core.rest` request and get back a rest response.
 
         :param request: The request object to be sent.
@@ -304,12 +310,16 @@ class RequestsTransport(HttpTransport):
         :return: An HTTPResponse object.
         :rtype: ~azure.core.rest.HttpResponse
 
-        :keyword requests.Session session: will override the driver session and use yours.
-         Should NOT be done unless really required. Anything else is sent straight to requests.
-        :keyword dict proxies: will define the proxy to use. Proxy is a dict (protocol, url)
+        :keyword MutableMapping proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
 
-    def send(self, request: Union[HttpRequest, "RestHttpRequest"], **kwargs) -> Union[HttpResponse, "RestHttpResponse"]:
+    def send(
+        self,
+        request: Union[HttpRequest, "RestHttpRequest"],
+        *,
+        proxies: Optional[MutableMapping[str, str]] = None,
+        **kwargs
+    ) -> Union[HttpResponse, "RestHttpResponse"]:
         """Send request object according to configuration.
 
         :param request: The request object to be sent.
@@ -317,9 +327,7 @@ class RequestsTransport(HttpTransport):
         :return: An HTTPResponse object.
         :rtype: ~azure.core.pipeline.transport.HttpResponse
 
-        :keyword requests.Session session: will override the driver session and use yours.
-         Should NOT be done unless really required. Anything else is sent straight to requests.
-        :keyword dict proxies: will define the proxy to use. Proxy is a dict (protocol, url)
+        :keyword MutableMapping proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
         self.open()
         response = None
@@ -346,6 +354,7 @@ class RequestsTransport(HttpTransport):
                 timeout=timeout,
                 cert=kwargs.pop("connection_cert", self.connection_config.cert),
                 allow_redirects=False,
+                proxies=proxies,
                 **kwargs
             )
             response.raw.enforce_content_length = True

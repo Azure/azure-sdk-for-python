@@ -9,7 +9,8 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, Any, AnyStr, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import Datastore as DatastoreData, DatastoreType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import Datastore as DatastoreData
+from azure.ai.ml._restclient.v2023_04_01_preview.models import DatastoreType
 from azure.ai.ml._utils.utils import camel_to_snake, dump_yaml_to_file
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, CommonYamlFields
 from azure.ai.ml.entities._credentials import NoneCredentialConfiguration
@@ -43,9 +44,9 @@ class Datastore(Resource, RestTranslatableMixin, ABC):
         description: Optional[str] = None,
         tags: Optional[Dict] = None,
         properties: Optional[Dict] = None,
-        **kwargs,
+        **kwargs: Any,
     ):
-        self._type = kwargs.pop("type", None)
+        self._type: str = kwargs.pop("type", None)
         super().__init__(
             name=name,
             description=description,
@@ -60,7 +61,7 @@ class Datastore(Resource, RestTranslatableMixin, ABC):
     def type(self) -> str:
         return self._type
 
-    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
+    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs: Any) -> None:
         """Dump the datastore content into a file in yaml format.
 
         :param dest: The destination to receive this datastore's content.
@@ -84,7 +85,7 @@ class Datastore(Resource, RestTranslatableMixin, ABC):
         data: Optional[Dict] = None,
         yaml_path: Optional[Union[PathLike, str]] = None,
         params_override: Optional[list] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> "Datastore":
         data = data or {}
         params_override = params_override or []
@@ -106,7 +107,7 @@ class Datastore(Resource, RestTranslatableMixin, ABC):
         #     HdfsDatastore
         # )
 
-        ds_type = None
+        ds_type: Any = None
         type_in_override = find_type_in_override(params_override)
         type = type_in_override or data.get(
             CommonYamlFields.TYPE, DatastoreType.AZURE_BLOB
@@ -136,12 +137,13 @@ class Datastore(Resource, RestTranslatableMixin, ABC):
                 error_category=ErrorCategory.USER_ERROR,
             )
 
-        return ds_type._load_from_dict(
+        res: Datastore = ds_type._load_from_dict(
             data=data,
             context=context,
             additional_message="If the datastore type is incorrect, change the 'type' property.",
             **kwargs,
         )
+        return res
 
     @classmethod
     def _from_rest_object(cls, datastore_resource: DatastoreData) -> "Datastore":
@@ -159,15 +161,20 @@ class Datastore(Resource, RestTranslatableMixin, ABC):
 
         datastore_type = datastore_resource.properties.datastore_type
         if datastore_type == DatastoreType.AZURE_DATA_LAKE_GEN1:
-            return AzureDataLakeGen1Datastore._from_rest_object(datastore_resource)
+            res_adl_gen1: Datastore = AzureDataLakeGen1Datastore._from_rest_object(datastore_resource)
+            return res_adl_gen1
         if datastore_type == DatastoreType.AZURE_DATA_LAKE_GEN2:
-            return AzureDataLakeGen2Datastore._from_rest_object(datastore_resource)
+            res_adl_gen2: Datastore = AzureDataLakeGen2Datastore._from_rest_object(datastore_resource)
+            return res_adl_gen2
         if datastore_type == DatastoreType.AZURE_BLOB:
-            return AzureBlobDatastore._from_rest_object(datastore_resource)
+            res_abd: Datastore = AzureBlobDatastore._from_rest_object(datastore_resource)
+            return res_abd
         if datastore_type == DatastoreType.AZURE_FILE:
-            return AzureFileDatastore._from_rest_object(datastore_resource)
+            res_afd: Datastore = AzureFileDatastore._from_rest_object(datastore_resource)
+            return res_afd
         if datastore_type == DatastoreType.ONE_LAKE:
-            return OneLakeDatastore._from_rest_object(datastore_resource)
+            res_old: Datastore = OneLakeDatastore._from_rest_object(datastore_resource)
+            return res_old
         # disable unless preview release
         # elif datastore_type == DatastoreTypePreview.HDFS:
         #     return HdfsDatastore._from_rest_object(datastore_resource)
@@ -182,11 +189,12 @@ class Datastore(Resource, RestTranslatableMixin, ABC):
 
     @classmethod
     @abstractmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "Datastore":
+    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any) -> "Datastore":
         pass
 
-    def __eq__(self, other) -> bool:
-        return self.name == other.name and self.type == other.type and self.credentials == other.credentials
+    def __eq__(self, other: Any) -> bool:
+        res: bool = self.name == other.name and self.type == other.type and self.credentials == other.credentials
+        return res
 
-    def __ne__(self, other) -> bool:
+    def __ne__(self, other: Any) -> bool:
         return not self.__eq__(other)

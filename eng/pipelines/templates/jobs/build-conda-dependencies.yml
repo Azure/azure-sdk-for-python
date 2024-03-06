@@ -1,0 +1,139 @@
+parameters:
+  - name: CondaArtifacts
+    type: object
+    default: []
+
+jobs:
+- job: 'Build_Windows_Dependencies'
+  displayName: 'Build Windows Dependencies'
+  timeoutInMinutes: 90
+  pool:
+    name: azsdk-pool-mms-win-2022-general
+    vmImage: MMS2022
+  variables:
+    VS_INSTALLER_URL: "https://aka.ms/vs/17/release/vs_enterprise.exe"
+    VS_INSTALLER_PATH: "$(Build.BinariesDirectory)/vs_enterprise.exe"
+    VS_ENTERPRISE_PATH: "C:\\Program Files\\Microsoft Visual Studio\\2022\\Enterprise"
+  steps:
+    - bash: |
+        echo "##vso[task.prependpath]$(CONDA)/Scripts"
+      displayName: 'Prepend PATH with Conda'
+
+    - task: UsePythonVersion@0
+      displayName: 'Use Python $(PythonVersion)'
+      inputs:
+        versionSpec: $(PythonVersion)
+
+    - pwsh: |
+        $ErrorActionPreference = 'Stop'
+        $PSNativeCommandUseErrorActionPreference = $true
+        pip install "tools/azure-sdk-tools[build,conda]"
+        pip install disutils
+        Invoke-WebRequest "$(VS_INSTALLER_URL)" -OutFile "$(VS_INSTALLER_PATH)"
+        # In order of component appearance in the install command below, these are the names of the components
+        # as they in the VS Installer UI. (What you would do locally.)
+        #   C# and Visual Basic Roslyn Compilers (components pane)
+        #   C++ 2022 Redistributable Update (components pane)
+        #   C++ CMake tools for Windows (components pane)
+        #   MSBuild (components pane)
+        #   MSVC v143 - VS 2022 C++ x64/x86 build tools (Latest) (components pane)
+        #   Native Desktop Workload (workloads pane)
+        $(VS_INSTALLER_PATH) --installPath $(VS_ENTERPRISE_PATH) `
+          --add Microsoft.VisualStudio.Component.Roslyn.Compiler `
+          --add Microsoft.VisualStudio.Component.VC.Redist.14.Latest `
+          --add Microsoft.VisualStudio.Component.VC.CMake.Project `
+          --add Microsoft.Component.MSBuild `
+          --add Microsoft.VisualStudio.Component.VC.Tools.x86.x64 `
+          --add Microsoft.VisualStudio.Workload.NativeDesktop `
+          --quiet
+      displayName: Install build script requirements
+
+    - pwsh: |
+        $argument = @'
+          ${{ replace(convertToJson(parameters.CondaArtifacts), '"', '\"') }}
+        '@
+        $escapedJsonString = $argument -replace "`r`n", "" -replace "\s", ""
+        Write-Host "##vso[task.setvariable variable=arguments;]$escapedJsonString"
+        Write-Host "$escapedJsonString"
+      displayName: "Convert YAML to JSON-like string"
+
+    - script: |
+        call "$(VS_ENTERPRISE_PATH)\VC\Auxiliary\Build\vcvars64.bat"
+        sdk_build_conda -c %arguments%
+      displayName: Assemble Conda Packages
+
+    - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+      parameters:
+        ArtifactPath: '$(Build.SourcesDirectory)/conda/assembled'
+        ArtifactName: 'windows_distributions'
+
+    - ${{if eq(variables['System.TeamProject'], 'internal') }}:
+      - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
+        displayName: 'Upload Conda SBOM'
+        condition: succeededOrFailed()
+        inputs:
+          BuildDropPath: '$(Build.SourcesDirectory)/conda/output'
+
+    - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+      parameters:
+        ArtifactPath: '$(Build.SourcesDirectory)/conda/output'
+        ArtifactName: 'windows_conda'
+
+- job: 'Build_Linux_Dependencies'
+  displayName: 'Build Linux Dependencies'
+  timeoutInMinutes: 90
+  pool:
+    name: azsdk-pool-mms-ubuntu-2004-general
+    vmImage: MMSUbuntu20.04
+  steps:
+    - bash: |
+        sudo apt-get install -y build-essential
+      displayName: Install Requirements
+
+    - template: ../steps/build-conda-artifacts.yml
+      parameters:
+        ArtifactPrefix: linux_
+        CondaArtifacts: ${{ parameters.CondaArtifacts }}
+
+- job: 'Build_Mac_Dependencies'
+  displayName: 'Build Mac Dependencies'
+  timeoutInMinutes: 90
+  pool:
+    name: Azure Pipelines
+    vmImage: macos-11
+  variables:
+    MacOSXDeploymentTarget: '10.9'
+    OpenSSLDir: $(Agent.BuildDirectory)/openssl-macosx$(MacOSXDeploymentTarget)
+  steps:
+    - task: DownloadPipelineArtifact@1
+      displayName: 'Download OpenSSL artifact'
+      inputs:
+        artifactName: openssl-macosx$(MacOSXDeploymentTarget)
+        buildType: specific
+        buildVersionToDownload: latest
+        downloadPath: $(Agent.BuildDirectory)
+        pipeline: 119 # azure-uamqp-python - openssl
+        project: '29ec6040-b234-4e31-b139-33dc4287b756' # public
+
+    - script: sudo ls /Applications/
+      displayName: 'List All apps'
+      
+    - script: sudo xcode-select --switch /Applications/Xcode_11.7.0.app
+      displayName: 'Select Xcode 11.7.0'
+
+    - bash: |
+          echo "##vso[task.setvariable variable=CFLAGS;]-mmacosx-version-min=$(MacOSXDeploymentTarget) -I$(OpenSSLDir)/include"
+          echo "##vso[task.setvariable variable=CMAKE_OSX_ARCHITECTURES;]x86_64"
+          echo "##vso[task.setvariable variable=CMAKE_OSX_DEPLOYMENT_TARGET;]$(MacOSXDeploymentTarget)"
+          echo "##vso[task.setvariable variable=LDFLAGS;]-mmacosx-version-min=$(MacOSXDeploymentTarget) -L$(OpenSSLDir)/lib"
+          echo "##vso[task.setvariable variable=MACOSX_DEPLOYMENT_TARGET;]$(MacOSXDeploymentTarget)"
+          echo "##vso[task.setvariable variable=OPENSSL_INCLUDE_DIR;]$(OpenSSLDir)/include"
+          echo "##vso[task.setvariable variable=OPENSSL_ROOT_DIR;]$(OpenSSLDir)"
+          echo "##vso[task.setvariable variable=UAMQP_REBUILD_PYX;]True"
+          echo "##vso[task.setvariable variable=UAMQP_USE_OPENSSL;]True"
+      displayName: Set Mac Build Flags
+
+    - template: ../steps/build-conda-artifacts.yml
+      parameters:
+        ArtifactPrefix: mac_
+        CondaArtifacts: ${{ parameters.CondaArtifacts }}

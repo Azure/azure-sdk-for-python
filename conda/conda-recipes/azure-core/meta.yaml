@@ -1,0 +1,57 @@
+{% set name = "azure-core" %}
+
+package:
+  name: "{{ name|lower }}"
+  version: {{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+
+source:
+  url: {{ environ.get('CORE_SOURCE_DISTRIBUTION', '') }}
+
+build:
+  noarch: python
+  number: 0
+  script: "{{ PYTHON }} -m pip install . -vv"
+
+requirements:
+  host:
+    - pip
+    - python
+    - requests
+    - six
+    - typing_extensions
+  run:
+    - python
+    - requests
+    - six
+    - typing_extensions
+
+test:
+  imports:
+    - azure.core
+    - azure.core.pipeline
+    - azure.core.pipeline.policies
+    - azure.core.pipeline.transport
+    - azure.core.polling
+    - azure.core.rest
+    - azure.core.utils
+    - azure.common
+    - azure.profiles
+    - azure.mgmt.core
+    - azure.mgmt.core.policies
+    - azure.mgmt.core.polling
+
+about:
+  home: "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core"
+  license: MIT
+  license_family: MIT
+  license_file: 
+  summary: "Microsoft Azure Core Library for Python"
+  description: |
+    Azure core provides shared exceptions and modules for Python SDK client libraries.
+    Please see https://aka.ms/azsdk/conda/releases/core for version details.
+  doc_url: 
+  dev_url: 
+
+extra:
+  recipe-maintainers:
+    - xiangyan99

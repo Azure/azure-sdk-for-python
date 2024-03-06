@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.connectedvmware import AzureArcVMwareManagementServiceAPI
+from azure.mgmt.connectedvmware import ConnectedVMwareMgmtClient
 
 """
 # PREREQUISITES
@@ -24,19 +24,18 @@ from azure.mgmt.connectedvmware import AzureArcVMwareManagementServiceAPI
 
 
 def main():
-    client = AzureArcVMwareManagementServiceAPI(
+    client = ConnectedVMwareMgmtClient(
         credential=DefaultAzureCredential(),
         subscription_id="fd3c3665-1729-4b7b-9a38-238e83b0f98b",
     )
 
-    response = client.inventory_items.delete(
+    client.inventory_items.delete(
         resource_group_name="testrg",
         vcenter_name="ContosoVCenter",
         inventory_item_name="testItem",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/connectedvmware/resource-manager/Microsoft.ConnectedVMwarevSphere/preview/2022-07-15-preview/examples/DeleteInventoryItem.json
+# x-ms-original-file: specification/connectedvmware/resource-manager/Microsoft.ConnectedVMwarevSphere/stable/2023-10-01/examples/DeleteInventoryItem.json
 if __name__ == "__main__":
     main()

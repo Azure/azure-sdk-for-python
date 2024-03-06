@@ -24,16 +24,14 @@ class MsalCredential:  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         client_id: str,
-        client_credential: Optional[Union[str, Dict]] = None,
+        client_credential: Optional[Union[str, Dict[str, str]]] = None,
         *,
         additionally_allowed_tenants: Optional[List[str]] = None,
-        allow_broker: Optional[bool] = None,
-        parent_window_handle: Optional[int] = None,
-        enable_msa_passthrough: Optional[bool] = None,
         authority: Optional[str] = None,
         disable_instance_discovery: Optional[bool] = None,
         tenant_id: Optional[str] = None,
-        **kwargs
+        enable_support_logging: Optional[bool] = None,
+        **kwargs: Any
     ) -> None:
         self._instance_discovery = None if disable_instance_discovery is None else not disable_instance_discovery
         self._authority = normalize_authority(authority) if authority else get_default_authority()
@@ -45,9 +43,7 @@ class MsalCredential:  # pylint: disable=too-many-instance-attributes
         self._client = MsalClient(**kwargs)
         self._client_credential = client_credential
         self._client_id = client_id
-        self._allow_broker = allow_broker
-        self._parent_window_handle = parent_window_handle
-        self._enable_msa_passthrough = enable_msa_passthrough
+        self._enable_support_logging = enable_support_logging
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
 
         self._client_applications: Dict[str, msal.ClientApplication] = {}
@@ -55,15 +51,19 @@ class MsalCredential:  # pylint: disable=too-many-instance-attributes
 
         self._cache = kwargs.pop("_cache", None)
         self._cae_cache = kwargs.pop("_cae_cache", None)
+        if self._cache or self._cae_cache:
+            self._custom_cache = True
+        else:
+            self._custom_cache = False
         self._cache_options = kwargs.pop("cache_persistence_options", None)
 
         super(MsalCredential, self).__init__()
 
-    def __enter__(self):
+    def __enter__(self) -> "MsalCredential":
         self._client.__enter__()
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, *args: Any) -> None:
         self._client.__exit__(*args)
 
     def close(self) -> None:
@@ -112,7 +112,26 @@ class MsalCredential:  # pylint: disable=too-many-instance-attributes
                 token_cache=token_cache,
                 http_client=self._client,
                 instance_discovery=self._instance_discovery,
-                allow_broker=self._allow_broker,
+                enable_pii_log=self._enable_support_logging,
             )
 
         return client_applications_map[tenant_id]
+
+    def __getstate__(self) -> Dict[str, Any]:
+        state = self.__dict__.copy()
+        # Remove the non-picklable entries
+        del state["_client_applications"]
+        del state["_cae_client_applications"]
+        if not self._custom_cache:
+            del state["_cache"]
+            del state["_cae_cache"]
+        return state
+
+    def __setstate__(self, state: Dict[str, Any]) -> None:
+        self.__dict__.update(state)
+        # Re-create the unpickable entries
+        self._client_applications = {}
+        self._cae_client_applications = {}
+        if not self._custom_cache:
+            self._cache = None
+            self._cae_cache = None

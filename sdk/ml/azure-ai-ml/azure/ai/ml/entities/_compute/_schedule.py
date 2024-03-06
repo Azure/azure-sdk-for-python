@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 # pylint: disable=protected-access
-from typing import List, Optional, Union
+from typing import Any, List, Optional, Union
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputePowerAction
 from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeSchedules as RestComputeSchedules
@@ -28,7 +28,7 @@ class ComputeStartStopSchedule(RestTranslatableMixin):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../../samples/ml_samples_compute.py
+        .. literalinclude:: ../samples/ml_samples_compute.py
             :start-after: [START compute_start_stop_schedule]
             :end-before: [END compute_start_stop_schedule]
             :language: python
@@ -42,13 +42,13 @@ class ComputeStartStopSchedule(RestTranslatableMixin):
         trigger: Optional[Union[CronTrigger, RecurrenceTrigger]] = None,
         action: Optional[ComputePowerAction] = None,
         state: ScheduleState = ScheduleState.ENABLED,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         self.trigger = trigger
         self.action = action
         self.state = state
-        self._schedule_id = kwargs.pop("schedule_id", None)
-        self._provisioning_state = kwargs.pop("provisioning_state", None)
+        self._schedule_id: Optional[str] = kwargs.pop("schedule_id", None)
+        self._provisioning_state: Optional[str] = kwargs.pop("provisioning_state", None)
 
     @property
     def schedule_id(self) -> Optional[str]:
@@ -120,7 +120,7 @@ class ComputeSchedules(RestTranslatableMixin):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../../samples/ml_samples_compute.py
+        .. literalinclude:: ../samples/ml_samples_compute.py
             :start-after: [START compute_start_stop_schedule]
             :end-before: [END compute_start_stop_schedule]
             :language: python

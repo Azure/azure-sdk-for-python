@@ -50,6 +50,7 @@ def main():
                         ],
                         "policyFormatVersion": 2,
                     },
+                    "computedProperties": [{"name": "cp_lowerName", "query": "SELECT VALUE LOWER(c.name) FROM c"}],
                     "conflictResolutionPolicy": {"conflictResolutionPath": "/path", "mode": "LastWriterWins"},
                     "defaultTtl": 100,
                     "id": "containerName",
@@ -77,6 +78,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/preview/2023-03-15-preview/examples/CosmosDBSqlContainerCreateUpdate.json
+# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/preview/2023-11-15-preview/examples/CosmosDBSqlContainerCreateUpdate.json
 if __name__ == "__main__":
     main()

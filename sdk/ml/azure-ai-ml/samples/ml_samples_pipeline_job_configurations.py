@@ -20,11 +20,10 @@ import os
 
 class PipelineConfigurationOptions(object):
     def ml_pipeline_config(self):
-        from azure.identity import DefaultAzureCredential
-
         from azure.ai.ml import Input, MLClient
         from azure.ai.ml.constants._common import AssetTypes
         from azure.ai.ml.entities import Environment
+        from azure.identity import DefaultAzureCredential
 
         subscription_id = os.environ["AZURE_SUBSCRIPTION_ID"]
         resource_group = os.environ["RESOURCE_GROUP_NAME"]
@@ -46,7 +45,9 @@ class PipelineConfigurationOptions(object):
         from azure.ai.ml import load_component
         from azure.ai.ml.dsl import pipeline
 
-        component_func = load_component(source=r"../tests/test_configs/components/helloworld_component.yml")
+        component_func = load_component(
+            source="./sdk/ml/azure-ai-ml/tests/test_configs/components/helloworld_component.yml"
+        )
 
         # Define a pipeline with decorator
         @pipeline(name="sample_pipeline", description="pipeline description")
@@ -70,7 +71,7 @@ class PipelineConfigurationOptions(object):
         ml_client.jobs.create_or_update(pipeline_job, experiment_name="pipeline_samples", compute="cpu-cluster")
         # [END configure_pipeline]
 
-        # [START configure_PipelineJob_and_PipelineJobSettings]
+        # [START configure_pipeline_job_and_settings]
         from azure.ai.ml.entities import PipelineJob, PipelineJobSettings
 
         pipeline_job = PipelineJob(
@@ -83,7 +84,7 @@ class PipelineConfigurationOptions(object):
             jobs={"component1": component_func(component_in_number=1.0, component_in_path=uri_file_input)},
         )
         ml_client.jobs.create_or_update(pipeline_job)
-        # [END configure_PipelineJob_and_PipelineJobSettings]
+        # [END configure_pipeline_job_and_settings]
 
 
 if __name__ == "__main__":

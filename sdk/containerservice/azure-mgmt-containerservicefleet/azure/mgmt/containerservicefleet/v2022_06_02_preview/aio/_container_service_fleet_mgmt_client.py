@@ -63,9 +63,15 @@ class ContainerServiceFleetMgmtClient:  # pylint: disable=client-accepts-api-ver
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
-        self.fleets = FleetsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.fleet_members = FleetMembersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.operations = Operations(
+            self._client, self._config, self._serialize, self._deserialize, "2022-09-02-preview"
+        )
+        self.fleets = FleetsOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2022-09-02-preview"
+        )
+        self.fleet_members = FleetMembersOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2022-09-02-preview"
+        )
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.

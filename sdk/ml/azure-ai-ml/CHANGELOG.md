@@ -1,7 +1,83 @@
 # Release History
 
+## 1.15.0 (unreleased)
 
-## 1.10.0 (Unreleased)
+### Features Added
+
+### Bugs Fixed
+
+### Breaking Changes
+
+### Other Changes
+
+## 1.14.0 (unreleased)
+
+### Features Added
+- Remove `experimental` tag for  `ml_client.jobs.validate`.
+- Workspace Connection has new read-only subclass: AzureBlobStoreWorkspaceConnectionSchema.
+- Workspace Connection supports 2 new types under main class: gen 2 and azure_one_lake.
+- Workspace Connection LIST operation can return data connections via new optional flag: include_data_connections.
+- Support `ml_client.schedules.trigger(name='my_schedule')` function to trigger a schedule once.
+
+### Bugs Fixed
+- Fix pipeline job `outputs` not load correctly when `component: <local-file>` exists in pipeline job yaml.
+- Workspace ListKey operation serialization issue fixed.
+- Workspace Diagnose result now can be print in to Json format.
+
+### Breaking Changes
+
+### Other Changes
+
+- Support for Python 3.12
+
+## 1.13.0 (2024-01-29)
+
+### Features Added
+
+### Bugs Fixed
+
+### Breaking Changes
+
+### Other Changes
+
+## 1.12.0 (2023-11-13)
+
+### Features Added
+- Workspace Connections had 3 child classes added for open AI, cog search, and cog service connections.
+- Workspace Connections replaced metadata with tags, and surfaced api_version, api_type, and kind for certain connection types.
+
+
+### Bugs Fixed
+- Workspace Hubs now properly create various endpoints, and surface a variable to select the resource they connect to via the
+  'endpoint_resource_id' kwarg.
+
+### Breaking Changes
+
+### Other Changes
+
+## 1.11.1 (2023-10-13)
+
+### Bugs Fixed
+ - pydash dependency version was upgraded to >=6.0.0 to patch [security vulnerability in versions below 6.0.0](https://github.com/advisories/GHSA-8mjr-6c96-39w8)
+ - Workspace hub deletion no longer fails if delete_dependent_resources is true.
+
+## 1.11.0 (2023-10-04)
+
+### Features Added
+- Now, when you specify `delete_dependent_resources` as True when deleting a workspace, the log analytics resource
+  associated with the workspace application insights resource will also be deleted.
+- Now, when creating or updating a workspace, you can provide a `serverless_compute` configuration object. This allows configuring a custom subnet in which all Serverless computes will be created. You can also specify whether or not these Serverless computes will have public IP addresses or not.
+
+### Breaking Changes
+ - [Python 3.7 reached end-of-life on June 27th 2023](https://devguide.python.org/versions/). Consequently, 3.7 will be deprecated in azure-ai-ml starting in October 2023 and azure-ai-ml will end support for 3.7 in February 2024.
+
+## 1.10.1 (2023-09-17)
+
+### Bugs Fixed
+- Feature sets can now be registers after being dumped and reloaded.
+- SDK feature store create/update can now assign materialization identities to cross RG offline stores and online stores.
+
+## 1.10.0 (2023-09-07)
 
 ### Features Added
 - Added support of features that are known into the future/at forecast time for dnn in AutoML Forecasting jobs.
@@ -13,8 +89,6 @@
 - Local job runs will no longer fail if Docker registry has no username/password
 - Fixed an issue that code asset doesn't work with relative symbol links.
 - Fixed [Issue 31319](https://github.com/Azure/azure-sdk-for-python/issues/31319): can't accept `PathLike` for `CommandComponent.code`.
-
-### Breaking Changes
 
 ### Other Changes
 
@@ -60,6 +134,7 @@
 - Added data import schedule. The class added is `ImportDataSchedule`.
 - Added support to enable data isolation feature at workspace creation stage.
 - Added auto_delete_setting support for asset version in data import job.
+- Switched code snapshot upload from directory-based to container-based design in order to allow finer RBAC within workspaces. A container will be created for each new snapshot. This change does not affect storage costs or snapshot functionality.
 
 ### Bugs Fixed
 
@@ -135,6 +210,7 @@
 - Added dedicated classes for each type of job service and updated the docstrings. The classes added are `JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService` with a few properties specific to the type.
 - Added Custom Applications Support to Compute Instances.
 - Update data asset list, show and create operations to support data assets in registry.
+- Added Managed Network features to workspace to include `ManagedNetwork`, `FqdnDestination`, `PrivateEndpointDestination`, `ServiceTagDestination` as well as relevant schema.
 
 ### Bugs Fixed
 - Fixed an issue where the ordering of `.amlignore` and `.gitignore` files are not respected.
