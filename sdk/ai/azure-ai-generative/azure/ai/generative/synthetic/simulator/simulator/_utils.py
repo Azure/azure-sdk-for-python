@@ -1,6 +1,9 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+"""
+This module contains a utility class for managing a list of JSON lines.
+"""
 import json
 
 
@@ -14,7 +17,9 @@ class JsonLineList(list):
 
         Each item in the list is converted to a JSON string 
         and appended to the result string with a newline.
-
+        
+        :returns: A string of JSON lines, where each line is a JSON representation of an item in the list.
+        :rtype: str
         """
         json_lines = ""
         for item in self:
@@ -32,8 +37,8 @@ class JsonLineList(list):
         If a 'context' key is present in the message, its value is also included
         in the output.
         
-        Returns:
-            str: A string of JSON lines.
+        :returns: A string of JSON lines.
+        :rtype: str
         """
         json_lines = ""
         for item in self:
