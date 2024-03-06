@@ -46,6 +46,15 @@ class PipelineComponentBatchDeployment(Resource):
     :type job_definition: Optional[Dict[str, ~azure.ai.ml.entities._builders.BaseNode]]
     :param endpoint_name: Name of the Endpoint resource, defaults to None.
     :type endpoint_name: Optional[str]
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_endpoint_deployment_configs.py
+            :start-after: [START create_pipeline_component_batch_deployment]
+            :end-before: [END create_pipeline_component_batch_deployment]
+            :language: python
+            :dedent: 8
+            :caption: Creating a PipelineComponentBatchDeployment entity.
     """
 
     def __init__(

@@ -22,6 +22,15 @@ class DataAsset:
     :param version: Version of data asset. If not set, version defaults to None.
     :type version" typing.Optional[int]
 
+    .. admonition:: Example:
+
+            .. literalinclude:: ../samples/ml_samples_endpoint_deployment_configs.py
+                :start-after: [START data_asset_entity_create]
+                :end-before: [END data_asset_entity_create]
+                :language: python
+                :dedent: 8
+                :caption: Creating a DataAsset entity.
+
     """
 
     def __init__(

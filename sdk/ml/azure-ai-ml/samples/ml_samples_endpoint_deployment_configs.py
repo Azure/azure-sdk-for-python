@@ -33,42 +33,227 @@ import uuid
 job_name = f"iris-dataset-job-{str(uuid.uuid4())}"
 
 
-class EndpointsConfigurationOptions(object):
+class EndpointsDeploymentsConfigurationOptions(object):
     def ml_endpoints_config_0(self):
-        
-        
+        # [START scale_settings_entity_create]
+        from azure.ai.ml.entities import ScaleSettings
+
+        scale_settings = ScaleSettings(
+            type="scale_type",
+        )
+        # [END scale_settings_entity_create]
+
+        # [START run_settings_entity_create]
+        from azure.ai.ml.entities import RunSettings
+
+        run_settings = RunSettings(
+            name="run_settings_name",
+            display_name="run_settings_display_name",
+            experiment_name="experiment_name",
+            description="run_settings_description",
+            tags={"tag1": "value1", "tag2": "value2"},
+            settings={"setting1": "value1", "setting2": "value2"},
+        )
+        # [END run_settings_entity_create]
+
+        # [START request_logging_entity_create]
+        from azure.ai.ml.entities import RequestLogging
+
+        request_logging = RequestLogging(
+            capture_headers=["header1", "header2"],
+        )
+        # [END request_logging_entity_create]
+
+        # [START payload_response_entity_create]
+        from azure.ai.ml.entities import PayloadResponse
+
+        payload_response = PayloadResponse(
+            enabled="true",
+        )
+        # [END payload_response_entity_create]
+
+        # [START oversize_data_config_entity_create]
+        from azure.ai.ml.entities import OversizeDataConfig
+
+        oversize_data_config = OversizeDataConfig(
+            path="path_to_blob"
+        )
+        # [END oversize_data_config_entity_create]
+
+        # [START event_hub_entity_create]
+        from azure.ai.ml.entities import EventHub
+
+        event_hub = EventHub(
+            namespace="event_hub_namespace",
+            oversize_data_config=oversize_data_config,
+        )
+        # [END event_hub_entity_create]
+
+        # [START batch_retry_settings_entity_create]
+        from azure.ai.ml.entities import BatchRetrySettings
+
+        batch_retry_settings = BatchRetrySettings(
+            max_retries=5,
+            timeout=10,
+        )
+        # [END batch_retry_settings_entity_create]
+
+        # [START online_request_settings_entity_create]
+        from azure.ai.ml.entities import OnlineRequestSettings
+
+        online_request_settings = OnlineRequestSettings(
+            max_concurrent_requests_per_instance=5000,
+            request_timeout_ms=1,
+            max_queue_wait_ms=500,
+        )
+        # [END online_request_settings_entity_create]
+
+        # [START probe_settings_entity_create]
+        from azure.ai.ml.entities import ProbeSettings
+
+        probe_settings = ProbeSettings(
+            failure_threshold=10,
+            success_threshold=1,
+            timeout=2,
+            period=10,
+            initial_delay=10,
+        )
+        # [END probe_settings_entity_create]
+
+        # [START data_asset_entity_create]
+        from azure.ai.ml.entities import DataAsset
+
+        data_asset = DataAsset(
+            data_id="data_id",
+            name="data_name",
+            path="data_path",
+            version=1,
+        )
+        # [END data_asset_entity_create]
+
+        # [START deployment_collection_entity_create]
+        from azure.ai.ml.entities import DeploymentCollection
+
+        deployment_collection = DeploymentCollection(
+            enabled="true",
+            data="data_id",
+            sampling_rate=0.5,
+            client_id="client_id",
+        )
+        # [END deployment_collection_entity_create]
+
+        # [START data_collector_entity_create]
+        from azure.ai.ml.entities import DataCollector
+
+        data_collector = DataCollector(
+            collections={"collection1": deployment_collection},
+            rolling_rate="hour",
+            sampling_rate=0.5,
+        )
+        # [END data_collector_entity_create]
+
+        # [START resource_requirements_configuration]
+        from azure.ai.ml.entities import (
+            CodeConfiguration,
+            KubernetesOnlineDeployment,
+            ResourceRequirementsSettings,
+            ResourceSettings,
+        )
+        from azure.ai.ml import load_model
+
+        blue_deployment = KubernetesOnlineDeployment(
+            name="kubernetes_deployment",
+            endpoint_name="online_endpoint_name",
+            model=load_model("./sdk/ml/azure-ai-ml/tests/test_configs/model/model_with_stage.yml"),
+            environment="azureml:AzureML-Minimal:1",
+            code_configuration=CodeConfiguration(
+                code="endpoints/online/model-1/onlinescoring", scoring_script="score.py"
+            ),
+            instance_count=1,
+            resources=ResourceRequirementsSettings(
+                requests=ResourceSettings(
+                    cpu="500m",
+                    memory="0.5Gi",
+                ),
+                limits=ResourceSettings(
+                    cpu="1",
+                    memory="1Gi",
+                ),
+            ),
+        )
+        # [END resource_requirements_configuration]
+
+        # [START code_configuration_entity_create]
+        from azure.ai.ml.entities import CodeConfiguration
+
+        codeConfig = CodeConfiguration(
+            code="code_directory", 
+            scoring_script="scoring_script.py"
+        )
+        # [END code_configuration_entity_create]   
+
+        from azure.ai.ml.entities._deployment.model_batch_deployment_settings import ModelBatchDeploymentSettings
+
+        # [START model_batch_deployment_settings_entity_create]
+        modelBatchDeploymentSetting = ModelBatchDeploymentSettings(
+            mini_batch_size=256,
+            instance_count=5,
+            max_concurrency_per_instance=2,
+            output_file_name="output-file-name",
+            environment_variables={"env1": "value1", "env2": "value2"},
+            error_threshold=2,
+            logging_level=1,
+        )
+        # [END model_batch_deployment_settings_entity_create]
+
         # [START model_batch_deployment_config]
         from azure.ai.ml.entities import ModelBatchDeployment, ModelBatchDeploymentSettings, CodeConfiguration, BatchRetrySettings
 
-        deployment = ModelBatchDeployment(
+        model_deployment = ModelBatchDeployment(
             name="batch-deployment",
             description="This is a sample batch deployment.",
             endpoint_name="endpoint_name",
             model="model_name",
-            code_configuration=CodeConfiguration(
-                code="deployment-torch/code/", scoring_script="batch_driver.py"
-            ),
+            code_configuration=codeConfig,
             environment="environment_name",
             compute="compute_name",
-            settings=ModelBatchDeploymentSettings(
-                max_concurrency_per_instance=2,
-                mini_batch_size=10,
-                instance_count=2,
-                output_file_name="predictions.csv",
-                retry_settings=BatchRetrySettings(max_retries=3, timeout=30),
-                logging_level="info",
-            ),
+            settings=modelBatchDeploymentSetting,
             tags={"tag1": "value1", "tag2": "value2"},
             properties={"prop1": "value1", "prop2": "value2"},
             compute="cpu-cluster",
-            logging_level="info",
-            mini_batch_size=10,
-            max_concurrency_per_instance=2,
+            scoring_script="scoring_script",
         )
-
         # [END model_batch_deployment_config]
+
+        # [START batch_deployment_entity_config]
+        from azure.ai.ml.entities import BatchDeployment
+
+        batch_deployment = BatchDeployment(
+            name="batch_deployment",
+            endpoint_name="endpoint_name",
+            description="This is a sample batch deployment.",
+            tags={"tag1": "value1", "tag2": "value2"},
+            properties={"prop1": "value1", "prop2": "value2"},
+            model="model_name",
+            environment="environment_name",
+            code_configuration=
+        )
+        # [END batch_deployment_entity_config]
+
+        # [START pipeline_component_batch_deployment_config]
+        from azure.ai.ml.entities import PipelineComponentBatchDeployment
+
+        pipeline_component_batch_deployment = PipelineComponentBatchDeployment(
+            name="pipeline_component_batch_deployment",
+            endpoint_name="endpoint_name",
+            component="component_name",
+            settings={"setting1": "value1", "setting2": "value2"},
+            tags={"tag1": "value1", "tag2": "value2"},
+            description="This is a sample pipeline component batch deployment.",
+        )
+        # [END pipeline_component_batch_deployment_config]
 
 
 if __name__ == "__main__":
-    sample = EndpointsConfigurationOptions()
+    sample = EndpointsDeploymentsConfigurationOptions()
     sample.ml_endpoints_config_0()

@@ -13,6 +13,15 @@ class OversizeDataConfig:
 
     :param path: Blob path for Model Data Collector file.
     :type path: str
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_endpoint_deployment_configs.py
+            :start-after: [START oversize_data_config_entity_create]
+            :end-before: [END oversize_data_config_entity_create]
+            :language: python
+            :dedent: 8
+            :caption: Creating a OversizeDataConfig entity.
     """
 
     # pylint: disable=unused-argument

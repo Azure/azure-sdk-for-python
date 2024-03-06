@@ -23,6 +23,15 @@ class DeploymentCollection:
     :param sampling_rate: Sampling rate for this collection. If not set, sampling_rate defaults to 1.
     :type sampling_rate: typing.Optional[float]
 
+    .. admonition:: Example:
+
+            .. literalinclude:: ../samples/ml_samples_endpoint_deployment_configs.py
+                :start-after: [START data_collector_entity_create]
+                :end-before: [END data_collector_entity_create]
+                :language: python
+                :dedent: 8
+                :caption: Creating a DataCollector entity.
+
     """
 
     def __init__(self, *, enabled: str = None, data: str = None, client_id: str = None, **kwargs):

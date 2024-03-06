@@ -25,6 +25,15 @@ class DataCollector:
     :type sampling_rate: typing.Optional[float]
     :param request_logging: Logging of request payload parameters. If not set, request_logging defaults to None.
     :type request_logging: typing.Optional[RequestLogging]
+
+    .. admonition:: Example:
+
+            .. literalinclude:: ../samples/ml_samples_endpoint_deployment_configs.py
+                :start-after: [START data_collector_entity_create]
+                :end-before: [END data_collector_entity_create]
+                :language: python
+                :dedent: 8
+                :caption: Creating a DataCollector entity.
     """
 
     def __init__(

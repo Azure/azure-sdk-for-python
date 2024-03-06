@@ -25,6 +25,15 @@ class RunSettings:
     :type tags: typing.Optional[Dict[str, Any]]
     :param settings: Run settings - settings
     :type settings: typing.Optional[Dict[str, Any]]
+
+    .. admonition:: Example:
+    
+        .. literalinclude:: ../samples/ml_samples_endpoint_deployment_configs.py
+            :start-after: [START run_settings_entity_create]
+            :end-before: [END run_settings_entity_create]
+            :language: python
+            :dedent: 8
+            :caption: Creating a RunSettings entity.
     """
 
     def __init__(

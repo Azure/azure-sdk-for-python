@@ -28,6 +28,15 @@ class BatchRetrySettings(RestTranslatableMixin):
     :type max_retries: typing.Optional[int]
     :param timeout: Timeout in seconds. If not set, timeout defaults to 30
     :type timeout: typing.Optional[int]
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_endpoint_deployment_configs.py
+            :start-after: [START batch_retry_settings_entity_create]
+            :end-before: [END batch_retry_settings_entity_create]
+            :language: python
+            :dedent: 8
+            :caption: Creating a BatchRetrySettings entity.
     """
 
     def __init__(self, *, max_retries: Optional[int] = None, timeout: Optional[int] = None):
@@ -67,6 +76,15 @@ class OnlineRequestSettings(RestTranslatableMixin):
     :type max_concurrent_requests_per_instance: typing.Optional[int]
     :param max_queue_wait_ms: The maximum amount of time a request will stay in the queue. If not set, max_queue_wait_ms defaults to 500.
     :type max_queue_wait_ms: typing.Optional[int]
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_endpoint_deployment_configs.py
+            :start-after: [START online_request_settings_entity_create]
+            :end-before: [END online_request_settings_entity_create]
+            :language: python
+            :dedent: 8
+            :caption: Creating a OnlineRequestSettings entity.
     """
 
     def __init__(
@@ -136,6 +154,14 @@ class ProbeSettings(RestTranslatableMixin):
     :param initial_delay: The delay before the first probe. If not set, initial_delay defaults to 10.
     :type initial_delay: typing.Optional[int]
 
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_endpoint_deployment_configs.py
+            :start-after: [START probe_settings_entity_create]
+            :end-before: [END probe_settings_entity_create]
+            :language: python
+            :dedent: 8
+            :caption: Creating a ProbeSettings entity.
     """
 
     def __init__(

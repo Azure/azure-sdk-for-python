@@ -56,6 +56,15 @@ class ModelBatchDeployment(Deployment):
     :param scoring_script: Scoring script name. Equivalent to code_configuration.code.scoring_script
         , defaults to None
     :paramtype scoring_script: typing.Optional[typing.Union[str, PathLike]]
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_endpoint_deployment_configs.py
+            :start-after: [START model_batch_deployment_entity_create]
+            :end-before: [END model_batch_deployment_entity_create]
+            :language: python
+            :dedent: 8
+            :caption: Creating a ModelBatchDeployment entity.
     """
 
     def __init__(
