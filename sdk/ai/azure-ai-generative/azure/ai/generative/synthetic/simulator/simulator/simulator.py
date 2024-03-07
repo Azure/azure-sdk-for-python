@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-
+# pylint: disable=E0401
 # needed for 'list' type annotations on 3.8
 from __future__ import annotations
 
@@ -392,13 +392,18 @@ class Simulator:
 
     def _to_chat_protocol(self, template, conversation_history, template_parameters):
         messages = []
-
         for i, m in enumerate(conversation_history):
             message = {"content": m.message, "role": m.role.value}
             if len(template.context_key) > 0:
                 citations = self._get_citations(template_parameters, template.context_key, i)
                 message["context"] = citations
+            elif "context" in m.full_response:
+                # adding context for adv_qa
+                message["context"] = m.full_response["context"]
             messages.append(message)
+        template_parameters['metadata'] = {}
+        if "ch_template_placeholder" in template_parameters:
+            del template_parameters["ch_template_placeholder"]
 
         return {
             "template_parameters": template_parameters,

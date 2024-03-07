@@ -1,6 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+#pylint: skip-file
 from typing import List
 import uuid
 import time
@@ -30,8 +31,8 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
 
         super().__init__(name=name, *args, **kwargs)
 
-    def format_request_data(self, prompt: List[dict], **request_params):  # type: ignore[override]
-        request_data = {"messages": prompt, **self.get_model_params()}
+    def format_request_data(self, messages: List[dict], **request_params): # type: ignore[override]
+        request_data = {"messages": messages, **self.get_model_params()}
         request_data.update(request_params)
         return request_data
 
