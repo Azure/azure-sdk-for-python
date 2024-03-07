@@ -227,14 +227,14 @@ class AzureAppConfigurationClient:
                 cls=kwargs.pop("cls", lambda objs: [ConfigurationSetting._from_generated(x) for x in objs]),
                 page_iterator_class=ConfigurationSettingPropertiesPaged,
             )
-            # return self._impl.get_key_values(  # type: ignore
-            #     key=key_filter,
-            #     label=label_filter,
-            #     accept_datetime=accept_datetime,
-            #     select=select,
-            #     cls=kwargs.pop("cls", lambda objs: [ConfigurationSetting._from_generated(x) for x in objs]),
-            #     **kwargs,
-            # )
+            return self._impl.get_key_values(  # type: ignore
+                key=key_filter,
+                label=label_filter,
+                accept_datetime=accept_datetime,
+                select=select,
+                cls=kwargs.pop("cls", lambda objs: [ConfigurationSetting._from_generated(x) for x in objs]),
+                **kwargs,
+            )
 
         except binascii.Error as exc:
             raise binascii.Error("Connection string secret has incorrect padding") from exc

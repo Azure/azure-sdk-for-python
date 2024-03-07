@@ -28,10 +28,6 @@ def main():
         items = client.list_configuration_settings(key_filter="sample_key_*", label_filter="sample_label_*")
         iterator = items.by_page()
         for page in iterator:
-            # etag = iterator._response.http_response.headers['Etag']
-            # page_etags.append(etag)
-            # print(f"ETag: {etag}")
-            
             etag = iterator.page_etag
             page_etags.append(etag)
             print(f"ETag: {etag}")

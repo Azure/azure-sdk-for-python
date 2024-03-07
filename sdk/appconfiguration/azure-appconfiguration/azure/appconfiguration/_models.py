@@ -551,14 +551,15 @@ class ConfigurationSettingPropertiesPaged(PageIterator):
             continuation_token=kwargs.get("continuation_token"),
         )
         self._command = command
-        self._key = kwargs.get("key_filter")
-        self._label = kwargs.get("label_filter")
+        self._key = kwargs.get("key")
+        self._label = kwargs.get("label")
         self._accept_datetime = kwargs.get("accept_datetime")
         self._select = kwargs.get("select")
         self._cls = kwargs.get("cls")
+        self._kwargs = kwargs
 
     
-    def _get_next_cb(self, continuation_token, **kwargs):  # pylint: disable=inconsistent-return-statements
+    def _get_next_cb(self, continuation_token):  # pylint: disable=inconsistent-return-statements
         
         response = self._command(
             key=self._key,
@@ -567,10 +568,8 @@ class ConfigurationSettingPropertiesPaged(PageIterator):
             select=self._select,
             cls=self._cls,
         ).by_page(continuation_token=continuation_token)
-        # print(f"continuation_token: {continuation_token}")
         next(response)
-        if response._did_a_call_already:
-            self.page_etag = response._response.http_response.headers['Etag']
+        self.page_etag = response._response.http_response.headers['Etag']
         return response
 
 
