@@ -39,7 +39,7 @@ class SourceMetadata(object):
         if type != "custom":
             if type == "featureset":
                 if not path:
-                    msg = f"You need to provide path for featureset feature source."
+                    msg = f"You need to provide path for {type} feature source."
                     raise ValidationException(
                         message=msg,
                         no_personal_data_message=msg,
@@ -48,7 +48,7 @@ class SourceMetadata(object):
                         error_category=ErrorCategory.USER_ERROR,
                     )
                 if timestamp_column:
-                    msg = f"Cannot provide timestamp_column for featureset feature source."
+                    msg = f"Cannot provide timestamp_column for {type} feature source."
                     raise ValidationException(
                         message=msg,
                         no_personal_data_message=msg,
