@@ -321,7 +321,7 @@ class OpenAICompletionsModel(LLMBase):
         """
         prompt = []
         for message in messages:
-            prompt.append(f"{self.CHAT_START_TOKEN}{message["role"]}\n{message["content"]}\n{self.CHAT_END_TOKEN}\n")
+            prompt.append(f"{self.CHAT_START_TOKEN}{message['role']}\n{message['content']}\n{self.CHAT_END_TOKEN}\n")
         prompt_string: str = "".join(prompt)
         prompt_string += f"{self.CHAT_START_TOKEN}{role}\n"
 
