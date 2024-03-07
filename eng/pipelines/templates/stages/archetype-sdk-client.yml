@@ -89,6 +89,8 @@ extends:
   ${{ else }}:
     template: v1/1ES.Unofficial.PipelineTemplate.yml@1ESPipelineTemplates
   parameters:
+    settings:
+      skipBuildTagsForGitHubPullRequests: true
     sdl:
       sourceAnalysisPool:
         name: azsdk-pool-mms-win-2022-general
