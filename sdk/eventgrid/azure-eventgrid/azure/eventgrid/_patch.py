@@ -6,7 +6,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-from typing import List, TYPE_CHECKING, Any, Union
+from typing import List, TYPE_CHECKING, Any, Union, Optional
 from ._legacy import (
     EventGridPublisherClient,
     SystemEventNames,
@@ -58,7 +58,7 @@ class EventGridClient(InternalEventGridClient):
         credential: Union[AzureKeyCredential, "TokenCredential"],
         *,
         api_version: str = "2023-10-01-preview",
-        level: Union[str, ClientLevel] = "Standard",
+        level: Optional[Union[str, ClientLevel]] = None,
         **kwargs: Any
     ) -> None:
         
@@ -69,12 +69,12 @@ class EventGridClient(InternalEventGridClient):
         if _policies is None:
             _policies = [policies.RequestIdPolicy(**kwargs),self._config.headers_policy,self._config.user_agent_policy,self._config.proxy_policy,policies.ContentDecodePolicy(**kwargs),self._config.redirect_policy,self._config.retry_policy,self._config.authentication_policy,self._config.custom_hook_policy,self._config.logging_policy,policies.DistributedTracingPolicy(**kwargs),policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,self._config.http_logging_policy]
         
-        if level == ClientLevel.BASIC and endpoint.endswith("/api/events"):
+        if level == ClientLevel.BASIC or endpoint.endswith("/api/events"):
             self._client = EventGridPublisherClient(endpoint, credential, api_version=api_version, **kwargs)
-        elif level == ClientLevel.STANDARD and not endpoint.endswith("/api/events"):
+            self._config.level = ClientLevel.BASIC
+        elif level == ClientLevel.STANDARD or not endpoint.endswith("/api/events"):
             self._client: PipelineClient = PipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
-        else:
-            raise ValueError("Invalid endpoint provided for level specified. Please provide a valid endpoint for the level specified.")
+            self._config.level = ClientLevel.STANDARD
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
@@ -96,4 +96,5 @@ __all__: List[str] = [
     "EventGridEvent",
     "generate_sas",
     "ClientLevel",
+    "EventGridPublisherClient"
 ]  # Add all objects you want publicly available to users at this package level

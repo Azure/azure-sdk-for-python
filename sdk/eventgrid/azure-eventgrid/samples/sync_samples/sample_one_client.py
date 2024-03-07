@@ -12,42 +12,54 @@ from azure.core.messaging import CloudEvent
 from azure.core.exceptions import HttpResponseError
 
 
-EVENTGRID_KEY_GA: str = os.environ["EVENTGRID_KEY_GA"]
-EVENTGRID_ENDPOINT_GA: str = os.environ["EVENTGRID_ENDPOINT_GA"]
-EVENTGRID_KEY: str = os.environ["EVENTGRID_KEY"]
-EVENTGRID_ENDPOINT: str = os.environ["EVENTGRID_ENDPOINT"]
-TOPIC_NAME: str = os.environ["EVENTGRID_TOPIC_NAME"]
-EVENT_SUBSCRIPTION_NAME: str = os.environ["EVENTGRID_EVENT_SUBSCRIPTION_NAME"]
+EVENTGRID_KEY_GA: str = os.environ["EVENTGRID_CLOUD_EVENT_TOPIC_KEY"]
+EVENTGRID_ENDPOINT_GA: str = os.environ["EVENTGRID_CLOUD_EVENT_TOPIC_ENDPOINT"]
+EVENTGRID_KEY: str = os.environ["EVENTGRID_NAMESPACE_KEY"]
+EVENTGRID_ENDPOINT: str = os.environ["EVENTGRID_NAMESPACES_ENDPOINT"]
+TOPIC_NAME: str = os.environ["EVENTGRID_NAMESPACE_TOPIC_NAME"]
+EVENT_SUBSCRIPTION_NAME: str = os.environ["EVENTGRID_NAMESPACE_SUBSCRIPTION_NAME"]
 
 # Create a NameSpace client
-client = EventGridClient(EVENTGRID_ENDPOINT, AzureKeyCredential(EVENTGRID_KEY))
+namespace_client = EventGridClient(EVENTGRID_ENDPOINT, AzureKeyCredential(EVENTGRID_KEY))
 
-# Create a client using publisherClient naming, will create a NamespaceClient
-client = EventGridPublisherClient(EVENTGRID_ENDPOINT, AzureKeyCredential(EVENTGRID_KEY))
+# Create a client using publisherClient naming, will create a PublisherClient and fail on operations
+publisher_client = EventGridPublisherClient(EVENTGRID_ENDPOINT_GA, AzureKeyCredential(EVENTGRID_KEY_GA))
 
-# Try to create a basic client with the wrong endpoint
+# Create a standard client using EventGridClient
 try:
-    client_basic = EventGridClient(EVENTGRID_ENDPOINT, AzureKeyCredential(EVENTGRID_KEY), level="Basic")
+    client_standard = EventGridClient(EVENTGRID_ENDPOINT, AzureKeyCredential(EVENTGRID_KEY))
 except ValueError as e:
     print(e)
 
 # Create a Basic Client with the correct endpoint
-client_basic = EventGridClient(EVENTGRID_ENDPOINT_GA, AzureKeyCredential(EVENTGRID_KEY_GA), level="Basic")
-
+client_basic = EventGridClient(EVENTGRID_ENDPOINT_GA, AzureKeyCredential(EVENTGRID_KEY_GA))
 
 # Publish an event to a topic using basic client
 event = CloudEvent(data={"key": "value"}, type="Contoso.Items.ItemReceived", source="https://contoso.com/items")
 client_basic.publish(TOPIC_NAME, event)
 
-# Publish an event to a topic using standard client
-client.publish(TOPIC_NAME, event)
+# Publish an event to a topic using NameSpace client
+client_standard.publish(TOPIC_NAME, event)
+
+# Publish an event to a topic using Publisher client
+publisher_client.send(event)
 
 
 # Receive events from EventGrid with a basic client - raise error
 try:
     client_basic.receive_cloud_events(TOPIC_NAME, EVENT_SUBSCRIPTION_NAME)
-except ValueError as e:
+except AttributeError as e:
     print(e)
 
-# Receive events from EventGrid standard client
-    client.receive_cloud_events(TOPIC_NAME, EVENT_SUBSCRIPTION_NAME)
+try:
+    # Receive events from EventGrid publisher client
+    publisher_client.receive_cloud_events(TOPIC_NAME, EVENT_SUBSCRIPTION_NAME)
+except AttributeError as e:
+    print(e)
+
+# Receive events from EventGrid with a standard client
+try:
+    events = client_standard.receive_cloud_events(TOPIC_NAME, EVENT_SUBSCRIPTION_NAME)
+    print(events)
+except AttributeError as e:
+    print(e)
