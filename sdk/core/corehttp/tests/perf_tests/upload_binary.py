@@ -6,6 +6,7 @@
 from time import time
 from wsgiref.handlers import format_date_time
 from devtools_testutils.perfstress_tests import RandomStream, AsyncRandomStream
+from ._async_iterator_random_stream import AsyncIteratorRandomStream
 
 from corehttp.rest import HttpRequest
 from corehttp.exceptions import (
@@ -29,7 +30,10 @@ class UploadBinaryDataTest(_BlobTest):
         blob_name = "uploadtest"
         self.blob_endpoint = f"{self.account_endpoint}{self.container_name}/{blob_name}"
         self.upload_stream = RandomStream(self.args.size)
-        self.upload_stream_async = AsyncRandomStream(self.args.size)
+        if self.args.transport == "httpx":
+            self.upload_stream_async = AsyncIteratorRandomStream(self.args.size)
+        else:
+            self.upload_stream_async = AsyncRandomStream(self.args.size)
 
     def run_sync(self):
         self.upload_stream.reset()
