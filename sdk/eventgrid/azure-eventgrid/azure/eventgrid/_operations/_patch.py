@@ -40,7 +40,7 @@ def use_standard_only(func):
     @wraps(func)
     def wrapper(self, *args, **kwargs):
         if self._config.level == "Basic":
-            raise ValueError("The basic client is not supported for this operation.")
+            raise AttributeError("The basic client is not supported for this operation.")
         return func(self, *args, **kwargs)
     return wrapper
 
