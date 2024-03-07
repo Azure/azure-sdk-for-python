@@ -76,7 +76,7 @@ class ParameterizedSweep:
         :type resources: ~azure.ai.ml.entities.ResourceConfiguration
         """
         self.sampling_algorithm = sampling_algorithm
-        self.early_termination = early_termination
+        self.early_termination = early_termination  # type: ignore[assignment]
         self._limits = limits
         self.search_space = search_space
         self.queue_settings = queue_settings
@@ -270,7 +270,7 @@ class ParameterizedSweep:
         )
 
     @property
-    def early_termination(self) -> Any:
+    def early_termination(self) -> Optional[Union[str, EarlyTerminationPolicy]]:
         """Early termination policy for sweep job.
 
         :returns: Early termination policy for sweep job.
@@ -285,6 +285,7 @@ class ParameterizedSweep:
         :param value: Early termination policy for sweep job.
         :type value: ~azure.ai.ml.entities._job.sweep.early_termination_policy.EarlyTerminationPolicy
         """
+        self._early_termination: Optional[Union[str, EarlyTerminationPolicy]]
         if value is None:
             self._early_termination = None
         elif isinstance(value, EarlyTerminationPolicy):

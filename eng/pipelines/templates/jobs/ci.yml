@@ -66,14 +66,15 @@ parameters:
     default: false
 
 jobs:
-  
+
   - ${{ if eq(parameters['AdvancedBuild'], false) }}:
     - job: 'Build'
       timeoutInMinutes: 90
 
       pool:
         name: azsdk-pool-mms-ubuntu-2004-general
-        vmImage: MMSUbuntu20.04
+        image: azsdk-pool-mms-ubuntu-2004-1espt
+        os: linux
 
       steps:
       - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
@@ -88,27 +89,13 @@ jobs:
           Artifacts: ${{ parameters.Artifacts }}
 
   - ${{ if eq(parameters['AdvancedBuild'], true) }}:
-    - job: 'Build'
+    - job: 'Build_Linux'
       timeoutInMinutes: 90
 
-      strategy:
-        matrix:
-          Linux:
-            imageName: 'MMSUbuntu22.04'
-            poolName: 'azsdk-pool-mms-ubuntu-2204-general'
-            ArtifactName: 'linux'
-          Windows:
-            imageName: 'MMS2022'
-            poolName: 'azsdk-pool-mms-win-2022-general'
-            ArtifactName: 'windows'
-          Mac:
-            imageName: 'macos-11'
-            poolName: 'Azure Pipelines'
-            ArtifactName: 'mac'
-
       pool:
-        name: $(poolName)
-        vmImage: $(imageName)
+        name: azsdk-pool-mms-ubuntu-2004-general
+        image: azsdk-pool-mms-ubuntu-2004-1espt
+        os: linux
 
       steps:
       - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
@@ -121,17 +108,62 @@ jobs:
           BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
           TestPipeline: ${{ parameters.TestPipeline }}
           Artifacts: ${{ parameters.Artifacts }}
-          ArtifactSuffix: $(ArtifactName)
+          ArtifactSuffix: linux
+
+    - job: 'Build_Windows'
+      timeoutInMinutes: 90
+
+      pool:
+        name: azsdk-pool-mms-win-2022-general
+        image: azsdk-pool-mms-win-2022-1espt
+        os: windows
+
+      steps:
+      - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
+        parameters:
+          BuildTargetingString: ${{ parameters.BuildTargetingString }}
+
+      - template: ../steps/build-package-artifacts.yml
+        parameters:
+          ServiceDirectory: ${{ parameters.ServiceDirectory }}
+          BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
+          TestPipeline: ${{ parameters.TestPipeline }}
+          Artifacts: ${{ parameters.Artifacts }}
+          ArtifactSuffix: windows
+
+    - job: 'Build_MacOS'
+      timeoutInMinutes: 90
+
+      pool:
+        name: 'Azure Pipelines'
+        vmImage: macos-11
+        os: macOS
+
+      steps:
+      - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
+        parameters:
+          BuildTargetingString: ${{ parameters.BuildTargetingString }}
+
+      - template: ../steps/build-package-artifacts.yml
+        parameters:
+          ServiceDirectory: ${{ parameters.ServiceDirectory }}
+          BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
+          TestPipeline: ${{ parameters.TestPipeline }}
+          Artifacts: ${{ parameters.Artifacts }}
+          ArtifactSuffix: mac
 
     - job: 'CoalesceBuildArtifacts'
       displayName: Combine Built Artifacts
-      dependsOn: 
-        - 'Build'
+      dependsOn:
+        - 'Build_Linux'
+        - 'Build_Windows'
+        - 'Build_MacOS'
       timeoutInMinutes: 90
 
       pool:
         name: azsdk-pool-mms-ubuntu-2004-general
-        vmImage: MMSUbuntu20.04
+        image: azsdk-pool-mms-ubuntu-2004-1espt
+        os: linux
 
       steps:
       - task: DownloadPipelineArtifact@2
@@ -149,22 +181,25 @@ jobs:
           artifactName: 'packages_linux'
           targetPath: $(Build.ArtifactStagingDirectory)/packages
 
-      - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+      - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
         parameters:
           ArtifactPath: '$(Build.ArtifactStagingDirectory)/packages'
           ArtifactName: 'packages'
 
   - job: 'Build_Extended'
     displayName: Build Extended
-    dependsOn: 
-      - 'Build'
+    dependsOn:
       - ${{ if eq(parameters['AdvancedBuild'], true) }}:
         - 'CoalesceBuildArtifacts'
+      - ${{ else }}:
+        - 'Build'
+      
     timeoutInMinutes: 90
 
     pool:
       name: azsdk-pool-mms-ubuntu-2004-general
-      vmImage: MMSUbuntu20.04
+      image: azsdk-pool-mms-ubuntu-2004-1espt
+      os: linux
 
     steps:
     - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
@@ -189,7 +224,8 @@ jobs:
 
     pool:
       name: azsdk-pool-mms-ubuntu-2004-general
-      vmImage: MMSUbuntu20.04
+      image: azsdk-pool-mms-ubuntu-2004-1espt
+      os: linux
 
     steps:
     - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
@@ -220,35 +256,16 @@ jobs:
         ValidateFormatting: ${{ parameters.ValidateFormatting }}
         GenerateApiReviewForManualOnly: ${{ parameters.GenerateApiReviewForManualOnly }}
 
-  - job: Compliance
-    pool:
-      name: azsdk-pool-mms-win-2022-general
-      vmImage: MMS2022
-
-    variables:
-      Codeql.SkipTaskAutoInjection: false
-      Codeql.Enabled: true
-      Codeql.Language: python
-      Codeql.BuildIdentifier: "${{ parameters.ServiceDirectory }}"
-      Codeql.SourceRoot: "sdk/${{ parameters.ServiceDirectory }}"
-
-    # per the guidance of the codeql team:
-    # https://eng.ms/docs/cloud-ai-platform/devdiv/one-engineering-system-1es/1es-docs/codeql/snippets/codeql-3000-other-issues#timeouts
-    timeoutInMinutes: 360
-
-    steps:
-      - template: /eng/common/pipelines/templates/steps/credscan.yml
-        parameters:
-          ServiceDirectory: ${{ parameters.ServiceDirectory }}
-          BaselineFilePath: $(Build.SourcesDirectory)\eng\python.gdnbaselines
-
-  - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
+  - template: /eng/common/pipelines/templates/jobs/generate-job-matrix.yml
     parameters:
       JobTemplatePath: /eng/pipelines/templates/jobs/ci.tests.yml
+      OsVmImage: azsdk-pool-mms-ubuntu-2004-1espt
+      Pool: azsdk-pool-mms-ubuntu-2004-general
       DependsOn:
-        - 'Build'
         - ${{ if eq(parameters['AdvancedBuild'], true) }}:
           - 'CoalesceBuildArtifacts'
+        - ${{ else }}:
+          - 'Build'
       MatrixConfigs: ${{ parameters.MatrixConfigs }}
       MatrixFilters: ${{ parameters.MatrixFilters }}
       MatrixReplace: ${{ parameters.MatrixReplace }}
@@ -267,9 +284,11 @@ jobs:
         UnsupportedToxEnvironments: ${{ parameters.UnsupportedToxEnvironments }}
         TestProxy: ${{ parameters.TestProxy }}
 
-  - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
+  - template: /eng/common/pipelines/templates/jobs/generate-job-matrix.yml
     parameters:
       JobTemplatePath: /eng/pipelines/templates/jobs/regression.yml
+      OsVmImage: azsdk-pool-mms-ubuntu-2004-1espt
+      Pool: azsdk-pool-mms-ubuntu-2004-general
       GenerateJobName: generate_regression_matrix
       SparseCheckoutPaths: [ "scripts/", "sdk/", "tools/azure-sdk-tools/" ]
       MatrixConfigs:
@@ -295,9 +314,10 @@ jobs:
       CloudConfig:
         Cloud: Public
       DependsOn:
-        - 'Build'
         - ${{ if eq(parameters['AdvancedBuild'], true) }}:
           - 'CoalesceBuildArtifacts'
+        - ${{ else }}:
+          - 'Build'
       AdditionalParameters:
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         ServiceDirectory: ${{ parameters.ServiceDirectory }}

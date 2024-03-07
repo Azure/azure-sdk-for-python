@@ -8,6 +8,7 @@ from unittest.mock import patch
 import pytest
 from corehttp.utils import case_insensitive_dict
 from corehttp.utils._utils import get_running_async_lock
+from corehttp.runtime.policies._utils import parse_retry_after
 
 
 @pytest.fixture()
@@ -124,3 +125,14 @@ async def test_get_running_async_module_asyncio():
 def test_get_running_async_module_sync():
     with pytest.raises(RuntimeError):
         get_running_async_lock()
+
+
+def test_parse_retry_after():
+    ret = parse_retry_after("100")
+    assert ret == 100
+    ret = parse_retry_after("Fri, 1 Oct 2100 00:00:00 GMT")
+    assert ret > 0
+    ret = parse_retry_after("0")
+    assert ret == 0
+    ret = parse_retry_after("0.9")
+    assert ret == 0.9

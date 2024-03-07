@@ -151,7 +151,7 @@ class RouterJobStatusSelector(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Job is in a suspended state and waiting for an update."""
     ACTIVE = "active"
     """Job is in a state of PendingClassification or Queued or Assigned or ClassificationFailed or
-    #: Completed or PendingSchedule or Scheduled or ScheduleFailed or WaitingForActivation."""
+    Completed or PendingSchedule or Scheduled or ScheduleFailed or WaitingForActivation."""
 
 
 class RouterRuleKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -185,7 +185,7 @@ class RouterWorkerState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Worker is active and available to take offers."""
     DRAINING = "draining"
     """Worker is not active, if there are existing offers they are being revoked. No new offers are
-    #: sent."""
+    sent."""
     INACTIVE = "inactive"
     """Worker is not active. No new offers are sent."""
 
@@ -197,7 +197,7 @@ class RouterWorkerStateSelector(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Worker is active and available to take offers."""
     DRAINING = "draining"
     """Worker is not active, if there are existing offers they are being revoked. No new offers are
-    #: sent."""
+    sent."""
     INACTIVE = "inactive"
     """Worker is not active. No new offers are sent."""
     ALL = "all"
@@ -211,7 +211,7 @@ class ScoringRuleParameterSelector(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     """Parameter to add job labels to scoring payload.  Property is sent as ``job``."""
     WORKER_SELECTORS = "workerSelectors"
     """Parameter to add worker selectors from a job to scoring payload.  Property is sent as
-    #: ``selectors``."""
+    ``selectors``."""
 
 
 class WorkerSelectorAttachmentKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):

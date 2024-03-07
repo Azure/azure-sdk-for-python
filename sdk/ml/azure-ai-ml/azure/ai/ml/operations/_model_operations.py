@@ -69,7 +69,7 @@ from azure.core.exceptions import ResourceNotFoundError
 from ._operation_orchestrator import OperationOrchestrator
 
 ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
+module_logger = ops_logger.module_logger
 
 
 class ModelOperations(_ScopeDependentOperations):
@@ -120,7 +120,7 @@ class ModelOperations(_ScopeDependentOperations):
         # returns the asset associated with the label
         self._managed_label_resolver = {"latest": self._get_latest_version}
 
-    @monitor_with_activity(logger, "Model.CreateOrUpdate", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Model.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(  # type: ignore
         self, model: Union[Model, WorkspaceAssetReference]
     ) -> Model:  # TODO: Are we going to implement job_name?
@@ -279,16 +279,16 @@ class ModelOperations(_ScopeDependentOperations):
             )
         )
 
-    @monitor_with_activity(logger, "Model.Get", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Model.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, version: Optional[str] = None, label: Optional[str] = None) -> Model:
         """Returns information about the specified model asset.
 
         :param name: Name of the model.
         :type name: str
-        :keyword version: Version of the model.
-        :paramtype version: str
-        :keyword label: Label of the model. (mutually exclusive with version)
-        :paramtype label: str
+        :param version: Version of the model.
+        :type version: str
+        :param label: Label of the model. (mutually exclusive with version)
+        :type label: str
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Model cannot be successfully validated.
             Details will be provided in the error message.
         :return: Model asset object.
@@ -321,7 +321,7 @@ class ModelOperations(_ScopeDependentOperations):
 
         return Model._from_rest_object(model_version_resource)
 
-    @monitor_with_activity(logger, "Model.Download", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Model.Download", ActivityType.PUBLICAPI)
     def download(self, name: str, version: str, download_path: Union[PathLike, str] = ".") -> None:
         """Download files related to a model.
 
@@ -329,9 +329,9 @@ class ModelOperations(_ScopeDependentOperations):
         :type name: str
         :param version: Version of the model.
         :type version: str
-        :keyword download_path: Local path as download destination, defaults to current working directory of the current
+        :param download_path: Local path as download destination, defaults to current working directory of the current
             user. Contents will be overwritten.
-        :paramtype download_path: Union[PathLike, str]
+        :type download_path: Union[PathLike, str]
         :raises ResourceNotFoundError: if can't find a model matching provided name.
         """
 
@@ -391,7 +391,7 @@ class ModelOperations(_ScopeDependentOperations):
         module_logger.info("Downloading the model %s at %s\n", path_prefix, path_file)
         storage_client.download(starts_with=path_prefix, destination=path_file)
 
-    @monitor_with_activity(logger, "Model.Archive", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Model.Archive", ActivityType.PUBLICAPI)
     def archive(
         self,
         name: str,
@@ -403,10 +403,10 @@ class ModelOperations(_ScopeDependentOperations):
 
         :param name: Name of model asset.
         :type name: str
-        :keyword version: Version of model asset.
-        :paramtype version: str
-        :keyword label: Label of the model asset. (mutually exclusive with version)
-        :paramtype label: str
+        :param version: Version of model asset.
+        :type version: str
+        :param label: Label of the model asset. (mutually exclusive with version)
+        :type label: str
 
         .. admonition:: Example:
 
@@ -427,7 +427,7 @@ class ModelOperations(_ScopeDependentOperations):
             label=label,
         )
 
-    @monitor_with_activity(logger, "Model.Restore", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Model.Restore", ActivityType.PUBLICAPI)
     def restore(
         self,
         name: str,
@@ -439,10 +439,10 @@ class ModelOperations(_ScopeDependentOperations):
 
         :param name: Name of model asset.
         :type name: str
-        :keyword version: Version of model asset.
-        :paramtype version: str
-        :keyword label: Label of the model asset. (mutually exclusive with version)
-        :paramtype label: str
+        :param version: Version of model asset.
+        :type version: str
+        :param label: Label of the model asset. (mutually exclusive with version)
+        :type label: str
 
         .. admonition:: Example:
 
@@ -463,7 +463,7 @@ class ModelOperations(_ScopeDependentOperations):
             label=label,
         )
 
-    @monitor_with_activity(logger, "Model.List", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Model.List", ActivityType.PUBLICAPI)
     def list(
         self,
         name: Optional[str] = None,
@@ -473,10 +473,10 @@ class ModelOperations(_ScopeDependentOperations):
     ) -> Iterable[Model]:
         """List all model assets in workspace.
 
-        :keyword name: Name of the model.
-        :paramtype name: Optional[str]
-        :keyword stage: The Model stage
-        :paramtype stage: Optional[str]
+        :param name: Name of the model.
+        :type name: Optional[str]
+        :param stage: The Model stage
+        :type stage: Optional[str]
         :keyword list_view_type: View type for including/excluding (for example) archived models.
             Defaults to :attr:`ListViewType.ACTIVE_ONLY`.
         :paramtype list_view_type: ListViewType
@@ -524,7 +524,7 @@ class ModelOperations(_ScopeDependentOperations):
             ),
         )
 
-    @monitor_with_activity(logger, "Model.Share", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Model.Share", ActivityType.PUBLICAPI)
     @experimental
     def share(
         self, name: str, version: str, *, share_with_name: str, share_with_version: str, registry_name: str
@@ -614,7 +614,7 @@ class ModelOperations(_ScopeDependentOperations):
             self._model_versions_operation = model_versions_operation_
 
     @experimental
-    @monitor_with_activity(logger, "Model.Package", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Model.Package", ActivityType.PUBLICAPI)
     def package(self, name: str, version: str, package_request: ModelPackage, **kwargs: Any) -> Environment:
         """Package a model asset
 
