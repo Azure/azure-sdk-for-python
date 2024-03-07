@@ -12,9 +12,9 @@ from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, U
 from .. import _model_base
 from .._model_base import rest_discriminator, rest_field
 from ._enums import (CommunicationMessageKind,
-CommunicationMessagesChannel,
-MessageTemplateBindingsKind,
-MessageTemplateValueKind)
+                    CommunicationMessagesChannel,
+                    MessageTemplateBindingsKind,
+                    MessageTemplateValueKind)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -70,9 +70,8 @@ class NotificationContent(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-
 class ImageNotificationContent(NotificationContent, discriminator='image'):
-    """A request to send a Image notification.
+    """A request to send a media image notification.
 
     All required parameters must be populated in order to send to server.
 
@@ -85,7 +84,7 @@ class ImageNotificationContent(NotificationContent, discriminator='image'):
     :vartype kind: str or ~azure.communication.messages.models.IMAGE
     :ivar content: Optional text content.
     :vartype content: str
-    :ivar media_uri: A media url for the file. Required if the type is one of the supported media
+    :ivar media_uri: A media url for the image file. Required if the type is one of the supported media
      types, e.g. image. Required.
     :vartype media_uri: str
     """
@@ -119,7 +118,6 @@ class ImageNotificationContent(NotificationContent, discriminator='image'):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, kind=CommunicationMessageKind.IMAGE, **kwargs)
-
 
 
 class MessageReceipt(_model_base.Model):
@@ -159,7 +157,6 @@ class MessageReceipt(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-
 class MessageTemplate(_model_base.Model):
     """The template object used to create templates.
 
@@ -170,8 +167,8 @@ class MessageTemplate(_model_base.Model):
     :ivar language: The template's language, in the ISO 639 format, consist of a two-letter
      language code followed by an optional two-letter country code, e.g., 'en' or 'en_US'. Required.
     :vartype language: str
-    :ivar values_property: The template values.
-    :vartype values_property: list[~azure.communication.messages.models.MessageTemplateValue]
+    :ivar template_values: The template values.
+    :vartype template_values: list[~azure.communication.messages.models.MessageTemplateValue]
     :ivar bindings: The binding object to link values to the template specific locations.
     :vartype bindings: ~azure.communication.messages.models.MessageTemplateBindings
     """
@@ -181,7 +178,7 @@ class MessageTemplate(_model_base.Model):
     language: str = rest_field()
     """The template's language, in the ISO 639 format, consist of a two-letter language code followed
      by an optional two-letter country code, e.g., 'en' or 'en_US'. Required."""
-    values_property: Optional[List["_models.MessageTemplateValue"]] = rest_field(name="values")
+    template_values: Optional[List["_models.MessageTemplateValue"]] = rest_field(name="values")
     """The template values."""
     bindings: Optional["_models.MessageTemplateBindings"] = rest_field()
     """The binding object to link values to the template specific locations."""
@@ -193,7 +190,7 @@ class MessageTemplate(_model_base.Model):
         *,
         name: str,
         language: str,
-        values_property: Optional[List["_models.MessageTemplateValue"]] = None,
+        template_values: Optional[List["_models.MessageTemplateValue"]] = None,
         bindings: Optional["_models.MessageTemplateBindings"] = None,
     ):
         ...
@@ -207,7 +204,6 @@ class MessageTemplate(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
-
 
 
 class MessageTemplateBindings(_model_base.Model):
@@ -246,7 +242,6 @@ class MessageTemplateBindings(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-
 class MessageTemplateValue(_model_base.Model):
     """The class describes a parameter of a template.
 
@@ -256,7 +251,7 @@ class MessageTemplateValue(_model_base.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar name: Name of the Template value. Required.
+    :ivar name: Template binding reference name. Required.
     :vartype name: str
     :ivar kind: The type discriminator describing a template parameter type. Required. Known values
      are: "text", "image", "document", "video", "location", and "quickAction".
@@ -265,7 +260,7 @@ class MessageTemplateValue(_model_base.Model):
 
     __mapping__: Dict[str, _model_base.Model] = {}
     name: str = rest_field()
-    """Name of the Template value. Required."""
+    """Template binding reference name. Required."""
     kind: str = rest_discriminator(name="kind")
     """The type discriminator describing a template parameter type. Required. Known values are:
      \"text\", \"image\", \"document\", \"video\", \"location\", and \"quickAction\"."""
@@ -291,13 +286,12 @@ class MessageTemplateValue(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-
 class MessageTemplateDocument(MessageTemplateValue, discriminator='document'):
     """The message template's document value information.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar name: Name of the Template value. Required.
+    :ivar name: Template binding reference name. Required.
     :vartype name: str
     :ivar kind: Message parameter type is document. Required. The document template parameter type.
     :vartype kind: str or ~azure.communication.messages.models.DOCUMENT
@@ -341,13 +335,12 @@ class MessageTemplateDocument(MessageTemplateValue, discriminator='document'):
         super().__init__(*args, kind=MessageTemplateValueKind.DOCUMENT, **kwargs)
 
 
-
 class MessageTemplateImage(MessageTemplateValue, discriminator='image'):
     """The message template's image value information.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar name: Name of the Template value. Required.
+    :ivar name: Template binding reference name. Required.
     :vartype name: str
     :ivar kind: Message parameter type is image. Required. The image template parameter type.
     :vartype kind: str or ~azure.communication.messages.models.IMAGE
@@ -389,8 +382,6 @@ class MessageTemplateImage(MessageTemplateValue, discriminator='image'):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, kind=MessageTemplateValueKind.IMAGE, **kwargs)
-
-
 
 class MessageTemplateItem(_model_base.Model):
     """The message template as returned from the service.
@@ -448,13 +439,12 @@ class MessageTemplateItem(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-
 class MessageTemplateLocation(MessageTemplateValue, discriminator='location'):
     """The message template's location value information.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar name: Name of the Template value. Required.
+    :ivar name: Template binding reference name. Required.
     :vartype name: str
     :ivar kind: Message parameter type is location. Required. The location template parameter type.
     :vartype kind: str or ~azure.communication.messages.models.LOCATION
@@ -503,13 +493,12 @@ class MessageTemplateLocation(MessageTemplateValue, discriminator='location'):
         super().__init__(*args, kind=MessageTemplateValueKind.LOCATION, **kwargs)
 
 
-
 class MessageTemplateQuickAction(MessageTemplateValue, discriminator='quickAction'):
     """The message template's quick action value information.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar name: Name of the Template value. Required.
+    :ivar name: Template binding reference name. Required.
     :vartype name: str
     :ivar kind: Message parameter type is quick action. Required. The quick action template
      parameter type.
@@ -549,13 +538,12 @@ class MessageTemplateQuickAction(MessageTemplateValue, discriminator='quickActio
         super().__init__(*args, kind=MessageTemplateValueKind.QUICK_ACTION, **kwargs)
 
 
-
 class MessageTemplateText(MessageTemplateValue, discriminator='text'):
     """The message template's text value information.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar name: Name of the Template value. Required.
+    :ivar name: Template binding reference name. Required.
     :vartype name: str
     :ivar kind: Message parameter type is text. Required. The text template parameter type.
     :vartype kind: str or ~azure.communication.messages.models.TEXT
@@ -589,13 +577,12 @@ class MessageTemplateText(MessageTemplateValue, discriminator='text'):
         super().__init__(*args, kind=MessageTemplateValueKind.TEXT, **kwargs)
 
 
-
 class MessageTemplateVideo(MessageTemplateValue, discriminator='video'):
     """The message template's video value information.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar name: Name of the Template value. Required.
+    :ivar name: Template binding reference name. Required.
     :vartype name: str
     :ivar kind: Message parameter type is video. Required. The video template parameter type.
     :vartype kind: str or ~azure.communication.messages.models.VIDEO
@@ -639,8 +626,6 @@ class MessageTemplateVideo(MessageTemplateValue, discriminator='video'):
         super().__init__(*args, kind=MessageTemplateValueKind.VIDEO, **kwargs)
 
 
-
-
 class SendMessageResult(_model_base.Model):
     """Result of the send message operation.
 
@@ -671,8 +656,6 @@ class SendMessageResult(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
-
-
 
 
 class TemplateNotificationContent(NotificationContent, discriminator='template'):
@@ -718,8 +701,6 @@ class TemplateNotificationContent(NotificationContent, discriminator='template')
         super().__init__(*args, kind=CommunicationMessageKind.TEMPLATE, **kwargs)
 
 
-
-
 class TextNotificationContent(NotificationContent, discriminator='text'):
     """A request to send a text notification.
 
@@ -762,15 +743,13 @@ class TextNotificationContent(NotificationContent, discriminator='text'):
     def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, kind=CommunicationMessageKind.TEXT, **kwargs)
 
-
-
 class WhatsAppMessageTemplateBindings(MessageTemplateBindings, discriminator='whatsApp'):
     """The template bindings for WhatsApp.
 
     All required parameters must be populated in order to send to server.
 
     :ivar kind: MessageTemplateBindings is whatsApp. Required. The WhatsApp template type.
-    :vartype kind: str or ~azure.communication.messages.models.WHATS_APP
+    :vartype kind: str or ~azure.communication.messages.models.WHATSAPP
     :ivar header: The header template bindings.
     :vartype header:
      list[~azure.communication.messages.models.WhatsAppMessageTemplateBindingsComponent]
@@ -818,8 +797,6 @@ class WhatsAppMessageTemplateBindings(MessageTemplateBindings, discriminator='wh
     def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, kind=MessageTemplateBindingsKind.WHATSAPP, **kwargs)
 
-
-
 class WhatsAppMessageTemplateBindingsButton(_model_base.Model):
     """The template bindings component button for WhatsApp.
 
@@ -857,8 +834,6 @@ class WhatsAppMessageTemplateBindingsButton(_model_base.Model):
     def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
-
-
 class WhatsAppMessageTemplateBindingsComponent(_model_base.Model):
     """The template bindings component for WhatsApp.
 
@@ -890,7 +865,6 @@ class WhatsAppMessageTemplateBindingsComponent(_model_base.Model):
     def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
-
 class WhatsAppMessageTemplateItem(MessageTemplateItem, discriminator='whatsApp'):
     """The WhatsApp-specific template response contract.
 
@@ -911,7 +885,7 @@ class WhatsAppMessageTemplateItem(MessageTemplateItem, discriminator='whatsApp')
     :vartype content: any
     :ivar kind: Message template response type is whatsApp. Required. The WhatsApp communication
      messages channel type.
-    :vartype kind: str or ~azure.communication.messages.models.WHATS_APP
+    :vartype kind: str or ~azure.communication.messages.models.WHATSAPP
     """
 
     content: Optional[Any] = rest_field()
@@ -940,4 +914,3 @@ class WhatsAppMessageTemplateItem(MessageTemplateItem, discriminator='whatsApp')
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, kind=CommunicationMessagesChannel.WHATSAPP, **kwargs)
- 

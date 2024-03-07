@@ -98,7 +98,7 @@ class TestNotificationMessageClientForTextAsync(AsyncMessagesRecordedTestCase):
         input_template: MessageTemplate = MessageTemplate(
             name="gathering_invitation",
             language="en_US",
-            values_property= [parammeter1],
+            template_values= [parammeter1],
             bindings=WhatsAppMessageTemplateBindings
              (
                 body= [ WhatsAppMessageTemplateBindingsComponent(ref_value="first")]
