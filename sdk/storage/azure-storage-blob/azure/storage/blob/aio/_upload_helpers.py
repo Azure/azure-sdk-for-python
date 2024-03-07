@@ -23,8 +23,8 @@ from .._generated.models import (
     AppendPositionAccessConditions,
     ModifiedAccessConditions,
 )
+from ._encryption_async import GCMBlobEncryptionStream
 from .._encryption import (
-    GCMBlobEncryptionStream,
     encrypt_blob,
     get_adjusted_upload_size,
     get_blob_encryptor_and_padder,
