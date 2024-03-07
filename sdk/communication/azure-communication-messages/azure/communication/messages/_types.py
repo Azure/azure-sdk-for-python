@@ -7,5 +7,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Literal, Union
-RepeatabilityResult = Union[Literal["accepted"], Literal["rejected"]]
+from typing import Literal
+RepeatabilityResult = Literal["accepted", "rejected"]
