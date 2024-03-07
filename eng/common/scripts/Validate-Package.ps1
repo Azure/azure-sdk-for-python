@@ -201,7 +201,7 @@ function CreateUpdatePackageWorkItem($pkgInfo)
         -packageType $pkgInfo.SDKType `
         -packageNewLibrary $pkgInfo.IsNewSDK `
         -serviceName "unknown" `
-        -packageDisplayName "unknown" `
+        -packageDisplayName $packageName `
         -inRelease $setReleaseState
     
     if ($LASTEXITCODE -ne 0)
