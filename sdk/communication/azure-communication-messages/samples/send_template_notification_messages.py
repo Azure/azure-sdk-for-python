@@ -53,12 +53,8 @@ class SendWhatsAppTemplateMessageSample(object):
         # calling send() with whatsapp message details
         message_responses = messaging_client.send(template_options)
         response = message_responses.receipts[0]
-        
-        if (response is not None):
-            print("Message with message id {} was successful sent to {}"
+        print("Message with message id {} was successful sent to {}"
             .format(response.message_id, response.to))
-        else:
-            print("Message failed to send")
 
 if __name__ == '__main__':
     sample = SendWhatsAppTemplateMessageSample()

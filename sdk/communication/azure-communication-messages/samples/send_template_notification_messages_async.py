@@ -54,11 +54,8 @@ class SendWhatsAppTemplateMessageSampleAsync(object):
         async with messaging_client:
             message_responses =await messaging_client.send(template_options)
             response = message_responses.receipts[0]
-            if (response is not None):
-                print("Message with message id {} was successful sent to {}"
+            print("Message with message id {} was successful sent to {}"
                 .format(response.message_id, response.to))
-            else:
-                 print("Message failed to send")
 
 
 async def main():
