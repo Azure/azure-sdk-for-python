@@ -6,7 +6,7 @@
 import os
 import json
 from azure.core.credentials import AzureKeyCredential
-from azure.eventgrid import EventGridClient, EventGridPublisherClient
+from azure.eventgrid import EventGridClient, EventGridPublisherClient, EventGridEvent
 from azure.eventgrid.models import *
 from azure.core.messaging import CloudEvent
 from azure.core.exceptions import HttpResponseError
@@ -18,6 +18,10 @@ EVENTGRID_KEY: str = os.environ["EVENTGRID_NAMESPACE_KEY"]
 EVENTGRID_ENDPOINT: str = os.environ["EVENTGRID_NAMESPACES_ENDPOINT"]
 TOPIC_NAME: str = os.environ["EVENTGRID_NAMESPACE_TOPIC_NAME"]
 EVENT_SUBSCRIPTION_NAME: str = os.environ["EVENTGRID_NAMESPACE_SUBSCRIPTION_NAME"]
+
+EVENTGRID_KEY_GA_EVENTGRIDEVENT: str = os.environ["EVENTGRID_TOPIC_KEY"]
+EVENTGRID_ENDPOINT_GA_EVENTGRIDEVENT: str = os.environ["EVENTGRID_TOPIC_ENDPOINT"]
+
 
 # Create a NameSpace client
 namespace_client = EventGridClient(EVENTGRID_ENDPOINT, AzureKeyCredential(EVENTGRID_KEY))
@@ -34,6 +38,9 @@ except ValueError as e:
 # Create a Basic Client with the correct endpoint
 client_basic = EventGridClient(EVENTGRID_ENDPOINT_GA, AzureKeyCredential(EVENTGRID_KEY_GA))
 
+# Create a Basic Client with the correct endpoint for EventGridEvent
+client_basic_eventgrid_event = EventGridClient(EVENTGRID_ENDPOINT_GA_EVENTGRIDEVENT, AzureKeyCredential(EVENTGRID_KEY_GA_EVENTGRIDEVENT))
+
 # Publish an event to a topic using basic client
 event = CloudEvent(data={"key": "value"}, type="Contoso.Items.ItemReceived", source="https://contoso.com/items")
 client_basic.publish(TOPIC_NAME, event)
@@ -43,6 +50,24 @@ client_standard.publish(TOPIC_NAME, event)
 
 # Publish an event to a topic using Publisher client
 publisher_client.send(event)
+
+
+# Publish an event to a topic using basic client for EventGridEvent
+event = EventGridEvent(
+    id="1234",
+    subject="MySubject",
+    data={"key": "value"},
+    event_type="Contoso.Items.ItemReceived",
+    data_version="2.0"
+)
+client_basic_eventgrid_event.publish(TOPIC_NAME, event)
+
+
+# Try to publish an event to a topic using NameSpace client
+try:
+    client_standard.publish(TOPIC_NAME, event)
+except Exception as e:
+    print(e)
 
 
 # Receive events from EventGrid with a basic client - raise error
