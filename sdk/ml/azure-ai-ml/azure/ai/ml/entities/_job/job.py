@@ -140,7 +140,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
         return self._status
 
     @property
-    def log_files(self) -> Optional[Dict]:
+    def log_files(self) -> Optional[Dict[str, str]]:
         """Job output files.
 
         :return: The dictionary of log names and URLs.

@@ -155,8 +155,8 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
                 not skip_script_validation
                 and deployment
                 and deployment.code_configuration
-                and not deployment.code_configuration.code.startswith(ARM_ID_PREFIX)
-                and not re.match(AMLVersionedArmId.REGEX_PATTERN, deployment.code_configuration.code)
+                and not deployment.code_configuration.code.startswith(ARM_ID_PREFIX)  # type: ignore[union-attr]
+                and not re.match(AMLVersionedArmId.REGEX_PATTERN, deployment.code_configuration.code)  # type: ignore
             ):
                 validate_scoring_script(deployment)
 
