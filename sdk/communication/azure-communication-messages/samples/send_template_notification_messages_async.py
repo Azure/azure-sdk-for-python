@@ -47,7 +47,7 @@ class SendWhatsAppTemplateMessageSampleAsync(object):
             language="ca") # Language of the WhatsApp Template
         template_options = TemplateNotificationContent(
             channel_registration_id= self.channel_id,
-            to= [self.phone_number],
+            to=[self.phone_number],
             template=input_template)
         
         # calling send() with whatsapp message details
