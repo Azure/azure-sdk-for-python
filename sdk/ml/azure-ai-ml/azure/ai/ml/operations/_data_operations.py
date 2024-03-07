@@ -261,7 +261,7 @@ class DataOperations(_ScopeDependentOperations):
                 )
 
             if label:
-                return _resolve_label_to_asset(self, name, label)
+                return cast(Data, _resolve_label_to_asset(self, name, label))
 
             if not version:
                 msg = "Must provide either version or label."
@@ -356,7 +356,7 @@ class DataOperations(_ScopeDependentOperations):
                     version=version,
                     resource_group=self._resource_group_name,
                     registry=self._registry_name,
-                    body=get_asset_body_for_registry_storage(self._registry_name, "data", name, version),
+                    body=get_asset_body_for_registry_storage(self._registry_name, "data", str(name), str(version)),
                 )
 
             referenced_uris = self._validate(data)
@@ -556,7 +556,7 @@ class DataOperations(_ScopeDependentOperations):
             mltable_metadata_schema = self._try_get_mltable_metadata_jsonschema(data._mltable_schema_url)
             if mltable_metadata_schema and not data._skip_validation:
                 validate_mltable_metadata(
-                    mltable_metadata_dict=metadata_contents,
+                    mltable_metadata_dict=cast(dict, metadata_contents),
                     mltable_schema=mltable_metadata_schema,
                 )
             return cast(Optional[List[str]], metadata.referenced_uris())

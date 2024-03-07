@@ -163,7 +163,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
 
         sas_uri = None
 
-        if not is_url(featureset_copy.path):
+        if not is_url(str(featureset_copy.path)):
             with open(os.path.join(str(featureset_copy.path), ".amlignore"), mode="w", encoding="utf-8") as f:
                 f.write(".*\n*.amltmp\n*.amltemp")
 

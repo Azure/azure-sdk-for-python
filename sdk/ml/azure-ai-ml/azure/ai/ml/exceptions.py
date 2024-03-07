@@ -437,8 +437,8 @@ class AssetPathException(MlException):
         message: str,
         no_personal_data_message: str,
         *args,
-        target: ErrorTarget = ErrorTarget.UNKNOWN,
-        error_category: ErrorCategory = ErrorCategory.UNKNOWN,
+        target: Union[str, ErrorCategory] = ErrorTarget.UNKNOWN,
+        error_category: Union[str, ErrorCategory] = ErrorCategory.UNKNOWN,
         **kwargs,
     ):
         super(AssetPathException, self).__init__(

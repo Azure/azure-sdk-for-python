@@ -127,12 +127,12 @@ class Deployment(Resource, RestTranslatableMixin):
 
         super().__init__(name, description, tags, properties, **kwargs)
 
-        self.model = model
+        self.model: Any = model
         self.code_configuration = code_configuration
         if not self.code_configuration and (code_path or scoring_script):
             self.code_configuration = CodeConfiguration(code=code_path, scoring_script=scoring_script)
 
-        self.environment = environment
+        self.environment: Any = environment
         self.environment_variables = dict(environment_variables) if environment_variables else {}
 
     @property

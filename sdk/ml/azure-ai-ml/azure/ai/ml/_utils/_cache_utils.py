@@ -37,7 +37,7 @@ _YAML_SOURCE_PREFIX = "yaml-source-"
 _CODE_INVOLVED_PREFIX = "code-involved-"
 EXPIRE_TIME_IN_SECONDS = 60 * 60 * 24 * 7  # 7 days
 
-_node_resolution_lock = defaultdict(threading.Lock)
+_node_resolution_lock: defaultdict = defaultdict(threading.Lock)
 
 
 @dataclass
@@ -167,7 +167,7 @@ class CachedNodeResolver(object):
         if component._source_path:  # pylint: disable=protected-access
             object_hash = hashlib.sha256()
             object_hash.update(component._get_anonymous_hash().encode("utf-8"))  # pylint: disable=protected-access
-            object_hash.update(component._source_path.encode("utf-8"))  # pylint: disable=protected-access
+            object_hash.update(str(component._source_path).encode("utf-8"))  # pylint: disable=protected-access
             return _YAML_SOURCE_PREFIX + object_hash.hexdigest()
         # For components without code, like pipeline component, their dependencies have already
         # been resolved before calling this function, so we can use their anonymous hash directly
