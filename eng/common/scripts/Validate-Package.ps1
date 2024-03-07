@@ -14,7 +14,7 @@ param (
   [string] $APIKey,  
   [Parameter(Mandatory=$True)]
   [string]$ConfigFileDir,
-  [string]$BuildId,
+  [string]$BuildDefinition,
   [string]$PipelineUrl,
   [string]$Devops_pat = $env:DEVOPS_PAT,
   [bool]$IgnoreFailures = $false
@@ -67,7 +67,6 @@ class PackageDetails
     [string]$Version
     [ValidationStatus]$VersionValidation
     [ValidationStatus]$ChangeLogValidation
-    [ValidationStatus]$ReadmeValidation
     [ValidationStatus]$APIReviewValidation
     [ValidationStatus]$PackageNameValidation
 
@@ -97,7 +96,7 @@ function ValidateChangeLog($changeLogPath, $versionString)
         Write-Host "Path to change log: [$changeLogFullPath]"        
         if (Test-Path $changeLogFullPath)
         {
-            $errOutput = $( $validChangeLog = & Confirm-ChangeLogEntry -ChangeLogLocation $changeLogPath -VersionString $versionString -ForRelease $true ) 2>&1
+            $errOutput = $( $validChangeLog = & Confirm-ChangeLogEntry -ChangeLogLocation $changeLogFullPath -VersionString $versionString -ForRelease $true ) 2>&1
             if (!$validChangeLog) {
                 $validationStatus.Status = "Failed"
                 $validationStatus.Message = $errOutput
@@ -201,7 +200,7 @@ function CreateUpdatePackageWorkItem($pkgInfo)
         -packageType $pkgInfo.SDKType `
         -packageNewLibrary $pkgInfo.IsNewSDK `
         -serviceName "unknown" `
-        -packageDisplayName $packageName `
+        -packageDisplayName "unknown" `
         -inRelease $setReleaseState
     
     if ($LASTEXITCODE -ne 0)
@@ -244,8 +243,8 @@ function UpdateValidationStatus($pkgvalidationDetails)
     $fields += "`"APIReviewStatusDetails=${apiReviewDetails}`""
     $fields += "`"PackageNameApprovalStatus=${packageNameStatus}`""
     $fields += "`"PackageNameApprovalDetails=${packageNameDetails}`""
-    if ($BuildId) {
-        $fields += "`"BuildId=$BuildId`""
+    if ($BuildDefinition) {
+        $fields += "`"BuildId=$BuildDefinition`""
     }
     if ($PipelineUrl) {
         $fields += "`"LatestPipelineRun=$PipelineUrl`""

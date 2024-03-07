@@ -11,7 +11,7 @@ Param (
   [Parameter(Mandatory=$True)]
   [string]$APIKey,
   [string]$ConfigFileDir,
-  [string]$BuildId,
+  [string]$BuildDefinition,
   [string]$PipelineUrl,
   [string]$Devops_pat = $env:DEVOPS_PAT,
   [bool]$IgnoreFailures = $false
@@ -40,7 +40,7 @@ function ProcessPackage($PackageName, $ConfigFileDir)
         -RepoRoot $RepoRoot `
         -APIViewUri $APIViewUri `
         -APIKey $APIKey `
-        -BuildId $BuildId `
+        -BuildDefinition $BuildDefinition `
         -PipelineUrl $PipelineUrl `
         -ConfigFileDir $ConfigFileDir `
         -Devops_pat $Devops_pat `
