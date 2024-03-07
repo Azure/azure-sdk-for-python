@@ -6,7 +6,7 @@
 
 import inspect
 from io import SEEK_SET, UnsupportedOperation
-from typing import TypeVar, TYPE_CHECKING
+from typing import IO, TypeVar, Union, TYPE_CHECKING
 
 from azure.core.exceptions import ResourceModifiedError, HttpResponseError
 
@@ -40,7 +40,6 @@ if TYPE_CHECKING:
 
 async def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statements
         client=None,
-        data=None,
         stream=None,
         length=None,
         overwrite=None,
@@ -68,17 +67,27 @@ async def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statem
 
         # Do single put if the size is smaller than config.max_single_put_size
         if adjusted_count is not None and (adjusted_count <= blob_settings.max_single_put_size):
-            try:
-                data = data.read(length)
-                if inspect.isawaitable(data):
-                    data = await data
-                if not isinstance(data, bytes):
-                    raise TypeError('Blob data should be of type bytes.')
-            except AttributeError:
-                pass
+            # Test the output type of the stream and determine if read is awaitable
+            awaitable = False
+            read_type = stream.read(0)
+            if inspect.isawaitable(read_type):
+                awaitable = True
+                read_type = await read_type
+            if not isinstance(read_type, bytes):
+                raise TypeError('Blob data should be of type bytes.')
+
+            data: Union[bytes, IO[bytes]]
+            # Aiohttp requires streams to be IOBase, which most async streams will not be.
+            # So we just read the data out here instead.
+            if awaitable:
+                data = await stream.read()
+            else:
+                data = stream
+
             if encryption_options.get('key'):
                 encryption_data, data = encrypt_blob(data, encryption_options['key'], encryption_options['version'])
                 headers['x-ms-meta-encryptiondata'] = encryption_data
+
             response = await client.upload(
                 body=data,
                 content_length=adjusted_count,
