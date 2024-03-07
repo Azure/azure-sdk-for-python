@@ -36,7 +36,7 @@ class SendWhatsAppMessageSampleAsync(object):
     
     async def send_image_send_message_async(self):
         from azure.communication.messages.aio import NotificationMessagesClient
-        from azure.communication.messages.models import ( ImageNotificationContent )
+        from azure.communication.messages.models import ImageNotificationContent
 
         # client creation
         messaging_client = NotificationMessagesClient.from_connection_string(self.connection_string)
