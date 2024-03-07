@@ -1,16 +1,7 @@
-# No index_columns for custom feature source
+# index_columns is not supported for featureset feature source
 source:
-  type: custom
-  kwargs:
-    k1: v1
-    k2: v2
-    k3: v3
-  timestamp_column:
-    name: timestamp
-    format: "%Y-%m-%d %H:%M:%S"
-  source_process_code:
-    path: ./source_process_code
-    process_class: source_process.MyDataSourceLoader
+  type: featureset
+  path: azureml://subscriptions/my_sub/resourcegroups/my_rg/workspaces/my_fs/feturesets/source_feature_set_name/versions/version1
 feature_transformation_code:
   path: ./code
   transformer_class: driver_hourly_transform.DriverHourlyTransformer
@@ -21,6 +12,9 @@ features:
     type: double
   - name: avg_daily_trips
     type: double
+index_columns:
+  - name: driver_id
+    type: long
 source_lookback:
     days: 30
     hours: 0

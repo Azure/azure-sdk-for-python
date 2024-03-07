@@ -47,6 +47,15 @@ class SourceMetadata(object):
                         target=ErrorTarget.FEATURE_SET,
                         error_category=ErrorCategory.USER_ERROR,
                     )
+                if timestamp_column:
+                    msg = f"Cannot provide timestamp_column for featureset feature source."
+                    raise ValidationException(
+                        message=msg,
+                        no_personal_data_message=msg,
+                        error_type=ValidationErrorType.INVALID_VALUE,
+                        target=ErrorTarget.FEATURE_SET,
+                        error_category=ErrorCategory.USER_ERROR,
+                    )
             if not (path and not dict and not source_process_code):
                 msg = f"Cannot provide source_process_code or kwargs for {type} feature source."
                 raise ValidationException(

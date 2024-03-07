@@ -1,16 +1,10 @@
-# No index_columns for custom feature source
+# timestamp_column is not supported for featureset feature source
 source:
-  type: custom
-  kwargs:
-    k1: v1
-    k2: v2
-    k3: v3
+  type: featureset
+  path: azureml://subscriptions/my_sub/resourcegroups/my_rg/workspaces/my_fs/feturesets/source_feature_set_name/versions/version1
   timestamp_column:
     name: timestamp
     format: "%Y-%m-%d %H:%M:%S"
-  source_process_code:
-    path: ./source_process_code
-    process_class: source_process.MyDataSourceLoader
 feature_transformation_code:
   path: ./code
   transformer_class: driver_hourly_transform.DriverHourlyTransformer

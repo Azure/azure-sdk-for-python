@@ -1,3 +1,4 @@
+# No path for featureset feature source
 source:
   type: featureset
 feature_transformation_code:

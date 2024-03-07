@@ -1,3 +1,4 @@
+# No timestamp_column for custom feature source
 source:
   type: custom
   kwargs:
