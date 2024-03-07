@@ -612,7 +612,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
 
     @distributed_trace
     def upload_blob(
-            self, data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
+            self, data: Union[bytes, str, Iterable[AnyStr], IO[bytes]],
             blob_type: Union[str, BlobType] = BlobType.BlockBlob,
             length: Optional[int] = None,
             metadata: Optional[Dict[str, str]] = None,

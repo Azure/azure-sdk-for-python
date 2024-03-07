@@ -272,6 +272,12 @@ def encrypt_data_v2(data: bytes, nonce: int, key: bytes) -> bytes:
     """
     Encrypts the given data using the given nonce and key using AES-GCM.
     The result includes the data in the form: nonce + ciphertext + tag.
+
+    :param bytes data: The raw data to encrypt.
+    :param int nonce: The nonce to use for encryption.
+    :param bytes key: The encryption key to use for encryption.
+    :return: The encrypted bytes in the form: nonce + ciphertext + tag.
+    :rtype: bytes
     """
     nonce_bytes = nonce.to_bytes(_GCM_NONCE_LENGTH, 'big')
     aesgcm = AESGCM(key)
