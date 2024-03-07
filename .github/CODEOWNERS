@@ -123,6 +123,10 @@
 # PRLabel: %Content Safety
 /sdk/contentsafety/                                                  @mengaims @JieZhou000
 
+# ServiceLabel: %Cognitive - Health Insights
+# PRLabel: %Cognitive - Health Insights
+/sdk/healthinsights/                                                 @tomsft
+
 # AzureSdkOwners: @mccoyp
 # ServiceLabel: %KeyVault
 # PRLabel: %KeyVault

@@ -16,6 +16,17 @@ using async OAuth credentials.
 - Fixed an typing issue which incorrectly typed the `readinto` API. The correct input type is `IO[bytes]`.
 - Fixed a typo in the initialization of `completion_time` for the `CopyProperties` model.
 
+### Other Changes
+- Passing `prefix` to the following `ContainerClient` APIs now raises a `ValueError`:
+`list_blobs`, `list_blobs_names`, and `walk_blobs`. This change was made to avoid confusion for filtering results.
+The `name_starts_with` parameter is the correct prameter to pass for filtering.
+
+## 12.19.1 (2024-03-05)
+
+### Bugs Fixed
+- Fixed an issue where under rare circumstances, full downloads of sparse Page Blobs could result in the
+downloaded content containing up to one "chunk" of extra `\x00` at the end due to an optimization error.
+
 ## 12.19.0 (2023-11-07)
 
 ### Features Added

@@ -132,7 +132,7 @@ nodes:
     type: code
     path: evaluate_chat_rag.py
   inputs:
-    connection: Default_AzureOpenAI
+    connection: openai_connection
     chat: ${inputs.messages}
     deployment_name: ${inputs.deployment_name}
     selected_metrics: ${select_metrics.output}
@@ -146,7 +146,7 @@ nodes:
     type: code
     path: evaluate_coherence_fluency.py
   inputs:
-    connection: Default_AzureOpenAI
+    connection: openai_connection
     deployment_name: ${inputs.deployment_name}
     parsed_qa: ${parse_chat.output}
     selected_metrics: ${select_metrics.output}
