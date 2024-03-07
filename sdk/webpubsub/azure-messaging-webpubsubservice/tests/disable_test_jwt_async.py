@@ -41,20 +41,21 @@ def test_parse_connection_string(connection_string, endpoint):
     assert client._config.credential.key == access_key
 
 test_cases = [
-    (None, None),
-    ("ab", ["a"]),
-    ("ab", ["a", "a", "a"]),
-    ("ab", ["a", "b", "c"]),
-    ("ab", "")
+    (None, None, None),
+    ("ab", [], []),
+    ("ab", ["a"], ["a"]),
+    ("ab", ["a", "a", "a"], ["a", "a", "a"]),
+    ("ab", ["a", "b", "c"], ["a", "a", "a"]),
+    ("ab", "", "")
 ]
-@pytest.mark.parametrize("user_id,roles", test_cases)
+@pytest.mark.parametrize("user_id,roles,groups", test_cases)
 @pytest.mark.asyncio
-async def test_generate_uri_contains_expected_payloads_dto(user_id, roles):
+async def test_generate_uri_contains_expected_payloads_dto(user_id, roles, groups):
     client = WebPubSubServiceClient.from_connection_string(
         f"Endpoint=http://localhost;Port=8080;AccessKey={access_key};Version=1.0;", "hub"
     )
     minutes_to_expire = 5
-    token = await client.get_client_access_token(user_id=user_id, roles=roles, minutes_to_expire=minutes_to_expire)
+    token = await client.get_client_access_token(user_id=user_id, roles=roles, minutes_to_expire=minutes_to_expire, groups=groups)
     assert token
     assert len(token) == 3
     assert set(token.keys()) == set(["baseUrl", "url", "token"])
@@ -75,6 +76,11 @@ async def test_generate_uri_contains_expected_payloads_dto(user_id, roles):
         assert decoded_token['role'] == roles
     else:
         assert not decoded_token.get('role')
+
+    if groups:
+        assert decoded_token['webpubsub.group'] == groups
+    else:
+        assert not decoded_token.get('webpubsub.group')
 
 test_cases = [
     ("Endpoint=http://localhost;Port=8080;AccessKey={};Version=1.0;".format(access_key), "hub", "ws://localhost:8080/client/hubs/hub"),

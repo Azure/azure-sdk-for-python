@@ -74,7 +74,8 @@ def get_token_by_key(endpoint: str, hub: str, key: str, **kwargs: Any) -> str:
         payload["role"] = roles
     if groups:
         payload["webpubsub.group"] = groups
-    return jwt.encode(payload, key, algorithm="HS256", headers=kwargs.pop("jwt_headers", {})).decode("utf-8")
+    encoded = jwt.encode(payload, key, algorithm="HS256", headers=kwargs.pop("jwt_headers", {}))
+    return encoded
 
 
 class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixinGenerated):
@@ -88,6 +89,8 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         :keyword minutes_to_expire: The expire time of the generated token.
         :paramtype minutes_to_expire: int
         :keyword dict[str, any] jwt_headers: Any headers you want to pass to jwt encoding.
+        :keyword groups: Groups that the connection will join when it connects. Default value is None.
+        :paramtype groups: list[str]
         :returns: JSON response containing the web socket endpoint, the token and a url with the generated access token.
         :rtype: JSON
         Example:
@@ -168,7 +171,6 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
                 "The content_type '{}' is not one of the allowed values: "
                 "['application/json', 'application/octet-stream', 'text/plain']".format(content_type)
             )
-
         request = build_send_to_all_request(
             hub=self._config.hub,
             excluded=excluded,
@@ -194,7 +196,6 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
-
         if cls:
             return cls(pipeline_response, None, {})
 
@@ -243,7 +244,6 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
                 "The content_type '{}' is not one of the allowed values: "
                 "['application/json', 'application/octet-stream', 'text/plain']".format(content_type)
             )
-
         request = build_send_to_user_request(
             user_id=user_id,
             hub=self._config.hub,
@@ -269,7 +269,6 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
-
         if cls:
             return cls(pipeline_response, None, {})
 
@@ -327,7 +326,6 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
                 "The content_type '{}' is not one of the allowed values: "
                 "['application/json', 'application/octet-stream', 'text/plain']".format(content_type)
             )
-
         request = build_send_to_group_request(
             group=group,
             hub=self._config.hub,
@@ -354,7 +352,6 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
-
         if cls:
             return cls(pipeline_response, None, {})
 
@@ -400,7 +397,6 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
                 "The content_type '{}' is not one of the allowed values: "
                 "['application/json', 'application/octet-stream', 'text/plain']".format(content_type)
             )
-
         request = build_send_to_connection_request(
             connection_id=connection_id,
             hub=self._config.hub,
@@ -425,7 +421,6 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
-
         if cls:
             return cls(pipeline_response, None, {})
 

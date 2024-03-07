@@ -6,7 +6,7 @@ import pandas as pd
 
 
 class BaseHandler(metaclass=abc.ABCMeta):
-
+    # pylint: disable=unused-argument
     def __init__(self, asset, test_data, prediction_data=None, ground_truth=None, **kwargs):
         self._prediction_data = None
         self._input_output_data = None

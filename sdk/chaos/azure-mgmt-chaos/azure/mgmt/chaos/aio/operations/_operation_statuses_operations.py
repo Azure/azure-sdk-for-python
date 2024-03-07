@@ -54,7 +54,7 @@ class OperationStatusesOperations:
     async def get(self, location: str, async_operation_id: str, **kwargs: Any) -> _models.OperationStatus:
         """Get the status of a long running azure asynchronous operation.
 
-        :param location: The region name of operation. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param async_operation_id: The operation Id. Required.
         :type async_operation_id: str
@@ -109,5 +109,5 @@ class OperationStatusesOperations:
         return deserialized
 
     get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Chaos/locations/{location}/operationsStatuses/{asyncOperationId}"
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Chaos/locations/{location}/operationStatuses/{asyncOperationId}"
     }

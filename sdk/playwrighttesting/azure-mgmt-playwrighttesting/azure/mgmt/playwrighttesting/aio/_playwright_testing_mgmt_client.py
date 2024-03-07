@@ -23,7 +23,7 @@ if TYPE_CHECKING:
 
 
 class PlaywrightTestingMgmtClient:  # pylint: disable=client-accepts-api-version-keyword
-    """Microsoft.AzurePlaywrightService Resource Provider management API.
+    """Azure Playwright testing management service.
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.playwrighttesting.aio.operations.Operations
