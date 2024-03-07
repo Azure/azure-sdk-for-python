@@ -17,7 +17,7 @@ Param (
 Set-StrictMode -Version 3
 . (Join-Path $PSScriptRoot common.ps1)
 
-function ProcessPackage($PackageName)
+function ProcessPackage($PackageName, $ConfigFileDir)
 {
     Write-Host "Artifact path: $($ArtifactPath)"
     Write-Host "Package Name: $($PackageName)"
@@ -38,6 +38,7 @@ function ProcessPackage($PackageName)
         -APIKey $APIKey `
         -BuildId $BuildId `
         -PipelineUrl $PipelineUrl `
+        -ConfigFileDir $ConfigFileDir `
         -IgnoreFailures $IgnoreFailures
     if ($LASTEXITCODE -ne 0)
     {
@@ -56,7 +57,7 @@ $status = $true
 foreach ($artifact in $ArtifactList)
 {
     Write-Host "Processing $($artifact.name)"
-    $pkgStatus = ProcessPackage -PackageName $artifact.name
+    $pkgStatus = ProcessPackage -PackageName $artifact.name -ConfigFileDir $ConfigFileDir
     if(!$pkgStatus) {
         $status = $false
     }

@@ -9,7 +9,9 @@ param (
   [Parameter(Mandatory=$True)]
   [string] $APIViewUri,
   [Parameter(Mandatory=$True)]
-  [string] $APIKey,
+  [string] $APIKey,  
+  [Parameter(Mandatory=$True)]
+  [string]$ConfigFileDir,
   [string]$BuildId,
   [string]$PipelineUrl,
   [bool]$IgnoreFailures = $false
@@ -227,7 +229,7 @@ function UpdateValidationStatus($pkgvalidationDetails)
 
 # Read package property file and identify all packages to process
 Write-Host "Processing package: $PackageName"
-$packagePropertyFile = Join-Path $ArtifactPath "$PackageName.json"
+$packagePropertyFile = Join-Path $ConfigFileDir "$PackageName.json"
 $pkgInfo = Get-Content $packagePropertyFile | ConvertFrom-Json
 
 $pkgValidationDetails= [PackageDetails]::new($PackageName)
