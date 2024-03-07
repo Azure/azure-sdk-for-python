@@ -415,7 +415,7 @@ class ModelOperations(_ScopeDependentOperations):
                 :end-before: [END model_operations_archive]
                 :language: python
                 :dedent: 8
-                :caption: Archive a model example.
+                :caption: Archive a model.
         """
         _archive_or_restore(
             asset_operations=self,
@@ -451,7 +451,7 @@ class ModelOperations(_ScopeDependentOperations):
                 :end-before: [END model_operations_restore]
                 :language: python
                 :dedent: 8
-                :caption: Restore a model example.
+                :caption: Restore an archived model.
         """
         _archive_or_restore(
             asset_operations=self,
