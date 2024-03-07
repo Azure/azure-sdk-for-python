@@ -41,7 +41,7 @@ class SendWhatsAppMessageSample(object):
 
         image_options = ImageNotificationContent (
             channel_registration_id=self.channel_id,
-            to= [self.phone_number], 
+            to=[self.phone_number], 
             content="Hello World via Notification Messaging SDK.",
             media_uri="https://aka.ms/acsicon1"
         )
