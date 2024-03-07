@@ -15,6 +15,7 @@
 ### Breaking Changes
 
 - Changed property name from `items` to `items_property` in model `DocumentFieldSchema` and `DocumentList`.
+- Changed property name from `base64_source` to `bytes_source` in model `AnalyzeDocumentRequest` and `ClassifyDocumentRequest`.
 
 ### Bugs Fixed
 
