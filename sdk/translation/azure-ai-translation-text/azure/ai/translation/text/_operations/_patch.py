@@ -12,7 +12,6 @@ from ._operations import TextTranslationClientOperationsMixin as TextTranslation
 
 
 class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinGenerated):
-
     @overload
     def translate(
         self,
@@ -551,46 +550,32 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
         allow_fallback: Optional[bool] = None,
         **kwargs: Any
     ) -> List[_models.TranslatedTextItem]:
+        body: Union[List[_models.InputTextItem], IO[bytes]]
         if isinstance(request_body, list) and all(isinstance(item, str) for item in request_body):
             input_text_items: List[_models.InputTextItem] = []
             for text in request_body:
                 input_text_items.append(_models.InputTextItem(text=cast(str, text)))
-
-            return super().translate(
-                request_body=input_text_items,
-                to=to,
-                client_trace_id=client_trace_id,
-                from_parameter=from_parameter,
-                text_type=text_type,
-                category=category,
-                profanity_action=profanity_action,
-                profanity_marker=profanity_marker,
-                include_alignment=include_alignment,
-                include_sentence_length=include_sentence_length,
-                suggested_from=suggested_from,
-                from_script=from_script,
-                to_script=to_script,
-                allow_fallback=allow_fallback,
-                **kwargs
-            )
+            body = input_text_items
         else:
-            return super().translate(
-                request_body=cast(Union[List[_models.InputTextItem], IO[bytes]], request_body),
-                to=to,
-                client_trace_id=client_trace_id,
-                from_parameter=from_parameter,
-                text_type=text_type,
-                category=category,
-                profanity_action=profanity_action,
-                profanity_marker=profanity_marker,
-                include_alignment=include_alignment,
-                include_sentence_length=include_sentence_length,
-                suggested_from=suggested_from,
-                from_script=from_script,
-                to_script=to_script,
-                allow_fallback=allow_fallback,
-                **kwargs
-            )
+            body = cast(Union[List[_models.InputTextItem], IO[bytes]], request_body)
+
+        return super().translate(
+            request_body=body,
+            to=to,
+            client_trace_id=client_trace_id,
+            from_parameter=from_parameter,
+            text_type=text_type,
+            category=category,
+            profanity_action=profanity_action,
+            profanity_marker=profanity_marker,
+            include_alignment=include_alignment,
+            include_sentence_length=include_sentence_length,
+            suggested_from=suggested_from,
+            from_script=from_script,
+            to_script=to_script,
+            allow_fallback=allow_fallback,
+            **kwargs
+        )
 
     @overload
     def transliterate(
@@ -778,28 +763,23 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
         client_trace_id: Optional[str] = None,
         **kwargs: Any
     ) -> List[_models.TransliteratedText]:
+        body: Union[List[_models.InputTextItem], IO[bytes]]
         if isinstance(request_body, list) and all(isinstance(item, str) for item in request_body):
             input_text_items: List[_models.InputTextItem] = []
             for text in request_body:
                 input_text_items.append(_models.InputTextItem(text=cast(str, text)))
-
-            return super().transliterate(
-                request_body=input_text_items,
-                language=language,
-                from_script=from_script,
-                to_script=to_script,
-                client_trace_id=client_trace_id,
-                **kwargs
-            )
+            body = input_text_items
         else:
-            return super().transliterate(
-                request_body=cast(Union[List[_models.InputTextItem], IO[bytes]], request_body),
-                language=language,
-                from_script=from_script,
-                to_script=to_script,
-                client_trace_id=client_trace_id,
-                **kwargs
-            )
+            body = cast(Union[List[_models.InputTextItem], IO[bytes]], request_body)
+
+        return super().transliterate(
+            request_body=body,
+            language=language,
+            from_script=from_script,
+            to_script=to_script,
+            client_trace_id=client_trace_id,
+            **kwargs
+        )
 
     @overload
     def find_sentence_boundaries(
@@ -998,22 +978,19 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
         script: Optional[str] = None,
         **kwargs: Any
     ) -> List[_models.BreakSentenceItem]:
+        body: Union[List[_models.InputTextItem], IO[bytes]]
         if isinstance(request_body, list) and all(isinstance(item, str) for item in request_body):
             input_text_items: List[_models.InputTextItem] = []
             for text in request_body:
                 input_text_items.append(_models.InputTextItem(text=cast(str, text)))
+            body = input_text_items
 
-            return super().find_sentence_boundaries(
-                request_body=input_text_items,
-                language=language,
-                script=script,
-                client_trace_id=client_trace_id,
-                **kwargs
-            )
         else:
-            return super().find_sentence_boundaries(
-                request_body=cast(Union[List[_models.InputTextItem], IO[bytes]], request_body), language=language, script=script, client_trace_id=client_trace_id, **kwargs
-            )
+            body = cast(Union[List[_models.InputTextItem], IO[bytes]], request_body)
+
+        return super().find_sentence_boundaries(
+            request_body=body, language=language, script=script, client_trace_id=client_trace_id, **kwargs
+        )
 
     @overload
     def lookup_dictionary_entries(
@@ -1362,26 +1339,18 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
         client_trace_id: Optional[str] = None,
         **kwargs: Any
     ) -> List[_models.DictionaryLookupItem]:
+        body: Union[List[_models.InputTextItem], IO[bytes]]
         if isinstance(request_body, list) and all(isinstance(item, str) for item in request_body):
             input_text_items: List[_models.InputTextItem] = []
             for text in request_body:
                 input_text_items.append(_models.InputTextItem(text=cast(str, text)))
-
-            return super().lookup_dictionary_entries(
-                request_body=input_text_items,
-                from_parameter=from_parameter,
-                to=to,
-                client_trace_id=client_trace_id,
-                **kwargs
-            )
+            body = input_text_items
         else:
-            return super().lookup_dictionary_entries(
-                request_body=cast(Union[List[_models.InputTextItem], IO[bytes]], request_body),
-                from_parameter=from_parameter,
-                to=to,
-                client_trace_id=client_trace_id,
-                **kwargs
-            )
+            body = cast(Union[List[_models.InputTextItem], IO[bytes]], request_body)
+
+        return super().lookup_dictionary_entries(
+            request_body=body, from_parameter=from_parameter, to=to, client_trace_id=client_trace_id, **kwargs
+        )
 
 
 __all__: List[str] = [
