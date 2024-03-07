@@ -36,14 +36,14 @@ class SendWhatsAppMessageSampleAsync(object):
     
     async def send_text_send_message_async(self):
         from azure.communication.messages.aio import NotificationMessagesClient
-        from azure.communication.messages.models import ( TextNotificationContent )
+        from azure.communication.messages.models import TextNotificationContent
 
         # client creation
         messaging_client = NotificationMessagesClient.from_connection_string(self.connection_string)
 
-        text_options = TextNotificationContent (
+        text_options = TextNotificationContent(
             channel_registration_id=self.channel_id,
-            to= [self.phone_number],
+            to=[self.phone_number],
             content="Hello World via Notification Messaging SDK.",
         )
         
