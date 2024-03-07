@@ -9,13 +9,12 @@ param (
   [Parameter(Mandatory=$True)]
   [string]$RepoRoot,
   [Parameter(Mandatory=$True)]
-  [string] $APIViewUri,
-  [Parameter(Mandatory=$True)]
   [string] $APIKey,  
   [Parameter(Mandatory=$True)]
   [string]$ConfigFileDir,
   [string]$BuildDefinition,
   [string]$PipelineUrl,
+  [string] $APIViewUri,
   [string]$Devops_pat = $env:DEVOPS_PAT,
   [bool]$IgnoreFailures = $false
 )
@@ -201,7 +200,7 @@ function CreateUpdatePackageWorkItem($pkgInfo)
         -packageNewLibrary $pkgInfo.IsNewSDK `
         -serviceName "unknown" `
         -packageDisplayName "unknown" `
-        -inRelease $setReleaseState
+        -inRelease $setReleaseState `
         -devops_pat $Devops_pat
     
     if ($LASTEXITCODE -ne 0)

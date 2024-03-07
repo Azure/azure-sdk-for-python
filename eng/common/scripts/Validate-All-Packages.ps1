@@ -7,12 +7,11 @@ Param (
   [Parameter(Mandatory=$True)]
   [string]$RepoRoot,
   [Parameter(Mandatory=$True)]
-  [string]$APIViewUri,
-  [Parameter(Mandatory=$True)]
   [string]$APIKey,
   [string]$ConfigFileDir,
   [string]$BuildDefinition,
   [string]$PipelineUrl,
+  [string]$APIViewUri  = "https://apiview.dev/AutoReview/GetReviewStatus",
   [string]$Devops_pat = $env:DEVOPS_PAT,
   [bool]$IgnoreFailures = $false
 )
