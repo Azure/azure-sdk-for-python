@@ -1632,6 +1632,12 @@
       ]
     },
     {
+      "filename": "sdk/appconfiguration/azure-appconfiguration/**",
+      "words": [
+        "kvset"
+      ]
+    },
+    {
       "filename": "sdk/personalizer/test-resources.json",
       "words": [
         "euap"
