@@ -17,6 +17,7 @@ Param (
 
 Set-StrictMode -Version 3
 . (Join-Path $PSScriptRoot common.ps1)
+. ${PSScriptRoot}\Helpers\DevOps-WorkItem-Helpers.ps1
 
 if (!$Devops_pat) {
   az account show *> $null
