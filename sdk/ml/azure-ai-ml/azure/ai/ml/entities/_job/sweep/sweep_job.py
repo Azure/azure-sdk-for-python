@@ -99,7 +99,7 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
     :keyword sampling_algorithm: The hyperparameter sampling algorithm to use over the `search_space`. Defaults to
         "random".
 
-            :paramtype sampling_algorithm: str
+    :paramtype sampling_algorithm: str
     :keyword search_space: Dictionary of the hyperparameter search space. The key is the name of the hyperparameter
         and the value is the parameter expression.
 
