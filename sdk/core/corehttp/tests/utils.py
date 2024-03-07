@@ -5,72 +5,53 @@
 # -------------------------------------------------------------------------
 import pytest
 import types
+import io
 
 ############################## LISTS USED TO PARAMETERIZE TESTS ##############################
-from corehttp.rest import HttpRequest as RestHttpRequest
-
-HTTP_REQUESTS = [RestHttpRequest]
-REQUESTS_TRANSPORT_RESPONSES = []
-
+from corehttp.rest import HttpRequest
 from corehttp.rest._http_response_impl import HttpResponseImpl as RestHttpResponse
+from corehttp.rest._http_response_impl_async import AsyncHttpResponseImpl as RestAsyncHttpResponse
 
-HTTP_RESPONSES = [RestHttpResponse]
 
-ASYNC_HTTP_RESPONSES = []
+SYNC_TRANSPORTS = []
+ASYNC_TRANSPORTS = []
 
-try:
-    from corehttp.rest._http_response_impl_async import AsyncHttpResponseImpl as RestAsyncHttpResponse
-
-    ASYNC_HTTP_RESPONSES = [RestAsyncHttpResponse]
-except (ImportError, SyntaxError):
-    pass
+SYNC_TRANSPORT_RESPONSES = []
+ASYNC_TRANSPORT_RESPONSES = []
 
 try:
     from corehttp.rest._requests_basic import RestRequestsTransportResponse
+    from corehttp.transport.requests import RequestsTransport
 
-    REQUESTS_TRANSPORT_RESPONSES = [RestRequestsTransportResponse]
-except ImportError:
-    pass
-
-from corehttp.rest._http_response_impl import RestHttpClientTransportResponse
-
-HTTP_CLIENT_TRANSPORT_RESPONSES = [RestHttpClientTransportResponse]
-
-AIOHTTP_TRANSPORT_RESPONSES = []
-
-try:
-    from corehttp.rest._aiohttp import RestAioHttpTransportResponse
-
-    AIOHTTP_TRANSPORT_RESPONSES = [RestAioHttpTransportResponse]
+    SYNC_TRANSPORTS.append(RequestsTransport)
+    SYNC_TRANSPORT_RESPONSES.append(RestRequestsTransportResponse)
 except (ImportError, SyntaxError):
     pass
 
+try:
+    from corehttp.rest._aiohttp import RestAioHttpTransportResponse
+    from corehttp.transport.aiohttp import AioHttpTransport
+
+    ASYNC_TRANSPORTS.append(AioHttpTransport)
+    ASYNC_TRANSPORT_RESPONSES.append(RestAioHttpTransportResponse)
+except (ImportError, SyntaxError):
+    pass
+
+try:
+    from corehttp.rest._httpx import HttpXTransportResponse, AsyncHttpXTransportResponse
+    from corehttp.transport.httpx import HttpXTransport, AsyncHttpXTransport
+
+    SYNC_TRANSPORTS.append(HttpXTransport)
+    SYNC_TRANSPORT_RESPONSES.append(HttpXTransportResponse)
+    ASYNC_TRANSPORTS.append(AsyncHttpXTransport)
+    ASYNC_TRANSPORT_RESPONSES.append(AsyncHttpXTransportResponse)
+except (ImportError, SyntaxError):
+    pass
+
+HTTP_RESPONSES = [RestHttpResponse]
+ASYNC_HTTP_RESPONSES = [RestAsyncHttpResponse]
+
 ############################## HELPER FUNCTIONS ##############################
-
-
-def request_and_responses_product(*args):
-    rest = tuple([RestHttpRequest]) + tuple(arg[0] for arg in args)
-    return [rest]
-
-
-def create_http_request(http_request, *args, **kwargs):
-    if hasattr(http_request, "content"):
-        method = args[0]
-        url = args[1]
-        try:
-            headers = args[2]
-        except IndexError:
-            headers = None
-        try:
-            files = args[3]
-        except IndexError:
-            files = None
-        try:
-            data = args[4]
-        except IndexError:
-            data = None
-        return http_request(method=method, url=url, headers=headers, files=files, data=data, **kwargs)
-    return http_request(*args, **kwargs)
 
 
 def create_transport_response(http_response, *args, **kwargs):
@@ -103,7 +84,7 @@ def create_http_response(http_response, *args, **kwargs):
 
 def readonly_checks(response):
     # We want these properties to be completely readonly.
-    assert isinstance(response.request, RestHttpRequest)
+    assert isinstance(response.request, HttpRequest)
     assert isinstance(response.status_code, int)
     assert response.headers
     assert response.content_type == "text/html; charset=utf-8"
@@ -139,3 +120,9 @@ def readonly_checks(response):
         if attr == "encoding":
             # encoding is the only settable new attr
             continue
+
+
+class NamedIo(io.BytesIO):
+    def __init__(self, name: str, *args, **kwargs):
+        super(NamedIo, self).__init__(*args, **kwargs)
+        self.name = name

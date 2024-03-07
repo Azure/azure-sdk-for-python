@@ -7,6 +7,8 @@
 # TODO: fix mypy errors for _code/_definition/__defaults__ (issue #26500)
 from collections import namedtuple
 import sys
+from typing import NamedTuple, Optional
+from typing_extensions import Buffer
 
 from .types import AMQPTypes, FieldDefinition, ObjDefinition
 from .constants import FIELD
@@ -333,23 +335,20 @@ if _CAN_ADD_DOCSTRING:
         here: http://www.amqp.org/specification/1.0/link-state-properties.
     """
 
+class TransferFrame(NamedTuple):
+    handle: Optional[int] = None
+    delivery_id: Optional[int] = None
+    delivery_tag: Optional[bytes] = None
+    message_format: Optional[int] = None
+    settled: Optional[bool] = None
+    more: Optional[bool] = None
+    rcv_settle_mode: Optional[str] = None
+    state: Optional[bytes] = None
+    resume: Optional[bool] = None
+    aborted: Optional[bool] = None
+    batchable: Optional[bool] = None
+    payload: Optional[Buffer] = None
 
-TransferFrame = namedtuple(
-    'TransferFrame',
-    [
-        'handle',
-        'delivery_id',
-        'delivery_tag',
-        'message_format',
-        'settled',
-        'more',
-        'rcv_settle_mode',
-        'state',
-        'resume',
-        'aborted',
-        'batchable',
-        'payload'
-    ])
 TransferFrame._code = 0x00000014  # type: ignore # pylint:disable=protected-access
 TransferFrame._definition = (  # type: ignore # pylint:disable=protected-access
     FIELD("handle", AMQPTypes.uint, True, None, False),
@@ -363,7 +362,9 @@ TransferFrame._definition = (  # type: ignore # pylint:disable=protected-access
     FIELD("resume", AMQPTypes.boolean, False, False, False),
     FIELD("aborted", AMQPTypes.boolean, False, False, False),
     FIELD("batchable", AMQPTypes.boolean, False, False, False),
-    None)
+    None
+)
+
 if _CAN_ADD_DOCSTRING:
     TransferFrame.__doc__ = """
     TRANSFER performative. Transfer a Message.
@@ -419,7 +420,7 @@ if _CAN_ADD_DOCSTRING:
         on the first transfer of the resumed delivery. For subsequent transfers for the same delivery the resume
         flag may be set to true, or may be omitted. In the case where the exchange of unsettled maps makes clear
         that all message data has been successfully transferred to the receiver, and that only the final state
-        (andpotentially settlement) at the sender needs to be conveyed, then a resumed delivery may carry no
+        (and potentially settlement) at the sender needs to be conveyed, then a resumed delivery may carry no
         payload and instead act solely as a vehicle for carrying the terminal state of the delivery at the sender.
     :param bool aborted: Indicates that the Message is aborted.
         Aborted Messages should be discarded by the recipient (any payload within the frame carrying the performative

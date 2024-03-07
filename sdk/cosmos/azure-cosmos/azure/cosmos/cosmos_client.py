@@ -22,27 +22,35 @@
 """Create, read, and delete databases in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, Dict, Optional, Union, cast, Iterable, List  # pylint: disable=unused-import
+from typing import Any, Dict, Iterable, List, Mapping, Optional, Union, cast
 import warnings
-from azure.core.tracing.decorator import distributed_trace  # type: ignore
 
-from ._cosmos_client_connection import CosmosClientConnection
+from azure.core import MatchConditions
+from azure.core.tracing.decorator import distributed_trace
+from azure.core.paging import ItemPaged
+from azure.core.credentials import TokenCredential
+
+from ._cosmos_client_connection import CosmosClientConnection, CredentialDict
 from ._base import build_options, _set_throughput_options
 from .offer import ThroughputProperties
 from ._retry_utility import ConnectionRetryPolicy
-from .database import DatabaseProxy
+from .database import DatabaseProxy, _get_database_link
 from .documents import ConnectionPolicy, DatabaseAccount
 from .exceptions import CosmosResourceNotFoundError
+
 
 __all__ = ("CosmosClient",)
 
 
-def _parse_connection_str(conn_str, credential):
-    # type: (str, Optional[Any]) -> Dict[str, str]
+
+CredentialType = Union[
+    TokenCredential, CredentialDict, str, Mapping[str, Any], Iterable[Mapping[str, Any]]
+]
+
+
+def _parse_connection_str(conn_str: str, credential: Optional[Any]) -> Dict[str, str]:
     conn_str = conn_str.rstrip(";")
-    conn_settings = dict(  # type: ignore  # pylint: disable=consider-using-dict-comprehension
-        s.split("=", 1) for s in conn_str.split(";")
-    )
+    conn_settings = dict([s.split("=", 1) for s in conn_str.split(";")])
     if 'AccountEndpoint' not in conn_settings:
         raise ValueError("Connection string missing setting 'AccountEndpoint'.")
     if not credential and 'AccountKey' not in conn_settings:
@@ -50,18 +58,17 @@ def _parse_connection_str(conn_str, credential):
     return conn_settings
 
 
-def _build_auth(credential):
-    # type: (Any) -> Dict[str, Any]
-    auth = {}
+def _build_auth(credential: CredentialType) -> CredentialDict:
+    auth: CredentialDict = {}
     if isinstance(credential, str):
         auth['masterKey'] = credential
-    elif isinstance(credential, dict):
+    elif isinstance(credential, Mapping):
         if any(k for k in credential.keys() if k in ['masterKey', 'resourceTokens', 'permissionFeed']):
-            return credential  # Backwards compatible
-        auth['resourceTokens'] = credential  # type: ignore
-    elif hasattr(credential, '__iter__'):
-        auth['permissionFeed'] = credential
-    elif hasattr(credential, 'get_token'):
+            return cast(CredentialDict, credential)  # Backwards compatible
+        auth['resourceTokens'] = credential
+    elif isinstance(credential, Iterable):
+        auth['permissionFeed'] = cast(Iterable[Mapping[str, Any]], credential)
+    elif isinstance(credential, TokenCredential):
         auth['clientSecretCredential'] = credential
     else:
         raise TypeError(
@@ -71,8 +78,7 @@ def _build_auth(credential):
     return auth
 
 
-def _build_connection_policy(kwargs):
-    # type: (Dict[str, Any]) -> ConnectionPolicy
+def _build_connection_policy(kwargs: Dict[str, Any]) -> ConnectionPolicy:
     # pylint: disable=protected-access
     policy = kwargs.pop('connection_policy', ConnectionPolicy())
 
@@ -100,8 +106,10 @@ def _build_connection_policy(kwargs):
     # Retry config
     retry_options = kwargs.pop('retry_options', None)
     if retry_options is not None:
-        warnings.warn("This option has been deprecated and will be removed from the SDK in a future release.",
-                      DeprecationWarning)
+        warnings.warn(
+            "'retry_options' has been deprecated and will be removed from the SDK in a future release.",
+            DeprecationWarning
+        )
     retry_options = policy.RetryOptions
     total_retries = kwargs.pop('retry_total', None)
     retry_options._max_retry_attempt_count = total_retries or retry_options._max_retry_attempt_count
@@ -112,8 +120,10 @@ def _build_connection_policy(kwargs):
     policy.RetryOptions = retry_options
     connection_retry = kwargs.pop('connection_retry_policy', None)
     if connection_retry is not None:
-        warnings.warn("This option has been deprecated and will be removed from the SDK in a future release.",
-                      DeprecationWarning)
+        warnings.warn(
+            "'connection_retry_policy' has been deprecated and will be removed from the SDK in a future release.",
+            DeprecationWarning
+        )
     connection_retry = policy.ConnectionRetryConfiguration
     if not connection_retry:
         connection_retry = ConnectionRetryPolicy(
@@ -126,11 +136,10 @@ def _build_connection_policy(kwargs):
             retry_backoff_factor=kwargs.pop('retry_backoff_factor', 0.8),
         )
     policy.ConnectionRetryConfiguration = connection_retry
-
     return policy
 
 
-class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keyword
+class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     """A client-side logical representation of an Azure Cosmos DB account.
 
     Use this client to configure and execute requests to the Azure Cosmos DB service.
@@ -182,8 +191,13 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
             :name: create_client
     """
 
-    def __init__(self, url, credential, consistency_level=None, **kwargs):
-        # type: (str, Any, Optional[str], Any) -> None
+    def __init__(
+        self,
+        url: str,
+        credential: Union[TokenCredential, str, Dict[str, Any]],
+        consistency_level: Optional[str] = None,
+        **kwargs
+    ) -> None:
         """Instantiate a new CosmosClient."""
         auth = _build_auth(credential)
         connection_policy = _build_connection_policy(kwargs)
@@ -191,8 +205,7 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
             url, auth=auth, consistency_level=consistency_level, connection_policy=connection_policy, **kwargs
         )
 
-    def __repr__(self):  # pylint:disable=client-method-name-no-double-underscore
-        # type () -> str
+    def __repr__(self) -> str:
         return "<CosmosClient [{}]>".format(self.client_connection.url_connection)[:1024]
 
     def __enter__(self):
@@ -203,8 +216,13 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
         return self.client_connection.pipeline_client.__exit__(*args)
 
     @classmethod
-    def from_connection_string(cls, conn_str, credential=None, consistency_level=None, **kwargs):
-        # type: (str, Optional[Any], Optional[str], Any) -> CosmosClient
+    def from_connection_string(
+        cls,
+        conn_str: str,
+        credential: Optional[Union[TokenCredential, str, Dict[str, Any]]] = None,
+        consistency_level: Optional[str] = None,
+        **kwargs
+    ) -> 'CosmosClient':
         """Create a CosmosClient instance from a connection string.
 
         This can be retrieved from the Azure portal.For full list of optional
@@ -227,27 +245,19 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
             **kwargs
         )
 
-    @staticmethod
-    def _get_database_link(database_or_id):
-        # type: (Union[DatabaseProxy, str, Dict[str, str]]) -> str
-        if isinstance(database_or_id, str):
-            return "dbs/{}".format(database_or_id)
-        try:
-            return cast("DatabaseProxy", database_or_id).database_link
-        except AttributeError:
-            pass
-        database_id = cast("Dict[str, str]", database_or_id)["id"]
-        return "dbs/{}".format(database_id)
-
     @distributed_trace
-    def create_database(  # pylint: disable=redefined-builtin
+    def create_database(  # pylint:disable=docstring-missing-param
         self,
-        id,  # type: str
-        populate_query_metrics=None,  # type: Optional[bool] # pylint:disable=docstring-missing-param
-        offer_throughput=None,  # type: Optional[Union[int, ThroughputProperties]]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> DatabaseProxy
+        id: str,
+        populate_query_metrics: Optional[bool] = None,
+        offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
+        *,
+        session_token: Optional[str] = None,
+        initial_headers: Optional[Dict[str, str]] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> DatabaseProxy:
         """
         Create a new database with the given ID (name).
 
@@ -264,6 +274,7 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
         :rtype: ~azure.cosmos.DatabaseProxy
         :raises ~azure.cosmos.exceptions.CosmosResourceExistsError: Database with the given ID already exists.
         .. admonition:: Example:
+
             .. literalinclude:: ../samples/examples.py
                 :start-after: [START create_database]
                 :end-before: [END create_database]
@@ -272,31 +283,42 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
                 :caption: Create a database in the Cosmos DB account:
                 :name: create_database
         """
-
-        request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
+        if session_token is not None:
+            kwargs["session_token"] = session_token
+        if initial_headers is not None:
+            kwargs["initial_headers"] = initial_headers
+        if etag is not None:
+            kwargs["etag"] = etag
+        if match_condition is not None:
+            kwargs["match_condition"] = match_condition
+        request_options = build_options(kwargs)
         if populate_query_metrics is not None:
             warnings.warn(
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
                 UserWarning,
             )
             request_options["populateQueryMetrics"] = populate_query_metrics
-        _set_throughput_options(offer=offer_throughput, request_options=request_options)
 
+        _set_throughput_options(offer=offer_throughput, request_options=request_options)
         result = self.client_connection.CreateDatabase(database=dict(id=id), options=request_options, **kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers)
         return DatabaseProxy(self.client_connection, id=result["id"], properties=result)
 
     @distributed_trace
-    def create_database_if_not_exists(  # pylint: disable=redefined-builtin
+    def create_database_if_not_exists(  # pylint:disable=docstring-missing-param
         self,
-        id,  # type: str
-        populate_query_metrics=None,  # type: Optional[bool] # pylint:disable=docstring-missing-param
-        offer_throughput=None,  # type: Optional[Union[int, ThroughputProperties]]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> DatabaseProxy
+        id: str,
+        populate_query_metrics: Optional[bool] = None,
+        offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
+        *,
+        session_token: Optional[str] = None,
+        initial_headers: Optional[Dict[str, str]] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> DatabaseProxy:
         """
         Create the database if it does not exist already.
         If the database already exists, the existing settings are returned.
@@ -318,6 +340,14 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
         :rtype: ~azure.cosmos.DatabaseProxy
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The database read or creation failed.
         """
+        if session_token is not None:
+            kwargs["session_token"] = session_token
+        if initial_headers is not None:
+            kwargs["initial_headers"] = initial_headers
+        if etag is not None:
+            kwargs["etag"] = etag
+        if match_condition is not None:
+            kwargs["match_condition"] = match_condition
         try:
             database_proxy = self.get_database_client(id)
             database_proxy.read(
@@ -333,8 +363,7 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
                 **kwargs
             )
 
-    def get_database_client(self, database):
-        # type: (Union[str, DatabaseProxy, Dict[str, Any]]) -> DatabaseProxy
+    def get_database_client(self, database: Union[str, DatabaseProxy, Mapping[str, Any]]) -> DatabaseProxy:
         """Retrieve an existing database with the ID (name) `id`.
 
         :param database: The ID (name), dict representing the properties or
@@ -345,22 +374,22 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
         """
         if isinstance(database, DatabaseProxy):
             id_value = database.id
+        elif isinstance(database, str):
+            id_value = database
         else:
-            try:
-                id_value = database["id"]
-            except TypeError:
-                id_value = database
-
+            id_value = database["id"]
         return DatabaseProxy(self.client_connection, id_value)
 
     @distributed_trace
-    def list_databases(
+    def list_databases(  # pylint:disable=docstring-missing-param
         self,
-        max_item_count=None,  # type: Optional[int]
-        populate_query_metrics=None,  # type: Optional[bool] # pylint:disable=docstring-missing-param
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable[Dict[str, Any]]
+        max_item_count: Optional[int] = None,
+        populate_query_metrics: Optional[bool] = None,
+        *,
+        session_token: Optional[str] = None,
+        initial_headers: Optional[Dict[str, str]] = None,
+        **kwargs: Any
+    ) -> ItemPaged[Dict[str, Any]]:
         """List the databases in a Cosmos DB SQL database account.
 
         :param int max_item_count: Max number of items to be returned in the enumeration operation.
@@ -370,8 +399,12 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
         :returns: An Iterable of database properties (dicts).
         :rtype: Iterable[Dict[str, str]]
         """
-        feed_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
+        if session_token is not None:
+            kwargs["session_token"] = session_token
+        if initial_headers is not None:
+            kwargs["initial_headers"] = initial_headers
+        feed_options = build_options(kwargs)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
         if populate_query_metrics is not None:
@@ -387,20 +420,23 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
         return result
 
     @distributed_trace
-    def query_databases(
+    def query_databases(  # pylint:disable=docstring-missing-param
         self,
-        query=None,  # type: Optional[str]
-        parameters=None,  # type: Optional[List[Dict[str, Any]]]
-        enable_cross_partition_query=None,  # type: Optional[bool]
-        max_item_count=None,  # type:  Optional[int]
-        populate_query_metrics=None,  # type: Optional[bool] # pylint:disable=docstring-missing-param
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable[Dict[str, Any]]
+        query: Optional[str] = None,
+        parameters: Optional[List[Dict[str, Any]]] = None,
+        enable_cross_partition_query: Optional[bool] = None,
+        max_item_count: Optional[int] = None,
+        populate_query_metrics: Optional[bool] = None,
+        *,
+        session_token: Optional[str] = None,
+        initial_headers: Optional[Dict[str, str]] = None,
+        **kwargs: Any
+    ) -> ItemPaged[Dict[str, Any]]:
         """Query the databases in a Cosmos DB SQL database account.
 
         :param str query: The Azure Cosmos DB SQL query to execute.
-        :param List[Dict[str, Any]] parameters: Optional array of parameters to the query. Ignored if no query is provided.
+        :param List[Dict[str, Any]] parameters: Optional array of parameters to the query.
+            Ignored if no query is provided.
         :param bool enable_cross_partition_query: Allow scan on the queries which couldn't be
             served as indexing was opted out on the requested paths.
         :param int max_item_count: Max number of items to be returned in the enumeration operation.
@@ -410,8 +446,12 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
         :returns: An Iterable of database properties (dicts).
         :rtype: Iterable[Dict[str, str]]
         """
-        feed_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
+        if session_token is not None:
+            kwargs["session_token"] = session_token
+        if initial_headers is not None:
+            kwargs["initial_headers"] = initial_headers
+        feed_options = build_options(kwargs)
         if enable_cross_partition_query is not None:
             feed_options["enableCrossPartitionQuery"] = enable_cross_partition_query
         if max_item_count is not None:
@@ -429,8 +469,11 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
             # (just returning a generator did not initiate the first network call, so
             # the headers were misleading)
             # This needs to change for "real" implementation
-            query = query if parameters is None else dict(query=query, parameters=parameters)  # type: ignore
-            result = self.client_connection.QueryDatabases(query=query, options=feed_options, **kwargs)
+            result = self.client_connection.QueryDatabases(
+                query=query if parameters is None else {'query': query, 'parameters': parameters},
+                options=feed_options,
+                **kwargs
+            )
         else:
             result = self.client_connection.ReadDatabases(options=feed_options, **kwargs)
         if response_hook:
@@ -438,13 +481,17 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
         return result
 
     @distributed_trace
-    def delete_database(
+    def delete_database(  # pylint:disable=docstring-missing-param
         self,
-        database,  # type: Union[str, DatabaseProxy, Dict[str, Any]]
-        populate_query_metrics=None,  # type: Optional[bool] # pylint:disable=docstring-missing-param
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        database: Union[str, DatabaseProxy, Mapping[str, Any]],
+        populate_query_metrics: Optional[bool] = None,
+        *,
+        session_token: Optional[str] = None,
+        initial_headers: Optional[Dict[str, str]] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> None:
         """Delete the database with the given ID (name).
 
         :param database: The ID (name), dict representing the properties or :class:`DatabaseProxy`
@@ -459,8 +506,16 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the database couldn't be deleted.
         :rtype: None
         """
-        request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
+        if session_token is not None:
+            kwargs["session_token"] = session_token
+        if initial_headers is not None:
+            kwargs["initial_headers"] = initial_headers
+        if etag is not None:
+            kwargs["etag"] = etag
+        if match_condition is not None:
+            kwargs["match_condition"] = match_condition
+        request_options = build_options(kwargs)
         if populate_query_metrics is not None:
             warnings.warn(
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
@@ -468,14 +523,13 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
             )
             request_options["populateQueryMetrics"] = populate_query_metrics
 
-        database_link = self._get_database_link(database)
+        database_link = _get_database_link(database)
         self.client_connection.DeleteDatabase(database_link, options=request_options, **kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers)
 
     @distributed_trace
-    def get_database_account(self, **kwargs):
-        # type: (Any) -> DatabaseAccount
+    def get_database_account(self, **kwargs) -> DatabaseAccount:
         """Retrieve the database account information.
 
         :keyword Callable response_hook: A callable invoked with the response metadata.

@@ -48,8 +48,8 @@ class Categories(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     IO_T = "IoT"
 
 
-class Enum1(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Enum1."""
+class Enum12(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum12."""
 
     MCAS = "MCAS"
     WDATP = "WDATP"

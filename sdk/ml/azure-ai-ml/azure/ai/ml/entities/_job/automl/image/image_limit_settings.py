@@ -54,7 +54,7 @@ class ImageLimitSettings(RestTranslatableMixin):
         max_concurrent_trials: Optional[int] = None,
         max_trials: Optional[int] = None,
         timeout_minutes: Optional[int] = None,
-    ):
+    ) -> None:
         self.max_concurrent_trials = max_concurrent_trials
         self.max_trials = max_trials
         self.timeout_minutes = timeout_minutes

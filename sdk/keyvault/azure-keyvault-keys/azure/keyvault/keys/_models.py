@@ -3,17 +3,16 @@
 # Licensed under the MIT License.
 # -------------------------------------
 from collections import namedtuple
-from typing import TYPE_CHECKING
+from datetime import datetime
+from typing import Any, Dict, List, Optional, Union, TYPE_CHECKING
 
+from ._enums import KeyOperation, KeyRotationPolicyAction, KeyType
 from ._shared import parse_key_vault_id
 from ._generated.models import JsonWebKey as _JsonWebKey
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
-    from typing import Any, Dict, List, Optional, Union
-    from datetime import datetime
     from ._generated import models as _models
-    from ._enums import KeyOperation, KeyRotationPolicyAction, KeyType
 
 KeyOperationResult = namedtuple("KeyOperationResult", ["id", "value"])
 
@@ -45,7 +44,7 @@ class JsonWebKey(object):
 
     _FIELDS = ("kid", "kty", "key_ops", "n", "e", "d", "dp", "dq", "qi", "p", "q", "k", "t", "crv", "x", "y")
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         for field in self._FIELDS:
             setattr(self, field, kwargs.get(field))
 
@@ -65,13 +64,13 @@ class KeyProperties(object):
 
     :keyword bool managed: Whether the key's lifetime is managed by Key Vault.
     :keyword tags: Application specific metadata in the form of key-value pairs.
-    :paramtype tags: dict[str, str]
-    :keyword release_policy: The :class:`~azure.keyvault.keys.KeyReleasePolicy` specifying the rules under which the key
+    :paramtype tags: dict[str, str] or None
+    :keyword release_policy: The azure.keyvault.keys.KeyReleasePolicy specifying the rules under which the key
         can be exported.
-    :paramtype release_policy: ~azure.keyvault.keys.KeyReleasePolicy
+    :paramtype release_policy: ~azure.keyvault.keys.KeyReleasePolicy or None
     """
 
-    def __init__(self, key_id: str, attributes: "Optional[_models.KeyAttributes]" = None, **kwargs) -> None:
+    def __init__(self, key_id: str, attributes: "Optional[_models.KeyAttributes]" = None, **kwargs: Any) -> None:
         self._attributes = attributes
         self._id = key_id
         self._vault_id = KeyVaultKeyIdentifier(key_id)
@@ -132,7 +131,7 @@ class KeyProperties(object):
         return self._vault_id.name
 
     @property
-    def version(self) -> "Optional[str]":
+    def version(self) -> Optional[str]:
         """The key version.
 
         :returns: The key version.
@@ -141,7 +140,7 @@ class KeyProperties(object):
         return self._vault_id.version
 
     @property
-    def enabled(self) -> "Optional[bool]":
+    def enabled(self) -> Optional[bool]:
         """Whether the key is enabled for use.
 
         :returns: True if the key is enabled for use; False otherwise.
@@ -150,7 +149,7 @@ class KeyProperties(object):
         return self._attributes.enabled if self._attributes else None
 
     @property
-    def not_before(self) -> "Optional[datetime]":
+    def not_before(self) -> Optional[datetime]:
         """The time before which the key can not be used, in UTC.
 
         :returns: The time before which the key can not be used, in UTC.
@@ -159,7 +158,7 @@ class KeyProperties(object):
         return self._attributes.not_before if self._attributes else None
 
     @property
-    def expires_on(self) -> "Optional[datetime]":
+    def expires_on(self) -> Optional[datetime]:
         """When the key will expire, in UTC.
 
         :returns: When the key will expire, in UTC.
@@ -168,7 +167,7 @@ class KeyProperties(object):
         return self._attributes.expires if self._attributes else None
 
     @property
-    def created_on(self) -> "Optional[datetime]":
+    def created_on(self) -> Optional[datetime]:
         """When the key was created, in UTC.
 
         :returns: When the key was created, in UTC.
@@ -177,7 +176,7 @@ class KeyProperties(object):
         return self._attributes.created if self._attributes else None
 
     @property
-    def updated_on(self) -> "Optional[datetime]":
+    def updated_on(self) -> Optional[datetime]:
         """When the key was last updated, in UTC.
 
         :returns: When the key was last updated, in UTC.
@@ -195,7 +194,7 @@ class KeyProperties(object):
         return self._vault_id.vault_url
 
     @property
-    def recoverable_days(self) -> "Optional[int]":
+    def recoverable_days(self) -> Optional[int]:
         """The number of days the key is retained before being deleted from a soft-delete enabled Key Vault.
 
         :returns: The number of days the key is retained before being deleted from a soft-delete enabled Key Vault.
@@ -207,7 +206,7 @@ class KeyProperties(object):
         return None
 
     @property
-    def recovery_level(self) -> "Optional[str]":
+    def recovery_level(self) -> Optional[str]:
         """The vault's deletion recovery level for keys.
 
         :returns: The vault's deletion recovery level for keys.
@@ -216,7 +215,7 @@ class KeyProperties(object):
         return self._attributes.recovery_level if self._attributes else None
 
     @property
-    def tags(self) -> "Dict[str, str]":
+    def tags(self) -> Dict[str, str]:
         """Application specific metadata in the form of key-value pairs.
 
         :returns: A dictionary of tags attached to the key.
@@ -225,7 +224,7 @@ class KeyProperties(object):
         return self._tags
 
     @property
-    def managed(self) -> "Optional[bool]":
+    def managed(self) -> Optional[bool]:
         """Whether the key's lifetime is managed by Key Vault. If the key backs a certificate, this will be true.
 
         :returns: True if the key's lifetime is managed by Key Vault; False otherwise.
@@ -234,7 +233,7 @@ class KeyProperties(object):
         return self._managed
 
     @property
-    def exportable(self) -> "Optional[bool]":
+    def exportable(self) -> Optional[bool]:
         """Whether the private key can be exported.
 
         :returns: True if the private key can be exported; False otherwise.
@@ -255,7 +254,7 @@ class KeyProperties(object):
         return self._release_policy
 
     @property
-    def hsm_platform(self) -> "Optional[str]":
+    def hsm_platform(self) -> Optional[str]:
         """The underlying HSM platform.
 
         :returns: The underlying HSM platform.
@@ -280,7 +279,7 @@ class KeyReleasePolicy(object):
         updated after being marked immutable. Release policies are mutable by default.
     """
 
-    def __init__(self, encoded_policy: bytes, **kwargs) -> None:
+    def __init__(self, encoded_policy: bytes, **kwargs: Any) -> None:
         self.encoded_policy = encoded_policy
         self.content_type = kwargs.get("content_type", None)
         self.immutable = kwargs.get("immutable", None)
@@ -288,6 +287,8 @@ class KeyReleasePolicy(object):
 
 class ReleaseKeyResult(object):
     """The result of a key release operation.
+
+    :ivar str value: A signed token containing the released key.
 
     :param str value: A signed token containing the released key.
     """
@@ -312,10 +313,10 @@ class KeyRotationLifetimeAction(object):
     :paramtype time_before_expiry: str or None
     """
 
-    def __init__(self, action: "Union[KeyRotationPolicyAction, str]", **kwargs) -> None:
+    def __init__(self, action: Union[KeyRotationPolicyAction, str], **kwargs: Any) -> None:
         self.action = action
-        self.time_after_create: "Optional[str]" = kwargs.get("time_after_create", None)
-        self.time_before_expiry: "Optional[str]" = kwargs.get("time_before_expiry", None)
+        self.time_after_create: Optional[str] = kwargs.get("time_after_create", None)
+        self.time_before_expiry: Optional[str] = kwargs.get("time_before_expiry", None)
 
     @classmethod
     def _from_generated(cls, lifetime_action: "_models.LifetimeActions") -> "KeyRotationLifetimeAction":
@@ -347,9 +348,9 @@ class KeyRotationPolicy(object):
     :vartype updated_on: ~datetime.datetime or None
     """
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         self.id = kwargs.get("policy_id", None)
-        self.lifetime_actions: "List[KeyRotationLifetimeAction]" = kwargs.get("lifetime_actions", [])
+        self.lifetime_actions: List[KeyRotationLifetimeAction] = kwargs.get("lifetime_actions", [])
         self.expires_in = kwargs.get("expires_in", None)
         self.created_on = kwargs.get("created_on", None)
         self.updated_on = kwargs.get("updated_on", None)
@@ -405,7 +406,7 @@ class KeyVaultKey(object):
 
     """
 
-    def __init__(self, key_id: str, jwk: "Optional[Dict[str, Any]]" = None, **kwargs) -> None:
+    def __init__(self, key_id: str, jwk: Optional[Dict[str, Any]] = None, **kwargs) -> None:
         self._properties: KeyProperties = kwargs.pop("properties", None) or KeyProperties(key_id, **kwargs)
         if isinstance(jwk, dict):
             if any(field in kwargs for field in JsonWebKey._FIELDS):  # pylint:disable=protected-access
@@ -465,7 +466,7 @@ class KeyVaultKey(object):
         return self._key_material
 
     @property
-    def key_type(self) -> "Union[str, KeyType]":
+    def key_type(self) -> Union[str, KeyType]:
         """The key's type. See :class:`~azure.keyvault.keys.KeyType` for possible values.
 
         :returns: The key's type. See :class:`~azure.keyvault.keys.KeyType` for possible values.
@@ -475,7 +476,7 @@ class KeyVaultKey(object):
         return self._key_material.kty  # type: ignore[attr-defined]
 
     @property
-    def key_operations(self) -> "List[Union[str, KeyOperation]]":
+    def key_operations(self) -> List[Union[str, KeyOperation]]:
         """Permitted operations. See :class:`~azure.keyvault.keys.KeyOperation` for possible values.
 
         :returns: Permitted operations. See :class:`~azure.keyvault.keys.KeyOperation` for possible values.
@@ -517,7 +518,7 @@ class KeyVaultKeyIdentifier(object):
         return self._resource_id.name
 
     @property
-    def version(self) -> "Optional[str]":
+    def version(self) -> Optional[str]:
         return self._resource_id.version
 
 
@@ -540,10 +541,10 @@ class DeletedKey(KeyVaultKey):
     def __init__(
         self,
         properties: KeyProperties,
-        deleted_date: "Optional[datetime]" = None,
-        recovery_id: "Optional[str]" = None,
-        scheduled_purge_date: "Optional[datetime]" = None,
-        **kwargs,
+        deleted_date: Optional[datetime] = None,
+        recovery_id: Optional[str] = None,
+        scheduled_purge_date: Optional[datetime] = None,
+        **kwargs: Any,
     ) -> None:
         super(DeletedKey, self).__init__(properties=properties, **kwargs)
         self._deleted_date = deleted_date
@@ -576,7 +577,7 @@ class DeletedKey(KeyVaultKey):
         )
 
     @property
-    def deleted_date(self) -> "Optional[datetime]":
+    def deleted_date(self) -> Optional[datetime]:
         """When the key was deleted, in UTC.
 
         :returns: When the key was deleted, in UTC.
@@ -585,7 +586,7 @@ class DeletedKey(KeyVaultKey):
         return self._deleted_date
 
     @property
-    def recovery_id(self) -> "Optional[str]":
+    def recovery_id(self) -> Optional[str]:
         """An identifier used to recover the deleted key. Returns ``None`` if soft-delete is disabled.
 
         :returns: An identifier used to recover the deleted key. Returns ``None`` if soft-delete is disabled.
@@ -594,7 +595,7 @@ class DeletedKey(KeyVaultKey):
         return self._recovery_id
 
     @property
-    def scheduled_purge_date(self) -> "Optional[datetime]":
+    def scheduled_purge_date(self) -> Optional[datetime]:
         """When the key is scheduled to be purged, in UTC. Returns ``None`` if soft-delete is disabled.
 
         :returns: When the key is scheduled to be purged, in UTC. Returns ``None`` if soft-delete is disabled.

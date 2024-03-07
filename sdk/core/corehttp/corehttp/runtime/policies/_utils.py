@@ -61,7 +61,7 @@ def parse_retry_after(retry_after: str) -> float:
     """
     delay: float  # Using the Mypy recommendation to use float for "int or float"
     try:
-        delay = int(retry_after)
+        delay = float(retry_after)
     except ValueError:
         # Not an integer? Try HTTP date
         retry_date = _parse_http_date(retry_after)

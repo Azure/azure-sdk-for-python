@@ -1,16 +1,25 @@
 # Release History
 
-## 12.4.5 (Unreleased)
+## 12.5.1 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
 
 ### Bugs Fixed
+
+### Other Changes
+
+## 12.5.0 (2024-01-10)
+
+### Bugs Fixed
 * Fixed issue in serializing EntityProperty tuples where a value of None could be serialized as the string "None".
 
 ### Other Changes
 * Refactored batching code to use latest Core models and improve typing.
+* Added a public type `EntityMetadata`, it is used in `TableEntity`'s metadata.
+* Added support for Python 3.12.
+* Python 3.7 is no longer supported. Please use Python version 3.8 or later.
 
 ## 12.4.4 (2023-09-14)
 

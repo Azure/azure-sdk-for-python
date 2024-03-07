@@ -35,7 +35,7 @@ class BiggerBlockSizeHTTPAdapter(HTTPAdapter):
         :class:`HTTPAdapter <requests.adapters.HTTPAdapter>`.
 
         :param str url: The URL to connect to.
-        :param dict proxies: (optional) A Requests-style dictionary of proxies used on this request.
+        :param MutableMapping proxies: (optional) A Requests-style dictionary of proxies used on this request.
         :rtype: urllib3.ConnectionPool
         :returns: The urllib3 ConnectionPool for the given URL.
         """

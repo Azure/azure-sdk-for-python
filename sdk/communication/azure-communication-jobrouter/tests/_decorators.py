@@ -6,8 +6,7 @@ import functools
 import os
 from typing import Callable, Any
 
-from devtools_testutils import is_live, is_live_and_not_recording
-from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
+from devtools_testutils import is_live, is_live_and_not_recording, trim_kwargs_from_test_function
 from azure.communication.jobrouter._shared.utils import parse_connection_str
 
 

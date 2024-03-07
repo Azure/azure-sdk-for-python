@@ -24,7 +24,7 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
     This flow is typically used by middle-tier services that authorize requests to other services with a delegated
     user identity. Because this is not an interactive authentication flow, an application using it must have admin
     consent for any delegated permissions before requesting tokens for them. See `Microsoft Entra ID documentation
-    <https://learn.microsoft.com/azure/active-directory/develop/v2-oauth2-on-behalf-of-flow>`_ for a more detailed
+    <https://learn.microsoft.com/azure/active-directory/develop/v2-oauth2-on-behalf-of-flow>`__ for a more detailed
     description of the on-behalf-of flow.
 
     :param str tenant_id: ID of the service principal's tenant. Also called its "directory" ID.

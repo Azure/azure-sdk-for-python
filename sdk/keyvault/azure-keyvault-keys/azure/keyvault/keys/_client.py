@@ -2,28 +2,21 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from datetime import datetime
 from functools import partial
+from typing import Any, Optional, Union
+
+from azure.core.paging import ItemPaged
+from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 
 from .crypto import CryptographyClient
+from ._enums import KeyType
+from ._generated.models import KeyAttributes
+from ._models import JsonWebKey
 from ._shared import KeyVaultClientBase
 from ._shared._polling import DeleteRecoverPollingMethod, KeyVaultOperationPoller
 from ._models import DeletedKey, KeyVaultKey, KeyProperties, KeyRotationPolicy, ReleaseKeyResult
-
-try:
-    from typing import TYPE_CHECKING
-except ImportError:
-    TYPE_CHECKING = False
-
-if TYPE_CHECKING:
-    # pylint:disable=unused-import
-    from datetime import datetime
-    from typing import Optional, Union
-    from azure.core.paging import ItemPaged
-    from azure.core.polling import LROPoller
-    from ._enums import KeyType
-    from ._generated.models import KeyAttributes
-    from ._models import JsonWebKey
 
 
 def _get_key_id(vault_url, key_name, version=None):
@@ -39,7 +32,7 @@ class KeyClient(KeyVaultClientBase):
         See https://aka.ms/azsdk/blog/vault-uri for details.
     :param credential: An object which can provide an access token for the vault, such as a credential from
         :mod:`azure.identity`
-    :type credential: :class:`~azure.core.credentials.TokenCredential`
+    :type credential: ~azure.core.credentials.TokenCredential
 
     :keyword api_version: Version of the service API to use. Defaults to the most recent.
     :paramtype api_version: ~azure.keyvault.keys.ApiVersion or str
@@ -59,11 +52,11 @@ class KeyClient(KeyVaultClientBase):
 
     def _get_attributes(
         self,
-        enabled: "Optional[bool]",
-        not_before: "Optional[datetime]",
-        expires_on: "Optional[datetime]",
-        exportable: "Optional[bool]" = None,
-    ) -> "Optional[KeyAttributes]":
+        enabled: Optional[bool],
+        not_before: Optional[datetime],
+        expires_on: Optional[datetime],
+        exportable: Optional[bool] = None,
+    ) -> Optional[KeyAttributes]:
         """Return a KeyAttributes object if non-None attributes are provided, or None otherwise.
 
         :param enabled: Whether the key is enabled.
@@ -84,18 +77,25 @@ class KeyClient(KeyVaultClientBase):
             )
         return None
 
-    def get_cryptography_client(self, key_name: str, **kwargs) -> CryptographyClient:
+    def get_cryptography_client(
+            self,
+            key_name: str,
+            *,
+            key_version: Optional[str] = None,
+            **kwargs,  # pylint: disable=unused-argument
+        ) -> CryptographyClient:
         """Gets a :class:`~azure.keyvault.keys.crypto.CryptographyClient` for the given key.
 
         :param str key_name: The name of the key used to perform cryptographic operations.
 
-        :keyword str key_version: Optional version of the key used to perform cryptographic operations.
+        :keyword key_version: Optional version of the key used to perform cryptographic operations.
+        :paramtype key_version: str or None
 
         :returns: A :class:`~azure.keyvault.keys.crypto.CryptographyClient` using the same options, credentials, and
             HTTP client as this :class:`~azure.keyvault.keys.KeyClient`.
         :rtype: ~azure.keyvault.keys.crypto.CryptographyClient
         """
-        key_id = _get_key_id(self._vault_url, key_name, kwargs.get("key_version"))
+        key_id = _get_key_id(self._vault_url, key_name, key_version)
 
         # We provide a fake credential because the generated client already has the KeyClient's real credential
         return CryptographyClient(
@@ -103,7 +103,7 @@ class KeyClient(KeyVaultClientBase):
         )
 
     @distributed_trace
-    def create_key(self, name: str, key_type: "Union[str, KeyType]", **kwargs) -> KeyVaultKey:
+    def create_key(self, name: str, key_type: Union[str, KeyType], **kwargs: Any) -> KeyVaultKey:
         """Create a key or, if ``name`` is already in use, create a new version of the key.
 
         Requires keys/create permission.
@@ -138,7 +138,7 @@ class KeyClient(KeyVaultClientBase):
         :returns: The created key
         :rtype: ~azure.keyvault.keys.KeyVaultKey
 
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys.py
@@ -178,7 +178,7 @@ class KeyClient(KeyVaultClientBase):
         return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace
-    def create_rsa_key(self, name: str, **kwargs) -> KeyVaultKey:
+    def create_rsa_key(self, name: str, **kwargs: Any) -> KeyVaultKey:
         """Create a new RSA key or, if ``name`` is already in use, create a new version of the key
 
         Requires the keys/create permission.
@@ -210,7 +210,7 @@ class KeyClient(KeyVaultClientBase):
         :returns: The created key
         :rtype: ~azure.keyvault.keys.KeyVaultKey
 
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys.py
@@ -224,7 +224,7 @@ class KeyClient(KeyVaultClientBase):
         return self.create_key(name, key_type="RSA-HSM" if hsm else "RSA", **kwargs)
 
     @distributed_trace
-    def create_ec_key(self, name: str, **kwargs) -> KeyVaultKey:
+    def create_ec_key(self, name: str, **kwargs: Any) -> KeyVaultKey:
         """Create a new elliptic curve key or, if ``name`` is already in use, create a new version of the key.
 
         Requires the keys/create permission.
@@ -254,7 +254,7 @@ class KeyClient(KeyVaultClientBase):
         :returns: The created key
         :rtype: ~azure.keyvault.keys.KeyVaultKey
 
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys.py
@@ -268,7 +268,7 @@ class KeyClient(KeyVaultClientBase):
         return self.create_key(name, key_type="EC-HSM" if hsm else "EC", **kwargs)
 
     @distributed_trace
-    def create_oct_key(self, name: str, **kwargs) -> KeyVaultKey:
+    def create_oct_key(self, name: str, **kwargs: Any) -> KeyVaultKey:
         """Create a new octet sequence (symmetric) key or, if ``name`` is in use, create a new version of the key.
 
         Requires the keys/create permission.
@@ -297,7 +297,7 @@ class KeyClient(KeyVaultClientBase):
 
         :returns: The created key
         :rtype: ~azure.keyvault.keys.KeyVaultKey
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys.py
@@ -311,7 +311,7 @@ class KeyClient(KeyVaultClientBase):
         return self.create_key(name, key_type="oct-HSM" if hsm else "oct", **kwargs)
 
     @distributed_trace
-    def begin_delete_key(self, name: str, **kwargs) -> "LROPoller[DeletedKey]":  # pylint:disable=bad-option-value,delete-operation-wrong-return-type
+    def begin_delete_key(self, name: str, **kwargs: Any) -> LROPoller[DeletedKey]:  # pylint:disable=bad-option-value,delete-operation-wrong-return-type
         """Delete all versions of a key and its cryptographic material.
 
         Requires keys/delete permission. When this method returns Key Vault has begun deleting the key. Deletion may
@@ -327,9 +327,8 @@ class KeyClient(KeyVaultClientBase):
             keys/get permission.
         :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.keys.DeletedKey]
 
-        :raises:
-            :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
-            :class:`~azure.core.exceptions.HttpResponseError` for other errors
+        :raises ~azure.core.exceptions.ResourceNotFoundError or ~azure.core.exceptions.HttpResponseError:
+            the former if the key doesn't exist; the latter for other errors
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys.py
@@ -342,14 +341,19 @@ class KeyClient(KeyVaultClientBase):
         polling_interval = kwargs.pop("_polling_interval", None)
         if polling_interval is None:
             polling_interval = 2
-        deleted_key = DeletedKey._from_deleted_key_bundle(
-            self._client.delete_key(self.vault_url, name, **kwargs)
+        pipeline_response, deleted_key_bundle = self._client.delete_key(
+            vault_base_url=self.vault_url,
+            key_name=name,
+            cls=lambda pipeline_response, deserialized, _: (pipeline_response, deserialized),
+            **kwargs,
         )
+        deleted_key = DeletedKey._from_deleted_key_bundle(deleted_key_bundle)
 
         command = partial(self.get_deleted_key, name=name, **kwargs)
         polling_method = DeleteRecoverPollingMethod(
             # no recovery ID means soft-delete is disabled, in which case we initialize the poller as finished
             finished=deleted_key.recovery_id is None,
+            pipeline_response=pipeline_response,
             command=command,
             final_resource=deleted_key,
             interval=polling_interval,
@@ -357,7 +361,7 @@ class KeyClient(KeyVaultClientBase):
         return KeyVaultOperationPoller(polling_method)
 
     @distributed_trace
-    def get_key(self, name: str, version: "Optional[str]" = None, **kwargs) -> KeyVaultKey:
+    def get_key(self, name: str, version: Optional[str] = None, **kwargs: Any) -> KeyVaultKey:
         """Get a key's attributes and, if it's an asymmetric key, its public material.
 
         Requires keys/get permission.
@@ -370,9 +374,8 @@ class KeyClient(KeyVaultClientBase):
         :returns: The fetched key.
         :rtype: ~azure.keyvault.keys.KeyVaultKey
 
-        :raises:
-            :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
-            :class:`~azure.core.exceptions.HttpResponseError` for other errors
+        :raises ~azure.core.exceptions.ResourceNotFoundError or ~azure.core.exceptions.HttpResponseError:
+            the former if the key doesn't exist; the latter for other errors
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys.py
@@ -386,7 +389,7 @@ class KeyClient(KeyVaultClientBase):
         return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace
-    def get_deleted_key(self, name: str, **kwargs) -> DeletedKey:
+    def get_deleted_key(self, name: str, **kwargs: Any) -> DeletedKey:
         """Get a deleted key. Possible only in a vault with soft-delete enabled.
 
         Requires keys/get permission.
@@ -396,9 +399,8 @@ class KeyClient(KeyVaultClientBase):
         :returns: The deleted key
         :rtype: ~azure.keyvault.keys.DeletedKey
 
-        :raises:
-            :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
-            :class:`~azure.core.exceptions.HttpResponseError` for other errors
+        :raises ~azure.core.exceptions.ResourceNotFoundError or ~azure.core.exceptions.HttpResponseError:
+            the former if the key doesn't exist; the latter for other errors
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys.py
@@ -412,7 +414,7 @@ class KeyClient(KeyVaultClientBase):
         return DeletedKey._from_deleted_key_bundle(bundle)
 
     @distributed_trace
-    def list_deleted_keys(self, **kwargs) -> "ItemPaged[DeletedKey]":
+    def list_deleted_keys(self, **kwargs: Any) -> ItemPaged[DeletedKey]:
         """List all deleted keys, including the public part of each. Possible only in a vault with soft-delete enabled.
 
         Requires keys/list permission.
@@ -436,7 +438,7 @@ class KeyClient(KeyVaultClientBase):
         )
 
     @distributed_trace
-    def list_properties_of_keys(self, **kwargs) -> "ItemPaged[KeyProperties]":
+    def list_properties_of_keys(self, **kwargs: Any) -> ItemPaged[KeyProperties]:
         """List identifiers and properties of all keys in the vault.
 
         Requires keys/list permission.
@@ -460,7 +462,7 @@ class KeyClient(KeyVaultClientBase):
         )
 
     @distributed_trace
-    def list_properties_of_key_versions(self, name: str, **kwargs) -> "ItemPaged[KeyProperties]":
+    def list_properties_of_key_versions(self, name: str, **kwargs: Any) -> ItemPaged[KeyProperties]:
         """List the identifiers and properties of a key's versions.
 
         Requires keys/list permission.
@@ -487,7 +489,7 @@ class KeyClient(KeyVaultClientBase):
         )
 
     @distributed_trace
-    def purge_deleted_key(self, name: str, **kwargs) -> None:
+    def purge_deleted_key(self, name: str, **kwargs: Any) -> None:
         """Permanently deletes a deleted key. Only possible in a vault with soft-delete enabled.
 
         Performs an irreversible deletion of the specified key, without possibility for recovery. The operation is not
@@ -501,7 +503,7 @@ class KeyClient(KeyVaultClientBase):
 
         :returns: None
 
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
@@ -514,7 +516,7 @@ class KeyClient(KeyVaultClientBase):
         self._client.purge_deleted_key(vault_base_url=self.vault_url, key_name=name, **kwargs)
 
     @distributed_trace
-    def begin_recover_deleted_key(self, name: str, **kwargs) -> "LROPoller[KeyVaultKey]":
+    def begin_recover_deleted_key(self, name: str, **kwargs: Any) -> LROPoller[KeyVaultKey]:
         """Recover a deleted key to its latest version. Possible only in a vault with soft-delete enabled.
 
         Requires keys/recover permission.
@@ -531,7 +533,7 @@ class KeyClient(KeyVaultClientBase):
             `wait` method requires keys/get permission.
         :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.keys.KeyVaultKey]
 
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys.py
@@ -544,14 +546,17 @@ class KeyClient(KeyVaultClientBase):
         polling_interval = kwargs.pop("_polling_interval", None)
         if polling_interval is None:
             polling_interval = 2
-        recovered_key = KeyVaultKey._from_key_bundle(
-            self._client.recover_deleted_key(
-                vault_base_url=self.vault_url, key_name=name, **kwargs
-            )
+        pipeline_response, recovered_key_bundle = self._client.recover_deleted_key(
+            vault_base_url=self.vault_url,
+            key_name=name,
+            cls=lambda pipeline_response, deserialized, _: (pipeline_response, deserialized),
+            **kwargs,
         )
+        recovered_key = KeyVaultKey._from_key_bundle(recovered_key_bundle)
         command = partial(self.get_key, name=name, **kwargs)
         polling_method = DeleteRecoverPollingMethod(
             finished=False,
+            pipeline_response=pipeline_response,
             command=command,
             final_resource=recovered_key,
             interval=polling_interval,
@@ -560,7 +565,7 @@ class KeyClient(KeyVaultClientBase):
         return KeyVaultOperationPoller(polling_method)
 
     @distributed_trace
-    def update_key_properties(self, name: str, version: "Optional[str]" = None, **kwargs) -> KeyVaultKey:
+    def update_key_properties(self, name: str, version: Optional[str] = None, **kwargs: Any) -> KeyVaultKey:
         """Change a key's properties (not its cryptographic material).
 
         Requires keys/update permission.
@@ -585,9 +590,8 @@ class KeyClient(KeyVaultClientBase):
         :returns: The updated key
         :rtype: ~azure.keyvault.keys.KeyVaultKey
 
-        :raises:
-            :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
-            :class:`~azure.core.exceptions.HttpResponseError` for other errors
+        :raises ~azure.core.exceptions.ResourceNotFoundError or ~azure.core.exceptions.HttpResponseError:
+            the former if the key doesn't exist; the latter for other errors
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys.py
@@ -620,7 +624,7 @@ class KeyClient(KeyVaultClientBase):
         return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace
-    def backup_key(self, name: str, **kwargs) -> bytes:
+    def backup_key(self, name: str, **kwargs: Any) -> bytes:
         """Back up a key in a protected form useable only by Azure Key Vault.
 
         Requires keys/backup permission.
@@ -634,9 +638,8 @@ class KeyClient(KeyVaultClientBase):
         :returns: The key backup result, in a protected bytes format that can only be used by Azure Key Vault.
         :rtype: bytes
 
-        :raises:
-            :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
-            :class:`~azure.core.exceptions.HttpResponseError` for other errors
+        :raises ~azure.core.exceptions.ResourceNotFoundError or ~azure.core.exceptions.HttpResponseError:
+            the former if the key doesn't exist; the latter for other errors
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys.py
@@ -650,7 +653,7 @@ class KeyClient(KeyVaultClientBase):
         return backup_result.value
 
     @distributed_trace
-    def restore_key_backup(self, backup: bytes, **kwargs) -> KeyVaultKey:
+    def restore_key_backup(self, backup: bytes, **kwargs: Any) -> KeyVaultKey:
         """Restore a key backup to the vault.
 
         Requires keys/restore permission.
@@ -664,9 +667,8 @@ class KeyClient(KeyVaultClientBase):
         :returns: The restored key
         :rtype: ~azure.keyvault.keys.KeyVaultKey
 
-        :raises:
-            :class:`~azure.core.exceptions.ResourceExistsError` if the backed up key's name is already in use,
-            :class:`~azure.core.exceptions.HttpResponseError` for other errors
+        :raises ~azure.core.exceptions.ResourceExistsError or ~azure.core.exceptions.HttpResponseError:
+            the former if the backed up key's name is already in use; the latter for other errors
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys.py
@@ -684,7 +686,7 @@ class KeyClient(KeyVaultClientBase):
         return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace
-    def import_key(self, name: str, key: "JsonWebKey", **kwargs) -> KeyVaultKey:
+    def import_key(self, name: str, key: JsonWebKey, **kwargs: Any) -> KeyVaultKey:
         """Import a key created externally.
 
         Requires keys/import permission. If ``name`` is already in use, the key will be imported as a new version.
@@ -711,7 +713,7 @@ class KeyClient(KeyVaultClientBase):
         :returns: The imported key
         :rtype: ~azure.keyvault.keys.KeyVaultKey
 
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         enabled = kwargs.pop("enabled", None)
         not_before = kwargs.pop("not_before", None)
@@ -738,7 +740,7 @@ class KeyClient(KeyVaultClientBase):
         return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace
-    def release_key(self, name: str, target_attestation_token: str, **kwargs) -> ReleaseKeyResult:
+    def release_key(self, name: str, target_attestation_token: str, **kwargs: Any) -> ReleaseKeyResult:
         """Releases a key.
 
         The release key operation is applicable to all key types. The target key must be marked
@@ -757,7 +759,7 @@ class KeyClient(KeyVaultClientBase):
         :return: The result of the key release.
         :rtype: ~azure.keyvault.keys.ReleaseKeyResult
 
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         version = kwargs.pop("version", None)
         result = self._client.release(
@@ -774,7 +776,7 @@ class KeyClient(KeyVaultClientBase):
         return ReleaseKeyResult(result.value)
 
     @distributed_trace
-    def get_random_bytes(self, count: int, **kwargs) -> bytes:
+    def get_random_bytes(self, count: int, **kwargs: Any) -> bytes:
         """Get the requested number of random bytes from a managed HSM.
 
         :param int count: The requested number of random bytes.
@@ -782,9 +784,8 @@ class KeyClient(KeyVaultClientBase):
         :return: The random bytes.
         :rtype: bytes
 
-        :raises:
-            :class:`ValueError` if less than one random byte is requested,
-            :class:`~azure.core.exceptions.HttpResponseError` for other errors
+        :raises ValueError or ~azure.core.exceptions.HttpResponseError:
+            the former if less than one random byte is requested; the latter for other errors
 
         Example:
             .. literalinclude:: ../tests/test_key_client.py
@@ -801,7 +802,7 @@ class KeyClient(KeyVaultClientBase):
         return result.value
 
     @distributed_trace
-    def get_key_rotation_policy(self, key_name: str, **kwargs) -> KeyRotationPolicy:
+    def get_key_rotation_policy(self, key_name: str, **kwargs: Any) -> KeyRotationPolicy:
         """Get the rotation policy of a Key Vault key.
 
         :param str key_name: The name of the key.
@@ -809,13 +810,13 @@ class KeyClient(KeyVaultClientBase):
         :return: The key rotation policy.
         :rtype: ~azure.keyvault.keys.KeyRotationPolicy
 
-        :raises: :class: `~azure.core.exceptions.HttpResponseError`
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         policy = self._client.get_key_rotation_policy(vault_base_url=self._vault_url, key_name=key_name, **kwargs)
         return KeyRotationPolicy._from_generated(policy)
 
     @distributed_trace
-    def rotate_key(self, name: str, **kwargs) -> KeyVaultKey:
+    def rotate_key(self, name: str, **kwargs: Any) -> KeyVaultKey:
         """Rotate the key based on the key policy by generating a new version of the key.
 
         This operation requires the keys/rotate permission.
@@ -825,14 +826,14 @@ class KeyClient(KeyVaultClientBase):
         :return: The new version of the rotated key.
         :rtype: ~azure.keyvault.keys.KeyVaultKey
 
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         bundle = self._client.rotate_key(vault_base_url=self._vault_url, key_name=name, **kwargs)
         return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace
     def update_key_rotation_policy(
-        self, key_name: str, policy: KeyRotationPolicy, **kwargs
+        self, key_name: str, policy: KeyRotationPolicy, **kwargs: Any
     ) -> KeyRotationPolicy:
         """Updates the rotation policy of a Key Vault key.
 
@@ -853,7 +854,7 @@ class KeyClient(KeyVaultClientBase):
         :return: The updated rotation policy.
         :rtype: ~azure.keyvault.keys.KeyRotationPolicy
 
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         lifetime_actions = kwargs.pop("lifetime_actions", policy.lifetime_actions)
         if lifetime_actions:

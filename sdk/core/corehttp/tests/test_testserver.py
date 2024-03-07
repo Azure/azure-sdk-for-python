@@ -4,15 +4,14 @@
 # license information.
 # -------------------------------------------------------------------------
 import pytest
+from corehttp.rest import HttpRequest
 from corehttp.transport.requests import RequestsTransport
-from utils import HTTP_REQUESTS
 
 """This file does a simple call to the testserver to make sure we can use the testserver"""
 
 
-@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-def test_smoke(port, http_request):
-    request = http_request(method="GET", url="http://localhost:{}/basic/string".format(port))
+def test_smoke(port):
+    request = HttpRequest(method="GET", url="http://localhost:{}/basic/string".format(port))
     with RequestsTransport() as sender:
         response = sender.send(request)
         response.raise_for_status()

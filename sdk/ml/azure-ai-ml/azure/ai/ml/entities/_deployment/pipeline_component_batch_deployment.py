@@ -4,26 +4,26 @@
 
 from os import PathLike
 from pathlib import Path
-from typing import IO, Dict, AnyStr, Optional, Union
+from typing import IO, Any, AnyStr, Dict, Optional, Union
 
-from azure.ai.ml.entities._component.component import Component
-from azure.ai.ml.entities._builders import BaseNode
-from azure.ai.ml._schema._deployment.batch.pipeline_component_batch_deployment_schema import (
-    PipelineComponentBatchDeploymentSchema,
-)  # pylint: disable=line-too-long
-from azure.ai.ml.entities._resource import Resource
-from azure.ai.ml.entities import PipelineComponent
-from azure.ai.ml._utils.utils import dump_yaml_to_file
-from azure.ai.ml._utils._experimental import experimental
-from azure.ai.ml._utils._arm_id_utils import _parse_endpoint_name_from_deployment_id
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
-from azure.ai.ml.entities._util import load_from_dict
+from azure.ai.ml._restclient.v2023_04_01_preview.models import BatchDeployment as RestBatchDeployment
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    BatchDeploymentProperties,
     BatchPipelineComponentDeploymentConfiguration,
     IdAssetReference,
-    BatchDeploymentProperties,
-    BatchDeployment as RestBatchDeployment,
 )
+from azure.ai.ml._schema._deployment.batch.pipeline_component_batch_deployment_schema import (  # pylint: disable=line-too-long
+    PipelineComponentBatchDeploymentSchema,
+)
+from azure.ai.ml._utils._arm_id_utils import _parse_endpoint_name_from_deployment_id
+from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml._utils.utils import dump_yaml_to_file
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
+from azure.ai.ml.entities import PipelineComponent
+from azure.ai.ml.entities._builders import BaseNode
+from azure.ai.ml.entities._component.component import Component
+from azure.ai.ml.entities._resource import Resource
+from azure.ai.ml.entities._util import load_from_dict
 
 
 @experimental
@@ -34,6 +34,8 @@ class PipelineComponentBatchDeployment(Resource):
     :type type: Optional[str]
     :param name: Name of the deployment resource.
     :type name: Optional[str]
+    :param description: Description of the deployment resource.
+    :type description: Optional[str]
     :param component: Component definition.
     :type component: Optional[Union[Component, str]]
     :param settings: Run-time settings for the pipeline job.
@@ -55,10 +57,11 @@ class PipelineComponentBatchDeployment(Resource):
         settings: Optional[Dict[str, str]] = None,
         job_definition: Optional[Dict[str, BaseNode]] = None,
         tags: Optional[Dict] = None,
-        **kwargs,  # pylint: disable=unused-argument
+        description: Optional[str] = None,
+        **kwargs: Any,  # pylint: disable=unused-argument
     ):
         self._type = kwargs.pop("type", None)
-        super().__init__(name=name, tags=tags, **kwargs)
+        super().__init__(name=name, tags=tags, description=description, **kwargs)
         self.component = component
         self.endpoint_name = endpoint_name
         self.settings = settings
@@ -82,7 +85,10 @@ class PipelineComponentBatchDeployment(Resource):
         return RestBatchDeployment(
             location=location,
             tags=self.tags,
-            properties=BatchDeploymentProperties(deployment_configuration=batch_pipeline_config),
+            properties=BatchDeploymentProperties(
+                deployment_configuration=batch_pipeline_config,
+                description=self.description,
+            ),
         )
 
     @classmethod
@@ -91,7 +97,7 @@ class PipelineComponentBatchDeployment(Resource):
         data: Optional[Dict] = None,
         yaml_path: Optional[Union[PathLike, str]] = None,
         params_override: Optional[list] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> "PipelineComponentBatchDeployment":
         data = data or {}
         params_override = params_override or []
@@ -101,17 +107,22 @@ class PipelineComponentBatchDeployment(Resource):
             BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path.cwd(),
             PARAMS_OVERRIDE_KEY: params_override,
         }
-        return load_from_dict(PipelineComponentBatchDeploymentSchema, data, context, **kwargs)
+        res: PipelineComponentBatchDeployment = load_from_dict(
+            PipelineComponentBatchDeploymentSchema, data, context, **kwargs
+        )
+        return res
 
     @classmethod
-    def _update_params(cls, params_override) -> None:
+    def _update_params(cls, params_override: Any) -> None:
         for param in params_override:
             endpoint_name = param.get("endpoint_name")
             if isinstance(endpoint_name, str):
                 param["endpoint_name"] = endpoint_name.lower()
 
     @classmethod
-    def _from_rest_object(cls, deployment: RestBatchDeployment):  # pylint: disable=arguments-renamed
+    def _from_rest_object(  # pylint: disable=arguments-renamed
+        cls, deployment: RestBatchDeployment
+    ) -> "PipelineComponentBatchDeployment":
         return PipelineComponentBatchDeployment(
             name=deployment.name,
             tags=deployment.tags,
@@ -120,7 +131,7 @@ class PipelineComponentBatchDeployment(Resource):
             endpoint_name=_parse_endpoint_name_from_deployment_id(deployment.id),
         )
 
-    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
+    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs: Any) -> None:
         """Dump the deployment content into a file in yaml format.
 
         :param dest: The destination to receive this deployment's content.
@@ -136,6 +147,8 @@ class PipelineComponentBatchDeployment(Resource):
         dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
 
     def _to_dict(self) -> Dict:
-        return PipelineComponentBatchDeploymentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(
+        res: dict = PipelineComponentBatchDeploymentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(
             self
         )  # pylint: disable=no-member
+
+        return res

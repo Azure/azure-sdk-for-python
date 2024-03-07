@@ -30,7 +30,7 @@ def generate_sas_token(uri, sas_name, sas_value, token_ttl):
     return 'SharedAccessSignature sr={}&sig={}&se={}&skn={}'.format(uri, signature, expiry, sas_name)
 
 
-class CustomizedSASCredential(object):
+class CustomizedSASCredential:
     def __init__(self, token, expiry):
         """
         :param str token: The token string

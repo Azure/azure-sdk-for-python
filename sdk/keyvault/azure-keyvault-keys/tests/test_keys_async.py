@@ -37,12 +37,12 @@ from _keys_test_case import KeysTestCase
 all_api_versions = get_decorator(is_async=True)
 only_hsm = get_decorator(only_hsm=True, is_async=True)
 only_hsm_7_4_plus = get_decorator(
-    only_hsm=True, is_async=True, api_versions=[ApiVersion.V7_4, ApiVersion.V7_5_PREVIEW_1]
+    only_hsm=True, is_async=True, api_versions=[ApiVersion.V7_4, ApiVersion.V7_5]
 )
 only_vault_7_4_plus = get_decorator(
-    only_vault=True, is_async=True, api_versions=[ApiVersion.V7_4, ApiVersion.V7_5_PREVIEW_1]
+    only_vault=True, is_async=True, api_versions=[ApiVersion.V7_4, ApiVersion.V7_5]
 )
-only_7_4_plus = get_decorator(is_async=True, api_versions=[ApiVersion.V7_4, ApiVersion.V7_5_PREVIEW_1])
+only_7_4_plus = get_decorator(is_async=True, api_versions=[ApiVersion.V7_4, ApiVersion.V7_5])
 logging_enabled = get_decorator(is_async=True, logging_enable=True)
 logging_disabled = get_decorator(is_async=True, logging_enable=False)
 
@@ -525,7 +525,7 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
     async def test_key_release(self, client, is_hsm, **kwargs):
         if (self.is_live and os.environ["KEYVAULT_SKU"] != "premium"):
             pytest.skip("This test is not supported on standard SKU vaults. Follow up with service team")
-        if is_hsm and client.api_version == ApiVersion.V7_5_PREVIEW_1:
+        if is_hsm and client.api_version == ApiVersion.V7_5:
             pytest.skip("Currently failing on 7.5-preview.1; skipping for now")
 
         set_bodiless_matcher()
@@ -541,15 +541,20 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
         assert key.properties.release_policy.encoded_policy
         assert key.properties.exportable
 
-        release_result = await client.release_key(rsa_key_name, attestation)
-        assert release_result.value
+        try:
+            release_result = await client.release_key(rsa_key_name, attestation)
+            assert release_result.value
+        except HttpResponseError as ex:
+            # In live pipeline tests, the service can frequently throw a transient error regarding attestation
+            if self.is_live and "Target environment attestation statement cannot be verified" in ex.message:
+                pytest.skip("Target environment attestation statement cannot be verified. Likely transient failure.")
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("api_version,is_hsm",only_hsm_7_4_plus)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
     async def test_imported_key_release(self, client, **kwargs):
-        if client.api_version == ApiVersion.V7_5_PREVIEW_1:
+        if client.api_version == ApiVersion.V7_5:
             pytest.skip("Currently failing on 7.5-preview.1; skipping for now")
 
         set_bodiless_matcher()
@@ -575,7 +580,7 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
     async def test_update_release_policy(self, client, **kwargs):
         if (self.is_live and os.environ["KEYVAULT_SKU"] != "premium"):
             pytest.skip("This test is not supported on standard SKU vaults. Follow up with service team")
-        if client.api_version == ApiVersion.V7_5_PREVIEW_1:
+        if client.api_version == ApiVersion.V7_5:
             pytest.skip("Currently failing on 7.5-preview.1; skipping for now")
 
         set_bodiless_matcher()

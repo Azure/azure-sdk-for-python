@@ -28,6 +28,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
 )
 from azure.monitor.opentelemetry.exporter import _utils
 from azure.monitor.opentelemetry.exporter._generated.models import (
+    ContextTagKeys,
     MessageData,
     MetricDataPoint,
     MetricsData,
@@ -149,15 +150,18 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
     # pylint: disable=docstring-keyword-should-match-keyword-only
     @classmethod
     def from_connection_string(cls, conn_str: str, **kwargs: Any) -> "AzureMonitorTraceExporter":
-        """Create an AzureMonitorTraceExporter from a connection string.
+        """
+        Create an AzureMonitorTraceExporter from a connection string. This is
+        the recommended way of instantiation if a connection string is passed in
+        explicitly. If a user wants to use a connection string provided by
+        environment variable, the constructor of the exporter can be called
+        directly.
 
-        This is the recommended way of instantation if a connection string is passed in explicitly.
-        If a user wants to use a connection string provided by environment variable, the constructor
-        of the exporter can be called directly.
-
-        :param str conn_str: The connection string to be used for authentication.
-        :keyword str api_version: The service API version used. Defaults to latest.
-        :returns an instance of ~AzureMonitorTraceExporter
+        :param str conn_str: The connection string to be used for
+            authentication.
+        :keyword str api_version: The service API version used. Defaults to
+            latest.
+        :return: an instance of ~AzureMonitorTraceExporter
         :rtype: ~azure.monitor.opentelemetry.exporter.AzureMonitorTraceExporter
         """
         return cls(connection_string=conn_str, **kwargs)
@@ -178,11 +182,11 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
             duration = span.end_time - span.start_time
     envelope = _utils._create_telemetry_item(start_time)
     envelope.tags.update(_utils._populate_part_a_fields(span.resource))
-    envelope.tags["ai.operation.id"] = "{:032x}".format(span.context.trace_id)
+    envelope.tags[ContextTagKeys.AI_OPERATION_ID] = "{:032x}".format(span.context.trace_id)
     if SpanAttributes.ENDUSER_ID in span.attributes:
-        envelope.tags["ai.user.id"] = span.attributes[SpanAttributes.ENDUSER_ID]
+        envelope.tags[ContextTagKeys.AI_USER_ID] = span.attributes[SpanAttributes.ENDUSER_ID]
     if span.parent and span.parent.span_id:
-        envelope.tags["ai.operation.parentId"] = "{:016x}".format(
+        envelope.tags[ContextTagKeys.AI_OPERATION_PARENT_ID] = "{:016x}".format(
             span.parent.span_id
         )
     # pylint: disable=too-many-nested-blocks
@@ -198,9 +202,9 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
             measurements={},
         )
         envelope.data = MonitorBase(base_data=data, base_type="RequestData")
-        envelope.tags["ai.operation.name"] = span.name
+        envelope.tags[ContextTagKeys.AI_OPERATION_NAME] = span.name
         if SpanAttributes.NET_PEER_IP in span.attributes:
-            envelope.tags["ai.location.ip"] = span.attributes[SpanAttributes.NET_PEER_IP]
+            envelope.tags[ContextTagKeys.AI_LOCATION_IP] = span.attributes[SpanAttributes.NET_PEER_IP]
         if _AZURE_SDK_NAMESPACE_NAME in span.attributes:  # Azure specific resources
             # Currently only eventhub and servicebus are supported (kind CONSUMER)
             data.source = _get_azure_sdk_target_source(span.attributes)
@@ -221,7 +225,7 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                 envelope.tags["ai.user.userAgent"] = span.attributes[SpanAttributes.HTTP_USER_AGENT]
             # http specific logic for ai.location.ip
             if SpanAttributes.HTTP_CLIENT_IP in span.attributes:
-                envelope.tags["ai.location.ip"] = span.attributes[SpanAttributes.HTTP_CLIENT_IP]
+                envelope.tags[ContextTagKeys.AI_LOCATION_IP] = span.attributes[SpanAttributes.HTTP_CLIENT_IP]
             # url
             if SpanAttributes.HTTP_URL in span.attributes:
                 url = span.attributes[SpanAttributes.HTTP_URL]
@@ -255,7 +259,7 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
             data.url = url
             # Http specific logic for ai.operation.name
             if SpanAttributes.HTTP_ROUTE in span.attributes:
-                envelope.tags["ai.operation.name"] = "{} {}".format(
+                envelope.tags[ContextTagKeys.AI_OPERATION_NAME] = "{} {}".format(
                     span.attributes[SpanAttributes.HTTP_METHOD],
                     span.attributes[SpanAttributes.HTTP_ROUTE],
                 )
@@ -265,7 +269,7 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                     path = parse_url.path
                     if not path:
                         path = "/"
-                    envelope.tags["ai.operation.name"] = "{} {}".format(
+                    envelope.tags[ContextTagKeys.AI_OPERATION_NAME] = "{} {}".format(
                         span.attributes[SpanAttributes.HTTP_METHOD],
                         path,
                     )
@@ -281,7 +285,7 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                 data.success = span.status.is_ok and status_code not in range(400, 500)
         elif SpanAttributes.MESSAGING_SYSTEM in span.attributes:  # Messaging
             if SpanAttributes.NET_PEER_IP in span.attributes:
-                envelope.tags["ai.location.ip"] = span.attributes[SpanAttributes.NET_PEER_IP]
+                envelope.tags[ContextTagKeys.AI_LOCATION_IP] = span.attributes[SpanAttributes.NET_PEER_IP]
             if span.attributes.get(SpanAttributes.MESSAGING_DESTINATION):
                 if span.attributes.get(SpanAttributes.NET_PEER_NAME):
                     data.source = "{}/{}".format(
@@ -297,8 +301,8 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                     data.source = span.attributes.get(SpanAttributes.MESSAGING_DESTINATION, '')
         # Apply truncation
         # See https://github.com/MohanGsk/ApplicationInsights-Home/tree/master/EndpointSpecs/Schemas/Bond
-        if envelope.tags.get("ai.operation.name"):
-            data.name = envelope.tags["ai.operation.name"][:1024]
+        if envelope.tags.get(ContextTagKeys.AI_OPERATION_NAME):
+            data.name = envelope.tags[ContextTagKeys.AI_OPERATION_NAME][:1024]
         if data.response_code:
             data.response_code = data.response_code[:1024]
         if data.source:
@@ -529,9 +533,9 @@ def _convert_span_events_to_envelopes(span: ReadableSpan) -> Sequence[TelemetryI
     for event in span.events:
         envelope = _utils._create_telemetry_item(event.timestamp)
         envelope.tags.update(_utils._populate_part_a_fields(span.resource))
-        envelope.tags["ai.operation.id"] = "{:032x}".format(span.context.trace_id)
+        envelope.tags[ContextTagKeys.AI_OPERATION_ID] = "{:032x}".format(span.context.trace_id)
         if span.context and span.context.span_id:
-            envelope.tags["ai.operation.parentId"] = "{:016x}".format(
+            envelope.tags[ContextTagKeys.AI_OPERATION_PARENT_ID] = "{:016x}".format(
                 span.context.span_id
             )
 

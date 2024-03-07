@@ -5,7 +5,7 @@
 
 import os
 
-from azure_devtools.perfstress_tests import PerfStressTest
+from devtools_testutils.perfstress_tests import PerfStressTest
 
 from azure.appconfiguration import ConfigurationSetting, AzureAppConfigurationClient as SyncAppConfigClient
 from azure.appconfiguration.aio import AzureAppConfigurationClient as AsyncAppConfigClient

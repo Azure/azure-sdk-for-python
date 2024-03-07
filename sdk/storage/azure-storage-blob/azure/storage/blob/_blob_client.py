@@ -1025,7 +1025,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             These dialects can be passed through their respective classes, the QuickQueryDialect enum or as a string
 
             .. note::
-            "ParquetDialect" is in preview, so some features may not work as intended.
+                "ParquetDialect" is in preview, so some features may not work as intended.
 
         :paramtype blob_format: ~azure.storage.blob.DelimitedTextDialect or ~azure.storage.blob.DelimitedJsonDialect
             or ~azure.storage.blob.QuickQueryDialect or str

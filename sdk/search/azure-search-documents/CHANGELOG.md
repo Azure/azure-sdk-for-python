@@ -1,13 +1,8 @@
 # Release History
 
-## 11.4.0b12 (Unreleased)
+## 11.6.0b3 (Unreleased)
 
 ### Features Added
-
-- Exposed `VectorSearchAlgorithmMetric`, `IndexProjectionMode`, `SearchIndexerIndexProjections`,
-  `SearchIndexerIndexProjectionSelector`, `SearchIndexerIndexProjectionsParameters`
-- Added `index_projections` support for `SearchIndexerSkillset`
-- Added `semantic_query` for `Search` method.
 
 ### Breaking Changes
 
@@ -15,6 +10,92 @@
 
 ### Other Changes
 
+## 11.6.0b2 (2024-03-05)
+
+### Breaking Changes
+
+- `SearchIndexerSkillset`, `SearchField`, `SearchIndex`, `AnalyzeTextOptions`, `SearchResourceEncryptionKey`, `SynonymMap`, `SearchIndexerDataSourceConnection` are no longer subclasses of `_serialization.Model`.
+
+### Bugs Fixed
+
+- Fixed the issue that `SearchIndexerSkillset`, `SearchField`, `SearchIndex`, `AnalyzeTextOptions`, `SearchResourceEncryptionKey`, `SynonymMap`, `SearchIndexerDataSourceConnection` could not be serialized and `as_dict` did not work.
+- Fixed the issue that `context` was missing for `EntityRecognitionSkill` and `SentimentSkill`. #34623
+
+### Other Changes
+
+- Default to API version `V2024_03_01_PREVIEW`
+
+## 11.6.0b1 (2024-01-31)
+
+### Features Added
+
+- Added back `semantic_query` for `Search` method.
+- Added back alias operations to `SearchIndexClient`.
+- Added back `AzureOpenAIEmbeddingSkill`, `AzureOpenAIParameters` and `AzureOpenAIVectorizer`.
+- Added back `query_language`, `query_speller`, `semantic_fields` and `debug` for `Search` method.
+- Added `send_request` method for `SearchClient` & `SearchIndexClient` to run a network request using the client's existing pipeline.
+
+### Bugs Fixed
+
+- Fixed the issue that we added unexpected `retrievable` property for `SearchField`.
+
+### Other Changes
+
+- Python 3.7 is no longer supported. Please use Python version 3.8 or later.
+
+## 11.4.0 (2023-10-13)
+
+### Features Added
+
+- Added new models:
+  - `VectorSearchAlgorithmMetric`
+  - `IndexProjectionMode`
+  - `SearchIndexerIndexProjections`
+  - `SearchIndexerIndexProjectionSelector`
+  - `SearchIndexerIndexProjectionsParameters`
+  - `BlobIndexerDataToExtract`
+  - `BlobIndexerImageAction`
+  - `BlobIndexerParsingMode`
+  - `CharFilterName`
+  - `CustomEntity`
+  - `CustomEntityAlias`
+  - `DataChangeDetectionPolicy`
+  - `DataDeletionDetectionPolicy`
+  - `DefaultCognitiveServicesAccount`
+  - `HighWaterMarkChangeDetectionPolicy`
+  - `HnswAlgorithmConfiguration`
+  - `IndexerExecutionResult`
+  - `IndexingParameters`
+  - `IndexingParametersConfiguration`
+  - `IndexingSchedule`
+  - `LexicalAnalyzerName`
+  - `LexicalTokenizerName`
+  - `PIIDetectionSkill`
+  - `PIIDetectionSkillMaskingMode`
+  - `ScoringProfile`
+  - `SemanticSearch`
+- Added `index_projections` support for `SearchIndexerSkillset`
+
+### Breaking Changes
+
+> These changes do not impact the API of stable versions such as 11.3.0.
+> Only code written against a beta version such as 11.4.0b11 may be affected.
+
+- Renamed `AnswerResult` to `QueryAnswerResult` and `CaptionResult` to `QueryCaptionResult`.
+- Renamed `SemanticErrorHandling` to `SemanticErrorMode`.
+- Renamed `RawVectorQuery` to `VectorizedQuery`.
+- Renamed `ExhaustiveKnnVectorSearchAlgorithmConfiguration` to `ExhaustiveKnnAlgorithmConfiguration`.
+- Renamed `PrioritizedFields` to `SemanticPrioritizedFields`.
+- Renamed `query_caption_highlight` to `query_caption_highlight_enabled`.
+- `query_language` and `query_speller` are not available for `Search` method in this stable release.
+- `alias` operations are not available in this stable release.
+- `AzureOpenAIEmbeddingSkill`, `AzureOpenAIParameters` and `AzureOpenAIVectorizer` are not available in 11.4.0.
+- Renamed `vector_search_profile` to `vector_search_profile_name` in `SearchField`.
+- Renamed `SemanticSettings` to `SemanticSearch`.
+
+### Other Changes
+
+- Used API version "2023-11-01".
 
 ## 11.4.0b11 (2023-10-11)
 

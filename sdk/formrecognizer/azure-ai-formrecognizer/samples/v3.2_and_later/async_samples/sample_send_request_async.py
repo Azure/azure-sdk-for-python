@@ -24,7 +24,7 @@ import asyncio
 import os
 from azure.core.credentials import AzureKeyCredential
 from azure.core.rest import HttpRequest
-from azure.ai.formrecognizer.aio import DocumentModelAdministrationClient
+from azure.ai.formrecognizer.aio import DocumentModelAdministrationClient, FormTrainingClient
 
 
 async def sample_send_request():
@@ -44,7 +44,83 @@ async def sample_send_request():
     async with client:
         response = await client.send_request(request)
     response.raise_for_status()
+    response_body = response.json()
+    print(
+        f"Our resource has {response_body['customDocumentModels']['count']} custom models, "
+        f"and we can have at most {response_body['customDocumentModels']['limit']} custom models."
+        f"The quota limit for custom neural document models is {response_body['customNeuralDocumentModelBuilds']['quota']} and the resource has"
+        f"used {response_body['customNeuralDocumentModelBuilds']['used']}. The resource quota will reset on {response_body['customNeuralDocumentModelBuilds']['quotaResetDateTime']}"
+    )
     
+    # pass with absolute url and override the API version
+    request = HttpRequest(method="GET", url=f"{endpoint}/formrecognizer/info?api-version=2022-08-31")
+    async with client:
+        response = await client.send_request(request)
+    response.raise_for_status()
+    response_body = response.json()
+    print(
+        f"Our resource has {response_body['customDocumentModels']['count']} custom models, "
+        f"and we can have at most {response_body['customDocumentModels']['limit']} custom models."
+        f"The quota limit for custom neural document models is {response_body['customNeuralDocumentModelBuilds']['quota']} and the resource has"
+        f"used {response_body['customNeuralDocumentModelBuilds']['used']}. The resource quota will reset on {response_body['customNeuralDocumentModelBuilds']['quotaResetDateTime']}"
+    )
+    
+    # override the API version to v2.1
+    request = HttpRequest(method="GET", url="v2.1/custom/models?op=summary")
+    async with client:
+        response = await client.send_request(request)
+    response.raise_for_status()
+    response_body = response.json()
+    print(f"Our account has {response_body['summary']['count']} custom models, "
+          f"and we can have at most {response_body['summary']['limit']} custom models.")
+    
+    # pass with absolute url and override the API version to v2.1
+    request = HttpRequest(method="GET", url=f"{endpoint}/formrecognizer/v2.1/custom/models?op=summary")
+    async with client:
+        response = await client.send_request(request)
+    response.raise_for_status()
+    response_body = response.json()
+    print(f"Our account has {response_body['summary']['count']} custom models, "
+          f"and we can have at most {response_body['summary']['limit']} custom models.")
+
+
+async def sample_send_request_v2():
+    endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
+    key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
+
+    # The default FormTrainingClient API version is v2.1
+    client = FormTrainingClient(
+        endpoint=endpoint, credential=AzureKeyCredential(key)
+    )
+    
+    # The `send_request` method can send custom HTTP requests that share the client's existing pipeline,
+    # while adding convenience for endpoint construction and service API versioning.
+    # Now let's use the `send_request` method to make a resource details fetching request.
+    # The URL of the request can be relative (your endpoint is the default base URL),
+    # and the API version of your client will automatically be used for the request.
+    request = HttpRequest(method="GET", url="custom/models?op=summary")
+    async with client:
+        response = await client.send_request(request)
+    response.raise_for_status()
+    response_body = response.json()
+    print(f"Our account has {response_body['summary']['count']} custom models, "
+          f"and we can have at most {response_body['summary']['limit']} custom models.")
+    
+    # pass with absolute  url and override the API version
+    request = HttpRequest(method="GET", url=f"{endpoint}/formrecognizer/v2.0/custom/models?op=summary")
+    async with client:
+        response = await client.send_request(request)
+    response.raise_for_status()
+    response_body = response.json()
+    print(f"Our account has {response_body['summary']['count']} custom models, "
+          f"and we can have at most {response_body['summary']['limit']} custom models.")
+    
+    # override the API version to 2023-07-31
+    # can only override the API version to 2022-08-31 or later with absolute url
+    request = HttpRequest(method="GET", url=f"{endpoint}/formrecognizer/info?api-version=2023-07-31")
+    async with client:
+        response = await client.send_request(request)
+    response.raise_for_status()
     response_body = response.json()
     print(
         f"Our resource has {response_body['customDocumentModels']['count']} custom models, "
@@ -56,10 +132,10 @@ async def sample_send_request():
 
 async def main():
     await sample_send_request()
+    await sample_send_request_v2()
 
 
 if __name__ == "__main__":
-    import sys
     from azure.core.exceptions import HttpResponseError
 
     try:

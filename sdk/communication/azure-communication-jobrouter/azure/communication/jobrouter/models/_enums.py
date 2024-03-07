@@ -10,32 +10,89 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class DistributionModeKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Discriminators for supported distribution mode types."""
+
+    BEST_WORKER = "bestWorker"
+    """Discriminator value for BestWorkerMode."""
+    LONGEST_IDLE = "longestIdle"
+    """Discriminator value for LongestIdleMode."""
+    ROUND_ROBIN = "roundRobin"
+    """Discriminator value for RoundRobinMode."""
+
+
+class ExceptionActionKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Discriminators for supported exception action types."""
+
+    CANCEL = "cancel"
+    """Discriminator value for CancelExceptionAction."""
+    MANUAL_RECLASSIFY = "manualReclassify"
+    """Discriminator value for ManualReclassifyExceptionAction."""
+    RECLASSIFY = "reclassify"
+    """Discriminator value for ReclassifyExceptionAction."""
+
+
+class ExceptionTriggerKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Discriminators for supported exception trigger types."""
+
+    QUEUE_LENGTH = "queueLength"
+    """Discriminator value for QueueLengthExceptionTrigger."""
+    WAIT_TIME = "waitTime"
+    """Discriminator value for WaitTimeExceptionTrigger."""
+
+
 class ExpressionRouterRuleLanguage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The available expression languages that can be configured."""
+    """Available expression languages that can be configured."""
 
     POWER_FX = "powerFx"
     """PowerFx"""
+
+
+class JobMatchingModeKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Discriminators for supported matching mode types."""
+
+    QUEUE_AND_MATCH = "queueAndMatch"
+    """Discriminator value for QueueAndMatchMode."""
+    SCHEDULE_AND_SUSPEND = "scheduleAndSuspend"
+    """Discriminator value for ScheduleAndSuspendMode."""
+    SUSPEND = "suspend"
+    """Discriminator value for SuspendMode."""
 
 
 class LabelOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Describes supported operations on label values."""
 
     EQUAL = "equal"
-    """Equal"""
+    """Equal."""
     NOT_EQUAL = "notEqual"
-    """Not Equal"""
+    """Not Equal."""
     LESS_THAN = "lessThan"
-    """Less than"""
+    """Less than."""
     LESS_THAN_OR_EQUAL = "lessThanOrEqual"
-    """Less than or equal"""
+    """Less than or equal."""
     GREATER_THAN = "greaterThan"
-    """Greater than"""
+    """Greater than."""
     GREATER_THAN_OR_EQUAL = "greaterThanOrEqual"
-    """Greater than or equal"""
+    """Greater than or equal."""
+
+
+class QueueSelectorAttachmentKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Discriminators for supported queue selector attachment types."""
+
+    CONDITIONAL = "conditional"
+    """Discriminator value for ConditionalQueueSelectorAttachment."""
+    PASS_THROUGH = "passThrough"
+    """Discriminator value for PassThroughQueueSelectorAttachment."""
+    RULE_ENGINE = "ruleEngine"
+    """Discriminator value for RuleEngineQueueSelectorAttachment."""
+    STATIC = "static"
+    """Discriminator value for StaticQueueSelectorAttachment."""
+    WEIGHTED_ALLOCATION = "weightedAllocation"
+    """Discriminator value for WeightedAllocationQueueSelectorAttachment."""
 
 
 class RouterJobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The status of the Job."""
+    """Describes the various status of a job."""
 
     PENDING_CLASSIFICATION = "pendingClassification"
     """Job is waiting to be classified."""
@@ -64,7 +121,7 @@ class RouterJobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class RouterJobStatusSelector(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Enums used to filters jobs by state."""
+    """Enums used to filters jobs by status."""
 
     ALL = "all"
     """Default"""
@@ -94,26 +151,41 @@ class RouterJobStatusSelector(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Job is in a suspended state and waiting for an update."""
     ACTIVE = "active"
     """Job is in a state of PendingClassification or Queued or Assigned or ClassificationFailed or
-    #: Completed or PendingSchedule or Scheduled or ScheduleFailed or WaitingForActivation."""
+    Completed or PendingSchedule or Scheduled or ScheduleFailed or WaitingForActivation."""
+
+
+class RouterRuleKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Discriminators for supported router rule types."""
+
+    DIRECT_MAP = "directMap"
+    """Discriminator value for DirectMapRouterRule."""
+    EXPRESSION = "expression"
+    """Discriminator value for ExpressionRouterRule."""
+    FUNCTION = "function"
+    """Discriminator value for FunctionRouterRule."""
+    STATIC = "static"
+    """Discriminator value for StaticRouterRule."""
+    WEBHOOK = "webhook"
+    """Discriminator value for WebhookRouterRule."""
 
 
 class RouterWorkerSelectorStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The status of the worker selector."""
+    """Describes the status of a worker selector."""
 
     ACTIVE = "active"
-    """Active"""
+    """Worker selector is valid."""
     EXPIRED = "expired"
-    """Expired"""
+    """Worker selector is not valid."""
 
 
 class RouterWorkerState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Enums for worker status."""
+    """Enums for worker states."""
 
     ACTIVE = "active"
     """Worker is active and available to take offers."""
     DRAINING = "draining"
     """Worker is not active, if there are existing offers they are being revoked. No new offers are
-    #: sent."""
+    sent."""
     INACTIVE = "inactive"
     """Worker is not active. No new offers are sent."""
 
@@ -125,7 +197,7 @@ class RouterWorkerStateSelector(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Worker is active and available to take offers."""
     DRAINING = "draining"
     """Worker is not active, if there are existing offers they are being revoked. No new offers are
-    #: sent."""
+    sent."""
     INACTIVE = "inactive"
     """Worker is not active. No new offers are sent."""
     ALL = "all"
@@ -133,10 +205,25 @@ class RouterWorkerStateSelector(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ScoringRuleParameterSelector(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Supported parameters for scoring workers."""
+    """Supported parameters for scoring workers used with BestWorkerMode."""
 
     JOB_LABELS = "jobLabels"
     """Parameter to add job labels to scoring payload.  Property is sent as ``job``."""
     WORKER_SELECTORS = "workerSelectors"
-    """Parameter to add worker selectors from the job to scoring payload.  Property is sent as
-    #: ``selectors``."""
+    """Parameter to add worker selectors from a job to scoring payload.  Property is sent as
+    ``selectors``."""
+
+
+class WorkerSelectorAttachmentKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Discriminators for supported worker selector attachment types."""
+
+    CONDITIONAL = "conditional"
+    """Discriminator value for ConditionalWorkerSelectorAttachment."""
+    PASS_THROUGH = "passThrough"
+    """Discriminator value for PassThroughWorkerSelectorAttachment."""
+    RULE_ENGINE = "ruleEngine"
+    """Discriminator value for RuleEngineWorkerSelectorAttachment."""
+    STATIC = "static"
+    """Discriminator value for StaticWorkerSelectorAttachment."""
+    WEIGHTED_ALLOCATION = "weightedAllocation"
+    """Discriminator value for WeightedAllocationWorkerSelectorAttachment."""

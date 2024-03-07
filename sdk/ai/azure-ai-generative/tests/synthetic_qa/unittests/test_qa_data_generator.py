@@ -3,8 +3,11 @@
 # ---------------------------------------------------------
 
 import pytest
+import os
+import pathlib
+import filecmp
 
-from azure.ai.generative.synthetic.qa import QADataGenerator, QAType
+from azure.ai.generative.synthetic.qa import QADataGenerator, QAType, OutputStructure
 
 API_BASE = ""
 API_KEY = ""
@@ -65,3 +68,58 @@ class TestQADataGenerator:
         with pytest.raises(ValueError) as excinfo:
             qa_generator.generate("", QAType.SHORT_ANSWER, num_questions)
         assert str(excinfo.value) == "num_questions must be an integer greater than zero"
+    
+    @pytest.mark.parametrize("qa_type", [QAType.CONVERSATION, QAType.SHORT_ANSWER])
+    @pytest.mark.parametrize("structure", [OutputStructure.CHAT_PROTOCOL, OutputStructure.PROMPTFLOW])
+    def test_export_format(self, qa_type, structure):
+        questions = [
+            "What is Compute Instance?",
+            "Is CI different than Compute Cluster?",
+            "In what way?",
+            "Is K8s also a compute?",
+            "Question after space?",
+        ]
+        answers = [
+            "Compute instance is ...",
+            "Yes.",
+            "It is different ... because ...\n... these are the reasons.\n   Here's one more reason ...",
+            "Yes.\n",
+            "Answer after space.\n\n",
+        ]
+        
+        model_config = dict(api_base=API_BASE, api_key=API_KEY, deployment=DEPLOYMENT, model=MODEL)
+        qa_generator = QADataGenerator(model_config)
+        qas = list(zip(questions, answers))
+        filepath = os.path.join(pathlib.Path(__file__).parent.parent.resolve(), "data")
+        output_file = os.path.join(filepath, f"test_{qa_type.value}_{structure.value}.jsonl")
+        qa_generator.export_to_file(output_file, qa_type, qas, structure)
+        
+        if qa_type == QAType.CONVERSATION and structure == OutputStructure.CHAT_PROTOCOL:
+            filename = "generated_qa_chat_conv.jsonl"
+        elif qa_type == QAType.CONVERSATION and structure == OutputStructure.PROMPTFLOW:
+            filename = "generated_qa_pf_conv.jsonl"
+        elif qa_type == QAType.SHORT_ANSWER and structure == OutputStructure.CHAT_PROTOCOL:
+            filename = "generated_qa_chat_short.jsonl"
+        elif qa_type == QAType.SHORT_ANSWER and structure == OutputStructure.PROMPTFLOW:
+            filename = "generated_qa_pf_short.jsonl"
+
+        expected_file = os.path.join(filepath, filename) 
+
+        try:
+            with open(expected_file, 'r') as json_file:
+                expected_lines = list(json_file)
+
+            with open(output_file, 'r') as json_file:
+                actual_lines = list(json_file)
+
+            assert len(expected_lines) == len(actual_lines)
+
+            for i in range(0,len(expected_lines)):
+                assert expected_lines[i] == actual_lines[i]
+        except Exception as e:
+            # Still raise exception
+            print(f"Exception encountered in test: {e}")
+            raise
+        finally:
+            # clean up file
+            os.remove(output_file)

@@ -29,11 +29,10 @@ def main():
         subscription_id="12345678-1234-1234-1234-12345678abc",
     )
 
-    response = client.factories.delete(
+    client.factories.delete(
         resource_group_name="exampleResourceGroup",
         factory_name="exampleFactoryName",
     )
-    print(response)
 
 
 # x-ms-original-file: specification/datafactory/resource-manager/Microsoft.DataFactory/stable/2018-06-01/examples/Factories_Delete.json

@@ -23,73 +23,18 @@ if TYPE_CHECKING:
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
-class AddParticipantCancelled(_serialization.Model):
-    """Successful cancel add participant event.
-
-    :ivar call_connection_id: Call connection ID.
-    :vartype call_connection_id: str
-    :ivar server_call_id: Server call ID.
-    :vartype server_call_id: str
-    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-     skype chain ID.
-    :vartype correlation_id: str
-    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
-     request to the response event.
-    :vartype operation_context: str
-    :ivar participant: Participant that has been cancelled.
-    :vartype participant: ~azure.communication.callautomation.models.CommunicationIdentifierModel
-    :ivar invitation_id: Invitation ID used to cancel the request.
-    :vartype invitation_id: str
-    """
-
-    _attribute_map = {
-        "call_connection_id": {"key": "callConnectionId", "type": "str"},
-        "server_call_id": {"key": "serverCallId", "type": "str"},
-        "correlation_id": {"key": "correlationId", "type": "str"},
-        "operation_context": {"key": "operationContext", "type": "str"},
-        "participant": {"key": "participant", "type": "CommunicationIdentifierModel"},
-        "invitation_id": {"key": "invitationId", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        call_connection_id: Optional[str] = None,
-        server_call_id: Optional[str] = None,
-        correlation_id: Optional[str] = None,
-        operation_context: Optional[str] = None,
-        participant: Optional["_models.CommunicationIdentifierModel"] = None,
-        invitation_id: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword call_connection_id: Call connection ID.
-        :paramtype call_connection_id: str
-        :keyword server_call_id: Server call ID.
-        :paramtype server_call_id: str
-        :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-         skype chain ID.
-        :paramtype correlation_id: str
-        :keyword operation_context: Used by customers when calling mid-call actions to correlate the
-         request to the response event.
-        :paramtype operation_context: str
-        :keyword participant: Participant that has been cancelled.
-        :paramtype participant: ~azure.communication.callautomation.models.CommunicationIdentifierModel
-        :keyword invitation_id: Invitation ID used to cancel the request.
-        :paramtype invitation_id: str
-        """
-        super().__init__(**kwargs)
-        self.call_connection_id = call_connection_id
-        self.server_call_id = server_call_id
-        self.correlation_id = correlation_id
-        self.operation_context = operation_context
-        self.participant = participant
-        self.invitation_id = invitation_id
-
-
 class AddParticipantFailed(_serialization.Model):
     """The failed to add participant event.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+     request to the response event.
+    :vartype operation_context: str
+    :ivar result_information: Contains the resulting SIP code, sub-code and message.
+    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
+    :ivar participant: Participant.
+    :vartype participant: ~azure.communication.callautomation.models.CommunicationIdentifierModel
     :ivar call_connection_id: Call connection ID.
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
@@ -97,66 +42,41 @@ class AddParticipantFailed(_serialization.Model):
     :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
      skype chain ID.
     :vartype correlation_id: str
-    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
-     request to the response event.
-    :vartype operation_context: str
-    :ivar result_information: Contains the resulting SIP code/sub-code and message from NGC
-     services.
-    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
-    :ivar participant: Participant.
-    :vartype participant: ~azure.communication.callautomation.models.CommunicationIdentifierModel
     """
 
+    _validation = {
+        "operation_context": {"readonly": True},
+        "result_information": {"readonly": True},
+        "participant": {"readonly": True},
+        "call_connection_id": {"readonly": True},
+        "server_call_id": {"readonly": True},
+        "correlation_id": {"readonly": True},
+    }
+
     _attribute_map = {
-        "call_connection_id": {"key": "callConnectionId", "type": "str"},
-        "server_call_id": {"key": "serverCallId", "type": "str"},
-        "correlation_id": {"key": "correlationId", "type": "str"},
         "operation_context": {"key": "operationContext", "type": "str"},
         "result_information": {"key": "resultInformation", "type": "ResultInformation"},
         "participant": {"key": "participant", "type": "CommunicationIdentifierModel"},
+        "call_connection_id": {"key": "callConnectionId", "type": "str"},
+        "server_call_id": {"key": "serverCallId", "type": "str"},
+        "correlation_id": {"key": "correlationId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        call_connection_id: Optional[str] = None,
-        server_call_id: Optional[str] = None,
-        correlation_id: Optional[str] = None,
-        operation_context: Optional[str] = None,
-        result_information: Optional["_models.ResultInformation"] = None,
-        participant: Optional["_models.CommunicationIdentifierModel"] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword call_connection_id: Call connection ID.
-        :paramtype call_connection_id: str
-        :keyword server_call_id: Server call ID.
-        :paramtype server_call_id: str
-        :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-         skype chain ID.
-        :paramtype correlation_id: str
-        :keyword operation_context: Used by customers when calling mid-call actions to correlate the
-         request to the response event.
-        :paramtype operation_context: str
-        :keyword result_information: Contains the resulting SIP code/sub-code and message from NGC
-         services.
-        :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
-        :keyword participant: Participant.
-        :paramtype participant: ~azure.communication.callautomation.models.CommunicationIdentifierModel
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
-        self.call_connection_id = call_connection_id
-        self.server_call_id = server_call_id
-        self.correlation_id = correlation_id
-        self.operation_context = operation_context
-        self.result_information = result_information
-        self.participant = participant
+        self.operation_context = None
+        self.result_information = None
+        self.participant = None
+        self.call_connection_id = None
+        self.server_call_id = None
+        self.correlation_id = None
 
 
 class AddParticipantRequest(_serialization.Model):
     """The request payload for adding participant to the call.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar source_caller_id_number: The source caller Id, a phone number, that's shown to the PSTN
      participant being invited.
@@ -178,10 +98,14 @@ class AddParticipantRequest(_serialization.Model):
     :ivar operation_context: Used by customers when calling mid-call actions to correlate the
      request to the response event.
     :vartype operation_context: str
-    :ivar custom_context: Used by customer to send custom context to targets.
-    :vartype custom_context: ~azure.communication.callautomation.models.CustomContext
-    :ivar callback_uri: The callback URI to override the main callback URI.
-    :vartype callback_uri: str
+    :ivar custom_calling_context: Used by customer to send custom calling context to targets.
+    :vartype custom_calling_context:
+     ~azure.communication.callautomation.models.CustomCallingContext
+    :ivar operation_callback_uri: Set a callback URI that overrides the default callback URI set by
+     CreateCall/AnswerCall for this operation.
+     This setup is per-action. If this is not set, the default callback URI set by
+     CreateCall/AnswerCall will be used.
+    :vartype operation_callback_uri: str
     """
 
     _validation = {
@@ -195,8 +119,8 @@ class AddParticipantRequest(_serialization.Model):
         "participant_to_add": {"key": "participantToAdd", "type": "CommunicationIdentifierModel"},
         "invitation_timeout_in_seconds": {"key": "invitationTimeoutInSeconds", "type": "int"},
         "operation_context": {"key": "operationContext", "type": "str"},
-        "custom_context": {"key": "customContext", "type": "CustomContext"},
-        "callback_uri": {"key": "callbackUri", "type": "str"},
+        "custom_calling_context": {"key": "customCallingContext", "type": "CustomCallingContext"},
+        "operation_callback_uri": {"key": "operationCallbackUri", "type": "str"},
     }
 
     def __init__(
@@ -207,8 +131,8 @@ class AddParticipantRequest(_serialization.Model):
         source_display_name: Optional[str] = None,
         invitation_timeout_in_seconds: Optional[int] = None,
         operation_context: Optional[str] = None,
-        custom_context: Optional["_models.CustomContext"] = None,
-        callback_uri: Optional[str] = None,
+        custom_calling_context: Optional["_models.CustomCallingContext"] = None,
+        operation_callback_uri: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -232,10 +156,14 @@ class AddParticipantRequest(_serialization.Model):
         :keyword operation_context: Used by customers when calling mid-call actions to correlate the
          request to the response event.
         :paramtype operation_context: str
-        :keyword custom_context: Used by customer to send custom context to targets.
-        :paramtype custom_context: ~azure.communication.callautomation.models.CustomContext
-        :keyword callback_uri: The callback URI to override the main callback URI.
-        :paramtype callback_uri: str
+        :keyword custom_calling_context: Used by customer to send custom calling context to targets.
+        :paramtype custom_calling_context:
+         ~azure.communication.callautomation.models.CustomCallingContext
+        :keyword operation_callback_uri: Set a callback URI that overrides the default callback URI set
+         by CreateCall/AnswerCall for this operation.
+         This setup is per-action. If this is not set, the default callback URI set by
+         CreateCall/AnswerCall will be used.
+        :paramtype operation_callback_uri: str
         """
         super().__init__(**kwargs)
         self.source_caller_id_number = source_caller_id_number
@@ -243,8 +171,8 @@ class AddParticipantRequest(_serialization.Model):
         self.participant_to_add = participant_to_add
         self.invitation_timeout_in_seconds = invitation_timeout_in_seconds
         self.operation_context = operation_context
-        self.custom_context = custom_context
-        self.callback_uri = callback_uri
+        self.custom_calling_context = custom_calling_context
+        self.operation_callback_uri = operation_callback_uri
 
 
 class AddParticipantResponse(_serialization.Model):
@@ -289,6 +217,15 @@ class AddParticipantResponse(_serialization.Model):
 class AddParticipantSucceeded(_serialization.Model):
     """The participant successfully added event.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+     request to the response event.
+    :vartype operation_context: str
+    :ivar result_information: Contains the resulting SIP code, sub-code and message.
+    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
+    :ivar participant: Participant.
+    :vartype participant: ~azure.communication.callautomation.models.CommunicationIdentifierModel
     :ivar call_connection_id: Call connection ID.
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
@@ -296,66 +233,41 @@ class AddParticipantSucceeded(_serialization.Model):
     :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
      skype chain ID.
     :vartype correlation_id: str
-    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
-     request to the response event.
-    :vartype operation_context: str
-    :ivar result_information: Contains the resulting SIP code/sub-code and message from NGC
-     services.
-    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
-    :ivar participant: Participant.
-    :vartype participant: ~azure.communication.callautomation.models.CommunicationIdentifierModel
     """
 
+    _validation = {
+        "operation_context": {"readonly": True},
+        "result_information": {"readonly": True},
+        "participant": {"readonly": True},
+        "call_connection_id": {"readonly": True},
+        "server_call_id": {"readonly": True},
+        "correlation_id": {"readonly": True},
+    }
+
     _attribute_map = {
-        "call_connection_id": {"key": "callConnectionId", "type": "str"},
-        "server_call_id": {"key": "serverCallId", "type": "str"},
-        "correlation_id": {"key": "correlationId", "type": "str"},
         "operation_context": {"key": "operationContext", "type": "str"},
         "result_information": {"key": "resultInformation", "type": "ResultInformation"},
         "participant": {"key": "participant", "type": "CommunicationIdentifierModel"},
+        "call_connection_id": {"key": "callConnectionId", "type": "str"},
+        "server_call_id": {"key": "serverCallId", "type": "str"},
+        "correlation_id": {"key": "correlationId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        call_connection_id: Optional[str] = None,
-        server_call_id: Optional[str] = None,
-        correlation_id: Optional[str] = None,
-        operation_context: Optional[str] = None,
-        result_information: Optional["_models.ResultInformation"] = None,
-        participant: Optional["_models.CommunicationIdentifierModel"] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword call_connection_id: Call connection ID.
-        :paramtype call_connection_id: str
-        :keyword server_call_id: Server call ID.
-        :paramtype server_call_id: str
-        :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-         skype chain ID.
-        :paramtype correlation_id: str
-        :keyword operation_context: Used by customers when calling mid-call actions to correlate the
-         request to the response event.
-        :paramtype operation_context: str
-        :keyword result_information: Contains the resulting SIP code/sub-code and message from NGC
-         services.
-        :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
-        :keyword participant: Participant.
-        :paramtype participant: ~azure.communication.callautomation.models.CommunicationIdentifierModel
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
-        self.call_connection_id = call_connection_id
-        self.server_call_id = server_call_id
-        self.correlation_id = correlation_id
-        self.operation_context = operation_context
-        self.result_information = result_information
-        self.participant = participant
+        self.operation_context = None
+        self.result_information = None
+        self.participant = None
+        self.call_connection_id = None
+        self.server_call_id = None
+        self.correlation_id = None
 
 
 class AnswerCallRequest(_serialization.Model):
     """The request payload for answering the call.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar incoming_call_context: The context associated with the call. Required.
     :vartype incoming_call_context: str
@@ -369,13 +281,17 @@ class AnswerCallRequest(_serialization.Model):
     :ivar transcription_configuration: Live Transcription Configuration.
     :vartype transcription_configuration:
      ~azure.communication.callautomation.models.TranscriptionConfiguration
-    :ivar azure_cognitive_services_endpoint_url: The endpoint URL of the Azure Cognitive Services
-     resource attached.
-    :vartype azure_cognitive_services_endpoint_url: str
-    :ivar answered_by_identifier: The identifier of the call automation entity which answers the
-     call.
-    :vartype answered_by_identifier:
+    :ivar call_intelligence_options: AI options for the call.
+    :vartype call_intelligence_options:
+     ~azure.communication.callautomation.models.CallIntelligenceOptions
+    :ivar answered_by: The identifier of the call automation entity which answers the call.
+    :vartype answered_by:
      ~azure.communication.callautomation.models.CommunicationUserIdentifierModel
+    :ivar source_caller_id_number: The source caller Id, a phone number, that's will be used when
+     inviting a pstn target.
+     Required only when transferring call to PSTN, if this is an incoming voip call.
+    :vartype source_caller_id_number:
+     ~azure.communication.callautomation.models.PhoneNumberIdentifierModel
     """
 
     _validation = {
@@ -389,8 +305,9 @@ class AnswerCallRequest(_serialization.Model):
         "operation_context": {"key": "operationContext", "type": "str"},
         "media_streaming_configuration": {"key": "mediaStreamingConfiguration", "type": "MediaStreamingConfiguration"},
         "transcription_configuration": {"key": "transcriptionConfiguration", "type": "TranscriptionConfiguration"},
-        "azure_cognitive_services_endpoint_url": {"key": "azureCognitiveServicesEndpointUrl", "type": "str"},
-        "answered_by_identifier": {"key": "answeredByIdentifier", "type": "CommunicationUserIdentifierModel"},
+        "call_intelligence_options": {"key": "callIntelligenceOptions", "type": "CallIntelligenceOptions"},
+        "answered_by": {"key": "answeredBy", "type": "CommunicationUserIdentifierModel"},
+        "source_caller_id_number": {"key": "sourceCallerIdNumber", "type": "PhoneNumberIdentifierModel"},
     }
 
     def __init__(
@@ -401,8 +318,9 @@ class AnswerCallRequest(_serialization.Model):
         operation_context: Optional[str] = None,
         media_streaming_configuration: Optional["_models.MediaStreamingConfiguration"] = None,
         transcription_configuration: Optional["_models.TranscriptionConfiguration"] = None,
-        azure_cognitive_services_endpoint_url: Optional[str] = None,
-        answered_by_identifier: Optional["_models.CommunicationUserIdentifierModel"] = None,
+        call_intelligence_options: Optional["_models.CallIntelligenceOptions"] = None,
+        answered_by: Optional["_models.CommunicationUserIdentifierModel"] = None,
+        source_caller_id_number: Optional["_models.PhoneNumberIdentifierModel"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -418,13 +336,17 @@ class AnswerCallRequest(_serialization.Model):
         :keyword transcription_configuration: Live Transcription Configuration.
         :paramtype transcription_configuration:
          ~azure.communication.callautomation.models.TranscriptionConfiguration
-        :keyword azure_cognitive_services_endpoint_url: The endpoint URL of the Azure Cognitive
-         Services resource attached.
-        :paramtype azure_cognitive_services_endpoint_url: str
-        :keyword answered_by_identifier: The identifier of the call automation entity which answers the
-         call.
-        :paramtype answered_by_identifier:
+        :keyword call_intelligence_options: AI options for the call.
+        :paramtype call_intelligence_options:
+         ~azure.communication.callautomation.models.CallIntelligenceOptions
+        :keyword answered_by: The identifier of the call automation entity which answers the call.
+        :paramtype answered_by:
          ~azure.communication.callautomation.models.CommunicationUserIdentifierModel
+        :keyword source_caller_id_number: The source caller Id, a phone number, that's will be used
+         when inviting a pstn target.
+         Required only when transferring call to PSTN, if this is an incoming voip call.
+        :paramtype source_caller_id_number:
+         ~azure.communication.callautomation.models.PhoneNumberIdentifierModel
         """
         super().__init__(**kwargs)
         self.incoming_call_context = incoming_call_context
@@ -432,14 +354,194 @@ class AnswerCallRequest(_serialization.Model):
         self.operation_context = operation_context
         self.media_streaming_configuration = media_streaming_configuration
         self.transcription_configuration = transcription_configuration
-        self.azure_cognitive_services_endpoint_url = azure_cognitive_services_endpoint_url
-        self.answered_by_identifier = answered_by_identifier
+        self.call_intelligence_options = call_intelligence_options
+        self.answered_by = answered_by
+        self.source_caller_id_number = source_caller_id_number
+
+
+class AnswerFailed(_serialization.Model):
+    """AnswerFailed event.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+     request to the response event.
+    :vartype operation_context: str
+    :ivar result_information: Contains the resulting SIP code, sub-code and message.
+    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+     skype chain ID.
+    :vartype correlation_id: str
+    """
+
+    _validation = {
+        "operation_context": {"readonly": True},
+        "result_information": {"readonly": True},
+        "call_connection_id": {"readonly": True},
+        "server_call_id": {"readonly": True},
+        "correlation_id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "operation_context": {"key": "operationContext", "type": "str"},
+        "result_information": {"key": "resultInformation", "type": "ResultInformation"},
+        "call_connection_id": {"key": "callConnectionId", "type": "str"},
+        "server_call_id": {"key": "serverCallId", "type": "str"},
+        "correlation_id": {"key": "correlationId", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.operation_context = None
+        self.result_information = None
+        self.call_connection_id = None
+        self.server_call_id = None
+        self.correlation_id = None
+
+
+class BaseDialog(_serialization.Model):
+    """BaseDialog.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AzureOpenAIDialog, PowerVirtualAgentsDialog
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar kind: Determines the type of the dialog. Required. Known values are: "powerVirtualAgents"
+     and "azureOpenAI".
+    :vartype kind: str or ~azure.communication.callautomation.models.DialogInputType
+    :ivar context: Dialog context. Required.
+    :vartype context: dict[str, JSON]
+    """
+
+    _validation = {
+        "kind": {"required": True},
+        "context": {"required": True},
+    }
+
+    _attribute_map = {
+        "kind": {"key": "kind", "type": "str"},
+        "context": {"key": "context", "type": "{object}"},
+    }
+
+    _subtype_map = {"kind": {"AzureOpenAI": "AzureOpenAIDialog", "PowerVirtualAgents": "PowerVirtualAgentsDialog"}}
+
+    def __init__(self, *, context: Dict[str, JSON], **kwargs: Any) -> None:
+        """
+        :keyword context: Dialog context. Required.
+        :paramtype context: dict[str, JSON]
+        """
+        super().__init__(**kwargs)
+        self.kind: Optional[str] = None
+        self.context = context
+
+
+class AzureOpenAIDialog(BaseDialog):
+    """Azure Open AI Dialog.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar kind: Determines the type of the dialog. Required. Known values are: "powerVirtualAgents"
+     and "azureOpenAI".
+    :vartype kind: str or ~azure.communication.callautomation.models.DialogInputType
+    :ivar context: Dialog context. Required.
+    :vartype context: dict[str, JSON]
+    """
+
+    _validation = {
+        "kind": {"required": True},
+        "context": {"required": True},
+    }
+
+    _attribute_map = {
+        "kind": {"key": "kind", "type": "str"},
+        "context": {"key": "context", "type": "{object}"},
+    }
+
+    def __init__(self, *, context: Dict[str, JSON], **kwargs: Any) -> None:
+        """
+        :keyword context: Dialog context. Required.
+        :paramtype context: dict[str, JSON]
+        """
+        super().__init__(context=context, **kwargs)
+        self.kind: str = "AzureOpenAI"
+
+
+class DialogUpdateBase(_serialization.Model):
+    """DialogUpdateBase.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AzureOpenAIDialogUpdate
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar kind: Determines the type of the dialog. Required. Known values are: "powerVirtualAgents"
+     and "azureOpenAI".
+    :vartype kind: str or ~azure.communication.callautomation.models.DialogInputType
+    :ivar context: Dialog context.
+    :vartype context: dict[str, JSON]
+    """
+
+    _validation = {
+        "kind": {"required": True},
+    }
+
+    _attribute_map = {
+        "kind": {"key": "kind", "type": "str"},
+        "context": {"key": "context", "type": "{object}"},
+    }
+
+    _subtype_map = {"kind": {"AzureOpenAI": "AzureOpenAIDialogUpdate"}}
+
+    def __init__(self, *, context: Optional[Dict[str, JSON]] = None, **kwargs: Any) -> None:
+        """
+        :keyword context: Dialog context.
+        :paramtype context: dict[str, JSON]
+        """
+        super().__init__(**kwargs)
+        self.kind: Optional[str] = None
+        self.context = context
+
+
+class AzureOpenAIDialogUpdate(DialogUpdateBase):
+    """Azure Open AI Dialog for UpdateDialog API Call.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar kind: Determines the type of the dialog. Required. Known values are: "powerVirtualAgents"
+     and "azureOpenAI".
+    :vartype kind: str or ~azure.communication.callautomation.models.DialogInputType
+    :ivar context: Dialog context.
+    :vartype context: dict[str, JSON]
+    """
+
+    _validation = {
+        "kind": {"required": True},
+    }
+
+    _attribute_map = {
+        "kind": {"key": "kind", "type": "str"},
+        "context": {"key": "context", "type": "{object}"},
+    }
+
+    def __init__(self, *, context: Optional[Dict[str, JSON]] = None, **kwargs: Any) -> None:
+        """
+        :keyword context: Dialog context.
+        :paramtype context: dict[str, JSON]
+        """
+        super().__init__(context=context, **kwargs)
+        self.kind: str = "AzureOpenAI"
 
 
 class BlobStorage(_serialization.Model):
     """Used to specify Blob container url to recording storage.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar container_uri: Url of a container or a location within a container. Required.
     :vartype container_uri: str
@@ -465,6 +567,11 @@ class BlobStorage(_serialization.Model):
 class CallConnected(_serialization.Model):
     """The call connected event.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+     request to the response event.
+    :vartype operation_context: str
     :ivar call_connection_id: Call connection ID.
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
@@ -472,44 +579,29 @@ class CallConnected(_serialization.Model):
     :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
      skype chain ID.
     :vartype correlation_id: str
-    :ivar operation_context: Used by customers to set the context for creating a new call. This
-     property will be null for answering a call.
-    :vartype operation_context: str
     """
 
+    _validation = {
+        "operation_context": {"readonly": True},
+        "call_connection_id": {"readonly": True},
+        "server_call_id": {"readonly": True},
+        "correlation_id": {"readonly": True},
+    }
+
     _attribute_map = {
+        "operation_context": {"key": "operationContext", "type": "str"},
         "call_connection_id": {"key": "callConnectionId", "type": "str"},
         "server_call_id": {"key": "serverCallId", "type": "str"},
         "correlation_id": {"key": "correlationId", "type": "str"},
-        "operation_context": {"key": "operationContext", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        call_connection_id: Optional[str] = None,
-        server_call_id: Optional[str] = None,
-        correlation_id: Optional[str] = None,
-        operation_context: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword call_connection_id: Call connection ID.
-        :paramtype call_connection_id: str
-        :keyword server_call_id: Server call ID.
-        :paramtype server_call_id: str
-        :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-         skype chain ID.
-        :paramtype correlation_id: str
-        :keyword operation_context: Used by customers to set the context for creating a new call. This
-         property will be null for answering a call.
-        :paramtype operation_context: str
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
-        self.call_connection_id = call_connection_id
-        self.server_call_id = server_call_id
-        self.correlation_id = correlation_id
-        self.operation_context = operation_context
+        self.operation_context = None
+        self.call_connection_id = None
+        self.server_call_id = None
+        self.correlation_id = None
 
 
 class CallConnectionProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
@@ -539,15 +631,17 @@ class CallConnectionProperties(_serialization.Model):  # pylint: disable=too-man
      ~azure.communication.callautomation.models.PhoneNumberIdentifierModel
     :ivar source_display_name: Display name of the call if dialing out to a pstn number.
     :vartype source_display_name: str
-    :ivar source_identity: Source identity.
-    :vartype source_identity:
-     ~azure.communication.callautomation.models.CommunicationIdentifierModel
+    :ivar source: Source identity.
+    :vartype source: ~azure.communication.callautomation.models.CommunicationIdentifierModel
     :ivar correlation_id: The correlation ID.
     :vartype correlation_id: str
-    :ivar answered_by_identifier: Identity of the answering entity. Only populated when identity is
-     provided in the request.
-    :vartype answered_by_identifier:
+    :ivar answered_by: Identity of the answering entity. Only populated when identity is provided
+     in the request.
+    :vartype answered_by:
      ~azure.communication.callautomation.models.CommunicationUserIdentifierModel
+    :ivar original_pstn_target: The original PSTN target of the incoming Call.
+    :vartype original_pstn_target:
+     ~azure.communication.callautomation.models.PhoneNumberIdentifierModel
     """
 
     _attribute_map = {
@@ -560,9 +654,10 @@ class CallConnectionProperties(_serialization.Model):  # pylint: disable=too-man
         "data_subscription_id": {"key": "dataSubscriptionId", "type": "str"},
         "source_caller_id_number": {"key": "sourceCallerIdNumber", "type": "PhoneNumberIdentifierModel"},
         "source_display_name": {"key": "sourceDisplayName", "type": "str"},
-        "source_identity": {"key": "sourceIdentity", "type": "CommunicationIdentifierModel"},
+        "source": {"key": "source", "type": "CommunicationIdentifierModel"},
         "correlation_id": {"key": "correlationId", "type": "str"},
-        "answered_by_identifier": {"key": "answeredByIdentifier", "type": "CommunicationUserIdentifierModel"},
+        "answered_by": {"key": "answeredBy", "type": "CommunicationUserIdentifierModel"},
+        "original_pstn_target": {"key": "originalPstnTarget", "type": "PhoneNumberIdentifierModel"},
     }
 
     def __init__(
@@ -577,9 +672,10 @@ class CallConnectionProperties(_serialization.Model):  # pylint: disable=too-man
         data_subscription_id: Optional[str] = None,
         source_caller_id_number: Optional["_models.PhoneNumberIdentifierModel"] = None,
         source_display_name: Optional[str] = None,
-        source_identity: Optional["_models.CommunicationIdentifierModel"] = None,
+        source: Optional["_models.CommunicationIdentifierModel"] = None,
         correlation_id: Optional[str] = None,
-        answered_by_identifier: Optional["_models.CommunicationUserIdentifierModel"] = None,
+        answered_by: Optional["_models.CommunicationUserIdentifierModel"] = None,
+        original_pstn_target: Optional["_models.PhoneNumberIdentifierModel"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -608,15 +704,17 @@ class CallConnectionProperties(_serialization.Model):  # pylint: disable=too-man
          ~azure.communication.callautomation.models.PhoneNumberIdentifierModel
         :keyword source_display_name: Display name of the call if dialing out to a pstn number.
         :paramtype source_display_name: str
-        :keyword source_identity: Source identity.
-        :paramtype source_identity:
-         ~azure.communication.callautomation.models.CommunicationIdentifierModel
+        :keyword source: Source identity.
+        :paramtype source: ~azure.communication.callautomation.models.CommunicationIdentifierModel
         :keyword correlation_id: The correlation ID.
         :paramtype correlation_id: str
-        :keyword answered_by_identifier: Identity of the answering entity. Only populated when identity
-         is provided in the request.
-        :paramtype answered_by_identifier:
+        :keyword answered_by: Identity of the answering entity. Only populated when identity is
+         provided in the request.
+        :paramtype answered_by:
          ~azure.communication.callautomation.models.CommunicationUserIdentifierModel
+        :keyword original_pstn_target: The original PSTN target of the incoming Call.
+        :paramtype original_pstn_target:
+         ~azure.communication.callautomation.models.PhoneNumberIdentifierModel
         """
         super().__init__(**kwargs)
         self.call_connection_id = call_connection_id
@@ -628,14 +726,20 @@ class CallConnectionProperties(_serialization.Model):  # pylint: disable=too-man
         self.data_subscription_id = data_subscription_id
         self.source_caller_id_number = source_caller_id_number
         self.source_display_name = source_display_name
-        self.source_identity = source_identity
+        self.source = source
         self.correlation_id = correlation_id
-        self.answered_by_identifier = answered_by_identifier
+        self.answered_by = answered_by
+        self.original_pstn_target = original_pstn_target
 
 
 class CallDisconnected(_serialization.Model):
     """The call disconnected event.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+     request to the response event.
+    :vartype operation_context: str
     :ivar call_connection_id: Call connection ID.
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
@@ -643,44 +747,51 @@ class CallDisconnected(_serialization.Model):
     :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
      skype chain ID.
     :vartype correlation_id: str
-    :ivar operation_context: Used by customers to set the context for creating a new call. This
-     property will be null for answering a call.
-    :vartype operation_context: str
     """
 
+    _validation = {
+        "operation_context": {"readonly": True},
+        "call_connection_id": {"readonly": True},
+        "server_call_id": {"readonly": True},
+        "correlation_id": {"readonly": True},
+    }
+
     _attribute_map = {
+        "operation_context": {"key": "operationContext", "type": "str"},
         "call_connection_id": {"key": "callConnectionId", "type": "str"},
         "server_call_id": {"key": "serverCallId", "type": "str"},
         "correlation_id": {"key": "correlationId", "type": "str"},
-        "operation_context": {"key": "operationContext", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        call_connection_id: Optional[str] = None,
-        server_call_id: Optional[str] = None,
-        correlation_id: Optional[str] = None,
-        operation_context: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.operation_context = None
+        self.call_connection_id = None
+        self.server_call_id = None
+        self.correlation_id = None
+
+
+class CallIntelligenceOptions(_serialization.Model):
+    """AI options for the call.
+
+    :ivar cognitive_services_endpoint: The identifier of the Cognitive Service resource assigned to
+     this call.
+    :vartype cognitive_services_endpoint: str
+    """
+
+    _attribute_map = {
+        "cognitive_services_endpoint": {"key": "cognitiveServicesEndpoint", "type": "str"},
+    }
+
+    def __init__(self, *, cognitive_services_endpoint: Optional[str] = None, **kwargs: Any) -> None:
         """
-        :keyword call_connection_id: Call connection ID.
-        :paramtype call_connection_id: str
-        :keyword server_call_id: Server call ID.
-        :paramtype server_call_id: str
-        :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-         skype chain ID.
-        :paramtype correlation_id: str
-        :keyword operation_context: Used by customers to set the context for creating a new call. This
-         property will be null for answering a call.
-        :paramtype operation_context: str
+        :keyword cognitive_services_endpoint: The identifier of the Cognitive Service resource assigned
+         to this call.
+        :paramtype cognitive_services_endpoint: str
         """
         super().__init__(**kwargs)
-        self.call_connection_id = call_connection_id
-        self.server_call_id = server_call_id
-        self.correlation_id = correlation_id
-        self.operation_context = operation_context
+        self.cognitive_services_endpoint = cognitive_services_endpoint
 
 
 class CallLocator(_serialization.Model):
@@ -725,7 +836,7 @@ class CallLocator(_serialization.Model):
 
 
 class CallParticipant(_serialization.Model):
-    """Contract model of an ACS call participant.
+    """A call participant.
 
     :ivar identifier: Communication identifier of the participant.
     :vartype identifier: ~azure.communication.callautomation.models.CommunicationIdentifierModel
@@ -761,6 +872,16 @@ class CallTransferAccepted(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+     request to the response event.
+    :vartype operation_context: str
+    :ivar result_information: Contains the resulting SIP code, sub-code and message.
+    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
+    :ivar transfer_target: Target who the call is transferred to.
+    :vartype transfer_target:
+     ~azure.communication.callautomation.models.CommunicationIdentifierModel
+    :ivar transferee: the participant who is being transferred away.
+    :vartype transferee: ~azure.communication.callautomation.models.CommunicationIdentifierModel
     :ivar call_connection_id: Call connection ID.
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
@@ -768,72 +889,50 @@ class CallTransferAccepted(_serialization.Model):
     :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
      skype chain ID.
     :vartype correlation_id: str
-    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
-     request to the response event.
-    :vartype operation_context: str
-    :ivar result_information: Contains the resulting SIP code/sub-code and message from NGC
-     services.
-    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
-    :ivar transfer_target: Traffer target: the user that transferee will be transferred to.
-    :vartype transfer_target:
-     ~azure.communication.callautomation.models.CommunicationIdentifierModel
-    :ivar transferee: Transferee: the participant being transferred away.
-    :vartype transferee: ~azure.communication.callautomation.models.CommunicationIdentifierModel
     """
 
     _validation = {
+        "operation_context": {"readonly": True},
+        "result_information": {"readonly": True},
         "transfer_target": {"readonly": True},
         "transferee": {"readonly": True},
+        "call_connection_id": {"readonly": True},
+        "server_call_id": {"readonly": True},
+        "correlation_id": {"readonly": True},
     }
 
     _attribute_map = {
-        "call_connection_id": {"key": "callConnectionId", "type": "str"},
-        "server_call_id": {"key": "serverCallId", "type": "str"},
-        "correlation_id": {"key": "correlationId", "type": "str"},
         "operation_context": {"key": "operationContext", "type": "str"},
         "result_information": {"key": "resultInformation", "type": "ResultInformation"},
         "transfer_target": {"key": "transferTarget", "type": "CommunicationIdentifierModel"},
         "transferee": {"key": "transferee", "type": "CommunicationIdentifierModel"},
+        "call_connection_id": {"key": "callConnectionId", "type": "str"},
+        "server_call_id": {"key": "serverCallId", "type": "str"},
+        "correlation_id": {"key": "correlationId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        call_connection_id: Optional[str] = None,
-        server_call_id: Optional[str] = None,
-        correlation_id: Optional[str] = None,
-        operation_context: Optional[str] = None,
-        result_information: Optional["_models.ResultInformation"] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword call_connection_id: Call connection ID.
-        :paramtype call_connection_id: str
-        :keyword server_call_id: Server call ID.
-        :paramtype server_call_id: str
-        :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-         skype chain ID.
-        :paramtype correlation_id: str
-        :keyword operation_context: Used by customers when calling mid-call actions to correlate the
-         request to the response event.
-        :paramtype operation_context: str
-        :keyword result_information: Contains the resulting SIP code/sub-code and message from NGC
-         services.
-        :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
-        self.call_connection_id = call_connection_id
-        self.server_call_id = server_call_id
-        self.correlation_id = correlation_id
-        self.operation_context = operation_context
-        self.result_information = result_information
+        self.operation_context = None
+        self.result_information = None
         self.transfer_target = None
         self.transferee = None
+        self.call_connection_id = None
+        self.server_call_id = None
+        self.correlation_id = None
 
 
 class CallTransferFailed(_serialization.Model):
     """The call transfer failed event.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+     request to the response event.
+    :vartype operation_context: str
+    :ivar result_information: Contains the resulting SIP code, sub-code and message.
+    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
     :ivar call_connection_id: Call connection ID.
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
@@ -841,58 +940,46 @@ class CallTransferFailed(_serialization.Model):
     :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
      skype chain ID.
     :vartype correlation_id: str
-    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
-     request to the response event.
-    :vartype operation_context: str
-    :ivar result_information: Contains the resulting SIP code/sub-code and message from NGC
-     services.
-    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
     """
 
+    _validation = {
+        "operation_context": {"readonly": True},
+        "result_information": {"readonly": True},
+        "call_connection_id": {"readonly": True},
+        "server_call_id": {"readonly": True},
+        "correlation_id": {"readonly": True},
+    }
+
     _attribute_map = {
+        "operation_context": {"key": "operationContext", "type": "str"},
+        "result_information": {"key": "resultInformation", "type": "ResultInformation"},
         "call_connection_id": {"key": "callConnectionId", "type": "str"},
         "server_call_id": {"key": "serverCallId", "type": "str"},
         "correlation_id": {"key": "correlationId", "type": "str"},
-        "operation_context": {"key": "operationContext", "type": "str"},
-        "result_information": {"key": "resultInformation", "type": "ResultInformation"},
     }
 
-    def __init__(
-        self,
-        *,
-        call_connection_id: Optional[str] = None,
-        server_call_id: Optional[str] = None,
-        correlation_id: Optional[str] = None,
-        operation_context: Optional[str] = None,
-        result_information: Optional["_models.ResultInformation"] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword call_connection_id: Call connection ID.
-        :paramtype call_connection_id: str
-        :keyword server_call_id: Server call ID.
-        :paramtype server_call_id: str
-        :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-         skype chain ID.
-        :paramtype correlation_id: str
-        :keyword operation_context: Used by customers when calling mid-call actions to correlate the
-         request to the response event.
-        :paramtype operation_context: str
-        :keyword result_information: Contains the resulting SIP code/sub-code and message from NGC
-         services.
-        :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
-        self.call_connection_id = call_connection_id
-        self.server_call_id = server_call_id
-        self.correlation_id = correlation_id
-        self.operation_context = operation_context
-        self.result_information = result_information
+        self.operation_context = None
+        self.result_information = None
+        self.call_connection_id = None
+        self.server_call_id = None
+        self.correlation_id = None
 
 
 class CancelAddParticipantFailed(_serialization.Model):
     """Failed cancel add participant event.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+     request to the response event.
+    :vartype operation_context: str
+    :ivar result_information: Contains the resulting SIP code, sub-code and message.
+    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
+    :ivar invitation_id: Invitation ID used to cancel the request.
+    :vartype invitation_id: str
     :ivar call_connection_id: Call connection ID.
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
@@ -900,74 +987,52 @@ class CancelAddParticipantFailed(_serialization.Model):
     :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
      skype chain ID.
     :vartype correlation_id: str
-    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
-     request to the response event.
-    :vartype operation_context: str
-    :ivar result_information: Contains the resulting SIP code/sub-code and message from NGC
-     services.
-    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
-    :ivar invitation_id: Invitation ID used to cancel the request.
-    :vartype invitation_id: str
     """
 
+    _validation = {
+        "operation_context": {"readonly": True},
+        "result_information": {"readonly": True},
+        "invitation_id": {"readonly": True},
+        "call_connection_id": {"readonly": True},
+        "server_call_id": {"readonly": True},
+        "correlation_id": {"readonly": True},
+    }
+
     _attribute_map = {
-        "call_connection_id": {"key": "callConnectionId", "type": "str"},
-        "server_call_id": {"key": "serverCallId", "type": "str"},
-        "correlation_id": {"key": "correlationId", "type": "str"},
         "operation_context": {"key": "operationContext", "type": "str"},
         "result_information": {"key": "resultInformation", "type": "ResultInformation"},
         "invitation_id": {"key": "invitationId", "type": "str"},
+        "call_connection_id": {"key": "callConnectionId", "type": "str"},
+        "server_call_id": {"key": "serverCallId", "type": "str"},
+        "correlation_id": {"key": "correlationId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        call_connection_id: Optional[str] = None,
-        server_call_id: Optional[str] = None,
-        correlation_id: Optional[str] = None,
-        operation_context: Optional[str] = None,
-        result_information: Optional["_models.ResultInformation"] = None,
-        invitation_id: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword call_connection_id: Call connection ID.
-        :paramtype call_connection_id: str
-        :keyword server_call_id: Server call ID.
-        :paramtype server_call_id: str
-        :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-         skype chain ID.
-        :paramtype correlation_id: str
-        :keyword operation_context: Used by customers when calling mid-call actions to correlate the
-         request to the response event.
-        :paramtype operation_context: str
-        :keyword result_information: Contains the resulting SIP code/sub-code and message from NGC
-         services.
-        :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
-        :keyword invitation_id: Invitation ID used to cancel the request.
-        :paramtype invitation_id: str
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
-        self.call_connection_id = call_connection_id
-        self.server_call_id = server_call_id
-        self.correlation_id = correlation_id
-        self.operation_context = operation_context
-        self.result_information = result_information
-        self.invitation_id = invitation_id
+        self.operation_context = None
+        self.result_information = None
+        self.invitation_id = None
+        self.call_connection_id = None
+        self.server_call_id = None
+        self.correlation_id = None
 
 
 class CancelAddParticipantRequest(_serialization.Model):
-    """CancelAddParticipantRequest.
+    """Request payload for cancelling add participant request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar invitation_id: Invitation ID used to add a participant. Required.
     :vartype invitation_id: str
     :ivar operation_context: Used by customers when calling mid-call actions to correlate the
      request to the response event.
     :vartype operation_context: str
-    :ivar callback_uri: The callback URI to override the main callback URI.
-    :vartype callback_uri: str
+    :ivar operation_callback_uri: Set a callback URI that overrides the default callback URI set by
+     CreateCall/AnswerCall for this operation.
+     This setup is per-action. If this is not set, the default callback URI set by
+     CreateCall/AnswerCall will be used.
+    :vartype operation_callback_uri: str
     """
 
     _validation = {
@@ -977,7 +1042,7 @@ class CancelAddParticipantRequest(_serialization.Model):
     _attribute_map = {
         "invitation_id": {"key": "invitationId", "type": "str"},
         "operation_context": {"key": "operationContext", "type": "str"},
-        "callback_uri": {"key": "callbackUri", "type": "str"},
+        "operation_callback_uri": {"key": "operationCallbackUri", "type": "str"},
     }
 
     def __init__(
@@ -985,7 +1050,7 @@ class CancelAddParticipantRequest(_serialization.Model):
         *,
         invitation_id: str,
         operation_context: Optional[str] = None,
-        callback_uri: Optional[str] = None,
+        operation_callback_uri: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -994,17 +1059,20 @@ class CancelAddParticipantRequest(_serialization.Model):
         :keyword operation_context: Used by customers when calling mid-call actions to correlate the
          request to the response event.
         :paramtype operation_context: str
-        :keyword callback_uri: The callback URI to override the main callback URI.
-        :paramtype callback_uri: str
+        :keyword operation_callback_uri: Set a callback URI that overrides the default callback URI set
+         by CreateCall/AnswerCall for this operation.
+         This setup is per-action. If this is not set, the default callback URI set by
+         CreateCall/AnswerCall will be used.
+        :paramtype operation_callback_uri: str
         """
         super().__init__(**kwargs)
         self.invitation_id = invitation_id
         self.operation_context = operation_context
-        self.callback_uri = callback_uri
+        self.operation_callback_uri = operation_callback_uri
 
 
 class CancelAddParticipantResponse(_serialization.Model):
-    """CancelAddParticipantResponse.
+    """Response payload for cancel add participant request.
 
     :ivar invitation_id: Invitation ID used to cancel the add participant action.
     :vartype invitation_id: str
@@ -1031,10 +1099,60 @@ class CancelAddParticipantResponse(_serialization.Model):
         self.operation_context = operation_context
 
 
+class CancelAddParticipantSucceeded(_serialization.Model):
+    """Successful cancel add participant event.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar invitation_id: Invitation ID used to cancel the request.
+    :vartype invitation_id: str
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+     request to the response event.
+    :vartype operation_context: str
+    :ivar result_information:
+    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+     skype chain ID.
+    :vartype correlation_id: str
+    """
+
+    _validation = {
+        "invitation_id": {"readonly": True},
+        "operation_context": {"readonly": True},
+        "result_information": {"readonly": True},
+        "call_connection_id": {"readonly": True},
+        "server_call_id": {"readonly": True},
+        "correlation_id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "invitation_id": {"key": "invitationId", "type": "str"},
+        "operation_context": {"key": "operationContext", "type": "str"},
+        "result_information": {"key": "resultInformation", "type": "ResultInformation"},
+        "call_connection_id": {"key": "callConnectionId", "type": "str"},
+        "server_call_id": {"key": "serverCallId", "type": "str"},
+        "correlation_id": {"key": "correlationId", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.invitation_id = None
+        self.operation_context = None
+        self.result_information = None
+        self.call_connection_id = None
+        self.server_call_id = None
+        self.correlation_id = None
+
+
 class ChannelAffinity(_serialization.Model):
     """Channel affinity for a participant.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar channel: Channel number to which bitstream from a particular participant will be written.
     :vartype channel: int
@@ -1074,7 +1192,7 @@ class ChannelAffinity(_serialization.Model):
 class Choice(_serialization.Model):
     """Choice.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar label: Identifier for a given choice. Required.
     :vartype label: str
@@ -1174,7 +1292,7 @@ class CommunicationError(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar code: The error code. Required.
     :vartype code: str
@@ -1222,7 +1340,7 @@ class CommunicationError(_serialization.Model):
 class CommunicationErrorResponse(_serialization.Model):
     """The Communication Services error.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar error: The Communication Services error. Required.
     :vartype error: ~azure.communication.callautomation.models.CommunicationError
@@ -1311,7 +1429,7 @@ class CommunicationIdentifierModel(_serialization.Model):
 class CommunicationUserIdentifierModel(_serialization.Model):
     """A user that got created with an Azure Communication Services resource.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The Id of the communication user. Required.
     :vartype id: str
@@ -1337,15 +1455,18 @@ class CommunicationUserIdentifierModel(_serialization.Model):
 class ContinuousDtmfRecognitionRequest(_serialization.Model):
     """ContinuousDtmfRecognitionRequest.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar target_participant: Defines options for recognition. Required.
     :vartype target_participant:
      ~azure.communication.callautomation.models.CommunicationIdentifierModel
     :ivar operation_context: The value to identify context of the operation.
     :vartype operation_context: str
-    :ivar callback_uri: The callback URI to override the main callback URI.
-    :vartype callback_uri: str
+    :ivar operation_callback_uri: Set a callback URI that overrides the default callback URI set by
+     CreateCall/AnswerCall for this operation.
+     This setup is per-action. If this is not set, the default callback URI set by
+     CreateCall/AnswerCall will be used.
+    :vartype operation_callback_uri: str
     """
 
     _validation = {
@@ -1355,7 +1476,7 @@ class ContinuousDtmfRecognitionRequest(_serialization.Model):
     _attribute_map = {
         "target_participant": {"key": "targetParticipant", "type": "CommunicationIdentifierModel"},
         "operation_context": {"key": "operationContext", "type": "str"},
-        "callback_uri": {"key": "callbackUri", "type": "str"},
+        "operation_callback_uri": {"key": "operationCallbackUri", "type": "str"},
     }
 
     def __init__(
@@ -1363,7 +1484,7 @@ class ContinuousDtmfRecognitionRequest(_serialization.Model):
         *,
         target_participant: "_models.CommunicationIdentifierModel",
         operation_context: Optional[str] = None,
-        callback_uri: Optional[str] = None,
+        operation_callback_uri: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1372,193 +1493,217 @@ class ContinuousDtmfRecognitionRequest(_serialization.Model):
          ~azure.communication.callautomation.models.CommunicationIdentifierModel
         :keyword operation_context: The value to identify context of the operation.
         :paramtype operation_context: str
-        :keyword callback_uri: The callback URI to override the main callback URI.
-        :paramtype callback_uri: str
+        :keyword operation_callback_uri: Set a callback URI that overrides the default callback URI set
+         by CreateCall/AnswerCall for this operation.
+         This setup is per-action. If this is not set, the default callback URI set by
+         CreateCall/AnswerCall will be used.
+        :paramtype operation_callback_uri: str
         """
         super().__init__(**kwargs)
         self.target_participant = target_participant
         self.operation_context = operation_context
-        self.callback_uri = callback_uri
+        self.operation_callback_uri = operation_callback_uri
 
 
 class ContinuousDtmfRecognitionStopped(_serialization.Model):
-    """ContinuousDtmfRecognitionStopped.
+    """Call connection ID.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+     request to the response event.
+    :vartype operation_context: str
+    :ivar result_information: Contains the resulting SIP code/sub-code and message from NGC
+     services.
+    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
     :ivar call_connection_id: Call connection ID.
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
     :vartype server_call_id: str
-    :ivar correlation_id: Correlation ID for event to call correlation.
+    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+     skype chain ID.
     :vartype correlation_id: str
-    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
-     request to the response event.
-    :vartype operation_context: str
-    :ivar result_information: Contains the resulting SIP code, sub-code and message.
-    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
     """
 
+    _validation = {
+        "operation_context": {"readonly": True},
+        "result_information": {"readonly": True},
+        "call_connection_id": {"readonly": True},
+        "server_call_id": {"readonly": True},
+        "correlation_id": {"readonly": True},
+    }
+
     _attribute_map = {
+        "operation_context": {"key": "operationContext", "type": "str"},
+        "result_information": {"key": "resultInformation", "type": "ResultInformation"},
         "call_connection_id": {"key": "callConnectionId", "type": "str"},
         "server_call_id": {"key": "serverCallId", "type": "str"},
         "correlation_id": {"key": "correlationId", "type": "str"},
-        "operation_context": {"key": "operationContext", "type": "str"},
-        "result_information": {"key": "resultInformation", "type": "ResultInformation"},
     }
 
-    def __init__(
-        self,
-        *,
-        call_connection_id: Optional[str] = None,
-        server_call_id: Optional[str] = None,
-        correlation_id: Optional[str] = None,
-        operation_context: Optional[str] = None,
-        result_information: Optional["_models.ResultInformation"] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword call_connection_id: Call connection ID.
-        :paramtype call_connection_id: str
-        :keyword server_call_id: Server call ID.
-        :paramtype server_call_id: str
-        :keyword correlation_id: Correlation ID for event to call correlation.
-        :paramtype correlation_id: str
-        :keyword operation_context: Used by customers when calling mid-call actions to correlate the
-         request to the response event.
-        :paramtype operation_context: str
-        :keyword result_information: Contains the resulting SIP code, sub-code and message.
-        :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
-        self.call_connection_id = call_connection_id
-        self.server_call_id = server_call_id
-        self.correlation_id = correlation_id
-        self.operation_context = operation_context
-        self.result_information = result_information
+        self.operation_context = None
+        self.result_information = None
+        self.call_connection_id = None
+        self.server_call_id = None
+        self.correlation_id = None
 
 
 class ContinuousDtmfRecognitionToneFailed(_serialization.Model):
     """ContinuousDtmfRecognitionToneFailed.
 
-    :ivar call_connection_id: Call connection ID.
-    :vartype call_connection_id: str
-    :ivar server_call_id: Server call ID.
-    :vartype server_call_id: str
-    :ivar correlation_id: Correlation ID for event to call correlation.
-    :vartype correlation_id: str
-    :ivar result_information: Contains the resulting SIP code, sub-code and message.
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar result_information: Result information defines the code, subcode and message.
     :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
     :ivar operation_context: Used by customers when calling mid-call actions to correlate the
      request to the response event.
     :vartype operation_context: str
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+     skype chain ID.
+    :vartype correlation_id: str
     """
 
+    _validation = {
+        "result_information": {"readonly": True},
+        "operation_context": {"readonly": True},
+        "call_connection_id": {"readonly": True},
+        "server_call_id": {"readonly": True},
+        "correlation_id": {"readonly": True},
+    }
+
     _attribute_map = {
+        "result_information": {"key": "resultInformation", "type": "ResultInformation"},
+        "operation_context": {"key": "operationContext", "type": "str"},
         "call_connection_id": {"key": "callConnectionId", "type": "str"},
         "server_call_id": {"key": "serverCallId", "type": "str"},
         "correlation_id": {"key": "correlationId", "type": "str"},
-        "result_information": {"key": "resultInformation", "type": "ResultInformation"},
-        "operation_context": {"key": "operationContext", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        call_connection_id: Optional[str] = None,
-        server_call_id: Optional[str] = None,
-        correlation_id: Optional[str] = None,
-        result_information: Optional["_models.ResultInformation"] = None,
-        operation_context: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword call_connection_id: Call connection ID.
-        :paramtype call_connection_id: str
-        :keyword server_call_id: Server call ID.
-        :paramtype server_call_id: str
-        :keyword correlation_id: Correlation ID for event to call correlation.
-        :paramtype correlation_id: str
-        :keyword result_information: Contains the resulting SIP code, sub-code and message.
-        :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
-        :keyword operation_context: Used by customers when calling mid-call actions to correlate the
-         request to the response event.
-        :paramtype operation_context: str
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
-        self.call_connection_id = call_connection_id
-        self.server_call_id = server_call_id
-        self.correlation_id = correlation_id
-        self.result_information = result_information
-        self.operation_context = operation_context
+        self.result_information = None
+        self.operation_context = None
+        self.call_connection_id = None
+        self.server_call_id = None
+        self.correlation_id = None
 
 
 class ContinuousDtmfRecognitionToneReceived(_serialization.Model):
     """ContinuousDtmfRecognitionToneReceived.
 
-    :ivar tone_info: Information about Tone.
-    :vartype tone_info: ~azure.communication.callautomation.models.ToneInfo
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar result_information: Result information defines the code, subcode and message.
+    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
+    :ivar sequence_id: The sequence id which can be used to determine if the same tone was played
+     multiple times or if any tones were missed.
+    :vartype sequence_id: int
+    :ivar tone: Known values are: "zero", "one", "two", "three", "four", "five", "six", "seven",
+     "eight", "nine", "a", "b", "c", "d", "pound", and "asterisk".
+    :vartype tone: str or ~azure.communication.callautomation.models.DtmfTone
+    :ivar operation_context:
+    :vartype operation_context: str
     :ivar call_connection_id: Call connection ID.
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
     :vartype server_call_id: str
-    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId or
+    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
      skype chain ID.
     :vartype correlation_id: str
-    :ivar result_information: Contains the resulting SIP code, sub-code and message.
-    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
-    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
-     request to the response event.
-    :vartype operation_context: str
     """
 
+    _validation = {
+        "result_information": {"readonly": True},
+        "sequence_id": {"readonly": True},
+        "operation_context": {"readonly": True},
+        "call_connection_id": {"readonly": True},
+        "server_call_id": {"readonly": True},
+        "correlation_id": {"readonly": True},
+    }
+
     _attribute_map = {
-        "tone_info": {"key": "toneInfo", "type": "ToneInfo"},
+        "result_information": {"key": "resultInformation", "type": "ResultInformation"},
+        "sequence_id": {"key": "sequenceId", "type": "int"},
+        "tone": {"key": "tone", "type": "str"},
+        "operation_context": {"key": "operationContext", "type": "str"},
         "call_connection_id": {"key": "callConnectionId", "type": "str"},
         "server_call_id": {"key": "serverCallId", "type": "str"},
         "correlation_id": {"key": "correlationId", "type": "str"},
-        "result_information": {"key": "resultInformation", "type": "ResultInformation"},
-        "operation_context": {"key": "operationContext", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        tone_info: Optional["_models.ToneInfo"] = None,
-        call_connection_id: Optional[str] = None,
-        server_call_id: Optional[str] = None,
-        correlation_id: Optional[str] = None,
-        result_information: Optional["_models.ResultInformation"] = None,
-        operation_context: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, *, tone: Optional[Union[str, "_models.DtmfTone"]] = None, **kwargs: Any) -> None:
         """
-        :keyword tone_info: Information about Tone.
-        :paramtype tone_info: ~azure.communication.callautomation.models.ToneInfo
-        :keyword call_connection_id: Call connection ID.
-        :paramtype call_connection_id: str
-        :keyword server_call_id: Server call ID.
-        :paramtype server_call_id: str
-        :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId or
-         skype chain ID.
-        :paramtype correlation_id: str
-        :keyword result_information: Contains the resulting SIP code, sub-code and message.
-        :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
-        :keyword operation_context: Used by customers when calling mid-call actions to correlate the
-         request to the response event.
-        :paramtype operation_context: str
+        :keyword tone: Known values are: "zero", "one", "two", "three", "four", "five", "six", "seven",
+         "eight", "nine", "a", "b", "c", "d", "pound", and "asterisk".
+        :paramtype tone: str or ~azure.communication.callautomation.models.DtmfTone
         """
         super().__init__(**kwargs)
-        self.tone_info = tone_info
-        self.call_connection_id = call_connection_id
-        self.server_call_id = server_call_id
-        self.correlation_id = correlation_id
-        self.result_information = result_information
-        self.operation_context = operation_context
+        self.result_information = None
+        self.sequence_id = None
+        self.tone = tone
+        self.operation_context = None
+        self.call_connection_id = None
+        self.server_call_id = None
+        self.correlation_id = None
+
+
+class CreateCallFailed(_serialization.Model):
+    """The CreateCallFailed event.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+     request to the response event.
+    :vartype operation_context: str
+    :ivar result_information: Contains the resulting SIP code, sub-code and message.
+    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+     skype chain ID.
+    :vartype correlation_id: str
+    """
+
+    _validation = {
+        "operation_context": {"readonly": True},
+        "result_information": {"readonly": True},
+        "call_connection_id": {"readonly": True},
+        "server_call_id": {"readonly": True},
+        "correlation_id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "operation_context": {"key": "operationContext", "type": "str"},
+        "result_information": {"key": "resultInformation", "type": "ResultInformation"},
+        "call_connection_id": {"key": "callConnectionId", "type": "str"},
+        "server_call_id": {"key": "serverCallId", "type": "str"},
+        "correlation_id": {"key": "correlationId", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.operation_context = None
+        self.result_information = None
+        self.call_connection_id = None
+        self.server_call_id = None
+        self.correlation_id = None
 
 
 class CreateCallRequest(_serialization.Model):
     """The request payload for creating the call.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar targets: The targets of the call. Required.
     :vartype targets: list[~azure.communication.callautomation.models.CommunicationIdentifierModel]
@@ -1569,9 +1714,8 @@ class CreateCallRequest(_serialization.Model):
      ~azure.communication.callautomation.models.PhoneNumberIdentifierModel
     :ivar source_display_name: Display name of the call if dialing out to a pstn number.
     :vartype source_display_name: str
-    :ivar source_identity: The identifier of the source of the call.
-    :vartype source_identity:
-     ~azure.communication.callautomation.models.CommunicationUserIdentifierModel
+    :ivar source: The identifier of the source of the call.
+    :vartype source: ~azure.communication.callautomation.models.CommunicationUserIdentifierModel
     :ivar operation_context: A customer set value used to track the answering of a call.
     :vartype operation_context: str
     :ivar callback_uri: The callback URI. Required.
@@ -1582,11 +1726,12 @@ class CreateCallRequest(_serialization.Model):
     :ivar transcription_configuration: Live Transcription Configuration.
     :vartype transcription_configuration:
      ~azure.communication.callautomation.models.TranscriptionConfiguration
-    :ivar azure_cognitive_services_endpoint_url: The identifier of the Cognitive Service resource
-     assigned to this call.
-    :vartype azure_cognitive_services_endpoint_url: str
-    :ivar custom_context: Used by customer to send custom context to targets.
-    :vartype custom_context: ~azure.communication.callautomation.models.CustomContext
+    :ivar call_intelligence_options: AI options for the call.
+    :vartype call_intelligence_options:
+     ~azure.communication.callautomation.models.CallIntelligenceOptions
+    :ivar custom_calling_context: Used by customer to send custom calling context to targets.
+    :vartype custom_calling_context:
+     ~azure.communication.callautomation.models.CustomCallingContext
     """
 
     _validation = {
@@ -1598,13 +1743,13 @@ class CreateCallRequest(_serialization.Model):
         "targets": {"key": "targets", "type": "[CommunicationIdentifierModel]"},
         "source_caller_id_number": {"key": "sourceCallerIdNumber", "type": "PhoneNumberIdentifierModel"},
         "source_display_name": {"key": "sourceDisplayName", "type": "str"},
-        "source_identity": {"key": "sourceIdentity", "type": "CommunicationUserIdentifierModel"},
+        "source": {"key": "source", "type": "CommunicationUserIdentifierModel"},
         "operation_context": {"key": "operationContext", "type": "str"},
         "callback_uri": {"key": "callbackUri", "type": "str"},
         "media_streaming_configuration": {"key": "mediaStreamingConfiguration", "type": "MediaStreamingConfiguration"},
         "transcription_configuration": {"key": "transcriptionConfiguration", "type": "TranscriptionConfiguration"},
-        "azure_cognitive_services_endpoint_url": {"key": "azureCognitiveServicesEndpointUrl", "type": "str"},
-        "custom_context": {"key": "customContext", "type": "CustomContext"},
+        "call_intelligence_options": {"key": "callIntelligenceOptions", "type": "CallIntelligenceOptions"},
+        "custom_calling_context": {"key": "customCallingContext", "type": "CustomCallingContext"},
     }
 
     def __init__(
@@ -1614,12 +1759,12 @@ class CreateCallRequest(_serialization.Model):
         callback_uri: str,
         source_caller_id_number: Optional["_models.PhoneNumberIdentifierModel"] = None,
         source_display_name: Optional[str] = None,
-        source_identity: Optional["_models.CommunicationUserIdentifierModel"] = None,
+        source: Optional["_models.CommunicationUserIdentifierModel"] = None,
         operation_context: Optional[str] = None,
         media_streaming_configuration: Optional["_models.MediaStreamingConfiguration"] = None,
         transcription_configuration: Optional["_models.TranscriptionConfiguration"] = None,
-        azure_cognitive_services_endpoint_url: Optional[str] = None,
-        custom_context: Optional["_models.CustomContext"] = None,
+        call_intelligence_options: Optional["_models.CallIntelligenceOptions"] = None,
+        custom_calling_context: Optional["_models.CustomCallingContext"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1633,9 +1778,8 @@ class CreateCallRequest(_serialization.Model):
          ~azure.communication.callautomation.models.PhoneNumberIdentifierModel
         :keyword source_display_name: Display name of the call if dialing out to a pstn number.
         :paramtype source_display_name: str
-        :keyword source_identity: The identifier of the source of the call.
-        :paramtype source_identity:
-         ~azure.communication.callautomation.models.CommunicationUserIdentifierModel
+        :keyword source: The identifier of the source of the call.
+        :paramtype source: ~azure.communication.callautomation.models.CommunicationUserIdentifierModel
         :keyword operation_context: A customer set value used to track the answering of a call.
         :paramtype operation_context: str
         :keyword callback_uri: The callback URI. Required.
@@ -1646,27 +1790,28 @@ class CreateCallRequest(_serialization.Model):
         :keyword transcription_configuration: Live Transcription Configuration.
         :paramtype transcription_configuration:
          ~azure.communication.callautomation.models.TranscriptionConfiguration
-        :keyword azure_cognitive_services_endpoint_url: The identifier of the Cognitive Service
-         resource assigned to this call.
-        :paramtype azure_cognitive_services_endpoint_url: str
-        :keyword custom_context: Used by customer to send custom context to targets.
-        :paramtype custom_context: ~azure.communication.callautomation.models.CustomContext
+        :keyword call_intelligence_options: AI options for the call.
+        :paramtype call_intelligence_options:
+         ~azure.communication.callautomation.models.CallIntelligenceOptions
+        :keyword custom_calling_context: Used by customer to send custom calling context to targets.
+        :paramtype custom_calling_context:
+         ~azure.communication.callautomation.models.CustomCallingContext
         """
         super().__init__(**kwargs)
         self.targets = targets
         self.source_caller_id_number = source_caller_id_number
         self.source_display_name = source_display_name
-        self.source_identity = source_identity
+        self.source = source
         self.operation_context = operation_context
         self.callback_uri = callback_uri
         self.media_streaming_configuration = media_streaming_configuration
         self.transcription_configuration = transcription_configuration
-        self.azure_cognitive_services_endpoint_url = azure_cognitive_services_endpoint_url
-        self.custom_context = custom_context
+        self.call_intelligence_options = call_intelligence_options
+        self.custom_calling_context = custom_calling_context
 
 
-class CustomContext(_serialization.Model):
-    """CustomContext.
+class CustomCallingContext(_serialization.Model):
+    """CustomCallingContext.
 
     :ivar voip_headers: Dictionary of :code:`<string>`.
     :vartype voip_headers: dict[str, str]
@@ -1702,13 +1847,6 @@ class DialogCompleted(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar call_connection_id: Call connection ID.
-    :vartype call_connection_id: str
-    :ivar server_call_id: Server call ID.
-    :vartype server_call_id: str
-    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-     skype chain ID.
-    :vartype correlation_id: str
     :ivar operation_context: Used by customers when calling answerCall action to correlate the
      request to the response event.
     :vartype operation_context: str
@@ -1720,51 +1858,50 @@ class DialogCompleted(_serialization.Model):
     :vartype dialog_input_type: str or ~azure.communication.callautomation.models.DialogInputType
     :ivar dialog_id: Dialog ID.
     :vartype dialog_id: str
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+     skype chain ID.
+    :vartype correlation_id: str
     """
 
     _validation = {
-        "call_connection_id": {"readonly": True},
         "operation_context": {"readonly": True},
         "result_information": {"readonly": True},
         "dialog_id": {"readonly": True},
+        "call_connection_id": {"readonly": True},
+        "server_call_id": {"readonly": True},
+        "correlation_id": {"readonly": True},
     }
 
     _attribute_map = {
-        "call_connection_id": {"key": "callConnectionId", "type": "str"},
-        "server_call_id": {"key": "serverCallId", "type": "str"},
-        "correlation_id": {"key": "correlationId", "type": "str"},
         "operation_context": {"key": "operationContext", "type": "str"},
         "result_information": {"key": "resultInformation", "type": "ResultInformation"},
         "dialog_input_type": {"key": "dialogInputType", "type": "str"},
         "dialog_id": {"key": "dialogId", "type": "str"},
+        "call_connection_id": {"key": "callConnectionId", "type": "str"},
+        "server_call_id": {"key": "serverCallId", "type": "str"},
+        "correlation_id": {"key": "correlationId", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        server_call_id: Optional[str] = None,
-        correlation_id: Optional[str] = None,
-        dialog_input_type: Optional[Union[str, "_models.DialogInputType"]] = None,
-        **kwargs: Any
+        self, *, dialog_input_type: Optional[Union[str, "_models.DialogInputType"]] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword server_call_id: Server call ID.
-        :paramtype server_call_id: str
-        :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-         skype chain ID.
-        :paramtype correlation_id: str
         :keyword dialog_input_type: Determines the type of the dialog. Known values are:
          "powerVirtualAgents" and "azureOpenAI".
         :paramtype dialog_input_type: str or ~azure.communication.callautomation.models.DialogInputType
         """
         super().__init__(**kwargs)
-        self.call_connection_id = None
-        self.server_call_id = server_call_id
-        self.correlation_id = correlation_id
         self.operation_context = None
         self.result_information = None
         self.dialog_input_type = dialog_input_type
         self.dialog_id = None
+        self.call_connection_id = None
+        self.server_call_id = None
+        self.correlation_id = None
 
 
 class DialogConsent(_serialization.Model):
@@ -1772,13 +1909,8 @@ class DialogConsent(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar call_connection_id: Call connection ID.
-    :vartype call_connection_id: str
-    :ivar server_call_id: Server call ID.
-    :vartype server_call_id: str
-    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-     skype chain ID.
-    :vartype correlation_id: str
+    :ivar user_consent: UserConsent data from the Conversation Conductor.
+    :vartype user_consent: ~azure.communication.callautomation.models.UserConsent
     :ivar operation_context: Used by customers when calling answerCall action to correlate the
      request to the response event.
     :vartype operation_context: str
@@ -1788,58 +1920,55 @@ class DialogConsent(_serialization.Model):
     :ivar dialog_input_type: Determines the type of the dialog. Known values are:
      "powerVirtualAgents" and "azureOpenAI".
     :vartype dialog_input_type: str or ~azure.communication.callautomation.models.DialogInputType
-    :ivar user_consent: UserConsent data from the Conversation Conductor.
-    :vartype user_consent: ~azure.communication.callautomation.models.UserConsent
     :ivar dialog_id: Dialog ID.
     :vartype dialog_id: str
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+     skype chain ID.
+    :vartype correlation_id: str
     """
 
     _validation = {
-        "call_connection_id": {"readonly": True},
+        "user_consent": {"readonly": True},
         "operation_context": {"readonly": True},
         "result_information": {"readonly": True},
-        "user_consent": {"readonly": True},
         "dialog_id": {"readonly": True},
+        "call_connection_id": {"readonly": True},
+        "server_call_id": {"readonly": True},
+        "correlation_id": {"readonly": True},
     }
 
     _attribute_map = {
-        "call_connection_id": {"key": "callConnectionId", "type": "str"},
-        "server_call_id": {"key": "serverCallId", "type": "str"},
-        "correlation_id": {"key": "correlationId", "type": "str"},
+        "user_consent": {"key": "userConsent", "type": "UserConsent"},
         "operation_context": {"key": "operationContext", "type": "str"},
         "result_information": {"key": "resultInformation", "type": "ResultInformation"},
         "dialog_input_type": {"key": "dialogInputType", "type": "str"},
-        "user_consent": {"key": "userConsent", "type": "UserConsent"},
         "dialog_id": {"key": "dialogId", "type": "str"},
+        "call_connection_id": {"key": "callConnectionId", "type": "str"},
+        "server_call_id": {"key": "serverCallId", "type": "str"},
+        "correlation_id": {"key": "correlationId", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        server_call_id: Optional[str] = None,
-        correlation_id: Optional[str] = None,
-        dialog_input_type: Optional[Union[str, "_models.DialogInputType"]] = None,
-        **kwargs: Any
+        self, *, dialog_input_type: Optional[Union[str, "_models.DialogInputType"]] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword server_call_id: Server call ID.
-        :paramtype server_call_id: str
-        :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-         skype chain ID.
-        :paramtype correlation_id: str
         :keyword dialog_input_type: Determines the type of the dialog. Known values are:
          "powerVirtualAgents" and "azureOpenAI".
         :paramtype dialog_input_type: str or ~azure.communication.callautomation.models.DialogInputType
         """
         super().__init__(**kwargs)
-        self.call_connection_id = None
-        self.server_call_id = server_call_id
-        self.correlation_id = correlation_id
+        self.user_consent = None
         self.operation_context = None
         self.result_information = None
         self.dialog_input_type = dialog_input_type
-        self.user_consent = None
         self.dialog_id = None
+        self.call_connection_id = None
+        self.server_call_id = None
+        self.correlation_id = None
 
 
 class DialogFailed(_serialization.Model):
@@ -1847,13 +1976,6 @@ class DialogFailed(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar call_connection_id: Call connection ID.
-    :vartype call_connection_id: str
-    :ivar server_call_id: Server call ID.
-    :vartype server_call_id: str
-    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-     skype chain ID.
-    :vartype correlation_id: str
     :ivar operation_context: Used by customers when calling answerCall action to correlate the
      request to the response event.
     :vartype operation_context: str
@@ -1865,51 +1987,50 @@ class DialogFailed(_serialization.Model):
     :vartype dialog_input_type: str or ~azure.communication.callautomation.models.DialogInputType
     :ivar dialog_id: Dialog ID.
     :vartype dialog_id: str
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+     skype chain ID.
+    :vartype correlation_id: str
     """
 
     _validation = {
-        "call_connection_id": {"readonly": True},
         "operation_context": {"readonly": True},
         "result_information": {"readonly": True},
         "dialog_id": {"readonly": True},
+        "call_connection_id": {"readonly": True},
+        "server_call_id": {"readonly": True},
+        "correlation_id": {"readonly": True},
     }
 
     _attribute_map = {
-        "call_connection_id": {"key": "callConnectionId", "type": "str"},
-        "server_call_id": {"key": "serverCallId", "type": "str"},
-        "correlation_id": {"key": "correlationId", "type": "str"},
         "operation_context": {"key": "operationContext", "type": "str"},
         "result_information": {"key": "resultInformation", "type": "ResultInformation"},
         "dialog_input_type": {"key": "dialogInputType", "type": "str"},
         "dialog_id": {"key": "dialogId", "type": "str"},
+        "call_connection_id": {"key": "callConnectionId", "type": "str"},
+        "server_call_id": {"key": "serverCallId", "type": "str"},
+        "correlation_id": {"key": "correlationId", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        server_call_id: Optional[str] = None,
-        correlation_id: Optional[str] = None,
-        dialog_input_type: Optional[Union[str, "_models.DialogInputType"]] = None,
-        **kwargs: Any
+        self, *, dialog_input_type: Optional[Union[str, "_models.DialogInputType"]] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword server_call_id: Server call ID.
-        :paramtype server_call_id: str
-        :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-         skype chain ID.
-        :paramtype correlation_id: str
         :keyword dialog_input_type: Determines the type of the dialog. Known values are:
          "powerVirtualAgents" and "azureOpenAI".
         :paramtype dialog_input_type: str or ~azure.communication.callautomation.models.DialogInputType
         """
         super().__init__(**kwargs)
-        self.call_connection_id = None
-        self.server_call_id = server_call_id
-        self.correlation_id = correlation_id
         self.operation_context = None
         self.result_information = None
         self.dialog_input_type = dialog_input_type
         self.dialog_id = None
+        self.call_connection_id = None
+        self.server_call_id = None
+        self.correlation_id = None
 
 
 class DialogHangup(_serialization.Model):
@@ -1917,13 +2038,6 @@ class DialogHangup(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar call_connection_id: Call connection ID.
-    :vartype call_connection_id: str
-    :ivar server_call_id: Server call ID.
-    :vartype server_call_id: str
-    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-     skype chain ID.
-    :vartype correlation_id: str
     :ivar operation_context: Used by customers when calling answerCall action to correlate the
      request to the response event.
     :vartype operation_context: str
@@ -1937,54 +2051,53 @@ class DialogHangup(_serialization.Model):
     :vartype dialog_id: str
     :ivar ivr_context: Ivr Context.
     :vartype ivr_context: JSON
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+     skype chain ID.
+    :vartype correlation_id: str
     """
 
     _validation = {
-        "call_connection_id": {"readonly": True},
         "operation_context": {"readonly": True},
         "result_information": {"readonly": True},
         "dialog_id": {"readonly": True},
         "ivr_context": {"readonly": True},
+        "call_connection_id": {"readonly": True},
+        "server_call_id": {"readonly": True},
+        "correlation_id": {"readonly": True},
     }
 
     _attribute_map = {
-        "call_connection_id": {"key": "callConnectionId", "type": "str"},
-        "server_call_id": {"key": "serverCallId", "type": "str"},
-        "correlation_id": {"key": "correlationId", "type": "str"},
         "operation_context": {"key": "operationContext", "type": "str"},
         "result_information": {"key": "resultInformation", "type": "ResultInformation"},
         "dialog_input_type": {"key": "dialogInputType", "type": "str"},
         "dialog_id": {"key": "dialogId", "type": "str"},
         "ivr_context": {"key": "ivrContext", "type": "object"},
+        "call_connection_id": {"key": "callConnectionId", "type": "str"},
+        "server_call_id": {"key": "serverCallId", "type": "str"},
+        "correlation_id": {"key": "correlationId", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        server_call_id: Optional[str] = None,
-        correlation_id: Optional[str] = None,
-        dialog_input_type: Optional[Union[str, "_models.DialogInputType"]] = None,
-        **kwargs: Any
+        self, *, dialog_input_type: Optional[Union[str, "_models.DialogInputType"]] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword server_call_id: Server call ID.
-        :paramtype server_call_id: str
-        :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-         skype chain ID.
-        :paramtype correlation_id: str
         :keyword dialog_input_type: Determines the type of the dialog. Known values are:
          "powerVirtualAgents" and "azureOpenAI".
         :paramtype dialog_input_type: str or ~azure.communication.callautomation.models.DialogInputType
         """
         super().__init__(**kwargs)
-        self.call_connection_id = None
-        self.server_call_id = server_call_id
-        self.correlation_id = correlation_id
         self.operation_context = None
         self.result_information = None
         self.dialog_input_type = dialog_input_type
         self.dialog_id = None
         self.ivr_context = None
+        self.call_connection_id = None
+        self.server_call_id = None
+        self.correlation_id = None
 
 
 class DialogLanguageChange(_serialization.Model):
@@ -1992,13 +2105,8 @@ class DialogLanguageChange(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar call_connection_id: Call connection ID.
-    :vartype call_connection_id: str
-    :ivar server_call_id: Server call ID.
-    :vartype server_call_id: str
-    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-     skype chain ID.
-    :vartype correlation_id: str
+    :ivar selected_language: Selected Language.
+    :vartype selected_language: str
     :ivar operation_context: Used by customers when calling answerCall action to correlate the
      request to the response event.
     :vartype operation_context: str
@@ -2010,93 +2118,58 @@ class DialogLanguageChange(_serialization.Model):
     :vartype dialog_input_type: str or ~azure.communication.callautomation.models.DialogInputType
     :ivar dialog_id: Dialog ID.
     :vartype dialog_id: str
-    :ivar selected_language: Selected Language.
-    :vartype selected_language: str
     :ivar ivr_context: Ivr Context.
     :vartype ivr_context: JSON
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+     skype chain ID.
+    :vartype correlation_id: str
     """
 
     _validation = {
-        "call_connection_id": {"readonly": True},
+        "selected_language": {"readonly": True},
         "operation_context": {"readonly": True},
         "result_information": {"readonly": True},
         "dialog_id": {"readonly": True},
-        "selected_language": {"readonly": True},
         "ivr_context": {"readonly": True},
+        "call_connection_id": {"readonly": True},
+        "server_call_id": {"readonly": True},
+        "correlation_id": {"readonly": True},
     }
 
     _attribute_map = {
-        "call_connection_id": {"key": "callConnectionId", "type": "str"},
-        "server_call_id": {"key": "serverCallId", "type": "str"},
-        "correlation_id": {"key": "correlationId", "type": "str"},
+        "selected_language": {"key": "selectedLanguage", "type": "str"},
         "operation_context": {"key": "operationContext", "type": "str"},
         "result_information": {"key": "resultInformation", "type": "ResultInformation"},
         "dialog_input_type": {"key": "dialogInputType", "type": "str"},
         "dialog_id": {"key": "dialogId", "type": "str"},
-        "selected_language": {"key": "selectedLanguage", "type": "str"},
         "ivr_context": {"key": "ivrContext", "type": "object"},
+        "call_connection_id": {"key": "callConnectionId", "type": "str"},
+        "server_call_id": {"key": "serverCallId", "type": "str"},
+        "correlation_id": {"key": "correlationId", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        server_call_id: Optional[str] = None,
-        correlation_id: Optional[str] = None,
-        dialog_input_type: Optional[Union[str, "_models.DialogInputType"]] = None,
-        **kwargs: Any
+        self, *, dialog_input_type: Optional[Union[str, "_models.DialogInputType"]] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword server_call_id: Server call ID.
-        :paramtype server_call_id: str
-        :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-         skype chain ID.
-        :paramtype correlation_id: str
         :keyword dialog_input_type: Determines the type of the dialog. Known values are:
          "powerVirtualAgents" and "azureOpenAI".
         :paramtype dialog_input_type: str or ~azure.communication.callautomation.models.DialogInputType
         """
         super().__init__(**kwargs)
-        self.call_connection_id = None
-        self.server_call_id = server_call_id
-        self.correlation_id = correlation_id
+        self.selected_language = None
         self.operation_context = None
         self.result_information = None
         self.dialog_input_type = dialog_input_type
         self.dialog_id = None
-        self.selected_language = None
         self.ivr_context = None
-
-
-class DialogOptions(_serialization.Model):
-    """DialogOptions.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar bot_app_id: Bot identifier.
-    :vartype bot_app_id: str
-    :ivar dialog_context: Dialog context. Required.
-    :vartype dialog_context: dict[str, JSON]
-    """
-
-    _validation = {
-        "dialog_context": {"required": True},
-    }
-
-    _attribute_map = {
-        "bot_app_id": {"key": "botAppId", "type": "str"},
-        "dialog_context": {"key": "dialogContext", "type": "{object}"},
-    }
-
-    def __init__(self, *, dialog_context: Dict[str, JSON], bot_app_id: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword bot_app_id: Bot identifier.
-        :paramtype bot_app_id: str
-        :keyword dialog_context: Dialog context. Required.
-        :paramtype dialog_context: dict[str, JSON]
-        """
-        super().__init__(**kwargs)
-        self.bot_app_id = bot_app_id
-        self.dialog_context = dialog_context
+        self.call_connection_id = None
+        self.server_call_id = None
+        self.correlation_id = None
 
 
 class DialogSensitivityUpdate(_serialization.Model):
@@ -2104,13 +2177,8 @@ class DialogSensitivityUpdate(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar call_connection_id: Call connection ID.
-    :vartype call_connection_id: str
-    :ivar server_call_id: Server call ID.
-    :vartype server_call_id: str
-    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-     skype chain ID.
-    :vartype correlation_id: str
+    :ivar sensitive_mask: SensitiveMask.
+    :vartype sensitive_mask: bool
     :ivar operation_context: Used by customers when calling answerCall action to correlate the
      request to the response event.
     :vartype operation_context: str
@@ -2122,56 +2190,53 @@ class DialogSensitivityUpdate(_serialization.Model):
     :vartype dialog_input_type: str or ~azure.communication.callautomation.models.DialogInputType
     :ivar dialog_id: Dialog ID.
     :vartype dialog_id: str
-    :ivar sensitive_mask: SensitiveMask.
-    :vartype sensitive_mask: bool
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+     skype chain ID.
+    :vartype correlation_id: str
     """
 
     _validation = {
-        "call_connection_id": {"readonly": True},
+        "sensitive_mask": {"readonly": True},
         "operation_context": {"readonly": True},
         "result_information": {"readonly": True},
         "dialog_id": {"readonly": True},
-        "sensitive_mask": {"readonly": True},
+        "call_connection_id": {"readonly": True},
+        "server_call_id": {"readonly": True},
+        "correlation_id": {"readonly": True},
     }
 
     _attribute_map = {
-        "call_connection_id": {"key": "callConnectionId", "type": "str"},
-        "server_call_id": {"key": "serverCallId", "type": "str"},
-        "correlation_id": {"key": "correlationId", "type": "str"},
+        "sensitive_mask": {"key": "sensitiveMask", "type": "bool"},
         "operation_context": {"key": "operationContext", "type": "str"},
         "result_information": {"key": "resultInformation", "type": "ResultInformation"},
         "dialog_input_type": {"key": "dialogInputType", "type": "str"},
         "dialog_id": {"key": "dialogId", "type": "str"},
-        "sensitive_mask": {"key": "sensitiveMask", "type": "bool"},
+        "call_connection_id": {"key": "callConnectionId", "type": "str"},
+        "server_call_id": {"key": "serverCallId", "type": "str"},
+        "correlation_id": {"key": "correlationId", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        server_call_id: Optional[str] = None,
-        correlation_id: Optional[str] = None,
-        dialog_input_type: Optional[Union[str, "_models.DialogInputType"]] = None,
-        **kwargs: Any
+        self, *, dialog_input_type: Optional[Union[str, "_models.DialogInputType"]] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword server_call_id: Server call ID.
-        :paramtype server_call_id: str
-        :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-         skype chain ID.
-        :paramtype correlation_id: str
         :keyword dialog_input_type: Determines the type of the dialog. Known values are:
          "powerVirtualAgents" and "azureOpenAI".
         :paramtype dialog_input_type: str or ~azure.communication.callautomation.models.DialogInputType
         """
         super().__init__(**kwargs)
-        self.call_connection_id = None
-        self.server_call_id = server_call_id
-        self.correlation_id = correlation_id
+        self.sensitive_mask = None
         self.operation_context = None
         self.result_information = None
         self.dialog_input_type = dialog_input_type
         self.dialog_id = None
-        self.sensitive_mask = None
+        self.call_connection_id = None
+        self.server_call_id = None
+        self.correlation_id = None
 
 
 class DialogStarted(_serialization.Model):
@@ -2179,13 +2244,6 @@ class DialogStarted(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar call_connection_id: Call connection ID.
-    :vartype call_connection_id: str
-    :ivar server_call_id: Server call ID.
-    :vartype server_call_id: str
-    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-     skype chain ID.
-    :vartype correlation_id: str
     :ivar operation_context: Used by customers when calling answerCall action to correlate the
      request to the response event.
     :vartype operation_context: str
@@ -2197,51 +2255,50 @@ class DialogStarted(_serialization.Model):
     :vartype dialog_input_type: str or ~azure.communication.callautomation.models.DialogInputType
     :ivar dialog_id: Dialog ID.
     :vartype dialog_id: str
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+     skype chain ID.
+    :vartype correlation_id: str
     """
 
     _validation = {
-        "call_connection_id": {"readonly": True},
         "operation_context": {"readonly": True},
         "result_information": {"readonly": True},
         "dialog_id": {"readonly": True},
+        "call_connection_id": {"readonly": True},
+        "server_call_id": {"readonly": True},
+        "correlation_id": {"readonly": True},
     }
 
     _attribute_map = {
-        "call_connection_id": {"key": "callConnectionId", "type": "str"},
-        "server_call_id": {"key": "serverCallId", "type": "str"},
-        "correlation_id": {"key": "correlationId", "type": "str"},
         "operation_context": {"key": "operationContext", "type": "str"},
         "result_information": {"key": "resultInformation", "type": "ResultInformation"},
         "dialog_input_type": {"key": "dialogInputType", "type": "str"},
         "dialog_id": {"key": "dialogId", "type": "str"},
+        "call_connection_id": {"key": "callConnectionId", "type": "str"},
+        "server_call_id": {"key": "serverCallId", "type": "str"},
+        "correlation_id": {"key": "correlationId", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        server_call_id: Optional[str] = None,
-        correlation_id: Optional[str] = None,
-        dialog_input_type: Optional[Union[str, "_models.DialogInputType"]] = None,
-        **kwargs: Any
+        self, *, dialog_input_type: Optional[Union[str, "_models.DialogInputType"]] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword server_call_id: Server call ID.
-        :paramtype server_call_id: str
-        :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-         skype chain ID.
-        :paramtype correlation_id: str
         :keyword dialog_input_type: Determines the type of the dialog. Known values are:
          "powerVirtualAgents" and "azureOpenAI".
         :paramtype dialog_input_type: str or ~azure.communication.callautomation.models.DialogInputType
         """
         super().__init__(**kwargs)
-        self.call_connection_id = None
-        self.server_call_id = server_call_id
-        self.correlation_id = correlation_id
         self.operation_context = None
         self.result_information = None
         self.dialog_input_type = dialog_input_type
         self.dialog_id = None
+        self.call_connection_id = None
+        self.server_call_id = None
+        self.correlation_id = None
 
 
 class DialogStateResponse(_serialization.Model):
@@ -2249,19 +2306,15 @@ class DialogStateResponse(_serialization.Model):
 
     :ivar dialog_id: The dialog ID.
     :vartype dialog_id: str
-    :ivar dialog_options: Defines options for dialog.
-    :vartype dialog_options: ~azure.communication.callautomation.models.DialogOptions
-    :ivar dialog_input_type: Determines the type of the dialog. Known values are:
-     "powerVirtualAgents" and "azureOpenAI".
-    :vartype dialog_input_type: str or ~azure.communication.callautomation.models.DialogInputType
+    :ivar dialog: Defines dialog.
+    :vartype dialog: ~azure.communication.callautomation.models.BaseDialog
     :ivar operation_context: The value to identify context of the operation.
     :vartype operation_context: str
     """
 
     _attribute_map = {
         "dialog_id": {"key": "dialogId", "type": "str"},
-        "dialog_options": {"key": "dialogOptions", "type": "DialogOptions"},
-        "dialog_input_type": {"key": "dialogInputType", "type": "str"},
+        "dialog": {"key": "dialog", "type": "BaseDialog"},
         "operation_context": {"key": "operationContext", "type": "str"},
     }
 
@@ -2269,26 +2322,21 @@ class DialogStateResponse(_serialization.Model):
         self,
         *,
         dialog_id: Optional[str] = None,
-        dialog_options: Optional["_models.DialogOptions"] = None,
-        dialog_input_type: Optional[Union[str, "_models.DialogInputType"]] = None,
+        dialog: Optional["_models.BaseDialog"] = None,
         operation_context: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword dialog_id: The dialog ID.
         :paramtype dialog_id: str
-        :keyword dialog_options: Defines options for dialog.
-        :paramtype dialog_options: ~azure.communication.callautomation.models.DialogOptions
-        :keyword dialog_input_type: Determines the type of the dialog. Known values are:
-         "powerVirtualAgents" and "azureOpenAI".
-        :paramtype dialog_input_type: str or ~azure.communication.callautomation.models.DialogInputType
+        :keyword dialog: Defines dialog.
+        :paramtype dialog: ~azure.communication.callautomation.models.BaseDialog
         :keyword operation_context: The value to identify context of the operation.
         :paramtype operation_context: str
         """
         super().__init__(**kwargs)
         self.dialog_id = dialog_id
-        self.dialog_options = dialog_options
-        self.dialog_input_type = dialog_input_type
+        self.dialog = dialog
         self.operation_context = operation_context
 
 
@@ -2297,13 +2345,10 @@ class DialogTransfer(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar call_connection_id: Call connection ID.
-    :vartype call_connection_id: str
-    :ivar server_call_id: Server call ID.
-    :vartype server_call_id: str
-    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-     skype chain ID.
-    :vartype correlation_id: str
+    :ivar transfer_type: Transfer type.
+    :vartype transfer_type: str
+    :ivar transfer_destination: Transfer destination.
+    :vartype transfer_destination: str
     :ivar operation_context: Used by customers when calling answerCall action to correlate the
      request to the response event.
     :vartype operation_context: str
@@ -2315,66 +2360,128 @@ class DialogTransfer(_serialization.Model):
     :vartype dialog_input_type: str or ~azure.communication.callautomation.models.DialogInputType
     :ivar dialog_id: Dialog ID.
     :vartype dialog_id: str
-    :ivar transfer_type: Transfer type.
-    :vartype transfer_type: str
-    :ivar transfer_destination: Transfer destination.
-    :vartype transfer_destination: str
-    :ivar ivr_context: IVR context.
+    :ivar ivr_context: Ivr Context.
     :vartype ivr_context: JSON
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+     skype chain ID.
+    :vartype correlation_id: str
     """
 
     _validation = {
-        "call_connection_id": {"readonly": True},
+        "transfer_type": {"readonly": True},
+        "transfer_destination": {"readonly": True},
         "operation_context": {"readonly": True},
         "result_information": {"readonly": True},
         "dialog_id": {"readonly": True},
-        "transfer_type": {"readonly": True},
-        "transfer_destination": {"readonly": True},
         "ivr_context": {"readonly": True},
+        "call_connection_id": {"readonly": True},
+        "server_call_id": {"readonly": True},
+        "correlation_id": {"readonly": True},
     }
 
     _attribute_map = {
-        "call_connection_id": {"key": "callConnectionId", "type": "str"},
-        "server_call_id": {"key": "serverCallId", "type": "str"},
-        "correlation_id": {"key": "correlationId", "type": "str"},
+        "transfer_type": {"key": "transferType", "type": "str"},
+        "transfer_destination": {"key": "transferDestination", "type": "str"},
         "operation_context": {"key": "operationContext", "type": "str"},
         "result_information": {"key": "resultInformation", "type": "ResultInformation"},
         "dialog_input_type": {"key": "dialogInputType", "type": "str"},
         "dialog_id": {"key": "dialogId", "type": "str"},
-        "transfer_type": {"key": "transferType", "type": "str"},
-        "transfer_destination": {"key": "transferDestination", "type": "str"},
         "ivr_context": {"key": "ivrContext", "type": "object"},
+        "call_connection_id": {"key": "callConnectionId", "type": "str"},
+        "server_call_id": {"key": "serverCallId", "type": "str"},
+        "correlation_id": {"key": "correlationId", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        server_call_id: Optional[str] = None,
-        correlation_id: Optional[str] = None,
-        dialog_input_type: Optional[Union[str, "_models.DialogInputType"]] = None,
-        **kwargs: Any
+        self, *, dialog_input_type: Optional[Union[str, "_models.DialogInputType"]] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword server_call_id: Server call ID.
-        :paramtype server_call_id: str
-        :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-         skype chain ID.
-        :paramtype correlation_id: str
         :keyword dialog_input_type: Determines the type of the dialog. Known values are:
          "powerVirtualAgents" and "azureOpenAI".
         :paramtype dialog_input_type: str or ~azure.communication.callautomation.models.DialogInputType
         """
         super().__init__(**kwargs)
-        self.call_connection_id = None
-        self.server_call_id = server_call_id
-        self.correlation_id = correlation_id
+        self.transfer_type = None
+        self.transfer_destination = None
         self.operation_context = None
         self.result_information = None
         self.dialog_input_type = dialog_input_type
         self.dialog_id = None
-        self.transfer_type = None
-        self.transfer_destination = None
         self.ivr_context = None
+        self.call_connection_id = None
+        self.server_call_id = None
+        self.correlation_id = None
+
+
+class DialogUpdated(_serialization.Model):
+    """DialogUpdated.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar operation_context: Used by customers when calling answerCall action to correlate the
+     request to the response event.
+    :vartype operation_context: str
+    :ivar result_information: Contains the resulting SIP code/sub-code and message from NGC
+     services.
+    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
+    :ivar dialog_input_type: Determines the type of the dialog. Known values are:
+     "powerVirtualAgents" and "azureOpenAI".
+    :vartype dialog_input_type: str or ~azure.communication.callautomation.models.DialogInputType
+    :ivar dialog_id: Dialog ID.
+    :vartype dialog_id: str
+    :ivar ivr_context: Ivr Context.
+    :vartype ivr_context: JSON
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+     skype chain ID.
+    :vartype correlation_id: str
+    """
+
+    _validation = {
+        "operation_context": {"readonly": True},
+        "result_information": {"readonly": True},
+        "dialog_id": {"readonly": True},
+        "ivr_context": {"readonly": True},
+        "call_connection_id": {"readonly": True},
+        "server_call_id": {"readonly": True},
+        "correlation_id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "operation_context": {"key": "operationContext", "type": "str"},
+        "result_information": {"key": "resultInformation", "type": "ResultInformation"},
+        "dialog_input_type": {"key": "dialogInputType", "type": "str"},
+        "dialog_id": {"key": "dialogId", "type": "str"},
+        "ivr_context": {"key": "ivrContext", "type": "object"},
+        "call_connection_id": {"key": "callConnectionId", "type": "str"},
+        "server_call_id": {"key": "serverCallId", "type": "str"},
+        "correlation_id": {"key": "correlationId", "type": "str"},
+    }
+
+    def __init__(
+        self, *, dialog_input_type: Optional[Union[str, "_models.DialogInputType"]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword dialog_input_type: Determines the type of the dialog. Known values are:
+         "powerVirtualAgents" and "azureOpenAI".
+        :paramtype dialog_input_type: str or ~azure.communication.callautomation.models.DialogInputType
+        """
+        super().__init__(**kwargs)
+        self.operation_context = None
+        self.result_information = None
+        self.dialog_input_type = dialog_input_type
+        self.dialog_id = None
+        self.ivr_context = None
+        self.call_connection_id = None
+        self.server_call_id = None
+        self.correlation_id = None
 
 
 class DtmfOptions(_serialization.Model):
@@ -2446,7 +2553,7 @@ class DtmfResult(_serialization.Model):
 class ExternalStorage(_serialization.Model):
     """ExternalStorage.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar storage_type: Defines the type of external storage. Required. Known values are: "acs" and
      "blobStorage".
@@ -2486,7 +2593,7 @@ class ExternalStorage(_serialization.Model):
 class FileSource(_serialization.Model):
     """FileSource.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar uri: Uri for the audio file to be played. Required.
     :vartype uri: str
@@ -2512,39 +2619,41 @@ class FileSource(_serialization.Model):
 class GetParticipantsResponse(_serialization.Model):
     """The response payload for getting participants of the call.
 
-    :ivar values: List of the current participants in the call.
-    :vartype values: list[~azure.communication.callautomation.models.CallParticipant]
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: List of the current participants in the call. Required.
+    :vartype value: list[~azure.communication.callautomation.models.CallParticipant]
     :ivar next_link: Continue of the list of participants.
     :vartype next_link: str
     """
 
+    _validation = {
+        "value": {"required": True},
+    }
+
     _attribute_map = {
-        "values": {"key": "values", "type": "[CallParticipant]"},
+        "value": {"key": "value", "type": "[CallParticipant]"},
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        values: Optional[List["_models.CallParticipant"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs: Any
+        self, *, value: List["_models.CallParticipant"], next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword values: List of the current participants in the call.
-        :paramtype values: list[~azure.communication.callautomation.models.CallParticipant]
+        :keyword value: List of the current participants in the call. Required.
+        :paramtype value: list[~azure.communication.callautomation.models.CallParticipant]
         :keyword next_link: Continue of the list of participants.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
-        self.values = values
+        self.value = value
         self.next_link = next_link
 
 
 class MediaStreamingConfiguration(_serialization.Model):
     """Configuration of Media streaming.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar transport_url: Transport URL for media streaming. Required.
     :vartype transport_url: str
@@ -2609,7 +2718,7 @@ class MediaStreamingConfiguration(_serialization.Model):
 class MicrosoftTeamsUserIdentifierModel(_serialization.Model):
     """A Microsoft Teams user.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar user_id: The Id of the Microsoft Teams user. If not anonymous, this is the AAD object Id
      of the user. Required.
@@ -2661,7 +2770,7 @@ class MicrosoftTeamsUserIdentifierModel(_serialization.Model):
 class MuteParticipantsRequest(_serialization.Model):
     """The request payload for muting participants from the call.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar target_participants: Participants to be muted from the call.
      Only ACS Users are supported. Required.
@@ -2702,8 +2811,8 @@ class MuteParticipantsRequest(_serialization.Model):
         self.operation_context = operation_context
 
 
-class MuteParticipantsResponse(_serialization.Model):
-    """The response payload for muting participants from the call.
+class MuteParticipantsResult(_serialization.Model):
+    """The result payload for muting participants from the call.
 
     :ivar operation_context: The operation context provided by client.
     :vartype operation_context: str
@@ -2725,6 +2834,12 @@ class MuteParticipantsResponse(_serialization.Model):
 class ParticipantsUpdated(_serialization.Model):
     """The participants updated in a call event.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar participants: The list of participants in the call.
+    :vartype participants: list[~azure.communication.callautomation.models.CallParticipant]
+    :ivar sequence_number:
+    :vartype sequence_number: int
     :ivar call_connection_id: Call connection ID.
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
@@ -2732,55 +2847,38 @@ class ParticipantsUpdated(_serialization.Model):
     :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
      skype chain ID.
     :vartype correlation_id: str
-    :ivar sequence_number: The Sequence Number of the event.
-    :vartype sequence_number: int
-    :ivar participants: The list of participants in the call.
-    :vartype participants: list[~azure.communication.callautomation.models.CallParticipant]
     """
 
+    _validation = {
+        "participants": {"readonly": True},
+        "sequence_number": {"readonly": True},
+        "call_connection_id": {"readonly": True},
+        "server_call_id": {"readonly": True},
+        "correlation_id": {"readonly": True},
+    }
+
     _attribute_map = {
+        "participants": {"key": "participants", "type": "[CallParticipant]"},
+        "sequence_number": {"key": "sequenceNumber", "type": "int"},
         "call_connection_id": {"key": "callConnectionId", "type": "str"},
         "server_call_id": {"key": "serverCallId", "type": "str"},
         "correlation_id": {"key": "correlationId", "type": "str"},
-        "sequence_number": {"key": "sequenceNumber", "type": "int"},
-        "participants": {"key": "participants", "type": "[CallParticipant]"},
     }
 
-    def __init__(
-        self,
-        *,
-        call_connection_id: Optional[str] = None,
-        server_call_id: Optional[str] = None,
-        correlation_id: Optional[str] = None,
-        sequence_number: Optional[int] = None,
-        participants: Optional[List["_models.CallParticipant"]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword call_connection_id: Call connection ID.
-        :paramtype call_connection_id: str
-        :keyword server_call_id: Server call ID.
-        :paramtype server_call_id: str
-        :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-         skype chain ID.
-        :paramtype correlation_id: str
-        :keyword sequence_number: The Sequence Number of the event.
-        :paramtype sequence_number: int
-        :keyword participants: The list of participants in the call.
-        :paramtype participants: list[~azure.communication.callautomation.models.CallParticipant]
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
-        self.call_connection_id = call_connection_id
-        self.server_call_id = server_call_id
-        self.correlation_id = correlation_id
-        self.sequence_number = sequence_number
-        self.participants = participants
+        self.participants = None
+        self.sequence_number = None
+        self.call_connection_id = None
+        self.server_call_id = None
+        self.correlation_id = None
 
 
 class PhoneNumberIdentifierModel(_serialization.Model):
     """A phone number.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The phone number in E.164 format. Required.
     :vartype value: str
@@ -2806,168 +2904,143 @@ class PhoneNumberIdentifierModel(_serialization.Model):
 class PlayCanceled(_serialization.Model):
     """PlayCanceled.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+     request to the response event.
+    :vartype operation_context: str
     :ivar call_connection_id: Call connection ID.
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
     :vartype server_call_id: str
-    :ivar correlation_id: Correlation ID for event to call correlation.
+    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+     skype chain ID.
     :vartype correlation_id: str
-    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
-     request to the response event.
-    :vartype operation_context: str
     """
 
+    _validation = {
+        "operation_context": {"readonly": True},
+        "call_connection_id": {"readonly": True},
+        "server_call_id": {"readonly": True},
+        "correlation_id": {"readonly": True},
+    }
+
     _attribute_map = {
+        "operation_context": {"key": "operationContext", "type": "str"},
         "call_connection_id": {"key": "callConnectionId", "type": "str"},
         "server_call_id": {"key": "serverCallId", "type": "str"},
         "correlation_id": {"key": "correlationId", "type": "str"},
-        "operation_context": {"key": "operationContext", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        call_connection_id: Optional[str] = None,
-        server_call_id: Optional[str] = None,
-        correlation_id: Optional[str] = None,
-        operation_context: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword call_connection_id: Call connection ID.
-        :paramtype call_connection_id: str
-        :keyword server_call_id: Server call ID.
-        :paramtype server_call_id: str
-        :keyword correlation_id: Correlation ID for event to call correlation.
-        :paramtype correlation_id: str
-        :keyword operation_context: Used by customers when calling mid-call actions to correlate the
-         request to the response event.
-        :paramtype operation_context: str
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
-        self.call_connection_id = call_connection_id
-        self.server_call_id = server_call_id
-        self.correlation_id = correlation_id
-        self.operation_context = operation_context
+        self.operation_context = None
+        self.call_connection_id = None
+        self.server_call_id = None
+        self.correlation_id = None
 
 
 class PlayCompleted(_serialization.Model):
     """PlayCompleted.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar result_information: Result information defines the code, subcode and message.
+    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+     request to the response event.
+    :vartype operation_context: str
     :ivar call_connection_id: Call connection ID.
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
     :vartype server_call_id: str
-    :ivar correlation_id: Correlation ID for event to call correlation.
+    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+     skype chain ID.
     :vartype correlation_id: str
-    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
-     request to the response event.
-    :vartype operation_context: str
-    :ivar result_information: Contains the resulting SIP code, sub-code and message.
-    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
     """
 
+    _validation = {
+        "result_information": {"readonly": True},
+        "operation_context": {"readonly": True},
+        "call_connection_id": {"readonly": True},
+        "server_call_id": {"readonly": True},
+        "correlation_id": {"readonly": True},
+    }
+
     _attribute_map = {
+        "result_information": {"key": "resultInformation", "type": "ResultInformation"},
+        "operation_context": {"key": "operationContext", "type": "str"},
         "call_connection_id": {"key": "callConnectionId", "type": "str"},
         "server_call_id": {"key": "serverCallId", "type": "str"},
         "correlation_id": {"key": "correlationId", "type": "str"},
-        "operation_context": {"key": "operationContext", "type": "str"},
-        "result_information": {"key": "resultInformation", "type": "ResultInformation"},
     }
 
-    def __init__(
-        self,
-        *,
-        call_connection_id: Optional[str] = None,
-        server_call_id: Optional[str] = None,
-        correlation_id: Optional[str] = None,
-        operation_context: Optional[str] = None,
-        result_information: Optional["_models.ResultInformation"] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword call_connection_id: Call connection ID.
-        :paramtype call_connection_id: str
-        :keyword server_call_id: Server call ID.
-        :paramtype server_call_id: str
-        :keyword correlation_id: Correlation ID for event to call correlation.
-        :paramtype correlation_id: str
-        :keyword operation_context: Used by customers when calling mid-call actions to correlate the
-         request to the response event.
-        :paramtype operation_context: str
-        :keyword result_information: Contains the resulting SIP code, sub-code and message.
-        :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
-        self.call_connection_id = call_connection_id
-        self.server_call_id = server_call_id
-        self.correlation_id = correlation_id
-        self.operation_context = operation_context
-        self.result_information = result_information
+        self.result_information = None
+        self.operation_context = None
+        self.call_connection_id = None
+        self.server_call_id = None
+        self.correlation_id = None
 
 
 class PlayFailed(_serialization.Model):
     """PlayFailed.
 
-    :ivar call_connection_id: Call connection ID.
-    :vartype call_connection_id: str
-    :ivar server_call_id: Server call ID.
-    :vartype server_call_id: str
-    :ivar correlation_id: Correlation ID for event to call correlation.
-    :vartype correlation_id: str
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     :ivar operation_context: Used by customers when calling mid-call actions to correlate the
      request to the response event.
     :vartype operation_context: str
     :ivar result_information: Contains the resulting SIP code, sub-code and message.
     :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+     skype chain ID.
+    :vartype correlation_id: str
     """
 
+    _validation = {
+        "operation_context": {"readonly": True},
+        "result_information": {"readonly": True},
+        "call_connection_id": {"readonly": True},
+        "server_call_id": {"readonly": True},
+        "correlation_id": {"readonly": True},
+    }
+
     _attribute_map = {
+        "operation_context": {"key": "operationContext", "type": "str"},
+        "result_information": {"key": "resultInformation", "type": "ResultInformation"},
         "call_connection_id": {"key": "callConnectionId", "type": "str"},
         "server_call_id": {"key": "serverCallId", "type": "str"},
         "correlation_id": {"key": "correlationId", "type": "str"},
-        "operation_context": {"key": "operationContext", "type": "str"},
-        "result_information": {"key": "resultInformation", "type": "ResultInformation"},
     }
 
-    def __init__(
-        self,
-        *,
-        call_connection_id: Optional[str] = None,
-        server_call_id: Optional[str] = None,
-        correlation_id: Optional[str] = None,
-        operation_context: Optional[str] = None,
-        result_information: Optional["_models.ResultInformation"] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword call_connection_id: Call connection ID.
-        :paramtype call_connection_id: str
-        :keyword server_call_id: Server call ID.
-        :paramtype server_call_id: str
-        :keyword correlation_id: Correlation ID for event to call correlation.
-        :paramtype correlation_id: str
-        :keyword operation_context: Used by customers when calling mid-call actions to correlate the
-         request to the response event.
-        :paramtype operation_context: str
-        :keyword result_information: Contains the resulting SIP code, sub-code and message.
-        :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
-        self.call_connection_id = call_connection_id
-        self.server_call_id = server_call_id
-        self.correlation_id = correlation_id
-        self.operation_context = operation_context
-        self.result_information = result_information
+        self.operation_context = None
+        self.result_information = None
+        self.call_connection_id = None
+        self.server_call_id = None
+        self.correlation_id = None
 
 
 class PlayOptions(_serialization.Model):
     """PlayOptions.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar loop: The option to play the provided audio source in loop when set to true. Required.
     :vartype loop: bool
+    :ivar interrupt_call_media_operation: If set play can barge into other existing
+     queued-up/currently-processing requests.
+    :vartype interrupt_call_media_operation: bool
     """
 
     _validation = {
@@ -2976,24 +3049,29 @@ class PlayOptions(_serialization.Model):
 
     _attribute_map = {
         "loop": {"key": "loop", "type": "bool"},
+        "interrupt_call_media_operation": {"key": "interruptCallMediaOperation", "type": "bool"},
     }
 
-    def __init__(self, *, loop: bool, **kwargs: Any) -> None:
+    def __init__(self, *, loop: bool, interrupt_call_media_operation: Optional[bool] = None, **kwargs: Any) -> None:
         """
         :keyword loop: The option to play the provided audio source in loop when set to true. Required.
         :paramtype loop: bool
+        :keyword interrupt_call_media_operation: If set play can barge into other existing
+         queued-up/currently-processing requests.
+        :paramtype interrupt_call_media_operation: bool
         """
         super().__init__(**kwargs)
         self.loop = loop
+        self.interrupt_call_media_operation = interrupt_call_media_operation
 
 
 class PlayRequest(_serialization.Model):
     """PlayRequest.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :ivar play_source_info: The source of the audio to be played. Required.
-    :vartype play_source_info: ~azure.communication.callautomation.models.PlaySource
+    :ivar play_sources: The source of the audio to be played. Required.
+    :vartype play_sources: list[~azure.communication.callautomation.models.PlaySource]
     :ivar play_to: The list of call participants play provided audio to.
      Plays to everyone in the call when not provided.
     :vartype play_to: list[~azure.communication.callautomation.models.CommunicationIdentifierModel]
@@ -3001,35 +3079,38 @@ class PlayRequest(_serialization.Model):
     :vartype play_options: ~azure.communication.callautomation.models.PlayOptions
     :ivar operation_context: The value to identify context of the operation.
     :vartype operation_context: str
-    :ivar callback_uri: The callback URI to override the main callback URI.
-    :vartype callback_uri: str
+    :ivar operation_callback_uri: Set a callback URI that overrides the default callback URI set by
+     CreateCall/AnswerCall for this operation.
+     This setup is per-action. If this is not set, the default callback URI set by
+     CreateCall/AnswerCall will be used.
+    :vartype operation_callback_uri: str
     """
 
     _validation = {
-        "play_source_info": {"required": True},
+        "play_sources": {"required": True},
     }
 
     _attribute_map = {
-        "play_source_info": {"key": "playSourceInfo", "type": "PlaySource"},
+        "play_sources": {"key": "playSources", "type": "[PlaySource]"},
         "play_to": {"key": "playTo", "type": "[CommunicationIdentifierModel]"},
         "play_options": {"key": "playOptions", "type": "PlayOptions"},
         "operation_context": {"key": "operationContext", "type": "str"},
-        "callback_uri": {"key": "callbackUri", "type": "str"},
+        "operation_callback_uri": {"key": "operationCallbackUri", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        play_source_info: "_models.PlaySource",
+        play_sources: List["_models.PlaySource"],
         play_to: Optional[List["_models.CommunicationIdentifierModel"]] = None,
         play_options: Optional["_models.PlayOptions"] = None,
         operation_context: Optional[str] = None,
-        callback_uri: Optional[str] = None,
+        operation_callback_uri: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword play_source_info: The source of the audio to be played. Required.
-        :paramtype play_source_info: ~azure.communication.callautomation.models.PlaySource
+        :keyword play_sources: The source of the audio to be played. Required.
+        :paramtype play_sources: list[~azure.communication.callautomation.models.PlaySource]
         :keyword play_to: The list of call participants play provided audio to.
          Plays to everyone in the call when not provided.
         :paramtype play_to:
@@ -3038,126 +3119,166 @@ class PlayRequest(_serialization.Model):
         :paramtype play_options: ~azure.communication.callautomation.models.PlayOptions
         :keyword operation_context: The value to identify context of the operation.
         :paramtype operation_context: str
-        :keyword callback_uri: The callback URI to override the main callback URI.
-        :paramtype callback_uri: str
+        :keyword operation_callback_uri: Set a callback URI that overrides the default callback URI set
+         by CreateCall/AnswerCall for this operation.
+         This setup is per-action. If this is not set, the default callback URI set by
+         CreateCall/AnswerCall will be used.
+        :paramtype operation_callback_uri: str
         """
         super().__init__(**kwargs)
-        self.play_source_info = play_source_info
+        self.play_sources = play_sources
         self.play_to = play_to
         self.play_options = play_options
         self.operation_context = operation_context
-        self.callback_uri = callback_uri
+        self.operation_callback_uri = operation_callback_uri
 
 
 class PlaySource(_serialization.Model):
     """PlaySource.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :ivar source_type: Defines the type of the play source. Required. Known values are: "file",
-     "text", and "ssml".
-    :vartype source_type: str or ~azure.communication.callautomation.models.PlaySourceType
-    :ivar play_source_id: Defines the identifier to be used for caching related media.
-    :vartype play_source_id: str
-    :ivar file_source: Defines the file source info to be used for play.
-    :vartype file_source: ~azure.communication.callautomation.models.FileSource
-    :ivar text_source: Defines the text source info to be used for play.
-    :vartype text_source: ~azure.communication.callautomation.models.TextSource
-    :ivar ssml_source: Defines the ssml(Speech Synthesis Markup Language) source info to be used
-     for play.
-    :vartype ssml_source: ~azure.communication.callautomation.models.SsmlSource
+    :ivar kind: Defines the type of the play source. Required. Known values are: "file", "text",
+     and "ssml".
+    :vartype kind: str or ~azure.communication.callautomation.models.PlaySourceType
+    :ivar play_source_cache_id: Defines the identifier to be used for caching related media.
+    :vartype play_source_cache_id: str
+    :ivar file: Defines the file source info to be used for play.
+    :vartype file: ~azure.communication.callautomation.models.FileSource
+    :ivar text: Defines the text source info to be used for play.
+    :vartype text: ~azure.communication.callautomation.models.TextSource
+    :ivar ssml: Defines the ssml(Speech Synthesis Markup Language) source info to be used for play.
+    :vartype ssml: ~azure.communication.callautomation.models.SsmlSource
     """
 
     _validation = {
-        "source_type": {"required": True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        "source_type": {"key": "sourceType", "type": "str"},
-        "play_source_id": {"key": "playSourceId", "type": "str"},
-        "file_source": {"key": "fileSource", "type": "FileSource"},
-        "text_source": {"key": "textSource", "type": "TextSource"},
-        "ssml_source": {"key": "ssmlSource", "type": "SsmlSource"},
+        "kind": {"key": "kind", "type": "str"},
+        "play_source_cache_id": {"key": "playSourceCacheId", "type": "str"},
+        "file": {"key": "file", "type": "FileSource"},
+        "text": {"key": "text", "type": "TextSource"},
+        "ssml": {"key": "ssml", "type": "SsmlSource"},
     }
 
     def __init__(
         self,
         *,
-        source_type: Union[str, "_models.PlaySourceType"],
-        play_source_id: Optional[str] = None,
-        file_source: Optional["_models.FileSource"] = None,
-        text_source: Optional["_models.TextSource"] = None,
-        ssml_source: Optional["_models.SsmlSource"] = None,
+        kind: Union[str, "_models.PlaySourceType"],
+        play_source_cache_id: Optional[str] = None,
+        file: Optional["_models.FileSource"] = None,
+        text: Optional["_models.TextSource"] = None,
+        ssml: Optional["_models.SsmlSource"] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword source_type: Defines the type of the play source. Required. Known values are: "file",
-         "text", and "ssml".
-        :paramtype source_type: str or ~azure.communication.callautomation.models.PlaySourceType
-        :keyword play_source_id: Defines the identifier to be used for caching related media.
-        :paramtype play_source_id: str
-        :keyword file_source: Defines the file source info to be used for play.
-        :paramtype file_source: ~azure.communication.callautomation.models.FileSource
-        :keyword text_source: Defines the text source info to be used for play.
-        :paramtype text_source: ~azure.communication.callautomation.models.TextSource
-        :keyword ssml_source: Defines the ssml(Speech Synthesis Markup Language) source info to be used
-         for play.
-        :paramtype ssml_source: ~azure.communication.callautomation.models.SsmlSource
+        :keyword kind: Defines the type of the play source. Required. Known values are: "file", "text",
+         and "ssml".
+        :paramtype kind: str or ~azure.communication.callautomation.models.PlaySourceType
+        :keyword play_source_cache_id: Defines the identifier to be used for caching related media.
+        :paramtype play_source_cache_id: str
+        :keyword file: Defines the file source info to be used for play.
+        :paramtype file: ~azure.communication.callautomation.models.FileSource
+        :keyword text: Defines the text source info to be used for play.
+        :paramtype text: ~azure.communication.callautomation.models.TextSource
+        :keyword ssml: Defines the ssml(Speech Synthesis Markup Language) source info to be used for
+         play.
+        :paramtype ssml: ~azure.communication.callautomation.models.SsmlSource
         """
         super().__init__(**kwargs)
-        self.source_type = source_type
-        self.play_source_id = play_source_id
-        self.file_source = file_source
-        self.text_source = text_source
-        self.ssml_source = ssml_source
+        self.kind = kind
+        self.play_source_cache_id = play_source_cache_id
+        self.file = file
+        self.text = text
+        self.ssml = ssml
+
+
+class PowerVirtualAgentsDialog(BaseDialog):
+    """Power Virtual Agents Dialog.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar kind: Determines the type of the dialog. Required. Known values are: "powerVirtualAgents"
+     and "azureOpenAI".
+    :vartype kind: str or ~azure.communication.callautomation.models.DialogInputType
+    :ivar context: Dialog context. Required.
+    :vartype context: dict[str, JSON]
+    :ivar bot_app_id: Bot identifier. Required.
+    :vartype bot_app_id: str
+    :ivar language: Language.
+    :vartype language: str
+    """
+
+    _validation = {
+        "kind": {"required": True},
+        "context": {"required": True},
+        "bot_app_id": {"required": True},
+    }
+
+    _attribute_map = {
+        "kind": {"key": "kind", "type": "str"},
+        "context": {"key": "context", "type": "{object}"},
+        "bot_app_id": {"key": "botAppId", "type": "str"},
+        "language": {"key": "language", "type": "str"},
+    }
+
+    def __init__(
+        self, *, context: Dict[str, JSON], bot_app_id: str, language: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword context: Dialog context. Required.
+        :paramtype context: dict[str, JSON]
+        :keyword bot_app_id: Bot identifier. Required.
+        :paramtype bot_app_id: str
+        :keyword language: Language.
+        :paramtype language: str
+        """
+        super().__init__(context=context, **kwargs)
+        self.kind: str = "PowerVirtualAgents"
+        self.bot_app_id = bot_app_id
+        self.language = language
 
 
 class RecognizeCanceled(_serialization.Model):
     """RecognizeCanceled.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+     request to the response event.
+    :vartype operation_context: str
     :ivar call_connection_id: Call connection ID.
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
     :vartype server_call_id: str
-    :ivar correlation_id: Correlation ID for event to call correlation.
+    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+     skype chain ID.
     :vartype correlation_id: str
-    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
-     request to the response event.
-    :vartype operation_context: str
     """
 
+    _validation = {
+        "operation_context": {"readonly": True},
+        "call_connection_id": {"readonly": True},
+        "server_call_id": {"readonly": True},
+        "correlation_id": {"readonly": True},
+    }
+
     _attribute_map = {
+        "operation_context": {"key": "operationContext", "type": "str"},
         "call_connection_id": {"key": "callConnectionId", "type": "str"},
         "server_call_id": {"key": "serverCallId", "type": "str"},
         "correlation_id": {"key": "correlationId", "type": "str"},
-        "operation_context": {"key": "operationContext", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        call_connection_id: Optional[str] = None,
-        server_call_id: Optional[str] = None,
-        correlation_id: Optional[str] = None,
-        operation_context: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword call_connection_id: Call connection ID.
-        :paramtype call_connection_id: str
-        :keyword server_call_id: Server call ID.
-        :paramtype server_call_id: str
-        :keyword correlation_id: Correlation ID for event to call correlation.
-        :paramtype correlation_id: str
-        :keyword operation_context: Used by customers when calling mid-call actions to correlate the
-         request to the response event.
-        :paramtype operation_context: str
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
-        self.call_connection_id = call_connection_id
-        self.server_call_id = server_call_id
-        self.correlation_id = correlation_id
-        self.operation_context = operation_context
+        self.operation_context = None
+        self.call_connection_id = None
+        self.server_call_id = None
+        self.correlation_id = None
 
 
 class RecognizeCompleted(_serialization.Model):
@@ -3165,16 +3286,10 @@ class RecognizeCompleted(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar call_connection_id: Call connection ID.
-    :vartype call_connection_id: str
-    :ivar server_call_id: Server call ID.
-    :vartype server_call_id: str
-    :ivar correlation_id: Correlation ID for event to call correlation.
-    :vartype correlation_id: str
     :ivar operation_context: Used by customers when calling mid-call actions to correlate the
      request to the response event.
     :vartype operation_context: str
-    :ivar result_information: Contains the resulting SIP code, sub-code and message.
+    :ivar result_information: Result information defines the code, subcode and message.
     :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
     :ivar recognition_type: Determines the sub-type of the recognize operation.
      In case of cancel operation the this field is not set and is returned empty. Known values are:
@@ -3185,139 +3300,109 @@ class RecognizeCompleted(_serialization.Model):
     :vartype collect_tones_result: ~azure.communication.callautomation.models.CollectTonesResult
     :ivar dtmf_result: Defines the result for RecognitionType = Dtmf.
     :vartype dtmf_result: ~azure.communication.callautomation.models.DtmfResult
-    :ivar choice_result: Defines the result for RecognitionType = Choices.
-    :vartype choice_result: ~azure.communication.callautomation.models.ChoiceResult
     :ivar speech_result: Defines the result for RecognitionType = Speech and SpeechOrDtmf.
     :vartype speech_result: ~azure.communication.callautomation.models.SpeechResult
+    :ivar choice_result: Defines the result for RecognitionType = Choices.
+    :vartype choice_result: ~azure.communication.callautomation.models.ChoiceResult
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+     skype chain ID.
+    :vartype correlation_id: str
     """
 
     _validation = {
+        "operation_context": {"readonly": True},
+        "result_information": {"readonly": True},
+        "recognition_type": {"readonly": True},
+        "collect_tones_result": {"readonly": True},
+        "dtmf_result": {"readonly": True},
         "speech_result": {"readonly": True},
+        "choice_result": {"readonly": True},
+        "call_connection_id": {"readonly": True},
+        "server_call_id": {"readonly": True},
+        "correlation_id": {"readonly": True},
     }
 
     _attribute_map = {
-        "call_connection_id": {"key": "callConnectionId", "type": "str"},
-        "server_call_id": {"key": "serverCallId", "type": "str"},
-        "correlation_id": {"key": "correlationId", "type": "str"},
         "operation_context": {"key": "operationContext", "type": "str"},
         "result_information": {"key": "resultInformation", "type": "ResultInformation"},
         "recognition_type": {"key": "recognitionType", "type": "str"},
         "collect_tones_result": {"key": "collectTonesResult", "type": "CollectTonesResult"},
         "dtmf_result": {"key": "dtmfResult", "type": "DtmfResult"},
-        "choice_result": {"key": "choiceResult", "type": "ChoiceResult"},
         "speech_result": {"key": "speechResult", "type": "SpeechResult"},
+        "choice_result": {"key": "choiceResult", "type": "ChoiceResult"},
+        "call_connection_id": {"key": "callConnectionId", "type": "str"},
+        "server_call_id": {"key": "serverCallId", "type": "str"},
+        "correlation_id": {"key": "correlationId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        call_connection_id: Optional[str] = None,
-        server_call_id: Optional[str] = None,
-        correlation_id: Optional[str] = None,
-        operation_context: Optional[str] = None,
-        result_information: Optional["_models.ResultInformation"] = None,
-        recognition_type: Optional[Union[str, "_models.RecognitionType"]] = None,
-        collect_tones_result: Optional["_models.CollectTonesResult"] = None,
-        dtmf_result: Optional["_models.DtmfResult"] = None,
-        choice_result: Optional["_models.ChoiceResult"] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword call_connection_id: Call connection ID.
-        :paramtype call_connection_id: str
-        :keyword server_call_id: Server call ID.
-        :paramtype server_call_id: str
-        :keyword correlation_id: Correlation ID for event to call correlation.
-        :paramtype correlation_id: str
-        :keyword operation_context: Used by customers when calling mid-call actions to correlate the
-         request to the response event.
-        :paramtype operation_context: str
-        :keyword result_information: Contains the resulting SIP code, sub-code and message.
-        :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
-        :keyword recognition_type: Determines the sub-type of the recognize operation.
-         In case of cancel operation the this field is not set and is returned empty. Known values are:
-         "dtmf", "speech", and "choices".
-        :paramtype recognition_type: str or ~azure.communication.callautomation.models.RecognitionType
-        :keyword collect_tones_result: Defines the result for RecognitionType = Dtmf
-         Would be replaced by DtmfResult after server sdk renewed.
-        :paramtype collect_tones_result: ~azure.communication.callautomation.models.CollectTonesResult
-        :keyword dtmf_result: Defines the result for RecognitionType = Dtmf.
-        :paramtype dtmf_result: ~azure.communication.callautomation.models.DtmfResult
-        :keyword choice_result: Defines the result for RecognitionType = Choices.
-        :paramtype choice_result: ~azure.communication.callautomation.models.ChoiceResult
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
-        self.call_connection_id = call_connection_id
-        self.server_call_id = server_call_id
-        self.correlation_id = correlation_id
-        self.operation_context = operation_context
-        self.result_information = result_information
-        self.recognition_type = recognition_type
-        self.collect_tones_result = collect_tones_result
-        self.dtmf_result = dtmf_result
-        self.choice_result = choice_result
+        self.operation_context = None
+        self.result_information = None
+        self.recognition_type = None
+        self.collect_tones_result = None
+        self.dtmf_result = None
         self.speech_result = None
+        self.choice_result = None
+        self.call_connection_id = None
+        self.server_call_id = None
+        self.correlation_id = None
 
 
 class RecognizeFailed(_serialization.Model):
     """RecognizeFailed.
 
-    :ivar call_connection_id: Call connection ID.
-    :vartype call_connection_id: str
-    :ivar server_call_id: Server call ID.
-    :vartype server_call_id: str
-    :ivar correlation_id: Correlation ID for event to call correlation.
-    :vartype correlation_id: str
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     :ivar operation_context: Used by customers when calling mid-call actions to correlate the
      request to the response event.
     :vartype operation_context: str
     :ivar result_information: Contains the resulting SIP code, sub-code and message.
     :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+     skype chain ID.
+    :vartype correlation_id: str
     """
 
+    _validation = {
+        "operation_context": {"readonly": True},
+        "result_information": {"readonly": True},
+        "call_connection_id": {"readonly": True},
+        "server_call_id": {"readonly": True},
+        "correlation_id": {"readonly": True},
+    }
+
     _attribute_map = {
+        "operation_context": {"key": "operationContext", "type": "str"},
+        "result_information": {"key": "resultInformation", "type": "ResultInformation"},
         "call_connection_id": {"key": "callConnectionId", "type": "str"},
         "server_call_id": {"key": "serverCallId", "type": "str"},
         "correlation_id": {"key": "correlationId", "type": "str"},
-        "operation_context": {"key": "operationContext", "type": "str"},
-        "result_information": {"key": "resultInformation", "type": "ResultInformation"},
     }
 
-    def __init__(
-        self,
-        *,
-        call_connection_id: Optional[str] = None,
-        server_call_id: Optional[str] = None,
-        correlation_id: Optional[str] = None,
-        operation_context: Optional[str] = None,
-        result_information: Optional["_models.ResultInformation"] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword call_connection_id: Call connection ID.
-        :paramtype call_connection_id: str
-        :keyword server_call_id: Server call ID.
-        :paramtype server_call_id: str
-        :keyword correlation_id: Correlation ID for event to call correlation.
-        :paramtype correlation_id: str
-        :keyword operation_context: Used by customers when calling mid-call actions to correlate the
-         request to the response event.
-        :paramtype operation_context: str
-        :keyword result_information: Contains the resulting SIP code, sub-code and message.
-        :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
-        self.call_connection_id = call_connection_id
-        self.server_call_id = server_call_id
-        self.correlation_id = correlation_id
-        self.operation_context = operation_context
-        self.result_information = result_information
+        self.operation_context = None
+        self.result_information = None
+        self.call_connection_id = None
+        self.server_call_id = None
+        self.correlation_id = None
 
 
 class RecognizeOptions(_serialization.Model):
     """RecognizeOptions.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar interrupt_prompt: Determines if we interrupt the prompt and start recognizing.
     :vartype interrupt_prompt: bool
@@ -3401,7 +3486,7 @@ class RecognizeOptions(_serialization.Model):
 class RecognizeRequest(_serialization.Model):
     """RecognizeRequest.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar recognize_input_type: Determines the type of the recognition. Required. Known values are:
      "dtmf", "speech", "speechOrDtmf", and "choices".
@@ -3416,8 +3501,11 @@ class RecognizeRequest(_serialization.Model):
     :vartype recognize_options: ~azure.communication.callautomation.models.RecognizeOptions
     :ivar operation_context: The value to identify context of the operation.
     :vartype operation_context: str
-    :ivar callback_uri: The callback URI to override the main callback URI.
-    :vartype callback_uri: str
+    :ivar operation_callback_uri: Set a callback URI that overrides the default callback URI set by
+     CreateCall/AnswerCall for this operation.
+     This setup is per-action. If this is not set, the default callback URI set by
+     CreateCall/AnswerCall will be used.
+    :vartype operation_callback_uri: str
     """
 
     _validation = {
@@ -3431,7 +3519,7 @@ class RecognizeRequest(_serialization.Model):
         "interrupt_call_media_operation": {"key": "interruptCallMediaOperation", "type": "bool"},
         "recognize_options": {"key": "recognizeOptions", "type": "RecognizeOptions"},
         "operation_context": {"key": "operationContext", "type": "str"},
-        "callback_uri": {"key": "callbackUri", "type": "str"},
+        "operation_callback_uri": {"key": "operationCallbackUri", "type": "str"},
     }
 
     def __init__(
@@ -3442,7 +3530,7 @@ class RecognizeRequest(_serialization.Model):
         play_prompt: Optional["_models.PlaySource"] = None,
         interrupt_call_media_operation: Optional[bool] = None,
         operation_context: Optional[str] = None,
-        callback_uri: Optional[str] = None,
+        operation_callback_uri: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3459,8 +3547,11 @@ class RecognizeRequest(_serialization.Model):
         :paramtype recognize_options: ~azure.communication.callautomation.models.RecognizeOptions
         :keyword operation_context: The value to identify context of the operation.
         :paramtype operation_context: str
-        :keyword callback_uri: The callback URI to override the main callback URI.
-        :paramtype callback_uri: str
+        :keyword operation_callback_uri: Set a callback URI that overrides the default callback URI set
+         by CreateCall/AnswerCall for this operation.
+         This setup is per-action. If this is not set, the default callback URI set by
+         CreateCall/AnswerCall will be used.
+        :paramtype operation_callback_uri: str
         """
         super().__init__(**kwargs)
         self.recognize_input_type = recognize_input_type
@@ -3468,7 +3559,7 @@ class RecognizeRequest(_serialization.Model):
         self.interrupt_call_media_operation = interrupt_call_media_operation
         self.recognize_options = recognize_options
         self.operation_context = operation_context
-        self.callback_uri = callback_uri
+        self.operation_callback_uri = operation_callback_uri
 
 
 class RecordingStateChanged(_serialization.Model):
@@ -3476,60 +3567,62 @@ class RecordingStateChanged(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar call_connection_id: Call connection ID.
-    :vartype call_connection_id: str
-    :ivar server_call_id: Server call ID.
-    :vartype server_call_id: str
-    :ivar correlation_id: Correlation ID for event to call correlation.
-    :vartype correlation_id: str
     :ivar recording_id: The call recording id.
     :vartype recording_id: str
     :ivar state: Known values are: "active" and "inactive".
     :vartype state: str or ~azure.communication.callautomation.models.RecordingState
     :ivar start_date_time: The time of the recording started.
     :vartype start_date_time: ~datetime.datetime
+    :ivar recording_type: Known values are: "acs", "teams", and "teamsCompliance".
+    :vartype recording_type: str or ~azure.communication.callautomation.models.RecordingType
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+     skype chain ID.
+    :vartype correlation_id: str
     """
 
     _validation = {
         "recording_id": {"readonly": True},
         "start_date_time": {"readonly": True},
+        "call_connection_id": {"readonly": True},
+        "server_call_id": {"readonly": True},
+        "correlation_id": {"readonly": True},
     }
 
     _attribute_map = {
-        "call_connection_id": {"key": "callConnectionId", "type": "str"},
-        "server_call_id": {"key": "serverCallId", "type": "str"},
-        "correlation_id": {"key": "correlationId", "type": "str"},
         "recording_id": {"key": "recordingId", "type": "str"},
         "state": {"key": "state", "type": "str"},
         "start_date_time": {"key": "startDateTime", "type": "iso-8601"},
+        "recording_type": {"key": "recordingType", "type": "str"},
+        "call_connection_id": {"key": "callConnectionId", "type": "str"},
+        "server_call_id": {"key": "serverCallId", "type": "str"},
+        "correlation_id": {"key": "correlationId", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        call_connection_id: Optional[str] = None,
-        server_call_id: Optional[str] = None,
-        correlation_id: Optional[str] = None,
         state: Optional[Union[str, "_models.RecordingState"]] = None,
+        recording_type: Optional[Union[str, "_models.RecordingType"]] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword call_connection_id: Call connection ID.
-        :paramtype call_connection_id: str
-        :keyword server_call_id: Server call ID.
-        :paramtype server_call_id: str
-        :keyword correlation_id: Correlation ID for event to call correlation.
-        :paramtype correlation_id: str
         :keyword state: Known values are: "active" and "inactive".
         :paramtype state: str or ~azure.communication.callautomation.models.RecordingState
+        :keyword recording_type: Known values are: "acs", "teams", and "teamsCompliance".
+        :paramtype recording_type: str or ~azure.communication.callautomation.models.RecordingType
         """
         super().__init__(**kwargs)
-        self.call_connection_id = call_connection_id
-        self.server_call_id = server_call_id
-        self.correlation_id = correlation_id
         self.recording_id = None
         self.state = state
         self.start_date_time = None
+        self.recording_type = recording_type
+        self.call_connection_id = None
+        self.server_call_id = None
+        self.correlation_id = None
 
 
 class RecordingStateResponse(_serialization.Model):
@@ -3539,7 +3632,7 @@ class RecordingStateResponse(_serialization.Model):
     :vartype recording_id: str
     :ivar recording_state: Known values are: "active" and "inactive".
     :vartype recording_state: str or ~azure.communication.callautomation.models.RecordingState
-    :ivar recording_type: Known values are: "acs" and "teams".
+    :ivar recording_type: Known values are: "acs", "teams", and "teamsCompliance".
     :vartype recording_type: str or ~azure.communication.callautomation.models.RecordingType
     """
 
@@ -3562,7 +3655,7 @@ class RecordingStateResponse(_serialization.Model):
         :paramtype recording_id: str
         :keyword recording_state: Known values are: "active" and "inactive".
         :paramtype recording_state: str or ~azure.communication.callautomation.models.RecordingState
-        :keyword recording_type: Known values are: "acs" and "teams".
+        :keyword recording_type: Known values are: "acs", "teams", and "teamsCompliance".
         :paramtype recording_type: str or ~azure.communication.callautomation.models.RecordingType
         """
         super().__init__(**kwargs)
@@ -3574,14 +3667,15 @@ class RecordingStateResponse(_serialization.Model):
 class RedirectCallRequest(_serialization.Model):
     """The request payload for redirecting the call.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar incoming_call_context: The context associated with the call. Required.
     :vartype incoming_call_context: str
     :ivar target: The target identity to redirect the call to. Required.
     :vartype target: ~azure.communication.callautomation.models.CommunicationIdentifierModel
-    :ivar custom_context: Used by customer to send custom context to targets.
-    :vartype custom_context: ~azure.communication.callautomation.models.CustomContext
+    :ivar custom_calling_context: Used by customer to send custom calling context to targets.
+    :vartype custom_calling_context:
+     ~azure.communication.callautomation.models.CustomCallingContext
     """
 
     _validation = {
@@ -3592,7 +3686,7 @@ class RedirectCallRequest(_serialization.Model):
     _attribute_map = {
         "incoming_call_context": {"key": "incomingCallContext", "type": "str"},
         "target": {"key": "target", "type": "CommunicationIdentifierModel"},
-        "custom_context": {"key": "customContext", "type": "CustomContext"},
+        "custom_calling_context": {"key": "customCallingContext", "type": "CustomCallingContext"},
     }
 
     def __init__(
@@ -3600,7 +3694,7 @@ class RedirectCallRequest(_serialization.Model):
         *,
         incoming_call_context: str,
         target: "_models.CommunicationIdentifierModel",
-        custom_context: Optional["_models.CustomContext"] = None,
+        custom_calling_context: Optional["_models.CustomCallingContext"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3608,19 +3702,20 @@ class RedirectCallRequest(_serialization.Model):
         :paramtype incoming_call_context: str
         :keyword target: The target identity to redirect the call to. Required.
         :paramtype target: ~azure.communication.callautomation.models.CommunicationIdentifierModel
-        :keyword custom_context: Used by customer to send custom context to targets.
-        :paramtype custom_context: ~azure.communication.callautomation.models.CustomContext
+        :keyword custom_calling_context: Used by customer to send custom calling context to targets.
+        :paramtype custom_calling_context:
+         ~azure.communication.callautomation.models.CustomCallingContext
         """
         super().__init__(**kwargs)
         self.incoming_call_context = incoming_call_context
         self.target = target
-        self.custom_context = custom_context
+        self.custom_calling_context = custom_calling_context
 
 
 class RejectCallRequest(_serialization.Model):
     """The request payload for rejecting the call.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar incoming_call_context: The context associated with the call. Required.
     :vartype incoming_call_context: str
@@ -3661,6 +3756,15 @@ class RejectCallRequest(_serialization.Model):
 class RemoveParticipantFailed(_serialization.Model):
     """The failed to remove participant event.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+     request to the response event.
+    :vartype operation_context: str
+    :ivar result_information: Contains the resulting SIP code, sub-code and message.
+    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
+    :ivar participant: Participant.
+    :vartype participant: ~azure.communication.callautomation.models.CommunicationIdentifierModel
     :ivar call_connection_id: Call connection ID.
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
@@ -3668,66 +3772,41 @@ class RemoveParticipantFailed(_serialization.Model):
     :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
      skype chain ID.
     :vartype correlation_id: str
-    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
-     request to the response event.
-    :vartype operation_context: str
-    :ivar result_information: Contains the resulting SIP code/sub-code and message from NGC
-     services.
-    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
-    :ivar participant: Participant.
-    :vartype participant: ~azure.communication.callautomation.models.CommunicationIdentifierModel
     """
 
+    _validation = {
+        "operation_context": {"readonly": True},
+        "result_information": {"readonly": True},
+        "participant": {"readonly": True},
+        "call_connection_id": {"readonly": True},
+        "server_call_id": {"readonly": True},
+        "correlation_id": {"readonly": True},
+    }
+
     _attribute_map = {
-        "call_connection_id": {"key": "callConnectionId", "type": "str"},
-        "server_call_id": {"key": "serverCallId", "type": "str"},
-        "correlation_id": {"key": "correlationId", "type": "str"},
         "operation_context": {"key": "operationContext", "type": "str"},
         "result_information": {"key": "resultInformation", "type": "ResultInformation"},
         "participant": {"key": "participant", "type": "CommunicationIdentifierModel"},
+        "call_connection_id": {"key": "callConnectionId", "type": "str"},
+        "server_call_id": {"key": "serverCallId", "type": "str"},
+        "correlation_id": {"key": "correlationId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        call_connection_id: Optional[str] = None,
-        server_call_id: Optional[str] = None,
-        correlation_id: Optional[str] = None,
-        operation_context: Optional[str] = None,
-        result_information: Optional["_models.ResultInformation"] = None,
-        participant: Optional["_models.CommunicationIdentifierModel"] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword call_connection_id: Call connection ID.
-        :paramtype call_connection_id: str
-        :keyword server_call_id: Server call ID.
-        :paramtype server_call_id: str
-        :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-         skype chain ID.
-        :paramtype correlation_id: str
-        :keyword operation_context: Used by customers when calling mid-call actions to correlate the
-         request to the response event.
-        :paramtype operation_context: str
-        :keyword result_information: Contains the resulting SIP code/sub-code and message from NGC
-         services.
-        :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
-        :keyword participant: Participant.
-        :paramtype participant: ~azure.communication.callautomation.models.CommunicationIdentifierModel
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
-        self.call_connection_id = call_connection_id
-        self.server_call_id = server_call_id
-        self.correlation_id = correlation_id
-        self.operation_context = operation_context
-        self.result_information = result_information
-        self.participant = participant
+        self.operation_context = None
+        self.result_information = None
+        self.participant = None
+        self.call_connection_id = None
+        self.server_call_id = None
+        self.correlation_id = None
 
 
 class RemoveParticipantRequest(_serialization.Model):
     """The remove participant by identifier request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar participant_to_remove: The participants to be removed from the call. Required.
     :vartype participant_to_remove:
@@ -3735,8 +3814,11 @@ class RemoveParticipantRequest(_serialization.Model):
     :ivar operation_context: Used by customers when calling mid-call actions to correlate the
      request to the response event.
     :vartype operation_context: str
-    :ivar callback_uri: The callback URI to override the main callback URI.
-    :vartype callback_uri: str
+    :ivar operation_callback_uri: Set a callback URI that overrides the default callback URI set by
+     CreateCall/AnswerCall for this operation.
+     This setup is per-action. If this is not set, the default callback URI set by
+     CreateCall/AnswerCall will be used.
+    :vartype operation_callback_uri: str
     """
 
     _validation = {
@@ -3746,7 +3828,7 @@ class RemoveParticipantRequest(_serialization.Model):
     _attribute_map = {
         "participant_to_remove": {"key": "participantToRemove", "type": "CommunicationIdentifierModel"},
         "operation_context": {"key": "operationContext", "type": "str"},
-        "callback_uri": {"key": "callbackUri", "type": "str"},
+        "operation_callback_uri": {"key": "operationCallbackUri", "type": "str"},
     }
 
     def __init__(
@@ -3754,7 +3836,7 @@ class RemoveParticipantRequest(_serialization.Model):
         *,
         participant_to_remove: "_models.CommunicationIdentifierModel",
         operation_context: Optional[str] = None,
-        callback_uri: Optional[str] = None,
+        operation_callback_uri: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3764,13 +3846,16 @@ class RemoveParticipantRequest(_serialization.Model):
         :keyword operation_context: Used by customers when calling mid-call actions to correlate the
          request to the response event.
         :paramtype operation_context: str
-        :keyword callback_uri: The callback URI to override the main callback URI.
-        :paramtype callback_uri: str
+        :keyword operation_callback_uri: Set a callback URI that overrides the default callback URI set
+         by CreateCall/AnswerCall for this operation.
+         This setup is per-action. If this is not set, the default callback URI set by
+         CreateCall/AnswerCall will be used.
+        :paramtype operation_callback_uri: str
         """
         super().__init__(**kwargs)
         self.participant_to_remove = participant_to_remove
         self.operation_context = operation_context
-        self.callback_uri = callback_uri
+        self.operation_callback_uri = operation_callback_uri
 
 
 class RemoveParticipantResponse(_serialization.Model):
@@ -3796,6 +3881,15 @@ class RemoveParticipantResponse(_serialization.Model):
 class RemoveParticipantSucceeded(_serialization.Model):
     """The participant removed event.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+     request to the response event.
+    :vartype operation_context: str
+    :ivar result_information: Contains the resulting SIP code, sub-code and message.
+    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
+    :ivar participant: Participant.
+    :vartype participant: ~azure.communication.callautomation.models.CommunicationIdentifierModel
     :ivar call_connection_id: Call connection ID.
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
@@ -3803,60 +3897,35 @@ class RemoveParticipantSucceeded(_serialization.Model):
     :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
      skype chain ID.
     :vartype correlation_id: str
-    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
-     request to the response event.
-    :vartype operation_context: str
-    :ivar result_information: Contains the resulting SIP code/sub-code and message from NGC
-     services.
-    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
-    :ivar participant: Participant.
-    :vartype participant: ~azure.communication.callautomation.models.CommunicationIdentifierModel
     """
 
+    _validation = {
+        "operation_context": {"readonly": True},
+        "result_information": {"readonly": True},
+        "participant": {"readonly": True},
+        "call_connection_id": {"readonly": True},
+        "server_call_id": {"readonly": True},
+        "correlation_id": {"readonly": True},
+    }
+
     _attribute_map = {
-        "call_connection_id": {"key": "callConnectionId", "type": "str"},
-        "server_call_id": {"key": "serverCallId", "type": "str"},
-        "correlation_id": {"key": "correlationId", "type": "str"},
         "operation_context": {"key": "operationContext", "type": "str"},
         "result_information": {"key": "resultInformation", "type": "ResultInformation"},
         "participant": {"key": "participant", "type": "CommunicationIdentifierModel"},
+        "call_connection_id": {"key": "callConnectionId", "type": "str"},
+        "server_call_id": {"key": "serverCallId", "type": "str"},
+        "correlation_id": {"key": "correlationId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        call_connection_id: Optional[str] = None,
-        server_call_id: Optional[str] = None,
-        correlation_id: Optional[str] = None,
-        operation_context: Optional[str] = None,
-        result_information: Optional["_models.ResultInformation"] = None,
-        participant: Optional["_models.CommunicationIdentifierModel"] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword call_connection_id: Call connection ID.
-        :paramtype call_connection_id: str
-        :keyword server_call_id: Server call ID.
-        :paramtype server_call_id: str
-        :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-         skype chain ID.
-        :paramtype correlation_id: str
-        :keyword operation_context: Used by customers when calling mid-call actions to correlate the
-         request to the response event.
-        :paramtype operation_context: str
-        :keyword result_information: Contains the resulting SIP code/sub-code and message from NGC
-         services.
-        :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
-        :keyword participant: Participant.
-        :paramtype participant: ~azure.communication.callautomation.models.CommunicationIdentifierModel
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
-        self.call_connection_id = call_connection_id
-        self.server_call_id = server_call_id
-        self.correlation_id = correlation_id
-        self.operation_context = operation_context
-        self.result_information = result_information
-        self.participant = participant
+        self.operation_context = None
+        self.result_information = None
+        self.participant = None
+        self.call_connection_id = None
+        self.server_call_id = None
+        self.correlation_id = None
 
 
 class ResultInformation(_serialization.Model):
@@ -3902,130 +3971,113 @@ class ResultInformation(_serialization.Model):
         self.message = message
 
 
-class SendDtmfCompleted(_serialization.Model):
-    """SendDtmfCompleted.
+class SendDtmfTonesCompleted(_serialization.Model):
+    """SendDtmfTonesCompleted.
 
-    :ivar call_connection_id: Call connection ID.
-    :vartype call_connection_id: str
-    :ivar server_call_id: Server call ID.
-    :vartype server_call_id: str
-    :ivar correlation_id: Correlation ID for event to call correlation.
-    :vartype correlation_id: str
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     :ivar operation_context: Used by customers when calling mid-call actions to correlate the
      request to the response event.
     :vartype operation_context: str
     :ivar result_information: Contains the resulting SIP code, sub-code and message.
     :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
-    """
-
-    _attribute_map = {
-        "call_connection_id": {"key": "callConnectionId", "type": "str"},
-        "server_call_id": {"key": "serverCallId", "type": "str"},
-        "correlation_id": {"key": "correlationId", "type": "str"},
-        "operation_context": {"key": "operationContext", "type": "str"},
-        "result_information": {"key": "resultInformation", "type": "ResultInformation"},
-    }
-
-    def __init__(
-        self,
-        *,
-        call_connection_id: Optional[str] = None,
-        server_call_id: Optional[str] = None,
-        correlation_id: Optional[str] = None,
-        operation_context: Optional[str] = None,
-        result_information: Optional["_models.ResultInformation"] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword call_connection_id: Call connection ID.
-        :paramtype call_connection_id: str
-        :keyword server_call_id: Server call ID.
-        :paramtype server_call_id: str
-        :keyword correlation_id: Correlation ID for event to call correlation.
-        :paramtype correlation_id: str
-        :keyword operation_context: Used by customers when calling mid-call actions to correlate the
-         request to the response event.
-        :paramtype operation_context: str
-        :keyword result_information: Contains the resulting SIP code, sub-code and message.
-        :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
-        """
-        super().__init__(**kwargs)
-        self.call_connection_id = call_connection_id
-        self.server_call_id = server_call_id
-        self.correlation_id = correlation_id
-        self.operation_context = operation_context
-        self.result_information = result_information
-
-
-class SendDtmfFailed(_serialization.Model):
-    """SendDtmfFailed.
-
     :ivar call_connection_id: Call connection ID.
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
     :vartype server_call_id: str
-    :ivar correlation_id: Correlation ID for event to call correlation.
+    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+     skype chain ID.
     :vartype correlation_id: str
+    """
+
+    _validation = {
+        "operation_context": {"readonly": True},
+        "result_information": {"readonly": True},
+        "call_connection_id": {"readonly": True},
+        "server_call_id": {"readonly": True},
+        "correlation_id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "operation_context": {"key": "operationContext", "type": "str"},
+        "result_information": {"key": "resultInformation", "type": "ResultInformation"},
+        "call_connection_id": {"key": "callConnectionId", "type": "str"},
+        "server_call_id": {"key": "serverCallId", "type": "str"},
+        "correlation_id": {"key": "correlationId", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.operation_context = None
+        self.result_information = None
+        self.call_connection_id = None
+        self.server_call_id = None
+        self.correlation_id = None
+
+
+class SendDtmfTonesFailed(_serialization.Model):
+    """SendDtmfTonesFailed.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     :ivar operation_context: Used by customers when calling mid-call actions to correlate the
      request to the response event.
     :vartype operation_context: str
     :ivar result_information: Contains the resulting SIP code, sub-code and message.
     :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+     skype chain ID.
+    :vartype correlation_id: str
     """
 
+    _validation = {
+        "operation_context": {"readonly": True},
+        "result_information": {"readonly": True},
+        "call_connection_id": {"readonly": True},
+        "server_call_id": {"readonly": True},
+        "correlation_id": {"readonly": True},
+    }
+
     _attribute_map = {
+        "operation_context": {"key": "operationContext", "type": "str"},
+        "result_information": {"key": "resultInformation", "type": "ResultInformation"},
         "call_connection_id": {"key": "callConnectionId", "type": "str"},
         "server_call_id": {"key": "serverCallId", "type": "str"},
         "correlation_id": {"key": "correlationId", "type": "str"},
-        "operation_context": {"key": "operationContext", "type": "str"},
-        "result_information": {"key": "resultInformation", "type": "ResultInformation"},
     }
 
-    def __init__(
-        self,
-        *,
-        call_connection_id: Optional[str] = None,
-        server_call_id: Optional[str] = None,
-        correlation_id: Optional[str] = None,
-        operation_context: Optional[str] = None,
-        result_information: Optional["_models.ResultInformation"] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword call_connection_id: Call connection ID.
-        :paramtype call_connection_id: str
-        :keyword server_call_id: Server call ID.
-        :paramtype server_call_id: str
-        :keyword correlation_id: Correlation ID for event to call correlation.
-        :paramtype correlation_id: str
-        :keyword operation_context: Used by customers when calling mid-call actions to correlate the
-         request to the response event.
-        :paramtype operation_context: str
-        :keyword result_information: Contains the resulting SIP code, sub-code and message.
-        :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
-        self.call_connection_id = call_connection_id
-        self.server_call_id = server_call_id
-        self.correlation_id = correlation_id
-        self.operation_context = operation_context
-        self.result_information = result_information
+        self.operation_context = None
+        self.result_information = None
+        self.call_connection_id = None
+        self.server_call_id = None
+        self.correlation_id = None
 
 
-class SendDtmfRequest(_serialization.Model):
-    """SendDtmfRequest.
+class SendDtmfTonesRequest(_serialization.Model):
+    """SendDtmfTonesRequest.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar tones: List of tones to be sent to target participant. Required.
     :vartype tones: list[str or ~azure.communication.callautomation.models.DtmfTone]
-    :ivar target_participant: Target participant of send DTMF. Required.
+    :ivar target_participant: Target participant of send Dtmf tones. Required.
     :vartype target_participant:
      ~azure.communication.callautomation.models.CommunicationIdentifierModel
     :ivar operation_context: The value to identify context of the operation.
     :vartype operation_context: str
-    :ivar callback_uri: The callback URI to override the main callback URI.
-    :vartype callback_uri: str
+    :ivar operation_callback_uri: Set a callback URI that overrides the default callback URI set by
+     CreateCall/AnswerCall for this operation.
+     This setup is per-action. If this is not set, the default callback URI set by
+     CreateCall/AnswerCall will be used.
+    :vartype operation_callback_uri: str
     """
 
     _validation = {
@@ -4037,7 +4089,7 @@ class SendDtmfRequest(_serialization.Model):
         "tones": {"key": "tones", "type": "[str]"},
         "target_participant": {"key": "targetParticipant", "type": "CommunicationIdentifierModel"},
         "operation_context": {"key": "operationContext", "type": "str"},
-        "callback_uri": {"key": "callbackUri", "type": "str"},
+        "operation_callback_uri": {"key": "operationCallbackUri", "type": "str"},
     }
 
     def __init__(
@@ -4046,25 +4098,48 @@ class SendDtmfRequest(_serialization.Model):
         tones: List[Union[str, "_models.DtmfTone"]],
         target_participant: "_models.CommunicationIdentifierModel",
         operation_context: Optional[str] = None,
-        callback_uri: Optional[str] = None,
+        operation_callback_uri: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword tones: List of tones to be sent to target participant. Required.
         :paramtype tones: list[str or ~azure.communication.callautomation.models.DtmfTone]
-        :keyword target_participant: Target participant of send DTMF. Required.
+        :keyword target_participant: Target participant of send Dtmf tones. Required.
         :paramtype target_participant:
          ~azure.communication.callautomation.models.CommunicationIdentifierModel
         :keyword operation_context: The value to identify context of the operation.
         :paramtype operation_context: str
-        :keyword callback_uri: The callback URI to override the main callback URI.
-        :paramtype callback_uri: str
+        :keyword operation_callback_uri: Set a callback URI that overrides the default callback URI set
+         by CreateCall/AnswerCall for this operation.
+         This setup is per-action. If this is not set, the default callback URI set by
+         CreateCall/AnswerCall will be used.
+        :paramtype operation_callback_uri: str
         """
         super().__init__(**kwargs)
         self.tones = tones
         self.target_participant = target_participant
         self.operation_context = operation_context
-        self.callback_uri = callback_uri
+        self.operation_callback_uri = operation_callback_uri
+
+
+class SendDtmfTonesResult(_serialization.Model):
+    """SendDtmfTonesResult.
+
+    :ivar operation_context: The operation context provided by client.
+    :vartype operation_context: str
+    """
+
+    _attribute_map = {
+        "operation_context": {"key": "operationContext", "type": "str"},
+    }
+
+    def __init__(self, *, operation_context: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword operation_context: The operation context provided by client.
+        :paramtype operation_context: str
+        """
+        super().__init__(**kwargs)
+        self.operation_context = operation_context
 
 
 class SpeechOptions(_serialization.Model):
@@ -4090,7 +4165,7 @@ class SpeechOptions(_serialization.Model):
 
 
 class SpeechResult(_serialization.Model):
-    """The speech status as a result.
+    """The speech recognition status as a result.
 
     :ivar speech: The recognized speech in string.
     :vartype speech: str
@@ -4112,7 +4187,7 @@ class SpeechResult(_serialization.Model):
 class SsmlSource(_serialization.Model):
     """SsmlSource.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar ssml_text: Ssml string for the cognitive service to be played. Required.
     :vartype ssml_text: str
@@ -4144,7 +4219,7 @@ class SsmlSource(_serialization.Model):
 class StartCallRecordingRequest(_serialization.Model):
     """The request payload start for call recording operation with call locator.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar call_locator: The call locator. Required.
     :vartype call_locator: ~azure.communication.callautomation.models.CallLocator
@@ -4273,55 +4348,58 @@ class StartCallRecordingRequest(_serialization.Model):
 class StartDialogRequest(_serialization.Model):
     """StartDialogRequest.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :ivar dialog_options: Defines options for dialog. Required.
-    :vartype dialog_options: ~azure.communication.callautomation.models.DialogOptions
-    :ivar dialog_input_type: Determines the type of the dialog. Required. Known values are:
-     "powerVirtualAgents" and "azureOpenAI".
-    :vartype dialog_input_type: str or ~azure.communication.callautomation.models.DialogInputType
+    :ivar dialog: Defines the dialog. Required.
+    :vartype dialog: ~azure.communication.callautomation.models.BaseDialog
+    :ivar operation_callback_uri: Set a callback URI that overrides the default callback URI set by
+     CreateCall/AnswerCall for this operation.
+     This setup is per-action. If this is not set, the default callback URI set by
+     CreateCall/AnswerCall will be used.
+    :vartype operation_callback_uri: str
     :ivar operation_context: The value to identify context of the operation.
     :vartype operation_context: str
     """
 
     _validation = {
-        "dialog_options": {"required": True},
-        "dialog_input_type": {"required": True},
+        "dialog": {"required": True},
     }
 
     _attribute_map = {
-        "dialog_options": {"key": "dialogOptions", "type": "DialogOptions"},
-        "dialog_input_type": {"key": "dialogInputType", "type": "str"},
+        "dialog": {"key": "dialog", "type": "BaseDialog"},
+        "operation_callback_uri": {"key": "operationCallbackUri", "type": "str"},
         "operation_context": {"key": "operationContext", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        dialog_options: "_models.DialogOptions",
-        dialog_input_type: Union[str, "_models.DialogInputType"],
+        dialog: "_models.BaseDialog",
+        operation_callback_uri: Optional[str] = None,
         operation_context: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword dialog_options: Defines options for dialog. Required.
-        :paramtype dialog_options: ~azure.communication.callautomation.models.DialogOptions
-        :keyword dialog_input_type: Determines the type of the dialog. Required. Known values are:
-         "powerVirtualAgents" and "azureOpenAI".
-        :paramtype dialog_input_type: str or ~azure.communication.callautomation.models.DialogInputType
+        :keyword dialog: Defines the dialog. Required.
+        :paramtype dialog: ~azure.communication.callautomation.models.BaseDialog
+        :keyword operation_callback_uri: Set a callback URI that overrides the default callback URI set
+         by CreateCall/AnswerCall for this operation.
+         This setup is per-action. If this is not set, the default callback URI set by
+         CreateCall/AnswerCall will be used.
+        :paramtype operation_callback_uri: str
         :keyword operation_context: The value to identify context of the operation.
         :paramtype operation_context: str
         """
         super().__init__(**kwargs)
-        self.dialog_options = dialog_options
-        self.dialog_input_type = dialog_input_type
+        self.dialog = dialog
+        self.operation_callback_uri = operation_callback_uri
         self.operation_context = operation_context
 
 
 class StartHoldMusicRequest(_serialization.Model):
     """The request payload for holding participant from the call.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar target_participant: Participant to be held from the call. Required.
     :vartype target_participant:
@@ -4404,7 +4482,7 @@ class StartTranscriptionRequest(_serialization.Model):
 class StopHoldMusicRequest(_serialization.Model):
     """The request payload for holding participant from the call.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar target_participant: Participants to be hold from the call.
      Only ACS Users are supported. Required.
@@ -4465,10 +4543,136 @@ class StopTranscriptionRequest(_serialization.Model):
         self.operation_context = operation_context
 
 
+class TeamsComplianceRecordingStateChanged(_serialization.Model):
+    """TeamsComplianceRecordingStateChanged.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar recording_id: The call recording id.
+    :vartype recording_id: str
+    :ivar state: Known values are: "active" and "inactive".
+    :vartype state: str or ~azure.communication.callautomation.models.RecordingState
+    :ivar start_date_time: The time of the recording started.
+    :vartype start_date_time: ~datetime.datetime
+    :ivar recording_type: Known values are: "acs", "teams", and "teamsCompliance".
+    :vartype recording_type: str or ~azure.communication.callautomation.models.RecordingType
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+     skype chain ID.
+    :vartype correlation_id: str
+    """
+
+    _validation = {
+        "recording_id": {"readonly": True},
+        "start_date_time": {"readonly": True},
+        "call_connection_id": {"readonly": True},
+        "server_call_id": {"readonly": True},
+        "correlation_id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "recording_id": {"key": "recordingId", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "start_date_time": {"key": "startDateTime", "type": "iso-8601"},
+        "recording_type": {"key": "recordingType", "type": "str"},
+        "call_connection_id": {"key": "callConnectionId", "type": "str"},
+        "server_call_id": {"key": "serverCallId", "type": "str"},
+        "correlation_id": {"key": "correlationId", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        state: Optional[Union[str, "_models.RecordingState"]] = None,
+        recording_type: Optional[Union[str, "_models.RecordingType"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword state: Known values are: "active" and "inactive".
+        :paramtype state: str or ~azure.communication.callautomation.models.RecordingState
+        :keyword recording_type: Known values are: "acs", "teams", and "teamsCompliance".
+        :paramtype recording_type: str or ~azure.communication.callautomation.models.RecordingType
+        """
+        super().__init__(**kwargs)
+        self.recording_id = None
+        self.state = state
+        self.start_date_time = None
+        self.recording_type = recording_type
+        self.call_connection_id = None
+        self.server_call_id = None
+        self.correlation_id = None
+
+
+class TeamsRecordingStateChanged(_serialization.Model):
+    """TeamsRecordingStateChanged.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar recording_id: The call recording id.
+    :vartype recording_id: str
+    :ivar state: Known values are: "active" and "inactive".
+    :vartype state: str or ~azure.communication.callautomation.models.RecordingState
+    :ivar start_date_time: The time of the recording started.
+    :vartype start_date_time: ~datetime.datetime
+    :ivar recording_type: Known values are: "acs", "teams", and "teamsCompliance".
+    :vartype recording_type: str or ~azure.communication.callautomation.models.RecordingType
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+     skype chain ID.
+    :vartype correlation_id: str
+    """
+
+    _validation = {
+        "recording_id": {"readonly": True},
+        "start_date_time": {"readonly": True},
+        "call_connection_id": {"readonly": True},
+        "server_call_id": {"readonly": True},
+        "correlation_id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "recording_id": {"key": "recordingId", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "start_date_time": {"key": "startDateTime", "type": "iso-8601"},
+        "recording_type": {"key": "recordingType", "type": "str"},
+        "call_connection_id": {"key": "callConnectionId", "type": "str"},
+        "server_call_id": {"key": "serverCallId", "type": "str"},
+        "correlation_id": {"key": "correlationId", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        state: Optional[Union[str, "_models.RecordingState"]] = None,
+        recording_type: Optional[Union[str, "_models.RecordingType"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword state: Known values are: "active" and "inactive".
+        :paramtype state: str or ~azure.communication.callautomation.models.RecordingState
+        :keyword recording_type: Known values are: "acs", "teams", and "teamsCompliance".
+        :paramtype recording_type: str or ~azure.communication.callautomation.models.RecordingType
+        """
+        super().__init__(**kwargs)
+        self.recording_id = None
+        self.state = state
+        self.start_date_time = None
+        self.recording_type = recording_type
+        self.call_connection_id = None
+        self.server_call_id = None
+        self.correlation_id = None
+
+
 class TextSource(_serialization.Model):
     """TextSource.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar text: Text for the cognitive service to be played. Required.
     :vartype text: str
@@ -4477,8 +4681,8 @@ class TextSource(_serialization.Model):
      href="https://learn.microsoft.com/en-us/azure/cognitive-services/speech-service/language-support?tabs=stt-tts"
      />`.
     :vartype source_locale: str
-    :ivar voice_gender: Voice gender type. Known values are: "male" and "female".
-    :vartype voice_gender: str or ~azure.communication.callautomation.models.Gender
+    :ivar voice_kind: Voice kind type. Known values are: "male" and "female".
+    :vartype voice_kind: str or ~azure.communication.callautomation.models.VoiceKind
     :ivar voice_name: Voice name to be played
      Refer to available Text-to-speech voices here: :code:`<seealso
      href="https://learn.microsoft.com/en-us/azure/cognitive-services/speech-service/language-support?tabs=stt-tts"
@@ -4495,7 +4699,7 @@ class TextSource(_serialization.Model):
     _attribute_map = {
         "text": {"key": "text", "type": "str"},
         "source_locale": {"key": "sourceLocale", "type": "str"},
-        "voice_gender": {"key": "voiceGender", "type": "str"},
+        "voice_kind": {"key": "voiceKind", "type": "str"},
         "voice_name": {"key": "voiceName", "type": "str"},
         "custom_voice_endpoint_id": {"key": "customVoiceEndpointId", "type": "str"},
     }
@@ -4505,7 +4709,7 @@ class TextSource(_serialization.Model):
         *,
         text: str,
         source_locale: Optional[str] = None,
-        voice_gender: Optional[Union[str, "_models.Gender"]] = None,
+        voice_kind: Optional[Union[str, "_models.VoiceKind"]] = None,
         voice_name: Optional[str] = None,
         custom_voice_endpoint_id: Optional[str] = None,
         **kwargs: Any
@@ -4518,8 +4722,8 @@ class TextSource(_serialization.Model):
          href="https://learn.microsoft.com/en-us/azure/cognitive-services/speech-service/language-support?tabs=stt-tts"
          />`.
         :paramtype source_locale: str
-        :keyword voice_gender: Voice gender type. Known values are: "male" and "female".
-        :paramtype voice_gender: str or ~azure.communication.callautomation.models.Gender
+        :keyword voice_kind: Voice kind type. Known values are: "male" and "female".
+        :paramtype voice_kind: str or ~azure.communication.callautomation.models.VoiceKind
         :keyword voice_name: Voice name to be played
          Refer to available Text-to-speech voices here: :code:`<seealso
          href="https://learn.microsoft.com/en-us/azure/cognitive-services/speech-service/language-support?tabs=stt-tts"
@@ -4531,52 +4735,15 @@ class TextSource(_serialization.Model):
         super().__init__(**kwargs)
         self.text = text
         self.source_locale = source_locale
-        self.voice_gender = voice_gender
+        self.voice_kind = voice_kind
         self.voice_name = voice_name
         self.custom_voice_endpoint_id = custom_voice_endpoint_id
-
-
-class ToneInfo(_serialization.Model):
-    """The information about the tone.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar sequence_id: The sequence id which can be used to determine if the same tone was played
-     multiple times or if any tones were missed. Required.
-    :vartype sequence_id: int
-    :ivar tone: Required. Known values are: "zero", "one", "two", "three", "four", "five", "six",
-     "seven", "eight", "nine", "a", "b", "c", "d", "pound", and "asterisk".
-    :vartype tone: str or ~azure.communication.callautomation.models.DtmfTone
-    """
-
-    _validation = {
-        "sequence_id": {"required": True},
-        "tone": {"required": True},
-    }
-
-    _attribute_map = {
-        "sequence_id": {"key": "sequenceId", "type": "int"},
-        "tone": {"key": "tone", "type": "str"},
-    }
-
-    def __init__(self, *, sequence_id: int, tone: Union[str, "_models.DtmfTone"], **kwargs: Any) -> None:
-        """
-        :keyword sequence_id: The sequence id which can be used to determine if the same tone was
-         played multiple times or if any tones were missed. Required.
-        :paramtype sequence_id: int
-        :keyword tone: Required. Known values are: "zero", "one", "two", "three", "four", "five",
-         "six", "seven", "eight", "nine", "a", "b", "c", "d", "pound", and "asterisk".
-        :paramtype tone: str or ~azure.communication.callautomation.models.DtmfTone
-        """
-        super().__init__(**kwargs)
-        self.sequence_id = sequence_id
-        self.tone = tone
 
 
 class TranscriptionConfiguration(_serialization.Model):
     """Configuration of live transcription.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar transport_url: Transport URL for live transcription. Required.
     :vartype transport_url: str
@@ -4639,6 +4806,14 @@ class TranscriptionFailed(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+     request to the response event.
+    :vartype operation_context: str
+    :ivar result_information: Contains the resulting SIP code, sub-code and message.
+    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
+    :ivar transcription_update: Defines the result for TranscriptionUpdate with the current status
+     and the details about the status.
+    :vartype transcription_update: ~azure.communication.callautomation.models.TranscriptionUpdate
     :ivar call_connection_id: Call connection ID.
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
@@ -4646,110 +4821,35 @@ class TranscriptionFailed(_serialization.Model):
     :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
      skype chain ID.
     :vartype correlation_id: str
-    :ivar operation_context: Used by customers when calling answerCall action to correlate the
-     request to the response event.
-    :vartype operation_context: str
-    :ivar result_information: Contains the resulting SIP code/sub-code and message from NGC
-     services.
-    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
-    :ivar transcription_update_result: Defines the result for TranscriptionUpdate with the current
-     status and the details about the status.
-    :vartype transcription_update_result:
-     ~azure.communication.callautomation.models.TranscriptionUpdate
     """
 
     _validation = {
-        "call_connection_id": {"readonly": True},
         "operation_context": {"readonly": True},
         "result_information": {"readonly": True},
-        "transcription_update_result": {"readonly": True},
+        "transcription_update": {"readonly": True},
+        "call_connection_id": {"readonly": True},
+        "server_call_id": {"readonly": True},
+        "correlation_id": {"readonly": True},
     }
 
     _attribute_map = {
+        "operation_context": {"key": "operationContext", "type": "str"},
+        "result_information": {"key": "resultInformation", "type": "ResultInformation"},
+        "transcription_update": {"key": "transcriptionUpdate", "type": "TranscriptionUpdate"},
         "call_connection_id": {"key": "callConnectionId", "type": "str"},
         "server_call_id": {"key": "serverCallId", "type": "str"},
         "correlation_id": {"key": "correlationId", "type": "str"},
-        "operation_context": {"key": "operationContext", "type": "str"},
-        "result_information": {"key": "resultInformation", "type": "ResultInformation"},
-        "transcription_update_result": {"key": "transcriptionUpdateResult", "type": "TranscriptionUpdate"},
     }
 
-    def __init__(
-        self, *, server_call_id: Optional[str] = None, correlation_id: Optional[str] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword server_call_id: Server call ID.
-        :paramtype server_call_id: str
-        :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-         skype chain ID.
-        :paramtype correlation_id: str
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
-        self.call_connection_id = None
-        self.server_call_id = server_call_id
-        self.correlation_id = correlation_id
         self.operation_context = None
         self.result_information = None
-        self.transcription_update_result = None
-
-
-class TranscriptionResumed(_serialization.Model):
-    """TranscriptionResumed.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar call_connection_id: Call connection ID.
-    :vartype call_connection_id: str
-    :ivar server_call_id: Server call ID.
-    :vartype server_call_id: str
-    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-     skype chain ID.
-    :vartype correlation_id: str
-    :ivar operation_context: Used by customers when calling answerCall action to correlate the
-     request to the response event.
-    :vartype operation_context: str
-    :ivar result_information: Contains the resulting SIP code/sub-code and message from NGC
-     services.
-    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
-    :ivar transcription_update_result: Defines the result for TranscriptionUpdate with the current
-     status and the details about the status.
-    :vartype transcription_update_result:
-     ~azure.communication.callautomation.models.TranscriptionUpdate
-    """
-
-    _validation = {
-        "call_connection_id": {"readonly": True},
-        "operation_context": {"readonly": True},
-        "result_information": {"readonly": True},
-        "transcription_update_result": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "call_connection_id": {"key": "callConnectionId", "type": "str"},
-        "server_call_id": {"key": "serverCallId", "type": "str"},
-        "correlation_id": {"key": "correlationId", "type": "str"},
-        "operation_context": {"key": "operationContext", "type": "str"},
-        "result_information": {"key": "resultInformation", "type": "ResultInformation"},
-        "transcription_update_result": {"key": "transcriptionUpdateResult", "type": "TranscriptionUpdate"},
-    }
-
-    def __init__(
-        self, *, server_call_id: Optional[str] = None, correlation_id: Optional[str] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword server_call_id: Server call ID.
-        :paramtype server_call_id: str
-        :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-         skype chain ID.
-        :paramtype correlation_id: str
-        """
-        super().__init__(**kwargs)
+        self.transcription_update = None
         self.call_connection_id = None
-        self.server_call_id = server_call_id
-        self.correlation_id = correlation_id
-        self.operation_context = None
-        self.result_information = None
-        self.transcription_update_result = None
+        self.server_call_id = None
+        self.correlation_id = None
 
 
 class TranscriptionStarted(_serialization.Model):
@@ -4757,6 +4857,14 @@ class TranscriptionStarted(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+     request to the response event.
+    :vartype operation_context: str
+    :ivar result_information: Contains the resulting SIP code, sub-code and message.
+    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
+    :ivar transcription_update: Defines the result for TranscriptionUpdate with the current status
+     and the details about the status.
+    :vartype transcription_update: ~azure.communication.callautomation.models.TranscriptionUpdate
     :ivar call_connection_id: Call connection ID.
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
@@ -4764,51 +4872,35 @@ class TranscriptionStarted(_serialization.Model):
     :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
      skype chain ID.
     :vartype correlation_id: str
-    :ivar operation_context: Used by customers when calling answerCall action to correlate the
-     request to the response event.
-    :vartype operation_context: str
-    :ivar result_information: Contains the resulting SIP code/sub-code and message from NGC
-     services.
-    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
-    :ivar transcription_update_result: Defines the result for TranscriptionUpdate with the current
-     status and the details about the status.
-    :vartype transcription_update_result:
-     ~azure.communication.callautomation.models.TranscriptionUpdate
     """
 
     _validation = {
-        "call_connection_id": {"readonly": True},
         "operation_context": {"readonly": True},
         "result_information": {"readonly": True},
-        "transcription_update_result": {"readonly": True},
+        "transcription_update": {"readonly": True},
+        "call_connection_id": {"readonly": True},
+        "server_call_id": {"readonly": True},
+        "correlation_id": {"readonly": True},
     }
 
     _attribute_map = {
+        "operation_context": {"key": "operationContext", "type": "str"},
+        "result_information": {"key": "resultInformation", "type": "ResultInformation"},
+        "transcription_update": {"key": "transcriptionUpdate", "type": "TranscriptionUpdate"},
         "call_connection_id": {"key": "callConnectionId", "type": "str"},
         "server_call_id": {"key": "serverCallId", "type": "str"},
         "correlation_id": {"key": "correlationId", "type": "str"},
-        "operation_context": {"key": "operationContext", "type": "str"},
-        "result_information": {"key": "resultInformation", "type": "ResultInformation"},
-        "transcription_update_result": {"key": "transcriptionUpdateResult", "type": "TranscriptionUpdate"},
     }
 
-    def __init__(
-        self, *, server_call_id: Optional[str] = None, correlation_id: Optional[str] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword server_call_id: Server call ID.
-        :paramtype server_call_id: str
-        :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-         skype chain ID.
-        :paramtype correlation_id: str
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
-        self.call_connection_id = None
-        self.server_call_id = server_call_id
-        self.correlation_id = correlation_id
         self.operation_context = None
         self.result_information = None
-        self.transcription_update_result = None
+        self.transcription_update = None
+        self.call_connection_id = None
+        self.server_call_id = None
+        self.correlation_id = None
 
 
 class TranscriptionStopped(_serialization.Model):
@@ -4816,6 +4908,14 @@ class TranscriptionStopped(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+     request to the response event.
+    :vartype operation_context: str
+    :ivar result_information: Contains the resulting SIP code, sub-code and message.
+    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
+    :ivar transcription_update: Defines the result for TranscriptionUpdate with the current status
+     and the details about the status.
+    :vartype transcription_update: ~azure.communication.callautomation.models.TranscriptionUpdate
     :ivar call_connection_id: Call connection ID.
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
@@ -4823,65 +4923,49 @@ class TranscriptionStopped(_serialization.Model):
     :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
      skype chain ID.
     :vartype correlation_id: str
-    :ivar operation_context: Used by customers when calling answerCall action to correlate the
-     request to the response event.
-    :vartype operation_context: str
-    :ivar result_information: Contains the resulting SIP code/sub-code and message from NGC
-     services.
-    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
-    :ivar transcription_update_result: Defines the result for TranscriptionUpdate with the current
-     status and the details about the status.
-    :vartype transcription_update_result:
-     ~azure.communication.callautomation.models.TranscriptionUpdate
     """
 
     _validation = {
-        "call_connection_id": {"readonly": True},
         "operation_context": {"readonly": True},
         "result_information": {"readonly": True},
-        "transcription_update_result": {"readonly": True},
+        "transcription_update": {"readonly": True},
+        "call_connection_id": {"readonly": True},
+        "server_call_id": {"readonly": True},
+        "correlation_id": {"readonly": True},
     }
 
     _attribute_map = {
+        "operation_context": {"key": "operationContext", "type": "str"},
+        "result_information": {"key": "resultInformation", "type": "ResultInformation"},
+        "transcription_update": {"key": "transcriptionUpdate", "type": "TranscriptionUpdate"},
         "call_connection_id": {"key": "callConnectionId", "type": "str"},
         "server_call_id": {"key": "serverCallId", "type": "str"},
         "correlation_id": {"key": "correlationId", "type": "str"},
-        "operation_context": {"key": "operationContext", "type": "str"},
-        "result_information": {"key": "resultInformation", "type": "ResultInformation"},
-        "transcription_update_result": {"key": "transcriptionUpdateResult", "type": "TranscriptionUpdate"},
     }
 
-    def __init__(
-        self, *, server_call_id: Optional[str] = None, correlation_id: Optional[str] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword server_call_id: Server call ID.
-        :paramtype server_call_id: str
-        :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-         skype chain ID.
-        :paramtype correlation_id: str
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
-        self.call_connection_id = None
-        self.server_call_id = server_call_id
-        self.correlation_id = correlation_id
         self.operation_context = None
         self.result_information = None
-        self.transcription_update_result = None
+        self.transcription_update = None
+        self.call_connection_id = None
+        self.server_call_id = None
+        self.correlation_id = None
 
 
 class TranscriptionUpdate(_serialization.Model):
     """TranscriptionUpdate.
 
     :ivar transcription_status: Known values are: "transcriptionStarted", "transcriptionFailed",
-     "transcriptionResumed", "transcriptionLocaleUpdated", "transcriptionStopped", and
-     "unspecifiedError".
+     "transcriptionResumed", "transcriptionUpdated", "transcriptionStopped", and "unspecifiedError".
     :vartype transcription_status: str or
      ~azure.communication.callautomation.models.TranscriptionStatus
     :ivar transcription_status_details: Known values are: "subscriptionStarted",
      "streamConnectionReestablished", "streamConnectionUnsuccessful", "streamUrlMissing",
      "serviceShutdown", "streamConnectionInterrupted", "speechServicesConnectionError",
-     "subscriptionStopped", and "unspecifiedError".
+     "subscriptionStopped", "unspecifiedError", "authenticationFailure", "badRequest",
+     "tooManyRequests", "forbidden", "serviceTimeout", and "transcriptionLocaleUpdated".
     :vartype transcription_status_details: str or
      ~azure.communication.callautomation.models.TranscriptionStatusDetails
     """
@@ -4900,20 +4984,71 @@ class TranscriptionUpdate(_serialization.Model):
     ) -> None:
         """
         :keyword transcription_status: Known values are: "transcriptionStarted", "transcriptionFailed",
-         "transcriptionResumed", "transcriptionLocaleUpdated", "transcriptionStopped", and
-         "unspecifiedError".
+         "transcriptionResumed", "transcriptionUpdated", "transcriptionStopped", and "unspecifiedError".
         :paramtype transcription_status: str or
          ~azure.communication.callautomation.models.TranscriptionStatus
         :keyword transcription_status_details: Known values are: "subscriptionStarted",
          "streamConnectionReestablished", "streamConnectionUnsuccessful", "streamUrlMissing",
          "serviceShutdown", "streamConnectionInterrupted", "speechServicesConnectionError",
-         "subscriptionStopped", and "unspecifiedError".
+         "subscriptionStopped", "unspecifiedError", "authenticationFailure", "badRequest",
+         "tooManyRequests", "forbidden", "serviceTimeout", and "transcriptionLocaleUpdated".
         :paramtype transcription_status_details: str or
          ~azure.communication.callautomation.models.TranscriptionStatusDetails
         """
         super().__init__(**kwargs)
         self.transcription_status = transcription_status
         self.transcription_status_details = transcription_status_details
+
+
+class TranscriptionUpdated(_serialization.Model):
+    """TranscriptionUpdated.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+     request to the response event.
+    :vartype operation_context: str
+    :ivar result_information: Contains the resulting SIP code, sub-code and message.
+    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
+    :ivar transcription_update: Defines the result for TranscriptionUpdate with the current status
+     and the details about the status.
+    :vartype transcription_update: ~azure.communication.callautomation.models.TranscriptionUpdate
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+     skype chain ID.
+    :vartype correlation_id: str
+    """
+
+    _validation = {
+        "operation_context": {"readonly": True},
+        "result_information": {"readonly": True},
+        "transcription_update": {"readonly": True},
+        "call_connection_id": {"readonly": True},
+        "server_call_id": {"readonly": True},
+        "correlation_id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "operation_context": {"key": "operationContext", "type": "str"},
+        "result_information": {"key": "resultInformation", "type": "ResultInformation"},
+        "transcription_update": {"key": "transcriptionUpdate", "type": "TranscriptionUpdate"},
+        "call_connection_id": {"key": "callConnectionId", "type": "str"},
+        "server_call_id": {"key": "serverCallId", "type": "str"},
+        "correlation_id": {"key": "correlationId", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.operation_context = None
+        self.result_information = None
+        self.transcription_update = None
+        self.call_connection_id = None
+        self.server_call_id = None
+        self.correlation_id = None
 
 
 class TransferCallResponse(_serialization.Model):
@@ -4939,21 +5074,25 @@ class TransferCallResponse(_serialization.Model):
 class TransferToParticipantRequest(_serialization.Model):
     """The request payload for transferring call to a participant.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar target_participant: The identity of the target where call should be transferred to.
      Required.
     :vartype target_participant:
      ~azure.communication.callautomation.models.CommunicationIdentifierModel
-    :ivar custom_context: Used by customer to send custom context to targets.
-    :vartype custom_context: ~azure.communication.callautomation.models.CustomContext
+    :ivar custom_calling_context: Used by customer to send custom calling context to targets.
+    :vartype custom_calling_context:
+     ~azure.communication.callautomation.models.CustomCallingContext
     :ivar operation_context: Used by customers when calling mid-call actions to correlate the
      request to the response event.
     :vartype operation_context: str
-    :ivar transferee: Transferee is the participant who is transferring the call.
+    :ivar transferee: Transferee is the participant who is transferred away.
     :vartype transferee: ~azure.communication.callautomation.models.CommunicationIdentifierModel
-    :ivar callback_uri: The callback URI to override the main callback URI.
-    :vartype callback_uri: str
+    :ivar operation_callback_uri: Set a callback URI that overrides the default callback URI set by
+     CreateCall/AnswerCall for this operation.
+     This setup is per-action. If this is not set, the default callback URI set by
+     CreateCall/AnswerCall will be used.
+    :vartype operation_callback_uri: str
     """
 
     _validation = {
@@ -4962,20 +5101,20 @@ class TransferToParticipantRequest(_serialization.Model):
 
     _attribute_map = {
         "target_participant": {"key": "targetParticipant", "type": "CommunicationIdentifierModel"},
-        "custom_context": {"key": "customContext", "type": "CustomContext"},
+        "custom_calling_context": {"key": "customCallingContext", "type": "CustomCallingContext"},
         "operation_context": {"key": "operationContext", "type": "str"},
         "transferee": {"key": "transferee", "type": "CommunicationIdentifierModel"},
-        "callback_uri": {"key": "callbackUri", "type": "str"},
+        "operation_callback_uri": {"key": "operationCallbackUri", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         target_participant: "_models.CommunicationIdentifierModel",
-        custom_context: Optional["_models.CustomContext"] = None,
+        custom_calling_context: Optional["_models.CustomCallingContext"] = None,
         operation_context: Optional[str] = None,
         transferee: Optional["_models.CommunicationIdentifierModel"] = None,
-        callback_uri: Optional[str] = None,
+        operation_callback_uri: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4983,28 +5122,32 @@ class TransferToParticipantRequest(_serialization.Model):
          Required.
         :paramtype target_participant:
          ~azure.communication.callautomation.models.CommunicationIdentifierModel
-        :keyword custom_context: Used by customer to send custom context to targets.
-        :paramtype custom_context: ~azure.communication.callautomation.models.CustomContext
+        :keyword custom_calling_context: Used by customer to send custom calling context to targets.
+        :paramtype custom_calling_context:
+         ~azure.communication.callautomation.models.CustomCallingContext
         :keyword operation_context: Used by customers when calling mid-call actions to correlate the
          request to the response event.
         :paramtype operation_context: str
-        :keyword transferee: Transferee is the participant who is transferring the call.
+        :keyword transferee: Transferee is the participant who is transferred away.
         :paramtype transferee: ~azure.communication.callautomation.models.CommunicationIdentifierModel
-        :keyword callback_uri: The callback URI to override the main callback URI.
-        :paramtype callback_uri: str
+        :keyword operation_callback_uri: Set a callback URI that overrides the default callback URI set
+         by CreateCall/AnswerCall for this operation.
+         This setup is per-action. If this is not set, the default callback URI set by
+         CreateCall/AnswerCall will be used.
+        :paramtype operation_callback_uri: str
         """
         super().__init__(**kwargs)
         self.target_participant = target_participant
-        self.custom_context = custom_context
+        self.custom_calling_context = custom_calling_context
         self.operation_context = operation_context
         self.transferee = transferee
-        self.callback_uri = callback_uri
+        self.operation_callback_uri = operation_callback_uri
 
 
 class UnmuteParticipantsRequest(_serialization.Model):
     """The request payload for unmuting participant from the call.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar target_participants: Participants to be unmuted from the call.
      Only ACS Users are supported. Required.
@@ -5065,10 +5208,61 @@ class UnmuteParticipantsResponse(_serialization.Model):
         self.operation_context = operation_context
 
 
-class UpdateTranscriptionDataRequest(_serialization.Model):
-    """UpdateTranscriptionDataRequest.
+class UpdateDialogRequest(_serialization.Model):
+    """UpdateDialogRequest.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
+
+    :ivar dialog: Dialog context. Required.
+    :vartype dialog: ~azure.communication.callautomation.models.DialogUpdateBase
+    :ivar operation_callback_uri: Set a callback URI that overrides the default callback URI set by
+     CreateCall/AnswerCall for this operation.
+     This setup is per-action. If this is not set, the default callback URI set by
+     CreateCall/AnswerCall will be used.
+    :vartype operation_callback_uri: str
+    :ivar operation_context: The value to identify context of the operation.
+    :vartype operation_context: str
+    """
+
+    _validation = {
+        "dialog": {"required": True},
+    }
+
+    _attribute_map = {
+        "dialog": {"key": "dialog", "type": "DialogUpdateBase"},
+        "operation_callback_uri": {"key": "operationCallbackUri", "type": "str"},
+        "operation_context": {"key": "operationContext", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        dialog: "_models.DialogUpdateBase",
+        operation_callback_uri: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword dialog: Dialog context. Required.
+        :paramtype dialog: ~azure.communication.callautomation.models.DialogUpdateBase
+        :keyword operation_callback_uri: Set a callback URI that overrides the default callback URI set
+         by CreateCall/AnswerCall for this operation.
+         This setup is per-action. If this is not set, the default callback URI set by
+         CreateCall/AnswerCall will be used.
+        :paramtype operation_callback_uri: str
+        :keyword operation_context: The value to identify context of the operation.
+        :paramtype operation_context: str
+        """
+        super().__init__(**kwargs)
+        self.dialog = dialog
+        self.operation_callback_uri = operation_callback_uri
+        self.operation_context = operation_context
+
+
+class UpdateTranscriptionRequest(_serialization.Model):
+    """UpdateTranscriptionRequest.
+
+    All required parameters must be populated in order to send to server.
 
     :ivar locale: Defines new locale for transcription. Required.
     :vartype locale: str

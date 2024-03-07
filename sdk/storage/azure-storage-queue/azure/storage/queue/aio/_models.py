@@ -6,37 +6,49 @@
 # pylint: disable=too-few-public-methods, too-many-instance-attributes
 # pylint: disable=super-init-not-called
 
-from typing import List # pylint: disable=unused-import
+from typing import Any, Callable, List, Optional, Tuple
+
 from azure.core.async_paging import AsyncPageIterator
 from azure.core.exceptions import HttpResponseError
-from .._shared.response_handlers import (
-    process_storage_error,
-    return_context_and_deserialized)
 from .._models import QueueMessage, QueueProperties
+from .._shared.response_handlers import process_storage_error, return_context_and_deserialized
 
 
 class MessagesPaged(AsyncPageIterator):
     """An iterable of Queue Messages.
 
-    :param callable command: Function to retrieve the next page of items.
-    :param int results_per_page: The maximum number of messages to retrieve per
+    :param Callable command: Function to retrieve the next page of items.
+    :param Optional[int] results_per_page: The maximum number of messages to retrieve per
         call.
-    :param int max_messages: The maximum number of messages to retrieve from
+    :param Optional[int] max_messages: The maximum number of messages to retrieve from
         the queue.
     """
-    def __init__(self, command, results_per_page=None, continuation_token=None, max_messages=None):
+
+    command: Callable
+    """Function to retrieve the next page of items."""
+    results_per_page: Optional[int] = None
+    """A UTC date value representing the time the message expires."""
+    max_messages: Optional[int] = None
+    """The maximum number of messages to retrieve from the queue."""
+
+    def __init__(
+        self, command: Callable,
+        results_per_page: Optional[int] = None,
+        continuation_token: Optional[str] = None,
+        max_messages: Optional[int] = None
+    ) -> None:
         if continuation_token is not None:
             raise ValueError("This operation does not support continuation token")
 
         super(MessagesPaged, self).__init__(
             self._get_next_cb,
-            self._extract_data_cb,
+            self._extract_data_cb, # type: ignore [arg-type]
         )
         self._command = command
         self.results_per_page = results_per_page
         self._max_messages = max_messages
 
-    async def _get_next_cb(self, continuation_token):
+    async def _get_next_cb(self, continuation_token: Optional[str]) -> Any:
         try:
             if self._max_messages is not None:
                 if self.results_per_page is None:
@@ -48,7 +60,7 @@ class MessagesPaged(AsyncPageIterator):
         except HttpResponseError as error:
             process_storage_error(error)
 
-    async def _extract_data_cb(self, messages):
+    async def _extract_data_cb(self, messages: Any) -> Tuple[str, List[QueueMessage]]:
         # There is no concept of continuation token, so raising on my own condition
         if not messages:
             raise StopAsyncIteration("End of paging")
@@ -60,24 +72,40 @@ class MessagesPaged(AsyncPageIterator):
 class QueuePropertiesPaged(AsyncPageIterator):
     """An iterable of Queue properties.
 
-    :ivar str service_endpoint: The service URL.
-    :ivar str prefix: A queue name prefix being used to filter the list.
-    :ivar str marker: The continuation token of the current page of results.
-    :ivar int results_per_page: The maximum number of results retrieved per API call.
-    :ivar str next_marker: The continuation token to retrieve the next page of results.
-    :ivar str location_mode: The location mode being used to list results. The available
-        options include "primary" and "secondary".
-    :param callable command: Function to retrieve the next page of items.
+    :param Callable command: Function to retrieve the next page of items.
     :param str prefix: Filters the results to return only queues whose names
         begin with the specified prefix.
-    :param int results_per_page: The maximum number of queue names to retrieve per
+    :param Optional[int] results_per_page: The maximum number of queue names to retrieve per
         call.
     :param str continuation_token: An opaque continuation token.
     """
-    def __init__(self, command, prefix=None, results_per_page=None, continuation_token=None):
+
+    service_endpoint: Optional[str]
+    """The service URL."""
+    prefix: Optional[str]
+    """A queue name prefix being used to filter the list."""
+    marker: Optional[str]
+    """The continuation token of the current page of results."""
+    results_per_page: Optional[int] = None
+    """The maximum number of results retrieved per API call."""
+    next_marker: str
+    """The continuation token to retrieve the next page of results."""
+    location_mode: Optional[str]
+    """The location mode being used to list results. The available options include "primary" and "secondary"."""
+    command: Callable
+    """Function to retrieve the next page of items."""
+    _response: Any
+    """Function to retrieve the next page of items."""
+
+    def __init__(
+        self, command: Callable,
+        prefix: Optional[str] = None,
+        results_per_page: Optional[int] = None,
+        continuation_token: Optional[str] = None
+    ) -> None:
         super(QueuePropertiesPaged, self).__init__(
             self._get_next_cb,
-            self._extract_data_cb,
+            self._extract_data_cb, # type: ignore [arg-type]
             continuation_token=continuation_token or ""
         )
         self._command = command
@@ -87,7 +115,7 @@ class QueuePropertiesPaged(AsyncPageIterator):
         self.results_per_page = results_per_page
         self.location_mode = None
 
-    async def _get_next_cb(self, continuation_token):
+    async def _get_next_cb(self, continuation_token: Optional[str]) -> Any:
         try:
             return await self._command(
                 marker=continuation_token or None,
@@ -97,11 +125,12 @@ class QueuePropertiesPaged(AsyncPageIterator):
         except HttpResponseError as error:
             process_storage_error(error)
 
-    async def _extract_data_cb(self, get_next_return):
+    async def _extract_data_cb(self, get_next_return: Any) -> Tuple[Optional[str], List[QueueProperties]]:
         self.location_mode, self._response = get_next_return
         self.service_endpoint = self._response.service_endpoint
         self.prefix = self._response.prefix
         self.marker = self._response.marker
         self.results_per_page = self._response.max_results
         props_list = [QueueProperties._from_generated(q) for q in self._response.queue_items] # pylint: disable=protected-access
-        return self._response.next_marker or None, props_list
+        next_marker = self._response.next_marker
+        return next_marker or None, props_list

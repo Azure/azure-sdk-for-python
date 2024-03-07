@@ -52,7 +52,7 @@ print("\n.. Back up the vault")
 CONTAINER_URL = os.environ["CONTAINER_URL"]
 SAS_TOKEN = os.environ["SAS_TOKEN"]
 
-backup_result: KeyVaultBackupResult = client.begin_backup(CONTAINER_URL, SAS_TOKEN).result()
+backup_result: KeyVaultBackupResult = client.begin_backup(CONTAINER_URL, sas_token=SAS_TOKEN).result()
 print(f"Azure Storage Blob URL of the backup: {backup_result.folder_url}")
 # [END begin_backup]
 print("Vault backed up successfully.")
@@ -63,6 +63,9 @@ assert backup_result.folder_url
 # To restore a single key from the backed up vault instead, pass the key_name keyword argument.
 print("\n.. Restore the full vault")
 # [START begin_restore]
-client.begin_restore(backup_result.folder_url, SAS_TOKEN).wait()
-# [END begin_restore]
+SAS_TOKEN = os.environ["SAS_TOKEN"]
+
+# `backup_result` is the KeyVaultBackupResult returned by `begin_backup`
+client.begin_restore(backup_result.folder_url, sas_token=SAS_TOKEN).wait()
 print("Vault restored successfully.")
+# [END begin_restore]

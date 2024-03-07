@@ -8,15 +8,16 @@ from types import TracebackType
 from copy import deepcopy
 
 from corehttp.runtime import AsyncPipelineClient
+from corehttp.runtime._pipeline_client_async import _Coroutine
 
 
 class AsyncMockRestClient(object):
-    def __init__(self, port, **kwargs):
+    def __init__(self, port, *, transport=None, **kwargs):
         kwargs.setdefault("sdk_moniker", "autorestswaggerbatfileservice/1.0.0b1")
 
-        self._client = AsyncPipelineClient(endpoint="http://localhost:{}".format(port), **kwargs)
+        self._client = AsyncPipelineClient(endpoint="http://localhost:{}".format(port), transport=transport, **kwargs)
 
-    def send_request(self, request, **kwargs):
+    def send_request(self, request, **kwargs) -> _Coroutine:
         """Runs the network request through the client's chained policies.
         >>> from corehttp.rest import HttpRequest
         >>> request = HttpRequest("GET", "http://localhost:3000/helloWorld")
@@ -32,7 +33,7 @@ class AsyncMockRestClient(object):
         """
         request_copy = deepcopy(request)
         request_copy.url = self._client.format_url(request_copy.url)
-        return self._client.send_request(request_copy, **kwargs)
+        return self._client.send_request(request_copy, **kwargs)  # type: ignore
 
     async def close(self) -> None:
         await self._client.close()

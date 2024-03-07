@@ -92,10 +92,10 @@
         "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMHttpLoggingPolicy\", \"AsyncARMChallengeAuthenticationPolicy\"]}, \"local\": {\".._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
     },
     "operation_groups": {
+        "health_reports": "HealthReportsOperations",
+        "health_report": "HealthReportOperations",
         "sql_vulnerability_assessment_baseline_rules": "SqlVulnerabilityAssessmentBaselineRulesOperations",
         "sql_vulnerability_assessment_scans": "SqlVulnerabilityAssessmentScansOperations",
-        "sql_vulnerability_assessment_scan_results": "SqlVulnerabilityAssessmentScanResultsOperations",
-        "health_reports": "HealthReportsOperations",
-        "health_report": "HealthReportOperations"
+        "sql_vulnerability_assessment_scan_results": "SqlVulnerabilityAssessmentScanResultsOperations"
     }
 }

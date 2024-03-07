@@ -21,19 +21,26 @@
 
 """Create permissions in the Azure Cosmos DB SQL API service.
 """
-from typing import Dict, Any, Union
+from typing import Any, Mapping
 
-from .documents import PermissionMode
+# Keeping this import for API backcompat
+from .documents import PermissionMode  # pylint: disable=unused-import
 
 
-class Permission(object):
+class Permission:
     """Represents a Permission object in the Azure Cosmos DB SQL API service.
     """
-    def __init__(self, id, user_link, permission_mode, resource_link, properties):  # pylint: disable=redefined-builtin
-        # type: (str, str, Union[str, PermissionMode], str, Dict[str, Any]) -> None
+    def __init__(
+        self,
+        id: str,
+        user_link: str,
+        permission_mode: str,
+        resource_link: str,
+        properties: Mapping[str, Any]
+    ) -> None:
         self.id = id
         self.user_link = user_link
         self.permission_mode = permission_mode
         self.resource_link = resource_link
         self.properties = properties
-        self.permission_link = u"{}/permissions/{}".format(self.user_link, self.id)
+        self.permission_link: str = "{}/permissions/{}".format(self.user_link, self.id)

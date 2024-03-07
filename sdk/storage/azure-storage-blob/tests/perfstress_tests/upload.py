@@ -5,8 +5,8 @@
 
 from ._test_base import _BlobTest
 
-from azure_devtools.perfstress_tests import RandomStream, get_random_bytes
-from azure_devtools.perfstress_tests import AsyncRandomStream
+from devtools_testutils.perfstress_tests import RandomStream, get_random_bytes
+from devtools_testutils.perfstress_tests import AsyncRandomStream
 
 
 class UploadTest(_BlobTest):

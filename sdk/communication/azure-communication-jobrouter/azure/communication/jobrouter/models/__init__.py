@@ -9,9 +9,13 @@
 from ._models import AcceptJobOfferResult
 from ._models import BestWorkerMode
 from ._models import CancelExceptionAction
+from ._models import CancelJobOptions
 from ._models import ClassificationPolicy
+from ._models import CloseJobOptions
+from ._models import CompleteJobOptions
 from ._models import ConditionalQueueSelectorAttachment
 from ._models import ConditionalWorkerSelectorAttachment
+from ._models import DeclineJobOfferOptions
 from ._models import DirectMapRouterRule
 from ._models import DistributionMode
 from ._models import DistributionPolicy
@@ -64,14 +68,21 @@ from ._models import WeightedAllocationWorkerSelectorAttachment
 from ._models import WorkerSelectorAttachment
 from ._models import WorkerWeightedAllocation
 
+from ._enums import DistributionModeKind
+from ._enums import ExceptionActionKind
+from ._enums import ExceptionTriggerKind
 from ._enums import ExpressionRouterRuleLanguage
+from ._enums import JobMatchingModeKind
 from ._enums import LabelOperator
+from ._enums import QueueSelectorAttachmentKind
 from ._enums import RouterJobStatus
 from ._enums import RouterJobStatusSelector
+from ._enums import RouterRuleKind
 from ._enums import RouterWorkerSelectorStatus
 from ._enums import RouterWorkerState
 from ._enums import RouterWorkerStateSelector
 from ._enums import ScoringRuleParameterSelector
+from ._enums import WorkerSelectorAttachmentKind
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
@@ -80,9 +91,13 @@ __all__ = [
     "AcceptJobOfferResult",
     "BestWorkerMode",
     "CancelExceptionAction",
+    "CancelJobOptions",
     "ClassificationPolicy",
+    "CloseJobOptions",
+    "CompleteJobOptions",
     "ConditionalQueueSelectorAttachment",
     "ConditionalWorkerSelectorAttachment",
+    "DeclineJobOfferOptions",
     "DirectMapRouterRule",
     "DistributionMode",
     "DistributionPolicy",
@@ -134,14 +149,21 @@ __all__ = [
     "WeightedAllocationWorkerSelectorAttachment",
     "WorkerSelectorAttachment",
     "WorkerWeightedAllocation",
+    "DistributionModeKind",
+    "ExceptionActionKind",
+    "ExceptionTriggerKind",
     "ExpressionRouterRuleLanguage",
+    "JobMatchingModeKind",
     "LabelOperator",
+    "QueueSelectorAttachmentKind",
     "RouterJobStatus",
     "RouterJobStatusSelector",
+    "RouterRuleKind",
     "RouterWorkerSelectorStatus",
     "RouterWorkerState",
     "RouterWorkerStateSelector",
     "ScoringRuleParameterSelector",
+    "WorkerSelectorAttachmentKind",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

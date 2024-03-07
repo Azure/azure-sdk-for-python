@@ -1,0 +1,42 @@
+trigger: none
+
+extends:
+    template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
+    parameters:
+      ServiceDirectory: keyvault
+      BuildTargetingString: "azure-keyvault-administration"
+      JobName: azure_keyvault_administration
+      SupportedClouds: 'Public,UsGov,China'
+      TestTimeoutInMinutes: 240
+      TestResourceDirectories: 
+        - keyvault/
+      CloudConfig:
+        Public:
+          SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
+        UsGov:
+          SubscriptionConfiguration: $(sub-config-gov-test-resources)
+          MatrixFilters:
+            - ArmTemplateParameters=^(?!.*enableHsm.*true)
+        China:
+          SubscriptionConfiguration: $(sub-config-cn-test-resources)
+          MatrixFilters:
+            - ArmTemplateParameters=^(?!.*enableHsm.*true)
+          Location: chinanorth3
+        # Test azure-keyvault-administration on *only* Managed HSM for weekly tests only
+        MatrixConfigs:
+          - Name: keyvault_admin_weekly_matrix
+            Path: sdk/keyvault/azure-keyvault-keys/platform-matrix.json
+            Selection: sparse
+            GenerateVMJobs: true
+        ${{ if not(contains(variables['Build.DefinitionName'], 'tests-weekly')) }}:
+          # For nightly tests, don't run live azure-keyvault-administration jobs since they require Managed HSM
+          MatrixFilters:
+            - OSVmImage=NonexistentImage
+      EnvVars:
+        AZURE_TEST_RUN_LIVE: true
+        AZURE_SKIP_LIVE_RECORDING: 'True'
+        AZURE_SUBSCRIPTION_ID: $(azure-subscription-id)
+        AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
+        AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
+        AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
+        AZURE_CLIENT_OID: $(aad-azure-sdk-test-client-oid)

@@ -61,8 +61,8 @@ class AsyncRouterRecordedTestCase(AzureRecordedTestCase):
                     worker_assignments = router_job.assignments
 
                     for assignment_id, job_assignment in worker_assignments.items():
-                        await router_client.complete_job(job_id, CompleteJobOptions(assignment_id=assignment_id))
-                        await router_client.close_job(job_id, CloseJobOptions(assignment_id=assignment_id))
+                        await router_client.complete_job(job_id, assignment_id)
+                        await router_client.close_job(job_id, assignment_id)
 
                     await router_client.delete_job(job_id)
                 elif router_job.status == RouterJobStatus.COMPLETED:
@@ -70,7 +70,7 @@ class AsyncRouterRecordedTestCase(AzureRecordedTestCase):
                     worker_assignments = router_job.assignments
 
                     for assignment_id, job_assignment in worker_assignments.items():
-                        await router_client.close_job(job_id, CloseJobOptions(assignment_id=assignment_id))
+                        await router_client.close_job(job_id, assignment_id)
 
                     await router_client.delete_job(job_id)
                 elif router_job.status == RouterJobStatus.CLOSED:

@@ -9,7 +9,7 @@ import base64
 import json
 import logging
 import time
-from typing import Any, Optional
+from typing import Any, Optional, Iterable
 from urllib.parse import urlparse
 
 from azure.core.credentials import AccessToken
@@ -112,7 +112,12 @@ class InteractiveCredential(MsalCredential, ABC):
             super(InteractiveCredential, self).__init__(**kwargs)
 
     def get_token(
-        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
+        self,
+        *scopes: str,
+        claims: Optional[str] = None,
+        tenant_id: Optional[str] = None,
+        enable_cae: bool = False,
+        **kwargs: Any
     ) -> AccessToken:
         """Request an access token for `scopes`.
 
@@ -142,7 +147,9 @@ class InteractiveCredential(MsalCredential, ABC):
 
         allow_prompt = kwargs.pop("_allow_prompt", not self._disable_automatic_authentication)
         try:
-            token = self._acquire_token_silent(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
+            token = self._acquire_token_silent(
+                *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
+            )
             _LOGGER.info("%s.get_token succeeded", self.__class__.__name__)
             return token
         except Exception as ex:  # pylint:disable=broad-except
@@ -159,7 +166,7 @@ class InteractiveCredential(MsalCredential, ABC):
         now = int(time.time())
 
         try:
-            result = self._request_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
+            result = self._request_token(*scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs)
             if "access_token" not in result:
                 message = "Authentication failed: {}".format(result.get("error_description") or result.get("error"))
                 response = self._client.get_error_response(result)
@@ -179,7 +186,9 @@ class InteractiveCredential(MsalCredential, ABC):
         _LOGGER.info("%s.get_token succeeded", self.__class__.__name__)
         return AccessToken(result["access_token"], now + int(result["expires_in"]))
 
-    def authenticate(self, **kwargs: Any) -> AuthenticationRecord:
+    def authenticate(
+        self, *, scopes: Optional[Iterable[str]] = None, claims: Optional[str] = None, **kwargs: Any
+    ) -> AuthenticationRecord:
         """Interactively authenticate a user.
 
         :keyword Iterable[str] scopes: scopes to request during authentication, such as those provided by
@@ -192,7 +201,6 @@ class InteractiveCredential(MsalCredential, ABC):
           attribute gives a reason.
         """
 
-        scopes = kwargs.pop("scopes", None)
         if not scopes:
             if self._authority not in _DEFAULT_AUTHENTICATE_SCOPES:
                 # the credential is configured to use a cloud whose ARM scope we can't determine
@@ -202,7 +210,7 @@ class InteractiveCredential(MsalCredential, ABC):
 
             scopes = _DEFAULT_AUTHENTICATE_SCOPES[self._authority]
 
-        _ = self.get_token(*scopes, _allow_prompt=True, **kwargs)
+        _ = self.get_token(*scopes, _allow_prompt=True, claims=claims, **kwargs)
         return self._auth_record  # type: ignore
 
     @wrap_exceptions

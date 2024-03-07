@@ -129,40 +129,52 @@
         "value": {}
     },
     "spark_runtime_version" : {
-        "value": ""
+        "value": null
     },
-    "offline_store_connection_name" : {
-        "value": ""
+    "offlineStoreStorageAccountOption": {
+        "value": null
     },
-    "offline_store_target" : {
-        "value": ""
+    "offline_store_storage_account_name": {
+        "value": null
+    },
+    "offline_store_container_name" : {
+        "value": null
     },
     "offline_store_resource_group_name" : {
-        "value": ""
+        "value": null
     },
     "offline_store_subscription_id" : {
-        "value": ""
+        "value": null
     },
-    "materialization_identity_name": {
-        "value": "empty"
+    "offline_store_connection_name" : {
+        "value": null
     },
-    "materialization_identity_resource_id" : {
-        "value": ""
+    "online_store_resource_id" : {
+        "value": null
+    },
+    "online_store_resource_group_name" : {
+        "value": null
+    },
+    "online_store_subscription_id" : {
+        "value": null
+    },
+    "online_store_connection_name" : {
+        "value": null
     },
     "grant_materialization_permissions" : {
         "value": "true"
     },
-    "online_store_connection_name" : {
-        "value": ""
+    "materializationIdentityOption": {
+        "value": null
     },
-    "online_store_target" : {
-        "value": ""
+    "materialization_identity_name": {
+        "value": null
     },
-    "online_store_resource_group_name" : {
-        "value": ""
+    "materialization_identity_resource_group_name": {
+        "value": null
     },
-    "online_store_subscription_id" : {
-        "value": ""
+    "materialization_identity_subscription_id": {
+        "value": null
     },
     "workspace_hub_config" : {
         "value": {}
@@ -174,9 +186,6 @@
         "value": ""
     },
     "enable_data_isolation": {
-        "value": "false"
-    },
-    "set_up_feature_store": {
         "value": "false"
     },
     "serverless_compute_settings": {

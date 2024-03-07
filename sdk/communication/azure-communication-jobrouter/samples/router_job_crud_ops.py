@@ -22,9 +22,7 @@ import time
 
 
 class RouterJobSamples(object):
-    endpoint = os.environ.get("AZURE_COMMUNICATION_SERVICE_ENDPOINT", None)
-    if not endpoint:
-        raise ValueError("Set AZURE_COMMUNICATION_SERVICE_ENDPOINT env before run this sample.")
+    endpoint = os.environ["AZURE_COMMUNICATION_SERVICE_ENDPOINT"]
 
     _job_id = "sample_job"
     _job_w_cp_id = "sample_job_w_cp"
@@ -110,7 +108,7 @@ class RouterJobSamples(object):
             RouterWorker(
                 capacity=100,
                 available_for_offers=True,
-                channels=[RouterChannel(channel_id = "general", capacity_cost_per_job=0)],
+                channels=[RouterChannel(channel_id="general", capacity_cost_per_job=0)],
                 queues=[queue_id],
             ),
         )
@@ -285,8 +283,8 @@ class RouterJobSamples(object):
                 worker_id,
                 offer_id,
                 DeclineJobOfferOptions(
-                    retry_offer_at = datetime.utcnow() + timedelta(0, 30),  # re-offer after 30 secs
-                )
+                    retry_offer_at=datetime.utcnow() + timedelta(0, 30),  # re-offer after 30 secs
+                ),
             )
             # [END decline_job_offer]
         except Exception:
@@ -309,7 +307,7 @@ class RouterJobSamples(object):
 
         assignment_id = [k for k, v in queried_job.assignments.items()][0]
 
-        router_client.complete_job(job_id, CompleteJobOptions(assignment_id = assignment_id))
+        router_client.complete_job(job_id, assignment_id, CompleteJobOptions(note="Complete job"))
 
         queried_job: RouterJob = router_client.get_job(job_id)
 
@@ -317,12 +315,9 @@ class RouterJobSamples(object):
         # [END complete_job]
 
         # [START close_job]
-        from azure.communication.jobrouter.models import (
-            RouterJob,
-            CloseJobOptions
-        )
+        from azure.communication.jobrouter.models import RouterJob, CloseJobOptions
 
-        router_client.close_job(job_id, CloseJobOptions(assignment_id=assignment_id))
+        router_client.close_job(job_id, assignment_id, CloseJobOptions(note="Close job"))
 
         queried_job: RouterJob = router_client.get_job(job_id)
 
@@ -419,7 +414,7 @@ class RouterJobSamples(object):
 
         from azure.communication.jobrouter import JobRouterAdministrationClient
 
-        router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str = connection_string)
+        router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str=connection_string)
         router_admin_client.delete_classification_policy(self._classification_policy_id)
         router_admin_client.delete_queue(self._queue_id)
         router_admin_client.delete_distribution_policy(self._distribution_policy_id)

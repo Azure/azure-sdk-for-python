@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import functools
+import logging
 import os
 import os.path
 import six
@@ -13,8 +14,6 @@ from typing import Dict
 
 from dotenv import load_dotenv, find_dotenv
 
-from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
-
 from . import mgmt_settings_fake as fake_settings
 from .azure_testcase import (
     _is_autorest_v3,
@@ -22,9 +21,11 @@ from .azure_testcase import (
     get_qualified_method_name,
 )
 from .fake_credentials_async import AsyncFakeCredential
-from .helpers import is_live
+from .helpers import is_live, trim_kwargs_from_test_function
 from .sanitizers import add_general_string_sanitizer
 
+
+_LOGGER = logging.getLogger()
 
 load_dotenv(find_dotenv())
 
@@ -89,23 +90,54 @@ class AzureRecordedTestCase(object):
         tenant_id = os.environ.get("AZURE_TENANT_ID", getattr(os.environ, "TENANT_ID", None))
         client_id = os.environ.get("AZURE_CLIENT_ID", getattr(os.environ, "CLIENT_ID", None))
         secret = os.environ.get("AZURE_CLIENT_SECRET", getattr(os.environ, "CLIENT_SECRET", None))
+
+        use_pwsh = os.environ.get("AZURE_TEST_USE_PWSH_AUTH", "false")
+        use_cli = os.environ.get("AZURE_TEST_USE_CLI_AUTH", "false")
         is_async = kwargs.pop("is_async", False)
 
-        if tenant_id and client_id and secret and self.is_live:
-            if _is_autorest_v3(client_class):
-                # Create azure-identity class
-                from azure.identity import ClientSecretCredential
+        # Return live credentials only in live mode
+        if self.is_live:
+            # User-based authentication through Azure PowerShell, if requested
+            if use_pwsh.lower() == "true":
+                _LOGGER.info(
+                    "Environment variable AZURE_TEST_USE_PWSH_AUTH set to 'true'. Using AzurePowerShellCredential."
+                )
+                from azure.identity import AzurePowerShellCredential
 
                 if is_async:
-                    from azure.identity.aio import ClientSecretCredential
-                return ClientSecretCredential(tenant_id=tenant_id, client_id=client_id, client_secret=secret)
-            else:
-                # Create msrestazure class
-                from msrestazure.azure_active_directory import (
-                    ServicePrincipalCredentials,
-                )
+                    from azure.identity.aio import AzurePowerShellCredential
+                return AzurePowerShellCredential()
+            # User-based authentication through Azure CLI, if requested
+            if use_cli.lower() == "true":
+                _LOGGER.info("Environment variable AZURE_TEST_USE_CLI_AUTH set to 'true'. Using AzureCliCredential.")
+                from azure.identity import AzureCliCredential
 
-                return ServicePrincipalCredentials(tenant=tenant_id, client_id=client_id, secret=secret)
+                if is_async:
+                    from azure.identity.aio import AzureCliCredential
+                return AzureCliCredential()
+
+            # Service principal authentication
+            if tenant_id and client_id and secret:
+                # Check for track 2 client
+                if _is_autorest_v3(client_class):
+                    _LOGGER.info(
+                        "Service principal client ID, secret, and tenant ID detected. Using ClientSecretCredential.\n"
+                        "For user-based auth, set AZURE_TEST_USE_PWSH_AUTH or AZURE_TEST_USE_CLI_AUTH to 'true'."
+                    )
+                    from azure.identity import ClientSecretCredential
+
+                    if is_async:
+                        from azure.identity.aio import ClientSecretCredential
+                    return ClientSecretCredential(tenant_id=tenant_id, client_id=client_id, client_secret=secret)
+                else:
+                    # Create msrestazure class
+                    from msrestazure.azure_active_directory import (
+                        ServicePrincipalCredentials,
+                    )
+
+                    return ServicePrincipalCredentials(tenant=tenant_id, client_id=client_id, secret=secret)
+
+        # For playback tests, return credentials that will accept playback `get_token` calls
         else:
             if _is_autorest_v3(client_class):
                 if is_async:

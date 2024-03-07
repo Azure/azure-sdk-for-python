@@ -45,6 +45,11 @@ test:
     - azure.mgmt.alertsmanagement.aio.operations
     - azure.mgmt.alertsmanagement.models
     - azure.mgmt.alertsmanagement.operations
+    - azure.mgmt.apicenter
+    - azure.mgmt.apicenter.aio
+    - azure.mgmt.apicenter.aio.operations
+    - azure.mgmt.apicenter.models
+    - azure.mgmt.apicenter.operations
     - azure.mgmt.apimanagement
     - azure.mgmt.apimanagement.aio
     - azure.mgmt.apimanagement.aio.operations
@@ -60,53 +65,13 @@ test:
     - azure.mgmt.appcontainers.operations
     - azure.mgmt.appplatform
     - azure.mgmt.appplatform.aio
-    - azure.mgmt.appplatform.v2020_11_01_preview
-    - azure.mgmt.appplatform.v2020_11_01_preview.aio
-    - azure.mgmt.appplatform.v2020_11_01_preview.aio.operations
-    - azure.mgmt.appplatform.v2020_11_01_preview.models
-    - azure.mgmt.appplatform.v2020_11_01_preview.operations
     - azure.mgmt.applicationinsights
     - azure.mgmt.applicationinsights.aio
-    - azure.mgmt.applicationinsights.v2015_05_01
-    - azure.mgmt.applicationinsights.v2015_05_01.aio
-    - azure.mgmt.applicationinsights.v2015_05_01.aio.operations
-    - azure.mgmt.applicationinsights.v2015_05_01.models
-    - azure.mgmt.applicationinsights.v2015_05_01.operations
-    - azure.mgmt.applicationinsights.v2017_10_01
-    - azure.mgmt.applicationinsights.v2017_10_01.aio
-    - azure.mgmt.applicationinsights.v2017_10_01.aio.operations
-    - azure.mgmt.applicationinsights.v2017_10_01.models
-    - azure.mgmt.applicationinsights.v2017_10_01.operations
-    - azure.mgmt.applicationinsights.v2018_05_01_preview
-    - azure.mgmt.applicationinsights.v2018_05_01_preview.aio
-    - azure.mgmt.applicationinsights.v2018_05_01_preview.aio.operations
-    - azure.mgmt.applicationinsights.v2018_05_01_preview.models
-    - azure.mgmt.applicationinsights.v2018_05_01_preview.operations
-    - azure.mgmt.applicationinsights.v2018_06_17_preview
-    - azure.mgmt.applicationinsights.v2018_06_17_preview.aio
-    - azure.mgmt.applicationinsights.v2018_06_17_preview.aio.operations
-    - azure.mgmt.applicationinsights.v2018_06_17_preview.models
-    - azure.mgmt.applicationinsights.v2018_06_17_preview.operations
-    - azure.mgmt.applicationinsights.v2019_10_17_preview
-    - azure.mgmt.applicationinsights.v2019_10_17_preview.aio
-    - azure.mgmt.applicationinsights.v2019_10_17_preview.aio.operations
-    - azure.mgmt.applicationinsights.v2019_10_17_preview.models
-    - azure.mgmt.applicationinsights.v2019_10_17_preview.operations
-    - azure.mgmt.applicationinsights.v2020_02_02_preview
-    - azure.mgmt.applicationinsights.v2020_02_02_preview.aio
-    - azure.mgmt.applicationinsights.v2020_02_02_preview.aio.operations
-    - azure.mgmt.applicationinsights.v2020_02_02_preview.models
-    - azure.mgmt.applicationinsights.v2020_02_02_preview.operations
-    - azure.mgmt.applicationinsights.v2020_03_01_preview
-    - azure.mgmt.applicationinsights.v2020_03_01_preview.aio
-    - azure.mgmt.applicationinsights.v2020_03_01_preview.aio.operations
-    - azure.mgmt.applicationinsights.v2020_03_01_preview.models
-    - azure.mgmt.applicationinsights.v2020_03_01_preview.operations
-    - azure.mgmt.applicationinsights.v2020_06_02_preview
-    - azure.mgmt.applicationinsights.v2020_06_02_preview.aio
-    - azure.mgmt.applicationinsights.v2020_06_02_preview.aio.operations
-    - azure.mgmt.applicationinsights.v2020_06_02_preview.models
-    - azure.mgmt.applicationinsights.v2020_06_02_preview.operations
+    - azure.mgmt.applicationinsights.v2022_06_15
+    - azure.mgmt.applicationinsights.v2022_06_15.aio
+    - azure.mgmt.applicationinsights.v2022_06_15.aio.operations
+    - azure.mgmt.applicationinsights.v2022_06_15.models
+    - azure.mgmt.applicationinsights.v2022_06_15.operations
     - azure.mgmt.attestation
     - azure.mgmt.attestation.aio
     - azure.mgmt.attestation.aio.operations
@@ -114,31 +79,16 @@ test:
     - azure.mgmt.attestation.operations
     - azure.mgmt.authorization
     - azure.mgmt.authorization.aio
-    - azure.mgmt.authorization.v2015_06_01
-    - azure.mgmt.authorization.v2015_06_01.aio
-    - azure.mgmt.authorization.v2015_06_01.aio.operations
-    - azure.mgmt.authorization.v2015_06_01.models
-    - azure.mgmt.authorization.v2015_06_01.operations
-    - azure.mgmt.authorization.v2015_07_01
-    - azure.mgmt.authorization.v2015_07_01.aio
-    - azure.mgmt.authorization.v2015_07_01.aio.operations
-    - azure.mgmt.authorization.v2015_07_01.models
-    - azure.mgmt.authorization.v2015_07_01.operations
-    - azure.mgmt.authorization.v2018_01_01_preview
-    - azure.mgmt.authorization.v2018_01_01_preview.aio
-    - azure.mgmt.authorization.v2018_01_01_preview.aio.operations
-    - azure.mgmt.authorization.v2018_01_01_preview.models
-    - azure.mgmt.authorization.v2018_01_01_preview.operations
-    - azure.mgmt.authorization.v2018_07_01_preview
-    - azure.mgmt.authorization.v2018_07_01_preview.aio
-    - azure.mgmt.authorization.v2018_07_01_preview.aio.operations
-    - azure.mgmt.authorization.v2018_07_01_preview.models
-    - azure.mgmt.authorization.v2018_07_01_preview.operations
-    - azure.mgmt.authorization.v2018_09_01_preview
-    - azure.mgmt.authorization.v2018_09_01_preview.aio
-    - azure.mgmt.authorization.v2018_09_01_preview.aio.operations
-    - azure.mgmt.authorization.v2018_09_01_preview.models
-    - azure.mgmt.authorization.v2018_09_01_preview.operations
+    - azure.mgmt.authorization.v2022_04_01
+    - azure.mgmt.authorization.v2022_04_01.aio
+    - azure.mgmt.authorization.v2022_04_01.aio.operations
+    - azure.mgmt.authorization.v2022_04_01.models
+    - azure.mgmt.authorization.v2022_04_01.operations
+    - azure.mgmt.authorization.v2022_08_01_preview
+    - azure.mgmt.authorization.v2022_08_01_preview.aio
+    - azure.mgmt.authorization.v2022_08_01_preview.aio.operations
+    - azure.mgmt.authorization.v2022_08_01_preview.models
+    - azure.mgmt.authorization.v2022_08_01_preview.operations
     - azure.mgmt.automanage
     - azure.mgmt.automanage.aio
     - azure.mgmt.automanage.aio.operations
@@ -164,6 +114,11 @@ test:
     - azure.mgmt.azurestackhci.aio.operations
     - azure.mgmt.azurestackhci.models
     - azure.mgmt.azurestackhci.operations
+    - azure.mgmt.avs
+    - azure.mgmt.avs.aio
+    - azure.mgmt.avs.aio.operations
+    - azure.mgmt.avs.models
+    - azure.mgmt.avs.operations
     - azure.mgmt.baremetalinfrastructure
     - azure.mgmt.baremetalinfrastructure.aio
     - azure.mgmt.baremetalinfrastructure.aio.operations
@@ -184,11 +139,21 @@ test:
     - azure.mgmt.botservice.aio.operations
     - azure.mgmt.botservice.models
     - azure.mgmt.botservice.operations
+    - azure.mgmt.cdn
+    - azure.mgmt.cdn.aio
+    - azure.mgmt.cdn.aio.operations
+    - azure.mgmt.cdn.models
+    - azure.mgmt.cdn.operations
     - azure.mgmt.changeanalysis
     - azure.mgmt.changeanalysis.aio
     - azure.mgmt.changeanalysis.aio.operations
     - azure.mgmt.changeanalysis.models
     - azure.mgmt.changeanalysis.operations
+    - azure.mgmt.chaos
+    - azure.mgmt.chaos.aio
+    - azure.mgmt.chaos.aio.operations
+    - azure.mgmt.chaos.models
+    - azure.mgmt.chaos.operations
     - azure.mgmt.cognitiveservices
     - azure.mgmt.cognitiveservices.aio
     - azure.mgmt.cognitiveservices.aio.operations
@@ -206,116 +171,11 @@ test:
     - azure.mgmt.communication.operations
     - azure.mgmt.compute
     - azure.mgmt.compute.aio
-    - azure.mgmt.compute.v2015_06_15
-    - azure.mgmt.compute.v2015_06_15.aio
-    - azure.mgmt.compute.v2015_06_15.aio.operations
-    - azure.mgmt.compute.v2015_06_15.models
-    - azure.mgmt.compute.v2015_06_15.operations
-    - azure.mgmt.compute.v2016_03_30
-    - azure.mgmt.compute.v2016_03_30.aio
-    - azure.mgmt.compute.v2016_03_30.aio.operations
-    - azure.mgmt.compute.v2016_03_30.models
-    - azure.mgmt.compute.v2016_03_30.operations
-    - azure.mgmt.compute.v2016_04_30_preview
-    - azure.mgmt.compute.v2016_04_30_preview.aio
-    - azure.mgmt.compute.v2016_04_30_preview.aio.operations
-    - azure.mgmt.compute.v2016_04_30_preview.models
-    - azure.mgmt.compute.v2016_04_30_preview.operations
-    - azure.mgmt.compute.v2017_03_30
-    - azure.mgmt.compute.v2017_03_30.aio
-    - azure.mgmt.compute.v2017_03_30.aio.operations
-    - azure.mgmt.compute.v2017_03_30.models
-    - azure.mgmt.compute.v2017_03_30.operations
-    - azure.mgmt.compute.v2017_09_01
-    - azure.mgmt.compute.v2017_09_01.aio
-    - azure.mgmt.compute.v2017_09_01.aio.operations
-    - azure.mgmt.compute.v2017_09_01.models
-    - azure.mgmt.compute.v2017_09_01.operations
-    - azure.mgmt.compute.v2017_12_01
-    - azure.mgmt.compute.v2017_12_01.aio
-    - azure.mgmt.compute.v2017_12_01.aio.operations
-    - azure.mgmt.compute.v2017_12_01.models
-    - azure.mgmt.compute.v2017_12_01.operations
-    - azure.mgmt.compute.v2018_04_01
-    - azure.mgmt.compute.v2018_04_01.aio
-    - azure.mgmt.compute.v2018_04_01.aio.operations
-    - azure.mgmt.compute.v2018_04_01.models
-    - azure.mgmt.compute.v2018_04_01.operations
-    - azure.mgmt.compute.v2018_06_01
-    - azure.mgmt.compute.v2018_06_01.aio
-    - azure.mgmt.compute.v2018_06_01.aio.operations
-    - azure.mgmt.compute.v2018_06_01.models
-    - azure.mgmt.compute.v2018_06_01.operations
-    - azure.mgmt.compute.v2018_09_30
-    - azure.mgmt.compute.v2018_09_30.aio
-    - azure.mgmt.compute.v2018_09_30.aio.operations
-    - azure.mgmt.compute.v2018_09_30.models
-    - azure.mgmt.compute.v2018_09_30.operations
-    - azure.mgmt.compute.v2018_10_01
-    - azure.mgmt.compute.v2018_10_01.aio
-    - azure.mgmt.compute.v2018_10_01.aio.operations
-    - azure.mgmt.compute.v2018_10_01.models
-    - azure.mgmt.compute.v2018_10_01.operations
-    - azure.mgmt.compute.v2019_03_01
-    - azure.mgmt.compute.v2019_03_01.aio
-    - azure.mgmt.compute.v2019_03_01.aio.operations
-    - azure.mgmt.compute.v2019_03_01.models
-    - azure.mgmt.compute.v2019_03_01.operations
-    - azure.mgmt.compute.v2019_04_01
-    - azure.mgmt.compute.v2019_04_01.aio
-    - azure.mgmt.compute.v2019_04_01.aio.operations
-    - azure.mgmt.compute.v2019_04_01.models
-    - azure.mgmt.compute.v2019_04_01.operations
-    - azure.mgmt.compute.v2019_07_01
-    - azure.mgmt.compute.v2019_07_01.aio
-    - azure.mgmt.compute.v2019_07_01.aio.operations
-    - azure.mgmt.compute.v2019_07_01.models
-    - azure.mgmt.compute.v2019_07_01.operations
-    - azure.mgmt.compute.v2019_11_01
-    - azure.mgmt.compute.v2019_11_01.aio
-    - azure.mgmt.compute.v2019_11_01.aio.operations
-    - azure.mgmt.compute.v2019_11_01.models
-    - azure.mgmt.compute.v2019_11_01.operations
-    - azure.mgmt.compute.v2019_12_01
-    - azure.mgmt.compute.v2019_12_01.aio
-    - azure.mgmt.compute.v2019_12_01.aio.operations
-    - azure.mgmt.compute.v2019_12_01.models
-    - azure.mgmt.compute.v2019_12_01.operations
-    - azure.mgmt.compute.v2020_05_01
-    - azure.mgmt.compute.v2020_05_01.aio
-    - azure.mgmt.compute.v2020_05_01.aio.operations
-    - azure.mgmt.compute.v2020_05_01.models
-    - azure.mgmt.compute.v2020_05_01.operations
-    - azure.mgmt.compute.v2020_06_01
-    - azure.mgmt.compute.v2020_06_01.aio
-    - azure.mgmt.compute.v2020_06_01.aio.operations
-    - azure.mgmt.compute.v2020_06_01.models
-    - azure.mgmt.compute.v2020_06_01.operations
-    - azure.mgmt.compute.v2020_06_30
-    - azure.mgmt.compute.v2020_06_30.aio
-    - azure.mgmt.compute.v2020_06_30.aio.operations
-    - azure.mgmt.compute.v2020_06_30.models
-    - azure.mgmt.compute.v2020_06_30.operations
-    - azure.mgmt.compute.v2020_09_30
-    - azure.mgmt.compute.v2020_09_30.aio
-    - azure.mgmt.compute.v2020_09_30.aio.operations
-    - azure.mgmt.compute.v2020_09_30.models
-    - azure.mgmt.compute.v2020_09_30.operations
-    - azure.mgmt.compute.v2020_10_01_preview
-    - azure.mgmt.compute.v2020_10_01_preview.aio
-    - azure.mgmt.compute.v2020_10_01_preview.aio.operations
-    - azure.mgmt.compute.v2020_10_01_preview.models
-    - azure.mgmt.compute.v2020_10_01_preview.operations
-    - azure.mgmt.compute.v2020_12_01
-    - azure.mgmt.compute.v2020_12_01.aio
-    - azure.mgmt.compute.v2020_12_01.aio.operations
-    - azure.mgmt.compute.v2020_12_01.models
-    - azure.mgmt.compute.v2020_12_01.operations
-    - azure.mgmt.compute.v2021_03_01
-    - azure.mgmt.compute.v2021_03_01.aio
-    - azure.mgmt.compute.v2021_03_01.aio.operations
-    - azure.mgmt.compute.v2021_03_01.models
-    - azure.mgmt.compute.v2021_03_01.operations
+    - azure.mgmt.compute.v2023_07_01
+    - azure.mgmt.compute.v2023_07_01.aio
+    - azure.mgmt.compute.v2023_07_01.aio.operations
+    - azure.mgmt.compute.v2023_07_01.models
+    - azure.mgmt.compute.v2023_07_01.operations
     - azure.mgmt.confidentialledger
     - azure.mgmt.confidentialledger.aio
     - azure.mgmt.confidentialledger.aio.operations
@@ -326,138 +186,47 @@ test:
     - azure.mgmt.confluent.aio.operations
     - azure.mgmt.confluent.models
     - azure.mgmt.confluent.operations
+    - azure.mgmt.connectedvmware
+    - azure.mgmt.connectedvmware.aio
+    - azure.mgmt.connectedvmware.aio.operations
+    - azure.mgmt.connectedvmware.models
+    - azure.mgmt.connectedvmware.operations
+    - azure.mgmt.consumption
+    - azure.mgmt.consumption.aio
+    - azure.mgmt.consumption.aio.operations
+    - azure.mgmt.consumption.models
+    - azure.mgmt.consumption.operations
     - azure.mgmt.containerinstance
     - azure.mgmt.containerinstance.aio
     - azure.mgmt.containerinstance.aio.operations
     - azure.mgmt.containerinstance.models
     - azure.mgmt.containerinstance.operations
+    - azure.mgmt.containerregistry
+    - azure.mgmt.containerregistry.aio
+    - azure.mgmt.containerregistry.v2023_07_01
+    - azure.mgmt.containerregistry.v2023_07_01.aio
+    - azure.mgmt.containerregistry.v2023_07_01.aio.operations
+    - azure.mgmt.containerregistry.v2023_07_01.models
+    - azure.mgmt.containerregistry.v2023_07_01.operations
+    - azure.mgmt.containerregistry.v2023_08_01_preview
+    - azure.mgmt.containerregistry.v2023_08_01_preview.aio
+    - azure.mgmt.containerregistry.v2023_08_01_preview.aio.operations
+    - azure.mgmt.containerregistry.v2023_08_01_preview.models
+    - azure.mgmt.containerregistry.v2023_08_01_preview.operations
     - azure.mgmt.containerservice
     - azure.mgmt.containerservice.aio
-    - azure.mgmt.containerservice.v2017_07_01
-    - azure.mgmt.containerservice.v2017_07_01.aio
-    - azure.mgmt.containerservice.v2017_07_01.aio.operations
-    - azure.mgmt.containerservice.v2017_07_01.models
-    - azure.mgmt.containerservice.v2017_07_01.operations
-    - azure.mgmt.containerservice.v2018_03_31
-    - azure.mgmt.containerservice.v2018_03_31.aio
-    - azure.mgmt.containerservice.v2018_03_31.aio.operations
-    - azure.mgmt.containerservice.v2018_03_31.models
-    - azure.mgmt.containerservice.v2018_03_31.operations
-    - azure.mgmt.containerservice.v2018_08_01_preview
-    - azure.mgmt.containerservice.v2018_08_01_preview.aio
-    - azure.mgmt.containerservice.v2018_08_01_preview.aio.operations
-    - azure.mgmt.containerservice.v2018_08_01_preview.models
-    - azure.mgmt.containerservice.v2018_08_01_preview.operations
-    - azure.mgmt.containerservice.v2018_09_30_preview
-    - azure.mgmt.containerservice.v2018_09_30_preview.aio
-    - azure.mgmt.containerservice.v2018_09_30_preview.aio.operations
-    - azure.mgmt.containerservice.v2018_09_30_preview.models
-    - azure.mgmt.containerservice.v2018_09_30_preview.operations
-    - azure.mgmt.containerservice.v2019_02_01
-    - azure.mgmt.containerservice.v2019_02_01.aio
-    - azure.mgmt.containerservice.v2019_02_01.aio.operations
-    - azure.mgmt.containerservice.v2019_02_01.models
-    - azure.mgmt.containerservice.v2019_02_01.operations
-    - azure.mgmt.containerservice.v2019_04_01
-    - azure.mgmt.containerservice.v2019_04_01.aio
-    - azure.mgmt.containerservice.v2019_04_01.aio.operations
-    - azure.mgmt.containerservice.v2019_04_01.models
-    - azure.mgmt.containerservice.v2019_04_01.operations
-    - azure.mgmt.containerservice.v2019_04_30
-    - azure.mgmt.containerservice.v2019_04_30.aio
-    - azure.mgmt.containerservice.v2019_04_30.aio.operations
-    - azure.mgmt.containerservice.v2019_04_30.models
-    - azure.mgmt.containerservice.v2019_04_30.operations
-    - azure.mgmt.containerservice.v2019_06_01
-    - azure.mgmt.containerservice.v2019_06_01.aio
-    - azure.mgmt.containerservice.v2019_06_01.aio.operations
-    - azure.mgmt.containerservice.v2019_06_01.models
-    - azure.mgmt.containerservice.v2019_06_01.operations
-    - azure.mgmt.containerservice.v2019_08_01
-    - azure.mgmt.containerservice.v2019_08_01.aio
-    - azure.mgmt.containerservice.v2019_08_01.aio.operations
-    - azure.mgmt.containerservice.v2019_08_01.models
-    - azure.mgmt.containerservice.v2019_08_01.operations
-    - azure.mgmt.containerservice.v2019_09_30_preview
-    - azure.mgmt.containerservice.v2019_09_30_preview.aio
-    - azure.mgmt.containerservice.v2019_09_30_preview.aio.operations
-    - azure.mgmt.containerservice.v2019_09_30_preview.models
-    - azure.mgmt.containerservice.v2019_09_30_preview.operations
-    - azure.mgmt.containerservice.v2019_10_01
-    - azure.mgmt.containerservice.v2019_10_01.aio
-    - azure.mgmt.containerservice.v2019_10_01.aio.operations
-    - azure.mgmt.containerservice.v2019_10_01.models
-    - azure.mgmt.containerservice.v2019_10_01.operations
-    - azure.mgmt.containerservice.v2019_10_27_preview
-    - azure.mgmt.containerservice.v2019_10_27_preview.aio
-    - azure.mgmt.containerservice.v2019_10_27_preview.aio.operations
-    - azure.mgmt.containerservice.v2019_10_27_preview.models
-    - azure.mgmt.containerservice.v2019_10_27_preview.operations
-    - azure.mgmt.containerservice.v2019_11_01
-    - azure.mgmt.containerservice.v2019_11_01.aio
-    - azure.mgmt.containerservice.v2019_11_01.aio.operations
-    - azure.mgmt.containerservice.v2019_11_01.models
-    - azure.mgmt.containerservice.v2019_11_01.operations
-    - azure.mgmt.containerservice.v2020_01_01
-    - azure.mgmt.containerservice.v2020_01_01.aio
-    - azure.mgmt.containerservice.v2020_01_01.aio.operations
-    - azure.mgmt.containerservice.v2020_01_01.models
-    - azure.mgmt.containerservice.v2020_01_01.operations
-    - azure.mgmt.containerservice.v2020_02_01
-    - azure.mgmt.containerservice.v2020_02_01.aio
-    - azure.mgmt.containerservice.v2020_02_01.aio.operations
-    - azure.mgmt.containerservice.v2020_02_01.models
-    - azure.mgmt.containerservice.v2020_02_01.operations
-    - azure.mgmt.containerservice.v2020_03_01
-    - azure.mgmt.containerservice.v2020_03_01.aio
-    - azure.mgmt.containerservice.v2020_03_01.aio.operations
-    - azure.mgmt.containerservice.v2020_03_01.models
-    - azure.mgmt.containerservice.v2020_03_01.operations
-    - azure.mgmt.containerservice.v2020_04_01
-    - azure.mgmt.containerservice.v2020_04_01.aio
-    - azure.mgmt.containerservice.v2020_04_01.aio.operations
-    - azure.mgmt.containerservice.v2020_04_01.models
-    - azure.mgmt.containerservice.v2020_04_01.operations
-    - azure.mgmt.containerservice.v2020_06_01
-    - azure.mgmt.containerservice.v2020_06_01.aio
-    - azure.mgmt.containerservice.v2020_06_01.aio.operations
-    - azure.mgmt.containerservice.v2020_06_01.models
-    - azure.mgmt.containerservice.v2020_06_01.operations
-    - azure.mgmt.containerservice.v2020_07_01
-    - azure.mgmt.containerservice.v2020_07_01.aio
-    - azure.mgmt.containerservice.v2020_07_01.aio.operations
-    - azure.mgmt.containerservice.v2020_07_01.models
-    - azure.mgmt.containerservice.v2020_07_01.operations
-    - azure.mgmt.containerservice.v2020_09_01
-    - azure.mgmt.containerservice.v2020_09_01.aio
-    - azure.mgmt.containerservice.v2020_09_01.aio.operations
-    - azure.mgmt.containerservice.v2020_09_01.models
-    - azure.mgmt.containerservice.v2020_09_01.operations
-    - azure.mgmt.containerservice.v2020_11_01
-    - azure.mgmt.containerservice.v2020_11_01.aio
-    - azure.mgmt.containerservice.v2020_11_01.aio.operations
-    - azure.mgmt.containerservice.v2020_11_01.models
-    - azure.mgmt.containerservice.v2020_11_01.operations
-    - azure.mgmt.containerservice.v2020_12_01
-    - azure.mgmt.containerservice.v2020_12_01.aio
-    - azure.mgmt.containerservice.v2020_12_01.aio.operations
-    - azure.mgmt.containerservice.v2020_12_01.models
-    - azure.mgmt.containerservice.v2020_12_01.operations
-    - azure.mgmt.containerservice.v2021_02_01
-    - azure.mgmt.containerservice.v2021_02_01.aio
-    - azure.mgmt.containerservice.v2021_02_01.aio.operations
-    - azure.mgmt.containerservice.v2021_02_01.models
-    - azure.mgmt.containerservice.v2021_02_01.operations
-    - azure.mgmt.containerservice.v2021_03_01
-    - azure.mgmt.containerservice.v2021_03_01.aio
-    - azure.mgmt.containerservice.v2021_03_01.aio.operations
-    - azure.mgmt.containerservice.v2021_03_01.models
-    - azure.mgmt.containerservice.v2021_03_01.operations
-    - azure.mgmt.cdn
-    - azure.mgmt.cdn.aio
-    - azure.mgmt.cdn.aio.operations
-    - azure.mgmt.cdn.models
-    - azure.mgmt.cdn.operations
+    - azure.mgmt.containerservice.v2023_08_01
+    - azure.mgmt.containerservice.v2023_08_01.aio
+    - azure.mgmt.containerservice.v2023_08_01.aio.operations
+    - azure.mgmt.containerservice.v2023_08_01.models
+    - azure.mgmt.containerservice.v2023_08_01.operations
+    - azure.mgmt.containerservicefleet
+    - azure.mgmt.containerservicefleet.aio
+    - azure.mgmt.containerservicefleet.v2023_10_15
+    - azure.mgmt.containerservicefleet.v2023_10_15.aio
+    - azure.mgmt.containerservicefleet.v2023_10_15.aio.operations
+    - azure.mgmt.containerservicefleet.v2023_10_15.models
+    - azure.mgmt.containerservicefleet.v2023_10_15.operations
     - azure.mgmt.cosmosdb
     - azure.mgmt.cosmosdb.aio
     - azure.mgmt.cosmosdb.aio.operations
@@ -480,26 +249,11 @@ test:
     - azure.mgmt.dashboard.operations
     - azure.mgmt.databox
     - azure.mgmt.databox.aio
-    - azure.mgmt.databox.v2018_01_01
-    - azure.mgmt.databox.v2018_01_01.aio
-    - azure.mgmt.databox.v2018_01_01.aio.operations
-    - azure.mgmt.databox.v2018_01_01.models
-    - azure.mgmt.databox.v2018_01_01.operations
-    - azure.mgmt.databox.v2019_09_01
-    - azure.mgmt.databox.v2019_09_01.aio
-    - azure.mgmt.databox.v2019_09_01.aio.operations
-    - azure.mgmt.databox.v2019_09_01.models
-    - azure.mgmt.databox.v2019_09_01.operations
-    - azure.mgmt.databox.v2020_04_01
-    - azure.mgmt.databox.v2020_04_01.aio
-    - azure.mgmt.databox.v2020_04_01.aio.operations
-    - azure.mgmt.databox.v2020_04_01.models
-    - azure.mgmt.databox.v2020_04_01.operations
-    - azure.mgmt.databox.v2020_11_01
-    - azure.mgmt.databox.v2020_11_01.aio
-    - azure.mgmt.databox.v2020_11_01.aio.operations
-    - azure.mgmt.databox.v2020_11_01.models
-    - azure.mgmt.databox.v2020_11_01.operations
+    - azure.mgmt.databox.v2022_12_01
+    - azure.mgmt.databox.v2022_12_01.aio
+    - azure.mgmt.databox.v2022_12_01.aio.operations
+    - azure.mgmt.databox.v2022_12_01.models
+    - azure.mgmt.databox.v2022_12_01.operations
     - azure.mgmt.datab
     - azure.mgmt.datab.aio
     - azure.mgmt.datab.aio.operations
@@ -507,36 +261,11 @@ test:
     - azure.mgmt.datab.operations
     - azure.mgmt.databoxedge
     - azure.mgmt.databoxedge.aio
-    - azure.mgmt.databoxedge.v2019_03_01
-    - azure.mgmt.databoxedge.v2019_03_01.aio
-    - azure.mgmt.databoxedge.v2019_03_01.aio.operations
-    - azure.mgmt.databoxedge.v2019_03_01.models
-    - azure.mgmt.databoxedge.v2019_03_01.operations
-    - azure.mgmt.databoxedge.v2019_07_01
-    - azure.mgmt.databoxedge.v2019_07_01.aio
-    - azure.mgmt.databoxedge.v2019_07_01.aio.operations
-    - azure.mgmt.databoxedge.v2019_07_01.models
-    - azure.mgmt.databoxedge.v2019_07_01.operations
-    - azure.mgmt.databoxedge.v2019_08_01
-    - azure.mgmt.databoxedge.v2019_08_01.aio
-    - azure.mgmt.databoxedge.v2019_08_01.aio.operations
-    - azure.mgmt.databoxedge.v2019_08_01.models
-    - azure.mgmt.databoxedge.v2019_08_01.operations
-    - azure.mgmt.databoxedge.v2020_05_01_preview
-    - azure.mgmt.databoxedge.v2020_05_01_preview.aio
-    - azure.mgmt.databoxedge.v2020_05_01_preview.aio.operations
-    - azure.mgmt.databoxedge.v2020_05_01_preview.models
-    - azure.mgmt.databoxedge.v2020_05_01_preview.operations
     - azure.mgmt.databoxedge.v2020_09_01
     - azure.mgmt.databoxedge.v2020_09_01.aio
     - azure.mgmt.databoxedge.v2020_09_01.aio.operations
     - azure.mgmt.databoxedge.v2020_09_01.models
     - azure.mgmt.databoxedge.v2020_09_01.operations
-    - azure.mgmt.databoxedge.v2020_09_01_preview
-    - azure.mgmt.databoxedge.v2020_09_01_preview.aio
-    - azure.mgmt.databoxedge.v2020_09_01_preview.aio.operations
-    - azure.mgmt.databoxedge.v2020_09_01_preview.models
-    - azure.mgmt.databoxedge.v2020_09_01_preview.operations
     - azure.mgmt.databoxedge.v2021_02_01_preview
     - azure.mgmt.databoxedge.v2021_02_01_preview.aio
     - azure.mgmt.databoxedge.v2021_02_01_preview.aio.operations
@@ -567,6 +296,11 @@ test:
     - azure.mgmt.databricks.aio.operations
     - azure.mgmt.databricks.models
     - azure.mgmt.databricks.operations
+    - azure.mgmt.datadog
+    - azure.mgmt.datadog.aio
+    - azure.mgmt.datadog.aio.operations
+    - azure.mgmt.datadog.models
+    - azure.mgmt.datadog.operations
     - azure.mgmt.deploymentmanager
     - azure.mgmt.deploymentmanager.aio
     - azure.mgmt.deploymentmanager.aio.operations
@@ -594,41 +328,23 @@ test:
     - azure.mgmt.devtestlabs.operations
     - azure.mgmt.digitaltwins
     - azure.mgmt.digitaltwins.aio
-    - azure.mgmt.digitaltwins.v2020_03_01_preview
-    - azure.mgmt.digitaltwins.v2020_03_01_preview.aio
-    - azure.mgmt.digitaltwins.v2020_03_01_preview.aio.operations
-    - azure.mgmt.digitaltwins.v2020_03_01_preview.models
-    - azure.mgmt.digitaltwins.v2020_03_01_preview.operations
-    - azure.mgmt.digitaltwins.v2020_10_31
-    - azure.mgmt.digitaltwins.v2020_10_31.aio
-    - azure.mgmt.digitaltwins.v2020_10_31.aio.operations
-    - azure.mgmt.digitaltwins.v2020_10_31.models
-    - azure.mgmt.digitaltwins.v2020_10_31.operations
-    - azure.mgmt.digitaltwins.v2020_12_01
-    - azure.mgmt.digitaltwins.v2020_12_01.aio
-    - azure.mgmt.digitaltwins.v2020_12_01.aio.operations
-    - azure.mgmt.digitaltwins.v2020_12_01.models
-    - azure.mgmt.digitaltwins.v2020_12_01.operations
-    - azure.mgmt.digitaltwins.v2021_06_30_preview
-    - azure.mgmt.digitaltwins.v2021_06_30_preview.aio
-    - azure.mgmt.digitaltwins.v2021_06_30_preview.aio.operations
-    - azure.mgmt.digitaltwins.v2021_06_30_preview.models
-    - azure.mgmt.digitaltwins.v2021_06_30_preview.operations
-    - azure.mgmt.digitaltwins.v2022_05_31
-    - azure.mgmt.digitaltwins.v2022_05_31.aio
-    - azure.mgmt.digitaltwins.v2022_05_31.aio.operations
-    - azure.mgmt.digitaltwins.v2022_05_31.models
-    - azure.mgmt.digitaltwins.v2022_05_31.operations
-    - azure.mgmt.digitaltwins.v2022_10_31
-    - azure.mgmt.digitaltwins.v2022_10_31.aio
-    - azure.mgmt.digitaltwins.v2022_10_31.aio.operations
-    - azure.mgmt.digitaltwins.v2022_10_31.models
-    - azure.mgmt.digitaltwins.v2022_10_31.operations
     - azure.mgmt.digitaltwins.v2023_01_31
     - azure.mgmt.digitaltwins.v2023_01_31.aio
     - azure.mgmt.digitaltwins.v2023_01_31.aio.operations
     - azure.mgmt.digitaltwins.v2023_01_31.models
     - azure.mgmt.digitaltwins.v2023_01_31.operations
+    - azure.mgmt.dns
+    - azure.mgmt.dns.aio
+    - azure.mgmt.dns.v2018_05_01
+    - azure.mgmt.dns.v2018_05_01.aio
+    - azure.mgmt.dns.v2018_05_01.aio.operations
+    - azure.mgmt.dns.v2018_05_01.models
+    - azure.mgmt.dns.v2018_05_01.operations
+    - azure.mgmt.dns.v2023_07_01_preview
+    - azure.mgmt.dns.v2023_07_01_preview.aio
+    - azure.mgmt.dns.v2023_07_01_preview.aio.operations
+    - azure.mgmt.dns.v2023_07_01_preview.models
+    - azure.mgmt.dns.v2023_07_01_preview.operations
     - azure.mgmt.dnsresolver
     - azure.mgmt.dnsresolver.aio
     - azure.mgmt.dnsresolver.aio.operations
@@ -641,7 +357,7 @@ test:
     - azure.mgmt.dynatrace.operations
     - azure.mgmt.edgeorder
     - azure.mgmt.edgeorder.aio
-    - azure.mgmt.edgeorder.aio.operations
+    - azure.mgmt.edgeorder.v2021_12_01
     - azure.mgmt.edgeorder.v2021_12_01.aio
     - azure.mgmt.edgeorder.v2021_12_01.aio.operations
     - azure.mgmt.edgeorder.v2021_12_01.models
@@ -651,29 +367,40 @@ test:
     - azure.mgmt.elastic.aio.operations
     - azure.mgmt.elastic.models
     - azure.mgmt.elastic.operations
+    - azure.mgmt.elasticsan
+    - azure.mgmt.elasticsan.aio
+    - azure.mgmt.elasticsan.aio.operations
+    - azure.mgmt.elasticsan.models
+    - azure.mgmt.elasticsan.operations
+    - azure.mgmt.eventgrid
+    - azure.mgmt.eventgrid.aio
+    - azure.mgmt.eventgrid.aio.operations
+    - azure.mgmt.eventgrid.models
+    - azure.mgmt.eventgrid.operations
     - azure.mgmt.eventhub
     - azure.mgmt.eventhub.aio
-    - azure.mgmt.eventhub.v2015_08_01
-    - azure.mgmt.eventhub.v2015_08_01.aio
-    - azure.mgmt.eventhub.v2015_08_01.aio.operations
-    - azure.mgmt.eventhub.v2015_08_01.models
-    - azure.mgmt.eventhub.v2015_08_01.operations
-    - azure.mgmt.eventhub.v2017_04_01
-    - azure.mgmt.eventhub.v2017_04_01.aio
-    - azure.mgmt.eventhub.v2017_04_01.aio.operations
-    - azure.mgmt.eventhub.v2017_04_01.models
-    - azure.mgmt.eventhub.v2017_04_01.operations
-    - azure.mgmt.eventhub.v2018_01_01_preview
-    - azure.mgmt.eventhub.v2018_01_01_preview.aio
-    - azure.mgmt.eventhub.v2018_01_01_preview.aio.operations
-    - azure.mgmt.eventhub.v2018_01_01_preview.models
-    - azure.mgmt.eventhub.v2018_01_01_preview.operations
+    - azure.mgmt.eventhub.v2021_11_01
+    - azure.mgmt.eventhub.v2021_11_01.aio
+    - azure.mgmt.eventhub.v2021_11_01.aio.operations
+    - azure.mgmt.eventhub.v2021_11_01.models
+    - azure.mgmt.eventhub.v2021_11_01.operations
+    - azure.mgmt.eventhub.v2022_10_01_preview
+    - azure.mgmt.eventhub.v2022_10_01_preview.aio
+    - azure.mgmt.eventhub.v2022_10_01_preview.aio.operations
+    - azure.mgmt.eventhub.v2022_10_01_preview.models
+    - azure.mgmt.eventhub.v2022_10_01_preview.operations
     - azure.mgmt.extendedlocation
     - azure.mgmt.extendedlocation.aio
+    - azure.mgmt.extendedlocation.v2021_08_15
     - azure.mgmt.extendedlocation.v2021_08_15.aio
     - azure.mgmt.extendedlocation.v2021_08_15.aio.operations
     - azure.mgmt.extendedlocation.v2021_08_15.models
     - azure.mgmt.extendedlocation.v2021_08_15.operations
+    - azure.mgmt.extendedlocation.v2021_08_31_preview
+    - azure.mgmt.extendedlocation.v2021_08_31_preview.aio
+    - azure.mgmt.extendedlocation.v2021_08_31_preview.aio.operations
+    - azure.mgmt.extendedlocation.v2021_08_31_preview.models
+    - azure.mgmt.extendedlocation.v2021_08_31_preview.operations
     - azure.mgmt.fluidrelay
     - azure.mgmt.fluidrelay.aio
     - azure.mgmt.fluidrelay.aio.operations
@@ -684,6 +411,11 @@ test:
     - azure.mgmt.frontdoor.aio.operations
     - azure.mgmt.frontdoor.models
     - azure.mgmt.frontdoor.operations
+    - azure.mgmt.graphservices
+    - azure.mgmt.graphservices.aio
+    - azure.mgmt.graphservices.aio.operations
+    - azure.mgmt.graphservices.models
+    - azure.mgmt.graphservices.operations
     - azure.mgmt.hanaonazure
     - azure.mgmt.hanaonazure.aio
     - azure.mgmt.hanaonazure.aio.operations
@@ -704,6 +436,16 @@ test:
     - azure.mgmt.hybridcompute.aio.operations
     - azure.mgmt.hybridcompute.models
     - azure.mgmt.hybridcompute.operations
+    - azure.mgmt.hybridconnectivity
+    - azure.mgmt.hybridconnectivity.aio
+    - azure.mgmt.hybridconnectivity.aio.operations
+    - azure.mgmt.hybridconnectivity.models
+    - azure.mgmt.hybridconnectivity.operations
+    - azure.mgmt.hybridcontainerservice
+    - azure.mgmt.hybridcontainerservice.aio
+    - azure.mgmt.hybridcontainerservice.aio.operations
+    - azure.mgmt.hybridcontainerservice.models
+    - azure.mgmt.hybridcontainerservice.operations
     - azure.mgmt.hybridkubernetes
     - azure.mgmt.hybridkubernetes.aio
     - azure.mgmt.hybridkubernetes.aio.operations
@@ -721,105 +463,30 @@ test:
     - azure.mgmt.imagebuilder.operations
     - azure.mgmt.iothub
     - azure.mgmt.iothub.aio
-    - azure.mgmt.iothub.v2016_02_03
-    - azure.mgmt.iothub.v2016_02_03.aio
-    - azure.mgmt.iothub.v2016_02_03.aio.operations
-    - azure.mgmt.iothub.v2016_02_03.models
-    - azure.mgmt.iothub.v2016_02_03.operations
-    - azure.mgmt.iothub.v2017_01_19
-    - azure.mgmt.iothub.v2017_01_19.aio
-    - azure.mgmt.iothub.v2017_01_19.aio.operations
-    - azure.mgmt.iothub.v2017_01_19.models
-    - azure.mgmt.iothub.v2017_01_19.operations
-    - azure.mgmt.iothub.v2017_07_01
-    - azure.mgmt.iothub.v2017_07_01.aio
-    - azure.mgmt.iothub.v2017_07_01.aio.operations
-    - azure.mgmt.iothub.v2017_07_01.models
-    - azure.mgmt.iothub.v2017_07_01.operations
-    - azure.mgmt.iothub.v2018_01_22
-    - azure.mgmt.iothub.v2018_01_22.aio
-    - azure.mgmt.iothub.v2018_01_22.aio.operations
-    - azure.mgmt.iothub.v2018_01_22.models
-    - azure.mgmt.iothub.v2018_01_22.operations
-    - azure.mgmt.iothub.v2018_04_01
-    - azure.mgmt.iothub.v2018_04_01.aio
-    - azure.mgmt.iothub.v2018_04_01.aio.operations
-    - azure.mgmt.iothub.v2018_04_01.models
-    - azure.mgmt.iothub.v2018_04_01.operations
-    - azure.mgmt.iothub.v2019_03_22
-    - azure.mgmt.iothub.v2019_03_22.aio
-    - azure.mgmt.iothub.v2019_03_22.aio.operations
-    - azure.mgmt.iothub.v2019_03_22.models
-    - azure.mgmt.iothub.v2019_03_22.operations
-    - azure.mgmt.iothub.v2019_11_04
-    - azure.mgmt.iothub.v2019_11_04.aio
-    - azure.mgmt.iothub.v2019_11_04.aio.operations
-    - azure.mgmt.iothub.v2019_11_04.models
-    - azure.mgmt.iothub.v2019_11_04.operations
-    - azure.mgmt.iothub.v2020_03_01
-    - azure.mgmt.iothub.v2020_03_01.aio
-    - azure.mgmt.iothub.v2020_03_01.aio.operations
-    - azure.mgmt.iothub.v2020_03_01.models
-    - azure.mgmt.iothub.v2020_03_01.operations
+    - azure.mgmt.iothub.v2023_06_30
+    - azure.mgmt.iothub.v2023_06_30.aio
+    - azure.mgmt.iothub.v2023_06_30.aio.operations
+    - azure.mgmt.iothub.v2023_06_30.models
+    - azure.mgmt.iothub.v2023_06_30.operations
+    - azure.mgmt.iothubprovisioningservices
+    - azure.mgmt.iothubprovisioningservices.aio
+    - azure.mgmt.iothubprovisioningservices.aio.operations
+    - azure.mgmt.iothubprovisioningservices.models
+    - azure.mgmt.iothubprovisioningservices.operations
     - azure.mgmt.keyvault
     - azure.mgmt.keyvault.aio
-    - azure.mgmt.keyvault.v2016_10_01
-    - azure.mgmt.keyvault.v2016_10_01.aio
-    - azure.mgmt.keyvault.v2016_10_01.aio.operations
-    - azure.mgmt.keyvault.v2016_10_01.models
-    - azure.mgmt.keyvault.v2016_10_01.operations
-    - azure.mgmt.keyvault.v2018_02_14
-    - azure.mgmt.keyvault.v2018_02_14.aio
-    - azure.mgmt.keyvault.v2018_02_14.aio.operations
-    - azure.mgmt.keyvault.v2018_02_14.models
-    - azure.mgmt.keyvault.v2018_02_14.operations
-    - azure.mgmt.keyvault.v2019_09_01
-    - azure.mgmt.keyvault.v2019_09_01.aio
-    - azure.mgmt.keyvault.v2019_09_01.aio.operations
-    - azure.mgmt.keyvault.v2019_09_01.models
-    - azure.mgmt.keyvault.v2019_09_01.operations
-    - azure.mgmt.keyvault.v2020_04_01_preview
-    - azure.mgmt.keyvault.v2020_04_01_preview.aio
-    - azure.mgmt.keyvault.v2020_04_01_preview.aio.operations
-    - azure.mgmt.keyvault.v2020_04_01_preview.models
-    - azure.mgmt.keyvault.v2020_04_01_preview.operations
+    - azure.mgmt.keyvault.v2023_07_01
+    - azure.mgmt.keyvault.v2023_07_01.aio
+    - azure.mgmt.keyvault.v2023_07_01.aio.operations
+    - azure.mgmt.keyvault.v2023_07_01.models
+    - azure.mgmt.keyvault.v2023_07_01.operations
     - azure.mgmt.kubernetesconfiguration
     - azure.mgmt.kubernetesconfiguration.aio
-    - azure.mgmt.kubernetesconfiguration.v2020_07_01_preview
-    - azure.mgmt.kubernetesconfiguration.v2020_07_01_preview.aio
-    - azure.mgmt.kubernetesconfiguration.v2020_07_01_preview.aio.operations
-    - azure.mgmt.kubernetesconfiguration.v2020_07_01_preview.models
-    - azure.mgmt.kubernetesconfiguration.v2020_07_01_preview.operations
-    - azure.mgmt.kubernetesconfiguration.v2020_10_01_preview
-    - azure.mgmt.kubernetesconfiguration.v2020_10_01_preview.aio
-    - azure.mgmt.kubernetesconfiguration.v2020_10_01_preview.aio.operations
-    - azure.mgmt.kubernetesconfiguration.v2020_10_01_preview.models
-    - azure.mgmt.kubernetesconfiguration.v2020_10_01_preview.operations
-    - azure.mgmt.kubernetesconfiguration.v2021_03_01
-    - azure.mgmt.kubernetesconfiguration.v2021_03_01.aio
-    - azure.mgmt.kubernetesconfiguration.v2021_03_01.aio.operations
-    - azure.mgmt.kubernetesconfiguration.v2021_03_01.models
-    - azure.mgmt.kubernetesconfiguration.v2021_03_01.operations
-    - azure.mgmt.kubernetesconfiguration.v2021_05_01_preview
-    - azure.mgmt.kubernetesconfiguration.v2021_05_01_preview.aio
-    - azure.mgmt.kubernetesconfiguration.v2021_05_01_preview.aio.operations
-    - azure.mgmt.kubernetesconfiguration.v2021_05_01_preview.models
-    - azure.mgmt.kubernetesconfiguration.v2021_05_01_preview.operations
-    - azure.mgmt.kubernetesconfiguration.v2021_09_01
-    - azure.mgmt.kubernetesconfiguration.v2021_09_01.aio
-    - azure.mgmt.kubernetesconfiguration.v2021_09_01.aio.operations
-    - azure.mgmt.kubernetesconfiguration.v2021_09_01.models
-    - azure.mgmt.kubernetesconfiguration.v2021_09_01.operations
-    - azure.mgmt.kubernetesconfiguration.v2021_11_01_preview
-    - azure.mgmt.kubernetesconfiguration.v2021_11_01_preview.aio
-    - azure.mgmt.kubernetesconfiguration.v2021_11_01_preview.aio.operations
-    - azure.mgmt.kubernetesconfiguration.v2021_11_01_preview.models
-    - azure.mgmt.kubernetesconfiguration.v2021_11_01_preview.operations
-    - azure.mgmt.kubernetesconfiguration.v2022_01_01_preview
-    - azure.mgmt.kubernetesconfiguration.v2022_01_01_preview.aio
-    - azure.mgmt.kubernetesconfiguration.v2022_01_01_preview.aio.operations
-    - azure.mgmt.kubernetesconfiguration.v2022_01_01_preview.models
-    - azure.mgmt.kubernetesconfiguration.v2022_01_01_preview.operations
+    - azure.mgmt.kubernetesconfiguration.v2023_05_01
+    - azure.mgmt.kubernetesconfiguration.v2023_05_01.aio
+    - azure.mgmt.kubernetesconfiguration.v2023_05_01.aio.operations
+    - azure.mgmt.kubernetesconfiguration.v2023_05_01.models
+    - azure.mgmt.kubernetesconfiguration.v2023_05_01.operations
     - azure.mgmt.kusto
     - azure.mgmt.kusto.aio
     - azure.mgmt.kusto.aio.operations
@@ -860,6 +527,11 @@ test:
     - azure.mgmt.maintenance.aio.operations
     - azure.mgmt.maintenance.models
     - azure.mgmt.maintenance.operations
+    - azure.mgmt.managednetworkfabric
+    - azure.mgmt.managednetworkfabric.aio
+    - azure.mgmt.managednetworkfabric.aio.operations
+    - azure.mgmt.managednetworkfabric.models
+    - azure.mgmt.managednetworkfabric.operations
     - azure.mgmt.managedservices
     - azure.mgmt.managedservices.aio
     - azure.mgmt.managedservices.aio.operations
@@ -912,123 +584,18 @@ test:
     - azure.mgmt.mobilenetwork.operations
     - azure.mgmt.monitor
     - azure.mgmt.monitor.aio
-    - azure.mgmt.monitor.v2015_04_01
-    - azure.mgmt.monitor.v2015_04_01.aio
-    - azure.mgmt.monitor.v2015_04_01.aio.operations
-    - azure.mgmt.monitor.v2015_04_01.models
-    - azure.mgmt.monitor.v2015_04_01.operations
-    - azure.mgmt.monitor.v2015_07_01
-    - azure.mgmt.monitor.v2015_07_01.aio
-    - azure.mgmt.monitor.v2015_07_01.aio.operations
-    - azure.mgmt.monitor.v2015_07_01.models
-    - azure.mgmt.monitor.v2015_07_01.operations
-    - azure.mgmt.monitor.v2016_03_01
-    - azure.mgmt.monitor.v2016_03_01.aio
-    - azure.mgmt.monitor.v2016_03_01.aio.operations
-    - azure.mgmt.monitor.v2016_03_01.models
-    - azure.mgmt.monitor.v2016_03_01.operations
-    - azure.mgmt.monitor.v2016_09_01
-    - azure.mgmt.monitor.v2016_09_01.aio
-    - azure.mgmt.monitor.v2016_09_01.aio.operations
-    - azure.mgmt.monitor.v2016_09_01.models
-    - azure.mgmt.monitor.v2016_09_01.operations
-    - azure.mgmt.monitor.v2017_03_01_preview
-    - azure.mgmt.monitor.v2017_03_01_preview.aio
-    - azure.mgmt.monitor.v2017_03_01_preview.aio.operations
-    - azure.mgmt.monitor.v2017_03_01_preview.models
-    - azure.mgmt.monitor.v2017_03_01_preview.operations
-    - azure.mgmt.monitor.v2017_04_01
-    - azure.mgmt.monitor.v2017_04_01.aio
-    - azure.mgmt.monitor.v2017_04_01.aio.operations
-    - azure.mgmt.monitor.v2017_04_01.models
-    - azure.mgmt.monitor.v2017_04_01.operations
-    - azure.mgmt.monitor.v2017_05_01_preview
-    - azure.mgmt.monitor.v2017_05_01_preview.aio
-    - azure.mgmt.monitor.v2017_05_01_preview.aio.operations
-    - azure.mgmt.monitor.v2017_05_01_preview.models
-    - azure.mgmt.monitor.v2017_05_01_preview.operations
-    - azure.mgmt.monitor.v2017_12_01_preview
-    - azure.mgmt.monitor.v2017_12_01_preview.aio
-    - azure.mgmt.monitor.v2017_12_01_preview.aio.operations
-    - azure.mgmt.monitor.v2017_12_01_preview.models
-    - azure.mgmt.monitor.v2017_12_01_preview.operations
-    - azure.mgmt.monitor.v2018_01_01
-    - azure.mgmt.monitor.v2018_01_01.aio
-    - azure.mgmt.monitor.v2018_01_01.aio.operations
-    - azure.mgmt.monitor.v2018_01_01.models
-    - azure.mgmt.monitor.v2018_01_01.operations
-    - azure.mgmt.monitor.v2018_03_01
-    - azure.mgmt.monitor.v2018_03_01.aio
-    - azure.mgmt.monitor.v2018_03_01.aio.operations
-    - azure.mgmt.monitor.v2018_03_01.models
-    - azure.mgmt.monitor.v2018_03_01.operations
-    - azure.mgmt.monitor.v2018_04_16
-    - azure.mgmt.monitor.v2018_04_16.aio
-    - azure.mgmt.monitor.v2018_04_16.aio.operations
-    - azure.mgmt.monitor.v2018_04_16.models
-    - azure.mgmt.monitor.v2018_04_16.operations
-    - azure.mgmt.monitor.v2018_06_01_preview
-    - azure.mgmt.monitor.v2018_06_01_preview.aio
-    - azure.mgmt.monitor.v2018_06_01_preview.aio.operations
-    - azure.mgmt.monitor.v2018_06_01_preview.models
-    - azure.mgmt.monitor.v2018_06_01_preview.operations
-    - azure.mgmt.monitor.v2018_09_01
-    - azure.mgmt.monitor.v2018_09_01.aio
-    - azure.mgmt.monitor.v2018_09_01.aio.operations
-    - azure.mgmt.monitor.v2018_09_01.models
-    - azure.mgmt.monitor.v2018_09_01.operations
-    - azure.mgmt.monitor.v2018_11_27_preview
-    - azure.mgmt.monitor.v2018_11_27_preview.aio
-    - azure.mgmt.monitor.v2018_11_27_preview.aio.operations
-    - azure.mgmt.monitor.v2018_11_27_preview.models
-    - azure.mgmt.monitor.v2018_11_27_preview.operations
-    - azure.mgmt.monitor.v2019_03_01
-    - azure.mgmt.monitor.v2019_03_01.aio
-    - azure.mgmt.monitor.v2019_03_01.aio.operations
-    - azure.mgmt.monitor.v2019_03_01.models
-    - azure.mgmt.monitor.v2019_03_01.operations
-    - azure.mgmt.monitor.v2019_06_01
-    - azure.mgmt.monitor.v2019_06_01.aio
-    - azure.mgmt.monitor.v2019_06_01.aio.operations
-    - azure.mgmt.monitor.v2019_06_01.models
-    - azure.mgmt.monitor.v2019_06_01.operations
-    - azure.mgmt.monitor.v2019_10_17
-    - azure.mgmt.monitor.v2019_10_17.aio
-    - azure.mgmt.monitor.v2019_10_17.aio.operations
-    - azure.mgmt.monitor.v2019_10_17.models
-    - azure.mgmt.monitor.v2019_10_17.operations
-    - azure.mgmt.monitor.v2019_11_01_preview
-    - azure.mgmt.monitor.v2019_11_01_preview.aio
-    - azure.mgmt.monitor.v2019_11_01_preview.aio.operations
-    - azure.mgmt.monitor.v2019_11_01_preview.models
-    - azure.mgmt.monitor.v2019_11_01_preview.operations
-    - azure.mgmt.monitor.v2020_01_01_preview
-    - azure.mgmt.monitor.v2020_01_01_preview.aio
-    - azure.mgmt.monitor.v2020_01_01_preview.aio.operations
-    - azure.mgmt.monitor.v2020_01_01_preview.models
-    - azure.mgmt.monitor.v2020_01_01_preview.operations
-    - azure.mgmt.monitor.v2020_05_01_preview
-    - azure.mgmt.monitor.v2020_05_01_preview.aio
-    - azure.mgmt.monitor.v2020_05_01_preview.aio.operations
-    - azure.mgmt.monitor.v2020_05_01_preview.models
-    - azure.mgmt.monitor.v2020_05_01_preview.operations
+    - azure.mgmt.monitor.v2023_01_01
+    - azure.mgmt.monitor.v2023_01_01.aio
+    - azure.mgmt.monitor.v2023_01_01.aio.operations
+    - azure.mgmt.monitor.v2023_01_01.models
+    - azure.mgmt.monitor.v2023_01_01.operations
+    - azure.mgmt.monitor.v2023_03_01_preview
+    - azure.mgmt.monitor.v2023_03_01_preview.aio
+    - azure.mgmt.monitor.v2023_03_01_preview.aio.operations
+    - azure.mgmt.monitor.v2023_03_01_preview.models
+    - azure.mgmt.monitor.v2023_03_01_preview.operations
     - azure.mgmt.msi
     - azure.mgmt.msi.aio
-    - azure.mgmt.msi.v2018_11_30
-    - azure.mgmt.msi.v2018_11_30.aio
-    - azure.mgmt.msi.v2018_11_30.aio.operations
-    - azure.mgmt.msi.v2018_11_30.models
-    - azure.mgmt.msi.v2018_11_30.operations
-    - azure.mgmt.msi.v2021_09_30_preview
-    - azure.mgmt.msi.v2021_09_30_preview.aio
-    - azure.mgmt.msi.v2021_09_30_preview.aio.operations
-    - azure.mgmt.msi.v2021_09_30_preview.models
-    - azure.mgmt.msi.v2021_09_30_preview.operations
-    - azure.mgmt.msi.v2022_01_31_preview
-    - azure.mgmt.msi.v2022_01_31_preview.aio
-    - azure.mgmt.msi.v2022_01_31_preview.aio.operations
-    - azure.mgmt.msi.v2022_01_31_preview.models
-    - azure.mgmt.msi.v2022_01_31_preview.operations
     - azure.mgmt.msi.v2023_01_31
     - azure.mgmt.msi.v2023_01_31.aio
     - azure.mgmt.msi.v2023_01_31.aio.operations
@@ -1039,6 +606,16 @@ test:
     - azure.mgmt.network.aio.operations
     - azure.mgmt.network.models
     - azure.mgmt.network.operations
+    - azure.mgmt.networkanalytics
+    - azure.mgmt.networkanalytics.aio
+    - azure.mgmt.networkanalytics.aio.operations
+    - azure.mgmt.networkanalytics.models
+    - azure.mgmt.networkanalytics.operations
+    - azure.mgmt.networkcloud
+    - azure.mgmt.networkcloud.aio
+    - azure.mgmt.networkcloud.aio.operations
+    - azure.mgmt.networkcloud.models
+    - azure.mgmt.networkcloud.operations
     - azure.mgmt.nginx
     - azure.mgmt.nginx.aio
     - azure.mgmt.nginx.aio.operations
@@ -1069,6 +646,16 @@ test:
     - azure.mgmt.orbital.aio.operations
     - azure.mgmt.orbital.models
     - azure.mgmt.orbital.operations
+    - azure.mgmt.operationsmanagement
+    - azure.mgmt.operationsmanagement.aio
+    - azure.mgmt.operationsmanagement.aio.operations
+    - azure.mgmt.operationsmanagement.models
+    - azure.mgmt.operationsmanagement.operations
+    - azure.mgmt.paloaltonetworksngfw
+    - azure.mgmt.paloaltonetworksngfw.aio
+    - azure.mgmt.paloaltonetworksngfw.aio.operations
+    - azure.mgmt.paloaltonetworksngfw.models
+    - azure.mgmt.paloaltonetworksngfw.operations
     - azure.mgmt.peering
     - azure.mgmt.peering.aio
     - azure.mgmt.peering.aio.operations
@@ -1104,6 +691,11 @@ test:
     - azure.mgmt.qumulo.aio.operations
     - azure.mgmt.qumulo.models
     - azure.mgmt.qumulo.operations
+    - azure.mgmt.quota
+    - azure.mgmt.quota.aio
+    - azure.mgmt.quota.aio.operations
+    - azure.mgmt.quota.models
+    - azure.mgmt.quota.operations
     - azure.mgmt.rdbms
     - azure.mgmt.rdbms.mariadb
     - azure.mgmt.rdbms.mariadb.aio
@@ -1145,13 +737,18 @@ test:
     - azure.mgmt.recoveryservicesbackup.passivestamp.aio.operations
     - azure.mgmt.recoveryservicesbackup.passivestamp.models
     - azure.mgmt.recoveryservicesbackup.passivestamp.operations
+    - azure.mgmt.recoveryservicessiterecovery
+    - azure.mgmt.recoveryservicessiterecovery.aio
+    - azure.mgmt.recoveryservicessiterecovery.aio.operations
+    - azure.mgmt.recoveryservicessiterecovery.models
+    - azure.mgmt.recoveryservicessiterecovery.operations
     - azure.mgmt.redhatopenshift
     - azure.mgmt.redhatopenshift.aio
-    - azure.mgmt.redhatopenshift.v2020_04_30
-    - azure.mgmt.redhatopenshift.v2020_04_30.aio
-    - azure.mgmt.redhatopenshift.v2020_04_30.aio.operations
-    - azure.mgmt.redhatopenshift.v2020_04_30.models
-    - azure.mgmt.redhatopenshift.v2020_04_30.operations
+    - azure.mgmt.redhatopenshift.v2023_09_04
+    - azure.mgmt.redhatopenshift.v2023_09_04.aio
+    - azure.mgmt.redhatopenshift.v2023_09_04.aio.operations
+    - azure.mgmt.redhatopenshift.v2023_09_04.models
+    - azure.mgmt.redhatopenshift.v2023_09_04.operations
     - azure.mgmt.redis
     - azure.mgmt.redis.aio
     - azure.mgmt.redis.aio.operations
@@ -1175,11 +772,6 @@ test:
     - azure.mgmt.resource
     - azure.mgmt.resource.deploymentscripts
     - azure.mgmt.resource.deploymentscripts.aio
-    - azure.mgmt.resource.deploymentscripts.v2019_10_01_preview
-    - azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.aio
-    - azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.aio.operations
-    - azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models
-    - azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.operations
     - azure.mgmt.resource.deploymentscripts.v2020_10_01
     - azure.mgmt.resource.deploymentscripts.v2020_10_01.aio
     - azure.mgmt.resource.deploymentscripts.v2020_10_01.aio.operations
@@ -1187,11 +779,11 @@ test:
     - azure.mgmt.resource.deploymentscripts.v2020_10_01.operations
     - azure.mgmt.resource.features
     - azure.mgmt.resource.features.aio
-    - azure.mgmt.resource.features.v2015_12_01
-    - azure.mgmt.resource.features.v2015_12_01.aio
-    - azure.mgmt.resource.features.v2015_12_01.aio.operations
-    - azure.mgmt.resource.features.v2015_12_01.models
-    - azure.mgmt.resource.features.v2015_12_01.operations
+    - azure.mgmt.resource.features.v2021_07_01
+    - azure.mgmt.resource.features.v2021_07_01.aio
+    - azure.mgmt.resource.features.v2021_07_01.aio.operations
+    - azure.mgmt.resource.features.v2021_07_01.models
+    - azure.mgmt.resource.features.v2021_07_01.operations
     - azure.mgmt.resource.links
     - azure.mgmt.resource.links.aio
     - azure.mgmt.resource.links.v2016_09_01
@@ -1201,11 +793,6 @@ test:
     - azure.mgmt.resource.links.v2016_09_01.operations
     - azure.mgmt.resource.locks
     - azure.mgmt.resource.locks.aio
-    - azure.mgmt.resource.locks.v2015_01_01
-    - azure.mgmt.resource.locks.v2015_01_01.aio
-    - azure.mgmt.resource.locks.v2015_01_01.aio.operations
-    - azure.mgmt.resource.locks.v2015_01_01.models
-    - azure.mgmt.resource.locks.v2015_01_01.operations
     - azure.mgmt.resource.locks.v2016_09_01
     - azure.mgmt.resource.locks.v2016_09_01.aio
     - azure.mgmt.resource.locks.v2016_09_01.aio.operations
@@ -1216,152 +803,37 @@ test:
     - azure.mgmt.resource.managedapplications.models
     - azure.mgmt.resource.policy
     - azure.mgmt.resource.policy.aio
-    - azure.mgmt.resource.policy.v2015_10_01_preview
-    - azure.mgmt.resource.policy.v2015_10_01_preview.aio
-    - azure.mgmt.resource.policy.v2015_10_01_preview.aio.operations
-    - azure.mgmt.resource.policy.v2015_10_01_preview.models
-    - azure.mgmt.resource.policy.v2015_10_01_preview.operations
-    - azure.mgmt.resource.policy.v2016_04_01
-    - azure.mgmt.resource.policy.v2016_04_01.aio
-    - azure.mgmt.resource.policy.v2016_04_01.aio.operations
-    - azure.mgmt.resource.policy.v2016_04_01.models
-    - azure.mgmt.resource.policy.v2016_04_01.operations
-    - azure.mgmt.resource.policy.v2016_12_01
-    - azure.mgmt.resource.policy.v2016_12_01.aio
-    - azure.mgmt.resource.policy.v2016_12_01.aio.operations
-    - azure.mgmt.resource.policy.v2016_12_01.models
-    - azure.mgmt.resource.policy.v2016_12_01.operations
-    - azure.mgmt.resource.policy.v2017_06_01_preview
-    - azure.mgmt.resource.policy.v2017_06_01_preview.aio
-    - azure.mgmt.resource.policy.v2017_06_01_preview.aio.operations
-    - azure.mgmt.resource.policy.v2017_06_01_preview.models
-    - azure.mgmt.resource.policy.v2017_06_01_preview.operations
-    - azure.mgmt.resource.policy.v2018_03_01
-    - azure.mgmt.resource.policy.v2018_03_01.aio
-    - azure.mgmt.resource.policy.v2018_03_01.aio.operations
-    - azure.mgmt.resource.policy.v2018_03_01.models
-    - azure.mgmt.resource.policy.v2018_03_01.operations
-    - azure.mgmt.resource.policy.v2018_05_01
-    - azure.mgmt.resource.policy.v2018_05_01.aio
-    - azure.mgmt.resource.policy.v2018_05_01.aio.operations
-    - azure.mgmt.resource.policy.v2018_05_01.models
-    - azure.mgmt.resource.policy.v2018_05_01.operations
-    - azure.mgmt.resource.policy.v2019_01_01
-    - azure.mgmt.resource.policy.v2019_01_01.aio
-    - azure.mgmt.resource.policy.v2019_01_01.aio.operations
-    - azure.mgmt.resource.policy.v2019_01_01.models
-    - azure.mgmt.resource.policy.v2019_01_01.operations
-    - azure.mgmt.resource.policy.v2019_06_01
-    - azure.mgmt.resource.policy.v2019_06_01.aio
-    - azure.mgmt.resource.policy.v2019_06_01.aio.operations
-    - azure.mgmt.resource.policy.v2019_06_01.models
-    - azure.mgmt.resource.policy.v2019_06_01.operations
-    - azure.mgmt.resource.policy.v2019_09_01
-    - azure.mgmt.resource.policy.v2019_09_01.aio
-    - azure.mgmt.resource.policy.v2019_09_01.aio.operations
-    - azure.mgmt.resource.policy.v2019_09_01.models
-    - azure.mgmt.resource.policy.v2019_09_01.operations
-    - azure.mgmt.resource.policy.v2020_09_01
-    - azure.mgmt.resource.policy.v2020_09_01.aio
-    - azure.mgmt.resource.policy.v2020_09_01.aio.operations
-    - azure.mgmt.resource.policy.v2020_09_01.models
-    - azure.mgmt.resource.policy.v2020_09_01.operations
+    - azure.mgmt.resource.policy.v2022_06_01
+    - azure.mgmt.resource.policy.v2022_06_01.aio
+    - azure.mgmt.resource.policy.v2022_06_01.aio.operations
+    - azure.mgmt.resource.policy.v2022_06_01.models
+    - azure.mgmt.resource.policy.v2022_06_01.operations
     - azure.mgmt.resource.resources
     - azure.mgmt.resource.resources.aio
-    - azure.mgmt.resource.resources.v2016_02_01
-    - azure.mgmt.resource.resources.v2016_02_01.aio
-    - azure.mgmt.resource.resources.v2016_02_01.aio.operations
-    - azure.mgmt.resource.resources.v2016_02_01.models
-    - azure.mgmt.resource.resources.v2016_02_01.operations
-    - azure.mgmt.resource.resources.v2016_09_01
-    - azure.mgmt.resource.resources.v2016_09_01.aio
-    - azure.mgmt.resource.resources.v2016_09_01.aio.operations
-    - azure.mgmt.resource.resources.v2016_09_01.models
-    - azure.mgmt.resource.resources.v2016_09_01.operations
-    - azure.mgmt.resource.resources.v2017_05_10
-    - azure.mgmt.resource.resources.v2017_05_10.aio
-    - azure.mgmt.resource.resources.v2017_05_10.aio.operations
-    - azure.mgmt.resource.resources.v2017_05_10.models
-    - azure.mgmt.resource.resources.v2017_05_10.operations
-    - azure.mgmt.resource.resources.v2018_02_01
-    - azure.mgmt.resource.resources.v2018_02_01.aio
-    - azure.mgmt.resource.resources.v2018_02_01.aio.operations
-    - azure.mgmt.resource.resources.v2018_02_01.models
-    - azure.mgmt.resource.resources.v2018_02_01.operations
-    - azure.mgmt.resource.resources.v2018_05_01
-    - azure.mgmt.resource.resources.v2018_05_01.aio
-    - azure.mgmt.resource.resources.v2018_05_01.aio.operations
-    - azure.mgmt.resource.resources.v2018_05_01.models
-    - azure.mgmt.resource.resources.v2018_05_01.operations
-    - azure.mgmt.resource.resources.v2019_03_01
-    - azure.mgmt.resource.resources.v2019_03_01.aio
-    - azure.mgmt.resource.resources.v2019_03_01.aio.operations
-    - azure.mgmt.resource.resources.v2019_03_01.models
-    - azure.mgmt.resource.resources.v2019_03_01.operations
-    - azure.mgmt.resource.resources.v2019_05_01
-    - azure.mgmt.resource.resources.v2019_05_01.aio
-    - azure.mgmt.resource.resources.v2019_05_01.aio.operations
-    - azure.mgmt.resource.resources.v2019_05_01.models
-    - azure.mgmt.resource.resources.v2019_05_01.operations
-    - azure.mgmt.resource.resources.v2019_05_10
-    - azure.mgmt.resource.resources.v2019_05_10.aio
-    - azure.mgmt.resource.resources.v2019_05_10.aio.operations
-    - azure.mgmt.resource.resources.v2019_05_10.models
-    - azure.mgmt.resource.resources.v2019_05_10.operations
-    - azure.mgmt.resource.resources.v2019_07_01
-    - azure.mgmt.resource.resources.v2019_07_01.aio
-    - azure.mgmt.resource.resources.v2019_07_01.aio.operations
-    - azure.mgmt.resource.resources.v2019_07_01.models
-    - azure.mgmt.resource.resources.v2019_07_01.operations
-    - azure.mgmt.resource.resources.v2019_08_01
-    - azure.mgmt.resource.resources.v2019_08_01.aio
-    - azure.mgmt.resource.resources.v2019_08_01.aio.operations
-    - azure.mgmt.resource.resources.v2019_08_01.models
-    - azure.mgmt.resource.resources.v2019_08_01.operations
-    - azure.mgmt.resource.resources.v2019_10_01
-    - azure.mgmt.resource.resources.v2019_10_01.aio
-    - azure.mgmt.resource.resources.v2019_10_01.aio.operations
-    - azure.mgmt.resource.resources.v2019_10_01.models
-    - azure.mgmt.resource.resources.v2019_10_01.operations
-    - azure.mgmt.resource.resources.v2020_06_01
-    - azure.mgmt.resource.resources.v2020_06_01.aio
-    - azure.mgmt.resource.resources.v2020_06_01.aio.operations
-    - azure.mgmt.resource.resources.v2020_06_01.models
-    - azure.mgmt.resource.resources.v2020_06_01.operations
-    - azure.mgmt.resource.resources.v2020_10_01
-    - azure.mgmt.resource.resources.v2020_10_01.aio
-    - azure.mgmt.resource.resources.v2020_10_01.aio.operations
-    - azure.mgmt.resource.resources.v2020_10_01.models
-    - azure.mgmt.resource.resources.v2020_10_01.operations
+    - azure.mgmt.resource.resources.v2022_09_01
+    - azure.mgmt.resource.resources.v2022_09_01.aio
+    - azure.mgmt.resource.resources.v2022_09_01.aio.operations
+    - azure.mgmt.resource.resources.v2022_09_01.models
+    - azure.mgmt.resource.resources.v2022_09_01.operations
     - azure.mgmt.resource.subscriptions
     - azure.mgmt.resource.subscriptions.aio
-    - azure.mgmt.resource.subscriptions.v2016_06_01
-    - azure.mgmt.resource.subscriptions.v2016_06_01.aio
-    - azure.mgmt.resource.subscriptions.v2016_06_01.aio.operations
-    - azure.mgmt.resource.subscriptions.v2016_06_01.models
-    - azure.mgmt.resource.subscriptions.v2016_06_01.operations
-    - azure.mgmt.resource.subscriptions.v2018_06_01
-    - azure.mgmt.resource.subscriptions.v2018_06_01.aio
-    - azure.mgmt.resource.subscriptions.v2018_06_01.aio.operations
-    - azure.mgmt.resource.subscriptions.v2018_06_01.models
-    - azure.mgmt.resource.subscriptions.v2018_06_01.operations
-    - azure.mgmt.resource.subscriptions.v2019_06_01
-    - azure.mgmt.resource.subscriptions.v2019_06_01.aio
-    - azure.mgmt.resource.subscriptions.v2019_06_01.aio.operations
-    - azure.mgmt.resource.subscriptions.v2019_06_01.models
-    - azure.mgmt.resource.subscriptions.v2019_06_01.operations
-    - azure.mgmt.resource.subscriptions.v2019_11_01
-    - azure.mgmt.resource.subscriptions.v2019_11_01.aio
-    - azure.mgmt.resource.subscriptions.v2019_11_01.aio.operations
-    - azure.mgmt.resource.subscriptions.v2019_11_01.models
-    - azure.mgmt.resource.subscriptions.v2019_11_01.operations
+    - azure.mgmt.resource.subscriptions.v2021_01_01
+    - azure.mgmt.resource.subscriptions.v2021_01_01.aio
+    - azure.mgmt.resource.subscriptions.v2021_01_01.aio.operations
+    - azure.mgmt.resource.subscriptions.v2021_01_01.models
+    - azure.mgmt.resource.subscriptions.v2021_01_01.operations
     - azure.mgmt.resource.templatespecs
     - azure.mgmt.resource.templatespecs.aio
-    - azure.mgmt.resource.templatespecs.v2019_06_01_preview
-    - azure.mgmt.resource.templatespecs.v2019_06_01_preview.aio
-    - azure.mgmt.resource.templatespecs.v2019_06_01_preview.aio.operations
-    - azure.mgmt.resource.templatespecs.v2019_06_01_preview.models
-    - azure.mgmt.resource.templatespecs.v2019_06_01_preview.operations
+    - azure.mgmt.resource.templatespecs.v2022_02_01
+    - azure.mgmt.resource.templatespecs.v2022_02_01.aio
+    - azure.mgmt.resource.templatespecs.v2022_02_01.aio.operations
+    - azure.mgmt.resource.templatespecs.v2022_02_01.models
+    - azure.mgmt.resource.templatespecs.v2022_02_01.operations
+    - azure.mgmt.resourceconnector
+    - azure.mgmt.resourceconnector.aio
+    - azure.mgmt.resourceconnector.aio.operations
+    - azure.mgmt.resourceconnector.models
+    - azure.mgmt.resourceconnector.operations
     - azure.mgmt.search
     - azure.mgmt.search.aio
     - azure.mgmt.search.aio.operations
@@ -1375,6 +847,11 @@ test:
     - azure.mgmt.securityinsight.aio.operations
     - azure.mgmt.securityinsight.models
     - azure.mgmt.securityinsight.operations
+    - azure.mgmt.selfhelp
+    - azure.mgmt.selfhelp.aio
+    - azure.mgmt.selfhelp.aio.operations
+    - azure.mgmt.selfhelp.models
+    - azure.mgmt.selfhelp.operations
     - azure.mgmt.serialconsole
     - azure.mgmt.serialconsole.aio
     - azure.mgmt.serialconsole.aio.operations
@@ -1393,6 +870,11 @@ test:
     - azure.mgmt.servicelinker.aio.operations
     - azure.mgmt.servicelinker.models
     - azure.mgmt.servicelinker.operations
+    - azure.mgmt.servicenetworking
+    - azure.mgmt.servicenetworking.aio
+    - azure.mgmt.servicenetworking.aio.operations
+    - azure.mgmt.servicenetworking.models
+    - azure.mgmt.servicenetworking.operations
     - azure.mgmt.signalr
     - azure.mgmt.signalr.aio
     - azure.mgmt.signalr.aio.operations
@@ -1405,71 +887,11 @@ test:
     - azure.mgmt.sql.operations
     - azure.mgmt.storage
     - azure.mgmt.storage.aio
-    - azure.mgmt.storage.v2015_06_15
-    - azure.mgmt.storage.v2015_06_15.aio
-    - azure.mgmt.storage.v2015_06_15.aio.operations
-    - azure.mgmt.storage.v2015_06_15.models
-    - azure.mgmt.storage.v2015_06_15.operations
-    - azure.mgmt.storage.v2016_01_01
-    - azure.mgmt.storage.v2016_01_01.aio
-    - azure.mgmt.storage.v2016_01_01.aio.operations
-    - azure.mgmt.storage.v2016_01_01.models
-    - azure.mgmt.storage.v2016_01_01.operations
-    - azure.mgmt.storage.v2016_12_01
-    - azure.mgmt.storage.v2016_12_01.aio
-    - azure.mgmt.storage.v2016_12_01.aio.operations
-    - azure.mgmt.storage.v2016_12_01.models
-    - azure.mgmt.storage.v2016_12_01.operations
-    - azure.mgmt.storage.v2017_06_01
-    - azure.mgmt.storage.v2017_06_01.aio
-    - azure.mgmt.storage.v2017_06_01.aio.operations
-    - azure.mgmt.storage.v2017_06_01.models
-    - azure.mgmt.storage.v2017_06_01.operations
-    - azure.mgmt.storage.v2017_10_01
-    - azure.mgmt.storage.v2017_10_01.aio
-    - azure.mgmt.storage.v2017_10_01.aio.operations
-    - azure.mgmt.storage.v2017_10_01.models
-    - azure.mgmt.storage.v2017_10_01.operations
-    - azure.mgmt.storage.v2018_02_01
-    - azure.mgmt.storage.v2018_02_01.aio
-    - azure.mgmt.storage.v2018_02_01.aio.operations
-    - azure.mgmt.storage.v2018_02_01.models
-    - azure.mgmt.storage.v2018_02_01.operations
-    - azure.mgmt.storage.v2018_03_01_preview
-    - azure.mgmt.storage.v2018_03_01_preview.aio
-    - azure.mgmt.storage.v2018_03_01_preview.aio.operations
-    - azure.mgmt.storage.v2018_03_01_preview.models
-    - azure.mgmt.storage.v2018_03_01_preview.operations
-    - azure.mgmt.storage.v2018_07_01
-    - azure.mgmt.storage.v2018_07_01.aio
-    - azure.mgmt.storage.v2018_07_01.aio.operations
-    - azure.mgmt.storage.v2018_07_01.models
-    - azure.mgmt.storage.v2018_07_01.operations
-    - azure.mgmt.storage.v2018_11_01
-    - azure.mgmt.storage.v2018_11_01.aio
-    - azure.mgmt.storage.v2018_11_01.aio.operations
-    - azure.mgmt.storage.v2018_11_01.models
-    - azure.mgmt.storage.v2018_11_01.operations
-    - azure.mgmt.storage.v2019_04_01
-    - azure.mgmt.storage.v2019_04_01.aio
-    - azure.mgmt.storage.v2019_04_01.aio.operations
-    - azure.mgmt.storage.v2019_04_01.models
-    - azure.mgmt.storage.v2019_04_01.operations
-    - azure.mgmt.storage.v2019_06_01
-    - azure.mgmt.storage.v2019_06_01.aio
-    - azure.mgmt.storage.v2019_06_01.aio.operations
-    - azure.mgmt.storage.v2019_06_01.models
-    - azure.mgmt.storage.v2019_06_01.operations
-    - azure.mgmt.storage.v2020_08_01_preview
-    - azure.mgmt.storage.v2020_08_01_preview.aio
-    - azure.mgmt.storage.v2020_08_01_preview.aio.operations
-    - azure.mgmt.storage.v2020_08_01_preview.models
-    - azure.mgmt.storage.v2020_08_01_preview.operations
-    - azure.mgmt.storage.v2021_01_01
-    - azure.mgmt.storage.v2021_01_01.aio
-    - azure.mgmt.storage.v2021_01_01.aio.operations
-    - azure.mgmt.storage.v2021_01_01.models
-    - azure.mgmt.storage.v2021_01_01.operations
+    - azure.mgmt.storage.v2023_01_01
+    - azure.mgmt.storage.v2023_01_01.aio
+    - azure.mgmt.storage.v2023_01_01.aio.operations
+    - azure.mgmt.storage.v2023_01_01.models
+    - azure.mgmt.storage.v2023_01_01.operations
     - azure.mgmt.storagecache
     - azure.mgmt.storagecache.aio
     - azure.mgmt.storagecache.aio.operations
@@ -1515,6 +937,11 @@ test:
     - azure.mgmt.timeseriesinsights.aio.operations
     - azure.mgmt.timeseriesinsights.models
     - azure.mgmt.timeseriesinsights.operations
+    - azure.mgmt.trafficmanager
+    - azure.mgmt.trafficmanager.aio
+    - azure.mgmt.trafficmanager.aio.operations
+    - azure.mgmt.trafficmanager.models
+    - azure.mgmt.trafficmanager.operations
     - azure.mgmt.voiceservices
     - azure.mgmt.voiceservices.aio
     - azure.mgmt.voiceservices.aio.operations
@@ -1522,56 +949,11 @@ test:
     - azure.mgmt.voiceservices.operations
     - azure.mgmt.web
     - azure.mgmt.web.aio
-    - azure.mgmt.web.v2015_04_01
-    - azure.mgmt.web.v2015_04_01.aio
-    - azure.mgmt.web.v2015_04_01.aio.operations
-    - azure.mgmt.web.v2015_04_01.models
-    - azure.mgmt.web.v2015_04_01.operations
-    - azure.mgmt.web.v2015_08_01
-    - azure.mgmt.web.v2015_08_01.aio
-    - azure.mgmt.web.v2015_08_01.aio.operations
-    - azure.mgmt.web.v2015_08_01.models
-    - azure.mgmt.web.v2015_08_01.operations
-    - azure.mgmt.web.v2016_03_01
-    - azure.mgmt.web.v2016_03_01.aio
-    - azure.mgmt.web.v2016_03_01.aio.operations
-    - azure.mgmt.web.v2016_03_01.models
-    - azure.mgmt.web.v2016_03_01.operations
-    - azure.mgmt.web.v2016_08_01
-    - azure.mgmt.web.v2016_08_01.aio
-    - azure.mgmt.web.v2016_08_01.aio.operations
-    - azure.mgmt.web.v2016_08_01.models
-    - azure.mgmt.web.v2016_08_01.operations
-    - azure.mgmt.web.v2016_09_01
-    - azure.mgmt.web.v2016_09_01.aio
-    - azure.mgmt.web.v2016_09_01.aio.operations
-    - azure.mgmt.web.v2016_09_01.models
-    - azure.mgmt.web.v2016_09_01.operations
-    - azure.mgmt.web.v2018_02_01
-    - azure.mgmt.web.v2018_02_01.aio
-    - azure.mgmt.web.v2018_02_01.aio.operations
-    - azure.mgmt.web.v2018_02_01.models
-    - azure.mgmt.web.v2018_02_01.operations
-    - azure.mgmt.web.v2018_11_01
-    - azure.mgmt.web.v2018_11_01.aio
-    - azure.mgmt.web.v2018_11_01.aio.operations
-    - azure.mgmt.web.v2018_11_01.models
-    - azure.mgmt.web.v2018_11_01.operations
-    - azure.mgmt.web.v2019_08_01
-    - azure.mgmt.web.v2019_08_01.aio
-    - azure.mgmt.web.v2019_08_01.aio.operations
-    - azure.mgmt.web.v2019_08_01.models
-    - azure.mgmt.web.v2019_08_01.operations
-    - azure.mgmt.web.v2020_06_01
-    - azure.mgmt.web.v2020_06_01.aio
-    - azure.mgmt.web.v2020_06_01.aio.operations
-    - azure.mgmt.web.v2020_06_01.models
-    - azure.mgmt.web.v2020_06_01.operations
-    - azure.mgmt.web.v2020_09_01
-    - azure.mgmt.web.v2020_09_01.aio
-    - azure.mgmt.web.v2020_09_01.aio.operations
-    - azure.mgmt.web.v2020_09_01.models
-    - azure.mgmt.web.v2020_09_01.operations
+    - azure.mgmt.web.v2022_09_01
+    - azure.mgmt.web.v2022_09_01.aio
+    - azure.mgmt.web.v2022_09_01.aio.operations
+    - azure.mgmt.web.v2022_09_01.models
+    - azure.mgmt.web.v2022_09_01.operations
     - azure.mgmt.webpubsub
     - azure.mgmt.webpubsub.aio
     - azure.mgmt.webpubsub.aio.operations

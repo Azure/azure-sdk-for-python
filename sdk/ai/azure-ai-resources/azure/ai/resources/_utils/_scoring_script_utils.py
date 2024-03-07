@@ -4,10 +4,10 @@
 
 import datetime
 import os
-from typing import Union
+from typing import Union, Optional
 import uuid
 
-import yaml
+import yaml  # type: ignore[import]
 
 from azure.ai.resources.entities.models import Model
 
@@ -50,6 +50,13 @@ def run(raw_data: AMLRequest):
     """
     raw_data = json.loads(raw_data.data)
     messages = raw_data["messages"]
+    messages = [
+        {{
+            "role": message["role"],
+            "content": message["content"], 
+        }} 
+        for message in messages if message.get("kind", "text") == "text"
+    ]
     stream = raw_data.get("stream", False)
     session_state = raw_data.get("sessionState", raw_data.get("session_state", None))
     context = raw_data.get("context", {{}})
@@ -82,7 +89,7 @@ def run(raw_data: AMLRequest):
 def create_chat_scoring_script(
     directory: Union[str, os.PathLike],
     chat_module: str,
-    model_dir_name: str = None,
+    model_dir_name: Optional[str] = None,
 ) -> None:
     score_file_path = f"{str(directory)}/score.py"
     with open(score_file_path, "w+") as f:

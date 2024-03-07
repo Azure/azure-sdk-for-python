@@ -10,7 +10,6 @@ from unittest.mock import Mock, patch
 
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure_devtools.scenario_tests import RecordingProcessor
 from devtools_testutils import recorded_by_proxy
 from azure.keyvault.certificates import (
     AdministratorContact,
@@ -46,15 +45,6 @@ logging_disabled = get_decorator(logging_enable=False)
 exclude_2016_10_01 = get_decorator(api_versions=[v for v in ApiVersion if v != ApiVersion.V2016_10_01])
 only_2016_10_01 = get_decorator(api_versions=[ApiVersion.V2016_10_01])
 LIST_TEST_SIZE = 7
-
-
-class RetryAfterReplacer(RecordingProcessor):
-    """Replace the retry after wait time in the replay process to 0."""
-
-    def process_response(self, response):
-        if "retry-after" in response["headers"]:
-            response["headers"]["retry-after"] = "0"
-        return response
 
 
 class MockHandler(logging.Handler):
@@ -784,9 +774,9 @@ def test_case_insensitive_key_type():
 
 
 def test_thumbprint_hex():
-    """Ensure the `CertificateProperties.x509_thumbprint_string` property correctly converts a thumbprint to hex."""
+    """Ensure `CertificateProperties.__repr__()` correctly displays the cert's thumbprint as hex."""
     properties = CertificateProperties(
         cert_id="https://vaultname.vault.azure.net/certificates/certname/version",
         x509_thumbprint=b"v\xe1\x81\x9f\xad\xf0jU\xefK\x12j.\xf7C\xc2\xba\xe8\xa1Q",
     )
-    assert properties.x509_thumbprint_string == "76E1819FADF06A55EF4B126A2EF743C2BAE8A151"
+    assert "76E1819FADF06A55EF4B126A2EF743C2BAE8A151" in str(properties)

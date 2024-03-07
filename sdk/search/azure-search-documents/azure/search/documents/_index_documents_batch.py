@@ -39,10 +39,10 @@ class IndexDocumentsBatch:
         replaced in the update case.
 
         :param documents: Documents to upload to an Azure search index. May be
-         a single list of documents, or documents as individual parameters.
-        :type documents: Dict or List[Dict]
+            a single list of documents, or documents as individual parameters.
+        :type documents: dict or list[dict]
         :return: the added actions
-        :rtype: List[IndexAction]
+        :rtype: list[IndexAction]
         """
         return self._extend_batch(_flatten_args(documents), "upload")
 
@@ -60,10 +60,10 @@ class IndexDocumentsBatch:
         result in a 200 status code.
 
         :param documents: Documents to delete from an Azure search index. May be
-         a single list of documents, or documents as individual parameters.
-        :type documents: Dict or List[Dict]
+            a single list of documents, or documents as individual parameters.
+        :type documents: dict or list[dict]
         :return: the added actions
-        :rtype: List[IndexAction]
+        :rtype: list[IndexAction]
         """
         return self._extend_batch(_flatten_args(documents), "delete")
 
@@ -78,10 +78,10 @@ class IndexDocumentsBatch:
         to collections of primitive and complex types.
 
         :param documents: Documents to merge into an Azure search index. May be
-         a single list of documents, or documents as individual parameters.
-        :type documents: Dict or List[Dict]
+            a single list of documents, or documents as individual parameters.
+        :type documents: dict or list[dict]
         :return: the added actions
-        :rtype: List[IndexAction]
+        :rtype: list[IndexAction]
         """
         return self._extend_batch(_flatten_args(documents), "merge")
 
@@ -97,11 +97,11 @@ class IndexDocumentsBatch:
         like *upload* with a new document.
 
         :param documents: Documents to merge or upload into an Azure search
-         index. May be a single list of documents, or documents as individual
-         parameters.
-        :type documents: Dict or List[Dict]
+            index. May be a single list of documents, or documents as individual
+            parameters.
+        :type documents: dict or list[dict]
         :return: the added actions
-        :rtype: List[IndexAction]
+        :rtype: list[IndexAction]
         """
         return self._extend_batch(_flatten_args(documents), "mergeOrUpload")
 
@@ -109,7 +109,7 @@ class IndexDocumentsBatch:
     def actions(self) -> List[IndexAction]:
         """The list of currently index actions to index.
 
-        :rtype: List[IndexAction]
+        :rtype: list[IndexAction]
         """
         return list(self._actions)
 
@@ -117,7 +117,7 @@ class IndexDocumentsBatch:
         """Get the list of currently configured index actions and clear it.
 
         :return: the current actions
-        :rtype: List[IndexAction]
+        :rtype: list[IndexAction]
         """
         with self._lock:
             result = list(self._actions)
@@ -129,7 +129,7 @@ class IndexDocumentsBatch:
         """Enqueue a list of index actions to index.
 
         :param new_actions: the actions to enqueue
-        :type new_actions: IndexAction or List[IndexAction]
+        :type new_actions: IndexAction or list[IndexAction]
         """
         if isinstance(new_actions, IndexAction):
             with self._lock:

@@ -52,6 +52,7 @@ from ..utils._pipeline_transport_rest_shared import (
     _prepare_multipart_body_helper,
     _serialize_request,
     _format_data_helper,
+    get_file_items,
 )
 
 if TYPE_CHECKING:
@@ -66,7 +67,15 @@ PrimitiveData = Optional[Union[str, int, float, bool]]
 ParamsType = Mapping[str, Union[PrimitiveData, Sequence[PrimitiveData]]]
 
 FileContent = Union[str, bytes, IO[str], IO[bytes]]
-FileType = Tuple[Optional[str], FileContent]
+
+FileType = Union[
+    # file (or bytes)
+    FileContent,
+    # (filename, file (or bytes))
+    Tuple[Optional[str], FileContent],
+    # (filename, file (or bytes), content_type)
+    Tuple[Optional[str], FileContent, Optional[str]],
+]
 
 FilesType = Union[Mapping[str, FileType], Sequence[Tuple[str, FileType]]]
 
@@ -104,9 +113,9 @@ def set_urlencoded_body(data, has_files):
     return default_headers, body
 
 
-def set_multipart_body(files):
-    formatted_files = {f: _format_data_helper(d) for f, d in files.items() if d is not None}
-    return {}, formatted_files
+def set_multipart_body(files: FilesType):
+    formatted_files = [(f, _format_data_helper(d)) for f, d in get_file_items(files) if d is not None]
+    return {}, dict(formatted_files) if isinstance(files, Mapping) else formatted_files
 
 
 def set_xml_body(content):

@@ -7,8 +7,9 @@
 import json
 import os
 import re
+import uuid
 from pathlib import Path
-from typing import TYPE_CHECKING, Dict, Optional
+from typing import TYPE_CHECKING, Any, Dict, Optional, cast
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
@@ -16,7 +17,7 @@ from azure.ai.ml._artifacts._artifact_utilities import _upload_and_generate_remo
 from azure.ai.ml._azure_environments import _get_aml_resource_id_from_metadata, _resource_to_scopes
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2020_09_01_dataplanepreview.models import BatchJobResource
-from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
+from azure.ai.ml._restclient.v2023_10_01 import AzureMachineLearningServices as ServiceClient102023
 from azure.ai.ml._schema._deployment.batch.batch_job import BatchJobSchema
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
@@ -53,7 +54,7 @@ from azure.ai.ml.entities import BatchEndpoint, BatchJob
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MlException, ValidationErrorType, ValidationException
 from azure.core.credentials import TokenCredential
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError, ServiceRequestError, ServiceResponseError
 from azure.core.paging import ItemPaged
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
@@ -64,7 +65,7 @@ if TYPE_CHECKING:
     from azure.ai.ml.operations import DatastoreOperations
 
 ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
+module_logger = ops_logger.module_logger
 
 
 class BatchEndpointOperations(_ScopeDependentOperations):
@@ -77,9 +78,9 @@ class BatchEndpointOperations(_ScopeDependentOperations):
     :type operation_scope: ~azure.ai.ml._scope_dependent_operations.OperationScope
     :param operation_config: Common configuration for operations classes of an MLClient object.
     :type operation_config: ~azure.ai.ml._scope_dependent_operations.OperationConfig
-    :param service_client_05_2022: Service client to allow end users to operate on Azure Machine Learning Workspace
+    :param service_client_10_2023: Service client to allow end users to operate on Azure Machine Learning Workspace
         resources.
-    :type service_client_05_2022: ~azure.ai.ml._restclient.v2022_05_01._azure_machine_learning_workspaces.
+    :type service_client_10_2023: ~azure.ai.ml._restclient.v2023_10_01._azure_machine_learning_workspaces.
         AzureMachineLearningWorkspaces
     :param all_operations: All operations classes of an MLClient object.
     :type all_operations: ~azure.ai.ml._scope_dependent_operations.OperationsContainer
@@ -91,15 +92,15 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client_05_2022: ServiceClient052022,
+        service_client_10_2023: ServiceClient102023,
         all_operations: OperationsContainer,
         credentials: Optional[TokenCredential] = None,
-        **kwargs: Dict,
+        **kwargs: Any,
     ):
         super(BatchEndpointOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
-        self._batch_operation = service_client_05_2022.batch_endpoints
-        self._batch_deployment_operation = service_client_05_2022.batch_deployments
+        self._batch_operation = service_client_10_2023.batch_endpoints
+        self._batch_deployment_operation = service_client_10_2023.batch_deployments
         self._batch_job_endpoint = kwargs.pop("service_client_09_2020_dataplanepreview").batch_job_endpoint
         self._all_operations = all_operations
         self._credentials = credentials
@@ -109,10 +110,12 @@ class BatchEndpointOperations(_ScopeDependentOperations):
 
     @property
     def _datastore_operations(self) -> "DatastoreOperations":
-        return self._all_operations.all_operations[AzureMLResourceType.DATASTORE]
+        from azure.ai.ml.operations import DatastoreOperations
+
+        return cast(DatastoreOperations, self._all_operations.all_operations[AzureMLResourceType.DATASTORE])
 
     @distributed_trace
-    @monitor_with_activity(logger, "BatchEndpoint.List", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "BatchEndpoint.List", ActivityType.PUBLICAPI)
     def list(self) -> ItemPaged[BatchEndpoint]:
         """List endpoints of the workspace.
 
@@ -136,7 +139,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         )
 
     @distributed_trace
-    @monitor_with_activity(logger, "BatchEndpoint.Get", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "BatchEndpoint.Get", ActivityType.PUBLICAPI)
     def get(
         self,
         name: str,
@@ -169,7 +172,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         return endpoint_data
 
     @distributed_trace
-    @monitor_with_activity(logger, "BatchEndpoint.BeginDelete", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "BatchEndpoint.BeginDelete", ActivityType.PUBLICAPI)
     def begin_delete(self, name: str) -> LROPoller[None]:
         """Delete a batch Endpoint.
 
@@ -208,7 +211,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         return delete_poller
 
     @distributed_trace
-    @monitor_with_activity(logger, "BatchEndpoint.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "BatchEndpoint.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
     def begin_create_or_update(self, endpoint: BatchEndpoint) -> LROPoller[BatchEndpoint]:
         """Create or update a batch endpoint.
 
@@ -248,14 +251,14 @@ class BatchEndpointOperations(_ScopeDependentOperations):
             raise ex
 
     @distributed_trace
-    @monitor_with_activity(logger, "BatchEndpoint.Invoke", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "BatchEndpoint.Invoke", ActivityType.PUBLICAPI)
     def invoke(  # pylint: disable=too-many-locals, too-many-branches, too-many-statements
         self,
         endpoint_name: str,
         *,
         deployment_name: Optional[str] = None,
         inputs: Optional[Dict[str, Input]] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> BatchJob:
         """Invokes the batch endpoint with the provided payload.
 
@@ -373,23 +376,34 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         headers = EndpointInvokeFields.DEFAULT_HEADER
         ml_audience_scopes = _resource_to_scopes(_get_aml_resource_id_from_metadata())
         module_logger.debug("ml_audience_scopes used: `%s`\n", ml_audience_scopes)
-        key = self._credentials.get_token(*ml_audience_scopes).token
+        key = self._credentials.get_token(*ml_audience_scopes).token if self._credentials is not None else ""
         headers[EndpointInvokeFields.AUTHORIZATION] = f"Bearer {key}"
+        headers[EndpointInvokeFields.REPEATABILITY_REQUEST_ID] = str(uuid.uuid4())
 
         if deployment_name:
             headers[EndpointInvokeFields.MODEL_DEPLOYMENT] = deployment_name
 
-        response = self._requests_pipeline.post(
-            endpoint.properties.scoring_uri,
-            json=request,
-            headers=headers,
-        )
+        retry_attempts = 0
+        while retry_attempts < 5:
+            try:
+                response = self._requests_pipeline.post(
+                    endpoint.properties.scoring_uri,
+                    json=request,
+                    headers=headers,
+                )
+            except (ServiceRequestError, ServiceResponseError):
+                retry_attempts += 1
+                continue
+            break
+        if retry_attempts == 5:
+            retry_msg = "Max retry attempts reached while trying to connect to server. Please check connection and invoke again."  # pylint: disable=line-too-long
+            raise MlException(message=retry_msg, no_personal_data_message=retry_msg, target=ErrorTarget.BATCH_ENDPOINT)
         validate_response(response)
         batch_job = json.loads(response.text())
         return BatchJobResource.deserialize(batch_job)
 
     @distributed_trace
-    @monitor_with_activity(logger, "BatchEndpoint.ListJobs", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "BatchEndpoint.ListJobs", ActivityType.PUBLICAPI)
     def list_jobs(self, endpoint_name: str) -> ItemPaged[BatchJob]:
         """List jobs under the provided batch endpoint deployment. This is only valid for batch endpoint.
 
@@ -425,9 +439,11 @@ class BatchEndpointOperations(_ScopeDependentOperations):
             return list(result)
 
     def _get_workspace_location(self) -> str:
-        return self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].get(self._workspace_name).location
+        return str(
+            self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].get(self._workspace_name).location
+        )
 
-    def _validate_deployment_name(self, endpoint_name, deployment_name):
+    def _validate_deployment_name(self, endpoint_name: str, deployment_name: str) -> None:
         deployments_list = self._batch_deployment_operation.list(
             endpoint_name=endpoint_name,
             resource_group_name=self._resource_group_name,

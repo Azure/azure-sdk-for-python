@@ -105,11 +105,11 @@
         "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMHttpLoggingPolicy\", \"AsyncARMChallengeAuthenticationPolicy\"]}, \"local\": {\".._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
     },
     "operation_groups": {
+        "alerts_suppression_rules": "AlertsSuppressionRulesOperations",
+        "automations": "AutomationsOperations",
         "regulatory_compliance_standards": "RegulatoryComplianceStandardsOperations",
         "regulatory_compliance_controls": "RegulatoryComplianceControlsOperations",
         "regulatory_compliance_assessments": "RegulatoryComplianceAssessmentsOperations",
-        "sub_assessments": "SubAssessmentsOperations",
-        "automations": "AutomationsOperations",
-        "alerts_suppression_rules": "AlertsSuppressionRulesOperations"
+        "sub_assessments": "SubAssessmentsOperations"
     }
 }

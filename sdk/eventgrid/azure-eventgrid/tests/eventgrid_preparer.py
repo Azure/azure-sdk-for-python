@@ -2,7 +2,6 @@ import functools
 from devtools_testutils import PowerShellPreparer
 
 from azure.mgmt.eventgrid.models import Topic, InputSchema, JsonInputSchemaMapping, JsonField, JsonFieldWithDefault
-from azure_devtools.scenario_tests.exceptions import AzureTestError
 
 from devtools_testutils.resource_testcase import RESOURCE_GROUP_PARAM
 

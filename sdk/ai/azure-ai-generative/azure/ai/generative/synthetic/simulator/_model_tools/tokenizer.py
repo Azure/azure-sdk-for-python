@@ -4,8 +4,8 @@
 
 import time
 import logging
-import tiktoken
 from typing import Optional
+import tiktoken
 
 
 class Tokenizer:
@@ -23,7 +23,7 @@ class Tokenizer:
         # Count tokens, including special tokens like <|endofprompt|>
         return len(self.encoding.encode(input, allowed_special="all"))
 
-    def set_encoding(self, model_name: str) -> tiktoken.Encoding:
+    def set_encoding(self, model_name: str) -> None:
         # See: tiktoken mapping of model names here:
         #  https://github.com/openai/tiktoken/blob/main/tiktoken/model.py#L12
 
@@ -31,7 +31,7 @@ class Tokenizer:
 
         try:
             encoding = tiktoken.encoding_for_model(model_name)
-        except KeyError as err:
+        except KeyError:
             self._log(
                 f"Couldn't find encoding for '{model_name}'", log_level=logging.WARNING)
 

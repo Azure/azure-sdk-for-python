@@ -40,6 +40,7 @@ from azure.storage.blob import (
     LinearRetry,
     ResourceTypes,
     RetentionPolicy,
+    Services,
     StandardBlobTier,
     StorageErrorCode,
     download_blob_from_url,
@@ -2139,6 +2140,25 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         assert blob_list is not None
         assert blob_props is not None
 
+    @BlobPreparer()
+    def test_multiple_services_sas(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Act
+        token = self.generate_sas(
+            generate_account_sas,
+            storage_account_name,
+            storage_account_key,
+            ResourceTypes(container=True, object=True, service=True),
+            AccountSasPermissions(read=True, list=True),
+            datetime.utcnow() + timedelta(hours=1),
+            services=Services(blob=True, fileshare=True)
+        )
+
+        # Assert
+        assert 'ss=bf' in token
+
     @pytest.mark.live_test_only
     @BlobPreparer()
     def test_set_immutability_policy_using_sas(self, **kwargs):
@@ -2225,7 +2245,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         # Assert response using blob sas
         assert resp_with_blob_sas['immutability_policy_until_date'] is not None
         assert resp_with_blob_sas['immutability_policy_mode'] is not None
-        
+
         if self.is_live:
             blob_client.delete_immutability_policy()
             blob_client.set_legal_hold(False)
@@ -3334,5 +3354,27 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         # Assert
         response = blob.exists()
         assert response is not None
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    def test_oauth_error_handling(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+
+        # Arrange
+        from azure.identity import ClientSecretCredential
+
+        # Generate an invalid credential
+        creds = ClientSecretCredential(
+            self.get_settings_value("TENANT_ID"),
+            self.get_settings_value("CLIENT_ID"),
+            self.get_settings_value("CLIENT_SECRET") + 'a'
+        )
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=creds, retry_total=0)
+        container = bsc.get_container_client('testing')
+
+        # Act
+        with pytest.raises(ClientAuthenticationError):
+            container.exists()
 
     # ------------------------------------------------------------------------------

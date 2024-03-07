@@ -7,6 +7,7 @@
 from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, List, TYPE_CHECKING
 )
+from urllib.parse import parse_qs
 
 from ._shared import sign_string
 from ._shared.constants import X_MS_VERSION
@@ -241,16 +242,17 @@ class _FileSharedAccessHelper(_SharedAccessHelper):
 
 
 def generate_account_sas(
-        account_name,  # type: str
-        account_key,  # type: str
-        resource_types,  # type: Union[ResourceTypes, str]
-        permission,  # type: Union[AccountSasPermissions, str]
-        expiry,  # type: Union[datetime, str]
-        start=None,  # type: Optional[Union[datetime, str]]
-        ip=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-    # type: (...) -> str
+    account_name: str,
+    account_key: str,
+    resource_types: Union["ResourceTypes", str],
+    permission: Union["AccountSasPermissions", str],
+    expiry: Union["datetime", str],
+    start: Optional[Union["datetime", str]] = None,
+    ip: Optional[str] = None,
+    *,
+    services: Union[Services, str] = Services(fileshare=True),
+    **kwargs: Any
+) -> str:
     """Generates a shared access signature for the file service.
 
     Use the returned signature with the credential parameter of any ShareServiceClient,
@@ -283,6 +285,9 @@ def generate_account_sas(
         or address range specified on the SAS token, the request is not authenticated.
         For example, specifying sip=168.1.5.65 or sip=168.1.5.60-168.1.5.70 on the SAS
         restricts the request to those IP addresses.
+    :keyword Union[Services, str] services:
+        Specifies the services that the Shared Access Signature (sas) token will be able to be utilized with.
+        Will default to only this package (i.e. fileshare) if not provided.
     :keyword str protocol:
         Specifies the protocol permitted for a request made. The default value is https.
     :return: A Shared Access Signature (sas) token.
@@ -299,7 +304,7 @@ def generate_account_sas(
     """
     sas = SharedAccessSignature(account_name, account_key)
     return sas.generate_account(
-        services=Services(fileshare=True),
+        services=services,
         resource_types=resource_types,
         permission=permission,
         expiry=expiry,
@@ -501,3 +506,13 @@ def generate_file_sas(
         ip=ip,
         **kwargs
     )
+
+def _is_credential_sastoken(credential: Any) -> bool:
+    if not credential or not isinstance(credential, str):
+        return False
+
+    sas_values = QueryStringConstants.to_list()
+    parsed_query = parse_qs(credential.lstrip("?"))
+    if parsed_query and all(k in sas_values for k in parsed_query):
+        return True
+    return False

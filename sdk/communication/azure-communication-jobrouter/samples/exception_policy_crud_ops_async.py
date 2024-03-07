@@ -21,9 +21,7 @@ import asyncio
 
 
 class ExceptionPolicySamplesAsync(object):
-    endpoint = os.environ.get("AZURE_COMMUNICATION_SERVICE_ENDPOINT", None)
-    if not endpoint:
-        raise ValueError("Set AZURE_COMMUNICATION_SERVICE_ENDPOINT env before run this sample.")
+    endpoint = os.environ["AZURE_COMMUNICATION_SERVICE_ENDPOINT"]
 
     _ep_policy_id = "sample_ep_policy"
     _cp_policy_ids = [
@@ -46,26 +44,27 @@ class ExceptionPolicySamplesAsync(object):
             RouterWorkerSelector,
             LabelOperator,
         )
-        router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str = connection_string)
+
+        router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str=connection_string)
 
         async with router_admin_client:
             for _id in self._cp_policy_ids:
                 classification_policy: ClassificationPolicy = await router_admin_client.upsert_classification_policy(
                     _id,
                     ClassificationPolicy(
-                        prioritization_rule = StaticRouterRule(value = 100),
-                        queue_selector_attachments = [
+                        prioritization_rule=StaticRouterRule(value=100),
+                        queue_selector_attachments=[
                             StaticQueueSelectorAttachment(
-                                queue_selector = RouterQueueSelector(key = "Escalate",
-                                                                     label_operator = LabelOperator.EQUAL,
-                                                                     value = True)
+                                queue_selector=RouterQueueSelector(
+                                    key="Escalate", label_operator=LabelOperator.EQUAL, value=True
+                                )
                             ),
                         ],
-                        worker_selector_attachments = [
+                        worker_selector_attachments=[
                             StaticWorkerSelectorAttachment(
-                                worker_selector = RouterWorkerSelector(key = "Escalate",
-                                                                       label_operator = LabelOperator.EQUAL,
-                                                                       value = True)
+                                worker_selector=RouterWorkerSelector(
+                                    key="Escalate", label_operator=LabelOperator.EQUAL, value=True
+                                )
                             ),
                         ],
                     ),
@@ -116,12 +115,12 @@ class ExceptionPolicySamplesAsync(object):
 
         exception_rule = [
             ExceptionRule(
-                id = "EscalateJobOnQueueOverFlowTrigger",
+                id="EscalateJobOnQueueOverFlowTrigger",
                 trigger=queue_length_exception_trigger,
                 actions=[escalate_job_on_queue_over_flow],
             ),
             ExceptionRule(
-                id = "EscalateJobOnWaitTimeExceededTrigger",
+                id="EscalateJobOnWaitTimeExceededTrigger",
                 trigger=wait_time_exception_trigger,
                 actions=[escalate_job_on_wait_time_exceeded],
             ),
@@ -132,9 +131,7 @@ class ExceptionPolicySamplesAsync(object):
         async with router_admin_client:
             exception_policy = await router_admin_client.upsert_exception_policy(
                 policy_id,
-                ExceptionPolicy(
-                    name="TriggerJobCancellationWhenQueueLenIs10", exception_rules=exception_rule
-                ),
+                ExceptionPolicy(name="TriggerJobCancellationWhenQueueLenIs10", exception_rules=exception_rule),
             )
 
             print(f"Exception policy has been successfully created with id: {exception_policy.id}")
@@ -179,13 +176,13 @@ class ExceptionPolicySamplesAsync(object):
                 exception_rules=[
                     # adding new rule
                     ExceptionRule(
-                        id = "EscalateJobOnWaitTimeExceededTrigger2Min",
+                        id="EscalateJobOnWaitTimeExceededTrigger2Min",
                         trigger=escalate_job_on_wait_time_exceed2,
                         actions=[escalate_job_on_wait_time_exceeded2],
                     ),
                     # modifying existing rule
                     ExceptionRule(
-                        id = "EscalateJobOnQueueOverFlowTrigger",
+                        id="EscalateJobOnQueueOverFlowTrigger",
                         trigger=QueueLengthExceptionTrigger(threshold=100),
                         actions=[
                             ReclassifyExceptionAction(
@@ -197,9 +194,7 @@ class ExceptionPolicySamplesAsync(object):
                 ],
             )
 
-            print(
-                f"Exception policy updated with rules: {updated_exception_policy.exception_rules}"
-            )
+            print(f"Exception policy updated with rules: {updated_exception_policy.exception_rules}")
             print("Exception policy has been successfully updated")
 
         # [END update_exception_policy_async]
@@ -265,7 +260,7 @@ class ExceptionPolicySamplesAsync(object):
 
         async with router_admin_client:
             await router_admin_client.delete_exception_policy(policy_id)
-        # [END delete_exception_policy_async]
+            # [END delete_exception_policy_async]
             for _id in self._cp_policy_ids:
                 await router_admin_client.delete_classification_policy(_id)
 

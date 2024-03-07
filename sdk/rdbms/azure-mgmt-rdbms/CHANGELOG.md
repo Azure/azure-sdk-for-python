@@ -1,5 +1,65 @@
 # Release History
 
+## 10.2.0b15 (2024-03-04)
+
+### Features Added
+
+  - Added operation AdvancedThreatProtectionSettingsOperations.begin_update_put
+  - Added operation group LongRunningBackupOperations
+  - Added operation group LongRunningBackupsOperations
+  - Added operation group MaintenancesOperations
+  - Added operation group OperationProgressOperations
+
+## 10.2.0b14 (2024-01-23)
+
+### Features Added
+
+  - Added operation group AdvancedThreatProtectionSettingsOperations
+  - Added operation group LocationBasedCapabilitySetOperations
+  - Added operation group OperationResultsOperations
+
+## 10.2.0b13 (2023-12-18)
+
+### Other Changes
+
+  - Fix for ServerThreatProtectionSettingsOperations.begin_create_or_update
+
+## 10.2.0b12 (2023-11-20)
+
+### Features Added
+
+  - Added operation group PrivateEndpointConnectionOperations
+  - Added operation group QuotaUsagesOperations
+  - Added operation group ServerThreatProtectionSettingsOperations
+  - Added operation group VirtualEndpointsOperations
+  - Model MigrationResource has a new parameter migration_option
+  - Model MigrationResource has a new parameter source_type
+  - Model MigrationResource has a new parameter ssl_mode
+  - Model MigrationSubStateDetails has a new parameter db_details
+  - Model MigrationSubStateDetails has a new parameter validation_details
+  - Model PrivateEndpointConnection has a new parameter group_ids
+  - Model PrivateEndpointConnection has a new parameter system_data
+  - Model PrivateLinkResource has a new parameter group_id
+  - Model PrivateLinkResource has a new parameter required_members
+  - Model PrivateLinkResource has a new parameter required_zone_names
+  - Model PrivateLinkResource has a new parameter system_data
+  - Model Server has a new parameter private_endpoint_connections
+  - Model Server has a new parameter replica
+  - Model ServerForUpdate has a new parameter replica
+  - Model Storage has a new parameter throughput
+  - Model Storage has a new parameter type
+  - Model StorageMbCapability has a new parameter maximum_storage_size_mb
+  - Model StorageMbCapability has a new parameter supported_maximum_iops
+  - Model StorageMbCapability has a new parameter supported_maximum_throughput
+  - Model StorageMbCapability has a new parameter supported_throughput
+
+### Breaking Changes
+
+  - Model PrivateLinkResource no longer has parameter properties
+  - Removed operation PrivateEndpointConnectionsOperations.begin_create_or_update
+  - Removed operation PrivateEndpointConnectionsOperations.begin_delete
+  - Removed operation PrivateEndpointConnectionsOperations.begin_update_tags
+
 ## 10.2.0b11 (2023-09-27)
 
 ### Features Added

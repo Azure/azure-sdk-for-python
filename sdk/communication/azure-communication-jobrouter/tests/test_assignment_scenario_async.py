@@ -13,7 +13,6 @@ from azure.core.exceptions import (
     HttpResponseError,
 )
 from _router_test_case_async import AsyncRouterRecordedTestCase
-from _shared.asynctestcase import AsyncCommunicationTestCase
 
 from _decorators_async import RouterPreparersAsync
 from azure.communication.jobrouter._shared.utils import parse_connection_str
@@ -265,10 +264,10 @@ class TestAssignmentScenarioAsync(AsyncRouterRecordedTestCase):
             assignment_id = accept_job_offer_result.assignment_id
 
             # complete job
-            await router_client.complete_job(job_identifier, CompleteJobOptions(assignment_id=assignment_id))
+            await router_client.complete_job(job_identifier, assignment_id)
 
             # close job
-            await router_client.close_job(job_identifier, CloseJobOptions(assignment_id=assignment_id))
+            await router_client.close_job(job_identifier, assignment_id)
 
             # validate post closure job details
             queried_job: RouterJob = await router_client.get_job(job_identifier)

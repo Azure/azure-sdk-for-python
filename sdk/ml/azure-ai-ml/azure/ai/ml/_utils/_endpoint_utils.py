@@ -27,6 +27,7 @@ from azure.core.exceptions import (
     HttpResponseError,
     ResourceExistsError,
     ResourceNotFoundError,
+    ServiceRequestTimeoutError,
     map_error,
 )
 from azure.core.polling import LROPoller
@@ -123,7 +124,9 @@ def validate_response(response: HttpResponse) -> None:
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
+            408: ServiceRequestTimeoutError,
             409: ResourceExistsError,
+            424: HttpResponseError,
         }
         map_error(status_code=response.status_code, response=response, error_map=error_map)
         raise HttpResponseError(response=response, message=failure_msg, error_format=ARMErrorFormat)

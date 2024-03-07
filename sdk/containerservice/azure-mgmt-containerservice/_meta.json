@@ -1,5 +1,5 @@
 {
-  "commit": "68d03f91ea7c30e1ab28fb9d35c13f81bc85b724",
+  "commit": "7b07cc90244d4a2e850cdf3d9c7e200242cc2677",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "autorest": "3.9.7",
   "use": [
@@ -72,5 +72,13 @@
   "package-2023-07": "2023-08-08 09:49:45 +0800 7848c0430929469eb9a6a827777d822faff7dc65 stable/2023-07-01/managedClusters.json",
   "package-preview-2023-06": "2023-09-12 12:00:43 -0700 250a8bb16297fcffd5fb07e41ba84eb5a549324a preview/2023-06-02-preview/managedClusters.json",
   "package-2023-08": "2023-09-20 21:02:12 +0800 1e0097098ee58c7c9b9bbd952bcc309244707654 stable/2023-08-01/managedClusters.json",
-  "package-preview-2023-07": "2023-09-12 12:00:43 -0700 250a8bb16297fcffd5fb07e41ba84eb5a549324a preview/2023-07-02-preview/managedClusters.json"
+  "package-preview-2023-07": "2023-09-12 12:00:43 -0700 250a8bb16297fcffd5fb07e41ba84eb5a549324a preview/2023-07-02-preview/managedClusters.json",
+  "package-2023-10": "2023-11-08 02:41:38 +0800 dc44fb5cf9b20b678e7e5c5bc90af1622ca6008b stable/2023-10-01/managedClusters.json",
+  "package-preview-2023-10": "2023-11-15 06:05:35 +0800 8cd51b5240f4773621ec74346b6f5fb13f2c0e83 preview/2023-10-02-preview/managedClusters.json",
+  "package-2023-09": "2023-10-20 10:06:44 +0800 8c49a56458eeb093c0a6dee16e9b71ccdda0a888 stable/2023-09-01/managedClusters.json",
+  "package-preview-2023-09": "2023-10-25 17:47:27 +0800 a032c2413b49d297196a0c64393e862433fccbb1 preview/2023-09-02-preview/managedClusters.json",
+  "package-preview-2023-08": "2023-09-29 00:37:40 +0800 657bda014dd85860f8d5eb3fefd00e6888a9259b preview/2023-08-02-preview/managedClusters.json",
+  "package-2023-11": "2024-01-18 03:51:18 +0800 ebf29a8107ea2d7f65c2d74bf9196ec672ed18c2 stable/2023-11-01/managedClusters.json",
+  "package-2024-01": "2024-02-19 13:08:53 +0800 477b483e1b6d4f343432c238c417a1ab47de858b stable/2024-01-01/managedClusters.json",
+  "package-preview-2023-11": "2024-02-02 00:15:59 +0800 eca452ea5bedf668299276087531e98558540e3c preview/2023-11-02-preview/managedClusters.json"
 }

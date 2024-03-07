@@ -21,7 +21,7 @@
 
 """Service-specific Exceptions in the Azure Cosmos database service.
 """
-from azure.core.exceptions import (  # type: ignore  # pylint: disable=unused-import
+from azure.core.exceptions import (
     AzureError,
     HttpResponseError,
     ResourceExistsError,
@@ -78,7 +78,7 @@ class CosmosBatchOperationError(HttpResponseError):
             **kwargs):
         """
         :param int error_index: Index of operation within the batch that caused the error.
-        :param str headers: Error headers.
+        :param dict[str, Any] headers: Error headers.
         :param int status_code: HTTP response code.
         :param str message: Error message.
         :param list operation_responses: List of failed operations' responses.

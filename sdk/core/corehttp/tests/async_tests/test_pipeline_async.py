@@ -3,8 +3,10 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-import sys
+from typing import cast
+from unittest.mock import AsyncMock, PropertyMock, Mock
 
+from corehttp.rest import HttpRequest
 from corehttp.runtime import AsyncPipelineClient
 from corehttp.runtime.pipeline import AsyncPipeline
 from corehttp.runtime.policies import (
@@ -15,16 +17,17 @@ from corehttp.runtime.policies import (
 )
 from corehttp.transport import AsyncHttpTransport
 from corehttp.transport.aiohttp import AioHttpTransport
+from corehttp.transport.httpx import AsyncHttpXTransport
 from corehttp.exceptions import BaseError
 import aiohttp
+import httpx
 import pytest
 
-from utils import HTTP_REQUESTS
+from utils import ASYNC_TRANSPORTS
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-async def test_sans_io_exception(http_request):
+async def test_sans_io_exception():
     class BrokenSender(AsyncHttpTransport):
         async def send(self, request, **config):
             raise ValueError("Broken")
@@ -41,31 +44,75 @@ async def test_sans_io_exception(http_request):
 
     pipeline = AsyncPipeline(BrokenSender(), [SansIOHTTPPolicy()])
 
-    req = http_request("GET", "/")
+    req = HttpRequest("GET", "/")
     with pytest.raises(ValueError):
         await pipeline.run(req)
 
 
-@pytest.mark.asyncio
-@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-async def test_basic_aiohttp(port, http_request):
+def test_invalid_policy_error():
+    # non-HTTPPolicy/non-SansIOHTTPPolicy should raise an error
+    class FooPolicy:
+        pass
 
-    request = http_request("GET", "http://localhost:{}/basic/string".format(port))
+    # sync send method should raise an error
+    class SyncSendPolicy:
+        def send(self, request):
+            pass
+
+    # only on_request should raise an error
+    class OnlyOnRequestPolicy:
+        def on_request(self, request):
+            pass
+
+    # only on_response should raise an error
+    class OnlyOnResponsePolicy:
+        def on_response(self, request, response):
+            pass
+
+    with pytest.raises(AttributeError):
+        pipeline = AsyncPipeline(transport=Mock(), policies=[FooPolicy()])
+
+    with pytest.raises(AttributeError):
+        pipeline = AsyncPipeline(transport=Mock(), policies=[SyncSendPolicy()])
+
+    with pytest.raises(AttributeError):
+        pipeline = AsyncPipeline(transport=Mock(), policies=[OnlyOnRequestPolicy()])
+
+    with pytest.raises(AttributeError):
+        pipeline = AsyncPipeline(transport=Mock(), policies=[OnlyOnResponsePolicy()])
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("transport", ASYNC_TRANSPORTS)
+async def test_transport_socket_timeout(transport):
+    request = HttpRequest("GET", "https://bing.com")
+    policies = [UserAgentPolicy("myusergant")]
+    # Sometimes this will raise a read timeout, sometimes a socket timeout depending on timing.
+    # Either way, the error should always be wrapped as an BaseError to ensure it's caught
+    # by the retry policy.
+    with pytest.raises(BaseError):
+        async with AsyncPipeline(transport(), policies=policies) as pipeline:
+            response = await pipeline.run(request, connection_timeout=0.000001, read_timeout=0.000001)
+
+
+@pytest.mark.asyncio
+async def test_basic_aiohttp(port):
+
+    request = HttpRequest("GET", "http://localhost:{}/basic/string".format(port))
     policies = [UserAgentPolicy("myusergant"), AsyncRetryPolicy()]
     async with AsyncPipeline(AioHttpTransport(), policies=policies) as pipeline:
         response = await pipeline.run(request)
 
-    assert pipeline._transport.session is None
+    assert cast(AioHttpTransport, pipeline._transport).session is None
     # all we need to check is if we are able to make the call
     assert isinstance(response.http_response.status_code, int)
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-async def test_basic_aiohttp_separate_session(port, http_request):
+async def test_basic_aiohttp_separate_session(port):
 
     session = aiohttp.ClientSession()
-    request = http_request("GET", "http://localhost:{}/basic/string".format(port))
+    request = HttpRequest("GET", "http://localhost:{}/basic/string".format(port))
     policies = [UserAgentPolicy("myusergant"), AsyncRetryPolicy()]
     transport = AioHttpTransport(session=session, session_owner=False)
     async with AsyncPipeline(transport, policies=policies) as pipeline:
@@ -79,26 +126,25 @@ async def test_basic_aiohttp_separate_session(port, http_request):
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-async def test_retry_without_http_response(http_request):
+async def test_retry_without_http_response():
     class NaughtyPolicy(AsyncHTTPPolicy):
-        def send(*args):
+        async def send(*args):
             raise BaseError("boo")
 
     policies = [AsyncRetryPolicy(), NaughtyPolicy()]
     pipeline = AsyncPipeline(policies=policies, transport=None)
     with pytest.raises(BaseError):
-        await pipeline.run(http_request("GET", url="https://foo.bar"))
+        await pipeline.run(HttpRequest("GET", url="https://foo.bar"))
 
 
 @pytest.mark.asyncio
 async def test_add_custom_policy():
     class BooPolicy(AsyncHTTPPolicy):
-        def send(*args):
+        async def send(*args):
             raise BaseError("boo")
 
     class FooPolicy(AsyncHTTPPolicy):
-        def send(*args):
+        async def send(*args):
             raise BaseError("boo")
 
     retry_policy = AsyncRetryPolicy()
@@ -189,3 +235,62 @@ async def test_add_custom_policy():
         client = AsyncPipelineClient(endpoint="test", policies=policies, per_retry_policies=foo_policy)
     with pytest.raises(ValueError):
         client = AsyncPipelineClient(endpoint="test", policies=policies, per_retry_policies=[foo_policy])
+
+
+@pytest.mark.asyncio
+async def test_basic_httpx(port):
+
+    request = HttpRequest("GET", "http://localhost:{}/basic/string".format(port))
+    policies = [UserAgentPolicy("myusergant"), AsyncRetryPolicy()]
+    transport = AsyncHttpXTransport()
+    async with AsyncPipeline(AsyncHttpXTransport(), policies=policies) as pipeline:
+        response = await pipeline.run(request)
+
+    assert cast(AsyncHttpXTransport, pipeline._transport).client is None
+    # all we need to check is if we are able to make the call
+    assert isinstance(response.http_response.status_code, int)
+
+
+@pytest.mark.asyncio
+async def test_basic_httpx_separate_session(port):
+
+    client = httpx.AsyncClient()
+    request = HttpRequest("GET", "http://localhost:{}/basic/string".format(port))
+    policies = [UserAgentPolicy("myusergant"), AsyncRetryPolicy()]
+    transport = AsyncHttpXTransport(client=client, client_owner=False)
+    async with AsyncPipeline(transport, policies=policies) as pipeline:
+        response = await pipeline.run(request)
+
+    assert transport.client
+    assert isinstance(response.http_response.status_code, int)
+    await transport.close()
+    assert transport.client
+    await transport.client.aclose()
+
+
+@pytest.mark.asyncio
+async def test_aiohttp_default_ssl_context():
+    class MockAiohttpSession:
+        async def __aenter__(self):
+            pass
+
+        async def __aexit__(self, exc_type, exc_val, exc_tb):
+            pass
+
+        async def close(self):
+            pass
+
+        async def open(self):
+            pass
+
+        async def request(self, method: str, url: str, **kwargs):
+            assert "ssl" not in kwargs
+            mock_response = AsyncMock(spec=aiohttp.ClientResponse)
+            type(mock_response).status = PropertyMock(return_value=200)
+            return mock_response
+
+    transport = AioHttpTransport(session=MockAiohttpSession(), session_owner=False)
+    pipeline = AsyncPipeline(transport=transport)
+
+    req = HttpRequest("GET", "https://bing.com")
+    await pipeline.run(req)

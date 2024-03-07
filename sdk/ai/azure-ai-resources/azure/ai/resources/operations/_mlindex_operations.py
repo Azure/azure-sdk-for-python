@@ -15,9 +15,9 @@ from azure.ai.ml.entities import AccountKeyConfiguration, Data
 from azure.ai.ml._utils._storage_utils import get_ds_name_and_path_prefix, get_storage_client
 
 from azure.ai.resources.entities.mlindex import Index as MLIndex
-from azure.ai.resources._telemetry import ActivityType, monitor_with_activity, OpsLogger
+from azure.ai.resources._telemetry import ActivityType, monitor_with_activity, ActivityLogger
 
-ops_logger = OpsLogger(__name__)
+ops_logger = ActivityLogger(__name__)
 logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 
 
@@ -25,8 +25,11 @@ class MLIndexOperations():
     """MLIndexOperations.
 
     You should not instantiate this class directly. Instead, you should
-    create an MLClient instance that instantiates it for you and
+    create an AIClient instance that instantiates it for you and
     attaches it as an attribute.
+
+    :param ml_client: The Azure Machine Learning client
+    :type ml_client: ~azure.ai.ml.MLClient
     """
 
     def __init__(self, ml_client: MLClient, **kwargs: Any):
@@ -39,6 +42,11 @@ class MLIndexOperations():
         self,
         **kwargs,
     ) -> Iterable[MLIndex]:
+        """List all indexes.
+        
+        :return: List of indexes.
+        :rtype: Iterable[~azure.ai.resources.entities.mlindex.Index]
+        """
         # currently buggy since data.list() returns a list of data containers instead of data versions, and
         # data containers have no identifying feature saying that it's an index vs regular data asset
         return [MLIndex._from_data_asset(data) for data in self._ml_client.data.list()]
@@ -46,6 +54,17 @@ class MLIndexOperations():
     @distributed_trace
     @monitor_with_activity(logger, "Index.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, version: Optional[str] = None, label: Optional[str] = None) -> MLIndex:
+        """Get an index.
+
+        :param name: The name of the index to retrieve.
+        :type name: str
+        :param version: The version of the index to retrieve.
+        :type version: Optional[str]
+        :param label: The label of the index.
+        :type label: Optional[str]
+        :return: The index matching the name, version, and/or label.
+        :rtype: ~azure.ai.resources.entities.mlindex.Index
+        """
         data = self._ml_client.data.get(name, version, label)
 
         if "azureml.mlIndexAsset" not in data.properties:
@@ -56,11 +75,20 @@ class MLIndexOperations():
     @distributed_trace
     @monitor_with_activity(logger, "Index.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(self, mlindex: MLIndex, **kwargs) -> MLIndex:
+        """Create or update an index.
+        
+        :param mlindex: The index resource to create or update remotely
+        :type mlindex: ~azure.ai.resources.entities.mlindex.Index
+        :return: The created or updated index.
+        :rtype: ~azure.ai.resources.entities.mlindex.Index
+        :raises Exception: If the index does not have a path attribute
+        """
         try:
             path = mlindex.path
         except:
             try:
-                path = mlindex["path"]
+                path = mlindex["path"]  # type: ignore[index]
+                # TODO: Bug 2875652
             except Exception as e:
                 raise e
 
@@ -83,8 +111,18 @@ class MLIndexOperations():
 
     @distributed_trace
     @monitor_with_activity(logger, "Index.Download", ActivityType.PUBLICAPI)
-    def download(self, name: str, download_path: Union[str, PathLike], version: str = None, label: str = None) -> None:
-
+    def download(self, name: str, download_path: Union[str, PathLike], version: Optional[str] = None, label: Optional[str] = None) -> None:
+        """Download an index.
+        
+        :param name: The name of the index
+        :type name: str
+        :param download_path: The path to download the index to
+        :type download_path: Union[str, PathLike]
+        :param version: The version of the index
+        :type version: Optional[str]
+        :param label: The index label
+        :type label: Optional[str]
+        """
         model_uri = self.get(name=name, version=version, label=label).path
         ds_name, path_prefix = get_ds_name_and_path_prefix(model_uri)
         ds = self._ml_client.datastores.get(ds_name, include_secrets=True)
@@ -124,14 +162,12 @@ class MLIndexOperations():
         ) -> None:
             """Restore an archived index.
 
-            :param name: index name.
+            :param name: The name of the index.
             :type name: str
-            :param version: index version.
+            :param version: The index version. (mutually exclusive with label)
             :type version: str
-            :param label: Label of the index. (mutually exclusive with version)
+            :param label: The index label. (mutually exclusive with version)
             :type label: str
-            :return: None
-
             """
          
             self._ml_client.data.restore(name, version, label)
@@ -146,14 +182,12 @@ class MLIndexOperations():
         ) -> None:
             """Archive an index.
 
-            :param name: index name.
+            :param name: The name of the index.
             :type name: str
-            :param version: index version.
+            :param version: The index version. (mutually exclusive with label)
             :type version: str
-            :param label: Label of the index. (mutually exclusive with version)
+            :param label: The index label. (mutually exclusive with version)
             :type label: str
-            :return: None
-
             """
 
             self._ml_client.data.archive(name, version, label)

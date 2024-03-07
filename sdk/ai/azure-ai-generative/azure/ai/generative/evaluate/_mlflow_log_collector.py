@@ -2,12 +2,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-import os
 import sys
-import errno
-import mlflow
 import traceback
 import tempfile
+from typing import Any
+import mlflow
 
 
 class OutputCollector(object):
@@ -22,15 +21,20 @@ class OutputCollector(object):
     def __getattr__(self, name):
         return getattr(self._inner, name)
 
+
 class RedirectUserOutputStreams(object):
     def __init__(self, logger):
         self.logger = logger
         self.user_log_path = tempfile.mkstemp(suffix="_stdout_stderr.txt")[1]
 
+        self.user_log_fp: Any = None
+        self.original_stdout: Any = None
+        self.original_stderr: Any = None
+
     def __enter__(self):
         self.logger.debug("Redirecting user output to {0}".format(self.user_log_path))
 
-        self.user_log_fp = open(self.user_log_path, "at+")
+        self.user_log_fp = open(self.user_log_path, "at+", encoding="utf-8")
         self.original_stdout = sys.stdout
         self.original_stderr = sys.stderr
         sys.stdout = OutputCollector(sys.stdout, self.user_log_fp.write)

@@ -105,8 +105,12 @@ class ServiceBusReceiver(
      the client connects to.
     :keyword str subscription_name: The path of specific Service Bus Subscription under the
      specified Topic the client connects to.
-    :keyword Optional[float] max_wait_time: The timeout in seconds between received messages after which the
-     receiver will automatically stop receiving. The default value is None, meaning no timeout.
+    :keyword Optional[float] max_wait_time:  The timeout in seconds to wait for the first and subsequent
+     messages to arrive. If no messages arrive, and no timeout is specified, this call will not return
+     until the connection is closed. The default value is None, meaning no timeout. On a sessionful
+     queue/topic when NEXT_AVAILABLE_SESSION is specified, this will act as the timeout for connecting
+     to a session. If connection errors are occurring due to write timing out,the connection timeout
+     value may need to be adjusted. See the `socket_timeout` optional parameter for more details.
     :keyword receive_mode: The mode with which messages will be retrieved from the entity. The two options
      are PEEK_LOCK and RECEIVE_AND_DELETE. Messages received with PEEK_LOCK must be settled within a given
      lock period before they will be removed from the queue. Messages received with RECEIVE_AND_DELETE
@@ -238,7 +242,17 @@ class ServiceBusReceiver(
             self
         )
 
-    def __iter__(self):
+    def __enter__(self) -> "ServiceBusReceiver":
+        if self._shutdown.is_set():
+            raise ValueError(
+                "The handler has already been shutdown. Please use ServiceBusClient to "
+                "create a new instance."
+            )
+
+        self._open_with_retry()
+        return self
+
+    def __iter__(self) -> Iterator["ServiceBusReceivedMessage"]:
         return self._iter_contextual_wrapper()
 
     def _inner_next(
@@ -286,8 +300,12 @@ class ServiceBusReceiver(
          if the client fails to process the message.
          The default mode is PEEK_LOCK.
         :paramtype receive_mode: Union[~azure.servicebus.ServiceBusReceiveMode, str]
-        :keyword Optional[float] max_wait_time: The timeout in seconds between received messages after which the
-         receiver will automatically stop receiving. The default value is None, meaning no timeout.
+        :keyword Optional[float] max_wait_time:  The timeout in seconds to wait for the first and subsequent
+         messages to arrive. If no messages arrive, and no timeout is specified, this call will not return
+         until the connection is closed. The default value is None, meaning no timeout. On a sessionful
+         queue/topic when NEXT_AVAILABLE_SESSION is specified, this will act as the timeout for connecting
+         to a session. If connection errors are occurring due to write timing out,the connection timeout
+         value may need to be adjusted. See the `socket_timeout` optional parameter for more details.
         :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
         :keyword transport_type: The type of transport protocol that will be used for communicating with
          the Service Bus service. Default is `TransportType.Amqp`.
@@ -658,8 +676,10 @@ class ServiceBusReceiver(
          Setting to None will fully depend on the prefetch config. The default value is 1.
         :param Optional[float] max_wait_time: Maximum time to wait in seconds for the first message to arrive.
          If no messages arrive, and no timeout is specified, this call will not return
-         until the connection is closed. If specified, an no messages arrive within the
-         timeout period, an empty list will be returned.
+         until the connection is closed. If specified, and no messages arrive within the
+         timeout period, an empty list will be returned. NOTE: Setting max_wait_time on receive_messages
+         when NEXT_AVAILABLE_SESSION is specified will not impact the timeout for connecting to a session.
+         Please use max_wait_time on the constructor to set the timeout for connecting to a session.
         :return: A list of messages received. If no messages are available, this will be an empty list.
         :rtype: List[~azure.servicebus.ServiceBusReceivedMessage]
 

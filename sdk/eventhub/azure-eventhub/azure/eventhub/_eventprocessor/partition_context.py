@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from .._common import EventData
 
 
-class PartitionContext(object):
+class PartitionContext:
     """Contains partition related context information.
 
     A `PartitionContext` instance will be passed to the event, error and initialization callbacks defined
@@ -37,7 +37,7 @@ class PartitionContext(object):
         self.eventhub_name = eventhub_name
         self.consumer_group = consumer_group
         self._checkpoint_store = checkpoint_store
-        self._last_received_event = None  # type: Optional[EventData]
+        self._last_received_event: Optional[EventData] = None
 
     @property
     def last_enqueued_event_properties(self) -> Optional[Dict[str, Any]]:
@@ -58,7 +58,7 @@ class PartitionContext(object):
             return get_last_enqueued_event_properties(self._last_received_event)
         return None
 
-    def update_checkpoint(self, event: Optional[EventData]=None, **kwargs: Any) -> None:
+    def update_checkpoint(self, event: Optional[EventData] = None, **kwargs: Any) -> None:
         """Updates the receive checkpoint to the given events offset.
 
         :param ~azure.eventhub.EventData event: The EventData instance which contains the offset and

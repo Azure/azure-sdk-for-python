@@ -7,7 +7,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-import sys
 from typing import Any, Callable, Dict, Iterable, Optional, TypeVar
 import urllib.parse
 
@@ -29,12 +28,8 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from .. import models as _models
 from ..._serialization import Serializer
-from .._vendor import WebSiteManagementClientMixinABC, _convert_request, _format_url_section
+from .._vendor import WebSiteManagementClientMixinABC, _convert_request
 
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -48,7 +43,7 @@ def build_list_hosting_environment_detector_responses_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2021-01-15"] = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -69,7 +64,7 @@ def build_list_hosting_environment_detector_responses_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -94,7 +89,7 @@ def build_get_hosting_environment_detector_response_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2021-01-15"] = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -116,7 +111,7 @@ def build_get_hosting_environment_detector_response_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     if start_time is not None:
@@ -139,7 +134,7 @@ def build_list_site_detector_responses_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2021-01-15"] = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -160,7 +155,7 @@ def build_list_site_detector_responses_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -185,7 +180,7 @@ def build_get_site_detector_response_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2021-01-15"] = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -207,7 +202,7 @@ def build_get_site_detector_response_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     if start_time is not None:
@@ -230,7 +225,7 @@ def build_list_site_diagnostic_categories_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2021-01-15"] = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -251,7 +246,7 @@ def build_list_site_diagnostic_categories_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -268,7 +263,7 @@ def build_get_site_diagnostic_category_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2021-01-15"] = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -290,7 +285,7 @@ def build_get_site_diagnostic_category_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -307,7 +302,7 @@ def build_list_site_analyses_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2021-01-15"] = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -329,7 +324,7 @@ def build_list_site_analyses_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -351,7 +346,7 @@ def build_get_site_analysis_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2021-01-15"] = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -374,7 +369,7 @@ def build_get_site_analysis_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -400,7 +395,7 @@ def build_execute_site_analysis_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2021-01-15"] = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -423,7 +418,7 @@ def build_execute_site_analysis_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     if start_time is not None:
@@ -446,7 +441,7 @@ def build_list_site_detectors_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2021-01-15"] = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -468,7 +463,7 @@ def build_list_site_detectors_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -490,7 +485,7 @@ def build_get_site_detector_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2021-01-15"] = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -513,7 +508,7 @@ def build_get_site_detector_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -539,7 +534,7 @@ def build_execute_site_detector_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2021-01-15"] = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -562,7 +557,7 @@ def build_execute_site_detector_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     if start_time is not None:
@@ -585,7 +580,7 @@ def build_list_site_detector_responses_slot_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2021-01-15"] = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -607,7 +602,7 @@ def build_list_site_detector_responses_slot_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -633,7 +628,7 @@ def build_get_site_detector_response_slot_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2021-01-15"] = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -656,7 +651,7 @@ def build_get_site_detector_response_slot_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     if start_time is not None:
@@ -679,7 +674,7 @@ def build_list_site_diagnostic_categories_slot_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2021-01-15"] = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -701,7 +696,7 @@ def build_list_site_diagnostic_categories_slot_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -718,7 +713,7 @@ def build_get_site_diagnostic_category_slot_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2021-01-15"] = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -741,7 +736,7 @@ def build_get_site_diagnostic_category_slot_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -758,7 +753,7 @@ def build_list_site_analyses_slot_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2021-01-15"] = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -781,7 +776,7 @@ def build_list_site_analyses_slot_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -804,7 +799,7 @@ def build_get_site_analysis_slot_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2021-01-15"] = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -828,7 +823,7 @@ def build_get_site_analysis_slot_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -855,7 +850,7 @@ def build_execute_site_analysis_slot_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2021-01-15"] = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -879,7 +874,7 @@ def build_execute_site_analysis_slot_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     if start_time is not None:
@@ -902,7 +897,7 @@ def build_list_site_detectors_slot_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2021-01-15"] = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -925,7 +920,7 @@ def build_list_site_detectors_slot_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -948,7 +943,7 @@ def build_get_site_detector_slot_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2021-01-15"] = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -972,7 +967,7 @@ def build_get_site_detector_slot_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -999,7 +994,7 @@ def build_execute_site_detector_slot_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2021-01-15"] = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1023,7 +1018,7 @@ def build_execute_site_detector_slot_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     if start_time is not None:
@@ -1058,6 +1053,7 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
 
     @distributed_trace
     def list_hosting_environment_detector_responses(
@@ -1079,7 +1075,7 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2021-01-15"] = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-15"))
         cls: ClsType[_models.DetectorResponseCollection] = kwargs.pop("cls", None)
 
         error_map = {
@@ -1195,7 +1191,7 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2021-01-15"] = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-15"))
         cls: ClsType[_models.DetectorResponse] = kwargs.pop("cls", None)
 
         request = build_get_hosting_environment_detector_response_request(
@@ -1257,7 +1253,7 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2021-01-15"] = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-15"))
         cls: ClsType[_models.DetectorResponseCollection] = kwargs.pop("cls", None)
 
         error_map = {
@@ -1373,7 +1369,7 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2021-01-15"] = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-15"))
         cls: ClsType[_models.DetectorResponse] = kwargs.pop("cls", None)
 
         request = build_get_site_detector_response_request(
@@ -1435,7 +1431,7 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2021-01-15"] = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-15"))
         cls: ClsType[_models.DiagnosticCategoryCollection] = kwargs.pop("cls", None)
 
         error_map = {
@@ -1538,7 +1534,7 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2021-01-15"] = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-15"))
         cls: ClsType[_models.DiagnosticCategory] = kwargs.pop("cls", None)
 
         request = build_get_site_diagnostic_category_request(
@@ -1599,7 +1595,7 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2021-01-15"] = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-15"))
         cls: ClsType[_models.DiagnosticAnalysisCollection] = kwargs.pop("cls", None)
 
         error_map = {
@@ -1705,7 +1701,7 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2021-01-15"] = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-15"))
         cls: ClsType[_models.AnalysisDefinition] = kwargs.pop("cls", None)
 
         request = build_get_site_analysis_request(
@@ -1791,7 +1787,7 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2021-01-15"] = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-15"))
         cls: ClsType[_models.DiagnosticAnalysis] = kwargs.pop("cls", None)
 
         request = build_execute_site_analysis_request(
@@ -1856,7 +1852,7 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2021-01-15"] = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-15"))
         cls: ClsType[_models.DiagnosticDetectorCollection] = kwargs.pop("cls", None)
 
         error_map = {
@@ -1962,7 +1958,7 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2021-01-15"] = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-15"))
         cls: ClsType[_models.DetectorDefinition] = kwargs.pop("cls", None)
 
         request = build_get_site_detector_request(
@@ -2048,7 +2044,7 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2021-01-15"] = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-15"))
         cls: ClsType[_models.DiagnosticDetectorResponse] = kwargs.pop("cls", None)
 
         request = build_execute_site_detector_request(
@@ -2113,7 +2109,7 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2021-01-15"] = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-15"))
         cls: ClsType[_models.DetectorResponseCollection] = kwargs.pop("cls", None)
 
         error_map = {
@@ -2233,7 +2229,7 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2021-01-15"] = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-15"))
         cls: ClsType[_models.DetectorResponse] = kwargs.pop("cls", None)
 
         request = build_get_site_detector_response_slot_request(
@@ -2298,7 +2294,7 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2021-01-15"] = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-15"))
         cls: ClsType[_models.DiagnosticCategoryCollection] = kwargs.pop("cls", None)
 
         error_map = {
@@ -2404,7 +2400,7 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2021-01-15"] = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-15"))
         cls: ClsType[_models.DiagnosticCategory] = kwargs.pop("cls", None)
 
         request = build_get_site_diagnostic_category_slot_request(
@@ -2468,7 +2464,7 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2021-01-15"] = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-15"))
         cls: ClsType[_models.DiagnosticAnalysisCollection] = kwargs.pop("cls", None)
 
         error_map = {
@@ -2583,7 +2579,7 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2021-01-15"] = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-15"))
         cls: ClsType[_models.AnalysisDefinition] = kwargs.pop("cls", None)
 
         request = build_get_site_analysis_slot_request(
@@ -2673,7 +2669,7 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2021-01-15"] = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-15"))
         cls: ClsType[_models.DiagnosticAnalysis] = kwargs.pop("cls", None)
 
         request = build_execute_site_analysis_slot_request(
@@ -2741,7 +2737,7 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2021-01-15"] = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-15"))
         cls: ClsType[_models.DiagnosticDetectorCollection] = kwargs.pop("cls", None)
 
         error_map = {
@@ -2856,7 +2852,7 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2021-01-15"] = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-15"))
         cls: ClsType[_models.DetectorDefinition] = kwargs.pop("cls", None)
 
         request = build_get_site_detector_slot_request(
@@ -2946,7 +2942,7 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2021-01-15"] = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-15"))
         cls: ClsType[_models.DiagnosticDetectorResponse] = kwargs.pop("cls", None)
 
         request = build_execute_site_detector_slot_request(

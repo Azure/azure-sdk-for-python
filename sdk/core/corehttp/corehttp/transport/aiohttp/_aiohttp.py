@@ -24,7 +24,7 @@
 #
 # --------------------------------------------------------------------------
 from __future__ import annotations
-from typing import Optional, TYPE_CHECKING, Type, cast
+from typing import Optional, TYPE_CHECKING, Type, cast, MutableMapping
 from types import TracebackType
 
 import logging
@@ -39,6 +39,7 @@ from ...exceptions import (
 from .._base_async import AsyncHttpTransport, _handle_non_stream_rest_response
 from .._base import _create_connection_config
 from ...rest._aiohttp import RestAioHttpTransportResponse
+from ...utils._utils import get_file_items
 
 
 if TYPE_CHECKING:
@@ -109,7 +110,7 @@ class AioHttpTransport(AsyncHttpTransport):
 
         :param tuple cert: Cert information
         :param bool verify: SSL verification or path to CA file or directory
-        :rtype: bool or str or :class:`ssl.SSLContext`
+        :rtype: bool or str or ssl.SSLContext
         :return: SSL configuration
         """
         ssl_ctx = None
@@ -136,7 +137,7 @@ class AioHttpTransport(AsyncHttpTransport):
         """
         if request._files:  # pylint: disable=protected-access
             form_data = aiohttp.FormData(request._data or {})  # pylint: disable=protected-access
-            for form_file, data in request._files.items():  # pylint: disable=protected-access
+            for form_file, data in get_file_items(request._files):  # pylint: disable=protected-access
                 content_type = data[2] if len(data) > 2 else None
                 try:
                     form_data.add_field(form_file, data[1], filename=data[0], content_type=content_type)
@@ -145,7 +146,14 @@ class AioHttpTransport(AsyncHttpTransport):
             return form_data
         return request.content
 
-    async def send(self, request: RestHttpRequest, **config) -> RestAsyncHttpResponse:
+    async def send(
+        self,
+        request: RestHttpRequest,
+        *,
+        stream: bool = False,
+        proxies: Optional[MutableMapping[str, str]] = None,
+        **config,
+    ) -> RestAsyncHttpResponse:
         """Send the request using this HTTP sender.
 
         Will pre-load the body into memory to be available with a sync method.
@@ -153,13 +161,10 @@ class AioHttpTransport(AsyncHttpTransport):
 
         :param request: The HttpRequest object
         :type request: ~corehttp.rest.HttpRequest
-        :keyword any config: Any keyword arguments
+        :keyword bool stream: Defaults to False.
+        :keyword MutableMapping proxies: dict of proxies to use based on protocol. Proxy is a dict (protocol, url).
         :return: The AsyncHttpResponse
         :rtype: ~corehttp.rest.AsyncHttpResponse
-
-        :keyword bool stream: Defaults to False.
-        :keyword dict proxies: dict of proxy to used based on protocol. Proxy is a dict (protocol, url)
-        :keyword str proxy: will define the proxy to use all the time
         """
         await self.open()
         try:
@@ -168,29 +173,33 @@ class AioHttpTransport(AsyncHttpTransport):
             # auto_decompress is introduced in aiohttp 3.7. We need this to handle aiohttp 3.6-.
             auto_decompress = False
 
-        proxies = config.pop("proxies", None)
-        if proxies and "proxy" not in config:
+        proxy = config.pop("proxy", None)
+        if proxies and not proxy:
             # aiohttp needs a single proxy, so iterating until we found the right protocol
 
             # Sort by longest string first, so "http" is not used for "https" ;-)
             for protocol in sorted(proxies.keys(), reverse=True):
                 if request.url.startswith(protocol):
-                    config["proxy"] = proxies[protocol]
+                    proxy = proxies[protocol]
                     break
 
         response: Optional[RestAsyncHttpResponse] = None
-        config["ssl"] = self._build_ssl_config(
-            cert=config.pop("connection_cert", self.connection_config.get("cert")),
-            verify=config.pop("connection_verify", self.connection_config.get("verify")),
+        ssl = self._build_ssl_config(
+            cert=config.pop("connection_cert", self.connection_config.get("connection_cert")),
+            verify=config.pop("connection_verify", self.connection_config.get("connection_verify")),
         )
+
+        # If "ssl" is True, then we don't set the "ssl" config as aiohttp will use ssl.create_default_context
+        # to create the SSL context by default.
+        if ssl is not True:
+            config["ssl"] = ssl
         # If we know for sure there is not body, disable "auto content type"
         # Otherwise, aiohttp will send "application/octet-stream" even for empty POST request
         # and that break services like storage signature
         if not request.content:
             config["skip_auto_headers"] = ["Content-Type"]
         try:
-            stream_response = config.pop("stream", False)
-            timeout = config.pop("connection_timeout", self.connection_config.get("timeout"))
+            timeout = config.pop("connection_timeout", self.connection_config.get("connection_timeout"))
             read_timeout = config.pop("read_timeout", self.connection_config.get("read_timeout"))
             socket_timeout = aiohttp.ClientTimeout(sock_connect=timeout, sock_read=read_timeout)
             result = await self.session.request(  # type: ignore
@@ -200,6 +209,7 @@ class AioHttpTransport(AsyncHttpTransport):
                 data=self._get_request_data(request),
                 timeout=socket_timeout,
                 allow_redirects=False,
+                proxy=proxy,
                 **config,
             )
 
@@ -209,7 +219,7 @@ class AioHttpTransport(AsyncHttpTransport):
                 block_size=self.connection_config.get("data_block_size"),
                 decompress=not auto_decompress,
             )
-            if not stream_response:
+            if not stream:
                 await _handle_non_stream_rest_response(response)
 
         except aiohttp.client_exceptions.ClientResponseError as err:

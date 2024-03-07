@@ -1,7 +1,7 @@
 trigger: none
 
-stages:
-  - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
+extends:
+    template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       ServiceDirectory: identity
       EnvVars:
@@ -15,3 +15,14 @@ stages:
         PFX_CONTENT_PASSWORD_PROTECTED: $(python-identity-certificate-with-password-pfx)
         AZURE_TEST_RUN_LIVE: true
         AZURE_SKIP_LIVE_RECORDING: 'True'
+      CloudConfig:
+        Public:
+          SubscriptionConfigurations:
+            - $(sub-config-azure-cloud-test-resources)
+      ${{ if contains(variables['Build.DefinitionName'], 'tests-weekly') }}:
+          # Test Managed Identity integrations tests on weekly tests pipeline.
+          AdditionalMatrixConfigs:
+            - Name: managed_identity_matrix
+              Path: sdk/identity/platform-matrix-integration.json
+              Selection: sparse
+              GenerateVMJobs: true

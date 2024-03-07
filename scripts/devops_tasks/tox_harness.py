@@ -18,8 +18,10 @@ from common_tasks import (
 from ci_tools.variables import in_ci
 from ci_tools.environment_exclusions import filter_tox_environment_string
 from ci_tools.ci_interactions import output_ci_warning
-from ci_tools.functions import build_whl_for_req, cleanup_directory, replace_dev_reqs
-from pkg_resources import parse_requirements
+from ci_tools.scenario.generation import replace_dev_reqs
+from ci_tools.functions import cleanup_directory
+from ci_tools.parsing import ParsedSetup
+from pkg_resources import parse_requirements, RequirementParseError
 import logging
 
 logging.getLogger().setLevel(logging.INFO)
@@ -251,6 +253,7 @@ def prep_and_run_tox(targeted_packages: List[str], parsed_args: Namespace) -> No
     skipped_tox_checks = {}
 
     for index, package_dir in enumerate(targeted_packages):
+        parsed_package = ParsedSetup.from_path(package_dir)
         destination_tox_ini = os.path.join(package_dir, "tox.ini")
         destination_dev_req = os.path.join(package_dir, "dev_requirements.txt")
 
@@ -315,7 +318,7 @@ def prep_and_run_tox(targeted_packages: List[str], parsed_args: Namespace) -> No
                         if check not in skipped_tox_checks:
                             skipped_tox_checks[check] = []
 
-                    skipped_tox_checks[check].append(package_name)
+                    skipped_tox_checks[check].append(parsed_package)
 
             if not filtered_tox_environment_set:
                 logging.info(
@@ -341,7 +344,10 @@ def prep_and_run_tox(targeted_packages: List[str], parsed_args: Namespace) -> No
     if in_ci() and skipped_tox_checks:
         warning_content = ""
         for check in skipped_tox_checks:
-            warning_content += f"{check} is skipped by packages: {sorted(set(skipped_tox_checks[check]))}. \n"
+            packages_with_suppression = [pkg.name for pkg in skipped_tox_checks[check] if not pkg.is_reporting_suppressed(check)]
+
+            if packages_with_suppression:
+                warning_content += f"{check} is skipped by packages: {sorted(set(packages_with_suppression))}. \n"
 
         if warning_content:
             output_ci_warning(

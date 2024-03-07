@@ -1,5 +1,32 @@
 # Release History
 
+## 2.0.0b2 (2023-12-18)
+
+### Features Added
+
+  - Model SolutionPatchRequestBody has a new parameter content
+  - Model SolutionPatchRequestBody has a new parameter parameters
+  - Model SolutionPatchRequestBody has a new parameter provisioning_state
+  - Model SolutionPatchRequestBody has a new parameter replacement_maps
+  - Model SolutionPatchRequestBody has a new parameter sections
+  - Model SolutionPatchRequestBody has a new parameter solution_id
+  - Model SolutionPatchRequestBody has a new parameter title
+  - Model SolutionPatchRequestBody has a new parameter trigger_criteria
+  - Model SolutionResource has a new parameter content
+  - Model SolutionResource has a new parameter parameters
+  - Model SolutionResource has a new parameter provisioning_state
+  - Model SolutionResource has a new parameter replacement_maps
+  - Model SolutionResource has a new parameter sections
+  - Model SolutionResource has a new parameter solution_id
+  - Model SolutionResource has a new parameter system_data
+  - Model SolutionResource has a new parameter title
+  - Model SolutionResource has a new parameter trigger_criteria
+
+### Breaking Changes
+
+  - Model SolutionPatchRequestBody no longer has parameter properties
+  - Model SolutionResource no longer has parameter properties
+
 ## 2.0.0b1 (2023-10-23)
 
 ### Features Added

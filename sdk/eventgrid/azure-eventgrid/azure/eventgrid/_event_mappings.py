@@ -204,6 +204,30 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     AppConfigurationSnapshotModifiedEventName = 'Microsoft.AppConfiguration.SnapshotModified'
 
+    AvsClusterCreatedEventName = 'Microsoft.AVS.ClusterCreated'
+
+    AvsClusterDeletedEventName = 'Microsoft.AVS.ClusterDeleted'
+
+    AvsClusterFailedEventName = 'Microsoft.AVS.ClusterFailed'
+
+    AvsClusterUpdatedEventName = 'Microsoft.AVS.ClusterUpdated'
+
+    AvsClusterUpdatingEventName = 'Microsoft.AVS.ClusterUpdating'
+
+    AvsPrivateCloudFailedEventName = 'Microsoft.AVS.PrivateCloudFailed'
+
+    AvsPrivateCloudUpdatedEventName = 'Microsoft.AVS.PrivateCloudUpdated'
+
+    AvsPrivateCloudUpdatingEventName = 'Microsoft.AVS.PrivateCloudUpdating'
+
+    AvsScriptExecutionCancelledEventName = 'Microsoft.AVS.ScriptExecutionCancelled'
+
+    AvsScriptExecutionFailedEventName = 'Microsoft.AVS.ScriptExecutionFailed'
+
+    AvsScriptExecutionFinishedEventName = 'Microsoft.AVS.ScriptExecutionFinished'
+
+    AvsScriptExecutionStartedEventName = 'Microsoft.AVS.ScriptExecutionStarted'
+
     ContainerRegistryChartDeletedEventName = 'Microsoft.ContainerRegistry.ChartDeleted'
 
     ContainerRegistryChartPushedEventName = 'Microsoft.ContainerRegistry.ChartPushed'
@@ -378,6 +402,10 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ResourceNotificationsHealthResourcesAvailabilityStatusChangedEventName = 'Microsoft.ResourceNotifications.HealthResources.AvailabilityStatusChanged'
 
+    ResourceNotificationsResourceManagementCreatedOrUpdatedEventName = 'Microsoft.ResourceNotifications.Resources.CreatedOrUpdated'
+
+    ResourceNotificationsResourceManagementDeletedEventName = 'Microsoft.ResourceNotifications.Resources.Deleted'
+
     ResourceWriteCancelName = 'Microsoft.Resources.ResourceWriteCancel'
 
     ResourceWriteFailureName = 'Microsoft.Resources.ResourceWriteFailure'
@@ -415,6 +443,10 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     StorageDirectoryRenamedEventName = 'Microsoft.Storage.DirectoryRenamed'
 
     StorageLifecyclePolicyCompletedEventName = 'Microsoft.Storage.LifecyclePolicyCompleted'
+
+    StorageTaskAssignmentCompletedEventName = 'Microsoft.Storage.StorageTaskAssignmentCompleted'
+
+    StorageTaskAssignmentQueuedEventName = 'Microsoft.Storage.StorageTaskAssignmentQueued'
 
     StorageTaskCompletedEventName = 'Microsoft.Storage.StorageTaskCompleted'
 

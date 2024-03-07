@@ -1,5 +1,31 @@
 # Release History
 
+## 2.0.0 (2023-11-20)
+
+### Features Added
+
+  - Added operation group AccessOperations
+  - Added operation group ValidationsOperations
+  - Model ConfluentAgreementResource has a new parameter system_data
+  - Model OfferDetail has a new parameter private_offer_id
+  - Model OfferDetail has a new parameter private_offer_ids
+  - Model OfferDetail has a new parameter term_id
+  - Model OrganizationResource has a new parameter link_organization
+  - Model OrganizationResource has a new parameter system_data
+  - Model UserDetail has a new parameter aad_email
+  - Model UserDetail has a new parameter user_principal_name
+
+### Breaking Changes
+
+  - Parameter email_address of model UserDetail is now required
+  - Parameter id of model OfferDetail is now required
+  - Parameter offer_detail of model OrganizationResource is now required
+  - Parameter plan_id of model OfferDetail is now required
+  - Parameter plan_name of model OfferDetail is now required
+  - Parameter publisher_id of model OfferDetail is now required
+  - Parameter term_unit of model OfferDetail is now required
+  - Parameter user_detail of model OrganizationResource is now required
+
 ## 2.0.0b2 (2022-11-02)
 
 ### Features Added

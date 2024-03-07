@@ -12,23 +12,18 @@ from azure.ai.ml._schema._utils.utils import ArmId
 
 
 class ServerlessComputeSettings:
-    """Settings regarding serverless compute(s) in an Azure ML workspace.
-
-    :param custom_subnet: The name of the subnet to use for serverless compute(s).
-    :type custom_subnet: ArmId
-    :param no_public_ip: Whether or not to disable public IP addresses for serverless compute(s). Defaults to False.
-    :type no_public_ip: bool
-    """
 
     custom_subnet: Optional[ArmId]
     no_public_ip: bool = False
 
-    def __init__(self, custom_subnet: Optional[Union[str, ArmId]] = None, no_public_ip: bool = False) -> None:
-        """
-        :param custom_subnet: The ARM ID of the subnet to use for serverless compute(s).
-        :type custom_subnet: Optional[Union[str, ArmId]]
-        :param no_public_ip: Whether or not to disable public IP addresses for serverless compute(s). Defaults to False.
-        :type no_public_ip: bool
+    def __init__(self, *, custom_subnet: Optional[Union[str, ArmId]] = None, no_public_ip: bool = False) -> None:
+        """Settings regarding serverless compute(s) in an Azure ML workspace.
+
+        :keyword custom_subnet: The ARM ID of the subnet to use for serverless compute(s).
+        :paramtype custom_subnet: Optional[Union[str, ArmId]]
+        :keyword no_public_ip: Whether or not to disable public IP addresses for serverless compute(s).
+            Defaults to False.
+        :paramtype no_public_ip: bool
         :raises ValidationError: If the custom_subnet is not formatted as an ARM ID.
         """
         if isinstance(custom_subnet, str):
@@ -39,9 +34,9 @@ class ServerlessComputeSettings:
             raise ValidationError("custom_subnet must be a string, ArmId, or None.")
         self.no_public_ip = no_public_ip
 
-    def __eq__(self, other: "ServerlessComputeSettings") -> bool:
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, ServerlessComputeSettings):
-            return False
+            return NotImplemented
         return self.custom_subnet == other.custom_subnet and self.no_public_ip == other.no_public_ip
 
     def _to_rest_object(self) -> RestServerlessComputeSettings:

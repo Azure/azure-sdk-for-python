@@ -1,6 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 import logging
+import os
 
 from typing import Dict, Optional, Union, Any
 
@@ -23,8 +24,10 @@ from opentelemetry.sdk.metrics.export import (
     NumberDataPoint,
 )
 from opentelemetry.sdk.resources import Resource
+from opentelemetry.sdk.util.instrumentation import InstrumentationScope
 
 from azure.monitor.opentelemetry.exporter._constants import (
+    _APPLICATIONINSIGHTS_METRIC_NAMESPACE_OPT_IN,
     _AUTOCOLLECTED_INSTRUMENT_NAMES,
     _METRIC_ENVELOPE_NAME,
 )
@@ -94,6 +97,7 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
                                 point,
                                 metric.name,
                                 resource_metric.resource,
+                                scope_metric.scope,
                             )
                             if envelope is not None:
                                 envelopes.append(envelope)
@@ -133,8 +137,9 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
         point: DataPointT,
         name: str,
         resource: Optional[Resource] = None,
+        scope: Optional[InstrumentationScope] = None,
     ) -> Optional[TelemetryItem]:
-        envelope = _convert_point_to_envelope(point, name, resource)
+        envelope = _convert_point_to_envelope(point, name, resource, scope)
         if name in _AUTOCOLLECTED_INSTRUMENT_NAMES:
             envelope = _handle_std_metric_envelope(envelope, name, point.attributes) # type: ignore
         if envelope is not None:
@@ -147,16 +152,18 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
         cls, conn_str: str, **kwargs: Any
     ) -> "AzureMonitorMetricExporter":
         """
-        Create an AzureMonitorMetricExporter from a connection string.
+        Create an AzureMonitorMetricExporter from a connection string. This is
+        the recommended way of instantiation if a connection string is passed in
+        explicitly. If a user wants to use a connection string provided by
+        environment variable, the constructor of the exporter can be called
+        directly.
 
-        This is the recommended way of instantation if a connection string is passed in explicitly.
-        If a user wants to use a connection string provided by environment variable, the constructor
-        of the exporter can be called directly.
-
-        :param str conn_str: The connection string to be used for authentication.
-        :keyword str api_version: The service API version used. Defaults to latest.
+        :param str conn_str: The connection string to be used for
+            authentication.
+        :keyword str api_version: The service API version used. Defaults to
+            latest.
         :return: An instance of ~AzureMonitorMetricExporter
-        :rtype ~azure.monitor.opentelemetry.exporter.AzureMonitorMetricExporter
+        :rtype: ~azure.monitor.opentelemetry.exporter.AzureMonitorMetricExporter
         """
         return cls(connection_string=conn_str, **kwargs)
 
@@ -166,10 +173,14 @@ def _convert_point_to_envelope(
     point: DataPointT,
     name: str,
     resource: Optional[Resource] = None,
+    scope: Optional[InstrumentationScope] = None
 ) -> TelemetryItem:
     envelope = _utils._create_telemetry_item(point.time_unix_nano)
     envelope.name = _METRIC_ENVELOPE_NAME
     envelope.tags.update(_utils._populate_part_a_fields(resource)) # type: ignore
+    namespace = None
+    if scope is not None and _is_metric_namespace_opted_in():
+        namespace = str(scope.name)[:256]
     value: Union[int, float] = 0
     count = 1
     min_ = None
@@ -189,6 +200,7 @@ def _convert_point_to_envelope(
 
     data_point = MetricDataPoint(
         name=str(name)[:1024],
+        namespace=namespace,
         value=value,
         count=count,
         min=min_,
@@ -264,6 +276,8 @@ def _handle_std_metric_envelope(
 def _is_status_code_success(status_code: Optional[str], threshold: int) -> bool:
     return status_code is not None and int(status_code) < threshold
 
+def _is_metric_namespace_opted_in() -> bool:
+    return os.environ.get(_APPLICATIONINSIGHTS_METRIC_NAMESPACE_OPT_IN, "False").lower() == "true"
 
 def _get_metric_export_result(result: ExportResult) -> MetricExportResult:
     if result == ExportResult.SUCCESS:

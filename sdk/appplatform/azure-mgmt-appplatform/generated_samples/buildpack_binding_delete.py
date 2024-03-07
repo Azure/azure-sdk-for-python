@@ -29,16 +29,15 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.buildpack_binding.begin_delete(
+    client.buildpack_binding.begin_delete(
         resource_group_name="myResourceGroup",
         service_name="myservice",
         build_service_name="default",
         builder_name="default",
         buildpack_binding_name="myBuildpackBinding",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/appplatform/resource-manager/Microsoft.AppPlatform/stable/2022-12-01/examples/BuildpackBinding_Delete.json
+# x-ms-original-file: specification/appplatform/resource-manager/Microsoft.AppPlatform/stable/2023-12-01/examples/BuildpackBinding_Delete.json
 if __name__ == "__main__":
     main()

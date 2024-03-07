@@ -3,17 +3,19 @@
 # ---------------------------------------------------------
 """Document parsing and chunking utilities."""
 import copy
+from pathlib import Path
 import re
 import time
 from dataclasses import dataclass
 from functools import lru_cache
-from typing import Any, Iterable, Iterator, List, Optional
+from typing import Any, Iterable, Iterator, List, Optional, Sequence
 
-from azure.ai.generative.index._documents.document import Document, DocumentSource, StaticDocument
-from azure.ai.generative.index._langchain.vendor.text_splitter import TextSplitter
+from azure.ai.generative.index._documents.document import DocumentSource
 from azure.ai.generative.index._utils import merge_dicts
 from azure.ai.generative.index._utils.logging import get_logger, safe_mlflow_log_metric
-from azure.ai.generative.index._utils.tokens import tiktoken_cache_dir, token_length_function
+from azure.ai.resources._index._langchain.vendor.text_splitter import TextSplitter
+from azure.ai.resources._index._utils.tokens import tiktoken_cache_dir, token_length_function
+from azure.ai.resources._index._documents.document import Document, StaticDocument
 
 logger = get_logger(__name__)
 
@@ -22,7 +24,7 @@ logger = get_logger(__name__)
 class ChunkedDocument:
     """Chunked Document."""
 
-    chunks: List[Document]
+    chunks: Sequence[Document]
     source: DocumentSource
     metadata: dict
 
@@ -32,15 +34,30 @@ class ChunkedDocument:
 
     @property
     def page_content(self) -> str:
-        """Get the page content of the chunked document."""
+        """
+        Get the page content of the chunked document.
+
+        :return: The page content of the chunked document.
+        :rtype: str
+        """
         return "\n\n".join([chunk.page_content for chunk in self.chunks])
 
     def get_metadata(self) -> dict:
-        """Get the metadata of the chunked document."""
+        """
+        Get the metadata of the chunked document.
+
+        :return: The metadata of the chunked document.
+        :rtype: dict
+        """
         return self.metadata
 
     def flatten(self) -> List[Document]:
-        """Flatten the chunked document."""
+        """
+        Flatten the chunked document.
+
+        :return: The flatten chunked document.
+        :rtype: List[Document]
+        """
         chunks = []
         for i, chunk in enumerate(self.chunks):
             chunk.metadata["source"]["chunk_id"] = str(i)
@@ -51,11 +68,21 @@ class ChunkedDocument:
 @lru_cache(maxsize=1)
 def _init_nltk():
     import nltk
+
     nltk.download("punkt")
 
 
 def get_langchain_splitter(file_extension: str, arguments: dict) -> TextSplitter:
-    """Get a text splitter for a given file extension."""
+    """
+    Get a text splitter for a given file extension.
+
+    :keyword file_extension: The given file extension.
+    :paramtype file_extension: str
+    :keyword arguments: The arguments of getting a text splitter.
+    :paramtype arguments: dict
+    :return: A text splitter for a given file extension.
+    :rtype: TextSplitter
+    """
     use_nltk = False
     if "use_nltk" in arguments:
         use_nltk = arguments["use_nltk"] is True
@@ -67,7 +94,8 @@ def get_langchain_splitter(file_extension: str, arguments: dict) -> TextSplitter
 
     # Handle non-natural language splitters
     if file_extension == ".py":
-        from azure.ai.generative.index._langchain.vendor.text_splitter import Language, RecursiveCharacterTextSplitter
+        from azure.ai.resources._index._langchain.vendor.text_splitter import Language, RecursiveCharacterTextSplitter
+
         with tiktoken_cache_dir():
             return RecursiveCharacterTextSplitter.from_tiktoken_encoder(
                 **{
@@ -76,19 +104,16 @@ def get_langchain_splitter(file_extension: str, arguments: dict) -> TextSplitter
                     "separators": RecursiveCharacterTextSplitter.get_separators_for_language(Language.PYTHON),
                     "is_separator_regex": True,
                     "disallowed_special": (),
-                    "allowed_special": "all"
+                    "allowed_special": "all",
                 }
             )
 
     # If configured to use NLTK for splitting on sentence boundaries use that for non-code text formats
     if use_nltk:
         _init_nltk()
-        from azure.ai.generative.index._langchain.vendor.text_splitter import NLTKTextSplitter
+        from azure.ai.resources._index._langchain.vendor.text_splitter import NLTKTextSplitter
 
-        return NLTKTextSplitter(
-            length_function=token_length_function(),
-            **arguments
-        )
+        return NLTKTextSplitter(length_function=token_length_function(), **arguments)
 
     # TODO: Support NLTK for splitting text as default?
     # Though want to keep MD specific splitting, only using NLTK on large chunks of plain text.
@@ -96,32 +121,31 @@ def get_langchain_splitter(file_extension: str, arguments: dict) -> TextSplitter
     # Finally use any text format specific splitters
     formats_to_treat_as_txt_once_loaded = [".pdf", ".ppt", ".pptx", ".doc", ".docx", ".xls", ".xlsx"]
     if file_extension == ".txt" or file_extension in formats_to_treat_as_txt_once_loaded:
-        from azure.ai.generative.index._langchain.vendor.text_splitter import TokenTextSplitter
+        from azure.ai.resources._index._langchain.vendor.text_splitter import TokenTextSplitter
 
         with tiktoken_cache_dir():
             return TokenTextSplitter(
                 encoding_name="cl100k_base",
                 length_function=token_length_function(),
-                **{**arguments, "disallowed_special": (), "allowed_special": "all"}
+                **{**arguments, "disallowed_special": (), "allowed_special": "all"},
             )
-    elif file_extension == ".html" or file_extension == ".htm":
-        from azure.ai.generative.index._langchain.vendor.text_splitter import TokenTextSplitter
+    elif file_extension in {".html", ".htm"}:
+        from azure.ai.resources._index._langchain.vendor.text_splitter import TokenTextSplitter
 
         logger.info("Using HTML splitter.")
         with tiktoken_cache_dir():
             return TokenTextSplitter(
                 encoding_name="cl100k_base",
                 length_function=token_length_function(),
-                **{**arguments, "disallowed_special": (), "allowed_special": "all"}
+                **{**arguments, "disallowed_special": (), "allowed_special": "all"},
             )
     elif file_extension == ".md":
         if use_rcts:
-            from azure.ai.generative.index._langchain.vendor.text_splitter import MarkdownTextSplitter
+            from azure.ai.resources._index._langchain.vendor.text_splitter import MarkdownTextSplitter
 
             with tiktoken_cache_dir():
                 return MarkdownTextSplitter.from_tiktoken_encoder(
-                    encoding_name="cl100k_base",
-                    **{**arguments, "disallowed_special": (), "allowed_special": "all"}
+                    encoding_name="cl100k_base", **{**arguments, "disallowed_special": (), "allowed_special": "all"}
                 )
         else:
             with tiktoken_cache_dir():
@@ -129,13 +153,13 @@ def get_langchain_splitter(file_extension: str, arguments: dict) -> TextSplitter
                     encoding_name="cl100k_base",
                     remove_hyperlinks=True,
                     remove_images=True,
-                    **{**arguments, "disallowed_special": (), "allowed_special": "all"}
+                    **{**arguments, "disallowed_special": (), "allowed_special": "all"},
                 )
     else:
         raise ValueError(f"Invalid file_extension: {file_extension}")
 
 
-file_extension_splitters = {
+file_extension_splitters_dict = {
     # Plain text
     ".txt": lambda **kwargs: get_langchain_splitter(".txt", kwargs),
     ".md": lambda **kwargs: get_langchain_splitter(".md", kwargs),
@@ -155,21 +179,39 @@ file_extension_splitters = {
 }
 
 
-def split_documents(documents: Iterable[ChunkedDocument], splitter_args: dict, file_extension_splitters=file_extension_splitters) -> Iterator[ChunkedDocument]:
-    """Split documents into chunks."""
-    total_time = 0
+def split_documents(  # pylint: disable=too-many-statements
+    documents: Iterable[ChunkedDocument], splitter_args: dict, file_extension_splitters=None
+) -> Iterator[ChunkedDocument]:
+    """
+    Split documents into chunks.
+
+    :keyword documents: The documents to be split.
+    :paramtype documents: Iterable[ChunkedDocument]
+    :keyword splitter_args: The splitter arguments to be used.
+    :paramtype splitter_args: dict
+    :keyword file_extension_splitters: The file extension splitters to be used.
+    :paramtype file_extension_splitters: dict
+    :return: Documents chunks.
+    :rtype: Iterator[ChunkedDocument]
+    """
+    if file_extension_splitters is None:
+        file_extension_splitters = file_extension_splitters_dict
+    total_time: float = 0.0
     total_documents = 0
     total_splits = 0
     log_batch_size = 100
     for i, document in enumerate(documents):
         if len(document.chunks) < 1:
             logger.warning(f"Skipped document with no chunks: {document.source.filename}")
-            # TODO: Log this warning to telemetry with document metadata (extension, size, etc.) to get signal for improvements to parsing.
+            # TODO: Log this warning to telemetry with document metadata (extension, size, etc.)
+            # to get signal for improvements to parsing.
             continue
         file_start_time = time.time()
         total_documents += len(document.chunks)
         if i % log_batch_size == 0:
-            safe_mlflow_log_metric("total_source_documents", total_documents, logger=logger, step=int(time.time() * 1000))
+            safe_mlflow_log_metric(
+                "total_source_documents", total_documents, logger=logger, step=int(time.time() * 1000)
+            )
 
         local_splitter_args = splitter_args.copy()
 
@@ -179,7 +221,7 @@ def split_documents(documents: Iterable[ChunkedDocument], splitter_args: dict, f
             if "chunk_size" in local_splitter_args:
                 prefix_token_length = token_length_function()(chunk_prefix)
                 if prefix_token_length > local_splitter_args["chunk_size"] // 2:
-                    chunk_prefix = chunk_prefix[:local_splitter_args["chunk_size"] // 2]
+                    chunk_prefix = chunk_prefix[: local_splitter_args["chunk_size"] // 2]
                     # should we update local_splitter_args['chunk_size'] here?
                 else:
                     local_splitter_args["chunk_size"] = local_splitter_args["chunk_size"] - prefix_token_length
@@ -192,50 +234,66 @@ def split_documents(documents: Iterable[ChunkedDocument], splitter_args: dict, f
         if "chunk_overlap" in local_splitter_args:
             chunk_overlap = local_splitter_args["chunk_overlap"]
 
-        def filter_short_docs(chunked_document):
+        def filter_short_docs(chunked_document, chunk_overlap):
             for doc in chunked_document.chunks:
                 doc_len = len(doc.page_content)
                 if doc_len < chunk_overlap:
-                    logger.info(f"Filtering out doc_chunk shorter than {chunk_overlap}: {chunked_document.source.filename}")
+                    logger.info(
+                        f"Filtering out doc_chunk shorter than {chunk_overlap}: {chunked_document.source.filename}"
+                    )
                     continue
                 yield doc
 
-        def merge_metadata(chunked_document):
+        def merge_metadata(chunked_document, document_metadata):
             for chunk in chunked_document.chunks:
                 chunk.metadata = merge_dicts(chunk.metadata, document_metadata)
             return chunked_document
 
-        splitter = file_extension_splitters.get(document.source.path.suffix.lower())(**local_splitter_args)
-        split_docs = splitter.split_documents(list(filter_short_docs(merge_metadata(document))))
+        if document.source.path:
+            document_source_path: Path = Path(document.source.path)
+            splitter = file_extension_splitters.get(document_source_path.suffix.lower())(**local_splitter_args)
+            split_docs = splitter.split_documents(
+                list(filter_short_docs(merge_metadata(document, document_metadata), chunk_overlap))
+            )
 
-        i = -1
-        file_chunks = []
-        for chunk in split_docs:
-            i += 1
-            if "chunk_prefix" in chunk.metadata:
-                del chunk.metadata["chunk_prefix"]
-            # Normalize line endings to just '\n'
-            file_chunks.append(StaticDocument(
-                chunk_prefix.replace("\r", "") + chunk.page_content.replace("\r", ""),
-                merge_dicts(chunk.metadata, document_metadata),
-                document_id=document.source.filename + str(i),
-                mtime=document.source.mtime
-            ))
+            i = -1
+            file_chunks = []
+            for chunk in split_docs:
+                i += 1
+                if "chunk_prefix" in chunk.metadata:
+                    del chunk.metadata["chunk_prefix"]
+                # Normalize line endings to just '\n'
+                file_chunks.append(
+                    StaticDocument(
+                        chunk_prefix.replace("\r", "") + chunk.page_content.replace("\r", ""),
+                        merge_dicts(chunk.metadata, document_metadata),
+                        document_id=document.source.filename + str(i),
+                        mtime=document.source.mtime,
+                    )
+                )
 
-        file_pre_yield_time = time.time()
-        total_time += file_pre_yield_time - file_start_time
-        if len(file_chunks) < 1:
-            logger.info("No file_chunks to yield, continuing")
-            continue
-        total_splits += len(file_chunks)
-        if i % log_batch_size == 0:
-            safe_mlflow_log_metric("total_chunked_documents", total_splits, logger=logger, step=int(time.time() * 1000))
-        document.chunks = file_chunks
+            file_pre_yield_time = time.time()
+            total_time += file_pre_yield_time - file_start_time
+            if len(file_chunks) < 1:
+                logger.info("No file_chunks to yield, continuing")
+                continue
+            total_splits += len(file_chunks)
+            if i % log_batch_size == 0:
+                safe_mlflow_log_metric(
+                    "total_chunked_documents", total_splits, logger=logger, step=int(time.time() * 1000)
+                )
+            document.chunks = file_chunks
+        else:
+            total_time = 0
+            total_splits = 0
         yield document
 
     safe_mlflow_log_metric("total_source_documents", total_documents, logger=logger, step=int(time.time() * 1000))
     safe_mlflow_log_metric("total_chunked_documents", total_splits, logger=logger, step=int(time.time() * 1000))
-    logger.info(f"[DocumentChunksIterator::split_documents] Total time to split {total_documents} documents into {total_splits} chunks: {total_time}")
+    logger.info(
+        "[DocumentChunksIterator::split_documents] Total time to split "
+        + f"{total_documents} documents into {total_splits} chunks: {total_time}"
+    )
 
 
 @dataclass
@@ -248,7 +306,12 @@ class MarkdownBlock:
 
     @property
     def header_level(self) -> int:
-        """Get the header level of the block."""
+        """
+        Get the header level of the block.
+
+        :return: The header level of the block.
+        :rtype: int
+        """
         if self.header is None:
             return 0
         return self.header.count("#", 0, self.header.find(" "))
@@ -258,8 +321,16 @@ class MarkdownHeaderSplitter(TextSplitter):
     """Split text by markdown headers."""
 
     def __init__(self, remove_hyperlinks: bool = True, remove_images: bool = True, **kwargs: Any):
-        """Initialize Markdown Header Splitter."""
-        from azure.ai.generative.index._langchain.vendor.text_splitter import TokenTextSplitter
+        """
+        Initialize Markdown Header Splitter.
+
+        :keyword remove_hyperlinks: Remove hyperlinks or not.
+        :paramtype remove_hyperlinks: bool
+        :keyword remove_images: Remove images or not.
+        :paramtype remove_images: bool
+        """
+        from azure.ai.resources._index._langchain.vendor.text_splitter import TokenTextSplitter
+
         self._remove_hyperlinks = remove_hyperlinks
         self._remove_images = remove_images
         with tiktoken_cache_dir():
@@ -267,14 +338,30 @@ class MarkdownHeaderSplitter(TextSplitter):
         super().__init__(**kwargs)
 
     def split_text(self, text: str) -> List[str]:
-        """Split text into multiple components."""
+        """
+        Split text into multiple components.
+
+        :keyword text: Text to be split.
+        :paramtype text: str
+        :return: Multiple text components.
+        :rtype: List[str]
+        """
         blocks = self.get_blocks(text)
         return [block.content for block in blocks]
 
     def create_documents(
         self, texts: List[str], metadatas: Optional[List[dict]] = None
-    ) -> List[StaticDocument]:
-        """Create documents from a list of texts."""
+    ) -> List[StaticDocument]:  # type: ignore[override]
+        """
+        Create documents from a list of texts.
+
+        :keyword texts: A list of texts.
+        :paramtype texts: List[str]
+        :keyword metadatas: Metadatas of creating documents.
+        :paramtype metadatas: Optional[List[dict]]
+        :return: Created Documents.
+        :rtype: List[StaticDocument]
+        """
         _metadatas = metadatas or [{}] * len(texts)
         documents = []
 
@@ -295,34 +382,39 @@ class MarkdownHeaderSplitter(TextSplitter):
                 block_nested_headings = get_nested_heading_string(md_block)
                 if self._length_function(block_nested_headings + md_block.content) > self._chunk_size:
                     logger.info(f"Splitting section in chunks: {md_block.header}")
-                    chunks = [f"{block_nested_headings}\n{chunk}" for chunk in self._sub_splitter.split_text(md_block.content)]
+                    chunks = [
+                        f"{block_nested_headings}\n{chunk}" for chunk in self._sub_splitter.split_text(md_block.content)
+                    ]
                 else:
                     chunks = [f"{block_nested_headings}\n{md_block.content}"]
 
                 metadata = _metadatas[i]
                 metadata["markdown_heading"] = {
                     "heading": re.sub(
-                        r"#",
-                        "",
-                        md_block.header if md_block.header is not None else metadata["source"]["filename"]
+                        r"#", "", md_block.header if md_block.header is not None else metadata["source"]["filename"]
                     ).strip(),
-                    "level": md_block.header_level
+                    "level": md_block.header_level,
                 }
                 if len(chunks) > 0:
                     for chunk in chunks:
-                        new_doc = StaticDocument(
-                            chunk, metadata=copy.deepcopy(metadata)
-                        )
+                        new_doc = StaticDocument(chunk, metadata=copy.deepcopy(metadata))
                         documents.append(new_doc)
         return documents
 
     def get_blocks(self, markdown_text: str) -> List[MarkdownBlock]:
-        """Parse blocks from markdown text."""
+        """
+        Parse blocks from markdown text.
+
+        :keyword markdown_text: Markdown text being parsed.
+        :paramtype markdown_text: str
+        :return: Parsed blocks.
+        :rtype: List[MarkdownBlock]
+        """
         blocks = re.split(r"(^#+\s.*)", markdown_text, flags=re.MULTILINE)
         blocks = [b for b in blocks if b.strip()]
 
         markdown_blocks = []
-        header_stack = []
+        header_stack: List = []
 
         if not blocks[0].startswith("#"):
             markdown_blocks.append(MarkdownBlock(header=None, content=blocks[0]))

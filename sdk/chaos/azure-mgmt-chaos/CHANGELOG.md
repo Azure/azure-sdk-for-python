@@ -1,5 +1,42 @@
 # Release History
 
+## 1.1.0 (2024-03-04)
+
+### Features Added
+
+  - Model ExperimentUpdate has a new parameter tags
+
+## 1.0.0 (2023-11-20)
+
+### Features Added
+
+  - Added operation ExperimentsOperations.execution_details
+  - Added operation ExperimentsOperations.get_execution
+  - Added operation ExperimentsOperations.list_all_executions
+  - Added operation group OperationStatusesOperations
+  - Model Experiment has a new parameter provisioning_state
+  - Model ExperimentExecutionDetails has a new parameter last_action_at
+  - Model ExperimentExecutionDetails has a new parameter started_at
+  - Model ExperimentExecutionDetails has a new parameter stopped_at
+
+### Breaking Changes
+
+  - Model Experiment no longer has parameter start_on_creation
+  - Model ExperimentExecutionDetails no longer has parameter created_date_time
+  - Model ExperimentExecutionDetails no longer has parameter experiment_id
+  - Model ExperimentExecutionDetails no longer has parameter last_action_date_time
+  - Model ExperimentExecutionDetails no longer has parameter start_date_time
+  - Model ExperimentExecutionDetails no longer has parameter stop_date_time
+  - Removed operation ExperimentsOperations.get_execution_details
+  - Removed operation ExperimentsOperations.get_status
+  - Removed operation ExperimentsOperations.list_all_statuses
+  - Removed operation ExperimentsOperations.list_execution_details
+  - Renamed operation ExperimentsOperations.cancel to ExperimentsOperations.begin_cancel
+  - Renamed operation ExperimentsOperations.create_or_update to ExperimentsOperations.begin_create_or_update
+  - Renamed operation ExperimentsOperations.delete to ExperimentsOperations.begin_delete
+  - Renamed operation ExperimentsOperations.start to ExperimentsOperations.begin_start
+  - Renamed operation ExperimentsOperations.update to ExperimentsOperations.begin_update
+
 ## 1.0.0b7 (2023-08-18)
 
 ### Features Added

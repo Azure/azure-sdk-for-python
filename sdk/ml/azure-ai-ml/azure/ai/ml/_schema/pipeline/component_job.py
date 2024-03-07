@@ -277,6 +277,13 @@ class ParallelSchema(BaseNodeSchema, ParameterizedParallelSchema):
         ],
         required=True,
     )
+    identity = UnionField(
+        [
+            NestedField(ManagedIdentitySchema),
+            NestedField(AMLTokenIdentitySchema),
+            NestedField(UserIdentitySchema),
+        ]
+    )
     type = StringTransformedEnum(allowed_values=[NodeType.PARALLEL])
 
     @post_load

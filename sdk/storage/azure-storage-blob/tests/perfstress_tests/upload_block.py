@@ -6,7 +6,7 @@ import uuid
 
 from ._test_base import _BlobTest
 
-from azure_devtools.perfstress_tests import get_random_bytes
+from devtools_testutils.perfstress_tests import get_random_bytes
 
 
 class UploadBlockTest(_BlobTest):

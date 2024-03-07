@@ -47,7 +47,7 @@ class AzureFileSchema(AzureStorageSchema):
     )
 
     @post_load
-    def make(self, data: Dict[str, Any], **kwargs) -> "AzureFileDatastore":
+    def make(self, data: Dict[str, Any], **kwargs) -> "AzureFileDatastore":  # type: ignore[name-defined]
         from azure.ai.ml.entities import AzureFileDatastore
 
         return AzureFileDatastore(**data)
@@ -69,7 +69,7 @@ class AzureBlobSchema(AzureStorageSchema):
     )
 
     @post_load
-    def make(self, data: Dict[str, Any], **kwargs) -> "AzureBlobDatastore":
+    def make(self, data: Dict[str, Any], **kwargs) -> "AzureBlobDatastore":  # type: ignore[name-defined]
         from azure.ai.ml.entities import AzureBlobDatastore
 
         return AzureBlobDatastore(**data)

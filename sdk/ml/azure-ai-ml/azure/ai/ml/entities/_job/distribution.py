@@ -4,7 +4,7 @@
 
 # pylint: disable=unused-argument
 
-from typing import Dict, Optional, Union
+from typing import Any, Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     DistributionConfiguration as RestDistributionConfiguration,
@@ -32,13 +32,13 @@ class DistributionConfiguration(RestTranslatableMixin):
     This class is not meant to be instantiated directly. Instead, use one of its subclasses.
     """
 
-    def __init__(self, **kwargs) -> None:
-        self.type = None
+    def __init__(self, **kwargs: Any) -> None:
+        self.type: Any = None
 
     @classmethod
     def _from_rest_object(
         cls, obj: Optional[Union[RestDistributionConfiguration, Dict]]
-    ) -> "DistributionConfiguration":
+    ) -> Optional["DistributionConfiguration"]:
         """Constructs a DistributionConfiguration object from a REST object
 
         This function works for distribution property of a Job object and of a Component object()
@@ -66,12 +66,14 @@ class DistributionConfiguration(RestTranslatableMixin):
 
         type_str = data.pop("distribution_type", None) or data.pop("type", None)
         klass = DISTRIBUTION_TYPE_MAP[type_str.lower()]
-        return klass(**data)
+        res: DistributionConfiguration = klass(**data)
+        return res
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: Any) -> bool:
         if not isinstance(other, DistributionConfiguration):
             return NotImplemented
-        return self._to_rest_object() == other._to_rest_object()
+        res: bool = self._to_rest_object() == other._to_rest_object()
+        return res
 
 
 class MpiDistribution(DistributionConfiguration):
@@ -92,7 +94,7 @@ class MpiDistribution(DistributionConfiguration):
             :caption: Configuring a CommandComponent with an MpiDistribution.
     """
 
-    def __init__(self, *, process_count_per_instance: Optional[int] = None, **kwargs) -> None:
+    def __init__(self, *, process_count_per_instance: Optional[int] = None, **kwargs: Any) -> None:
         super().__init__(**kwargs)
         self.type = DistributionType.MPI
         self.process_count_per_instance = process_count_per_instance
@@ -119,7 +121,7 @@ class PyTorchDistribution(DistributionConfiguration):
             :caption: Configuring a CommandComponent with a PyTorchDistribution.
     """
 
-    def __init__(self, *, process_count_per_instance: Optional[int] = None, **kwargs) -> None:
+    def __init__(self, *, process_count_per_instance: Optional[int] = None, **kwargs: Any) -> None:
         super().__init__(**kwargs)
         self.type = DistributionType.PYTORCH
         self.process_count_per_instance = process_count_per_instance
@@ -154,7 +156,7 @@ class TensorFlowDistribution(DistributionConfiguration):
     """
 
     def __init__(
-        self, *, parameter_server_count: Optional[int] = 0, worker_count: Optional[int] = None, **kwargs
+        self, *, parameter_server_count: Optional[int] = 0, worker_count: Optional[int] = None, **kwargs: Any
     ) -> None:
         super().__init__(**kwargs)
         self.type = DistributionType.TENSORFLOW
@@ -195,7 +197,7 @@ class RayDistribution(DistributionConfiguration):
         dashboard_port: Optional[int] = None,
         head_node_additional_args: Optional[str] = None,
         worker_node_additional_args: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ):
         super().__init__(**kwargs)
         self.type = DistributionType.RAY

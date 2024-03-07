@@ -23,7 +23,7 @@
 """
 
 
-class HttpMethods(object):
+class HttpMethods:
     """Constants of http methods.
     """
 
@@ -35,7 +35,7 @@ class HttpMethods(object):
     Options = "OPTIONS"
 
 
-class HttpHeaders(object):
+class HttpHeaders:
     """Constants of http headers.
     """
 
@@ -100,6 +100,7 @@ class HttpHeaders(object):
     QueryVersion = "x-ms-cosmos-query-version"
     QueryMetrics = "x-ms-documentdb-query-metrics"
     QueryExecutionInfo = "x-ms-cosmos-query-execution-info"
+    IndexUtilization = "x-ms-cosmos-index-utilization"
 
     # Our custom DocDB headers
     Continuation = "x-ms-continuation"
@@ -130,6 +131,7 @@ class HttpHeaders(object):
     ContentPath = "x-ms-content-path"
     IsContinuationExpected = "x-ms-documentdb-query-iscontinuationexpected"
     PopulateQueryMetrics = "x-ms-documentdb-populatequerymetrics"
+    PopulateIndexMetrics = "x-ms-cosmos-populateindexmetrics"
     ResourceQuota = "x-ms-resource-quota"
     ResourceUsage = "x-ms-resource-usage"
 
@@ -241,17 +243,15 @@ class HttpHeaders(object):
     CosmosQuorumAckedLsn = "x-ms-cosmos-quorum-acked-llsn"  # cspell:disable-line
     RequestDurationMs = "x-ms-request-duration-ms"
 
-class HttpHeaderPreferenceTokens(object):
+class HttpHeaderPreferenceTokens:
     """Constants of http header preference tokens.
     """
-
     PreferUnfilteredQueryResponse = "PreferUnfilteredQueryResponse"
 
 
-class HttpStatusDescriptions(object):
+class HttpStatusDescriptions:
     """Constants of http status descriptions.
     """
-
     Accepted = "Accepted"
     Conflict = "Conflict"
     OK = "Ok"
@@ -278,10 +278,9 @@ class HttpStatusDescriptions(object):
     RetryWith = "Retry the request"
 
 
-class QueryStrings(object):
+class QueryStrings:
     """Constants of query strings.
     """
-
     Filter = "$filter"
     GenerateId = "$generateFor"
     GenerateIdBatchSize = "$batchSize"
@@ -296,14 +295,13 @@ class QueryStrings(object):
     Generic = "generic"
 
 
-class CookieHeaders(object):
+class CookieHeaders:
     """Constants of cookie headers.
     """
-
     SessionToken = "x-ms-session-token"
 
 
-class Versions(object):
+class Versions:
     """Constants of versions.
     """
     CurrentVersion = "2020-07-15"
@@ -311,7 +309,7 @@ class Versions(object):
     QueryVersion = "1.0"
 
 
-class Delimiters(object):
+class Delimiters:
     """Constants of delimiters.
     """
 
@@ -319,7 +317,7 @@ class Delimiters(object):
     ClientContinuationFormat = "{0}!!{1}"
 
 
-class HttpListenerErrorCodes(object):
+class HttpListenerErrorCodes:
     """Constants of http listener error codes.
     """
 
@@ -327,14 +325,14 @@ class HttpListenerErrorCodes(object):
     ERROR_CONNECTION_INVALID = 1229
 
 
-class HttpContextProperties(object):
+class HttpContextProperties:
     """Constants of http context properties.
     """
 
     SubscriptionId = "SubscriptionId"
 
 
-class _ErrorCodes(object):
+class _ErrorCodes:
     """Constants of error codes.
     """
 
@@ -359,10 +357,9 @@ class _ErrorCodes(object):
     LinuxConnectionReset = 131
 
 
-class StatusCodes(object):
+class StatusCodes:
     """HTTP status codes returned by the REST operations
     """
-
     # Success
     OK = 200
     CREATED = 201
@@ -394,10 +391,9 @@ class StatusCodes(object):
     OPERATION_CANCELLED = 1201
 
 
-class SubStatusCodes(object):
+class SubStatusCodes:
     """Sub status codes returned by the REST operations specifying the details of the operation
     """
-
     UNKNOWN = 0
 
     # 400: Bad Request Substatus
@@ -430,7 +426,7 @@ class SubStatusCodes(object):
     INSUFFICIENT_BINDABLE_PARTITIONS = 1007
 
 
-class ResourceType(object):
+class ResourceType:
     """Types of resources in Azure Cosmos
     """
 
@@ -452,7 +448,7 @@ class ResourceType(object):
     PartitionKey = "partitionkey"
 
     @staticmethod
-    def IsCollectionChild(resourceType):
+    def IsCollectionChild(resourceType: str) -> bool:
         return resourceType in (
             ResourceType.Document,
             ResourceType.Attachment,

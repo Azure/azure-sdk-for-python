@@ -48,7 +48,7 @@ client = NginxManagementClient(credential=DefaultAzureCredential(), subscription
 Code samples for this package can be found at:
 - [Search Nginx Management](https://docs.microsoft.com/samples/browse/?languages=python&term=Getting%20started%20-%20Managing&terms=Getting%20started%20-%20Managing) on docs.microsoft.com
 - [Azure Python Mgmt SDK Samples Repo](https://aka.ms/azsdk/python/mgmt/samples)
-- [Other Nginx Management doc](https://github.com/nginxinc/nginxaas-for-azure-snippets/tree/main/snippets/sdk/python)
+- [Other Nginx Management doc](https://github.com/nginxinc/nginxaas-for-azure-snippets/tree/main/sdk/python)
 
 
 ## Troubleshooting
@@ -60,6 +60,3 @@ Code samples for this package can be found at:
 If you encounter any bugs or have suggestions, please file an issue in the
 [Issues](https://github.com/Azure/azure-sdk-for-python/issues)
 section of the project. 
-
-
-![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fazure-mgmt-nginx%2FREADME.png)

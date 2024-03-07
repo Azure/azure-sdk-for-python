@@ -61,7 +61,8 @@ def test_retry_types():
 
 
 @pytest.mark.parametrize(
-    "retry_after_input,http_request,http_response", product(["0", "800", "1000", "1200"], HTTP_REQUESTS, HTTP_RESPONSES)
+    "retry_after_input,http_request,http_response",
+    product(["0", "800", "1000", "1200", "0.9"], HTTP_REQUESTS, HTTP_RESPONSES),
 )
 def test_retry_after(retry_after_input, http_request, http_response):
     retry_policy = RetryPolicy()
@@ -82,7 +83,8 @@ def test_retry_after(retry_after_input, http_request, http_response):
 
 
 @pytest.mark.parametrize(
-    "retry_after_input,http_request,http_response", product(["0", "800", "1000", "1200"], HTTP_REQUESTS, HTTP_RESPONSES)
+    "retry_after_input,http_request,http_response",
+    product(["0", "800", "1000", "1200", "0.9"], HTTP_REQUESTS, HTTP_RESPONSES),
 )
 def test_x_ms_retry_after(retry_after_input, http_request, http_response):
     retry_policy = RetryPolicy()

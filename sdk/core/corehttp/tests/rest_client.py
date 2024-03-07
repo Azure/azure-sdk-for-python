@@ -8,9 +8,9 @@ from copy import deepcopy
 
 
 class MockRestClient(object):
-    def __init__(self, port, **kwargs):
+    def __init__(self, port, *, transport=None, **kwargs):
         kwargs.setdefault("sdk_moniker", "corehttp/1.0.0b1")
-        self._client = PipelineClient(endpoint="http://localhost:{}/".format(port), **kwargs)
+        self._client = PipelineClient(endpoint="http://localhost:{}/".format(port), transport=transport, **kwargs)
 
     def send_request(self, request, **kwargs):
         """Runs the network request through the client's chained policies.

@@ -74,10 +74,10 @@ class AzurePowerShellCredential:
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
         self._process_timeout = process_timeout
 
-    def __enter__(self):
+    def __enter__(self) -> "AzurePowerShellCredential":
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, *args: Any) -> None:
         pass
 
     def close(self) -> None:
@@ -135,7 +135,7 @@ def run_command_line(command_line: List[str], timeout: int) -> str:
     try:
         proc = start_process(command_line)
         stdout, stderr = proc.communicate(**kwargs)
-        if sys.platform.startswith("win") and "' is not recognized" in stderr:
+        if sys.platform.startswith("win") and ("' is not recognized" in stderr or proc.returncode == 9009):
             # pwsh.exe isn't on the path; try powershell.exe
             command_line[-1] = command_line[-1].replace("pwsh", "powershell", 1)
             proc = start_process(command_line)
@@ -192,7 +192,7 @@ def get_command_line(scopes: Tuple[str, ...], tenant_id: str) -> List[str]:
 
     command = "pwsh -NoProfile -NonInteractive -EncodedCommand " + encoded_script
     if sys.platform.startswith("win"):
-        return ["cmd", "/c", command]
+        return ["cmd", "/c", command + " & exit"]
     return ["/bin/sh", "-c", command]
 
 

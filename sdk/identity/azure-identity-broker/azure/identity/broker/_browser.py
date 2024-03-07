@@ -16,7 +16,10 @@ from ._utils import wrap_exceptions, resolve_tenant
 
 
 class InteractiveBrowserBrokerCredential(_InteractiveBrowserCredential):
-    """Opens a browser to interactively authenticate a user.
+    """Uses an authentication broker to interactively sign in a user.
+
+    Currently, only the Windows authentication broker, Web Account Manager (WAM), is supported. Users on macOS and Linux
+    will be authenticated through a browser.
 
     :func:`~get_token` opens a browser to a login URL provided by Microsoft Entra ID and authenticates a user
     there with the authorization code flow, using PKCE (Proof Key for Code Exchange) internally to protect the code.
@@ -32,9 +35,8 @@ class InteractiveBrowserBrokerCredential(_InteractiveBrowserCredential):
         may still log in with a different username.
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
     :keyword int timeout: seconds to wait for the user to complete authentication. Defaults to 300 (5 minutes).
-    :keyword int parent_window_handle: If your app is a GUI app running on a modern Windows system,
-        and your app opts in to use broker via `allow_broker`, you are required to also provide its window handle,
-        so that the sign in UI window will properly pop up on top of your window.
+    :keyword int parent_window_handle: If your app is a GUI app running on a modern Windows system, you are required to
+        also provide its window handle so that the sign in UI window will properly pop up on top of your window.
     :keyword bool enable_msa_passthrough: Determines whether Microsoft Account (MSA) passthrough is enabled. Note, this
         is only needed for select legacy first-party applications. Defaults to False.
     :keyword bool disable_instance_discovery: Determines whether or not instance discovery is performed when attempting

@@ -5,10 +5,11 @@
 import base64
 import functools
 import pickle
-from typing import Any, Optional, overload, TYPE_CHECKING
+from typing import Any, Optional, overload
 
 from typing_extensions import Literal
 
+from azure.core.polling import AsyncLROPoller
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._backup_client import _parse_status_url
@@ -16,10 +17,6 @@ from .._internal import AsyncKeyVaultClientBase, parse_folder_url
 from .._internal.async_polling import KeyVaultAsyncBackupClientPollingMethod
 from .._internal.polling import KeyVaultBackupClientPolling
 from .._models import KeyVaultBackupResult
-
-if TYPE_CHECKING:
-    # pylint:disable=unused-import
-    from azure.core.polling import AsyncLROPoller
 
 
 class KeyVaultBackupClient(AsyncKeyVaultClientBase):
@@ -30,7 +27,7 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
         See https://aka.ms/azsdk/blog/vault-uri for details.
     :param credential: An object which can provide an access token for the vault, such as a credential from
         :mod:`azure.identity.aio`
-    :type credential: :class:`~azure.core.credentials_async.AsyncTokenCredential`
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
 
     :keyword api_version: Version of the service API to use. Defaults to the most recent.
     :paramtype api_version: ~azure.keyvault.administration.ApiVersion or str
@@ -45,8 +42,8 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
         *,
         use_managed_identity: Literal[True],
         continuation_token: Optional[str] = None,
-        **kwargs,
-    ) -> "AsyncLROPoller[KeyVaultBackupResult]":
+        **kwargs: Any,
+    ) -> AsyncLROPoller[KeyVaultBackupResult]:
         ...
 
     @overload
@@ -57,13 +54,13 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
         sas_token: str,
         continuation_token: Optional[str] = None,
         **kwargs: Any,
-    ) -> "AsyncLROPoller[KeyVaultBackupResult]":
+    ) -> AsyncLROPoller[KeyVaultBackupResult]:
         ...
 
     @distributed_trace_async
     async def begin_backup(
         self, blob_storage_url: str, *args: str, **kwargs: Any
-    ) -> "AsyncLROPoller[KeyVaultBackupResult]":
+    ) -> AsyncLROPoller[KeyVaultBackupResult]:
         """Begin a full backup of the Key Vault.
 
         :param str blob_storage_url: URL of the blob storage container in which the backup will be stored, for example
@@ -74,7 +71,7 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
         :keyword use_managed_identity: Indicates which authentication method should be used. If set to True, Managed HSM
             will use the configured user-assigned managed identity to authenticate with Azure Storage. Otherwise, a SAS
             token has to be specified.
-        :paramtype use_managed_identity: Literal[True]
+        :paramtype use_managed_identity: bool
         :keyword str continuation_token: A continuation token to restart polling from a saved state.
 
         :returns: An AsyncLROPoller. Call `result()` on this object to get a :class:`KeyVaultBackupResult`.
@@ -138,7 +135,7 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
         key_name: Optional[str] = None,
         continuation_token: Optional[str] = None,
         **kwargs: Any,
-    ) -> "AsyncLROPoller":
+    ) -> AsyncLROPoller[None]:
         ...
 
     @overload
@@ -150,11 +147,11 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
         key_name: Optional[str] = None,
         continuation_token: Optional[str] = None,
         **kwargs: Any,
-    ) -> "AsyncLROPoller":
+    ) -> AsyncLROPoller[None]:
         ...
 
     @distributed_trace_async
-    async def begin_restore(self, folder_url: str, *args: str, **kwargs: Any) -> "AsyncLROPoller":
+    async def begin_restore(self, folder_url: str, *args: str, **kwargs: Any) -> AsyncLROPoller[None]:
         """Restore a Key Vault backup.
 
         This method restores either a complete Key Vault backup or when ``key_name`` has a value, a single key.
@@ -169,7 +166,7 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
         :keyword use_managed_identity: Indicates which authentication method should be used. If set to True, Managed HSM
             will use the configured user-assigned managed identity to authenticate with Azure Storage. Otherwise, a SAS
             token has to be specified.
-        :paramtype use_managed_identity: Literal[True]
+        :paramtype use_managed_identity: bool
         :keyword str key_name: Name of a single key in the backup. When set, only this key will be restored.
         :keyword str continuation_token: A continuation token to restart polling from a saved state.
 

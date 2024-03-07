@@ -2,12 +2,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-import yaml
 import pytest
+import yaml
 
-from azure.ai.ml.entities._feature_set.feature_set_backfill_request import (
-    FeatureSetBackfillRequest,
-)
+from azure.ai.ml.entities._feature_set.feature_set_backfill_request import FeatureSetBackfillRequest
 from azure.ai.ml.entities._load_functions import load_feature_set_backfill_request
 
 
@@ -27,5 +25,5 @@ class TestFeatureSetBackfillRequestSchema:
         assert backfill_request.job_id == target["job_id"]
         assert backfill_request.tags is not None
         assert backfill_request.resource is not None
-        assert backfill_request.spark_conf is not None
+        assert backfill_request.spark_configuration is not None
         assert backfill_request.feature_window is not None

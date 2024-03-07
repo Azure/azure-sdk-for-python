@@ -31,6 +31,7 @@ USAGE:
 
 from datetime import datetime, timedelta
 import os
+import sys
 
 
 class QueueAuthSamples(object):
@@ -46,6 +47,11 @@ class QueueAuthSamples(object):
     active_directory_tenant_id = os.getenv("ACTIVE_DIRECTORY_TENANT_ID")
 
     def authentication_by_connection_string(self):
+        if self.connection_string is None:
+            print("Missing required environment variable(s). Please see specific test for more details." + '\n' +
+                  "Test: authentication_by_connection_string")
+            sys.exit(1)
+
         # Instantiate a QueueServiceClient using a connection string
         # [START auth_from_connection_string]
         from azure.storage.queue import QueueServiceClient
@@ -56,6 +62,11 @@ class QueueAuthSamples(object):
         properties = queue_service.get_service_properties()
 
     def authentication_by_shared_key(self):
+        if self.account_url is None or self.access_key is None:
+            print("Missing required environment variable(s). Please see specific test for more details." + '\n' +
+                  "Test: authentication_by_shared_key")
+            sys.exit(1)
+
         # Instantiate a QueueServiceClient using a shared access key
         # [START create_queue_service_client]
         from azure.storage.queue import QueueServiceClient
@@ -66,6 +77,15 @@ class QueueAuthSamples(object):
         properties = queue_service.get_service_properties()
 
     def authentication_by_active_directory(self):
+        if (self.active_directory_tenant_id is None or
+            self.active_directory_application_id is None or
+            self.active_directory_application_secret is None or
+            self.account_url is None
+        ):
+            print("Missing required environment variable(s). Please see specific test for more details." + '\n' +
+                  "Test: authentication_by_active_directory")
+            sys.exit(1)
+
         # [START create_queue_service_client_token]
         # Get a token credential for authentication
         from azure.identity import ClientSecretCredential
@@ -84,6 +104,15 @@ class QueueAuthSamples(object):
         properties = queue_service.get_service_properties()
 
     def authentication_by_shared_access_signature(self):
+        if (self.connection_string is None or
+            self.account_name is None or
+            self.access_key is None or
+            self.account_url is None
+        ):
+            print("Missing required environment variable(s). Please see specific test for more details." + '\n' +
+                  "Test: authentication_by_shared_access_signature")
+            sys.exit(1)
+
         # Instantiate a QueueServiceClient using a connection string
         from azure.storage.queue import QueueServiceClient
         queue_service = QueueServiceClient.from_connection_string(conn_str=self.connection_string)

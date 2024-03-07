@@ -2,47 +2,57 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from datetime import datetime
 import logging
-from typing import TYPE_CHECKING, cast
+from typing import Any, cast, Dict, Optional, Union
 
+from azure.core.credentials import TokenCredential
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 
-from . import DecryptResult, EncryptionAlgorithm, EncryptResult, SignResult, VerifyResult, UnwrapResult, WrapResult
+from . import (
+    DecryptResult,
+    EncryptionAlgorithm,
+    EncryptResult,
+    KeyWrapAlgorithm,
+    SignatureAlgorithm,
+    SignResult,
+    VerifyResult,
+    UnwrapResult,
+    WrapResult,
+)
 from ._key_validity import raise_if_time_invalid
 from ._models import KeyVaultRSAPrivateKey, KeyVaultRSAPublicKey
 from ._providers import get_local_cryptography_provider, NoLocalCryptography
 from .. import KeyOperation
 from .._models import JsonWebKey, KeyVaultKey
-from .._shared import KeyVaultClientBase, parse_key_vault_id
-
-if TYPE_CHECKING:
-    # pylint:disable=unused-import,ungrouped-imports
-    from datetime import datetime
-    from typing import Any, Dict, Optional, Union
-    from azure.core.credentials import TokenCredential
-    from . import KeyWrapAlgorithm, SignatureAlgorithm
-    from .._shared import KeyVaultResourceId
+from .._shared import KeyVaultClientBase, KeyVaultResourceId, parse_key_vault_id
 
 _LOGGER = logging.getLogger(__name__)
 
 
-def _validate_arguments(operation: KeyOperation, algorithm: EncryptionAlgorithm, **kwargs) -> None:
+def _validate_arguments(
+        operation: KeyOperation,
+        algorithm: EncryptionAlgorithm,
+        *,
+        iv: Optional[bytes] = None,
+        tag: Optional[bytes] = None,
+        aad: Optional[bytes] = None,
+    ) -> None:
     """Validates the arguments passed to perform an operation with a provided algorithm.
 
     :param KeyOperation operation: the type of operation being requested
     :param EncryptionAlgorithm algorithm: the encryption algorithm to use for the operation
 
-    :keyword bytes iv: initialization vector
-    :keyword bytes authentication_tag: authentication tag returned from an encryption
-    :keyword bytes additional_authenticated_data: data that is authenticated but not encrypted
+    :keyword iv: initialization vector
+    :paramtype iv: bytes or None
+    :keyword tag: authentication tag returned from an encryption
+    :paramtype tag: bytes or None
+    :keyword aad: data that is authenticated but not encrypted
+    :paramtype aad: bytes or None
 
     :raises ValueError: if parameters that are incompatible with the specified algorithm are provided.
     """
-    iv = kwargs.pop("iv", None)
-    tag = kwargs.pop("tag", None)
-    aad = kwargs.pop("aad", None)
-
     if operation == KeyOperation.encrypt:
         if iv and "CBC" not in algorithm:
             raise ValueError(
@@ -83,13 +93,13 @@ class CryptographyClient(KeyVaultClientBase):
     that material from Key Vault. When the required key material is unavailable, cryptographic operations are performed
     by the Key Vault service.
 
-    :param key: Either a :class:`~azure.keyvault.keys.KeyVaultKey` instance as returned by
+    :param key: Either a azure.keyvault.keys.KeyVaultKey instance as returned by
         :func:`~azure.keyvault.keys.KeyClient.get_key`, or a string.
         If a string, the value must be the identifier of an Azure Key Vault key. Including a version is recommended.
-    :type key: str or :class:`~azure.keyvault.keys.KeyVaultKey`
+    :type key: str or azure.keyvault.keys.KeyVaultKey
     :param credential: An object which can provide an access token for the vault, such as a credential from
         :mod:`azure.identity`
-    :type credential: :class:`~azure.core.credentials.TokenCredential`
+    :type credential: ~azure.core.credentials.TokenCredential
 
     :keyword api_version: Version of the service API to use. Defaults to the most recent.
     :paramtype api_version: ~azure.keyvault.keys.ApiVersion or str
@@ -106,14 +116,14 @@ class CryptographyClient(KeyVaultClientBase):
 
     # pylint:disable=protected-access
 
-    def __init__(self, key: "Union[KeyVaultKey, str]", credential: "TokenCredential", **kwargs) -> None:
+    def __init__(self, key: Union[KeyVaultKey, str], credential: TokenCredential, **kwargs: Any) -> None:
         self._jwk = kwargs.pop("_jwk", False)
-        self._not_before: "Optional[datetime]" = None
-        self._expires_on: "Optional[datetime]" = None
-        self._key_id: "Optional[KeyVaultResourceId]" = None
+        self._not_before: Optional[datetime] = None
+        self._expires_on: Optional[datetime] = None
+        self._key_id: Optional[KeyVaultResourceId] = None
 
         if isinstance(key, KeyVaultKey):
-            self._key: "Union[JsonWebKey, KeyVaultKey, str, None]" = key.key
+            self._key: Union[JsonWebKey, KeyVaultKey, str, None] = key.key
             self._key_id = parse_key_vault_id(key.id)
             if key.properties._attributes:
                 self._not_before = key.properties.not_before
@@ -145,7 +155,7 @@ class CryptographyClient(KeyVaultClientBase):
         )
 
     @property
-    def key_id(self) -> "Optional[str]":
+    def key_id(self) -> Optional[str]:
         """The full identifier of the client's key.
 
         This property may be None when a client is constructed with :func:`from_jwk`.
@@ -158,7 +168,7 @@ class CryptographyClient(KeyVaultClientBase):
         return cast(JsonWebKey, self._key).kid  # type: ignore[attr-defined]
 
     @property
-    def vault_url(self) -> "Optional[str]":  # type: ignore
+    def vault_url(self) -> Optional[str]:  # type: ignore
         """The base vault URL of the client's key.
 
         This property may be None when a client is constructed with :func:`from_jwk`.
@@ -169,7 +179,7 @@ class CryptographyClient(KeyVaultClientBase):
         return self._vault_url
 
     @classmethod
-    def from_jwk(cls, jwk: "Union[JsonWebKey, Dict[str, Any]]") -> "CryptographyClient":
+    def from_jwk(cls, jwk: Union[JsonWebKey, Dict[str, Any]]) -> "CryptographyClient":
         """Creates a client that can only perform cryptographic operations locally.
 
         :param jwk: the key's cryptographic material, as a JsonWebKey or dictionary.
@@ -183,7 +193,7 @@ class CryptographyClient(KeyVaultClientBase):
         return cls(jwk, object(), _jwk=True)  # type: ignore
 
     @distributed_trace
-    def _initialize(self, **kwargs) -> None:
+    def _initialize(self, **kwargs: Any) -> None:
         if self._initialized:
             return
 
@@ -219,7 +229,7 @@ class CryptographyClient(KeyVaultClientBase):
         The `CryptographyClient` will attempt to download the key, if it hasn't been already, as part of this operation.
 
         :returns: A `KeyVaultRSAPrivateKey`, which implements `cryptography`'s `RSAPrivateKey` interface.
-        :rtype: :class:`~azure.keyvault.keys.crypto.KeyVaultRSAPrivateKey`
+        :rtype: ~azure.keyvault.keys.crypto.KeyVaultRSAPrivateKey
         """
         self._initialize()
         return KeyVaultRSAPrivateKey(client=self, key_material=cast(JsonWebKey, self._key))
@@ -231,20 +241,20 @@ class CryptographyClient(KeyVaultClientBase):
         The `CryptographyClient` will attempt to download the key, if it hasn't been already, as part of this operation.
 
         :returns: A `KeyVaultRSAPublicKey`, which implements `cryptography`'s `RSAPublicKey` interface.
-        :rtype: :class:`~azure.keyvault.keys.crypto.KeyVaultRSAPublicKey`
+        :rtype: ~azure.keyvault.keys.crypto.KeyVaultRSAPublicKey
         """
         self._initialize()
         return KeyVaultRSAPublicKey(client=self, key_material=cast(JsonWebKey, self._key))
 
     @distributed_trace
-    def encrypt(self, algorithm: "EncryptionAlgorithm", plaintext: bytes, **kwargs) -> EncryptResult:
+    def encrypt(self, algorithm: EncryptionAlgorithm, plaintext: bytes, **kwargs: Any) -> EncryptResult:
         """Encrypt bytes using the client's key.
 
         Requires the keys/encrypt permission. This method encrypts only a single block of data, whose size depends on
         the key and encryption algorithm.
 
         :param algorithm: Encryption algorithm to use
-        :type algorithm: :class:`~azure.keyvault.keys.crypto.EncryptionAlgorithm`
+        :type algorithm: ~azure.keyvault.keys.crypto.EncryptionAlgorithm
         :param bytes plaintext: Bytes to encrypt
 
         :keyword iv: Initialization vector. Required for only AES-CBC(PAD) encryption. If you pass your own IV,
@@ -257,7 +267,7 @@ class CryptographyClient(KeyVaultClientBase):
         :paramtype additional_authenticated_data: bytes or None
 
         :returns: The result of the encryption operation.
-        :rtype: :class:`~azure.keyvault.keys.crypto.EncryptResult`
+        :rtype: ~azure.keyvault.keys.crypto.EncryptResult
 
         :raises ValueError: if parameters that are incompatible with the specified algorithm are provided, or if
             generating an IV fails on the current platform.
@@ -313,14 +323,14 @@ class CryptographyClient(KeyVaultClientBase):
         )
 
     @distributed_trace
-    def decrypt(self, algorithm: "EncryptionAlgorithm", ciphertext: bytes, **kwargs) -> DecryptResult:
+    def decrypt(self, algorithm: EncryptionAlgorithm, ciphertext: bytes, **kwargs: Any) -> DecryptResult:
         """Decrypt a single block of encrypted data using the client's key.
 
         Requires the keys/decrypt permission. This method decrypts only a single block of data, whose size depends on
         the key and encryption algorithm.
 
         :param algorithm: Encryption algorithm to use
-        :type algorithm: :class:`~azure.keyvault.keys.crypto.EncryptionAlgorithm`
+        :type algorithm: ~azure.keyvault.keys.crypto.EncryptionAlgorithm
         :param bytes ciphertext: Encrypted bytes to decrypt. Microsoft recommends you not use CBC without first ensuring
             the integrity of the ciphertext using, for example, an HMAC. See
             https://docs.microsoft.com/dotnet/standard/security/vulnerabilities-cbc-mode for more information.
@@ -335,7 +345,7 @@ class CryptographyClient(KeyVaultClientBase):
         :paramtype additional_authenticated_data: bytes or None
 
         :returns: The result of the decryption operation.
-        :rtype: :class:`~azure.keyvault.keys.crypto.DecryptResult`
+        :rtype: ~azure.keyvault.keys.crypto.DecryptResult
 
         :raises ValueError: If parameters that are incompatible with the specified algorithm are provided.
 
@@ -377,17 +387,17 @@ class CryptographyClient(KeyVaultClientBase):
         return DecryptResult(key_id=self.key_id, algorithm=algorithm, plaintext=operation_result.result)
 
     @distributed_trace
-    def wrap_key(self, algorithm: "KeyWrapAlgorithm", key: bytes, **kwargs) -> WrapResult:
+    def wrap_key(self, algorithm: KeyWrapAlgorithm, key: bytes, **kwargs: Any) -> WrapResult:
         """Wrap a key with the client's key.
 
         Requires the keys/wrapKey permission.
 
         :param algorithm: wrapping algorithm to use
-        :type algorithm: :class:`~azure.keyvault.keys.crypto.KeyWrapAlgorithm`
+        :type algorithm: ~azure.keyvault.keys.crypto.KeyWrapAlgorithm
         :param bytes key: key to wrap
 
         :returns: The result of the wrapping operation.
-        :rtype: :class:`~azure.keyvault.keys.crypto.WrapResult`
+        :rtype: ~azure.keyvault.keys.crypto.WrapResult
 
         .. literalinclude:: ../tests/test_examples_crypto.py
             :start-after: [START wrap_key]
@@ -421,17 +431,17 @@ class CryptographyClient(KeyVaultClientBase):
         return WrapResult(key_id=self.key_id, algorithm=algorithm, encrypted_key=operation_result.result)
 
     @distributed_trace
-    def unwrap_key(self, algorithm: "KeyWrapAlgorithm", encrypted_key: bytes, **kwargs) -> UnwrapResult:
+    def unwrap_key(self, algorithm: KeyWrapAlgorithm, encrypted_key: bytes, **kwargs: Any) -> UnwrapResult:
         """Unwrap a key previously wrapped with the client's key.
 
         Requires the keys/unwrapKey permission.
 
         :param algorithm: wrapping algorithm to use
-        :type algorithm: :class:`~azure.keyvault.keys.crypto.KeyWrapAlgorithm`
+        :type algorithm: ~azure.keyvault.keys.crypto.KeyWrapAlgorithm
         :param bytes encrypted_key: the wrapped key
 
         :returns: The result of the unwrapping operation.
-        :rtype: :class:`~azure.keyvault.keys.crypto.UnwrapResult`
+        :rtype: ~azure.keyvault.keys.crypto.UnwrapResult
 
         .. literalinclude:: ../tests/test_examples_crypto.py
             :start-after: [START unwrap_key]
@@ -463,17 +473,17 @@ class CryptographyClient(KeyVaultClientBase):
         return UnwrapResult(key_id=self.key_id, algorithm=algorithm, key=operation_result.result)
 
     @distributed_trace
-    def sign(self, algorithm: "SignatureAlgorithm", digest: bytes, **kwargs) -> SignResult:
+    def sign(self, algorithm: SignatureAlgorithm, digest: bytes, **kwargs: Any) -> SignResult:
         """Create a signature from a digest using the client's key.
 
         Requires the keys/sign permission.
 
         :param algorithm: signing algorithm
-        :type algorithm: :class:`~azure.keyvault.keys.crypto.SignatureAlgorithm`
+        :type algorithm: ~azure.keyvault.keys.crypto.SignatureAlgorithm
         :param bytes digest: hashed bytes to sign
 
         :returns: The result of the signing operation.
-        :rtype: :class:`~azure.keyvault.keys.crypto.SignResult`
+        :rtype: ~azure.keyvault.keys.crypto.SignResult
 
         .. literalinclude:: ../tests/test_examples_crypto.py
             :start-after: [START sign]
@@ -507,19 +517,19 @@ class CryptographyClient(KeyVaultClientBase):
         return SignResult(key_id=self.key_id, algorithm=algorithm, signature=operation_result.result)
 
     @distributed_trace
-    def verify(self, algorithm: "SignatureAlgorithm", digest: bytes, signature: bytes, **kwargs) -> VerifyResult:
+    def verify(self, algorithm: SignatureAlgorithm, digest: bytes, signature: bytes, **kwargs: Any) -> VerifyResult:
         """Verify a signature using the client's key.
 
         Requires the keys/verify permission.
 
         :param algorithm: verification algorithm
-        :type algorithm: :class:`~azure.keyvault.keys.crypto.SignatureAlgorithm`
+        :type algorithm: ~azure.keyvault.keys.crypto.SignatureAlgorithm
         :param bytes digest: Pre-hashed digest corresponding to **signature**. The hash algorithm used must be
             compatible with ``algorithm``.
         :param bytes signature: signature to verify
 
         :returns: The result of the verifying operation.
-        :rtype: :class:`~azure.keyvault.keys.crypto.VerifyResult`
+        :rtype: ~azure.keyvault.keys.crypto.VerifyResult
 
         .. literalinclude:: ../tests/test_examples_crypto.py
             :start-after: [START verify]

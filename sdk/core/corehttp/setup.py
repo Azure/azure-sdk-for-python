@@ -67,12 +67,17 @@ setup(
     },
     python_requires=">=3.8",
     install_requires=[
-        "requests>=2.18.4",
         "typing-extensions>=4.6.0",
     ],
     extras_require={
-        "aio": [
+        "requests": [
+            "requests>=2.18.4",
+        ],
+        "aiohttp": [
             "aiohttp>=3.0",
+        ],
+        "httpx": [
+            "httpx>=0.25.0",
         ],
     },
 )

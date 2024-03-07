@@ -19,7 +19,6 @@ from ci_tools.environment_exclusions import (
 )
 from ci_tools.parsing import ParsedSetup
 from ci_tools.variables import in_ci
-from gh_tools.vnext_issue_creator import create_vnext_issue
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -51,8 +50,6 @@ def get_pyright_config_path(args):
     else:
         config.update({"executionEnvironments": [{"root": args.target_package}]})
 
-    if args.next:
-        config["pythonVersion"] = "3.8"
     # write the pyrightconfig.json to the tox environment and return the path so we can point to it
     pyright_env = "pyright" if not args.next else "next-pyright"
     pyright_config_path = os.path.join(args.target_package, ".tox", pyright_env, "tmp", "pyrightconfig.json")
@@ -118,7 +115,12 @@ if __name__ == "__main__":
         check_call(commands)
     except CalledProcessError as error:
         if args.next and in_ci() and is_check_enabled(args.target_package, "pyright") and not is_typing_ignored(package_name):
+            from gh_tools.vnext_issue_creator import create_vnext_issue
             create_vnext_issue(package_name, "pyright")
 
         print("See https://aka.ms/python/typing-guide for information.\n\n")
         raise error
+
+    if args.next and in_ci() and not is_typing_ignored(package_name):
+        from gh_tools.vnext_issue_creator import close_vnext_issue
+        close_vnext_issue(package_name, "pyright")

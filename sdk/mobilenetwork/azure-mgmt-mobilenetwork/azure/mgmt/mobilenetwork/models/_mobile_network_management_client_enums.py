@@ -86,14 +86,33 @@ class DiagnosticsPackageStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class InstallationReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The reason for the installation state of the packet core."""
+    """The reason or list of reasons why a packet core has not been installed or requires a reinstall."""
 
     NO_SLICES = "NoSlices"
-    """The mobile network does not have any applicable configured slices."""
+    """The packet core has not been installed as the mobile network does not have any applicable
+    #: configured slices."""
     NO_PACKET_CORE_DATA_PLANE = "NoPacketCoreDataPlane"
-    """There is no configured data plane for this packet core."""
+    """The packet core has not been installed as there is no configured data plane for this packet
+    #: core."""
     NO_ATTACHED_DATA_NETWORKS = "NoAttachedDataNetworks"
-    """The packet core has no attached data networks."""
+    """The packet core has not been installed as the packet core has no attached data networks."""
+    PUBLIC_LAND_MOBILE_NETWORK_IDENTIFIER_HAS_CHANGED = "PublicLandMobileNetworkIdentifierHasChanged"
+    """A reinstall is required as the packet core is running with out-of-date PLMN ID."""
+    CONTROL_PLANE_ACCESS_INTERFACE_HAS_CHANGED = "ControlPlaneAccessInterfaceHasChanged"
+    """A reinstall is required as the packet core is running with out-of-date control plane access
+    #: interface information."""
+    USER_PLANE_ACCESS_INTERFACE_HAS_CHANGED = "UserPlaneAccessInterfaceHasChanged"
+    """A reinstall is required as the packet core is running with out-of-date user plane core
+    #: interface."""
+    USER_PLANE_DATA_INTERFACE_HAS_CHANGED = "UserPlaneDataInterfaceHasChanged"
+    """A reinstall is required as the packet core is running with out-of-date user plane access
+    #: interface."""
+    CONTROL_PLANE_ACCESS_VIRTUAL_IPV4_ADDRESSES_HAS_CHANGED = "ControlPlaneAccessVirtualIpv4AddressesHasChanged"
+    """A reinstall is required as the packet core is running with out-of-date control plane access
+    #: network virtual IP address."""
+    USER_PLANE_ACCESS_VIRTUAL_IPV4_ADDRESSES_HAS_CHANGED = "UserPlaneAccessVirtualIpv4AddressesHasChanged"
+    """A reinstall is required as the packet core is running with out-of-date user plane access
+    #: network virtual IP address."""
 
 
 class InstallationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):

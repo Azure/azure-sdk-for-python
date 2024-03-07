@@ -23,10 +23,11 @@ class JobRouterAdministrationClient(
 ):  # pylint: disable=client-accepts-api-version-keyword
     """JobRouterAdministrationClient.
 
-    :param endpoint: Required.
+    :param endpoint: Uri of your Communication resource. Required.
     :type endpoint: str
-    :keyword api_version: The API version to use for this operation. Default value is "2023-11-01".
-     Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Default value is
+     "2024-01-18-preview". Note that overriding this default value may result in unsupported
+     behavior.
     :paramtype api_version: str
     """
 
@@ -100,10 +101,11 @@ class JobRouterAdministrationClient(
 class JobRouterClient(JobRouterClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
     """JobRouterClient.
 
-    :param endpoint: Required.
+    :param endpoint: Uri of your Communication resource. Required.
     :type endpoint: str
-    :keyword api_version: The API version to use for this operation. Default value is "2023-11-01".
-     Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Default value is
+     "2024-01-18-preview". Note that overriding this default value may result in unsupported
+     behavior.
     :paramtype api_version: str
     """
 

@@ -5,7 +5,7 @@
 # pylint: disable=too-many-instance-attributes
 
 from abc import ABC
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     AutoNCrossValidations,
@@ -71,8 +71,8 @@ class AutoMLTabular(AutoMLVertical, ABC):
         task_type: str,
         featurization: Optional[TabularFeaturizationSettings] = None,
         limits: Optional[TabularLimitSettings] = None,
-        training: Optional[TrainingSettings] = None,
-        **kwargs,
+        training: Optional[Any] = None,
+        **kwargs: Any,
     ) -> None:
         """Initialize an AutoML job entity for tabular data.
 
@@ -141,7 +141,7 @@ class AutoMLTabular(AutoMLVertical, ABC):
         return self._log_verbosity
 
     @log_verbosity.setter
-    def log_verbosity(self, value: Union[str, LogVerbosity]):
+    def log_verbosity(self, value: Union[str, LogVerbosity]) -> None:
         """Set the log verbosity for the AutoML job.
 
         :param value: str or LogVerbosity
@@ -150,7 +150,7 @@ class AutoMLTabular(AutoMLVertical, ABC):
         self._log_verbosity = None if value is None else LogVerbosity[camel_to_snake(value).upper()]
 
     @property
-    def limits(self) -> TabularLimitSettings:
+    def limits(self) -> Optional[TabularLimitSettings]:
         """Get the tabular limits for the AutoML job.
 
         :return: Tabular limits for the AutoML job
@@ -180,7 +180,7 @@ class AutoMLTabular(AutoMLVertical, ABC):
             self.set_limits(**value)
 
     @property
-    def training(self) -> TrainingSettings:
+    def training(self) -> Any:
         """Get the training settings for the AutoML job.
 
         :return: Training settings for the AutoML job.
@@ -210,7 +210,7 @@ class AutoMLTabular(AutoMLVertical, ABC):
             self.set_training(**value)
 
     @property
-    def featurization(self) -> TabularFeaturizationSettings:
+    def featurization(self) -> Optional[TabularFeaturizationSettings]:
         """Get the tabular featurization settings for the AutoML job.
 
         :return: Tabular featurization settings for the AutoML job
@@ -276,18 +276,18 @@ class AutoMLTabular(AutoMLVertical, ABC):
         :keyword max_concurrent_trials: This is the maximum number of iterations that would be executed in parallel.
             The default value is 1.
 
-            * AmlCompute clusters support one iteration running per node.
-            For multiple AutoML experiment parent runs executed in parallel on a single AmlCompute cluster, the
-            sum of the ``max_concurrent_trials`` values for all experiments should be less
-            than or equal to the maximum number of nodes. Otherwise, runs will be queued until nodes are available.
+            * AmlCompute clusters support one iteration running per node. For multiple AutoML experiment parent runs
+                executed in parallel on a single AmlCompute cluster, the sum of the ``max_concurrent_trials`` values
+                for all experiments should be less than or equal to the maximum number of nodes. Otherwise, runs
+                will be queued until nodes are available.
 
             * DSVM supports multiple iterations per node. ``max_concurrent_trials`` should
-            be less than or equal to the number of cores on the DSVM. For multiple experiments
-            run in parallel on a single DSVM, the sum of the ``max_concurrent_trials`` values for all
-            experiments should be less than or equal to the maximum number of nodes.
+                be less than or equal to the number of cores on the DSVM. For multiple experiments
+                run in parallel on a single DSVM, the sum of the ``max_concurrent_trials`` values for all
+                experiments should be less than or equal to the maximum number of nodes.
 
             * Databricks - ``max_concurrent_trials`` should be less than or equal to the number of
-            worker nodes on Databricks.
+                worker nodes on Databricks.
 
             ``max_concurrent_trials`` does not apply to local runs. Formerly, this parameter
             was named ``concurrent_iterations``.
@@ -300,6 +300,7 @@ class AutoMLTabular(AutoMLVertical, ABC):
             * Equal to -1, which means to use all the possible cores per iteration per child-run.
 
             * Equal to 1, the default.
+
         :paramtype max_cores_per_trial: typing.Optional[int]
         :keyword max_nodes: [Experimental] The maximum number of nodes to use for distributed training.
 
@@ -407,38 +408,40 @@ class AutoMLTabular(AutoMLVertical, ABC):
         """
         # get training object by calling training getter of respective tabular task
         self._training = self.training
+        if self._training is not None:
+            self._training.enable_onnx_compatible_models = (
+                enable_onnx_compatible_models
+                if enable_onnx_compatible_models is not None
+                else self._training.enable_onnx_compatible_models
+            )
+            self._training.enable_dnn_training = (
+                enable_dnn_training if enable_dnn_training is not None else self._training.enable_dnn_training
+            )
+            self._training.enable_model_explainability = (
+                enable_model_explainability
+                if enable_model_explainability is not None
+                else self._training.enable_model_explainability
+            )
+            self._training.enable_stack_ensemble = (
+                enable_stack_ensemble if enable_stack_ensemble is not None else self._training.enable_stack_ensemble
+            )
+            self._training.enable_vote_ensemble = (
+                enable_vote_ensemble if enable_vote_ensemble is not None else self._training.enable_vote_ensemble
+            )
+            self._training.stack_ensemble_settings = (
+                stack_ensemble_settings
+                if stack_ensemble_settings is not None
+                else self._training.stack_ensemble_settings
+            )
+            self._training.ensemble_model_download_timeout = (
+                ensemble_model_download_timeout
+                if ensemble_model_download_timeout is not None
+                else self._training.ensemble_model_download_timeout
+            )
 
-        self._training.enable_onnx_compatible_models = (
-            enable_onnx_compatible_models
-            if enable_onnx_compatible_models is not None
-            else self._training.enable_onnx_compatible_models
-        )
-        self._training.enable_dnn_training = (
-            enable_dnn_training if enable_dnn_training is not None else self._training.enable_dnn_training
-        )
-        self._training.enable_model_explainability = (
-            enable_model_explainability
-            if enable_model_explainability is not None
-            else self._training.enable_model_explainability
-        )
-        self._training.enable_stack_ensemble = (
-            enable_stack_ensemble if enable_stack_ensemble is not None else self._training.enable_stack_ensemble
-        )
-        self._training.enable_vote_ensemble = (
-            enable_vote_ensemble if enable_vote_ensemble is not None else self._training.enable_vote_ensemble
-        )
-        self._training.stack_ensemble_settings = (
-            stack_ensemble_settings if stack_ensemble_settings is not None else self._training.stack_ensemble_settings
-        )
-        self._training.ensemble_model_download_timeout = (
-            ensemble_model_download_timeout
-            if ensemble_model_download_timeout is not None
-            else self._training.ensemble_model_download_timeout
-        )
-
-        self._training.allowed_training_algorithms = allowed_training_algorithms
-        self._training.blocked_training_algorithms = blocked_training_algorithms
-        self._training.training_mode = training_mode if training_mode is not None else self._training.training_mode
+            self._training.allowed_training_algorithms = allowed_training_algorithms
+            self._training.blocked_training_algorithms = blocked_training_algorithms
+            self._training.training_mode = training_mode if training_mode is not None else self._training.training_mode
 
     def set_featurization(
         self,
@@ -538,7 +541,7 @@ class AutoMLTabular(AutoMLVertical, ABC):
         self.test_data = test_data if test_data is not None else self.test_data
         self.test_data_size = test_data_size if test_data_size is not None else self.test_data_size
 
-    def _validation_data_to_rest(self, rest_obj):
+    def _validation_data_to_rest(self, rest_obj: "AutoMLTabular") -> None:
         """Validation data serialization.
 
         :param rest_obj: Serialized object
@@ -553,7 +556,7 @@ class AutoMLTabular(AutoMLVertical, ABC):
             elif isinstance(n_cross_val, str):
                 rest_obj.n_cross_validations = AutoNCrossValidations()
 
-    def _validation_data_from_rest(self):
+    def _validation_data_from_rest(self) -> None:
         """Validation data deserialization."""
         if self.n_cross_validations:
             n_cross_val = self.n_cross_validations
@@ -564,7 +567,7 @@ class AutoMLTabular(AutoMLVertical, ABC):
             elif isinstance(n_cross_val, AutoNCrossValidations):
                 self.n_cross_validations = AutoMLConstants.AUTO
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         """Return True if both instances have the same values.
 
         This method check instances equality and returns True if both of
@@ -593,7 +596,7 @@ class AutoMLTabular(AutoMLVertical, ABC):
             and self._training == other._training
         )
 
-    def __ne__(self, other):
+    def __ne__(self, other: object) -> bool:
         """Check inequality between two AutoMLTabular objects.
 
         :param other: Any object

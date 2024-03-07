@@ -1,0 +1,8 @@
+include *.md
+include LICENSE
+include azure/ai/vision/imageanalysis/py.typed
+recursive-include tests *.py *.md sample.jpg
+recursive-include samples *.py *.md sample.jpg run_all_samples.cmd run_all_samples.ps1
+include azure/__init__.py
+include azure/ai/__init__.py
+include azure/ai/vision/__init__.py

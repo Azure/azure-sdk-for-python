@@ -1,6 +1,18 @@
 # Release History
+## 1.1.0b1 (Unreleased)
 
-## 1.0.0 (Unreleased)
+This is the beta release of Azure Communication Job Router Python SDK. For more information, please see the [README][read_me].
+
+This is a Public Preview version, so breaking changes are possible in subsequent releases as we improve the product. To provide feedback, please submit an issue in our [Azure SDK for Python GitHub repo][issues].
+
+### Features Added
+- `JobRouterClient`
+  - `upsert_worker`
+    - keyword argument `max_concurrent_offers: Optional[int]` added.
+- `RouterWorker`
+  - Add `max_concurrent_offers`
+
+## 1.0.0 (2023-11-01)
 
 ### Features Added
 - `JobRouterAdministrationClient`
@@ -27,11 +39,15 @@
   - Create and update methods have been removed for `RouterWorker`. Use `upsert_worker` instead.
   - `list_jobs` returns `(Async)Iterable[RouterJob]` instead of `(Async)Iterable[RouterJobItem]`
   - `list_workers` returns `(Async)Iterable[RouterWorker]` instead of `(Async)Iterable[RouterWorkerItem]`
-  - `decline_job_offer` - keyword argument `retry_offer_at: Optional[datetime]` removed from method. Use `decline_job_offer_options: Optional[Union[DeclineJobOfferOptions, JSON, IO]]` instead.
-  - `close_job` - keyword arguments `close_at: Optional[datetime]`, `disposition_code: Optional[str]`, `note: Optional[str]` removed from method. Use `close_job_options: Union[CloseJobOptions, JSON, IO]` instead.
-  - `cancel_job` - keyword arguments `disposition_code: Optional[str]`, `note: Optional[str]` removed from method. Use `cancel_job_options: Optional[Union[CancelJobOptions, JSON, IO]]` instead.
-  - `complete_job` - keyword argument `note: Optional[str]` removed from method. Use `complete_job_options: Union[CompleteJobOptions, JSON, IO]` instead.
-  - `unassign_job` - keyword argument `suspend_matching: Optional[bool]` removed from method. Use `unassign_job_options: Optional[Union[UnassignJobOptions, JSON, IO]]` instead.
+  - `decline_job_offer` - keyword argument `retry_offer_at: Optional[datetime]` removed from method. Use `options: Optional[Union[DeclineJobOfferOptions, JSON, IO]]` instead.
+  - `close_job`
+    - keyword arguments `close_at: Optional[datetime]`, `disposition_code: Optional[str]`, `note: Optional[str]` removed from method. Use `options: Optional[Union[CloseJobOptions, JSON, IO]]` instead.
+    - `assignment_id: str` added as positional argument.
+  - `cancel_job` - keyword arguments `disposition_code: Optional[str]`, `note: Optional[str]` removed from method. Use `options: Optional[Union[CancelJobOptions, JSON, IO]]` instead.
+  - `complete_job` 
+    - keyword argument `note: Optional[str]` removed from method. Use `options: Optional[Union[CompleteJobOptions, JSON, IO]]` instead.
+    - `assignment_id: str` added as positional argument.
+  - `unassign_job` - keyword argument `suspend_matching: Optional[bool]` removed from method. Use `options: Optional[Union[UnassignJobOptions, JSON, IO]]` instead.
 - `RouterJob`
   - Property `notes` - Changed from `Dict[str, ~datetime.datetime]` to `List[RouterJobNote]`
 - `ClassificationPolicy`
@@ -47,6 +63,31 @@
   - Property changed `queue_assignments: Dict[str, RouterQueueAssignment]` -> `queues: List[str]`
   - Rename `total_capacity` -> `capacity`
   - Property changed `channel_configurations: Dict[str, ChannelConfiguration]` -> `channels: List[RouterChannel]`
+- `CloseJobOptions`
+  - Removed property `assignment_id`
+- `CompleteJobOptions`
+  - Removed property `assignment_id`
+- `JobMatchingMode`
+  - Property `kind` - Changed from `str` to `JobMatchingModeKind`
+  - Affected derived classes: `QueueAndMatchMode`, `ScheduleAndSuspendMode`, `SuspendMode`
+- `RouterRule`
+  - Property `kind` - Changed from `str` to `RouterRuleKind`
+  - Affected derived classes: `DirectMapRouterRule`, `ExpressionRouterRule`, `FunctionRouterRule`, `StaticRouterRule`, `WebhookRouterRule`
+- `DistributionMode`
+  - Property `kind` - Changed from `str` to `DistributionModeKind`
+  - Affected derived classes: `RoundRobinMode`, `LongestIdleMode`, `BestWorkerMode`
+- `ExceptionTrigger`
+  - Property `kind` - Changed from `str` to `ExceptionTriggerKind`
+  - Affected derived classes: `QueueLengthExceptionTrigger`, `WaitTimeExceptionTrigger`
+- `ExceptionAction`
+  - Property `kind` - Changed from `str` to `ExceptionActionKind`
+  - Affected derived classes: `CancelExceptionAction`, `ManualReclassifyExceptionAction`, `ReclassifyExceptionAction`
+- `QueueSelectorAttachment`
+  - Property `kind` - Changed from `str` to `QueueSelectorAttachmentKind`
+  - Affected derived classes: `ConditionalQueueSelectorAttachment`, `PassThroughQueueSelectorAttachment`, `RuleEngineQueueSelectorAttachment`, `StaticQueueSelectorAttachment`, `WeightedAllocationQueueSelectorAttachment`
+- `WorkerSelectorAttachment`
+  - Property `kind` - Changed from `str` to `WorkerSelectorAttachmentKind`
+  - Affected derived classes: `ConditionalWorkerSelectorAttachment`, `PassThroughWorkerSelectorAttachment`, `RuleEngineWorkerSelectorAttachment`, `StaticWorkerSelectorAttachment`, `WeightedAllocationWorkerSelectorAttachment`
 
 #### Renames
 - `ChannelConfiguration` -> `RouterChannel`
@@ -60,8 +101,6 @@
 - `RouterWorkerItem`
 - `RouterJobItem`
 - `RouterQueueAssignment`
-
-### Bugs Fixed
 
 ### Other Changes
 - `ClassificationPolicy`
@@ -79,7 +118,7 @@
 - `ExceptionRule`
   - Add `id`
 - `ExceptionAction` and all derived classes `CancelExceptionAction`, `ManualReclassifyExceptionAction`, `ReclassifyExceptionAction`
-  - Add `id`. Property is read-only. If not provided, it will be generated by the service.
+  - Add `id`. If not provided, it will be generated by the service.
 - `RouterChannel`
   - Add `channel_id`
 

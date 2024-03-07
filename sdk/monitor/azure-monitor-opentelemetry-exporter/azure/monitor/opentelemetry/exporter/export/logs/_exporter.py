@@ -14,6 +14,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _MESSAGE_ENVELOPE_NAME,
 )
 from azure.monitor.opentelemetry.exporter._generated.models import (
+    ContextTagKeys,
     MessageData,
     MonitorBase,
     TelemetryEventData,
@@ -25,6 +26,15 @@ from azure.monitor.opentelemetry.exporter.export._base import (
     BaseExporter,
     ExportResult,
 )
+from azure.monitor.opentelemetry.exporter._constants import (
+    _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE,
+)
+from azure.monitor.opentelemetry.exporter.statsbeat._state import (
+    get_statsbeat_shutdown,
+    get_statsbeat_custom_events_feature_set,
+    is_statsbeat_enabled,
+    set_statsbeat_custom_events_feature_set,
+)
 
 _logger = logging.getLogger(__name__)
 
@@ -33,7 +43,6 @@ _DEFAULT_TRACE_ID = 0
 
 __all__ = ["AzureMonitorLogExporter"]
 
-_APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE = "APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE"
 
 class AzureMonitorLogExporter(BaseExporter, LogExporter):
     """Azure Monitor Log exporter for OpenTelemetry."""
@@ -76,16 +85,18 @@ class AzureMonitorLogExporter(BaseExporter, LogExporter):
         cls, conn_str: str, **kwargs: Any
     ) -> "AzureMonitorLogExporter":
         """
-        Create an AzureMonitorLogExporter from a connection string.
+        Create an AzureMonitorLogExporter from a connection string. This is the
+        recommended way of instantiation if a connection string is passed in
+        explicitly. If a user wants to use a connection string provided by
+        environment variable, the constructor of the exporter can be called
+        directly.
 
-        This is the recommended way of instantation if a connection string is passed in explicitly.
-        If a user wants to use a connection string provided by environment variable, the constructor
-        of the exporter can be called directly.
-
-        :param str conn_str: The connection string to be used for authentication.
-        :keyword str api_version: The service API version used. Defaults to latest.
-        :returns an instance of ~AzureMonitorLogExporter
-        :rtype ~azure.monitor.opentelemetry.exporter.AzureMonitorLogExporter
+        :param str conn_str: The connection string to be used for
+            authentication.
+        :keyword str api_version: The service API version used. Defaults to
+            latest.
+        :return: an instance of ~AzureMonitorLogExporter
+        :rtype: ~azure.monitor.opentelemetry.exporter.AzureMonitorLogExporter
         """
         return cls(connection_string=conn_str, **kwargs)
 
@@ -103,10 +114,10 @@ def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
     time_stamp = log_record.timestamp if log_record.timestamp is not None else log_record.observed_timestamp
     envelope = _utils._create_telemetry_item(time_stamp)
     envelope.tags.update(_utils._populate_part_a_fields(log_record.resource)) # type: ignore
-    envelope.tags["ai.operation.id"] = "{:032x}".format( # type: ignore
+    envelope.tags[ContextTagKeys.AI_OPERATION_ID] = "{:032x}".format( # type: ignore
         log_record.trace_id or _DEFAULT_TRACE_ID
     )
-    envelope.tags["ai.operation.parentId"] = "{:016x}".format( # type: ignore
+    envelope.tags[ContextTagKeys.AI_OPERATION_PARENT_ID] = "{:016x}".format( # type: ignore
         log_record.span_id or _DEFAULT_SPAN_ID
     )
     properties = _utils._filter_custom_properties(
@@ -121,11 +132,11 @@ def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
         stack_trace = log_record.attributes.get(SpanAttributes.EXCEPTION_STACKTRACE)
     severity_level = _get_severity_level(log_record.severity_number)
 
-    if not log_record.body:
-        log_record.body = "n/a"
-
     # Event telemetry
     if _log_data_is_event(log_data):
+        if not log_record.body:
+            log_record.body = "n/a"
+        _set_statsbeat_custom_events_feature()
         envelope.name = 'Microsoft.ApplicationInsights.Event'
         data = TelemetryEventData(
             name=str(log_record.body)[:32768],
@@ -138,11 +149,16 @@ def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
         has_full_stack = stack_trace is not None
         if not exc_type:
             exc_type = "Exception"
-        if not exc_message:
-            exc_message = "Exception"
+        # Log body takes priority for message
+        if log_record.body:
+            message = str(log_record.body)
+        elif exc_message:
+            message = exc_message # type: ignore
+        else:
+            message = "Exception"
         exc_details = TelemetryExceptionDetails(
-            type_name=str(exc_type)[:1024],
-            message=str(exc_message)[:32768],
+            type_name=str(exc_type)[:1024], # type: ignore
+            message=str(message)[:32768],
             has_full_stack=has_full_stack,
             stack=str(stack_trace)[:32768],
         )
@@ -154,6 +170,8 @@ def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
         # pylint: disable=line-too-long
         envelope.data = MonitorBase(base_data=data, base_type="ExceptionData")
     else:  # Message telemetry
+        if not log_record.body:
+            log_record.body = "n/a"
         envelope.name = _MESSAGE_ENVELOPE_NAME
         # pylint: disable=line-too-long
         # Severity number: https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/logs/data-model.md#field-severitynumber
@@ -195,3 +213,7 @@ _IGNORED_ATTRS = frozenset(
         _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE,
     )
 )
+
+def _set_statsbeat_custom_events_feature():
+    if is_statsbeat_enabled() and not get_statsbeat_shutdown() and not get_statsbeat_custom_events_feature_set():
+        set_statsbeat_custom_events_feature_set()

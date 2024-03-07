@@ -110,6 +110,7 @@ from ._feature_set.feature_set_backfill_metadata import FeatureSetBackfillMetada
 from ._feature_set.feature_set_backfill_request import FeatureSetBackfillRequest
 from ._feature_set.feature_set_materialization_metadata import FeatureSetMaterializationMetadata
 from ._feature_set.feature_set_specification import FeatureSetSpecification
+from ._feature_set.feature_window import FeatureWindow
 from ._feature_set.materialization_compute_resource import MaterializationComputeResource
 from ._feature_set.materialization_settings import MaterializationSettings
 from ._feature_set.materialization_type import MaterializationType
@@ -164,6 +165,7 @@ from ._monitoring.signals import (
     FeatureAttributionDriftSignal,
     GenerationSafetyQualitySignal,
     LlmData,
+    ModelPerformanceSignal,
     MonitorFeatureFilter,
     PredictionDriftSignal,
     ProductionData,
@@ -179,6 +181,9 @@ from ._monitoring.thresholds import (
     DataQualityMetricThreshold,
     FeatureAttributionDriftMetricThreshold,
     GenerationSafetyQualityMonitoringMetricThreshold,
+    ModelPerformanceClassificationThresholds,
+    ModelPerformanceMetricThreshold,
+    ModelPerformanceRegressionThresholds,
     NumericalDriftMetrics,
     PredictionDriftMetricThreshold,
 )
@@ -190,16 +195,17 @@ from ._registry.registry_support_classes import (
     SystemCreatedStorageAccount,
 )
 from ._resource import Resource
-from ._schedule.schedule import JobSchedule, Schedule
+from ._schedule.schedule import JobSchedule, Schedule, ScheduleTriggerResult
 from ._schedule.trigger import CronTrigger, RecurrencePattern, RecurrenceTrigger
 from ._system_data import SystemData
 from ._validation import ValidationResult
 from ._workspace.compute_runtime import ComputeRuntime
 from ._workspace.connections.workspace_connection import WorkspaceConnection
 from ._workspace.connections.workspace_connection_subtypes import (
-    AzureOpenAIWorkspaceConnection,
     AzureAISearchWorkspaceConnection,
     AzureAIServiceWorkspaceConnection,
+    AzureBlobStoreWorkspaceConnection,
+    AzureOpenAIWorkspaceConnection,
 )
 from ._workspace.customer_managed_key import CustomerManagedKey
 from ._workspace.diagnose import (
@@ -280,6 +286,7 @@ __all__ = [
     "WorkspaceKeys",
     "WorkspaceConnection",
     "AzureOpenAIWorkspaceConnection",
+    "AzureBlobStoreWorkspaceConnection",
     "AzureAISearchWorkspaceConnection",
     "AzureAIServiceWorkspaceConnection",
     "DiagnoseRequestProperties",
@@ -342,6 +349,7 @@ __all__ = [
     "JobSchedule",
     "ImportDataSchedule",
     "Schedule",
+    "ScheduleTriggerResult",
     "ComputePowerAction",
     "ComputeSchedules",
     "ComputeStartStopSchedule",
@@ -378,6 +386,7 @@ __all__ = [
     "DataColumnType",
     "FeatureSetSpecification",
     "MaterializationComputeResource",
+    "FeatureWindow",
     "MaterializationSettings",
     "MaterializationType",
     "FeatureStore",
@@ -432,6 +441,7 @@ __all__ = [
     "FeatureAttributionDriftSignal",
     "CustomMonitoringSignal",
     "GenerationSafetyQualitySignal",
+    "ModelPerformanceSignal",
     "MonitorFeatureFilter",
     "DataSegment",
     "FADProductionData",
@@ -453,6 +463,9 @@ __all__ = [
     "NumericalDriftMetrics",
     "DataQualityMetricsNumerical",
     "DataQualityMetricsCategorical",
+    "ModelPerformanceMetricThreshold",
+    "ModelPerformanceClassificationThresholds",
+    "ModelPerformanceRegressionThresholds",
     "DataCollector",
     "IntellectualProperty",
     "DeploymentCollection",

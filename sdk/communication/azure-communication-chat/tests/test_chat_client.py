@@ -8,8 +8,7 @@ import time
 
 from azure.core.exceptions import HttpResponseError
 from azure.core.credentials import AccessToken
-from datetime import datetime
-from azure.core.serialization import TZ_UTC
+from datetime import datetime, timezone
 from azure.communication.chat import (
     ChatClient,
     ChatParticipant
@@ -32,7 +31,7 @@ class TestChatClient(unittest.TestCase):
     @patch('azure.communication.identity._shared.user_credential.CommunicationTokenCredential')
     def setUpClass(cls, credential):
         credential.get_token = Mock(return_value=AccessToken(
-            "some_token", _convert_datetime_to_utc_int(datetime.now().replace(tzinfo=TZ_UTC))
+            "some_token", _convert_datetime_to_utc_int(datetime.now().replace(tzinfo=timezone.utc))
         ))
         TestChatClient.credential = credential
 
@@ -119,6 +118,48 @@ class TestChatClient(unittest.TestCase):
         )]
 
         self.assertRaises(HttpResponseError, chat_client.create_chat_thread, topic=topic, thread_participants=thread_participants)
+    
+    def test_create_chat_thread_with_invalid_participant_raises_error(self):
+        thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
+        def mock_send(*_, **__):
+            return mock_response(status_code=201, json_payload={
+                "chatThread": {
+                    "id": thread_id,
+                    "topic": "Lunch",
+                    "createdOn": "2020-06-06T05:55:41.6460000Z",
+                    "createdByCommunicationIdentifier": {
+                        "rawId": "8:acs:8540c0de-899f-5cce-acb5-3ec493af3800_0e59221d-0c1d-46ae-9544-c963ce56c10a",
+                        "communicationUser": {
+                        "id": "8:acs:8540c0de-899f-5cce-acb5-3ec493af3800_0e59221d-0c1d-46ae-9544-c963ce56c10a"
+                        }
+                    }
+                },
+                "invalidParticipants": [
+                    {
+                        "target": "8:acs:8540c0de-899f-5cce-acb5-3ec493af3800_0e59221d-0c1d-46ae-9544-c963ce56c10c",
+                        "code": "403",
+                        "message": "Permissions check failed"
+                    },
+                    {
+                        "target": "8:acs:8540c0de-899f-5cce-acb5-3ec493af3800_0e59221d-0c1d-46ae-9544-c963ce56c10d",
+                        "code": "404",
+                        "message": "Not found"
+                    }
+                ]
+            })
+        chat_client = ChatClient("https://endpoint", TestChatClient.credential, transport=Mock(send=mock_send))
+
+        topic="test topic",
+        user = CommunicationUserIdentifier("57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041")
+        thread_participants=[ChatParticipant(
+            identifier=user,
+            display_name='name',
+            share_history_time=datetime.utcnow()
+        )]
+        
+        create_chat_thread_result = chat_client.create_chat_thread(topic, thread_participants=thread_participants)
+        assert create_chat_thread_result.errors is not None
+        assert len(create_chat_thread_result.errors) is 2
 
     def test_delete_chat_thread(self):
         thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"

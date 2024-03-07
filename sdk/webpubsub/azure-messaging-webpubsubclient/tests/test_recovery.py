@@ -22,7 +22,7 @@ class TestWebpubsubClientRecovery(WebpubsubClientTest):
             time.sleep(0.001)  # wait for connection_id to be updated
             conn_id0 = client._connection_id
             group_name = name
-            client.on("group-message", on_group_message)
+            client.subscribe("group-message", on_group_message)
             client.join_group(group_name)
             client._ws.sock.close(1001)  # close connection to trigger recovery
             client.send_to_group(group_name, name, "text")

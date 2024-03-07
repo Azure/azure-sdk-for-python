@@ -70,18 +70,18 @@ async def test_incomplete_configuration():
 
 
 @pytest.mark.parametrize(
-    "credential_name,environment_variables",
+    "credential_name,envvars",
     (
         ("ClientSecretCredential", EnvironmentVariables.CLIENT_SECRET_VARS),
         ("CertificateCredential", EnvironmentVariables.CERT_VARS),
     ),
 )
-def test_passes_authority_argument(credential_name, environment_variables):
+def test_passes_authority_argument(credential_name, envvars):
     """the credential pass the 'authority' keyword argument to its inner credential"""
 
     authority = "authority"
 
-    with mock.patch.dict(ENVIRON, {variable: "foo" for variable in environment_variables}, clear=True):
+    with mock.patch.dict(ENVIRON, {variable: "foo" for variable in envvars}, clear=True):
         with mock.patch(EnvironmentCredential.__module__ + "." + credential_name) as mock_credential:
             EnvironmentCredential(authority=authority)
 

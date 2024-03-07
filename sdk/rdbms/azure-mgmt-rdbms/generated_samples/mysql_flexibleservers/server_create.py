@@ -38,7 +38,7 @@ def main():
                 "administratorLogin": "cloudsa",
                 "administratorLoginPassword": "your_password",
                 "availabilityZone": "1",
-                "backup": {"backupRetentionDays": 7, "geoRedundantBackup": "Disabled"},
+                "backup": {"backupIntervalHours": 24, "backupRetentionDays": 7, "geoRedundantBackup": "Disabled"},
                 "createMode": "Default",
                 "highAvailability": {"mode": "ZoneRedundant", "standbyAvailabilityZone": "3"},
                 "storage": {"autoGrow": "Disabled", "iops": 600, "storageSizeGB": 100},
@@ -51,6 +51,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/mysql/resource-manager/Microsoft.DBforMySQL/FlexibleServers/preview/2023-06-01-preview/examples/ServerCreate.json
+# x-ms-original-file: specification/mysql/resource-manager/Microsoft.DBforMySQL/FlexibleServers/preview/2023-12-01-preview/examples/ServerCreate.json
 if __name__ == "__main__":
     main()

@@ -3,8 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from azure.appconfiguration.provider import load, SentinelKey
-from azure.appconfiguration import (
+from azure.appconfiguration.provider import load, WatchKey
+from azure.appconfiguration import (  # type:ignore
     AzureAppConfigurationClient,
     ConfigurationSetting,
 )
@@ -30,7 +30,7 @@ def my_callback_on_fail(error):
 # Connecting to Azure App Configuration using connection string, and refreshing when the configuration setting message changes
 config = load(
     connection_string=connection_string,
-    refresh_on=[SentinelKey("message")],
+    refresh_on=[WatchKey("message")],
     refresh_interval=1,
     on_refresh_error=my_callback_on_fail,
     **kwargs,

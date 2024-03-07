@@ -1,6 +1,18 @@
 # Release History
 
-## 1.0.0 (Unreleased)
+## 1.1.0 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+- Python 3.7 is no longer supported. Please use Python version 3.8 or later.
+
+## 1.0.0 (2023-11-07)
 
 ### Features Added
 
@@ -9,10 +21,6 @@
 ### Breaking Changes
 
 - Removed `UsernamePasswordBrokerCredential`
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 1.0.0b1 (2023-10-12)
 

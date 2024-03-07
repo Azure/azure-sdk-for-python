@@ -21,9 +21,7 @@ import asyncio
 
 
 class JobQueueSamplesAsync(object):
-    endpoint = os.environ.get("AZURE_COMMUNICATION_SERVICE_ENDPOINT", None)
-    if not endpoint:
-        raise ValueError("Set AZURE_COMMUNICATION_SERVICE_ENDPOINT env before run this sample.")
+    endpoint = os.environ["AZURE_COMMUNICATION_SERVICE_ENDPOINT"]
 
     _job_queue_id = "sample_q_policy"
     _distribution_policy_id = "sample_dp_policy"
@@ -168,7 +166,7 @@ class JobQueueSamplesAsync(object):
 
         async with router_admin_client:
             await router_admin_client.delete_queue(job_queue_id)
-        # [END delete_queue_async]
+            # [END delete_queue_async]
             await router_admin_client.delete_distribution_policy(self._distribution_policy_id)
 
 

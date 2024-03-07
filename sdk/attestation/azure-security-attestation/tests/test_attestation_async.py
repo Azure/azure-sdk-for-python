@@ -9,7 +9,6 @@
 from typing import Any, Dict
 import pytest
 
-from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
 from devtools_testutils.azure_testcase import _is_autorest_v3
 from devtools_testutils import AzureRecordedTestCase
 from devtools_testutils.aio import recorded_by_proxy_async
