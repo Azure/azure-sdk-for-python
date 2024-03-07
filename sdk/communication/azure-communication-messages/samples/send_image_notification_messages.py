@@ -39,7 +39,7 @@ class SendWhatsAppMessageSample(object):
 
         messaging_client = NotificationMessagesClient.from_connection_string(self.connection_string)
 
-        image_options = ImageNotificationContent (
+        image_options = ImageNotificationContent(
             channel_registration_id=self.channel_id,
             to=[self.phone_number], 
             content="Hello World via Notification Messaging SDK.",
