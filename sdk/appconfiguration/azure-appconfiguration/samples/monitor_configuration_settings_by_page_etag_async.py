@@ -1,18 +1,28 @@
+# coding: utf-8
+
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
+
+import asyncio
 import os
-from azure.appconfiguration import AzureAppConfigurationClient, ConfigurationSetting
+from azure.appconfiguration import ConfigurationSetting
+from azure.appconfiguration.aio import AzureAppConfigurationClient
 from azure.core.rest import HttpRequest
 from dotenv import find_dotenv, load_dotenv
 
 
-def main():
+async def main():
     load_dotenv(find_dotenv())
     CONNECTION_STRING = os.environ["APPCONFIGURATION_CONNECTION_STRING"]
 
-    with AzureAppConfigurationClient.from_connection_string(CONNECTION_STRING) as client:
+    async with AzureAppConfigurationClient.from_connection_string(CONNECTION_STRING) as client:
 
         # prepare 400 configuration settings
         for i in range(400):
-            client.add_configuration_setting(
+            await client.add_configuration_setting(
                 ConfigurationSetting(
                     key=f"sample_key_{str(i)}",
                     label=f"sample_label_{str(i)}",
@@ -25,15 +35,13 @@ def main():
         page_etags = []
         items = client.list_configuration_settings(key_filter="sample_key_*", label_filter="sample_label_*")
         iterator = items.by_page()
-        for page in iterator:
+        async for page in iterator:
             etag = iterator.page_etag
             page_etags.append(etag)
             print(f"ETag: {etag}")
-            
         
         # monitor page updates
         print("**********************monitor page before updates*****************************")
-        
         continuation_token = None
         index = 0
         request = HttpRequest(
@@ -41,7 +49,7 @@ def main():
             url="/kv?key=sample_key_%2A&label=sample_label_%2A&api-version=2023-10-01",
             headers={"If-None-Match": page_etags[index], "Accept": "application/vnd.microsoft.appconfig.kvset+json, application/problem+json"}
         )
-        first_page_response = client.send_request(request)
+        first_page_response = await client.send_request(request)
         if first_page_response.status_code == 304:
             print("No change found.")
         if first_page_response.status_code == 200:
@@ -60,7 +68,7 @@ def main():
                 headers={"If-None-Match": page_etags[index]}
             )
             index += 1
-            response = client.send_request(request)
+            response = await client.send_request(request)
             if response.status_code == 304:
                 print("No change found.")
             if response.status_code == 200:
@@ -73,10 +81,10 @@ def main():
         
         # add a configuration setting
         print("**********************add a configuration setting*****************************")
-        client.add_configuration_setting(
+        await client.add_configuration_setting(
             ConfigurationSetting(
                 key="sample_key_201",
-                label="sample_label_205",
+                label="sample_label_202",
             )
         )
         
@@ -84,7 +92,7 @@ def main():
         print("*****************get page etags after updates**********************************")
         items = client.list_configuration_settings(key_filter="sample_key_*", label_filter="sample_label_*")
         iterator = items.by_page()
-        for page in iterator:
+        async for page in iterator:
             etag = iterator.page_etag
             print(f"ETag: {etag}")
         
@@ -97,7 +105,7 @@ def main():
             url="/kv?key=sample_key_%2A&label=sample_label_%2A&api-version=2023-10-01",
             headers={"If-None-Match": page_etags[index], "Accept": "application/vnd.microsoft.appconfig.kvset+json, application/problem+json"}
         )
-        first_page_response = client.send_request(request)
+        first_page_response = await client.send_request(request)
         if first_page_response.status_code == 304:
             print("No change found.")
         if first_page_response.status_code == 200:
@@ -116,7 +124,7 @@ def main():
                 headers={"If-None-Match": page_etags[index]}
             )
             index += 1
-            response = client.send_request(request)
+            response = await client.send_request(request)
             if response.status_code == 304:
                 print("No change found.")
             if response.status_code == 200:
@@ -125,16 +133,15 @@ def main():
                 for item in items:
                     print(f"Key: {item['key']}, Label: {item['label']}")
             link = response.headers.get('Link', None)
-            continuation_token = link[1:link.index(">")] if link else None
+            continuation_token = link[1:link.index(">")] if link else None      
 
         # clean up
         print("*************************clean up**************************")
         count = 0
-        for item in client.list_configuration_settings(key_filter="sample_key_*", label_filter="sample_label_*"):
-            client.delete_configuration_setting(item.key, label=item.label)
+        async for item in client.list_configuration_settings(key_filter="sample_key_*", label_filter="sample_label_*"):
+            await client.delete_configuration_setting(item.key, label=item.label)
             count += 1
         print(count)
 
-
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

@@ -26,7 +26,12 @@ from ._azure_appconfiguration_error import ResourceReadOnlyError
 from ._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
 from ._generated import AzureAppConfiguration
 from ._generated.models import SnapshotUpdateParameters, SnapshotStatus
-from ._models import ConfigurationSetting, ConfigurationSettingsFilter, ConfigurationSnapshot, ConfigurationSettingPropertiesPaged
+from ._models import (
+    ConfigurationSetting,
+    ConfigurationSettingsFilter,
+    ConfigurationSnapshot,
+    ConfigurationSettingPropertiesPaged,
+)
 from ._utils import (
     prep_if_match,
     prep_if_none_match,
@@ -113,7 +118,7 @@ class AzureAppConfigurationClient:
         )
     
     @distributed_trace
-    def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs) -> HttpResponse:
+    def send_request(self, request: HttpRequest, **kwargs) -> HttpResponse:
         """Runs a network request using the client's existing pipeline.
 
         The request URL can be relative to the vault URL. The service API version used for the request is the same as
@@ -129,7 +134,7 @@ class AzureAppConfigurationClient:
         :return: The response of your network call. Does not do error handling on your response.
         :rtype: ~azure.core.rest.HttpResponse
         """
-        return self._impl._send_request(request, stream=stream, **kwargs)
+        return self._impl._send_request(request, **kwargs)
 
     @overload
     def list_configuration_settings(
@@ -213,10 +218,8 @@ class AzureAppConfigurationClient:
                     cls=lambda objs: [ConfigurationSetting._from_generated(x) for x in objs],
                     **kwargs,
                 )
-            
             key_filter, kwargs = get_key_filter(*args, **kwargs)
             label_filter, kwargs = get_label_filter(*args, **kwargs)
-            
             command = functools.partial(self._impl.get_key_values, **kwargs)
             return ItemPaged(
                 command,
@@ -224,16 +227,8 @@ class AzureAppConfigurationClient:
                 label=label_filter,
                 accept_datetime=accept_datetime,
                 select=select,
-                cls=kwargs.pop("cls", lambda objs: [ConfigurationSetting._from_generated(x) for x in objs]),
+                cls=lambda objs: [ConfigurationSetting._from_generated(x) for x in objs],
                 page_iterator_class=ConfigurationSettingPropertiesPaged,
-            )
-            return self._impl.get_key_values(  # type: ignore
-                key=key_filter,
-                label=label_filter,
-                accept_datetime=accept_datetime,
-                select=select,
-                cls=kwargs.pop("cls", lambda objs: [ConfigurationSetting._from_generated(x) for x in objs]),
-                **kwargs,
             )
 
         except binascii.Error as exc:

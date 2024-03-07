@@ -9,6 +9,7 @@ from typing_extensions import Literal
 
 from azure.core.rest import HttpResponse
 from azure.core.paging import PageIterator
+from azure.core.async_paging import AsyncPageIterator
 from ._generated._serialization import Model
 from ._generated.models import (
     KeyValue,
@@ -556,11 +557,9 @@ class ConfigurationSettingPropertiesPaged(PageIterator):
         self._accept_datetime = kwargs.get("accept_datetime")
         self._select = kwargs.get("select")
         self._cls = kwargs.get("cls")
-        self._kwargs = kwargs
 
     
     def _get_next_cb(self, continuation_token):  # pylint: disable=inconsistent-return-statements
-        
         response = self._command(
             key=self._key,
             label=self._label,
@@ -574,14 +573,41 @@ class ConfigurationSettingPropertiesPaged(PageIterator):
 
 
     def _extract_data_cb(self, pipeline_response):
-        # convert result
-        
-        # self.etag, deserialized = pipeline_response
-        # breakpoint()
-        # if self._cls:
-        #     list_of_elem = [self._cls(e) for e in pipeline_response.items]  # type: ignore
-        # else:
-        #     list_of_elem = iter(pipeline_response.items)
-        # return pipeline_response.next_link or None, list_of_elem
-        
+        return pipeline_response.continuation_token, pipeline_response._current_page
+
+
+class ConfigurationSettingPropertiesPagedAsync(AsyncPageIterator):
+    """An iterable of ConfigurationSetting properties."""
+
+    page_etag: str
+    """The etag of current page."""
+    
+    def __init__(self, command: Callable, **kwargs: Any) -> None:
+        super(ConfigurationSettingPropertiesPagedAsync, self).__init__(
+            self._get_next_cb,
+            self._extract_data_cb,
+            continuation_token=kwargs.get("continuation_token"),
+        )
+        self._command = command
+        self._key = kwargs.get("key")
+        self._label = kwargs.get("label")
+        self._accept_datetime = kwargs.get("accept_datetime")
+        self._select = kwargs.get("select")
+        self._cls = kwargs.get("cls")
+
+    
+    async def _get_next_cb(self, continuation_token):  # pylint: disable=inconsistent-return-statements
+        response = self._command(
+            key=self._key,
+            label=self._label,
+            accept_datetime=self._accept_datetime,
+            select=self._select,
+            cls=self._cls,
+        ).by_page(continuation_token=continuation_token)
+        await anext(response)
+        self.page_etag = response._response.http_response.headers['Etag']
+        return response
+
+
+    async def _extract_data_cb(self, pipeline_response):
         return pipeline_response.continuation_token, pipeline_response._current_page
