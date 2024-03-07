@@ -14,7 +14,7 @@ from azure.mgmt.core import AsyncARMPipelineClient
 
 from .. import models as _models
 from .._serialization import Deserializer, Serializer
-from ._configuration import AzureQuantumManagementClientConfiguration
+from ._configuration import AzureQuantumMgmtClientConfiguration
 from .operations import OfferingsOperations, Operations, WorkspaceOperations, WorkspacesOperations
 
 if TYPE_CHECKING:
@@ -22,8 +22,8 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class AzureQuantumManagementClient:  # pylint: disable=client-accepts-api-version-keyword
-    """AzureQuantumManagementClient.
+class AzureQuantumMgmtClient:  # pylint: disable=client-accepts-api-version-keyword
+    """AzureQuantumMgmtClient.
 
     :ivar workspaces: WorkspacesOperations operations
     :vartype workspaces: azure.mgmt.quantum.aio.operations.WorkspacesOperations
@@ -35,11 +35,11 @@ class AzureQuantumManagementClient:  # pylint: disable=client-accepts-api-versio
     :vartype workspace: azure.mgmt.quantum.aio.operations.WorkspaceOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: The Azure subscription ID. Required.
+    :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2022-01-10-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2023-11-13-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -53,7 +53,7 @@ class AzureQuantumManagementClient:  # pylint: disable=client-accepts-api-versio
         base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
-        self._config = AzureQuantumManagementClientConfiguration(
+        self._config = AzureQuantumMgmtClientConfiguration(
             credential=credential, subscription_id=subscription_id, **kwargs
         )
         self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
@@ -92,7 +92,7 @@ class AzureQuantumManagementClient:  # pylint: disable=client-accepts-api-versio
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "AzureQuantumManagementClient":
+    async def __aenter__(self) -> "AzureQuantumMgmtClient":
         await self._client.__aenter__()
         return self
 
