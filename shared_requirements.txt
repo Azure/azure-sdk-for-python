@@ -67,3 +67,4 @@ yarl
 azure-identity
 openai
 wrapt
+dnspython
