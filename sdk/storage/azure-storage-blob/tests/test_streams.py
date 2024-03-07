@@ -339,13 +339,14 @@ class TestStructuredMessageDecodeStream:
         with pytest.raises(StructuredMessageError):
             stream.read()
 
+    @pytest.mark.parametrize("message_length", [100, 1234567])  # Correct value: 1057
     @pytest.mark.parametrize("flags", [StructuredMessageProperties.NONE, StructuredMessageProperties.CRC64])
-    def test_incorrect_content_length(self, flags):
+    def test_incorrect_message_length(self, message_length, flags):
         data = os.urandom(1024)
         message_stream, length = _build_structured_message(data, 512, flags)
 
         message_stream.seek(1, io.SEEK_SET)
-        message_stream.write(int.to_bytes(1234567, 8, 'little'))
+        message_stream.write(int.to_bytes(message_length, 8, 'little'))
         message_stream.seek(0, io.SEEK_SET)
 
         stream = StructuredMessageDecodeStream(message_stream, length)
