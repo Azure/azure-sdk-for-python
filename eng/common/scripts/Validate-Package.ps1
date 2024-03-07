@@ -95,7 +95,7 @@ function ValidateChangeLog($changeLogPath, $versionString)
     {
         $changeLogFullPath = Join-Path $RepoRoot $changeLogPath
         Write-Host "Path to change log: [$changeLogFullPath]"        
-        if ($changeLogFullPath -and Test-Path $changeLogFullPath)
+        if (Test-Path $changeLogFullPath)
         {
             $errOutput = $( $validChangeLog = & Confirm-ChangeLogEntry -ChangeLogLocation $changeLogPath -VersionString $versionString -ForRelease $true ) 2>&1
             if (!$validChangeLog) {
