@@ -5,6 +5,8 @@ Param (
   [Parameter(Mandatory=$True)]
   [string]$ArtifactPath,
   [Parameter(Mandatory=$True)]
+  [string]$RepoRoot,
+  [Parameter(Mandatory=$True)]
   [string]$APIViewUri,
   [Parameter(Mandatory=$True)]
   [string]$APIKey,
@@ -17,30 +19,6 @@ Param (
 
 Set-StrictMode -Version 3
 . (Join-Path $PSScriptRoot common.ps1)
-. ${PSScriptRoot}\Helpers\DevOps-WorkItem-Helpers.ps1
-
-if (!$Devops_pat) {
-  az account show *> $null
-  if (!$?) {
-    Write-Host 'Running az login...'
-    az login *> $null
-  }
-}
-else {
-  # Login using PAT
-  LoginToAzureDevops $Devops_pat
-}
-
-az extension show -n azure-devops *> $null
-if (!$?){
-  az extension add --name azure-devops
-} else {
-  # Force update the extension to the latest version if it was already installed
-  # this is needed to ensure we have the authentication issue fixed from earlier versions
-  az extension update -n azure-devops *> $null
-}
-
-CheckDevOpsAccess
 
 function ProcessPackage($PackageName, $ConfigFileDir)
 {
@@ -59,11 +37,13 @@ function ProcessPackage($PackageName, $ConfigFileDir)
     &$EngCommonScriptsDir/Validate-Package.ps1 `
         -PackageName $PackageName `
         -ArtifactPath $ArtifactPath `
+        -RepoRoot $RepoRoot `
         -APIViewUri $APIViewUri `
         -APIKey $APIKey `
         -BuildId $BuildId `
         -PipelineUrl $PipelineUrl `
         -ConfigFileDir $ConfigFileDir `
+        -Devops_pat $Devops_pat `
         -IgnoreFailures $IgnoreFailures
     if ($LASTEXITCODE -ne 0)
     {

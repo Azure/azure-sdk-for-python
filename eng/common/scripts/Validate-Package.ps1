@@ -5,7 +5,9 @@ param (
   [Parameter(Mandatory = $true)]  
   [string]$PackageName,
   [Parameter(Mandatory = $true)] 
-  [string]$ArtifactPath,  
+  [string]$ArtifactPath,
+  [Parameter(Mandatory=$True)]
+  [string]$RepoRoot,
   [Parameter(Mandatory=$True)]
   [string] $APIViewUri,
   [Parameter(Mandatory=$True)]
@@ -14,6 +16,7 @@ param (
   [string]$ConfigFileDir,
   [string]$BuildId,
   [string]$PipelineUrl,
+  [string]$Devops_pat = $env:DEVOPS_PAT,
   [bool]$IgnoreFailures = $false
 )
 Set-StrictMode -Version 3
@@ -21,6 +24,29 @@ Set-StrictMode -Version 3
 . (Join-Path $PSScriptRoot common.ps1)
 . ${PSScriptRoot}\Helpers\ApiView-Helpers.ps1
 . ${PSScriptRoot}\Helpers\DevOps-WorkItem-Helpers.ps1
+
+if (!$Devops_pat) {
+  az account show *> $null
+  if (!$?) {
+    Write-Host 'Running az login...'
+    az login *> $null
+  }
+}
+else {
+  # Login using PAT
+  LoginToAzureDevops $Devops_pat
+}
+
+az extension show -n azure-devops *> $null
+if (!$?){
+  az extension add --name azure-devops
+} else {
+  # Force update the extension to the latest version if it was already installed
+  # this is needed to ensure we have the authentication issue fixed from earlier versions
+  az extension update -n azure-devops *> $null
+}
+
+CheckDevOpsAccess
 
 class ValidationStatus
 {
@@ -67,7 +93,9 @@ function ValidateChangeLog($changeLogPath, $versionString)
     $validationStatus = [ValidationStatus]::new("Change Log Validation", "Success")
     try
     {
-        if ($changeLogPath)
+        $changeLogFullPath = Join-Path $RepoRoot $changeLogPath
+        Write-Host "Path to change log: [$changeLogFullPath]"        
+        if ($changeLogFullPath -and Test-Path $changeLogFullPath)
         {
             $errOutput = $( $validChangeLog = & Confirm-ChangeLogEntry -ChangeLogLocation $changeLogPath -VersionString $versionString -ForRelease $true ) 2>&1
             if (!$validChangeLog) {
@@ -96,6 +124,7 @@ function VerifyAPIReview($packageDetails, $packageName, $packageVersion, $langua
 
     try
     {
+        Write-Hosty "Checking API review status for package $packageName with version $packageVersion. language [$language]." 
         $errOutput = $( $apireviewStatus = & Check-ApiReviewStatus -PackageName $packageName -packageVersion $packageVersion -Language $language -url $APIViewUri -apiKey $APIKey) 2>&1
         Write-Host "API Review status: $apireviewStatus"
         Write-Host "APi review status check output(if any): $($errOutput)"
@@ -120,7 +149,7 @@ function VerifyAPIReview($packageDetails, $packageName, $packageVersion, $langua
     }
     catch
     {
-        Write-Warning "Failed to get APIView URL and API Key from Keyvault AzureSDKPrepRelease-KV. Please check and ensure you have access to this Keyvault as reader."
+        Write-Warning "Failed to get API review status. Error: $_"
         $packageDetails.PackageNameValidation.Status = "Failed"
         $packageDetails.PackageNameValidation.Message = $_.Exception.Message
         $packageDetails.APIReviewValidation.Status = "Failed"
