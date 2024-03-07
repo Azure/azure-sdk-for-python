@@ -35,7 +35,7 @@ class SendWhatsAppMessageSample(object):
     def send_image_send_message(self):
 
         from azure.communication.messages import NotificationMessagesClient
-        from azure.communication.messages.models import ( ImageNotificationContent )
+        from azure.communication.messages.models import ImageNotificationContent
 
         messaging_client = NotificationMessagesClient.from_connection_string(self.connection_string)
 
