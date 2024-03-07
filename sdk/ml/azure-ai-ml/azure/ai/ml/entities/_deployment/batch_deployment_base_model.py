@@ -24,7 +24,7 @@ module_logger = logging.getLogger(__name__)
 
 
 class BatchDeploymentBaseModel(Resource, RestTranslatableMixin):
-    """Endpoint Deployment base class.
+    """BatchDeployment base class.
 
     :param name: Name of the deployment resource, defaults to None
     :type name: typing.Optional[str]
@@ -34,6 +34,8 @@ class BatchDeploymentBaseModel(Resource, RestTranslatableMixin):
     :paramtype description: typing.Optional[str]
     :keyword tags: Tag dictionary. Tags can be added, removed, and updated, defaults to None
     :paramtype tags: typing.Optional[typing.Dict[str, typing.Any]]
+    :param type: Batch deployment type. Allowed values are: pipeline, model.
+    :type type: str
     """
 
     def __init__(
@@ -86,28 +88,10 @@ class BatchDeploymentBaseModel(Resource, RestTranslatableMixin):
     @abstractmethod
     def _to_dict(self) -> Dict:
         pass
-    # How do which api and rest objects do we want to except for this _from_rest function ?
 
-
-    # @classmethod
-    # def _from_rest_object(
-    #     cls, deployment_rest_object: Union[OnlineDeploymentData, BatchDeploymentData]
-    # ) -> Union[OnlineDeploymentData, BatchDeploymentData]:
-    #     from azure.ai.ml.entities._deployment.batch_deployment import BatchDeployment
-    #     from azure.ai.ml.entities._deployment.online_deployment import OnlineDeployment
-
-    #     if isinstance(deployment_rest_object, OnlineDeploymentData):
-    #         return OnlineDeployment._from_rest_object(deployment_rest_object)
-    #     if isinstance(deployment_rest_object, BatchDeploymentData):
-    #         return BatchDeployment._from_rest_object(deployment_rest_object)
-
-    #     msg = f"Unsupported deployment type {type(deployment_rest_object)}"
-    #     raise DeploymentException(
-    #         message=msg,
-    #         target=ErrorTarget.DEPLOYMENT,
-    #         no_personal_data_message=msg,
-    #         error_category=ErrorCategory.SYSTEM_ERROR,
-    #     )
+    @classmethod
+    def _from_rest_object(cls) -> Any:
+        pass
 
     def _to_rest_object(self) -> Any:
         pass

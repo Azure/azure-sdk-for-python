@@ -37,9 +37,6 @@ class ModelBatchDeploymentSchema(BatchDeploymentBaseModelSchema):
         }
     )
     resources = NestedField(JobResourceConfigurationSchema)
-    type = StringTransformedEnum(
-        allowed_values=[BatchDeploymentType.PIPELINE, BatchDeploymentType.MODEL], required=False
-    )
     id = fields.Str()
     properties = fields.Dict()
     model = UnionField(

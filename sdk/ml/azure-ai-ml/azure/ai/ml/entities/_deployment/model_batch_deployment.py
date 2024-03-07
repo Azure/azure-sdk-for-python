@@ -31,7 +31,7 @@ from .model_batch_deployment_settings import ModelBatchDeploymentSettings
 class ModelBatchDeployment(BatchDeploymentBaseModel):
     """Job Definition entity.
 
-    :param type: Job definition type. Allowed value is: pipeline
+    :param type: Batch deployment type. Allowed value is: model.
     :type type: str
     :param name: Job name
     :type name: str
@@ -70,11 +70,12 @@ class ModelBatchDeployment(BatchDeploymentBaseModel):
         **kwargs: Any,  # pylint: disable=unused-argument
     ):
         self._provisioning_state: Optional[str] = kwargs.pop("provisioning_state", None)
+        type  = kwargs.pop("type", "model")
         super().__init__(
             name=name,
             endpoint_name=endpoint_name,
             description=description,
-            type="model",
+            type= type,
             tags=tags,
             **kwargs,
         )
@@ -85,6 +86,7 @@ class ModelBatchDeployment(BatchDeploymentBaseModel):
         self.properties = properties
         self.compute = compute
         self.resources = resources
+        self.scoring_script = scoring_script
         if settings is not None:
             self.model_deployment_settings = ModelBatchDeploymentSettings(
                 mini_batch_size=settings.mini_batch_size,

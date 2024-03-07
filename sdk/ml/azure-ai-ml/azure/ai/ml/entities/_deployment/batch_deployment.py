@@ -93,9 +93,9 @@ class BatchDeployment(BatchDeploymentBaseModel):  # pylint: disable=too-many-ins
         description: Optional[str] = None,
         tags: Optional[Dict[str, Any]] = None,
         properties: Optional[Dict[str, str]] = None,
-        model: Optional[Union[str, Model]] = None,
-        code_configuration: Optional[CodeConfiguration] = None,
-        environment: Optional[Union[str, Environment]] = None,
+        model: Optional[Union[str, "Model"]] = None,
+        code_configuration: Any = None,
+        environment: Optional[Union[str, "Environment"]] = None,
         compute: Optional[str] = None,
         resources: Optional[ResourceConfiguration] = None,
         output_file_name: Optional[str] = None,
@@ -128,11 +128,13 @@ class BatchDeployment(BatchDeploymentBaseModel):  # pylint: disable=too-many-ins
         )
 
         self.model=model,
-        self.code_configuration=code_configuration,
-        self.environment=environment,
-        self.environment_variables=environment_variables,
-        self.code_path=code_path,
-        self.scoring_script=scoring_script,
+        self.code_configuration = code_configuration
+        if not self.code_configuration and (code_path or scoring_script):
+            self.code_configuration = CodeConfiguration(code=code_path, scoring_script=scoring_script)
+        self.environment=environment
+        self.environment_variables=environment_variables
+        self.code_path=code_path
+        self.scoring_script=scoring_script
         self.compute = compute
         self.resources = resources
         self.output_action = output_action
@@ -256,9 +258,6 @@ class BatchDeployment(BatchDeploymentBaseModel):  # pylint: disable=too-many-ins
     def _from_rest_object(  # pylint: disable=arguments-renamed
         cls, deployment: BatchDeploymentData
     ) -> BatchDeploymentData:
-        import debugpy
-        debugpy.connect(('localhost', 5678))
-        debugpy.breakpoint()
         modelId = deployment.properties.model.asset_id if deployment.properties.model else None
         code_configuration = (
             CodeConfiguration._from_rest_code_configuration(deployment.properties.code_configuration)

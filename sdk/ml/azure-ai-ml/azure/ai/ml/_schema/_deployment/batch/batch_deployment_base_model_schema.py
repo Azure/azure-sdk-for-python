@@ -8,7 +8,8 @@ from typing import Any
 
 from marshmallow import fields, post_load
 
-from azure.ai.ml._schema.core.fields import PathAwareSchema
+from azure.ai.ml._schema.core.fields import PathAwareSchema, StringTransformedEnum
+from azure.ai.ml.constants._deployment import BatchDeploymentType
 
 module_logger = logging.getLogger(__name__)
 
@@ -17,7 +18,9 @@ class BatchDeploymentBaseModelSchema(PathAwareSchema):
     name = fields.Str()
     endpoint_name = fields.Str()
     name = fields.Str()
-    type = fields.Str()
+    type = StringTransformedEnum(
+        allowed_values=[BatchDeploymentType.PIPELINE, BatchDeploymentType.MODEL], required=False
+    )
     tags = fields.Dict()
     description = fields.Str(metadata={"description": "Description of the endpoint deployment."})
 

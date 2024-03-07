@@ -30,7 +30,7 @@ from azure.ai.ml.entities._util import load_from_dict
 class PipelineComponentBatchDeployment(BatchDeploymentBaseModel):
     """Pipeline Component Batch Deployment entity.
 
-    :param type: Job definition type. Allowed value: "pipeline"
+    :param type: Batch deployment type. Allowed value is: "pipeline".
     :type type: Optional[str]
     :param name: Name of the deployment resource.
     :type name: Optional[str]
@@ -60,8 +60,8 @@ class PipelineComponentBatchDeployment(BatchDeploymentBaseModel):
         description: Optional[str] = None,
         **kwargs: Any,  # pylint: disable=unused-argument
     ):
-        self._type = kwargs.pop("type", None)
-        super().__init__(name=name, endpoint_name=endpoint_name, type="pipeline", tags=tags, description=description, **kwargs)
+        type  = kwargs.pop("type", "pipeline")
+        super().__init__(name=name, endpoint_name=endpoint_name, type=type, tags=tags, description=description, **kwargs)
         self.component = component
         self.settings = settings
         self.job_definition = job_definition
