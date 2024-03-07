@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -20,6 +20,7 @@ from azure.core.utils import case_insensitive_dict
 from .. import models as _models
 from .._model_base import SdkJSONEncoder, _deserialize
 from .._serialization import Serializer
+from .._validation import api_version_validation
 from .._vendor import EventGridClientMixinABC
 
 if sys.version_info >= (3, 9):
@@ -312,6 +313,7 @@ class EventGridClientOperationsMixin(
         event: _models._models.CloudEvent,
         **kwargs: Any
     ) -> _models._models.PublishResult:
+        # pylint: disable=line-too-long
         """Publish Single Cloud Event to namespace topic. In case of success, the server responds with an
         HTTP 200 status code with an empty JSON object in response. Otherwise, the server can return
         various error codes. For example, 401: which indicates authorization failure, 403: which
@@ -322,14 +324,33 @@ class EventGridClientOperationsMixin(
         :type topic_name: str
         :param event: Single Cloud Event being published. Required.
         :type event: ~azure.eventgrid.models.CloudEvent
-        :keyword content_type: content type. Default value is "application/cloudevents+json;
-         charset=utf-8".
-        :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: PublishResult. The PublishResult is compatible with MutableMapping
         :rtype: ~azure.eventgrid.models.PublishResult
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                event = {
+                    "id": "str",  # An identifier for the event. The combination of id and source
+                      must be unique for each distinct event. Required.
+                    "source": "str",  # Identifies the context in which an event happened. The
+                      combination of id and source must be unique for each distinct event. Required.
+                    "specversion": "str",  # The version of the CloudEvents specification which
+                      the event uses. Required.
+                    "type": "str",  # Type of event related to the originating occurrence.
+                      Required.
+                    "data": {},  # Optional. Event data specific to the event type.
+                    "data_base64": bytes("bytes", encoding="utf-8"),  # Optional. Event data
+                      specific to the event type, encoded as a base64 string.
+                    "datacontenttype": "str",  # Optional. Content type of data value.
+                    "dataschema": "str",  # Optional. Identifies the schema that data adheres to.
+                    "subject": "str",  # Optional. This describes the subject of the event in the
+                      context of the event producer (identified by source).
+                    "time": "2020-02-20 00:00:00"  # Optional. The time (in UTC) the event was
+                      generated, in RFC3339 format.
+                }
         """
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
@@ -344,7 +365,7 @@ class EventGridClientOperationsMixin(
             'cls', None
         )
 
-        _content = json.dumps(event, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        _content = event
 
         _request = build_event_grid_publish_cloud_event_request(
             topic_name=topic_name,
@@ -396,6 +417,7 @@ class EventGridClientOperationsMixin(
         events: List[_models._models.CloudEvent],
         **kwargs: Any
     ) -> _models._models.PublishResult:
+        # pylint: disable=line-too-long
         """Publish Batch Cloud Event to namespace topic. In case of success, the server responds with an
         HTTP 200 status code with an empty JSON object in response. Otherwise, the server can return
         various error codes. For example, 401: which indicates authorization failure, 403: which
@@ -406,14 +428,37 @@ class EventGridClientOperationsMixin(
         :type topic_name: str
         :param events: Array of Cloud Events being published. Required.
         :type events: list[~azure.eventgrid.models.CloudEvent]
-        :keyword content_type: content type. Default value is "application/cloudevents-batch+json;
-         charset=utf-8".
-        :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: PublishResult. The PublishResult is compatible with MutableMapping
         :rtype: ~azure.eventgrid.models.PublishResult
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                events = [
+                    {
+                        "id": "str",  # An identifier for the event. The combination of id
+                          and source must be unique for each distinct event. Required.
+                        "source": "str",  # Identifies the context in which an event
+                          happened. The combination of id and source must be unique for each distinct
+                          event. Required.
+                        "specversion": "str",  # The version of the CloudEvents specification
+                          which the event uses. Required.
+                        "type": "str",  # Type of event related to the originating
+                          occurrence. Required.
+                        "data": {},  # Optional. Event data specific to the event type.
+                        "data_base64": bytes("bytes", encoding="utf-8"),  # Optional. Event
+                          data specific to the event type, encoded as a base64 string.
+                        "datacontenttype": "str",  # Optional. Content type of data value.
+                        "dataschema": "str",  # Optional. Identifies the schema that data
+                          adheres to.
+                        "subject": "str",  # Optional. This describes the subject of the
+                          event in the context of the event producer (identified by source).
+                        "time": "2020-02-20 00:00:00"  # Optional. The time (in UTC) the
+                          event was generated, in RFC3339 format.
+                    }
+                ]
         """
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
@@ -428,7 +473,7 @@ class EventGridClientOperationsMixin(
             'cls', None
         )
 
-        _content = json.dumps(events, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        _content = events
 
         _request = build_event_grid_publish_cloud_events_request(
             topic_name=topic_name,
@@ -483,6 +528,7 @@ class EventGridClientOperationsMixin(
         max_wait_time: Optional[int] = None,
         **kwargs: Any
     ) -> _models._models.ReceiveResult:
+        # pylint: disable=line-too-long
         """Receive Batch of Cloud Events from the Event Subscription.
 
         :param topic_name: Topic Name. Required.
@@ -498,11 +544,52 @@ class EventGridClientOperationsMixin(
          value is 10 seconds, while maximum value is 120 seconds. If not specified, the default value is
          60 seconds. Default value is None.
         :paramtype max_wait_time: int
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: ReceiveResult. The ReceiveResult is compatible with MutableMapping
         :rtype: ~azure.eventgrid.models.ReceiveResult
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "value": [
+                        {
+                            "brokerProperties": {
+                                "deliveryCount": 0,  # The attempt count for
+                                  delivering the event. Required.
+                                "lockToken": "str"  # The token of the lock on the
+                                  event. Required.
+                            },
+                            "event": {
+                                "id": "str",  # An identifier for the event. The
+                                  combination of id and source must be unique for each distinct event.
+                                  Required.
+                                "source": "str",  # Identifies the context in which
+                                  an event happened. The combination of id and source must be unique
+                                  for each distinct event. Required.
+                                "specversion": "str",  # The version of the
+                                  CloudEvents specification which the event uses. Required.
+                                "type": "str",  # Type of event related to the
+                                  originating occurrence. Required.
+                                "data": {},  # Optional. Event data specific to the
+                                  event type.
+                                "data_base64": bytes("bytes", encoding="utf-8"),  #
+                                  Optional. Event data specific to the event type, encoded as a base64
+                                  string.
+                                "datacontenttype": "str",  # Optional. Content type
+                                  of data value.
+                                "dataschema": "str",  # Optional. Identifies the
+                                  schema that data adheres to.
+                                "subject": "str",  # Optional. This describes the
+                                  subject of the event in the context of the event producer (identified
+                                  by source).
+                                "time": "2020-02-20 00:00:00"  # Optional. The time
+                                  (in UTC) the event was generated, in RFC3339 format.
+                            }
+                        }
+                    ]
+                }
         """
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
@@ -585,11 +672,48 @@ class EventGridClientOperationsMixin(
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: AcknowledgeResult. The AcknowledgeResult is compatible with MutableMapping
         :rtype: ~azure.eventgrid.models.AcknowledgeResult
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                acknowledge_options = {
+                    "lockTokens": [
+                        "str"  # Array of lock tokens. Required.
+                    ]
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "failedLockTokens": [
+                        {
+                            "error": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required.
+                                "message": "str",  # A human-readable representation
+                                  of the error. Required.
+                                "details": [
+                                    ...
+                                ],
+                                "innererror": {
+                                    "code": "str",  # Optional. One of a
+                                      server-defined set of error codes.
+                                    "innererror": ...
+                                },
+                                "target": "str"  # Optional. The target of the error.
+                            },
+                            "lockToken": "str"  # The lock token of an entry in the
+                              request. Required.
+                        }
+                    ],
+                    "succeededLockTokens": [
+                        "str"  # Array of lock tokens for the successfully acknowledged cloud
+                          events. Required.
+                    ]
+                }
         """
 
     @overload
@@ -616,11 +740,41 @@ class EventGridClientOperationsMixin(
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: AcknowledgeResult. The AcknowledgeResult is compatible with MutableMapping
         :rtype: ~azure.eventgrid.models.AcknowledgeResult
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "failedLockTokens": [
+                        {
+                            "error": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required.
+                                "message": "str",  # A human-readable representation
+                                  of the error. Required.
+                                "details": [
+                                    ...
+                                ],
+                                "innererror": {
+                                    "code": "str",  # Optional. One of a
+                                      server-defined set of error codes.
+                                    "innererror": ...
+                                },
+                                "target": "str"  # Optional. The target of the error.
+                            },
+                            "lockToken": "str"  # The lock token of an entry in the
+                              request. Required.
+                        }
+                    ],
+                    "succeededLockTokens": [
+                        "str"  # Array of lock tokens for the successfully acknowledged cloud
+                          events. Required.
+                    ]
+                }
         """
 
     @overload
@@ -628,7 +782,7 @@ class EventGridClientOperationsMixin(
         self,
         topic_name: str,
         event_subscription_name: str,
-        acknowledge_options: IO,
+        acknowledge_options: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -643,15 +797,45 @@ class EventGridClientOperationsMixin(
         :param event_subscription_name: Event Subscription Name. Required.
         :type event_subscription_name: str
         :param acknowledge_options: AcknowledgeOptions. Required.
-        :type acknowledge_options: IO
+        :type acknowledge_options: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: AcknowledgeResult. The AcknowledgeResult is compatible with MutableMapping
         :rtype: ~azure.eventgrid.models.AcknowledgeResult
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "failedLockTokens": [
+                        {
+                            "error": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required.
+                                "message": "str",  # A human-readable representation
+                                  of the error. Required.
+                                "details": [
+                                    ...
+                                ],
+                                "innererror": {
+                                    "code": "str",  # Optional. One of a
+                                      server-defined set of error codes.
+                                    "innererror": ...
+                                },
+                                "target": "str"  # Optional. The target of the error.
+                            },
+                            "lockToken": "str"  # The lock token of an entry in the
+                              request. Required.
+                        }
+                    ],
+                    "succeededLockTokens": [
+                        "str"  # Array of lock tokens for the successfully acknowledged cloud
+                          events. Required.
+                    ]
+                }
         """
 
 
@@ -660,7 +844,7 @@ class EventGridClientOperationsMixin(
         self,
         topic_name: str,
         event_subscription_name: str,
-        acknowledge_options: Union[_models.AcknowledgeOptions, JSON, IO],
+        acknowledge_options: Union[_models.AcknowledgeOptions, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.AcknowledgeResult:
         """Acknowledge batch of Cloud Events. The server responds with an HTTP 200 status code if the
@@ -673,16 +857,50 @@ class EventGridClientOperationsMixin(
         :param event_subscription_name: Event Subscription Name. Required.
         :type event_subscription_name: str
         :param acknowledge_options: AcknowledgeOptions. Is one of the following types:
-         AcknowledgeOptions, JSON, IO Required.
-        :type acknowledge_options: ~azure.eventgrid.models.AcknowledgeOptions or JSON or IO
-        :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
-         value is None.
-        :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
+         AcknowledgeOptions, JSON, IO[bytes] Required.
+        :type acknowledge_options: ~azure.eventgrid.models.AcknowledgeOptions or JSON or IO[bytes]
         :return: AcknowledgeResult. The AcknowledgeResult is compatible with MutableMapping
         :rtype: ~azure.eventgrid.models.AcknowledgeResult
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                acknowledge_options = {
+                    "lockTokens": [
+                        "str"  # Array of lock tokens. Required.
+                    ]
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "failedLockTokens": [
+                        {
+                            "error": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required.
+                                "message": "str",  # A human-readable representation
+                                  of the error. Required.
+                                "details": [
+                                    ...
+                                ],
+                                "innererror": {
+                                    "code": "str",  # Optional. One of a
+                                      server-defined set of error codes.
+                                    "innererror": ...
+                                },
+                                "target": "str"  # Optional. The target of the error.
+                            },
+                            "lockToken": "str"  # The lock token of an entry in the
+                              request. Required.
+                        }
+                    ],
+                    "succeededLockTokens": [
+                        "str"  # Array of lock tokens for the successfully acknowledged cloud
+                          events. Required.
+                    ]
+                }
         """
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
@@ -749,6 +967,9 @@ class EventGridClientOperationsMixin(
 
 
     @overload
+    @api_version_validation(
+        params_added_on={'2023-10-01-preview': ['release_delay_in_seconds']},
+    )
     def release_cloud_events(
         self,
         topic_name: str,
@@ -775,14 +996,54 @@ class EventGridClientOperationsMixin(
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: ReleaseResult. The ReleaseResult is compatible with MutableMapping
         :rtype: ~azure.eventgrid.models.ReleaseResult
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                release_options = {
+                    "lockTokens": [
+                        "str"  # Array of lock tokens. Required.
+                    ]
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "failedLockTokens": [
+                        {
+                            "error": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required.
+                                "message": "str",  # A human-readable representation
+                                  of the error. Required.
+                                "details": [
+                                    ...
+                                ],
+                                "innererror": {
+                                    "code": "str",  # Optional. One of a
+                                      server-defined set of error codes.
+                                    "innererror": ...
+                                },
+                                "target": "str"  # Optional. The target of the error.
+                            },
+                            "lockToken": "str"  # The lock token of an entry in the
+                              request. Required.
+                        }
+                    ],
+                    "succeededLockTokens": [
+                        "str"  # Array of lock tokens for the successfully released cloud
+                          events. Required.
+                    ]
+                }
         """
 
     @overload
+    @api_version_validation(
+        params_added_on={'2023-10-01-preview': ['release_delay_in_seconds']},
+    )
     def release_cloud_events(
         self,
         topic_name: str,
@@ -809,19 +1070,52 @@ class EventGridClientOperationsMixin(
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: ReleaseResult. The ReleaseResult is compatible with MutableMapping
         :rtype: ~azure.eventgrid.models.ReleaseResult
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "failedLockTokens": [
+                        {
+                            "error": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required.
+                                "message": "str",  # A human-readable representation
+                                  of the error. Required.
+                                "details": [
+                                    ...
+                                ],
+                                "innererror": {
+                                    "code": "str",  # Optional. One of a
+                                      server-defined set of error codes.
+                                    "innererror": ...
+                                },
+                                "target": "str"  # Optional. The target of the error.
+                            },
+                            "lockToken": "str"  # The lock token of an entry in the
+                              request. Required.
+                        }
+                    ],
+                    "succeededLockTokens": [
+                        "str"  # Array of lock tokens for the successfully released cloud
+                          events. Required.
+                    ]
+                }
         """
 
     @overload
+    @api_version_validation(
+        params_added_on={'2023-10-01-preview': ['release_delay_in_seconds']},
+    )
     def release_cloud_events(
         self,
         topic_name: str,
         event_subscription_name: str,
-        release_options: IO,
+        release_options: IO[bytes],
         *,
         release_delay_in_seconds: Optional[Union[int, _models.ReleaseDelay]] = None,
         content_type: str = "application/json",
@@ -836,27 +1130,60 @@ class EventGridClientOperationsMixin(
         :param event_subscription_name: Event Subscription Name. Required.
         :type event_subscription_name: str
         :param release_options: ReleaseOptions. Required.
-        :type release_options: IO
+        :type release_options: IO[bytes]
         :keyword release_delay_in_seconds: Release cloud events with the specified delay in seconds.
          Known values are: 0, 10, 60, 600, and 3600. Default value is None.
         :paramtype release_delay_in_seconds: int or ~azure.eventgrid.models.ReleaseDelay
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: ReleaseResult. The ReleaseResult is compatible with MutableMapping
         :rtype: ~azure.eventgrid.models.ReleaseResult
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "failedLockTokens": [
+                        {
+                            "error": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required.
+                                "message": "str",  # A human-readable representation
+                                  of the error. Required.
+                                "details": [
+                                    ...
+                                ],
+                                "innererror": {
+                                    "code": "str",  # Optional. One of a
+                                      server-defined set of error codes.
+                                    "innererror": ...
+                                },
+                                "target": "str"  # Optional. The target of the error.
+                            },
+                            "lockToken": "str"  # The lock token of an entry in the
+                              request. Required.
+                        }
+                    ],
+                    "succeededLockTokens": [
+                        "str"  # Array of lock tokens for the successfully released cloud
+                          events. Required.
+                    ]
+                }
         """
 
 
     @distributed_trace
+    @api_version_validation(
+        params_added_on={'2023-10-01-preview': ['release_delay_in_seconds']},
+    )
     def release_cloud_events(
         self,
         topic_name: str,
         event_subscription_name: str,
-        release_options: Union[_models.ReleaseOptions, JSON, IO],
+        release_options: Union[_models.ReleaseOptions, JSON, IO[bytes]],
         *,
         release_delay_in_seconds: Optional[Union[int, _models.ReleaseDelay]] = None,
         **kwargs: Any
@@ -869,20 +1196,54 @@ class EventGridClientOperationsMixin(
         :type topic_name: str
         :param event_subscription_name: Event Subscription Name. Required.
         :type event_subscription_name: str
-        :param release_options: ReleaseOptions. Is one of the following types: ReleaseOptions, JSON, IO
-         Required.
-        :type release_options: ~azure.eventgrid.models.ReleaseOptions or JSON or IO
+        :param release_options: ReleaseOptions. Is one of the following types: ReleaseOptions, JSON,
+         IO[bytes] Required.
+        :type release_options: ~azure.eventgrid.models.ReleaseOptions or JSON or IO[bytes]
         :keyword release_delay_in_seconds: Release cloud events with the specified delay in seconds.
          Known values are: 0, 10, 60, 600, and 3600. Default value is None.
         :paramtype release_delay_in_seconds: int or ~azure.eventgrid.models.ReleaseDelay
-        :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
-         value is None.
-        :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: ReleaseResult. The ReleaseResult is compatible with MutableMapping
         :rtype: ~azure.eventgrid.models.ReleaseResult
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                release_options = {
+                    "lockTokens": [
+                        "str"  # Array of lock tokens. Required.
+                    ]
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "failedLockTokens": [
+                        {
+                            "error": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required.
+                                "message": "str",  # A human-readable representation
+                                  of the error. Required.
+                                "details": [
+                                    ...
+                                ],
+                                "innererror": {
+                                    "code": "str",  # Optional. One of a
+                                      server-defined set of error codes.
+                                    "innererror": ...
+                                },
+                                "target": "str"  # Optional. The target of the error.
+                            },
+                            "lockToken": "str"  # The lock token of an entry in the
+                              request. Required.
+                        }
+                    ],
+                    "succeededLockTokens": [
+                        "str"  # Array of lock tokens for the successfully released cloud
+                          events. Required.
+                    ]
+                }
         """
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
@@ -972,11 +1333,48 @@ class EventGridClientOperationsMixin(
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: RejectResult. The RejectResult is compatible with MutableMapping
         :rtype: ~azure.eventgrid.models.RejectResult
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                reject_options = {
+                    "lockTokens": [
+                        "str"  # Array of lock tokens. Required.
+                    ]
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "failedLockTokens": [
+                        {
+                            "error": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required.
+                                "message": "str",  # A human-readable representation
+                                  of the error. Required.
+                                "details": [
+                                    ...
+                                ],
+                                "innererror": {
+                                    "code": "str",  # Optional. One of a
+                                      server-defined set of error codes.
+                                    "innererror": ...
+                                },
+                                "target": "str"  # Optional. The target of the error.
+                            },
+                            "lockToken": "str"  # The lock token of an entry in the
+                              request. Required.
+                        }
+                    ],
+                    "succeededLockTokens": [
+                        "str"  # Array of lock tokens for the successfully rejected cloud
+                          events. Required.
+                    ]
+                }
         """
 
     @overload
@@ -1002,11 +1400,41 @@ class EventGridClientOperationsMixin(
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: RejectResult. The RejectResult is compatible with MutableMapping
         :rtype: ~azure.eventgrid.models.RejectResult
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "failedLockTokens": [
+                        {
+                            "error": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required.
+                                "message": "str",  # A human-readable representation
+                                  of the error. Required.
+                                "details": [
+                                    ...
+                                ],
+                                "innererror": {
+                                    "code": "str",  # Optional. One of a
+                                      server-defined set of error codes.
+                                    "innererror": ...
+                                },
+                                "target": "str"  # Optional. The target of the error.
+                            },
+                            "lockToken": "str"  # The lock token of an entry in the
+                              request. Required.
+                        }
+                    ],
+                    "succeededLockTokens": [
+                        "str"  # Array of lock tokens for the successfully rejected cloud
+                          events. Required.
+                    ]
+                }
         """
 
     @overload
@@ -1014,7 +1442,7 @@ class EventGridClientOperationsMixin(
         self,
         topic_name: str,
         event_subscription_name: str,
-        reject_options: IO,
+        reject_options: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1028,15 +1456,45 @@ class EventGridClientOperationsMixin(
         :param event_subscription_name: Event Subscription Name. Required.
         :type event_subscription_name: str
         :param reject_options: RejectOptions. Required.
-        :type reject_options: IO
+        :type reject_options: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: RejectResult. The RejectResult is compatible with MutableMapping
         :rtype: ~azure.eventgrid.models.RejectResult
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "failedLockTokens": [
+                        {
+                            "error": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required.
+                                "message": "str",  # A human-readable representation
+                                  of the error. Required.
+                                "details": [
+                                    ...
+                                ],
+                                "innererror": {
+                                    "code": "str",  # Optional. One of a
+                                      server-defined set of error codes.
+                                    "innererror": ...
+                                },
+                                "target": "str"  # Optional. The target of the error.
+                            },
+                            "lockToken": "str"  # The lock token of an entry in the
+                              request. Required.
+                        }
+                    ],
+                    "succeededLockTokens": [
+                        "str"  # Array of lock tokens for the successfully rejected cloud
+                          events. Required.
+                    ]
+                }
         """
 
 
@@ -1045,7 +1503,7 @@ class EventGridClientOperationsMixin(
         self,
         topic_name: str,
         event_subscription_name: str,
-        reject_options: Union[_models.RejectOptions, JSON, IO],
+        reject_options: Union[_models.RejectOptions, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.RejectResult:
         """Reject batch of Cloud Events. The server responds with an HTTP 200 status code if the request
@@ -1056,17 +1514,51 @@ class EventGridClientOperationsMixin(
         :type topic_name: str
         :param event_subscription_name: Event Subscription Name. Required.
         :type event_subscription_name: str
-        :param reject_options: RejectOptions. Is one of the following types: RejectOptions, JSON, IO
-         Required.
-        :type reject_options: ~azure.eventgrid.models.RejectOptions or JSON or IO
-        :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
-         value is None.
-        :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
+        :param reject_options: RejectOptions. Is one of the following types: RejectOptions, JSON,
+         IO[bytes] Required.
+        :type reject_options: ~azure.eventgrid.models.RejectOptions or JSON or IO[bytes]
         :return: RejectResult. The RejectResult is compatible with MutableMapping
         :rtype: ~azure.eventgrid.models.RejectResult
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                reject_options = {
+                    "lockTokens": [
+                        "str"  # Array of lock tokens. Required.
+                    ]
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "failedLockTokens": [
+                        {
+                            "error": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required.
+                                "message": "str",  # A human-readable representation
+                                  of the error. Required.
+                                "details": [
+                                    ...
+                                ],
+                                "innererror": {
+                                    "code": "str",  # Optional. One of a
+                                      server-defined set of error codes.
+                                    "innererror": ...
+                                },
+                                "target": "str"  # Optional. The target of the error.
+                            },
+                            "lockToken": "str"  # The lock token of an entry in the
+                              request. Required.
+                        }
+                    ],
+                    "succeededLockTokens": [
+                        "str"  # Array of lock tokens for the successfully rejected cloud
+                          events. Required.
+                    ]
+                }
         """
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
@@ -1133,6 +1625,9 @@ class EventGridClientOperationsMixin(
 
 
     @overload
+    @api_version_validation(
+        method_added_on="2023-10-01-preview",
+    )
     def renew_cloud_event_locks(
         self,
         topic_name: str,
@@ -1156,15 +1651,55 @@ class EventGridClientOperationsMixin(
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: RenewCloudEventLocksResult. The RenewCloudEventLocksResult is compatible with
          MutableMapping
         :rtype: ~azure.eventgrid.models.RenewCloudEventLocksResult
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                renew_lock_options = {
+                    "lockTokens": [
+                        "str"  # Array of lock tokens. Required.
+                    ]
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "failedLockTokens": [
+                        {
+                            "error": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required.
+                                "message": "str",  # A human-readable representation
+                                  of the error. Required.
+                                "details": [
+                                    ...
+                                ],
+                                "innererror": {
+                                    "code": "str",  # Optional. One of a
+                                      server-defined set of error codes.
+                                    "innererror": ...
+                                },
+                                "target": "str"  # Optional. The target of the error.
+                            },
+                            "lockToken": "str"  # The lock token of an entry in the
+                              request. Required.
+                        }
+                    ],
+                    "succeededLockTokens": [
+                        "str"  # Array of lock tokens for the successfully renewed locks.
+                          Required.
+                    ]
+                }
         """
 
     @overload
+    @api_version_validation(
+        method_added_on="2023-10-01-preview",
+    )
     def renew_cloud_event_locks(
         self,
         topic_name: str,
@@ -1188,20 +1723,53 @@ class EventGridClientOperationsMixin(
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: RenewCloudEventLocksResult. The RenewCloudEventLocksResult is compatible with
          MutableMapping
         :rtype: ~azure.eventgrid.models.RenewCloudEventLocksResult
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "failedLockTokens": [
+                        {
+                            "error": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required.
+                                "message": "str",  # A human-readable representation
+                                  of the error. Required.
+                                "details": [
+                                    ...
+                                ],
+                                "innererror": {
+                                    "code": "str",  # Optional. One of a
+                                      server-defined set of error codes.
+                                    "innererror": ...
+                                },
+                                "target": "str"  # Optional. The target of the error.
+                            },
+                            "lockToken": "str"  # The lock token of an entry in the
+                              request. Required.
+                        }
+                    ],
+                    "succeededLockTokens": [
+                        "str"  # Array of lock tokens for the successfully renewed locks.
+                          Required.
+                    ]
+                }
         """
 
     @overload
+    @api_version_validation(
+        method_added_on="2023-10-01-preview",
+    )
     def renew_cloud_event_locks(
         self,
         topic_name: str,
         event_subscription_name: str,
-        renew_lock_options: IO,
+        renew_lock_options: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1216,25 +1784,58 @@ class EventGridClientOperationsMixin(
         :param event_subscription_name: Event Subscription Name. Required.
         :type event_subscription_name: str
         :param renew_lock_options: RenewLockOptions. Required.
-        :type renew_lock_options: IO
+        :type renew_lock_options: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: RenewCloudEventLocksResult. The RenewCloudEventLocksResult is compatible with
          MutableMapping
         :rtype: ~azure.eventgrid.models.RenewCloudEventLocksResult
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "failedLockTokens": [
+                        {
+                            "error": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required.
+                                "message": "str",  # A human-readable representation
+                                  of the error. Required.
+                                "details": [
+                                    ...
+                                ],
+                                "innererror": {
+                                    "code": "str",  # Optional. One of a
+                                      server-defined set of error codes.
+                                    "innererror": ...
+                                },
+                                "target": "str"  # Optional. The target of the error.
+                            },
+                            "lockToken": "str"  # The lock token of an entry in the
+                              request. Required.
+                        }
+                    ],
+                    "succeededLockTokens": [
+                        "str"  # Array of lock tokens for the successfully renewed locks.
+                          Required.
+                    ]
+                }
         """
 
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2023-10-01-preview",
+    )
     def renew_cloud_event_locks(
         self,
         topic_name: str,
         event_subscription_name: str,
-        renew_lock_options: Union[_models.RenewLockOptions, JSON, IO],
+        renew_lock_options: Union[_models.RenewLockOptions, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.RenewCloudEventLocksResult:
         """Renew lock for batch of Cloud Events. The server responds with an HTTP 200 status code if the
@@ -1247,17 +1848,51 @@ class EventGridClientOperationsMixin(
         :param event_subscription_name: Event Subscription Name. Required.
         :type event_subscription_name: str
         :param renew_lock_options: RenewLockOptions. Is one of the following types: RenewLockOptions,
-         JSON, IO Required.
-        :type renew_lock_options: ~azure.eventgrid.models.RenewLockOptions or JSON or IO
-        :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
-         value is None.
-        :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
+         JSON, IO[bytes] Required.
+        :type renew_lock_options: ~azure.eventgrid.models.RenewLockOptions or JSON or IO[bytes]
         :return: RenewCloudEventLocksResult. The RenewCloudEventLocksResult is compatible with
          MutableMapping
         :rtype: ~azure.eventgrid.models.RenewCloudEventLocksResult
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                renew_lock_options = {
+                    "lockTokens": [
+                        "str"  # Array of lock tokens. Required.
+                    ]
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "failedLockTokens": [
+                        {
+                            "error": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required.
+                                "message": "str",  # A human-readable representation
+                                  of the error. Required.
+                                "details": [
+                                    ...
+                                ],
+                                "innererror": {
+                                    "code": "str",  # Optional. One of a
+                                      server-defined set of error codes.
+                                    "innererror": ...
+                                },
+                                "target": "str"  # Optional. The target of the error.
+                            },
+                            "lockToken": "str"  # The lock token of an entry in the
+                              request. Required.
+                        }
+                    ],
+                    "succeededLockTokens": [
+                        "str"  # Array of lock tokens for the successfully renewed locks.
+                          Required.
+                    ]
+                }
         """
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
