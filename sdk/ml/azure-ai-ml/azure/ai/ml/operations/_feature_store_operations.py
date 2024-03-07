@@ -505,7 +505,6 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
 
     @distributed_trace
     @monitor_with_activity(ops_logger, "FeatureStore.BeginProvisionNetwork", ActivityType.PUBLICAPI)
-    @experimental
     def begin_provision_network(
         self,
         *,
