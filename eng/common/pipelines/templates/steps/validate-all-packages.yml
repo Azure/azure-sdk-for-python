@@ -15,7 +15,7 @@ steps:
           -APIViewUri $(azuresdk-apiview-uri)
           -APIKey $(azuresdk-apiview-apikey)
           -ConfigFileDir '${{ parameters.ConfigFileDir }}'
-          -BuildDefinition $(Build.DefinitionName)
+          -BuildDefinition '$(Build.DefinitionName)'
           -PipelineUrl $(Build.BuildUri)
           -Devops_pat '$(azuresdk-azure-sdk-devops-release-work-item-pat)'
         pwsh: true
