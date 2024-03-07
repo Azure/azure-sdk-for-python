@@ -123,7 +123,7 @@ function VerifyAPIReview($packageDetails, $packageName, $packageVersion, $langua
 
     try
     {
-        Write-Hosty "Checking API review status for package $packageName with version $packageVersion. language [$language]." 
+        Write-Host "Checking API review status for package $packageName with version $packageVersion. language [$language]." 
         $errOutput = $( $apireviewStatus = & Check-ApiReviewStatus -PackageName $packageName -packageVersion $packageVersion -Language $language -url $APIViewUri -apiKey $APIKey) 2>&1
         Write-Host "API Review status: $apireviewStatus"
         Write-Host "APi review status check output(if any): $($errOutput)"
@@ -202,6 +202,7 @@ function CreateUpdatePackageWorkItem($pkgInfo)
         -serviceName "unknown" `
         -packageDisplayName "unknown" `
         -inRelease $setReleaseState
+        -devops_pat $Devops_pat
     
     if ($LASTEXITCODE -ne 0)
     {
