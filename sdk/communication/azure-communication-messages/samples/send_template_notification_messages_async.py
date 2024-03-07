@@ -37,7 +37,7 @@ class SendWhatsAppTemplateMessageSampleAsync(object):
     
     async def send_template_send_message_async(self):
         from azure.communication.messages.aio import NotificationMessagesClient
-        from azure.communication.messages.models import ( TemplateNotificationContent, MessageTemplate )
+        from azure.communication.messages.models import TemplateNotificationContent, MessageTemplate
 
         messaging_client = NotificationMessagesClient.from_connection_string(self.connection_string)
 
