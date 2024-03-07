@@ -162,9 +162,6 @@ class CategoricalDriftMetrics(RestTranslatableMixin):
             jensen_shannon_distance=0.1,
         )
 
-    def get_name_and_threshold(self) -> Tuple:
-        return self._find_name_and_threshold()
-
 
 class DataDriftMetricThreshold(MetricThreshold):
     """Data drift metric threshold
