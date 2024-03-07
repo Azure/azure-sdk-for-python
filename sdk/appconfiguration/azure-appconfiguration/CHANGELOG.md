@@ -1,15 +1,13 @@
 # Release History
 
-## 1.5.1 (Unreleased)
+## 1.5.1 (2024-03-07)
 
 ### Features Added
-
-### Breaking Changes
+- Exposed `send_request()` method in each client to send custom requests using the client's existing pipeline.
+- Supported to get `page_etag` while iterating `list_configuration_setting()` result by page.
 
 ### Bugs Fixed
 - Fixed a bug in consuming "etag" value in sync operation `set_configuration_setting()`.
-
-### Other Changes
 
 ## 1.5.0 (2023-11-09)
 
