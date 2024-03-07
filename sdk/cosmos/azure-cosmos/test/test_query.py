@@ -1,5 +1,8 @@
 import unittest
 import uuid
+from datetime import datetime, timedelta
+from time import sleep
+
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos._retry_utility as retry_utility
 from azure.cosmos import http_constants
@@ -268,6 +271,51 @@ class QueryTest(unittest.TestCase):
         )
         iter_list = list(query_iterable)
         self.assertEqual(len(iter_list), 0)
+
+    def test_query_change_feed_with_start_time(self):
+        created_collection = self.created_db.create_container_if_not_exists("query_change_feed_start_time_test",
+                                                                            PartitionKey(path="/pk"))
+        batchSize = 50
+
+        def round_time():
+            utc_now = datetime.utcnow()
+            return utc_now - timedelta(microseconds=utc_now.microsecond)
+        def create_random_items(container, batch_size):
+            for _ in range(batch_size):
+                # Generate a Random partition key
+                partition_key = 'pk' + str(uuid.uuid4())
+
+                # Generate a random item
+                item = {
+                    'id': 'item' + str(uuid.uuid4()),
+                    'partitionKey': partition_key,
+                    'content': 'This is some random content',
+                }
+
+                try:
+                    # Create the item in the container
+                    container.upsert_item(item)
+                except exceptions.CosmosHttpResponseError as e:
+                    self.fail(e)
+
+        # Create first batch of random items
+        create_random_items(created_collection, batchSize)
+
+        # wait for 1 second and record the time, then wait another second
+        sleep(1)
+        start_time = round_time()
+        sleep(1)
+
+        # now create another batch of items
+        create_random_items(created_collection, batchSize)
+
+        # now query change feed based on start time
+        change_feed_iter = list(created_collection.query_items_change_feed(start_time=start_time))
+        totalCount = len(change_feed_iter)
+
+        # now check if the number of items that were changed match the batch size
+        self.assertEqual(totalCount, batchSize)
+
 
     def test_populate_query_metrics(self):
         created_collection = self.created_db.create_container_if_not_exists("query_metrics_test",

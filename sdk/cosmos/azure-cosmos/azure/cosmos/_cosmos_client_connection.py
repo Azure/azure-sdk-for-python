@@ -1106,6 +1106,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if options is not None and "partitionKeyRangeId" in options:
             partition_key_range_id = options["partitionKeyRangeId"]
 
+
+
         return self._QueryChangeFeed(
             collection_link, "Documents", options, partition_key_range_id, response_hook=response_hook, **kwargs
         )
@@ -3000,6 +3002,26 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             )
             result, last_response_headers = self.__Get(path, request_params, headers, **kwargs)
             self.last_response_headers = last_response_headers
+            # Work around to test feature
+            if options.get("startTime"):
+                lsn = last_response_headers['lsn']
+                etag = last_response_headers['etag']
+                results = result
+                while(etag != lsn):
+                    headers[http_constants.HttpHeaders.IfNoneMatch] = last_response_headers['etag']
+                    re, last_response_headers = self.__Get(path, request_params, headers, **kwargs)
+                    if re is not None:
+                        results["Documents"].extend(re["Documents"])
+                    else:
+                        self.last_response_headers = last_response_headers
+                        break
+                    self.last_response_headers = last_response_headers
+                    lsn = last_response_headers['lsn']
+                    etag = last_response_headers['etag']
+
+                if response_hook:
+                    response_hook(last_response_headers, results)
+                return __GetBodiesFromQueryResult(results), last_response_headers
             if response_hook:
                 response_hook(last_response_headers, result)
             return __GetBodiesFromQueryResult(result), last_response_headers

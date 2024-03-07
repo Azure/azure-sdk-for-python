@@ -2759,6 +2759,24 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             )
             headers = base.GetHeaders(self, initial_headers, "get", path, id_, typ, options, partition_key_range_id)
             result, self.last_response_headers = await self.__Get(path, request_params, headers, **kwargs)
+            # Work around to test feature
+            if options.get("startTime"):
+                lsn = self.last_response_headers['lsn']
+                etag = self.last_response_headers['Etag']
+                results = result
+                while(etag != lsn):
+                    headers[http_constants.HttpHeaders.IfNoneMatch] = self.last_response_headers['Etag']
+                    re, self.last_response_headers = await self.__Get(path, request_params, headers, **kwargs)
+                    if re is not None:
+                        results["Documents"].extend(re["Documents"])
+                    else:
+                        break
+                    lsn = self.last_response_headers['lsn']
+                    etag = self.last_response_headers['Etag']
+
+                if response_hook:
+                    response_hook(self.last_response_headers, results)
+                return __GetBodiesFromQueryResult(results)
             if response_hook:
                 response_hook(self.last_response_headers, result)
             return __GetBodiesFromQueryResult(result)

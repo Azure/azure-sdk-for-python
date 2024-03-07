@@ -1,4 +1,6 @@
 import uuid
+from asyncio import sleep
+from datetime import datetime, timedelta
 
 from azure.cosmos import http_constants
 from azure.cosmos.aio import CosmosClient
@@ -304,6 +306,53 @@ class TestQueryAsync:
         )
         iter_list = [item async for item in query_iterable]
         assert len(iter_list) == 0
+
+    @pytest.mark.asyncio
+    async def test_query_change_feed_with_start_time(self):
+        await self._set_up()
+        created_collection = await self.created_db.create_container_if_not_exists("query_change_feed_start_time_test",
+                                                                            PartitionKey(path="/pk"))
+        batchSize = 50
+
+        def round_time():
+            utc_now = datetime.utcnow()
+            return utc_now - timedelta(microseconds=utc_now.microsecond)
+
+        async def create_random_items(container, batch_size):
+            for _ in range(batch_size):
+                # Generate a Random partition key
+                partition_key = 'pk' + str(uuid.uuid4())
+
+                # Generate a random item
+                item = {
+                    'id': 'item' + str(uuid.uuid4()),
+                    'partitionKey': partition_key,
+                    'content': 'This is some random content',
+                }
+
+                try:
+                    # Create the item in the container
+                    await container.upsert_item(item)
+                except exceptions.CosmosHttpResponseError as e:
+                    pytest.fail(e)
+
+        # Create first batch of random items
+        await create_random_items(created_collection, batchSize)
+
+        # wait for 1 second and record the time, then wait another second
+        await sleep(1)
+        start_time = round_time()
+        await sleep(2)
+
+        # now create another batch of items
+        await create_random_items(created_collection, batchSize)
+
+        # now query change feed based on start time
+        change_feed_iter = [i async for i in created_collection.query_items_change_feed(start_time=start_time)]
+        totalCount = len(change_feed_iter)
+
+        # now check if the number of items that were changed match the batch size
+        assert (totalCount == batchSize)
 
     @pytest.mark.asyncio
     async def test_populate_query_metrics_async(self):

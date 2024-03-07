@@ -21,7 +21,7 @@
 
 """Create, read, update and delete items in the Azure Cosmos DB SQL API service.
 """
-
+from datetime import datetime
 from typing import Any, Dict, Mapping, Optional, Sequence, Type, Union, List, Tuple, cast
 from typing_extensions import Literal
 
@@ -487,6 +487,7 @@ class ContainerProxy:
         *,
         partition_key_range_id: Optional[str] = None,
         is_start_from_beginning: bool = False,
+        start_time: datetime = None,
         continuation: Optional[str] = None,
         max_item_count: Optional[int] = None,
         partition_key: Optional[PartitionKeyType] = None,
@@ -497,6 +498,8 @@ class ContainerProxy:
 
         :keyword bool is_start_from_beginning: Get whether change feed should start from
             beginning (true) or from current (false). By default, it's start from current (false).
+        :keyword datetime start_time: Specifies a point of time to start change feed. Start time in
+            http://www.ietf.org/rfc/rfc2616.txt format.
         :keyword str partition_key_range_id: ChangeFeed requests can be executed against specific partition key
             ranges. This is used to process the change feed in parallel across multiple consumers.
         :keyword str continuation: e_tag value to be used as continuation for reading change feed.
@@ -516,6 +519,7 @@ class ContainerProxy:
             kwargs['priority_level'] = priority_level
         feed_options = _build_options(kwargs)
         feed_options["isStartFromBeginning"] = is_start_from_beginning
+        feed_options["startTime"] = start_time
         if partition_key_range_id is not None:
             feed_options["partitionKeyRangeId"] = partition_key_range_id
         if partition_key is not None:
