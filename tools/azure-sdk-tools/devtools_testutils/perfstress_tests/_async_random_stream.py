@@ -66,7 +66,6 @@ class AsyncIteratorRandomStream(AsyncIterator[bytes]):
         Async random stream of bytes for methods that accept AsyncIterator as input.
     """
     def __init__(self, length, initial_buffer_length=_DEFAULT_LENGTH):
-        super().__init__()
         self._base_data = get_random_bytes(initial_buffer_length)
         self._data_length = length
         self._base_buffer_length = initial_buffer_length
