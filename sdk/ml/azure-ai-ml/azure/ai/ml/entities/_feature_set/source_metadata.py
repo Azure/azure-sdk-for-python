@@ -27,7 +27,7 @@ class SourceMetadata(object):
     ):
         if type != "featureset":
             if not timestamp_column:
-                msg = f"You need to provide timestam_solumn for {type} feature source."
+                msg = f"You need to provide timestamp_column for {type} feature source."
                 raise ValidationException(
                     message=msg,
                     no_personal_data_message=msg,
