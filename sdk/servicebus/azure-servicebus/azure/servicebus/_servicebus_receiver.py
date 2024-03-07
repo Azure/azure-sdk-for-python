@@ -860,8 +860,6 @@ class ServiceBusReceiver(
         self,
         max_message_count: int = 1,
         enqueued_time_older_than_utc: datetime.datetime = datetime.datetime.now(datetime.timezone.utc),
-        *,
-        timeout: Optional[float] = None,
         **kwargs: Any,
     ) -> int:
         """
@@ -871,17 +869,12 @@ class ServiceBusReceiver(
         :param int max_message_count: The maximum number of messages to delete. The default value is 1.
         :param datetime.datetime enqueued_time_older_than_utc: The UTC datetime value before which all messages
          should be deleted.
-        :keyword Optional[float] timeout: The total operation timeout in seconds including all the retries.
-         The value must be greater than 0 if specified. The default value is None, meaning no timeout.
-        :returns: The number of messages deleted.
         :rtype: int
 
         """
         if kwargs:
             warnings.warn(f"Unsupported keyword args: {kwargs}")
         self._check_live()
-        if timeout is not None and timeout <= 0:
-            raise ValueError("The timeout must be greater than 0.")
         if int(max_message_count) < 0 or int(max_message_count) > 4000:
             raise ValueError("max_message_count must be between 1 and 4000, inclusive.")
 
@@ -895,7 +888,7 @@ class ServiceBusReceiver(
         handler = functools.partial(mgmt_handlers.batch_delete_op, receiver=self, amqp_transport=self._amqp_transport)
         start_time = time.time_ns()
         messages = self._mgmt_request_response_with_retry(
-            REQUEST_RESPONSE_DELETE_BATCH_OPERATION, message, handler, timeout=timeout
+            REQUEST_RESPONSE_DELETE_BATCH_OPERATION, message, handler
         )
         links = get_receive_links(messages)
         with receive_trace_context_manager(self, span_name=SPAN_NAME_PEEK, links=links, start_time=start_time):
