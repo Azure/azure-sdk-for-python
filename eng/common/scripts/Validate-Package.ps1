@@ -82,6 +82,7 @@ function ValidateChangeLog($changeLogPath, $versionString)
     }
     catch
     {
+        Write-Host "Current directory: $(Get-Location)"
         $validationStatus.Status = "Failed"
         $validationStatus.Message = $_.Exception.Message
     }    
