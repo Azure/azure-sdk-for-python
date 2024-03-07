@@ -734,7 +734,7 @@ class LLAMACompletionsModel(OpenAICompletionsModel):
         prompt = request_data["input_data"]["input_string"][0]
 
         # remove prompt text from each response as llama model returns prompt + completion instead of only completion
-        # remove any text after the stop tokens, since llama doesn"t support stop token
+        # remove any text after the stop tokens, since llama does not support stop token
         for idx, response in enumerate(response_data["samples"]):
             response_data["samples"][idx] = response_data["samples"][idx].replace(prompt, "").strip()
             for stop_token in self.stop:
@@ -761,7 +761,7 @@ class LLAMAChatCompletionsModel(LLAMACompletionsModel):
     """
     LLaMa ChatCompletionsModel is a wrapper around LLaMaCompletionsModel that
     formats the prompt for chat completion.
-    This chat completion model should be only used as assistant, and shouldn"t be used to simulate user. It is not possible
+    This chat completion model should be only used as assistant, and should not be used to simulate user. It is not possible
      to pass a system prompt do describe how the model would behave, So we only use the model as assistant to reply for questions
      made by GPT simulated users.
     """
@@ -780,8 +780,9 @@ class LLAMAChatCompletionsModel(LLAMACompletionsModel):
                     captions=self.image_captions,
                 )
 
-        # For LLaMa we don"t pass the prompt (user persona) as a system message since LLama doesn"t support system message
-        # LLama only supports user, and assistant messages. The messages sequence has to start with User message/ It can"t have two user or
+        # For LLaMa we do not pass the prompt (user persona) as a system message since LLama does not support system message
+        # LLama only supports user, and assistant messages. 
+        # The messages sequence has to start with User message/ It can not have two user or
         # two assistant consecutive messages.
         # so if we set the system meta prompt as a user message, and if we have the first two messages made by user then we
         # combine the two messages in one message.
