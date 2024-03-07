@@ -114,6 +114,8 @@ extends:
     template: v1/1ES.Unofficial.PipelineTemplate.yml@1ESPipelineTemplates
   parameters:
     ${{ if eq(variables['System.TeamProject'], 'internal') }}:
+      settings:
+        skipBuildTagsForGitHubPullRequests: true
       sdl:
         sourceAnalysisPool:
           name: azsdk-pool-mms-win-2022-general
