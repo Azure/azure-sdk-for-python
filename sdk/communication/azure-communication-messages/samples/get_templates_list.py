@@ -40,11 +40,9 @@ class GetTemplatesSample(object):
         # calling send() with whatsapp message details
         template_list = message_template_client.list_templates(self.channel_id)
         
-        if (template_list is not None):
-            print("Successfully retrieved {} templates from channel_id {}."
-            .format(len(list(template_list)), self.channel_id))
-        else:
-            print("Message failed to send")
+        count_templates = len(list(template_list))
+        print("Successfully retrieved {} templates from channel_id {}."
+            .format(count_templates, self.channel_id))
 
 if __name__ == '__main__':
     sample = GetTemplatesSample()
