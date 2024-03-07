@@ -15,6 +15,7 @@ from azure.core.exceptions import (
     ResourceExistsError,
     AzureError,
 )
+from azure.core.rest import HttpRequest
 from azure.appconfiguration import (
     ResourceReadOnlyError,
     ConfigurationSetting,
@@ -1004,6 +1005,114 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         assert len(items) == 1
 
         await self.tear_down()
+    
+    @app_config_decorator_async
+    @recorded_by_proxy_async
+    async def test_monitor_configuration_settings_by_page_etag(self, appconfiguration_connection_string):
+        async with AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string) as client:
+            # prepare 200 configuration settings
+            for i in range(200):
+                await client.add_configuration_setting(
+                    ConfigurationSetting(
+                        key=f"async_sample_key_{str(i)}",
+                        label=f"async_sample_label_{str(i)}",
+                    )
+                )
+            # there will have 2 pages while listing, there are 100 configuration settings per page.
+            
+            # get page etags
+            page_etags = []
+            items = client.list_configuration_settings(key_filter="async_sample_key_*", label_filter="async_sample_label_*")
+            iterator = items.by_page()
+            async for page in iterator:
+                etag = iterator.page_etag
+                page_etags.append(etag)
+            
+            # monitor page updates without changes       
+            continuation_token = None
+            index = 0
+            request = HttpRequest(
+                method="GET",
+                url="/kv?key=async_sample_key_%2A&label=async_sample_label_%2A&api-version=2023-10-01",
+                headers={"If-None-Match": page_etags[index], "Accept": "application/vnd.microsoft.appconfig.kvset+json, application/problem+json"}
+            )
+            first_page_response = await client.send_request(request)
+            assert first_page_response.status_code == 304
+            
+            link = first_page_response.headers.get('Link', None)
+            continuation_token = link[1:link.index(">")] if link else None
+            index += 1
+            while continuation_token:
+                request = HttpRequest(
+                    method="GET",
+                    url=f"{continuation_token}",
+                    headers={"If-None-Match": page_etags[index]}
+                )
+                index += 1
+                response = await client.send_request(request)
+                assert response.status_code == 304
+                
+                link = response.headers.get('Link', None)
+                continuation_token = link[1:link.index(">")] if link else None
+            
+            # do some changes
+            await client.add_configuration_setting(
+                ConfigurationSetting(
+                    key="async_sample_key_201",
+                    label="async_sample_label_202",
+                )
+            )
+            # now we have three pages, 100 settings in first two pages and 1 setting in the last page
+            
+            # get page etags after updates
+            new_page_etags = []
+            items = client.list_configuration_settings(key_filter="async_sample_key_*", label_filter="async_sample_label_*")
+            iterator = items.by_page()
+            async for page in iterator:
+                etag = iterator.page_etag
+                new_page_etags.append(etag)
+                        
+            assert page_etags[0] == new_page_etags[0]
+            assert page_etags[1] != new_page_etags[1]
+            assert page_etags[2] != new_page_etags[2]
+            
+            # monitor page after updates
+            continuation_token = None
+            index = 0
+            request = HttpRequest(
+                method="GET",
+                url="/kv?key=async_sample_key_%2A&label=async_sample_label_%2A&api-version=2023-10-01",
+                headers={"If-None-Match": page_etags[index], "Accept": "application/vnd.microsoft.appconfig.kvset+json, application/problem+json"}
+            )
+            first_page_response = await client.send_request(request)
+            # 304 means the page doesn't have changes.
+            assert first_page_response.status_code == 304
+            
+            link = first_page_response.headers.get('Link', None)
+            continuation_token = link[1:link.index(">")] if link else None
+            index += 1
+            while continuation_token:
+                request = HttpRequest(
+                    method="GET",
+                    url=f"{continuation_token}",
+                    headers={"If-None-Match": page_etags[index]}
+                )
+                index += 1
+                response = await client.send_request(request)
+
+                # 200 means the page has changes.
+                assert response.status_code == 200
+                items = response.json()["items"]
+                for item in items:
+                    print(f"Key: {item['key']}, Label: {item['label']}")
+                
+                link = response.headers.get('Link', None)
+                continuation_token = link[1:link.index(">")] if link else None
+
+            # clean up
+            config_settings = client.list_configuration_settings()
+            async for config_setting in config_settings:
+                await client.delete_configuration_setting(key=config_setting.key, label=config_setting.label)
 
 
 class TestAppConfigurationClientUnitTest:
