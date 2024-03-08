@@ -5,7 +5,7 @@
 """Customize generated code here.
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List, overload, Union, Any, Optional, Callable, Dict, TypeVar
+from typing import List, overload, Union, Any, Optional, Callable, Dict, TypeVar, IO
 import sys
 from azure.core.messaging import CloudEvent
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, ResourceNotModifiedError, map_error
