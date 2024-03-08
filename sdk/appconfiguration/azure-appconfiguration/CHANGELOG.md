@@ -4,7 +4,7 @@
 
 ### Features Added
 - Exposed `send_request()` method in each client to send custom requests using the client's existing pipeline.
-- Supported to get `page_etag` while iterating `list_configuration_setting()` result by page.
+- Supported to get page ETag while iterating `list_configuration_setting()` result by page.
 
 ### Bugs Fixed
 - Fixed a bug in consuming "etag" value in sync operation `set_configuration_setting()`.

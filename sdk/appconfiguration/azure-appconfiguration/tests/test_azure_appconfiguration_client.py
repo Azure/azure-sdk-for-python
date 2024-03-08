@@ -1003,7 +1003,7 @@ class TestAppConfigurationClient(AppConfigTestCase):
             items = client.list_configuration_settings(key_filter="sample_key_*", label_filter="sample_label_*")
             iterator = items.by_page()
             for page in iterator:
-                etag = iterator.page
+                etag = iterator.etag
                 page_etags.append(etag)
             
             # monitor page updates without changes       
@@ -1047,7 +1047,7 @@ class TestAppConfigurationClient(AppConfigTestCase):
             items = client.list_configuration_settings(key_filter="sample_key_*", label_filter="sample_label_*")
             iterator = items.by_page()
             for page in iterator:
-                etag = iterator.page
+                etag = iterator.etag
                 new_page_etags.append(etag)
             
             assert page_etags[0] == new_page_etags[0]
