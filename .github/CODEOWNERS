@@ -244,9 +244,9 @@
 /sdk/ml/azure-ai-ml/azure/ai/ml/_local_endpoints/                    @NonStatic2014 @arunsu @stanley-msft @JustinFirsching
 
 # PRLabel: %ML-Jobs
-/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/job*                         @DouglasXiaoMS @TonyJ1 @wangchao1230
-/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_job/                       @DouglasXiaoMS @TonyJ1 @wangchao1230
-/sdk/ml/training-experiences.tests.yml                               @DouglasXiaoMS @TonyJ1
+/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/job*                         @TonyJ1 @wangchao1230
+/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_job/                       @TonyJ1 @wangchao1230
+/sdk/ml/training-experiences.tests.yml                               @TonyJ1
 
 # PRLabel: %ML-AutoML
 /sdk/ml/azure-ai-ml/azure/ai/ml/_schema/automl/                      @skasturi @rtanase @raduk @PhaniShekhar @sharma-riti @jialiu103 @nick863 @yuanzhuangyuanzhuang @anupsms @MaurisLucis @novaturient95
@@ -954,7 +954,7 @@
 #/<NotInRepo>/          @shivanissambare
 
 # ServiceLabel: %ML-Jobs
-#/<NotInRepo>/          @DouglasXiaoMS @TonyJ1 @wangchao1230
+#/<NotInRepo>/          @TonyJ1 @wangchao1230
 
 # ServiceLabel: %ML-Local Endpoints
 #/<NotInRepo>/          @NonStatic2014 @arunsu @stanley-msft @JustinFirsching
