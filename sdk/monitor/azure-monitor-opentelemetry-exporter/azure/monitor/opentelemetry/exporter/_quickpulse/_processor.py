@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 
 from opentelemetry.sdk._logs import LogData, LogRecordProcessor
+from opentelemetry.sdk.trace import ReadableSpan, SpanProcessor
 
 from azure.monitor.opentelemetry.exporter._quickpulse._live_metrics import _QuickpulseManager
 
@@ -19,3 +20,12 @@ class _QuickpulseLogRecordProcessor(LogRecordProcessor):
 
     def force_flush(self, timeout_millis: int = 30000):
         super().force_flush(timeout_millis=timeout_millis)
+
+
+class _QuickpulseSpanProcessor(SpanProcessor):
+
+    def on_end(self, span: ReadableSpan) -> None:
+        qpm = _QuickpulseManager._instance
+        if qpm:
+            qpm._record_span(span)
+        return super().on_end(span)

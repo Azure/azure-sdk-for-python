@@ -7,6 +7,7 @@ from unittest import mock
 
 from opentelemetry.sdk.metrics import MeterProvider
 from opentelemetry.sdk.resources import Resource, ResourceAttributes
+from opentelemetry.trace import SpanKind
 
 from azure.monitor.opentelemetry.exporter._generated.models import ContextTagKeys
 from azure.monitor.opentelemetry.exporter._quickpulse._exporter import (
@@ -44,6 +45,10 @@ class TestQuickpulseManager(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         _set_global_quickpulse_state(_QuickpulseState.PING_SHORT)
+
+    @classmethod
+    def tearDownClass(cls):
+        _set_global_quickpulse_state(_QuickpulseState.OFFLINE)
 
     @mock.patch("opentelemetry.sdk.trace.id_generator.RandomIdGenerator.generate_trace_id")
     def test_init(self, generator_mock):
@@ -127,3 +132,95 @@ class TestQuickpulseManager(unittest.TestCase):
             qpm2._base_monitoring_data_point.role_name,
             part_a_fields.get(ContextTagKeys.AI_CLOUD_ROLE, "")
         )
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._append_quickpulse_document")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._get_span_document")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._is_post_state")
+    def test_record_span_server_success(self, post_state_mock, span_doc_mock, append_doc_mock):
+        post_state_mock.return_value = True
+        span_doc = mock.Mock()
+        span_doc_mock.return_value = span_doc
+        span_mock = mock.Mock()
+        span_mock.end_time = 10
+        span_mock.start_time = 5
+        span_mock.status.is_ok = True
+        span_mock.kind = SpanKind.SERVER
+        qpm = _QuickpulseManager(
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ac;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/",
+            resource=Resource.create(),
+        )
+        qpm._request_rate_counter = mock.Mock()
+        qpm._request_duration = mock.Mock()
+        qpm._record_span(span_mock)
+        append_doc_mock.assert_called_once_with(span_doc)
+        qpm._request_rate_counter.add.assert_called_once_with(1)
+        qpm._request_duration.record.assert_called_once_with(5 / 1e9)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._append_quickpulse_document")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._get_span_document")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._is_post_state")
+    def test_record_span_server_failure(self, post_state_mock, span_doc_mock, append_doc_mock):
+        post_state_mock.return_value = True
+        span_doc = mock.Mock()
+        span_doc_mock.return_value = span_doc
+        span_mock = mock.Mock()
+        span_mock.end_time = 10
+        span_mock.start_time = 5
+        span_mock.status.is_ok = False
+        span_mock.kind = SpanKind.SERVER
+        qpm = _QuickpulseManager(
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ac;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/",
+            resource=Resource.create(),
+        )
+        qpm._request_failed_rate_counter = mock.Mock()
+        qpm._request_duration = mock.Mock()
+        qpm._record_span(span_mock)
+        append_doc_mock.assert_called_once_with(span_doc)
+        qpm._request_failed_rate_counter.add.assert_called_once_with(1)
+        qpm._request_duration.record.assert_called_once_with(5 / 1e9)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._append_quickpulse_document")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._get_span_document")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._is_post_state")
+    def test_record_span_dep_success(self, post_state_mock, span_doc_mock, append_doc_mock):
+        post_state_mock.return_value = True
+        span_doc = mock.Mock()
+        span_doc_mock.return_value = span_doc
+        span_mock = mock.Mock()
+        span_mock.end_time = 10
+        span_mock.start_time = 5
+        span_mock.status.is_ok = True
+        span_mock.kind = SpanKind.CLIENT
+        qpm = _QuickpulseManager(
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ac;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/",
+            resource=Resource.create(),
+        )
+        qpm._dependency_rate_counter = mock.Mock()
+        qpm._dependency_duration = mock.Mock()
+        qpm._record_span(span_mock)
+        append_doc_mock.assert_called_once_with(span_doc)
+        qpm._dependency_rate_counter.add.assert_called_once_with(1)
+        qpm._dependency_duration.record.assert_called_once_with(5 / 1e9)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._append_quickpulse_document")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._get_span_document")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._is_post_state")
+    def test_record_span_dep_failure(self, post_state_mock, span_doc_mock, append_doc_mock):
+        post_state_mock.return_value = True
+        span_doc = mock.Mock()
+        span_doc_mock.return_value = span_doc
+        span_mock = mock.Mock()
+        span_mock.end_time = 10
+        span_mock.start_time = 5
+        span_mock.status.is_ok = False
+        span_mock.kind = SpanKind.CLIENT
+        qpm = _QuickpulseManager(
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ac;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/",
+            resource=Resource.create(),
+        )
+        qpm._dependency_failure_rate_counter = mock.Mock()
+        qpm._dependency_duration = mock.Mock()
+        qpm._record_span(span_mock)
+        append_doc_mock.assert_called_once_with(span_doc)
+        qpm._dependency_failure_rate_counter.add.assert_called_once_with(1)
+        qpm._dependency_duration.record.assert_called_once_with(5 / 1e9)
