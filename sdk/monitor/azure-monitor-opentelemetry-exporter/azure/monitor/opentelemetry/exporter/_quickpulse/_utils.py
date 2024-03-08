@@ -144,7 +144,6 @@ def _get_url(span_kind: SpanKind, attributes: Attributes) -> str:
                 http_host = attributes.get(SpanAttributes.HTTP_HOST)
                 if http_host:
                     return f"{http_scheme}://{http_host}:{port}{http_target}"
-    return ""
 
 
 def _ns_to_iso8601_string(nanoseconds: int) -> str:
