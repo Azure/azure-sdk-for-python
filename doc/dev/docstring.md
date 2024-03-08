@@ -194,4 +194,4 @@ Positional parameters and keyword arguments are documented in the exact same way
 ## Additional references
 
 - [Official Sphinx documentation](https://www.sphinx-doc.org/en/master/usage/domains/python.html)
-- [Microsoft - How to document a Python API (internal)](https://github.com/MicrosoftDocs/docs-help-pr/blob/main/help-content/onboard/admin/reference/python/documenting-api.md)
+- [Microsoft - How to document a Python API (internal)](https://review.learn.microsoft.com/help/onboard/admin/reference/python/documenting-api)

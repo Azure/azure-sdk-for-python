@@ -21,6 +21,12 @@ using async OAuth credentials.
 `list_blobs`, `list_blobs_names`, and `walk_blobs`. This change was made to avoid confusion for filtering results.
 The `name_starts_with` parameter is the correct prameter to pass for filtering.
 
+## 12.19.1 (2024-03-05)
+
+### Bugs Fixed
+- Fixed an issue where under rare circumstances, full downloads of sparse Page Blobs could result in the
+downloaded content containing up to one "chunk" of extra `\x00` at the end due to an optimization error.
+
 ## 12.19.0 (2023-11-07)
 
 ### Features Added
