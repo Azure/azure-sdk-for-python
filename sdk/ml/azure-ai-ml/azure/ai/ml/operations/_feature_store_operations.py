@@ -452,7 +452,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
         identity = kwargs.pop("identity", feature_store.identity)
         if materialization_identity:
             identity = IdentityConfiguration(
-                type=camel_to_snake(ManagedServiceIdentityType.SYSTEM_ASSIGNED_USER_ASSIGNED),
+                type=str(camel_to_snake(ManagedServiceIdentityType.SYSTEM_ASSIGNED_USER_ASSIGNED)),
                 # At most 1 UAI can be attached to workspace when materialization is enabled
                 user_assigned_identities=[materialization_identity],
             )

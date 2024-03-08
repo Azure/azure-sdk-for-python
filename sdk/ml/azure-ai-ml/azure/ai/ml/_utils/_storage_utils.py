@@ -126,8 +126,8 @@ class AzureMLDatastorePathUri:
 
 
 def get_storage_client(
-    credential: str,
-    storage_account: str,
+    credential: Optional[str],
+    storage_account: Optional[str],
     storage_type: Union[DatastoreType, str] = DatastoreType.AZURE_BLOB,
     account_url: Optional[str] = None,
     container_name: Optional[str] = None,

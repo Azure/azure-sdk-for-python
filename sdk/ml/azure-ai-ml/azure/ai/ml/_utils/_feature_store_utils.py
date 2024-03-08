@@ -43,7 +43,7 @@ def read_remote_feature_set_spec_metadata(
     if scheme == "azureml":
         datastore_path_uri = AzureMLDatastorePathUri(base_uri)
         datastore_info = get_datastore_info(datastore_operations, datastore_path_uri.datastore)
-        storage_client = get_storage_client(**datastore_info)
+        storage_client = get_storage_client(**datastore_info)  # type: ignore[misc]
         with TemporaryDirectory() as tmp_dir:
             starts_with = datastore_path_uri.path.rstrip("/")
             storage_client.download(f"{starts_with}/FeatureSetSpec.yaml", tmp_dir)
