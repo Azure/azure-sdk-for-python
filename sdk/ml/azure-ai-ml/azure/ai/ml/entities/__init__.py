@@ -9,7 +9,8 @@ and run output/logging etc.
 # pylint: disable=naming-mismatch
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
-from typing import Any, List, Optional
+import logging
+from typing import Any, Optional
 
 from azure.ai.ml._restclient.v2022_10_01.models import CreatedByType
 from azure.ai.ml._restclient.v2022_10_01_preview.models import UsageUnit
@@ -453,57 +454,61 @@ __all__ = [
     "NoneCredentialConfiguration",
 ]
 
-
-def __dir__() -> List[str]:
-    return __all__
-
-
 # Allow importing these types for backwards compatibility
 
 
 def __getattr__(name: str):
     requested: Optional[Any] = None
+
     if name == "Choice":
-        from ._job.sweep.search_space import Choice
+        from ..sweep import Choice
 
         requested = Choice
     if name == "LogNormal":
-        from ._job.sweep.search_space import LogNormal
+        from ..sweep import LogNormal
 
         requested = LogNormal
     if name == "LogUniform":
-        from ._job.sweep.search_space import LogUniform
+        from ..sweep import LogUniform
 
         requested = LogUniform
     if name == "Normal":
-        from ._job.sweep.search_space import Normal
+        from ..sweep import Normal
 
         requested = Normal
     if name == "QLogNormal":
-        from ._job.sweep.search_space import QLogNormal
+        from ..sweep import QLogNormal
 
         requested = QLogNormal
     if name == "QLogUniform":
-        from ._job.sweep.search_space import QLogUniform
+        from ..sweep import QLogUniform
 
         requested = QLogUniform
     if name == "QNormal":
-        from ._job.sweep.search_space import QNormal
+        from ..sweep import QNormal
 
         requested = QNormal
     if name == "QUniform":
-        from ._job.sweep.search_space import QUniform
+        from ..sweep import QUniform
 
         requested = QUniform
     if name == "Randint":
-        from ._job.sweep.search_space import Randint
+        from ..sweep import Randint
 
         requested = Randint
     if name == "Uniform":
-        from ._job.sweep.search_space import Uniform
+        from ..sweep import Uniform
 
         requested = Uniform
 
     if requested:
+        if not getattr(__getattr__, "warning_issued", False):
+            logging.warning(
+                " %s will be removed from the azure.ai.ml.entities namespace in a future release."
+                " Please import from the azure.ai.ml.sweep namespace instead.",
+                name,
+            )
+            __getattr__.warning_issued = True
         return requested
+
     raise AttributeError(f"module 'azure.ai.ml.entities' has no attribute {name}")

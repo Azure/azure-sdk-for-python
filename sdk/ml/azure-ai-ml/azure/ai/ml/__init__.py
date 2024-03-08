@@ -5,7 +5,7 @@
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
 import logging
-from typing import Any, List, Optional
+from typing import Any, Optional
 
 # from .entities._builders.parallel_func import parallel
 from azure.ai.ml.entities._inputs_outputs import Input, Output
@@ -76,15 +76,12 @@ __all__ = [
 __version__ = VERSION
 
 
-def __dir__() -> List[str]:
-    return __all__
-
-
 # Allow importing these types for backwards compatibility
 
 
 def __getattr__(name: str):
     requested: Optional[Any] = None
+
     if name == "AmlTokenConfiguration":
         from .entities._credentials import AmlTokenConfiguration
 
@@ -99,5 +96,13 @@ def __getattr__(name: str):
         requested = UserIdentityConfiguration
 
     if requested:
+        if not getattr(__getattr__, "warning_issued", False):
+            logging.warning(
+                " %s will be removed from the azure.ai.ml namespace in a future release."
+                " Please use the azure.ai.ml.entities namespace instead.",
+                name,
+            )
+            __getattr__.warning_issued = True
         return requested
-    raise AttributeError(f"module 'azure.ai.ml.entities' has no attribute {name}")
+
+    raise AttributeError(f"module 'azure.ai.ml' has no attribute {name}")
