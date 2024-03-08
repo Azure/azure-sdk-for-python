@@ -124,7 +124,7 @@ class AzureAppConfigurationClient:
         )
 
     @distributed_trace_async
-    async def send_request(self, request: HttpRequest, **kwargs) -> AsyncHttpResponse:
+    async def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs) -> AsyncHttpResponse:
         """Runs a network request using the client's existing pipeline.
 
         The request URL can be relative to the vault URL. The service API version used for the request is the same as
@@ -134,13 +134,11 @@ class AzureAppConfigurationClient:
 
         :param request: The network request you want to make.
         :type request: ~azure.core.rest.HttpRequest
-
         :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
-
         :return: The response of your network call. Does not do error handling on your response.
         :rtype: ~azure.core.rest.AsyncHttpResponse
         """
-        return await self._impl._send_request(request, **kwargs)
+        return await self._impl._send_request(request, stream=stream, **kwargs)
     
     @overload
     def list_configuration_settings(

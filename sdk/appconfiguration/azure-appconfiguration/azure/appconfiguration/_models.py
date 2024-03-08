@@ -542,10 +542,10 @@ class ConfigurationSnapshot:  # pylint: disable=too-many-instance-attributes
 class ConfigurationSettingPropertiesPaged(PageIterator):
     """An iterable of ConfigurationSetting properties."""
 
-    page_etag: str
+    etag: str
     """The etag of current page."""
     
-    def __init__(self, command: Callable, **kwargs: Any) -> None:
+    def __init__(self, command: Callable, **kwargs):
         super(ConfigurationSettingPropertiesPaged, self).__init__(
             self._get_next_cb,
             self._extract_data_cb,
@@ -557,9 +557,8 @@ class ConfigurationSettingPropertiesPaged(PageIterator):
         self._accept_datetime = kwargs.get("accept_datetime")
         self._select = kwargs.get("select")
         self._cls = kwargs.get("cls")
-
     
-    def _get_next_cb(self, continuation_token):  # pylint: disable=inconsistent-return-statements
+    def _get_next_cb(self, continuation_token):
         response = self._command(
             key=self._key,
             label=self._label,
@@ -568,9 +567,8 @@ class ConfigurationSettingPropertiesPaged(PageIterator):
             cls=self._cls,
         ).by_page(continuation_token=continuation_token)
         next(response)
-        self.page_etag = response._response.http_response.headers['Etag']
+        self.etag = response._response.http_response.headers.get('Etag')
         return response
-
 
     def _extract_data_cb(self, pipeline_response):
         return pipeline_response.continuation_token, pipeline_response._current_page
@@ -579,10 +577,10 @@ class ConfigurationSettingPropertiesPaged(PageIterator):
 class ConfigurationSettingPropertiesPagedAsync(AsyncPageIterator):
     """An iterable of ConfigurationSetting properties."""
 
-    page_etag: str
+    etag: str
     """The etag of current page."""
     
-    def __init__(self, command: Callable, **kwargs: Any) -> None:
+    def __init__(self, command: Callable, **kwargs):
         super(ConfigurationSettingPropertiesPagedAsync, self).__init__(
             self._get_next_cb,
             self._extract_data_cb,
@@ -594,9 +592,8 @@ class ConfigurationSettingPropertiesPagedAsync(AsyncPageIterator):
         self._accept_datetime = kwargs.get("accept_datetime")
         self._select = kwargs.get("select")
         self._cls = kwargs.get("cls")
-
     
-    async def _get_next_cb(self, continuation_token):  # pylint: disable=inconsistent-return-statements
+    async def _get_next_cb(self, continuation_token):
         response = self._command(
             key=self._key,
             label=self._label,
@@ -604,10 +601,9 @@ class ConfigurationSettingPropertiesPagedAsync(AsyncPageIterator):
             select=self._select,
             cls=self._cls,
         ).by_page(continuation_token=continuation_token)
-        await anext(response)
-        self.page_etag = response._response.http_response.headers['Etag']
+        await response.__anext__()
+        self.etag = response._response.http_response.headers.get('Etag')
         return response
-
 
     async def _extract_data_cb(self, pipeline_response):
         return pipeline_response.continuation_token, pipeline_response._current_page
