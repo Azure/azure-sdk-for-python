@@ -113,6 +113,8 @@ extends:
   ${{ else }}:
     template: v1/1ES.Unofficial.PipelineTemplate.yml@1ESPipelineTemplates
   parameters:
+    settings:
+      skipBuildTagsForGitHubPullRequests: true
     ${{ if eq(variables['System.TeamProject'], 'internal') }}:
       sdl:
         sourceAnalysisPool:
