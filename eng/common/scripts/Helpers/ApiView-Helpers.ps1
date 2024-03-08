@@ -32,10 +32,10 @@ function Check-ApiReviewStatus($packageName, $packageVersion, $language, $url, $
 
   try
   {
-    $requestUrl = "`"${url}?language=${lang}&packageName=${packageName}`""
+    $requestUrl = $url+"?language=" + $lang +"&packageName=" +$packageName
     if ($packageVersion)
     {
-      $requestUrl = $url + "`"&packageVersion=${packageVersion}`""
+      $requestUrl = $url + "&packageVersion=" + $packageVersion
     }
     Write-host "URL to check status: $requestUrl"
     $response = Invoke-WebRequest $requestUrl -Method 'GET' -Headers $headers
