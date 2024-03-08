@@ -7,6 +7,7 @@ from unittest import mock
 
 from opentelemetry.sdk.metrics import MeterProvider
 from opentelemetry.sdk.resources import Resource, ResourceAttributes
+from opentelemetry.semconv.trace import SpanAttributes
 from opentelemetry.trace import SpanKind
 
 from azure.monitor.opentelemetry.exporter._generated.models import ContextTagKeys
@@ -224,3 +225,25 @@ class TestQuickpulseManager(unittest.TestCase):
         append_doc_mock.assert_called_once_with(span_doc)
         qpm._dependency_failure_rate_counter.add.assert_called_once_with(1)
         qpm._dependency_duration.record.assert_called_once_with(5 / 1e9)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._append_quickpulse_document")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._get_log_record_document")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._is_post_state")
+    def test_record_log_exception(self, post_state_mock, log_doc_mock, append_doc_mock):
+        post_state_mock.return_value = True
+        log_record_doc = mock.Mock()
+        log_doc_mock.return_value = log_record_doc
+        log_data_mock = mock.Mock()
+        attributes = {
+            SpanAttributes.EXCEPTION_TYPE: "exc_type",
+            SpanAttributes.EXCEPTION_MESSAGE: "exc_msg",
+        }
+        log_data_mock.log_record.attributes = attributes
+        qpm = _QuickpulseManager(
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ac;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/",
+            resource=Resource.create(),
+        )
+        qpm._exception_rate_counter = mock.Mock()
+        qpm._record_log_record(log_data_mock)
+        append_doc_mock.assert_called_once_with(log_record_doc)
+        qpm._exception_rate_counter.add.assert_called_once_with(1)
