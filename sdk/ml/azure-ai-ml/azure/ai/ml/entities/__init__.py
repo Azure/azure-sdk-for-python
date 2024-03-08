@@ -9,6 +9,8 @@ and run output/logging etc.
 # pylint: disable=naming-mismatch
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
+from typing import Any, List, Optional
+
 from azure.ai.ml._restclient.v2022_10_01.models import CreatedByType
 from azure.ai.ml._restclient.v2022_10_01_preview.models import UsageUnit
 
@@ -138,18 +140,6 @@ from ._job.service_instance import ServiceInstance
 from ._job.spark_job import SparkJob
 from ._job.spark_job_entry import SparkJobEntry, SparkJobEntryType
 from ._job.spark_resource_configuration import SparkResourceConfiguration
-from ._job.sweep.search_space import (
-    Choice,
-    LogNormal,
-    LogUniform,
-    Normal,
-    QLogNormal,
-    QLogUniform,
-    QNormal,
-    QUniform,
-    Randint,
-    Uniform,
-)
 from ._monitoring.alert_notification import AlertNotification
 from ._monitoring.compute import ServerlessSparkCompute
 from ._monitoring.definition import MonitorDefinition
@@ -325,16 +315,6 @@ __all__ = [
     "ParallelComponent",
     "CommandComponent",
     "SparkComponent",
-    "Choice",
-    "Normal",
-    "LogNormal",
-    "QNormal",
-    "QLogNormal",
-    "Randint",
-    "Uniform",
-    "QUniform",
-    "LogUniform",
-    "QLogUniform",
     "ResourceRequirementsSettings",
     "ResourceSettings",
     "AssignedUserConfiguration",
@@ -472,3 +452,58 @@ __all__ = [
     "RequestLogging",
     "NoneCredentialConfiguration",
 ]
+
+
+def __dir__() -> List[str]:
+    return __all__
+
+
+# Allow importing these types for backwards compatibility
+
+
+def __getattr__(name: str):
+    requested: Optional[Any] = None
+    if name == "Choice":
+        from ._job.sweep.search_space import Choice
+
+        requested = Choice
+    if name == "LogNormal":
+        from ._job.sweep.search_space import LogNormal
+
+        requested = LogNormal
+    if name == "LogUniform":
+        from ._job.sweep.search_space import LogUniform
+
+        requested = LogUniform
+    if name == "Normal":
+        from ._job.sweep.search_space import Normal
+
+        requested = Normal
+    if name == "QLogNormal":
+        from ._job.sweep.search_space import QLogNormal
+
+        requested = QLogNormal
+    if name == "QLogUniform":
+        from ._job.sweep.search_space import QLogUniform
+
+        requested = QLogUniform
+    if name == "QNormal":
+        from ._job.sweep.search_space import QNormal
+
+        requested = QNormal
+    if name == "QUniform":
+        from ._job.sweep.search_space import QUniform
+
+        requested = QUniform
+    if name == "Randint":
+        from ._job.sweep.search_space import Randint
+
+        requested = Randint
+    if name == "Uniform":
+        from ._job.sweep.search_space import Uniform
+
+        requested = Uniform
+
+    if requested:
+        return requested
+    raise AttributeError(f"module 'azure.ai.ml.entities' has no attribute {name}")
