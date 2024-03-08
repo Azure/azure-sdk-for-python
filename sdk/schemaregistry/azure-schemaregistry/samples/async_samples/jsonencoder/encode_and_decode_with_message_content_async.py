@@ -63,8 +63,8 @@ TENANT_ID = os.environ["AZURE_TENANT_ID"]
 CLIENT_ID = os.environ["AZURE_CLIENT_ID"]
 CLIENT_SECRET = os.environ["AZURE_CLIENT_SECRET"]
 
-SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE = os.environ['SCHEMAREGISTRY_JSON_FULLY_QUALIFIED_NAMESPACE']
-GROUP_NAME = os.environ['SCHEMAREGISTRY_GROUP']
+SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE = os.environ["SCHEMAREGISTRY_JSON_FULLY_QUALIFIED_NAMESPACE"]
+GROUP_NAME = os.environ["SCHEMAREGISTRY_GROUP"]
 
 SCHEMA_JSON = {
     "$id": "https://example.com/person.schema.json",
@@ -72,26 +72,18 @@ SCHEMA_JSON = {
     "title": "Person",
     "type": "object",
     "properties": {
-        "name": {
-            "type": "string",
-            "description": "Person's name."
-        },
-        "favorite_color": {
-            "type": "string",
-            "description": "Favorite color."
-        },
+        "name": {"type": "string", "description": "Person's name."},
+        "favorite_color": {"type": "string", "description": "Favorite color."},
         "favorite_number": {
             "description": "Favorite number.",
             "type": "integer",
-        }
-    }
+        },
+    },
 }
 SCHEMA_STRING = json.dumps(SCHEMA_JSON)
 
 
-token_credential = ClientSecretCredential(
-    tenant_id=TENANT_ID, client_id=CLIENT_ID, client_secret=CLIENT_SECRET
-)
+token_credential = ClientSecretCredential(tenant_id=TENANT_ID, client_id=CLIENT_ID, client_secret=CLIENT_SECRET)
 
 
 async def encode_message_content_dict(encoder: JsonSchemaEncoder):
@@ -103,6 +95,7 @@ async def encode_message_content_dict(encoder: JsonSchemaEncoder):
         encoded_message_content_ben["content"],
         encoded_message_content_ben["content_type"],
     )
+
 
 async def decode_with_content_and_content_type(encoder: JsonSchemaEncoder, event_data: EventData):
     # get content as bytes
@@ -129,6 +122,7 @@ async def main():
     decoded_content = await decode_with_content_and_content_type(encoder, event_data)
     await encoder.close()
     await token_credential.close()
+
 
 if __name__ == "__main__":
     asyncio.run(main())

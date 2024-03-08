@@ -74,9 +74,7 @@ async def register_schema(schema_registry_client):
         ],
     }
     DEFINITION = json.dumps(SCHEMA_JSON, separators=(",", ":"))
-    schema_properties = await schema_registry_client.register_schema(
-        GROUP_NAME, NAME, DEFINITION, FORMAT
-    )
+    schema_properties = await schema_registry_client.register_schema(GROUP_NAME, NAME, DEFINITION, FORMAT)
     schema_id = schema_properties.id
     # [END register_schema_async]
     return schema_properties
@@ -105,6 +103,7 @@ async def get_schema_by_version(schema_registry_client, version):
     print(properties)
     return schema
 
+
 async def get_old_schema_by_version(schema_registry_client):
     GROUP_NAME = os.environ["SCHEMAREGISTRY_GROUP"]
     NAME = "your-schema-name"
@@ -120,14 +119,13 @@ async def get_old_schema_by_version(schema_registry_client):
         ],
     }
     NEW_DEFINITION = json.dumps(NEW_SCHEMA_JSON, separators=(",", ":"))
-    updated_schema_properties = await schema_registry_client.register_schema(
-        GROUP_NAME, NAME, NEW_DEFINITION, FORMAT
-    )
+    updated_schema_properties = await schema_registry_client.register_schema(GROUP_NAME, NAME, NEW_DEFINITION, FORMAT)
     print(f"Updated schema v{updated_schema_properties.version}: {NEW_SCHEMA_JSON}")
     old_version = updated_schema_properties.version - 1
     schema = await schema_registry_client.get_schema(group_name=GROUP_NAME, name=NAME, version=old_version)
     print(f"Retrieving old schema v{schema.properties.version}: {schema.definition}")
     return schema
+
 
 async def get_schema_id(schema_registry_client):
     # [START get_schema_id_async]
@@ -145,9 +143,7 @@ async def get_schema_id(schema_registry_client):
         ],
     }
     definition = json.dumps(schema_json, separators=(",", ":"))
-    schema_properties = await schema_registry_client.get_schema_properties(
-        group_name, name, definition, format
-    )
+    schema_properties = await schema_registry_client.get_schema_properties(group_name, name, definition, format)
     schema_id = schema_properties.id
     # [END get_schema_id_async]
     return schema_id
