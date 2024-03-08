@@ -90,23 +90,24 @@ class PromptMetric(Metric):
 
         self.prompt = prompt
         self.description = description
-        self.prompt = prompt
-        self._template_variable = None
+        self._template_variable = PromptMetric._load_template_variables(prompt)
 
     @staticmethod
     def from_template(*, path, name):
+        with open(path, encoding="utf-8") as template_file:
+            template_content = template_file.read()
+
+        metric = PromptMetric(name=name, prompt=template_content)
+
+        metric._template_variable = PromptMetric._load_template_variables(template_content)  # pylint: disable=protected-access
+        return metric
+    
+    @staticmethod
+    def _load_template_variables(prompt_template):
         from jinja2 import Environment
         from jinja2 import meta
 
         env = Environment()
-
-        with open(path, encoding="utf-8") as template_file:
-            template_content = template_file.read()
-            template = env.parse(template_content, name="test")
-
+        template = env.parse(prompt_template, name="test")
         template_variables = meta.find_undeclared_variables(template)
-
-        metric = PromptMetric(name=name, prompt=template_content)
-
-        metric._template_variable = template_variables  # pylint: disable=protected-access
-        return metric
+        return template_variables
