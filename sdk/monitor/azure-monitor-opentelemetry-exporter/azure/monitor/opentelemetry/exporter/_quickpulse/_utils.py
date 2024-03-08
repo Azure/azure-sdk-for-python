@@ -76,7 +76,7 @@ def _get_span_document(span: ReadableSpan) -> Union[RemoteDependencyDocument, Re
     url = _get_url(span_kind, span.attributes)
     if span_kind in (SpanKind.CLIENT, SpanKind.PRODUCER, SpanKind.INTERNAL):
         document = RemoteDependencyDocument(
-            document_type=_DocumentIngressDocumentType.RemoteDependency,
+            document_type=_DocumentIngressDocumentType.RemoteDependency.value,
             name=span.name,
             command_name=url,
             result_code=str(status_code),
@@ -88,7 +88,7 @@ def _get_span_document(span: ReadableSpan) -> Union[RemoteDependencyDocument, Re
         else:
             code = str(grpc_status_code)
         document = RequestDocument(
-            document_type=_DocumentIngressDocumentType.Request,
+            document_type=_DocumentIngressDocumentType.Request.value,
             name=span.name,
             url=url,
             response_code=code,
@@ -98,17 +98,17 @@ def _get_span_document(span: ReadableSpan) -> Union[RemoteDependencyDocument, Re
 
 # mypy: disable-error-code="assignment"
 def _get_log_record_document(log_data: LogData) -> Union[ExceptionDocument, TraceDocument]:
-    exc_type = log_data.log_record.attributes.get(SpanAttributes.EXCEPTION_TYPE, "")
-    exc_message = log_data.log_record.attributes.get(SpanAttributes.EXCEPTION_MESSAGE, "")
+    exc_type = log_data.log_record.attributes.get(SpanAttributes.EXCEPTION_TYPE)
+    exc_message = log_data.log_record.attributes.get(SpanAttributes.EXCEPTION_MESSAGE)
     if exc_type is not None or exc_message is not None:
         document = ExceptionDocument(
-            document_type=_DocumentIngressDocumentType.Exception,
+            document_type=_DocumentIngressDocumentType.Exception.value,
             exception_type=str(exc_type),
             exception_message=str(exc_message),
         )
     else:
         document = TraceDocument(
-            document_type=_DocumentIngressDocumentType.Trace,
+            document_type=_DocumentIngressDocumentType.Trace.value,
             message=log_data.log_record.body,
         )
     return document
