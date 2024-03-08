@@ -121,6 +121,7 @@ class _QuickpulseManager(metaclass=Singleton):
             _append_quickpulse_document(document)
             duration_ms = 0
             if span.end_time and span.start_time:
+                # mypy: disable-error-code="assignment"
                 duration_ms = (span.end_time - span.start_time) / 1e9
             # TODO: Spec out what "success" is
             success = span.status.is_ok

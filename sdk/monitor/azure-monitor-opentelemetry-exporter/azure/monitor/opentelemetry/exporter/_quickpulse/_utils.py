@@ -65,7 +65,7 @@ def _metric_to_quick_pulse_data_points(  # pylint: disable=too-many-nested-block
         )
     ]
 
-# mypy: disable-error-code="assignment, union-attr"
+# mypy: disable-error-code="assignment,union-attr"
 def _get_span_document(span: ReadableSpan) -> Union[RemoteDependencyDocument, RequestDocument]:
     duration = 0
     if span.end_time and span.start_time:
@@ -114,12 +114,12 @@ def _get_log_record_document(log_data: LogData) -> Union[ExceptionDocument, Trac
     return document
 
 
+# mypy: disable-error-code="assignment"
+# pylint: disable=no-else-return
 def _get_url(span_kind: SpanKind, attributes: Attributes) -> str:
     if not attributes:
         return ""
     http_method = attributes.get(SpanAttributes.HTTP_METHOD)
-    if not http_method:
-        return ""
     if http_method:
         http_scheme = attributes.get(SpanAttributes.HTTP_SCHEME)
         # Client
@@ -144,6 +144,7 @@ def _get_url(span_kind: SpanKind, attributes: Attributes) -> str:
                 http_host = attributes.get(SpanAttributes.HTTP_HOST)
                 if http_host:
                     return f"{http_scheme}://{http_host}:{port}{http_target}"
+    return ""
 
 
 def _ns_to_iso8601_string(nanoseconds: int) -> str:
