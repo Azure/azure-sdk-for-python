@@ -38,12 +38,13 @@ def main():
                 "userAssignedIdentities": {
                     "/subscriptions/6b052e15-03d3-4f17-b2e1-be7f07588291/resourceGroups/exampleRG/providers/Microsoft.ManagedIdentity/userAssignedIdentity/exampleUMI": {}
                 },
-            }
+            },
+            "tags": {"key1": "value1", "key2": "value2"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/chaos/resource-manager/Microsoft.Chaos/stable/2023-11-01/examples/UpdateExperiment.json
+# x-ms-original-file: specification/chaos/resource-manager/Microsoft.Chaos/stable/2024-01-01/examples/UpdateExperiment.json
 if __name__ == "__main__":
     main()
