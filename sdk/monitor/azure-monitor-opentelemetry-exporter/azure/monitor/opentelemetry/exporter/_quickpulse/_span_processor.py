@@ -3,11 +3,13 @@
 
 from opentelemetry.sdk.trace import ReadableSpan, SpanProcessor
 
-from azure.monitor.opentelemetry.exporter._quickpulse._live_metrics import record_span
+from azure.monitor.opentelemetry.exporter._quickpulse._live_metrics import _QuickpulseManager
 
 
 class _QuickpulseSpanProcessor(SpanProcessor):
 
     def on_end(self, span: ReadableSpan) -> None:
-        record_span(span)
+        qpm = _QuickpulseManager._instance
+        if qpm:
+            qpm._record_span(span)
         return super().on_end(span)

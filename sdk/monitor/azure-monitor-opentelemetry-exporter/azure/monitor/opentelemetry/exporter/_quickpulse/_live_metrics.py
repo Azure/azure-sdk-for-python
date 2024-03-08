@@ -53,20 +53,7 @@ def enable_live_metrics(**kwargs: Any) -> None:
     _QuickpulseManager(kwargs.get('connection_string'), kwargs.get('resource'))
 
 
-# Used by _QuickpulseSpanProcessor to record live metrics on span record
-def record_span(span: ReadableSpan) -> None:
-    qpm = _QuickpulseManager._instance
-    if qpm:
-        qpm._record_span(span)
-
-
-# Used by _QuickpulseLogRecordProcessor to record live metrics on log data record
-def record_log_record(log_data: LogData) -> None:
-    qpm = _QuickpulseManager._instance
-    if qpm:
-        qpm._record_log_record(log_data)
-
-
+# pylint: disable=protected-access,too-many-instance-attributes
 class _QuickpulseManager(metaclass=Singleton):
 
     def __init__(self, connection_string: Optional[str], resource: Optional[Resource]) -> None:
@@ -132,7 +119,9 @@ class _QuickpulseManager(metaclass=Singleton):
         if _is_post_state():
             document = _get_span_document(span)
             _append_quickpulse_document(document)
-            duration_ms = (span.end_time - span.start_time) / 1e9
+            duration_ms = 0
+            if span.end_time and span.start_time:
+                duration_ms = (span.end_time - span.start_time) / 1e9
             # TODO: Spec out what "success" is
             success = span.status.is_ok
 
@@ -147,6 +136,7 @@ class _QuickpulseManager(metaclass=Singleton):
                     self._dependency_rate_counter.add(1)
                 else:
                     self._dependency_failure_rate_counter.add(1)
+                self._dependency_duration.record(duration_ms)
 
     def _record_log_record(self, log_data: LogData) -> None:
         # Only record if in post state

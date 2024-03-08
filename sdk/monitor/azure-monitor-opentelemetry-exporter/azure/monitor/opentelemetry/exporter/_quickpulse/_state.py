@@ -22,9 +22,10 @@ class _QuickpulseState(Enum):
 
 
 _GLOBAL_QUICKPULSE_STATE = _QuickpulseState.OFFLINE
-_QUICKPULSE_DOCUMENTS = []
+_QUICKPULSE_DOCUMENTS: List[DocumentIngress] = []
 
 def _set_global_quickpulse_state(state: _QuickpulseState):
+    # pylint: disable=global-statement
     global _GLOBAL_QUICKPULSE_STATE
     _GLOBAL_QUICKPULSE_STATE = state
 
@@ -49,6 +50,7 @@ def _is_post_state():
 
 
 def _append_quickpulse_document(document: DocumentIngress):
+    # pylint: disable=global-statement,global-variable-not-assigned
     global _QUICKPULSE_DOCUMENTS
     # Limit risk of memory leak by limiting doc length to something manageable
     if len(_QUICKPULSE_DOCUMENTS) > 20:
@@ -60,6 +62,7 @@ def _append_quickpulse_document(document: DocumentIngress):
 
 
 def _get_and_clear_quickpulse_documents() -> List[DocumentIngress]:
+    # pylint: disable=global-statement
     global _QUICKPULSE_DOCUMENTS
     documents = list(_QUICKPULSE_DOCUMENTS)
     _QUICKPULSE_DOCUMENTS = []

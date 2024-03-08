@@ -272,7 +272,6 @@ class TestQuickpulse(unittest.TestCase):
             self._metrics_data,
             timeout_millis=20_000,
             base_monitoring_data_point=self._data_point,
-            documents=[],
         )
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._exporter._QuickpulseExporter.export")

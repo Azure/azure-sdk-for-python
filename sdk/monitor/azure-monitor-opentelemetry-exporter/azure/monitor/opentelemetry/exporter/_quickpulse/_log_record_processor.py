@@ -3,17 +3,19 @@
 
 from opentelemetry.sdk._logs import LogData, LogRecordProcessor
 
-from azure.monitor.opentelemetry.exporter._quickpulse._live_metrics import record_log_record
+from azure.monitor.opentelemetry.exporter._quickpulse._live_metrics import _QuickpulseManager
 
 
 class _QuickpulseLogRecordProcessor(LogRecordProcessor):
 
     def emit(self, log_data: LogData) -> None:
-        record_log_record(log_data)
+        qpm = _QuickpulseManager._instance
+        if qpm:
+            qpm._record_log_record(log_data)
         super().emit(log_data)
-    
+
     def shutdown(self):
-        super().shutdown()
+        pass
 
     def force_flush(self, timeout_millis: int = 30000):
         super().force_flush(timeout_millis=timeout_millis)

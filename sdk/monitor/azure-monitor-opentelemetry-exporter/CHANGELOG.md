@@ -5,7 +5,7 @@
 ### Features Added
 
 - Add live metrics collection of requests/dependencies/exceptions
-    ([#34141](https://github.com/Azure/azure-sdk-for-python/pull/34141))
+    ([#34673](https://github.com/Azure/azure-sdk-for-python/pull/34673))
 
 ### Breaking Changes
 

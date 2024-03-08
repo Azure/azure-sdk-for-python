@@ -65,10 +65,13 @@ def _metric_to_quick_pulse_data_points(  # pylint: disable=too-many-nested-block
         )
     ]
 
+# mypy: disable-error-code="assignment, union-attr"
 def _get_span_document(span: ReadableSpan) -> Union[RemoteDependencyDocument, RequestDocument]:
-    duration = span.end_time - span.start_time
-    status_code = span.attributes.get(SpanAttributes.HTTP_STATUS_CODE)
-    grpc_status_code = span.attributes.get(SpanAttributes.RPC_GRPC_STATUS_CODE)
+    duration = 0
+    if span.end_time and span.start_time:
+        duration = span.end_time - span.start_time
+    status_code = span.attributes.get(SpanAttributes.HTTP_STATUS_CODE, "")
+    grpc_status_code = span.attributes.get(SpanAttributes.RPC_GRPC_STATUS_CODE, "")
     span_kind = span.kind
     url = _get_url(span_kind, span.attributes)
     if span_kind in (SpanKind.CLIENT, SpanKind.PRODUCER, SpanKind.INTERNAL):
@@ -76,7 +79,7 @@ def _get_span_document(span: ReadableSpan) -> Union[RemoteDependencyDocument, Re
             document_type=_DocumentIngressDocumentType.RemoteDependency,
             name=span.name,
             command_name=url,
-            result_code=status_code,
+            result_code=str(status_code),
             duration=_ns_to_iso8601_string(duration),
         )
     else:
@@ -93,14 +96,15 @@ def _get_span_document(span: ReadableSpan) -> Union[RemoteDependencyDocument, Re
         )
     return document
 
+# mypy: disable-error-code="assignment"
 def _get_log_record_document(log_data: LogData) -> Union[ExceptionDocument, TraceDocument]:
-    exc_type = log_data.log_record.attributes.get(SpanAttributes.EXCEPTION_TYPE)
-    exc_message = log_data.log_record.attributes.get(SpanAttributes.EXCEPTION_MESSAGE)
+    exc_type = log_data.log_record.attributes.get(SpanAttributes.EXCEPTION_TYPE, "")
+    exc_message = log_data.log_record.attributes.get(SpanAttributes.EXCEPTION_MESSAGE, "")
     if exc_type is not None or exc_message is not None:
         document = ExceptionDocument(
             document_type=_DocumentIngressDocumentType.Exception,
-            exception_type=exc_type,
-            exception_message=exc_message,
+            exception_type=str(exc_type),
+            exception_message=str(exc_message),
         )
     else:
         document = TraceDocument(
@@ -114,6 +118,8 @@ def _get_url(span_kind: SpanKind, attributes: Attributes) -> str:
     if not attributes:
         return ""
     http_method = attributes.get(SpanAttributes.HTTP_METHOD)
+    if not http_method:
+        return ""
     if http_method:
         http_scheme = attributes.get(SpanAttributes.HTTP_SCHEME)
         # Client
@@ -121,15 +127,15 @@ def _get_url(span_kind: SpanKind, attributes: Attributes) -> str:
             http_url = attributes.get(SpanAttributes.HTTP_URL)
             if http_url:
                 return str(http_url)
-            else:
-                host = attributes.get(SpanAttributes.NET_PEER_NAME)
-                port = attributes.get(SpanAttributes.NET_PEER_PORT, "")
-                ip = attributes.get(SpanAttributes.NET_PEER_IP)
-                if http_scheme:
-                    if host:
-                        return f"{http_scheme}://{host}:{port}"
-                    else:
-                        return f"{http_scheme}://{ip}:{port}"
+            
+            host = attributes.get(SpanAttributes.NET_PEER_NAME)
+            port = attributes.get(SpanAttributes.NET_PEER_PORT, "")
+            ip = attributes.get(SpanAttributes.NET_PEER_IP)
+            if http_scheme:
+                if host:
+                    return f"{http_scheme}://{host}:{port}"
+                else:
+                    return f"{http_scheme}://{ip}:{port}"
         else:  # Server
             host = attributes.get(SpanAttributes.NET_HOST_NAME)
             port = attributes.get(SpanAttributes.NET_HOST_PORT)
