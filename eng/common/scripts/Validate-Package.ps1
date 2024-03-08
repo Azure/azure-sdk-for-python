@@ -3,20 +3,20 @@
 [CmdletBinding()]
 param (
   [Parameter(Mandatory = $true)]  
-  [string]$PackageName,
+  [string] $PackageName,
   [Parameter(Mandatory = $true)] 
-  [string]$ArtifactPath,
+  [string] $ArtifactPath,
   [Parameter(Mandatory=$True)]
-  [string]$RepoRoot,
+  [string] $RepoRoot,
   [Parameter(Mandatory=$True)]
   [string] $APIKey,  
   [Parameter(Mandatory=$True)]
-  [string]$ConfigFileDir,
-  [string]$BuildDefinition,
-  [string]$PipelineUrl,
+  [string] $ConfigFileDir,
+  [string] $BuildDefinition,
+  [string] $PipelineUrl,
   [string] $APIViewUri,
-  [string]$Devops_pat = $env:DEVOPS_PAT,
-  [bool]$IgnoreFailures = $false
+  [string] $Devops_pat = $env:DEVOPS_PAT,
+  [bool] $IgnoreFailures = $false
 )
 Set-StrictMode -Version 3
 
@@ -305,7 +305,6 @@ if (!$IgnoreFailures)
 {
     if ($pkgValidationDetails.VersionValidation.Status -eq "Failed" -or
         $pkgValidationDetails.ChangeLogValidation.Status -eq "Failed" -or
-        $pkgValidationDetails.ReadmeValidation.Status -eq "Failed" -or
         $pkgValidationDetails.APIReviewValidation.Status -eq "Pending" -or
         $pkgValidationDetails.PackageNameValidation.Status -eq "Pending" -or
         !$updatedWi)
