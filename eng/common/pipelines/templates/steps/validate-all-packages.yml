@@ -2,8 +2,6 @@ parameters:
   ArtifactPath: $(Build.ArtifactStagingDirectory)
   Artifacts: []
   ConfigFileDir: $(Build.ArtifactStagingDirectory)/PackageInfo
-variables:
-  CurrentPipelineRunUrl: '$(System.CollectionUri)$(System.TeamProject)/_build/results?buildId=$(Build.BuildId)'
 
 steps:
  - ${{ if and(ne(variables['Skip.PackageValidation'], 'true'), eq(variables['System.TeamProject'], 'internal')) }}:
@@ -17,7 +15,7 @@ steps:
           -APIKey $(azuresdk-apiview-apikey)
           -ConfigFileDir '${{ parameters.ConfigFileDir }}'
           -BuildDefinition '$(Build.DefinitionName)'
-          -PipelineUrl $(CurrentPipelineRunUrl)
+          -PipelineUrl $(System.CollectionUri)$(System.TeamProject)/_build/results?buildId=$(Build.BuildId)
           -Devops_pat '$(azuresdk-azure-sdk-devops-release-work-item-pat)'
         pwsh: true
         workingDirectory: $(Pipeline.Workspace)
