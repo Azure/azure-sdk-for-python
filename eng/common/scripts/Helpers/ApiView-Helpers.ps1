@@ -39,7 +39,7 @@ function Check-ApiReviewStatus($packageName, $packageVersion, $language, $url, $
     }
     Write-host "URL to check status: $requestUrl"
     $response = Invoke-WebRequest $requestUrl -Method 'GET' -Headers $headers
-    Write-Host = "Response: $($response)"
+    Write-Host  "Response: $($response), code: $($response.StatusCode)"
     if ($response.StatusCode -eq '200')
     {
       Write-Host "API Review is approved for package $($packageName)"      

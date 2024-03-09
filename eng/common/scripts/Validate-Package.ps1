@@ -244,9 +244,9 @@ function UpdateValidationStatus($pkgvalidationDetails)
     $fields += "`"APIReviewStatusDetails=${apiReviewDetails}`""
     $fields += "`"PackageNameApprovalStatus=${packageNameStatus}`""
     $fields += "`"PackageNameApprovalDetails=${packageNameDetails}`""
-    if ($BuildDefinition) {
-        $fields += "`"BuildId=$BuildDefinition`""
-    }
+    <#if ($BuildDefinition) {
+        $fields += "`"LatestBuildId=$BuildDefinition`""
+    }#>
     if ($PipelineUrl) {
         $fields += "`"LatestPipelineRun=$PipelineUrl`""
     }
