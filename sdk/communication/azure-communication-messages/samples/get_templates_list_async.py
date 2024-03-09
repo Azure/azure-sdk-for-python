@@ -42,11 +42,8 @@ class GetTemplatesSampleAsync(object):
             template_list = message_template_client.list_templates(self.channel_id)
             async_list_data = [x async for x in template_list]
             count_templates = len(list(async_list_data))
-            if(count_templates != 0):
-                print("Successfully retrieved {} templates from channel_id {}."
+            print("Successfully retrieved {} templates from channel_id {}."
                 .format(count_templates, self.channel_id))
-            else:
-                 print("Failed to fetch WhatsApp templates.")
 
 async def main():
     sample = GetTemplatesSampleAsync()
