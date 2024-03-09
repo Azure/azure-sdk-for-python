@@ -123,26 +123,36 @@ function VerifyAPIReview($packageDetails, $packageName, $packageVersion, $langua
     try
     {
         Write-Host "Checking API review status for package $packageName with version $packageVersion. language [$language]." 
-        $errOutput = $( $apireviewStatus = & Check-ApiReviewStatus -PackageName $packageName -Language $language -url $APIViewUri -apiKey $APIKey) 2>&1
+        $apireviewStatus =  Check-ApiReviewStatus -PackageName $packageName -Language $language -packageVersion $packageVersion -url $APIViewUri -apiKey $APIKey
         Write-Host "API Review status: $apireviewStatus"
-        Write-Host "APi review status check output(if any): $($errOutput)"
-        $packageDetails.APIReviewValidation.Message = $errOutput
-        $packageDetails.PackageNameValidation.Message = $errOutput
 
-        # API review returns status code 200 if api review is approved
-        # Package name is considered as approved if response is 200 or 201.
+        #API review approval status
         if ($apireviewStatus -eq '200')
         {
             $packageDetails.APIReviewValidation.Status = "Approved"
             $packageDetails.APIReviewValidation.Message = "API review is in approved status."
+        }
+        else
+        {
+            $packageDetails.APIReviewValidation.Status = "Pending"
+            $packageDetails.APIReviewValidation.Message = "API Review is not approved for package $($packageName). Release pipeline will fail if API review is not approved for a stable version release.You can check http://aka.ms/azsdk/engsys/apireview/faq for more details on API Approval."
+        }
 
-            $packageDetails.PackageNameValidation.Status = "Approved"
-            $packageDetails.PackageNameValidation.Message = "Package name is in approved status."
-        }        
-        elseif ($apireviewStatus -eq '201')
+        # Package name approval status
+        if ($apireviewStatus -eq '200' -or $apireviewStatus -eq '201')
         {
             $packageDetails.PackageNameValidation.Status = "Approved"
             $packageDetails.PackageNameValidation.Message = "Package name is in approved status."
+        }
+        elseif ($apireviewStatus -eq '202')
+        {
+            $packageDetails.PackageNameValidation.Status = "Pending"
+            $packageDetails.PackageNameValidation.Message = "Package name [$($packageName)] is not yet approved by an SDK API approver. Package name must be approved to release a beta version if $($packageName) was never released a stable version. You can check http://aka.ms/azsdk/engsys/apireview/faq for more details on package name Approval."
+        }
+        else
+        {
+            $packageDetails.PackageNameValidation.Status = "Failed"
+            $packageDetails.PackageNameValidation.Message = "Package name approval status is not available for package $($packageName)."
         }
     }
     catch

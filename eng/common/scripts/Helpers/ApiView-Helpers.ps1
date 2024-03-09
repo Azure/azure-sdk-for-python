@@ -39,24 +39,24 @@ function Check-ApiReviewStatus($packageName, $packageVersion, $language, $url, $
     }
     Write-host "URL to check status: $requestUrl"
     $response = Invoke-WebRequest $requestUrl -Method 'GET' -Headers $headers
-    Write-Host  "Response: $($response), code: $($response.StatusCode)"
+    Write-Host  "Response code: $($response.StatusCode)"
     if ($response.StatusCode -eq '200')
     {
       Write-Host "API Review is approved for package $($packageName)"      
     }
     elseif ($response.StatusCode -eq '202')
     {
-      Write-Error "Package name $($packageName) is not yet approved by an SDK API approver. Package name must be approved to release a beta version if $($packageName) was never released a stable version."
+      Write-Host "Package name $($packageName) is not yet approved by an SDK API approver. Package name must be approved to release a beta version if $($packageName) was never released a stable version."
       Write-Host "You can check http://aka.ms/azsdk/engsys/apireview/faq for more details on package name Approval."
     }
     elseif ($response.StatusCode -eq '201')
     {
-      Write-Error "API Review is not approved for package $($packageName). Release pipeline will fail if API review is not approved for a stable version release."
+      Write-Host "API Review is not approved for package $($packageName). Release pipeline will fail if API review is not approved for a stable version release."
       Write-Host "You can check http://aka.ms/azsdk/engsys/apireview/faq for more details on API Approval."
     }
     else
     {
-      Write-Error "API review status check returned unexpected response. $($response)"
+      Write-Host "API review status check returned unexpected response. $($response)"
       Write-Host "You can check http://aka.ms/azsdk/engsys/apireview/faq for more details on API Approval."
     }
   }
