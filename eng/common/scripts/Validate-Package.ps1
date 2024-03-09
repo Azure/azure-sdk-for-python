@@ -123,7 +123,7 @@ function VerifyAPIReview($packageDetails, $packageName, $packageVersion, $langua
     try
     {
         Write-Host "Checking API review status for package $packageName with version $packageVersion. language [$language]." 
-        $errOutput = $( $apireviewStatus = & Check-ApiReviewStatus -PackageName $packageName -packageVersion $packageVersion -Language $language -url $APIViewUri -apiKey $APIKey) 2>&1
+        $errOutput = $( $apireviewStatus = & Check-ApiReviewStatus -PackageName $packageName -Language $language -url $APIViewUri -apiKey $APIKey) 2>&1
         Write-Host "API Review status: $apireviewStatus"
         Write-Host "APi review status check output(if any): $($errOutput)"
         $packageDetails.APIReviewValidation.Message = $errOutput
@@ -208,6 +208,7 @@ function CreateUpdatePackageWorkItem($pkgInfo)
         Write-Host "Update of the Devops Release WorkItem failed."
         return $false
     }
+    return $true
 }
 
 function UpdateValidationStatus($pkgvalidationDetails)
