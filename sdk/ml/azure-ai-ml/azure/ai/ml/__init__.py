@@ -102,7 +102,7 @@ def __getattr__(name: str):
                 " Please use the azure.ai.ml.entities namespace instead.",
                 name,
             )
-            __getattr__.warning_issued = True
+            __getattr__.warning_issued = True  # type: ignore[attr-defined]
         return requested
 
     raise AttributeError(f"module 'azure.ai.ml' has no attribute {name}")

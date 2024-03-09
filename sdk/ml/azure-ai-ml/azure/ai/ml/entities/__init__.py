@@ -508,7 +508,7 @@ def __getattr__(name: str):
                 " Please import from the azure.ai.ml.sweep namespace instead.",
                 name,
             )
-            __getattr__.warning_issued = True
+            __getattr__.warning_issued = True  # type: ignore[attr-defined]
         return requested
 
     raise AttributeError(f"module 'azure.ai.ml.entities' has no attribute {name}")
