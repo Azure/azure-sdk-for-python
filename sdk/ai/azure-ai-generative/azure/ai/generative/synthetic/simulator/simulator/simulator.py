@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-
+# pylint: disable=E0401
 # needed for 'list' type annotations on 3.8
 from __future__ import annotations
 

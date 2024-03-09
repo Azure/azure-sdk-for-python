@@ -25,7 +25,6 @@ USAGE:
 """
 
 from azure.core.exceptions import HttpResponseError
-from azure.ai.translation.text.models import InputTextItem
 
 # -------------------------------------------------------------------------
 # Text translation client
@@ -42,7 +41,7 @@ def get_text_translation_dictionary_lookup():
     try:
         source_language = "en"
         target_language = "es"
-        input_text_elements = [InputTextItem(text="fly")]
+        input_text_elements = ["fly"]
 
         response = text_translator.lookup_dictionary_entries(
             request_body=input_text_elements, from_parameter=source_language, to=target_language

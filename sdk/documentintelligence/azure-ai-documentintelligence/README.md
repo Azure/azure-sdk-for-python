@@ -26,6 +26,7 @@ This table shows the relationship between SDK versions and supported API service
 |SDK version|Supported API service version
 |-|-
 |1.0.0b1 | 2023-10-31-preview
+|1.0.0b2 | 2024-02-29-preview
 
 Older API versions are supported in `azure-ai-formrecognizer`, please see the [Migration Guide][migration-guide] for detailed instructions on how to update application.
 
