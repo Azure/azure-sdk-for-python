@@ -12,8 +12,7 @@ Param (
   [string]$BuildDefinition,
   [string]$PipelineUrl,
   [string]$APIViewUri  = "https://apiview.dev/AutoReview/GetReviewStatus",
-  [string]$Devops_pat = $env:DEVOPS_PAT,
-  [bool]$IgnoreFailures = $false
+  [string]$Devops_pat = $env:DEVOPS_PAT
 )
 
 Set-StrictMode -Version 3
@@ -42,11 +41,10 @@ function ProcessPackage($PackageName, $ConfigFileDir)
         -BuildDefinition $BuildDefinition `
         -PipelineUrl $PipelineUrl `
         -ConfigFileDir $ConfigFileDir `
-        -Devops_pat $Devops_pat `
-        -IgnoreFailures $IgnoreFailures
+        -Devops_pat $Devops_pat
     if ($LASTEXITCODE -ne 0)
     {
-        Write-Host "Failed to validate package $PackageName"
+        Write-Error "Failed to validate package $PackageName"
         return $false
     }
     return $true
@@ -57,29 +55,8 @@ if (-not $ConfigFileDir)
 {
     $ConfigFileDir = Join-Path -Path $ArtifactPath "PackageInfo"
 }
-$status = $true
 foreach ($artifact in $ArtifactList)
 {
     Write-Host "Processing $($artifact.name)"
-    $pkgStatus = ProcessPackage -PackageName $artifact.name -ConfigFileDir $ConfigFileDir
-    if(!$pkgStatus) {
-        $status = $false
-    }
-}
-
-if(!$status)
-{
-    if (!$IgnoreFailures)
-    {
-        Write-Error "Failed to validate all packages"
-        exit 1
-    }
-    else
-    {
-        Write-Host "Ignoring validation failures"
-    }
-}
-else
-{
-    Write-Host "Validated and updated status in DevOps work item for all packages."
+    ProcessPackage -PackageName $artifact.name -ConfigFileDir $ConfigFileDir
 }

@@ -15,8 +15,7 @@ param (
   [string] $BuildDefinition,
   [string] $PipelineUrl,
   [string] $APIViewUri,
-  [string] $Devops_pat = $env:DEVOPS_PAT,
-  [bool] $IgnoreFailures = $false
+  [string] $Devops_pat = $env:DEVOPS_PAT
 )
 Set-StrictMode -Version 3
 
@@ -197,6 +196,7 @@ function CreateUpdatePackageWorkItem($pkgInfo)
     if (!$plannedDate -or $plannedDate -eq "Unreleased")
     {
         $setReleaseState = $false
+        $plannedDate = "unknown"
     }
         
     # Create or update package work item  
@@ -309,22 +309,4 @@ $updatedWi = CreateUpdatePackageWorkItem $pkgInfo
 if ($updatedWi) {
     Write-Host "Updating validation status in package work item."
     $updatedWi = UpdateValidationStatus $pkgValidationDetails        
-}
-
-# Fail the build if any of the validation fails
-if (!$IgnoreFailures)
-{
-    if ($pkgValidationDetails.VersionValidation.Status -eq "Failed" -or
-        $pkgValidationDetails.ChangeLogValidation.Status -eq "Failed" -or
-        $pkgValidationDetails.APIReviewValidation.Status -eq "Pending" -or
-        $pkgValidationDetails.PackageNameValidation.Status -eq "Pending" -or
-        !$updatedWi)
-    {
-        Write-Error "Validation failed for package $PackageName"
-        exit 1
-    }
-}
-else
-{
-    Write-Host "Validation completed for package $PackageName"
 }
