@@ -77,6 +77,7 @@ class ShareOperations:
         access_tier: Optional[Union[str, _models.ShareAccessTier]] = None,
         enabled_protocols: Optional[str] = None,
         root_squash: Optional[Union[str, _models.ShareRootSquash]] = None,
+        enable_snapshot_virtual_directory_access: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """Creates a new share under the specified account. If the share with the same name already
@@ -100,6 +101,8 @@ class ShareOperations:
         :param root_squash: Root squash to set on the share.  Only valid for NFS shares. Known values
          are: "NoRootSquash", "RootSquash", and "AllSquash". Default value is None.
         :type root_squash: str or ~azure.storage.fileshare.models.ShareRootSquash
+        :param enable_snapshot_virtual_directory_access: Default value is None.
+        :type enable_snapshot_virtual_directory_access: bool
         :keyword restype: restype. Default value is "share". Note that overriding this default value
          may result in unsupported behavior.
         :paramtype restype: str
@@ -130,6 +133,7 @@ class ShareOperations:
             access_tier=access_tier,
             enabled_protocols=enabled_protocols,
             root_squash=root_squash,
+            enable_snapshot_virtual_directory_access=enable_snapshot_virtual_directory_access,
             restype=restype,
             version=self._config.version,
             headers=_headers,
@@ -269,6 +273,9 @@ class ShareOperations:
             "str", response.headers.get("x-ms-enabled-protocols")
         )
         response_headers["x-ms-root-squash"] = self._deserialize("str", response.headers.get("x-ms-root-squash"))
+        response_headers["x-ms-enable-snapshot-virtual-directory-access"] = self._deserialize(
+            "bool", response.headers.get("x-ms-enable-snapshot-virtual-directory-access")
+        )
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -1193,6 +1200,7 @@ class ShareOperations:
         quota: Optional[int] = None,
         access_tier: Optional[Union[str, _models.ShareAccessTier]] = None,
         root_squash: Optional[Union[str, _models.ShareRootSquash]] = None,
+        enable_snapshot_virtual_directory_access: Optional[bool] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> None:
@@ -1211,6 +1219,8 @@ class ShareOperations:
         :param root_squash: Root squash to set on the share.  Only valid for NFS shares. Known values
          are: "NoRootSquash", "RootSquash", and "AllSquash". Default value is None.
         :type root_squash: str or ~azure.storage.fileshare.models.ShareRootSquash
+        :param enable_snapshot_virtual_directory_access: Default value is None.
+        :type enable_snapshot_virtual_directory_access: bool
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
         :keyword restype: restype. Default value is "share". Note that overriding this default value
@@ -1250,6 +1260,7 @@ class ShareOperations:
             access_tier=access_tier,
             lease_id=_lease_id,
             root_squash=root_squash,
+            enable_snapshot_virtual_directory_access=enable_snapshot_virtual_directory_access,
             restype=restype,
             comp=comp,
             version=self._config.version,
