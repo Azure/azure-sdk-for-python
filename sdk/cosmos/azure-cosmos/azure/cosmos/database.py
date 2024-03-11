@@ -309,6 +309,8 @@ class DatabaseProxy(object):
         """
         analytical_storage_ttl = kwargs.pop("analytical_storage_ttl", None)
         computed_properties = kwargs.pop("computed_properties", None)
+        etag = kwargs.pop("etag", None)
+        match_condition = kwargs.pop("match_condition", None)
         try:
             container_proxy = self.get_container_client(id)
             container_proxy.read(
@@ -327,7 +329,10 @@ class DatabaseProxy(object):
                 unique_key_policy=unique_key_policy,
                 conflict_resolution_policy=conflict_resolution_policy,
                 analytical_storage_ttl=analytical_storage_ttl,
-                computed_properties=computed_properties
+                computed_properties=computed_properties,
+                etag=etag,
+                match_condition=match_condition,
+                **kwargs
             )
 
     @distributed_trace

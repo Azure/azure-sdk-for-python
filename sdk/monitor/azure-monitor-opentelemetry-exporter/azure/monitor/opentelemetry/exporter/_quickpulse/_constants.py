@@ -1,5 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+from enum import Enum
+
 # cSpell:disable
 
 # (OpenTelemetry metric name, Quickpulse metric name)
@@ -32,5 +34,19 @@ _QUICKPULSE_METRIC_NAME_MAPPINGS = dict(
         _EXCEPTION_RATE_NAME,
     ]
 )
+
+# Quickpulse intervals
+_SHORT_PING_INTERVAL_SECONDS = 5
+_POST_INTERVAL_SECONDS = 1
+_LONG_PING_INTERVAL_SECONDS = 60
+_POST_CANCEL_INTERVAL_SECONDS = 20
+
+# Live metrics data types
+class _DocumentIngressDocumentType(Enum):
+    Request = "Request"
+    RemoteDependency = "RemoteDependency"
+    Exception = "Exception"
+    Event = "Event"
+    Trace = "Trace"
 
 # cSpell:disable

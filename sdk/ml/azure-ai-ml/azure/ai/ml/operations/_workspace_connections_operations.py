@@ -133,15 +133,15 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
     @monitor_with_activity(ops_logger, "WorkspaceConnections.List", ActivityType.PUBLICAPI)
     def list(
         self,
-        *,
         connection_type: Optional[str] = None,
+        *,
         include_data_connections: bool = False,
         **kwargs: Any,
     ) -> Iterable[WorkspaceConnection]:
         """List all workspace connections for a workspace.
 
-        :keyword connection_type: Type of workspace connection to list.
-        :paramtype connection_type: Optional[str]
+        :param connection_type: Type of workspace connection to list.
+        :type connection_type: Optional[str]
         :keyword include_data_connections: If true, also return data connections. Defaults to False.
         :paramtype include_data_connections: bool
         :return: An iterator like instance of workspace connection objects
