@@ -72,8 +72,8 @@ jobs:
       timeoutInMinutes: 90
 
       pool:
-        name: azsdk-pool-mms-ubuntu-2004-general
-        image: azsdk-pool-mms-ubuntu-2004-1espt
+        name: $(LINUXPOOL)
+        image: $(LINUXVMIMAGE)
         os: linux
 
       steps:
@@ -93,8 +93,8 @@ jobs:
       timeoutInMinutes: 90
 
       pool:
-        name: azsdk-pool-mms-ubuntu-2004-general
-        image: azsdk-pool-mms-ubuntu-2004-1espt
+        name: $(LINUXPOOL)
+        image: $(LINUXVMIMAGE)
         os: linux
 
       steps:
@@ -114,8 +114,8 @@ jobs:
       timeoutInMinutes: 90
 
       pool:
-        name: azsdk-pool-mms-win-2022-general
-        image: azsdk-pool-mms-win-2022-1espt
+        name: $(WINDOWSPOOL)
+        image: $(WINDOWSVMIMAGE)
         os: windows
 
       steps:
@@ -135,8 +135,8 @@ jobs:
       timeoutInMinutes: 90
 
       pool:
-        name: 'Azure Pipelines'
-        vmImage: macos-11
+        name: $(MACPOOL)
+        vmImage: $(MACVMIMAGE)
         os: macOS
 
       steps:
@@ -161,8 +161,8 @@ jobs:
       timeoutInMinutes: 90
 
       pool:
-        name: azsdk-pool-mms-ubuntu-2004-general
-        image: azsdk-pool-mms-ubuntu-2004-1espt
+        name: $(LINUXPOOL)
+        image: $(LINUXVMIMAGE)
         os: linux
 
       steps:
@@ -197,8 +197,8 @@ jobs:
     timeoutInMinutes: 90
 
     pool:
-      name: azsdk-pool-mms-ubuntu-2004-general
-      image: azsdk-pool-mms-ubuntu-2004-1espt
+      name: $(LINUXPOOL)
+      image: $(LINUXVMIMAGE)
       os: linux
 
     steps:
@@ -223,8 +223,8 @@ jobs:
       - 'Build_Extended'
 
     pool:
-      name: azsdk-pool-mms-ubuntu-2004-general
-      image: azsdk-pool-mms-ubuntu-2004-1espt
+      name: $(LINUXPOOL)
+      image: $(LINUXVMIMAGE)
       os: linux
 
     steps:
