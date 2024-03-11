@@ -1,0 +1,35 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://eastus.prod.apcgatewayapi.azure.com/device-network/network:retrieve?api-version=2024-02-09-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "apc-gateway-id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/dev-testing-eastus/providers/Microsoft.programmableconnectivity/gateways/apcg-eastus",
+        "Connection": "keep-alive",
+        "Content-Length": "54",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-programmableconnectivity/1.0.0b1 Python/3.8.10 (Linux-5.15.146.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)"
+      },
+      "RequestBody": {
+        "identifierType": "IPv4",
+        "identifier": "189.20.1.1"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 11 Mar 2024 16:48:34 GMT",
+        "mise-correlation-id": "fa044d1e-4e00-4bf6-98ad-fa0343352819",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "x-ms-response-id": "ced7fe39-872f-4776-b154-7da27c19cf3d"
+      },
+      "ResponseBody": {
+        "networkCode": "Telefonica_Brazil"
+      }
+    }
+  ],
+  "Variables": {}
+}

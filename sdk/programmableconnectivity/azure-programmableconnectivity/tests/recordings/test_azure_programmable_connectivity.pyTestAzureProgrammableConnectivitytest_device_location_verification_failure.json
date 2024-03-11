@@ -1,0 +1,43 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://eastus.prod.apcgatewayapi.azure.com/device-location/location:verify?api-version=2024-02-09-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "apc-gateway-id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/dev-testing-eastus/providers/Microsoft.programmableconnectivity/gateways/apcg-eastus",
+        "Connection": "keep-alive",
+        "Content-Length": "191",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-programmableconnectivity/1.0.0b1 Python/3.8.10 (Linux-5.15.146.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)"
+      },
+      "RequestBody": {
+        "longitude": 12.12,
+        "latitude": 45.11,
+        "accuracy": 10,
+        "device": {
+          "phoneNumber": "\u002B5547865461235"
+        },
+        "networkIdentifier": {
+          "identifierType": "NetworkCode",
+          "identifier": "Telefonica_Brazil"
+        }
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 11 Mar 2024 16:48:34 GMT",
+        "mise-correlation-id": "a8c321fa-2a15-4713-be8f-16e9efbc952c",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "x-ms-response-id": "18a9901e-5c09-4591-854d-d2a16dc33568"
+      },
+      "ResponseBody": {
+        "verificationResult": false
+      }
+    }
+  ],
+  "Variables": {}
+}

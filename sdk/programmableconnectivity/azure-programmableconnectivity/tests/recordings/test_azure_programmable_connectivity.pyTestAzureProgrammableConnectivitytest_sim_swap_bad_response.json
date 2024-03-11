@@ -1,0 +1,47 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://eastus.prod.apcgatewayapi.azure.com/sim-swap/sim-swap:verify?api-version=2024-02-09-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "apc-gateway-id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/dev-testing-eastus/providers/Microsoft.programmableconnectivity/gateways/apcg-eastus",
+        "Connection": "keep-alive",
+        "Content-Length": "137",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-programmableconnectivity/1.0.0b1 Python/3.8.10 (Linux-5.15.146.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)"
+      },
+      "RequestBody": {
+        "phoneNumber": "\u002B14587443214",
+        "maxAgeHours": -10,
+        "networkIdentifier": {
+          "identifierType": "NetworkCode",
+          "identifier": "Orange_Spain"
+        }
+      },
+      "StatusCode": 400,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 11 Mar 2024 16:48:25 GMT",
+        "mise-correlation-id": "fb1760ba-aa9c-4e05-86cf-3ee32c5f79e3",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "x-ms-error-code": "CAMARA_ERROR",
+        "x-ms-response-id": "2495f013-7911-42ae-9edc-4e5953b0c6f5"
+      },
+      "ResponseBody": {
+        "error": {
+          "message": "APC encountered an error while communicating with Operator: Orange_Spain",
+          "code": "CAMARA_ERROR",
+          "innererror": {
+            "message": "Client specified an invalid argument, request body or query param",
+            "code": "INVALID_ARGUMENT"
+          }
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

@@ -1,0 +1,39 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://eastus.prod.apcgatewayapi.azure.com/device-network/network:retrieve?api-version=2024-02-09-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "apc-gateway-id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/dev-testing-eastus/providers/Microsoft.programmableconnectivity/gateways/apcg-eastus",
+        "Connection": "keep-alive",
+        "Content-Length": "54",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-programmableconnectivity/1.0.0b1 Python/3.8.10 (Linux-5.15.146.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)"
+      },
+      "RequestBody": {
+        "identifierType": "IPv5",
+        "identifier": "189.20.1.1"
+      },
+      "StatusCode": 400,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 11 Mar 2024 16:48:34 GMT",
+        "mise-correlation-id": "d97507ea-9de2-4961-a415-681db639ba2d",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "x-ms-error-code": "BAD_REQUEST",
+        "x-ms-response-id": "c09a88fb-904a-4ab9-a102-a0ca927e0775"
+      },
+      "ResponseBody": {
+        "error": {
+          "message": "Identifier type not supported: IPv5",
+          "code": "BAD_REQUEST"
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

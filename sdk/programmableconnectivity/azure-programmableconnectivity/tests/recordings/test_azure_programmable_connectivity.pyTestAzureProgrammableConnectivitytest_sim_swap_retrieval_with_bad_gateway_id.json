@@ -1,0 +1,42 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://eastus.prod.apcgatewayapi.azure.com/sim-swap/sim-swap:retrieve?api-version=2024-02-09-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "apc-gateway-id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/dev-testing-eastus/providers/Microsoft.programmableconnectivity/gateways/non-existent",
+        "Connection": "keep-alive",
+        "Content-Length": "117",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-programmableconnectivity/1.0.0b1 Python/3.8.10 (Linux-5.15.146.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)"
+      },
+      "RequestBody": {
+        "phoneNumber": "\u002B14587443214",
+        "networkIdentifier": {
+          "identifierType": "NetworkCode",
+          "identifier": "Orange_Spain"
+        }
+      },
+      "StatusCode": 400,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 11 Mar 2024 16:48:34 GMT",
+        "mise-correlation-id": "afb12414-14b8-45b0-950c-a01db65b01b9",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "x-ms-error-code": "INVALID_TENANT",
+        "x-ms-response-id": "7e44ef71-c856-4b4b-80c9-c93c2894af88"
+      },
+      "ResponseBody": {
+        "error": {
+          "message": "No configuration for App ID /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/dev-testing-eastus/providers/Microsoft.programmableconnectivity/gateways/non-existent.",
+          "code": "INVALID_TENANT"
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}
