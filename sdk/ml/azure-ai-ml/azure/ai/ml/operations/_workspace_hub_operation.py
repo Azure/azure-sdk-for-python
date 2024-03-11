@@ -118,7 +118,7 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
         if rest_workspace_obj and rest_workspace_obj.kind and rest_workspace_obj.kind.lower() == WORKSPACE_HUB_KIND:
             workspace_hub = WorkspaceHub._from_rest_object(rest_workspace_obj)
 
-        return workspace_hub
+        return workspace_hub  # type: ignore[return-value]
 
     @distributed_trace
     @monitor_with_activity(ops_logger, "WorkspaceHub.BeginCreate", ActivityType.PUBLICAPI)

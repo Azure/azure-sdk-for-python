@@ -46,15 +46,6 @@ class CmkIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     USER_ASSIGNED_IDENTITY = "userAssignedIdentity"
 
 
-class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of identity that created the resource."""
-
-    USER = "User"
-    APPLICATION = "Application"
-    MANAGED_IDENTITY = "ManagedIdentity"
-    KEY = "Key"
-
-
 class EvictionPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Redis eviction policy - default is VolatileLRU."""
 
@@ -159,10 +150,14 @@ class ResourceState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DISABLING = "Disabling"
     DISABLE_FAILED = "DisableFailed"
     DISABLED = "Disabled"
+    SCALING = "Scaling"
+    SCALING_FAILED = "ScalingFailed"
 
 
 class SkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """SkuName."""
+    """The type of RedisEnterprise cluster to deploy. Possible values: (Enterprise_E10,
+    EnterpriseFlash_F300 etc.).
+    """
 
     ENTERPRISE_E10 = "Enterprise_E10"
     ENTERPRISE_E20 = "Enterprise_E20"

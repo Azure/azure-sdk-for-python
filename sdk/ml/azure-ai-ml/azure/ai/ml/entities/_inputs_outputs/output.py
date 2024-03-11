@@ -23,7 +23,8 @@ class Output(_InputOutputBase):
     @overload
     def __init__(
         self,
-        type: Any,
+        *,
+        type: str,
         path: Optional[str] = None,
         mode: Optional[str] = None,
         description: Optional[str] = None,
@@ -60,8 +61,9 @@ class Output(_InputOutputBase):
         :paramtype version: str
         """
 
-    def __init__(
+    def __init__(  # type: ignore[misc]
         self,
+        *,
         type: str = AssetTypes.URI_FOLDER,
         path: Optional[str] = None,
         mode: Optional[str] = None,
