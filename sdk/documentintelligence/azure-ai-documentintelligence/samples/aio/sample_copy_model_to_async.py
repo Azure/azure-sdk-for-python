@@ -79,6 +79,10 @@ async def sample_copy_model_to(custom_model_id):
                         f"Field: '{field_name}' has type '{field['type']}' and confidence score "
                         f"{doc_type.field_confidence[field_name]}"
                     )
+    if copied_over_model.warnings:
+        print("Warnings encountered while building the model:")
+        for warning in copied_over_model.warnings:
+            print(f"warning code: {warning.code}, message: {warning.message}, target of the error: {warning.target}")
     # [END begin_copy_document_model_to]
 
 

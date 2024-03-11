@@ -154,7 +154,7 @@ def generate_difference(original_packages: List[str], filtered_packages: List[st
 
 def glob_packages(glob_string: str, target_root_dir: str) -> List[str]:
     if glob_string:
-        individual_globs = glob_string.split(",")
+        individual_globs = [glob_string.strip() for glob_string in glob_string.split(",")]
     else:
         individual_globs = "azure-*"
     collected_top_level_directories = []

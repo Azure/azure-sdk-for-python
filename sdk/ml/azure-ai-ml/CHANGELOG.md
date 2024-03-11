@@ -26,7 +26,7 @@
   - `Normal`
   - `Randint`
 
-## 1.14.0 (unreleased)
+## 1.14.0 (2024-03-11)
 
 ### Features Added
 - Remove `experimental` tag for  `ml_client.jobs.validate`.
