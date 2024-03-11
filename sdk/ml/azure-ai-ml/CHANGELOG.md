@@ -13,10 +13,7 @@
 - Workspace ListKey operation serialization issue fixed.
 - Workspace Diagnose result now can be print in to Json format.
 
-### Breaking Changes
-
 ### Other Changes
-
 - Support for Python 3.12
 
 ## 1.13.0 (2024-01-29)
