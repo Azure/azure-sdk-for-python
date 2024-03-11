@@ -15,6 +15,7 @@ from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.entities._feature_store_entity.data_column import DataColumn
 from azure.ai.ml.entities._util import load_from_dict
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 from .delay_metadata import DelayMetadata
 from .feature import Feature
@@ -31,11 +32,29 @@ class FeaturesetSpecMetadata(object):
         source: SourceMetadata,
         feature_transformation_code: Optional[FeatureTransformationCodeMetadata] = None,
         features: List[Feature],
-        index_columns: List[DataColumn],
+        index_columns: Optional[List[DataColumn]] = None,
         source_lookback: Optional[DelayMetadata] = None,
         temporal_join_lookback: Optional[DelayMetadata] = None,
         **_kwargs: Any,
     ):
+        if source.type == "featureset" and index_columns:
+            msg = f"You cannot provide index_columns for {source.type} feature source."
+            raise ValidationException(
+                message=msg,
+                no_personal_data_message=msg,
+                error_type=ValidationErrorType.INVALID_VALUE,
+                target=ErrorTarget.FEATURE_SET,
+                error_category=ErrorCategory.USER_ERROR,
+            )
+        if not index_columns and source.type != "featureset":
+            msg = f"You need to provide index_columns for {source.type} feature source."
+            raise ValidationException(
+                message=msg,
+                no_personal_data_message=msg,
+                error_type=ValidationErrorType.INVALID_VALUE,
+                target=ErrorTarget.FEATURE_SET,
+                error_category=ErrorCategory.USER_ERROR,
+            )
         self.source = source
         self.feature_transformation_code = feature_transformation_code
         self.features = features
@@ -74,6 +93,7 @@ class FeaturesetSpecMetadata(object):
         res: FeaturesetSpecMetadata = load_from_dict(
             FeaturesetSpecMetadataSchema, yaml_data, context, "", unknown=INCLUDE, **kwargs
         )
+
         return res
 
     def _to_dict(self) -> Dict:
