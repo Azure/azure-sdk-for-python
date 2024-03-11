@@ -858,7 +858,6 @@ class ServiceBusReceiver(
 
     def delete_messages(
         self,
-        
         max_message_count: int = 1,
         before_enqueued_time_utc: Optional[datetime.datetime] = None,
     ) -> int:
