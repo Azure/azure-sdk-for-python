@@ -1,5 +1,15 @@
 # Release History
 
+## 11.6.0b3 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 11.6.0b2 (2024-03-05)
 
 ### Breaking Changes
@@ -9,6 +19,7 @@
 ### Bugs Fixed
 
 - Fixed the issue that `SearchIndexerSkillset`, `SearchField`, `SearchIndex`, `AnalyzeTextOptions`, `SearchResourceEncryptionKey`, `SynonymMap`, `SearchIndexerDataSourceConnection` could not be serialized and `as_dict` did not work.
+- Fixed the issue that `context` was missing for `EntityRecognitionSkill` and `SentimentSkill`. #34623
 
 ### Other Changes
 

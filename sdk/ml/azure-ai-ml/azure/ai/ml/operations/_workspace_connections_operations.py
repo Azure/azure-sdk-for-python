@@ -47,11 +47,13 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
         self._init_kwargs = kwargs
 
     @monitor_with_activity(ops_logger, "WorkspaceConnections.Get", ActivityType.PUBLICAPI)
-    def get(self, name: str, **kwargs: Dict) -> Optional[WorkspaceConnection]:
+    def get(self, name: str, **kwargs: Dict) -> WorkspaceConnection:
         """Get a workspace connection by name.
 
         :param name: Name of the workspace connection.
         :type name: str
+        :raises ~azure.core.exceptions.HttpResponseError: Raised if the corresponding name and version cannot be
+            retrieved from the service.
         :return: The workspace connection with the provided name.
         :rtype: ~azure.ai.ml.entities.WorkspaceConnection
 
@@ -72,7 +74,7 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
             **kwargs,
         )
 
-        return WorkspaceConnection._from_rest_object(rest_obj=obj)
+        return WorkspaceConnection._from_rest_object(rest_obj=obj)  # type: ignore[return-value]
 
     @monitor_with_activity(ops_logger, "WorkspaceConnections.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(
@@ -131,15 +133,15 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
     @monitor_with_activity(ops_logger, "WorkspaceConnections.List", ActivityType.PUBLICAPI)
     def list(
         self,
-        *,
         connection_type: Optional[str] = None,
+        *,
         include_data_connections: bool = False,
         **kwargs: Any,
     ) -> Iterable[WorkspaceConnection]:
         """List all workspace connections for a workspace.
 
-        :keyword connection_type: Type of workspace connection to list.
-        :paramtype connection_type: Optional[str]
+        :param connection_type: Type of workspace connection to list.
+        :type connection_type: Optional[str]
         :keyword include_data_connections: If true, also return data connections. Defaults to False.
         :paramtype include_data_connections: bool
         :return: An iterator like instance of workspace connection objects
