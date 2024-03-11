@@ -73,8 +73,8 @@ setup(
     python_requires=">=3.6",
     install_requires=[
         "msrest>=0.6.21",
-        "azure-core<2.0.0,>=1.28.0",
-        "azure-appconfiguration<2.0.0,>=1.5.0",
-        "azure-keyvault-secrets<5.0.0,>=4.3.0",
+        "azure-core>=1.28.0",
+        "azure-appconfiguration>=1.5.0",
+        "azure-keyvault-secrets>=4.3.0",
     ],
 )
