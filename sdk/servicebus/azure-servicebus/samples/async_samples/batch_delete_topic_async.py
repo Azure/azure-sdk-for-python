@@ -61,7 +61,7 @@ async def main():
             )
         async with receiver:
             from datetime import datetime, timezone, timedelta
-            received_msgs = await receiver.delete_messages(max_message_count=20, enqueued_time_older_than_utc=datetime.now(timezone.utc) + timedelta(hours=10))
+            received_msgs = await receiver.delete_messages(max_message_count=20, before_enqueued_time_utc=datetime.now(timezone.utc) + timedelta(hours=10))
             print(received_msgs)
 
     print("delete message is done.")
