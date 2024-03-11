@@ -511,6 +511,8 @@ class TestCallMediaClient(unittest.TestCase):
         actual_hold_request = mock_hold.call_args[0][1]
 
         self.assertEqual(expected_hold_request.operation_context, actual_hold_request.operation_context)
+        self.assertEqual(expected_hold_request.play_source_info, actual_hold_request.play_source_info)
+        self.assertEqual(expected_hold_request.operation_context, actual_hold_request.operation_context)
 
     def test_unhold(self):
         mock_unhold = Mock()
