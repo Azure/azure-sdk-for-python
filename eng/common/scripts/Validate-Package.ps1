@@ -246,6 +246,7 @@ function UpdateValidationStatus($pkgvalidationDetails)
     $packageNameDetails = $pkgValidationDetails.PackageNameValidation.Message
 
     $fields = @()
+    $fields += "`"PackageVersion=${versionString}`""
     $fields += "`"ChangeLogStatus=${changeLogStatus}`""
     $fields += "`"ChangeLogValidationDetails=${changeLogDetails}`""
     $fields += "`"VersionValidationStatus=${versionStatus}`""
@@ -254,14 +255,13 @@ function UpdateValidationStatus($pkgvalidationDetails)
     $fields += "`"APIReviewStatusDetails=${apiReviewDetails}`""
     $fields += "`"PackageNameApprovalStatus=${packageNameStatus}`""
     $fields += "`"PackageNameApprovalDetails=${packageNameDetails}`""
-    <#if ($BuildDefinition) {
-        $fields += "`"LatestBuildId=$BuildDefinition`""
-    }#>
+    if ($BuildDefinition) {
+        $fields += "`"PipelineDefinition=$BuildDefinition`""
+    }
     if ($PipelineUrl) {
         $fields += "`"LatestPipelineRun=$PipelineUrl`""
     }
 
-    #todo include pipeline details
     $workItem = UpdateWorkItem -id $workItem.id -fields $fields
     Write-Host "[$($workItem.id)]$LanguageDisplayName - $pkgName($versionMajorMinor) - Updated"
     return $true

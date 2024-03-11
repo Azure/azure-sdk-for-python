@@ -14,7 +14,7 @@ steps:
           -RepoRoot $(Build.SourcesDirectory)
           -APIKey $(azuresdk-apiview-apikey)
           -ConfigFileDir '${{ parameters.ConfigFileDir }}'
-          -BuildDefinition '$(Build.DefinitionName)'
+          -BuildDefinition $(System.CollectionUri)$(System.TeamProject)/_build?definitionId=$(System.DefinitionId)
           -PipelineUrl $(System.CollectionUri)$(System.TeamProject)/_build/results?buildId=$(Build.BuildId)
           -Devops_pat '$(azuresdk-azure-sdk-devops-release-work-item-pat)'
         pwsh: true
