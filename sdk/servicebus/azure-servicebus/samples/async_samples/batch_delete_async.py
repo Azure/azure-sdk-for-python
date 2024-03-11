@@ -47,7 +47,7 @@ async def run():
             print(f"Deleting messages that are older than {new_time}")
             deleted_msgs = await receiver.delete_messages(
                 max_message_count=10,
-                enqueued_time_older_than_utc=new_time
+                before_enqueued_time_utc=new_time
             )
             print(f"{deleted_msgs} messages deleted.")
 

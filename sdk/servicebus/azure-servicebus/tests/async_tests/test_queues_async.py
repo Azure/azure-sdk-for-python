@@ -2854,7 +2854,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
             receiver = sb_client.get_queue_receiver(servicebus_queue.name, receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE)
             number_deleted_messages = 0
             async with receiver:
-                number_deleted_messages = await receiver.delete_messages(max_message_count=10, enqueued_time_older_than_utc=datetime.utcnow())
+                number_deleted_messages = await receiver.delete_messages(max_message_count=10, before_enqueued_time_utc=datetime.utcnow())
             assert number_deleted_messages == 10
 
             receiver_peek = sb_client.get_queue_receiver(servicebus_queue.name)
@@ -2891,5 +2891,5 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
             receiver = sb_client.get_queue_receiver(servicebus_queue.name)
             number_deleted_messages = 0
             async with receiver:
-                number_deleted_messages = await receiver.delete_messages(max_message_count=4000, enqueued_time_older_than_utc=datetime.utcnow())
+                number_deleted_messages = await receiver.delete_messages(max_message_count=4000, before_enqueued_time_utc=datetime.utcnow())
             assert number_deleted_messages == 4000

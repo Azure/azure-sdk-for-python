@@ -858,16 +858,16 @@ class ServiceBusReceiver(
 
     def delete_messages(
         self,
-        *,
+        
         max_message_count: int = 1,
-        enqueued_time_older_than_utc: datetime.datetime = None,
+        before_enqueued_time_utc: Optional[datetime.datetime] = None,
     ) -> int:
         """
         This operation deletes messages in the queue that are older than the specified enqueued time,
          up to 4,000 messages.
 
         :param int max_message_count: The maximum number of messages to delete. The default value is 1.
-        :param datetime.datetime enqueued_time_older_than_utc: The UTC datetime value before which all messages
+        :param datetime.datetime or None before_enqueued_time_utc: The UTC datetime value before which all messages
          should be deleted. The default value is None, meaning all messages in the queue will be considered.
         :rtype: int
 
@@ -878,7 +878,7 @@ class ServiceBusReceiver(
 
         self._open()
         message = {
-            MGMT_REQUEST_ENQUEUED_TIME_UTC: enqueued_time_older_than_utc if enqueued_time_older_than_utc else datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=1),
+            MGMT_REQUEST_ENQUEUED_TIME_UTC: before_enqueued_time_utc if before_enqueued_time_utc else datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=1),
             MGMT_REQUEST_MAX_MESSAGE_COUNT: max_message_count,
         }
 
