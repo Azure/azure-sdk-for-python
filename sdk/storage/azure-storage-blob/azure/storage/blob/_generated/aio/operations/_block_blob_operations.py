@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,8 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-import sys
-from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union
+from typing import Any, Callable, Dict, IO, Literal, Optional, TypeVar, Union
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -35,10 +34,6 @@ from ...operations._block_blob_operations import (
     build_upload_request,
 )
 
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -66,7 +61,7 @@ class BlockBlobOperations:
     async def upload(  # pylint: disable=inconsistent-return-statements
         self,
         content_length: int,
-        body: IO,
+        body: IO[bytes],
         timeout: Optional[int] = None,
         transactional_content_md5: Optional[bytes] = None,
         metadata: Optional[Dict[str, str]] = None,
@@ -77,6 +72,8 @@ class BlockBlobOperations:
         immutability_policy_mode: Optional[Union[str, _models.BlobImmutabilityPolicyMode]] = None,
         legal_hold: Optional[bool] = None,
         transactional_content_crc64: Optional[bytes] = None,
+        structured_body_type: Optional[str] = None,
+        structured_content_length: Optional[int] = None,
         blob_http_headers: Optional[_models.BlobHTTPHeaders] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         cpk_info: Optional[_models.CpkInfo] = None,
@@ -93,7 +90,7 @@ class BlockBlobOperations:
         :param content_length: The length of the request. Required.
         :type content_length: int
         :param body: Initial data. Required.
-        :type body: IO
+        :type body: IO[bytes]
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -132,6 +129,13 @@ class BlockBlobOperations:
         :param transactional_content_crc64: Specify the transactional crc64 for the body, to be
          validated by the service. Default value is None.
         :type transactional_content_crc64: bytes
+        :param structured_body_type: Required if the request body is a structured message. Specifies
+         the message schema version and properties. Default value is None.
+        :type structured_body_type: str
+        :param structured_content_length: Required if the request body is a structured message.
+         Specifies the length of the blob/file content inside the message body. Will always be smaller
+         than Content-Length. Default value is None.
+        :type structured_content_length: int
         :param blob_http_headers: Parameter group. Default value is None.
         :type blob_http_headers: ~azure.storage.blob.models.BlobHTTPHeaders
         :param lease_access_conditions: Parameter group. Default value is None.
@@ -142,11 +146,6 @@ class BlockBlobOperations:
         :type cpk_scope_info: ~azure.storage.blob.models.CpkScopeInfo
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
-        :keyword blob_type: Specifies the type of blob to create: block blob, page blob, or append
-         blob. Default value is "BlockBlob". Note that overriding this default value may result in
-         unsupported behavior.
-        :paramtype blob_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -205,7 +204,7 @@ class BlockBlobOperations:
             _if_unmodified_since = modified_access_conditions.if_unmodified_since
         _content = body
 
-        request = build_upload_request(
+        _request = build_upload_request(
             url=self._config.url,
             content_length=content_length,
             timeout=timeout,
@@ -234,20 +233,21 @@ class BlockBlobOperations:
             immutability_policy_mode=immutability_policy_mode,
             legal_hold=legal_hold,
             transactional_content_crc64=transactional_content_crc64,
+            structured_body_type=structured_body_type,
+            structured_content_length=structured_content_length,
             blob_type=blob_type,
             content_type=content_type,
             version=self._config.version,
             content=_content,
-            template_url=self.upload.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -277,11 +277,12 @@ class BlockBlobOperations:
         response_headers["x-ms-encryption-scope"] = self._deserialize(
             "str", response.headers.get("x-ms-encryption-scope")
         )
+        response_headers["x-ms-structured-body"] = self._deserialize(
+            "str", response.headers.get("x-ms-structured-body")
+        )
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    upload.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def put_blob_from_url(  # pylint: disable=inconsistent-return-statements
@@ -372,11 +373,6 @@ class BlockBlobOperations:
         :param source_modified_access_conditions: Parameter group. Default value is None.
         :type source_modified_access_conditions:
          ~azure.storage.blob.models.SourceModifiedAccessConditions
-        :keyword blob_type: Specifies the type of blob to create: block blob, page blob, or append
-         blob. Default value is "BlockBlob". Note that overriding this default value may result in
-         unsupported behavior.
-        :paramtype blob_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -444,7 +440,7 @@ class BlockBlobOperations:
             _source_if_tags = source_modified_access_conditions.source_if_tags
             _source_if_unmodified_since = source_modified_access_conditions.source_if_unmodified_since
 
-        request = build_put_blob_from_url_request(
+        _request = build_put_blob_from_url_request(
             url=self._config.url,
             content_length=content_length,
             copy_source=copy_source,
@@ -481,16 +477,15 @@ class BlockBlobOperations:
             copy_source_tags=copy_source_tags,
             blob_type=blob_type,
             version=self._config.version,
-            template_url=self.put_blob_from_url.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -522,20 +517,20 @@ class BlockBlobOperations:
         )
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    put_blob_from_url.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def stage_block(  # pylint: disable=inconsistent-return-statements
         self,
         block_id: str,
         content_length: int,
-        body: IO,
+        body: IO[bytes],
         transactional_content_md5: Optional[bytes] = None,
         transactional_content_crc64: Optional[bytes] = None,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
+        structured_body_type: Optional[str] = None,
+        structured_content_length: Optional[int] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         cpk_info: Optional[_models.CpkInfo] = None,
         cpk_scope_info: Optional[_models.CpkScopeInfo] = None,
@@ -550,7 +545,7 @@ class BlockBlobOperations:
         :param content_length: The length of the request. Required.
         :type content_length: int
         :param body: Initial data. Required.
-        :type body: IO
+        :type body: IO[bytes]
         :param transactional_content_md5: Specify the transactional md5 for the body, to be validated
          by the service. Default value is None.
         :type transactional_content_md5: bytes
@@ -566,16 +561,19 @@ class BlockBlobOperations:
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
          value is None.
         :type request_id_parameter: str
+        :param structured_body_type: Required if the request body is a structured message. Specifies
+         the message schema version and properties. Default value is None.
+        :type structured_body_type: str
+        :param structured_content_length: Required if the request body is a structured message.
+         Specifies the length of the blob/file content inside the message body. Will always be smaller
+         than Content-Length. Default value is None.
+        :type structured_content_length: int
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
         :param cpk_info: Parameter group. Default value is None.
         :type cpk_info: ~azure.storage.blob.models.CpkInfo
         :param cpk_scope_info: Parameter group. Default value is None.
         :type cpk_scope_info: ~azure.storage.blob.models.CpkScopeInfo
-        :keyword comp: comp. Default value is "block". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -610,7 +608,7 @@ class BlockBlobOperations:
             _encryption_scope = cpk_scope_info.encryption_scope
         _content = body
 
-        request = build_stage_block_request(
+        _request = build_stage_block_request(
             url=self._config.url,
             block_id=block_id,
             content_length=content_length,
@@ -623,20 +621,21 @@ class BlockBlobOperations:
             encryption_algorithm=_encryption_algorithm,
             encryption_scope=_encryption_scope,
             request_id_parameter=request_id_parameter,
+            structured_body_type=structured_body_type,
+            structured_content_length=structured_content_length,
             comp=comp,
             content_type=content_type,
             version=self._config.version,
             content=_content,
-            template_url=self.stage_block.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -666,11 +665,12 @@ class BlockBlobOperations:
         response_headers["x-ms-encryption-scope"] = self._deserialize(
             "str", response.headers.get("x-ms-encryption-scope")
         )
+        response_headers["x-ms-structured-body"] = self._deserialize(
+            "str", response.headers.get("x-ms-structured-body")
+        )
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    stage_block.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def stage_block_from_url(  # pylint: disable=inconsistent-return-statements
@@ -730,10 +730,6 @@ class BlockBlobOperations:
         :param source_modified_access_conditions: Parameter group. Default value is None.
         :type source_modified_access_conditions:
          ~azure.storage.blob.models.SourceModifiedAccessConditions
-        :keyword comp: comp. Default value is "block". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -775,7 +771,7 @@ class BlockBlobOperations:
             _source_if_none_match = source_modified_access_conditions.source_if_none_match
             _source_if_unmodified_since = source_modified_access_conditions.source_if_unmodified_since
 
-        request = build_stage_block_from_url_request(
+        _request = build_stage_block_from_url_request(
             url=self._config.url,
             block_id=block_id,
             content_length=content_length,
@@ -797,16 +793,15 @@ class BlockBlobOperations:
             copy_source_authorization=copy_source_authorization,
             comp=comp,
             version=self._config.version,
-            template_url=self.stage_block_from_url.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -838,9 +833,7 @@ class BlockBlobOperations:
         )
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    stage_block_from_url.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def commit_block_list(  # pylint: disable=inconsistent-return-statements
@@ -921,10 +914,6 @@ class BlockBlobOperations:
         :type cpk_scope_info: ~azure.storage.blob.models.CpkScopeInfo
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
-        :keyword comp: comp. Default value is "blocklist". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -983,7 +972,7 @@ class BlockBlobOperations:
             _if_unmodified_since = modified_access_conditions.if_unmodified_since
         _content = self._serialize.body(blocks, "BlockLookupList", is_xml=True)
 
-        request = build_commit_block_list_request(
+        _request = build_commit_block_list_request(
             url=self._config.url,
             timeout=timeout,
             blob_cache_control=_blob_cache_control,
@@ -1015,16 +1004,15 @@ class BlockBlobOperations:
             content_type=content_type,
             version=self._config.version,
             content=_content,
-            template_url=self.commit_block_list.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1059,9 +1047,7 @@ class BlockBlobOperations:
         )
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    commit_block_list.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def get_block_list(
@@ -1100,10 +1086,6 @@ class BlockBlobOperations:
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
-        :keyword comp: comp. Default value is "blocklist". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: BlockList or the result of cls(response)
         :rtype: ~azure.storage.blob.models.BlockList
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1129,7 +1111,7 @@ class BlockBlobOperations:
         if modified_access_conditions is not None:
             _if_tags = modified_access_conditions.if_tags
 
-        request = build_get_block_list_request(
+        _request = build_get_block_list_request(
             url=self._config.url,
             snapshot=snapshot,
             list_type=list_type,
@@ -1139,16 +1121,15 @@ class BlockBlobOperations:
             request_id_parameter=request_id_parameter,
             comp=comp,
             version=self._config.version,
-            template_url=self.get_block_list.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1175,8 +1156,6 @@ class BlockBlobOperations:
         deserialized = self._deserialize("BlockList", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    get_block_list.metadata = {"url": "{url}"}
+        return deserialized  # type: ignore

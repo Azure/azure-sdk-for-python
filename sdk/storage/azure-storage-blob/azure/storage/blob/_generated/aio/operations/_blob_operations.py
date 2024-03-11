@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,8 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-import sys
-from typing import Any, AsyncIterator, Callable, Dict, Optional, TypeVar, Union
+from typing import Any, AsyncIterator, Callable, Dict, Literal, Optional, TypeVar, Union
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -53,10 +52,6 @@ from ...operations._blob_operations import (
     build_undelete_request,
 )
 
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -89,6 +84,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         range: Optional[str] = None,
         range_get_content_md5: Optional[bool] = None,
         range_get_content_crc64: Optional[bool] = None,
+        structured_body_type: Optional[str] = None,
         request_id_parameter: Optional[str] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         cpk_info: Optional[_models.CpkInfo] = None,
@@ -123,6 +119,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
          service returns the CRC64 hash for the range, as long as the range is less than or equal to 4
          MB in size. Default value is None.
         :type range_get_content_crc64: bool
+        :param structured_body_type: Specifies the response content should be returned as a structured
+         message and specifies the message schema version and properties. Default value is None.
+        :type structured_body_type: str
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
          value is None.
@@ -133,8 +132,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :type cpk_info: ~azure.storage.blob.models.CpkInfo
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Async iterator of the response bytes or the result of cls(response)
+        :return: AsyncIterator[bytes] or the result of cls(response)
         :rtype: AsyncIterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -173,7 +171,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             _if_tags = modified_access_conditions.if_tags
             _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
-        request = build_download_request(
+        _request = build_download_request(
             url=self._config.url,
             snapshot=snapshot,
             version_id=version_id,
@@ -182,6 +180,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             lease_id=_lease_id,
             range_get_content_md5=range_get_content_md5,
             range_get_content_crc64=range_get_content_crc64,
+            structured_body_type=structured_body_type,
             encryption_key=_encryption_key,
             encryption_key_sha256=_encryption_key_sha256,
             encryption_algorithm=_encryption_algorithm,
@@ -192,16 +191,15 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
             version=self._config.version,
-            template_url=self.download.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -290,6 +288,12 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
                 "str", response.headers.get("x-ms-immutability-policy-mode")
             )
             response_headers["x-ms-legal-hold"] = self._deserialize("bool", response.headers.get("x-ms-legal-hold"))
+            response_headers["x-ms-structured-body"] = self._deserialize(
+                "str", response.headers.get("x-ms-structured-body")
+            )
+            response_headers["x-ms-structured-content-length"] = self._deserialize(
+                "int", response.headers.get("x-ms-structured-content-length")
+            )
 
             deserialized = response.stream_download(self._client._pipeline)
 
@@ -374,6 +378,12 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
                 "str", response.headers.get("x-ms-immutability-policy-mode")
             )
             response_headers["x-ms-legal-hold"] = self._deserialize("bool", response.headers.get("x-ms-legal-hold"))
+            response_headers["x-ms-structured-body"] = self._deserialize(
+                "str", response.headers.get("x-ms-structured-body")
+            )
+            response_headers["x-ms-structured-content-length"] = self._deserialize(
+                "int", response.headers.get("x-ms-structured-content-length")
+            )
 
             deserialized = response.stream_download(self._client._pipeline)
 
@@ -381,8 +391,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
-
-    download.metadata = {"url": "{url}"}
 
     @distributed_trace_async
     async def get_properties(  # pylint: disable=inconsistent-return-statements
@@ -424,7 +432,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :type cpk_info: ~azure.storage.blob.models.CpkInfo
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -464,7 +471,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             _if_tags = modified_access_conditions.if_tags
             _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
-        request = build_get_properties_request(
+        _request = build_get_properties_request(
             url=self._config.url,
             snapshot=snapshot,
             version_id=version_id,
@@ -480,16 +487,15 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
             version=self._config.version,
-            template_url=self.get_properties.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -587,9 +593,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         response_headers["x-ms-legal-hold"] = self._deserialize("bool", response.headers.get("x-ms-legal-hold"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    get_properties.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def delete(  # pylint: disable=inconsistent-return-statements
@@ -649,7 +653,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -682,7 +685,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             _if_tags = modified_access_conditions.if_tags
             _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
-        request = build_delete_request(
+        _request = build_delete_request(
             url=self._config.url,
             snapshot=snapshot,
             version_id=version_id,
@@ -697,16 +700,15 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             request_id_parameter=request_id_parameter,
             blob_delete_type=blob_delete_type,
             version=self._config.version,
-            template_url=self.delete.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -725,9 +727,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    delete.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def undelete(  # pylint: disable=inconsistent-return-statements
@@ -744,10 +744,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
          value is None.
         :type request_id_parameter: str
-        :keyword comp: comp. Default value is "undelete". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -766,22 +762,21 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         comp: Literal["undelete"] = kwargs.pop("comp", _params.pop("comp", "undelete"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_undelete_request(
+        _request = build_undelete_request(
             url=self._config.url,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             comp=comp,
             version=self._config.version,
-            template_url=self.undelete.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -800,9 +795,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    undelete.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def set_expiry(  # pylint: disable=inconsistent-return-statements
@@ -829,10 +822,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :type request_id_parameter: str
         :param expires_on: The time to set the blob to expiry. Default value is None.
         :type expires_on: str
-        :keyword comp: comp. Default value is "expiry". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -851,7 +840,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         comp: Literal["expiry"] = kwargs.pop("comp", _params.pop("comp", "expiry"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_set_expiry_request(
+        _request = build_set_expiry_request(
             url=self._config.url,
             expiry_options=expiry_options,
             timeout=timeout,
@@ -859,16 +848,15 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             expires_on=expires_on,
             comp=comp,
             version=self._config.version,
-            template_url=self.set_expiry.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -889,9 +877,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    set_expiry.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def set_http_headers(  # pylint: disable=inconsistent-return-statements
@@ -920,10 +906,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
-        :keyword comp: comp. Default value is "properties". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -970,7 +952,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             _if_tags = modified_access_conditions.if_tags
             _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
-        request = build_set_http_headers_request(
+        _request = build_set_http_headers_request(
             url=self._config.url,
             timeout=timeout,
             blob_cache_control=_blob_cache_control,
@@ -988,16 +970,15 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             request_id_parameter=request_id_parameter,
             comp=comp,
             version=self._config.version,
-            template_url=self.set_http_headers.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1021,9 +1002,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    set_http_headers.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def set_immutability_policy(  # pylint: disable=inconsistent-return-statements
@@ -1054,10 +1033,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :type immutability_policy_mode: str or ~azure.storage.blob.models.BlobImmutabilityPolicyMode
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
-        :keyword comp: comp. Default value is "immutabilityPolicies". Note that overriding this default
-         value may result in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1080,7 +1055,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         if modified_access_conditions is not None:
             _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
-        request = build_set_immutability_policy_request(
+        _request = build_set_immutability_policy_request(
             url=self._config.url,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
@@ -1089,16 +1064,15 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             immutability_policy_mode=immutability_policy_mode,
             comp=comp,
             version=self._config.version,
-            template_url=self.set_immutability_policy.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1123,9 +1097,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         )
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    set_immutability_policy.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def delete_immutability_policy(  # pylint: disable=inconsistent-return-statements
@@ -1142,10 +1114,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
          value is None.
         :type request_id_parameter: str
-        :keyword comp: comp. Default value is "immutabilityPolicies". Note that overriding this default
-         value may result in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1164,22 +1132,21 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         comp: Literal["immutabilityPolicies"] = kwargs.pop("comp", _params.pop("comp", "immutabilityPolicies"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_immutability_policy_request(
+        _request = build_delete_immutability_policy_request(
             url=self._config.url,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             comp=comp,
             version=self._config.version,
-            template_url=self.delete_immutability_policy.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1198,9 +1165,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    delete_immutability_policy.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def set_legal_hold(  # pylint: disable=inconsistent-return-statements
@@ -1219,10 +1184,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
          value is None.
         :type request_id_parameter: str
-        :keyword comp: comp. Default value is "legalhold". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1241,23 +1202,22 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         comp: Literal["legalhold"] = kwargs.pop("comp", _params.pop("comp", "legalhold"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_set_legal_hold_request(
+        _request = build_set_legal_hold_request(
             url=self._config.url,
             legal_hold=legal_hold,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             comp=comp,
             version=self._config.version,
-            template_url=self.set_legal_hold.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1277,9 +1237,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         response_headers["x-ms-legal-hold"] = self._deserialize("bool", response.headers.get("x-ms-legal-hold"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    set_legal_hold.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def set_metadata(  # pylint: disable=inconsistent-return-statements
@@ -1321,10 +1279,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :type cpk_scope_info: ~azure.storage.blob.models.CpkScopeInfo
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
-        :keyword comp: comp. Default value is "metadata". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1368,7 +1322,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             _if_tags = modified_access_conditions.if_tags
             _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
-        request = build_set_metadata_request(
+        _request = build_set_metadata_request(
             url=self._config.url,
             timeout=timeout,
             metadata=metadata,
@@ -1385,16 +1339,15 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             request_id_parameter=request_id_parameter,
             comp=comp,
             version=self._config.version,
-            template_url=self.set_metadata.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1425,9 +1378,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         )
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    set_metadata.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def acquire_lease(  # pylint: disable=inconsistent-return-statements
@@ -1461,13 +1412,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :type request_id_parameter: str
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
-        :keyword comp: comp. Default value is "lease". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword action: Describes what lease action to take. Default value is "acquire". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype action: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1499,7 +1443,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             _if_tags = modified_access_conditions.if_tags
             _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
-        request = build_acquire_lease_request(
+        _request = build_acquire_lease_request(
             url=self._config.url,
             timeout=timeout,
             duration=duration,
@@ -1513,16 +1457,15 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             comp=comp,
             action=action,
             version=self._config.version,
-            template_url=self.acquire_lease.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1544,9 +1487,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    acquire_lease.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def release_lease(  # pylint: disable=inconsistent-return-statements
@@ -1573,13 +1514,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :type request_id_parameter: str
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
-        :keyword comp: comp. Default value is "lease". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword action: Describes what lease action to take. Default value is "release". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype action: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1611,7 +1545,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             _if_tags = modified_access_conditions.if_tags
             _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
-        request = build_release_lease_request(
+        _request = build_release_lease_request(
             url=self._config.url,
             lease_id=lease_id,
             timeout=timeout,
@@ -1624,16 +1558,15 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             comp=comp,
             action=action,
             version=self._config.version,
-            template_url=self.release_lease.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1654,9 +1587,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    release_lease.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def renew_lease(  # pylint: disable=inconsistent-return-statements
@@ -1683,13 +1614,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :type request_id_parameter: str
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
-        :keyword comp: comp. Default value is "lease". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword action: Describes what lease action to take. Default value is "renew". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype action: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1721,7 +1645,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             _if_tags = modified_access_conditions.if_tags
             _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
-        request = build_renew_lease_request(
+        _request = build_renew_lease_request(
             url=self._config.url,
             lease_id=lease_id,
             timeout=timeout,
@@ -1734,16 +1658,15 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             comp=comp,
             action=action,
             version=self._config.version,
-            template_url=self.renew_lease.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1765,9 +1688,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    renew_lease.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def change_lease(  # pylint: disable=inconsistent-return-statements
@@ -1799,13 +1720,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :type request_id_parameter: str
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
-        :keyword comp: comp. Default value is "lease". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword action: Describes what lease action to take. Default value is "change". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype action: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1837,7 +1751,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             _if_tags = modified_access_conditions.if_tags
             _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
-        request = build_change_lease_request(
+        _request = build_change_lease_request(
             url=self._config.url,
             lease_id=lease_id,
             proposed_lease_id=proposed_lease_id,
@@ -1851,16 +1765,15 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             comp=comp,
             action=action,
             version=self._config.version,
-            template_url=self.change_lease.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1882,9 +1795,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    change_lease.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def break_lease(  # pylint: disable=inconsistent-return-statements
@@ -1917,13 +1828,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :type request_id_parameter: str
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
-        :keyword comp: comp. Default value is "lease". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword action: Describes what lease action to take. Default value is "break". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype action: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1955,7 +1859,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             _if_tags = modified_access_conditions.if_tags
             _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
-        request = build_break_lease_request(
+        _request = build_break_lease_request(
             url=self._config.url,
             timeout=timeout,
             break_period=break_period,
@@ -1968,16 +1872,15 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             comp=comp,
             action=action,
             version=self._config.version,
-            template_url=self.break_lease.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1999,9 +1902,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    break_lease.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def create_snapshot(  # pylint: disable=inconsistent-return-statements
@@ -2042,10 +1943,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
-        :keyword comp: comp. Default value is "snapshot". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2089,7 +1986,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
 
-        request = build_create_snapshot_request(
+        _request = build_create_snapshot_request(
             url=self._config.url,
             timeout=timeout,
             metadata=metadata,
@@ -2106,16 +2003,15 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             request_id_parameter=request_id_parameter,
             comp=comp,
             version=self._config.version,
-            template_url=self.create_snapshot.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2141,9 +2037,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         )
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    create_snapshot.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def start_copy_from_url(  # pylint: disable=inconsistent-return-statements
@@ -2216,7 +2110,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2260,7 +2153,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
 
-        request = build_start_copy_from_url_request(
+        _request = build_start_copy_from_url_request(
             url=self._config.url,
             copy_source=copy_source,
             timeout=timeout,
@@ -2285,16 +2178,15 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             immutability_policy_mode=immutability_policy_mode,
             legal_hold=legal_hold,
             version=self._config.version,
-            template_url=self.start_copy_from_url.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2318,9 +2210,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         response_headers["x-ms-copy-status"] = self._deserialize("str", response.headers.get("x-ms-copy-status"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    start_copy_from_url.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def copy_from_url(  # pylint: disable=inconsistent-return-statements
@@ -2402,11 +2292,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
         :param cpk_scope_info: Parameter group. Default value is None.
         :type cpk_scope_info: ~azure.storage.blob.models.CpkScopeInfo
-        :keyword x_ms_requires_sync: This header indicates that this is a synchronous Copy Blob From
-         URL instead of a Asynchronous Copy Blob. Default value is "true". Note that overriding this
-         default value may result in unsupported behavior.
-        :paramtype x_ms_requires_sync: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2454,7 +2339,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         if cpk_scope_info is not None:
             _encryption_scope = cpk_scope_info.encryption_scope
 
-        request = build_copy_from_url_request(
+        _request = build_copy_from_url_request(
             url=self._config.url,
             copy_source=copy_source,
             timeout=timeout,
@@ -2481,16 +2366,15 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             copy_source_tags=copy_source_tags,
             x_ms_requires_sync=x_ms_requires_sync,
             version=self._config.version,
-            template_url=self.copy_from_url.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2521,9 +2405,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         )
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    copy_from_url.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def abort_copy_from_url(  # pylint: disable=inconsistent-return-statements
@@ -2551,13 +2433,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :type request_id_parameter: str
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
-        :keyword comp: comp. Default value is "copy". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword copy_action_abort_constant: Copy action. Default value is "abort". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype copy_action_abort_constant: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2583,7 +2458,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
 
-        request = build_abort_copy_from_url_request(
+        _request = build_abort_copy_from_url_request(
             url=self._config.url,
             copy_id=copy_id,
             timeout=timeout,
@@ -2592,16 +2467,15 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             comp=comp,
             copy_action_abort_constant=copy_action_abort_constant,
             version=self._config.version,
-            template_url=self.abort_copy_from_url.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2620,9 +2494,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    abort_copy_from_url.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def set_tier(  # pylint: disable=inconsistent-return-statements
@@ -2673,10 +2545,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
-        :keyword comp: comp. Default value is "tier". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2702,7 +2570,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         if modified_access_conditions is not None:
             _if_tags = modified_access_conditions.if_tags
 
-        request = build_set_tier_request(
+        _request = build_set_tier_request(
             url=self._config.url,
             tier=tier,
             snapshot=snapshot,
@@ -2714,16 +2582,15 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             if_tags=_if_tags,
             comp=comp,
             version=self._config.version,
-            template_url=self.set_tier.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2749,21 +2616,12 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    set_tier.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def get_account_info(self, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
         """Returns the sku name and account kind.
 
-        :keyword restype: restype. Default value is "account". Note that overriding this default value
-         may result in unsupported behavior.
-        :paramtype restype: str
-        :keyword comp: comp. Default value is "properties". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2783,21 +2641,20 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_get_account_info_request(
+        _request = build_get_account_info_request(
             url=self._config.url,
             restype=restype,
             comp=comp,
             version=self._config.version,
-            template_url=self.get_account_info.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2818,9 +2675,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         response_headers["x-ms-account-kind"] = self._deserialize("str", response.headers.get("x-ms-account-kind"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    get_account_info.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def query(
@@ -2860,11 +2715,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
         :param query_request: the query request. Default value is None.
         :type query_request: ~azure.storage.blob.models.QueryRequest
-        :keyword comp: comp. Default value is "query". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Async iterator of the response bytes or the result of cls(response)
+        :return: AsyncIterator[bytes] or the result of cls(response)
         :rtype: AsyncIterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -2909,7 +2760,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = None
 
-        request = build_query_request(
+        _request = build_query_request(
             url=self._config.url,
             snapshot=snapshot,
             timeout=timeout,
@@ -2927,16 +2778,15 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             content_type=content_type,
             version=self._config.version,
             content=_content,
-            template_url=self.query.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3075,8 +2925,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
-    query.metadata = {"url": "{url}"}
-
     @distributed_trace_async
     async def get_tags(
         self,
@@ -3113,10 +2961,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
-        :keyword comp: comp. Default value is "tags". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: BlobTags or the result of cls(response)
         :rtype: ~azure.storage.blob.models.BlobTags
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3142,7 +2986,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
 
-        request = build_get_tags_request(
+        _request = build_get_tags_request(
             url=self._config.url,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
@@ -3152,16 +2996,15 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             lease_id=_lease_id,
             comp=comp,
             version=self._config.version,
-            template_url=self.get_tags.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3182,11 +3025,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         deserialized = self._deserialize("BlobTags", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    get_tags.metadata = {"url": "{url}"}
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def set_tags(  # pylint: disable=inconsistent-return-statements
@@ -3228,10 +3069,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
         :param tags: Blob tags. Default value is None.
         :type tags: ~azure.storage.blob.models.BlobTags
-        :keyword comp: comp. Default value is "tags". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3262,7 +3099,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = None
 
-        request = build_set_tags_request(
+        _request = build_set_tags_request(
             url=self._config.url,
             timeout=timeout,
             version_id=version_id,
@@ -3275,16 +3112,15 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             content_type=content_type,
             version=self._config.version,
             content=_content,
-            template_url=self.set_tags.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3303,6 +3139,4 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    set_tags.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
