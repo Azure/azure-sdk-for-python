@@ -863,7 +863,7 @@ class ServiceBusReceiver(
     ) -> int:
         """
         This operation deletes messages in the queue that are older than the specified enqueued time,
-         up to 4,000 messages.
+         up to 4,000 messages at a time.
 
         :param int max_message_count: The maximum number of messages to delete. The default value is 1.
         :param datetime.datetime or None before_enqueued_time_utc: The UTC datetime value before which all messages
