@@ -11,7 +11,7 @@ from ._models import AddParticipantRequest
 from ._models import AddParticipantResponse
 from ._models import AddParticipantSucceeded
 from ._models import AnswerCallRequest
-from ._models import BlobStorage
+from ._models import AzureBlobStorage
 from ._models import CallConnected
 from ._models import CallConnectionProperties
 from ._models import CallDisconnected
@@ -93,7 +93,7 @@ from ._enums import RecordingContent
 from ._enums import RecordingFormat
 from ._enums import RecordingKind
 from ._enums import RecordingState
-from ._enums import RecordingStorage
+from ._enums import RecordingStorageKind
 from ._enums import VoiceKind
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
@@ -105,7 +105,7 @@ __all__ = [
     "AddParticipantResponse",
     "AddParticipantSucceeded",
     "AnswerCallRequest",
-    "BlobStorage",
+    "AzureBlobStorage",
     "CallConnected",
     "CallConnectionProperties",
     "CallDisconnected",
@@ -186,7 +186,7 @@ __all__ = [
     "RecordingFormat",
     "RecordingKind",
     "RecordingState",
-    "RecordingStorage",
+    "RecordingStorageKind",
     "VoiceKind",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])

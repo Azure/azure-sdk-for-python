@@ -59,7 +59,7 @@ if TYPE_CHECKING:
         RecordingContent,
         RecordingChannel,
         RecordingFormat,
-        RecordingStorage
+        RecordingStorageKind
     )
 
 
@@ -425,7 +425,7 @@ class CallAutomationClient:
         recording_format_type: Optional[Union[str, 'RecordingFormat']] = None,
         audio_channel_participant_ordering: Optional[List['CommunicationIdentifier']] = None,
         channel_affinity: Optional[List['ChannelAffinity']] = None,
-        recording_storage_type: Optional[Union[str, 'RecordingStorage']] = None,
+        recording_storage_type: Optional[Union[str, 'RecordingStorageKind']] = None,
         external_storage_location: Optional[str] = None,
         pause_on_start: Optional[bool] = None,
         **kwargs
@@ -458,8 +458,8 @@ class CallAutomationClient:
          ``External`` enables bring your own storage.
         :paramtype recording_storage_type: str or None
         :keyword external_storage_location: The location where recording is stored,
-         when RecordingStorageType is set to 'BlobStorage'.
-        :paramtype external_storage_location: str or ~azure.communication.callautomation.RecordingStorage or None
+         when RecordingStorageType is set to 'AzureBlobStorage'.
+        :paramtype external_storage_location: str or ~azure.communication.callautomation.RecordingStorageKind or None
         :keyword pause_on_start: The state of the pause on start option.
         :paramtype pause_on_start: bool or None
         :return: RecordingProperties
@@ -478,7 +478,7 @@ class CallAutomationClient:
         recording_format_type: Optional[Union[str, 'RecordingFormat']] = None,
         audio_channel_participant_ordering: Optional[List['CommunicationIdentifier']] = None,
         channel_affinity: Optional[List['ChannelAffinity']] = None,
-        recording_storage_type: Optional[Union[str, 'RecordingStorage']] = None,
+        recording_storage_type: Optional[Union[str, 'RecordingStorageKind']] = None,
         external_storage_location: Optional[str] = None,
         pause_on_start: Optional[bool] = None,
         **kwargs
@@ -511,8 +511,8 @@ class CallAutomationClient:
          ``External`` enables bring your own storage.
         :paramtype recording_storage_type: str or None
         :keyword external_storage_location: The location where recording is stored,
-         when RecordingStorageType is set to 'BlobStorage'.
-        :paramtype external_storage_location: str or ~azure.communication.callautomation.RecordingStorage or None
+         when RecordingStorageType is set to 'AzureBlobStorage'.
+        :paramtype external_storage_location: str or ~azure.communication.callautomation.RecordingStorageKind or None
         :keyword pause_on_start: The state of the pause on start option.
         :paramtype pause_on_start: bool or None
         :return: RecordingProperties

@@ -349,8 +349,8 @@ class AnswerCallRequest(_serialization.Model):
         self.answered_by = answered_by
 
 
-class BlobStorage(_serialization.Model):
-    """Used to specify Blob container url to recording storage.
+class AzureBlobStorage(_serialization.Model):
+    """Used to specify Azure Blob container url to recording storage.
 
     All required parameters must be populated in order to send to server.
 
@@ -1724,39 +1724,43 @@ class ExternalStorage(_serialization.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar storage_type: Defines the type of external storage. Required. Known values are: "acs" and
-     "blobStorage".
-    :vartype storage_type: str or ~azure.communication.callautomation.models.RecordingStorage
-    :ivar blob_storage: Defines the blob storage location where the recording will be stored.
-    :vartype blob_storage: ~azure.communication.callautomation.models.BlobStorage
+    :ivar recording_storage_kind: Defines the kind of external storage. Required. Known values are:
+     "azureCommunicationServices" and "azureBlobStorage".
+    :vartype recording_storage_kind: str or
+     ~azure.communication.callautomation.models.RecordingStorageKind
+    :ivar azure_blob_storage: Defines the Azure Blob storage location where the recording will be
+     stored.
+    :vartype azure_blob_storage: ~azure.communication.callautomation.models.AzureBlobStorage
     """
 
     _validation = {
-        "storage_type": {"required": True},
+        "recording_storage_kind": {"required": True},
     }
 
     _attribute_map = {
-        "storage_type": {"key": "storageType", "type": "str"},
-        "blob_storage": {"key": "blobStorage", "type": "BlobStorage"},
+        "recording_storage_kind": {"key": "recordingStorageKind", "type": "str"},
+        "azure_blob_storage": {"key": "azureBlobStorage", "type": "AzureBlobStorage"},
     }
 
     def __init__(
         self,
         *,
-        storage_type: Union[str, "_models.RecordingStorage"],
-        blob_storage: Optional["_models.BlobStorage"] = None,
+        recording_storage_kind: Union[str, "_models.RecordingStorageKind"],
+        azure_blob_storage: Optional["_models.AzureBlobStorage"] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword storage_type: Defines the type of external storage. Required. Known values are: "acs"
-         and "blobStorage".
-        :paramtype storage_type: str or ~azure.communication.callautomation.models.RecordingStorage
-        :keyword blob_storage: Defines the blob storage location where the recording will be stored.
-        :paramtype blob_storage: ~azure.communication.callautomation.models.BlobStorage
+        :keyword recording_storage_kind: Defines the kind of external storage. Required. Known values
+         are: "azureCommunicationServices" and "azureBlobStorage".
+        :paramtype recording_storage_kind: str or
+         ~azure.communication.callautomation.models.RecordingStorageKind
+        :keyword azure_blob_storage: Defines the Azure Blob storage location where the recording will
+         be stored.
+        :paramtype azure_blob_storage: ~azure.communication.callautomation.models.AzureBlobStorage
         """
         super().__init__(**kwargs)
-        self.storage_type = storage_type
-        self.blob_storage = blob_storage
+        self.recording_storage_kind = recording_storage_kind
+        self.azure_blob_storage = azure_blob_storage
 
 
 class FileSource(_serialization.Model):
@@ -2745,6 +2749,9 @@ class RecordingStateChanged(_serialization.Model):
     :vartype state: str or ~azure.communication.callautomation.models.RecordingState
     :ivar start_date_time: The time of the recording started.
     :vartype start_date_time: ~datetime.datetime
+    :ivar recording_kind: Known values are: "azureCommunicationServices", "teams",
+     "teamsCompliance", and "others".
+    :vartype recording_kind: str or ~azure.communication.callautomation.models.RecordingKind
     """
 
     _validation = {
@@ -2759,6 +2766,7 @@ class RecordingStateChanged(_serialization.Model):
         "recording_id": {"key": "recordingId", "type": "str"},
         "state": {"key": "state", "type": "str"},
         "start_date_time": {"key": "startDateTime", "type": "iso-8601"},
+        "recording_kind": {"key": "recordingKind", "type": "str"},
     }
 
     def __init__(
@@ -2768,6 +2776,7 @@ class RecordingStateChanged(_serialization.Model):
         server_call_id: Optional[str] = None,
         correlation_id: Optional[str] = None,
         state: Optional[Union[str, "_models.RecordingState"]] = None,
+        recording_kind: Optional[Union[str, "_models.RecordingKind"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2779,6 +2788,9 @@ class RecordingStateChanged(_serialization.Model):
         :paramtype correlation_id: str
         :keyword state: Known values are: "active" and "inactive".
         :paramtype state: str or ~azure.communication.callautomation.models.RecordingState
+        :keyword recording_kind: Known values are: "azureCommunicationServices", "teams",
+         "teamsCompliance", and "others".
+        :paramtype recording_kind: str or ~azure.communication.callautomation.models.RecordingKind
         """
         super().__init__(**kwargs)
         self.call_connection_id = call_connection_id
@@ -2787,6 +2799,7 @@ class RecordingStateChanged(_serialization.Model):
         self.recording_id = None
         self.state = state
         self.start_date_time = None
+        self.recording_kind = recording_kind
 
 
 class RecordingStateResponse(_serialization.Model):
@@ -2796,8 +2809,8 @@ class RecordingStateResponse(_serialization.Model):
     :vartype recording_id: str
     :ivar recording_state: Known values are: "active" and "inactive".
     :vartype recording_state: str or ~azure.communication.callautomation.models.RecordingState
-    :ivar recording_kind: Known values are: "azureCommunication", "teams", "teamsCompliance", and
-     "others".
+    :ivar recording_kind: Known values are: "azureCommunicationServices", "teams",
+     "teamsCompliance", and "others".
     :vartype recording_kind: str or ~azure.communication.callautomation.models.RecordingKind
     """
 
@@ -2820,8 +2833,8 @@ class RecordingStateResponse(_serialization.Model):
         :paramtype recording_id: str
         :keyword recording_state: Known values are: "active" and "inactive".
         :paramtype recording_state: str or ~azure.communication.callautomation.models.RecordingState
-        :keyword recording_kind: Known values are: "azureCommunication", "teams", "teamsCompliance",
-         and "others".
+        :keyword recording_kind: Known values are: "azureCommunicationServices", "teams",
+         "teamsCompliance", and "others".
         :paramtype recording_kind: str or ~azure.communication.callautomation.models.RecordingKind
         """
         super().__init__(**kwargs)

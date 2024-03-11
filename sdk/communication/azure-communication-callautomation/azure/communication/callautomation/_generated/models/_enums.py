@@ -128,7 +128,7 @@ class RecordingFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class RecordingKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """RecordingKind."""
 
-    AZURE_COMMUNICATION = "azureCommunication"
+    AZURE_COMMUNICATION_SERVICES = "azureCommunicationServices"
     TEAMS = "teams"
     TEAMS_COMPLIANCE = "teamsCompliance"
     OTHERS = "others"
@@ -141,11 +141,11 @@ class RecordingState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     INACTIVE = "inactive"
 
 
-class RecordingStorage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Defines the type of external storage."""
+class RecordingStorageKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Defines the kind of external storage."""
 
-    ACS = "acs"
-    BLOB_STORAGE = "blobStorage"
+    AZURE_COMMUNICATION_SERVICES = "azureCommunicationServices"
+    AZURE_BLOB_STORAGE = "azureBlobStorage"
 
 
 class VoiceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
