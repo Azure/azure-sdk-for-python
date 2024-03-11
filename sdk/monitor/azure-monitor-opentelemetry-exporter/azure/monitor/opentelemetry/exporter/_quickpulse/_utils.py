@@ -127,7 +127,7 @@ def _get_url(span_kind: SpanKind, attributes: Attributes) -> str:
             http_url = attributes.get(SpanAttributes.HTTP_URL)
             if http_url:
                 return str(http_url)
-            
+
             host = attributes.get(SpanAttributes.NET_PEER_NAME)
             port = attributes.get(SpanAttributes.NET_PEER_PORT, "")
             ip = attributes.get(SpanAttributes.NET_PEER_IP)
