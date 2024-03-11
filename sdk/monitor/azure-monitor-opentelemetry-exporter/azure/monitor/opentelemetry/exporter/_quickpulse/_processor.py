@@ -7,6 +7,7 @@ from opentelemetry.sdk.trace import ReadableSpan, SpanProcessor
 from azure.monitor.opentelemetry.exporter._quickpulse._live_metrics import _QuickpulseManager
 
 
+# pylint: disable=protected-access
 class _QuickpulseLogRecordProcessor(LogRecordProcessor):
 
     def emit(self, log_data: LogData) -> None:
@@ -22,6 +23,7 @@ class _QuickpulseLogRecordProcessor(LogRecordProcessor):
         super().force_flush(timeout_millis=timeout_millis)
 
 
+# pylint: disable=protected-access
 class _QuickpulseSpanProcessor(SpanProcessor):
 
     def on_end(self, span: ReadableSpan) -> None:

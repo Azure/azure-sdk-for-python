@@ -70,8 +70,8 @@ def _get_span_document(span: ReadableSpan) -> Union[RemoteDependencyDocument, Re
     duration = 0
     if span.end_time and span.start_time:
         duration = span.end_time - span.start_time
-    status_code = span.attributes.get(SpanAttributes.HTTP_STATUS_CODE, "")
-    grpc_status_code = span.attributes.get(SpanAttributes.RPC_GRPC_STATUS_CODE, "")
+    status_code = span.attributes.get(SpanAttributes.HTTP_STATUS_CODE, "")  # type: ignore
+    grpc_status_code = span.attributes.get(SpanAttributes.RPC_GRPC_STATUS_CODE, "")  # type: ignore
     span_kind = span.kind
     url = _get_url(span_kind, span.attributes)
     if span_kind in (SpanKind.CLIENT, SpanKind.PRODUCER, SpanKind.INTERNAL):
@@ -98,8 +98,8 @@ def _get_span_document(span: ReadableSpan) -> Union[RemoteDependencyDocument, Re
 
 # mypy: disable-error-code="assignment"
 def _get_log_record_document(log_data: LogData) -> Union[ExceptionDocument, TraceDocument]:
-    exc_type = log_data.log_record.attributes.get(SpanAttributes.EXCEPTION_TYPE)
-    exc_message = log_data.log_record.attributes.get(SpanAttributes.EXCEPTION_MESSAGE)
+    exc_type = log_data.log_record.attributes.get(SpanAttributes.EXCEPTION_TYPE)  # type: ignore
+    exc_message = log_data.log_record.attributes.get(SpanAttributes.EXCEPTION_MESSAGE)  # type: ignore
     if exc_type is not None or exc_message is not None:
         document = ExceptionDocument(
             document_type=_DocumentIngressDocumentType.Exception.value,
