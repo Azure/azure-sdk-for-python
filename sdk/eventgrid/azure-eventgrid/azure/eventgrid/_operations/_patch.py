@@ -23,6 +23,8 @@ from ..models._patch import ReceiveResult, ReceiveDetails
 from .. import models as _models
 from functools import wraps
 
+from .._legacy import EventGridEvent
+
 from .._serialization import Serializer
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -171,12 +173,68 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-    
+
+    @overload
+    def publish(
+        self,
+        topic_name: str,
+        body: EventGridEvent,
+        *,
+        binary_mode: bool = False,
+        content_type: str = "application/json; charset=utf-8",
+        **kwargs: Any
+    ) -> None:
+        """Publish Single EventGrid Event to  topic. In case of success, the server responds with an
+        HTTP 200 status code with an empty JSON object in response. Otherwise, the server can return
+        various error codes. For example, 401: which indicates authorization failure, 403: which
+        indicates quota exceeded or message is too large, 410: which indicates that specific topic is
+        not found, 400: for bad request, and 500: for internal server error.
+
+        :param topic_name: Topic Name. Required.
+        :type topic_name: str
+        :param body: Single EventGrid Event being published. Required.
+        :type body: ~azure.eventgrid.EventGridEvent
+        :keyword content_type: content type. Default value is "application/cloudevents+json;
+         charset=utf-8".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def publish(
+        self,
+        topic_name: str,
+        body: List[EventGridEvent],
+        *,
+        binary_mode: bool = False,
+        content_type: str = "application/json; charset=utf-8",
+        **kwargs: Any
+    ) -> None:
+        """Publish Single EventGrid Event to  topic. In case of success, the server responds with an
+        HTTP 200 status code with an empty JSON object in response. Otherwise, the server can return
+        various error codes. For example, 401: which indicates authorization failure, 403: which
+        indicates quota exceeded or message is too large, 410: which indicates that specific topic is
+        not found, 400: for bad request, and 500: for internal server error.
+
+        :param topic_name: Topic Name. Required.
+        :type topic_name: str
+        :param body: Single EventGrid Event being published. Required.
+        :type body: list[~azure.eventgrid.EventGridEvent]
+        :keyword content_type: content type. Default value is "application/cloudevents+json;
+         charset=utf-8".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+  
     @distributed_trace
     def publish(
         self,
         topic_name: str,
-        body: Union[List[CloudEvent], CloudEvent, List[Dict[str, Any]], Dict[str, Any]],
+        body: Union[List[CloudEvent], CloudEvent, List[Dict[str, Any]], Dict[str, Any], EventGridEvent, List[EventGridEvent]],
         *,
         binary_mode: bool = False,
         **kwargs
