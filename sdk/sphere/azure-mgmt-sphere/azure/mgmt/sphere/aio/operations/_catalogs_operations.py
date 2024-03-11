@@ -30,7 +30,6 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
-from ..._vendor import _convert_request
 from ...operations._catalogs_operations import (
     build_count_devices_request,
     build_create_or_update_request,
@@ -72,16 +71,14 @@ class CatalogsOperations:
     def list_by_subscription(self, **kwargs: Any) -> AsyncIterable["_models.Catalog"]:
         """List Catalog resources by subscription ID.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either Catalog or the result of cls(response)
+        :return: An iterator like instance of Catalog
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sphere.models.Catalog]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.CatalogListResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models._models.CatalogListResult] = kwargs.pop("cls", None)  # pylint: disable=protected-access
 
         error_map = {
             401: ClientAuthenticationError,
@@ -96,12 +93,10 @@ class CatalogsOperations:
 
                 request = build_list_by_subscription_request(
                     subscription_id=self._config.subscription_id,
-                    api_version=api_version,
-                    template_url=self.list_by_subscription.metadata["url"],
+                    api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
 
             else:
@@ -117,13 +112,14 @@ class CatalogsOperations:
                 request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
-                request.method = "GET"
+
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("CatalogListResult", pipeline_response)
+            deserialized = self._deserialize(
+                _models._models.CatalogListResult, pipeline_response  # pylint: disable=protected-access
+            )
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -147,8 +143,6 @@ class CatalogsOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list_by_subscription.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.AzureSphere/catalogs"}
-
     @distributed_trace
     def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.Catalog"]:
         """List Catalog resources by resource group.
@@ -156,16 +150,14 @@ class CatalogsOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either Catalog or the result of cls(response)
+        :return: An iterator like instance of Catalog
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sphere.models.Catalog]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.CatalogListResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models._models.CatalogListResult] = kwargs.pop("cls", None)  # pylint: disable=protected-access
 
         error_map = {
             401: ClientAuthenticationError,
@@ -181,12 +173,10 @@ class CatalogsOperations:
                 request = build_list_by_resource_group_request(
                     resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
-                    api_version=api_version,
-                    template_url=self.list_by_resource_group.metadata["url"],
+                    api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
 
             else:
@@ -202,13 +192,14 @@ class CatalogsOperations:
                 request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
-                request.method = "GET"
+
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("CatalogListResult", pipeline_response)
+            deserialized = self._deserialize(
+                _models._models.CatalogListResult, pipeline_response  # pylint: disable=protected-access
+            )
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -232,10 +223,6 @@ class CatalogsOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list_by_resource_group.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureSphere/catalogs"
-    }
-
     @distributed_trace_async
     async def get(self, resource_group_name: str, catalog_name: str, **kwargs: Any) -> _models.Catalog:
         """Get a Catalog.
@@ -245,8 +232,7 @@ class CatalogsOperations:
         :type resource_group_name: str
         :param catalog_name: Name of catalog. Required.
         :type catalog_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Catalog or the result of cls(response)
+        :return: Catalog
         :rtype: ~azure.mgmt.sphere.models.Catalog
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -259,21 +245,18 @@ class CatalogsOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.Catalog] = kwargs.pop("cls", None)
 
         request = build_get_request(
             resource_group_name=resource_group_name,
             catalog_name=catalog_name,
             subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            template_url=self.get.metadata["url"],
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         _stream = False
@@ -295,10 +278,6 @@ class CatalogsOperations:
 
         return deserialized
 
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureSphere/catalogs/{catalogName}"
-    }
-
     async def _create_or_update_initial(
         self, resource_group_name: str, catalog_name: str, resource: Union[_models.Catalog, IO], **kwargs: Any
     ) -> _models.Catalog:
@@ -311,9 +290,8 @@ class CatalogsOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.Catalog] = kwargs.pop("cls", None)
 
@@ -329,15 +307,13 @@ class CatalogsOperations:
             resource_group_name=resource_group_name,
             catalog_name=catalog_name,
             subscription_id=self._config.subscription_id,
-            api_version=api_version,
             content_type=content_type,
+            api_version=self._config.api_version,
             json=_json,
             content=_content,
-            template_url=self._create_or_update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         _stream = False
@@ -366,10 +342,6 @@ class CatalogsOperations:
 
         return deserialized  # type: ignore
 
-    _create_or_update_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureSphere/catalogs/{catalogName}"
-    }
-
     @overload
     async def begin_create_or_update(
         self,
@@ -392,7 +364,6 @@ class CatalogsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
          this operation to not poll, or pass in your own initialized polling object for a personal
@@ -400,8 +371,7 @@ class CatalogsOperations:
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either Catalog or the result of
-         cls(response)
+        :return: An instance of AsyncLROPoller that returns Catalog
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sphere.models.Catalog]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -428,7 +398,6 @@ class CatalogsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
          this operation to not poll, or pass in your own initialized polling object for a personal
@@ -436,8 +405,7 @@ class CatalogsOperations:
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either Catalog or the result of
-         cls(response)
+        :return: An instance of AsyncLROPoller that returns Catalog
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sphere.models.Catalog]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -458,7 +426,6 @@ class CatalogsOperations:
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
          this operation to not poll, or pass in your own initialized polling object for a personal
@@ -466,15 +433,13 @@ class CatalogsOperations:
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either Catalog or the result of
-         cls(response)
+        :return: An instance of AsyncLROPoller that returns Catalog
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sphere.models.Catalog]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.Catalog] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -485,7 +450,6 @@ class CatalogsOperations:
                 resource_group_name=resource_group_name,
                 catalog_name=catalog_name,
                 resource=resource,
-                api_version=api_version,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -518,10 +482,6 @@ class CatalogsOperations:
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureSphere/catalogs/{catalogName}"
-    }
-
     @overload
     async def update(
         self,
@@ -544,8 +504,7 @@ class CatalogsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Catalog or the result of cls(response)
+        :return: Catalog
         :rtype: ~azure.mgmt.sphere.models.Catalog
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -572,8 +531,7 @@ class CatalogsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Catalog or the result of cls(response)
+        :return: Catalog
         :rtype: ~azure.mgmt.sphere.models.Catalog
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -595,8 +553,7 @@ class CatalogsOperations:
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Catalog or the result of cls(response)
+        :return: Catalog
         :rtype: ~azure.mgmt.sphere.models.Catalog
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -609,9 +566,8 @@ class CatalogsOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.Catalog] = kwargs.pop("cls", None)
 
@@ -627,15 +583,13 @@ class CatalogsOperations:
             resource_group_name=resource_group_name,
             catalog_name=catalog_name,
             subscription_id=self._config.subscription_id,
-            api_version=api_version,
             content_type=content_type,
+            api_version=self._config.api_version,
             json=_json,
             content=_content,
-            template_url=self.update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         _stream = False
@@ -657,10 +611,6 @@ class CatalogsOperations:
 
         return deserialized
 
-    update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureSphere/catalogs/{catalogName}"
-    }
-
     async def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, catalog_name: str, **kwargs: Any
     ) -> None:
@@ -673,21 +623,18 @@ class CatalogsOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_delete_request(
             resource_group_name=resource_group_name,
             catalog_name=catalog_name,
             subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            template_url=self._delete_initial.metadata["url"],
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         _stream = False
@@ -710,10 +657,6 @@ class CatalogsOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    _delete_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureSphere/catalogs/{catalogName}"
-    }
-
     @distributed_trace_async
     async def begin_delete(self, resource_group_name: str, catalog_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
         """Delete a Catalog.
@@ -723,7 +666,6 @@ class CatalogsOperations:
         :type resource_group_name: str
         :param catalog_name: Name of catalog. Required.
         :type catalog_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
          this operation to not poll, or pass in your own initialized polling object for a personal
@@ -731,14 +673,13 @@ class CatalogsOperations:
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -747,7 +688,6 @@ class CatalogsOperations:
             raw_result = await self._delete_initial(  # type: ignore
                 resource_group_name=resource_group_name,
                 catalog_name=catalog_name,
-                api_version=api_version,
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
@@ -776,10 +716,6 @@ class CatalogsOperations:
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureSphere/catalogs/{catalogName}"
-    }
-
     @distributed_trace_async
     async def count_devices(
         self, resource_group_name: str, catalog_name: str, **kwargs: Any
@@ -791,8 +727,7 @@ class CatalogsOperations:
         :type resource_group_name: str
         :param catalog_name: Name of catalog. Required.
         :type catalog_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: CountDeviceResponse or the result of cls(response)
+        :return: CountDeviceResponse
         :rtype: ~azure.mgmt.sphere.models.CountDeviceResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -805,21 +740,18 @@ class CatalogsOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.CountDeviceResponse] = kwargs.pop("cls", None)
 
         request = build_count_devices_request(
             resource_group_name=resource_group_name,
             catalog_name=catalog_name,
             subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            template_url=self.count_devices.metadata["url"],
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         _stream = False
@@ -841,19 +773,15 @@ class CatalogsOperations:
 
         return deserialized
 
-    count_devices.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureSphere/catalogs/{catalogName}/countDevices"
-    }
-
     @distributed_trace
     def list_deployments(
         self,
         resource_group_name: str,
         catalog_name: str,
+        *,
         filter: Optional[str] = None,
         top: Optional[int] = None,
         skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.Deployment"]:
         """Lists deployments for catalog.
@@ -863,24 +791,20 @@ class CatalogsOperations:
         :type resource_group_name: str
         :param catalog_name: Name of catalog. Required.
         :type catalog_name: str
-        :param filter: Filter the result list using the given expression. Default value is None.
-        :type filter: str
-        :param top: The number of result items to return. Default value is None.
-        :type top: int
-        :param skip: The number of result items to skip. Default value is None.
-        :type skip: int
-        :param maxpagesize: The maximum number of result items per page. Default value is None.
-        :type maxpagesize: int
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either Deployment or the result of cls(response)
+        :keyword filter: Filter the result list using the given expression. Default value is None.
+        :paramtype filter: str
+        :keyword top: The number of result items to return. Default value is None.
+        :paramtype top: int
+        :keyword skip: The number of result items to skip. Default value is None.
+        :paramtype skip: int
+        :return: An iterator like instance of Deployment
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sphere.models.Deployment]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.DeploymentListResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models._models.DeploymentListResult] = kwargs.pop("cls", None)  # pylint: disable=protected-access
 
         error_map = {
             401: ClientAuthenticationError,
@@ -900,13 +824,10 @@ class CatalogsOperations:
                     filter=filter,
                     top=top,
                     skip=skip,
-                    maxpagesize=maxpagesize,
-                    api_version=api_version,
-                    template_url=self.list_deployments.metadata["url"],
+                    api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
 
             else:
@@ -922,13 +843,14 @@ class CatalogsOperations:
                 request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
-                request.method = "GET"
+
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("DeploymentListResult", pipeline_response)
+            deserialized = self._deserialize(
+                _models._models.DeploymentListResult, pipeline_response  # pylint: disable=protected-access
+            )
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -952,21 +874,16 @@ class CatalogsOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list_deployments.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureSphere/catalogs/{catalogName}/listDeployments"
-    }
-
     @overload
     def list_device_groups(
         self,
         resource_group_name: str,
         catalog_name: str,
         list_device_groups_request: _models.ListDeviceGroupsRequest,
+        *,
         filter: Optional[str] = None,
         top: Optional[int] = None,
         skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
-        *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncIterable["_models.DeviceGroup"]:
@@ -979,19 +896,16 @@ class CatalogsOperations:
         :type catalog_name: str
         :param list_device_groups_request: List device groups for catalog. Required.
         :type list_device_groups_request: ~azure.mgmt.sphere.models.ListDeviceGroupsRequest
-        :param filter: Filter the result list using the given expression. Default value is None.
-        :type filter: str
-        :param top: The number of result items to return. Default value is None.
-        :type top: int
-        :param skip: The number of result items to skip. Default value is None.
-        :type skip: int
-        :param maxpagesize: The maximum number of result items per page. Default value is None.
-        :type maxpagesize: int
+        :keyword filter: Filter the result list using the given expression. Default value is None.
+        :paramtype filter: str
+        :keyword top: The number of result items to return. Default value is None.
+        :paramtype top: int
+        :keyword skip: The number of result items to skip. Default value is None.
+        :paramtype skip: int
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either DeviceGroup or the result of cls(response)
+        :return: An iterator like instance of DeviceGroup
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sphere.models.DeviceGroup]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -1002,11 +916,10 @@ class CatalogsOperations:
         resource_group_name: str,
         catalog_name: str,
         list_device_groups_request: IO,
+        *,
         filter: Optional[str] = None,
         top: Optional[int] = None,
         skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
-        *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncIterable["_models.DeviceGroup"]:
@@ -1019,19 +932,16 @@ class CatalogsOperations:
         :type catalog_name: str
         :param list_device_groups_request: List device groups for catalog. Required.
         :type list_device_groups_request: IO
-        :param filter: Filter the result list using the given expression. Default value is None.
-        :type filter: str
-        :param top: The number of result items to return. Default value is None.
-        :type top: int
-        :param skip: The number of result items to skip. Default value is None.
-        :type skip: int
-        :param maxpagesize: The maximum number of result items per page. Default value is None.
-        :type maxpagesize: int
+        :keyword filter: Filter the result list using the given expression. Default value is None.
+        :paramtype filter: str
+        :keyword top: The number of result items to return. Default value is None.
+        :paramtype top: int
+        :keyword skip: The number of result items to skip. Default value is None.
+        :paramtype skip: int
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either DeviceGroup or the result of cls(response)
+        :return: An iterator like instance of DeviceGroup
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sphere.models.DeviceGroup]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -1042,10 +952,10 @@ class CatalogsOperations:
         resource_group_name: str,
         catalog_name: str,
         list_device_groups_request: Union[_models.ListDeviceGroupsRequest, IO],
+        *,
         filter: Optional[str] = None,
         top: Optional[int] = None,
         skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.DeviceGroup"]:
         """List the device groups for the catalog.
@@ -1058,28 +968,26 @@ class CatalogsOperations:
         :param list_device_groups_request: List device groups for catalog. Is either a
          ListDeviceGroupsRequest type or a IO type. Required.
         :type list_device_groups_request: ~azure.mgmt.sphere.models.ListDeviceGroupsRequest or IO
-        :param filter: Filter the result list using the given expression. Default value is None.
-        :type filter: str
-        :param top: The number of result items to return. Default value is None.
-        :type top: int
-        :param skip: The number of result items to skip. Default value is None.
-        :type skip: int
-        :param maxpagesize: The maximum number of result items per page. Default value is None.
-        :type maxpagesize: int
+        :keyword filter: Filter the result list using the given expression. Default value is None.
+        :paramtype filter: str
+        :keyword top: The number of result items to return. Default value is None.
+        :paramtype top: int
+        :keyword skip: The number of result items to skip. Default value is None.
+        :paramtype skip: int
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either DeviceGroup or the result of cls(response)
+        :return: An iterator like instance of DeviceGroup
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sphere.models.DeviceGroup]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.DeviceGroupListResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models._models.DeviceGroupListResult] = kwargs.pop(  # pylint: disable=protected-access
+            "cls", None
+        )
 
         error_map = {
             401: ClientAuthenticationError,
@@ -1106,16 +1014,13 @@ class CatalogsOperations:
                     filter=filter,
                     top=top,
                     skip=skip,
-                    maxpagesize=maxpagesize,
-                    api_version=api_version,
                     content_type=content_type,
+                    api_version=self._config.api_version,
                     json=_json,
                     content=_content,
-                    template_url=self.list_device_groups.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
 
             else:
@@ -1131,13 +1036,14 @@ class CatalogsOperations:
                 request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
-                request.method = "GET"
+
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("DeviceGroupListResult", pipeline_response)
+            deserialized = self._deserialize(
+                _models._models.DeviceGroupListResult, pipeline_response  # pylint: disable=protected-access
+            )
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -1161,19 +1067,15 @@ class CatalogsOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list_device_groups.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureSphere/catalogs/{catalogName}/listDeviceGroups"
-    }
-
     @distributed_trace
     def list_device_insights(
         self,
         resource_group_name: str,
         catalog_name: str,
+        *,
         filter: Optional[str] = None,
         top: Optional[int] = None,
         skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.DeviceInsight"]:
         """Lists device insights for catalog.
@@ -1183,24 +1085,20 @@ class CatalogsOperations:
         :type resource_group_name: str
         :param catalog_name: Name of catalog. Required.
         :type catalog_name: str
-        :param filter: Filter the result list using the given expression. Default value is None.
-        :type filter: str
-        :param top: The number of result items to return. Default value is None.
-        :type top: int
-        :param skip: The number of result items to skip. Default value is None.
-        :type skip: int
-        :param maxpagesize: The maximum number of result items per page. Default value is None.
-        :type maxpagesize: int
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either DeviceInsight or the result of cls(response)
+        :keyword filter: Filter the result list using the given expression. Default value is None.
+        :paramtype filter: str
+        :keyword top: The number of result items to return. Default value is None.
+        :paramtype top: int
+        :keyword skip: The number of result items to skip. Default value is None.
+        :paramtype skip: int
+        :return: An iterator like instance of DeviceInsight
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sphere.models.DeviceInsight]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.PagedDeviceInsight] = kwargs.pop("cls", None)
+        cls: ClsType[_models._models.PagedDeviceInsight] = kwargs.pop("cls", None)  # pylint: disable=protected-access
 
         error_map = {
             401: ClientAuthenticationError,
@@ -1220,13 +1118,10 @@ class CatalogsOperations:
                     filter=filter,
                     top=top,
                     skip=skip,
-                    maxpagesize=maxpagesize,
-                    api_version=api_version,
-                    template_url=self.list_device_insights.metadata["url"],
+                    api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
 
             else:
@@ -1242,13 +1137,14 @@ class CatalogsOperations:
                 request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
-                request.method = "GET"
+
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("PagedDeviceInsight", pipeline_response)
+            deserialized = self._deserialize(
+                _models._models.PagedDeviceInsight, pipeline_response  # pylint: disable=protected-access
+            )
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -1272,19 +1168,15 @@ class CatalogsOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list_device_insights.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureSphere/catalogs/{catalogName}/listDeviceInsights"
-    }
-
     @distributed_trace
     def list_devices(
         self,
         resource_group_name: str,
         catalog_name: str,
+        *,
         filter: Optional[str] = None,
         top: Optional[int] = None,
         skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.Device"]:
         """Lists devices for catalog.
@@ -1294,24 +1186,20 @@ class CatalogsOperations:
         :type resource_group_name: str
         :param catalog_name: Name of catalog. Required.
         :type catalog_name: str
-        :param filter: Filter the result list using the given expression. Default value is None.
-        :type filter: str
-        :param top: The number of result items to return. Default value is None.
-        :type top: int
-        :param skip: The number of result items to skip. Default value is None.
-        :type skip: int
-        :param maxpagesize: The maximum number of result items per page. Default value is None.
-        :type maxpagesize: int
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either Device or the result of cls(response)
+        :keyword filter: Filter the result list using the given expression. Default value is None.
+        :paramtype filter: str
+        :keyword top: The number of result items to return. Default value is None.
+        :paramtype top: int
+        :keyword skip: The number of result items to skip. Default value is None.
+        :paramtype skip: int
+        :return: An iterator like instance of Device
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sphere.models.Device]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.DeviceListResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models._models.DeviceListResult] = kwargs.pop("cls", None)  # pylint: disable=protected-access
 
         error_map = {
             401: ClientAuthenticationError,
@@ -1331,13 +1219,10 @@ class CatalogsOperations:
                     filter=filter,
                     top=top,
                     skip=skip,
-                    maxpagesize=maxpagesize,
-                    api_version=api_version,
-                    template_url=self.list_devices.metadata["url"],
+                    api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
 
             else:
@@ -1353,13 +1238,14 @@ class CatalogsOperations:
                 request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
-                request.method = "GET"
+
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("DeviceListResult", pipeline_response)
+            deserialized = self._deserialize(
+                _models._models.DeviceListResult, pipeline_response  # pylint: disable=protected-access
+            )
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -1382,7 +1268,3 @@ class CatalogsOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_devices.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureSphere/catalogs/{catalogName}/listDevices"
-    }

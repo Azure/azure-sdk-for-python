@@ -25,26 +25,26 @@ class AzureSphereMgmtClientConfiguration(Configuration):  # pylint: disable=too-
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param credential: Credential needed for the client to connect to Azure. Required.
-    :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
+    :param credential: Credential needed for the client to connect to Azure. Required.
+    :type credential: ~azure.core.credentials.TokenCredential
     :keyword api_version: Api Version. Default value is "2022-09-01-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, credential: "TokenCredential", subscription_id: str, **kwargs: Any) -> None:
+    def __init__(self, subscription_id: str, credential: "TokenCredential", **kwargs: Any) -> None:
         super(AzureSphereMgmtClientConfiguration, self).__init__(**kwargs)
         api_version: str = kwargs.pop("api_version", "2022-09-01-preview")
 
-        if credential is None:
-            raise ValueError("Parameter 'credential' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
+        if credential is None:
+            raise ValueError("Parameter 'credential' must not be None.")
 
-        self.credential = credential
         self.subscription_id = subscription_id
+        self.credential = credential
         self.api_version = api_version
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://management.azure.com/.default"])
         kwargs.setdefault("sdk_moniker", "mgmt-sphere/{}".format(VERSION))

@@ -30,7 +30,7 @@ from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import _convert_request, _format_url_section
+from .._vendor import _format_url_section
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -49,7 +49,6 @@ def build_list_by_device_group_request(
     filter: Optional[str] = None,
     top: Optional[int] = None,
     skip: Optional[int] = None,
-    maxpagesize: Optional[int] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -59,10 +58,7 @@ def build_list_by_device_group_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop(
-        "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureSphere/catalogs/{catalogName}/products/{productName}/deviceGroups/{deviceGroupName}/deployments",
-    )  # pylint: disable=line-too-long
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureSphere/catalogs/{catalogName}/products/{productName}/deviceGroups/{deviceGroupName}/deployments"  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
         "resourceGroupName": _SERIALIZER.url(
@@ -89,8 +85,6 @@ def build_list_by_device_group_request(
         _params["$top"] = _SERIALIZER.query("top", top, "int")
     if skip is not None:
         _params["$skip"] = _SERIALIZER.query("skip", skip, "int")
-    if maxpagesize is not None:
-        _params["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
@@ -115,10 +109,7 @@ def build_get_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop(
-        "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureSphere/catalogs/{catalogName}/products/{productName}/deviceGroups/{deviceGroupName}/deployments/{deploymentName}",
-    )  # pylint: disable=line-too-long
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureSphere/catalogs/{catalogName}/products/{productName}/deviceGroups/{deviceGroupName}/deployments/{deploymentName}"  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
         "resourceGroupName": _SERIALIZER.url(
@@ -160,15 +151,12 @@ def build_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop(
-        "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureSphere/catalogs/{catalogName}/products/{productName}/deviceGroups/{deviceGroupName}/deployments/{deploymentName}",
-    )  # pylint: disable=line-too-long
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureSphere/catalogs/{catalogName}/products/{productName}/deviceGroups/{deviceGroupName}/deployments/{deploymentName}"  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
         "resourceGroupName": _SERIALIZER.url(
@@ -216,10 +204,7 @@ def build_delete_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop(
-        "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureSphere/catalogs/{catalogName}/products/{productName}/deviceGroups/{deviceGroupName}/deployments/{deploymentName}",
-    )  # pylint: disable=line-too-long
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureSphere/catalogs/{catalogName}/products/{productName}/deviceGroups/{deviceGroupName}/deployments/{deploymentName}"  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
         "resourceGroupName": _SERIALIZER.url(
@@ -275,10 +260,10 @@ class DeploymentsOperations:
         catalog_name: str,
         product_name: str,
         device_group_name: str,
+        *,
         filter: Optional[str] = None,
         top: Optional[int] = None,
         skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
         **kwargs: Any
     ) -> Iterable["_models.Deployment"]:
         """List Deployment resources by DeviceGroup. '.default' and '.unassigned' are system defined
@@ -293,24 +278,20 @@ class DeploymentsOperations:
         :type product_name: str
         :param device_group_name: Name of device group. Required.
         :type device_group_name: str
-        :param filter: Filter the result list using the given expression. Default value is None.
-        :type filter: str
-        :param top: The number of result items to return. Default value is None.
-        :type top: int
-        :param skip: The number of result items to skip. Default value is None.
-        :type skip: int
-        :param maxpagesize: The maximum number of result items per page. Default value is None.
-        :type maxpagesize: int
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either Deployment or the result of cls(response)
+        :keyword filter: Filter the result list using the given expression. Default value is None.
+        :paramtype filter: str
+        :keyword top: The number of result items to return. Default value is None.
+        :paramtype top: int
+        :keyword skip: The number of result items to skip. Default value is None.
+        :paramtype skip: int
+        :return: An iterator like instance of Deployment
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.sphere.models.Deployment]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.DeploymentListResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models._models.DeploymentListResult] = kwargs.pop("cls", None)  # pylint: disable=protected-access
 
         error_map = {
             401: ClientAuthenticationError,
@@ -332,13 +313,10 @@ class DeploymentsOperations:
                     filter=filter,
                     top=top,
                     skip=skip,
-                    maxpagesize=maxpagesize,
-                    api_version=api_version,
-                    template_url=self.list_by_device_group.metadata["url"],
+                    api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
 
             else:
@@ -354,13 +332,14 @@ class DeploymentsOperations:
                 request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
-                request.method = "GET"
+
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("DeploymentListResult", pipeline_response)
+            deserialized = self._deserialize(
+                _models._models.DeploymentListResult, pipeline_response  # pylint: disable=protected-access
+            )
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -383,10 +362,6 @@ class DeploymentsOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_by_device_group.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureSphere/catalogs/{catalogName}/products/{productName}/deviceGroups/{deviceGroupName}/deployments"
-    }
 
     @distributed_trace
     def get(
@@ -413,8 +388,7 @@ class DeploymentsOperations:
         :param deployment_name: Deployment name. Use .default for deployment creation and to get the
          current deployment for the associated device group. Required.
         :type deployment_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Deployment or the result of cls(response)
+        :return: Deployment
         :rtype: ~azure.mgmt.sphere.models.Deployment
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -427,9 +401,8 @@ class DeploymentsOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.Deployment] = kwargs.pop("cls", None)
 
         request = build_get_request(
@@ -439,12 +412,10 @@ class DeploymentsOperations:
             device_group_name=device_group_name,
             deployment_name=deployment_name,
             subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            template_url=self.get.metadata["url"],
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         _stream = False
@@ -466,10 +437,6 @@ class DeploymentsOperations:
 
         return deserialized
 
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureSphere/catalogs/{catalogName}/products/{productName}/deviceGroups/{deviceGroupName}/deployments/{deploymentName}"
-    }
-
     def _create_or_update_initial(
         self,
         resource_group_name: str,
@@ -489,9 +456,8 @@ class DeploymentsOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.Deployment] = kwargs.pop("cls", None)
 
@@ -510,15 +476,13 @@ class DeploymentsOperations:
             device_group_name=device_group_name,
             deployment_name=deployment_name,
             subscription_id=self._config.subscription_id,
-            api_version=api_version,
             content_type=content_type,
+            api_version=self._config.api_version,
             json=_json,
             content=_content,
-            template_url=self._create_or_update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         _stream = False
@@ -546,10 +510,6 @@ class DeploymentsOperations:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
-
-    _create_or_update_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureSphere/catalogs/{catalogName}/products/{productName}/deviceGroups/{deviceGroupName}/deployments/{deploymentName}"
-    }
 
     @overload
     def begin_create_or_update(
@@ -584,7 +544,6 @@ class DeploymentsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
          operation to not poll, or pass in your own initialized polling object for a personal polling
@@ -592,7 +551,7 @@ class DeploymentsOperations:
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either Deployment or the result of cls(response)
+        :return: An instance of LROPoller that returns Deployment
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.sphere.models.Deployment]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -630,7 +589,6 @@ class DeploymentsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
          operation to not poll, or pass in your own initialized polling object for a personal polling
@@ -638,7 +596,7 @@ class DeploymentsOperations:
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either Deployment or the result of cls(response)
+        :return: An instance of LROPoller that returns Deployment
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.sphere.models.Deployment]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -675,7 +633,6 @@ class DeploymentsOperations:
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
          operation to not poll, or pass in your own initialized polling object for a personal polling
@@ -683,14 +640,13 @@ class DeploymentsOperations:
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either Deployment or the result of cls(response)
+        :return: An instance of LROPoller that returns Deployment
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.sphere.models.Deployment]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.Deployment] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -704,7 +660,6 @@ class DeploymentsOperations:
                 device_group_name=device_group_name,
                 deployment_name=deployment_name,
                 resource=resource,
-                api_version=api_version,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -736,10 +691,6 @@ class DeploymentsOperations:
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureSphere/catalogs/{catalogName}/products/{productName}/deviceGroups/{deviceGroupName}/deployments/{deploymentName}"
-    }
-
     def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self,
         resource_group_name: str,
@@ -758,9 +709,8 @@ class DeploymentsOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_delete_request(
@@ -770,12 +720,10 @@ class DeploymentsOperations:
             device_group_name=device_group_name,
             deployment_name=deployment_name,
             subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            template_url=self._delete_initial.metadata["url"],
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         _stream = False
@@ -797,10 +745,6 @@ class DeploymentsOperations:
 
         if cls:
             return cls(pipeline_response, None, response_headers)
-
-    _delete_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureSphere/catalogs/{catalogName}/products/{productName}/deviceGroups/{deviceGroupName}/deployments/{deploymentName}"
-    }
 
     @distributed_trace
     def begin_delete(
@@ -827,7 +771,6 @@ class DeploymentsOperations:
         :param deployment_name: Deployment name. Use .default for deployment creation and to get the
          current deployment for the associated device group. Required.
         :type deployment_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
          operation to not poll, or pass in your own initialized polling object for a personal polling
@@ -835,14 +778,13 @@ class DeploymentsOperations:
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
+        :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -854,7 +796,6 @@ class DeploymentsOperations:
                 product_name=product_name,
                 device_group_name=device_group_name,
                 deployment_name=deployment_name,
-                api_version=api_version,
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
@@ -882,7 +823,3 @@ class DeploymentsOperations:
                 deserialization_callback=get_long_running_output,
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureSphere/catalogs/{catalogName}/products/{productName}/deviceGroups/{deviceGroupName}/deployments/{deploymentName}"
-    }

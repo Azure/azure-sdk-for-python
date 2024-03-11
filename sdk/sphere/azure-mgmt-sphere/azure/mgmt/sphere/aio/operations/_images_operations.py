@@ -30,7 +30,6 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
-from ..._vendor import _convert_request
 from ...operations._images_operations import (
     build_create_or_update_request,
     build_delete_request,
@@ -66,10 +65,10 @@ class ImagesOperations:
         self,
         resource_group_name: str,
         catalog_name: str,
+        *,
         filter: Optional[str] = None,
         top: Optional[int] = None,
         skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.Image"]:
         """List Image resources by Catalog.
@@ -79,24 +78,20 @@ class ImagesOperations:
         :type resource_group_name: str
         :param catalog_name: Name of catalog. Required.
         :type catalog_name: str
-        :param filter: Filter the result list using the given expression. Default value is None.
-        :type filter: str
-        :param top: The number of result items to return. Default value is None.
-        :type top: int
-        :param skip: The number of result items to skip. Default value is None.
-        :type skip: int
-        :param maxpagesize: The maximum number of result items per page. Default value is None.
-        :type maxpagesize: int
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either Image or the result of cls(response)
+        :keyword filter: Filter the result list using the given expression. Default value is None.
+        :paramtype filter: str
+        :keyword top: The number of result items to return. Default value is None.
+        :paramtype top: int
+        :keyword skip: The number of result items to skip. Default value is None.
+        :paramtype skip: int
+        :return: An iterator like instance of Image
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sphere.models.Image]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.ImageListResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models._models.ImageListResult] = kwargs.pop("cls", None)  # pylint: disable=protected-access
 
         error_map = {
             401: ClientAuthenticationError,
@@ -116,13 +111,10 @@ class ImagesOperations:
                     filter=filter,
                     top=top,
                     skip=skip,
-                    maxpagesize=maxpagesize,
-                    api_version=api_version,
-                    template_url=self.list_by_catalog.metadata["url"],
+                    api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
 
             else:
@@ -138,13 +130,14 @@ class ImagesOperations:
                 request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
-                request.method = "GET"
+
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("ImageListResult", pipeline_response)
+            deserialized = self._deserialize(
+                _models._models.ImageListResult, pipeline_response  # pylint: disable=protected-access
+            )
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -168,10 +161,6 @@ class ImagesOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list_by_catalog.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureSphere/catalogs/{catalogName}/images"
-    }
-
     @distributed_trace_async
     async def get(self, resource_group_name: str, catalog_name: str, image_name: str, **kwargs: Any) -> _models.Image:
         """Get a Image.
@@ -183,8 +172,7 @@ class ImagesOperations:
         :type catalog_name: str
         :param image_name: Image name. Use .default for image creation. Required.
         :type image_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Image or the result of cls(response)
+        :return: Image
         :rtype: ~azure.mgmt.sphere.models.Image
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -197,9 +185,8 @@ class ImagesOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.Image] = kwargs.pop("cls", None)
 
         request = build_get_request(
@@ -207,12 +194,10 @@ class ImagesOperations:
             catalog_name=catalog_name,
             image_name=image_name,
             subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            template_url=self.get.metadata["url"],
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         _stream = False
@@ -234,10 +219,6 @@ class ImagesOperations:
 
         return deserialized
 
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureSphere/catalogs/{catalogName}/images/{imageName}"
-    }
-
     async def _create_or_update_initial(
         self,
         resource_group_name: str,
@@ -255,9 +236,8 @@ class ImagesOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.Image] = kwargs.pop("cls", None)
 
@@ -274,15 +254,13 @@ class ImagesOperations:
             catalog_name=catalog_name,
             image_name=image_name,
             subscription_id=self._config.subscription_id,
-            api_version=api_version,
             content_type=content_type,
+            api_version=self._config.api_version,
             json=_json,
             content=_content,
-            template_url=self._create_or_update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         _stream = False
@@ -311,10 +289,6 @@ class ImagesOperations:
 
         return deserialized  # type: ignore
 
-    _create_or_update_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureSphere/catalogs/{catalogName}/images/{imageName}"
-    }
-
     @overload
     async def begin_create_or_update(
         self,
@@ -340,7 +314,6 @@ class ImagesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
          this operation to not poll, or pass in your own initialized polling object for a personal
@@ -348,7 +321,7 @@ class ImagesOperations:
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either Image or the result of cls(response)
+        :return: An instance of AsyncLROPoller that returns Image
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sphere.models.Image]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -378,7 +351,6 @@ class ImagesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
          this operation to not poll, or pass in your own initialized polling object for a personal
@@ -386,7 +358,7 @@ class ImagesOperations:
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either Image or the result of cls(response)
+        :return: An instance of AsyncLROPoller that returns Image
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sphere.models.Image]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -414,7 +386,6 @@ class ImagesOperations:
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
          this operation to not poll, or pass in your own initialized polling object for a personal
@@ -422,14 +393,13 @@ class ImagesOperations:
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either Image or the result of cls(response)
+        :return: An instance of AsyncLROPoller that returns Image
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sphere.models.Image]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.Image] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -441,7 +411,6 @@ class ImagesOperations:
                 catalog_name=catalog_name,
                 image_name=image_name,
                 resource=resource,
-                api_version=api_version,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -474,10 +443,6 @@ class ImagesOperations:
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureSphere/catalogs/{catalogName}/images/{imageName}"
-    }
-
     async def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, catalog_name: str, image_name: str, **kwargs: Any
     ) -> None:
@@ -490,9 +455,8 @@ class ImagesOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_delete_request(
@@ -500,12 +464,10 @@ class ImagesOperations:
             catalog_name=catalog_name,
             image_name=image_name,
             subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            template_url=self._delete_initial.metadata["url"],
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         _stream = False
@@ -528,10 +490,6 @@ class ImagesOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    _delete_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureSphere/catalogs/{catalogName}/images/{imageName}"
-    }
-
     @distributed_trace_async
     async def begin_delete(
         self, resource_group_name: str, catalog_name: str, image_name: str, **kwargs: Any
@@ -545,7 +503,6 @@ class ImagesOperations:
         :type catalog_name: str
         :param image_name: Image name. Use .default for image creation. Required.
         :type image_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
          this operation to not poll, or pass in your own initialized polling object for a personal
@@ -553,14 +510,13 @@ class ImagesOperations:
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -570,7 +526,6 @@ class ImagesOperations:
                 resource_group_name=resource_group_name,
                 catalog_name=catalog_name,
                 image_name=image_name,
-                api_version=api_version,
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
@@ -598,7 +553,3 @@ class ImagesOperations:
                 deserialization_callback=get_long_running_output,
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureSphere/catalogs/{catalogName}/images/{imageName}"
-    }

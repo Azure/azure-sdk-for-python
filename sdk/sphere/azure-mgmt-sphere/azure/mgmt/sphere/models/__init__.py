@@ -6,100 +6,100 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._models_py3 import Catalog
-from ._models_py3 import CatalogListResult
-from ._models_py3 import CatalogUpdate
-from ._models_py3 import Certificate
-from ._models_py3 import CertificateChainResponse
-from ._models_py3 import CertificateListResult
-from ._models_py3 import CertificateProperties
-from ._models_py3 import ClaimDevicesRequest
-from ._models_py3 import CountDeviceResponse
-from ._models_py3 import CountElementsResponse
-from ._models_py3 import Deployment
-from ._models_py3 import DeploymentListResult
-from ._models_py3 import Device
-from ._models_py3 import DeviceGroup
-from ._models_py3 import DeviceGroupListResult
-from ._models_py3 import DeviceGroupUpdate
-from ._models_py3 import DeviceInsight
-from ._models_py3 import DeviceListResult
-from ._models_py3 import DevicePatchProperties
-from ._models_py3 import DeviceUpdate
-from ._models_py3 import ErrorAdditionalInfo
-from ._models_py3 import ErrorDetail
-from ._models_py3 import ErrorResponse
-from ._models_py3 import GenerateCapabilityImageRequest
-from ._models_py3 import Image
-from ._models_py3 import ImageListResult
-from ._models_py3 import ImageUploadRequestBody
-from ._models_py3 import ListDeviceGroupsRequest
-from ._models_py3 import Operation
-from ._models_py3 import OperationDisplay
-from ._models_py3 import OperationListResult
-from ._models_py3 import PagedDeviceInsight
-from ._models_py3 import Product
-from ._models_py3 import ProductListResult
-from ._models_py3 import ProductUpdate
-from ._models_py3 import ProofOfPossessionNonceRequest
-from ._models_py3 import ProofOfPossessionNonceResponse
-from ._models_py3 import ProxyResource
-from ._models_py3 import Resource
-from ._models_py3 import SignedCapabilityImageResponse
-from ._models_py3 import SystemData
-from ._models_py3 import TrackedResource
+from ._models import Catalog
+from ._models import CatalogProperties
+from ._models import CatalogUpdate
+from ._models import Certificate
+from ._models import CertificateChainResponse
+from ._models import CertificateProperties
+from ._models import ClaimDevicesRequest
+from ._models import CountDeviceResponse
+from ._models import CountElementsResponse
+from ._models import Deployment
+from ._models import DeploymentProperties
+from ._models import Device
+from ._models import DeviceGroup
+from ._models import DeviceGroupProperties
+from ._models import DeviceGroupUpdate
+from ._models import DeviceGroupUpdateProperties
+from ._models import DeviceInsight
+from ._models import DevicePatchProperties
+from ._models import DeviceProperties
+from ._models import DeviceUpdate
+from ._models import DeviceUpdateProperties
+from ._models import ErrorAdditionalInfo
+from ._models import ErrorDetail
+from ._models import ErrorResponse
+from ._models import GenerateCapabilityImageRequest
+from ._models import Image
+from ._models import ImageProperties
+from ._models import ImageUploadRequestBody
+from ._models import ListDeviceGroupsRequest
+from ._models import Operation
+from ._models import OperationDisplay
+from ._models import Product
+from ._models import ProductProperties
+from ._models import ProductUpdate
+from ._models import ProductUpdateProperties
+from ._models import ProofOfPossessionNonceRequest
+from ._models import ProofOfPossessionNonceResponse
+from ._models import ProxyResource
+from ._models import Resource
+from ._models import SignedCapabilityImageResponse
+from ._models import SystemData
+from ._models import TrackedResource
 
-from ._azure_sphere_mgmt_client_enums import ActionType
-from ._azure_sphere_mgmt_client_enums import AllowCrashDumpCollection
-from ._azure_sphere_mgmt_client_enums import CapabilityType
-from ._azure_sphere_mgmt_client_enums import CertificateStatus
-from ._azure_sphere_mgmt_client_enums import CreatedByType
-from ._azure_sphere_mgmt_client_enums import ImageType
-from ._azure_sphere_mgmt_client_enums import OSFeedType
-from ._azure_sphere_mgmt_client_enums import Origin
-from ._azure_sphere_mgmt_client_enums import ProvisioningState
-from ._azure_sphere_mgmt_client_enums import RegionalDataBoundary
-from ._azure_sphere_mgmt_client_enums import UpdatePolicy
+from ._enums import ActionType
+from ._enums import AllowCrashDumpCollection
+from ._enums import CapabilityType
+from ._enums import CertificateStatus
+from ._enums import CreatedByType
+from ._enums import ImageType
+from ._enums import OSFeedType
+from ._enums import Origin
+from ._enums import ProvisioningState
+from ._enums import RegionalDataBoundary
+from ._enums import UpdatePolicy
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "Catalog",
-    "CatalogListResult",
+    "CatalogProperties",
     "CatalogUpdate",
     "Certificate",
     "CertificateChainResponse",
-    "CertificateListResult",
     "CertificateProperties",
     "ClaimDevicesRequest",
     "CountDeviceResponse",
     "CountElementsResponse",
     "Deployment",
-    "DeploymentListResult",
+    "DeploymentProperties",
     "Device",
     "DeviceGroup",
-    "DeviceGroupListResult",
+    "DeviceGroupProperties",
     "DeviceGroupUpdate",
+    "DeviceGroupUpdateProperties",
     "DeviceInsight",
-    "DeviceListResult",
     "DevicePatchProperties",
+    "DeviceProperties",
     "DeviceUpdate",
+    "DeviceUpdateProperties",
     "ErrorAdditionalInfo",
     "ErrorDetail",
     "ErrorResponse",
     "GenerateCapabilityImageRequest",
     "Image",
-    "ImageListResult",
+    "ImageProperties",
     "ImageUploadRequestBody",
     "ListDeviceGroupsRequest",
     "Operation",
     "OperationDisplay",
-    "OperationListResult",
-    "PagedDeviceInsight",
     "Product",
-    "ProductListResult",
+    "ProductProperties",
     "ProductUpdate",
+    "ProductUpdateProperties",
     "ProofOfPossessionNonceRequest",
     "ProofOfPossessionNonceResponse",
     "ProxyResource",

@@ -134,9 +134,8 @@ class Catalog(TrackedResource):
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
-    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
-     "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
-    :vartype provisioning_state: str or ~azure.mgmt.sphere.models.ProvisioningState
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.sphere.models.CatalogProperties
     """
 
     _validation = {
@@ -145,7 +144,6 @@ class Catalog(TrackedResource):
         "type": {"readonly": True},
         "system_data": {"readonly": True},
         "location": {"required": True},
-        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
@@ -155,18 +153,27 @@ class Catalog(TrackedResource):
         "system_data": {"key": "systemData", "type": "SystemData"},
         "tags": {"key": "tags", "type": "{str}"},
         "location": {"key": "location", "type": "str"},
-        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "properties": {"key": "properties", "type": "CatalogProperties"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[Dict[str, str]] = None,
+        properties: Optional["_models.CatalogProperties"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
+        :keyword properties: The resource-specific properties for this resource.
+        :paramtype properties: ~azure.mgmt.sphere.models.CatalogProperties
         """
         super().__init__(tags=tags, location=location, **kwargs)
-        self.provisioning_state = None
+        self.properties = properties
 
 
 class CatalogListResult(_serialization.Model):
@@ -199,6 +206,30 @@ class CatalogListResult(_serialization.Model):
         super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
+
+
+class CatalogProperties(_serialization.Model):
+    """Catalog properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
+     "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
+    :vartype provisioning_state: str or ~azure.mgmt.sphere.models.ProvisioningState
+    """
+
+    _validation = {
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.provisioning_state = None
 
 
 class CatalogUpdate(_serialization.Model):
@@ -259,7 +290,7 @@ class ProxyResource(Resource):
         super().__init__(**kwargs)
 
 
-class Certificate(ProxyResource):  # pylint: disable=too-many-instance-attributes
+class Certificate(ProxyResource):
     """An certificate resource belonging to a catalog resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -275,22 +306,8 @@ class Certificate(ProxyResource):  # pylint: disable=too-many-instance-attribute
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.sphere.models.SystemData
-    :ivar certificate: The certificate as a UTF-8 encoded base 64 string.
-    :vartype certificate: str
-    :ivar status: The certificate status. Known values are: "Active", "Inactive", "Expired", and
-     "Revoked".
-    :vartype status: str or ~azure.mgmt.sphere.models.CertificateStatus
-    :ivar subject: The certificate subject.
-    :vartype subject: str
-    :ivar thumbprint: The certificate thumbprint.
-    :vartype thumbprint: str
-    :ivar expiry_utc: The certificate expiry date.
-    :vartype expiry_utc: ~datetime.datetime
-    :ivar not_before_utc: The certificate not before date.
-    :vartype not_before_utc: ~datetime.datetime
-    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
-     "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
-    :vartype provisioning_state: str or ~azure.mgmt.sphere.models.ProvisioningState
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.sphere.models.CertificateProperties
     """
 
     _validation = {
@@ -298,13 +315,6 @@ class Certificate(ProxyResource):  # pylint: disable=too-many-instance-attribute
         "name": {"readonly": True},
         "type": {"readonly": True},
         "system_data": {"readonly": True},
-        "certificate": {"readonly": True},
-        "status": {"readonly": True},
-        "subject": {"readonly": True},
-        "thumbprint": {"readonly": True},
-        "expiry_utc": {"readonly": True},
-        "not_before_utc": {"readonly": True},
-        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
@@ -312,25 +322,16 @@ class Certificate(ProxyResource):  # pylint: disable=too-many-instance-attribute
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "system_data": {"key": "systemData", "type": "SystemData"},
-        "certificate": {"key": "properties.certificate", "type": "str"},
-        "status": {"key": "properties.status", "type": "str"},
-        "subject": {"key": "properties.subject", "type": "str"},
-        "thumbprint": {"key": "properties.thumbprint", "type": "str"},
-        "expiry_utc": {"key": "properties.expiryUtc", "type": "iso-8601"},
-        "not_before_utc": {"key": "properties.notBeforeUtc", "type": "iso-8601"},
-        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "properties": {"key": "properties", "type": "CertificateProperties"},
     }
 
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
+    def __init__(self, *, properties: Optional["_models.CertificateProperties"] = None, **kwargs: Any) -> None:
+        """
+        :keyword properties: The resource-specific properties for this resource.
+        :paramtype properties: ~azure.mgmt.sphere.models.CertificateProperties
+        """
         super().__init__(**kwargs)
-        self.certificate = None
-        self.status = None
-        self.subject = None
-        self.thumbprint = None
-        self.expiry_utc = None
-        self.not_before_utc = None
-        self.provisioning_state = None
+        self.properties = properties
 
 
 class CertificateChainResponse(_serialization.Model):
@@ -536,15 +537,8 @@ class Deployment(ProxyResource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.sphere.models.SystemData
-    :ivar deployment_id: Deployment ID.
-    :vartype deployment_id: str
-    :ivar deployed_images: Images deployed.
-    :vartype deployed_images: list[~azure.mgmt.sphere.models.Image]
-    :ivar deployment_date_utc: Deployment date UTC.
-    :vartype deployment_date_utc: ~datetime.datetime
-    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
-     "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
-    :vartype provisioning_state: str or ~azure.mgmt.sphere.models.ProvisioningState
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.sphere.models.DeploymentProperties
     """
 
     _validation = {
@@ -552,8 +546,6 @@ class Deployment(ProxyResource):
         "name": {"readonly": True},
         "type": {"readonly": True},
         "system_data": {"readonly": True},
-        "deployment_date_utc": {"readonly": True},
-        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
@@ -561,30 +553,16 @@ class Deployment(ProxyResource):
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "system_data": {"key": "systemData", "type": "SystemData"},
-        "deployment_id": {"key": "properties.deploymentId", "type": "str"},
-        "deployed_images": {"key": "properties.deployedImages", "type": "[Image]"},
-        "deployment_date_utc": {"key": "properties.deploymentDateUtc", "type": "iso-8601"},
-        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "properties": {"key": "properties", "type": "DeploymentProperties"},
     }
 
-    def __init__(
-        self,
-        *,
-        deployment_id: Optional[str] = None,
-        deployed_images: Optional[List["_models.Image"]] = None,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, *, properties: Optional["_models.DeploymentProperties"] = None, **kwargs: Any) -> None:
         """
-        :keyword deployment_id: Deployment ID.
-        :paramtype deployment_id: str
-        :keyword deployed_images: Images deployed.
-        :paramtype deployed_images: list[~azure.mgmt.sphere.models.Image]
+        :keyword properties: The resource-specific properties for this resource.
+        :paramtype properties: ~azure.mgmt.sphere.models.DeploymentProperties
         """
         super().__init__(**kwargs)
-        self.deployment_id = deployment_id
-        self.deployed_images = deployed_images
-        self.deployment_date_utc = None
-        self.provisioning_state = None
+        self.properties = properties
 
 
 class DeploymentListResult(_serialization.Model):
@@ -619,7 +597,55 @@ class DeploymentListResult(_serialization.Model):
         self.next_link = next_link
 
 
-class Device(ProxyResource):  # pylint: disable=too-many-instance-attributes
+class DeploymentProperties(_serialization.Model):
+    """The properties of deployment.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar deployment_id: Deployment ID.
+    :vartype deployment_id: str
+    :ivar deployed_images: Images deployed.
+    :vartype deployed_images: list[~azure.mgmt.sphere.models.Image]
+    :ivar deployment_date_utc: Deployment date UTC.
+    :vartype deployment_date_utc: ~datetime.datetime
+    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
+     "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
+    :vartype provisioning_state: str or ~azure.mgmt.sphere.models.ProvisioningState
+    """
+
+    _validation = {
+        "deployment_date_utc": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "deployment_id": {"key": "deploymentId", "type": "str"},
+        "deployed_images": {"key": "deployedImages", "type": "[Image]"},
+        "deployment_date_utc": {"key": "deploymentDateUtc", "type": "iso-8601"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        deployment_id: Optional[str] = None,
+        deployed_images: Optional[List["_models.Image"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword deployment_id: Deployment ID.
+        :paramtype deployment_id: str
+        :keyword deployed_images: Images deployed.
+        :paramtype deployed_images: list[~azure.mgmt.sphere.models.Image]
+        """
+        super().__init__(**kwargs)
+        self.deployment_id = deployment_id
+        self.deployed_images = deployed_images
+        self.deployment_date_utc = None
+        self.provisioning_state = None
+
+
+class Device(ProxyResource):
     """An device resource belonging to a device group resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -635,21 +661,8 @@ class Device(ProxyResource):  # pylint: disable=too-many-instance-attributes
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.sphere.models.SystemData
-    :ivar device_id: Device ID.
-    :vartype device_id: str
-    :ivar chip_sku: SKU of the chip.
-    :vartype chip_sku: str
-    :ivar last_available_os_version: OS version available for installation when update requested.
-    :vartype last_available_os_version: str
-    :ivar last_installed_os_version: OS version running on device when update requested.
-    :vartype last_installed_os_version: str
-    :ivar last_os_update_utc: Time when update requested and new OS version available.
-    :vartype last_os_update_utc: ~datetime.datetime
-    :ivar last_update_request_utc: Time when update was last requested.
-    :vartype last_update_request_utc: ~datetime.datetime
-    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
-     "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
-    :vartype provisioning_state: str or ~azure.mgmt.sphere.models.ProvisioningState
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.sphere.models.DeviceProperties
     """
 
     _validation = {
@@ -657,12 +670,6 @@ class Device(ProxyResource):  # pylint: disable=too-many-instance-attributes
         "name": {"readonly": True},
         "type": {"readonly": True},
         "system_data": {"readonly": True},
-        "chip_sku": {"readonly": True},
-        "last_available_os_version": {"readonly": True},
-        "last_installed_os_version": {"readonly": True},
-        "last_os_update_utc": {"readonly": True},
-        "last_update_request_utc": {"readonly": True},
-        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
@@ -670,31 +677,19 @@ class Device(ProxyResource):  # pylint: disable=too-many-instance-attributes
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "system_data": {"key": "systemData", "type": "SystemData"},
-        "device_id": {"key": "properties.deviceId", "type": "str"},
-        "chip_sku": {"key": "properties.chipSku", "type": "str"},
-        "last_available_os_version": {"key": "properties.lastAvailableOsVersion", "type": "str"},
-        "last_installed_os_version": {"key": "properties.lastInstalledOsVersion", "type": "str"},
-        "last_os_update_utc": {"key": "properties.lastOsUpdateUtc", "type": "iso-8601"},
-        "last_update_request_utc": {"key": "properties.lastUpdateRequestUtc", "type": "iso-8601"},
-        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "properties": {"key": "properties", "type": "DeviceProperties"},
     }
 
-    def __init__(self, *, device_id: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(self, *, properties: Optional["_models.DeviceProperties"] = None, **kwargs: Any) -> None:
         """
-        :keyword device_id: Device ID.
-        :paramtype device_id: str
+        :keyword properties: The resource-specific properties for this resource.
+        :paramtype properties: ~azure.mgmt.sphere.models.DeviceProperties
         """
         super().__init__(**kwargs)
-        self.device_id = device_id
-        self.chip_sku = None
-        self.last_available_os_version = None
-        self.last_installed_os_version = None
-        self.last_os_update_utc = None
-        self.last_update_request_utc = None
-        self.provisioning_state = None
+        self.properties = properties
 
 
-class DeviceGroup(ProxyResource):  # pylint: disable=too-many-instance-attributes
+class DeviceGroup(ProxyResource):
     """An device group resource belonging to a product resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -710,6 +705,71 @@ class DeviceGroup(ProxyResource):  # pylint: disable=too-many-instance-attribute
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.sphere.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.sphere.models.DeviceGroupProperties
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "DeviceGroupProperties"},
+    }
+
+    def __init__(self, *, properties: Optional["_models.DeviceGroupProperties"] = None, **kwargs: Any) -> None:
+        """
+        :keyword properties: The resource-specific properties for this resource.
+        :paramtype properties: ~azure.mgmt.sphere.models.DeviceGroupProperties
+        """
+        super().__init__(**kwargs)
+        self.properties = properties
+
+
+class DeviceGroupListResult(_serialization.Model):
+    """The response of a DeviceGroup list operation.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar value: The DeviceGroup items on this page. Required.
+    :vartype value: list[~azure.mgmt.sphere.models.DeviceGroup]
+    :ivar next_link: The link to the next page of items.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"required": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[DeviceGroup]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, *, value: List["_models.DeviceGroup"], next_link: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword value: The DeviceGroup items on this page. Required.
+        :paramtype value: list[~azure.mgmt.sphere.models.DeviceGroup]
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class DeviceGroupProperties(_serialization.Model):
+    """The properties of deviceGroup.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     :ivar description: Description of the device group.
     :vartype description: str
     :ivar os_feed_type: Operating system feed type of the device group. Known values are: "Retail"
@@ -733,26 +793,18 @@ class DeviceGroup(ProxyResource):  # pylint: disable=too-many-instance-attribute
     """
 
     _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
         "has_deployment": {"readonly": True},
         "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-        "description": {"key": "properties.description", "type": "str"},
-        "os_feed_type": {"key": "properties.osFeedType", "type": "str"},
-        "update_policy": {"key": "properties.updatePolicy", "type": "str"},
-        "allow_crash_dumps_collection": {"key": "properties.allowCrashDumpsCollection", "type": "str"},
-        "regional_data_boundary": {"key": "properties.regionalDataBoundary", "type": "str"},
-        "has_deployment": {"key": "properties.hasDeployment", "type": "bool"},
-        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "os_feed_type": {"key": "osFeedType", "type": "str"},
+        "update_policy": {"key": "updatePolicy", "type": "str"},
+        "allow_crash_dumps_collection": {"key": "allowCrashDumpsCollection", "type": "str"},
+        "regional_data_boundary": {"key": "regionalDataBoundary", "type": "str"},
+        "has_deployment": {"key": "hasDeployment", "type": "bool"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -792,40 +844,28 @@ class DeviceGroup(ProxyResource):  # pylint: disable=too-many-instance-attribute
         self.provisioning_state = None
 
 
-class DeviceGroupListResult(_serialization.Model):
-    """The response of a DeviceGroup list operation.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar value: The DeviceGroup items on this page. Required.
-    :vartype value: list[~azure.mgmt.sphere.models.DeviceGroup]
-    :ivar next_link: The link to the next page of items.
-    :vartype next_link: str
-    """
-
-    _validation = {
-        "value": {"required": True},
-    }
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[DeviceGroup]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(self, *, value: List["_models.DeviceGroup"], next_link: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword value: The DeviceGroup items on this page. Required.
-        :paramtype value: list[~azure.mgmt.sphere.models.DeviceGroup]
-        :keyword next_link: The link to the next page of items.
-        :paramtype next_link: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
 class DeviceGroupUpdate(_serialization.Model):
     """The type used for update operations of the DeviceGroup.
+
+    :ivar properties: The updatable properties of the DeviceGroup.
+    :vartype properties: ~azure.mgmt.sphere.models.DeviceGroupUpdateProperties
+    """
+
+    _attribute_map = {
+        "properties": {"key": "properties", "type": "DeviceGroupUpdateProperties"},
+    }
+
+    def __init__(self, *, properties: Optional["_models.DeviceGroupUpdateProperties"] = None, **kwargs: Any) -> None:
+        """
+        :keyword properties: The updatable properties of the DeviceGroup.
+        :paramtype properties: ~azure.mgmt.sphere.models.DeviceGroupUpdateProperties
+        """
+        super().__init__(**kwargs)
+        self.properties = properties
+
+
+class DeviceGroupUpdateProperties(_serialization.Model):
+    """The updatable properties of the DeviceGroup.
 
     :ivar description: Description of the device group.
     :vartype description: str
@@ -845,11 +885,11 @@ class DeviceGroupUpdate(_serialization.Model):
     """
 
     _attribute_map = {
-        "description": {"key": "properties.description", "type": "str"},
-        "os_feed_type": {"key": "properties.osFeedType", "type": "str"},
-        "update_policy": {"key": "properties.updatePolicy", "type": "str"},
-        "allow_crash_dumps_collection": {"key": "properties.allowCrashDumpsCollection", "type": "str"},
-        "regional_data_boundary": {"key": "properties.regionalDataBoundary", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "os_feed_type": {"key": "osFeedType", "type": "str"},
+        "update_policy": {"key": "updatePolicy", "type": "str"},
+        "allow_crash_dumps_collection": {"key": "allowCrashDumpsCollection", "type": "str"},
+        "regional_data_boundary": {"key": "regionalDataBoundary", "type": "str"},
     }
 
     def __init__(
@@ -1032,15 +1072,91 @@ class DevicePatchProperties(_serialization.Model):
         self.device_group_id = device_group_id
 
 
+class DeviceProperties(_serialization.Model):
+    """The properties of device.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar device_id: Device ID.
+    :vartype device_id: str
+    :ivar chip_sku: SKU of the chip.
+    :vartype chip_sku: str
+    :ivar last_available_os_version: OS version available for installation when update requested.
+    :vartype last_available_os_version: str
+    :ivar last_installed_os_version: OS version running on device when update requested.
+    :vartype last_installed_os_version: str
+    :ivar last_os_update_utc: Time when update requested and new OS version available.
+    :vartype last_os_update_utc: ~datetime.datetime
+    :ivar last_update_request_utc: Time when update was last requested.
+    :vartype last_update_request_utc: ~datetime.datetime
+    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
+     "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
+    :vartype provisioning_state: str or ~azure.mgmt.sphere.models.ProvisioningState
+    """
+
+    _validation = {
+        "chip_sku": {"readonly": True},
+        "last_available_os_version": {"readonly": True},
+        "last_installed_os_version": {"readonly": True},
+        "last_os_update_utc": {"readonly": True},
+        "last_update_request_utc": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "device_id": {"key": "deviceId", "type": "str"},
+        "chip_sku": {"key": "chipSku", "type": "str"},
+        "last_available_os_version": {"key": "lastAvailableOsVersion", "type": "str"},
+        "last_installed_os_version": {"key": "lastInstalledOsVersion", "type": "str"},
+        "last_os_update_utc": {"key": "lastOsUpdateUtc", "type": "iso-8601"},
+        "last_update_request_utc": {"key": "lastUpdateRequestUtc", "type": "iso-8601"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+    }
+
+    def __init__(self, *, device_id: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword device_id: Device ID.
+        :paramtype device_id: str
+        """
+        super().__init__(**kwargs)
+        self.device_id = device_id
+        self.chip_sku = None
+        self.last_available_os_version = None
+        self.last_installed_os_version = None
+        self.last_os_update_utc = None
+        self.last_update_request_utc = None
+        self.provisioning_state = None
+
+
 class DeviceUpdate(_serialization.Model):
     """The type used for update operations of the Device.
+
+    :ivar properties: The updatable properties of the Device.
+    :vartype properties: ~azure.mgmt.sphere.models.DeviceUpdateProperties
+    """
+
+    _attribute_map = {
+        "properties": {"key": "properties", "type": "DeviceUpdateProperties"},
+    }
+
+    def __init__(self, *, properties: Optional["_models.DeviceUpdateProperties"] = None, **kwargs: Any) -> None:
+        """
+        :keyword properties: The updatable properties of the Device.
+        :paramtype properties: ~azure.mgmt.sphere.models.DeviceUpdateProperties
+        """
+        super().__init__(**kwargs)
+        self.properties = properties
+
+
+class DeviceUpdateProperties(_serialization.Model):
+    """The updatable properties of the Device.
 
     :ivar device_group_id: Device group id.
     :vartype device_group_id: str
     """
 
     _attribute_map = {
-        "device_group_id": {"key": "properties.deviceGroupId", "type": "str"},
+        "device_group_id": {"key": "deviceGroupId", "type": "str"},
     }
 
     def __init__(self, *, device_group_id: Optional[str] = None, **kwargs: Any) -> None:
@@ -1170,7 +1286,7 @@ class GenerateCapabilityImageRequest(_serialization.Model):
         self.capabilities = capabilities
 
 
-class Image(ProxyResource):  # pylint: disable=too-many-instance-attributes
+class Image(ProxyResource):
     """An image resource belonging to a catalog resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1186,32 +1302,8 @@ class Image(ProxyResource):  # pylint: disable=too-many-instance-attributes
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.sphere.models.SystemData
-    :ivar image: Image as a UTF-8 encoded base 64 string on image create. This field contains the
-     image URI on image reads.
-    :vartype image: str
-    :ivar image_id: Image ID.
-    :vartype image_id: str
-    :ivar image_name: Image name.
-    :vartype image_name: str
-    :ivar regional_data_boundary: Regional data boundary for an image. Known values are: "None" and
-     "EU".
-    :vartype regional_data_boundary: str or ~azure.mgmt.sphere.models.RegionalDataBoundary
-    :ivar uri: Location the image.
-    :vartype uri: str
-    :ivar description: The image description.
-    :vartype description: str
-    :ivar component_id: The image component id.
-    :vartype component_id: str
-    :ivar image_type: The image type. Known values are: "InvalidImageType", "OneBl",
-     "PlutonRuntime", "WifiFirmware", "SecurityMonitor", "NormalWorldLoader", "NormalWorldDtb",
-     "NormalWorldKernel", "RootFs", "Services", "Applications", "FwConfig", "BootManifest", "Nwfs",
-     "TrustedKeystore", "Policy", "CustomerBoardConfig", "UpdateCertStore",
-     "BaseSystemUpdateManifest", "FirmwareUpdateManifest", "CustomerUpdateManifest",
-     "RecoveryManifest", "ManifestSet", and "Other".
-    :vartype image_type: str or ~azure.mgmt.sphere.models.ImageType
-    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
-     "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
-    :vartype provisioning_state: str or ~azure.mgmt.sphere.models.ProvisioningState
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.sphere.models.ImageProperties
     """
 
     _validation = {
@@ -1219,12 +1311,6 @@ class Image(ProxyResource):  # pylint: disable=too-many-instance-attributes
         "name": {"readonly": True},
         "type": {"readonly": True},
         "system_data": {"readonly": True},
-        "image_name": {"readonly": True},
-        "uri": {"readonly": True},
-        "description": {"readonly": True},
-        "component_id": {"readonly": True},
-        "image_type": {"readonly": True},
-        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
@@ -1232,45 +1318,16 @@ class Image(ProxyResource):  # pylint: disable=too-many-instance-attributes
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "system_data": {"key": "systemData", "type": "SystemData"},
-        "image": {"key": "properties.image", "type": "str"},
-        "image_id": {"key": "properties.imageId", "type": "str"},
-        "image_name": {"key": "properties.imageName", "type": "str"},
-        "regional_data_boundary": {"key": "properties.regionalDataBoundary", "type": "str"},
-        "uri": {"key": "properties.uri", "type": "str"},
-        "description": {"key": "properties.description", "type": "str"},
-        "component_id": {"key": "properties.componentId", "type": "str"},
-        "image_type": {"key": "properties.imageType", "type": "str"},
-        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "properties": {"key": "properties", "type": "ImageProperties"},
     }
 
-    def __init__(
-        self,
-        *,
-        image: Optional[str] = None,
-        image_id: Optional[str] = None,
-        regional_data_boundary: Optional[Union[str, "_models.RegionalDataBoundary"]] = None,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, *, properties: Optional["_models.ImageProperties"] = None, **kwargs: Any) -> None:
         """
-        :keyword image: Image as a UTF-8 encoded base 64 string on image create. This field contains
-         the image URI on image reads.
-        :paramtype image: str
-        :keyword image_id: Image ID.
-        :paramtype image_id: str
-        :keyword regional_data_boundary: Regional data boundary for an image. Known values are: "None"
-         and "EU".
-        :paramtype regional_data_boundary: str or ~azure.mgmt.sphere.models.RegionalDataBoundary
+        :keyword properties: The resource-specific properties for this resource.
+        :paramtype properties: ~azure.mgmt.sphere.models.ImageProperties
         """
         super().__init__(**kwargs)
-        self.image = image
-        self.image_id = image_id
-        self.image_name = None
-        self.regional_data_boundary = regional_data_boundary
-        self.uri = None
-        self.description = None
-        self.component_id = None
-        self.image_type = None
-        self.provisioning_state = None
+        self.properties = properties
 
 
 class ImageListResult(_serialization.Model):
@@ -1303,6 +1360,90 @@ class ImageListResult(_serialization.Model):
         super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
+
+
+class ImageProperties(_serialization.Model):
+    """The properties of image.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar image: Image as a UTF-8 encoded base 64 string on image create. This field contains the
+     image URI on image reads.
+    :vartype image: str
+    :ivar image_id: Image ID.
+    :vartype image_id: str
+    :ivar image_name: Image name.
+    :vartype image_name: str
+    :ivar regional_data_boundary: Regional data boundary for an image. Known values are: "None" and
+     "EU".
+    :vartype regional_data_boundary: str or ~azure.mgmt.sphere.models.RegionalDataBoundary
+    :ivar uri: Location the image.
+    :vartype uri: str
+    :ivar description: The image description.
+    :vartype description: str
+    :ivar component_id: The image component id.
+    :vartype component_id: str
+    :ivar image_type: The image type. Known values are: "InvalidImageType", "OneBl",
+     "PlutonRuntime", "WifiFirmware", "SecurityMonitor", "NormalWorldLoader", "NormalWorldDtb",
+     "NormalWorldKernel", "RootFs", "Services", "Applications", "FwConfig", "BootManifest", "Nwfs",
+     "TrustedKeystore", "Policy", "CustomerBoardConfig", "UpdateCertStore",
+     "BaseSystemUpdateManifest", "FirmwareUpdateManifest", "CustomerUpdateManifest",
+     "RecoveryManifest", "ManifestSet", and "Other".
+    :vartype image_type: str or ~azure.mgmt.sphere.models.ImageType
+    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
+     "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
+    :vartype provisioning_state: str or ~azure.mgmt.sphere.models.ProvisioningState
+    """
+
+    _validation = {
+        "image_name": {"readonly": True},
+        "uri": {"readonly": True},
+        "description": {"readonly": True},
+        "component_id": {"readonly": True},
+        "image_type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "image": {"key": "image", "type": "str"},
+        "image_id": {"key": "imageId", "type": "str"},
+        "image_name": {"key": "imageName", "type": "str"},
+        "regional_data_boundary": {"key": "regionalDataBoundary", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "component_id": {"key": "componentId", "type": "str"},
+        "image_type": {"key": "imageType", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        image: Optional[str] = None,
+        image_id: Optional[str] = None,
+        regional_data_boundary: Optional[Union[str, "_models.RegionalDataBoundary"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword image: Image as a UTF-8 encoded base 64 string on image create. This field contains
+         the image URI on image reads.
+        :paramtype image: str
+        :keyword image_id: Image ID.
+        :paramtype image_id: str
+        :keyword regional_data_boundary: Regional data boundary for an image. Known values are: "None"
+         and "EU".
+        :paramtype regional_data_boundary: str or ~azure.mgmt.sphere.models.RegionalDataBoundary
+        """
+        super().__init__(**kwargs)
+        self.image = image
+        self.image_id = image_id
+        self.image_name = None
+        self.regional_data_boundary = regional_data_boundary
+        self.uri = None
+        self.description = None
+        self.component_id = None
+        self.image_type = None
+        self.provisioning_state = None
 
 
 class ImageUploadRequestBody(_serialization.Model):
@@ -1520,11 +1661,8 @@ class Product(ProxyResource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.sphere.models.SystemData
-    :ivar description: Description of the product.
-    :vartype description: str
-    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
-     "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
-    :vartype provisioning_state: str or ~azure.mgmt.sphere.models.ProvisioningState
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.sphere.models.ProductProperties
     """
 
     _validation = {
@@ -1532,7 +1670,6 @@ class Product(ProxyResource):
         "name": {"readonly": True},
         "type": {"readonly": True},
         "system_data": {"readonly": True},
-        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
@@ -1540,18 +1677,16 @@ class Product(ProxyResource):
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "system_data": {"key": "systemData", "type": "SystemData"},
-        "description": {"key": "properties.description", "type": "str"},
-        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "properties": {"key": "properties", "type": "ProductProperties"},
     }
 
-    def __init__(self, *, description: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(self, *, properties: Optional["_models.ProductProperties"] = None, **kwargs: Any) -> None:
         """
-        :keyword description: Description of the product.
-        :paramtype description: str
+        :keyword properties: The resource-specific properties for this resource.
+        :paramtype properties: ~azure.mgmt.sphere.models.ProductProperties
         """
         super().__init__(**kwargs)
-        self.description = description
-        self.provisioning_state = None
+        self.properties = properties
 
 
 class ProductListResult(_serialization.Model):
@@ -1586,15 +1721,69 @@ class ProductListResult(_serialization.Model):
         self.next_link = next_link
 
 
+class ProductProperties(_serialization.Model):
+    """The properties of product.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar description: Description of the product. Required.
+    :vartype description: str
+    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
+     "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
+    :vartype provisioning_state: str or ~azure.mgmt.sphere.models.ProvisioningState
+    """
+
+    _validation = {
+        "description": {"required": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "description": {"key": "description", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+    }
+
+    def __init__(self, *, description: str, **kwargs: Any) -> None:
+        """
+        :keyword description: Description of the product. Required.
+        :paramtype description: str
+        """
+        super().__init__(**kwargs)
+        self.description = description
+        self.provisioning_state = None
+
+
 class ProductUpdate(_serialization.Model):
     """The type used for update operations of the Product.
+
+    :ivar properties: The updatable properties of the Product.
+    :vartype properties: ~azure.mgmt.sphere.models.ProductUpdateProperties
+    """
+
+    _attribute_map = {
+        "properties": {"key": "properties", "type": "ProductUpdateProperties"},
+    }
+
+    def __init__(self, *, properties: Optional["_models.ProductUpdateProperties"] = None, **kwargs: Any) -> None:
+        """
+        :keyword properties: The updatable properties of the Product.
+        :paramtype properties: ~azure.mgmt.sphere.models.ProductUpdateProperties
+        """
+        super().__init__(**kwargs)
+        self.properties = properties
+
+
+class ProductUpdateProperties(_serialization.Model):
+    """The updatable properties of the Product.
 
     :ivar description: Description of the product.
     :vartype description: str
     """
 
     _attribute_map = {
-        "description": {"key": "properties.description", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
     def __init__(self, *, description: Optional[str] = None, **kwargs: Any) -> None:

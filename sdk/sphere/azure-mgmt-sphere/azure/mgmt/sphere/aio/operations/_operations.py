@@ -26,7 +26,6 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
-from ..._vendor import _convert_request
 from ...operations._operations import build_list_request
 
 T = TypeVar("T")
@@ -56,16 +55,14 @@ class Operations:
     def list(self, **kwargs: Any) -> AsyncIterable["_models.Operation"]:
         """List the operations for the provider.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either Operation or the result of cls(response)
+        :return: An iterator like instance of Operation
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sphere.models.Operation]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.OperationListResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models._models.OperationListResult] = kwargs.pop("cls", None)  # pylint: disable=protected-access
 
         error_map = {
             401: ClientAuthenticationError,
@@ -79,12 +76,10 @@ class Operations:
             if not next_link:
 
                 request = build_list_request(
-                    api_version=api_version,
-                    template_url=self.list.metadata["url"],
+                    api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
 
             else:
@@ -100,13 +95,14 @@ class Operations:
                 request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
-                request.method = "GET"
+
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("OperationListResult", pipeline_response)
+            deserialized = self._deserialize(
+                _models._models.OperationListResult, pipeline_response  # pylint: disable=protected-access
+            )
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -129,5 +125,3 @@ class Operations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list.metadata = {"url": "/providers/Microsoft.AzureSphere/operations"}
