@@ -25,7 +25,6 @@ USAGE:
 """
 
 from azure.core.exceptions import HttpResponseError
-from azure.ai.translation.text.models import InputTextItem
 
 # -------------------------------------------------------------------------
 # Text translation client
@@ -40,7 +39,7 @@ def get_text_sentence_boundaries():
     try:
         source_language = "zh-Hans"
         source_script = "Latn"
-        input_text_elements = [InputTextItem(text="zhè shì gè cè shì。")]
+        input_text_elements = ["zhè shì gè cè shì。"]
 
         response = text_translator.find_sentence_boundaries(
             request_body=input_text_elements, language=source_language, script=source_script
@@ -68,7 +67,7 @@ def get_text_sentence_boundaries():
 def get_text_sentence_boundaries_auto():
     # [START get_text_sentence_boundaries_auto]
     try:
-        input_text_elements = [InputTextItem(text="This is a test. This is the second sentence.")]
+        input_text_elements = ["This is a test. This is the second sentence."]
 
         response = text_translator.find_sentence_boundaries(request_body=input_text_elements)
         sentence_boundaries = response[0] if response else None
@@ -84,6 +83,7 @@ def get_text_sentence_boundaries_auto():
                 print(boundary)
 
     except HttpResponseError as exception:
-        print(f"Error Code: {exception.error.code}")
-        print(f"Message: {exception.error.message}")
+        if exception.error is not None:
+            print(f"Error Code: {exception.error.code}")
+            print(f"Message: {exception.error.message}")
     # [END get_text_sentence_boundaries_auto]
