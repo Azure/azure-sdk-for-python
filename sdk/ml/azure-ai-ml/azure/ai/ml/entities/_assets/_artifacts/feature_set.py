@@ -111,6 +111,8 @@ class FeatureSet(Artifact):
 
     @classmethod
     def _from_rest_object(cls, featureset_rest_object: FeaturesetVersion) -> Optional["FeatureSet"]:
+        from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
+
         if not featureset_rest_object:
             return None
         featureset_rest_object_details: FeaturesetVersionProperties = featureset_rest_object.properties
@@ -118,7 +120,7 @@ class FeatureSet(Artifact):
         featureset = FeatureSet(
             id=featureset_rest_object.id,
             name=arm_id_object.asset_name,
-            version=arm_id_object.asset_version,
+            version=cast(AMLVersionedArmId, arm_id_object).asset_version,
             description=featureset_rest_object_details.description,
             tags=featureset_rest_object_details.tags,
             entities=featureset_rest_object_details.entities,
@@ -205,7 +207,11 @@ class FeatureSet(Artifact):
         from azure.ai.ml._utils.utils import is_url
 
         origin_spec_path = self.specification.path if self.specification is not None else None
-        if isinstance(dest, (PathLike, str)) and self.specification is not None and not is_url(self.specification.path):
+        if (
+            isinstance(dest, (PathLike, str))
+            and self.specification is not None
+            and not is_url(str(self.specification.path))
+        ):
             if os.path.exists(dest):
                 raise FileExistsError(f"File {dest} already exists.")
             relative_path = os.path.basename(cast(PathLike, self.specification.path))
