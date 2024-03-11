@@ -7,6 +7,7 @@
 #### Breaking Changes
 
 #### Bugs Fixed
+* Keyword arguments were not being passed down for `create_container_if_not_exists()` methods. See [PR 34286](https://github.com/Azure/azure-sdk-for-python/pull/34286).
 
 #### Other Changes
 
