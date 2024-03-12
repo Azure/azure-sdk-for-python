@@ -11,7 +11,7 @@ products:
 
 ## Prerequisites
 
-* Python 3.7 or later is required to use this package.
+* Python 3.8 or later is required to use this package.
 * You must have an [Azure subscription][azure_sub], and a [Configuration Store][configuration_store] to use this package.
 
 To create a Configuration Store, you can either use [Azure Portal](https://ms.portal.azure.com/#create/Microsoft.Azconfig) or if you are using [Azure CLI][azure_cli] you can simply run the following snippet in your console:

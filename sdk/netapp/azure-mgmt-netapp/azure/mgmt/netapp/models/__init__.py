@@ -9,9 +9,18 @@
 from ._models_py3 import AccountEncryption
 from ._models_py3 import ActiveDirectory
 from ._models_py3 import AuthorizeRequest
+from ._models_py3 import Backup
+from ._models_py3 import BackupPatch
 from ._models_py3 import BackupPoliciesList
 from ._models_py3 import BackupPolicy
 from ._models_py3 import BackupPolicyPatch
+from ._models_py3 import BackupRestoreFiles
+from ._models_py3 import BackupStatus
+from ._models_py3 import BackupVault
+from ._models_py3 import BackupVaultPatch
+from ._models_py3 import BackupVaultsList
+from ._models_py3 import BackupsList
+from ._models_py3 import BackupsMigrationRequest
 from ._models_py3 import BreakFileLocksRequest
 from ._models_py3 import BreakReplicationRequest
 from ._models_py3 import CapacityPool
@@ -22,6 +31,7 @@ from ._models_py3 import CloudErrorBody
 from ._models_py3 import DailySchedule
 from ._models_py3 import Dimension
 from ._models_py3 import EncryptionIdentity
+from ._models_py3 import EncryptionMigrationRequest
 from ._models_py3 import ErrorAdditionalInfo
 from ._models_py3 import ErrorDetail
 from ._models_py3 import ErrorResponse
@@ -55,7 +65,10 @@ from ._models_py3 import QuotaAvailabilityRequest
 from ._models_py3 import ReestablishReplicationRequest
 from ._models_py3 import RegionInfo
 from ._models_py3 import RegionInfoAvailabilityZoneMappingsItem
+from ._models_py3 import RegionInfoResource
+from ._models_py3 import RegionInfosList
 from ._models_py3 import RelocateVolumeRequest
+from ._models_py3 import RemotePath
 from ._models_py3 import Replication
 from ._models_py3 import ReplicationObject
 from ._models_py3 import ReplicationStatus
@@ -83,6 +96,7 @@ from ._models_py3 import TrackedResource
 from ._models_py3 import UpdateNetworkSiblingSetRequest
 from ._models_py3 import UserAssignedIdentity
 from ._models_py3 import Volume
+from ._models_py3 import VolumeBackupProperties
 from ._models_py3 import VolumeBackups
 from ._models_py3 import VolumeGroup
 from ._models_py3 import VolumeGroupDetails
@@ -106,6 +120,7 @@ from ._models_py3 import WeeklySchedule
 from ._net_app_management_client_enums import ActiveDirectoryStatus
 from ._net_app_management_client_enums import ApplicationType
 from ._net_app_management_client_enums import AvsDataStore
+from ._net_app_management_client_enums import BackupType
 from ._net_app_management_client_enums import CheckNameResourceTypes
 from ._net_app_management_client_enums import CheckQuotaNameResourceTypes
 from ._net_app_management_client_enums import ChownMode
@@ -143,9 +158,18 @@ __all__ = [
     "AccountEncryption",
     "ActiveDirectory",
     "AuthorizeRequest",
+    "Backup",
+    "BackupPatch",
     "BackupPoliciesList",
     "BackupPolicy",
     "BackupPolicyPatch",
+    "BackupRestoreFiles",
+    "BackupStatus",
+    "BackupVault",
+    "BackupVaultPatch",
+    "BackupVaultsList",
+    "BackupsList",
+    "BackupsMigrationRequest",
     "BreakFileLocksRequest",
     "BreakReplicationRequest",
     "CapacityPool",
@@ -156,6 +180,7 @@ __all__ = [
     "DailySchedule",
     "Dimension",
     "EncryptionIdentity",
+    "EncryptionMigrationRequest",
     "ErrorAdditionalInfo",
     "ErrorDetail",
     "ErrorResponse",
@@ -189,7 +214,10 @@ __all__ = [
     "ReestablishReplicationRequest",
     "RegionInfo",
     "RegionInfoAvailabilityZoneMappingsItem",
+    "RegionInfoResource",
+    "RegionInfosList",
     "RelocateVolumeRequest",
+    "RemotePath",
     "Replication",
     "ReplicationObject",
     "ReplicationStatus",
@@ -217,6 +245,7 @@ __all__ = [
     "UpdateNetworkSiblingSetRequest",
     "UserAssignedIdentity",
     "Volume",
+    "VolumeBackupProperties",
     "VolumeBackups",
     "VolumeGroup",
     "VolumeGroupDetails",
@@ -239,6 +268,7 @@ __all__ = [
     "ActiveDirectoryStatus",
     "ApplicationType",
     "AvsDataStore",
+    "BackupType",
     "CheckNameResourceTypes",
     "CheckQuotaNameResourceTypes",
     "ChownMode",

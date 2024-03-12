@@ -7,6 +7,7 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Fixed a bug in consuming "etag" value in sync operation `set_configuration_setting()`.
 
 ### Other Changes
 
@@ -17,6 +18,8 @@
 - Bumped minimum dependency on `azure-core` to `>=1.28.0`.
 - Updated the default `api_version` to "2023-10-01".
 - Removed `etag` keyword documentation in `set_read_only()` as it's not in use.
+- Added support for Python 3.12.
+- Python 3.7 is no longer supported. Please use Python version 3.8 or later.
 
 ## 1.5.0b3 (2023-10-10)
 

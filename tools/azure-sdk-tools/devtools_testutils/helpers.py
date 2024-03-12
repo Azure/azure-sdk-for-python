@@ -5,10 +5,12 @@
 # --------------------------------------------------------------------------
 import inspect
 import os
+import random
+import string
 import sys
 from urllib3 import PoolManager, Retry
 
-from azure_devtools.scenario_tests.config import TestConfig
+from .config import TestConfig
 
 
 # we store recording IDs in a module-level variable so that sanitizers can access them
@@ -84,6 +86,20 @@ def is_live_and_not_recording():
 
 def is_preparer_func(fn):
     return getattr(fn, "__is_preparer", False)
+
+
+def create_random_name(prefix: str = "aztest", length: int = 24) -> str:
+    if len(prefix) > length:
+        raise ValueError("The length of the prefix must not be longer than random name length")
+
+    padding_size = length - len(prefix)
+    if padding_size < 4:
+        raise ValueError(
+            "The randomized part of the name is shorter than 4, which may not be able to offer enough randomness"
+        )
+
+    # return name composed of the prefix plus random letters to meet the length
+    return prefix + "".join(random.choice(string.ascii_lowercase) for _ in range(padding_size))
 
 
 def trim_kwargs_from_test_function(fn, kwargs):

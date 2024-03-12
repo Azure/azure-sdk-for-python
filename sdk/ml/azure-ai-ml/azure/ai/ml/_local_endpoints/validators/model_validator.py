@@ -4,8 +4,9 @@
 
 # pylint: disable=protected-access
 
+from os import PathLike
 from pathlib import Path
-from typing import Tuple
+from typing import Tuple, Union
 
 from azure.ai.ml._artifacts._artifact_utilities import download_artifact
 from azure.ai.ml._utils._arm_id_utils import parse_prefixed_name_version
@@ -21,7 +22,7 @@ def get_model_artifacts(
     deployment: OnlineDeployment,
     model_operations: ModelOperations,
     download_path: str,
-) -> Tuple[str, str, Path]:
+) -> Union[str, Tuple]:
     """Validates and returns model artifacts from deployment specification.
 
     :param endpoint_name: name of endpoint which this deployment is linked to
@@ -41,7 +42,7 @@ def get_model_artifacts(
     if _model_contains_cloud_artifacts(deployment=deployment):
         return _get_cloud_model_artifacts(
             model_operations=model_operations,
-            model=deployment.model,
+            model=str(deployment.model),
             download_path=download_path,
         )
     if not _local_model_is_valid(deployment=deployment):
@@ -51,10 +52,12 @@ def get_model_artifacts(
             required_artifact_type=str,
             deployment_name=deployment.name,
         )
+    _model: Model = deployment.model  # type: ignore[assignment]
+    _model_path: Union[str, PathLike] = _model.path  # type: ignore[assignment]
     return (
-        deployment.model.name,
-        deployment.model.version,
-        Path(deployment._base_path, deployment.model.path).resolve().parent,
+        _model.name,
+        _model.version,
+        Path(deployment._base_path, _model_path).resolve().parent,
     )
 
 
@@ -64,10 +67,10 @@ def _local_model_is_valid(deployment: OnlineDeployment):
 
 def _model_contains_cloud_artifacts(deployment: OnlineDeployment):
     # If the deployment.model is a string, then it is the cloud model name or full arm ID
-    return isinstance(deployment.model, str) or deployment.model.id is not None
+    return isinstance(deployment.model, str) or (deployment.model is not None and deployment.model.id is not None)
 
 
-def _get_cloud_model_artifacts(model_operations: ModelOperations, model: str, download_path: str) -> str:
+def _get_cloud_model_artifacts(model_operations: ModelOperations, model: str, download_path: str) -> Tuple:
     if isinstance(model, Model):
         name = model.name
         version = model._version

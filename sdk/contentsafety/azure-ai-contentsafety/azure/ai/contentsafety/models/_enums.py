@@ -10,6 +10,22 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class AnalyzeImageOutputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of image analysis output."""
+
+    FOUR_SEVERITY_LEVELS = "FourSeverityLevels"
+    """Output severities in four levels, the value could be 0,2,4,6."""
+
+
+class AnalyzeTextOutputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of text analysis output."""
+
+    FOUR_SEVERITY_LEVELS = "FourSeverityLevels"
+    """Output severities in four levels, the value could be 0,2,4,6."""
+    EIGHT_SEVERITY_LEVELS = "EightSeverityLevels"
+    """Output severities in eight levels, the value could be 0,1,2,3,4,5,6,7."""
+
+
 class ImageCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Image analyze category."""
 

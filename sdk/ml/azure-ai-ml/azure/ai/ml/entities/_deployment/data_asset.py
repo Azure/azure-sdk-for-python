@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Dict, Optional
+from typing import Any, Dict, Optional
 
 from azure.ai.ml._schema._deployment.online.data_asset_schema import DataAssetSchema
 from azure.ai.ml._utils._experimental import experimental
@@ -30,7 +30,7 @@ class DataAsset:
         name: Optional[str] = None,
         path: Optional[str] = None,
         version: Optional[int] = None,
-        **kwargs,
+        **kwargs: Any,
     ):  # pylint: disable=unused-argument
         self.data_id = data_id
         self.name = name
@@ -39,4 +39,5 @@ class DataAsset:
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        return DataAssetSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = DataAssetSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return res

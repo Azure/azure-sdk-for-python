@@ -5,7 +5,7 @@
 # pylint: disable=protected-access
 
 import os
-from typing import Callable, Dict, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 from azure.ai.ml.constants._common import AssetTypes, LegacyAssetTypes
 from azure.ai.ml.constants._component import ComponentSource
@@ -18,6 +18,7 @@ from azure.ai.ml.entities._credentials import (
 )
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.distribution import (
+    DistributionConfiguration,
     MpiDistribution,
     PyTorchDistribution,
     RayDistribution,
@@ -47,8 +48,10 @@ SUPPORTED_INPUTS = [
 ]
 
 
-def _parse_input(input_value):
-    component_input, job_input = None, None
+def _parse_input(input_value: Union[Input, Dict, SweepDistribution, str, bool, int, float]) -> Tuple:
+    component_input = None
+    job_input: Optional[Union[Input, Dict, SweepDistribution, str, bool, int, float]] = None
+
     if isinstance(input_value, Input):
         component_input = Input(**input_value._to_dict())
         input_type = input_value.type
@@ -66,7 +69,8 @@ def _parse_input(input_value):
         component_input = ComponentTranslatableMixin._to_input_builder_function(input_value)
         job_input = input_value
     else:
-        msg = f"Unsupported input type: {type(input_value)}, only Input, dict, str, bool, int and float are supported."
+        msg = f"Unsupported input type: {type(input_value)}"
+        msg += ", only Input, dict, str, bool, int and float are supported."
         raise ValidationException(
             message=msg,
             no_personal_data_message=msg,
@@ -76,8 +80,10 @@ def _parse_input(input_value):
     return component_input, job_input
 
 
-def _parse_output(output_value):
-    component_output, job_output = None, None
+def _parse_output(output_value: Optional[Union[Output, Dict, str]]) -> Tuple:
+    component_output = None
+    job_output: Optional[Union[Output, Dict, str]] = None
+
     if isinstance(output_value, Output):
         component_output = Output(**output_value._to_dict())
         job_output = Output(**output_value._to_dict())
@@ -124,7 +130,14 @@ def command(
     environment: Optional[Union[str, Environment]] = None,
     environment_variables: Optional[Dict] = None,
     distribution: Optional[
-        Union[Dict, MpiDistribution, TensorFlowDistribution, PyTorchDistribution, RayDistribution]
+        Union[
+            Dict,
+            MpiDistribution,
+            TensorFlowDistribution,
+            PyTorchDistribution,
+            RayDistribution,
+            DistributionConfiguration,
+        ]
     ] = None,
     compute: Optional[str] = None,
     inputs: Optional[Dict] = None,
@@ -143,7 +156,7 @@ def command(
     ] = None,
     job_tier: Optional[str] = None,
     priority: Optional[str] = None,
-    **kwargs,
+    **kwargs: Any,
 ) -> Command:
     """Creates a Command object which can be used inside a dsl.pipeline function or used as a standalone Command job.
 
@@ -182,7 +195,7 @@ def command(
     :keyword instance_type: The type of VM to be used by the compute target.
     :paramtype instance_type: Optional[str]
     :keyword locations: The list of locations where the job will run.
-    :paramtype locations: Optional[list[str]]
+    :paramtype locations: Optional[List[str]]
     :keyword docker_args: Extra arguments to pass to the Docker run command. This would override any
         parameters that have already been set by the system, or in this section. This parameter is only
         supported for Azure ML compute types. Defaults to None.

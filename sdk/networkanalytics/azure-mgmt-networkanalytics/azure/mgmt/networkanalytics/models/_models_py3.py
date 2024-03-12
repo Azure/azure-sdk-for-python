@@ -306,7 +306,7 @@ class TrackedResource(Resource):
         self.location = location
 
 
-class DataProduct(TrackedResource):  # pylint: disable=too-many-instance-attributes
+class DataProduct(TrackedResource):
     """The data product resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -328,56 +328,10 @@ class DataProduct(TrackedResource):  # pylint: disable=too-many-instance-attribu
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.networkanalytics.models.DataProductProperties
     :ivar identity: The managed service identities assigned to this resource.
     :vartype identity: ~azure.mgmt.networkanalytics.models.ManagedServiceIdentity
-    :ivar resource_guid: The resource GUID property of the data product resource.
-    :vartype resource_guid: str
-    :ivar provisioning_state: Latest provisioning state  of data product. Known values are:
-     "Succeeded", "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
-    :vartype provisioning_state: str or ~azure.mgmt.networkanalytics.models.ProvisioningState
-    :ivar publisher: Data product publisher name.
-    :vartype publisher: str
-    :ivar product: Product name of data product.
-    :vartype product: str
-    :ivar major_version: Major version of data product.
-    :vartype major_version: str
-    :ivar owners: List of name or email associated with data product resource deployment.
-    :vartype owners: list[str]
-    :ivar redundancy: Flag to enable or disable redundancy for data product. Known values are:
-     "Enabled" and "Disabled".
-    :vartype redundancy: str or ~azure.mgmt.networkanalytics.models.ControlState
-    :ivar purview_account: Purview account url for data product to connect to.
-    :vartype purview_account: str
-    :ivar purview_collection: Purview collection url for data product to connect to.
-    :vartype purview_collection: str
-    :ivar private_links_enabled: Flag to enable or disable private link for data product resource.
-     Known values are: "Enabled" and "Disabled".
-    :vartype private_links_enabled: str or ~azure.mgmt.networkanalytics.models.ControlState
-    :ivar public_network_access: Flag to enable or disable public access of data product resource.
-     Known values are: "Enabled" and "Disabled".
-    :vartype public_network_access: str or ~azure.mgmt.networkanalytics.models.ControlState
-    :ivar customer_managed_key_encryption_enabled: Flag to enable customer managed key encryption
-     for data product. Known values are: "Enabled" and "Disabled".
-    :vartype customer_managed_key_encryption_enabled: str or
-     ~azure.mgmt.networkanalytics.models.ControlState
-    :ivar customer_encryption_key: Customer managed encryption key details for data product.
-    :vartype customer_encryption_key: ~azure.mgmt.networkanalytics.models.EncryptionKeyDetails
-    :ivar networkacls: Network rule set for data product.
-    :vartype networkacls: ~azure.mgmt.networkanalytics.models.DataProductNetworkAcls
-    :ivar managed_resource_group_configuration: Managed resource group configuration.
-    :vartype managed_resource_group_configuration:
-     ~azure.mgmt.networkanalytics.models.ManagedResourceGroupConfiguration
-    :ivar available_minor_versions: List of available minor versions of the data product resource.
-    :vartype available_minor_versions: list[str]
-    :ivar current_minor_version: Current configured minor version of the data product resource.
-    :vartype current_minor_version: str
-    :ivar documentation: Documentation link for the data product based on definition file.
-    :vartype documentation: str
-    :ivar consumption_endpoints: Resource links which exposed to the customer to query the data.
-    :vartype consumption_endpoints:
-     ~azure.mgmt.networkanalytics.models.ConsumptionEndpointsProperties
-    :ivar key_vault_url: Key vault url.
-    :vartype key_vault_url: str
     """
 
     _validation = {
@@ -386,12 +340,6 @@ class DataProduct(TrackedResource):  # pylint: disable=too-many-instance-attribu
         "type": {"readonly": True},
         "system_data": {"readonly": True},
         "location": {"required": True},
-        "resource_guid": {"readonly": True},
-        "provisioning_state": {"readonly": True},
-        "available_minor_versions": {"readonly": True},
-        "documentation": {"readonly": True},
-        "consumption_endpoints": {"readonly": True},
-        "key_vault_url": {"readonly": True},
     }
 
     _attribute_map = {
@@ -401,55 +349,17 @@ class DataProduct(TrackedResource):  # pylint: disable=too-many-instance-attribu
         "system_data": {"key": "systemData", "type": "SystemData"},
         "tags": {"key": "tags", "type": "{str}"},
         "location": {"key": "location", "type": "str"},
+        "properties": {"key": "properties", "type": "DataProductProperties"},
         "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
-        "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
-        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
-        "publisher": {"key": "properties.publisher", "type": "str"},
-        "product": {"key": "properties.product", "type": "str"},
-        "major_version": {"key": "properties.majorVersion", "type": "str"},
-        "owners": {"key": "properties.owners", "type": "[str]"},
-        "redundancy": {"key": "properties.redundancy", "type": "str"},
-        "purview_account": {"key": "properties.purviewAccount", "type": "str"},
-        "purview_collection": {"key": "properties.purviewCollection", "type": "str"},
-        "private_links_enabled": {"key": "properties.privateLinksEnabled", "type": "str"},
-        "public_network_access": {"key": "properties.publicNetworkAccess", "type": "str"},
-        "customer_managed_key_encryption_enabled": {
-            "key": "properties.customerManagedKeyEncryptionEnabled",
-            "type": "str",
-        },
-        "customer_encryption_key": {"key": "properties.customerEncryptionKey", "type": "EncryptionKeyDetails"},
-        "networkacls": {"key": "properties.networkacls", "type": "DataProductNetworkAcls"},
-        "managed_resource_group_configuration": {
-            "key": "properties.managedResourceGroupConfiguration",
-            "type": "ManagedResourceGroupConfiguration",
-        },
-        "available_minor_versions": {"key": "properties.availableMinorVersions", "type": "[str]"},
-        "current_minor_version": {"key": "properties.currentMinorVersion", "type": "str"},
-        "documentation": {"key": "properties.documentation", "type": "str"},
-        "consumption_endpoints": {"key": "properties.consumptionEndpoints", "type": "ConsumptionEndpointsProperties"},
-        "key_vault_url": {"key": "properties.keyVaultUrl", "type": "str"},
     }
 
-    def __init__(  # pylint: disable=too-many-locals
+    def __init__(
         self,
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
+        properties: Optional["_models.DataProductProperties"] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
-        publisher: Optional[str] = None,
-        product: Optional[str] = None,
-        major_version: Optional[str] = None,
-        owners: Optional[List[str]] = None,
-        redundancy: Optional[Union[str, "_models.ControlState"]] = None,
-        purview_account: Optional[str] = None,
-        purview_collection: Optional[str] = None,
-        private_links_enabled: Optional[Union[str, "_models.ControlState"]] = None,
-        public_network_access: Optional[Union[str, "_models.ControlState"]] = None,
-        customer_managed_key_encryption_enabled: Optional[Union[str, "_models.ControlState"]] = None,
-        customer_encryption_key: Optional["_models.EncryptionKeyDetails"] = None,
-        networkacls: Optional["_models.DataProductNetworkAcls"] = None,
-        managed_resource_group_configuration: Optional["_models.ManagedResourceGroupConfiguration"] = None,
-        current_minor_version: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -457,65 +367,14 @@ class DataProduct(TrackedResource):  # pylint: disable=too-many-instance-attribu
         :paramtype tags: dict[str, str]
         :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
+        :keyword properties: The resource-specific properties for this resource.
+        :paramtype properties: ~azure.mgmt.networkanalytics.models.DataProductProperties
         :keyword identity: The managed service identities assigned to this resource.
         :paramtype identity: ~azure.mgmt.networkanalytics.models.ManagedServiceIdentity
-        :keyword publisher: Data product publisher name.
-        :paramtype publisher: str
-        :keyword product: Product name of data product.
-        :paramtype product: str
-        :keyword major_version: Major version of data product.
-        :paramtype major_version: str
-        :keyword owners: List of name or email associated with data product resource deployment.
-        :paramtype owners: list[str]
-        :keyword redundancy: Flag to enable or disable redundancy for data product. Known values are:
-         "Enabled" and "Disabled".
-        :paramtype redundancy: str or ~azure.mgmt.networkanalytics.models.ControlState
-        :keyword purview_account: Purview account url for data product to connect to.
-        :paramtype purview_account: str
-        :keyword purview_collection: Purview collection url for data product to connect to.
-        :paramtype purview_collection: str
-        :keyword private_links_enabled: Flag to enable or disable private link for data product
-         resource. Known values are: "Enabled" and "Disabled".
-        :paramtype private_links_enabled: str or ~azure.mgmt.networkanalytics.models.ControlState
-        :keyword public_network_access: Flag to enable or disable public access of data product
-         resource. Known values are: "Enabled" and "Disabled".
-        :paramtype public_network_access: str or ~azure.mgmt.networkanalytics.models.ControlState
-        :keyword customer_managed_key_encryption_enabled: Flag to enable customer managed key
-         encryption for data product. Known values are: "Enabled" and "Disabled".
-        :paramtype customer_managed_key_encryption_enabled: str or
-         ~azure.mgmt.networkanalytics.models.ControlState
-        :keyword customer_encryption_key: Customer managed encryption key details for data product.
-        :paramtype customer_encryption_key: ~azure.mgmt.networkanalytics.models.EncryptionKeyDetails
-        :keyword networkacls: Network rule set for data product.
-        :paramtype networkacls: ~azure.mgmt.networkanalytics.models.DataProductNetworkAcls
-        :keyword managed_resource_group_configuration: Managed resource group configuration.
-        :paramtype managed_resource_group_configuration:
-         ~azure.mgmt.networkanalytics.models.ManagedResourceGroupConfiguration
-        :keyword current_minor_version: Current configured minor version of the data product resource.
-        :paramtype current_minor_version: str
         """
         super().__init__(tags=tags, location=location, **kwargs)
+        self.properties = properties
         self.identity = identity
-        self.resource_guid = None
-        self.provisioning_state = None
-        self.publisher = publisher
-        self.product = product
-        self.major_version = major_version
-        self.owners = owners
-        self.redundancy = redundancy
-        self.purview_account = purview_account
-        self.purview_collection = purview_collection
-        self.private_links_enabled = private_links_enabled
-        self.public_network_access = public_network_access
-        self.customer_managed_key_encryption_enabled = customer_managed_key_encryption_enabled
-        self.customer_encryption_key = customer_encryption_key
-        self.networkacls = networkacls
-        self.managed_resource_group_configuration = managed_resource_group_configuration
-        self.available_minor_versions = None
-        self.current_minor_version = current_minor_version
-        self.documentation = None
-        self.consumption_endpoints = None
-        self.key_vault_url = None
 
 
 class DataProductInformation(_serialization.Model):
@@ -654,6 +513,179 @@ class DataProductNetworkAcls(_serialization.Model):
         self.default_action = default_action
 
 
+class DataProductProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+    """The data product properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar resource_guid: The resource GUID property of the data product resource.
+    :vartype resource_guid: str
+    :ivar provisioning_state: Latest provisioning state  of data product. Known values are:
+     "Succeeded", "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
+    :vartype provisioning_state: str or ~azure.mgmt.networkanalytics.models.ProvisioningState
+    :ivar publisher: Data product publisher name. Required.
+    :vartype publisher: str
+    :ivar product: Product name of data product. Required.
+    :vartype product: str
+    :ivar major_version: Major version of data product. Required.
+    :vartype major_version: str
+    :ivar owners: List of name or email associated with data product resource deployment.
+    :vartype owners: list[str]
+    :ivar redundancy: Flag to enable or disable redundancy for data product. Known values are:
+     "Enabled" and "Disabled".
+    :vartype redundancy: str or ~azure.mgmt.networkanalytics.models.ControlState
+    :ivar purview_account: Purview account url for data product to connect to.
+    :vartype purview_account: str
+    :ivar purview_collection: Purview collection url for data product to connect to.
+    :vartype purview_collection: str
+    :ivar private_links_enabled: Flag to enable or disable private link for data product resource.
+     Known values are: "Enabled" and "Disabled".
+    :vartype private_links_enabled: str or ~azure.mgmt.networkanalytics.models.ControlState
+    :ivar public_network_access: Flag to enable or disable public access of data product resource.
+     Known values are: "Enabled" and "Disabled".
+    :vartype public_network_access: str or ~azure.mgmt.networkanalytics.models.ControlState
+    :ivar customer_managed_key_encryption_enabled: Flag to enable customer managed key encryption
+     for data product. Known values are: "Enabled" and "Disabled".
+    :vartype customer_managed_key_encryption_enabled: str or
+     ~azure.mgmt.networkanalytics.models.ControlState
+    :ivar customer_encryption_key: Customer managed encryption key details for data product.
+    :vartype customer_encryption_key: ~azure.mgmt.networkanalytics.models.EncryptionKeyDetails
+    :ivar networkacls: Network rule set for data product.
+    :vartype networkacls: ~azure.mgmt.networkanalytics.models.DataProductNetworkAcls
+    :ivar managed_resource_group_configuration: Managed resource group configuration.
+    :vartype managed_resource_group_configuration:
+     ~azure.mgmt.networkanalytics.models.ManagedResourceGroupConfiguration
+    :ivar available_minor_versions: List of available minor versions of the data product resource.
+    :vartype available_minor_versions: list[str]
+    :ivar current_minor_version: Current configured minor version of the data product resource.
+    :vartype current_minor_version: str
+    :ivar documentation: Documentation link for the data product based on definition file.
+    :vartype documentation: str
+    :ivar consumption_endpoints: Resource links which exposed to the customer to query the data.
+    :vartype consumption_endpoints:
+     ~azure.mgmt.networkanalytics.models.ConsumptionEndpointsProperties
+    :ivar key_vault_url: Key vault url.
+    :vartype key_vault_url: str
+    """
+
+    _validation = {
+        "resource_guid": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "publisher": {"required": True},
+        "product": {"required": True},
+        "major_version": {"required": True},
+        "available_minor_versions": {"readonly": True},
+        "documentation": {"readonly": True},
+        "consumption_endpoints": {"readonly": True},
+        "key_vault_url": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "resource_guid": {"key": "resourceGuid", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "publisher": {"key": "publisher", "type": "str"},
+        "product": {"key": "product", "type": "str"},
+        "major_version": {"key": "majorVersion", "type": "str"},
+        "owners": {"key": "owners", "type": "[str]"},
+        "redundancy": {"key": "redundancy", "type": "str"},
+        "purview_account": {"key": "purviewAccount", "type": "str"},
+        "purview_collection": {"key": "purviewCollection", "type": "str"},
+        "private_links_enabled": {"key": "privateLinksEnabled", "type": "str"},
+        "public_network_access": {"key": "publicNetworkAccess", "type": "str"},
+        "customer_managed_key_encryption_enabled": {"key": "customerManagedKeyEncryptionEnabled", "type": "str"},
+        "customer_encryption_key": {"key": "customerEncryptionKey", "type": "EncryptionKeyDetails"},
+        "networkacls": {"key": "networkacls", "type": "DataProductNetworkAcls"},
+        "managed_resource_group_configuration": {
+            "key": "managedResourceGroupConfiguration",
+            "type": "ManagedResourceGroupConfiguration",
+        },
+        "available_minor_versions": {"key": "availableMinorVersions", "type": "[str]"},
+        "current_minor_version": {"key": "currentMinorVersion", "type": "str"},
+        "documentation": {"key": "documentation", "type": "str"},
+        "consumption_endpoints": {"key": "consumptionEndpoints", "type": "ConsumptionEndpointsProperties"},
+        "key_vault_url": {"key": "keyVaultUrl", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        publisher: str,
+        product: str,
+        major_version: str,
+        owners: Optional[List[str]] = None,
+        redundancy: Optional[Union[str, "_models.ControlState"]] = None,
+        purview_account: Optional[str] = None,
+        purview_collection: Optional[str] = None,
+        private_links_enabled: Optional[Union[str, "_models.ControlState"]] = None,
+        public_network_access: Optional[Union[str, "_models.ControlState"]] = None,
+        customer_managed_key_encryption_enabled: Optional[Union[str, "_models.ControlState"]] = None,
+        customer_encryption_key: Optional["_models.EncryptionKeyDetails"] = None,
+        networkacls: Optional["_models.DataProductNetworkAcls"] = None,
+        managed_resource_group_configuration: Optional["_models.ManagedResourceGroupConfiguration"] = None,
+        current_minor_version: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword publisher: Data product publisher name. Required.
+        :paramtype publisher: str
+        :keyword product: Product name of data product. Required.
+        :paramtype product: str
+        :keyword major_version: Major version of data product. Required.
+        :paramtype major_version: str
+        :keyword owners: List of name or email associated with data product resource deployment.
+        :paramtype owners: list[str]
+        :keyword redundancy: Flag to enable or disable redundancy for data product. Known values are:
+         "Enabled" and "Disabled".
+        :paramtype redundancy: str or ~azure.mgmt.networkanalytics.models.ControlState
+        :keyword purview_account: Purview account url for data product to connect to.
+        :paramtype purview_account: str
+        :keyword purview_collection: Purview collection url for data product to connect to.
+        :paramtype purview_collection: str
+        :keyword private_links_enabled: Flag to enable or disable private link for data product
+         resource. Known values are: "Enabled" and "Disabled".
+        :paramtype private_links_enabled: str or ~azure.mgmt.networkanalytics.models.ControlState
+        :keyword public_network_access: Flag to enable or disable public access of data product
+         resource. Known values are: "Enabled" and "Disabled".
+        :paramtype public_network_access: str or ~azure.mgmt.networkanalytics.models.ControlState
+        :keyword customer_managed_key_encryption_enabled: Flag to enable customer managed key
+         encryption for data product. Known values are: "Enabled" and "Disabled".
+        :paramtype customer_managed_key_encryption_enabled: str or
+         ~azure.mgmt.networkanalytics.models.ControlState
+        :keyword customer_encryption_key: Customer managed encryption key details for data product.
+        :paramtype customer_encryption_key: ~azure.mgmt.networkanalytics.models.EncryptionKeyDetails
+        :keyword networkacls: Network rule set for data product.
+        :paramtype networkacls: ~azure.mgmt.networkanalytics.models.DataProductNetworkAcls
+        :keyword managed_resource_group_configuration: Managed resource group configuration.
+        :paramtype managed_resource_group_configuration:
+         ~azure.mgmt.networkanalytics.models.ManagedResourceGroupConfiguration
+        :keyword current_minor_version: Current configured minor version of the data product resource.
+        :paramtype current_minor_version: str
+        """
+        super().__init__(**kwargs)
+        self.resource_guid = None
+        self.provisioning_state = None
+        self.publisher = publisher
+        self.product = product
+        self.major_version = major_version
+        self.owners = owners
+        self.redundancy = redundancy
+        self.purview_account = purview_account
+        self.purview_collection = purview_collection
+        self.private_links_enabled = private_links_enabled
+        self.public_network_access = public_network_access
+        self.customer_managed_key_encryption_enabled = customer_managed_key_encryption_enabled
+        self.customer_encryption_key = customer_encryption_key
+        self.networkacls = networkacls
+        self.managed_resource_group_configuration = managed_resource_group_configuration
+        self.available_minor_versions = None
+        self.current_minor_version = current_minor_version
+        self.documentation = None
+        self.consumption_endpoints = None
+        self.key_vault_url = None
+
+
 class ProxyResource(Resource):
     """The resource model definition for a Azure Resource Manager proxy resource. It will not have
     tags and a location.
@@ -708,11 +740,8 @@ class DataProductsCatalog(ProxyResource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.networkanalytics.models.SystemData
-    :ivar provisioning_state: The data catalog provisioning state. Known values are: "Succeeded",
-     "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
-    :vartype provisioning_state: str or ~azure.mgmt.networkanalytics.models.ProvisioningState
-    :ivar publishers: The data product publisher information.
-    :vartype publishers: list[~azure.mgmt.networkanalytics.models.PublisherInformation]
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.networkanalytics.models.DataProductsCatalogProperties
     """
 
     _validation = {
@@ -720,7 +749,6 @@ class DataProductsCatalog(ProxyResource):
         "name": {"readonly": True},
         "type": {"readonly": True},
         "system_data": {"readonly": True},
-        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
@@ -728,18 +756,16 @@ class DataProductsCatalog(ProxyResource):
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "system_data": {"key": "systemData", "type": "SystemData"},
-        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
-        "publishers": {"key": "properties.publishers", "type": "[PublisherInformation]"},
+        "properties": {"key": "properties", "type": "DataProductsCatalogProperties"},
     }
 
-    def __init__(self, *, publishers: Optional[List["_models.PublisherInformation"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, properties: Optional["_models.DataProductsCatalogProperties"] = None, **kwargs: Any) -> None:
         """
-        :keyword publishers: The data product publisher information.
-        :paramtype publishers: list[~azure.mgmt.networkanalytics.models.PublisherInformation]
+        :keyword properties: The resource-specific properties for this resource.
+        :paramtype properties: ~azure.mgmt.networkanalytics.models.DataProductsCatalogProperties
         """
         super().__init__(**kwargs)
-        self.provisioning_state = None
-        self.publishers = publishers
+        self.properties = properties
 
 
 class DataProductsCatalogListResult(_serialization.Model):
@@ -776,6 +802,40 @@ class DataProductsCatalogListResult(_serialization.Model):
         self.next_link = next_link
 
 
+class DataProductsCatalogProperties(_serialization.Model):
+    """Details for data catalog properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar provisioning_state: The data catalog provisioning state. Known values are: "Succeeded",
+     "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
+    :vartype provisioning_state: str or ~azure.mgmt.networkanalytics.models.ProvisioningState
+    :ivar publishers: The data product publisher information. Required.
+    :vartype publishers: list[~azure.mgmt.networkanalytics.models.PublisherInformation]
+    """
+
+    _validation = {
+        "provisioning_state": {"readonly": True},
+        "publishers": {"required": True},
+    }
+
+    _attribute_map = {
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "publishers": {"key": "publishers", "type": "[PublisherInformation]"},
+    }
+
+    def __init__(self, *, publishers: List["_models.PublisherInformation"], **kwargs: Any) -> None:
+        """
+        :keyword publishers: The data product publisher information. Required.
+        :paramtype publishers: list[~azure.mgmt.networkanalytics.models.PublisherInformation]
+        """
+        super().__init__(**kwargs)
+        self.provisioning_state = None
+        self.publishers = publishers
+
+
 class DataProductUpdate(_serialization.Model):
     """The type used for update operations of the DataProduct.
 
@@ -783,6 +843,41 @@ class DataProductUpdate(_serialization.Model):
     :vartype identity: ~azure.mgmt.networkanalytics.models.ManagedServiceIdentity
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
+    :ivar properties: The updatable properties of the DataProduct.
+    :vartype properties: ~azure.mgmt.networkanalytics.models.DataProductUpdateProperties
+    """
+
+    _attribute_map = {
+        "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "properties": {"key": "properties", "type": "DataProductUpdateProperties"},
+    }
+
+    def __init__(
+        self,
+        *,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
+        tags: Optional[Dict[str, str]] = None,
+        properties: Optional["_models.DataProductUpdateProperties"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword identity: The managed service identities assigned to this resource.
+        :paramtype identity: ~azure.mgmt.networkanalytics.models.ManagedServiceIdentity
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword properties: The updatable properties of the DataProduct.
+        :paramtype properties: ~azure.mgmt.networkanalytics.models.DataProductUpdateProperties
+        """
+        super().__init__(**kwargs)
+        self.identity = identity
+        self.tags = tags
+        self.properties = properties
+
+
+class DataProductUpdateProperties(_serialization.Model):
+    """The updatable properties of the DataProduct.
+
     :ivar owners: List of name or email associated with data product resource deployment.
     :vartype owners: list[str]
     :ivar purview_account: Purview account url for data product to connect to.
@@ -797,20 +892,16 @@ class DataProductUpdate(_serialization.Model):
     """
 
     _attribute_map = {
-        "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
-        "tags": {"key": "tags", "type": "{str}"},
-        "owners": {"key": "properties.owners", "type": "[str]"},
-        "purview_account": {"key": "properties.purviewAccount", "type": "str"},
-        "purview_collection": {"key": "properties.purviewCollection", "type": "str"},
-        "private_links_enabled": {"key": "properties.privateLinksEnabled", "type": "str"},
-        "current_minor_version": {"key": "properties.currentMinorVersion", "type": "str"},
+        "owners": {"key": "owners", "type": "[str]"},
+        "purview_account": {"key": "purviewAccount", "type": "str"},
+        "purview_collection": {"key": "purviewCollection", "type": "str"},
+        "private_links_enabled": {"key": "privateLinksEnabled", "type": "str"},
+        "current_minor_version": {"key": "currentMinorVersion", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        identity: Optional["_models.ManagedServiceIdentity"] = None,
-        tags: Optional[Dict[str, str]] = None,
         owners: Optional[List[str]] = None,
         purview_account: Optional[str] = None,
         purview_collection: Optional[str] = None,
@@ -819,10 +910,6 @@ class DataProductUpdate(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword identity: The managed service identities assigned to this resource.
-        :paramtype identity: ~azure.mgmt.networkanalytics.models.ManagedServiceIdentity
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
         :keyword owners: List of name or email associated with data product resource deployment.
         :paramtype owners: list[str]
         :keyword purview_account: Purview account url for data product to connect to.
@@ -836,8 +923,6 @@ class DataProductUpdate(_serialization.Model):
         :paramtype current_minor_version: str
         """
         super().__init__(**kwargs)
-        self.identity = identity
-        self.tags = tags
         self.owners = owners
         self.purview_account = purview_account
         self.purview_collection = purview_collection
@@ -871,7 +956,7 @@ class DataProductVersion(_serialization.Model):
         self.version = version
 
 
-class DataType(ProxyResource):  # pylint: disable=too-many-instance-attributes
+class DataType(ProxyResource):
     """The data type resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -887,21 +972,8 @@ class DataType(ProxyResource):  # pylint: disable=too-many-instance-attributes
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.networkanalytics.models.SystemData
-    :ivar provisioning_state: Latest provisioning state  of data product. Known values are:
-     "Succeeded", "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
-    :vartype provisioning_state: str or ~azure.mgmt.networkanalytics.models.ProvisioningState
-    :ivar state: State of data type. Known values are: "Stopped" and "Running".
-    :vartype state: str or ~azure.mgmt.networkanalytics.models.DataTypeState
-    :ivar state_reason: Reason for the state of data type.
-    :vartype state_reason: str
-    :ivar storage_output_retention: Field for storage output retention in days.
-    :vartype storage_output_retention: int
-    :ivar database_cache_retention: Field for database cache retention in days.
-    :vartype database_cache_retention: int
-    :ivar database_retention: Field for database data retention in days.
-    :vartype database_retention: int
-    :ivar visualization_url: Url for data visualization.
-    :vartype visualization_url: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.networkanalytics.models.DataTypeProperties
     """
 
     _validation = {
@@ -909,9 +981,6 @@ class DataType(ProxyResource):  # pylint: disable=too-many-instance-attributes
         "name": {"readonly": True},
         "type": {"readonly": True},
         "system_data": {"readonly": True},
-        "provisioning_state": {"readonly": True},
-        "state_reason": {"readonly": True},
-        "visualization_url": {"readonly": True},
     }
 
     _attribute_map = {
@@ -919,42 +988,16 @@ class DataType(ProxyResource):  # pylint: disable=too-many-instance-attributes
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "system_data": {"key": "systemData", "type": "SystemData"},
-        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
-        "state": {"key": "properties.state", "type": "str"},
-        "state_reason": {"key": "properties.stateReason", "type": "str"},
-        "storage_output_retention": {"key": "properties.storageOutputRetention", "type": "int"},
-        "database_cache_retention": {"key": "properties.databaseCacheRetention", "type": "int"},
-        "database_retention": {"key": "properties.databaseRetention", "type": "int"},
-        "visualization_url": {"key": "properties.visualizationUrl", "type": "str"},
+        "properties": {"key": "properties", "type": "DataTypeProperties"},
     }
 
-    def __init__(
-        self,
-        *,
-        state: Optional[Union[str, "_models.DataTypeState"]] = None,
-        storage_output_retention: Optional[int] = None,
-        database_cache_retention: Optional[int] = None,
-        database_retention: Optional[int] = None,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, *, properties: Optional["_models.DataTypeProperties"] = None, **kwargs: Any) -> None:
         """
-        :keyword state: State of data type. Known values are: "Stopped" and "Running".
-        :paramtype state: str or ~azure.mgmt.networkanalytics.models.DataTypeState
-        :keyword storage_output_retention: Field for storage output retention in days.
-        :paramtype storage_output_retention: int
-        :keyword database_cache_retention: Field for database cache retention in days.
-        :paramtype database_cache_retention: int
-        :keyword database_retention: Field for database data retention in days.
-        :paramtype database_retention: int
+        :keyword properties: The resource-specific properties for this resource.
+        :paramtype properties: ~azure.mgmt.networkanalytics.models.DataTypeProperties
         """
         super().__init__(**kwargs)
-        self.provisioning_state = None
-        self.state = state
-        self.state_reason = None
-        self.storage_output_retention = storage_output_retention
-        self.database_cache_retention = database_cache_retention
-        self.database_retention = database_retention
-        self.visualization_url = None
+        self.properties = properties
 
 
 class DataTypeListResult(_serialization.Model):
@@ -989,8 +1032,95 @@ class DataTypeListResult(_serialization.Model):
         self.next_link = next_link
 
 
+class DataTypeProperties(_serialization.Model):
+    """The data type properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar provisioning_state: Latest provisioning state  of data product. Known values are:
+     "Succeeded", "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
+    :vartype provisioning_state: str or ~azure.mgmt.networkanalytics.models.ProvisioningState
+    :ivar state: State of data type. Known values are: "Stopped" and "Running".
+    :vartype state: str or ~azure.mgmt.networkanalytics.models.DataTypeState
+    :ivar state_reason: Reason for the state of data type.
+    :vartype state_reason: str
+    :ivar storage_output_retention: Field for storage output retention in days.
+    :vartype storage_output_retention: int
+    :ivar database_cache_retention: Field for database cache retention in days.
+    :vartype database_cache_retention: int
+    :ivar database_retention: Field for database data retention in days.
+    :vartype database_retention: int
+    :ivar visualization_url: Url for data visualization.
+    :vartype visualization_url: str
+    """
+
+    _validation = {
+        "provisioning_state": {"readonly": True},
+        "state_reason": {"readonly": True},
+        "visualization_url": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "state_reason": {"key": "stateReason", "type": "str"},
+        "storage_output_retention": {"key": "storageOutputRetention", "type": "int"},
+        "database_cache_retention": {"key": "databaseCacheRetention", "type": "int"},
+        "database_retention": {"key": "databaseRetention", "type": "int"},
+        "visualization_url": {"key": "visualizationUrl", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        state: Optional[Union[str, "_models.DataTypeState"]] = None,
+        storage_output_retention: Optional[int] = None,
+        database_cache_retention: Optional[int] = None,
+        database_retention: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword state: State of data type. Known values are: "Stopped" and "Running".
+        :paramtype state: str or ~azure.mgmt.networkanalytics.models.DataTypeState
+        :keyword storage_output_retention: Field for storage output retention in days.
+        :paramtype storage_output_retention: int
+        :keyword database_cache_retention: Field for database cache retention in days.
+        :paramtype database_cache_retention: int
+        :keyword database_retention: Field for database data retention in days.
+        :paramtype database_retention: int
+        """
+        super().__init__(**kwargs)
+        self.provisioning_state = None
+        self.state = state
+        self.state_reason = None
+        self.storage_output_retention = storage_output_retention
+        self.database_cache_retention = database_cache_retention
+        self.database_retention = database_retention
+        self.visualization_url = None
+
+
 class DataTypeUpdate(_serialization.Model):
     """The type used for update operations of the DataType.
+
+    :ivar properties: The updatable properties of the DataType.
+    :vartype properties: ~azure.mgmt.networkanalytics.models.DataTypeUpdateProperties
+    """
+
+    _attribute_map = {
+        "properties": {"key": "properties", "type": "DataTypeUpdateProperties"},
+    }
+
+    def __init__(self, *, properties: Optional["_models.DataTypeUpdateProperties"] = None, **kwargs: Any) -> None:
+        """
+        :keyword properties: The updatable properties of the DataType.
+        :paramtype properties: ~azure.mgmt.networkanalytics.models.DataTypeUpdateProperties
+        """
+        super().__init__(**kwargs)
+        self.properties = properties
+
+
+class DataTypeUpdateProperties(_serialization.Model):
+    """The updatable properties of the DataType.
 
     :ivar state: State of data type. Known values are: "Stopped" and "Running".
     :vartype state: str or ~azure.mgmt.networkanalytics.models.DataTypeState
@@ -1003,10 +1133,10 @@ class DataTypeUpdate(_serialization.Model):
     """
 
     _attribute_map = {
-        "state": {"key": "properties.state", "type": "str"},
-        "storage_output_retention": {"key": "properties.storageOutputRetention", "type": "int"},
-        "database_cache_retention": {"key": "properties.databaseCacheRetention", "type": "int"},
-        "database_retention": {"key": "properties.databaseRetention", "type": "int"},
+        "state": {"key": "state", "type": "str"},
+        "storage_output_retention": {"key": "storageOutputRetention", "type": "int"},
+        "database_cache_retention": {"key": "databaseCacheRetention", "type": "int"},
+        "database_retention": {"key": "databaseRetention", "type": "int"},
     }
 
     def __init__(

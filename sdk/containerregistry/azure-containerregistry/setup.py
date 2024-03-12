@@ -40,11 +40,11 @@ setup(
         "Programming Language :: Python",
         "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
         "License :: OSI Approved :: MIT License",
     ],
     packages=find_packages(
@@ -54,13 +54,13 @@ setup(
             "azure",
         ]
     ),
-    python_requires=">=3.7",
+    python_requires=">=3.8",
     install_requires=[
         "azure-core>=1.24.0,<2.0.0",
         "isodate>=0.6.0",
     ],
     project_urls={
         "Bug Reports": "https://github.com/Azure/azure-sdk-for-python/issues",
-        "Source": "https://github.com/Azure/azure-sdk-python",
+        "Source": "https://github.com/Azure/azure-sdk-for-python",
     },
 )

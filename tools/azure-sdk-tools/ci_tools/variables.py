@@ -59,5 +59,14 @@ def in_ci() -> int:
     return 0
 
 
+def in_public() -> int:
+    # Returns 3 if the build originates from a pull request
+    # 0 otherwise
+    if os.getenv("BUILD_REASON") == "PullRequest" or os.getenv("GITHUB_EVENT_NAME") == "pull_request":
+        return 3
+
+    return 0
+
+
 DEV_BUILD_IDENTIFIER = os.getenv("SDK_DEV_BUILD_IDENTIFIER", "a")
 DEFAULT_BUILD_ID = os.getenv("GITHUB_RUN_ID", os.getenv("BUILD.BUILDID", os.getenv("SDK_BUILD_ID", "20220101.1")))

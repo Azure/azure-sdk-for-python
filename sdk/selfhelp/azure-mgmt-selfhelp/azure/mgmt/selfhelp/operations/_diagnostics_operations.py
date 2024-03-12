@@ -206,14 +206,15 @@ class DiagnosticsOperations:
         **kwargs: Any
     ) -> LROPoller[_models.DiagnosticResource]:
         """Creates a diagnostic for the specific resource using solutionId and requiredInputs* from
-        discovery solutions. :code:`<br/>`Diagnostics tells you precisely the root cause of the issue
-        and the steps to address it. You can get diagnostics once you discover the relevant solution
-        for your Azure issue. :code:`<br/>`:code:`<br/>` :code:`<b>Note: </b>` requiredInputs’ from
+        discovery solutions. :code:`<br/>`Diagnostics are powerful solutions that access product
+        resources or other relevant data and provide the root cause of the issue and the steps to
+        address the issue.:code:`<br/>`:code:`<br/>` :code:`<b>Note: </b>` ‘requiredInputs’ from
         Discovery solutions response must be passed via ‘additionalParameters’ as an input to
         Diagnostics API.
 
-        :param scope: This is an extension resource provider and only resource level extension is
-         supported at the moment. Required.
+        :param scope: scope = resourceUri of affected resource.:code:`<br/>` For example:
+         /subscriptions/0d0fcd2e-c4fd-4349-8497-200edb3923c6/resourcegroups/myresourceGroup/providers/Microsoft.KeyVault/vaults/test-keyvault-non-read.
+         Required.
         :type scope: str
         :param diagnostics_resource_name: Unique resource name for insight resources. Required.
         :type diagnostics_resource_name: str
@@ -248,14 +249,15 @@ class DiagnosticsOperations:
         **kwargs: Any
     ) -> LROPoller[_models.DiagnosticResource]:
         """Creates a diagnostic for the specific resource using solutionId and requiredInputs* from
-        discovery solutions. :code:`<br/>`Diagnostics tells you precisely the root cause of the issue
-        and the steps to address it. You can get diagnostics once you discover the relevant solution
-        for your Azure issue. :code:`<br/>`:code:`<br/>` :code:`<b>Note: </b>` requiredInputs’ from
+        discovery solutions. :code:`<br/>`Diagnostics are powerful solutions that access product
+        resources or other relevant data and provide the root cause of the issue and the steps to
+        address the issue.:code:`<br/>`:code:`<br/>` :code:`<b>Note: </b>` ‘requiredInputs’ from
         Discovery solutions response must be passed via ‘additionalParameters’ as an input to
         Diagnostics API.
 
-        :param scope: This is an extension resource provider and only resource level extension is
-         supported at the moment. Required.
+        :param scope: scope = resourceUri of affected resource.:code:`<br/>` For example:
+         /subscriptions/0d0fcd2e-c4fd-4349-8497-200edb3923c6/resourcegroups/myresourceGroup/providers/Microsoft.KeyVault/vaults/test-keyvault-non-read.
+         Required.
         :type scope: str
         :param diagnostics_resource_name: Unique resource name for insight resources. Required.
         :type diagnostics_resource_name: str
@@ -288,14 +290,15 @@ class DiagnosticsOperations:
         **kwargs: Any
     ) -> LROPoller[_models.DiagnosticResource]:
         """Creates a diagnostic for the specific resource using solutionId and requiredInputs* from
-        discovery solutions. :code:`<br/>`Diagnostics tells you precisely the root cause of the issue
-        and the steps to address it. You can get diagnostics once you discover the relevant solution
-        for your Azure issue. :code:`<br/>`:code:`<br/>` :code:`<b>Note: </b>` requiredInputs’ from
+        discovery solutions. :code:`<br/>`Diagnostics are powerful solutions that access product
+        resources or other relevant data and provide the root cause of the issue and the steps to
+        address the issue.:code:`<br/>`:code:`<br/>` :code:`<b>Note: </b>` ‘requiredInputs’ from
         Discovery solutions response must be passed via ‘additionalParameters’ as an input to
         Diagnostics API.
 
-        :param scope: This is an extension resource provider and only resource level extension is
-         supported at the moment. Required.
+        :param scope: scope = resourceUri of affected resource.:code:`<br/>` For example:
+         /subscriptions/0d0fcd2e-c4fd-4349-8497-200edb3923c6/resourcegroups/myresourceGroup/providers/Microsoft.KeyVault/vaults/test-keyvault-non-read.
+         Required.
         :type scope: str
         :param diagnostics_resource_name: Unique resource name for insight resources. Required.
         :type diagnostics_resource_name: str
@@ -371,8 +374,9 @@ class DiagnosticsOperations:
         """Get the diagnostics using the 'diagnosticsResourceName' you chose while creating the
         diagnostic.
 
-        :param scope: This is an extension resource provider and only resource level extension is
-         supported at the moment. Required.
+        :param scope: scope = resourceUri of affected resource.:code:`<br/>` For example:
+         /subscriptions/0d0fcd2e-c4fd-4349-8497-200edb3923c6/resourcegroups/myresourceGroup/providers/Microsoft.KeyVault/vaults/test-keyvault-non-read.
+         Required.
         :type scope: str
         :param diagnostics_resource_name: Unique resource name for insight resources. Required.
         :type diagnostics_resource_name: str

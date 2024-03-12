@@ -83,7 +83,7 @@ class EnvironmentCredential(AsyncContextManager):
             else:
                 _LOGGER.info("No environment configuration found.")
 
-    async def __aenter__(self):
+    async def __aenter__(self) -> "EnvironmentCredential":
         if self._credential:
             await self._credential.__aenter__()
         return self

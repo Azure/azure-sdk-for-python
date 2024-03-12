@@ -86,3 +86,25 @@ stages:
                 --disablecov
             env:
               GH_TOKEN: $(azuresdk-github-pat)
+
+          - task: UsePythonVersion@0
+            displayName: 'Use Python 3.11 for docs generation'
+            inputs:
+              versionSpec: '3.11'
+
+          - script: |
+              python -m pip install setuptools==58.3.0
+              python -m pip install -r eng/ci_tools.txt
+            displayName: 'Prep Environment'
+
+          - task: PythonScript@0
+            displayName: 'Generate Docs'
+            continueOnError: true
+            inputs:
+              scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
+              arguments: >-
+                ${{ parameters.BuildTargetingString }}
+                --service="${{ parameters.ServiceDirectory }}" 
+                --toxenv="strict-sphinx"
+            env:
+              GH_TOKEN: $(azuresdk-github-pat)

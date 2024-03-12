@@ -2,22 +2,17 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING
-from uuid import uuid4
+from typing import Any, Union
+from uuid import UUID, uuid4
 
+from azure.core.async_paging import AsyncItemPaged
 from azure.core.exceptions import ResourceNotFoundError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
+from .._enums import KeyVaultRoleScope
 from .._models import KeyVaultRoleAssignment, KeyVaultRoleDefinition
 from .._internal import AsyncKeyVaultClientBase
-
-if TYPE_CHECKING:
-    # pylint:disable=ungrouped-imports
-    from typing import Union
-    from uuid import UUID
-    from azure.core.async_paging import AsyncItemPaged
-    from .._enums import KeyVaultRoleScope
 
 
 class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
@@ -28,7 +23,7 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
         See https://aka.ms/azsdk/blog/vault-uri for details.
     :param credential: An object which can provide an access token for the vault, such as a credential from
         :mod:`azure.identity.aio`
-    :type credential: :class:`~azure.core.credentials_async.AsyncTokenCredential`
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
 
     :keyword api_version: Version of the service API to use. Defaults to the most recent.
     :paramtype api_version: ~azure.keyvault.administration.ApiVersion or str
@@ -40,7 +35,7 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def create_role_assignment(
-        self, scope: "Union[str, KeyVaultRoleScope]", definition_id: str, principal_id: str, **kwargs
+        self, scope: Union[str, KeyVaultRoleScope], definition_id: str, principal_id: str, **kwargs: Any
     ) -> KeyVaultRoleAssignment:
         """Create a role assignment.
 
@@ -75,7 +70,7 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def delete_role_assignment(
-        self, scope: "Union[str, KeyVaultRoleScope]", name: "Union[str, UUID]", **kwargs
+        self, scope: Union[str, KeyVaultRoleScope], name: Union[str, UUID], **kwargs: Any
     ) -> None:
         """Delete a role assignment.
 
@@ -97,7 +92,7 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def get_role_assignment(
-        self, scope: "Union[str, KeyVaultRoleScope]", name: "Union[str, UUID]", **kwargs
+        self, scope: Union[str, KeyVaultRoleScope], name: Union[str, UUID], **kwargs: Any
     ) -> KeyVaultRoleAssignment:
         """Get a role assignment.
 
@@ -117,8 +112,8 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
 
     @distributed_trace
     def list_role_assignments(
-        self, scope: "Union[str, KeyVaultRoleScope]", **kwargs
-    ) -> "AsyncItemPaged[KeyVaultRoleAssignment]":
+        self, scope: Union[str, KeyVaultRoleScope], **kwargs: Any
+    ) -> AsyncItemPaged[KeyVaultRoleAssignment]:
         """List all role assignments for a scope.
 
         :param scope: scope of the role assignments. :class:`KeyVaultRoleScope` defines common broad
@@ -137,8 +132,8 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def set_role_definition(
-        self, scope: "Union[str, KeyVaultRoleScope]", **kwargs
-    ) -> "KeyVaultRoleDefinition":
+        self, scope: Union[str, KeyVaultRoleScope], **kwargs: Any
+    ) -> KeyVaultRoleDefinition:
         """Creates or updates a custom role definition.
 
         To update a role definition, specify the definition's ``name``.
@@ -195,8 +190,8 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def get_role_definition(
-        self, scope: "Union[str, KeyVaultRoleScope]", name: "Union[str, UUID]", **kwargs
-    ) -> "KeyVaultRoleDefinition":
+        self, scope: Union[str, KeyVaultRoleScope], name: Union[str, UUID], **kwargs: Any
+    ) -> KeyVaultRoleDefinition:
         """Get the specified role definition.
 
         :param scope: scope of the role definition. :class:`KeyVaultRoleScope` defines common broad scopes.
@@ -215,7 +210,7 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def delete_role_definition(
-        self, scope: "Union[str, KeyVaultRoleScope]", name: "Union[str, UUID]", **kwargs
+        self, scope: Union[str, KeyVaultRoleScope], name: Union[str, UUID], **kwargs: Any
     ) -> None:
         """Deletes a custom role definition.
 
@@ -237,8 +232,8 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
 
     @distributed_trace
     def list_role_definitions(
-        self, scope: "Union[str, KeyVaultRoleScope]", **kwargs
-    ) -> "AsyncItemPaged[KeyVaultRoleDefinition]":
+        self, scope: Union[str, KeyVaultRoleScope], **kwargs: Any
+    ) -> AsyncItemPaged[KeyVaultRoleDefinition]:
         """List all role definitions applicable at and above a scope.
 
         :param scope: scope of the role definitions. :class:`KeyVaultRoleScope` defines common broad

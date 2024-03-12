@@ -3,7 +3,8 @@
 # Licensed under the MIT License.
 # ------------------------------------
 # pylint: disable=too-many-lines,too-many-public-methods
-from typing import TYPE_CHECKING
+from datetime import datetime
+from typing import Any, Dict, Optional, Union, List
 
 from ._generated import models
 from ._shared import parse_key_vault_id
@@ -15,10 +16,6 @@ from ._enums import(
     CertificateContentType,
     WellKnownIssuerNames
 )
-
-if TYPE_CHECKING:
-    from typing import Dict, Optional, Union, List
-    from datetime import datetime
 
 
 class AdministratorContact(object):
@@ -36,10 +33,10 @@ class AdministratorContact(object):
 
     def __init__(
         self,
-        first_name: "Optional[str]" = None,
-        last_name: "Optional[str]" = None,
-        email: "Optional[str]" = None,
-        phone: "Optional[str]" = None,
+        first_name: Optional[str] = None,
+        last_name: Optional[str] = None,
+        email: Optional[str] = None,
+        phone: Optional[str] = None,
     ) -> None:
         self._first_name = first_name
         self._last_name = last_name
@@ -63,22 +60,22 @@ class AdministratorContact(object):
         )
 
     @property
-    def email(self) -> "Optional[str]":
+    def email(self) -> Optional[str]:
         """:rtype: str or None"""
         return self._email
 
     @property
-    def first_name(self) -> "Optional[str]":
+    def first_name(self) -> Optional[str]:
         """:rtype: str or None"""
         return self._first_name
 
     @property
-    def last_name(self) -> "Optional[str]":
+    def last_name(self) -> Optional[str]:
         """:rtype: str or None"""
         return self._last_name
 
     @property
-    def phone(self) -> "Optional[str]":
+    def phone(self) -> Optional[str]:
         """:rtype: str or None"""
         return self._phone
 
@@ -131,7 +128,7 @@ class CertificateOperationError(object):
         """The error itself.
 
         :returns: The error itself.
-        :rtype: :class:`~azure.keyvault.certificates.CertificateOperationError`
+        :rtype: ~azure.keyvault.certificates.CertificateOperationError
         """
         return self._inner_error
 
@@ -139,7 +136,7 @@ class CertificateOperationError(object):
 class CertificateProperties(object):
     """Certificate properties consists of a certificates metadata."""
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         self._attributes = kwargs.pop("attributes", None)
         self._id = kwargs.pop("cert_id", None)
         self._vault_id = KeyVaultCertificateIdentifier(self._id)
@@ -147,11 +144,11 @@ class CertificateProperties(object):
         self._tags = kwargs.pop("tags", None)
 
     def __repr__(self) -> str:
-        return f"<CertificateProperties [{self.id}]>"[:1024]
+        return f"<CertificateProperties [{self._x509_thumbprint.hex().upper()}]>"[:1024]
 
     @classmethod
     def _from_certificate_item(
-        cls, certificate_item: "Union[models.CertificateItem, models.CertificateBundle]"
+        cls, certificate_item: Union[models.CertificateItem, models.CertificateBundle]
     ) -> "CertificateProperties":
         return cls(
             attributes=certificate_item.attributes,
@@ -179,7 +176,7 @@ class CertificateProperties(object):
         return self._vault_id.name
 
     @property
-    def enabled(self) -> "Optional[bool]":
+    def enabled(self) -> Optional[bool]:
         """Whether the certificate is enabled or not.
 
         :returns: True if the certificate is enabled; False otherwise.
@@ -188,7 +185,7 @@ class CertificateProperties(object):
         return self._attributes.enabled if self._attributes else None
 
     @property
-    def not_before(self) -> "Optional[datetime]":
+    def not_before(self) -> Optional[datetime]:
         """The datetime before which the certificate is not valid.
 
         :returns: A datetime representing the point in time when the certificate becomes valid.
@@ -197,7 +194,7 @@ class CertificateProperties(object):
         return self._attributes.not_before if self._attributes else None
 
     @property
-    def expires_on(self) -> "Optional[datetime]":
+    def expires_on(self) -> Optional[datetime]:
         """The datetime when the certificate expires.
 
         :returns: A datetime representing the point in time when the certificate expires.
@@ -206,7 +203,7 @@ class CertificateProperties(object):
         return self._attributes.expires if self._attributes else None
 
     @property
-    def created_on(self) -> "Optional[datetime]":
+    def created_on(self) -> Optional[datetime]:
         """The datetime when the certificate is created.
 
         :returns: A datetime representing the certificate's creation time.
@@ -215,7 +212,7 @@ class CertificateProperties(object):
         return self._attributes.created if self._attributes else None
 
     @property
-    def updated_on(self) -> "Optional[datetime]":
+    def updated_on(self) -> Optional[datetime]:
         """The datetime when the certificate was last updated.
 
         :returns: A datetime representing the time of the certificate's most recent update.
@@ -224,7 +221,7 @@ class CertificateProperties(object):
         return self._attributes.updated if self._attributes else None
 
     @property
-    def recoverable_days(self) -> "Optional[int]":
+    def recoverable_days(self) -> Optional[int]:
         """The number of days the certificate is retained before being deleted from a soft-delete enabled Key Vault.
 
         :returns: The number of days remaining where the certificate can be restored.
@@ -236,7 +233,7 @@ class CertificateProperties(object):
         return None
 
     @property
-    def recovery_level(self) -> "Optional[models.DeletionRecoveryLevel]":
+    def recovery_level(self) -> Optional[models.DeletionRecoveryLevel]:
         """The deletion recovery level currently in effect for the certificate.
 
         :returns: The deletion recovery level currently in effect for the certificate.
@@ -257,24 +254,15 @@ class CertificateProperties(object):
     def x509_thumbprint(self) -> bytes:
         """The certificate's thumbprint, in bytes.
 
+        To get the thumbprint as a hexadecimal string, call ``.hex()`` on this property.
+
         :return: The certificate's thumbprint, in bytes.
         :rtype: bytes
         """
         return self._x509_thumbprint
 
     @property
-    def x509_thumbprint_string(self) -> str:
-        """The certificate's thumbprint, as a hexadecimal string.
-
-        The thumbprint is formatted without colon delimiters; e.g. 76E1819FADF06A55EF4B126A2EF743C2BAE8A151.
-
-        :return: The certificate's thumbprint, as a hexadecimal string.
-        :rtype: str
-        """
-        return self._x509_thumbprint.hex().upper()
-
-    @property
-    def tags(self) -> "Optional[Dict[str, str]]":
+    def tags(self) -> Optional[Dict[str, str]]:
         """Application specific metadata in the form of key-value pairs.
 
         :returns: A dictionary of tags attached to the certificate.
@@ -283,7 +271,7 @@ class CertificateProperties(object):
         return self._tags
 
     @property
-    def version(self) -> "Optional[str]":
+    def version(self) -> Optional[str]:
         """The version of the certificate.
 
         :returns: The version of the certificate.
@@ -306,9 +294,9 @@ class KeyVaultCertificate(object):
     def __init__(
         self,
         policy: "Optional[CertificatePolicy]" = None,
-        properties: "Optional[CertificateProperties]" = None,
-        cer: "Optional[bytearray]" = None,
-        **kwargs,
+        properties: Optional[CertificateProperties] = None,
+        cer: Optional[bytearray] = None,
+        **kwargs: Any,
     ) -> None:
         self._properties = properties
         self._key_id = kwargs.get("key_id", None)
@@ -324,7 +312,7 @@ class KeyVaultCertificate(object):
         # pylint:disable=protected-access
 
         if certificate_bundle.policy:
-            policy: "Optional[CertificatePolicy]" = CertificatePolicy._from_certificate_policy_bundle(
+            policy: Optional[CertificatePolicy] = CertificatePolicy._from_certificate_policy_bundle(
                 certificate_bundle.policy
             )
         else:
@@ -339,7 +327,7 @@ class KeyVaultCertificate(object):
         )
 
     @property
-    def id(self) -> "Optional[str]":
+    def id(self) -> Optional[str]:
         """The certificate identifier.
 
         :returns: The certificate identifier.
@@ -348,7 +336,7 @@ class KeyVaultCertificate(object):
         return self._properties.id if self._properties else None
 
     @property
-    def name(self) -> "Optional[str]":
+    def name(self) -> Optional[str]:
         """The name of the certificate.
 
         :returns: The name of the certificate.
@@ -357,7 +345,7 @@ class KeyVaultCertificate(object):
         return self._properties.name if self._properties else None
 
     @property
-    def properties(self) -> "Optional[CertificateProperties]":
+    def properties(self) -> Optional[CertificateProperties]:
         """The certificate's properties.
 
         :returns: The certificate's properties.
@@ -366,7 +354,7 @@ class KeyVaultCertificate(object):
         return self._properties
 
     @property
-    def key_id(self) -> "Optional[str]":
+    def key_id(self) -> Optional[str]:
         """The ID of the key associated with the certificate.
 
         :returns: The ID of the key associated with the certificate.
@@ -375,7 +363,7 @@ class KeyVaultCertificate(object):
         return self._key_id
 
     @property
-    def secret_id(self) -> "Optional[str]":
+    def secret_id(self) -> Optional[str]:
         """The ID of the secret associated with the certificate.
 
         :returns: The ID of the secret associated with the certificate.
@@ -393,7 +381,7 @@ class KeyVaultCertificate(object):
         return self._policy
 
     @property
-    def cer(self) -> "Optional[bytearray]":
+    def cer(self) -> Optional[bytearray]:
         """The CER contents of the certificate.
 
         :returns: The CER contents of the certificate.
@@ -434,7 +422,7 @@ class KeyVaultCertificateIdentifier(object):
         return self._resource_id.name
 
     @property
-    def version(self) -> "Optional[str]":
+    def version(self) -> Optional[str]:
         return self._resource_id.version
 
 
@@ -470,17 +458,17 @@ class CertificateOperation(object):
 
     def __init__(
         self,
-        cert_operation_id: "Optional[str]" = None,
-        issuer_name: "Optional[Union[str, WellKnownIssuerNames]]" = None,
-        certificate_type: "Optional[str]" = None,
-        certificate_transparency: "Optional[bool]" = False,
-        csr: "Optional[bytes]" = None,
-        cancellation_requested: "Optional[bool]" = False,
-        status: "Optional[str]" = None,
-        status_details: "Optional[str]" = None,
-        error: "Optional[CertificateOperationError]" = None,
-        target: "Optional[str]" = None,
-        request_id: "Optional[str]" = None,
+        cert_operation_id: Optional[str] = None,
+        issuer_name: Optional[Union[str, WellKnownIssuerNames]] = None,
+        certificate_type: Optional[str] = None,
+        certificate_transparency: Optional[bool] = False,
+        csr: Optional[bytes] = None,
+        cancellation_requested: Optional[bool] = False,
+        status: Optional[str] = None,
+        status_details: Optional[str] = None,
+        error: Optional[CertificateOperationError] = None,
+        target: Optional[str] = None,
+        request_id: Optional[str] = None,
     ) -> None:
         self._id = cert_operation_id
         self._vault_id = parse_key_vault_id(cert_operation_id) if cert_operation_id else None
@@ -525,7 +513,7 @@ class CertificateOperation(object):
         )
 
     @property
-    def id(self) -> "Optional[str]":
+    def id(self) -> Optional[str]:
         """The certificate ID.
 
         :returns: The certificate ID.
@@ -534,7 +522,7 @@ class CertificateOperation(object):
         return self._id
 
     @property
-    def name(self) -> "Optional[str]":
+    def name(self) -> Optional[str]:
         """The certificate name.
 
         :returns: The certificate name.
@@ -543,7 +531,7 @@ class CertificateOperation(object):
         return self._vault_id.name if self._vault_id else None
 
     @property
-    def vault_url(self) -> "Optional[str]":
+    def vault_url(self) -> Optional[str]:
         """URL of the vault performing the certificate operation.
 
         :returns: URL of the vault performing the certificate operation.
@@ -552,7 +540,7 @@ class CertificateOperation(object):
         return self._vault_id.vault_url if self._vault_id else None
 
     @property
-    def issuer_name(self) -> "Union[str, WellKnownIssuerNames, None]":
+    def issuer_name(self) -> Union[str, WellKnownIssuerNames, None]:
         """The name of the certificate issuer.
 
         :returns: The name of the certificate issuer.
@@ -561,7 +549,7 @@ class CertificateOperation(object):
         return self._issuer_name
 
     @property
-    def certificate_type(self) -> "Optional[str]":
+    def certificate_type(self) -> Optional[str]:
         """Type of certificate to be requested from the issuer provider.
 
         :returns: Type of certificate to be requested from the issuer provider.
@@ -570,7 +558,7 @@ class CertificateOperation(object):
         return self._certificate_type
 
     @property
-    def certificate_transparency(self) -> "Optional[bool]":
+    def certificate_transparency(self) -> Optional[bool]:
         """Whether certificates generated under this policy should be published to certificate transparency logs.
 
         :returns: True if the certificates should be published to transparency logs; False otherwise.
@@ -579,7 +567,7 @@ class CertificateOperation(object):
         return self._certificate_transparency
 
     @property
-    def csr(self) -> "Optional[bytes]":
+    def csr(self) -> Optional[bytes]:
         """The certificate signing request that is being used in this certificate operation.
 
         :returns: The certificate signing request that is being used in this certificate operation.
@@ -588,7 +576,7 @@ class CertificateOperation(object):
         return self._csr
 
     @property
-    def cancellation_requested(self) -> "Optional[bool]":
+    def cancellation_requested(self) -> Optional[bool]:
         """Whether cancellation was requested on the certificate operation.
 
         :returns: True if cancellation was requested; False otherwise.
@@ -597,7 +585,7 @@ class CertificateOperation(object):
         return self._cancellation_requested
 
     @property
-    def status(self) -> "Optional[str]":
+    def status(self) -> Optional[str]:
         """The operation status.
 
         :returns: The operation status.
@@ -606,7 +594,7 @@ class CertificateOperation(object):
         return self._status
 
     @property
-    def status_details(self) -> "Optional[str]":
+    def status_details(self) -> Optional[str]:
         """Details of the operation status.
 
         :returns: Details of the operation status.
@@ -615,7 +603,7 @@ class CertificateOperation(object):
         return self._status_details
 
     @property
-    def error(self) -> "Optional[CertificateOperationError]":
+    def error(self) -> Optional[CertificateOperationError]:
         """Any error associated with the certificate operation.
 
         :returns: Any error associated with the operation, as a
@@ -624,7 +612,7 @@ class CertificateOperation(object):
         return self._error
 
     @property
-    def target(self) -> "Optional[str]":
+    def target(self) -> Optional[str]:
         """Location which contains the result of the certificate operation.
 
         :returns: Location which contains the result of the certificate operation.
@@ -633,7 +621,7 @@ class CertificateOperation(object):
         return self._target
 
     @property
-    def request_id(self) -> "Optional[str]":
+    def request_id(self) -> Optional[str]:
         """Identifier for the certificate operation.
 
         :returns: Identifier for the certificate operation.
@@ -694,8 +682,8 @@ class CertificatePolicy(object):
     # pylint:disable=too-many-instance-attributes
     def __init__(
         self,
-        issuer_name: "Optional[str]" = None,
-        **kwargs,
+        issuer_name: Optional[str] = None,
+        **kwargs: Any,
     ) -> None:
         self._issuer_name = issuer_name
         self._subject = kwargs.pop("subject", None)
@@ -725,7 +713,7 @@ class CertificatePolicy(object):
 
     def _to_certificate_policy_bundle(self) -> models.CertificatePolicy:
         if self.issuer_name or self.certificate_type or self.certificate_transparency:
-            issuer_parameters: "Optional[models.IssuerParameters]" = models.IssuerParameters(
+            issuer_parameters: Optional[models.IssuerParameters] = models.IssuerParameters(
                 name=self.issuer_name,
                 certificate_type=self.certificate_type,
                 certificate_transparency=self.certificate_transparency,  # 2016-10-01 model will ignore this
@@ -773,13 +761,13 @@ class CertificatePolicy(object):
             or self.validity_in_months
         ):
             if self.key_usage:
-                key_usage: "Optional[List[Union[str, KeyUsageType]]]" = [
+                key_usage: Optional[List[Union[str, KeyUsageType]]] = [
                     k.value if not isinstance(k, str) else k for k in self.key_usage
                 ]
             else:
                 key_usage = None
 
-            x509_properties: "Optional[models.X509CertificateProperties]" = models.X509CertificateProperties(
+            x509_properties: Optional[models.X509CertificateProperties] = models.X509CertificateProperties(
                 subject=self.subject,
                 ekus=self.enhanced_key_usage,
                 subject_alternative_names=models.SubjectAlternativeNames(
@@ -792,7 +780,7 @@ class CertificatePolicy(object):
             x509_properties = None
 
         if self.exportable or self.key_type or self.key_size or self.reuse_key or self.key_curve_name:
-            key_properties: "Optional[models.KeyProperties]" = models.KeyProperties(
+            key_properties: Optional[models.KeyProperties] = models.KeyProperties(
                 exportable=self.exportable,
                 key_type=self.key_type,
                 key_size=self.key_size,
@@ -803,7 +791,7 @@ class CertificatePolicy(object):
             key_properties = None
 
         if self.content_type:
-            secret_properties: "Optional[models.SecretProperties]" = models.SecretProperties(
+            secret_properties: Optional[models.SecretProperties] = models.SecretProperties(
                 content_type=self.content_type
             )
         else:
@@ -821,13 +809,13 @@ class CertificatePolicy(object):
 
     @classmethod
     def _from_certificate_policy_bundle(
-        cls, certificate_policy_bundle: "Optional[models.CertificatePolicy]"
+        cls, certificate_policy_bundle: Optional[models.CertificatePolicy]
     ) -> "CertificatePolicy":
         if certificate_policy_bundle is None:
             return cls()
 
         if certificate_policy_bundle.lifetime_actions:
-            lifetime_actions: "Optional[List[LifetimeAction]]" = [
+            lifetime_actions: Optional[List[LifetimeAction]] = [
                 LifetimeAction(
                     action=CertificatePolicyAction(item.action.action_type) if item.action else None,
                     lifetime_percentage=item.trigger.lifetime_percentage if item.trigger else None,
@@ -839,7 +827,7 @@ class CertificatePolicy(object):
             lifetime_actions = None
         x509_certificate_properties = certificate_policy_bundle.x509_certificate_properties
         if x509_certificate_properties and x509_certificate_properties.key_usage:
-            key_usage: "Optional[List[KeyUsageType]]" = [
+            key_usage: Optional[List[KeyUsageType]] = [
                 KeyUsageType(k) for k in x509_certificate_properties.key_usage
             ]
         else:
@@ -892,7 +880,7 @@ class CertificatePolicy(object):
         )
 
     @property
-    def exportable(self) -> "Optional[bool]":
+    def exportable(self) -> Optional[bool]:
         """Whether the private key can be exported.
 
         :returns: True if the private key can be exported; False otherwise.
@@ -901,7 +889,7 @@ class CertificatePolicy(object):
         return self._exportable
 
     @property
-    def key_type(self) -> "Optional[KeyType]":
+    def key_type(self) -> Optional[KeyType]:
         """The type of key pair to be used for the certificate.
 
         :returns: The type of key pair to be used for the certificate.
@@ -910,7 +898,7 @@ class CertificatePolicy(object):
         return self._key_type
 
     @property
-    def key_size(self) -> "Optional[int]":
+    def key_size(self) -> Optional[int]:
         """The key size in bits.
 
         :returns: The key size in bits.
@@ -919,7 +907,7 @@ class CertificatePolicy(object):
         return self._key_size
 
     @property
-    def reuse_key(self) -> "Optional[bool]":
+    def reuse_key(self) -> Optional[bool]:
         """Whether the same key pair will be used on certificate renewal.
 
         :returns: True if the same key pair will be used on certificate renewal; False otherwise.
@@ -928,7 +916,7 @@ class CertificatePolicy(object):
         return self._reuse_key
 
     @property
-    def key_curve_name(self) -> "Optional[KeyCurveName]":
+    def key_curve_name(self) -> Optional[KeyCurveName]:
         """Elliptic curve name.
 
         :returns: Elliptic curve name.
@@ -937,7 +925,7 @@ class CertificatePolicy(object):
         return self._key_curve_name
 
     @property
-    def enhanced_key_usage(self) -> "Optional[List[str]]":
+    def enhanced_key_usage(self) -> Optional[List[str]]:
         """The enhanced key usage.
 
         :returns: The enhanced key usage.
@@ -946,7 +934,7 @@ class CertificatePolicy(object):
         return self._enhanced_key_usage
 
     @property
-    def key_usage(self) -> "Optional[List[KeyUsageType]]":
+    def key_usage(self) -> Optional[List[KeyUsageType]]:
         """List of key usages.
 
         :returns: List of key usages.
@@ -955,7 +943,7 @@ class CertificatePolicy(object):
         return self._key_usage
 
     @property
-    def content_type(self) -> "Optional[CertificateContentType]":
+    def content_type(self) -> Optional[CertificateContentType]:
         """The media type (MIME type).
 
         :returns: The media type (MIME type).
@@ -964,7 +952,7 @@ class CertificatePolicy(object):
         return self._content_type
 
     @property
-    def subject(self) -> "Optional[str]":
+    def subject(self) -> Optional[str]:
         """The subject name of the certificate.
 
         :returns: The subject name of the certificate.
@@ -973,7 +961,7 @@ class CertificatePolicy(object):
         return self._subject
 
     @property
-    def san_emails(self) -> "Optional[List[str]]":
+    def san_emails(self) -> Optional[List[str]]:
         """The subject alternative email addresses.
 
         :returns: The subject alternative email addresses, as a list.
@@ -982,7 +970,7 @@ class CertificatePolicy(object):
         return self._san_emails
 
     @property
-    def san_dns_names(self) -> "Optional[List[str]]":
+    def san_dns_names(self) -> Optional[List[str]]:
         """The subject alternative domain names.
 
         :returns: The subject alternative domain names, as a list.
@@ -991,7 +979,7 @@ class CertificatePolicy(object):
         return self._san_dns_names
 
     @property
-    def san_user_principal_names(self) -> "Optional[List[str]]":
+    def san_user_principal_names(self) -> Optional[List[str]]:
         """The subject alternative user principal names.
 
         :returns: The subject alternative user principal names, as a list.
@@ -1000,7 +988,7 @@ class CertificatePolicy(object):
         return self._san_user_principal_names
 
     @property
-    def validity_in_months(self) -> "Optional[int]":
+    def validity_in_months(self) -> Optional[int]:
         """The duration that the certificate is valid for in months.
 
         :returns: The duration that the certificate is valid for in months.
@@ -1018,7 +1006,7 @@ class CertificatePolicy(object):
         return self._lifetime_actions
 
     @property
-    def issuer_name(self) -> "Optional[str]":
+    def issuer_name(self) -> Optional[str]:
         """Name of the referenced issuer object or reserved names for the issuer of the certificate.
 
         :returns: Name of the referenced issuer object or reserved names for the issuer of the certificate.
@@ -1027,7 +1015,7 @@ class CertificatePolicy(object):
         return self._issuer_name
 
     @property
-    def certificate_type(self) -> "Optional[str]":
+    def certificate_type(self) -> Optional[str]:
         """Type of certificate requested from the issuer provider.
 
         :returns: Type of certificate requested from the issuer provider.
@@ -1036,7 +1024,7 @@ class CertificatePolicy(object):
         return self._certificate_type
 
     @property
-    def certificate_transparency(self) -> "Optional[bool]":
+    def certificate_transparency(self) -> Optional[bool]:
         """Whether the certificates generated under this policy should be published to certificate transparency logs.
 
         :returns: True if the certificates should be published to transparency logs; False otherwise.
@@ -1045,7 +1033,7 @@ class CertificatePolicy(object):
         return self._certificate_transparency
 
     @property
-    def enabled(self) -> "Optional[bool]":
+    def enabled(self) -> Optional[bool]:
         """Whether the certificate is enabled or not.
 
         :returns: True if the certificate is enabled; False otherwise.
@@ -1054,7 +1042,7 @@ class CertificatePolicy(object):
         return self._attributes.enabled if self._attributes else None
 
     @property
-    def created_on(self) -> "Optional[datetime]":
+    def created_on(self) -> Optional[datetime]:
         """The datetime when the certificate is created.
 
         :returns: The datetime when the certificate is created.
@@ -1063,7 +1051,7 @@ class CertificatePolicy(object):
         return self._attributes.created if self._attributes else None
 
     @property
-    def updated_on(self) -> "Optional[datetime]":
+    def updated_on(self) -> Optional[datetime]:
         """The datetime when the certificate was last updated.
 
         :returns: The datetime when the certificate was last updated.
@@ -1084,7 +1072,7 @@ class CertificateContact(object):
     """
 
     def __init__(
-        self, email: "Optional[str]" = None, name: "Optional[str]" = None, phone: "Optional[str]" = None
+        self, email: Optional[str] = None, name: Optional[str] = None, phone: Optional[str] = None
     ) -> None:
         self._email = email
         self._name = name
@@ -1101,17 +1089,17 @@ class CertificateContact(object):
         return cls(email=contact_item.email_address, name=contact_item.name, phone=contact_item.phone)
 
     @property
-    def email(self) -> "Optional[str]":
+    def email(self) -> Optional[str]:
         """:rtype: str or None"""
         return self._email
 
     @property
-    def name(self) -> "Optional[str]":
+    def name(self) -> Optional[str]:
         """:rtype: str or None"""
         return self._name
 
     @property
-    def phone(self) -> "Optional[str]":
+    def phone(self) -> Optional[str]:
         """:rtype: str or None"""
         return self._phone
 
@@ -1123,7 +1111,7 @@ class IssuerProperties(object):
     :type provider: str or None
     """
 
-    def __init__(self, provider: "Optional[str]" = None, **kwargs) -> None:
+    def __init__(self, provider: Optional[str] = None, **kwargs: Any) -> None:
         self._id = kwargs.pop("issuer_id", None)
         self._vault_id = parse_key_vault_id(self._id)
         self._provider = provider
@@ -1133,12 +1121,12 @@ class IssuerProperties(object):
 
     @classmethod
     def _from_issuer_item(
-        cls, issuer_item: "Union[models.CertificateIssuerItem, models.IssuerBundle]"
+        cls, issuer_item: Union[models.CertificateIssuerItem, models.IssuerBundle]
     ) -> "IssuerProperties":
         return cls(issuer_id=issuer_item.id, provider=issuer_item.provider)
 
     @property
-    def id(self) -> "Optional[str]":
+    def id(self) -> Optional[str]:
         """The issuer ID.
 
         :returns: The issuer ID.
@@ -1147,7 +1135,7 @@ class IssuerProperties(object):
         return self._id
 
     @property
-    def name(self) -> "Optional[str]":
+    def name(self) -> Optional[str]:
         """The issuer name.
 
         :returns: The issuer name.
@@ -1157,7 +1145,7 @@ class IssuerProperties(object):
         return self._vault_id.version
 
     @property
-    def provider(self) -> "Optional[str]":
+    def provider(self) -> Optional[str]:
         """The issuer provider.
 
         :returns: The issuer provider.
@@ -1185,14 +1173,14 @@ class CertificateIssuer(object):
 
     def __init__(
         self,
-        provider: "Optional[str]",
-        attributes: "Optional[models.IssuerAttributes]" = None,
-        account_id: "Optional[str]" = None,
+        provider: Optional[str],
+        attributes: Optional[models.IssuerAttributes] = None,
+        account_id: Optional[str] = None,
         # [SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Typedef, not string.")]
-        password: "Optional[str]" = None,
-        organization_id: "Optional[str]" = None,
-        admin_contacts: "Optional[List[AdministratorContact]]" = None,
-        **kwargs,
+        password: Optional[str] = None,
+        organization_id: Optional[str] = None,
+        admin_contacts: Optional[List[AdministratorContact]] = None,
+        **kwargs: Any,
     ) -> None:
         self._provider = provider
         self._attributes = attributes
@@ -1227,7 +1215,7 @@ class CertificateIssuer(object):
         )
 
     @property
-    def id(self) -> "Optional[str]":
+    def id(self) -> Optional[str]:
         """The issuer ID.
 
         :returns: The issuer ID.
@@ -1236,7 +1224,7 @@ class CertificateIssuer(object):
         return self._id
 
     @property
-    def name(self) -> "Optional[str]":
+    def name(self) -> Optional[str]:
         """The issuer name.
 
         :returns: The issuer name.
@@ -1249,7 +1237,7 @@ class CertificateIssuer(object):
         return self._vault_id.version
 
     @property
-    def provider(self) -> "Optional[str]":
+    def provider(self) -> Optional[str]:
         """The issuer provider.
 
         :returns: The issuer provider.
@@ -1258,7 +1246,7 @@ class CertificateIssuer(object):
         return self._provider
 
     @property
-    def enabled(self) -> "Optional[bool]":
+    def enabled(self) -> Optional[bool]:
         """Whether the certificate is enabled or not.
 
         :returns: True if the certificate is enabled; False otherwise.
@@ -1267,7 +1255,7 @@ class CertificateIssuer(object):
         return self._attributes.enabled if self._attributes else None
 
     @property
-    def created_on(self) -> "Optional[datetime]":
+    def created_on(self) -> Optional[datetime]:
         """The datetime when the certificate is created.
 
         :returns: The datetime when the certificate is created.
@@ -1276,7 +1264,7 @@ class CertificateIssuer(object):
         return self._attributes.created if self._attributes else None
 
     @property
-    def updated_on(self) -> "Optional[datetime]":
+    def updated_on(self) -> Optional[datetime]:
         """The datetime when the certificate was last updated.
 
         :returns: The datetime when the certificate was last updated.
@@ -1285,7 +1273,7 @@ class CertificateIssuer(object):
         return self._attributes.updated if self._attributes else None
 
     @property
-    def account_id(self) -> "Optional[str]":
+    def account_id(self) -> Optional[str]:
         """The username / account name / account id.
 
         :returns: The username / account name / account id.
@@ -1294,7 +1282,7 @@ class CertificateIssuer(object):
         return self._account_id
 
     @property
-    def password(self) -> "Optional[str]":
+    def password(self) -> Optional[str]:
         """The password / secret / account key.
 
         :returns: The password / secret / account key.
@@ -1303,7 +1291,7 @@ class CertificateIssuer(object):
         return self._password
 
     @property
-    def organization_id(self) -> "Optional[str]":
+    def organization_id(self) -> Optional[str]:
         """The issuer organization ID.
 
         :returns: The issuer organization ID.
@@ -1312,7 +1300,7 @@ class CertificateIssuer(object):
         return self._organization_id
 
     @property
-    def admin_contacts(self) -> "Optional[List[AdministratorContact]]":
+    def admin_contacts(self) -> Optional[List[AdministratorContact]]:
         """Contact details of the organization administrator(s) of this issuer.
 
         :returns: Contact details of the organization administrator(s) of this issuer.
@@ -1336,9 +1324,9 @@ class LifetimeAction(object):
 
     def __init__(
         self,
-        action: "Union[str, CertificatePolicyAction, None]",
-        lifetime_percentage: "Optional[int]" = None,
-        days_before_expiry: "Optional[int]" = None,
+        action: Union[str, CertificatePolicyAction, None],
+        lifetime_percentage: Optional[int] = None,
+        days_before_expiry: Optional[int] = None,
     ) -> None:
         self._lifetime_percentage = lifetime_percentage
         self._days_before_expiry = days_before_expiry
@@ -1352,7 +1340,7 @@ class LifetimeAction(object):
         return result[:1024]
 
     @property
-    def lifetime_percentage(self) -> "Optional[int]":
+    def lifetime_percentage(self) -> Optional[int]:
         """Percentage of lifetime at which to trigger.
 
         :returns: Percentage of lifetime at which to trigger.
@@ -1361,7 +1349,7 @@ class LifetimeAction(object):
         return self._lifetime_percentage
 
     @property
-    def days_before_expiry(self) -> "Optional[int]":
+    def days_before_expiry(self) -> Optional[int]:
         """Days before expiry to attempt renewal.
 
         :returns: Days before expiry to attempt renewal.
@@ -1370,7 +1358,7 @@ class LifetimeAction(object):
         return self._days_before_expiry
 
     @property
-    def action(self) -> "Union[str, CertificatePolicyAction, None]":
+    def action(self) -> Union[str, CertificatePolicyAction, None]:
         """The type of action that will be executed; see :class:`~azure.keyvault.certificates.CertificatePolicyAction`.
 
         :returns: The type of action that will be executed; see
@@ -1400,10 +1388,10 @@ class DeletedCertificate(KeyVaultCertificate):
 
     def __init__(
         self,
-        properties: "Optional[CertificateProperties]" = None,
-        policy: "Optional[CertificatePolicy]" = None,
-        cer: "Optional[bytearray]" = None,
-        **kwargs,
+        properties: Optional[CertificateProperties] = None,
+        policy: Optional[CertificatePolicy] = None,
+        cer: Optional[bytearray] = None,
+        **kwargs: Any,
     ) -> None:
         super(DeletedCertificate, self).__init__(properties=properties, policy=policy, cer=cer, **kwargs)
         self._deleted_on = kwargs.get("deleted_on", None)
@@ -1447,7 +1435,7 @@ class DeletedCertificate(KeyVaultCertificate):
         )
 
     @property
-    def deleted_on(self) -> "Optional[datetime]":
+    def deleted_on(self) -> Optional[datetime]:
         """The datetime when the certificate was deleted.
 
         :returns: The datetime when the certificate was deleted.
@@ -1456,7 +1444,7 @@ class DeletedCertificate(KeyVaultCertificate):
         return self._deleted_on
 
     @property
-    def recovery_id(self) -> "Optional[str]":
+    def recovery_id(self) -> Optional[str]:
         """The URL of the recovery object, used to identify and recover the deleted certificate.
 
         :returns: The URL of the recovery object, used to identify and recover the deleted certificate.
@@ -1465,7 +1453,7 @@ class DeletedCertificate(KeyVaultCertificate):
         return self._recovery_id
 
     @property
-    def scheduled_purge_date(self) -> "Optional[datetime]":
+    def scheduled_purge_date(self) -> Optional[datetime]:
         """The datetime when the certificate is scheduled to be purged.
 
         :returns: The datetime when the certificate is scheduled to be purged.

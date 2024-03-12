@@ -57,10 +57,16 @@ class CustomSpanProcessor(BatchSpanProcessor):
         for regex in self.EXCLUDED_SPAN_NAMES:
             if re.match(regex, span.name):
                 return
-        if "http.url" in span.attributes:
-            for regex in self.EXCLUDED_SPAN_URLS:
-                if re.match(regex, span.attributes["http.url"]):
-                    return
+        if span.attributes:
+            if "url.full" in span.attributes:
+                for regex in self.EXCLUDED_SPAN_URLS:
+                    if isinstance(span.attributes["url.full"], str) and re.match(regex, span.attributes["url.full"]):
+                        return
+            # Check for the older attribute name as well.
+            if "http.url" in span.attributes:
+                for regex in self.EXCLUDED_SPAN_URLS:
+                    if isinstance(span.attributes["http.url"], str) and re.match(regex, span.attributes["http.url"]):
+                        return
         super().on_end(span)
 
 

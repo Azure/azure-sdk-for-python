@@ -11,11 +11,11 @@ from langchain.vectorstores.base import VectorStore
 logger = get_logger(__name__)
 
 
-def azureml_faiss_as_langchain_faiss(faissanddocstore: FaissAndDocStore) -> VectorStore:
+def azureml_faiss_as_langchain_faiss(faiss_and_docstore: FaissAndDocStore) -> VectorStore:
     """Convert an AzureML FaissAndDocStore to a langchain FAISS VectorStore."""
     return FAISS(
-        faissanddocstore.query_embed,
-        faissanddocstore.index,
-        FileBasedDocStore(faissanddocstore.docstore),
-        {int(k): v for (k, v) in faissanddocstore.index_to_doc_id.items()}
+        faiss_and_docstore.query_embed,
+        faiss_and_docstore.index,
+        FileBasedDocStore(faiss_and_docstore.docstore),
+        {int(k): v for (k, v) in faiss_and_docstore.index_to_doc_id.items()}
     )

@@ -28,7 +28,7 @@ license-header: MICROSOFT_MIT_NO_VERSION
 python: true
 title: WebPubSubServiceClient
 head-as-boolean: true
-package-version: 1.1.0b1
+package-version: 1.1.0
 add-credential: true
 credential-scopes: https://webpubsub.azure.com/.default
 package-mode: dataplane
@@ -67,6 +67,10 @@ directive:
     where: $["paths"]["/api/hubs/{hub}/:generateToken"].post.parameters
     transform: >
         $[2]["x-ms-client-name"] = "roles"
+  - from: swagger-document
+    where: $["paths"]["/api/hubs/{hub}/:generateToken"].post.parameters
+    transform: >
+        $[5]["x-ms-client-name"] = "groups"
 ```
 
 ```yaml

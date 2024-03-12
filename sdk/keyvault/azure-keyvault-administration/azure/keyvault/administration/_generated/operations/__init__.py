@@ -6,9 +6,9 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._key_vault_client_operations import KeyVaultClientOperationsMixin
-from ._role_definitions_operations import RoleDefinitionsOperations
-from ._role_assignments_operations import RoleAssignmentsOperations
+from ._operations import KeyVaultClientOperationsMixin
+from ._operations import RoleDefinitionsOperations
+from ._operations import RoleAssignmentsOperations
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import

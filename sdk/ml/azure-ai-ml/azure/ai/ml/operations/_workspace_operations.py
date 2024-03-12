@@ -4,42 +4,43 @@
 
 # pylint: disable=protected-access
 
-from typing import Dict, Iterable, Optional
+from typing import Any, Dict, Iterable, Optional, cast
 
 from marshmallow import ValidationError
 
-from azure.core.exceptions import HttpResponseError
-from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningServices as ServiceClient082023Preview
+from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWorkspaces as ServiceClient082023Preview
 from azure.ai.ml._restclient.v2023_08_01_preview.models import ManagedNetworkProvisionOptions
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
-from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils._http_utils import HttpPipeline
+from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils.utils import (
+    _get_workspace_base_url,
     get_resource_and_group_name_from_resource_id,
     get_resource_group_name_from_resource_group_id,
-    _get_workspace_base_url,
     modified_operation_client,
 )
-from azure.ai.ml.constants._common import Scope, AzureMLResourceType
+from azure.ai.ml.constants._common import AzureMLResourceType, Scope
 from azure.ai.ml.entities import (
     DiagnoseRequestProperties,
     DiagnoseResponseResult,
     DiagnoseResponseResultValue,
     DiagnoseWorkspaceParameters,
+    ManagedNetworkProvisionStatus,
     Workspace,
     WorkspaceKeys,
-    ManagedNetworkProvisionStatus,
 )
 from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._workspace_hub._constants import PROJECT_WORKSPACE_KIND
 from azure.core.credentials import TokenCredential
+from azure.core.exceptions import HttpResponseError
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
+
 from ._workspace_operations_base import WorkspaceOperationsBase
 
 ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
+module_logger = ops_logger.module_logger
 
 
 class WorkspaceOperations(WorkspaceOperationsBase):
@@ -55,10 +56,12 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         service_client: ServiceClient082023Preview,
         all_operations: OperationsContainer,
         credentials: Optional[TokenCredential] = None,
-        **kwargs: Dict,
+        **kwargs: Any,
     ):
-        self.dataplane_workspace_operations = kwargs.pop("dataplane_client").workspaces
-        self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
+        self.dataplane_workspace_operations = (
+            kwargs.pop("dataplane_client").workspaces if kwargs.get("dataplane_client") else None
+        )
+        self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline", None)
         ops_logger.update_info(kwargs)
         self._provision_network_operation = service_client.managed_network_provisions
         super().__init__(
@@ -69,7 +72,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
             **kwargs,
         )
 
-    @monitor_with_activity(logger, "Workspace.List", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Workspace.List", ActivityType.PUBLICAPI)
     def list(self, *, scope: str = Scope.RESOURCE_GROUP) -> Iterable[Workspace]:
         """List all Workspaces that the user has access to in the current resource group or subscription.
 
@@ -89,18 +92,24 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         """
 
         if scope == Scope.SUBSCRIPTION:
-            return self._operation.list_by_subscription(
-                cls=lambda objs: [Workspace._from_rest_object(obj) for obj in objs]
+            return cast(
+                Iterable[Workspace],
+                self._operation.list_by_subscription(
+                    cls=lambda objs: [Workspace._from_rest_object(obj) for obj in objs]
+                ),
             )
-        return self._operation.list_by_resource_group(
-            self._resource_group_name,
-            cls=lambda objs: [Workspace._from_rest_object(obj) for obj in objs],
+        return cast(
+            Iterable[Workspace],
+            self._operation.list_by_resource_group(
+                self._resource_group_name,
+                cls=lambda objs: [Workspace._from_rest_object(obj) for obj in objs],
+            ),
         )
 
-    @monitor_with_activity(logger, "Workspace.Get", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Workspace.Get", ActivityType.PUBLICAPI)
     @distributed_trace
     # pylint: disable=arguments-renamed
-    def get(self, name: Optional[str] = None, **kwargs: Dict) -> Workspace:
+    def get(self, name: Optional[str] = None, **kwargs: Dict) -> Optional[Workspace]:
         """Get a Workspace by name.
 
         :param name: Name of the workspace.
@@ -120,10 +129,10 @@ class WorkspaceOperations(WorkspaceOperationsBase):
 
         return super().get(workspace_name=name, **kwargs)
 
-    @monitor_with_activity(logger, "Workspace.Get_Keys", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Workspace.Get_Keys", ActivityType.PUBLICAPI)
     @distributed_trace
     # pylint: disable=arguments-differ
-    def get_keys(self, name: Optional[str] = None) -> WorkspaceKeys:
+    def get_keys(self, name: Optional[str] = None) -> Optional[WorkspaceKeys]:
         """Get WorkspaceKeys by workspace name.
 
         :param name: Name of the workspace.
@@ -144,7 +153,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         obj = self._operation.list_keys(self._resource_group_name, workspace_name)
         return WorkspaceKeys._from_rest_object(obj)
 
-    @monitor_with_activity(logger, "Workspace.BeginSyncKeys", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Workspace.BeginSyncKeys", ActivityType.PUBLICAPI)
     @distributed_trace
     def begin_sync_keys(self, name: Optional[str] = None) -> LROPoller[None]:
         """Triggers the workspace to immediately synchronize keys. If keys for any resource in the workspace are
@@ -169,14 +178,14 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         workspace_name = self._check_workspace_name(name)
         return self._operation.begin_resync_keys(self._resource_group_name, workspace_name)
 
-    @monitor_with_activity(logger, "Workspace.BeginProvisionNetwork", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Workspace.BeginProvisionNetwork", ActivityType.PUBLICAPI)
     @distributed_trace
     def begin_provision_network(
         self,
         *,
         workspace_name: Optional[str] = None,
         include_spark: bool = False,
-        **kwargs,
+        **kwargs: Any,
     ) -> LROPoller[ManagedNetworkProvisionStatus]:
         """Triggers the workspace to provision the managed network. Specifying spark enabled
         as true prepares the workspace managed network for supporting Spark.
@@ -210,14 +219,14 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         module_logger.info("Provision network request initiated for workspace: %s\n", workspace_name)
         return poller
 
-    @monitor_with_activity(logger, "Workspace.BeginCreate", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Workspace.BeginCreate", ActivityType.PUBLICAPI)
     @distributed_trace
     # pylint: disable=arguments-differ
     def begin_create(
         self,
         workspace: Workspace,
         update_dependent_resources: bool = False,
-        **kwargs: Dict,
+        **kwargs: Any,
     ) -> LROPoller[Workspace]:
         """Create a new Azure Machine Learning Workspace.
 
@@ -260,14 +269,14 @@ class WorkspaceOperations(WorkspaceOperationsBase):
                     return self._begin_join(workspace, **kwargs)
             raise error
 
-    @monitor_with_activity(logger, "Workspace.BeginUpdate", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Workspace.BeginUpdate", ActivityType.PUBLICAPI)
     @distributed_trace
     def begin_update(
         self,
         workspace: Workspace,
         *,
         update_dependent_resources: bool = False,
-        **kwargs: Dict,
+        **kwargs: Any,
     ) -> LROPoller[Workspace]:
         """Updates a Azure Machine Learning Workspace.
 
@@ -289,7 +298,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         """
         return super().begin_update(workspace, update_dependent_resources=update_dependent_resources, **kwargs)
 
-    @monitor_with_activity(logger, "Workspace.BeginDelete", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Workspace.BeginDelete", ActivityType.PUBLICAPI)
     @distributed_trace
     def begin_delete(
         self, name: str, *, delete_dependent_resources: bool, permanently_delete: bool = False, **kwargs: Dict
@@ -322,7 +331,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         )
 
     @distributed_trace
-    @monitor_with_activity(logger, "Workspace.BeginDiagnose", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Workspace.BeginDiagnose", ActivityType.PUBLICAPI)
     def begin_diagnose(self, name: str, **kwargs: Dict) -> LROPoller[DiagnoseResponseResultValue]:
         """Diagnose workspace setup problems.
 
@@ -349,7 +358,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         parameters = DiagnoseWorkspaceParameters(value=DiagnoseRequestProperties())._to_rest_object()
 
         # pylint: disable=unused-argument, docstring-missing-param
-        def callback(_, deserialized, args):
+        def callback(_: Any, deserialized: Any, args: Any) -> Optional[DiagnoseResponseResultValue]:
             """Callback to be called after completion
 
             :return: DiagnoseResponseResult deserialized.
@@ -395,7 +404,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         workspace_base_uri = _get_workspace_base_url(workspace_operations, workspace_hub_name, self._requests_pipeline)
 
         # pylint:disable=unused-argument
-        def callback(_, deserialized, args):
+        def callback(_: Any, deserialized: Any, args: Any) -> Optional[Workspace]:
             return Workspace._from_rest_object(deserialized)
 
         with modified_operation_client(self.dataplane_workspace_operations, workspace_base_uri):

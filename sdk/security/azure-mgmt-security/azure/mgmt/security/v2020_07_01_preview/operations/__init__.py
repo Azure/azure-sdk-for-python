@@ -6,18 +6,18 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from ._sql_vulnerability_assessment_baseline_rules_operations import SqlVulnerabilityAssessmentBaselineRulesOperations
 from ._sql_vulnerability_assessment_scans_operations import SqlVulnerabilityAssessmentScansOperations
 from ._sql_vulnerability_assessment_scan_results_operations import SqlVulnerabilityAssessmentScanResultsOperations
-from ._sql_vulnerability_assessment_baseline_rules_operations import SqlVulnerabilityAssessmentBaselineRulesOperations
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "SqlVulnerabilityAssessmentBaselineRulesOperations",
     "SqlVulnerabilityAssessmentScansOperations",
     "SqlVulnerabilityAssessmentScanResultsOperations",
-    "SqlVulnerabilityAssessmentBaselineRulesOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

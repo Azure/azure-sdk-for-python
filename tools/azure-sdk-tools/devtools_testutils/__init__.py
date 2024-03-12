@@ -1,7 +1,7 @@
-from .mgmt_testcase import AzureMgmtTestCase, AzureMgmtPreparer
+from .mgmt_testcase import AzureMgmtPreparer
 from .mgmt_recorded_testcase import AzureMgmtRecordedTestCase
 from .azure_recorded_testcase import AzureRecordedTestCase
-from .azure_testcase import AzureTestCase, is_live, get_region_override
+from .azure_testcase import is_live, get_region_override
 from .resource_testcase import (
     FakeResource,
     ResourceGroupPreparer,
@@ -72,7 +72,6 @@ __all__ = [
     "add_uri_regex_sanitizer",
     "add_uri_string_sanitizer",
     "add_uri_subscription_id_sanitizer",
-    "AzureMgmtTestCase",
     "AzureMgmtPreparer",
     "AzureMgmtRecordedTestCase",
     "AzureRecordedTestCase",
@@ -84,7 +83,6 @@ __all__ = [
     "BlobAccountPreparer",
     "CachedStorageAccountPreparer",
     "FakeStorageAccount",
-    "AzureTestCase",
     "is_live",
     "get_region_override",
     "RandomNameResourceGroupPreparer",

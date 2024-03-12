@@ -36,7 +36,7 @@ pip install azure-servicebus
 To use this package, you must have:
 * Azure subscription - [Create a free account][azure_sub]
 * Azure Service Bus - [Namespace and management credentials][service_bus_namespace]
-* Python 3.7 or later - [Install Python][python]
+* Python 3.8 or later - [Install Python][python]
 
 
 If you need an Azure service bus namespace, you can create it via the [Azure Portal][azure_namespace_creation].
@@ -388,19 +388,22 @@ It would also manifest when trying to take action (such as completing a message)
 ### Logging
 
 - Enable `azure.servicebus` logger to collect traces from the library.
-- Enable `uamqp` logger to collect traces from the underlying uAMQP library.
 - Enable AMQP frame level trace by setting `logging_enable=True` when creating the client.
-- There may be cases where you consider the `uamqp` logging to be too verbose. To suppress unnecessary logging, add the following snippet to the top of your code:
+
 ```python
 import logging
+import sys
 
-# The logging levels below may need to be changed based on the logging that you want to suppress.
-uamqp_logger = logging.getLogger('uamqp')
-uamqp_logger.setLevel(logging.ERROR)
+handler = logging.StreamHandler(stream=sys.stdout)
+logger = logging.getLogger('azure.servicebus')
+logger.setLevel(logging.DEBUG)
+logger.addHandler(handler)
 
-# or even further fine-grained control, suppressing the warnings in uamqp.connection module
-uamqp_connection_logger = logging.getLogger('uamqp.connection')
-uamqp_connection_logger.setLevel(logging.ERROR)
+...
+
+from azure.servicebus import ServiceBusClient
+
+client = ServiceBusClient(..., logging_enable=True)
 ```
 
 ### Timeouts
@@ -505,6 +508,34 @@ client = ServiceBusClient.from_connection_string(
 
 Note: The `message` attribute on `ServiceBusMessage`/`ServiceBusMessageBatch`/`ServiceBusReceivedMessage`, which previously exposed the `uamqp.Message`, has been deprecated.
  The "Legacy" objects returned by `message` attribute have been introduced to help facilitate the transition.
+
+To enable the `uamqp` logger to collect traces from the underlying uAMQP library:
+```python
+import logging
+
+uamqp_logger = logging.getLogger('uamqp')
+uamqp_logger.setLevel(logging.DEBUG)
+uamqp_logger.addHandler(handler)
+
+...
+
+from azure.servicebus import ServiceBusClient
+
+client = ServiceBusClient(..., logging_enable=True)
+```
+
+There may be cases where you consider the `uamqp` logging to be too verbose. To suppress unnecessary logging, add the following snippet to the top of your code:
+```python
+import logging
+
+# The logging levels below may need to be changed based on the logging that you want to suppress.
+uamqp_logger = logging.getLogger('uamqp')
+uamqp_logger.setLevel(logging.ERROR)
+
+# or even further fine-grained control, suppressing the warnings in uamqp.connection module
+uamqp_connection_logger = logging.getLogger('uamqp.connection')
+uamqp_connection_logger.setLevel(logging.ERROR)
+```
 
 ### Building uAMQP wheel from source
 

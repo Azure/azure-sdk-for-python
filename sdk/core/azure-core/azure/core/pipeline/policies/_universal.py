@@ -35,7 +35,7 @@ import xml.etree.ElementTree as ET
 import types
 import re
 import uuid
-from typing import IO, cast, Union, Optional, AnyStr, Dict, Any, Set, Mapping
+from typing import IO, cast, Union, Optional, AnyStr, Dict, Any, Set, MutableMapping
 import urllib.parse
 
 from azure.core import __version__ as azcore_version
@@ -727,7 +727,7 @@ class ProxyPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
     Dictionary mapping protocol or protocol and host to the URL of the proxy
     to be used on each Request.
 
-    :param dict proxies: Maps protocol or protocol and hostname to the URL
+    :param MutableMapping proxies: Maps protocol or protocol and hostname to the URL
      of the proxy.
 
     .. admonition:: Example:
@@ -741,7 +741,7 @@ class ProxyPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
     """
 
     def __init__(
-        self, proxies: Optional[Mapping[str, str]] = None, **kwargs: Any
+        self, proxies: Optional[MutableMapping[str, str]] = None, **kwargs: Any
     ):  # pylint: disable=unused-argument,super-init-not-called
         self.proxies = proxies
 

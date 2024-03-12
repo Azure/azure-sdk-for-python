@@ -64,8 +64,8 @@ if TYPE_CHECKING:
             BatchMessage,
         )
     except ImportError:
-        Message = None
-        BatchMessage = None
+        pass
+
     from ._transport._base import AmqpTransport
 
 MessageContent = TypedDict("MessageContent", {"content": bytes, "content_type": str})
@@ -76,8 +76,8 @@ PrimitiveTypes = Optional[
         bytes,
         bool,
         str,
-        Dict,
-        List,
+        Dict[str, Any],
+        List[Any],
         uuid.UUID,
     ]
 ]
@@ -104,7 +104,7 @@ _SYS_PROP_KEYS_TO_MSG_PROPERTIES = (
 )
 
 
-class EventData(object):
+class EventData:
     """The EventData class is a container for event content.
 
     :param body: The data to send in a single message. body can be type of str or bytes.
@@ -125,8 +125,8 @@ class EventData(object):
         self,
         body: Optional[Union[str, bytes, List[AnyStr]]] = None,
     ) -> None:
-        self._last_enqueued_event_properties = {}  # type: Dict[str, Any]
-        self._sys_properties = None  # type: Optional[Dict[bytes, Any]]
+        self._last_enqueued_event_properties: Dict[str, Any] = {}
+        self._sys_properties: Optional[Dict[bytes, Any]] = None
         if body is None:
             raise ValueError("EventData cannot be None.")
 
@@ -348,12 +348,12 @@ class EventData(object):
         return self._raw_amqp_message.application_properties
 
     @properties.setter
-    def properties(self, value: Dict[Union[str, bytes], Any]):
+    def properties(self, value: Dict[Union[str, bytes], Any]) -> None:
         """Application-defined properties on the event.
 
         :param dict[str, any] or dict[bytes, any] value: The application properties for the EventData.
         """
-        properties = None if value is None else dict(value)
+        properties = None if value is None else value
         self._raw_amqp_message.application_properties = properties
 
     @property
@@ -520,7 +520,7 @@ class EventData(object):
         self._raw_amqp_message.properties.message_id = value
 
 
-class EventDataBatch(object):
+class EventDataBatch:
     """A batch of events.
 
     Sending events in a batch is more performant than sending individual events.
@@ -550,7 +550,7 @@ class EventDataBatch(object):
         max_size_in_bytes: Optional[int] = None,
         partition_id: Optional[str] = None,
         partition_key: Optional[Union[str, bytes]] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         self._amqp_transport = kwargs.pop("amqp_transport", PyamqpTransport)
         self._tracing_attributes: Dict[str, Union[str, int]] = kwargs.pop("tracing_attributes", {})
@@ -571,7 +571,7 @@ class EventDataBatch(object):
             self._message, self._partition_key
         )
         self._size = self._amqp_transport.get_batch_message_encoded_size(self._message)
-        self.max_size_in_bytes = (
+        self.max_size_in_bytes: int = (
             max_size_in_bytes or self._amqp_transport.MAX_MESSAGE_LENGTH_BYTES
         )
 

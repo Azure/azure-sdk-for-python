@@ -19,7 +19,7 @@ from .._pyamqp import (
 from .._pyamqp.message import Message, BatchMessage, Header, Properties
 from .._pyamqp.authentication import JWTTokenAuth
 from .._pyamqp.endpoints import Source, ApacheFilters
-from .._pyamqp._connection import Connection, _CLOSING_STATES
+from .._pyamqp._connection import Connection, ConnectionState, _CLOSING_STATES
 
 from ._base import AmqpTransport
 from .._constants import (
@@ -54,7 +54,12 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         constants.MAX_FRAME_SIZE_BYTES
     )  # TODO: define actual value in pyamqp
     TIMEOUT_FACTOR = 1
-    CONNECTION_CLOSING_STATES: Tuple = _CLOSING_STATES
+    CONNECTION_CLOSING_STATES: Tuple[
+        ConnectionState,
+        ConnectionState,
+        ConnectionState,
+        ConnectionState,
+        Optional[ConnectionState]] = _CLOSING_STATES
     TRANSPORT_IDENTIFIER = f"{PYAMQP_LIBRARY}/{__version__}"
 
     # define symbols
@@ -335,11 +340,14 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             raise OperationTimeoutError(message=str(exc), details=exc) from exc
 
     @staticmethod
-    def set_message_partition_key(message, partition_key, **kwargs):
-        # type: (Message, Optional[Union[bytes, str]], Any) -> Message
+    def set_message_partition_key(
+        message: Message,
+        partition_key: Optional[Union[str, bytes]],
+        **kwargs: Any
+    ) -> Message:
         """Set the partition key as an annotation on a uamqp message.
         :param ~pyamqp.message.Message message: The message to update.
-        :param str partition_key: The partition key value.
+        :param str or bytes or None partition_key: The partition key value.
         :return: The message with the partition key annotation.
         :rtype: ~pyamqp.message.Message
         """
@@ -668,7 +676,8 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         #     raise error
         elif isinstance(exception, errors.MessageException):
             _LOGGER.info("%r Event data send error (%r)", name, exception)
-            error = EventDataSendError(str(exception), exception)
+            # TODO: issue #34266
+            error = EventDataSendError(str(exception), exception)   # type: ignore[arg-type]
             raise error
         else:
             if isinstance(exception, errors.AuthenticationException):

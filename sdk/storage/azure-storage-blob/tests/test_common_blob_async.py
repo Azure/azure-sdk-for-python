@@ -43,12 +43,12 @@ from azure.storage.blob import (
     RehydratePriority,
     ResourceTypes,
     RetentionPolicy,
+    Services,
     StandardBlobTier,
     StorageErrorCode,
     generate_account_sas,
     generate_container_sas,
     generate_blob_sas)
-
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import BlobPreparer
@@ -2316,6 +2316,25 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         assert self.container_name == container_properties.name
 
     @BlobPreparer()
+    async def test_multiple_services_sas(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Act
+        token = self.generate_sas(
+            generate_account_sas,
+            storage_account_name,
+            storage_account_key,
+            ResourceTypes(container=True, object=True, service=True),
+            AccountSasPermissions(read=True, list=True),
+            datetime.utcnow() + timedelta(hours=1),
+            services=Services(blob=True, fileshare=True)
+        )
+
+        # Assert
+        assert 'ss=bf' in token
+
+    @BlobPreparer()
     @recorded_by_proxy_async
     async def test_azure_named_key_credential_access(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
@@ -3260,4 +3279,25 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         response = await blob.exists()
         assert response is not None
 
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    async def test_oauth_error_handling(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+
+        # Arrange
+        from azure.identity.aio import ClientSecretCredential
+
+        # Generate an invalid credential
+        creds = ClientSecretCredential(
+            self.get_settings_value("TENANT_ID"),
+            self.get_settings_value("CLIENT_ID"),
+            self.get_settings_value("CLIENT_SECRET") + 'a'
+        )
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=creds, retry_total=0)
+        container = bsc.get_container_client('testing')
+
+        # Act
+        with pytest.raises(ClientAuthenticationError):
+            await container.exists()
 # ------------------------------------------------------------------------------

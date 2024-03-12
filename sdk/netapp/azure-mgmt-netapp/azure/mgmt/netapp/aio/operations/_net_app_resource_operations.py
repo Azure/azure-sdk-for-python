@@ -72,7 +72,7 @@ class NetAppResourceOperations:
 
         Check if a resource name is available.
 
-        :param location: The name of Azure region. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param name: Resource name to verify. Required.
         :type name: str
@@ -149,7 +149,7 @@ class NetAppResourceOperations:
 
         Check if a file path is available.
 
-        :param location: The name of Azure region. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param name: File path to verify. Required.
         :type name: str
@@ -227,7 +227,7 @@ class NetAppResourceOperations:
 
         Check if a quota is available.
 
-        :param location: The name of Azure region. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param name: Name of the resource to verify. Required.
         :type name: str
@@ -302,7 +302,7 @@ class NetAppResourceOperations:
 
         Provides storage to network proximity and logical zone mapping information.
 
-        :param location: The name of Azure region. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RegionInfo or the result of cls(response)
@@ -364,7 +364,7 @@ class NetAppResourceOperations:
 
         Get details of the specified network sibling set.
 
-        :param location: The name of Azure region. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param network_sibling_set_id: Network Sibling Set ID for a group of volumes sharing networking
          resources in a subnet. Required.
@@ -523,7 +523,7 @@ class NetAppResourceOperations:
 
         Update the network features of the specified network sibling set.
 
-        :param location: The name of Azure region. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param network_sibling_set_id: Network Sibling Set ID for a group of volumes sharing networking
          resources in a subnet. Required.
@@ -536,8 +536,8 @@ class NetAppResourceOperations:
         :param network_sibling_set_state_id: Network sibling set state Id identifying the current state
          of the sibling set. Required.
         :type network_sibling_set_state_id: str
-        :param network_features: Network features available to the volume, some such. Known values are:
-         "Basic", "Standard", "Basic_Standard", and "Standard_Basic". Default value is "Basic".
+        :param network_features: Network features available to the volume. Known values are: "Basic",
+         "Standard", "Basic_Standard", and "Standard_Basic". Default value is "Basic".
         :type network_features: str or ~azure.mgmt.netapp.models.NetworkFeatures
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.

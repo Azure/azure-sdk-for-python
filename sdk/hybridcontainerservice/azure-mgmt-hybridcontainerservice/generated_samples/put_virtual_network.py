@@ -41,7 +41,9 @@ def main():
             "properties": {
                 "dnsServers": ["192.168.0.1"],
                 "gateway": "192.168.0.1",
-                "infraVnetProfile": {"vmware": {"segmentName": "test-network"}},
+                "infraVnetProfile": {
+                    "hci": {"mocGroup": "target-group", "mocLocation": "MocLocation", "mocVnetName": "vnet1"}
+                },
                 "ipAddressPrefix": "192.168.0.0/16",
                 "vipPool": [{"endIP": "192.168.0.50", "startIP": "192.168.0.10"}],
                 "vlanID": 10,
@@ -52,6 +54,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/hybridaks/resource-manager/Microsoft.HybridContainerService/preview/2023-11-15-preview/examples/PutVirtualNetwork.json
+# x-ms-original-file: specification/hybridaks/resource-manager/Microsoft.HybridContainerService/stable/2024-01-01/examples/PutVirtualNetwork.json
 if __name__ == "__main__":
     main()

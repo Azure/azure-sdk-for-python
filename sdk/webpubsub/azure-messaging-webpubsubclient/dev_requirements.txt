@@ -3,4 +3,4 @@
 ../../core/azure-core
 ../../identity/azure-identity
 aiohttp
--e ../azure-messaging-webpubsubservice
+azure-messaging-webpubsubservice==1.1.0b1

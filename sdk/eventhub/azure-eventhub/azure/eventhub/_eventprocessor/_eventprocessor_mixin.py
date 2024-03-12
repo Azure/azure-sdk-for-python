@@ -29,17 +29,17 @@ if TYPE_CHECKING:
     )
 
 
-class EventProcessorMixin(object):
+class EventProcessorMixin:
 
     _eventhub_client: Optional[Union[EventHubConsumerClient, EventHubConsumerClientAsync]] = None
-    _consumer_group = ""  # type: str
-    _owner_level = None  # type: Optional[int]
-    _prefetch = None  # type: Optional[int]
-    _track_last_enqueued_event_properties = False  # type: bool
-    _initial_event_position_inclusive = {}  # type: Union[bool, Dict[str, bool]]
-    _initial_event_position = (
+    _consumer_group: str = ""
+    _owner_level: Optional[int] = None
+    _prefetch: Optional[int] = None
+    _track_last_enqueued_event_properties: bool = False
+    _initial_event_position_inclusive: Union[bool, Dict[str, bool]] = {}
+    _initial_event_position: Union[int, str, datetime, Dict[str, Union[int, str, datetime]]] = (
         {}
-    )  # type: Union[int, str, datetime, Dict[str, Union[int, str, datetime]]]
+    )
 
     def get_init_event_position(
         self,
@@ -56,7 +56,7 @@ class EventProcessorMixin(object):
         elif isinstance(self._initial_event_position_inclusive, bool):
             event_position_inclusive = self._initial_event_position_inclusive
 
-        event_position = "-1"  # type: Union[int, str, datetime]
+        event_position: Union[str, int, datetime] = "-1"
         if checkpoint_offset:
             event_position = checkpoint_offset
         elif isinstance(self._initial_event_position, dict):

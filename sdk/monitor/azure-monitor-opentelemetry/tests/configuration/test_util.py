@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from os import environ
 from unittest import TestCase
 from unittest.mock import patch
 
@@ -27,12 +28,21 @@ from opentelemetry.environment_variables import (
     OTEL_METRICS_EXPORTER,
     OTEL_TRACES_EXPORTER,
 )
+from opentelemetry.sdk.environment_variables import OTEL_EXPERIMENTAL_RESOURCE_DETECTORS
+from opentelemetry.sdk.resources import Resource, Attributes
+
+
+TEST_DEFAULT_RESOURCE = Resource({
+    "test.attributes.1": "test_value_1",
+    "test.attributes.2": "test_value_2"
+})
 
 
 class TestUtil(TestCase):
     @patch.dict("os.environ", {}, clear=True)
     @patch("azure.monitor.opentelemetry._util.configurations._PREVIEW_INSTRUMENTED_LIBRARIES", ("previewlib1", "previewlib2"))
-    def test_get_configurations(self):
+    @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
+    def test_get_configurations(self, resource_create_mock):
         configurations = _get_configurations(
             connection_string="test_cs",
             credential="test_credential",
@@ -42,6 +52,9 @@ class TestUtil(TestCase):
         self.assertEqual(configurations["disable_logging"], False)
         self.assertEqual(configurations["disable_metrics"], False)
         self.assertEqual(configurations["disable_tracing"], False)
+        self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
+        self.assertEqual(environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS], "azure_app_service,azure_vm")
+        resource_create_mock.assert_called_once_with()
         self.assertEqual(configurations["sampling_ratio"], 1.0)
         self.assertEqual(configurations["credential"], ("test_credential"))
         self.assertEqual(configurations["instrumentation_options"], {
@@ -59,13 +72,27 @@ class TestUtil(TestCase):
         self.assertTrue("storage_directory" not in configurations)
 
     @patch.dict("os.environ", {}, clear=True)
-    def test_get_configurations_defaults(self):
+    @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
+    def test_get_configurations_defaults(self, resource_create_mock):
         configurations = _get_configurations()
 
         self.assertTrue("connection_string" not in configurations)
         self.assertEqual(configurations["disable_logging"], False)
         self.assertEqual(configurations["disable_metrics"], False)
         self.assertEqual(configurations["disable_tracing"], False)
+        self.assertEqual(configurations["instrumentation_options"], {
+            "azure_sdk" : {"enabled": True},
+            "django" : {"enabled": True},
+            "fastapi" : {"enabled": True},
+            "flask" : {"enabled": True},
+            "psycopg2" : {"enabled": True},
+            "requests": {"enabled": True},
+            "urllib": {"enabled": True},
+            "urllib3": {"enabled": True},
+        })
+        self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
+        self.assertEqual(environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS], "azure_app_service,azure_vm")
+        resource_create_mock.assert_called_once_with()
         self.assertEqual(configurations["sampling_ratio"], 1.0)
         self.assertTrue("credential" not in configurations)
         self.assertTrue("storage_directory" not in configurations)
@@ -78,10 +105,12 @@ class TestUtil(TestCase):
             OTEL_TRACES_EXPORTER: "None",
             OTEL_LOGS_EXPORTER: "none",
             OTEL_METRICS_EXPORTER: "NONE",
+            OTEL_EXPERIMENTAL_RESOURCE_DETECTORS: "custom_resource_detector"
         },
         clear=True,
     )
-    def test_get_configurations_env_vars(self):
+    @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
+    def test_get_configurations_env_vars(self, resource_create_mock):
         configurations = _get_configurations()
 
         self.assertTrue("connection_string" not in configurations)
@@ -98,6 +127,9 @@ class TestUtil(TestCase):
             "urllib": {"enabled": True},
             "urllib3": {"enabled": True},
         })
+        self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
+        self.assertEqual(environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS], "custom_resource_detector")
+        resource_create_mock.assert_called_once_with()
         self.assertEqual(configurations["sampling_ratio"], 0.5)
 
     @patch.dict(
@@ -110,7 +142,8 @@ class TestUtil(TestCase):
         },
         clear=True,
     )
-    def test_get_configurations_env_vars_validation(self):
+    @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
+    def test_get_configurations_env_vars_validation(self, resource_create_mock):
         configurations = _get_configurations()
 
         self.assertTrue("connection_string" not in configurations)
@@ -126,8 +159,9 @@ class TestUtil(TestCase):
         },
         clear=True,
     )
+    @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
     @patch("azure.monitor.opentelemetry._util.configurations._PREVIEW_INSTRUMENTED_LIBRARIES", ("previewlib1", "previewlib2"))
-    def test_merge_instrumentation_options_conflict(self):
+    def test_merge_instrumentation_options_conflict(self, resource_create_mock):
         configurations = _get_configurations(
             instrumentation_options = {
                 "azure_sdk" : {"enabled": True},
@@ -153,7 +187,8 @@ class TestUtil(TestCase):
 
     @patch.dict("os.environ", {}, clear=True)
     @patch("azure.monitor.opentelemetry._util.configurations._PREVIEW_INSTRUMENTED_LIBRARIES", ("previewlib1", "previewlib2"))
-    def test_merge_instrumentation_options_extra_args(self):
+    @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
+    def test_merge_instrumentation_options_extra_args(self, resource_create_mock):
         configurations = _get_configurations(
             instrumentation_options = {
                 "django" : {"enabled": True},

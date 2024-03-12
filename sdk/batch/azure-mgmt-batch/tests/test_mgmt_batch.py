@@ -16,7 +16,7 @@ import azure.mgmt.batch
 from azure.mgmt.batch import models
 import azure.mgmt.network.models
 from mgmt_batch_preparers import KeyVaultPreparer, SimpleBatchPreparer
-
+from azure_devtools.scenario_tests.recording_processors import GeneralNameReplacer
 from devtools_testutils import (
     AzureMgmtRecordedTestCase, recorded_by_proxy,
     ResourceGroupPreparer,
@@ -36,6 +36,7 @@ SECRET_FIELDS = ["primary", "secondary"]
 
 
 class TestMgmtBatch(AzureMgmtRecordedTestCase):
+    scrubber = GeneralNameReplacer()
 
     def setup_method(self, method):
         self.mgmt_batch_client = self.create_mgmt_client(

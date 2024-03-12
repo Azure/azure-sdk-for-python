@@ -1,6 +1,6 @@
 # Release History
 
-## 4.9.0b4 (Unreleased)
+## 4.9.1 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,27 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 4.9.0 (2024-02-22)
+
+### Features Added
+- Added support for service API version `7.5`
+- (From 4.9.0b2) The `cryptography` library's `RSAPrivateKey` and `RSAPublicKey` interfaces are now implemented by
+  `KeyVaultRSAPrivateKey` and `KeyVaultRSAPublicKey` classes that can use keys managed by Key Vault
+- (From 4.9.0b2) `CryptographyClient` has `create_rsa_private_key` and `create_rsa_public_key` methods that return a
+  `KeyVaultRSAPrivateKey` and `KeyVaultRSAPublicKey`, respectively
+- (From 4.9.0b3) Added `KeyProperties.hsm_platform` to get the underlying HSM platform
+
+### Bugs Fixed
+- (From 4.9.0b1) Token requests made during AD FS authentication no longer specify an erroneous "adfs" tenant ID
+  ([#29888](https://github.com/Azure/azure-sdk-for-python/issues/29888))
+
+### Other Changes
+- Python 3.7 is no longer supported. Please use Python version 3.8 or later.
+- `asyncio` is no longer directly referenced by the library
+  ([#33819](https://github.com/Azure/azure-sdk-for-python/pull/33819))
+- Updated minimum `azure-core` version to 1.29.5
+- Dropped `azure-common` requirement
 
 ## 4.9.0b3 (2023-11-03)
 

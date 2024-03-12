@@ -44,13 +44,14 @@ def create_dockerfile(
     output: Union[str, os.PathLike],
     type: str,
 ):
+    output = Path(output)
     if type == "mlflow":
         to_copy_dir = output / "model_files"
     else:
         to_copy_dir = output
         scoring_path = Path(output)/"scoring"
         os.makedirs(str(scoring_path), exist_ok=True)
-        create_chat_scoring_script(scoring_path, model.chat_module)
+        create_chat_scoring_script(scoring_path, model.chat_module)  # type: ignore[arg-type]
     shutil.copytree(model.path, str(to_copy_dir), dirs_exist_ok=True)
 
     with open(f"{str(output)}/Dockerfile", "w+") as f:

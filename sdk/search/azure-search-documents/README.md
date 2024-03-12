@@ -1,38 +1,33 @@
-# Azure Cognitive Search client library for Python
+# Azure AI Search client library for Python
 
-[Azure Cognitive Search](https://docs.microsoft.com/azure/search/) is a
-search-as-a-service cloud solution that gives developers APIs and tools
-for adding a rich search experience over private, heterogeneous content
-in web, mobile, and enterprise applications.
+[Azure AI Search](https://docs.microsoft.com/azure/search/) (formerly known as "Azure Cognitive Search") is an AI-powered information retrieval platform that helps developers build rich search experiences and generative AI apps that combine large language models with enterprise data.
 
-The Azure Cognitive Search service is well suited for the following
- application scenarios:
+Azure AI Search is well suited for the following application scenarios:
 
 * Consolidate varied content types into a single searchable index.
   To populate an index, you can push JSON documents that contain your content,
   or if your data is already in Azure, create an indexer to pull in data
   automatically.
 * Attach skillsets to an indexer to create searchable content from images
-  and large text documents. A skillset leverages AI from Cognitive Services
+  and unstructured documents. A skillset leverages APIs from Azure AI Services
   for built-in OCR, entity recognition, key phrase extraction, language
   detection, text translation, and sentiment analysis. You can also add
   custom skills to integrate external processing of your content during
   data ingestion.
 * In a search client application, implement query logic and user experiences
-  similar to commercial web search engines.
+  similar to commercial web search engines and chat-style apps.
 
 Use the Azure.Search.Documents client library to:
 
-* Submit queries for simple and advanced query forms that include fuzzy
-  search, wildcard search, regular expressions.
-* Implement filtered queries for faceted navigation, geospatial search,
+* Submit queries using vector, keyword, and hybrid query forms.
+* Implement filtered queries for metadata, geospatial search, faceted navigation, 
   or to narrow results based on filter criteria.
 * Create and manage search indexes.
 * Upload and update documents in the search index.
 * Create and manage indexers that pull data from Azure into an index.
 * Create and manage skillsets that add AI enrichment to data ingestion.
 * Create and manage analyzers for advanced text analysis or multi-lingual content.
-* Optimize results through scoring profiles to factor in business logic or freshness.
+* Optimize results through semantic ranking and scoring profiles to factor in business logic or freshness.
 
 [Source code](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/search/azure-search-documents)
 | [Package (PyPI)](https://pypi.org/project/azure-search-documents/)
@@ -45,7 +40,7 @@ Use the Azure.Search.Documents client library to:
 
 ### Install the package
 
-Install the Azure Cognitive Search client library for Python with [pip](https://pypi.org/project/pip/):
+Install the Azure AI Search client library for Python with [pip](https://pypi.org/project/pip/):
 
 ```bash
 pip install azure-search-documents
@@ -53,9 +48,9 @@ pip install azure-search-documents
 
 ### Prerequisites
 
-* Python 3.7 or later is required to use this package.
+* Python 3.8 or later is required to use this package.
 * You need an [Azure subscription][azure_sub] and an
-[Azure Cognitive Search service][search_resource] to use this package.
+[Azure AI Search service][search_resource] to use this package.
 
 To create a new search service, you can use the [Azure portal][create_search_service_docs], [Azure PowerShell][create_search_service_ps], or the [Azure CLI][create_search_service_cli].
 
@@ -68,11 +63,13 @@ See [choosing a pricing tier](https://docs.microsoft.com/azure/search/search-sku
 
 ### Authenticate the client
 
-To interact with the Search service, you'll need to create an instance of the appropriate client class: `SearchClient` for searching indexed documents, `SearchIndexClient` for managing indexes, or `SearchIndexerClient` for crawling data sources and loading search documents into an index. To instantiate a client object, you'll need an **endpoint** and an **API key**. You can refer to the documentation for more information on [supported authenticating approaches](https://learn.microsoft.com/azure/search/search-security-overview#authentication) with the Search service.
+To interact with the search service, you'll need to create an instance of the appropriate client class: `SearchClient` for searching indexed documents, `SearchIndexClient` for managing indexes, or `SearchIndexerClient` for crawling data sources and loading search documents into an index. To instantiate a client object, you'll need an **endpoint** and **Azure roles** or an **API key**. You can refer to the documentation for more information on [supported authenticating approaches](https://learn.microsoft.com/azure/search/search-security-overview#authentication) with the search service.
 
 #### Get an API Key
 
-You can get the **endpoint** and an **API key** from the Search service in the [Azure Portal](https://portal.azure.com/). Please refer the [documentation](https://docs.microsoft.com/azure/search/search-security-api-keys) for instructions on how to get an API key.
+An API key can be an easier approach to start with because it doesn't require pre-existing role assignments.
+
+You can get the **endpoint** and an **API key** from the Search service in the [Azure portal](https://portal.azure.com/). Please refer the [documentation](https://docs.microsoft.com/azure/search/search-security-api-keys) for instructions on how to get an API key.
 
 Alternatively, you can use the following [Azure CLI](https://learn.microsoft.com/cli/azure/) command to retrieve the API key from the Search service:
 
@@ -108,10 +105,10 @@ search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(ke
 
 <!-- END SNIPPET -->
 
-#### Create a client using Azure Active Directory authentication
+#### Create a client using Microsoft Entra ID authentication
 
-You can also create a `SearchClient`, `SearchIndexClient`, or `SearchIndexerClient` using Azure Active Directory (AAD) authentication. Your user or service principal must be assigned the "Search Index Data Reader" role.
-Using the [DefaultAzureCredential](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/README.md#defaultazurecredential) you can authenticate a service using Managed Identity or a service principal, authenticate as a developer working on an application, and more all without changing code. Please refer the [documentation](https://learn.microsoft.com/azure/search/search-security-rbac?tabs=config-svc-portal%2Croles-portal%2Ctest-portal%2Ccustom-role-portal%2Cdisable-keys-portal) for instructions on how to connect to Azure Cognitive Search using Azure role-based access control (Azure RBAC).
+You can also create a `SearchClient`, `SearchIndexClient`, or `SearchIndexerClient` using Microsoft Entra ID authentication. Your user or service principal must be assigned the "Search Index Data Reader" role.
+Using the [DefaultAzureCredential](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/README.md#defaultazurecredential) you can authenticate a service using Managed Identity or a service principal, authenticate as a developer working on an application, and more all without changing code. Please refer the [documentation](https://learn.microsoft.com/azure/search/search-security-rbac?tabs=config-svc-portal%2Croles-portal%2Ctest-portal%2Ccustom-role-portal%2Cdisable-keys-portal) for instructions on how to connect to Azure AI Search using Azure role-based access control (Azure RBAC).
 
 Before you can use the `DefaultAzureCredential`, or any credential type from [Azure.Identity](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/README.md), you'll first need to [install the Azure.Identity package](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/README.md#install-the-package).
 
@@ -133,17 +130,19 @@ search_client = SearchClient(service_endpoint, index_name, credential)
 
 ## Key concepts
 
-An Azure Cognitive Search service contains one or more indexes that provide
+An Azure AI Search service contains one or more indexes that provide
 persistent storage of searchable data in the form of JSON documents.  _(If
 you're brand new to search, you can make a very rough analogy between
 indexes and database tables.)_  The Azure.Search.Documents client library
-exposes operations on these resources through two main client types.
+exposes operations on these resources through three main client types.
 
 * `SearchClient` helps with:
   * [Searching](https://docs.microsoft.com/azure/search/search-lucene-query-architecture)
-    your indexed documents using
-    [rich queries](https://docs.microsoft.com/azure/search/search-query-overview)
-    and [powerful data shaping](https://docs.microsoft.com/azure/search/search-filters)
+    your indexed documents using [vector queries](https://learn.microsoft.com/azure/search/vector-search-how-to-query),
+    [keyword queries](https://learn.microsoft.com/azure/search/search-query-create)
+    and [hybrid queries](https://learn.microsoft.com/azure/search/hybrid-search-how-to-query)
+  * [Vector query filters](https://learn.microsoft.com/azure/search/vector-search-filters) and [Text query filters](https://learn.microsoft.com/azure/search/search-filters)
+  * [Semantic ranking](https://learn.microsoft.com/azure/search/semantic-how-to-query-request) and [scoring profiles](https://learn.microsoft.com/azure/search/index-add-scoring-profiles) for boosting relevance
   * [Autocompleting](https://docs.microsoft.com/rest/api/searchservice/autocomplete)
     partially typed search terms based on documents in the index
   * [Suggesting](https://docs.microsoft.com/rest/api/searchservice/suggestions)
@@ -154,31 +153,29 @@ exposes operations on these resources through two main client types.
 * `SearchIndexClient` allows you to:
   * [Create, delete, update, or configure a search index](https://docs.microsoft.com/rest/api/searchservice/index-operations)
   * [Declare custom synonym maps to expand or rewrite queries](https://docs.microsoft.com/rest/api/searchservice/synonym-map-operations)
-  * Most of the `SearchServiceClient` functionality is not yet available in our current preview
+<!--   * Most of the `SearchServiceClient` functionality is not yet available in our current preview -->
 
 * `SearchIndexerClient` allows you to:
   * [Start indexers to automatically crawl data sources](https://docs.microsoft.com/rest/api/searchservice/indexer-operations)
   * [Define AI powered Skillsets to transform and enrich your data](https://docs.microsoft.com/rest/api/searchservice/skillset-operations)
 
-Azure Cognitive Search provides two powerful features: **Semantic Search** and **Vector Search**.
+Azure AI Search provides two powerful features: **semantic ranking** and **vector search**.
 
-**Semantic Search** enhances the quality of search results for text-based queries. By enabling Semantic Search on your search service, you can improve the relevance of search results in two ways:
+**Semantic ranking** enhances the quality of search results for text-based queries. By enabling semantic ranking on your search service, you can improve the relevance of search results in two ways:
 - It applies secondary ranking to the initial result set, promoting the most semantically relevant results to the top.
 - It extracts and returns captions and answers in the response, which can be displayed on a search page to enhance the user's search experience.
 
-To learn more about Semantic Search, you can refer to the [documentation](https://learn.microsoft.com/azure/search/vector-search-overview).
+To learn more about semantic ranking, you can refer to the [documentation](https://learn.microsoft.com/azure/search/vector-search-overview).
 
-**Vector Search** is an information retrieval technique that overcomes the limitations of traditional keyword-based search. Instead of relying solely on lexical analysis and matching individual query terms, Vector Search utilizes machine learning models to capture the contextual meaning of words and phrases. It represents documents and queries as vectors in a high-dimensional space called an embedding. By understanding the intent behind the query, Vector Search can deliver more relevant results that align with the user's requirements, even if the exact terms are not present in the document. Moreover, Vector Search can be applied to various types of content, including images and videos, not just text.
+**Vector search** is an information retrieval technique that overcomes the limitations of traditional keyword-based search. Instead of relying solely on lexical analysis and matching individual query terms, vector search uses algorithms for similarity and concept search. It represents documents and queries as vectors in a high-dimensional space called an embedding. By searching on vector representations of content, a vector query can find relevant matches, even if the exact terms of the query are not present in the index. Moreover, vector search can be applied to various types of content, including images and videos and translated text, not just same-language text.
 
 To learn how to index vector fields and perform vector search, you can refer to the [sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_vector_search.py). This sample provides detailed guidance on indexing vector fields and demonstrates how to perform vector search.
 
-Additionally, for more comprehensive information about Vector Search, including its concepts and usage, you can refer to the [documentation](https://learn.microsoft.com/azure/search/vector-search-overview). The documentation provides in-depth explanations and guidance on leveraging the power of Vector Search in Azure Cognitive Search.
+Additionally, for more comprehensive information about vector search, including its concepts and usage, you can refer to the [documentation](https://learn.microsoft.com/azure/search/vector-search-overview). The documentation provides in-depth explanations and guidance on leveraging the power of vector search in Azure AI Search.
 
-_The `Azure.Search.Documents` client library (v1) is a brand new offering for
-Python developers who want to use search technology in their applications.  There
-is an older, fully featured `Microsoft.Azure.Search` client library (v10) with
-many similar looking APIs, so please be careful to avoid confusion when
-exploring online resources._
+_The `Azure.Search.Documents` client library (v1) provides APIs for data plane operations. The
+previous `Microsoft.Azure.Search` client library (v10) is now retired. It has many similar looking APIs, so please be careful to avoid confusion when exploring online resources. A good rule of thumb is to check for the namespace
+`Azure.Search.Documents;` when you're looking for API reference.
 
 ## Examples
 
@@ -364,7 +361,7 @@ async with search_client:
 
 ### General
 
-The Azure Cognitive Search client will raise exceptions defined in [Azure Core][azure_core].
+The Azure AI Search client will raise exceptions defined in [Azure Core][azure_core].
 
 ### Logging
 
@@ -402,8 +399,7 @@ result =  client.search(search_text="spa", logging_enable=True)
 ## Next steps
 
 * Go further with Azure.Search.Documents and our [https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/search/azure-search-documents/samples](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples)
-* Watch a [demo or deep dive video](https://azure.microsoft.com/resources/videos/index/?services=search)
-* Read more about the [Azure Cognitive Search service](https://docs.microsoft.com/azure/search/search-what-is-azure-search)
+* Read more about the [Azure AI Search service](https://docs.microsoft.com/azure/search/search-what-is-azure-search)
 
 ## Contributing
 
@@ -416,7 +412,7 @@ the right to, and actually do, grant us the rights to use your contribution. For
 details, visit [cla.microsoft.com][cla].
 
 This project has adopted the [Microsoft Open Source Code of Conduct][code_of_conduct].
-For more information see the [Code of Conduct FAQ][coc_faq]
+For more information, see the [Code of Conduct FAQ][coc_faq]
 or contact [opencode@microsoft.com][coc_contact] with any
 additional questions or comments.
 

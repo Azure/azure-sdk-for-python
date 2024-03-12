@@ -14,7 +14,7 @@ class AuthorizationCodeCredential(GetTokenMixin):
     """Authenticates by redeeming an authorization code previously obtained from Microsoft Entra ID.
 
     See `Microsoft Entra ID documentation
-    <https://docs.microsoft.com/azure/active-directory/develop/v2-oauth2-auth-code-flow>`_ for more information
+    <https://docs.microsoft.com/azure/active-directory/develop/v2-oauth2-auth-code-flow>`__ for more information
     about the authentication flow.
 
     :param str tenant_id: ID of the application's Microsoft Entra tenant. Also called its "directory" ID.
@@ -50,11 +50,11 @@ class AuthorizationCodeCredential(GetTokenMixin):
         self._redirect_uri = redirect_uri
         super(AuthorizationCodeCredential, self).__init__()
 
-    def __enter__(self):
+    def __enter__(self) -> "AuthorizationCodeCredential":
         self._client.__enter__()
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, *args: Any) -> None:
         self._client.__exit__(*args)
 
     def close(self) -> None:

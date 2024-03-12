@@ -16,7 +16,7 @@ from typing import (
 )
 
 from azure.core.async_paging import AsyncItemPaged
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from .._parser import _datetime_to_str, _get_file_permission
@@ -209,6 +209,29 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         lease = ShareLeaseClient(self, lease_id=lease_id)  # type: ignore
         await lease.acquire(**kwargs)
         return lease
+
+    @distributed_trace_async
+    async def exists(self, **kwargs: Any) -> bool:
+        """
+        Returns True if the file exists and returns False otherwise.
+
+        :keyword int timeout:
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
+            #other-client--per-operation-configuration>`_.
+        :returns: True if the file exists, False otherwise.
+        :rtype: bool
+        """
+        try:
+            await self._client.file.get_properties(**kwargs)
+            return True
+        except HttpResponseError as error:
+            try:
+                process_storage_error(error)
+            except ResourceNotFoundError:
+                return False
 
     @distributed_trace_async
     async def create_file(  # type: ignore

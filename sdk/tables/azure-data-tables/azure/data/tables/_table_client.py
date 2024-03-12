@@ -60,6 +60,7 @@ class TableClient(TablesBaseClient):
         table_name: str,
         *,
         credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential, TokenCredential]] = None,
+        api_version: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
         """Create TableClient from a Credential.
@@ -82,7 +83,7 @@ class TableClient(TablesBaseClient):
         if not table_name:
             raise ValueError("Please specify a table name.")
         self.table_name: str = table_name
-        super(TableClient, self).__init__(endpoint, credential=credential, **kwargs)
+        super(TableClient, self).__init__(endpoint, credential=credential, api_version=api_version, **kwargs)
 
     @classmethod
     def from_connection_string(cls, conn_str: str, table_name: str, **kwargs: Any) -> "TableClient":
@@ -263,7 +264,15 @@ class TableClient(TablesBaseClient):
                 raise
 
     @overload
-    def delete_entity(self, partition_key: str, row_key: str, **kwargs: Any) -> None:
+    def delete_entity(
+        self,
+        partition_key: str,
+        row_key: str,
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any,
+    ) -> None:
         """Deletes the specified entity in a table. No error will be raised if
         the entity or PartitionKey-RowKey pairing is not found.
 
@@ -288,7 +297,14 @@ class TableClient(TablesBaseClient):
         """
 
     @overload
-    def delete_entity(self, entity: EntityType, **kwargs: Any) -> None:
+    def delete_entity(
+        self,
+        entity: EntityType,
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any,
+    ) -> None:
         """Deletes the specified entity in a table. No error will be raised if
         the entity or PartitionKey-RowKey pairing is not found.
 
@@ -390,7 +406,15 @@ class TableClient(TablesBaseClient):
         return _trim_service_metadata(metadata, content=content)
 
     @distributed_trace
-    def update_entity(self, entity: EntityType, mode: UpdateMode = UpdateMode.MERGE, **kwargs) -> Dict[str, Any]:
+    def update_entity(
+        self,
+        entity: EntityType,
+        mode: UpdateMode = UpdateMode.MERGE,
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs,
+    ) -> Dict[str, Any]:
         """Update entity in a table.
 
         :param entity: The properties for the table entity.
@@ -415,8 +439,6 @@ class TableClient(TablesBaseClient):
                 :dedent: 16
                 :caption: Updating an already exiting entity in a Table
         """
-        match_condition = kwargs.pop("match_condition", None)
-        etag = kwargs.pop("etag", None)
         if match_condition and not etag and isinstance(entity, TableEntity):
             etag = entity.metadata.get("etag")
         match_condition = _get_match_condition(
@@ -462,7 +484,13 @@ class TableClient(TablesBaseClient):
         return _trim_service_metadata(metadata, content=content)
 
     @distributed_trace
-    def list_entities(self, **kwargs) -> ItemPaged[TableEntity]:
+    def list_entities(
+        self,
+        *,
+        results_per_page: Optional[int] = None,
+        select: Optional[Union[str, List[str]]] = None,
+        **kwargs,
+    ) -> ItemPaged[TableEntity]:
         """Lists entities in a table.
 
         :keyword int results_per_page: Number of entities returned per service request.
@@ -481,22 +509,28 @@ class TableClient(TablesBaseClient):
                 :dedent: 16
                 :caption: List all entities held within a table
         """
-        user_select = kwargs.pop("select", None)
-        if user_select and not isinstance(user_select, str):
-            user_select = ",".join(user_select)
-        top = kwargs.pop("results_per_page", None)
+        if select and not isinstance(select, str):
+            select = ",".join(select)
 
         command = functools.partial(self._client.table.query_entities, **kwargs)
         return ItemPaged(
             command,
             table=self.table_name,
-            results_per_page=top,
-            select=user_select,
+            results_per_page=results_per_page,
+            select=select,
             page_iterator_class=TableEntityPropertiesPaged,
         )
 
     @distributed_trace
-    def query_entities(self, query_filter: str, **kwargs) -> ItemPaged[TableEntity]:
+    def query_entities(
+        self,
+        query_filter: str,
+        *,
+        results_per_page: Optional[int] = None,
+        select: Optional[Union[str, List[str]]] = None,
+        parameters: Optional[Dict[str, Any]] = None,
+        **kwargs,
+    ) -> ItemPaged[TableEntity]:
         # pylint: disable=line-too-long
         """Lists entities in a table.
 
@@ -520,25 +554,29 @@ class TableClient(TablesBaseClient):
                 :dedent: 8
                 :caption: Query entities held within a table
         """
-        parameters = kwargs.pop("parameters", None)
         query_filter = _parameter_filter_substitution(parameters, query_filter)
-        top = kwargs.pop("results_per_page", None)
-        user_select = kwargs.pop("select", None)
-        if user_select and not isinstance(user_select, str):
-            user_select = ",".join(user_select)
+        if select and not isinstance(select, str):
+            select = ",".join(select)
 
         command = functools.partial(self._client.table.query_entities, **kwargs)
         return ItemPaged(
             command,
             table=self.table_name,
-            results_per_page=top,
+            results_per_page=results_per_page,
             filter=query_filter,
-            select=user_select,
+            select=select,
             page_iterator_class=TableEntityPropertiesPaged,
         )
 
     @distributed_trace
-    def get_entity(self, partition_key: str, row_key: str, **kwargs) -> TableEntity:
+    def get_entity(
+        self,
+        partition_key: str,
+        row_key: str,
+        *,
+        select: Optional[Union[str, List[str]]] = None,
+        **kwargs,
+    ) -> TableEntity:
         """Get a single entity in a table.
 
         :param partition_key: The partition key of the entity.
@@ -560,9 +598,11 @@ class TableClient(TablesBaseClient):
                 :dedent: 16
                 :caption: Get a single entity from a table
         """
-        user_select = kwargs.pop("select", None)
-        if user_select and not isinstance(user_select, str):
-            user_select = ",".join(user_select)
+        user_select = None
+        if select and not isinstance(select, str):
+            user_select = ",".join(select)
+        elif isinstance(select, str):
+            user_select = select
         try:
             entity = self._client.table.query_entity_with_partition_and_row_key(
                 table=self.table_name,

@@ -21,17 +21,24 @@ logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 
 
 class ProjectOperations:
-    """ProjectOperations.
+    """Operations class for project resources
 
     You should not instantiate this class directly. Instead, you should
-    create an MLClient instance that instantiates it for you and
+    create an AIClient instance that instantiates it for you and
     attaches it as an attribute.
+
+    :param resource_group_name: The name of the resource group associate with the project
+    :type resource_group_name: str
+    :param ml_client: The Azure Machine Learning client
+    :type ml_client: ~azure.ai.ml.MLClient
+    :param service_client: The Azure Machine Learning service client
+    :type service_client: ~azure.ai.ml._restclient.v2023_06_01_preview.AzureMachineLearningWorkspaces
     """
 
     # TODO add scope back in?
     def __init__(
         self, resource_group_name: str, ml_client: MLClient, service_client: ServiceClient062023Preview, **kwargs: Any
-    ):
+    ) -> None:
         self._ml_client = ml_client
         self._service_client = service_client
         self._resource_group_name = resource_group_name
@@ -44,10 +51,10 @@ class ProjectOperations:
     def get(self, *, name: Optional[str] = None, **kwargs: Dict) -> Project:
         """Get a project by name.
 
-        :keyword name: Name of the project.
-        :paramtype name: str
+        :keyword name: The project name.
+        :paramtype name: Optional[str]
         :return: The project with the provided name.
-        :rtype: Project
+        :rtype: ~azure.ai.resource.entities.Project
         """
 
         workspace = self._ml_client._workspaces.get(name=name, **kwargs)
@@ -62,7 +69,7 @@ class ProjectOperations:
         :keyword scope: The scope of the listing. Can be either "resource_group" or "subscription", and defaults to "resource_group".
         :paramtype scope: str
         :return: An iterator like instance of Project objects
-        :rtype: Iterable[Project]
+        :rtype: Iterable[~azure.ai.resource.entities.Project]
         """
 
         workspaces = []
@@ -88,8 +95,8 @@ class ProjectOperations:
 
         :keyword project: Project definition.
         :paramtype project: ~azure.ai.resources.entities.project
-        :keyword update_dependent_resources: Whether to update dependent resources
-        :paramtype update_dependent_resources: boolean
+        :keyword update_dependent_resources: Whether to update dependent resources. Defaults to False.
+        :paramtype update_dependent_resources: bool
         :return: An instance of LROPoller that returns a project.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.resources.entities.project]
         """
@@ -109,8 +116,8 @@ class ProjectOperations:
 
         :keyword project: Project definition.
         :paramtype project: ~azure.ai.resources.entities.project
-        :keyword update_dependent_resources: Whether to update dependent resources
-        :paramtype update_dependent_resources: boolean
+        :keyword update_dependent_resources: Whether to update dependent resources. Defaults to False.
+        :paramtype update_dependent_resources: bool
         :return: An instance of LROPoller that returns a project.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.resources.entities.project]
         """
@@ -136,10 +143,10 @@ class ProjectOperations:
         :paramtype name: str
         :keyword delete_dependent_resources: Whether to delete resources associated with the project,
             i.e., container registry, storage account, key vault, and application insights.
-            The default is False. Set to True to delete these resources.
+            Set to True to delete these resources.
         :paramtype delete_dependent_resources: bool
         :keyword permanently_delete: Project are soft-deleted by default to allow recovery of project data.
-            Set this flag to true to override the soft-delete behavior and permanently delete your project.
+            Defaults to False. Set this flag to true to override the soft-delete behavior and permanently delete your project.
         :paramtype permanently_delete: bool
         :return: A poller to track the operation status.
         :rtype: ~azure.core.polling.LROPoller[None]

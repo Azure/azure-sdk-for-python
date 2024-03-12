@@ -21,7 +21,7 @@ pip install azure-identity
 ### Prerequisites
 
 - An [Azure subscription](https://azure.microsoft.com/free/python)
-- Python 3.7 or a recent version of Python 3 (this library doesn't support end-of-life versions)
+- Python 3.8 or a recent version of Python 3 (this library doesn't support end-of-life versions)
 
 ### Authenticate during local development
 
@@ -256,13 +256,13 @@ Not all credentials require this configuration. Credentials that authenticate th
 
 ### Authenticate users
 
-|Credential|Usage|Reference
-|-|-|-
-|[`AuthorizationCodeCredential`][auth_code_cred_ref]| Authenticates a user with a previously obtained authorization code. | [OAuth2 authentication code](https://learn.microsoft.com/azure/active-directory/develop/v2-oauth2-auth-code-flow)
-|[`DeviceCodeCredential`][device_code_cred_ref]| Interactively authenticates a user on devices with limited UI. | [Device code authentication](https://learn.microsoft.com/azure/active-directory/develop/v2-oauth2-device-code)
-|[`InteractiveBrowserCredential`][interactive_cred_ref]| Interactively authenticates a user with the default system browser. | [OAuth2 authentication code](https://learn.microsoft.com/azure/active-directory/develop/v2-oauth2-auth-code-flow)
-|[`OnBehalfOfCredential`][obo_cred_ref]| Propagates the delegated user identity and permissions through the request chain. | [On-behalf-of authentication](https://learn.microsoft.com/azure/active-directory/develop/v2-oauth2-on-behalf-of-flow)
-|[`UsernamePasswordCredential`][userpass_cred_ref]| Authenticates a user with a username and password (doesn't support multi-factor authentication). |  [Username + password authentication](https://learn.microsoft.com/azure/active-directory/develop/v2-oauth-ropc)
+|Credential|Usage| Reference | Notes
+|-|-|-|-
+|[`AuthorizationCodeCredential`][auth_code_cred_ref]| Authenticates a user with a previously obtained authorization code. | [OAuth2 authentication code](https://learn.microsoft.com/azure/active-directory/develop/v2-oauth2-auth-code-flow)|
+|[`DeviceCodeCredential`][device_code_cred_ref]| Interactively authenticates a user on devices with limited UI. | [Device code authentication](https://learn.microsoft.com/azure/active-directory/develop/v2-oauth2-device-code)|
+|[`InteractiveBrowserCredential`][interactive_cred_ref]| Interactively authenticates a user with the default system browser. | [OAuth2 authentication code](https://learn.microsoft.com/azure/active-directory/develop/v2-oauth2-auth-code-flow)| `InteractiveBrowserCredential` doesn't support GitHub Codespaces. As a workaround, use [`DeviceCodeCredential`][device_code_cred_ref].
+|[`OnBehalfOfCredential`][obo_cred_ref]| Propagates the delegated user identity and permissions through the request chain. | [On-behalf-of authentication](https://learn.microsoft.com/azure/active-directory/develop/v2-oauth2-on-behalf-of-flow)|
+|[`UsernamePasswordCredential`][userpass_cred_ref]| Authenticates a user with a username and password (doesn't support multi-factor authentication). | [Username + password authentication](https://learn.microsoft.com/azure/active-directory/develop/v2-oauth-ropc)|
 
 ### Authenticate via development tools
 

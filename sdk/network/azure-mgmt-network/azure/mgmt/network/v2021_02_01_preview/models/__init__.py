@@ -76,6 +76,7 @@ from ._models_py3 import SubResource
 from ._models_py3 import SubscriptionId
 from ._models_py3 import SystemData
 from ._models_py3 import TagsObject
+from ._models_py3 import UpdateTagsRequest
 from ._models_py3 import UserRule
 from ._models_py3 import UserRuleListResult
 
@@ -179,6 +180,7 @@ __all__ = [
     "SubscriptionId",
     "SystemData",
     "TagsObject",
+    "UpdateTagsRequest",
     "UserRule",
     "UserRuleListResult",
     "AccessRuleDirection",

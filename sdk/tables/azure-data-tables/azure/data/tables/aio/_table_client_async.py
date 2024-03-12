@@ -65,6 +65,7 @@ class TableClient(AsyncTablesBaseClient):
         table_name: str,
         *,
         credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential, AsyncTokenCredential]] = None,
+        api_version: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
         """Create TableClient from a Credential.
@@ -87,7 +88,7 @@ class TableClient(AsyncTablesBaseClient):
         if not table_name:
             raise ValueError("Please specify a table name.")
         self.table_name: str = table_name
-        super(TableClient, self).__init__(endpoint, credential=credential, **kwargs)
+        super(TableClient, self).__init__(endpoint, credential=credential, api_version=api_version, **kwargs)
 
     @classmethod
     def from_connection_string(cls, conn_str: str, table_name: str, **kwargs: Any) -> "TableClient":
@@ -270,7 +271,15 @@ class TableClient(AsyncTablesBaseClient):
                 raise
 
     @overload
-    async def delete_entity(self, partition_key: str, row_key: str, **kwargs: Any) -> None:
+    async def delete_entity(
+        self,
+        partition_key: str,
+        row_key: str,
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any,
+    ) -> None:
         """Deletes the specified entity in a table. No error will be raised if
         the entity or PartitionKey-RowKey pairing is not found.
 
@@ -295,7 +304,14 @@ class TableClient(AsyncTablesBaseClient):
         """
 
     @overload
-    async def delete_entity(self, entity: EntityType, **kwargs: Any) -> None:
+    async def delete_entity(
+        self,
+        entity: EntityType,
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any,
+    ) -> None:
         """Deletes the specified entity in a table. No error will be raised if
         the entity or PartitionKey-RowKey pairing is not found.
 
@@ -398,7 +414,13 @@ class TableClient(AsyncTablesBaseClient):
 
     @distributed_trace_async
     async def update_entity(
-        self, entity: EntityType, mode: Union[str, UpdateMode] = UpdateMode.MERGE, **kwargs
+        self,
+        entity: EntityType,
+        mode: Union[str, UpdateMode] = UpdateMode.MERGE,
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs,
     ) -> Mapping[str, Any]:
         """Update entity in a table.
 
@@ -424,8 +446,6 @@ class TableClient(AsyncTablesBaseClient):
                 :dedent: 16
                 :caption: Querying entities from a TableClient
         """
-        match_condition = kwargs.pop("match_condition", None)
-        etag = kwargs.pop("etag", None)
         if match_condition and not etag and isinstance(entity, TableEntity):
             etag = entity.metadata.get("etag")
         match_condition = _get_match_condition(
@@ -471,7 +491,13 @@ class TableClient(AsyncTablesBaseClient):
         return _trim_service_metadata(metadata, content=content)
 
     @distributed_trace
-    def list_entities(self, **kwargs) -> AsyncItemPaged[TableEntity]:
+    def list_entities(
+        self,
+        *,
+        results_per_page: Optional[int] = None,
+        select: Optional[Union[str, List[str]]] = None,
+        **kwargs,
+    ) -> AsyncItemPaged[TableEntity]:
         """Lists entities in a table.
 
         :keyword int results_per_page: Number of entities returned per service request.
@@ -490,24 +516,29 @@ class TableClient(AsyncTablesBaseClient):
                 :dedent: 16
                 :caption: Querying entities from a TableClient
         """
-        user_select = kwargs.pop("select", None)
-        if user_select and not isinstance(user_select, str):
-            user_select = ",".join(user_select)
-        top = kwargs.pop("results_per_page", None)
+        if select and not isinstance(select, str):
+            select = ",".join(select)
 
         command = functools.partial(self._client.table.query_entities, **kwargs)
         return AsyncItemPaged(
             command,
             table=self.table_name,
-            results_per_page=top,
-            select=user_select,
+            results_per_page=results_per_page,
+            select=select,
             page_iterator_class=TableEntityPropertiesPaged,
         )
 
     @distributed_trace
-    def query_entities(  # pylint: disable=line-too-long
-        self, query_filter: str, **kwargs
+    def query_entities(
+        self,
+        query_filter: str,
+        *,
+        results_per_page: Optional[int] = None,
+        select: Optional[Union[str, List[str]]] = None,
+        parameters: Optional[Dict[str, Any]] = None,
+        **kwargs,
     ) -> AsyncItemPaged[TableEntity]:
+        # pylint: disable=line-too-long
         """Lists entities in a table.
 
         :param str query_filter: Specify a filter to return certain entities.  For more information
@@ -530,25 +561,29 @@ class TableClient(AsyncTablesBaseClient):
                 :dedent: 8
                 :caption: Querying entities from a TableClient
         """
-        parameters = kwargs.pop("parameters", None)
         query_filter = _parameter_filter_substitution(parameters, query_filter)
-        top = kwargs.pop("results_per_page", None)
-        user_select = kwargs.pop("select", None)
-        if user_select and not isinstance(user_select, str):
-            user_select = ",".join(user_select)
+        if select and not isinstance(select, str):
+            select = ",".join(select)
 
         command = functools.partial(self._client.table.query_entities, **kwargs)
         return AsyncItemPaged(
             command,
             table=self.table_name,
-            results_per_page=top,
+            results_per_page=results_per_page,
             filter=query_filter,
-            select=user_select,
+            select=select,
             page_iterator_class=TableEntityPropertiesPaged,
         )
 
     @distributed_trace_async
-    async def get_entity(self, partition_key: str, row_key: str, **kwargs) -> TableEntity:
+    async def get_entity(
+        self,
+        partition_key: str,
+        row_key: str,
+        *,
+        select: Optional[Union[str, List[str]]] = None,
+        **kwargs,
+    ) -> TableEntity:
         """Get a single entity in a table.
 
         :param partition_key: The partition key of the entity.
@@ -570,9 +605,11 @@ class TableClient(AsyncTablesBaseClient):
                 :dedent: 16
                 :caption: Getting an entity from PartitionKey and RowKey
         """
-        user_select = kwargs.pop("select", None)
-        if user_select and not isinstance(user_select, str):
-            user_select = ",".join(user_select)
+        user_select = None
+        if select and not isinstance(select, str):
+            user_select = ",".join(select)
+        elif isinstance(select, str):
+            user_select = select
         try:
             entity = await self._client.table.query_entity_with_partition_and_row_key(
                 table=self.table_name,

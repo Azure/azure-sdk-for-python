@@ -57,6 +57,7 @@ class AsyncTablesBaseClient:  # pylint: disable=too-many-instance-attributes
         endpoint: str,
         *,
         credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential, AsyncTokenCredential]] = None,
+        api_version: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
         """
@@ -121,7 +122,9 @@ class AsyncTablesBaseClient:  # pylint: disable=too-many-instance-attributes
 
         self._client = AzureTable(self.url, policies=kwargs.pop("policies", self._policies), **kwargs)
         # Incompatible assignment when assigning a str value to a Literal type variable
-        self._client._config.version = get_api_version(kwargs, self._client._config.version)  # type: ignore[assignment]
+        self._client._config.version = get_api_version(
+            api_version, self._client._config.version
+        )  # type: ignore[assignment]
 
     @property
     def url(self) -> str:

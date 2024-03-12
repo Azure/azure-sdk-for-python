@@ -8,6 +8,7 @@
 # pyright: reportGeneralTypeIssues=false
 
 import calendar
+import decimal
 import functools
 import sys
 import logging
@@ -31,7 +32,7 @@ else:
 
 _LOGGER = logging.getLogger(__name__)
 
-__all__ = ["AzureJSONEncoder", "Model", "rest_field", "rest_discriminator"]
+__all__ = ["SdkJSONEncoder", "Model", "rest_field", "rest_discriminator"]
 
 TZ_UTC = timezone.utc
 
@@ -125,7 +126,7 @@ def _is_readonly(p):
         return False
 
 
-class AzureJSONEncoder(JSONEncoder):
+class SdkJSONEncoder(JSONEncoder):
     """A JSON encoder that's capable of serializing datetime objects and bytes."""
 
     def __init__(self, *args, exclude_readonly: bool = False, format: typing.Optional[str] = None, **kwargs):
@@ -140,10 +141,12 @@ class AzureJSONEncoder(JSONEncoder):
                 return {k: v for k, v in o.items() if k not in readonly_props}
             return dict(o.items())
         try:
-            return super(AzureJSONEncoder, self).default(o)
+            return super(SdkJSONEncoder, self).default(o)
         except TypeError:
             if isinstance(o, _Null):
                 return None
+            if isinstance(o, decimal.Decimal):
+                return float(o)
             if isinstance(o, (bytes, bytearray)):
                 return _serialize_bytes(o, self.format)
             try:
@@ -157,7 +160,7 @@ class AzureJSONEncoder(JSONEncoder):
             except AttributeError:
                 # This will be raised when it hits value.total_seconds in the method above
                 pass
-            return super(AzureJSONEncoder, self).default(o)
+            return super(SdkJSONEncoder, self).default(o)
 
 
 _VALID_DATE = re.compile(r"\d{4}[-]\d{2}[-]\d{2}T\d{2}:\d{2}:\d{2}" + r"\.?\d*Z?[-+]?[\d{2}]?:?[\d{2}]?")
@@ -275,6 +278,12 @@ def _deserialize_duration(attr):
     return isodate.parse_duration(attr)
 
 
+def _deserialize_decimal(attr):
+    if isinstance(attr, decimal.Decimal):
+        return attr
+    return decimal.Decimal(str(attr))
+
+
 _DESERIALIZE_MAPPING = {
     datetime: _deserialize_datetime,
     date: _deserialize_date,
@@ -283,6 +292,7 @@ _DESERIALIZE_MAPPING = {
     bytearray: _deserialize_bytes,
     timedelta: _deserialize_duration,
     typing.Any: lambda x: x,
+    decimal.Decimal: _deserialize_decimal,
 }
 
 _DESERIALIZE_MAPPING_WITHFORMAT = {
@@ -426,6 +436,8 @@ def _serialize(o, format: typing.Optional[str] = None):  # pylint: disable=too-m
         return tuple(_serialize(x, format) for x in o)
     if isinstance(o, (bytes, bytearray)):
         return _serialize_bytes(o, format)
+    if isinstance(o, decimal.Decimal):
+        return float(o)
     try:
         # First try datetime.datetime
         return _serialize_datetime(o, format)
@@ -642,24 +654,18 @@ def _get_deserialize_callable_from_annotation(  # pylint: disable=R0911, R0915, 
 
     try:
         if annotation._name == "Dict":
-            key_deserializer = _get_deserialize_callable_from_annotation(annotation.__args__[0], module, rf)
             value_deserializer = _get_deserialize_callable_from_annotation(annotation.__args__[1], module, rf)
 
             def _deserialize_dict(
-                key_deserializer: typing.Optional[typing.Callable],
                 value_deserializer: typing.Optional[typing.Callable],
                 obj: typing.Dict[typing.Any, typing.Any],
             ):
                 if obj is None:
                     return obj
-                return {
-                    _deserialize(key_deserializer, k, module): _deserialize(value_deserializer, v, module)
-                    for k, v in obj.items()
-                }
+                return {k: _deserialize(value_deserializer, v, module) for k, v in obj.items()}
 
             return functools.partial(
                 _deserialize_dict,
-                key_deserializer,
                 value_deserializer,
             )
     except (AttributeError, IndexError):
@@ -698,19 +704,17 @@ def _get_deserialize_callable_from_annotation(  # pylint: disable=R0911, R0915, 
         pass
 
     def _deserialize_default(
-        annotation,
-        deserializer_from_mapping,
+        deserializer,
         obj,
     ):
         if obj is None:
             return obj
-        try:
-            return _deserialize_with_callable(annotation, obj)
-        except Exception:
-            pass
-        return _deserialize_with_callable(deserializer_from_mapping, obj)
+        return _deserialize_with_callable(deserializer, obj)
 
-    return functools.partial(_deserialize_default, annotation, get_deserializer(annotation, rf))
+    if get_deserializer(annotation, rf):
+        return functools.partial(_deserialize_default, get_deserializer(annotation, rf))
+
+    return functools.partial(_deserialize_default, annotation)
 
 
 def _deserialize_with_callable(
@@ -718,7 +722,7 @@ def _deserialize_with_callable(
     value: typing.Any,
 ):
     try:
-        if value is None:
+        if value is None or isinstance(value, _Null):
             return None
         if deserializer is None:
             return value
@@ -740,10 +744,14 @@ def _deserialize(
     value: typing.Any,
     module: typing.Optional[str] = None,
     rf: typing.Optional["_RestField"] = None,
+    format: typing.Optional[str] = None,
 ) -> typing.Any:
     if isinstance(value, PipelineResponse):
         value = value.http_response.json()
-    deserializer = _get_deserialize_callable_from_annotation(deserializer, module, rf)
+    if rf is None and format:
+        rf = _RestField(format=format)
+    if not isinstance(deserializer, functools.partial):
+        deserializer = _get_deserialize_callable_from_annotation(deserializer, module, rf)
     return _deserialize_with_callable(deserializer, value)
 
 

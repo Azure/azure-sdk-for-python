@@ -24,7 +24,7 @@ create, manage, and deploy public and private SSL/TLS certificates
 ## _Disclaimer_
 
 _Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691._
-_Python 3.7 or later is required to use this package. For more details, please refer to [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy)._
+_Python 3.8 or later is required to use this package. For more details, please refer to [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy)._
 
 ## Getting started
 ### Install packages
@@ -38,7 +38,7 @@ authentication as demonstrated below.
 
 ### Prerequisites
 * An [Azure subscription][azure_sub]
-* Python 3.7 or later
+* Python 3.8 or later
 * An existing [Key Vault Managed HSM][managed_hsm]. If you need to create one, you can do so using the Azure CLI by following the steps in [this document][managed_hsm_cli].
 
 ### Authenticate the client
@@ -124,7 +124,7 @@ A `KeyVaultSettingsClient` manages Managed HSM account settings.
 This section contains code snippets covering common tasks:
 * Access control
     * [List all role definitions](#list-all-role-definitions)
-    * [Set, get, and delete a role definition](#set-get-and-delete-a-role-defintion)
+    * [Set, get, and delete a role definition](#set-get-and-delete-a-role-definition)
     * [List all role assignments](#list-all-role-assignments)
     * [Create, get, and delete a role assignment](#create-get-and-delete-a-role-assignment)
 * Backup and restore
@@ -149,7 +149,6 @@ for definition in role_definitions:
 <!-- END SNIPPET -->
 
 ### Set, get, and delete a role definition
-
 `set_role_definition` can be used by a `KeyVaultAccessControlClient` to either create a custom role definition or update
 an existing definition with the specified unique `name` (a UUID).
 
@@ -278,7 +277,7 @@ to the library's [credential documentation][sas_docs]. Alternatively, it is poss
 CONTAINER_URL = os.environ["CONTAINER_URL"]
 SAS_TOKEN = os.environ["SAS_TOKEN"]
 
-backup_result: KeyVaultBackupResult = client.begin_backup(CONTAINER_URL, SAS_TOKEN).result()
+backup_result: KeyVaultBackupResult = client.begin_backup(CONTAINER_URL, sas_token=SAS_TOKEN).result()
 print(f"Azure Storage Blob URL of the backup: {backup_result.folder_url}")
 ```
 
@@ -297,14 +296,14 @@ For more details on creating a SAS token using a `BlobServiceClient` from [`azur
 to the library's [credential documentation][sas_docs]. Alternatively, it is possible to
 [generate a SAS token in Storage Explorer][storage_explorer].
 
-<!-- SNIPPET:backup_restore_operations.begin_backup -->
+<!-- SNIPPET:backup_restore_operations.begin_restore -->
 
 ```python
-CONTAINER_URL = os.environ["CONTAINER_URL"]
 SAS_TOKEN = os.environ["SAS_TOKEN"]
 
-backup_result: KeyVaultBackupResult = client.begin_backup(CONTAINER_URL, SAS_TOKEN).result()
-print(f"Azure Storage Blob URL of the backup: {backup_result.folder_url}")
+# `backup_result` is the KeyVaultBackupResult returned by `begin_backup`
+client.begin_restore(backup_result.folder_url, sas_token=SAS_TOKEN).wait()
+print("Vault restored successfully.")
 ```
 
 <!-- END SNIPPET -->
@@ -346,14 +345,10 @@ Clients from the Administration library can only be used to perform operations o
 
 ## Next steps
 Several samples are available in the Azure SDK for Python GitHub repository. These samples provide example code for additional Key Vault scenarios:
-| File | Description |
-|-------------|-------------|
-| [access_control_operations.py][access_control_operations_sample] | create/update/delete role definitions and role assignments |
-| [access_control_operations_async.py][access_control_operations_async_sample] | create/update/delete role definitions and role assignments with an async client |
-| [backup_restore_operations.py][backup_operations_sample] | full backup and restore |
-| [backup_restore_operations_async.py][backup_operations_async_sample] | full backup and restore with an async client |
-| [settings_operations.py][settings_operations_sample] | list and update Key Vault settings |
-| [settings_operations_async.py][settings_operations_async_sample] | list and update Key Vault settings with an async client |
+
+- [Create/update/delete role definitions and role assignments][access_control_operations_sample] ([async version][access_control_operations_async_sample])
+- [Full backup and restore][backup_operations_sample] ([async version][backup_operations_async_sample])
+- [List and update Key Vault settings][settings_operations_sample] ([async version][settings_operations_async_sample])
 
 ###  Additional documentation
 For more extensive documentation on Azure Key Vault, see the [API reference documentation][reference_docs].

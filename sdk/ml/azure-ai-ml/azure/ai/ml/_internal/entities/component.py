@@ -3,13 +3,14 @@
 # ---------------------------------------------------------
 # pylint: disable=protected-access, redefined-builtin
 # disable redefined-builtin to use id/type as argument name
+import os
 from contextlib import contextmanager
 from os import PathLike
 from pathlib import Path
-from typing import Dict, Iterable, List, Optional, Union
+from typing import Any, Dict, Iterable, List, Optional, Union
 from uuid import UUID
 
-import yaml
+import yaml  # type: ignore[import]
 from marshmallow import Schema
 
 from ... import Input, Output
@@ -20,7 +21,7 @@ from ..._utils._asset_utils import IgnoreFile
 from ...constants._common import DefaultOpenEncoding
 from ...entities import Component
 from ...entities._assets import Code
-from ...entities._component._additional_includes import AdditionalIncludesMixin, AdditionalIncludes
+from ...entities._component._additional_includes import AdditionalIncludes, AdditionalIncludesMixin
 from ...entities._component.code import ComponentIgnoreFile
 from ...entities._job.distribution import DistributionConfiguration
 from ...entities._system_data import SystemData
@@ -86,7 +87,7 @@ class InternalComponent(Component, AdditionalIncludesMixin):
         successful_return_code: Optional[str] = None,
         inputs: Optional[Dict] = None,
         outputs: Optional[Dict] = None,
-        code: Optional[str] = None,
+        code: Optional[Union[str, os.PathLike]] = None,
         environment: Optional[Dict] = None,
         environment_variables: Optional[Dict] = None,
         command: Optional[str] = None,
@@ -114,7 +115,7 @@ class InternalComponent(Component, AdditionalIncludesMixin):
             tags=tags,
             properties=properties,
             display_name=display_name,
-            is_deterministic=is_deterministic,
+            is_deterministic=is_deterministic,  # type: ignore[arg-type]
             inputs=inputs,
             outputs=outputs,
             yaml_str=yaml_str,
@@ -200,11 +201,13 @@ class InternalComponent(Component, AdditionalIncludesMixin):
 
     def _get_all_additional_includes_configs(self) -> List:
         # internal components must have a source path
-        return self._read_additional_include_configs(Path(self._source_path))
+        return self._read_additional_include_configs(Path(self._source_path))  # type: ignore[arg-type]
+        # TODO: Bug 2881943
 
     def _get_base_path_for_code(self) -> Path:
         # internal components must have a source path
-        return Path(self._source_path).parent
+        return Path(self._source_path).parent  # type: ignore[arg-type]
+        # TODO: Bug 2881943
 
     def _get_origin_code_value(self) -> Union[str, PathLike, None]:
         return super()._get_origin_code_value() or "."
@@ -276,8 +279,9 @@ class InternalComponent(Component, AdditionalIncludesMixin):
         return init_kwargs
 
     def _to_rest_object(self) -> ComponentVersion:
-        component = convert_ordered_dict_to_dict(self._to_dict())
-        component["_source"] = self._source
+        component: Union[Dict[Any, Any], List[Any]] = convert_ordered_dict_to_dict(self._to_dict())
+        component["_source"] = self._source  # type: ignore[call-overload]
+        # TODO: 2883063
 
         properties = ComponentVersionProperties(
             component_spec=component,
@@ -310,7 +314,7 @@ class InternalComponent(Component, AdditionalIncludesMixin):
         snapshot_id = str(UUID(curr_root.hexdigest_hash[::4]))
         return snapshot_id
 
-    @contextmanager
+    @contextmanager  # type: ignore[arg-type]
     def _try_build_local_code(self) -> Iterable[Code]:
         """Build final code when origin code is a local code.
         Will merge code path with additional includes into a temp folder if additional includes is specified.
@@ -319,6 +323,8 @@ class InternalComponent(Component, AdditionalIncludesMixin):
         :return: The code instance
         :rtype: Iterable[Code]
         """
+
+        tmp_code_dir: Path
         # origin code value of internal component will never be None. check _get_origin_code_value for details
         with self._generate_additional_includes_obj().merge_local_code_and_additional_includes() as tmp_code_dir:
             # use absolute path in case temp folder & work dir are in different drive
@@ -334,8 +340,12 @@ class InternalComponent(Component, AdditionalIncludesMixin):
             # additional includes config file itself should be ignored
             rebased_ignore_file = ComponentIgnoreFile(
                 tmp_code_dir,
-                additional_includes_file_name=Path(self._source_path).with_suffix(_ADDITIONAL_INCLUDES_SUFFIX).name,
+                additional_includes_file_name=Path(self._source_path)
+                .with_suffix(_ADDITIONAL_INCLUDES_SUFFIX)
+                .name  # type: ignore[arg-type]
+                # TODO: Bug 2881943
             )
+
             # Use the snapshot id in ml-components as code name to enable anonymous
             # component reuse from ml-component runs.
             # calculate snapshot id here instead of inside InternalCode to ensure that

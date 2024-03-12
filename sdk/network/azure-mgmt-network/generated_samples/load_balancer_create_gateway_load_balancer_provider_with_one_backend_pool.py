@@ -96,12 +96,12 @@ def main():
                     }
                 ],
             },
-            "sku": {"name": "Premium"},
+            "sku": {"name": "Gateway"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2023-05-01/examples/LoadBalancerCreateGatewayLoadBalancerProviderWithOneBackendPool.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2023-09-01/examples/LoadBalancerCreateGatewayLoadBalancerProviderWithOneBackendPool.json
 if __name__ == "__main__":
     main()

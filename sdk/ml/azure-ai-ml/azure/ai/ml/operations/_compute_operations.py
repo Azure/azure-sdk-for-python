@@ -4,9 +4,9 @@
 
 # pylint: disable=protected-access
 
-from typing import Any, Dict, Iterable, Optional
+from typing import Any, Dict, Iterable, Optional, cast
 
-from azure.ai.ml._restclient.v2023_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022023Preview
+from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWorkspaces as ServiceClient022023Preview
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
@@ -17,7 +17,7 @@ from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 
 ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
+module_logger = ops_logger.module_logger
 
 
 class ComputeOperations(_ScopeDependentOperations):
@@ -50,7 +50,7 @@ class ComputeOperations(_ScopeDependentOperations):
         self._init_kwargs = kwargs
 
     @distributed_trace
-    @monitor_with_activity(logger, "Compute.List", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Compute.List", ActivityType.PUBLICAPI)
     def list(self, *, compute_type: Optional[str] = None) -> Iterable[Compute]:
         """List computes of the workspace.
 
@@ -69,18 +69,21 @@ class ComputeOperations(_ScopeDependentOperations):
                 :caption: Retrieving a list of the AzureML Kubernetes compute resources in a workspace.
         """
 
-        return self._operation.list(
-            self._operation_scope.resource_group_name,
-            self._workspace_name,
-            cls=lambda objs: [
-                Compute._from_rest_object(obj)
-                for obj in objs
-                if compute_type is None or Compute._from_rest_object(obj).type.lower() == compute_type.lower()
-            ],
+        return cast(
+            Iterable[Compute],
+            self._operation.list(
+                self._operation_scope.resource_group_name,
+                self._workspace_name,
+                cls=lambda objs: [
+                    Compute._from_rest_object(obj)
+                    for obj in objs
+                    if compute_type is None or str(Compute._from_rest_object(obj).type).lower() == compute_type.lower()
+                ],
+            ),
         )
 
     @distributed_trace
-    @monitor_with_activity(logger, "Compute.Get", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Compute.Get", ActivityType.PUBLICAPI)
     def get(self, name: str) -> Compute:
         """Get a compute resource.
 
@@ -107,7 +110,7 @@ class ComputeOperations(_ScopeDependentOperations):
         return Compute._from_rest_object(rest_obj)
 
     @distributed_trace
-    @monitor_with_activity(logger, "Compute.ListNodes", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Compute.ListNodes", ActivityType.PUBLICAPI)
     def list_nodes(self, name: str) -> Iterable[AmlComputeNodeInfo]:
         """Retrieve a list of a compute resource's nodes.
 
@@ -125,15 +128,18 @@ class ComputeOperations(_ScopeDependentOperations):
                 :dedent: 8
                 :caption: Retrieving a list of nodes from a compute resource.
         """
-        return self._operation.list_nodes(
-            self._operation_scope.resource_group_name,
-            self._workspace_name,
-            name,
-            cls=lambda objs: [AmlComputeNodeInfo._from_rest_object(obj) for obj in objs],
+        return cast(
+            Iterable[AmlComputeNodeInfo],
+            self._operation.list_nodes(
+                self._operation_scope.resource_group_name,
+                self._workspace_name,
+                name,
+                cls=lambda objs: [AmlComputeNodeInfo._from_rest_object(obj) for obj in objs],
+            ),
         )
 
     @distributed_trace
-    @monitor_with_activity(logger, "Compute.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Compute.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
     def begin_create_or_update(self, compute: Compute) -> LROPoller[Compute]:
         """Create and register a compute resource.
 
@@ -182,7 +188,7 @@ class ComputeOperations(_ScopeDependentOperations):
         return poller
 
     @distributed_trace
-    @monitor_with_activity(logger, "Compute.Attach", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Compute.Attach", ActivityType.PUBLICAPI)
     def begin_attach(self, compute: Compute, **kwargs: Any) -> LROPoller[Compute]:
         """Attach a compute resource to the workspace.
 
@@ -204,7 +210,7 @@ class ComputeOperations(_ScopeDependentOperations):
         return self.begin_create_or_update(compute=compute, **kwargs)
 
     @distributed_trace
-    @monitor_with_activity(logger, "Compute.BeginUpdate", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Compute.BeginUpdate", ActivityType.PUBLICAPI)
     def begin_update(self, compute: Compute) -> LROPoller[Compute]:
         """Update a compute resource. Currently only valid for AmlCompute resource types.
 
@@ -240,7 +246,7 @@ class ComputeOperations(_ScopeDependentOperations):
         return poller
 
     @distributed_trace
-    @monitor_with_activity(logger, "Compute.BeginDelete", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Compute.BeginDelete", ActivityType.PUBLICAPI)
     def begin_delete(self, name: str, *, action: str = "Delete") -> LROPoller[None]:
         """Delete or detach a compute resource.
 
@@ -269,7 +275,7 @@ class ComputeOperations(_ScopeDependentOperations):
         )
 
     @distributed_trace
-    @monitor_with_activity(logger, "Compute.BeginStart", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Compute.BeginStart", ActivityType.PUBLICAPI)
     def begin_start(self, name: str) -> LROPoller[None]:
         """Start a compute instance.
 
@@ -295,7 +301,7 @@ class ComputeOperations(_ScopeDependentOperations):
         )
 
     @distributed_trace
-    @monitor_with_activity(logger, "Compute.BeginStop", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Compute.BeginStop", ActivityType.PUBLICAPI)
     def begin_stop(self, name: str) -> LROPoller[None]:
         """Stop a compute instance.
 
@@ -320,7 +326,7 @@ class ComputeOperations(_ScopeDependentOperations):
         )
 
     @distributed_trace
-    @monitor_with_activity(logger, "Compute.BeginRestart", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Compute.BeginRestart", ActivityType.PUBLICAPI)
     def begin_restart(self, name: str) -> LROPoller[None]:
         """Restart a compute instance.
 
@@ -345,7 +351,7 @@ class ComputeOperations(_ScopeDependentOperations):
         )
 
     @distributed_trace
-    @monitor_with_activity(logger, "Compute.ListUsage", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Compute.ListUsage", ActivityType.PUBLICAPI)
     def list_usage(self, *, location: Optional[str] = None) -> Iterable[Usage]:
         """List the current usage information as well as AzureML resource limits for the
         given subscription and location.
@@ -367,13 +373,16 @@ class ComputeOperations(_ScopeDependentOperations):
         """
         if not location:
             location = self._get_workspace_location()
-        return self._usage_operations.list(
-            location=location,
-            cls=lambda objs: [Usage._from_rest_object(obj) for obj in objs],
+        return cast(
+            Iterable[Usage],
+            self._usage_operations.list(
+                location=location,
+                cls=lambda objs: [Usage._from_rest_object(obj) for obj in objs],
+            ),
         )
 
     @distributed_trace
-    @monitor_with_activity(logger, "Compute.ListSizes", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Compute.ListSizes", ActivityType.PUBLICAPI)
     def list_sizes(self, *, location: Optional[str] = None, compute_type: Optional[str] = None) -> Iterable[VmSize]:
         """List the supported VM sizes in a location.
 
@@ -409,4 +418,4 @@ class ComputeOperations(_ScopeDependentOperations):
 
     def _get_workspace_location(self) -> str:
         workspace = self._workspace_operations.get(self._resource_group_name, self._workspace_name)
-        return workspace.location
+        return str(workspace.location)

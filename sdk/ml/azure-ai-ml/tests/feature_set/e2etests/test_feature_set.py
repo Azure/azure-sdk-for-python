@@ -106,8 +106,9 @@ class TestFeatureSet(AzureRecordedTestCase):
                 backfill_poller = feature_store_client.feature_sets.begin_backfill(
                     name=fset_name,
                     version=version,
-                    feature_window_start_time=datetime.datetime.now() - datetime.timedelta(i + 1),
-                    feature_window_end_time=datetime.datetime.now() - datetime.timedelta(i),
+                    # account for source delay
+                    feature_window_start_time=datetime.datetime.now() - datetime.timedelta(i + 1 + 2),
+                    feature_window_end_time=datetime.datetime.now() - datetime.timedelta(i + 2),
                     data_status=["None", "Complete"],
                 )
                 assert isinstance(backfill_poller, LROPoller)

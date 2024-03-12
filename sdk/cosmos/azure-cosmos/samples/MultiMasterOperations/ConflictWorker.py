@@ -1,5 +1,6 @@
 import uuid
 import time
+from typing import Optional, Dict, Any
 from multiprocessing.pool import ThreadPool
 import json
 from azure.cosmos import exceptions, PartitionKey
@@ -580,11 +581,14 @@ class ConflictWorker(object):
 
                     time.sleep(0.5)
 
-        winner_document = None
+        winner_document: Optional[Dict[str, Any]] = None
 
         for document in conflict_document:
             if winner_document is None or int(winner_document['regionId']) <= int(document['regionId']):
                 winner_document = document
+        if winner_document is None:
+            print("Winner document not found.")
+            return
 
         print("Document from region %d should be the winner" % int(winner_document['regionId']))
 
@@ -643,11 +647,14 @@ class ConflictWorker(object):
                                     (conflict_document[0]['id'], client.client_connection.ReadEndpoint))
                     time.sleep(0.5)
 
-        winner_document = None
+        winner_document: Optional[Dict[str, Any]] = None
 
         for document in conflict_document:
             if winner_document is None or int(winner_document['regionId']) <= int(document['regionId']):
                 winner_document = document
+        if winner_document is None:
+            print("Winner document not found.")
+            return
 
         print("Document from region %d should be the winner" % int(winner_document['regionId']))
 

@@ -3,9 +3,9 @@
 All public methods should have docstrings to document the parameters, keywords, exceptions raised, and return types for each method. Models and clients should also document properties, instance variables, and class variables.
 
 * [Docstrings](#docstrings)
-    * [Method Docstrings](#method_docstrings)
-    * [Model and Client Docstrings](#model_and_client_docstrings)
-
+    * [Method Docstrings](#method-docstrings)
+    * [Model and Client Docstrings](#model-and-client-docstrings)
+* [Additional references](#additional-references)
 
 ## Docstrings
 
@@ -22,7 +22,10 @@ A method docstring is annotated by the Python long-string `"""<docstring>"""` ri
 
         The request must include a `training_files_url` parameter that is an
         externally accessible Azure storage blob container URI (preferably a Shared Access Signature URI). Note that
-        a container URI (without SAS) is accepted only when the container is public.
+        a container URI (without SAS) is accepted only when the container is public. 
+        See `SAS container details
+        <https://docs.microsoft.com/azure/cognitive-services/form-recognizer/build-training-data-set>`__
+        for more details.
         Models are trained using documents that are of the following content type - 'application/pdf',
         'image/jpeg', 'image/png', 'image/tiff', or 'image/bmp'. Other types of content in the container is ignored.
 
@@ -63,7 +66,7 @@ A method docstring is annotated by the Python long-string `"""<docstring>"""` ri
         ...
 ```
 
-The first portion of this docstring is a general description of what the method does. Following the general description of the method is a **required new line** and then documentation for each of the parameters, optional keyword arguments, returned objects, and potentially raised errors.
+The first portion of this docstring is a general description of what the method does. It contains a clickable link to MS documentation (note the special format and double-underscore necessary to make this work). Following the general description of the method is a **required new line** and then documentation for each of the parameters, optional keyword arguments, returned objects, and potentially raised errors.
 
 Positional parameters can be documented in one-line or two-lines. Both options can be used in a single docstring for documenting different parameters without issue.
 1. This option works best for parameters that are one of the basic types (`str`, `int`, `bool`, `bytes`, `float`, etc.)
@@ -187,3 +190,8 @@ class DocumentTranslationInput(object):  # pylint: disable=useless-object-inheri
 ```
 
 Positional parameters and keyword arguments are documented in the exact same way as a client method would be, using the `param` and `keyword` descriptors. Although not required, a new line between `param` and `keyword` descriptors helps to separate the docstring into logically separated groups.
+
+## Additional references
+
+- [Official Sphinx documentation](https://www.sphinx-doc.org/en/master/usage/domains/python.html)
+- [Microsoft - How to document a Python API (internal)](https://review.learn.microsoft.com/help/onboard/admin/reference/python/documenting-api)

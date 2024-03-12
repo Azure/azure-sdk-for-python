@@ -16,7 +16,7 @@ You can find service libraries in the `/sdk` directory.
 
 ### Prerequisites
 
-The client libraries are supported on Python 3.7 or later. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).
+The client libraries are supported on Python 3.8 or later. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).
 
 ## Packages available
 
@@ -53,7 +53,7 @@ Management libraries can be identified by namespaces that start with `azure-mgmt
 ## Need help?
 
 * For detailed documentation visit our [Azure SDK for Python documentation](https://aka.ms/python-docs)
-* File an issue via [Github Issues](https://github.com/Azure/azure-sdk-for-python/issues)
+* File an issue via [GitHub Issues](https://github.com/Azure/azure-sdk-for-python/issues)
 * Check [previous questions](https://stackoverflow.com/questions/tagged/azure+python) or ask new ones on StackOverflow using `azure` and `python` tags.
 
 ### Community

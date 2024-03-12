@@ -38,7 +38,7 @@ def build_execute_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-12-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-12-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -92,7 +92,7 @@ class GetPrivateDnsZoneSuffixOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-12-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-12-01-preview"))
         cls: ClsType[_models.GetPrivateDnsZoneSuffixResponse] = kwargs.pop("cls", None)
 
         request = build_execute_request(
@@ -113,7 +113,8 @@ class GetPrivateDnsZoneSuffixOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("GetPrivateDnsZoneSuffixResponse", pipeline_response)
 
