@@ -37,6 +37,15 @@ class MetricsQueryClient(object):  # pylint: disable=client-accepts-api-version-
             :language: python
             :dedent: 4
             :caption: Creating the asynchronous MetricsQueryClient with a TokenCredential.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/async_samples/sample_authentication_async.py
+            :start-after: [START create_metrics_query_client_sovereign_cloud_async]
+            :end-before: [END create_metrics_query_client_sovereign_cloud_async]
+            :language: python
+            :dedent: 4
+            :caption: Creating the MetricsQueryClient for use with a sovereign cloud (i.e. non-public cloud).
     """
 
     def __init__(self, credential: AsyncTokenCredential, **kwargs: Any) -> None:
