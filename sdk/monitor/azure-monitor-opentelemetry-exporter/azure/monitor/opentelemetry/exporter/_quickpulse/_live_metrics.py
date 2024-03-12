@@ -1,8 +1,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+from typing import Any, Iterable, Optional
+
 import platform
 import psutil
-from typing import Any, Iterable, Optional
 
 from opentelemetry.metrics import CallbackOptions, Observation
 from opentelemetry.sdk._logs import LogData
@@ -166,6 +167,7 @@ class _QuickpulseManager(metaclass=Singleton):
                         self._exception_rate_counter.add(1)
 
 
+# pylint: disable=unused-argument
 def _get_process_memory(options: CallbackOptions) -> Iterable[Observation]:
     # rss is non-swapped physical memory a process has used
     yield Observation(
@@ -174,6 +176,7 @@ def _get_process_memory(options: CallbackOptions) -> Iterable[Observation]:
     )
 
 
+# pylint: disable=unused-argument
 def _get_processor_time(options: CallbackOptions) -> Iterable[Observation]:
     # Processor time does not include idle time
     yield Observation(
