@@ -66,10 +66,19 @@ class ParameterizedSweep:
         :param early_termination: Early termination policy for sweep job.
         :type early_termination: ~azure.ai.ml.entities._job.sweep.early_termination_policy.EarlyTerminationPolicy
         :param search_space: Search space for sweep job.
-        :type search_space: Dict[str, Union[~azure.ai.ml.sweep.Choice, ~azure.ai.ml.sweep.LogNormal,
-        ~azure.ai.ml.sweep.LogUniform, ~azure.ai.ml.sweep.Normal, ~azure.ai.ml.sweep.QLogNormal,
-        ~azure.ai.ml.sweep.QLogUniform, ~azure.ai.ml.sweep.QNormal, ~azure.ai.ml.sweep.QUniform,
-        ~azure.ai.ml.sweep.Randint, ~azure.ai.ml.sweep.Uniform]]
+        :type search_space: Dict[str, Union[
+            ~azure.ai.ml.sweep.Choice,
+            ~azure.ai.ml.sweep.LogNormal,
+            ~azure.ai.ml.sweep.LogUniform,
+            ~azure.ai.ml.sweep.Normal,
+            ~azure.ai.ml.sweep.QLogNormal,
+            ~azure.ai.ml.sweep.QLogUniform,
+            ~azure.ai.ml.sweep.QNormal,
+            ~azure.ai.ml.sweep.QUniform,
+            ~azure.ai.ml.sweep.Randint,
+            ~azure.ai.ml.sweep.Uniform
+
+            ]]
         :param queue_settings: Queue settings for sweep job.
         :type queue_settings: ~azure.ai.ml.entities.QueueSettings
         :param resources: Compute Resource configuration for the job.
