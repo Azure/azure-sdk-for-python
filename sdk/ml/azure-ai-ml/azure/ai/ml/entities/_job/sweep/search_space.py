@@ -267,7 +267,6 @@ class Randint(SweepDistribution):
 
 class Uniform(SweepDistribution):
     """
-    :noindex:
 
     Uniform distribution configuration.
 

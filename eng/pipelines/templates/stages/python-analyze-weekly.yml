@@ -19,11 +19,14 @@ stages:
         timeoutInMinutes: 90
 
         variables:
-          PythonVersion: '3.8'
+          - template: /eng/pipelines/templates/variables/image.yml
+          - name: PythonVersion
+            value: '3.8' 
 
         pool:
-          name: azsdk-pool-mms-ubuntu-2004-general
-          vmImage: MMSUbuntu20.04
+          name: $(LINUXPOOL)
+          vmImage: $(LINUXVMIMAGE)
+          os: linux
 
         steps:
           - task: UsePythonVersion@0
