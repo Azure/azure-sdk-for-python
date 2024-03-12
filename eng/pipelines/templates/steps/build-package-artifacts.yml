@@ -44,6 +44,17 @@ steps:
     displayName: 'Tag scheduled builds'
     condition: and(eq(variables['Build.SourceBranchName'], variables['DefaultBranch']), eq(variables['Build.Reason'],'Schedule'))
 
+  - script: |
+      python -m pip freeze
+    displayName: Output pip
+    continueOnError: true
+
+  - script: |
+      where cibuildwheel
+      which cibuildwheel
+    displayName: check for cibuildwheel
+    continueOnError: true
+
   - task: UsePythonVersion@0
     displayName: 'Use Python $(PythonVersion)'
     inputs:
