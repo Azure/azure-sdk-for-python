@@ -831,6 +831,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
 
     async def delete_messages(
         self,
+        *,
         max_message_count: Optional[int] = None,
         before_enqueued_time_utc: Optional[datetime.datetime] = None,
     ) -> int:
