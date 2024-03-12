@@ -10,6 +10,9 @@
 
 ### Other Changes
 
+- Updated FastAPI sample
+    ([#34738](https://github.com/Azure/azure-sdk-for-python/pull/34738))
+
 ## 1.0.0b23 (2024-02-28)
 
 ### Features Added
