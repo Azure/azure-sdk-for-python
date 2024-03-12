@@ -92,7 +92,9 @@ class BlobStorageClient:
         if name and version is None:
             version = str(uuid.uuid4())  # placeholder for auto-increment artifacts
 
-        asset_id = generate_asset_id(asset_hash, include_directory=True) if not self.upload_to_root_container else ""
+        asset_id = (
+            generate_asset_id(str(asset_hash), include_directory=True) if not self.upload_to_root_container else ""
+        )
         source_name = Path(source).name
         dest = str(PurePosixPath(asset_id, source_name))
 

@@ -8,7 +8,7 @@ import os
 import re
 from os import PathLike
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Type, Union
+from typing import Any, Dict, List, Optional, Tuple, Type, Union, cast
 
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
@@ -198,13 +198,15 @@ class Data(Artifact):
 
     @classmethod
     def _from_rest_object(cls, data_rest_object: DataVersionBase) -> "Data":
+        from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
+
         data_rest_object_details: DataVersionBaseProperties = data_rest_object.properties
         arm_id_object = get_arm_id_object_from_id(data_rest_object.id)
         path = data_rest_object_details.data_uri
         data = Data(
             id=data_rest_object.id,
             name=arm_id_object.asset_name,
-            version=arm_id_object.asset_version,
+            version=cast(AMLVersionedArmId, arm_id_object).asset_version,
             path=path,
             type=getDataAssetType(data_rest_object_details.data_type),
             description=data_rest_object_details.description,
@@ -232,7 +234,7 @@ class Data(Artifact):
         if not asset_artifact.datastore_arm_id and asset_artifact.full_storage_path:
             self.path = asset_artifact.full_storage_path
         else:
-            groups = re.search(regex, asset_artifact.datastore_arm_id)
+            groups = re.search(regex, str(asset_artifact.datastore_arm_id))
             if groups:
                 datastore_name = groups.group(1)
                 self.path = SHORT_URI_FORMAT.format(datastore_name, asset_artifact.relative_path)

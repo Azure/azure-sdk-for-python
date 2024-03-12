@@ -101,7 +101,7 @@ class IgnoreFile(object):
         return self._path and self._path.exists()
 
     @property
-    def base_path(self) -> Path:
+    def base_path(self) -> Union[str, Path]:
         return self._path.parent
 
     def _get_ignore_list(self) -> List[str]:
@@ -141,7 +141,7 @@ class IgnoreFile(object):
             # 2 paths are on different drives
             return None
 
-    def is_file_excluded(self, file_path: Union[str, os.PathLike]) -> bool:
+    def is_file_excluded(self, file_path: Union[str, Path, os.PathLike]) -> bool:
         """Checks if given file_path is excluded.
 
         :param file_path: File path to be checked against ignore file specifications

@@ -52,6 +52,8 @@ class AzureMLDatastorePathUri:
         long_uri_match = re.match(LONG_URI_REGEX_FORMAT, uri)
         output_uri_match = re.match(OUTPUT_URI_REGEX_FORMAT, uri)
 
+        self.uri_type: Optional[str]
+
         if short_uri_match:
             self.datastore = short_uri_match.group(1)
             self.path = short_uri_match.group(2)
@@ -147,7 +149,7 @@ def get_storage_client(
     :return: The storage client
     :rtype: Union[BlobStorageClient, FileStorageClient, Gen2StorageClient]
     """
-    client_builders = {
+    client_builders: dict = {
         DatastoreType.AZURE_BLOB: lambda credential, container_name, account_url: BlobStorageClient(
             credential=credential, account_url=account_url, container_name=container_name
         ),
@@ -177,7 +179,7 @@ def get_storage_client(
     return client_builders[storage_type](credential, container_name, account_url)
 
 
-def get_artifact_path_from_storage_url(blob_url: str, container_name: dict) -> str:
+def get_artifact_path_from_storage_url(blob_url: str, container_name: str) -> str:
     split_blob_url = blob_url.split(container_name)
     if len(split_blob_url) > 1:
         path = split_blob_url[-1]
@@ -187,11 +189,11 @@ def get_artifact_path_from_storage_url(blob_url: str, container_name: dict) -> s
     return blob_url
 
 
-def get_ds_name_and_path_prefix(asset_uri: str, registry_name: Optional[str] = None) -> Tuple[str, str]:
+def get_ds_name_and_path_prefix(asset_uri: str, registry_name: Optional[str] = None) -> Tuple[Optional[str], str]:
     if registry_name:
         try:
             split_paths = re.findall(STORAGE_URI_REGEX, asset_uri)
-            path_prefix = split_paths[0][3]
+            path_prefix: str = split_paths[0][3]
         except Exception as e:
             raise Exception("Registry asset URI could not be parsed.") from e
         ds_name = None
