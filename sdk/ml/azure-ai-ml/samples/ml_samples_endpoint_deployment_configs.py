@@ -34,7 +34,7 @@ job_name = f"iris-dataset-job-{str(uuid.uuid4())}"
 
 
 class EndpointsDeploymentsConfigurationOptions(object):
-    def ml_endpoints_config_0(self):
+    def ml_endpoints_deployments_config_0(self):
         # [START scale_settings_entity_create]
         from azure.ai.ml.entities import ScaleSettings
 
@@ -236,7 +236,7 @@ class EndpointsDeploymentsConfigurationOptions(object):
             properties={"prop1": "value1", "prop2": "value2"},
             model="model_name",
             environment="environment_name",
-            code_configuration=
+            code_configuration=codeConfig,
         )
         # [END batch_deployment_entity_config]
 
@@ -313,9 +313,151 @@ class EndpointsDeploymentsConfigurationOptions(object):
             tags={"tag1": "value1", "tag2": "value2"},
             properties={"prop1": "value1", "prop2": "value2"},
             description="This is a sample kubernetes online endpoint.",
-            
+            location="location",
+            traffic={"traffic1": 0.5, "traffic2": 0.5},
+            mirror_traffic={"traffic1": 0.5, "traffic2": 0.5},
+            compute="compute_name",
+            kind="kind",
+        )
+        # [END kubernetes_online_endpoint_config]
+
+        # [START managed_online_endpoint_config]
+        from azure.ai.ml.entities import ManagedOnlineEndpoint
+
+        managed_online_endpoint = ManagedOnlineEndpoint(
+            name="managed_online_endpoint",
+            tags={"tag1": "value1", "tag2": "value2"},
+            properties={"prop1": "value1", "prop2": "value2"},
+            description="This is a sample managed online endpoint.",
+            location="location",
+            traffic={"traffic1": 0.5, "traffic2": 0.5},
+            mirror_traffic={"traffic1": 0.5, "traffic2": 0.5},
+            kind="kind",
+            public_network_access="enabled",
+        )
+        # [END managed_online_endpoint_config]
+
+        # [START endpoint_auth_token_config]
+        from azure.ai.ml.entities import EndpointAuthToken
+
+        endpoint_auth_token = EndpointAuthToken(
+            access_token="access_token",
+            token_type="token_type",
+            expiry_time_utc="expiry_time_utc",
+            refresh_after_time_utc="refresh_after_time_utc",
+        )
+        # [END endpoint_auth_token_config]
+
+        # [START batch_endpoint_config]
+        from azure.ai.ml.entities import BatchEndpoint
+
+        batch_endpoint = BatchEndpoint(
+            name="batch_endpoint",
+            tags={"tag1": "value1", "tag2": "value2"},
+            properties={"prop1": "value1", "prop2": "value2"},
+            description="This is a sample batch endpoint.",
+            location="location",
+            defaults={"deployment_name": "deployment_name"},
+            default_deployment_name="default_deployment_name",
+            scoring_uri="scoring_uri",
+            openapi_uri="openapi_uri",
+        )
+        # [END batch_endpoint_config]
+
+        # [START online_endpoint_begin_create_update_operation]
+        from azure.ai.ml import load_batch_deployment
+        from azure.ai.ml.entities import BatchDeployment
+
+        deployment_example = load_batch_deployment(
+            source="./sdk/ml/azure-ai-ml/tests/test_configs/deployments/online/online_deployment_1.yaml",
+            params_override=[{"name": f"deployment-{randint(0, 1000)}", "endpoint_name": "endpoint_name"}],
+        )
+
+        ml_client.batch_deployments.begin_create_or_update(deployment=deployment_example, skip_script_validation=True)
+        # [END online_endpoint_begin_create_update_operation]
+
+    def ml_endpoints_deployments_config_1(self):
+        from random import randint
+
+        from azure.ai.ml import load_online_endpoint
+
+        endpoint_example = load_online_endpoint(
+            source="./sdk/ml/azure-ai-ml/tests/test_configs/endpoints/online/online_endpoint_minimal.yaml",
+            params_override=[{"name": f"endpoint-{randint(0, 1000)}"}],
+        )
+        ml_client.online_endpoints.begin_create_or_update(endpoint_example)
+        endpoint_name = endpoint_example.name
+
+        # [START online_deployment_begin_create_update_operation]
+        from azure.ai.ml import load_online_deployment
+
+        deployment_example = load_online_deployment(
+            source="./sdk/ml/azure-ai-ml/tests/test_configs/deployments/online/online_deployment_1.yaml",
+            params_override=[{"name": f"deployment-{randint(0, 1000)}", "endpoint_name": "endpoint_name"}],
+        )
+
+        ml_client.online_deployments.begin_create_or_update(deployment=deployment_example, skip_script_validation=True)
+        # [END online_deployment_begin_create_update_operation]
+        
+        deployment_name = deployment_example.name
+        
+        # [START online_deployment_get_operation]
+        ml_client.online_deployments.get(deployment_name, endpoint_name)
+        # [END online_deployment_get_operation]
+
+        # [START online_deployment_list_operation]
+        ml_client.online_deployments.list(endpoint_name)
+        # [END online_deployment_list_operation]
+
+        # [START online_deployment_delete_operation]
+        ml_client.online_deployments.begin_delete(deployment_name, endpoint_name)
+        # [END online_deployment_delete_operation]
+
+        # [START online_deployment_get_logs_operation]
+        ml_client.online_deployments.get_logs(deployment_name, endpoint_name, lines=100)
+        # [END online_deployment_get_logs_operation]
+
+        from random import randint
+
+        endpoint_name_2 = f"endpoint-{randint(0, 1000)}"
+
+        # [START online_endpoint_create_update_operation]
+        from azure.ai.ml.entities import ManagedOnlineEndpoint
+
+        endpoint_example = ManagedOnlineEndpoint(name=endpoint_name_2)
+        ml_client.online_endpoints.begin_create_or_update(endpoint_example)
+        # [END online_endpoint_create_update_operation]
+
+        # [START online_endpoint_invoke_operation]
+        ml_client.online_endpoints.invoke(endpoint_name_2)
+        # [END online_endpoint_invoke_operation]
+
+        # [START online_endpoint_list_operation]
+        ml_client.online_endpoints.list()
+        # [END online_endpoint_list_operation]
+
+        # [START online_endpoint_get_keys_operation]
+        ml_client.online_endpoints.get_keys(endpoint_name_2)
+        # [END online_endpoint_get_keys_operation]
+
+        # [START online_endpoint_get_operation]
+        ml_client.online_endpoints.get(endpoint_name_2)
+        # [END online_endpoint_get_operation]
+
+        # [START online_endpoint_delete_operation]
+        ml_client.online_endpoints.begin_delete(endpoint_name_2)
+        # [END online_endpoint_delete_operation]
+
+        # [START online_endpoint_begin_regenerate_keys_operation]
+        ml_client.online_endpoints.begin_regenerate_keys(endpoint_name_2)
+        # [END online_endpoint_begin_regenerate_keys_operation]
+
+
+
+
 
 
 if __name__ == "__main__":
     sample = EndpointsDeploymentsConfigurationOptions()
-    sample.ml_endpoints_config_0()
+    sample.ml_endpoints_deployments_config_0()
+    sample.ml_endpoints_deployments_config_1()

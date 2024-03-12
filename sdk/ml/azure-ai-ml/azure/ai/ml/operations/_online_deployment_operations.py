@@ -122,6 +122,15 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         :raises ~azure.ai.ml.exceptions.VSCodeCommandNotFound: Raised if VSCode instance cannot be instantiated.
         :return: A poller to track the operation status
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.OnlineDeployment]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/ml_samples_endpoint_deployment_configs.py
+                :start-after: [START online_deployment_begin_create_update_operation]
+                :end-before: [END online_deployment_begin_create_update_operation]
+                :language: python
+                :dedent: 8
+                :caption: Create or update an online deployment.
         """
         try:
             if vscode_debug and not local:
@@ -229,6 +238,15 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         :raises ~azure.ai.ml.exceptions.LocalEndpointNotFoundError: Raised if local endpoint resource does not exist.
         :return: a deployment entity
         :rtype: ~azure.ai.ml.entities.OnlineDeployment
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/ml_samples_endpoint_deployment_configs.py
+                :start-after: [START online_deployment_get_operation]
+                :end-before: [END online_deployment_get_operation]
+                :language: python
+                :dedent: 8
+                :caption: Get an online deployment.
         """
         if local:
             deployment = self._local_deployment_helper.get(endpoint_name=endpoint_name, deployment_name=name)
@@ -260,6 +278,15 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         :raises ~azure.ai.ml.exceptions.LocalEndpointNotFoundError: Raised if local endpoint resource does not exist.
         :return: A poller to track the operation status
         :rtype: ~azure.core.polling.LROPoller[None]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/ml_samples_endpoint_deployment_configs.py
+                :start-after: [START online_deployment_delete_operation]
+                :end-before: [END online_deployment_delete_operation]
+                :language: python
+                :dedent: 8
+                :caption: Delete an online deployment.
         """
         if local:
             return self._local_deployment_helper.delete(name=endpoint_name, deployment_name=name)
@@ -297,6 +324,15 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         :paramtype local: bool
         :return: the logs
         :rtype: str
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/ml_samples_endpoint_deployment_configs.py
+                :start-after: [START online_deployment_get_logs_operation]
+                :end-before: [END online_deployment_get_logs_operation]
+                :language: python
+                :dedent: 8
+                :caption: Get logs from an online deployment.
         """
         if local:
             return self._local_deployment_helper.get_deployment_logs(
@@ -325,6 +361,15 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         :paramtype local: bool
         :return: an iterator of deployment entities
         :rtype: Iterable[~azure.ai.ml.entities.OnlineDeployment]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/ml_samples_endpoint_deployment_configs.py
+                :start-after: [START online_deployment_list_operation]
+                :end-before: [END online_deployment_list_operation]
+                :language: python
+                :dedent: 8
+                :caption: List online deployments.
         """
         if local:
             return self._local_deployment_helper.list()

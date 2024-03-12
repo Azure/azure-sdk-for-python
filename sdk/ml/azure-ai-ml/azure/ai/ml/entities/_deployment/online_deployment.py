@@ -402,7 +402,7 @@ class KubernetesOnlineDeployment(OnlineDeployment):
     :keyword scoring_script: Equivalent to code_configuration.code.scoring_script.
         Will be ignored if code_configuration is present, defaults to None
     :paramtype scoring_script: typing.Optional[typing.Union[str, os.PathLike]]
-    
+
     .. admonition:: Example:
 
         .. literalinclude:: ../samples/ml_samples_endpoint_deployment_configs.py
@@ -651,7 +651,7 @@ class ManagedOnlineDeployment(OnlineDeployment):
     :paramtype scoring_script_path: typing.Optional[typing.Union[str, os.PathLike]]
     :keyword data_collector: Data collector, defaults to None
     :paramtype data_collector: typing.Optional[typing.List[~azure.ai.ml.entities.DataCollector]]
-    
+
     .. admonition:: Example:
 
         .. literalinclude:: ../samples/ml_samples_endpoint_deployment_configs.py

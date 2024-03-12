@@ -328,6 +328,15 @@ class KubernetesOnlineEndpoint(OnlineEndpoint):
     :paramtype identity: typing.Optional[IdentityConfiguration]
     :keyword kind: Kind of the resource, we have two kinds: K8s and Managed online endpoints. If not set, kind defaults to None.
     :paramtype kind: typing.Optional[str]
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_endpoint_deployment_configs.py
+            :start-after: [START kubernetes_online_endpoint_config]
+            :end-before: [END kubernetes_online_endpoint_config]
+            :language: python
+            :dedent: 8
+            :caption: Create a Kubernetes online endpoint.
     """
 
     def __init__(
@@ -455,6 +464,15 @@ class ManagedOnlineEndpoint(OnlineEndpoint):
     :keyword public_network_access: Set to "Enabled" for endpoints that should allow public access when Private Link is enabled.
         Possible values include: "Enabled", "Disabled". If not set, public_network_access defaults to None.
     :type public_network_access: typing.Optional[str]
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_endpoint_deployment_configs.py
+            :start-after: [START managed_online_endpoint_config]
+            :end-before: [END managed_online_endpoint_config]
+            :language: python
+            :dedent: 8
+            :caption: Create a managed online endpoint.
     """
 
     def __init__(
@@ -570,6 +588,15 @@ class EndpointAuthToken(RestTranslatableMixin):
     :vartype refresh_after_time_utc: float
     :ivar token_type: Access token type.
     :vartype token_type: str.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_endpoint_deployment_configs.py
+            :start-after: [START endpoint_auth_token_config]
+            :end-before: [END endpoint_auth_token_config]
+            :language: python
+            :dedent: 8
+            :caption: Create a endpoint auth token config.
     """
 
     def __init__(self, **kwargs):

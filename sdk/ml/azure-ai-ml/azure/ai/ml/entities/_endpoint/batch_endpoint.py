@@ -43,6 +43,15 @@ class BatchEndpoint(Endpoint):
     :type scoring_uri: typing.Optional[str]
     :param openapi_uri: URI to check the open API definition of the endpoint.
     :type openapi_uri: typing.Optional[str]
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_endpoint_deployment_configs.py
+            :start-after: [START batch_endpoint_config]
+            :end-before: [END batch_endpoint_config]
+            :language: python
+            :dedent: 8
+            :caption: Create a batch endpoint.
     """
 
     def __init__(

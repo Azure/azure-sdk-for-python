@@ -27,7 +27,7 @@ class RunSettings:
     :type settings: typing.Optional[Dict[str, Any]]
 
     .. admonition:: Example:
-    
+
         .. literalinclude:: ../samples/ml_samples_endpoint_deployment_configs.py
             :start-after: [START run_settings_entity_create]
             :end-before: [END run_settings_entity_create]
