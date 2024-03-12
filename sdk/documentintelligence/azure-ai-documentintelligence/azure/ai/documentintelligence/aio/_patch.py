@@ -27,7 +27,7 @@ class DocumentIntelligenceClient(DIClientGenerated):  # pylint: disable=client-a
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials_async.AsyncTokenCredential
     :keyword api_version: The API version to use for this operation. Default value is
-     "2023-10-31-preview". Note that overriding this default value may result in unsupported
+     "2024-02-29-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     """
@@ -60,7 +60,7 @@ class DocumentIntelligenceAdministrationClient(
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials_async.AsyncTokenCredential
     :keyword api_version: The API version to use for this operation. Default value is
-     "2023-10-31-preview". Note that overriding this default value may result in unsupported
+     "2024-02-29-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     """
