@@ -62,7 +62,7 @@
 
 # ServiceLabel: %Storage
 # PRLabel: %Storage
-/sdk/storage/                                                        @annatisch @jalauzon-msft @vincenttran-msft
+/sdk/storage/                                                        @annatisch @jalauzon-msft @vincenttran-msft @weirongw23-msft
 
 # AzureSdkOwners: @YalinLi0312
 # ServiceLabel: %App Configuration
@@ -1015,6 +1015,8 @@
 # Eng Sys
 ###########
 /eng/                                                                @scbedd @weshaggard @benbp
+
+/tools/                                                              @scbedd @mccoyp
 
 # Add owners for notifications for specific pipelines
 /eng/pipelines/templates/jobs/tests-nightly-python.yml               @lmazuel @mccoyp
