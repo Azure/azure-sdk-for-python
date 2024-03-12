@@ -1,8 +1,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 import platform
-from typing import Any, Optional
+import psutil
+from typing import Any, Iterable, Optional
 
+from opentelemetry.metrics import CallbackOptions, Observation
 from opentelemetry.sdk._logs import LogData
 from opentelemetry.sdk.metrics import MeterProvider
 from opentelemetry.sdk.resources import Resource
@@ -13,10 +15,12 @@ from opentelemetry.trace import SpanKind
 
 from azure.monitor.opentelemetry.exporter._generated.models import ContextTagKeys
 from azure.monitor.opentelemetry.exporter._quickpulse._constants import (
+    _COMMITTED_BYTES_NAME,
     _DEPENDENCY_DURATION_NAME,
     _DEPENDENCY_FAILURE_RATE_NAME,
     _DEPENDENCY_RATE_NAME,
     _EXCEPTION_RATE_NAME,
+    _PROCESSOR_TIME_NAME,
     _REQUEST_DURATION_NAME,
     _REQUEST_FAILURE_RATE_NAME,
     _REQUEST_RATE_NAME,
@@ -42,6 +46,8 @@ from azure.monitor.opentelemetry.exporter._utils import (
     Singleton,
 )
 
+
+PROCESS = psutil.Process()
 
 def enable_live_metrics(**kwargs: Any) -> None:
     """Live metrics entry point.
@@ -113,6 +119,14 @@ class _QuickpulseManager(metaclass=Singleton):
             "exc/sec",
             "live metrics exception rate per second"
         )
+        self._process_memory_gauge = self._meter.create_observable_gauge(
+            _COMMITTED_BYTES_NAME[0],
+            [_get_process_memory],
+        )
+        self._processor_time_gauge = self._meter.create_observable_gauge(
+            _PROCESSOR_TIME_NAME[0],
+            [_get_processor_time],
+        )
 
     def _record_span(self, span: ReadableSpan) -> None:
         # Only record if in post state
@@ -150,3 +164,19 @@ class _QuickpulseManager(metaclass=Singleton):
                     exc_message = log_record.attributes.get(SpanAttributes.EXCEPTION_MESSAGE)
                     if exc_type is not None or exc_message is not None:
                         self._exception_rate_counter.add(1)
+
+
+def _get_process_memory(options: CallbackOptions) -> Iterable[Observation]:
+    # rss is non-swapped physical memory a process has used
+    yield Observation(
+        PROCESS.memory_info().rss,
+        {},
+    )
+
+
+def _get_processor_time(options: CallbackOptions) -> Iterable[Observation]:
+    # Processor time does not include idle time
+    yield Observation(
+        100 - psutil.cpu_times_percent().idle,
+        {},
+    )
