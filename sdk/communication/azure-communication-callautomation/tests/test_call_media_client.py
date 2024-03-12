@@ -72,48 +72,6 @@ class TestCallMediaClient(unittest.TestCase):
         self.assertEqual(expected_play_request.play_to[0]['raw_id'], actual_play_request.play_to[0]['raw_id'])
         self.assertEqual(expected_play_request.play_options, actual_play_request.play_options)
 
-    def test_play_file_to_all_back_compat(self):
-        mock_play = Mock()
-        self.call_media_operations.play = mock_play
-        play_source = FileSource(url=self.url)
-
-        self.call_connection_client.play_media_to_all(play_source=play_source)
-
-        expected_play_request = PlayRequest(
-            play_sources=[play_source._to_generated()],
-            play_to=[],
-            play_options=PlayOptions(loop=False, interrupt_call_media_operation=False)
-        )
-        mock_play.assert_called_once()
-        actual_play_request = mock_play.call_args[0][1]
-
-        self.assertEqual(expected_play_request.play_sources[0].kind, actual_play_request.play_sources[0].kind)
-        self.assertEqual(expected_play_request.play_sources[0].file.uri, actual_play_request.play_sources[0].file.uri)
-        self.assertEqual(expected_play_request.play_sources[0].play_source_cache_id, actual_play_request.play_sources[0].play_source_cache_id)
-        self.assertEqual(expected_play_request.play_to, actual_play_request.play_to)
-        self.assertEqual(expected_play_request.play_options, actual_play_request.play_options)
-    
-    def test_play_file_to_all_back_compat_with_barge_in(self):
-        mock_play = Mock()
-        self.call_media_operations.play = mock_play
-        play_source = FileSource(url=self.url)
-
-        self.call_connection_client.play_media_to_all(play_source=play_source, interrupt_call_media_operation=True)
-
-        expected_play_request = PlayRequest(
-            play_sources=[play_source._to_generated()],
-            play_to=[],
-            play_options=PlayOptions(loop=False, interrupt_call_media_operation=True)
-        )
-        mock_play.assert_called_once()
-        actual_play_request = mock_play.call_args[0][1]
-
-        self.assertEqual(expected_play_request.play_sources[0].kind, actual_play_request.play_sources[0].kind)
-        self.assertEqual(expected_play_request.play_sources[0].file.uri, actual_play_request.play_sources[0].file.uri)
-        self.assertEqual(expected_play_request.play_sources[0].play_source_cache_id, actual_play_request.play_sources[0].play_source_cache_id)
-        self.assertEqual(expected_play_request.play_to, actual_play_request.play_to)
-        self.assertEqual(expected_play_request.play_options, actual_play_request.play_options)
-            
     def test_play_file_to_all(self):
         mock_play = Mock()
         self.call_media_operations.play = mock_play

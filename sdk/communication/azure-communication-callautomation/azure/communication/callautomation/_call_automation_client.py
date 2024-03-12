@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import List, Union, Optional, TYPE_CHECKING, Iterable, overload, Dict
+from typing import List, Union, Optional, TYPE_CHECKING, Iterable, overload
 from urllib.parse import urlparse
 import warnings
 
@@ -23,8 +23,7 @@ from ._generated.models import (
     RedirectCallRequest,
     RejectCallRequest,
     StartCallRecordingRequest,
-    CallIntelligenceOptions,
-    CustomCallingContext
+    CallIntelligenceOptions
 )
 from ._models import (
     CallConnectionProperties,
@@ -174,8 +173,6 @@ class CallAutomationClient:
         source_display_name: Optional[str] = None,
         operation_context: Optional[str] = None,
         cognitive_services_endpoint: Optional[str] = None,
-        sip_headers: Optional[Dict[str, str]] = None,
-        voip_headers: Optional[Dict[str, str]] = None,
         **kwargs
     ) -> CallConnectionProperties:
         """Create a call connection request to a target identity.
@@ -196,10 +193,6 @@ class CallAutomationClient:
         :keyword cognitive_services_endpoint:
          The identifier of the Cognitive Service resource assigned to this call.
         :paramtype cognitive_services_endpoint: str or None
-        :keyword sip_headers: Sip Headers for PSTN Call
-        :paramtype sip_headers: Dict[str, str] or None
-        :keyword voip_headers: Voip Headers for Voip Call
-        :paramtype voip_headers: Dict[str, str] or None
         :return: CallConnectionProperties
         :rtype: ~azure.communication.callautomation.CallConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -209,13 +202,6 @@ class CallAutomationClient:
             source_caller_id_number = source_caller_id_number or target_participant.source_caller_id_number
             source_display_name = source_display_name or target_participant.source_display_name
             target_participant = target_participant.target
-
-        user_custom_context = None
-        if sip_headers or voip_headers:
-            user_custom_context = CustomCallingContext(
-                voip_headers=voip_headers,
-                sip_headers=sip_headers
-            )
 
         call_intelligence_options = CallIntelligenceOptions(
             cognitive_services_endpoint=cognitive_services_endpoint
@@ -233,8 +219,7 @@ class CallAutomationClient:
             source=serialize_communication_user_identifier(self.source),
             operation_context=operation_context,
             call_intelligence_options=call_intelligence_options,
-            cognitive_services_endpoint=cognitive_services_endpoint,
-            custom_calling_context=user_custom_context
+            cognitive_services_endpoint=cognitive_services_endpoint
         )
         process_repeatability_first_sent(kwargs)
         result = self._client.create_call(
