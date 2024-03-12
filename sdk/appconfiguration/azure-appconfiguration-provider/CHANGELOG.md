@@ -4,9 +4,15 @@
 
 ### Features Added
 
+* Enable loading of feature flags with `feature_flag_enabled`
+* Select Feature Flags to load with `feature_flag_selectors`
+* Enable/Disable Feature Flag Refresh with `feature_flag_refresh_enabled`
+
 ### Breaking Changes
 
 ### Bugs Fixed
+
+* Fixes issue where loading configurations were slower do to returning a copy of the configurations.
 
 ### Other Changes
 

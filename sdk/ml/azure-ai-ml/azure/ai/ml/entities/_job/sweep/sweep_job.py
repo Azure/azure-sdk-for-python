@@ -51,7 +51,19 @@ from .early_termination_policy import (
 )
 from .objective import Objective
 from .parameterized_sweep import ParameterizedSweep
-from .search_space import SweepDistribution
+from .search_space import (
+    Choice,
+    LogNormal,
+    LogUniform,
+    Normal,
+    QLogNormal,
+    QLogUniform,
+    QNormal,
+    QUniform,
+    Randint,
+    SweepDistribution,
+    Uniform,
+)
 
 module_logger = logging.getLogger(__name__)
 
@@ -76,16 +88,21 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
     :paramtype identity: Union[
         ~azure.ai.ml.ManagedIdentityConfiguration,
         ~azure.ai.ml.AmlTokenConfiguration,
-        ~azure.ai.ml.UserIdentityConfiguration]
+        ~azure.ai.ml.UserIdentityConfiguration
+
+    ]
+
     :keyword inputs: Inputs to the command.
     :paramtype inputs: dict
     :keyword outputs: Mapping of output data bindings used in the job.
     :paramtype outputs: dict[str, ~azure.ai.ml.Output]
     :keyword sampling_algorithm: The hyperparameter sampling algorithm to use over the `search_space`. Defaults to
         "random".
+
     :paramtype sampling_algorithm: str
     :keyword search_space: Dictionary of the hyperparameter search space. The key is the name of the hyperparameter
         and the value is the parameter expression.
+
     :paramtype search_space: Dict
     :keyword objective: Metric to optimize for.
     :paramtype objective: Objective
@@ -99,12 +116,17 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
         ~azure.ai.ml.entities.CommandComponent
 
     ]
+
     :keyword early_termination: The early termination policy to use. A trial job is canceled
         when the criteria of the specified policy are met. If omitted, no early termination policy will be applied.
+
     :paramtype early_termination:  Union[
         ~azure.mgmt.machinelearningservices.models.BanditPolicy,
         ~azure.mgmt.machinelearningservices.models.MedianStoppingPolicy,
-        ~azure.mgmt.machinelearningservices.models.TruncationSelectionPolicy]
+        ~azure.mgmt.machinelearningservices.models.TruncationSelectionPolicy
+
+    ]
+
     :keyword limits: Limits for the sweep job.
     :paramtype limits: ~azure.ai.ml.entities.SweepJobLimits
     :keyword queue_settings: Queue settings for the job.
@@ -141,9 +163,16 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
         compute: Optional[str] = None,
         limits: Optional[SweepJobLimits] = None,
         sampling_algorithm: Optional[Union[str, SamplingAlgorithm]] = None,
-        search_space: Optional[Dict] = None,
+        search_space: Optional[
+            Dict[
+                str,
+                Union[
+                    Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+                ],
+            ]
+        ] = None,
         objective: Optional[Objective] = None,
-        trial: Optional[Union[CommandJob, CommandComponent, ParameterizedCommand]] = None,
+        trial: Optional[Union[CommandJob, CommandComponent]] = None,
         early_termination: Optional[
             Union[EarlyTerminationPolicy, BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy]
         ] = None,
@@ -163,8 +192,8 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
             compute=compute,
             **kwargs,
         )
-        self.inputs = inputs
-        self.outputs = outputs
+        self.inputs = inputs  # type: ignore[assignment]
+        self.outputs = outputs  # type: ignore[assignment]
         self.trial = trial
         self.identity = identity
 
@@ -267,6 +296,10 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
         # Compute also appears in both layers of the yaml, but only one of the REST.
         # This should be a required field in one place, but cannot be if its optional in two
 
+        _search_space = {}
+        for param, dist in properties.search_space.items():
+            _search_space[param] = SweepDistribution._from_rest_object(dist)
+
         return SweepJob(
             name=obj.name,
             id=obj.id,
@@ -278,12 +311,10 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
             services=properties.services,
             status=properties.status,
             creation_context=SystemData._from_rest_object(obj.system_data) if obj.system_data else None,
-            trial=trial,
+            trial=trial,  # type: ignore[arg-type]
             compute=properties.compute_id,
             sampling_algorithm=sampling_algorithm,
-            search_space={
-                param: SweepDistribution._from_rest_object(dist) for (param, dist) in properties.search_space.items()
-            },
+            search_space=_search_space,  # type: ignore[arg-type]
             limits=SweepJobLimits._from_rest_object(properties.limits),
             early_termination=early_termination,
             objective=properties.objective,

@@ -123,7 +123,7 @@ class TestHealth(TextAnalyticsTest):
 
         with pytest.raises(HttpResponseError) as excinfo:
             client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())
-        assert excinfo.value.status_code == 413
+        assert excinfo.value.status_code == 400
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()

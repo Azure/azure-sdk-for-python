@@ -10,6 +10,7 @@ from urllib.parse import parse_qs
 
 from azure.storage.blob import generate_account_sas as generate_blob_account_sas
 from azure.storage.blob import generate_container_sas, generate_blob_sas
+from ._shared.models import Services
 from ._shared.shared_access_signature import QueryStringConstants
 
 
@@ -26,13 +27,15 @@ if TYPE_CHECKING:
 
 
 def generate_account_sas(
-        account_name,  # type: str
-        account_key,  # type: str
-        resource_types,  # type: Union[ResourceTypes, str]
-        permission,  # type: Union[AccountSasPermissions, str]
-        expiry,  # type: Union[datetime, str]
-        **kwargs # type: Any
-    ):  # type: (...) -> str
+    account_name: str,
+    account_key: str,
+    resource_types: Union["ResourceTypes", str],
+    permission: Union["AccountSasPermissions", str],
+    expiry: Union["datetime", str],
+    *,
+    services: Union[Services, str] = Services(blob=True),
+    **kwargs: Any
+) -> str:
     """Generates a shared access signature for the DataLake service.
 
     Use the returned signature as the credential parameter of any DataLakeServiceClient,
@@ -67,6 +70,9 @@ def generate_account_sas(
         or address range specified on the SAS token, the request is not authenticated.
         For example, specifying ip=168.1.5.65 or ip=168.1.5.60-168.1.5.70 on the SAS
         restricts the request to those IP addresses.
+    :keyword Union[Services, str] services:
+        Specifies the services that the Shared Access Signature (sas) token will be able to be utilized with.
+        Will default to only this package (i.e. blobs) if not provided.
     :keyword str protocol:
         Specifies the protocol permitted for a request made. The default value is https.
     :keyword str encryption_scope:
@@ -80,6 +86,7 @@ def generate_account_sas(
         resource_types=resource_types,
         permission=permission,
         expiry=expiry,
+        services=services,
         **kwargs
     )
 

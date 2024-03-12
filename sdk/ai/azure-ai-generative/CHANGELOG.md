@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b5 (Unreleased)
+## 1.0.0b8 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,33 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.0.0b7 (2024-02-07)
+
+### Other Changes
+
+- Bug fixes
+
+## 1.0.0b6 (2024-02-06)
+
+### Other Changes
+
+- Recursive Text Splitter is now enabled by default for local index builds which mimics behavior of cloud index builds
+- Bug fixes
+
+## 1.0.0b5 (2024-02-02)
+
+### Features Added
+
+- Supports evaluate() on chat
+
+### Bugs Fixed
+
+- Fix promptflow evaluation bugs
+
+### Other Changes
+
+- Duplicate cleanup
 
 ## 1.0.0b4 (2024-02-01)
 

@@ -140,7 +140,7 @@ class TestHealth(TextAnalyticsTest):
             async with client:
                 await client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())
 
-        assert excinfo.value.status_code == 413
+        assert excinfo.value.status_code == 400
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()

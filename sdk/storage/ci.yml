@@ -50,6 +50,9 @@ extends:
       safeName: azurestoragequeue
     - name: azure-storage-extensions
       safeName: azurestorageextensions
+      # Pure C-based storage extension package, not generating docs at this moment.
+      skipPublishDocs: true
+      skipPublishDocMs: true
     - name: azure-mgmt-storage
       safeName: azuremgmtstorage
     - name: azure-mgmt-storagecache

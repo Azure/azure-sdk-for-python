@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import unittest
-from unittest.mock import Mock, patch
+from unittest.mock import Mock, call, patch
 
 from opentelemetry.sdk.resources import Resource
 
@@ -218,6 +218,7 @@ class TestConfigure(unittest.TestCase):
         trace_exporter_mock.return_value = trace_exp_init_mock
         bsp_init_mock = Mock()
         bsp_mock.return_value = bsp_init_mock
+        custom_sp = Mock()
 
         configurations = {
             "connection_string": "test_cs",
@@ -225,6 +226,7 @@ class TestConfigure(unittest.TestCase):
                 "azure_sdk": {"enabled": True}
             },
             "sampling_ratio": 0.5,
+            "span_processors": [custom_sp],
             "resource": TEST_RESOURCE,
         }
         _setup_tracing(configurations)
@@ -237,7 +239,8 @@ class TestConfigure(unittest.TestCase):
         get_tracer_provider_mock.assert_called()
         trace_exporter_mock.assert_called_once_with(**configurations)
         bsp_mock.assert_called_once_with(trace_exp_init_mock)
-        tp_init_mock.add_span_processor.assert_called_once_with(bsp_init_mock)
+        self.assertEqual(tp_init_mock.add_span_processor.call_count, 2)
+        tp_init_mock.add_span_processor.assert_has_calls([call(custom_sp), call(bsp_init_mock)])
         self.assertEqual(
             azure_core_mock.tracing_implementation, OpenTelemetrySpan
         )

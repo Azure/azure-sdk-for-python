@@ -1,0 +1,322 @@
+inputs:
+  question:
+    type: string
+    default: Which tent is the most waterproof?
+    is_chat_input: false
+  answer:
+    type: string
+    default: ""
+    is_chat_input: false
+  context:
+    type: string
+    default: ""
+    is_chat_input: false
+  ground_truth:
+    type: string
+    default: ""
+    is_chat_input: false
+  metrics:
+    type: string
+    default: gpt_groundedness,f1_score,gpt_fluency,gpt_coherence,gpt_similarity,gpt_relevance,violence,self_harm
+    is_chat_input: false
+  threshold:
+    type: int
+    default: 4
+    is_chat_input: false
+outputs:
+  gpt_coherence:
+    type: string
+    reference: ${concat_scores.output.gpt_coherence}
+  hate_fairness_score:
+    type: string
+    reference: ${concat_scores.output.hate_fairness_score}
+  gpt_relevance:
+    type: string
+    reference: ${concat_scores.output.gpt_relevance}
+  self_harm_reasoning:
+    type: string
+    reference: ${concat_scores.output.self_harm_reasoning}
+  self_harm:
+    type: string
+    reference: ${concat_scores.output.self_harm}
+  sexual_score:
+    type: string
+    reference: ${concat_scores.output.sexual_score}
+  violence_score:
+    type: string
+    reference: ${concat_scores.output.violence_score}
+  hate_fairness_reasoning:
+    type: string
+    reference: ${concat_scores.output.hate_fairness_reasoning}
+  hate_fairness:
+    type: string
+    reference: ${concat_scores.output.hate_fairness}
+  gpt_groundedness:
+    type: string
+    reference: ${concat_scores.output.gpt_groundedness}
+  gpt_similarity:
+    type: string
+    reference: ${concat_scores.output.gpt_similarity}
+  sexual_reasoning:
+    type: string
+    reference: ${concat_scores.output.sexual_reasoning}
+  gpt_fluency:
+    type: string
+    reference: ${concat_scores.output.gpt_fluency}
+  sexual:
+    type: string
+    reference: ${concat_scores.output.sexual}
+  self_harm_score:
+    type: string
+    reference: ${concat_scores.output.self_harm_score}
+  violence_reasoning:
+    type: string
+    reference: ${concat_scores.output.violence_reasoning}
+  violence:
+    type: string
+    reference: ${concat_scores.output.violence}
+  f1_score:
+    type: string
+    reference: ${concat_scores.output.f1_score}
+nodes:
+- name: gpt_coherence
+  type: llm
+  source:
+    type: code
+    path: gpt_coherence_prompt.jinja2
+  inputs:
+    deployment_name: GPT-4-Prod
+    temperature: 0
+    top_p: 1
+    max_tokens: 1
+    presence_penalty: 0
+    frequency_penalty: 0
+    answer: ${inputs.answer}
+    question: ${inputs.question}
+  provider: AzureOpenAI
+  connection: Default_AzureOpenAI
+  api: chat
+  module: promptflow.tools.aoai
+  activate:
+    when: ${validate_input.output.gpt_coherence}
+    is: true
+  use_variants: false
+- name: concat_quality_scores
+  type: python
+  source:
+    type: code
+    path: concat_quality_scores.py
+  inputs:
+    gpt_coherence_score: ${gpt_coherence.output}
+    gpt_similarity_score: ${gpt_similarity.output}
+    gpt_fluency_score: ${gpt_fluency.output}
+    gpt_relevance_score: ${gpt_relevance.output}
+    gpt_groundedness_score: ${gpt_groundedness.output}
+    f1_score: ${f1_score.output}
+  use_variants: false
+- name: gpt_similarity
+  type: llm
+  source:
+    type: code
+    path: gpt_similarity_prompt.jinja2
+  inputs:
+    deployment_name: GPT-4-Prod
+    temperature: 0
+    top_p: 1
+    max_tokens: 1
+    presence_penalty: 0
+    frequency_penalty: 0
+    answer: ${inputs.answer}
+    question: ${inputs.question}
+    ground_truth: ${inputs.ground_truth}
+  provider: AzureOpenAI
+  connection: Default_AzureOpenAI
+  api: chat
+  module: promptflow.tools.aoai
+  activate:
+    when: ${validate_input.output.gpt_similarity}
+    is: true
+  use_variants: false
+- name: gpt_relevance
+  type: llm
+  source:
+    type: code
+    path: gpt_relevance_prompt.jinja2
+  inputs:
+    deployment_name: GPT-4-Prod
+    temperature: 0
+    top_p: 1
+    max_tokens: 1
+    presence_penalty: 0
+    frequency_penalty: 0
+    answer: ${inputs.answer}
+    question: ${inputs.question}
+    context: ${inputs.context}
+  provider: AzureOpenAI
+  connection: Default_AzureOpenAI
+  api: chat
+  module: promptflow.tools.aoai
+  activate:
+    when: ${validate_input.output.gpt_relevance}
+    is: true
+  use_variants: false
+- name: gpt_fluency
+  type: llm
+  source:
+    type: code
+    path: gpt_fluency_prompt.jinja2
+  inputs:
+    deployment_name: GPT-4-Prod
+    temperature: 0
+    top_p: 1
+    max_tokens: 1
+    presence_penalty: 0
+    frequency_penalty: 0
+    answer: ${inputs.answer}
+    question: ${inputs.question}
+  provider: AzureOpenAI
+  connection: Default_AzureOpenAI
+  api: chat
+  module: promptflow.tools.aoai
+  activate:
+    when: ${validate_input.output.gpt_fluency}
+    is: true
+  use_variants: false
+- name: f1_score
+  type: python
+  source:
+    type: code
+    path: f1_score.py
+  inputs:
+    ground_truth: ${inputs.ground_truth}
+    answer: ${inputs.answer}
+  activate:
+    when: ${validate_input.output.f1_score}
+    is: true
+  use_variants: false
+- name: gpt_groundedness
+  type: llm
+  source:
+    type: code
+    path: gpt_groundedness_prompt.jinja2
+  inputs:
+    deployment_name: GPT-4-Prod
+    temperature: 0
+    top_p: 1
+    max_tokens: 1
+    presence_penalty: 0
+    frequency_penalty: 0
+    answer: ${inputs.answer}
+    context: ${inputs.context}
+  provider: AzureOpenAI
+  connection: Default_AzureOpenAI
+  api: chat
+  module: promptflow.tools.aoai
+  activate:
+    when: ${validate_input.output.gpt_groundedness}
+    is: true
+  use_variants: false
+- name: aggregate_variants_results
+  type: python
+  source:
+    type: code
+    path: aggregate_variants_results.py
+  inputs:
+    results: ${concat_scores.output}
+    selected_metrics: ${select_metrics.output}
+    thresholds: ${inputs.threshold}
+  aggregation: true
+  use_variants: false
+- name: select_metrics
+  type: python
+  source:
+    type: code
+    path: select_metrics.py
+  inputs:
+    metrics: ${inputs.metrics}
+  use_variants: false
+- name: validate_input
+  type: python
+  source:
+    type: code
+    path: validate_input.py
+  inputs:
+    answer: ${inputs.answer}
+    context: ${inputs.context}
+    ground_truth: ${inputs.ground_truth}
+    question: ${inputs.question}
+    selected_metrics: ${select_metrics.output}
+  use_variants: false
+- name: validate_safety_metric_input
+  type: python
+  source:
+    type: code
+    path: validate_safety_metric_input.py
+  inputs:
+    answer: ${inputs.answer}
+    question: ${inputs.question}
+    selected_metrics: ${select_metrics.output}
+  use_variants: false
+- name: construct_service_request
+  type: python
+  source:
+    type: code
+    path: construct_service_request.py
+  inputs:
+    answer: ${inputs.answer}
+    question: ${inputs.question}
+    selected_metrics: ${select_metrics.output}
+  activate:
+    when: ${validate_safety_metric_input.output}
+    is: true
+  use_variants: false
+- name: call_rai_service
+  type: python
+  source:
+    type: code
+    path: call_rai_service.py
+  inputs:
+    request_body: ${construct_service_request.output}
+  activate:
+    when: ${validate_safety_metric_input.output}
+    is: true
+  use_variants: false
+- name: parse_service_response
+  type: python
+  source:
+    type: code
+    path: parse_service_response.py
+  inputs:
+    batch_response: ${call_rai_service.output}
+    selected_label_keys: ${select_metrics.output}
+  activate:
+    when: ${validate_safety_metric_input.output}
+    is: true
+  use_variants: false
+- name: format_service_output
+  type: python
+  source:
+    type: code
+    path: format_service_output.py
+  inputs:
+    parsed_responses: ${parse_service_response.output}
+  activate:
+    when: ${validate_safety_metric_input.output}
+    is: true
+  use_variants: false
+- name: concat_scores
+  type: python
+  source:
+    type: code
+    path: concat_results.py
+  inputs:
+    quality_results: ${concat_quality_scores.output}
+    safety_results: ${format_service_output.output}
+    selected_metrics: ${select_metrics.output}
+  use_variants: false
+node_variants: {}
+$schema: https://azuremlschemas.azureedge.net/promptflow/latest/Flow.schema.json
+environment:
+  python_requirements_txt: requirements.txt
+environment_variables:
+  PF_WORKER_COUNT: 1

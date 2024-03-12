@@ -1,15 +1,28 @@
 # Release History
 
-## 1.2.1 (Unreleased)
+## 1.3.1 (Unreleased)
 
 ### Features Added
+
+### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
 
+## 1.3.0 (2024-02-29)
+
+### Features Added
+
+- Add custom span processors configuration option
+    ([#34326](https://github.com/Azure/azure-sdk-for-python/pull/34326))
+
+### Other Changes
+
 - Update configure_azure_monitor signature and Django sample
     ([#33834](https://github.com/Azure/azure-sdk-for-python/pull/33834))
+- Remove support for Python 3.7
+    ([#34252](https://github.com/Azure/azure-sdk-for-python/pull/34252))
 
 ## 1.2.0 (2024-01-18)
 
@@ -45,6 +58,8 @@
     ([#32195](https://github.com/Azure/azure-sdk-for-python/pull/32195))
 - Allow OTEL_PYTHON_DISABLED_INSTRUMENTATIONS functionality for Azure Core Tracing in Auto-instrumentation
     ([#32331](https://github.com/Azure/azure-sdk-for-python/pull/32331))
+- Add instrumentation_options
+    ([#31793](https://github.com/Azure/azure-sdk-for-python/pull/31793))
 
 ### Bugs Fixed
 
@@ -57,8 +72,6 @@
 
 - Add Azure resource detectors
     ([#32087](https://github.com/Azure/azure-sdk-for-python/pull/32087))
-- Add instrumentation_options
-    ([#31793](https://github.com/Azure/azure-sdk-for-python/pull/31793))
 
 ### Other Changes
 

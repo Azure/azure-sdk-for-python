@@ -504,10 +504,7 @@
       "name": "[concat(parameters('testStorageAccountName'), '/default/', parameters('testBlobContainerName'))]",
       "dependsOn": [
           "[resourceId('Microsoft.Storage/storageAccounts', parameters('testStorageAccountName'))]"
-      ],
-      "properties": {
-          "publicAccess": "Blob"
-      }
+      ]
     },
     {
       "type": "Microsoft.Storage/storageAccounts/fileServices/shares",

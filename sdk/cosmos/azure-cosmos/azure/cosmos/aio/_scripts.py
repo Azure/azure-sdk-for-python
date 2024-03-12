@@ -24,7 +24,7 @@
 # pylint: disable=protected-access
 # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
 
-from typing import Any, Dict, List, Mapping, Union, Optional, Type, TYPE_CHECKING
+from typing import Any, Dict, List, Mapping, Union, Optional, Type, Sequence, TYPE_CHECKING
 
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -39,7 +39,7 @@ if TYPE_CHECKING:
     from ._container import ContainerProxy
 
 
-PartitionKeyType = Union[str, int, float, bool, List[Union[str, int, float, bool]], Type[NonePartitionKeyValue]]
+PartitionKeyType = Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], Type[NonePartitionKeyValue]]  # pylint: disable=line-too-long
 
 
 class ScriptsProxy:
@@ -50,10 +50,10 @@ class ScriptsProxy:
     """
 
     def __init__(
-            self,
-            container: "ContainerProxy",
-            client_connection: _CosmosClientConnection,
-            container_link: str
+        self,
+        container: "ContainerProxy",
+        client_connection: _CosmosClientConnection,
+        container_link: str
     ) -> None:
         self.client_connection = client_connection
         self.container_link = container_link

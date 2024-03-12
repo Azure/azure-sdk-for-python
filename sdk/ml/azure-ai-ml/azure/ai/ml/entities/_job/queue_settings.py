@@ -22,7 +22,7 @@ class QueueSettings(RestTranslatableMixin, DictMixin):
     """Queue settings for a pipeline job.
 
     :ivar job_tier: Enum to determine the job tier. Possible values include: "Spot", "Basic",
-        "Standard", "Premium".
+        "Standard", "Premium", "Null".
     :vartype job_tier: str or ~azure.mgmt.machinelearningservices.models.JobTier
     :ivar priority: Controls the priority of the job on a compute.
     :vartype priority: str

@@ -25,6 +25,7 @@
 from typing import Any, Dict, List, Union, Optional, Mapping
 
 import warnings
+from azure.core import MatchConditions
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.paging import ItemPaged
 from azure.cosmos.partition_key import PartitionKey
@@ -123,6 +124,9 @@ class DatabaseProxy(object):
     def read(  # pylint:disable=docstring-missing-param
         self,
         populate_query_metrics: Optional[bool] = None,
+        *,
+        session_token: Optional[str] = None,
+        initial_headers: Optional[Dict[str, str]] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
         """Read the database properties.
@@ -135,6 +139,10 @@ class DatabaseProxy(object):
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given database couldn't be retrieved.
         """
         database_link = _get_database_link(self)
+        if session_token is not None:
+            kwargs['session_token'] = session_token
+        if initial_headers is not None:
+            kwargs['initial_headers'] = initial_headers
         request_options = build_options(kwargs)
         if populate_query_metrics is not None:
             warnings.warn(
@@ -159,6 +167,12 @@ class DatabaseProxy(object):
         offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
         unique_key_policy: Optional[Dict[str, Any]] = None,
         conflict_resolution_policy: Optional[Dict[str, Any]] = None,
+        *,
+        session_token: Optional[str] = None,
+        initial_headers: Optional[Dict[str, str]] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        analytical_storage_ttl: Optional[int] = None,
         **kwargs: Any
     ) -> ContainerProxy:
         """Create a new container with the given ID (name).
@@ -182,8 +196,8 @@ class DatabaseProxy(object):
         :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
             None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL. Please
             note that analytical storage can only be enabled on Synapse Link enabled accounts.
-        :keyword List[Dict[str, str]] computed_properties: Sets The computed properties for this container in the Azure
-            Cosmos DB Service. For more Information on how to use computed properties visit
+        :keyword List[Dict[str, str]] computed_properties: **provisional** Sets The computed properties for this
+            container in the Azure Cosmos DB Service. For more Information on how to use computed properties visit
             `here: https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/query/computed-properties?tabs=dotnet`
         :returns: A `ContainerProxy` instance representing the new container.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container creation failed.
@@ -222,12 +236,20 @@ class DatabaseProxy(object):
             definition["uniqueKeyPolicy"] = unique_key_policy
         if conflict_resolution_policy is not None:
             definition["conflictResolutionPolicy"] = conflict_resolution_policy
-        analytical_storage_ttl = kwargs.pop("analytical_storage_ttl", None)
         if analytical_storage_ttl is not None:
             definition["analyticalStorageTtl"] = analytical_storage_ttl
         computed_properties = kwargs.pop('computed_properties', None)
         if computed_properties:
             definition["computedProperties"] = computed_properties
+
+        if session_token is not None:
+            kwargs['session_token'] = session_token
+        if initial_headers is not None:
+            kwargs['initial_headers'] = initial_headers
+        if etag is not None:
+            kwargs['etag'] = etag
+        if match_condition is not None:
+            kwargs['match_condition'] = match_condition
         request_options = build_options(kwargs)
         if populate_query_metrics is not None:
             warnings.warn(
@@ -278,8 +300,8 @@ class DatabaseProxy(object):
         :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
             None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL.  Please
             note that analytical storage can only be enabled on Synapse Link enabled accounts.
-        :keyword List[Dict[str, str]] computed_properties: Sets The computed properties for this container in the Azure
-            Cosmos DB Service. For more Information on how to use computed properties visit
+        :keyword List[Dict[str, str]] computed_properties: **provisional** Sets The computed properties for this
+            container in the Azure Cosmos DB Service. For more Information on how to use computed properties visit
             `here: https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/query/computed-properties?tabs=dotnet`
         :returns: A `ContainerProxy` instance representing the container.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container read or creation failed.
@@ -287,6 +309,8 @@ class DatabaseProxy(object):
         """
         analytical_storage_ttl = kwargs.pop("analytical_storage_ttl", None)
         computed_properties = kwargs.pop("computed_properties", None)
+        etag = kwargs.pop("etag", None)
+        match_condition = kwargs.pop("match_condition", None)
         try:
             container_proxy = self.get_container_client(id)
             container_proxy.read(
@@ -305,7 +329,10 @@ class DatabaseProxy(object):
                 unique_key_policy=unique_key_policy,
                 conflict_resolution_policy=conflict_resolution_policy,
                 analytical_storage_ttl=analytical_storage_ttl,
-                computed_properties=computed_properties
+                computed_properties=computed_properties,
+                etag=etag,
+                match_condition=match_condition,
+                **kwargs
             )
 
     @distributed_trace
@@ -313,6 +340,11 @@ class DatabaseProxy(object):
         self,
         container: Union[str, ContainerProxy, Mapping[str, Any]],
         populate_query_metrics: Optional[bool] = None,
+        *,
+        session_token: Optional[str] = None,
+        initial_headers: Optional[Dict[str, str]] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
         """Delete a container.
@@ -330,6 +362,14 @@ class DatabaseProxy(object):
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the container couldn't be deleted.
         :rtype: None
         """
+        if session_token is not None:
+            kwargs['session_token'] = session_token
+        if initial_headers is not None:
+            kwargs['initial_headers'] = initial_headers
+        if etag is not None:
+            kwargs['etag'] = etag
+        if match_condition is not None:
+            kwargs['match_condition'] = match_condition
         request_options = build_options(kwargs)
         if populate_query_metrics is not None:
             warnings.warn(
@@ -373,6 +413,9 @@ class DatabaseProxy(object):
         self,
         max_item_count: Optional[int] = None,
         populate_query_metrics: Optional[bool] = None,
+        *,
+        session_token: Optional[str] = None,
+        initial_headers: Optional[Dict[str, str]] = None,
         **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
         """List the containers in the database.
@@ -394,6 +437,10 @@ class DatabaseProxy(object):
                 :caption: List all containers in the database:
                 :name: list_containers
         """
+        if session_token is not None:
+            kwargs['session_token'] = session_token
+        if initial_headers is not None:
+            kwargs['initial_headers'] = initial_headers
         feed_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
         if max_item_count is not None:
@@ -419,6 +466,9 @@ class DatabaseProxy(object):
         parameters: Optional[List[Dict[str, Any]]] = None,
         max_item_count: Optional[int] = None,
         populate_query_metrics: Optional[bool] = None,
+        *,
+        session_token: Optional[str] = None,
+        initial_headers: Optional[Dict[str, str]] = None,
         **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
         """List the properties for containers in the current database.
@@ -433,6 +483,10 @@ class DatabaseProxy(object):
         :returns: An Iterable of container properties (dicts).
         :rtype: Iterable[Dict[str, Any]]
         """
+        if session_token is not None:
+            kwargs['session_token'] = session_token
+        if initial_headers is not None:
+            kwargs['initial_headers'] = initial_headers
         feed_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
         if max_item_count is not None:
@@ -463,6 +517,12 @@ class DatabaseProxy(object):
         default_ttl: Optional[int] = None,
         conflict_resolution_policy: Optional[Dict[str, Any]] = None,
         populate_query_metrics: Optional[bool] = None,
+        *,
+        session_token: Optional[str] = None,
+        initial_headers: Optional[Dict[str, str]] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        analytical_storage_ttl: Optional[int] = None,
         **kwargs: Any
     ) -> ContainerProxy:
         """Reset the properties of the container.
@@ -483,13 +543,13 @@ class DatabaseProxy(object):
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword Callable response_hook: A callable invoked with the response metadata.
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be replaced.
-            This includes if the container with given id does not exist.
         :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
             None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL.  Please
             note that analytical storage can only be enabled on Synapse Link enabled accounts.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: A `ContainerProxy` instance representing the container after replace completed.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be replaced.
+            This includes if the container with given id does not exist.
         :rtype: ~azure.cosmos.ContainerProxy
         .. admonition:: Example:
 
@@ -501,8 +561,15 @@ class DatabaseProxy(object):
                 :caption: Reset the TTL property on a container, and display the updated properties:
                 :name: reset_container_properties
         """
+        if session_token is not None:
+            kwargs['session_token'] = session_token
+        if initial_headers is not None:
+            kwargs['initial_headers'] = initial_headers
+        if etag is not None:
+            kwargs['etag'] = etag
+        if match_condition is not None:
+            kwargs['match_condition'] = match_condition
         request_options = build_options(kwargs)
-        analytical_storage_ttl = kwargs.pop("analytical_storage_ttl", None)
         if populate_query_metrics is not None:
             warnings.warn(
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",

@@ -1,0 +1,29 @@
+type: finetuning
+
+name: simple_azure_openai_finetuning_job
+experiment_name: "gpt4-finetuning-experiment"
+display_name: "gpt4-display-name-1234"
+task: chat_completion
+model_provider: azure_open_ai
+model: 
+  path: "azureml://registries/azure-openai-v2/models/gpt4/versions/9"
+  type: mlflow_model
+
+training_data:
+  path: "https://foo/bar/train.jsonl"
+  type: uri_file
+validation_data:
+  path: "https://foo/bar/validation.jsonl"
+  type: uri_file
+hyperparameters:
+  n_epochs: 1
+  learning_rate_multiplier: 0.00002
+  batch_size: 1
+properties:
+  my_property: "my_value"
+tags:
+  foo_tag: "bar"
+outputs:
+  registered_model:
+    name: "gpt4-finetune-registered-1234"
+    type: mlflow_model
