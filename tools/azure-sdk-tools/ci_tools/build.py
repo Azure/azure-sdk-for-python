@@ -183,6 +183,7 @@ def create_package(
 
     if enable_wheel:
         if setup_parsed.ext_modules:
+            run([sys.executable, "-m", "pip", "freeze"], check=True)
             run([sys.executable, "-m", "cibuildwheel", "--output-dir", dist], cwd=setup_parsed.folder, check=True)
         else:
             run([sys.executable, "setup.py", "bdist_wheel", "-d", dist], cwd=setup_parsed.folder, check=True)
