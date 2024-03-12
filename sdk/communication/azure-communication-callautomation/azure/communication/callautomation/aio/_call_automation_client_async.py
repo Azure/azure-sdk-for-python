@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import List, Union, Optional, TYPE_CHECKING, AsyncIterable, overload, Dict
+from typing import List, Union, Optional, TYPE_CHECKING, AsyncIterable, overload
 from urllib.parse import urlparse
 import warnings
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -21,8 +21,7 @@ from .._generated.models import (
     RedirectCallRequest,
     RejectCallRequest,
     StartCallRecordingRequest,
-    CallIntelligenceOptions,
-    CustomCallingContext
+    CallIntelligenceOptions
 )
 from .._models import (
     CallConnectionProperties,
@@ -174,8 +173,6 @@ class CallAutomationClient:
         source_display_name: Optional[str] = None,
         operation_context: Optional[str] = None,
         cognitive_services_endpoint: Optional[str] = None,
-        sip_headers: Optional[Dict[str, str]] = None,
-        voip_headers: Optional[Dict[str, str]] = None,
         **kwargs
     ) -> CallConnectionProperties:
         """Create a call connection request to a target identity.
@@ -210,12 +207,6 @@ class CallAutomationClient:
             cognitive_services_endpoint=cognitive_services_endpoint
         ) if cognitive_services_endpoint else None
 
-        user_custom_context = None
-        if sip_headers or voip_headers:
-            user_custom_context = CustomCallingContext(
-                voip_headers=voip_headers,
-                sip_headers=sip_headers
-            )
         try:
             targets = [serialize_identifier(p) for p in target_participant]
         except TypeError:
@@ -228,7 +219,6 @@ class CallAutomationClient:
             source=serialize_communication_user_identifier(self.source),
             operation_context=operation_context,
             cognitive_services_endpoint=cognitive_services_endpoint,
-            CustomCallingContext=user_custom_context,
             call_intelligence_options=call_intelligence_options
         )
         process_repeatability_first_sent(kwargs)
