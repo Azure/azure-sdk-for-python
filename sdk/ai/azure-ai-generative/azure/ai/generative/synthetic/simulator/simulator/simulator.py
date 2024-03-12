@@ -194,7 +194,7 @@ class Simulator:
     async def simulate_async(
         self,
         template: "Template",
-        max_conversation_turns: int,
+        max_conversation_turns: int = 2,
         parameters: Optional[List[dict]] = None,
         jailbreak: bool = False,
         api_call_retry_limit: int = 3,
@@ -208,6 +208,7 @@ class Simulator:
         :keyword template: An instance of the Template class defining the conversation structure.
         :paramtype template: Template
         :keyword max_conversation_turns: The maximum number of conversation turns to simulate.
+            Defaults to 2, change only applies to chat templates.
         :paramtype max_conversation_turns: int
         :keyword parameters: A list of dictionaries containing the parameter values to be used in the simulations.
             Defaults to an empty list.
@@ -239,7 +240,8 @@ class Simulator:
 
         if not isinstance(parameters, list):
             raise ValueError(f"Expect parameters to be a list of dictionary, but found {type(parameters)}")
-
+        if "conversation" not in template.template_name:
+            max_conversation_turns = 2
         if template.content_harm:
             self._ensure_service_dependencies()
             self.adversarial = True
