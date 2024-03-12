@@ -121,7 +121,7 @@ class PipelineComponentBuilder:
         name = name if name is not None else func.__name__
         display_name = display_name if display_name else name
         description = description if description else func.__doc__
-        self._args_description = parse_args_description_from_docstring(func.__doc__)
+        self._args_description = parse_args_description_from_docstring(str(func.__doc__))
         # List of nodes, order by it's creation order in pipeline.
         self.nodes: List = []
         self.non_pipeline_parameter_names = non_pipeline_inputs or []

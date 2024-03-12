@@ -868,7 +868,7 @@ def map_single_brackets_and_warn(command: str) -> str:
     return command
 
 
-def transform_dict_keys(data: Dict[str, Any], casing_transform: Callable[[str], str]) -> Dict[str, Any]:
+def transform_dict_keys(data: Dict[str, Any], casing_transform: Callable[[str], Optional[str]]) -> Dict[str, Any]:
     """Convert all keys of a nested dictionary according to the passed casing_transform function.
 
     :param data: The data to transform
