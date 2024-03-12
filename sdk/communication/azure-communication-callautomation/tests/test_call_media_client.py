@@ -475,6 +475,7 @@ class TestCallMediaClient(unittest.TestCase):
         mock_hold.assert_called_once()
         actual_hold_request = mock_hold.call_args[0][1]
 
+        self.assertEqual(expected_hold_request.play_source_info, actual_hold_request.play_source_info)
         self.assertEqual(expected_hold_request.operation_context, actual_hold_request.operation_context)
 
     def test_unhold(self):
@@ -485,11 +486,11 @@ class TestCallMediaClient(unittest.TestCase):
         self.call_connection_client.unhold(target_participant=self.target_user,
                                           operation_context=operation_context)
 
-        expected_hold_request = UnholdRequest(
+        expected_unhold_request = UnholdRequest(
             target_participant=[serialize_identifier(self.target_user)],
             operation_context=operation_context
         )
         mock_unhold.assert_called_once()
-        actual_hold_request = mock_unhold.call_args[0][1]
+        actual_unhold_request = mock_unhold.call_args[0][1]
         
-        self.assertEqual(expected_hold_request.operation_context, actual_hold_request.operation_context)
+        self.assertEqual(expected_unhold_request.operation_context, actual_unhold_request.operation_context)
