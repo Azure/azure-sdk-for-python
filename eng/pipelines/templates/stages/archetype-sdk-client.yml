@@ -146,6 +146,7 @@ extends:
 
         variables:
           - template: /eng/pipelines/templates/variables/globals.yml@self
+          - template: /eng/pipelines/templates/variables/image.yml@self
 
       # The Prerelease and Release stages are conditioned on whether we are building a pull request and the branch.
       - ${{if and(in(variables['Build.Reason'], 'Manual', ''), eq(variables['System.TeamProject'], 'internal'))}}:
