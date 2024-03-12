@@ -873,8 +873,9 @@ class ServiceBusReceiver(
 
         """
         self._check_live()
-        if int(max_message_count) < 0 or int(max_message_count) > 4000:
-            raise ValueError("max_message_count must be between 1 and 4000, inclusive.")
+        if max_message_count:
+            if int(max_message_count) < 0 or int(max_message_count) > 4000:
+                raise ValueError("max_message_count must be between 1 and 4000, inclusive.")
 
         self._open()
         message = {
