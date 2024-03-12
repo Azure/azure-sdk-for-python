@@ -454,6 +454,9 @@
     "amltemp",
     "deserializers",
     "dicom",
+    "WINDOWSVMIMAGE",
+    "LINUXVMIMAGE",
+    "MACVMIMAGE"
   ],
   "overrides": [
     {
