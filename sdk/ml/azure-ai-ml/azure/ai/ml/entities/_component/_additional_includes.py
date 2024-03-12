@@ -11,7 +11,7 @@ from concurrent.futures import ThreadPoolExecutor
 from contextlib import contextmanager
 from multiprocessing import cpu_count
 from pathlib import Path
-from typing import Any, Dict, Generator, List, Optional, Tuple, Union
+from typing import Any, Dict, Generator, List, Optional, Tuple, Union, cast
 
 from azure.ai.ml.constants._common import AzureDevopsArtifactsType
 from azure.ai.ml.entities._validation import MutableValidationResult, ValidationResultBuilder
@@ -93,16 +93,16 @@ class AdditionalIncludes:
     @classmethod
     def _get_artifacts_by_config(cls, artifact_config: Dict[str, str]) -> Union[str, os.PathLike]:
         # config key existence has been validated in _validate_additional_include_config
-        res: Union[str, os.PathLike] = ArtifactCache().get(
+        res = ArtifactCache().get(
             organization=artifact_config.get("organization", None),
             project=artifact_config.get("project", None),
             feed=artifact_config["feed"],
             name=artifact_config["name"],
             version=artifact_config["version"],
-            scope=artifact_config.get("scope", "organization"),
+            scope=artifact_config.get("scope", "organization"),  # type: ignore[arg-type]
             resolve=True,
         )
-        return res
+        return cast(Union[str, os.PathLike], res)
 
     def _validate_additional_include_config(
         self, additional_include_config: Union[Dict, str]
@@ -241,7 +241,7 @@ class AdditionalIncludes:
         zip_file = dst_path / zip_additional_include.name
         with zipfile.ZipFile(zip_file, "w") as zf:
             zf.write(folder_to_zip, os.path.relpath(folder_to_zip, folder_to_zip.parent))  # write root in zip
-            paths = [path for path, _ in get_upload_files_from_folder(folder_to_zip, ignore_file=ignore_file)]
+            paths = get_upload_files_from_folder(folder_to_zip, ignore_file=ignore_file)
             # sort the paths to make sure the zip file (namelist) is deterministic
             for path in sorted(paths):
                 zf.write(path, os.path.relpath(path, folder_to_zip.parent))

@@ -184,7 +184,7 @@ class GitIgnoreFile(IgnoreFile):
         super(GitIgnoreFile, self).__init__(file_path)
 
 
-def get_ignore_file(directory_path: Union[Path, str]) -> IgnoreFile:
+def get_ignore_file(directory_path: Union[Path, str, os.PathLike]) -> IgnoreFile:
     """Finds and returns IgnoreFile object based on ignore file found in directory_path.
 
     .amlignore takes precedence over .gitignore and if no file is found, an empty

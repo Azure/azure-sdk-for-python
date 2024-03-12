@@ -5,6 +5,7 @@
 import logging
 import random
 import uuid
+from typing import Tuple
 
 from azure.ai.ml._azure_environments import _get_base_url_from_metadata
 from azure.ai.ml._vendor.azure_resources._resource_management_client import ResourceManagementClient
@@ -74,7 +75,7 @@ def delete_resource_by_arm_id(
         client.resources.begin_delete_by_id(arm_id, api_version)
 
 
-def get_resource_and_group_name(armstr: str) -> str:
+def get_resource_and_group_name(armstr: str) -> Tuple[str, str]:
     return armstr.split("/")[-1], armstr.split("/")[-5]
 
 

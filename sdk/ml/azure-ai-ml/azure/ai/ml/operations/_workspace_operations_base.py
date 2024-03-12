@@ -181,7 +181,7 @@ class WorkspaceOperationsBase(ABC):
             credentials=self._credentials,
             resource_group_name=resource_group,
             subscription_id=self._subscription_id,
-            deployment_name=get_deployment_name(workspace.name),
+            deployment_name=get_deployment_name(str(workspace.name)),
         )
 
         # deploy_resource() blocks for the poller to succeed if wait is True
@@ -384,7 +384,7 @@ class WorkspaceOperationsBase(ABC):
                     credentials=self._credentials,
                     resource_group_name=resource_group,
                     subscription_id=self._subscription_id,
-                    deployment_name=get_deployment_name(workspace.name),
+                    deployment_name=get_deployment_name(str(workspace.name)),
                 )
 
                 # deploy_resource() blocks for the poller to succeed if wait is True
@@ -520,7 +520,7 @@ class WorkspaceOperationsBase(ABC):
         resources_being_deployed: Dict = {}
         if not workspace.location:
             workspace.location = get_resource_group_location(
-                self._credentials, self._subscription_id, workspace.resource_group
+                self._credentials, self._subscription_id, str(workspace.resource_group)
             )
         template = get_template(resource_type=ArmConstants.WORKSPACE_BASE)
         param = get_template(resource_type=ArmConstants.WORKSPACE_PARAM)
@@ -641,7 +641,7 @@ class WorkspaceOperationsBase(ABC):
         else:
             # pylint: disable=protected-access
             identity = IdentityConfiguration(
-                type=camel_to_snake(ManagedServiceIdentityType.SYSTEM_ASSIGNED)
+                type=str(camel_to_snake(ManagedServiceIdentityType.SYSTEM_ASSIGNED))
             )._to_workspace_rest_object()
         _set_val(param["identity"], identity)
 
@@ -670,6 +670,7 @@ class WorkspaceOperationsBase(ABC):
 
             from azure.ai.ml._utils._arm_id_utils import AzureResourceId, AzureStorageContainerResourceId
 
+            arm_id: Any = None
             if offline_store_target:
                 arm_id = AzureStorageContainerResourceId(offline_store_target)
                 _set_val(param["offlineStoreStorageAccountOption"], "existing")
@@ -879,7 +880,7 @@ def _generate_key_vault(name: Optional[str], resources_being_deployed: dict) -> 
     # Vault name must only contain alphanumeric characters and dashes and cannot start with a number.
     # Vault name must be between 3-24 alphanumeric characters.
     # The name must begin with a letter, end with a letter or digit, and not contain consecutive hyphens.
-    key_vault = get_name_for_dependent_resource(name, "keyvault")
+    key_vault = get_name_for_dependent_resource(str(name), "keyvault")
     resources_being_deployed[key_vault] = (ArmConstants.KEY_VAULT, None)
     return str(key_vault)
 
@@ -895,7 +896,7 @@ def _generate_storage(name: Optional[str], resources_being_deployed: dict) -> st
     :return: String for name of storage account.
     :rtype: str
     """
-    storage = get_name_for_dependent_resource(name, "storage")
+    storage = get_name_for_dependent_resource(str(name), "storage")
     resources_being_deployed[storage] = (ArmConstants.STORAGE, None)
     return str(storage)
 
@@ -911,7 +912,7 @@ def _generate_storage_container(name: Optional[str], resources_being_deployed: d
     :return: String for name of storage container
     :rtype: str
     """
-    storage_container = get_name_for_dependent_resource(name, "container")
+    storage_container = get_name_for_dependent_resource(str(name), "container")
     resources_being_deployed[storage_container] = (ArmConstants.STORAGE_CONTAINER, None)
     return str(storage_container)
 
@@ -927,7 +928,7 @@ def _generate_log_analytics(name: Optional[str], resources_being_deployed: dict)
     :return: String for name of log analytics.
     :rtype: str
     """
-    log_analytics = get_name_for_dependent_resource(name, "logalytics")  # cspell:disable-line
+    log_analytics = get_name_for_dependent_resource(str(name), "logalytics")  # cspell:disable-line
     resources_being_deployed[log_analytics] = (
         ArmConstants.LOG_ANALYTICS,
         None,
@@ -948,7 +949,7 @@ def _generate_app_insights(name: Optional[str], resources_being_deployed: dict) 
     """
     # Application name only allows alphanumeric characters, periods, underscores,
     # hyphens and parenthesis and cannot end in a period
-    app_insights = get_name_for_dependent_resource(name, "insights")
+    app_insights = get_name_for_dependent_resource(str(name), "insights")
     resources_being_deployed[app_insights] = (
         ArmConstants.APP_INSIGHTS,
         None,
@@ -969,7 +970,7 @@ def _generate_container_registry(name: Optional[str], resources_being_deployed: 
     """
     # Application name only allows alphanumeric characters, periods, underscores,
     # hyphens and parenthesis and cannot end in a period
-    con_reg = get_name_for_dependent_resource(name, "containerRegistry")
+    con_reg = get_name_for_dependent_resource(str(name), "containerRegistry")
     resources_being_deployed[con_reg] = (
         ArmConstants.CONTAINER_REGISTRY,
         None,
