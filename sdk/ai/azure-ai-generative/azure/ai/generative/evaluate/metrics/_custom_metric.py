@@ -101,7 +101,7 @@ class PromptMetric(Metric):
 
         metric._template_variable = PromptMetric._load_template_variables(template_content)  # pylint: disable=protected-access
         return metric
-    
+
     @staticmethod
     def _load_template_variables(prompt_template):
         from jinja2 import Environment
