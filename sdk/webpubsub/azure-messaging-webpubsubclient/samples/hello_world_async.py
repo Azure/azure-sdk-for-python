@@ -48,11 +48,6 @@ async def main():
         ),
     )
 
-    # await client.open()
-    # print("client opened")
-    # await client.close()
-    # print("client closed")
-
     async with client:
         client.subscribe("connected", on_connected)
         client.subscribe("disconnected", on_disconnected)
@@ -68,11 +63,11 @@ async def main():
         await client.send_to_group(group_name, content, "binary")
 
     # If you can't run client in context, please open/close client manually like:
-    # client.open()
+    # await client.open()
     # ...
-    # client.close()
+    # await client.close()
 
 
 if __name__ == "__main__":
-    # asyncio.get_event_loop().run_until_complete(main())
-    asyncio.run(main())
+    asyncio.get_event_loop().run_until_complete(main())
+    # asyncio.run(main())

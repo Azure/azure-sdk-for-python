@@ -14,7 +14,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-MESSAGE_COUNT = 1000
+MESSAGE_COUNT = 1
 TIME_COST = 0
 TIME_COST_ASYNC = 0
 
@@ -42,12 +42,12 @@ def send() -> int:
         start = time.time()
         for i in range(MESSAGE_COUNT):
             client.send_to_group(group_name, {"hello": "json"}, "json")
-            print(f"send message {i}")
+            print(f"send message {i} with Sync API ")
         TIME_COST = time.time() - start
 
 
 async def send_item_async(client_async, idx):
-    print(f"send message {idx}")
+    print(f"send message {idx} with Async API")
     await client_async.send_to_group("test", {"hello": "json"}, "json")
 
 

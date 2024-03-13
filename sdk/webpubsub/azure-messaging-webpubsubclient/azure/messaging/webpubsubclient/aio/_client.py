@@ -54,11 +54,9 @@ _LOGGER = logging.getLogger(__name__)
 
 class WebSocketAppAsync:
 
-    def __init__(self, url, on_open=None, on_message=None,on_close=None,subprotocols: Optional[List[str]]=None,header: Optional[Dict[str, str]]=None) -> None:
+    def __init__(self, url, on_open=None, subprotocols: Optional[List[str]]=None,header: Optional[Dict[str, str]]=None) -> None:
         self.url = url
         self.on_open = on_open
-        self.on_message = on_message
-        self.on_close = on_close
         self.subprotocols = subprotocols
         self.header = header
         self._session: Optional[aiohttp.ClientSession] = None
@@ -787,7 +785,6 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
                     _LOGGER.debug("WebSocket is closing")
                 elif msg.type == aiohttp.WSMsgType.CLOSED:
                     _LOGGER.debug("WebSocket is closed")
-                elif msg.type == aiohttp.WSMsgType.CLOSE:
                     await on_close(msg.data, msg.extra)
                     break
                 elif msg.type == aiohttp.WSMsgType.ERROR:
@@ -813,14 +810,10 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         self._ws = WebSocketAppAsync(
             url=url,
             on_open=on_open,
-            on_message=on_message,
-            on_close=on_close,
             subprotocols=[self._protocol.name] if self._protocol else [],
             header={_USER_AGENT: format_user_agent(self._user_agent)},
         )
         await self._ws.run_forever()
-
-        _LOGGER.debug("WebSocket connection has opened")
 
         # set coroutine to check sequence id if needed
         if self._protocol.is_reliable_sub_protocol:
