@@ -33,7 +33,7 @@ def get_authentication_policy(
     :return: Either AsyncBearerTokenCredentialPolicy or BearerTokenCredentialPolicy or HMACCredentialsPolicy
     :rtype: ~azure.core.pipeline.policies.AsyncBearerTokenCredentialPolicy or
     ~azure.core.pipeline.policies.BearerTokenCredentialPolicy or
-    ~azure.communication.jobrouter.shared.policy.HMACCredentialsPolicy
+    ~azure.communication.messages.shared.policy.HMACCredentialsPolicy
     """
 
     if credential is None:

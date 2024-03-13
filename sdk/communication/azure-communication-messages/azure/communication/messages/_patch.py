@@ -83,7 +83,7 @@ class MessageTemplateClient(MessageTemplateClientGenerated):
     :param  Union[TokenCredential, AsyncTokenCredential] credential:
         The credentials with which to authenticate
 
-    :keyword api_version: Azure Communication Job Router API version. Default value is "2023-11-01".
+    :keyword api_version: Azure Communication Messages API version. Default value is "2024-02-01".
         Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
