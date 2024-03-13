@@ -46,48 +46,10 @@ if (!$?){
 
 CheckDevOpsAccess
 
-class ValidationStatus
+# Function to validate change log
+function ValidateChangeLog($changeLogPath, $versionString,  $validationStatus)
 {
-    [string]$Name
-    [string]$Status
-    [string]$Message
-
-    ValidationStatus([string]$name, [string]$status)
-    {
-        $this.Name = $name
-        $this.Status = $status
-    }
-}
-
-class PackageDetails
-{
-    [string]$Name
-    [string]$Version
-    [ValidationStatus]$VersionValidation
-    [ValidationStatus]$ChangeLogValidation
-    [ValidationStatus]$APIReviewValidation
-    [ValidationStatus]$PackageNameValidation
-
-    PackageDetails([string]$name)
-    {
-        $this.Name = $name
-    }
-}
-
-function ValidateVersion($packageName, $versionString)
-{
-    $validationStatus = [ValidationStatus]::new("Version Validation", "Success")
-    $version = [AzureEngSemanticVersion]::ParseVersionString($versionString)
-    if ($version -eq $null) {
-        $validationStatus.Status = "Failed"
-        $validationStatus.Message = "Version info is not available for package $packageName, because version '$versionString' is invalid. Please check if the version follows Azure SDK package versioning guidelines."    
-    }
-    return $validationStatus
-}
-
-function ValidateChangeLog($changeLogPath, $versionString)
-{
-    $validationStatus = [ValidationStatus]::new("Change Log Validation", "Success")
+    $validationStatus.ChangeLogValidation.Status = "Success"
     try
     {
         $changeLogFullPath = Join-Path $RepoRoot $changeLogPath
@@ -114,11 +76,11 @@ function ValidateChangeLog($changeLogPath, $versionString)
     return $validationStatus
 }
 
+# Function to verify API review status
 function VerifyAPIReview($packageDetails, $packageName, $packageVersion, $language)
 {
-    $packageDetails.APIReviewValidation = [ValidationStatus]::new("API Review Approval", "Pending")
-    $packageDetails.PackageNameValidation = [ValidationStatus]::new("Package Name Approval", "Pending")
-
+    $packageDetails.APIReviewValidation.Status = "Pending"
+    $packageDetails.PackageNameValidation.Status = "Pending"
     try
     {
         Write-Host "Checking API review status for package $packageName with version $packageVersion. language [$language]." 
@@ -238,8 +200,6 @@ function UpdateValidationStatus($pkgvalidationDetails)
 
     $changeLogStatus = $pkgValidationDetails.ChangeLogValidation.Status
     $changeLogDetails  = $pkgValidationDetails.ChangeLogValidation.Message
-    $versionStatus= $pkgValidationDetails.VersionValidation.Status
-    $versionDetails = $pkgValidationDetails.VersionValidation.Message
     $apiReviewStatus = $pkgValidationDetails.APIReviewValidation.Status
     $apiReviewDetails = $pkgValidationDetails.APIReviewValidation.Message
     $packageNameStatus = $pkgValidationDetails.PackageNameValidation.Status
@@ -249,8 +209,6 @@ function UpdateValidationStatus($pkgvalidationDetails)
     $fields += "`"PackageVersion=${versionString}`""
     $fields += "`"ChangeLogStatus=${changeLogStatus}`""
     $fields += "`"ChangeLogValidationDetails=${changeLogDetails}`""
-    $fields += "`"VersionValidationStatus=${versionStatus}`""
-    $fields += "`"VersionValidationDetails=${versionDetails}`""
     $fields += "`"APIReviewStatus=${apiReviewStatus}`""
     $fields += "`"APIReviewStatusDetails=${apiReviewDetails}`""
     $fields += "`"PackageNameApprovalStatus=${packageNameStatus}`""
@@ -272,11 +230,28 @@ Write-Host "Processing package: $PackageName"
 $packagePropertyFile = Join-Path $ConfigFileDir "$PackageName.json"
 $pkgInfo = Get-Content $packagePropertyFile | ConvertFrom-Json
 
-$pkgValidationDetails= [PackageDetails]::new($PackageName)
-$pkgValidationDetails.Version = $pkgInfo.Version
+$pkgValidationDetails= [PSCustomObject]@{
+    Name = $PackageName
+    Version = $pkgInfo.Version
+    ChangeLogValidation = [PSCustomObject]@ {
+        Name = "Change Log Validation"
+        Status = "Pending"
+        Message = ""
+    }
+    APIReviewValidation = [PSCustomObject]@ {
+        Name = "API Review Approval"
+        Status = "Pending"
+        Message = ""
+    }
+    PackageNameValidation = [PSCustomObject]@ {
+        Name = "Package Name Approval"
+        Status = "Pending"
+        Message = ""
+    }    
+}
+
 $changeLogPath = $pkgInfo.ChangeLogPath
 $versionString = $pkgInfo.Version
-
 Write-Host "Checking if we need to create or update work item for package $packageName with version $versionString."
 $isShipped = IsVersionShipped $packageName $versionString
 if ($isShipped) {
@@ -285,16 +260,10 @@ if ($isShipped) {
 }
 
 Write-Host "Validating package $packageName with version $versionString."
-
-# Version check
-$pkgValidationDetails.VersionValidation = ValidateVersion $PackageName  $pkgInfo.Version
-
 # Change log validation
-$pkgValidationDetails.ChangeLogValidation =  ValidateChangeLog $changeLogPath $versionString
-
+ValidateChangeLog $changeLogPath $versionString $pkgValidationDetails.ChangeLogValidation
 # API review and package name validation
 VerifyAPIReview $pkgValidationDetails $PackageName $pkgInfo.Version $LanguageDisplayName
-
 $output = ConvertTo-Json $pkgValidationDetails
 Write-Host "Output: $($output)"
 
