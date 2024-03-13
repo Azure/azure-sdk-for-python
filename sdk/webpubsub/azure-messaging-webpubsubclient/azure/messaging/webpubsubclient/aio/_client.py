@@ -59,29 +59,36 @@ class WebSocketAppAsync:
         self.on_open = on_open
         self.subprotocols = subprotocols
         self.header = header
-        self._session: Optional[aiohttp.ClientSession] = None
-        self._sock: Optional[aiohttp.client._WSRequestContextManager] = None
+        self.session: Optional[aiohttp.ClientSession] = None
+        self.sock: Optional[aiohttp.client._WSRequestContextManager] = None
 
     async def receive(self) -> aiohttp.WSMessage:
-        return await self._sock.receive()
+        return await self.sock.receive()
 
     async def send(self, message: str) -> None:
-        await self._sock.send_str(message)
+        await self.sock.send_str(message)
 
     async def run_forever(self):
         await self.on_open()
 
     async def connect(self):
-        self._session = aiohttp.ClientSession()
-        self._sock = await self._session.ws_connect(self.url, protocols=self.subprotocols, headers=self.header)
+        self.session = aiohttp.ClientSession()
+        self.sock = await self.session.ws_connect(self.url, protocols=self.subprotocols, headers=self.header)
 
     async def close(self):
-        await self._sock.close()
-        await self._session.close()
+        try:
+            await self.sock.close()
+        except Exception as e: # pylint: disable=broad-except
+            _LOGGER.info("Fail to close websocket connection: %s", e)
+        finally:
+            try:
+                await self.session.close()
+            except Exception as e: # pylint: disable=broad-except
+                _LOGGER.info("Fail to close websocket connection: %s", e)
     
     @property
     def closed(self):
-        return self._sock.closed
+        return self.sock.closed
 
 class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """WebPubSubClient
@@ -783,7 +790,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
                     await on_message(msg.data)
                 elif msg.type == aiohttp.WSMsgType.CLOSING:
                     _LOGGER.debug("WebSocket is closing")
-                elif msg.type == aiohttp.WSMsgType.CLOSED:
+                elif msg.type in (aiohttp.WSMsgType.CLOSED, aiohttp.WSMsgType.CLOSE):
                     _LOGGER.debug("WebSocket is closed")
                     await on_close(msg.data, msg.extra)
                     break
@@ -870,12 +877,12 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         self._is_stopping = True
 
         await self._ws.close()
-        for item in [self._task_listen, self._task_seq_ack]:
-            self._cancel_task(item)
+        for task in [self._task_listen, self._task_seq_ack]:
+            self._cancel_task(task)
         _LOGGER.info("close client successfully")
 
     @overload
-    def subscribe(
+    async def subscribe(
         self,
         event: Union[Literal[CallbackType.CONNECTED], str],
         listener: Callable[[OnConnectedArgs], Awaitable[None]],
@@ -888,7 +895,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         """
 
     @overload
-    def subscribe(
+    async def subscribe(
         self,
         event: Union[Literal[CallbackType.DISCONNECTED], str],
         listener: Callable[[OnDisconnectedArgs], Awaitable[None]],
@@ -901,7 +908,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         """
 
     @overload
-    def subscribe(self, event: Literal[CallbackType.STOPPED], listener: Callable[[], None]) -> None:
+    async def subscribe(self, event: Literal[CallbackType.STOPPED], listener: Callable[[], None]) -> None:
         """Add handler for stopped event.
         :param event: The event name. Required.
         :type event: str
@@ -910,7 +917,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         """
 
     @overload
-    def subscribe(
+    async def subscribe(
         self,
         event: Union[Literal[CallbackType.SERVER_MESSAGE], str],
         listener: Callable[[OnServerDataMessageArgs], Awaitable[None]],
@@ -923,7 +930,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         """
 
     @overload
-    def subscribe(
+    async def subscribe(
         self,
         event: Union[Literal[CallbackType.GROUP_MESSAGE], str],
         listener: Callable[[OnGroupDataMessageArgs], Awaitable[None]],
@@ -936,7 +943,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         """
 
     @overload
-    def subscribe(
+    async def subscribe(
         self,
         event: Union[Literal[CallbackType.REJOIN_GROUP_FAILED], str],
         listener: Callable[[OnRejoinGroupFailedArgs], Awaitable[None]],
@@ -948,7 +955,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         :type listener: callable.
         """
 
-    def subscribe(
+    async def subscribe(
         self,
         event: Union[CallbackType, str],
         listener: Callable,
@@ -968,7 +975,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
             _LOGGER.error("wrong event type: %s", event)
 
     @overload
-    def unsubscribe(
+    async def unsubscribe(
         self,
         event: Union[Literal[CallbackType.CONNECTED], str],
         listener: Callable[[OnConnectedArgs], Awaitable[None]],
@@ -981,7 +988,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         """
 
     @overload
-    def unsubscribe(
+    async def unsubscribe(
         self,
         event: Union[Literal[CallbackType.DISCONNECTED], str],
         listener: Callable[[OnDisconnectedArgs], Awaitable[None]],
@@ -994,7 +1001,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         """
 
     @overload
-    def unsubscribe(self, event: Union[Literal[CallbackType.STOPPED], str], listener: Callable[[], None]) -> None:
+    async def unsubscribe(self, event: Union[Literal[CallbackType.STOPPED], str], listener: Callable[[], None]) -> None:
         """Remove handler for stopped event.
         :param event: The event name. Required.
         :type event: str or ~azure.messaging.webpubsubclient.models.CallbackType.STOPPED
@@ -1003,7 +1010,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         """
 
     @overload
-    def unsubscribe(
+    async def unsubscribe(
         self,
         event: Union[Literal[CallbackType.SERVER_MESSAGE], str],
         listener: Callable[[OnServerDataMessageArgs], Awaitable[None]],
@@ -1016,7 +1023,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         """
 
     @overload
-    def unsubscribe(
+    async def unsubscribe(
         self,
         event: Union[Literal[CallbackType.GROUP_MESSAGE], str],
         listener: Callable[[OnGroupDataMessageArgs], Awaitable[None]],
@@ -1029,7 +1036,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         """
 
     @overload
-    def unsubscribe(
+    async def unsubscribe(
         self,
         event: Union[Literal[CallbackType.REJOIN_GROUP_FAILED], str],
         listener: Callable[[OnRejoinGroupFailedArgs], Awaitable[None]],
@@ -1041,7 +1048,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         :type listener: callable.
         """
 
-    def unsubscribe(
+    async def unsubscribe(
         self,
         event: Union[CallbackType, str],
         listener: Callable,

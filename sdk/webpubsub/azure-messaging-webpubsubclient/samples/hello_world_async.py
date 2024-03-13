@@ -49,9 +49,9 @@ async def main():
     )
 
     async with client:
-        client.subscribe("connected", on_connected)
-        client.subscribe("disconnected", on_disconnected)
-        client.subscribe("group-message", on_group_message)
+        await client.subscribe("connected", on_connected)
+        await client.subscribe("disconnected", on_disconnected)
+        await client.subscribe("group-message", on_group_message)
         group_name = "test"
         await client.join_group(group_name)
         await client.send_to_group(
