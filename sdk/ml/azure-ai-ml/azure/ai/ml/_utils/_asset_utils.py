@@ -58,6 +58,7 @@ from azure.ai.ml._utils._pathspec import GitWildMatchPattern, normalize_file
 from azure.ai.ml._utils.utils import convert_windows_path_to_unix, retry, snake_to_camel
 from azure.ai.ml.constants._common import MAX_AUTOINCREMENT_ATTEMPTS, DefaultOpenEncoding, OrderString
 from azure.ai.ml.entities._assets.asset import Asset
+from azure.ai.ml.entities._assets.auto_delete_setting import AutoDeleteSetting
 from azure.ai.ml.exceptions import (
     AssetPathException,
     EmptyDirectoryError,
@@ -661,12 +662,15 @@ def upload_directory(
             ex.submit(
                 upload_file,
                 storage_client=storage_client,
-                source=src,
-                dest=dest,
-                size=size_dict.get(src),
+                source=src,  # type: ignore[has-type]
+                dest=dest,  # type: ignore[has-type]
+                size=size_dict.get(src),  # type: ignore
                 in_directory=True,
                 show_progress=show_progress,
-            ): (src, dest)
+            ): (
+                src,  # type: ignore[has-type]
+                dest,  # type: ignore[has-type]
+            )
             for (src, dest) in upload_paths
         }
         if show_progress:
@@ -723,7 +727,7 @@ def _get_next_version_from_container(
     container_operation: Any,
     resource_group_name: str,
     workspace_name: str,
-    registry_name: str = None,
+    registry_name: Optional[str] = None,
     **kwargs,
 ) -> str:
     try:
@@ -802,7 +806,9 @@ def _get_latest(
     resource_group_name: str,
     workspace_name: Optional[str] = None,
     registry_name: Optional[str] = None,
-    order_by: Literal[OrderString.CREATED_AT, OrderString.CREATED_AT_DESC] = OrderString.CREATED_AT_DESC,
+    order_by: Literal[  # type: ignore[valid-type]
+        OrderString.CREATED_AT, OrderString.CREATED_AT_DESC
+    ] = OrderString.CREATED_AT_DESC,
     **kwargs,
 ) -> Union[ModelVersionData, DataVersionBaseData]:
     """Retrieve the latest version of the asset with the given name.
@@ -1020,8 +1026,8 @@ def _check_or_modify_auto_delete_setting(
 
 def _validate_workspace_managed_datastore(path: Optional[Union[str, PathLike]]) -> Optional[Union[str, PathLike]]:
     # block cumtomer specified path on managed datastore
-    if path.startswith(WORKSPACE_MANAGED_DATASTORE_WITH_SLASH) or path == WORKSPACE_MANAGED_DATASTORE:
-        path = path.rstrip("/")
+    if str(path).startswith(WORKSPACE_MANAGED_DATASTORE_WITH_SLASH) or path == WORKSPACE_MANAGED_DATASTORE:
+        path = str(path).rstrip("/")
 
         if path != WORKSPACE_MANAGED_DATASTORE:
             raise AssetPathException(
