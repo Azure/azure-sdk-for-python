@@ -317,6 +317,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
         _STATSBEAT_STATE["INITIAL_SUCCESS"] = False
         _STATSBEAT_STATE["SHUTDOWN"] = False
         _STATSBEAT_STATE["CUSTOM_EVENTS_FEATURE_SET"] = False
+        _STATSBEAT_STATE["LIVE_METRICS_FEATURE_SET"] = False
 
 
     def test_statsbeat_metric_init(self):
@@ -748,11 +749,12 @@ class TestStatsbeatMetrics(unittest.TestCase):
         self.assertEqual(_StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"], _StatsbeatFeature.AAD)
 
     # pylint: disable=protected-access
-    def test_get_feature_metric_custom_events_init(self):
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics.get_statsbeat_custom_events_feature_set")
+    def test_get_feature_metric_custom_events(self, feature_mock):
+        feature_mock.return_value = True
         mp = MeterProvider()
         ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
         endpoint = "https://westus-1.in.applicationinsights.azure.com/"
-        _STATSBEAT_STATE["CUSTOM_EVENTS_FEATURE_SET"] = True
         metric = _StatsbeatMetrics(
             mp,
             ikey,
@@ -769,37 +771,12 @@ class TestStatsbeatMetrics(unittest.TestCase):
         for obs in observations:
             self.assertEqual(obs.value, 1)
             self.assertEqual(obs.attributes, attributes)
-        _STATSBEAT_STATE["CUSTOM_EVENTS_FEATURE_SET"] = False
+
 
     # pylint: disable=protected-access
-    def test_get_feature_metric_custom_events_runtime(self):
-        mp = MeterProvider()
-        ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
-        endpoint = "https://westus-1.in.applicationinsights.azure.com/"
-        metric = _StatsbeatMetrics(
-            mp,
-            ikey,
-            endpoint,
-            True,
-            0,
-            False,
-        )
-        attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
-        attributes.update(_StatsbeatMetrics._FEATURE_ATTRIBUTES)
-        self.assertEqual(attributes["feature"], 0)
-        self.assertEqual(attributes["type"], _FEATURE_TYPES.FEATURE)
-        _STATSBEAT_STATE["CUSTOM_EVENTS_FEATURE_SET"] = True
-        observations = metric._get_feature_metric(options=None)
-        attributes.update(_StatsbeatMetrics._FEATURE_ATTRIBUTES)
-        self.assertEqual(attributes["feature"], 4)
-        self.assertEqual(metric._feature, 4)
-        for obs in observations:
-            self.assertEqual(obs.value, 1)
-            self.assertEqual(obs.attributes, attributes)
-        _STATSBEAT_STATE["CUSTOM_EVENTS_FEATURE_SET"] = False
-
-    # pylint: disable=protected-access
-    def test_get_feature_metric_live_metrics(self):
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics.get_statsbeat_live_metrics_feature_set")
+    def test_get_feature_metric_live_metrics(self, feature_mock):
+        feature_mock.return_value = True
         mp = MeterProvider()
         ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
         endpoint = "https://westus-1.in.applicationinsights.azure.com/"
