@@ -41,6 +41,9 @@ from ._utils import (
 )
 from ._sync_token import SyncTokenPolicy
 
+def _return_deserialized_and_headers(response, deserialized, response_headers):
+    return deserialized, response_headers
+
 
 class AzureAppConfigurationClient:
     """Represents a client that calls restful API of Azure App Configuration service.
@@ -218,14 +221,14 @@ class AzureAppConfigurationClient:
                 )
             key_filter, kwargs = get_key_filter(*args, **kwargs)
             label_filter, kwargs = get_label_filter(*args, **kwargs)
-            command = functools.partial(self._impl.get_key_values, **kwargs)
+            command = functools.partial(self._impl.get_key_values_in_one_page, **kwargs)
             return ItemPaged(
                 command,
                 key=key_filter,
                 label=label_filter,
                 accept_datetime=accept_datetime,
                 select=select,
-                cls=lambda objs: [ConfigurationSetting._from_generated(x) for x in objs],
+                cls=_return_deserialized_and_headers,
                 page_iterator_class=ConfigurationSettingPropertiesPaged,
             )
 

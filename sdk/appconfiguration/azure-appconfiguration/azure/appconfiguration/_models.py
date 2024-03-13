@@ -7,6 +7,7 @@ from datetime import datetime
 from typing import Any, Dict, List, Optional, Union, cast, Callable
 from typing_extensions import Literal
 
+from azure.core.async_paging import AsyncList
 from azure.core.rest import HttpResponse
 from azure.core.paging import PageIterator
 from azure.core.async_paging import AsyncPageIterator
@@ -557,21 +558,22 @@ class ConfigurationSettingPropertiesPaged(PageIterator):
         self._accept_datetime = kwargs.get("accept_datetime")
         self._select = kwargs.get("select")
         self._cls = kwargs.get("cls")
+        self._deserializer = lambda objs: [ConfigurationSetting._from_generated(x) for x in objs]
     
     def _get_next_cb(self, continuation_token):
-        response = self._command(
+        return self._command(
             key=self._key,
             label=self._label,
             accept_datetime=self._accept_datetime,
             select=self._select,
+            continuation_token=continuation_token,
             cls=self._cls,
-        ).by_page(continuation_token=continuation_token)
-        next(response)
-        self.etag = response._response.http_response.headers.get('Etag')
-        return response
+        )
 
-    def _extract_data_cb(self, pipeline_response):
-        return pipeline_response.continuation_token, pipeline_response._current_page
+    def _extract_data_cb(self, get_next_return):
+        deserialized, response_headers = get_next_return
+        self.etag = response_headers.get('ETag')
+        return deserialized.next_link or None, iter(self._deserializer(deserialized.items))
 
 
 class ConfigurationSettingPropertiesPagedAsync(AsyncPageIterator):
@@ -592,18 +594,19 @@ class ConfigurationSettingPropertiesPagedAsync(AsyncPageIterator):
         self._accept_datetime = kwargs.get("accept_datetime")
         self._select = kwargs.get("select")
         self._cls = kwargs.get("cls")
+        self._deserializer = lambda objs: [ConfigurationSetting._from_generated(x) for x in objs]
     
     async def _get_next_cb(self, continuation_token):
-        response = self._command(
+        return await self._command(
             key=self._key,
             label=self._label,
             accept_datetime=self._accept_datetime,
             select=self._select,
+            continuation_token=continuation_token,
             cls=self._cls,
-        ).by_page(continuation_token=continuation_token)
-        await response.__anext__()
-        self.etag = response._response.http_response.headers.get('Etag')
-        return response
+        )
 
-    async def _extract_data_cb(self, pipeline_response):
-        return pipeline_response.continuation_token, pipeline_response._current_page
+    async def _extract_data_cb(self, get_next_return):
+        deserialized, response_headers = get_next_return
+        self.etag = response_headers.get('ETag')
+        return deserialized.next_link or None, AsyncList(self._deserializer(deserialized.items))

@@ -25,6 +25,7 @@ from azure.core.exceptions import (
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.utils import CaseInsensitiveDict
 from ._sync_token_async import AsyncSyncTokenPolicy
+from .._azure_appconfiguration_client import _return_deserialized_and_headers
 from .._azure_appconfiguration_error import ResourceReadOnlyError
 from .._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
 from .._generated.aio import AzureAppConfiguration
@@ -224,14 +225,14 @@ class AzureAppConfigurationClient:
                 )
             key_filter, kwargs = get_key_filter(*args, **kwargs)
             label_filter, kwargs = get_label_filter(*args, **kwargs)
-            command = functools.partial(self._impl.get_key_values, **kwargs)
+            command = functools.partial(self._impl.get_key_values_in_one_page, **kwargs)
             return AsyncItemPaged(
                 command,
                 key=key_filter,
                 label=label_filter,
                 accept_datetime=accept_datetime,
                 select=select,
-                cls=lambda objs: [ConfigurationSetting._from_generated(x) for x in objs],
+                cls=_return_deserialized_and_headers,
                 page_iterator_class=ConfigurationSettingPropertiesPagedAsync,
             )
         except binascii.Error as exc:
