@@ -990,7 +990,8 @@
         "msecs",
         "mycontainer",
         "semconv",
-        "updown"
+        "updown",
+        "uvicorn"
       ]
     },
     {
