@@ -769,6 +769,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
         for obs in observations:
             self.assertEqual(obs.value, 1)
             self.assertEqual(obs.attributes, attributes)
+        _STATSBEAT_STATE["CUSTOM_EVENTS_FEATURE_SET"] = False
 
     # pylint: disable=protected-access
     def test_get_feature_metric_custom_events_runtime(self):
@@ -795,6 +796,31 @@ class TestStatsbeatMetrics(unittest.TestCase):
         for obs in observations:
             self.assertEqual(obs.value, 1)
             self.assertEqual(obs.attributes, attributes)
+        _STATSBEAT_STATE["CUSTOM_EVENTS_FEATURE_SET"] = False
+
+    # pylint: disable=protected-access
+    def test_get_feature_metric_live_metrics(self):
+        mp = MeterProvider()
+        ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
+        endpoint = "https://westus-1.in.applicationinsights.azure.com/"
+        _STATSBEAT_STATE["LIVE_METRICS_FEATURE_SET"] = True
+        metric = _StatsbeatMetrics(
+            mp,
+            ikey,
+            endpoint,
+            True,
+            0,
+            False,
+        )
+        attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
+        attributes.update(_StatsbeatMetrics._FEATURE_ATTRIBUTES)
+        self.assertEqual(attributes["feature"], 16)
+        self.assertEqual(attributes["type"], _FEATURE_TYPES.FEATURE)
+        observations = metric._get_feature_metric(options=None)
+        for obs in observations:
+            self.assertEqual(obs.value, 1)
+            self.assertEqual(obs.attributes, attributes)
+        _STATSBEAT_STATE["LIVE_METRICS_FEATURE_SET"] = False
 
     # pylint: disable=protected-access
     def test_get_feature_metric_distro(self):
