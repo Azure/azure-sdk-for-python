@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-# pylint: disable=C0303
+# pylint: skip-file
 """
 This module contains a utility class for managing a list of JSON lines.
 """
@@ -59,9 +59,8 @@ class JsonLineList(list):
                             'answer': assistant_message, 
                             'context': context}) + "\n"
                         continue
-                    else:
-                        json_lines += json.dumps({
-                            'question': user_message, 
-                            'answer': assistant_message}) + "\n"
-                        continue
+                    json_lines += json.dumps({
+                        'question': user_message, 
+                        'answer': assistant_message}) + "\n"
+                    continue
         return json_lines
