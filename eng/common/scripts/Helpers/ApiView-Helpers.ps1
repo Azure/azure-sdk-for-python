@@ -29,18 +29,20 @@ function Check-ApiReviewStatus($packageName, $packageVersion, $language, $url, $
     return
   }
   $headers = @{ "ApiKey" = $apiKey }
-  $body = @{
-    language = $lang
-    packageName = $packageName
-    packageVersion = $packageVersion
-  }
 
   try
   {
-    $response = Invoke-WebRequest $url -Method 'GET' -Headers $headers -Body $body
+    $requestUrl = $url+"?language=" + $lang +"&packageName=" +$packageName
+    if ($packageVersion)
+    {
+      $requestUrl = $requestUrl + "&packageVersion=" + $packageVersion
+    }
+    Write-host "URL to check status: $requestUrl"
+    $response = Invoke-WebRequest $requestUrl -Method 'GET' -Headers $headers
+    Write-Host  "Response code: $($response.StatusCode)"
     if ($response.StatusCode -eq '200')
     {
-      Write-Host "API Review is approved for package $($packageName)"
+      Write-Host "API Review is approved for package $($packageName)"      
     }
     elseif ($response.StatusCode -eq '202')
     {
@@ -49,17 +51,19 @@ function Check-ApiReviewStatus($packageName, $packageVersion, $language, $url, $
     }
     elseif ($response.StatusCode -eq '201')
     {
-      Write-Warning "API Review is not approved for package $($packageName). Release pipeline will fail if API review is not approved for a stable version release."
+      Write-Host "API Review is not approved for package $($packageName). Release pipeline will fail if API review is not approved for a stable version release."
       Write-Host "You can check http://aka.ms/azsdk/engsys/apireview/faq for more details on API Approval."
     }
     else
     {
-      Write-Warning "API review status check returned unexpected response. $($response)"
+      Write-Host "API review status check returned unexpected response. $($response)"
       Write-Host "You can check http://aka.ms/azsdk/engsys/apireview/faq for more details on API Approval."
     }
   }
   catch
   {
-    Write-Warning "Failed to check API review status for package $($PackageName). You can check http://aka.ms/azsdk/engsys/apireview/faq for more details on API Approval."
+    Write-Error "Failed to check API review status for package $($PackageName). You can check http://aka.ms/azsdk/engsys/apireview/faq for more details on API Approval."
+    Write-Error $_.Exception
   }
+  return $response.StatusCode
 }
