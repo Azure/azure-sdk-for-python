@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- `InteractiveBrowserBrokerCredential` now supports a `use_operating_system_account` property to enable the use of the currently logged in operating system account for authentication rather than prompting for a credential.
+
 ### Breaking Changes
 
 ### Bugs Fixed
