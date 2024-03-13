@@ -88,16 +88,21 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
     :paramtype identity: Union[
         ~azure.ai.ml.ManagedIdentityConfiguration,
         ~azure.ai.ml.AmlTokenConfiguration,
-        ~azure.ai.ml.UserIdentityConfiguration]
+        ~azure.ai.ml.UserIdentityConfiguration
+
+    ]
+
     :keyword inputs: Inputs to the command.
     :paramtype inputs: dict
     :keyword outputs: Mapping of output data bindings used in the job.
     :paramtype outputs: dict[str, ~azure.ai.ml.Output]
     :keyword sampling_algorithm: The hyperparameter sampling algorithm to use over the `search_space`. Defaults to
         "random".
+
     :paramtype sampling_algorithm: str
     :keyword search_space: Dictionary of the hyperparameter search space. The key is the name of the hyperparameter
         and the value is the parameter expression.
+
     :paramtype search_space: Dict
     :keyword objective: Metric to optimize for.
     :paramtype objective: Objective
@@ -111,12 +116,17 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
         ~azure.ai.ml.entities.CommandComponent
 
     ]
+
     :keyword early_termination: The early termination policy to use. A trial job is canceled
         when the criteria of the specified policy are met. If omitted, no early termination policy will be applied.
+
     :paramtype early_termination:  Union[
         ~azure.mgmt.machinelearningservices.models.BanditPolicy,
         ~azure.mgmt.machinelearningservices.models.MedianStoppingPolicy,
-        ~azure.mgmt.machinelearningservices.models.TruncationSelectionPolicy]
+        ~azure.mgmt.machinelearningservices.models.TruncationSelectionPolicy
+
+    ]
+
     :keyword limits: Limits for the sweep job.
     :paramtype limits: ~azure.ai.ml.entities.SweepJobLimits
     :keyword queue_settings: Queue settings for the job.

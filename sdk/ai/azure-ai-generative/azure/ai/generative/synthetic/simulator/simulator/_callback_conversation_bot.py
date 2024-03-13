@@ -56,6 +56,7 @@ class CallbackConversationBot(ConversationBot):
                 "id": None,
                 "template_parameters": {}
             } 
+
         self.logger.info("Using user provided callback returning response.")
 
         time_taken = 0
