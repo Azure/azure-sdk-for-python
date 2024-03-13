@@ -131,7 +131,6 @@ class RecordingKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AZURE_COMMUNICATION_SERVICES = "azureCommunicationServices"
     TEAMS = "teams"
     TEAMS_COMPLIANCE = "teamsCompliance"
-    OTHERS = "others"
 
 
 class RecordingState(str, Enum, metaclass=CaseInsensitiveEnumMeta):

@@ -350,11 +350,11 @@ class AnswerCallRequest(_serialization.Model):
 
 
 class AzureBlobStorage(_serialization.Model):
-    """Used to specify Azure Blob container url to recording storage.
+    """Used to specify Azure Blob container uri to recording storage.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar container_uri: Url of a container or a location within a container. Required.
+    :ivar container_uri: Uri of a container or a location within a container. Required.
     :vartype container_uri: str
     """
 
@@ -368,7 +368,7 @@ class AzureBlobStorage(_serialization.Model):
 
     def __init__(self, *, container_uri: str, **kwargs: Any) -> None:
         """
-        :keyword container_uri: Url of a container or a location within a container. Required.
+        :keyword container_uri: Uri of a container or a location within a container. Required.
         :paramtype container_uri: str
         """
         super().__init__(**kwargs)
@@ -2749,8 +2749,8 @@ class RecordingStateChanged(_serialization.Model):
     :vartype state: str or ~azure.communication.callautomation.models.RecordingState
     :ivar start_date_time: The time of the recording started.
     :vartype start_date_time: ~datetime.datetime
-    :ivar recording_kind: Known values are: "azureCommunicationServices", "teams",
-     "teamsCompliance", and "others".
+    :ivar recording_kind: Known values are: "azureCommunicationServices", "teams", and
+     "teamsCompliance".
     :vartype recording_kind: str or ~azure.communication.callautomation.models.RecordingKind
     """
 
@@ -2788,8 +2788,8 @@ class RecordingStateChanged(_serialization.Model):
         :paramtype correlation_id: str
         :keyword state: Known values are: "active" and "inactive".
         :paramtype state: str or ~azure.communication.callautomation.models.RecordingState
-        :keyword recording_kind: Known values are: "azureCommunicationServices", "teams",
-         "teamsCompliance", and "others".
+        :keyword recording_kind: Known values are: "azureCommunicationServices", "teams", and
+         "teamsCompliance".
         :paramtype recording_kind: str or ~azure.communication.callautomation.models.RecordingKind
         """
         super().__init__(**kwargs)
@@ -2809,8 +2809,8 @@ class RecordingStateResponse(_serialization.Model):
     :vartype recording_id: str
     :ivar recording_state: Known values are: "active" and "inactive".
     :vartype recording_state: str or ~azure.communication.callautomation.models.RecordingState
-    :ivar recording_kind: Known values are: "azureCommunicationServices", "teams",
-     "teamsCompliance", and "others".
+    :ivar recording_kind: Known values are: "azureCommunicationServices", "teams", and
+     "teamsCompliance".
     :vartype recording_kind: str or ~azure.communication.callautomation.models.RecordingKind
     """
 
@@ -2833,8 +2833,8 @@ class RecordingStateResponse(_serialization.Model):
         :paramtype recording_id: str
         :keyword recording_state: Known values are: "active" and "inactive".
         :paramtype recording_state: str or ~azure.communication.callautomation.models.RecordingState
-        :keyword recording_kind: Known values are: "azureCommunicationServices", "teams",
-         "teamsCompliance", and "others".
+        :keyword recording_kind: Known values are: "azureCommunicationServices", "teams", and
+         "teamsCompliance".
         :paramtype recording_kind: str or ~azure.communication.callautomation.models.RecordingKind
         """
         super().__init__(**kwargs)
@@ -3467,7 +3467,7 @@ class StartCallRecordingRequest(_serialization.Model):
      Channel-Participant mapping details can be found in the metadata of the recording.
      ///.
     :vartype channel_affinity: list[~azure.communication.callautomation.models.ChannelAffinity]
-    :ivar pause_on_start: When set to true will start recording in Pause mode, which could be
+    :ivar pause_on_start: When set to true will start recording in Pause mode, which can be
      resumed.
     :vartype pause_on_start: bool
     :ivar external_storage:
@@ -3540,7 +3540,7 @@ class StartCallRecordingRequest(_serialization.Model):
          Channel-Participant mapping details can be found in the metadata of the recording.
          ///.
         :paramtype channel_affinity: list[~azure.communication.callautomation.models.ChannelAffinity]
-        :keyword pause_on_start: When set to true will start recording in Pause mode, which could be
+        :keyword pause_on_start: When set to true will start recording in Pause mode, which can be
          resumed.
         :paramtype pause_on_start: bool
         :keyword external_storage:
