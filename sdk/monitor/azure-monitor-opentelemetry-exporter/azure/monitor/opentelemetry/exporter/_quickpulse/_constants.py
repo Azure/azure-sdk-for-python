@@ -49,4 +49,4 @@ class _DocumentIngressDocumentType(Enum):
     Event = "Event"
     Trace = "Trace"
 
-# cSpell:disable
+# cSpell:enable
