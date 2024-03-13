@@ -10,7 +10,7 @@ import datetime
 from io import IOBase
 import json
 import sys
-from typing import Any, Callable, Dict, IO, Iterable, List, Optional, TypeVar, Union, overload
+from typing import Any, Callable, Dict, IO, Iterable, Iterator, List, Optional, TypeVar, Union, overload
 import urllib.parse
 import uuid
 
@@ -453,10 +453,7 @@ class NotificationMessagesClientOperationsMixin(   # pylint: disable=name-too-lo
                 }
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
         error_map.update(kwargs.pop('error_map', {}) or {})
 
@@ -526,13 +523,13 @@ class NotificationMessagesClientOperationsMixin(   # pylint: disable=name-too-lo
         self,
         id: str,
         **kwargs: Any
-    ) -> bytes:
+    ) -> Iterator[bytes]:
         """Download the Media payload from a User to Business message.
 
         :param id: The stream ID. Required.
         :type id: str
-        :return: bytes
-        :rtype: bytes
+        :return: Iterator[bytes]
+        :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -546,7 +543,7 @@ class NotificationMessagesClientOperationsMixin(   # pylint: disable=name-too-lo
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[bytes] = kwargs.pop(
+        cls: ClsType[Iterator[bytes]] = kwargs.pop(
             'cls', None
         )
 
@@ -580,16 +577,12 @@ class NotificationMessagesClientOperationsMixin(   # pylint: disable=name-too-lo
         response_headers['x-ms-client-request-id']=self._deserialize('str',
                                                                     response.headers.get('x-ms-client-request-id'))
 
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = response.read()
+        deserialized = response.iter_bytes()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers) # type: ignore
 
         return deserialized  # type: ignore
-
 
 class MessageTemplateClientOperationsMixin(
     MessageTemplateClientMixinABC
@@ -640,10 +633,7 @@ class MessageTemplateClientOperationsMixin(
         )
 
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
         error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
