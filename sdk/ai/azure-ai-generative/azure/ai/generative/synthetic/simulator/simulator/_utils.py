@@ -52,14 +52,16 @@ class JsonLineList(list):
                     assistant_message = message['content']
                 if 'context' in message:
                     context = message.get("context", None)
-            if user_message and assistant_message:
-                if context:
-                    json_lines += json.dumps({
-                        'question': user_message, 
-                        'answer': assistant_message, 
-                        'context': context}) + "\n"
-                else:
-                    json_lines += json.dumps({
-                        'question': user_message, 
-                        'answer': assistant_message}) + "\n"
+                if user_message and assistant_message:
+                    if context:
+                        json_lines += json.dumps({
+                            'question': user_message, 
+                            'answer': assistant_message, 
+                            'context': context}) + "\n"
+                        continue
+                    else:
+                        json_lines += json.dumps({
+                            'question': user_message, 
+                            'answer': assistant_message}) + "\n"
+                        continue
         return json_lines
