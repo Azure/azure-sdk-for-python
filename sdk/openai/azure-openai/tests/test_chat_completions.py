@@ -296,7 +296,7 @@ class TestChatCompletions(AzureRecordedTestCase):
         assert completion.choices[0].message.role
 
     @configure
-    @pytest.mark.parametrize("api_type, api_version", [(AZURE, PREVIEW)])
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, GA), (AZURE, PREVIEW)])
     def test_chat_completion_rai_annotations(self, client, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
@@ -359,7 +359,7 @@ class TestChatCompletions(AzureRecordedTestCase):
     @configure
     @pytest.mark.parametrize(
         "api_type, api_version",
-        [(AZURE, PREVIEW), (OPENAI, "v1")]
+        [(AZURE, GA), (AZURE, PREVIEW), (OPENAI, "v1")]
     )
     def test_chat_completion_functions(self, client, api_type, api_version, **kwargs):
         messages = [
@@ -452,7 +452,7 @@ class TestChatCompletions(AzureRecordedTestCase):
     @configure
     @pytest.mark.parametrize(
         "api_type, api_version",
-        [(AZURE, PREVIEW), (OPENAI, "v1")]
+        [(AZURE, GA), (AZURE, PREVIEW), (OPENAI, "v1")]
     )
     def test_chat_completion_functions_stream(self, client, api_type, api_version, **kwargs):
         messages = [
@@ -526,7 +526,7 @@ class TestChatCompletions(AzureRecordedTestCase):
     @configure
     @pytest.mark.parametrize(
         "api_type, api_version",
-        [(AZURE, PREVIEW), (OPENAI, "v1")]
+        [(AZURE, GA), (AZURE, PREVIEW), (OPENAI, "v1")]
     )
     def test_chat_completion_given_function(self, client, api_type, api_version, **kwargs):
         messages = [
@@ -613,7 +613,7 @@ class TestChatCompletions(AzureRecordedTestCase):
         assert function_completion.choices[0].message.role == "assistant"
 
     @configure
-    @pytest.mark.parametrize("api_type, api_version", [(AZURE, PREVIEW)])
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, GA), (AZURE, PREVIEW)])
     def test_chat_completion_functions_rai(self, client, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "Don't make assumptions about what values to plug into functions. Ask for clarification if a user request is ambiguous."},
@@ -698,7 +698,7 @@ class TestChatCompletions(AzureRecordedTestCase):
         assert content_filter_result["violence"]["severity"] is not None
 
     @configure
-    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, PREVIEW), (GPT_4_AZURE_AD, PREVIEW)])
+    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, GA), (GPT_4_AZURE, PREVIEW), (GPT_4_AZURE_AD, PREVIEW)])
     def test_chat_completion_byod(self, client, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
@@ -734,7 +734,7 @@ class TestChatCompletions(AzureRecordedTestCase):
         assert completion.choices[0].message.context["intent"]
 
     @configure
-    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, PREVIEW)])
+    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, GA), (GPT_4_AZURE, PREVIEW)])
     def test_streamed_chat_completions_byod(self, client, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
@@ -775,7 +775,7 @@ class TestChatCompletions(AzureRecordedTestCase):
                     assert c.delta.content is not None
 
     @configure
-    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")])
+    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, GA), (GPT_4_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")])
     def test_chat_completion_seed(self, client, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
@@ -788,7 +788,7 @@ class TestChatCompletions(AzureRecordedTestCase):
         assert completion.system_fingerprint
 
     @configure
-    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, GA), (GPT_4_OPENAI, "v1")])
+    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, GA), (GPT_4_AZURE, GA), (GPT_4_OPENAI, "v1")])
     def test_chat_completion_json_response(self, client, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
@@ -811,7 +811,7 @@ class TestChatCompletions(AzureRecordedTestCase):
         assert completion.choices[0].message.role
 
     @configure
-    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, PREVIEW)])
+    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, GA), (GPT_4_AZURE, PREVIEW)])
     def test_chat_completion_block_list_term(self, client, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
@@ -838,7 +838,7 @@ class TestChatCompletions(AzureRecordedTestCase):
         assert content_filter_result["jailbreak"]["filtered"] is False
 
     @configure
-    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")])
+    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, GA), (GPT_4_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")])
     def test_chat_completion_tools(self, client, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "Don't make assumptions about what values to plug into tools. Ask for clarification if a user request is ambiguous."},
@@ -906,7 +906,7 @@ class TestChatCompletions(AzureRecordedTestCase):
         assert tool_completion.choices[0].message.role == "assistant"
 
     @configure
-    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")])
+    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, GA), (GPT_4_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")])
     def test_chat_completion_tools_stream(self, client, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "Don't make assumptions about what values to plug into tools. Ask for clarification if a user request is ambiguous."},
@@ -996,7 +996,7 @@ class TestChatCompletions(AzureRecordedTestCase):
         assert "22" in content
 
     @configure
-    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")])
+    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, GA), (GPT_4_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")])
     def test_chat_completion_tools_parallel_func(self, client, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "Don't make assumptions about what values to plug into tools. Ask for clarification if a user request is ambiguous."},
@@ -1080,7 +1080,7 @@ class TestChatCompletions(AzureRecordedTestCase):
         assert tool_completion.choices[0].message.role == "assistant"
 
     @configure
-    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")])
+    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, GA), (GPT_4_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")])
     def test_chat_completion_vision(self, client, api_type, api_version, **kwargs):
         completion = client.chat.completions.create(
             model="gpt-4-vision-preview",
@@ -1104,7 +1104,7 @@ class TestChatCompletions(AzureRecordedTestCase):
         assert completion.choices[0].message.role
 
     @configure
-    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_OPENAI, "v1")])
+    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")])
     def test_chat_completion_logprobs(self, client, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},

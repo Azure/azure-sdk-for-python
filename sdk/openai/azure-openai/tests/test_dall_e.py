@@ -14,7 +14,7 @@ class TestDallE(AzureRecordedTestCase):
     @configure
     @pytest.mark.parametrize(
         "api_type, api_version",
-        [(DALLE_AZURE, PREVIEW), (DALLE_AZURE_AD, PREVIEW), (OPENAI, "v1")]
+        [(DALLE_AZURE, GA), (DALLE_AZURE_AD, GA), (DALLE_AZURE, PREVIEW), (DALLE_AZURE_AD, PREVIEW), (OPENAI, "v1")]
     )
     def test_image_create(self, client, api_type, api_version, **kwargs):
         image = client.images.generate(
@@ -27,7 +27,7 @@ class TestDallE(AzureRecordedTestCase):
         assert image.data[0].revised_prompt
 
     @configure
-    @pytest.mark.parametrize("api_type, api_version", [(DALLE_AZURE, PREVIEW), (OPENAI, "v1")])
+    @pytest.mark.parametrize("api_type, api_version", [(DALLE_AZURE, GA), (DALLE_AZURE, PREVIEW), (OPENAI, "v1")])
     def test_image_create_n(self, client, api_type, api_version, **kwargs):
         image = client.images.generate(
             prompt="a cute baby seal",
@@ -41,7 +41,7 @@ class TestDallE(AzureRecordedTestCase):
             assert img.revised_prompt
 
     @configure
-    @pytest.mark.parametrize("api_type, api_version", [(DALLE_AZURE, PREVIEW), (OPENAI, "v1")])
+    @pytest.mark.parametrize("api_type, api_version", [(DALLE_AZURE, GA), (DALLE_AZURE, PREVIEW), (OPENAI, "v1")])
     def test_image_create_size(self, client, api_type, api_version, **kwargs):
         image = client.images.generate(
             prompt="a cute baby seal",
@@ -54,7 +54,7 @@ class TestDallE(AzureRecordedTestCase):
         assert image.data[0].revised_prompt
 
     @configure
-    @pytest.mark.parametrize("api_type, api_version", [(DALLE_AZURE, PREVIEW), (OPENAI, "v1")])
+    @pytest.mark.parametrize("api_type, api_version", [(DALLE_AZURE, GA), (DALLE_AZURE, PREVIEW), (OPENAI, "v1")])
     def test_image_create_response_format(self, client, api_type, api_version, **kwargs):
         image = client.images.generate(
             prompt="a cute baby seal",
@@ -67,7 +67,7 @@ class TestDallE(AzureRecordedTestCase):
         assert image.data[0].revised_prompt
 
     @configure
-    @pytest.mark.parametrize("api_type, api_version", [(DALLE_AZURE, PREVIEW), (OPENAI, "v1")])
+    @pytest.mark.parametrize("api_type, api_version", [(DALLE_AZURE, GA), (DALLE_AZURE, PREVIEW), (OPENAI, "v1")])
     def test_image_create_user(self, client, api_type, api_version, **kwargs):
         image = client.images.generate(
             prompt="a cute baby seal",
@@ -80,7 +80,7 @@ class TestDallE(AzureRecordedTestCase):
         assert image.data[0].revised_prompt
 
     @configure
-    @pytest.mark.parametrize("api_type, api_version", [(DALLE_AZURE, PREVIEW), (OPENAI, "v1")])
+    @pytest.mark.parametrize("api_type, api_version", [(DALLE_AZURE, GA), (DALLE_AZURE, PREVIEW), (OPENAI, "v1")])
     def test_image_create_quality(self, client, api_type, api_version, **kwargs):
         image = client.images.generate(
             prompt="a cute baby seal",
@@ -93,7 +93,7 @@ class TestDallE(AzureRecordedTestCase):
         assert image.data[0].revised_prompt
 
     @configure
-    @pytest.mark.parametrize("api_type, api_version", [(DALLE_AZURE, PREVIEW), (OPENAI, "v1")])
+    @pytest.mark.parametrize("api_type, api_version", [(DALLE_AZURE, GA), (DALLE_AZURE, PREVIEW), (OPENAI, "v1")])
     def test_image_create_style(self, client, api_type, api_version, **kwargs):
         image = client.images.generate(
             prompt="a cute baby seal",

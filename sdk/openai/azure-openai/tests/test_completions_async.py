@@ -411,7 +411,7 @@ class TestCompletionsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type, api_version", [(AZURE, PREVIEW)])
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, GA), (AZURE, PREVIEW)])
     async def test_completion_rai_annotations(self, client_async, api_type, api_version, **kwargs):
 
         # prompt filtered

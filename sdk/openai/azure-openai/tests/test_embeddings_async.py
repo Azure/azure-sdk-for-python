@@ -64,3 +64,36 @@ class TestEmbeddingsAsync(AzureRecordedTestCase):
         assert embedding.data[0].object == "embedding"
         assert embedding.data[0].index is not None
         assert len(embedding.data[0].embedding) > 0
+
+    @configure_async
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(AZURE, PREVIEW), (OPENAI, "v1")]
+    )
+    async def test_embedding_dimensions(self, client_async, api_type, api_version, **kwargs):
+
+        embedding = await client_async.embeddings.create(input="hello world", dimensions=1, model="text-embedding-3-small")
+        assert embedding.object == "list"
+        assert embedding.model
+        assert embedding.usage.prompt_tokens is not None
+        assert embedding.usage.total_tokens is not None
+        assert len(embedding.data) == 1
+        assert embedding.data[0].object == "embedding"
+        assert embedding.data[0].index is not None
+        assert len(embedding.data[0].embedding) > 0
+
+    @configure_async
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(AZURE, PREVIEW), (OPENAI, "v1")]
+    )
+    async def test_embedding_encoding_format(self, client_async, api_type, api_version, **kwargs):
+
+        embedding = await client_async.embeddings.create(input="hello world", encoding_format="base64", model="text-embedding-3-small")
+        assert embedding.object == "list"
+        assert embedding.model
+        assert embedding.usage.prompt_tokens is not None
+        assert embedding.usage.total_tokens is not None
+        assert len(embedding.data) > 0

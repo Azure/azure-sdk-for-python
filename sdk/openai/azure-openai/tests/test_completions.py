@@ -394,7 +394,7 @@ class TestCompletions(AzureRecordedTestCase):
         assert completion.choices[0].text is not None
 
     @configure
-    @pytest.mark.parametrize("api_type, api_version", [(AZURE, PREVIEW)])
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, GA), (AZURE, PREVIEW)])
     def test_completion_rai_annotations(self, client, api_type, api_version, **kwargs):
 
         # prompt filtered
