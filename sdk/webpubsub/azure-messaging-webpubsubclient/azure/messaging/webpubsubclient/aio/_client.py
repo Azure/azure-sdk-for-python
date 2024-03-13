@@ -41,7 +41,7 @@ from ..models._models import (
     AckMapAsync,
     OpenClientError,
 )
-from .models._enums import (
+from ..models._enums import (
     WebPubSubDataType,
     WebPubSubClientState,
     CallbackType,
@@ -191,6 +191,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         self._last_close_event: Optional[CloseEvent] = None
         self._reconnection_token: Optional[str] = None
         self._task_seq_ack: Optional[asyncio.Task] = None
+        self._task_listen: Optional[asyncio.Task] = None
         self._ack_timeout: float = ack_timeout
         self._start_timeout: float = start_timeout
         self._user_agent: Optional[str] = user_agent
@@ -642,6 +643,10 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
                 )
 
         await _rejoin_group()
+    @staticmethod
+    def _cancel_task(task: Optional[asyncio.Task]) -> None:
+        if task and not task.done():
+            task.cancel()
 
     async def _connect(self, url: str):  # pylint: disable=too-many-statements
         async def on_close(close_status_code: int, close_msg: Optional[str]=None):
@@ -799,7 +804,8 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
 
             _LOGGER.debug("WebSocket connection has opened")
             self._state = WebPubSubClientState.CONNECTED
-            asyncio.create_task(_listen())
+            self._cancel_task(self._task_listen)
+            self._task_listen = asyncio.create_task(_listen())
 
         if self._is_stopping:
             raise OpenClientError("Can't open a client during closing")
@@ -817,11 +823,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         _LOGGER.debug("WebSocket connection has opened")
 
         # set coroutine to check sequence id if needed
-        if self._protocol.is_reliable_sub_protocol and self._task_seq_ack:
-            if not self._task_seq_ack.done():
-                _LOGGER.debug("cancel the previous task which if for sequence id ack")
-                self._task_seq_ack.cancel()
-
+        if self._protocol.is_reliable_sub_protocol:
             async def sequence_id_ack_periodically():
                 while self._is_connected():
                     try:
@@ -831,6 +833,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
                     finally:
                         await asyncio.sleep(1.0)
 
+            self._cancel_task(self._task_seq_ack)
             self._task_seq_ack = asyncio.create_task(sequence_id_ack_periodically())
 
         _LOGGER.info("connected successfully")
@@ -874,9 +877,8 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         self._is_stopping = True
 
         await self._ws.close()
-        # if self._task_seq_ack and not self._task_seq_ack.done():
-        #     self._task_seq_ack.cancel()
-
+        for item in [self._task_listen, self._task_seq_ack]:
+            self._cancel_task(item)
         _LOGGER.info("close client successfully")
 
     @overload
