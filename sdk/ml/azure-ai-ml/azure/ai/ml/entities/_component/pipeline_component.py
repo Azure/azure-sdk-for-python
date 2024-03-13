@@ -337,13 +337,19 @@ class PipelineComponent(Component):
         component_interface_dict = self._to_rest_object().properties.component_spec
         # Hash local inputs in pipeline component jobs
         for job_name, job in self.jobs.items():
-            for input_name, input_value in job.inputs.items():
-                try:
-                    if input_value.path and os.path.exists(input_value.path):
-                        component_interface_dict["jobs"][job_name]["inputs"][input_name]["uri"] = get_object_hash(
-                            input_value.path)
-                except ValidationException:
-                    pass
+            if getattr(job, "inputs", None):
+                for input_name, input_value in job.inputs.items():
+                    try:
+                        if (
+                            isinstance(input_value._data, Input)
+                            and input_value.path
+                            and os.path.exists(input_value.path)
+                        ):
+                            component_interface_dict["jobs"][job_name]["inputs"][input_name]["content_hash"] = (
+                                get_object_hash(input_value.path)
+                            )
+                    except ValidationException:
+                        pass
         hash_value: str = hash_dict(
             component_interface_dict,
             keys_to_omit=[
