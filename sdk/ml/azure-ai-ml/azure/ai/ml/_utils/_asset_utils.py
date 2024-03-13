@@ -21,7 +21,6 @@ from colorama import Fore
 from tqdm import TqdmWarning, tqdm
 from typing_extensions import Literal
 
-from azure.ai.ml._artifacts._blob_storage_helper import BlobStorageClient
 from azure.ai.ml._artifacts._constants import (
     AML_IGNORE_FILE_NAME,
     ARTIFACT_ORIGIN,
@@ -39,7 +38,6 @@ from azure.ai.ml._artifacts._constants import (
     WORKSPACE_MANAGED_DATASTORE,
     WORKSPACE_MANAGED_DATASTORE_WITH_SLASH,
 )
-from azure.ai.ml._artifacts._gen2_storage_helper import Gen2StorageClient
 from azure.ai.ml._restclient.v2022_02_01_preview.operations import (  # pylint: disable = unused-import
     ComponentContainersOperations,
     ComponentVersionsOperations,
@@ -489,7 +487,7 @@ def get_directory_size(
 
 
 def upload_file(
-    storage_client: Union["BlobStorageClient", "Gen2StorageClient"],
+    storage_client: Union["BlobStorageClient", "Gen2StorageClient"],  # type: ignore[name-defined]
     source: str,
     dest: Optional[str] = None,
     msg: Optional[str] = None,
@@ -525,29 +523,28 @@ def upload_file(
     if (
         type(storage_client).__name__ == GEN2_STORAGE_CLIENT_NAME
     ):  # Only for Gen2StorageClient, Blob Storage doesn't have true directories
-        _storage_client = cast(Gen2StorageClient, storage_client)
         if in_directory:
-            _storage_client.temp_sub_directory_client = None
+            storage_client.temp_sub_directory_client = None
             file_name_tail = str(dest).rsplit(os.path.sep, maxsplit=1)[-1]
             # Indexing from 2 because the first two parts of the remote path will always be LocalUpload/<asset_id>
             all_sub_folders = str(dest).split(os.path.sep)[2:-1]
 
             # Create remote directories for each nested directory if file is in a nested directory
             for sub_folder in all_sub_folders:
-                if _storage_client.temp_sub_directory_client:
-                    _storage_client.temp_sub_directory_client = (
-                        _storage_client.temp_sub_directory_client.create_sub_directory(sub_folder)
+                if storage_client.temp_sub_directory_client:
+                    storage_client.temp_sub_directory_client = (
+                        storage_client.temp_sub_directory_client.create_sub_directory(sub_folder)
                     )
                 else:
-                    _storage_client.temp_sub_directory_client = _storage_client.directory_client.create_sub_directory(
+                    storage_client.temp_sub_directory_client = storage_client.directory_client.create_sub_directory(
                         sub_folder
                     )
 
-            _storage_client.file_client = _storage_client.temp_sub_directory_client.create_file(  # type: ignore
+            storage_client.file_client = storage_client.temp_sub_directory_client.create_file(  # type: ignore
                 file_name_tail
             )
         else:
-            _storage_client.file_client = _storage_client.directory_client.create_file(source.split("/")[-1])
+            storage_client.file_client = storage_client.directory_client.create_file(source.split("/")[-1])
 
     with open(source, "rb") as data:
         cntx_manager: Any = None
@@ -565,7 +562,7 @@ def upload_file(
         with cntx_manager as c:
             callback = c.update_to if (show_progress and not in_directory) else None
             if type(storage_client).__name__ == GEN2_STORAGE_CLIENT_NAME:
-                cast(Gen2StorageClient, storage_client).file_client.upload_data(
+                storage_client.file_client.upload_data(
                     data=data.read(),
                     overwrite=True,
                     validate_content=validate_content,
@@ -573,11 +570,11 @@ def upload_file(
                     max_concurrency=MAX_CONCURRENCY,
                 )
             elif type(storage_client).__name__ == BLOB_STORAGE_CLIENT_NAME:
-                cast(BlobStorageClient, storage_client).container_client.upload_blob(
+                storage_client.container_client.upload_blob(
                     name=dest,
                     data=data,
                     validate_content=validate_content,
-                    overwrite=cast(BlobStorageClient, storage_client).overwrite,
+                    overwrite=storage_client.overwrite,
                     raw_response_hook=callback,
                     max_concurrency=MAX_CONCURRENCY,
                     connection_timeout=DEFAULT_CONNECTION_TIMEOUT,
@@ -587,7 +584,7 @@ def upload_file(
 
 
 def upload_directory(
-    storage_client: Union["BlobStorageClient", "Gen2StorageClient"],
+    storage_client: Union["BlobStorageClient", "Gen2StorageClient"],  # type: ignore[name-defined]
     source: Union[str, os.PathLike],
     dest: str,
     msg: str,
@@ -619,8 +616,7 @@ def upload_directory(
     if (
         type(storage_client).__name__ == GEN2_STORAGE_CLIENT_NAME
     ):  # Only for Gen2StorageClient, Blob Storage doesn't have true directories
-        _storage_client = cast(Gen2StorageClient, storage_client)
-        _storage_client.sub_directory_client = _storage_client.directory_client.create_sub_directory(
+        storage_client.sub_directory_client = storage_client.directory_client.create_sub_directory(
             prefix.strip("/").split("/")[-1]
         )
 
@@ -662,7 +658,7 @@ def upload_directory(
         # Azure Blob doesn't allow metadata setting at the directory level, so the first
         # file in the directory is designated as the file where the confirmation metadata
         # will be added at the end of the upload.
-        cast(BlobStorageClient, storage_client).indicator_file = upload_paths[0][1]
+        storage_client.indicator_file = upload_paths[0][1]
         storage_client.check_blob_exists()
 
     # Submit paths to workers for upload
