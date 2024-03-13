@@ -23,6 +23,9 @@ from ._models import (
     MuteParticipantResult,
     SendDtmfTonesResult,
     CancelAddParticipantOperationResult,
+    GroupCallLocator,
+    ServerCallLocator,
+    CallInvite
 )
 from ._shared.models import (
     CommunicationIdentifier,
@@ -40,6 +43,7 @@ from ._generated.models._enums import (
     RecordingChannel,
     RecordingFormat,
     RecordingStorageKind,
+    RecordingKind,
     RecognizeInputType,
     DtmfTone,
     CallConnectionState,
@@ -85,37 +89,22 @@ __all__ = [
     "RecordingChannel",
     "RecordingFormat",
     "RecordingStorageKind",
+    "RecordingKind",
     "RecognizeInputType",
     "DtmfTone",
     "CallConnectionState",
     "RecordingState",
-    "VoiceKind"
+    "VoiceKind",
+    
+    # deprecated models
+    "GroupCallLocator",
+    "ServerCallLocator",
+    "CallInvite"
 ]
 __version__ = VERSION
 
 
 def __getattr__(name):
-    if name == 'CallInvite':
-        warnings.warn(
-            "CallInvite is deprecated and should not be used. Please pass in keyword arguments directly.",
-            DeprecationWarning
-        )
-        from ._models import CallInvite
-        return CallInvite
-    if name == 'GroupCallLocator':
-        warnings.warn(
-            "GroupCallLocator is deprecated and should not be used. Please pass in 'group_call_id' directly.",
-            DeprecationWarning
-        )
-        from ._models import GroupCallLocator
-        return GroupCallLocator
-    if name == 'ServerCallLocator':
-        warnings.warn(
-            "ServerCallLocator is deprecated and should not be used. Please pass in 'server_call_id' directly.",
-            DeprecationWarning
-        )
-        from ._models import ServerCallLocator
-        return ServerCallLocator
     if name == 'MicrosoftBotIdentifier':
         warnings.warn(f"{name} is deprecated and should not be used. Please use 'MicrosoftTeamsAppIdentifier' instead.",
                        DeprecationWarning)

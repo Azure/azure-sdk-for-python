@@ -4,11 +4,8 @@
 
 ### Features Added
 - StartRecording now accepts PauseOnStart.
-- Start, Stop, Update transcript added.
-- Start, Stop hold music added.
-- Introduced `MicrosoftTeamsAppIdentifier` for MS Teams automated scenarios.
-- Introduced `TeamsComplianceRecordingStateChanged` event.
-- Introduced `TeamsRecordingStateChanged` event.
+- Introduced TeamsComplianceRecording notification
+- You can store your recording in your own storage - Bring-your-own-storage (BYOS)
 
 ### Breaking Changes
 
