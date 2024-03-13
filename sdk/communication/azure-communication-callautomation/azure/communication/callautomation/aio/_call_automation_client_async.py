@@ -519,7 +519,7 @@ class CallAutomationClient:
             recording_format_type=kwargs.pop("recording_format_type", None),
             audio_channel_participant_ordering=kwargs.pop("audio_channel_participant_ordering", None),
             recording_storage_type=kwargs.pop("recording_storage_type", None),
-            external_storage_location=kwargs.pop("external_storage_location", None),
+            external_storage=kwargs.pop("external_storage_location", None),
             channel_affinity=channel_affinity_internal,
             pause_on_start=kwargs.pop("pause_on_start", None)
         )

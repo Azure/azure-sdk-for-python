@@ -95,7 +95,7 @@ __all__ = [
     "CallConnectionState",
     "RecordingState",
     "VoiceKind",
-    
+
     # deprecated models
     "GroupCallLocator",
     "ServerCallLocator",
