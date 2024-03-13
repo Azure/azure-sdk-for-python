@@ -23,21 +23,17 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+from enum import Enum
 
-from ._version import VERSION
 
-__version__ = VERSION
+class AzureClouds(Enum):
+    """An enum to describe Azure Cloud."""
 
-from ._pipeline_client import PipelineClient
-from ._match_conditions import MatchConditions
-from ._azure_clouds import AzureClouds
-from ._enum_meta import CaseInsensitiveEnumMeta
-from ._pipeline_client_async import AsyncPipelineClient
+    AzurePublicCloud = 1
+    """Azure public cloud"""
 
-__all__ = [
-    "PipelineClient",
-    "MatchConditions",
-    "CaseInsensitiveEnumMeta",
-    "AsyncPipelineClient",
-    "AzureClouds",
-]
+    AzureChinaCloud = 2
+    """Azure China cloud"""
+
+    AzureUSGovernment = 3
+    """Azure US government cloud"""
