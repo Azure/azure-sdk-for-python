@@ -364,7 +364,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
 
     @distributed_trace
     def send_to_connection(  # pylint: disable=inconsistent-return-statements
-        self, connection_id: str, message: IO, content_type: Optional[str] = None, **kwargs: Any
+        self, connection_id: str, message: IO, *, content_type: Optional[str] = None, **kwargs: Any
     ) -> None:
         """Send content inside request body to the specific connection.
 
