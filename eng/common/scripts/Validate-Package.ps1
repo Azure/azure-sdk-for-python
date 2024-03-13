@@ -49,7 +49,7 @@ CheckDevOpsAccess
 # Function to validate change log
 function ValidateChangeLog($changeLogPath, $versionString)
 {
-    $validationStatus = [PSCustomObject]@ {
+    $validationStatus = [PSCustomObject]@{
         Name = "Change Log Validation"
         Status = "Success"
         Message = ""
