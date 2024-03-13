@@ -345,9 +345,9 @@ class PipelineComponent(Component):
                             and input_value.path
                             and os.path.exists(input_value.path)
                         ):
-                            component_interface_dict["jobs"][job_name]["inputs"][input_name]["content_hash"] = (
-                                get_object_hash(input_value.path)
-                            )
+                            component_interface_dict["jobs"][job_name]["inputs"][
+                                input_name
+                            ]["content_hash"] = get_object_hash(input_value.path)
                     except ValidationException:
                         pass
         hash_value: str = hash_dict(
