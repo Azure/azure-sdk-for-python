@@ -21,6 +21,7 @@ from colorama import Fore
 from tqdm import TqdmWarning, tqdm
 from typing_extensions import Literal
 
+from azure.ai.ml._artifacts._blob_storage_helper import BlobStorageClient
 from azure.ai.ml._artifacts._constants import (
     AML_IGNORE_FILE_NAME,
     ARTIFACT_ORIGIN,
@@ -38,6 +39,7 @@ from azure.ai.ml._artifacts._constants import (
     WORKSPACE_MANAGED_DATASTORE,
     WORKSPACE_MANAGED_DATASTORE_WITH_SLASH,
 )
+from azure.ai.ml._artifacts._gen2_storage_helper import Gen2StorageClient
 from azure.ai.ml._restclient.v2022_02_01_preview.operations import (  # pylint: disable = unused-import
     ComponentContainersOperations,
     ComponentVersionsOperations,
@@ -88,8 +90,8 @@ class IgnoreFile(object):
         :param file_path: Relative path, or absolute path to the ignore file.
         """
         path = Path(file_path).resolve() if file_path else None
-        self._path = path
-        self._path_spec = None
+        self._path: Any = path
+        self._path_spec: Any = None
 
     def exists(self) -> bool:
         """Checks if ignore file exists.
@@ -155,7 +157,7 @@ class IgnoreFile(object):
             self._path_spec = self._create_pathspec()
         if not self._path_spec:
             return False
-        file_path = self._get_rel_path(file_path)
+        file_path = str(self._get_rel_path(file_path))
         if file_path is None:
             return True
 
@@ -170,17 +172,17 @@ class IgnoreFile(object):
 
     @property
     def path(self) -> Union[Path, str]:
-        return self._path
+        return cast(Union[Path, str], self._path)
 
 
 class AmlIgnoreFile(IgnoreFile):
-    def __init__(self, directory_path: Union[Path, str]):
+    def __init__(self, directory_path: Union[Path, str, os.PathLike]):
         file_path = Path(directory_path).joinpath(AML_IGNORE_FILE_NAME)
         super(AmlIgnoreFile, self).__init__(file_path)
 
 
 class GitIgnoreFile(IgnoreFile):
-    def __init__(self, directory_path: Union[Path, str]):
+    def __init__(self, directory_path: Union[Path, str, os.PathLike]):
         file_path = Path(directory_path).joinpath(GIT_IGNORE_FILE_NAME)
         super(GitIgnoreFile, self).__init__(file_path)
 
@@ -229,26 +231,28 @@ def _parse_name_version(
     token_list = name.split(":")
     if len(token_list) == 1:
         return name, None
-    *name, version = token_list
+    *name, version = token_list  # type: ignore[assignment]
     if version_as_int:
-        version = int(version)
+        version = int(version)  # type: ignore[assignment]
     return ":".join(name), version
 
 
-def _get_file_hash(filename: Union[str, os.PathLike], _hash: hash_type) -> hash_type:
+def _get_file_hash(filename: Union[str, os.PathLike], _hash: hash_type) -> hash_type:  # type: ignore[valid-type]
     with open(str(filename), "rb") as f:
         for chunk in iter(lambda: f.read(CHUNK_SIZE), b""):
-            _hash.update(chunk)
+            _hash.update(chunk)  # type: ignore[attr-defined]
     return _hash
 
 
-def _get_dir_hash(directory: Union[str, os.PathLike], _hash: hash_type, ignore_file: IgnoreFile) -> hash_type:
+def _get_dir_hash(
+    directory: Union[str, os.PathLike], _hash: hash_type, ignore_file: IgnoreFile  # type: ignore[valid-type]
+) -> hash_type:  # type: ignore[valid-type]
     dir_contents = Path(directory).iterdir()
     sorted_contents = sorted(dir_contents, key=lambda path: str(path).lower())
     for path in sorted_contents:
         if ignore_file.is_file_excluded(path):
             continue
-        _hash.update(path.name.encode())
+        _hash.update(path.name.encode())  # type: ignore[attr-defined]
         if os.path.islink(path):  # ensure we're hashing the contents of the linked file
             path = _resolve_path(path)
         if path.is_file():
@@ -289,6 +293,7 @@ def _build_metadata_dict(name: str, version: str) -> Dict[str, str]:
 
 def get_object_hash(path: Union[str, os.PathLike], ignore_file: IgnoreFile = IgnoreFile()) -> str:
     _hash = hashlib.md5(b"Initialize for october 2021 AML CLI version")  # nosec
+    object_hash: Any
     if Path(path).is_dir():
         object_hash = _get_dir_hash(directory=path, _hash=_hash, ignore_file=ignore_file)
     else:
@@ -357,7 +362,7 @@ def get_upload_files_from_folder(
                 ignore_file=ignore_file,
             )
         )
-    return upload_paths
+    return cast(List[str], upload_paths)
 
 
 def _get_file_list_content_hash(file_list) -> str:
@@ -414,14 +419,14 @@ def traverse_directory(  # pylint: disable=unused-argument
     # Normalize Windows paths. Note that path should be resolved first as long part will be converted to a shortcut in
     # Windows. For example, C:\Users\too-long-user-name\test will be converted to C:\Users\too-lo~1\test by default.
     # Refer to https://en.wikipedia.org/wiki/8.3_filename for more details.
-    root = Path(root).resolve().absolute()
+    root = Path(root).resolve().absolute()  # type: ignore[assignment]
 
     # filter out files excluded by the ignore file
     # TODO: inner ignore file won't take effect. A merged IgnoreFile need to be generated in code resolution.
     origin_file_paths = [
-        root.joinpath(filename)
+        root.joinpath(filename)  # type: ignore[attr-defined]
         for filename in files
-        if not ignore_file.is_file_excluded(root.joinpath(filename).as_posix())
+        if not ignore_file.is_file_excluded(root.joinpath(filename).as_posix())  # type: ignore[attr-defined]
     ]
 
     result = []
@@ -465,7 +470,7 @@ def get_directory_size(
     """
     total_size = 0
     size_list = {}
-    for dirpath, _, filenames in os.walk(root, followlinks=True):
+    for dirpath, _, filenames in os.walk(root, followlinks=True):  # type: ignore[type-var]
         for name in filenames:
             full_path = os.path.join(dirpath, name)
             # Don't count files that are excluded by an ignore file
@@ -520,28 +525,32 @@ def upload_file(
     if (
         type(storage_client).__name__ == GEN2_STORAGE_CLIENT_NAME
     ):  # Only for Gen2StorageClient, Blob Storage doesn't have true directories
+        _storage_client = cast(Gen2StorageClient, storage_client)
         if in_directory:
-            storage_client.temp_sub_directory_client = None
-            file_name_tail = dest.split(os.path.sep)[-1]
+            _storage_client.temp_sub_directory_client = None
+            file_name_tail = str(dest).rsplit(os.path.sep, maxsplit=1)[-1]
             # Indexing from 2 because the first two parts of the remote path will always be LocalUpload/<asset_id>
-            all_sub_folders = dest.split(os.path.sep)[2:-1]
+            all_sub_folders = str(dest).split(os.path.sep)[2:-1]
 
             # Create remote directories for each nested directory if file is in a nested directory
             for sub_folder in all_sub_folders:
-                if storage_client.temp_sub_directory_client:
-                    storage_client.temp_sub_directory_client = (
-                        storage_client.temp_sub_directory_client.create_sub_directory(sub_folder)
+                if _storage_client.temp_sub_directory_client:
+                    _storage_client.temp_sub_directory_client = (
+                        _storage_client.temp_sub_directory_client.create_sub_directory(sub_folder)
                     )
                 else:
-                    storage_client.temp_sub_directory_client = storage_client.directory_client.create_sub_directory(
+                    _storage_client.temp_sub_directory_client = _storage_client.directory_client.create_sub_directory(
                         sub_folder
                     )
 
-            storage_client.file_client = storage_client.temp_sub_directory_client.create_file(file_name_tail)
+            _storage_client.file_client = _storage_client.temp_sub_directory_client.create_file(  # type: ignore
+                file_name_tail
+            )
         else:
-            storage_client.file_client = storage_client.directory_client.create_file(source.split("/")[-1])
+            _storage_client.file_client = _storage_client.directory_client.create_file(source.split("/")[-1])
 
     with open(source, "rb") as data:
+        cntx_manager: Any = None
         if show_progress and not in_directory:
             file_size, _ = get_directory_size(source)
             file_size_in_mb = file_size / 10**6
@@ -556,7 +565,7 @@ def upload_file(
         with cntx_manager as c:
             callback = c.update_to if (show_progress and not in_directory) else None
             if type(storage_client).__name__ == GEN2_STORAGE_CLIENT_NAME:
-                storage_client.file_client.upload_data(
+                cast(Gen2StorageClient, storage_client).file_client.upload_data(
                     data=data.read(),
                     overwrite=True,
                     validate_content=validate_content,
@@ -564,11 +573,11 @@ def upload_file(
                     max_concurrency=MAX_CONCURRENCY,
                 )
             elif type(storage_client).__name__ == BLOB_STORAGE_CLIENT_NAME:
-                storage_client.container_client.upload_blob(
+                cast(BlobStorageClient, storage_client).container_client.upload_blob(
                     name=dest,
                     data=data,
                     validate_content=validate_content,
-                    overwrite=storage_client.overwrite,
+                    overwrite=cast(BlobStorageClient, storage_client).overwrite,
                     raw_response_hook=callback,
                     max_concurrency=MAX_CONCURRENCY,
                     connection_timeout=DEFAULT_CONNECTION_TIMEOUT,
@@ -610,7 +619,8 @@ def upload_directory(
     if (
         type(storage_client).__name__ == GEN2_STORAGE_CLIENT_NAME
     ):  # Only for Gen2StorageClient, Blob Storage doesn't have true directories
-        storage_client.sub_directory_client = storage_client.directory_client.create_sub_directory(
+        _storage_client = cast(Gen2StorageClient, storage_client)
+        _storage_client.sub_directory_client = _storage_client.directory_client.create_sub_directory(
             prefix.strip("/").split("/")[-1]
         )
 
@@ -624,15 +634,15 @@ def upload_directory(
     total_size = 0
 
     # Get each file's size for progress bar tracking
-    for path, _ in upload_paths:
+    for path, _ in upload_paths:  # type: ignore[misc]
         # TODO: symbol links are already resolved
-        if os.path.islink(path):
+        if os.path.islink(path):  # type: ignore[has-type]
             path_size = os.path.getsize(
-                os.readlink(convert_windows_path_to_unix(path))
+                os.readlink(convert_windows_path_to_unix(path))  # type: ignore[has-type]
             )  # ensure we're counting the size of the linked file
         else:
-            path_size = os.path.getsize(path)
-        size_dict[path] = path_size
+            path_size = os.path.getsize(path)  # type: ignore[has-type]
+        size_dict[path] = path_size  # type: ignore[has-type]
         total_size += path_size
 
     upload_paths = sorted(upload_paths)
@@ -652,13 +662,13 @@ def upload_directory(
         # Azure Blob doesn't allow metadata setting at the directory level, so the first
         # file in the directory is designated as the file where the confirmation metadata
         # will be added at the end of the upload.
-        storage_client.indicator_file = upload_paths[0][1]
+        cast(BlobStorageClient, storage_client).indicator_file = upload_paths[0][1]
         storage_client.check_blob_exists()
 
     # Submit paths to workers for upload
     num_cores = int(cpu_count()) * PROCESSES_PER_CORE
     with ThreadPoolExecutor(max_workers=num_cores) as ex:
-        futures_dict = {
+        futures_dict = {  # type: ignore[misc]
             ex.submit(
                 upload_file,
                 storage_client=storage_client,
