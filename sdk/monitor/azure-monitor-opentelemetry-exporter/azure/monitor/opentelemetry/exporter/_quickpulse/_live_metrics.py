@@ -1,5 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+# cSpell:disable
+
 from typing import Any, Iterable, Optional
 
 import platform
@@ -183,3 +185,5 @@ def _get_processor_time(options: CallbackOptions) -> Iterable[Observation]:
         100 - psutil.cpu_times_percent().idle,
         {},
     )
+
+# cSpell:enable

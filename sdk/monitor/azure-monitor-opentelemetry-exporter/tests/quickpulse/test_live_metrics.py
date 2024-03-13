@@ -1,6 +1,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+# cSpell:disable
+
 import collections
 import platform
 import unittest
@@ -307,3 +309,5 @@ class TestQuickpulseManager(unittest.TestCase):
         time = _get_processor_time(None)
         obs = next(time)
         self.assertEqual(obs.value, 5.5)
+
+# cSpell:enable

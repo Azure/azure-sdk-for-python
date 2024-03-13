@@ -6,6 +6,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
+# cSpell:disable
 
 import os
 import re
@@ -103,3 +104,5 @@ setup(
         ]
     }
 )
+
+# cSpell:enable
