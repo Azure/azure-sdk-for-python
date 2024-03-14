@@ -162,7 +162,8 @@ class LicenseProfilesOperations:
         :type resource_group_name: str
         :param machine_name: The name of the hybrid machine. Required.
         :type machine_name: str
-        :param parameters: Parameters supplied to the Create license profile operation. Required.
+        :param parameters: Parameters supplied to the Create or Update license profile operation.
+         Required.
         :type parameters: ~azure.mgmt.hybridcompute.models.LicenseProfile
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -201,7 +202,8 @@ class LicenseProfilesOperations:
         :type resource_group_name: str
         :param machine_name: The name of the hybrid machine. Required.
         :type machine_name: str
-        :param parameters: Parameters supplied to the Create license profile operation. Required.
+        :param parameters: Parameters supplied to the Create or Update license profile operation.
+         Required.
         :type parameters: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -234,8 +236,8 @@ class LicenseProfilesOperations:
         :type resource_group_name: str
         :param machine_name: The name of the hybrid machine. Required.
         :type machine_name: str
-        :param parameters: Parameters supplied to the Create license profile operation. Is either a
-         LicenseProfile type or a IO type. Required.
+        :param parameters: Parameters supplied to the Create or Update license profile operation. Is
+         either a LicenseProfile type or a IO type. Required.
         :type parameters: ~azure.mgmt.hybridcompute.models.LicenseProfile or IO
         :keyword license_profile_name: The name of the license profile. Default value is "default".
          Note that overriding this default value may result in unsupported behavior.

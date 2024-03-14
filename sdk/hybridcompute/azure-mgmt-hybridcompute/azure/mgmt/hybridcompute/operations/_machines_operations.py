@@ -45,7 +45,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-20-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-03-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -59,7 +59,7 @@ def build_delete_request(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
         "machineName": _SERIALIZER.url(
-            "machine_name", machine_name, "str", max_length=54, min_length=1, pattern=r"[a-zA-Z0-9-_\.]"
+            "machine_name", machine_name, "str", max_length=54, min_length=1, pattern=r"^[a-zA-Z0-9-_\.]{1,54}$"
         ),
     }
 
@@ -85,7 +85,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-20-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-03-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -99,7 +99,7 @@ def build_get_request(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
         "machineName": _SERIALIZER.url(
-            "machine_name", machine_name, "str", max_length=54, min_length=1, pattern=r"[a-zA-Z0-9-_\.]"
+            "machine_name", machine_name, "str", max_length=54, min_length=1, pattern=r"^[a-zA-Z0-9-_\.]{1,54}$"
         ),
     }
 
@@ -122,7 +122,7 @@ def build_assess_patches_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-20-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-03-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -153,7 +153,7 @@ def build_install_patches_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-20-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-03-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -187,7 +187,7 @@ def build_list_by_resource_group_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-20-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-03-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -219,7 +219,7 @@ def build_list_by_subscription_request(subscription_id: str, **kwargs: Any) -> H
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-20-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-03-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL

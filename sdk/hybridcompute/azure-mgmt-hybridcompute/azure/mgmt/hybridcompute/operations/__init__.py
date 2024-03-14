@@ -16,9 +16,12 @@ from ._operations import Operations
 from ._network_profile_operations import NetworkProfileOperations
 from ._hybrid_identity_metadata_operations import HybridIdentityMetadataOperations
 from ._agent_version_operations import AgentVersionOperations
+from ._machine_run_commands_operations import MachineRunCommandsOperations
 from ._private_link_scopes_operations import PrivateLinkScopesOperations
 from ._private_link_resources_operations import PrivateLinkResourcesOperations
 from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
+from ._network_configurations_operations import NetworkConfigurationsOperations
+from ._network_security_perimeter_configurations_operations import NetworkSecurityPerimeterConfigurationsOperations
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
@@ -35,9 +38,12 @@ __all__ = [
     "NetworkProfileOperations",
     "HybridIdentityMetadataOperations",
     "AgentVersionOperations",
+    "MachineRunCommandsOperations",
     "PrivateLinkScopesOperations",
     "PrivateLinkResourcesOperations",
     "PrivateEndpointConnectionsOperations",
+    "NetworkConfigurationsOperations",
+    "NetworkSecurityPerimeterConfigurationsOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()
