@@ -6,28 +6,25 @@
 
 from enum import Enum
 from typing import List
-import json
 from azure.communication.callautomation._shared.models import CommunicationIdentifier
 
 class ResultStatus(Enum):
     """
     The status of the result of transcription.
     """
-    
     INTERMEDIATE = "intermediate"
     FINAL = "final"
 
 class TextFormat(Enum):
-    """ 
+    """
     The format of transcription text.
     """
-    
     DISPLAY = "display"
 
 class WordData:
     """
     Text in the phrase.
-    
+
     :keyword text: Text in the phrase.
     :paramtype text: str
     :keyword offset: The word's position within the phrase.
@@ -35,7 +32,6 @@ class WordData:
     :keyword duration: Duration in ticks. 1 tick = 100 nanoseconds.
     :paramtype duration: int
     """
-    
     text:str
     """ Text in the phrase. """
     offset:int
@@ -50,7 +46,7 @@ class WordData:
 class TranscriptionMetadata:
     """
     Metadata for Transcription Streaming.
-    
+
     :keyword subscriptionId: Transcription Subscription Id.
     :paramtype subscriptionId: str
     :keyword locale: The target locale in which the translated text needs to be.
@@ -60,7 +56,7 @@ class TranscriptionMetadata:
     :keyword correlationId: correlation Id.
     :paramtype correlationId: str
     """
-    
+
     subscriptionId: str
     """ Transcription Subscription Id. """
     locale: str
@@ -82,7 +78,7 @@ class TranscriptionData:
     :paramtype  text: str
     :keyword format: The format of text.
     :paramtype format: TextFormat
-    :keyword confidence: Confidence of recognition of the whole phrase, from 0.0 (no confidence) to 1.0 (full confidence).
+    :keyword confidence: Confidence of recognition of the whole phrase.
     :paramtype confidence: float
     :keyword offset: The position of this payload.
     :paramtype offset: int
@@ -95,7 +91,6 @@ class TranscriptionData:
     :keyword resultStatus: Status of the result of transcription.
     :paramtype resultStatus: ResultStatus
     """
-    
     text: str
     """ The display form of the recognized word. """
     format: TextFormat
@@ -112,8 +107,8 @@ class TranscriptionData:
     """ The identified speaker based on participant raw ID. """
     resultStatus: ResultStatus
     """ Status of the result of transcription. """
-    def __init__(self, text: str, format: TextFormat, confidence: float, offset: int, duration: int, 
-                 words: List[WordData], participant: CommunicationIdentifier, resultStatus: ResultStatus):
+    def __init__(self, text: str, format: TextFormat, confidence: float, offset: int, duration: int,
+    words: List[WordData], participant: CommunicationIdentifier, resultStatus: ResultStatus):
         self.text = text
         self.format = format
         self.confidence = confidence

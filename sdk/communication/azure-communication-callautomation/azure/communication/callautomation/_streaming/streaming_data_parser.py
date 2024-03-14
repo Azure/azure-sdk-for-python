@@ -14,13 +14,11 @@ class StreamingDataParser:
     def parse(packet_data: Union[str, bytes]) -> Union[TranscriptionMetadata, TranscriptionData]:
         """
         Parse the incoming packets.
-        
         :keyword packet_data: Transcription packet data.
         :paramtype packet_data: Union[str, bytes]
         :return: Union[TranscriptionMetadata, TranscriptionData]
         :rType: TranscriptionMetadata, TranscriptionData
         :raises: ValueError
-        
         """
         if isinstance(packet_data, str):
             string_json = packet_data
@@ -35,11 +33,10 @@ class StreamingDataParser:
         if kind == 'TranscriptionMetadata':
             transcription_metadata = TranscriptionMetadata(**json_object['transcriptionMetadata'])
             return transcription_metadata
-        elif kind == 'TranscriptionData':
+        if kind == 'TranscriptionData':
             participant = identifier_from_raw_id(json_object['transcriptionData']['participantRawID'])
             word_data_list = json_object['transcriptionData']['words']
             words = [WordData(entry["text"], entry["offset"], entry["duration"]) for entry in word_data_list]
-            
             transcription_data = TranscriptionData(
                 text=json_object['transcriptionData']['text'],
                 format=json_object['transcriptionData']['format'],
@@ -51,5 +48,4 @@ class StreamingDataParser:
                 resultStatus=json_object['transcriptionData']['resultStatus']
             )
             return transcription_data
-        else:
-            raise ValueError(string_json)
+        raise ValueError(string_json)
