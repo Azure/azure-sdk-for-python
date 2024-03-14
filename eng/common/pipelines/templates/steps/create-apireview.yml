@@ -2,7 +2,7 @@ parameters:
   ArtifactPath: $(Build.ArtifactStagingDirectory)
   Artifacts: []
   ConfigFileDir: $(Build.ArtifactStagingDirectory)/PackageInfo
-  MarkPackageAsShipped: false
+  MarkPackageAsShipped: $false
   APIViewHostUrl: 'https://apiview.dev/'
   GenerateApiReviewForManualOnly: false
   ArtifactName: 'packages'
@@ -38,7 +38,7 @@ steps:
         and(
           succeededOrFailed(),
           ne(variables['Skip.CreateApiReview'], 'true'),
-          eq(variables['Build.Reason'],'PullRequest'),
+          ne(variables['Build.Reason'],'PullRequest'),
           eq(variables['System.TeamProject'], 'internal'),
           not(endsWith(variables['Build.Repository.Name'], '-pr'))
         )
