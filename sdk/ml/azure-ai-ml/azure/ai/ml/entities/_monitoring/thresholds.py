@@ -87,7 +87,7 @@ class NumericalDriftMetrics(RestTranslatableMixin):
     @classmethod
     # pylint: disable=arguments-differ, inconsistent-return-statements
     def _from_rest_object(cls, metric_name: str, threshold: Optional[float]) -> "NumericalDriftMetrics":  # type: ignore
-        metric_name = camel_to_snake(metric_name)
+        metric_name = str(camel_to_snake(metric_name))
         if metric_name == MonitorMetricName.JENSEN_SHANNON_DISTANCE:
             return cls(jensen_shannon_distance=threshold)
         if metric_name == MonitorMetricName.NORMALIZED_WASSERSTEIN_DISTANCE:
@@ -147,7 +147,7 @@ class CategoricalDriftMetrics(RestTranslatableMixin):
     def _from_rest_object(  # type: ignore
         cls, metric_name: str, threshold: Optional[float]
     ) -> "CategoricalDriftMetrics":
-        metric_name = camel_to_snake(metric_name)
+        metric_name = str(camel_to_snake(metric_name))
         if metric_name == MonitorMetricName.JENSEN_SHANNON_DISTANCE:
             return cls(jensen_shannon_distance=threshold)
         if metric_name == MonitorMetricName.POPULATION_STABILITY_INDEX:

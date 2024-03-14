@@ -79,7 +79,7 @@ def get_resource_and_group_name(armstr: str) -> Tuple[str, str]:
     return armstr.split("/")[-1], armstr.split("/")[-5]
 
 
-def get_endpoint_parts(arm_id: str, subnet_arm_id: str) -> ():
+def get_endpoint_parts(arm_id: str, subnet_arm_id: str) -> Tuple[str, str, str, str, str]:
     arm_id_parts = arm_id.split("/")
     subnet_id_parts = subnet_arm_id.split("/")
     conn_name = arm_id_parts[-1]

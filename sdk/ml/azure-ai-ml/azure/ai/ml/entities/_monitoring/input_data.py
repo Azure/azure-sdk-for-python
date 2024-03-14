@@ -86,7 +86,7 @@ class FixedInputData(MonitorInputData):
 
     def _to_rest_object(self) -> RestFixedInputData:
         return RestFixedInputData(
-            data_context=camel_to_snake(self.data_context),
+            data_context=camel_to_snake(self.data_context),  # type: ignore[arg-type]
             columns=self.target_columns,
             job_input_type=self.job_type,
             uri=self.uri,
@@ -95,7 +95,7 @@ class FixedInputData(MonitorInputData):
     @classmethod
     def _from_rest_object(cls, obj: RestFixedInputData) -> "FixedInputData":
         return cls(
-            data_context=camel_to_snake(obj.data_context),
+            data_context=camel_to_snake(obj.data_context),  # type: ignore[arg-type]
             target_columns=obj.columns,
             job_type=obj.job_input_type,
             uri=obj.uri,
@@ -132,7 +132,7 @@ class TrailingInputData(MonitorInputData):
 
     def _to_rest_object(self) -> RestTrailingInputData:
         return RestTrailingInputData(
-            data_context=camel_to_snake(self.data_context),
+            data_context=camel_to_snake(self.data_context),  # type: ignore[arg-type]
             columns=self.target_columns,
             job_input_type=self.job_type,
             uri=self.uri,
@@ -144,7 +144,7 @@ class TrailingInputData(MonitorInputData):
     @classmethod
     def _from_rest_object(cls, obj: RestTrailingInputData) -> "TrailingInputData":
         return cls(
-            data_context=snake_to_camel(obj.data_context),
+            data_context=snake_to_camel(obj.data_context),  # type: ignore[arg-type]
             target_columns=obj.columns,
             job_type=obj.job_input_type,
             uri=obj.uri,
@@ -184,7 +184,7 @@ class StaticInputData(MonitorInputData):
 
     def _to_rest_object(self) -> RestStaticInputData:
         return RestStaticInputData(
-            data_context=camel_to_snake(self.data_context),
+            data_context=camel_to_snake(self.data_context),  # type: ignore[arg-type]
             columns=self.target_columns,
             job_input_type=self.job_type,
             uri=self.uri,
@@ -196,7 +196,7 @@ class StaticInputData(MonitorInputData):
     @classmethod
     def _from_rest_object(cls, obj: RestStaticInputData) -> "StaticInputData":
         return cls(
-            data_context=snake_to_camel(obj.data_context),
+            data_context=snake_to_camel(obj.data_context),  # type: ignore[arg-type]
             target_columns=obj.columns,
             job_type=obj.job_input_type,
             uri=obj.uri,

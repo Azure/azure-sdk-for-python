@@ -3,26 +3,19 @@
 # ---------------------------------------------------------
 
 import logging
-from typing import Tuple, Optional
+from typing import Optional, Tuple
 
 from typing_extensions import Literal
 
-from azure.ai.ml._restclient.registry_discovery import (
-    AzureMachineLearningWorkspaces as ServiceClientRegistryDiscovery,
-)
-from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
-    AzureMachineLearningWorkspaces,
-)
+from azure.ai.ml._azure_environments import _get_default_cloud_name, _get_registry_discovery_endpoint_from_metadata
+from azure.ai.ml._restclient.registry_discovery import AzureMachineLearningWorkspaces as ServiceClientRegistryDiscovery
+from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import AzureMachineLearningWorkspaces
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.models import (
     BlobReferenceSASRequestDto,
     TemporaryDataReferenceRequestDto,
 )
 from azure.ai.ml.constants._common import REGISTRY_ASSET_ID
 from azure.core.exceptions import HttpResponseError
-from azure.ai.ml._azure_environments import (
-    _get_default_cloud_name,
-    _get_registry_discovery_endpoint_from_metadata,
-)
 
 module_logger = logging.getLogger(__name__)
 
@@ -43,10 +36,10 @@ class RegistryDiscovery:
         self.kwargs = kwargs
         self._resource_group = None
         self._subscription_id = None
-        self._base_url = None
+        self._base_url: str = ""
         self.workspace_region = kwargs.get("workspace_location", None)
 
-    def _get_registry_details(self) -> str:
+    def _get_registry_details(self) -> None:
         response = self.service_client_registry_discovery_client.registry_management_non_workspace.registry_management_non_workspace(  # pylint: disable=line-too-long
             self.registry_name
         )
@@ -78,7 +71,7 @@ class RegistryDiscovery:
         :return: Subscription Id
         :rtype: str
         """
-        return self._subscription_id
+        return str(self._subscription_id)
 
     @property
     def resource_group(self) -> str:
@@ -87,7 +80,7 @@ class RegistryDiscovery:
         :return: Resource Group
         :rtype: str
         """
-        return self._resource_group
+        return str(self._resource_group)
 
 
 def get_sas_uri_for_registry_asset(service_client, name, version, resource_group, registry, body) -> str:
@@ -105,6 +98,7 @@ def get_sas_uri_for_registry_asset(service_client, name, version, resource_group
     :type registry: str
     :param body: Request body
     :type body: TemporaryDataReferenceRequestDto
+    :return: sas uri for registry asset
     :rtype: str
     """
     sas_uri = None
@@ -123,7 +117,7 @@ def get_sas_uri_for_registry_asset(service_client, name, version, resource_group
             module_logger.debug("Skipping file upload, reason:  %s", str(e.reason))
         else:
             raise e
-    return sas_uri
+    return str(sas_uri)
 
 
 def get_asset_body_for_registry_storage(
