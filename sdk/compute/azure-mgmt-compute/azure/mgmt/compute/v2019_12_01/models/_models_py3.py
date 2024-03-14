@@ -9,7 +9,7 @@
 
 import datetime
 import sys
-from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Literal, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
@@ -17,10 +17,6 @@ if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -230,7 +226,7 @@ class AutomaticOSUpgradePolicy(_serialization.Model):
      applied to scale set instances in a rolling fashion when a newer version of the OS image
      becomes available. Default value is false. :code:`<br>`:code:`<br>` If this is set to true for
      Windows based scale sets, `enableAutomaticUpdates
-     <https://docs.microsoft.com/dotnet/api/microsoft.azure.management.compute.models.windowsconfiguration.enableautomaticupdates?view=azure-dotnet>`_
+     <https://docs.microsoft.com/dotnet/api/microsoft.azure.management.compute.models.windowsconfiguration.enableautomaticupdates?view=azure-dotnet>`_  # pylint: disable=line-too-long
      is automatically set to false and cannot be set to true.
     :vartype enable_automatic_os_upgrade: bool
     :ivar disable_automatic_rollback: Whether OS image rollback feature should be disabled. Default
@@ -255,7 +251,7 @@ class AutomaticOSUpgradePolicy(_serialization.Model):
          applied to scale set instances in a rolling fashion when a newer version of the OS image
          becomes available. Default value is false. :code:`<br>`:code:`<br>` If this is set to true for
          Windows based scale sets, `enableAutomaticUpdates
-         <https://docs.microsoft.com/dotnet/api/microsoft.azure.management.compute.models.windowsconfiguration.enableautomaticupdates?view=azure-dotnet>`_
+         <https://docs.microsoft.com/dotnet/api/microsoft.azure.management.compute.models.windowsconfiguration.enableautomaticupdates?view=azure-dotnet>`_  # pylint: disable=line-too-long
          is automatically set to false and cannot be set to true.
         :paramtype enable_automatic_os_upgrade: bool
         :keyword disable_automatic_rollback: Whether OS image rollback feature should be disabled.
@@ -270,7 +266,7 @@ class AutomaticOSUpgradePolicy(_serialization.Model):
 class AutomaticOSUpgradeProperties(_serialization.Model):
     """Describes automatic OS upgrade properties on the image.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar automatic_os_upgrade_supported: Specifies whether automatic OS upgrade is supported on
      the image. Required.
@@ -336,7 +332,7 @@ class Resource(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -394,7 +390,7 @@ class AvailabilitySet(Resource):  # pylint: disable=too-many-instance-attributes
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -493,7 +489,7 @@ class AvailabilitySet(Resource):  # pylint: disable=too-many-instance-attributes
 class AvailabilitySetListResult(_serialization.Model):
     """The List Availability Set operation response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The list of availability sets. Required.
     :vartype value: list[~azure.mgmt.compute.v2019_12_01.models.AvailabilitySet]
@@ -805,7 +801,7 @@ class DataDisk(_serialization.Model):  # pylint: disable=too-many-instance-attri
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar lun: Specifies the logical unit number of the data disk. This value is used to identify
      data disks within the VM and therefore must be unique for each data disk attached to a VM.
@@ -996,7 +992,7 @@ class DiskImageEncryption(_serialization.Model):
 class DataDiskImageEncryption(DiskImageEncryption):
     """Contains encryption settings for a data disk image.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar disk_encryption_set_id: A relative URI containing the resource ID of the disk encryption
      set.
@@ -1035,7 +1031,7 @@ class DedicatedHost(Resource):  # pylint: disable=too-many-instance-attributes
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -1212,7 +1208,7 @@ class DedicatedHostGroup(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -1284,7 +1280,7 @@ class DedicatedHostGroup(Resource):
 class DedicatedHostGroupListResult(_serialization.Model):
     """The List Dedicated Host Group with resource group response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The list of dedicated host groups. Required.
     :vartype value: list[~azure.mgmt.compute.v2019_12_01.models.DedicatedHostGroup]
@@ -1419,7 +1415,7 @@ class DedicatedHostInstanceView(_serialization.Model):
 class DedicatedHostListResult(_serialization.Model):
     """The list dedicated host operation response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The list of dedicated hosts. Required.
     :vartype value: list[~azure.mgmt.compute.v2019_12_01.models.DedicatedHost]
@@ -1665,17 +1661,6 @@ class DiskEncryptionSetParameters(SubResource):
     :vartype id: str
     """
 
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-    }
-
-    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
-        """
-        :keyword id: Resource Id.
-        :paramtype id: str
-        """
-        super().__init__(id=id, **kwargs)
-
 
 class DiskEncryptionSettings(_serialization.Model):
     """Describes a Encryption Settings for a Disk.
@@ -1800,7 +1785,7 @@ class Gallery(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -1874,7 +1859,7 @@ class GalleryApplication(Resource):  # pylint: disable=too-many-instance-attribu
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -1975,7 +1960,7 @@ class GalleryApplication(Resource):  # pylint: disable=too-many-instance-attribu
 class GalleryApplicationList(_serialization.Model):
     """The List Gallery Applications operation response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: A list of Gallery Applications. Required.
     :vartype value: list[~azure.mgmt.compute.v2019_12_01.models.GalleryApplication]
@@ -2148,7 +2133,7 @@ class GalleryApplicationVersion(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -2220,7 +2205,7 @@ class GalleryApplicationVersion(Resource):
 class GalleryApplicationVersionList(_serialization.Model):
     """The List Gallery Application version operation response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: A list of gallery Application Versions. Required.
     :vartype value: list[~azure.mgmt.compute.v2019_12_01.models.GalleryApplicationVersion]
@@ -2331,12 +2316,12 @@ class GalleryArtifactPublishingProfileBase(_serialization.Model):
         self.storage_account_type = storage_account_type
 
 
-class GalleryApplicationVersionPublishingProfile(GalleryArtifactPublishingProfileBase):
+class GalleryApplicationVersionPublishingProfile(GalleryArtifactPublishingProfileBase):  # pylint: disable=name-too-long
     """The publishing profile of a gallery image version.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar target_regions: The target regions where the Image Version is going to be replicated to.
      This property is updatable.
@@ -2503,7 +2488,7 @@ class GalleryApplicationVersionUpdate(UpdateResourceDefinition):
 class GalleryArtifactSource(_serialization.Model):
     """The source image from which the Image Version is going to be created.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar managed_image: The managed artifact. Required.
     :vartype managed_image: ~azure.mgmt.compute.v2019_12_01.models.ManagedArtifact
@@ -2597,7 +2582,7 @@ class GalleryDataDiskImage(GalleryDiskImage):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar size_in_gb: This property indicates the size of the VHD to be created.
     :vartype size_in_gb: int
@@ -2676,7 +2661,7 @@ class GalleryImage(Resource):  # pylint: disable=too-many-instance-attributes
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -2835,7 +2820,7 @@ class GalleryImage(Resource):  # pylint: disable=too-many-instance-attributes
 class GalleryImageIdentifier(_serialization.Model):
     """This is the gallery Image Definition identifier.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar publisher: The name of the gallery Image Definition publisher. Required.
     :vartype publisher: str
@@ -2875,7 +2860,7 @@ class GalleryImageIdentifier(_serialization.Model):
 class GalleryImageList(_serialization.Model):
     """The List Gallery Images operation response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: A list of Shared Image Gallery images. Required.
     :vartype value: list[~azure.mgmt.compute.v2019_12_01.models.GalleryImage]
@@ -3063,7 +3048,7 @@ class GalleryImageVersion(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -3141,7 +3126,7 @@ class GalleryImageVersion(Resource):
 class GalleryImageVersionList(_serialization.Model):
     """The List Gallery Image version operation response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: A list of gallery Image Versions. Required.
     :vartype value: list[~azure.mgmt.compute.v2019_12_01.models.GalleryImageVersion]
@@ -3199,58 +3184,6 @@ class GalleryImageVersionPublishingProfile(GalleryArtifactPublishingProfileBase)
      "Premium_LRS".
     :vartype storage_account_type: str or ~azure.mgmt.compute.v2019_12_01.models.StorageAccountType
     """
-
-    _validation = {
-        "published_date": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "target_regions": {"key": "targetRegions", "type": "[TargetRegion]"},
-        "replica_count": {"key": "replicaCount", "type": "int"},
-        "exclude_from_latest": {"key": "excludeFromLatest", "type": "bool"},
-        "published_date": {"key": "publishedDate", "type": "iso-8601"},
-        "end_of_life_date": {"key": "endOfLifeDate", "type": "iso-8601"},
-        "storage_account_type": {"key": "storageAccountType", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        target_regions: Optional[List["_models.TargetRegion"]] = None,
-        replica_count: Optional[int] = None,
-        exclude_from_latest: Optional[bool] = None,
-        end_of_life_date: Optional[datetime.datetime] = None,
-        storage_account_type: Optional[Union[str, "_models.StorageAccountType"]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword target_regions: The target regions where the Image Version is going to be replicated
-         to. This property is updatable.
-        :paramtype target_regions: list[~azure.mgmt.compute.v2019_12_01.models.TargetRegion]
-        :keyword replica_count: The number of replicas of the Image Version to be created per region.
-         This property would take effect for a region when regionalReplicaCount is not specified. This
-         property is updatable.
-        :paramtype replica_count: int
-        :keyword exclude_from_latest: If set to true, Virtual Machines deployed from the latest version
-         of the Image Definition won't use this Image Version.
-        :paramtype exclude_from_latest: bool
-        :keyword end_of_life_date: The end of life date of the gallery Image Version. This property can
-         be used for decommissioning purposes. This property is updatable.
-        :paramtype end_of_life_date: ~datetime.datetime
-        :keyword storage_account_type: Specifies the storage account type to be used to store the
-         image. This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS", and
-         "Premium_LRS".
-        :paramtype storage_account_type: str or
-         ~azure.mgmt.compute.v2019_12_01.models.StorageAccountType
-        """
-        super().__init__(
-            target_regions=target_regions,
-            replica_count=replica_count,
-            exclude_from_latest=exclude_from_latest,
-            end_of_life_date=end_of_life_date,
-            storage_account_type=storage_account_type,
-            **kwargs
-        )
 
 
 class GalleryImageVersionStorageProfile(_serialization.Model):
@@ -3366,7 +3299,7 @@ class GalleryImageVersionUpdate(UpdateResourceDefinition):
 class GalleryList(_serialization.Model):
     """The List Galleries operation response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: A list of galleries. Required.
     :vartype value: list[~azure.mgmt.compute.v2019_12_01.models.Gallery]
@@ -3410,32 +3343,6 @@ class GalleryOSDiskImage(GalleryDiskImage):
     :ivar source: The gallery artifact version source.
     :vartype source: ~azure.mgmt.compute.v2019_12_01.models.GalleryArtifactVersionSource
     """
-
-    _validation = {
-        "size_in_gb": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "size_in_gb": {"key": "sizeInGB", "type": "int"},
-        "host_caching": {"key": "hostCaching", "type": "str"},
-        "source": {"key": "source", "type": "GalleryArtifactVersionSource"},
-    }
-
-    def __init__(
-        self,
-        *,
-        host_caching: Optional[Union[str, "_models.HostCaching"]] = None,
-        source: Optional["_models.GalleryArtifactVersionSource"] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword host_caching: The host caching of the disk. Valid values are 'None', 'ReadOnly', and
-         'ReadWrite'. Known values are: "None", "ReadOnly", and "ReadWrite".
-        :paramtype host_caching: str or ~azure.mgmt.compute.v2019_12_01.models.HostCaching
-        :keyword source: The gallery artifact version source.
-        :paramtype source: ~azure.mgmt.compute.v2019_12_01.models.GalleryArtifactVersionSource
-        """
-        super().__init__(host_caching=host_caching, source=source, **kwargs)
 
 
 class GalleryUpdate(UpdateResourceDefinition):
@@ -3507,7 +3414,7 @@ class HardwareProfile(_serialization.Model):
 
     :ivar vm_size: Specifies the size of the virtual machine. For more information about virtual
      machine sizes, see `Sizes for virtual machines
-     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-sizes?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_.
+     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-sizes?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_.  # pylint: disable=line-too-long
      :code:`<br>`:code:`<br>` The available VM sizes depend on region and availability set. For a
      list of available sizes use these APIs:  :code:`<br>`:code:`<br>` `List all available virtual
      machine sizes in an availability set
@@ -3564,7 +3471,7 @@ class HardwareProfile(_serialization.Model):
         """
         :keyword vm_size: Specifies the size of the virtual machine. For more information about virtual
          machine sizes, see `Sizes for virtual machines
-         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-sizes?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_.
+         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-sizes?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_.  # pylint: disable=line-too-long
          :code:`<br>`:code:`<br>` The available VM sizes depend on region and availability set. For a
          list of available sizes use these APIs:  :code:`<br>`:code:`<br>` `List all available virtual
          machine sizes in an availability set
@@ -3621,7 +3528,7 @@ class Image(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -3786,7 +3693,7 @@ class ImageDisk(_serialization.Model):
 class ImageDataDisk(ImageDisk):
     """Describes a data disk.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar snapshot: The snapshot.
     :vartype snapshot: ~azure.mgmt.compute.v2019_12_01.models.SubResource
@@ -3892,7 +3799,7 @@ class ImageDataDisk(ImageDisk):
 class ImageListResult(_serialization.Model):
     """The List Image operation response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The list of Images. Required.
     :vartype value: list[~azure.mgmt.compute.v2019_12_01.models.Image]
@@ -3926,7 +3833,7 @@ class ImageListResult(_serialization.Model):
 class ImageOSDisk(ImageDisk):
     """Describes an Operating System disk.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar snapshot: The snapshot.
     :vartype snapshot: ~azure.mgmt.compute.v2019_12_01.models.SubResource
@@ -4162,12 +4069,12 @@ class ImageStorageProfile(_serialization.Model):
     :ivar os_disk: Specifies information about the operating system disk used by the virtual
      machine. :code:`<br>`:code:`<br>` For more information about disks, see `About disks and VHDs
      for Azure virtual machines
-     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-about-disks-vhds?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_.
+     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-about-disks-vhds?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_.  # pylint: disable=line-too-long
     :vartype os_disk: ~azure.mgmt.compute.v2019_12_01.models.ImageOSDisk
     :ivar data_disks: Specifies the parameters that are used to add a data disk to a virtual
      machine. :code:`<br>`:code:`<br>` For more information about disks, see `About disks and VHDs
      for Azure virtual machines
-     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-about-disks-vhds?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_.
+     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-about-disks-vhds?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_.  # pylint: disable=line-too-long
     :vartype data_disks: list[~azure.mgmt.compute.v2019_12_01.models.ImageDataDisk]
     :ivar zone_resilient: Specifies whether an image is zone resilient or not. Default is false.
      Zone resilient images can be created only in regions that provide Zone Redundant Storage (ZRS).
@@ -4192,12 +4099,12 @@ class ImageStorageProfile(_serialization.Model):
         :keyword os_disk: Specifies information about the operating system disk used by the virtual
          machine. :code:`<br>`:code:`<br>` For more information about disks, see `About disks and VHDs
          for Azure virtual machines
-         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-about-disks-vhds?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_.
+         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-about-disks-vhds?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_.  # pylint: disable=line-too-long
         :paramtype os_disk: ~azure.mgmt.compute.v2019_12_01.models.ImageOSDisk
         :keyword data_disks: Specifies the parameters that are used to add a data disk to a virtual
          machine. :code:`<br>`:code:`<br>` For more information about disks, see `About disks and VHDs
          for Azure virtual machines
-         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-about-disks-vhds?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_.
+         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-about-disks-vhds?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_.  # pylint: disable=line-too-long
         :paramtype data_disks: list[~azure.mgmt.compute.v2019_12_01.models.ImageDataDisk]
         :keyword zone_resilient: Specifies whether an image is zone resilient or not. Default is false.
          Zone resilient images can be created only in regions that provide Zone Redundant Storage (ZRS).
@@ -4352,7 +4259,7 @@ class InstanceViewStatus(_serialization.Model):
 class KeyVaultKeyReference(_serialization.Model):
     """Describes a reference to Key Vault Key.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar key_url: The URL referencing a key encryption key in Key Vault. Required.
     :vartype key_url: str
@@ -4385,7 +4292,7 @@ class KeyVaultKeyReference(_serialization.Model):
 class KeyVaultSecretReference(_serialization.Model):
     """Describes a reference to Key Vault Secret.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar secret_url: The URL referencing a secret in a Key Vault. Required.
     :vartype secret_url: str
@@ -4471,7 +4378,7 @@ class LinuxConfiguration(_serialization.Model):
 class ListUsagesResult(_serialization.Model):
     """The List Usages operation response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The list of compute resource usages. Required.
     :vartype value: list[~azure.mgmt.compute.v2019_12_01.models.Usage]
@@ -4505,7 +4412,7 @@ class ListUsagesResult(_serialization.Model):
 class LogAnalyticsInputBase(_serialization.Model):
     """Api input base class for LogAnalytics Api.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar blob_container_sas_uri: SAS Uri of the logging blob container to which LogAnalytics Api
      writes output logs to. Required.
@@ -4694,7 +4601,7 @@ class MaintenanceRedeployStatus(_serialization.Model):
 class ManagedArtifact(_serialization.Model):
     """The managed artifact.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The managed artifact id. Required.
     :vartype id: str
@@ -4827,7 +4734,7 @@ class NetworkProfile(_serialization.Model):
 class OrchestrationServiceStateInput(_serialization.Model):
     """The input for OrchestrationServiceState.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar service_name: The name of the service. Required. "AutomaticRepairs"
     :vartype service_name: str or ~azure.mgmt.compute.v2019_12_01.models.OrchestrationServiceNames
@@ -4901,7 +4808,7 @@ class OSDisk(_serialization.Model):  # pylint: disable=too-many-instance-attribu
     virtual machines
     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-about-disks-vhds?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar os_type: This property allows you to specify the type of the OS that is included in the
      disk if creating a VM from user-image or a specialized VHD. :code:`<br>`:code:`<br>` Possible
@@ -5044,7 +4951,7 @@ class OSDisk(_serialization.Model):  # pylint: disable=too-many-instance-attribu
 class OSDiskImage(_serialization.Model):
     """Contains the os disk image information.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar operating_system: The operating system of the osDiskImage. Required. Known values are:
      "Windows" and "Linux".
@@ -5077,18 +4984,6 @@ class OSDiskImageEncryption(DiskImageEncryption):
     :vartype disk_encryption_set_id: str
     """
 
-    _attribute_map = {
-        "disk_encryption_set_id": {"key": "diskEncryptionSetId", "type": "str"},
-    }
-
-    def __init__(self, *, disk_encryption_set_id: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword disk_encryption_set_id: A relative URI containing the resource ID of the disk
-         encryption set.
-        :paramtype disk_encryption_set_id: str
-        """
-        super().__init__(disk_encryption_set_id=disk_encryption_set_id, **kwargs)
-
 
 class OSProfile(_serialization.Model):
     """Specifies the operating system settings for the virtual machine. Some of the settings cannot be
@@ -5099,7 +4994,7 @@ class OSProfile(_serialization.Model):
      :code:`<br>`:code:`<br>` **Max-length (Windows):** 15 characters :code:`<br>`:code:`<br>`
      **Max-length (Linux):** 64 characters. :code:`<br>`:code:`<br>` For naming conventions and
      restrictions see `Azure infrastructure services implementation guidelines
-     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-infrastructure-subscription-accounts-guidelines?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json#1-naming-conventions>`_.
+     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-infrastructure-subscription-accounts-guidelines?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json#1-naming-conventions>`_.  # pylint: disable=line-too-long
     :vartype computer_name: str
     :ivar admin_username: Specifies the name of the administrator account. :code:`<br>`:code:`<br>`
      This property cannot be updated after the VM is created. :code:`<br>`:code:`<br>`
@@ -5111,10 +5006,10 @@ class OSProfile(_serialization.Model):
      :code:`<br>`:code:`<br>` **Max-length (Linux):** 64 characters :code:`<br>`:code:`<br>`
      **Max-length (Windows):** 20 characters  :code:`<br>`:code:`<br>`:code:`<li>` For root access
      to the Linux VM, see `Using root privileges on Linux virtual machines in Azure
-     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-use-root-privileges?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_\
+     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-use-root-privileges?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_\  # pylint: disable=line-too-long
      :code:`<br>`:code:`<li>` For a list of built-in system users on Linux that should not be used
      in this field, see `Selecting User Names for Linux on Azure
-     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-usernames?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_.
+     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-usernames?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_.  # pylint: disable=line-too-long
     :vartype admin_username: str
     :ivar admin_password: Specifies the password of the administrator account.
      :code:`<br>`:code:`<br>` **Minimum-length (Windows):** 8 characters :code:`<br>`:code:`<br>`
@@ -5127,10 +5022,10 @@ class OSProfile(_serialization.Model):
      "pass@word1", "Password!", "Password1", "Password22", "iloveyou!" :code:`<br>`:code:`<br>` For
      resetting the password, see `How to reset the Remote Desktop service or its login password in a
      Windows VM
-     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-reset-rdp?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_
+     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-reset-rdp?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_  # pylint: disable=line-too-long
      :code:`<br>`:code:`<br>` For resetting root password, see `Manage users, SSH, and check or
      repair disks on Azure Linux VMs using the VMAccess Extension
-     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-using-vmaccess-extension?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json#reset-root-password>`_.
+     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-using-vmaccess-extension?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json#reset-root-password>`_.  # pylint: disable=line-too-long
     :vartype admin_password: str
     :ivar custom_data: Specifies a base-64 encoded string of custom data. The base-64 encoded
      string is decoded to a binary array that is saved as a file on the Virtual Machine. The maximum
@@ -5141,7 +5036,7 @@ class OSProfile(_serialization.Model):
      <https://azure.microsoft.com/en-us/blog/custom-data-and-cloud-init-on-windows-azure/>`_
      :code:`<br>`:code:`<br>` For using cloud-init for your Linux VM, see `Using cloud-init to
      customize a Linux VM during creation
-     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-using-cloud-init?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_.
+     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-using-cloud-init?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_.  # pylint: disable=line-too-long
     :vartype custom_data: str
     :ivar windows_configuration: Specifies Windows operating system settings on the virtual
      machine.
@@ -5149,10 +5044,10 @@ class OSProfile(_serialization.Model):
     :ivar linux_configuration: Specifies the Linux operating system settings on the virtual
      machine. :code:`<br>`:code:`<br>`For a list of supported Linux distributions, see `Linux on
      Azure-Endorsed Distributions
-     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-endorsed-distros?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_
+     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-endorsed-distros?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_  # pylint: disable=line-too-long
      :code:`<br>`:code:`<br>` For running non-endorsed distributions, see `Information for
      Non-Endorsed Distributions
-     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-create-upload-generic?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_.
+     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-create-upload-generic?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_.  # pylint: disable=line-too-long
     :vartype linux_configuration: ~azure.mgmt.compute.v2019_12_01.models.LinuxConfiguration
     :ivar secrets: Specifies set of certificates that should be installed onto the virtual machine.
     :vartype secrets: list[~azure.mgmt.compute.v2019_12_01.models.VaultSecretGroup]
@@ -5197,7 +5092,7 @@ class OSProfile(_serialization.Model):
          :code:`<br>`:code:`<br>` **Max-length (Windows):** 15 characters :code:`<br>`:code:`<br>`
          **Max-length (Linux):** 64 characters. :code:`<br>`:code:`<br>` For naming conventions and
          restrictions see `Azure infrastructure services implementation guidelines
-         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-infrastructure-subscription-accounts-guidelines?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json#1-naming-conventions>`_.
+         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-infrastructure-subscription-accounts-guidelines?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json#1-naming-conventions>`_.  # pylint: disable=line-too-long
         :paramtype computer_name: str
         :keyword admin_username: Specifies the name of the administrator account.
          :code:`<br>`:code:`<br>` This property cannot be updated after the VM is created.
@@ -5210,10 +5105,10 @@ class OSProfile(_serialization.Model):
          **Max-length (Linux):** 64 characters :code:`<br>`:code:`<br>` **Max-length (Windows):** 20
          characters  :code:`<br>`:code:`<br>`:code:`<li>` For root access to the Linux VM, see `Using
          root privileges on Linux virtual machines in Azure
-         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-use-root-privileges?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_\
+         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-use-root-privileges?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_\  # pylint: disable=line-too-long
          :code:`<br>`:code:`<li>` For a list of built-in system users on Linux that should not be used
          in this field, see `Selecting User Names for Linux on Azure
-         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-usernames?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_.
+         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-usernames?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_.  # pylint: disable=line-too-long
         :paramtype admin_username: str
         :keyword admin_password: Specifies the password of the administrator account.
          :code:`<br>`:code:`<br>` **Minimum-length (Windows):** 8 characters :code:`<br>`:code:`<br>`
@@ -5226,10 +5121,10 @@ class OSProfile(_serialization.Model):
          "pass@word1", "Password!", "Password1", "Password22", "iloveyou!" :code:`<br>`:code:`<br>` For
          resetting the password, see `How to reset the Remote Desktop service or its login password in a
          Windows VM
-         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-reset-rdp?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_
+         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-reset-rdp?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_  # pylint: disable=line-too-long
          :code:`<br>`:code:`<br>` For resetting root password, see `Manage users, SSH, and check or
          repair disks on Azure Linux VMs using the VMAccess Extension
-         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-using-vmaccess-extension?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json#reset-root-password>`_.
+         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-using-vmaccess-extension?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json#reset-root-password>`_.  # pylint: disable=line-too-long
         :paramtype admin_password: str
         :keyword custom_data: Specifies a base-64 encoded string of custom data. The base-64 encoded
          string is decoded to a binary array that is saved as a file on the Virtual Machine. The maximum
@@ -5240,7 +5135,7 @@ class OSProfile(_serialization.Model):
          <https://azure.microsoft.com/en-us/blog/custom-data-and-cloud-init-on-windows-azure/>`_
          :code:`<br>`:code:`<br>` For using cloud-init for your Linux VM, see `Using cloud-init to
          customize a Linux VM during creation
-         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-using-cloud-init?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_.
+         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-using-cloud-init?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_.  # pylint: disable=line-too-long
         :paramtype custom_data: str
         :keyword windows_configuration: Specifies Windows operating system settings on the virtual
          machine.
@@ -5248,10 +5143,10 @@ class OSProfile(_serialization.Model):
         :keyword linux_configuration: Specifies the Linux operating system settings on the virtual
          machine. :code:`<br>`:code:`<br>`For a list of supported Linux distributions, see `Linux on
          Azure-Endorsed Distributions
-         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-endorsed-distros?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_
+         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-endorsed-distros?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_  # pylint: disable=line-too-long
          :code:`<br>`:code:`<br>` For running non-endorsed distributions, see `Information for
          Non-Endorsed Distributions
-         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-create-upload-generic?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_.
+         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-create-upload-generic?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_.  # pylint: disable=line-too-long
         :paramtype linux_configuration: ~azure.mgmt.compute.v2019_12_01.models.LinuxConfiguration
         :keyword secrets: Specifies set of certificates that should be installed onto the virtual
          machine.
@@ -5333,7 +5228,7 @@ class ProximityPlacementGroup(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -5427,7 +5322,7 @@ class ProximityPlacementGroup(Resource):
 class ProximityPlacementGroupListResult(_serialization.Model):
     """The List Proximity Placement Group operation response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The list of proximity placement groups. Required.
     :vartype value: list[~azure.mgmt.compute.v2019_12_01.models.ProximityPlacementGroup]
@@ -5465,22 +5360,11 @@ class ProximityPlacementGroupUpdate(UpdateResource):
     :vartype tags: dict[str, str]
     """
 
-    _attribute_map = {
-        "tags": {"key": "tags", "type": "{str}"},
-    }
-
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
-        """
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
-        """
-        super().__init__(tags=tags, **kwargs)
-
 
 class PurchasePlan(_serialization.Model):
     """Used for establishing the purchase context of any 3rd Party artifact through MarketPlace.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar publisher: The publisher ID. Required.
     :vartype publisher: str
@@ -5653,7 +5537,7 @@ class ReplicationStatus(_serialization.Model):
 class RequestRateByIntervalInput(LogAnalyticsInputBase):
     """Api request input for LogAnalytics getRequestRateByInterval Api.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar blob_container_sas_uri: SAS Uri of the logging blob container to which LogAnalytics Api
      writes output logs to. Required.
@@ -5958,7 +5842,7 @@ class RollingUpgradeStatusInfo(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -6021,7 +5905,7 @@ class RollingUpgradeStatusInfo(Resource):
 class RunCommandDocumentBase(_serialization.Model):
     """Describes the properties of a Run Command metadata.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar schema: The VM run command schema. Required.
     :vartype schema: str
@@ -6084,7 +5968,7 @@ class RunCommandDocumentBase(_serialization.Model):
 class RunCommandDocument(RunCommandDocumentBase):
     """Describes the properties of a Run Command.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar schema: The VM run command schema. Required.
     :vartype schema: str
@@ -6158,7 +6042,7 @@ class RunCommandDocument(RunCommandDocumentBase):
 class RunCommandInput(_serialization.Model):
     """Capture Virtual Machine parameters.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar command_id: The run command id. Required.
     :vartype command_id: str
@@ -6205,7 +6089,7 @@ class RunCommandInput(_serialization.Model):
 class RunCommandInputParameter(_serialization.Model):
     """Describes the properties of a run command parameter.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The run command parameter name. Required.
     :vartype name: str
@@ -6238,7 +6122,7 @@ class RunCommandInputParameter(_serialization.Model):
 class RunCommandListResult(_serialization.Model):
     """The List Virtual Machine operation response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The list of virtual machine run commands. Required.
     :vartype value: list[~azure.mgmt.compute.v2019_12_01.models.RunCommandDocumentBase]
@@ -6274,7 +6158,7 @@ class RunCommandListResult(_serialization.Model):
 class RunCommandParameterDefinition(_serialization.Model):
     """Describes the properties of a run command parameter.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The run command parameter name. Required.
     :vartype name: str
@@ -6488,7 +6372,7 @@ class SshPublicKey(_serialization.Model):
     :ivar key_data: SSH public key certificate used to authenticate with the VM through ssh. The
      key needs to be at least 2048-bit and in ssh-rsa format. :code:`<br>`:code:`<br>` For creating
      ssh keys, see `Create SSH keys on Linux and Mac for Linux VMs in Azure
-     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-mac-create-ssh-keys?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_.
+     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-mac-create-ssh-keys?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_.  # pylint: disable=line-too-long
     :vartype key_data: str
     """
 
@@ -6506,7 +6390,7 @@ class SshPublicKey(_serialization.Model):
         :keyword key_data: SSH public key certificate used to authenticate with the VM through ssh. The
          key needs to be at least 2048-bit and in ssh-rsa format. :code:`<br>`:code:`<br>` For creating
          ssh keys, see `Create SSH keys on Linux and Mac for Linux VMs in Azure
-         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-mac-create-ssh-keys?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_.
+         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-mac-create-ssh-keys?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_.  # pylint: disable=line-too-long
         :paramtype key_data: str
         """
         super().__init__(**kwargs)
@@ -6517,7 +6401,7 @@ class SshPublicKey(_serialization.Model):
 class SshPublicKeyGenerateKeyPairResult(_serialization.Model):
     """Response from generation of an SSH key pair.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar private_key: Private key portion of the key pair used to authenticate to a virtual
      machine through ssh. The private key is returned in RFC3447 format and should be treated as a
@@ -6527,7 +6411,7 @@ class SshPublicKeyGenerateKeyPairResult(_serialization.Model):
      through ssh. The public key is in ssh-rsa format. Required.
     :vartype public_key: str
     :ivar id: The ARM resource id in the form of
-     /subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Compute/sshPublicKeys/{SshPublicKeyName}.
+     /subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Compute/sshPublicKeys/{SshPublicKeyName}.  # pylint: disable=line-too-long
      Required.
     :vartype id: str
     """
@@ -6556,7 +6440,7 @@ class SshPublicKeyGenerateKeyPairResult(_serialization.Model):
          machine through ssh. The public key is in ssh-rsa format. Required.
         :paramtype public_key: str
         :keyword id: The ARM resource id in the form of
-         /subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Compute/sshPublicKeys/{SshPublicKeyName}.
+         /subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Compute/sshPublicKeys/{SshPublicKeyName}.  # pylint: disable=line-too-long
          Required.
         :paramtype id: str
         """
@@ -6571,7 +6455,7 @@ class SshPublicKeyResource(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -6627,7 +6511,7 @@ class SshPublicKeyResource(Resource):
 class SshPublicKeysGroupListResult(_serialization.Model):
     """The list SSH public keys operation response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The list of SSH public keys. Required.
     :vartype value: list[~azure.mgmt.compute.v2019_12_01.models.SshPublicKeyResource]
@@ -6704,12 +6588,12 @@ class StorageProfile(_serialization.Model):
     :ivar os_disk: Specifies information about the operating system disk used by the virtual
      machine. :code:`<br>`:code:`<br>` For more information about disks, see `About disks and VHDs
      for Azure virtual machines
-     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-about-disks-vhds?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_.
+     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-about-disks-vhds?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_.  # pylint: disable=line-too-long
     :vartype os_disk: ~azure.mgmt.compute.v2019_12_01.models.OSDisk
     :ivar data_disks: Specifies the parameters that are used to add a data disk to a virtual
      machine. :code:`<br>`:code:`<br>` For more information about disks, see `About disks and VHDs
      for Azure virtual machines
-     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-about-disks-vhds?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_.
+     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-about-disks-vhds?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_.  # pylint: disable=line-too-long
     :vartype data_disks: list[~azure.mgmt.compute.v2019_12_01.models.DataDisk]
     """
 
@@ -6736,12 +6620,12 @@ class StorageProfile(_serialization.Model):
         :keyword os_disk: Specifies information about the operating system disk used by the virtual
          machine. :code:`<br>`:code:`<br>` For more information about disks, see `About disks and VHDs
          for Azure virtual machines
-         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-about-disks-vhds?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_.
+         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-about-disks-vhds?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_.  # pylint: disable=line-too-long
         :paramtype os_disk: ~azure.mgmt.compute.v2019_12_01.models.OSDisk
         :keyword data_disks: Specifies the parameters that are used to add a data disk to a virtual
          machine. :code:`<br>`:code:`<br>` For more information about disks, see `About disks and VHDs
          for Azure virtual machines
-         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-about-disks-vhds?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_.
+         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-about-disks-vhds?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_.  # pylint: disable=line-too-long
         :paramtype data_disks: list[~azure.mgmt.compute.v2019_12_01.models.DataDisk]
         """
         super().__init__(**kwargs)
@@ -6809,7 +6693,7 @@ class SubResourceWithColocationStatus(SubResource):
 class TargetRegion(_serialization.Model):
     """Describes the target region information.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the region. Required.
     :vartype name: str
@@ -6904,7 +6788,7 @@ class TerminateNotificationProfile(_serialization.Model):
 class ThrottledRequestsInput(LogAnalyticsInputBase):
     """Api request input for LogAnalytics getThrottledRequests Api.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar blob_container_sas_uri: SAS Uri of the logging blob container to which LogAnalytics Api
      writes output logs to. Required.
@@ -6920,57 +6804,6 @@ class ThrottledRequestsInput(LogAnalyticsInputBase):
     :ivar group_by_resource_name: Group query result by Resource Name.
     :vartype group_by_resource_name: bool
     """
-
-    _validation = {
-        "blob_container_sas_uri": {"required": True},
-        "from_time": {"required": True},
-        "to_time": {"required": True},
-    }
-
-    _attribute_map = {
-        "blob_container_sas_uri": {"key": "blobContainerSasUri", "type": "str"},
-        "from_time": {"key": "fromTime", "type": "iso-8601"},
-        "to_time": {"key": "toTime", "type": "iso-8601"},
-        "group_by_throttle_policy": {"key": "groupByThrottlePolicy", "type": "bool"},
-        "group_by_operation_name": {"key": "groupByOperationName", "type": "bool"},
-        "group_by_resource_name": {"key": "groupByResourceName", "type": "bool"},
-    }
-
-    def __init__(
-        self,
-        *,
-        blob_container_sas_uri: str,
-        from_time: datetime.datetime,
-        to_time: datetime.datetime,
-        group_by_throttle_policy: Optional[bool] = None,
-        group_by_operation_name: Optional[bool] = None,
-        group_by_resource_name: Optional[bool] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword blob_container_sas_uri: SAS Uri of the logging blob container to which LogAnalytics
-         Api writes output logs to. Required.
-        :paramtype blob_container_sas_uri: str
-        :keyword from_time: From time of the query. Required.
-        :paramtype from_time: ~datetime.datetime
-        :keyword to_time: To time of the query. Required.
-        :paramtype to_time: ~datetime.datetime
-        :keyword group_by_throttle_policy: Group query result by Throttle Policy applied.
-        :paramtype group_by_throttle_policy: bool
-        :keyword group_by_operation_name: Group query result by Operation Name.
-        :paramtype group_by_operation_name: bool
-        :keyword group_by_resource_name: Group query result by Resource Name.
-        :paramtype group_by_resource_name: bool
-        """
-        super().__init__(
-            blob_container_sas_uri=blob_container_sas_uri,
-            from_time=from_time,
-            to_time=to_time,
-            group_by_throttle_policy=group_by_throttle_policy,
-            group_by_operation_name=group_by_operation_name,
-            group_by_resource_name=group_by_resource_name,
-            **kwargs
-        )
 
 
 class UpgradeOperationHistoricalStatusInfo(_serialization.Model):
@@ -7007,7 +6840,7 @@ class UpgradeOperationHistoricalStatusInfo(_serialization.Model):
         self.location = None
 
 
-class UpgradeOperationHistoricalStatusInfoProperties(_serialization.Model):
+class UpgradeOperationHistoricalStatusInfoProperties(_serialization.Model):  # pylint: disable=name-too-long
     """Describes each OS upgrade on the Virtual Machine Scale Set.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7150,7 +6983,7 @@ class Usage(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar unit: An enum describing the unit of usage measurement. Required. Default value is
      "Count".
@@ -7223,7 +7056,7 @@ class UsageName(_serialization.Model):
 class UserArtifactManage(_serialization.Model):
     """UserArtifactManage.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar install: Required. The path and arguments to install the gallery application. This is
      limited to 4096 characters. Required.
@@ -7270,7 +7103,7 @@ class UserArtifactManage(_serialization.Model):
 class UserArtifactSource(_serialization.Model):
     """The source image from which the Image Version is going to be created.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar media_link: Required. The mediaLink of the artifact, must be a readable storage page
      blob. Required.
@@ -7443,7 +7276,7 @@ class VirtualMachine(Resource):  # pylint: disable=too-many-instance-attributes
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -7486,10 +7319,10 @@ class VirtualMachine(Resource):  # pylint: disable=too-many-instance-attributes
      machine should be assigned to. Virtual machines specified in the same availability set are
      allocated to different nodes to maximize availability. For more information about availability
      sets, see `Manage the availability of virtual machines
-     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-manage-availability?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_.
+     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-manage-availability?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_.  # pylint: disable=line-too-long
      :code:`<br>`:code:`<br>` For more information on Azure planned maintenance, see `Planned
      maintenance for virtual machines in Azure
-     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-planned-maintenance?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_
+     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-planned-maintenance?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_  # pylint: disable=line-too-long
      :code:`<br>`:code:`<br>` Currently, a VM can only be added to availability set at creation
      time. The availability set to which the VM is being added should be under the same resource
      group as the availability set resource. An existing VM cannot be added to an availability set.
@@ -7534,7 +7367,7 @@ class VirtualMachine(Resource):  # pylint: disable=too-many-instance-attributes
      :code:`<br>`:code:`<br>` Windows_Server :code:`<br>`:code:`<br>` If this element is included in
      a request for an update, the value must match the initial value. This value cannot be updated.
      :code:`<br>`:code:`<br>` For more information, see `Azure Hybrid Use Benefit for Windows Server
-     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-hybrid-use-benefit-licensing?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_
+     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-hybrid-use-benefit-licensing?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_  # pylint: disable=line-too-long
      :code:`<br>`:code:`<br>` Minimum api-version: 2015-06-15.
     :vartype license_type: str
     :ivar vm_id: Specifies the VM unique ID which is a 128-bits identifier that is encoded and
@@ -7641,10 +7474,10 @@ class VirtualMachine(Resource):  # pylint: disable=too-many-instance-attributes
          machine should be assigned to. Virtual machines specified in the same availability set are
          allocated to different nodes to maximize availability. For more information about availability
          sets, see `Manage the availability of virtual machines
-         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-manage-availability?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_.
+         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-manage-availability?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_.  # pylint: disable=line-too-long
          :code:`<br>`:code:`<br>` For more information on Azure planned maintenance, see `Planned
          maintenance for virtual machines in Azure
-         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-planned-maintenance?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_
+         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-planned-maintenance?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_  # pylint: disable=line-too-long
          :code:`<br>`:code:`<br>` Currently, a VM can only be added to availability set at creation
          time. The availability set to which the VM is being added should be under the same resource
          group as the availability set resource. An existing VM cannot be added to an availability set.
@@ -7686,7 +7519,7 @@ class VirtualMachine(Resource):  # pylint: disable=too-many-instance-attributes
          :code:`<br>`:code:`<br>` Windows_Server :code:`<br>`:code:`<br>` If this element is included in
          a request for an update, the value must match the initial value. This value cannot be updated.
          :code:`<br>`:code:`<br>` For more information, see `Azure Hybrid Use Benefit for Windows Server
-         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-hybrid-use-benefit-licensing?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_
+         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-hybrid-use-benefit-licensing?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_  # pylint: disable=line-too-long
          :code:`<br>`:code:`<br>` Minimum api-version: 2015-06-15.
         :paramtype license_type: str
         """
@@ -7758,7 +7591,7 @@ class VirtualMachineAgentInstanceView(_serialization.Model):
 class VirtualMachineCaptureParameters(_serialization.Model):
     """Capture Virtual Machine parameters.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar vhd_prefix: The captured virtual hard disk's name prefix. Required.
     :vartype vhd_prefix: str
@@ -7848,7 +7681,7 @@ class VirtualMachineExtension(Resource):  # pylint: disable=too-many-instance-at
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -7966,7 +7799,7 @@ class VirtualMachineExtension(Resource):  # pylint: disable=too-many-instance-at
         self.instance_view = instance_view
 
 
-class VirtualMachineExtensionHandlerInstanceView(_serialization.Model):
+class VirtualMachineExtensionHandlerInstanceView(_serialization.Model):  # pylint: disable=name-too-long
     """The instance view of a virtual machine extension handler.
 
     :ivar type: Specifies the type of the extension; an example is "CustomScriptExtension".
@@ -8010,7 +7843,7 @@ class VirtualMachineExtensionImage(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -8291,7 +8124,7 @@ class VirtualMachineIdentity(_serialization.Model):
     :vartype type: str or ~azure.mgmt.compute.v2019_12_01.models.ResourceIdentityType
     :ivar user_assigned_identities: The list of user identities associated with the Virtual
      Machine. The user identity dictionary key references will be ARM resource ids in the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long
     :vartype user_assigned_identities: dict[str,
      ~azure.mgmt.compute.v2019_12_01.models.UserAssignedIdentitiesValue]
     """
@@ -8323,7 +8156,7 @@ class VirtualMachineIdentity(_serialization.Model):
         :paramtype type: str or ~azure.mgmt.compute.v2019_12_01.models.ResourceIdentityType
         :keyword user_assigned_identities: The list of user identities associated with the Virtual
          Machine. The user identity dictionary key references will be ARM resource ids in the form:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long
         :paramtype user_assigned_identities: dict[str,
          ~azure.mgmt.compute.v2019_12_01.models.UserAssignedIdentitiesValue]
         """
@@ -8337,7 +8170,7 @@ class VirtualMachineIdentity(_serialization.Model):
 class VirtualMachineImageResource(SubResource):
     """Virtual machine image resource information.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -8393,7 +8226,7 @@ class VirtualMachineImageResource(SubResource):
 class VirtualMachineImage(VirtualMachineImageResource):
     """Describes a Virtual Machine Image.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -8614,7 +8447,7 @@ class VirtualMachineInstanceView(_serialization.Model):  # pylint: disable=too-m
 class VirtualMachineListResult(_serialization.Model):
     """The List Virtual Machine operation response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The list of virtual machines. Required.
     :vartype value: list[~azure.mgmt.compute.v2019_12_01.models.VirtualMachine]
@@ -8675,7 +8508,7 @@ class VirtualMachineScaleSet(Resource):  # pylint: disable=too-many-instance-att
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -8882,7 +8715,7 @@ class VirtualMachineScaleSet(Resource):  # pylint: disable=too-many-instance-att
 class VirtualMachineScaleSetDataDisk(_serialization.Model):
     """Describes a virtual machine scale set data disk.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The disk name.
     :vartype name: str
@@ -9107,10 +8940,10 @@ class VirtualMachineScaleSetExtension(SubResourceReadOnly):  # pylint: disable=t
         self.provision_after_extensions = provision_after_extensions
 
 
-class VirtualMachineScaleSetExtensionListResult(_serialization.Model):
+class VirtualMachineScaleSetExtensionListResult(_serialization.Model):  # pylint: disable=name-too-long
     """The List VM scale set extension operation response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The list of VM scale set extensions. Required.
     :vartype value: list[~azure.mgmt.compute.v2019_12_01.models.VirtualMachineScaleSetExtension]
@@ -9296,7 +9129,7 @@ class VirtualMachineScaleSetIdentity(_serialization.Model):
     :vartype type: str or ~azure.mgmt.compute.v2019_12_01.models.ResourceIdentityType
     :ivar user_assigned_identities: The list of user identities associated with the virtual machine
      scale set. The user identity dictionary key references will be ARM resource ids in the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long
     :vartype user_assigned_identities: dict[str,
      ~azure.mgmt.compute.v2019_12_01.models.VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue]
     """
@@ -9335,7 +9168,7 @@ class VirtualMachineScaleSetIdentity(_serialization.Model):
         :keyword user_assigned_identities: The list of user identities associated with the virtual
          machine scale set. The user identity dictionary key references will be ARM resource ids in the
          form:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long
         :paramtype user_assigned_identities: dict[str,
          ~azure.mgmt.compute.v2019_12_01.models.VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue]
         """
@@ -9346,7 +9179,7 @@ class VirtualMachineScaleSetIdentity(_serialization.Model):
         self.user_assigned_identities = user_assigned_identities
 
 
-class VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue(_serialization.Model):
+class VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue(_serialization.Model):  # pylint: disable=name-too-long
     """VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -9417,7 +9250,7 @@ class VirtualMachineScaleSetInstanceView(_serialization.Model):
         self.orchestration_services = None
 
 
-class VirtualMachineScaleSetInstanceViewStatusesSummary(_serialization.Model):
+class VirtualMachineScaleSetInstanceViewStatusesSummary(_serialization.Model):  # pylint: disable=name-too-long
     """Instance view statuses summary for virtual machines of a virtual machine scale set.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -9444,7 +9277,7 @@ class VirtualMachineScaleSetInstanceViewStatusesSummary(_serialization.Model):
 class VirtualMachineScaleSetIPConfiguration(SubResource):
     """Describes a virtual machine scale set network profile's IP configuration.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -9599,10 +9432,10 @@ class VirtualMachineScaleSetIpTag(_serialization.Model):
         self.tag = tag
 
 
-class VirtualMachineScaleSetListOSUpgradeHistory(_serialization.Model):
+class VirtualMachineScaleSetListOSUpgradeHistory(_serialization.Model):  # pylint: disable=name-too-long
     """List of Virtual Machine Scale Set OS Upgrade History operation response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The list of OS upgrades performed on the virtual machine scale set. Required.
     :vartype value:
@@ -9644,7 +9477,7 @@ class VirtualMachineScaleSetListOSUpgradeHistory(_serialization.Model):
 class VirtualMachineScaleSetListResult(_serialization.Model):
     """The List Virtual Machine operation response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The list of virtual machine scale sets. Required.
     :vartype value: list[~azure.mgmt.compute.v2019_12_01.models.VirtualMachineScaleSet]
@@ -9680,7 +9513,7 @@ class VirtualMachineScaleSetListResult(_serialization.Model):
 class VirtualMachineScaleSetListSkusResult(_serialization.Model):
     """The Virtual Machine Scale Set List Skus operation response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The list of skus available for the virtual machine scale set. Required.
     :vartype value: list[~azure.mgmt.compute.v2019_12_01.models.VirtualMachineScaleSetSku]
@@ -9716,7 +9549,7 @@ class VirtualMachineScaleSetListSkusResult(_serialization.Model):
 class VirtualMachineScaleSetListWithLinkResult(_serialization.Model):
     """The List Virtual Machine operation response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The list of virtual machine scale sets. Required.
     :vartype value: list[~azure.mgmt.compute.v2019_12_01.models.VirtualMachineScaleSet]
@@ -9749,7 +9582,7 @@ class VirtualMachineScaleSetListWithLinkResult(_serialization.Model):
         self.next_link = next_link
 
 
-class VirtualMachineScaleSetManagedDiskParameters(_serialization.Model):
+class VirtualMachineScaleSetManagedDiskParameters(_serialization.Model):  # pylint: disable=name-too-long
     """Describes the parameters of a ScaleSet managed disk.
 
     :ivar storage_account_type: Specifies the storage account type for the managed disk. Managed OS
@@ -9793,10 +9626,10 @@ class VirtualMachineScaleSetManagedDiskParameters(_serialization.Model):
         self.disk_encryption_set = disk_encryption_set
 
 
-class VirtualMachineScaleSetNetworkConfiguration(SubResource):
+class VirtualMachineScaleSetNetworkConfiguration(SubResource):  # pylint: disable=name-too-long
     """Describes a virtual machine scale set network profile's network configurations.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -9883,7 +9716,7 @@ class VirtualMachineScaleSetNetworkConfiguration(SubResource):
         self.enable_ip_forwarding = enable_ip_forwarding
 
 
-class VirtualMachineScaleSetNetworkConfigurationDnsSettings(_serialization.Model):
+class VirtualMachineScaleSetNetworkConfigurationDnsSettings(_serialization.Model):  # pylint: disable=name-too-long
     """Describes a virtual machines scale sets network configuration's DNS settings.
 
     :ivar dns_servers: List of DNS servers IP addresses.
@@ -9908,7 +9741,7 @@ class VirtualMachineScaleSetNetworkProfile(_serialization.Model):
 
     :ivar health_probe: A reference to a load balancer probe used to determine the health of an
      instance in the virtual machine scale set. The reference will be in the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}/probes/{probeName}'.
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}/probes/{probeName}'.  # pylint: disable=line-too-long
     :vartype health_probe: ~azure.mgmt.compute.v2019_12_01.models.ApiEntityReference
     :ivar network_interface_configurations: The list of network configurations.
     :vartype network_interface_configurations:
@@ -9933,7 +9766,7 @@ class VirtualMachineScaleSetNetworkProfile(_serialization.Model):
         """
         :keyword health_probe: A reference to a load balancer probe used to determine the health of an
          instance in the virtual machine scale set. The reference will be in the form:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}/probes/{probeName}'.
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}/probes/{probeName}'.  # pylint: disable=line-too-long
         :paramtype health_probe: ~azure.mgmt.compute.v2019_12_01.models.ApiEntityReference
         :keyword network_interface_configurations: The list of network configurations.
         :paramtype network_interface_configurations:
@@ -9947,7 +9780,7 @@ class VirtualMachineScaleSetNetworkProfile(_serialization.Model):
 class VirtualMachineScaleSetOSDisk(_serialization.Model):
     """Describes a virtual machine scale set operating system disk.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The disk name.
     :vartype name: str
@@ -10087,10 +9920,10 @@ class VirtualMachineScaleSetOSProfile(_serialization.Model):
      :code:`<br>`:code:`<br>` **Max-length (Linux):** 64 characters :code:`<br>`:code:`<br>`
      **Max-length (Windows):** 20 characters  :code:`<br>`:code:`<br>`:code:`<li>` For root access
      to the Linux VM, see `Using root privileges on Linux virtual machines in Azure
-     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-use-root-privileges?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_\
+     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-use-root-privileges?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_\  # pylint: disable=line-too-long
      :code:`<br>`:code:`<li>` For a list of built-in system users on Linux that should not be used
      in this field, see `Selecting User Names for Linux on Azure
-     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-usernames?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_.
+     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-usernames?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_.  # pylint: disable=line-too-long
     :vartype admin_username: str
     :ivar admin_password: Specifies the password of the administrator account.
      :code:`<br>`:code:`<br>` **Minimum-length (Windows):** 8 characters :code:`<br>`:code:`<br>`
@@ -10103,16 +9936,16 @@ class VirtualMachineScaleSetOSProfile(_serialization.Model):
      "pass@word1", "Password!", "Password1", "Password22", "iloveyou!" :code:`<br>`:code:`<br>` For
      resetting the password, see `How to reset the Remote Desktop service or its login password in a
      Windows VM
-     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-reset-rdp?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_
+     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-reset-rdp?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_  # pylint: disable=line-too-long
      :code:`<br>`:code:`<br>` For resetting root password, see `Manage users, SSH, and check or
      repair disks on Azure Linux VMs using the VMAccess Extension
-     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-using-vmaccess-extension?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json#reset-root-password>`_.
+     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-using-vmaccess-extension?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json#reset-root-password>`_.  # pylint: disable=line-too-long
     :vartype admin_password: str
     :ivar custom_data: Specifies a base-64 encoded string of custom data. The base-64 encoded
      string is decoded to a binary array that is saved as a file on the Virtual Machine. The maximum
      length of the binary array is 65535 bytes. :code:`<br>`:code:`<br>` For using cloud-init for
      your VM, see `Using cloud-init to customize a Linux VM during creation
-     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-using-cloud-init?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_.
+     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-using-cloud-init?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_.  # pylint: disable=line-too-long
     :vartype custom_data: str
     :ivar windows_configuration: Specifies Windows operating system settings on the virtual
      machine.
@@ -10120,10 +9953,10 @@ class VirtualMachineScaleSetOSProfile(_serialization.Model):
     :ivar linux_configuration: Specifies the Linux operating system settings on the virtual
      machine. :code:`<br>`:code:`<br>`For a list of supported Linux distributions, see `Linux on
      Azure-Endorsed Distributions
-     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-endorsed-distros?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_
+     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-endorsed-distros?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_  # pylint: disable=line-too-long
      :code:`<br>`:code:`<br>` For running non-endorsed distributions, see `Information for
      Non-Endorsed Distributions
-     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-create-upload-generic?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_.
+     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-create-upload-generic?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_.  # pylint: disable=line-too-long
     :vartype linux_configuration: ~azure.mgmt.compute.v2019_12_01.models.LinuxConfiguration
     :ivar secrets: Specifies set of certificates that should be installed onto the virtual machines
      in the scale set.
@@ -10166,10 +9999,10 @@ class VirtualMachineScaleSetOSProfile(_serialization.Model):
          **Max-length (Linux):** 64 characters :code:`<br>`:code:`<br>` **Max-length (Windows):** 20
          characters  :code:`<br>`:code:`<br>`:code:`<li>` For root access to the Linux VM, see `Using
          root privileges on Linux virtual machines in Azure
-         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-use-root-privileges?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_\
+         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-use-root-privileges?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_\  # pylint: disable=line-too-long
          :code:`<br>`:code:`<li>` For a list of built-in system users on Linux that should not be used
          in this field, see `Selecting User Names for Linux on Azure
-         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-usernames?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_.
+         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-usernames?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_.  # pylint: disable=line-too-long
         :paramtype admin_username: str
         :keyword admin_password: Specifies the password of the administrator account.
          :code:`<br>`:code:`<br>` **Minimum-length (Windows):** 8 characters :code:`<br>`:code:`<br>`
@@ -10182,16 +10015,16 @@ class VirtualMachineScaleSetOSProfile(_serialization.Model):
          "pass@word1", "Password!", "Password1", "Password22", "iloveyou!" :code:`<br>`:code:`<br>` For
          resetting the password, see `How to reset the Remote Desktop service or its login password in a
          Windows VM
-         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-reset-rdp?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_
+         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-reset-rdp?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_  # pylint: disable=line-too-long
          :code:`<br>`:code:`<br>` For resetting root password, see `Manage users, SSH, and check or
          repair disks on Azure Linux VMs using the VMAccess Extension
-         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-using-vmaccess-extension?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json#reset-root-password>`_.
+         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-using-vmaccess-extension?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json#reset-root-password>`_.  # pylint: disable=line-too-long
         :paramtype admin_password: str
         :keyword custom_data: Specifies a base-64 encoded string of custom data. The base-64 encoded
          string is decoded to a binary array that is saved as a file on the Virtual Machine. The maximum
          length of the binary array is 65535 bytes. :code:`<br>`:code:`<br>` For using cloud-init for
          your VM, see `Using cloud-init to customize a Linux VM during creation
-         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-using-cloud-init?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_.
+         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-using-cloud-init?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_.  # pylint: disable=line-too-long
         :paramtype custom_data: str
         :keyword windows_configuration: Specifies Windows operating system settings on the virtual
          machine.
@@ -10199,10 +10032,10 @@ class VirtualMachineScaleSetOSProfile(_serialization.Model):
         :keyword linux_configuration: Specifies the Linux operating system settings on the virtual
          machine. :code:`<br>`:code:`<br>`For a list of supported Linux distributions, see `Linux on
          Azure-Endorsed Distributions
-         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-endorsed-distros?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_
+         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-endorsed-distros?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_  # pylint: disable=line-too-long
          :code:`<br>`:code:`<br>` For running non-endorsed distributions, see `Information for
          Non-Endorsed Distributions
-         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-create-upload-generic?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_.
+         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-create-upload-generic?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_.  # pylint: disable=line-too-long
         :paramtype linux_configuration: ~azure.mgmt.compute.v2019_12_01.models.LinuxConfiguration
         :keyword secrets: Specifies set of certificates that should be installed onto the virtual
          machines in the scale set.
@@ -10218,10 +10051,10 @@ class VirtualMachineScaleSetOSProfile(_serialization.Model):
         self.secrets = secrets
 
 
-class VirtualMachineScaleSetPublicIPAddressConfiguration(_serialization.Model):
+class VirtualMachineScaleSetPublicIPAddressConfiguration(_serialization.Model):  # pylint: disable=name-too-long
     """Describes a virtual machines scale set IP Configuration's PublicIPAddress configuration.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The publicIP address configuration name. Required.
     :vartype name: str
@@ -10293,10 +10126,12 @@ class VirtualMachineScaleSetPublicIPAddressConfiguration(_serialization.Model):
         self.public_ip_address_version = public_ip_address_version
 
 
-class VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings(_serialization.Model):
+class VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings(
+    _serialization.Model
+):  # pylint: disable=name-too-long
     """Describes a virtual machines scale sets network configuration's DNS settings.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar domain_name_label: The Domain name label.The concatenation of the domain name label and
      vm index will be the domain name labels of the PublicIPAddress resources that will be created.
@@ -10323,25 +10158,13 @@ class VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings(_serializati
         self.domain_name_label = domain_name_label
 
 
-class VirtualMachineScaleSetVMReimageParameters(VirtualMachineReimageParameters):
+class VirtualMachineScaleSetVMReimageParameters(VirtualMachineReimageParameters):  # pylint: disable=name-too-long
     """Describes a Virtual Machine Scale Set VM Reimage Parameters.
 
     :ivar temp_disk: Specifies whether to reimage temp disk. Default value: false. Note: This temp
      disk reimage parameter is only supported for VM/VMSS with Ephemeral OS disk.
     :vartype temp_disk: bool
     """
-
-    _attribute_map = {
-        "temp_disk": {"key": "tempDisk", "type": "bool"},
-    }
-
-    def __init__(self, *, temp_disk: Optional[bool] = None, **kwargs: Any) -> None:
-        """
-        :keyword temp_disk: Specifies whether to reimage temp disk. Default value: false. Note: This
-         temp disk reimage parameter is only supported for VM/VMSS with Ephemeral OS disk.
-        :paramtype temp_disk: bool
-        """
-        super().__init__(temp_disk=temp_disk, **kwargs)
 
 
 class VirtualMachineScaleSetReimageParameters(VirtualMachineScaleSetVMReimageParameters):
@@ -10461,12 +10284,12 @@ class VirtualMachineScaleSetStorageProfile(_serialization.Model):
     :ivar os_disk: Specifies information about the operating system disk used by the virtual
      machines in the scale set. :code:`<br>`:code:`<br>` For more information about disks, see
      `About disks and VHDs for Azure virtual machines
-     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-about-disks-vhds?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_.
+     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-about-disks-vhds?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_.  # pylint: disable=line-too-long
     :vartype os_disk: ~azure.mgmt.compute.v2019_12_01.models.VirtualMachineScaleSetOSDisk
     :ivar data_disks: Specifies the parameters that are used to add data disks to the virtual
      machines in the scale set. :code:`<br>`:code:`<br>` For more information about disks, see
      `About disks and VHDs for Azure virtual machines
-     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-about-disks-vhds?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_.
+     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-about-disks-vhds?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_.  # pylint: disable=line-too-long
     :vartype data_disks:
      list[~azure.mgmt.compute.v2019_12_01.models.VirtualMachineScaleSetDataDisk]
     """
@@ -10494,12 +10317,12 @@ class VirtualMachineScaleSetStorageProfile(_serialization.Model):
         :keyword os_disk: Specifies information about the operating system disk used by the virtual
          machines in the scale set. :code:`<br>`:code:`<br>` For more information about disks, see
          `About disks and VHDs for Azure virtual machines
-         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-about-disks-vhds?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_.
+         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-about-disks-vhds?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_.  # pylint: disable=line-too-long
         :paramtype os_disk: ~azure.mgmt.compute.v2019_12_01.models.VirtualMachineScaleSetOSDisk
         :keyword data_disks: Specifies the parameters that are used to add data disks to the virtual
          machines in the scale set. :code:`<br>`:code:`<br>` For more information about disks, see
          `About disks and VHDs for Azure virtual machines
-         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-about-disks-vhds?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_.
+         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-about-disks-vhds?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_.  # pylint: disable=line-too-long
         :paramtype data_disks:
          list[~azure.mgmt.compute.v2019_12_01.models.VirtualMachineScaleSetDataDisk]
         """
@@ -10651,7 +10474,7 @@ class VirtualMachineScaleSetUpdate(UpdateResource):  # pylint: disable=too-many-
         self.proximity_placement_group = proximity_placement_group
 
 
-class VirtualMachineScaleSetUpdateIPConfiguration(SubResource):
+class VirtualMachineScaleSetUpdateIPConfiguration(SubResource):  # pylint: disable=name-too-long
     """Describes a virtual machine scale set network profile's IP configuration. NOTE: The subnet of a
     scale set may be modified as long as the original subnet and the new subnet are in the same
     virtual network.
@@ -10769,7 +10592,7 @@ class VirtualMachineScaleSetUpdateIPConfiguration(SubResource):
         self.load_balancer_inbound_nat_pools = load_balancer_inbound_nat_pools
 
 
-class VirtualMachineScaleSetUpdateNetworkConfiguration(SubResource):
+class VirtualMachineScaleSetUpdateNetworkConfiguration(SubResource):  # pylint: disable=name-too-long
     """Describes a virtual machine scale set network profile's network configurations.
 
     :ivar id: Resource Id.
@@ -10854,12 +10677,12 @@ class VirtualMachineScaleSetUpdateNetworkConfiguration(SubResource):
         self.enable_ip_forwarding = enable_ip_forwarding
 
 
-class VirtualMachineScaleSetUpdateNetworkProfile(_serialization.Model):
+class VirtualMachineScaleSetUpdateNetworkProfile(_serialization.Model):  # pylint: disable=name-too-long
     """Describes a virtual machine scale set network profile.
 
     :ivar health_probe: A reference to a load balancer probe used to determine the health of an
      instance in the virtual machine scale set. The reference will be in the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}/probes/{probeName}'.
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}/probes/{probeName}'.  # pylint: disable=line-too-long
     :vartype health_probe: ~azure.mgmt.compute.v2019_12_01.models.ApiEntityReference
     :ivar network_interface_configurations: The list of network configurations.
     :vartype network_interface_configurations:
@@ -10886,7 +10709,7 @@ class VirtualMachineScaleSetUpdateNetworkProfile(_serialization.Model):
         """
         :keyword health_probe: A reference to a load balancer probe used to determine the health of an
          instance in the virtual machine scale set. The reference will be in the form:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}/probes/{probeName}'.
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}/probes/{probeName}'.  # pylint: disable=line-too-long
         :paramtype health_probe: ~azure.mgmt.compute.v2019_12_01.models.ApiEntityReference
         :keyword network_interface_configurations: The list of network configurations.
         :paramtype network_interface_configurations:
@@ -11016,7 +10839,7 @@ class VirtualMachineScaleSetUpdateOSProfile(_serialization.Model):
         self.secrets = secrets
 
 
-class VirtualMachineScaleSetUpdatePublicIPAddressConfiguration(_serialization.Model):
+class VirtualMachineScaleSetUpdatePublicIPAddressConfiguration(_serialization.Model):  # pylint: disable=name-too-long
     """Describes a virtual machines scale set IP Configuration's PublicIPAddress configuration.
 
     :ivar name: The publicIP address configuration name.
@@ -11060,7 +10883,7 @@ class VirtualMachineScaleSetUpdatePublicIPAddressConfiguration(_serialization.Mo
         self.dns_settings = dns_settings
 
 
-class VirtualMachineScaleSetUpdateStorageProfile(_serialization.Model):
+class VirtualMachineScaleSetUpdateStorageProfile(_serialization.Model):  # pylint: disable=name-too-long
     """Describes a virtual machine scale set storage profile.
 
     :ivar image_reference: The image reference.
@@ -11192,7 +11015,7 @@ class VirtualMachineScaleSetVM(Resource):  # pylint: disable=too-many-instance-a
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -11249,10 +11072,10 @@ class VirtualMachineScaleSetVM(Resource):  # pylint: disable=too-many-instance-a
      machine should be assigned to. Virtual machines specified in the same availability set are
      allocated to different nodes to maximize availability. For more information about availability
      sets, see `Manage the availability of virtual machines
-     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-manage-availability?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_.
+     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-manage-availability?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_.  # pylint: disable=line-too-long
      :code:`<br>`:code:`<br>` For more information on Azure planned maintenance, see `Planned
      maintenance for virtual machines in Azure
-     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-planned-maintenance?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_
+     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-planned-maintenance?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_  # pylint: disable=line-too-long
      :code:`<br>`:code:`<br>` Currently, a VM can only be added to availability set at creation
      time. An existing VM cannot be added to an availability set.
     :vartype availability_set: ~azure.mgmt.compute.v2019_12_01.models.SubResource
@@ -11264,7 +11087,7 @@ class VirtualMachineScaleSetVM(Resource):  # pylint: disable=too-many-instance-a
      :code:`<br>`:code:`<br>` Windows_Server :code:`<br>`:code:`<br>` If this element is included in
      a request for an update, the value must match the initial value. This value cannot be updated.
      :code:`<br>`:code:`<br>` For more information, see `Azure Hybrid Use Benefit for Windows Server
-     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-hybrid-use-benefit-licensing?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_
+     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-hybrid-use-benefit-licensing?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_  # pylint: disable=line-too-long
      :code:`<br>`:code:`<br>` Minimum api-version: 2015-06-15.
     :vartype license_type: str
     :ivar model_definition_applied: Specifies whether the model applied to the virtual machine is
@@ -11375,10 +11198,10 @@ class VirtualMachineScaleSetVM(Resource):  # pylint: disable=too-many-instance-a
          machine should be assigned to. Virtual machines specified in the same availability set are
          allocated to different nodes to maximize availability. For more information about availability
          sets, see `Manage the availability of virtual machines
-         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-manage-availability?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_.
+         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-manage-availability?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_.  # pylint: disable=line-too-long
          :code:`<br>`:code:`<br>` For more information on Azure planned maintenance, see `Planned
          maintenance for virtual machines in Azure
-         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-planned-maintenance?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_
+         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-planned-maintenance?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_  # pylint: disable=line-too-long
          :code:`<br>`:code:`<br>` Currently, a VM can only be added to availability set at creation
          time. An existing VM cannot be added to an availability set.
         :paramtype availability_set: ~azure.mgmt.compute.v2019_12_01.models.SubResource
@@ -11388,7 +11211,7 @@ class VirtualMachineScaleSetVM(Resource):  # pylint: disable=too-many-instance-a
          :code:`<br>`:code:`<br>` Windows_Server :code:`<br>`:code:`<br>` If this element is included in
          a request for an update, the value must match the initial value. This value cannot be updated.
          :code:`<br>`:code:`<br>` For more information, see `Azure Hybrid Use Benefit for Windows Server
-         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-hybrid-use-benefit-licensing?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_
+         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-hybrid-use-benefit-licensing?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_  # pylint: disable=line-too-long
          :code:`<br>`:code:`<br>` Minimum api-version: 2015-06-15.
         :paramtype license_type: str
         :keyword protection_policy: Specifies the protection policy of the virtual machine.
@@ -11418,7 +11241,7 @@ class VirtualMachineScaleSetVM(Resource):  # pylint: disable=too-many-instance-a
         self.protection_policy = protection_policy
 
 
-class VirtualMachineScaleSetVMExtensionsSummary(_serialization.Model):
+class VirtualMachineScaleSetVMExtensionsSummary(_serialization.Model):  # pylint: disable=name-too-long
     """Extensions summary for virtual machines of a virtual machine scale set.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -11471,10 +11294,10 @@ class VirtualMachineScaleSetVMInstanceIDs(_serialization.Model):
         self.instance_ids = instance_ids
 
 
-class VirtualMachineScaleSetVMInstanceRequiredIDs(_serialization.Model):
+class VirtualMachineScaleSetVMInstanceRequiredIDs(_serialization.Model):  # pylint: disable=name-too-long
     """Specifies a list of virtual machine instance IDs from the VM scale set.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar instance_ids: The virtual machine scale set instance ids. Required.
     :vartype instance_ids: list[str]
@@ -11610,7 +11433,7 @@ class VirtualMachineScaleSetVMInstanceView(_serialization.Model):  # pylint: dis
 class VirtualMachineScaleSetVMListResult(_serialization.Model):
     """The List Virtual Machine Scale Set VMs operation response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The list of virtual machine scale sets VMs. Required.
     :vartype value: list[~azure.mgmt.compute.v2019_12_01.models.VirtualMachineScaleSetVM]
@@ -11643,7 +11466,7 @@ class VirtualMachineScaleSetVMListResult(_serialization.Model):
         self.next_link = next_link
 
 
-class VirtualMachineScaleSetVMNetworkProfileConfiguration(_serialization.Model):
+class VirtualMachineScaleSetVMNetworkProfileConfiguration(_serialization.Model):  # pylint: disable=name-too-long
     """Describes a virtual machine scale set VM network profile.
 
     :ivar network_interface_configurations: The list of network configurations.
@@ -11699,7 +11522,7 @@ class VirtualMachineScaleSetVMProfile(_serialization.Model):
      :code:`<br>`:code:`<br>` Windows_Server :code:`<br>`:code:`<br>` If this element is included in
      a request for an update, the value must match the initial value. This value cannot be updated.
      :code:`<br>`:code:`<br>` For more information, see `Azure Hybrid Use Benefit for Windows Server
-     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-hybrid-use-benefit-licensing?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_
+     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-hybrid-use-benefit-licensing?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_  # pylint: disable=line-too-long
      :code:`<br>`:code:`<br>` Minimum api-version: 2015-06-15.
     :vartype license_type: str
     :ivar priority: Specifies the priority for the virtual machines in the scale set.
@@ -11773,7 +11596,7 @@ class VirtualMachineScaleSetVMProfile(_serialization.Model):
          :code:`<br>`:code:`<br>` Windows_Server :code:`<br>`:code:`<br>` If this element is included in
          a request for an update, the value must match the initial value. This value cannot be updated.
          :code:`<br>`:code:`<br>` For more information, see `Azure Hybrid Use Benefit for Windows Server
-         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-hybrid-use-benefit-licensing?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_
+         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-hybrid-use-benefit-licensing?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_  # pylint: disable=line-too-long
          :code:`<br>`:code:`<br>` Minimum api-version: 2015-06-15.
         :paramtype license_type: str
         :keyword priority: Specifies the priority for the virtual machines in the scale set.
@@ -11993,10 +11816,10 @@ class VirtualMachineUpdate(UpdateResource):  # pylint: disable=too-many-instance
      machine should be assigned to. Virtual machines specified in the same availability set are
      allocated to different nodes to maximize availability. For more information about availability
      sets, see `Manage the availability of virtual machines
-     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-manage-availability?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_.
+     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-manage-availability?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_.  # pylint: disable=line-too-long
      :code:`<br>`:code:`<br>` For more information on Azure planned maintenance, see `Planned
      maintenance for virtual machines in Azure
-     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-planned-maintenance?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_
+     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-planned-maintenance?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_  # pylint: disable=line-too-long
      :code:`<br>`:code:`<br>` Currently, a VM can only be added to availability set at creation
      time. The availability set to which the VM is being added should be under the same resource
      group as the availability set resource. An existing VM cannot be added to an availability set.
@@ -12041,7 +11864,7 @@ class VirtualMachineUpdate(UpdateResource):  # pylint: disable=too-many-instance
      :code:`<br>`:code:`<br>` Windows_Server :code:`<br>`:code:`<br>` If this element is included in
      a request for an update, the value must match the initial value. This value cannot be updated.
      :code:`<br>`:code:`<br>` For more information, see `Azure Hybrid Use Benefit for Windows Server
-     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-hybrid-use-benefit-licensing?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_
+     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-hybrid-use-benefit-licensing?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_  # pylint: disable=line-too-long
      :code:`<br>`:code:`<br>` Minimum api-version: 2015-06-15.
     :vartype license_type: str
     :ivar vm_id: Specifies the VM unique ID which is a 128-bits identifier that is encoded and
@@ -12135,10 +11958,10 @@ class VirtualMachineUpdate(UpdateResource):  # pylint: disable=too-many-instance
          machine should be assigned to. Virtual machines specified in the same availability set are
          allocated to different nodes to maximize availability. For more information about availability
          sets, see `Manage the availability of virtual machines
-         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-manage-availability?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_.
+         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-manage-availability?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_.  # pylint: disable=line-too-long
          :code:`<br>`:code:`<br>` For more information on Azure planned maintenance, see `Planned
          maintenance for virtual machines in Azure
-         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-planned-maintenance?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_
+         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-planned-maintenance?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_  # pylint: disable=line-too-long
          :code:`<br>`:code:`<br>` Currently, a VM can only be added to availability set at creation
          time. The availability set to which the VM is being added should be under the same resource
          group as the availability set resource. An existing VM cannot be added to an availability set.
@@ -12180,7 +12003,7 @@ class VirtualMachineUpdate(UpdateResource):  # pylint: disable=too-many-instance
          :code:`<br>`:code:`<br>` Windows_Server :code:`<br>`:code:`<br>` If this element is included in
          a request for an update, the value must match the initial value. This value cannot be updated.
          :code:`<br>`:code:`<br>` For more information, see `Azure Hybrid Use Benefit for Windows Server
-         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-hybrid-use-benefit-licensing?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_
+         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-hybrid-use-benefit-licensing?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_  # pylint: disable=line-too-long
          :code:`<br>`:code:`<br>` Minimum api-version: 2015-06-15.
         :paramtype license_type: str
         """
@@ -12207,7 +12030,7 @@ class VirtualMachineUpdate(UpdateResource):  # pylint: disable=too-many-instance
         self.vm_id = None
 
 
-class VMScaleSetConvertToSinglePlacementGroupInput(_serialization.Model):
+class VMScaleSetConvertToSinglePlacementGroupInput(_serialization.Model):  # pylint: disable=name-too-long
     """VMScaleSetConvertToSinglePlacementGroupInput.
 
     :ivar active_placement_group_id: Id of the placement group in which you want future virtual
