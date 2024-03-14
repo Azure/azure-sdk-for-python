@@ -12,6 +12,7 @@
   - `MetricsBatchQueryClient` has been renamed to `MetricsClient`. ([#33958](https://github.com/Azure/azure-sdk-for-python/pull/33958))
   - Reordered the arguments for the async `MetricsClient` constructor so that `endpoint` is now the first positional argument. ([#33752](https://github.com/Azure/azure-sdk-for-python/pull/33752))
   - Positional arguments in `MetricsClient.query_resources` are now required keyword-only arguments. ([#33958](https://github.com/Azure/azure-sdk-for-python/pull/33958))
+  - The `resource_uris` argument in `MetricsClient.query_resources` has been renamed to `resource_ids`. ([#34760](https://github.com/Azure/azure-sdk-for-python/pull/34760))
 
 ### Bugs Fixed
 
