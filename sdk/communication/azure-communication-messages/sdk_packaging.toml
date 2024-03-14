@@ -1,0 +1,7 @@
+[packaging]
+auto_update = false
+package_name = "azure-communication-messages"
+package_pprint_name = "Communication Messages"
+package_doc_id = "communication-messages"
+is_stable = false
+is_arm = false
