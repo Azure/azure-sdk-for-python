@@ -275,6 +275,12 @@ class DatabaseProxy(object):
         offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
         unique_key_policy: Optional[Dict[str, Any]] = None,
         conflict_resolution_policy: Optional[Dict[str, Any]] = None,
+        *,
+        session_token: Optional[str] = None,
+        initial_headers: Optional[Dict[str, str]] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        analytical_storage_ttl: Optional[int] = None,
         **kwargs: Any
     ) -> ContainerProxy:
         """Create a container if it does not exist already.
@@ -307,14 +313,13 @@ class DatabaseProxy(object):
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container read or creation failed.
         :rtype: ~azure.cosmos.ContainerProxy
         """
-        analytical_storage_ttl = kwargs.pop("analytical_storage_ttl", None)
         computed_properties = kwargs.pop("computed_properties", None)
-        etag = kwargs.pop("etag", None)
-        match_condition = kwargs.pop("match_condition", None)
         try:
             container_proxy = self.get_container_client(id)
             container_proxy.read(
                 populate_query_metrics=populate_query_metrics,
+                session_token=session_token,
+                initial_headers=initial_headers,
                 **kwargs
             )
             return container_proxy
@@ -332,6 +337,8 @@ class DatabaseProxy(object):
                 computed_properties=computed_properties,
                 etag=etag,
                 match_condition=match_condition,
+                session_token=session_token,
+                initial_headers=initial_headers,
                 **kwargs
             )
 
