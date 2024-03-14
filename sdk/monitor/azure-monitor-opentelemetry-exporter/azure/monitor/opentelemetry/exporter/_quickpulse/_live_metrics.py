@@ -43,6 +43,9 @@ from azure.monitor.opentelemetry.exporter._quickpulse._utils import (
     _get_log_record_document,
     _get_span_document,
 )
+from azure.monitor.opentelemetry.exporter.statsbeat._state import (
+    set_statsbeat_live_metrics_feature_set,
+)
 from azure.monitor.opentelemetry.exporter._utils import (
     _get_sdk_version,
     _populate_part_a_fields,
@@ -60,6 +63,7 @@ def enable_live_metrics(**kwargs: Any) -> None:
     :rtype: None
     """
     _QuickpulseManager(kwargs.get('connection_string'), kwargs.get('resource'))
+    set_statsbeat_live_metrics_feature_set()
 
 
 # pylint: disable=protected-access,too-many-instance-attributes
