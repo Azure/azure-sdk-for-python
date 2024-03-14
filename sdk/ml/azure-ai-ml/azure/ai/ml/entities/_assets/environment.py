@@ -454,7 +454,7 @@ def _deserialize(
         if is_conda:
             data = load_yaml(path)
         else:
-            data = load_file(path)
+            data = load_file(str(path))
         return data
     return input
 

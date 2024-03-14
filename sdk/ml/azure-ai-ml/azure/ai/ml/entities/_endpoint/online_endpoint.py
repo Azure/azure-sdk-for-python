@@ -271,7 +271,7 @@ class OnlineEndpoint(Endpoint):
         if self.name is None and other.name is None:
             return (
                 self.auth_mode.lower() == other.auth_mode.lower()
-                and dict_eq(self.tags, other.tags)
+                and dict_eq(cast(Dict, self.tags), cast(Dict, other.tags))
                 and self.description == other.description
                 and dict_eq(self.traffic, other.traffic)
             )
@@ -281,7 +281,7 @@ class OnlineEndpoint(Endpoint):
             return (
                 self.name.lower() == other.name.lower()
                 and self.auth_mode.lower() == other.auth_mode.lower()
-                and dict_eq(self.tags, other.tags)
+                and dict_eq(cast(Dict, self.tags), cast(Dict, other.tags))
                 and self.description == other.description
                 and dict_eq(self.traffic, other.traffic)
             )

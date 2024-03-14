@@ -89,7 +89,7 @@ class FileStorageClient:
         :return: A dictionary containing info of the uploaded artifact
         :rtype: Dict[Literal["remote path", "name", "version"], str]
         """
-        asset_id = generate_asset_id(asset_hash, include_directory=False)
+        asset_id = generate_asset_id(str(asset_hash), include_directory=False)
         source_name = Path(source).name
         dest = str(PurePosixPath(asset_id, source_name))
 

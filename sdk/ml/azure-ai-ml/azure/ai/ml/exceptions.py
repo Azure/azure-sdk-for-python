@@ -458,8 +458,8 @@ class EmptyDirectoryError(MlException):
         self,
         message: str,
         no_personal_data_message: str,
-        target: ErrorTarget = ErrorTarget.UNKNOWN,
-        error_category: ErrorCategory = ErrorCategory.UNKNOWN,
+        target: Union[str, ErrorCategory] = ErrorTarget.UNKNOWN,
+        error_category: Union[str, ErrorCategory] = ErrorCategory.UNKNOWN,
     ):
         self.message = message
         super(EmptyDirectoryError, self).__init__(

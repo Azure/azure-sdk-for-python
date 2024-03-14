@@ -6,7 +6,7 @@
 
 from os import PathLike
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union, cast
 
 from azure.ai.ml._restclient.v2023_10_01.models import (
     FeaturestoreEntityContainer,
@@ -98,11 +98,13 @@ class FeatureStoreEntity(Asset):
 
     @classmethod
     def _from_rest_object(cls, rest_obj: FeaturestoreEntityVersion) -> "FeatureStoreEntity":
+        from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
+
         rest_object_details: FeaturestoreEntityVersionProperties = rest_obj.properties
         arm_id_object = get_arm_id_object_from_id(rest_obj.id)
         featurestoreEntity = FeatureStoreEntity(
             name=arm_id_object.asset_name,
-            version=arm_id_object.asset_version,
+            version=cast(AMLVersionedArmId, arm_id_object).asset_version,
             index_columns=[DataColumn._from_rest_object(column) for column in rest_object_details.index_columns],
             stage=rest_object_details.stage,
             description=rest_object_details.description,

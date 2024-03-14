@@ -105,7 +105,7 @@ class TabularFeaturizationSettings(FeaturizationSettings):
         self._transformer_params = (
             None
             if not value
-            else {(AutoMLTransformerParameterKeys[camel_to_snake(k).upper()].value): v for k, v in value.items()}
+            else {(AutoMLTransformerParameterKeys[str(camel_to_snake(k)).upper()].value): v for k, v in value.items()}
         )
 
     @property
