@@ -4,7 +4,7 @@
     default:
       azure-mgmt-advisor:
         ServiceDirectory: advisor
-        Version: '10.0.0b1'
+        Version: '9.0.0'
 
  steps:
   - task: UsePythonVersion@0
@@ -41,4 +41,8 @@
           --service=${{ pkg.value.ServiceDirectory }}
           --dest-dir="$(Build.ArtifactStagingDirectory)"
           --toxenv=sphinx
-    
+
+  - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
+    parameters:
+      ArtifactPath: "$(Build.ArtifactStagingDirectory)"
+      ArtifactName: 'documentation'
