@@ -28,17 +28,17 @@
       inputs:
         scriptPath: 'checkout_tag.py'
         arguments: >-
-          --package="${{ pkg }}" 
-          --service="${{ pkg.value.ServiceDirectory }}"
-          --version="${{ pkg.value.Version }}"
+          --package=${{ pkg.key }}
+          --service=${{ pkg.value.ServiceDirectory }}
+          --version=${{ pkg.value.Version }}
 
     - task: PythonScript@0
       displayName: 'Generate Docs'
       inputs:
         scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
         arguments: >-
-          "${{ pkg }}" 
-          --service="${{ pkg.value.ServiceDirectory }}"
+          ${{ pkg.key }}
+          --service=${{ pkg.value.ServiceDirectory }}
           --dest-dir="$(Build.ArtifactStagingDirectory)"
           --toxenv=sphinx
     
