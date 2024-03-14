@@ -9,7 +9,7 @@ import asyncio
 from ._perf_stress_runner import _PerfStressRunner
 from ._perf_stress_test import PerfStressTest
 from ._random_stream import RandomStream, WriteStream, get_random_bytes
-from ._async_random_stream import AsyncRandomStream
+from ._async_random_stream import AsyncRandomStream, AsyncIteratorRandomStream
 from ._batch_perf_test import BatchPerfTest
 from ._event_perf_test import EventPerfTest
 
@@ -19,6 +19,7 @@ __all__ = [
     "EventPerfTest",
     "RandomStream",
     "WriteStream",
+    "AsyncIteratorRandomStream",
     "AsyncRandomStream",
     "get_random_bytes"
 ]

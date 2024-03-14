@@ -67,7 +67,7 @@ class TabularFeaturizationSettings(FeaturizationSettings):
         blocked_transformers: Optional[List[Union[BlockedTransformers, str]]] = None,
         column_name_and_types: Optional[Dict[str, str]] = None,
         dataset_language: Optional[str] = None,
-        transformer_params: Optional[Dict] = None,
+        transformer_params: Optional[Dict[str, List[ColumnTransformer]]] = None,
         mode: Optional[str] = None,
         enable_dnn_featurization: Optional[bool] = None,
     ):
@@ -138,7 +138,7 @@ class TabularFeaturizationSettings(FeaturizationSettings):
     @classmethod
     def _from_rest_object(cls, obj: RestTabularFeaturizationSettings) -> "TabularFeaturizationSettings":
         rest_transformers_params = obj.transformer_params
-        transformer_dict = None
+        transformer_dict: Optional[Dict] = None
         if rest_transformers_params:
             transformer_dict = {}
             for key, settings in rest_transformers_params.items():

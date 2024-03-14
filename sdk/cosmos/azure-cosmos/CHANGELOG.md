@@ -1,12 +1,20 @@
 ## Release History
 
-### 4.5.2b5 (Unreleased)
+### 4.5.2b6 (Unreleased)
 
 #### Features Added
 
 #### Breaking Changes
 
 #### Bugs Fixed
+* Keyword arguments were not being passed down for `create_container_if_not_exists()` methods. See [PR 34286](https://github.com/Azure/azure-sdk-for-python/pull/34286).
+
+#### Other Changes
+
+### 4.5.2b5 (2024-03-02)
+
+#### Bugs Fixed
+* Fixed bug with async lock not properly releasing on async global endpoint manager. see [PR 34579](https://github.com/Azure/azure-sdk-for-python/pull/34579).
 
 #### Other Changes
 * Marked `computed_properties` keyword as provisional, un-marked `continuation_token_limit` as provisional. See [PR 34207](https://github.com/Azure/azure-sdk-for-python/pull/34207).
