@@ -28,10 +28,10 @@ Set-StrictMode -Version 3
 . (Join-Path $PSScriptRoot ".." common scripts common.ps1)
 
 # Submit API review request and return status whether current revision is approved or pending or failed to create review
-function Submit-APIReview($packageArtifactname, $apiLabel, $releaseStatus, $reviewFileName)
+function Submit-APIReview($packageArtifactname, $apiLabel, $releaseStatus, $reviewFileName, $packageVersion)
 {
     $params = "buildId=$buildId&artifactName=$ArtifactName&originalFilePath=$packageArtifactname&reviewFilePath=$reviewFileName"
-    $params += "&label=$apiLabel&repoName=$repoName&packageName=$PackageName&project=internal"
+    $params += "&label=$apiLabel&repoName=$repoName&packageName=$PackageName&project=internal&packageVersion=$packageVersion"
     $uri = "$($APIViewUri)?$params"
     
     Write-Host $uri
@@ -101,7 +101,7 @@ function ProcessPackage($PackageName)
                 return 1
             }
 
-            $revisionLabel = "$($pkgInfo.Version) - Source Branch:${SourceBranch}"
+            $revisionLabel = "Source Branch:${SourceBranch}"
             Write-Host "Version: $($version)"
             Write-Host "SDK Type: $($pkgInfo.SdkType)"
             Write-Host "Release Status: $($pkgInfo.ReleaseStatus)"
@@ -112,7 +112,7 @@ function ProcessPackage($PackageName)
             if ( ($SourceBranch -eq $DefaultBranch) -or (-not $version.IsPrerelease))
             {
                 Write-Host "Submitting API Review for package $($pkg)"
-                $respCode = Submit-APIReview -reviewFileName $reviewFileName -packageArtifactname $pkg -apiLabel $revisionLabel -releaseStatus $pkgInfo.ReleaseStatus
+                $respCode = Submit-APIReview -reviewFileName $reviewFileName -packageArtifactname $pkg -apiLabel $revisionLabel -releaseStatus $pkgInfo.ReleaseStatus -packageVersion $pkgInfo.Version
                 Write-Host "HTTP Response code: $($respCode)"
                 # HTTP status 200 means API is in approved status
                 if ($respCode -eq '200')
