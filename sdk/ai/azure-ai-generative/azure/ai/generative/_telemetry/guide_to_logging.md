@@ -13,7 +13,7 @@ Logging will be disabled if
  - The subscription ID is in the `test_subscriptions` list of internal developer subscription IDs declared in [`logging_handler.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-generative/azure/ai/generative/_telemetry/logging_handler.py). 
  - An exception is triggered while trying to set up and return the logging handler. Logging should never interfere with the execution of the code, so if an exception is triggered, we simply move on.
 
-Logging can also be explicitly disabled in any scenario by setting the environment variable `os.environ["AZURE_AI_GENERATIVE_ENABLE_LOGGING"] = "True"` for azure-ai-generative or `os.environ["AZURE_AI_RESOURCES_ENABLE_LOGGING"] = "True"` for azure-ai-resources. (Note that since azure-ai-generative is dependent on azure-ai-resources, both environment variables will need to be set to false to prevent all logging when using azure-ai-generative.)
+Logging can also be explicitly disabled in any scenario by setting the environment variable `os.environ["AZURE_AI_GENERATIVE_ENABLE_LOGGING"] = "False"` for azure-ai-generative or `os.environ["AZURE_AI_RESOURCES_ENABLE_LOGGING"] = "False"` for azure-ai-resources. (Note that since azure-ai-generative is dependent on azure-ai-resources, both environment variables will need to be set to false to prevent all logging when using azure-ai-generative.)
 
 In all of these cases, a `logging.NullHandler` is returned from `get_appinsights_log_handler`.
 
