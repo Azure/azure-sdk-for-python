@@ -9,6 +9,12 @@ from azure.servicebus import ServiceBusClient, ServiceBusReceiveMode, ServiceBus
 from azure.servicebus.aio import ServiceBusClient as AsyncServiceBusClient
 from azure.servicebus.aio.management import ServiceBusAdministrationClient
 
+import logging
+import sys
+handler = logging.StreamHandler(stream=sys.stdout)
+logger = logging.getLogger('azure.servicebus')
+logger.setLevel(logging.DEBUG)
+logger.addHandler(handler)
 
 class _ReceiveTest():
 
@@ -25,6 +31,7 @@ class _ReceiveTest():
             max_wait_time=max_wait_time or None,
             transport_type=transport_type,
             uamqp_transport=uamqp_tranport,
+            logging_enable=True
         )
         self.async_servicebus_client=AsyncServiceBusClient.from_connection_string(
             self.connection_string,
@@ -33,6 +40,7 @@ class _ReceiveTest():
             max_wait_time=max_wait_time or None,
             transport_type=transport_type,
             uamqp_transport=uamqp_tranport,
+            logging_enable=True
         )
 
     async def close_clients(self) -> None:

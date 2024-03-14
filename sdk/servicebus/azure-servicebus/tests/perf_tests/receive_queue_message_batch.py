@@ -7,7 +7,6 @@ import asyncio
 
 from ._test_base import _QueueReceiveBatchTest
 
-
 class ReceiveQueueMessageBatchTest(_QueueReceiveBatchTest):
     def run_batch_sync(self) -> None:
         batch = self.receiver.receive_messages(
