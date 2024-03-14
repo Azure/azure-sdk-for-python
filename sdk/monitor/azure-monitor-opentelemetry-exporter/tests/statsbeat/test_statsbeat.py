@@ -28,9 +28,12 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     _REQUESTS_MAP,
     _STATSBEAT_STATE,
 )
-from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat import (
+from azure.monitor.opentelemetry.exporter._constants import (
+    _APPLICATIONINSIGHTS_STATS_CONNECTION_STRING_ENV_NAME,
     _DEFAULT_STATS_LONG_EXPORT_INTERVAL,
     _DEFAULT_STATS_SHORT_EXPORT_INTERVAL,
+    _APPLICATIONINSIGHTS_STATS_SHORT_EXPORT_INTERVAL_ENV_NAME,
+    _APPLICATIONINSIGHTS_STATS_LONG_EXPORT_INTERVAL_ENV_NAME,
 )
 from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics import (
     _shorten_host,
@@ -110,7 +113,7 @@ class TestStatsbeat(unittest.TestCase):
         self.assertIsNone(_statsbeat._STATSBEAT_METRICS)
         with mock.patch.dict(
             os.environ, {
-                "APPLICATION_INSIGHTS_STATS_CONNECTION_STRING": "",
+                _APPLICATIONINSIGHTS_STATS_CONNECTION_STRING_ENV_NAME: "",
             }):
             _statsbeat.collect_statsbeat_metrics(exporter)
         self.assertIsNotNone(_statsbeat._STATSBEAT_METRICS)
@@ -141,7 +144,7 @@ class TestStatsbeat(unittest.TestCase):
         self.assertIsNone(_statsbeat._STATSBEAT_METRICS)
         with mock.patch.dict(
             os.environ, {
-                "APPLICATION_INSIGHTS_STATS_CONNECTION_STRING": "",
+                _APPLICATIONINSIGHTS_STATS_CONNECTION_STRING_ENV_NAME: "",
             }):
             _statsbeat.collect_statsbeat_metrics(exporter)
         self.assertIsNotNone(_statsbeat._STATSBEAT_METRICS)
@@ -162,8 +165,8 @@ class TestStatsbeat(unittest.TestCase):
     @mock.patch.dict(
         "os.environ",
         {
-            "APPLICATION_INSIGHTS_STATS_SHORT_EXPORT_INTERVAL": "",
-            "APPLICATION_INSIGHTS_STATS_LONG_EXPORT_INTERVAL": "",
+            _APPLICATIONINSIGHTS_STATS_SHORT_EXPORT_INTERVAL_ENV_NAME: "",
+            _APPLICATIONINSIGHTS_STATS_LONG_EXPORT_INTERVAL_ENV_NAME: "",
         },
     )
     def test_collect_statsbeat_metrics_aad(
@@ -195,8 +198,8 @@ class TestStatsbeat(unittest.TestCase):
     @mock.patch.dict(
         "os.environ",
         {
-            "APPLICATION_INSIGHTS_STATS_SHORT_EXPORT_INTERVAL": "",
-            "APPLICATION_INSIGHTS_STATS_LONG_EXPORT_INTERVAL": "",
+            _APPLICATIONINSIGHTS_STATS_SHORT_EXPORT_INTERVAL_ENV_NAME: "",
+            _APPLICATIONINSIGHTS_STATS_LONG_EXPORT_INTERVAL_ENV_NAME: "",
         },
     )
     def test_collect_statsbeat_metrics_no_aad(
@@ -227,8 +230,8 @@ class TestStatsbeat(unittest.TestCase):
     @mock.patch.dict(
         "os.environ",
         {
-            "APPLICATION_INSIGHTS_STATS_SHORT_EXPORT_INTERVAL": "",
-            "APPLICATION_INSIGHTS_STATS_LONG_EXPORT_INTERVAL": "",
+            _APPLICATIONINSIGHTS_STATS_SHORT_EXPORT_INTERVAL_ENV_NAME: "",
+            _APPLICATIONINSIGHTS_STATS_LONG_EXPORT_INTERVAL_ENV_NAME: "",
         },
     )
     def test_collect_statsbeat_metrics_distro_version(

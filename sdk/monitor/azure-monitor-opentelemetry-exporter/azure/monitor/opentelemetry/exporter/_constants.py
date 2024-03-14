@@ -82,6 +82,28 @@ _STATSBEAT_METRIC_NAME_MAPPINGS = dict(
         _REQ_THROTTLE_NAME,
     ]
 )
+_APPLICATIONINSIGHTS_STATS_CONNECTION_STRING_ENV_NAME = "APPLICATIONINSIGHTS_STATS_CONNECTION_STRING"
+_APPLICATIONINSIGHTS_STATS_SHORT_EXPORT_INTERVAL_ENV_NAME = "APPLICATIONINSIGHTS_STATS_SHORT_EXPORT_INTERVAL"
+_APPLICATIONINSIGHTS_STATS_LONG_EXPORT_INTERVAL_ENV_NAME = "APPLICATIONINSIGHTS_STATS_LONG_EXPORT_INTERVAL"
+# pylint: disable=line-too-long
+_DEFAULT_NON_EU_STATS_CONNECTION_STRING = "InstrumentationKey=c4a29126-a7cb-47e5-b348-11414998b11e;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/"
+_DEFAULT_EU_STATS_CONNECTION_STRING = "InstrumentationKey=7dc56bab-3c0c-4e9f-9ebb-d1acadee8d0f;IngestionEndpoint=https://westeurope-5.in.applicationinsights.azure.com/"
+_DEFAULT_STATS_SHORT_EXPORT_INTERVAL = 900  # 15 minutes
+_DEFAULT_STATS_LONG_EXPORT_INTERVAL = 86400  # 24 hours
+_EU_ENDPOINTS = [
+    "westeurope",
+    "northeurope",
+    "francecentral",
+    "francesouth",
+    "germanywestcentral",
+    "norwayeast",
+    "norwaywest",
+    "swedencentral",
+    "switzerlandnorth",
+    "switzerlandwest",
+    "uksouth",
+    "ukwest",
+]
 
 # Instrumentations
 
