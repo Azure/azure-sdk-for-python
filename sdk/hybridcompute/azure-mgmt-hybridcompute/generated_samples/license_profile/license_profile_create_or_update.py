@@ -34,12 +34,20 @@ def main():
         machine_name="myMachine",
         parameters={
             "location": "eastus2euap",
-            "properties": {"esuProfile": {"assignedLicense": "{LicenseResourceId}"}},
+            "properties": {
+                "esuProfile": {"assignedLicense": "{LicenseResourceId}"},
+                "productProfile": {
+                    "productFeatures": [{"name": "HotPatching", "subscriptionStatus": "Enabled"}],
+                    "productType": "WindowsServer",
+                    "subscriptionStatus": "Enabled",
+                },
+                "softwareAssurance": {"softwareAssuranceCustomer": True},
+            },
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/hybridcompute/resource-manager/Microsoft.HybridCompute/preview/2023-06-20-preview/examples/licenseProfile/LicenseProfile_CreateOrUpdate.json
+# x-ms-original-file: specification/hybridcompute/resource-manager/Microsoft.HybridCompute/preview/2023-10-03-preview/examples/licenseProfile/LicenseProfile_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

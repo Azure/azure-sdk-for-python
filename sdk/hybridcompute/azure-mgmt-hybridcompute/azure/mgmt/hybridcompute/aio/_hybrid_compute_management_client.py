@@ -23,8 +23,11 @@ from .operations import (
     LicenseProfilesOperations,
     LicensesOperations,
     MachineExtensionsOperations,
+    MachineRunCommandsOperations,
     MachinesOperations,
+    NetworkConfigurationsOperations,
     NetworkProfileOperations,
+    NetworkSecurityPerimeterConfigurationsOperations,
     Operations,
     PrivateEndpointConnectionsOperations,
     PrivateLinkResourcesOperations,
@@ -62,6 +65,9 @@ class HybridComputeManagementClient(
      azure.mgmt.hybridcompute.aio.operations.HybridIdentityMetadataOperations
     :ivar agent_version: AgentVersionOperations operations
     :vartype agent_version: azure.mgmt.hybridcompute.aio.operations.AgentVersionOperations
+    :ivar machine_run_commands: MachineRunCommandsOperations operations
+    :vartype machine_run_commands:
+     azure.mgmt.hybridcompute.aio.operations.MachineRunCommandsOperations
     :ivar private_link_scopes: PrivateLinkScopesOperations operations
     :vartype private_link_scopes:
      azure.mgmt.hybridcompute.aio.operations.PrivateLinkScopesOperations
@@ -71,13 +77,20 @@ class HybridComputeManagementClient(
     :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
     :vartype private_endpoint_connections:
      azure.mgmt.hybridcompute.aio.operations.PrivateEndpointConnectionsOperations
+    :ivar network_configurations: NetworkConfigurationsOperations operations
+    :vartype network_configurations:
+     azure.mgmt.hybridcompute.aio.operations.NetworkConfigurationsOperations
+    :ivar network_security_perimeter_configurations:
+     NetworkSecurityPerimeterConfigurationsOperations operations
+    :vartype network_security_perimeter_configurations:
+     azure.mgmt.hybridcompute.aio.operations.NetworkSecurityPerimeterConfigurationsOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2023-06-20-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2023-10-03-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -117,6 +130,9 @@ class HybridComputeManagementClient(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.agent_version = AgentVersionOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.machine_run_commands = MachineRunCommandsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.private_link_scopes = PrivateLinkScopesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -124,6 +140,12 @@ class HybridComputeManagementClient(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.network_configurations = NetworkConfigurationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.network_security_perimeter_configurations = NetworkSecurityPerimeterConfigurationsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
 

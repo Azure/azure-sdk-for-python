@@ -23,6 +23,39 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
+class AccessRule(_serialization.Model):
+    """Access rule.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: Name of the access rule.
+    :vartype name: str
+    :ivar direction: Direction of the access rule. Known values are: "Inbound" and "Outbound".
+    :vartype direction: str or ~azure.mgmt.hybridcompute.models.AccessRuleDirection
+    :ivar address_prefixes: Address prefixes that are allowed access.
+    :vartype address_prefixes: list[str]
+    """
+
+    _validation = {
+        "name": {"readonly": True},
+        "direction": {"readonly": True},
+        "address_prefixes": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "direction": {"key": "properties.direction", "type": "str"},
+        "address_prefixes": {"key": "properties.addressPrefixes", "type": "[str]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.name = None
+        self.direction = None
+        self.address_prefixes = None
+
+
 class AgentConfiguration(_serialization.Model):
     """Configurable properties that the user can set locally via the azcmagent config command, or
     remotely via ARM.
@@ -556,6 +589,59 @@ class EsuKey(_serialization.Model):
         super().__init__(**kwargs)
         self.sku = sku
         self.license_status = license_status
+
+
+class ExtensionsResourceStatus(_serialization.Model):
+    """Instance view status.
+
+    :ivar code: The status code.
+    :vartype code: str
+    :ivar level: The level code. Known values are: "Info", "Warning", and "Error".
+    :vartype level: str or ~azure.mgmt.hybridcompute.models.ExtensionsStatusLevelTypes
+    :ivar display_status: The short localizable label for the status.
+    :vartype display_status: str
+    :ivar message: The detailed status message, including for alerts and error messages.
+    :vartype message: str
+    :ivar time: The time of the status.
+    :vartype time: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "level": {"key": "level", "type": "str"},
+        "display_status": {"key": "displayStatus", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "time": {"key": "time", "type": "iso-8601"},
+    }
+
+    def __init__(
+        self,
+        *,
+        code: Optional[str] = None,
+        level: Optional[Union[str, "_models.ExtensionsStatusLevelTypes"]] = None,
+        display_status: Optional[str] = None,
+        message: Optional[str] = None,
+        time: Optional[datetime.datetime] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword code: The status code.
+        :paramtype code: str
+        :keyword level: The level code. Known values are: "Info", "Warning", and "Error".
+        :paramtype level: str or ~azure.mgmt.hybridcompute.models.ExtensionsStatusLevelTypes
+        :keyword display_status: The short localizable label for the status.
+        :paramtype display_status: str
+        :keyword message: The detailed status message, including for alerts and error messages.
+        :paramtype message: str
+        :keyword time: The time of the status.
+        :paramtype time: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
+        self.code = code
+        self.level = level
+        self.display_status = display_status
+        self.message = message
+        self.time = time
 
 
 class ExtensionTargetProperties(_serialization.Model):
@@ -1093,6 +1179,67 @@ class IpAddress(_serialization.Model):
         self.subnet = None
 
 
+class KeyDetails(_serialization.Model):
+    """Public key details.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar public_key: Public key.
+    :vartype public_key: str
+    :ivar not_after: Key expiration date.
+    :vartype not_after: ~datetime.datetime
+    :ivar renew_after: Recommended key renewal date.
+    :vartype renew_after: ~datetime.datetime
+    """
+
+    _validation = {
+        "public_key": {"readonly": True},
+        "not_after": {"readonly": True},
+        "renew_after": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "public_key": {"key": "publicKey", "type": "str"},
+        "not_after": {"key": "notAfter", "type": "iso-8601"},
+        "renew_after": {"key": "renewAfter", "type": "iso-8601"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.public_key = None
+        self.not_after = None
+        self.renew_after = None
+
+
+class KeyProperties(_serialization.Model):
+    """Public key information for client authentication.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar client_public_key: Current public key details.
+    :vartype client_public_key: ~azure.mgmt.hybridcompute.models.KeyDetails
+    :ivar candidate_public_key: Candidate public key details.
+    :vartype candidate_public_key: ~azure.mgmt.hybridcompute.models.KeyDetails
+    """
+
+    _validation = {
+        "client_public_key": {"readonly": True},
+        "candidate_public_key": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "client_public_key": {"key": "clientPublicKey", "type": "KeyDetails"},
+        "candidate_public_key": {"key": "candidatePublicKey", "type": "KeyDetails"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.client_public_key = None
+        self.candidate_public_key = None
+
+
 class TrackedResource(Resource):
     """The resource model definition for an Azure Resource Manager tracked top level resource which
     has 'tags' and a 'location'.
@@ -1334,6 +1481,21 @@ class LicenseProfile(TrackedResource):  # pylint: disable=too-many-instance-attr
      values are: "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Accepted", "Canceled",
      and "Deleted".
     :vartype provisioning_state: str or ~azure.mgmt.hybridcompute.models.ProvisioningState
+    :ivar subscription_status: Indicates the subscription status of the product. Known values are:
+     "Unknown", "Enabling", "Enabled", and "Disabled".
+    :vartype subscription_status: str or
+     ~azure.mgmt.hybridcompute.models.LicenseProfileSubscriptionStatus
+    :ivar product_type: Indicates the product type of the license. Known values are:
+     "WindowsServer" and "WindowsIoTEnterprise".
+    :vartype product_type: str or ~azure.mgmt.hybridcompute.models.LicenseProfileProductType
+    :ivar billing_start_date: The timestamp in UTC when the billing starts.
+    :vartype billing_start_date: ~datetime.datetime
+    :ivar enrollment_date: The timestamp in UTC when the user enrolls the feature.
+    :vartype enrollment_date: ~datetime.datetime
+    :ivar disenrollment_date: The timestamp in UTC when the user disenrolled the feature.
+    :vartype disenrollment_date: ~datetime.datetime
+    :ivar product_features: The list of product features.
+    :vartype product_features: list[~azure.mgmt.hybridcompute.models.ProductFeature]
     :ivar assigned_license_immutable_id: The guid id of the license.
     :vartype assigned_license_immutable_id: str
     :ivar esu_keys: The list of ESU keys.
@@ -1348,6 +1510,9 @@ class LicenseProfile(TrackedResource):  # pylint: disable=too-many-instance-attr
     :vartype esu_key_state: str or ~azure.mgmt.hybridcompute.models.EsuKeyState
     :ivar assigned_license: The resource id of the license.
     :vartype assigned_license: str
+    :ivar software_assurance_customer: Specifies if this machine is licensed as part of a Software
+     Assurance agreement.
+    :vartype software_assurance_customer: bool
     """
 
     _validation = {
@@ -1357,6 +1522,9 @@ class LicenseProfile(TrackedResource):  # pylint: disable=too-many-instance-attr
         "system_data": {"readonly": True},
         "location": {"required": True},
         "provisioning_state": {"readonly": True},
+        "billing_start_date": {"readonly": True},
+        "enrollment_date": {"readonly": True},
+        "disenrollment_date": {"readonly": True},
         "assigned_license_immutable_id": {"readonly": True},
         "esu_keys": {"readonly": True},
         "server_type": {"readonly": True},
@@ -1372,12 +1540,22 @@ class LicenseProfile(TrackedResource):  # pylint: disable=too-many-instance-attr
         "tags": {"key": "tags", "type": "{str}"},
         "location": {"key": "location", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "subscription_status": {"key": "properties.productProfile.subscriptionStatus", "type": "str"},
+        "product_type": {"key": "properties.productProfile.productType", "type": "str"},
+        "billing_start_date": {"key": "properties.productProfile.billingStartDate", "type": "iso-8601"},
+        "enrollment_date": {"key": "properties.productProfile.enrollmentDate", "type": "iso-8601"},
+        "disenrollment_date": {"key": "properties.productProfile.disenrollmentDate", "type": "iso-8601"},
+        "product_features": {"key": "properties.productProfile.productFeatures", "type": "[ProductFeature]"},
         "assigned_license_immutable_id": {"key": "properties.esuProfile.assignedLicenseImmutableId", "type": "str"},
         "esu_keys": {"key": "properties.esuProfile.esuKeys", "type": "[EsuKey]"},
         "server_type": {"key": "properties.esuProfile.serverType", "type": "str"},
         "esu_eligibility": {"key": "properties.esuProfile.esuEligibility", "type": "str"},
         "esu_key_state": {"key": "properties.esuProfile.esuKeyState", "type": "str"},
         "assigned_license": {"key": "properties.esuProfile.assignedLicense", "type": "str"},
+        "software_assurance_customer": {
+            "key": "properties.softwareAssurance.softwareAssuranceCustomer",
+            "type": "bool",
+        },
     }
 
     def __init__(
@@ -1385,7 +1563,11 @@ class LicenseProfile(TrackedResource):  # pylint: disable=too-many-instance-attr
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
+        subscription_status: Optional[Union[str, "_models.LicenseProfileSubscriptionStatus"]] = None,
+        product_type: Optional[Union[str, "_models.LicenseProfileProductType"]] = None,
+        product_features: Optional[List["_models.ProductFeature"]] = None,
         assigned_license: Optional[str] = None,
+        software_assurance_customer: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1393,17 +1575,36 @@ class LicenseProfile(TrackedResource):  # pylint: disable=too-many-instance-attr
         :paramtype tags: dict[str, str]
         :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
+        :keyword subscription_status: Indicates the subscription status of the product. Known values
+         are: "Unknown", "Enabling", "Enabled", and "Disabled".
+        :paramtype subscription_status: str or
+         ~azure.mgmt.hybridcompute.models.LicenseProfileSubscriptionStatus
+        :keyword product_type: Indicates the product type of the license. Known values are:
+         "WindowsServer" and "WindowsIoTEnterprise".
+        :paramtype product_type: str or ~azure.mgmt.hybridcompute.models.LicenseProfileProductType
+        :keyword product_features: The list of product features.
+        :paramtype product_features: list[~azure.mgmt.hybridcompute.models.ProductFeature]
         :keyword assigned_license: The resource id of the license.
         :paramtype assigned_license: str
+        :keyword software_assurance_customer: Specifies if this machine is licensed as part of a
+         Software Assurance agreement.
+        :paramtype software_assurance_customer: bool
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.provisioning_state = None
+        self.subscription_status = subscription_status
+        self.product_type = product_type
+        self.billing_start_date = None
+        self.enrollment_date = None
+        self.disenrollment_date = None
+        self.product_features = product_features
         self.assigned_license_immutable_id = None
         self.esu_keys = None
         self.server_type = None
         self.esu_eligibility = None
         self.esu_key_state = None
         self.assigned_license = assigned_license
+        self.software_assurance_customer = software_assurance_customer
 
 
 class LicenseProfileStorageModelEsuProperties(_serialization.Model):
@@ -1527,25 +1728,95 @@ class LicenseProfileArmEsuProperties(LicenseProfileArmEsuPropertiesWithoutAssign
 class LicenseProfileMachineInstanceView(_serialization.Model):
     """License Profile Instance View in Machine Properties.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar license_status: Indicates the license status of the OS. Known values are: "Unlicensed",
+     "Licensed", "OOBGrace", "OOTGrace", "NonGenuineGrace", "Notification", and "ExtendedGrace".
+    :vartype license_status: str or ~azure.mgmt.hybridcompute.models.LicenseStatus
+    :ivar license_channel: Indicates the license channel.
+    :vartype license_channel: str
     :ivar esu_profile: Properties for the Machine ESU profile.
     :vartype esu_profile:
      ~azure.mgmt.hybridcompute.models.LicenseProfileMachineInstanceViewEsuProperties
+    :ivar subscription_status: Indicates the subscription status of the product. Known values are:
+     "Unknown", "Enabling", "Enabled", and "Disabled".
+    :vartype subscription_status: str or
+     ~azure.mgmt.hybridcompute.models.LicenseProfileSubscriptionStatus
+    :ivar product_type: Indicates the product type of the license. Known values are:
+     "WindowsServer" and "WindowsIoTEnterprise".
+    :vartype product_type: str or ~azure.mgmt.hybridcompute.models.LicenseProfileProductType
+    :ivar billing_start_date: The timestamp in UTC when the billing starts.
+    :vartype billing_start_date: ~datetime.datetime
+    :ivar enrollment_date: The timestamp in UTC when the user enrolls the feature.
+    :vartype enrollment_date: ~datetime.datetime
+    :ivar disenrollment_date: The timestamp in UTC when the user disenrolled the feature.
+    :vartype disenrollment_date: ~datetime.datetime
+    :ivar product_features: The list of product features.
+    :vartype product_features: list[~azure.mgmt.hybridcompute.models.ProductFeature]
+    :ivar software_assurance_customer: Specifies if this machine is licensed as part of a Software
+     Assurance agreement.
+    :vartype software_assurance_customer: bool
     """
 
+    _validation = {
+        "license_status": {"readonly": True},
+        "license_channel": {"readonly": True},
+        "billing_start_date": {"readonly": True},
+        "enrollment_date": {"readonly": True},
+        "disenrollment_date": {"readonly": True},
+    }
+
     _attribute_map = {
+        "license_status": {"key": "licenseStatus", "type": "str"},
+        "license_channel": {"key": "licenseChannel", "type": "str"},
         "esu_profile": {"key": "esuProfile", "type": "LicenseProfileMachineInstanceViewEsuProperties"},
+        "subscription_status": {"key": "productProfile.subscriptionStatus", "type": "str"},
+        "product_type": {"key": "productProfile.productType", "type": "str"},
+        "billing_start_date": {"key": "productProfile.billingStartDate", "type": "iso-8601"},
+        "enrollment_date": {"key": "productProfile.enrollmentDate", "type": "iso-8601"},
+        "disenrollment_date": {"key": "productProfile.disenrollmentDate", "type": "iso-8601"},
+        "product_features": {"key": "productProfile.productFeatures", "type": "[ProductFeature]"},
+        "software_assurance_customer": {"key": "softwareAssurance.softwareAssuranceCustomer", "type": "bool"},
     }
 
     def __init__(
-        self, *, esu_profile: Optional["_models.LicenseProfileMachineInstanceViewEsuProperties"] = None, **kwargs: Any
+        self,
+        *,
+        esu_profile: Optional["_models.LicenseProfileMachineInstanceViewEsuProperties"] = None,
+        subscription_status: Optional[Union[str, "_models.LicenseProfileSubscriptionStatus"]] = None,
+        product_type: Optional[Union[str, "_models.LicenseProfileProductType"]] = None,
+        product_features: Optional[List["_models.ProductFeature"]] = None,
+        software_assurance_customer: Optional[bool] = None,
+        **kwargs: Any
     ) -> None:
         """
         :keyword esu_profile: Properties for the Machine ESU profile.
         :paramtype esu_profile:
          ~azure.mgmt.hybridcompute.models.LicenseProfileMachineInstanceViewEsuProperties
+        :keyword subscription_status: Indicates the subscription status of the product. Known values
+         are: "Unknown", "Enabling", "Enabled", and "Disabled".
+        :paramtype subscription_status: str or
+         ~azure.mgmt.hybridcompute.models.LicenseProfileSubscriptionStatus
+        :keyword product_type: Indicates the product type of the license. Known values are:
+         "WindowsServer" and "WindowsIoTEnterprise".
+        :paramtype product_type: str or ~azure.mgmt.hybridcompute.models.LicenseProfileProductType
+        :keyword product_features: The list of product features.
+        :paramtype product_features: list[~azure.mgmt.hybridcompute.models.ProductFeature]
+        :keyword software_assurance_customer: Specifies if this machine is licensed as part of a
+         Software Assurance agreement.
+        :paramtype software_assurance_customer: bool
         """
         super().__init__(**kwargs)
+        self.license_status = None
+        self.license_channel = None
         self.esu_profile = esu_profile
+        self.subscription_status = subscription_status
+        self.product_type = product_type
+        self.billing_start_date = None
+        self.enrollment_date = None
+        self.disenrollment_date = None
+        self.product_features = product_features
+        self.software_assurance_customer = software_assurance_customer
 
 
 class LicenseProfileMachineInstanceViewEsuProperties(LicenseProfileArmEsuPropertiesWithoutAssignedLicense):
@@ -1672,26 +1943,69 @@ class LicenseProfileUpdate(ResourceUpdate):
 
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
+    :ivar subscription_status: Indicates the subscription status of the product. Known values are:
+     "Enable" and "Disable".
+    :vartype subscription_status: str or
+     ~azure.mgmt.hybridcompute.models.LicenseProfileSubscriptionStatusUpdate
+    :ivar product_type: Indicates the product type of the license. Known values are:
+     "WindowsServer" and "WindowsIoTEnterprise".
+    :vartype product_type: str or ~azure.mgmt.hybridcompute.models.LicenseProfileProductType
+    :ivar product_features: The list of product feature updates.
+    :vartype product_features: list[~azure.mgmt.hybridcompute.models.ProductFeatureUpdate]
     :ivar assigned_license: The resource id of the license.
     :vartype assigned_license: str
+    :ivar software_assurance_customer: Specifies if this machine is licensed as part of a Software
+     Assurance agreement.
+    :vartype software_assurance_customer: bool
     """
 
     _attribute_map = {
         "tags": {"key": "tags", "type": "{str}"},
+        "subscription_status": {"key": "properties.productProfile.subscriptionStatus", "type": "str"},
+        "product_type": {"key": "properties.productProfile.productType", "type": "str"},
+        "product_features": {"key": "properties.productProfile.productFeatures", "type": "[ProductFeatureUpdate]"},
         "assigned_license": {"key": "properties.esuProfile.assignedLicense", "type": "str"},
+        "software_assurance_customer": {
+            "key": "properties.softwareAssurance.softwareAssuranceCustomer",
+            "type": "bool",
+        },
     }
 
     def __init__(
-        self, *, tags: Optional[Dict[str, str]] = None, assigned_license: Optional[str] = None, **kwargs: Any
+        self,
+        *,
+        tags: Optional[Dict[str, str]] = None,
+        subscription_status: Optional[Union[str, "_models.LicenseProfileSubscriptionStatusUpdate"]] = None,
+        product_type: Optional[Union[str, "_models.LicenseProfileProductType"]] = None,
+        product_features: Optional[List["_models.ProductFeatureUpdate"]] = None,
+        assigned_license: Optional[str] = None,
+        software_assurance_customer: Optional[bool] = None,
+        **kwargs: Any
     ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
+        :keyword subscription_status: Indicates the subscription status of the product. Known values
+         are: "Enable" and "Disable".
+        :paramtype subscription_status: str or
+         ~azure.mgmt.hybridcompute.models.LicenseProfileSubscriptionStatusUpdate
+        :keyword product_type: Indicates the product type of the license. Known values are:
+         "WindowsServer" and "WindowsIoTEnterprise".
+        :paramtype product_type: str or ~azure.mgmt.hybridcompute.models.LicenseProfileProductType
+        :keyword product_features: The list of product feature updates.
+        :paramtype product_features: list[~azure.mgmt.hybridcompute.models.ProductFeatureUpdate]
         :keyword assigned_license: The resource id of the license.
         :paramtype assigned_license: str
+        :keyword software_assurance_customer: Specifies if this machine is licensed as part of a
+         Software Assurance agreement.
+        :paramtype software_assurance_customer: bool
         """
         super().__init__(tags=tags, **kwargs)
+        self.subscription_status = subscription_status
+        self.product_type = product_type
+        self.product_features = product_features
         self.assigned_license = assigned_license
+        self.software_assurance_customer = software_assurance_customer
 
 
 class LicensesListResult(_serialization.Model):
@@ -1943,7 +2257,7 @@ class Machine(TrackedResource):  # pylint: disable=too-many-instance-attributes
     :vartype agent_upgrade: ~azure.mgmt.hybridcompute.models.AgentUpgrade
     :ivar os_profile: Specifies the operating system settings for the hybrid machine.
     :vartype os_profile: ~azure.mgmt.hybridcompute.models.OSProfile
-    :ivar license_profile: Specifies the ESU related properties for a machine.
+    :ivar license_profile: Specifies the License related properties for a machine.
     :vartype license_profile: ~azure.mgmt.hybridcompute.models.LicenseProfileMachineInstanceView
     :ivar provisioning_state: The provisioning state, which only appears in the response.
     :vartype provisioning_state: str
@@ -1977,6 +2291,8 @@ class Machine(TrackedResource):  # pylint: disable=too-many-instance-attributes
     :vartype extensions: list[~azure.mgmt.hybridcompute.models.MachineExtensionInstanceView]
     :ivar os_sku: Specifies the Operating System product SKU.
     :vartype os_sku: str
+    :ivar os_edition: The edition of the Operating System.
+    :vartype os_edition: str
     :ivar domain_name: Specifies the Windows domain name.
     :vartype domain_name: str
     :ivar ad_fqdn: Specifies the AD fully qualified display name.
@@ -2016,6 +2332,7 @@ class Machine(TrackedResource):  # pylint: disable=too-many-instance-attributes
         "os_version": {"readonly": True},
         "vm_uuid": {"readonly": True},
         "os_sku": {"readonly": True},
+        "os_edition": {"readonly": True},
         "domain_name": {"readonly": True},
         "ad_fqdn": {"readonly": True},
         "dns_fqdn": {"readonly": True},
@@ -2055,6 +2372,7 @@ class Machine(TrackedResource):  # pylint: disable=too-many-instance-attributes
         "vm_uuid": {"key": "properties.vmUuid", "type": "str"},
         "extensions": {"key": "properties.extensions", "type": "[MachineExtensionInstanceView]"},
         "os_sku": {"key": "properties.osSku", "type": "str"},
+        "os_edition": {"key": "properties.osEdition", "type": "str"},
         "domain_name": {"key": "properties.domainName", "type": "str"},
         "ad_fqdn": {"key": "properties.adFqdn", "type": "str"},
         "dns_fqdn": {"key": "properties.dnsFqdn", "type": "str"},
@@ -2107,7 +2425,7 @@ class Machine(TrackedResource):  # pylint: disable=too-many-instance-attributes
         :paramtype agent_upgrade: ~azure.mgmt.hybridcompute.models.AgentUpgrade
         :keyword os_profile: Specifies the operating system settings for the hybrid machine.
         :paramtype os_profile: ~azure.mgmt.hybridcompute.models.OSProfile
-        :keyword license_profile: Specifies the ESU related properties for a machine.
+        :keyword license_profile: Specifies the License related properties for a machine.
         :paramtype license_profile: ~azure.mgmt.hybridcompute.models.LicenseProfileMachineInstanceView
         :keyword vm_id: Specifies the hybrid machine unique ID.
         :paramtype vm_id: str
@@ -2153,6 +2471,7 @@ class Machine(TrackedResource):  # pylint: disable=too-many-instance-attributes
         self.vm_uuid = None
         self.extensions = extensions
         self.os_sku = None
+        self.os_edition = None
         self.domain_name = None
         self.ad_fqdn = None
         self.dns_fqdn = None
@@ -2868,6 +3187,382 @@ class MachineListResult(_serialization.Model):
         self.next_link = next_link
 
 
+class MachineRunCommand(TrackedResource):  # pylint: disable=too-many-instance-attributes
+    """Describes a Run Command.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.hybridcompute.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar source: The source of the run command script.
+    :vartype source: ~azure.mgmt.hybridcompute.models.MachineRunCommandScriptSource
+    :ivar parameters: The parameters used by the script.
+    :vartype parameters: list[~azure.mgmt.hybridcompute.models.RunCommandInputParameter]
+    :ivar protected_parameters: The parameters used by the script.
+    :vartype protected_parameters: list[~azure.mgmt.hybridcompute.models.RunCommandInputParameter]
+    :ivar async_execution: Optional. If set to true, provisioning will complete as soon as script
+     starts and will not wait for script to complete.
+    :vartype async_execution: bool
+    :ivar run_as_user: Specifies the user account on the machine when executing the run command.
+    :vartype run_as_user: str
+    :ivar run_as_password: Specifies the user account password on the machine when executing the
+     run command.
+    :vartype run_as_password: str
+    :ivar timeout_in_seconds: The timeout in seconds to execute the run command.
+    :vartype timeout_in_seconds: int
+    :ivar output_blob_uri: Specifies the Azure storage blob where script output stream will be
+     uploaded. Use a SAS URI with read, append, create, write access OR use managed identity to
+     provide the VM access to the blob. Refer outputBlobManagedIdentity parameter.
+    :vartype output_blob_uri: str
+    :ivar error_blob_uri: Specifies the Azure storage blob where script error stream will be
+     uploaded. Use a SAS URI with read, append, create, write access OR use managed identity to
+     provide the VM access to the blob. Refer errorBlobManagedIdentity parameter.
+    :vartype error_blob_uri: str
+    :ivar output_blob_managed_identity: User-assigned managed identity that has access to
+     outputBlobUri storage blob. Use an empty object in case of system-assigned identity. Make sure
+     managed identity has been given access to blob's container with 'Storage Blob Data Contributor'
+     role assignment. In case of user-assigned identity, make sure you add it under VM's identity.
+     For more info on managed identity and Run Command, refer https://aka.ms/ManagedIdentity and
+     https://aka.ms/RunCommandManaged.
+    :vartype output_blob_managed_identity:
+     ~azure.mgmt.hybridcompute.models.RunCommandManagedIdentity
+    :ivar error_blob_managed_identity: User-assigned managed identity that has access to
+     errorBlobUri storage blob. Use an empty object in case of system-assigned identity. Make sure
+     managed identity has been given access to blob's container with 'Storage Blob Data Contributor'
+     role assignment. In case of user-assigned identity, make sure you add it under VM's identity.
+     For more info on managed identity and Run Command, refer https://aka.ms/ManagedIdentity and
+     https://aka.ms/RunCommandManaged.
+    :vartype error_blob_managed_identity:
+     ~azure.mgmt.hybridcompute.models.RunCommandManagedIdentity
+    :ivar provisioning_state: The provisioning state, which only appears in the response.
+    :vartype provisioning_state: str
+    :ivar instance_view: The machine run command instance view.
+    :vartype instance_view: ~azure.mgmt.hybridcompute.models.MachineRunCommandInstanceView
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+        "provisioning_state": {"readonly": True},
+        "instance_view": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "source": {"key": "properties.source", "type": "MachineRunCommandScriptSource"},
+        "parameters": {"key": "properties.parameters", "type": "[RunCommandInputParameter]"},
+        "protected_parameters": {"key": "properties.protectedParameters", "type": "[RunCommandInputParameter]"},
+        "async_execution": {"key": "properties.asyncExecution", "type": "bool"},
+        "run_as_user": {"key": "properties.runAsUser", "type": "str"},
+        "run_as_password": {"key": "properties.runAsPassword", "type": "str"},
+        "timeout_in_seconds": {"key": "properties.timeoutInSeconds", "type": "int"},
+        "output_blob_uri": {"key": "properties.outputBlobUri", "type": "str"},
+        "error_blob_uri": {"key": "properties.errorBlobUri", "type": "str"},
+        "output_blob_managed_identity": {
+            "key": "properties.outputBlobManagedIdentity",
+            "type": "RunCommandManagedIdentity",
+        },
+        "error_blob_managed_identity": {
+            "key": "properties.errorBlobManagedIdentity",
+            "type": "RunCommandManagedIdentity",
+        },
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "instance_view": {"key": "properties.instanceView", "type": "MachineRunCommandInstanceView"},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[Dict[str, str]] = None,
+        source: Optional["_models.MachineRunCommandScriptSource"] = None,
+        parameters: Optional[List["_models.RunCommandInputParameter"]] = None,
+        protected_parameters: Optional[List["_models.RunCommandInputParameter"]] = None,
+        async_execution: bool = False,
+        run_as_user: Optional[str] = None,
+        run_as_password: Optional[str] = None,
+        timeout_in_seconds: Optional[int] = None,
+        output_blob_uri: Optional[str] = None,
+        error_blob_uri: Optional[str] = None,
+        output_blob_managed_identity: Optional["_models.RunCommandManagedIdentity"] = None,
+        error_blob_managed_identity: Optional["_models.RunCommandManagedIdentity"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        :keyword source: The source of the run command script.
+        :paramtype source: ~azure.mgmt.hybridcompute.models.MachineRunCommandScriptSource
+        :keyword parameters: The parameters used by the script.
+        :paramtype parameters: list[~azure.mgmt.hybridcompute.models.RunCommandInputParameter]
+        :keyword protected_parameters: The parameters used by the script.
+        :paramtype protected_parameters:
+         list[~azure.mgmt.hybridcompute.models.RunCommandInputParameter]
+        :keyword async_execution: Optional. If set to true, provisioning will complete as soon as
+         script starts and will not wait for script to complete.
+        :paramtype async_execution: bool
+        :keyword run_as_user: Specifies the user account on the machine when executing the run command.
+        :paramtype run_as_user: str
+        :keyword run_as_password: Specifies the user account password on the machine when executing the
+         run command.
+        :paramtype run_as_password: str
+        :keyword timeout_in_seconds: The timeout in seconds to execute the run command.
+        :paramtype timeout_in_seconds: int
+        :keyword output_blob_uri: Specifies the Azure storage blob where script output stream will be
+         uploaded. Use a SAS URI with read, append, create, write access OR use managed identity to
+         provide the VM access to the blob. Refer outputBlobManagedIdentity parameter.
+        :paramtype output_blob_uri: str
+        :keyword error_blob_uri: Specifies the Azure storage blob where script error stream will be
+         uploaded. Use a SAS URI with read, append, create, write access OR use managed identity to
+         provide the VM access to the blob. Refer errorBlobManagedIdentity parameter.
+        :paramtype error_blob_uri: str
+        :keyword output_blob_managed_identity: User-assigned managed identity that has access to
+         outputBlobUri storage blob. Use an empty object in case of system-assigned identity. Make sure
+         managed identity has been given access to blob's container with 'Storage Blob Data Contributor'
+         role assignment. In case of user-assigned identity, make sure you add it under VM's identity.
+         For more info on managed identity and Run Command, refer https://aka.ms/ManagedIdentity and
+         https://aka.ms/RunCommandManaged.
+        :paramtype output_blob_managed_identity:
+         ~azure.mgmt.hybridcompute.models.RunCommandManagedIdentity
+        :keyword error_blob_managed_identity: User-assigned managed identity that has access to
+         errorBlobUri storage blob. Use an empty object in case of system-assigned identity. Make sure
+         managed identity has been given access to blob's container with 'Storage Blob Data Contributor'
+         role assignment. In case of user-assigned identity, make sure you add it under VM's identity.
+         For more info on managed identity and Run Command, refer https://aka.ms/ManagedIdentity and
+         https://aka.ms/RunCommandManaged.
+        :paramtype error_blob_managed_identity:
+         ~azure.mgmt.hybridcompute.models.RunCommandManagedIdentity
+        """
+        super().__init__(tags=tags, location=location, **kwargs)
+        self.source = source
+        self.parameters = parameters
+        self.protected_parameters = protected_parameters
+        self.async_execution = async_execution
+        self.run_as_user = run_as_user
+        self.run_as_password = run_as_password
+        self.timeout_in_seconds = timeout_in_seconds
+        self.output_blob_uri = output_blob_uri
+        self.error_blob_uri = error_blob_uri
+        self.output_blob_managed_identity = output_blob_managed_identity
+        self.error_blob_managed_identity = error_blob_managed_identity
+        self.provisioning_state = None
+        self.instance_view = None
+
+
+class MachineRunCommandInstanceView(_serialization.Model):
+    """The instance view of a machine run command.
+
+    :ivar execution_state: Script execution status. Known values are: "Unknown", "Pending",
+     "Running", "Failed", "Succeeded", "TimedOut", and "Canceled".
+    :vartype execution_state: str or ~azure.mgmt.hybridcompute.models.ExecutionState
+    :ivar execution_message: Communicate script configuration errors or execution messages.
+    :vartype execution_message: str
+    :ivar exit_code: Exit code returned from script execution.
+    :vartype exit_code: int
+    :ivar output: Script output stream.
+    :vartype output: str
+    :ivar error: Script error stream.
+    :vartype error: str
+    :ivar start_time: Script start time.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: Script end time.
+    :vartype end_time: ~datetime.datetime
+    :ivar statuses: The  status information.
+    :vartype statuses: list[~azure.mgmt.hybridcompute.models.ExtensionsResourceStatus]
+    """
+
+    _attribute_map = {
+        "execution_state": {"key": "executionState", "type": "str"},
+        "execution_message": {"key": "executionMessage", "type": "str"},
+        "exit_code": {"key": "exitCode", "type": "int"},
+        "output": {"key": "output", "type": "str"},
+        "error": {"key": "error", "type": "str"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "statuses": {"key": "statuses", "type": "[ExtensionsResourceStatus]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        execution_state: Optional[Union[str, "_models.ExecutionState"]] = None,
+        execution_message: Optional[str] = None,
+        exit_code: Optional[int] = None,
+        output: Optional[str] = None,
+        error: Optional[str] = None,
+        start_time: Optional[datetime.datetime] = None,
+        end_time: Optional[datetime.datetime] = None,
+        statuses: Optional[List["_models.ExtensionsResourceStatus"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword execution_state: Script execution status. Known values are: "Unknown", "Pending",
+         "Running", "Failed", "Succeeded", "TimedOut", and "Canceled".
+        :paramtype execution_state: str or ~azure.mgmt.hybridcompute.models.ExecutionState
+        :keyword execution_message: Communicate script configuration errors or execution messages.
+        :paramtype execution_message: str
+        :keyword exit_code: Exit code returned from script execution.
+        :paramtype exit_code: int
+        :keyword output: Script output stream.
+        :paramtype output: str
+        :keyword error: Script error stream.
+        :paramtype error: str
+        :keyword start_time: Script start time.
+        :paramtype start_time: ~datetime.datetime
+        :keyword end_time: Script end time.
+        :paramtype end_time: ~datetime.datetime
+        :keyword statuses: The  status information.
+        :paramtype statuses: list[~azure.mgmt.hybridcompute.models.ExtensionsResourceStatus]
+        """
+        super().__init__(**kwargs)
+        self.execution_state = execution_state
+        self.execution_message = execution_message
+        self.exit_code = exit_code
+        self.output = output
+        self.error = error
+        self.start_time = start_time
+        self.end_time = end_time
+        self.statuses = statuses
+
+
+class MachineRunCommandScriptSource(_serialization.Model):
+    """Describes the script sources for run command. Use only one of script, scriptUri, commandId.
+
+    :ivar script: Specifies the script content to be executed on the machine.
+    :vartype script: str
+    :ivar script_uri: Specifies the script download location. It can be either SAS URI of an Azure
+     storage blob with read access or public URI.
+    :vartype script_uri: str
+    :ivar command_id: Specifies the commandId of predefined built-in script.
+    :vartype command_id: str
+    :ivar script_uri_managed_identity: User-assigned managed identity that has access to scriptUri
+     in case of Azure storage blob. Use an empty object in case of system-assigned identity. Make
+     sure the Azure storage blob exists, and managed identity has been given access to blob's
+     container with 'Storage Blob Data Reader' role assignment. In case of user-assigned identity,
+     make sure you add it under VM's identity. For more info on managed identity and Run Command,
+     refer https://aka.ms/ManagedIdentity and https://aka.ms/RunCommandManaged.
+    :vartype script_uri_managed_identity:
+     ~azure.mgmt.hybridcompute.models.RunCommandManagedIdentity
+    """
+
+    _attribute_map = {
+        "script": {"key": "script", "type": "str"},
+        "script_uri": {"key": "scriptUri", "type": "str"},
+        "command_id": {"key": "commandId", "type": "str"},
+        "script_uri_managed_identity": {"key": "scriptUriManagedIdentity", "type": "RunCommandManagedIdentity"},
+    }
+
+    def __init__(
+        self,
+        *,
+        script: Optional[str] = None,
+        script_uri: Optional[str] = None,
+        command_id: Optional[str] = None,
+        script_uri_managed_identity: Optional["_models.RunCommandManagedIdentity"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword script: Specifies the script content to be executed on the machine.
+        :paramtype script: str
+        :keyword script_uri: Specifies the script download location. It can be either SAS URI of an
+         Azure storage blob with read access or public URI.
+        :paramtype script_uri: str
+        :keyword command_id: Specifies the commandId of predefined built-in script.
+        :paramtype command_id: str
+        :keyword script_uri_managed_identity: User-assigned managed identity that has access to
+         scriptUri in case of Azure storage blob. Use an empty object in case of system-assigned
+         identity. Make sure the Azure storage blob exists, and managed identity has been given access
+         to blob's container with 'Storage Blob Data Reader' role assignment. In case of user-assigned
+         identity, make sure you add it under VM's identity. For more info on managed identity and Run
+         Command, refer https://aka.ms/ManagedIdentity and https://aka.ms/RunCommandManaged.
+        :paramtype script_uri_managed_identity:
+         ~azure.mgmt.hybridcompute.models.RunCommandManagedIdentity
+        """
+        super().__init__(**kwargs)
+        self.script = script
+        self.script_uri = script_uri
+        self.command_id = command_id
+        self.script_uri_managed_identity = script_uri_managed_identity
+
+
+class MachineRunCommandsListResult(_serialization.Model):
+    """Describes the Run Commands List Result.
+
+    :ivar value: The list of run commands.
+    :vartype value: list[~azure.mgmt.hybridcompute.models.MachineRunCommand]
+    :ivar next_link: The uri to fetch the next page of run commands. Call ListNext() with this to
+     fetch the next page of run commands.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[MachineRunCommand]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["_models.MachineRunCommand"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: The list of run commands.
+        :paramtype value: list[~azure.mgmt.hybridcompute.models.MachineRunCommand]
+        :keyword next_link: The uri to fetch the next page of run commands. Call ListNext() with this
+         to fetch the next page of run commands.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class MachineRunCommandUpdate(ResourceUpdate):
+    """Describes a Machine Extension Update.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    _attribute_map = {
+        "tags": {"key": "tags", "type": "{str}"},
+    }
+
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(tags=tags, **kwargs)
+
+
 class MachineUpdate(ResourceUpdate):
     """Describes a hybrid machine Update.
 
@@ -2954,6 +3649,84 @@ class MachineUpdate(ResourceUpdate):
         self.private_link_scope_resource_id = private_link_scope_resource_id
 
 
+class NetworkConfiguration(ProxyResource):
+    """NetworkConfiguration.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.hybridcompute.models.SystemData
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar tenant_id: Azure resource tenant Id.
+    :vartype tenant_id: str
+    :ivar network_configuration_scope_id: Associated Network Configuration Scope Id (GUID).
+    :vartype network_configuration_scope_id: str
+    :ivar network_configuration_scope_resource_id: Associated Network Configuration Scope Resource
+     Id.
+    :vartype network_configuration_scope_resource_id: str
+    :ivar key_properties: Public key information for client authentication.
+    :vartype key_properties: ~azure.mgmt.hybridcompute.models.KeyProperties
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "tenant_id": {"readonly": True},
+        "key_properties": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "location": {"key": "properties.location", "type": "str"},
+        "tenant_id": {"key": "properties.tenantId", "type": "str"},
+        "network_configuration_scope_id": {"key": "properties.networkConfigurationScopeId", "type": "str"},
+        "network_configuration_scope_resource_id": {
+            "key": "properties.networkConfigurationScopeResourceId",
+            "type": "str",
+        },
+        "key_properties": {"key": "properties.keyProperties", "type": "KeyProperties"},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: Optional[str] = None,
+        network_configuration_scope_id: Optional[str] = None,
+        network_configuration_scope_resource_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword location: Resource location.
+        :paramtype location: str
+        :keyword network_configuration_scope_id: Associated Network Configuration Scope Id (GUID).
+        :paramtype network_configuration_scope_id: str
+        :keyword network_configuration_scope_resource_id: Associated Network Configuration Scope
+         Resource Id.
+        :paramtype network_configuration_scope_resource_id: str
+        """
+        super().__init__(**kwargs)
+        self.location = location
+        self.tenant_id = None
+        self.network_configuration_scope_id = network_configuration_scope_id
+        self.network_configuration_scope_resource_id = network_configuration_scope_resource_id
+        self.key_properties = None
+
+
 class NetworkInterface(_serialization.Model):
     """Describes a network interface.
 
@@ -2992,6 +3765,187 @@ class NetworkProfile(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.network_interfaces = network_interfaces
+
+
+class NetworkSecurityPerimeter(_serialization.Model):
+    """Properties that define a Network Security Perimeter resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Azure resource Id.
+    :vartype id: str
+    :ivar perimeter_guid: Guid of the Network Security Perimeter.
+    :vartype perimeter_guid: str
+    :ivar location: Regional location of the perimeter.
+    :vartype location: str
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "perimeter_guid": {"readonly": True},
+        "location": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "perimeter_guid": {"key": "perimeterGuid", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.id = None
+        self.perimeter_guid = None
+        self.location = None
+
+
+class NetworkSecurityPerimeterConfiguration(_serialization.Model):
+    """Properties that define a Network Security Perimeter resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Azure resource Id.
+    :vartype id: str
+    :ivar name: Azure resource name.
+    :vartype name: str
+    :ivar type: Azure resource type.
+    :vartype type: str
+    :ivar provisioning_state: Current state of this NetworkSecurityPerimeter: whether or not is has
+     been provisioned within the resource group it is defined. Users cannot change this value but
+     are able to read from it. Values will include Provisioning ,Succeeded, Canceled and Failed.
+    :vartype provisioning_state: str
+    :ivar provisioning_issues: Provisioning issues.
+    :vartype provisioning_issues: list[~azure.mgmt.hybridcompute.models.ProvisioningIssue]
+    :ivar network_security_perimeter: The Network Security Perimeter associated with this
+     configuration.
+    :vartype network_security_perimeter: ~azure.mgmt.hybridcompute.models.NetworkSecurityPerimeter
+    :ivar resource_association: The Resource Association.
+    :vartype resource_association: ~azure.mgmt.hybridcompute.models.ResourceAssociation
+    :ivar profile: Network Security Perimeter profile.
+    :vartype profile: ~azure.mgmt.hybridcompute.models.NetworkSecurityPerimeterProfile
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "provisioning_issues": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "provisioning_issues": {"key": "properties.provisioningIssues", "type": "[ProvisioningIssue]"},
+        "network_security_perimeter": {
+            "key": "properties.networkSecurityPerimeter",
+            "type": "NetworkSecurityPerimeter",
+        },
+        "resource_association": {"key": "properties.resourceAssociation", "type": "ResourceAssociation"},
+        "profile": {"key": "properties.profile", "type": "NetworkSecurityPerimeterProfile"},
+    }
+
+    def __init__(
+        self,
+        *,
+        network_security_perimeter: Optional["_models.NetworkSecurityPerimeter"] = None,
+        resource_association: Optional["_models.ResourceAssociation"] = None,
+        profile: Optional["_models.NetworkSecurityPerimeterProfile"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword network_security_perimeter: The Network Security Perimeter associated with this
+         configuration.
+        :paramtype network_security_perimeter:
+         ~azure.mgmt.hybridcompute.models.NetworkSecurityPerimeter
+        :keyword resource_association: The Resource Association.
+        :paramtype resource_association: ~azure.mgmt.hybridcompute.models.ResourceAssociation
+        :keyword profile: Network Security Perimeter profile.
+        :paramtype profile: ~azure.mgmt.hybridcompute.models.NetworkSecurityPerimeterProfile
+        """
+        super().__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.provisioning_state = None
+        self.provisioning_issues = None
+        self.network_security_perimeter = network_security_perimeter
+        self.resource_association = resource_association
+        self.profile = profile
+
+
+class NetworkSecurityPerimeterConfigurationListResult(_serialization.Model):
+    """A list of network security perimeter configurations.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: Array of results.
+    :vartype value: list[~azure.mgmt.hybridcompute.models.NetworkSecurityPerimeterConfiguration]
+    :ivar next_link: Link to retrieve next page of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[NetworkSecurityPerimeterConfiguration]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.value = None
+        self.next_link = None
+
+
+class NetworkSecurityPerimeterProfile(_serialization.Model):
+    """Network Security Perimeter profile.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: Name of the resource.
+    :vartype name: str
+    :ivar access_rules_version: Access rules version number.
+    :vartype access_rules_version: str
+    :ivar access_rules: Collection of access rules for the profile.
+    :vartype access_rules: list[~azure.mgmt.hybridcompute.models.AccessRule]
+    :ivar diagnostic_settings_version: Diagnostic settings version number.
+    :vartype diagnostic_settings_version: str
+    :ivar enabled_log_categories: Collection of enabled log categories for the profile.
+    :vartype enabled_log_categories: list[str]
+    """
+
+    _validation = {
+        "name": {"readonly": True},
+        "access_rules_version": {"readonly": True},
+        "access_rules": {"readonly": True},
+        "diagnostic_settings_version": {"readonly": True},
+        "enabled_log_categories": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "access_rules_version": {"key": "accessRulesVersion", "type": "str"},
+        "access_rules": {"key": "accessRules", "type": "[AccessRule]"},
+        "diagnostic_settings_version": {"key": "diagnosticSettingsVersion", "type": "str"},
+        "enabled_log_categories": {"key": "enabledLogCategories", "type": "[str]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.name = None
+        self.access_rules_version = None
+        self.access_rules = None
+        self.diagnostic_settings_version = None
+        self.enabled_log_categories = None
 
 
 class OperationListResult(_serialization.Model):
@@ -3589,6 +4543,247 @@ class PrivateLinkServiceConnectionStateProperty(_serialization.Model):
         self.status = status
         self.description = description
         self.actions_required = None
+
+
+class ProductFeature(_serialization.Model):
+    """Product Feature.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: Product feature name.
+    :vartype name: str
+    :ivar subscription_status: Indicates the current status of the product features. Known values
+     are: "Unknown", "Enabling", "Enabled", and "Disabled".
+    :vartype subscription_status: str or
+     ~azure.mgmt.hybridcompute.models.LicenseProfileSubscriptionStatus
+    :ivar billing_start_date: The timestamp in UTC when the billing starts.
+    :vartype billing_start_date: ~datetime.datetime
+    :ivar enrollment_date: The timestamp in UTC when the user enrolls the feature.
+    :vartype enrollment_date: ~datetime.datetime
+    :ivar disenrollment_date: The timestamp in UTC when the user disenrolled the feature.
+    :vartype disenrollment_date: ~datetime.datetime
+    """
+
+    _validation = {
+        "billing_start_date": {"readonly": True},
+        "enrollment_date": {"readonly": True},
+        "disenrollment_date": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "subscription_status": {"key": "subscriptionStatus", "type": "str"},
+        "billing_start_date": {"key": "billingStartDate", "type": "iso-8601"},
+        "enrollment_date": {"key": "enrollmentDate", "type": "iso-8601"},
+        "disenrollment_date": {"key": "disenrollmentDate", "type": "iso-8601"},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        subscription_status: Optional[Union[str, "_models.LicenseProfileSubscriptionStatus"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: Product feature name.
+        :paramtype name: str
+        :keyword subscription_status: Indicates the current status of the product features. Known
+         values are: "Unknown", "Enabling", "Enabled", and "Disabled".
+        :paramtype subscription_status: str or
+         ~azure.mgmt.hybridcompute.models.LicenseProfileSubscriptionStatus
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.subscription_status = subscription_status
+        self.billing_start_date = None
+        self.enrollment_date = None
+        self.disenrollment_date = None
+
+
+class ProductFeatureUpdate(_serialization.Model):
+    """Product Feature.
+
+    :ivar name: Product feature name.
+    :vartype name: str
+    :ivar subscription_status: Indicates the new status of the product feature. Known values are:
+     "Enable" and "Disable".
+    :vartype subscription_status: str or
+     ~azure.mgmt.hybridcompute.models.LicenseProfileSubscriptionStatusUpdate
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "subscription_status": {"key": "subscriptionStatus", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        subscription_status: Optional[Union[str, "_models.LicenseProfileSubscriptionStatusUpdate"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: Product feature name.
+        :paramtype name: str
+        :keyword subscription_status: Indicates the new status of the product feature. Known values
+         are: "Enable" and "Disable".
+        :paramtype subscription_status: str or
+         ~azure.mgmt.hybridcompute.models.LicenseProfileSubscriptionStatusUpdate
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.subscription_status = subscription_status
+
+
+class ProvisioningIssue(_serialization.Model):
+    """Details on issues that occurred during provisioning.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: Name of the provisioning issue.
+    :vartype name: str
+    :ivar issue_type: Issue type. Known values are: "MissingPerimeterConfiguration",
+     "MissingIdentityConfiguration", "ConfigurationPropagationFailure", and "Other".
+    :vartype issue_type: str or ~azure.mgmt.hybridcompute.models.ProvisioningIssueType
+    :ivar severity: Severity of the provisioning issue. Known values are: "Warning" and "Error".
+    :vartype severity: str or ~azure.mgmt.hybridcompute.models.ProvisioningIssueSeverity
+    :ivar description: Description of the provisioning issue.
+    :vartype description: str
+    :ivar suggested_resource_ids: ARM Ids of the resources that can be associated to the same
+     perimeter to remediate the issue.
+    :vartype suggested_resource_ids: list[str]
+    :ivar suggested_access_rules: Access rules that can be added to the perimeter to remediate the
+     issue.
+    :vartype suggested_access_rules: list[~azure.mgmt.hybridcompute.models.AccessRule]
+    """
+
+    _validation = {
+        "name": {"readonly": True},
+        "issue_type": {"readonly": True},
+        "severity": {"readonly": True},
+        "description": {"readonly": True},
+        "suggested_resource_ids": {"readonly": True},
+        "suggested_access_rules": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "issue_type": {"key": "properties.issueType", "type": "str"},
+        "severity": {"key": "properties.severity", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "suggested_resource_ids": {"key": "properties.suggestedResourceIds", "type": "[str]"},
+        "suggested_access_rules": {"key": "properties.suggestedAccessRules", "type": "[AccessRule]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.name = None
+        self.issue_type = None
+        self.severity = None
+        self.description = None
+        self.suggested_resource_ids = None
+        self.suggested_access_rules = None
+
+
+class ResourceAssociation(_serialization.Model):
+    """Properties that define a Resource Association.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: Name of the Resource Association.
+    :vartype name: str
+    :ivar access_mode: The access mode. Known values are: "enforced", "audit", and "learning".
+    :vartype access_mode: str or ~azure.mgmt.hybridcompute.models.AccessMode
+    """
+
+    _validation = {
+        "name": {"readonly": True},
+        "access_mode": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "access_mode": {"key": "accessMode", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.name = None
+        self.access_mode = None
+
+
+class RunCommandInputParameter(_serialization.Model):
+    """Describes the properties of a run command parameter.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar name: The run command parameter name. Required.
+    :vartype name: str
+    :ivar value: The run command parameter value. Required.
+    :vartype value: str
+    """
+
+    _validation = {
+        "name": {"required": True},
+        "value": {"required": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "str"},
+    }
+
+    def __init__(self, *, name: str, value: str, **kwargs: Any) -> None:
+        """
+        :keyword name: The run command parameter name. Required.
+        :paramtype name: str
+        :keyword value: The run command parameter value. Required.
+        :paramtype value: str
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.value = value
+
+
+class RunCommandManagedIdentity(_serialization.Model):
+    """Contains clientId or objectId (use only one, not both) of a user-assigned managed identity that
+    has access to storage blob used in Run Command. Use an empty RunCommandManagedIdentity object
+    in case of system-assigned identity. Make sure the Azure storage blob exists in case of
+    scriptUri, and managed identity has been given access to blob's container with 'Storage Blob
+    Data Reader' role assignment with scriptUri blob and 'Storage Blob Data Contributor' for Append
+    blobs(outputBlobUri, errorBlobUri). In case of user assigned identity, make sure you add it
+    under VM's identity. For more info on managed identity and Run Command, refer
+    https://aka.ms/ManagedIdentity and https://aka.ms/RunCommandManaged.
+
+    :ivar client_id: Client Id (GUID value) of the user-assigned managed identity. ObjectId should
+     not be used if this is provided.
+    :vartype client_id: str
+    :ivar object_id: Object Id (GUID value) of the user-assigned managed identity. ClientId should
+     not be used if this is provided.
+    :vartype object_id: str
+    """
+
+    _attribute_map = {
+        "client_id": {"key": "clientId", "type": "str"},
+        "object_id": {"key": "objectId", "type": "str"},
+    }
+
+    def __init__(self, *, client_id: Optional[str] = None, object_id: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword client_id: Client Id (GUID value) of the user-assigned managed identity. ObjectId
+         should not be used if this is provided.
+        :paramtype client_id: str
+        :keyword object_id: Object Id (GUID value) of the user-assigned managed identity. ClientId
+         should not be used if this is provided.
+        :paramtype object_id: str
+        """
+        super().__init__(**kwargs)
+        self.client_id = client_id
+        self.object_id = object_id
 
 
 class ServiceStatus(_serialization.Model):

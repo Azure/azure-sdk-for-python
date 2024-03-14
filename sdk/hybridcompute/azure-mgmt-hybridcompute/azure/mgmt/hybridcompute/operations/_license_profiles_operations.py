@@ -50,7 +50,7 @@ def build_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-20-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-03-preview"))
     license_profile_name: Literal["default"] = kwargs.pop("license_profile_name", "default")
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
@@ -88,7 +88,7 @@ def build_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-20-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-03-preview"))
     license_profile_name: Literal["default"] = kwargs.pop("license_profile_name", "default")
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
@@ -124,7 +124,7 @@ def build_get_request(resource_group_name: str, machine_name: str, subscription_
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-20-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-03-preview"))
     license_profile_name: Literal["default"] = kwargs.pop("license_profile_name", "default")
     accept = _headers.pop("Accept", "application/json")
 
@@ -159,7 +159,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-20-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-03-preview"))
     license_profile_name: Literal["default"] = kwargs.pop("license_profile_name", "default")
     accept = _headers.pop("Accept", "application/json")
 
@@ -192,7 +192,7 @@ def build_list_request(resource_group_name: str, machine_name: str, subscription
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-20-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-03-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -205,7 +205,7 @@ def build_list_request(resource_group_name: str, machine_name: str, subscription
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
         "machineName": _SERIALIZER.url(
-            "machine_name", machine_name, "str", max_length=54, min_length=1, pattern=r"[a-zA-Z0-9-_\.]"
+            "machine_name", machine_name, "str", max_length=54, min_length=1, pattern=r"^[a-zA-Z0-9-_\.]{1,54}$"
         ),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
     }
@@ -334,7 +334,8 @@ class LicenseProfilesOperations:
         :type resource_group_name: str
         :param machine_name: The name of the hybrid machine. Required.
         :type machine_name: str
-        :param parameters: Parameters supplied to the Create license profile operation. Required.
+        :param parameters: Parameters supplied to the Create or Update license profile operation.
+         Required.
         :type parameters: ~azure.mgmt.hybridcompute.models.LicenseProfile
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -373,7 +374,8 @@ class LicenseProfilesOperations:
         :type resource_group_name: str
         :param machine_name: The name of the hybrid machine. Required.
         :type machine_name: str
-        :param parameters: Parameters supplied to the Create license profile operation. Required.
+        :param parameters: Parameters supplied to the Create or Update license profile operation.
+         Required.
         :type parameters: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -406,8 +408,8 @@ class LicenseProfilesOperations:
         :type resource_group_name: str
         :param machine_name: The name of the hybrid machine. Required.
         :type machine_name: str
-        :param parameters: Parameters supplied to the Create license profile operation. Is either a
-         LicenseProfile type or a IO type. Required.
+        :param parameters: Parameters supplied to the Create or Update license profile operation. Is
+         either a LicenseProfile type or a IO type. Required.
         :type parameters: ~azure.mgmt.hybridcompute.models.LicenseProfile or IO
         :keyword license_profile_name: The name of the license profile. Default value is "default".
          Note that overriding this default value may result in unsupported behavior.
