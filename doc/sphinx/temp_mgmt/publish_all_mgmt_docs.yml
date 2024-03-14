@@ -6,7 +6,7 @@
         ServiceDirectory: advisor
         Version: '10.0.0b1'
 
- job:
+ steps:
   - task: UsePythonVersion@0
     displayName: 'Use Python 3.11'
     inputs:
