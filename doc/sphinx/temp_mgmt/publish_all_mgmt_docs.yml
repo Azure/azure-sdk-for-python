@@ -15,7 +15,7 @@
   - task: PythonScript@0
     displayName: 'checkout eng/tools/doc/scripts from main'
     inputs:
-      scriptPath: 'checkout_eng.py'
+      scriptPath: 'doc/sphinx/temp_mgmt/checkout_eng.py'
 
   - script: |
       python -m pip install setuptools==58.3.0
@@ -26,7 +26,7 @@
     - task: PythonScript@0
       displayName: 'checkout library tag'
       inputs:
-        scriptPath: 'checkout_tag.py'
+        scriptPath: 'doc/sphinx/temp_mgmt/checkout_tag.py'
         arguments: >-
           --package=${{ pkg.key }}
           --service=${{ pkg.value.ServiceDirectory }}
