@@ -53,7 +53,7 @@ def run_black(glob_string, service_dir):
             stdout, stderr = out.communicate()
 
             if stderr:
-                results.append((package_name, stderr))
+                results.append((package_name, stdout + stderr))
 
             if out.returncode > 0:
                 print(
