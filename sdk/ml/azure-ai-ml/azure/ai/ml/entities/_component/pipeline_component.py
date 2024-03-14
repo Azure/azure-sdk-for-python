@@ -6,18 +6,19 @@
 
 import json
 import logging
+import os
 import re
 import typing
 from collections import Counter
 from typing import Any, Dict, List, Optional, Tuple, Union
-import os
+
 from marshmallow import Schema
 
 from azure.ai.ml._restclient.v2022_10_01.models import ComponentVersion, ComponentVersionProperties
 from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml._schema.pipeline.pipeline_component import PipelineComponentSchema
-from azure.ai.ml._utils.utils import hash_dict, is_data_binding_expression
 from azure.ai.ml._utils._asset_utils import get_object_hash
+from azure.ai.ml._utils.utils import hash_dict, is_data_binding_expression
 from azure.ai.ml.constants._common import ARM_ID_PREFIX, ASSET_ARM_ID_REGEX_FORMAT, COMPONENT_TYPE
 from azure.ai.ml.constants._component import ComponentSource, NodeType
 from azure.ai.ml.constants._job.pipeline import ValidationErrorCode
