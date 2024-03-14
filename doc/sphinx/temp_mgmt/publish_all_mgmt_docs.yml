@@ -647,5 +647,6 @@
         arguments: >-
           "${{ pkg }}" 
           --service="${{ pkg.value.ServiceDirectory }}"
+          --dest-dir="$(Build.ArtifactStagingDirectory)"
           --toxenv=sphinx
     
