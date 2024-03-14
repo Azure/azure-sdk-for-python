@@ -37,6 +37,8 @@ class InteractiveBrowserBrokerCredential(_InteractiveBrowserCredential):
     :keyword int timeout: seconds to wait for the user to complete authentication. Defaults to 300 (5 minutes).
     :keyword int parent_window_handle: If your app is a GUI app running on a modern Windows system, you are required to
         also provide its window handle so that the sign in UI window will properly pop up on top of your window.
+    :keyword bool use_operating_system_account: Whether to authenticate with the currently signed in user instead of
+        prompting the user with a login dialog. Defaults to False.
     :keyword bool enable_msa_passthrough: Determines whether Microsoft Account (MSA) passthrough is enabled. Note, this
         is only needed for select legacy first-party applications. Defaults to False.
     :keyword bool disable_instance_discovery: Determines whether or not instance discovery is performed when attempting
@@ -52,6 +54,7 @@ class InteractiveBrowserBrokerCredential(_InteractiveBrowserCredential):
     def __init__(self, **kwargs: Any) -> None:
         self._parent_window_handle = kwargs.pop("parent_window_handle", None)
         self._enable_msa_passthrough = kwargs.pop("enable_msa_passthrough", False)
+        self._use_operating_system_account = kwargs.pop("use_operating_system_account", False)
         super().__init__(**kwargs)
 
     @wrap_exceptions
@@ -61,6 +64,22 @@ class InteractiveBrowserBrokerCredential(_InteractiveBrowserCredential):
         app = self._get_app(**kwargs)
         port = self._parsed_url.port if self._parsed_url else None
 
+        if self._use_operating_system_account:
+            try:
+                result = app.acquire_token_interactive(
+                    scopes=scopes,
+                    login_hint=self._login_hint,
+                    claims_challenge=claims,
+                    timeout=self._timeout,
+                    prompt=msal.Prompt.NONE,
+                    port=port,
+                    parent_window_handle=self._parent_window_handle,
+                    enable_msa_passthrough=self._enable_msa_passthrough,
+                )
+                if "access_token" in result:
+                    return result
+            except socket.error:
+                pass
         try:
             result = app.acquire_token_interactive(
                 scopes=scopes,
