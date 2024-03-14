@@ -845,27 +845,33 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
 
         """
         self._check_live()
-        if max_message_count:
-            if int(max_message_count) < 0 or int(max_message_count) > 4000:
-                raise ValueError("max_message_count must be between 1 and 4000, inclusive.")
-
         await self._open()
+
+        message_count = max_message_count if max_message_count else 4000
+
         message = {
             MGMT_REQUEST_ENQUEUED_TIME_UTC: before_enqueued_time_utc if before_enqueued_time_utc
-                else datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=1),
-            MGMT_REQUEST_MAX_MESSAGE_COUNT: max_message_count if max_message_count else 1,
+                else datetime.datetime.now(datetime.timezone.utc),
+            MGMT_REQUEST_MAX_MESSAGE_COUNT: message_count,
         }
 
         self._populate_message_properties(message)
         handler = functools.partial(mgmt_handlers.batch_delete_op, receiver=self, amqp_transport=self._amqp_transport)
-        start_time = time.time_ns()
-        messages = await self._mgmt_request_response_with_retry(
+        deleted = await self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_DELETE_BATCH_OPERATION, message, handler
         )
-        links = get_receive_links(messages)
-        with receive_trace_context_manager(self, span_name=SPAN_NAME_PEEK, links=links, start_time=start_time):
-            return messages
 
+        if deleted == message_count and (message_count > 4000 or max_message_count is None):
+            batch_count = message_count
+            while batch_count == message_count:
+                batch_count = await self._mgmt_request_response_with_retry(
+                    REQUEST_RESPONSE_DELETE_BATCH_OPERATION, message, handler
+                )
+                deleted += batch_count
+
+        links = get_receive_links(deleted)
+        with receive_trace_context_manager(self, span_name=SPAN_NAME_PEEK, links=links):
+            return deleted
 
     async def complete_message(self, message: ServiceBusReceivedMessage) -> None:
         """Complete the message.
