@@ -35,7 +35,7 @@
     - task: PythonScript@0
       displayName: 'Generate Docs'
       inputs:
-        scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
+        scriptPath: 'doc/sphinx/temp_mgmt/scripts/devops_tasks/dispatch_tox.py'
         arguments: >-
           ${{ pkg.key }}
           --service=${{ pkg.value.ServiceDirectory }}
