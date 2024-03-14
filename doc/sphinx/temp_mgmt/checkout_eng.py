@@ -63,7 +63,10 @@ def move_dirs(path):
     shutil.move(os.path.join(path, "tmp", "doc"), os.path.join(path, "doc"))
     shutil.move(os.path.join(path, "tmp", "scripts"), os.path.join(path, "scripts"))
 
-get_eng_from_main(
-    assembly_area=os.getcwd(),
-)
-move_dirs(os.getcwd())
+
+if __name__ == "__main__":
+
+    get_eng_from_main(
+        assembly_area=os.getcwd(),
+    )
+    move_dirs(os.getcwd())
