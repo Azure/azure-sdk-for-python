@@ -13,6 +13,9 @@
 
 ### Breaking Changes
 
+- Rename Statbeat environments variables to use `APPLICATIONINSIGHTS_*`
+    ([#34742](https://github.com/Azure/azure-sdk-for-python/pull/34742))
+
 ### Bugs Fixed
 
 ### Other Changes
