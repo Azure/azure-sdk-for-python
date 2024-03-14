@@ -1,6 +1,6 @@
 # Release History
 
-## 1.5.1 (2024-03-07)
+## 1.6.0b1 (2024-03-14)
 
 ### Features Added
 - Exposed `send_request()` method in each client to send custom requests using the client's existing pipeline.
