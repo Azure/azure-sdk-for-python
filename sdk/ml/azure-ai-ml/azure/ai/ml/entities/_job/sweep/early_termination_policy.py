@@ -77,8 +77,8 @@ class BanditPolicy(EarlyTerminationPolicy):
         *,
         delay_evaluation: int = 0,
         evaluation_interval: int = 0,
-        slack_amount: Optional[float] = 0,
-        slack_factor: Optional[float] = 0,
+        slack_amount: float = 0,
+        slack_factor: float = 0,
     ) -> None:
         super().__init__(delay_evaluation=delay_evaluation, evaluation_interval=evaluation_interval)
         self.type = EarlyTerminationPolicyType.BANDIT.lower()

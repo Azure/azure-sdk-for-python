@@ -25,8 +25,9 @@ stages:
             environment: github
 
             pool:
+              image: azsdk-pool-mms-ubuntu-2004-1espt
               name: azsdk-pool-mms-ubuntu-2004-general
-              vmImage: MMSUbuntu20.04
+              os: linux
 
             strategy:
               runOnce:
@@ -85,8 +86,9 @@ stages:
               dependsOn: TagRepository
 
               pool:
+                image: azsdk-pool-mms-ubuntu-2004-1espt
                 name: azsdk-pool-mms-ubuntu-2004-general
-                vmImage: MMSUbuntu20.04
+                os: linux
 
               strategy:
                 runOnce:
@@ -159,7 +161,8 @@ stages:
 
               pool:
                 name: azsdk-pool-mms-win-2022-general
-                vmImage: MMS2022
+                image: azsdk-pool-mms-win-2022-1espt
+                os: windows
 
               strategy:
                 runOnce:
@@ -190,8 +193,9 @@ stages:
                   dependsOn: PublishPackage
 
                   pool:
+                    image: azsdk-pool-mms-ubuntu-2004-1espt
                     name: azsdk-pool-mms-ubuntu-2004-general
-                    vmImage: MMSUbuntu20.04
+                    os: linux
 
                   strategy:
                     runOnce:
@@ -224,8 +228,9 @@ stages:
               dependsOn: PublishPackage
 
               pool:
+                image: azsdk-pool-mms-ubuntu-2004-1espt
                 name: azsdk-pool-mms-ubuntu-2004-general
-                vmImage: MMSUbuntu20.04
+                os: linux
 
               strategy:
                 runOnce:
@@ -262,8 +267,9 @@ stages:
       displayName: "Publish package to daily feed"
       condition: or(eq(variables['SetDevVersion'], 'true'), and(eq(variables['Build.Reason'],'Schedule'), eq(variables['System.TeamProject'], 'internal')))
       pool:
+        image: azsdk-pool-mms-ubuntu-2004-1espt
         name: azsdk-pool-mms-ubuntu-2004-general
-        vmImage: MMSUbuntu20.04
+        os: linux
       steps:
       - checkout: none
       - download: current
@@ -300,8 +306,9 @@ stages:
       dependsOn: PublishPackages
       condition: or(eq(variables['SetDevVersion'], 'true'), and(eq(variables['Build.Reason'],'Schedule'), eq(variables['System.TeamProject'], 'internal')))
       pool:
+        image: azsdk-pool-mms-ubuntu-2004-1espt
         name: azsdk-pool-mms-ubuntu-2004-general
-        vmImage: MMSUbuntu20.04
+        os: linux
       steps:
         - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
           parameters:

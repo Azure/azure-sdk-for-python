@@ -427,9 +427,9 @@ class Sweep(ParameterizedSweep, BaseNode):
             # only one of slack_amount and slack_factor can be specified but default value is 0.0.
             # Need to keep track of which one is null.
             if self.early_termination.slack_amount == 0.0:
-                self.early_termination.slack_amount = None
+                self.early_termination.slack_amount = None  # type: ignore[assignment]
             if self.early_termination.slack_factor == 0.0:
-                self.early_termination.slack_factor = None
+                self.early_termination.slack_factor = None  # type: ignore[assignment]
 
     @property
     def early_termination(self) -> Optional[Union[str, EarlyTerminationPolicy]]:

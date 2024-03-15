@@ -58,6 +58,11 @@ parameters:
   - name: TestProxy
     type: boolean
     default: false
+  - name: OSName
+    type: string
+  - name: ToxTestEnv
+    type: string
+    default: 'whl'
 
 jobs:
   - job:
@@ -69,6 +74,7 @@ jobs:
 
     variables:
       - template: ../variables/globals.yml
+      - template: ../variables/image.yml
 
       - name: skipComponentGovernanceDetection
         value: true
@@ -82,7 +88,13 @@ jobs:
 
     pool:
       name: $(Pool)
-      vmImage: $(OSVmImage)
+      # 1es pipeline templates converts `image` to demands: ImageOverride under the hood
+      # which is incompatible with image selection in the default non-1es hosted pools
+      ${{ if eq(parameters.OSName, 'macOS') }}:
+        vmImage: $(OSVmImage)
+      ${{ else }}:
+        image: $(OSVmImage)
+      os: ${{ parameters.OSName }}
 
     ${{ if eq(parameters.UsePlatformContainer, 'true') }}:
       # Add a default so the job doesn't fail when the matrix is empty
@@ -91,7 +103,7 @@ jobs:
     steps:
       - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
         parameters:
-          AgentImage: $(OSVmImage)
+          AgentImage: ${{ parameters.OSName }}
 
       - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
         parameters:
@@ -131,7 +143,7 @@ jobs:
           PostSteps: ${{ parameters.PostSteps }}
           PythonVersion: $(PythonVersion)
           OSVmImage: $(OSVmImage)
-          ToxTestEnv: "whl"
+          ToxTestEnv: ${{ parameters.ToxTestEnv }}
           AdditionalTestArgs: ${{ parameters.AdditionalTestArgs }}
           TestMarkArgument: ${{ parameters.TestMarkArgument }}
           InjectedPackages: ${{ parameters.InjectedPackages }}

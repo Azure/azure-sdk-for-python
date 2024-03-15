@@ -27,6 +27,11 @@ from azure.monitor.opentelemetry.exporter._quickpulse._exporter import (
     _Response,
     _UnsuccessfulQuickPulsePostError,
 )
+from azure.monitor.opentelemetry.exporter._quickpulse._state import (
+    _get_global_quickpulse_state,
+    _set_global_quickpulse_state,
+    _QuickpulseState,
+)
 
 
 def throw(exc_type, *args, **kwargs):
@@ -39,6 +44,7 @@ def throw(exc_type, *args, **kwargs):
 class TestQuickpulse(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        _set_global_quickpulse_state(_QuickpulseState.PING_SHORT)
         cls._resource = Resource.create(
             {
                 ResourceAttributes.SERVICE_INSTANCE_ID: "test_instance",
@@ -209,9 +215,8 @@ class TestQuickpulse(unittest.TestCase):
             self._data_point,
         )
         self.assertEqual(reader._exporter, self._exporter)
-        self.assertEqual(reader._quick_pulse_state, _QuickpulseState.PING_SHORT)
+        self.assertEqual(_get_global_quickpulse_state(), _QuickpulseState.PING_SHORT)
         self.assertEqual(reader._base_monitoring_data_point, self._data_point)
-        self.assertEqual(reader._elapsed_num_seconds, 0)
         self.assertEqual(reader._elapsed_num_seconds, 0)
         self.assertEqual(reader._worker, task_inst_mock)
         task_mock.assert_called_with(
@@ -231,7 +236,7 @@ class TestQuickpulse(unittest.TestCase):
             self._exporter,
             self._data_point,
         )
-        reader._quick_pulse_state = _QuickpulseState.PING_SHORT
+        _set_global_quickpulse_state(_QuickpulseState.PING_SHORT)
         reader._elapsed_num_seconds = _QuickpulseState.PING_SHORT.value
         ping_mock.return_value = _Response(
             None,
@@ -244,7 +249,7 @@ class TestQuickpulse(unittest.TestCase):
         ping_mock.assert_called_once_with(
             self._data_point,
         )
-        self.assertEqual(reader._quick_pulse_state, _QuickpulseState.POST_SHORT)
+        self.assertEqual(_get_global_quickpulse_state(), _QuickpulseState.POST_SHORT)
         self.assertEqual(reader._elapsed_num_seconds, 1)
 
     # TODO: Other ticker cases
@@ -267,7 +272,6 @@ class TestQuickpulse(unittest.TestCase):
             self._metrics_data,
             timeout_millis=20_000,
             base_monitoring_data_point=self._data_point,
-            documents=[],
         )
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._exporter._QuickpulseExporter.export")

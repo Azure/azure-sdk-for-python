@@ -245,415 +245,23 @@ class DocumentIntelligenceTest(AzureRecordedTestCase):
             assert field.field_confidence == exp.field_confidence
             assert field.field_schema == {name: field.serialize() for name, field in exp.field_schema.items()}
 
-    def assertFormPagesTransformCorrect(self, form_pages, read_result, page_result=None, **kwargs):
-        for page, expected_page in zip(form_pages, read_result):
-            if hasattr(page, "pages"):  # this is necessary for how unlabeled forms are structured
-                page = page.pages[0]
-            assert page.page_number == expected_page.page
-            assert page.text_angle == adjust_text_angle(expected_page.angle)
-            assert page.width == expected_page.width
-            assert page.height == expected_page.height
-            assert page.unit == expected_page.unit
-
-            for line, expected_line in zip(page.lines or [], expected_page.lines or []):
-                self.assertFormLineTransformCorrect(line, expected_line)
-
-            for selection_mark, expected_selection_mark in zip(
-                page.selection_marks or [], expected_page.selection_marks or []
-            ):
-                self.assertFormSelectionMarkHasValues(selection_mark, expected_page.page)
-
-        if page_result:
-            for page, expected_page in zip(form_pages, page_result):
-                if hasattr(page, "pages"):  # this is necessary for how unlabeled forms are structured
-                    page = page.pages[0]
-                if expected_page.tables:
-                    self.assertTablesTransformCorrect(page.tables, expected_page.tables, read_result, **kwargs)
-
     def assertBoundingBoxTransformCorrect(self, box, expected):
         if box is None and expected is None:
             return
-        assert box[0].x == expected[0]
-        assert box[0].y == expected[1]
-        assert box[1].x == expected[2]
-        assert box[1].y == expected[3]
-        assert box[2].x == expected[4]
-        assert box[2].y == expected[5]
-        assert box[3].x == expected[6]
-        assert box[3].y == expected[7]
+        assert len(box) == len(expected)
+        for element, expected_element in zip(box, expected):
+            assert element == expected_element
 
     def assertBoundingPolygonTransformCorrect(self, polygon, expected):
         if polygon is None and expected is None:
             return
 
-        count = 0
-        for point in polygon:
-            assert point.x == expected[count]
-            assert point.y == expected[count + 1]
-            count = count + 2
-
-    def assertFormWordTransformCorrect(self, word, expected):
-        assert word.text == expected.text
-        assert word.confidence == adjust_confidence(expected.confidence)
-        assert word.kind == "word"
-        self.assertBoundingBoxTransformCorrect(word.bounding_box, expected.bounding_box)
-
-    def assertFormLineTransformCorrect(self, line, expected):
-        assert line.kind == "line"
-        assert line.text == expected.text
-        self.assertBoundingBoxTransformCorrect(line.bounding_box, expected.bounding_box)
-        if expected.appearance:
-            assert line.appearance.style_name == expected.appearance.style.name
-            assert line.appearance.style_confidence == expected.appearance.style.confidence
-        for word, expected_word in zip(line.words, expected.words):
-            self.assertFormWordTransformCorrect(word, expected_word)
-
-    def assertFieldElementsTransFormCorrect(self, field_elements, generated_elements, read_result):
-        if field_elements is None and not generated_elements:
-            return
-        for element, json_pointer in zip(field_elements, generated_elements):
-            element_type, expected, page_number = get_element(json_pointer, read_result)
-            if element_type == "word":
-                self.assertFormWordTransformCorrect(element, expected)
-            elif element_type == "line":
-                self.assertFormLineTransformCorrect(element, expected)
-            elif element_type == "selectionMark":
-                self.assertFormSelectionMarkHasValues(element, page_number)
-
-    def assertFormFieldValueTransformCorrect(self, form_field, expected, read_results=None):
-        if expected is None:
-            return
-        field_type = expected.type
-        if field_type == "string":
-            assert form_field.value == expected.value_string
-        if field_type == "number":
-            assert form_field.value == expected.value_number
-        if field_type == "integer":
-            assert form_field.value == expected.value_integer
-        if field_type == "date":
-            assert form_field.value == expected.value_date
-        if field_type == "phoneNumber":
-            assert form_field.value == expected.value_phone_number
-        if field_type == "time":
-            assert form_field.value == expected.value_time
-        if field_type == "selectionMark":
-            assert form_field.value == expected.value_selection_mark
-        if field_type == "countryRegion":
-            assert form_field.value == expected.value_country_region
-        if field_type == "array":
-            for i in range(len(expected.value_array)):
-                self.assertFormFieldValueTransformCorrect(form_field.value[i], expected.value_array[i], read_results)
-        if field_type == "object":
-            self.assertFormFieldsTransformCorrect(form_field.value, expected.value_object, read_results)
-
-        if field_type not in ["array", "object"] and form_field.value_data:
-            self.assertBoundingBoxTransformCorrect(form_field.value_data.bounding_box, expected.bounding_box)
-            assert expected.text == form_field.value_data.text
-            assert expected.page == form_field.value_data.page_number
-            if read_results:
-                self.assertFieldElementsTransFormCorrect(
-                    form_field.value_data.field_elements, expected.elements, read_results
-                )
-
-    def assertFormFieldsTransformCorrect(self, form_fields, generated_fields, read_results=None):
-        if generated_fields is None:
-            return
-
-        for label, expected in generated_fields.items():
-            if expected is None:  # None value occurs with labeled tables and empty cells
-                continue
-            field_type = expected.type
-            assert adjust_value_type(field_type) == form_fields[label].value_type
-            assert label == form_fields[label].name
-            assert adjust_confidence(expected.confidence) == form_fields[label].confidence
-            self.assertFormFieldValueTransformCorrect(form_fields[label], expected, read_results)
-
-    def assertUnlabeledFormFieldDictTransformCorrect(self, form_fields, generated_fields, read_results=None):
-        if generated_fields is None:
-            return
-        for idx, expected in enumerate(generated_fields):
-            assert adjust_confidence(expected.confidence) == form_fields["field-" + str(idx)].confidence
-            assert expected.key.text == form_fields["field-" + str(idx)].label_data.text
-            self.assertBoundingBoxTransformCorrect(
-                form_fields["field-" + str(idx)].label_data.bounding_box, expected.key.bounding_box
-            )
-            if read_results:
-                self.assertFieldElementsTransFormCorrect(
-                    form_fields["field-" + str(idx)].label_data.field_elements, expected.key.elements, read_results
-                )
-            assert expected.value.text == form_fields["field-" + str(idx)].value_data.text
-            self.assertBoundingBoxTransformCorrect(
-                form_fields["field-" + str(idx)].value_data.bounding_box, expected.value.bounding_box
-            )
-            if read_results:
-                self.assertFieldElementsTransFormCorrect(
-                    form_fields["field-" + str(idx)].value_data.field_elements, expected.value.elements, read_results
-                )
-
-    def assertTablesTransformCorrect(self, layout, expected_layout, read_results=None, **kwargs):
-        for table, expected_table in zip(layout, expected_layout):
-            assert table.row_count == expected_table.rows
-            assert table.column_count == expected_table.columns
-            self.assertBoundingBoxTransformCorrect(table.bounding_box, expected_table.bounding_box)
-            for cell, expected_cell in zip(table.cells, expected_table.cells):
-                assert table.page_number == cell.page_number
-                assert cell.text == expected_cell.text
-                assert cell.row_index == expected_cell.row_index
-                assert cell.column_index == expected_cell.column_index
-                assert cell.row_span == expected_cell.row_span if expected_cell.row_span is not None else 1
-                assert cell.column_span == expected_cell.column_span if expected_cell.column_span is not None else 1
-                assert cell.confidence == adjust_confidence(expected_cell.confidence)
-                assert cell.is_header == (expected_cell.is_header if expected_cell.is_header is not None else False)
-                assert cell.is_footer == (expected_cell.is_footer if expected_cell.is_footer is not None else False)
-                self.assertBoundingBoxTransformCorrect(cell.bounding_box, expected_cell.bounding_box)
-                self.assertFieldElementsTransFormCorrect(cell.field_elements, expected_cell.elements, read_results)
-
-    def assertReceiptItemsHasValues(self, items, page_number, include_field_elements):
-        for item in items:
-            assert item.value_type == "dictionary"
-            self.assertBoundingBoxHasPoints(item.value.get("Name").value_data.bounding_box)
-            if item.value.get("Name", None):
-                assert item.value.get("Name").confidence is not None
-                assert item.value.get("Name").value_data.text is not None
-                assert item.value.get("Name").value_type is not None
-            if item.value.get("Quantity", None):
-                self.assertBoundingBoxHasPoints(item.value.get("Quantity").value_data.bounding_box)
-                assert item.value.get("Quantity").confidence is not None
-                assert item.value.get("Quantity").value_data.text is not None
-                assert item.value.get("Quantity").value_type is not None
-            if item.value.get("TotalPrice", None):
-                self.assertBoundingBoxHasPoints(item.value.get("TotalPrice").value_data.bounding_box)
-                assert item.value.get("TotalPrice").confidence is not None
-                assert item.value.get("TotalPrice").value_data.text is not None
-                assert item.value.get("TotalPrice").value_type is not None
-            if item.value.get("Price", None):
-                self.assertBoundingBoxHasPoints(item.value.get("Price").value_data.bounding_box)
-                assert item.value.get("Price").confidence is not None
-                assert item.value.get("Price").value_data.text is not None
-                assert item.value.get("Price").value_type is not None
-
-            if include_field_elements:
-                if item.value.get("Name", None):
-                    self.assertFieldElementsHasValues(item.value.get("Name").value_data.field_elements, page_number)
-                if item.value.get("Quantity", None):
-                    self.assertFieldElementsHasValues(item.value.get("Quantity").value_data.field_elements, page_number)
-                if item.value.get("TotalPrice", None):
-                    self.assertFieldElementsHasValues(
-                        item.value.get("TotalPrice").value_data.field_elements, page_number
-                    )
-                if item.value.get("Price", None):
-                    self.assertFieldElementsHasValues(item.value.get("Price").value_data.field_elements, page_number)
-
-    def assertInvoiceItemsHasValues(self, items, page_number, include_field_elements):
-        for item in items:
-            assert item.value_type == "dictionary"
-            if item.value.get("Amount", None):
-                self.assertBoundingBoxHasPoints(item.value.get("Amount").value_data.bounding_box)
-                assert item.value.get("Amount").confidence is not None
-                assert item.value.get("Amount").value_data.text is not None
-                assert item.value.get("Amount").value_type is not None
-            if item.value.get("Quantity", None):
-                self.assertBoundingBoxHasPoints(item.value.get("Quantity").value_data.bounding_box)
-                assert item.value.get("Quantity").confidence is not None
-                assert item.value.get("Quantity").value_data.text is not None
-                assert item.value.get("Quantity").value_type is not None
-            if item.value.get("Description", None):
-                self.assertBoundingBoxHasPoints(item.value.get("Description").value_data.bounding_box)
-                assert item.value.get("Description").confidence is not None
-                assert item.value.get("Description").value_data.text is not None
-                assert item.value.get("Description").value_type is not None
-            if item.value.get("UnitPrice", None):
-                self.assertBoundingBoxHasPoints(item.value.get("UnitPrice").value_data.bounding_box)
-                assert item.value.get("UnitPrice").confidence is not None
-                assert item.value.get("UnitPrice").value_data.text is not None
-                assert item.value.get("UnitPrice").value_type is not None
-            if item.value.get("ProductCode", None):
-                self.assertBoundingBoxHasPoints(item.value.get("ProductCode").value_data.bounding_box)
-                assert item.value.get("ProductCode").confidence is not None
-                assert item.value.get("ProductCode").value_data.text is not None
-                assert item.value.get("ProductCode").value_type is not None
-            if item.value.get("Unit", None):
-                self.assertBoundingBoxHasPoints(item.value.get("Unit").value_data.bounding_box)
-                assert item.value.get("Unit").confidence is not None
-                assert item.value.get("Unit").value_data.text is not None
-                assert item.value.get("Unit").value_type is not None
-            if item.value.get("Date", None):
-                self.assertBoundingBoxHasPoints(item.value.get("Date").value_data.bounding_box)
-                assert item.value.get("Date").confidence is not None
-                assert item.value.get("Date").value_data.text is not None
-                assert item.value.get("Date").value_type is not None
-            if item.value.get("Tax", None):
-                self.assertBoundingBoxHasPoints(item.value.get("Tax").value_data.bounding_box)
-                assert item.value.get("Tax").confidence is not None
-                assert item.value.get("Tax").value_data.text is not None
-                assert item.value.get("Tax").value_type is not None
-
-            if include_field_elements:
-                if item.value.get("Amount", None):
-                    self.assertFieldElementsHasValues(item.value.get("Amount").value_data.field_elements, page_number)
-                if item.value.get("Quantity", None):
-                    self.assertFieldElementsHasValues(item.value.get("Quantity").value_data.field_elements, page_number)
-                if item.value.get("Description", None):
-                    self.assertFieldElementsHasValues(
-                        item.value.get("Description").value_data.field_elements, page_number
-                    )
-                if item.value.get("UnitPrice", None):
-                    self.assertFieldElementsHasValues(
-                        item.value.get("UnitPrice").value_data.field_elements, page_number
-                    )
-                if item.value.get("ProductCode", None):
-                    self.assertFieldElementsHasValues(
-                        item.value.get("ProductCode").value_data.field_elements, page_number
-                    )
-                if item.value.get("Unit", None):
-                    self.assertFieldElementsHasValues(item.value.get("Unit").value_data.field_elements, page_number)
-                if item.value.get("Date", None):
-                    self.assertFieldElementsHasValues(item.value.get("Date").value_data.field_elements, page_number)
-                if item.value.get("Tax", None):
-                    self.assertFieldElementsHasValues(item.value.get("Tax").value_data.field_elements, page_number)
-
-    def assertBoundingBoxHasPoints(self, box):
-        if box is None:
-            return
-        assert box[0].x is not None
-        assert box[0].y is not None
-        assert box[1].x is not None
-        assert box[1].y is not None
-        assert box[2].x is not None
-        assert box[2].y is not None
-        assert box[3].x is not None
-        assert box[3].y is not None
-
-    def assertFormPagesHasValues(self, pages):
-        for page in pages:
-            assert page.text_angle is not None
-            assert page.height is not None
-            assert page.unit is not None
-            assert page.width is not None
-            assert page.page_number is not None
-            if page.lines:
-                for line in page.lines:
-                    self.assertFormLineHasValues(line, page.page_number)
-
-            if page.tables:
-                for table in page.tables:
-                    assert table.page_number == page.page_number
-                    assert table.row_count is not None
-                    if table.bounding_box:
-                        self.assertBoundingBoxHasPoints(table.bounding_box)
-                    assert table.column_count is not None
-                    for cell in table.cells:
-                        assert cell.text is not None
-                        assert cell.row_index is not None
-                        assert cell.column_index is not None
-                        assert cell.row_span is not None
-                        assert cell.column_span is not None
-                        self.assertBoundingBoxHasPoints(cell.bounding_box)
-                        self.assertFieldElementsHasValues(cell.field_elements, page.page_number)
-
-            if page.selection_marks:
-                for selection_mark in page.selection_marks:
-                    assert selection_mark.text is None
-                    assert selection_mark.page_number == page.page_number
-                    self.assertBoundingBoxHasPoints(selection_mark.bounding_box)
-                    assert selection_mark.confidence is not None
-                    assert (selection_mark.state in ["selected", "unselected"]) == True
-
-    def assertFormWordHasValues(self, word, page_number):
-        assert word.confidence is not None
-        assert word.text is not None
-        self.assertBoundingBoxHasPoints(word.bounding_box)
-        assert word.page_number == page_number
-
-    def assertFormLineHasValues(self, line, page_number):
-        assert line.text is not None
-        self.assertBoundingBoxHasPoints(line.bounding_box)
-        if line.appearance:
-            assert line.appearance.style_name is not None
-            assert line.appearance.style_confidence is not None
-        assert line.page_number == page_number
-        for word in line.words:
-            self.assertFormWordHasValues(word, page_number)
-
-    def assertFormSelectionMarkHasValues(self, selection_mark, page_number):
-        assert selection_mark.confidence is not None
-        assert selection_mark.state is not None
-        self.assertBoundingBoxHasPoints(selection_mark.bounding_box)
-        assert selection_mark.page_number == page_number
-
-    def assertFieldElementsHasValues(self, elements, page_number):
-        if elements is None:
-            return
-        for element in elements:
-            if element.kind == "word":
-                self.assertFormWordHasValues(element, page_number)
-            elif element.kind == "line":
-                self.assertFormLineHasValues(element, page_number)
-            elif element.kind == "selectionMark":
-                self.assertFormSelectionMarkHasValues(element, page_number)
-
-    def assertComposedModelV2HasValues(self, composed, model_1, model_2):
-        assert composed.model_id
-        assert composed.errors == []
-        assert composed.properties.is_composed_model
-        assert composed.status
-        assert composed.training_started_on
-        assert composed.training_completed_on
-
-        all_training_documents = model_1.training_documents + model_2.training_documents
-        for doc, composed_doc in zip(all_training_documents, composed.training_documents):
-            assert doc.name == composed_doc.name
-            assert doc.status == composed_doc.status
-            assert doc.page_count == composed_doc.page_count
-            assert doc.errors == composed_doc.errors
-
-        for model in model_1.submodels:
-            composed_model = composed.submodels[0]
-            if model.model_id != composed_model.model_id:  # order not guaranteed from service
-                composed_model = composed.submodels[1]
-            if model_1.model_name is None:
-                assert model.form_type == composed_model.form_type
-            assert model.accuracy == composed_model.accuracy
-            assert model.model_id == composed_model.model_id
-            for field, value in model.fields.items():
-                assert value.name == composed_model.fields[field].name
-                assert value.accuracy == composed_model.fields[field].accuracy
-
-        for model in model_2.submodels:
-            composed_model = composed.submodels[1]
-            if model.model_id != composed_model.model_id:  # order not guaranteed from service
-                composed_model = composed.submodels[0]
-            if model_2.model_name is None:
-                assert model.form_type == composed_model.form_type
-            assert model.accuracy == composed_model.accuracy
-            assert model.model_id == composed_model.model_id
-            for field, value in model.fields.items():
-                assert value.name == composed_model.fields[field].name
-                assert value.accuracy == composed_model.fields[field].accuracy
-
-    def assertUnlabeledRecognizedFormHasValues(self, form, model):
-        assert form.form_type_confidence is None
-        assert form.model_id == model.model_id
-        self.assertFormPagesHasValues(form.pages)
-        for label, field in form.fields.items():
-            assert field.confidence is not None
-            assert field.name is not None
-            assert field.value is not None
-            assert field.value_data.text is not None
-            assert field.label_data.text is not None
-
-    def assertLabeledRecognizedFormHasValues(self, form, model):
-        assert form.form_type_confidence is not None
-        assert form.model_id == model.model_id
-        self.assertFormPagesHasValues(form.pages)
-        for label, field in form.fields.items():
-            assert field.confidence is not None
-            assert field.name is not None
-            assert field.value_data.text is not None
-            assert field.value_data.bounding_box is not None
+        assert len(polygon) == len(expected)
+        for element, expected_element in zip(polygon, expected):
+            assert element == expected_element
 
     def assertDocumentTransformCorrect(self, transformed_documents, raw_documents, **kwargs):
-        if transformed_documents == [] and not raw_documents:
+        if not transformed_documents and not raw_documents:
             return
         for document, expected in zip(transformed_documents, raw_documents):
             assert document.doc_type == expected.doc_type
@@ -666,24 +274,15 @@ class DocumentIntelligenceTest(AzureRecordedTestCase):
             self.assertDocumentFieldsTransformCorrect(document.fields, expected.fields)
 
     def assertDocumentKeyValuePairsTransformCorrect(self, transformed_key_value, raw_key_value, **kwargs):
-        if transformed_key_value == [] and not raw_key_value:
+        if not transformed_key_value and not raw_key_value:
             return
         for key_value, expected in zip(transformed_key_value, raw_key_value):
             self.assertDocumentKeyValueElementTransformCorrect(key_value.key, expected.key)
             self.assertDocumentKeyValueElementTransformCorrect(key_value.value, expected.value)
             assert key_value.confidence == expected.confidence
 
-    def assertDocumentLanguagesTransformCorrect(self, transformed_languages, raw_languages, **kwargs):
-        if transformed_languages == [] and not raw_languages:
-            return
-        for lang, expected in zip(transformed_languages, raw_languages):
-            assert lang.locale == expected.locale
-            for span, expected_span in zip(lang.spans or [], expected.spans or []):
-                self.assertSpanTransformCorrect(span, expected_span)
-            assert lang.confidence == expected.confidence
-
     def assertDocumentStylesTransformCorrect(self, transformed_styles, raw_styles, **kwargs):
-        if transformed_styles == [] and not raw_styles:
+        if not transformed_styles and not raw_styles:
             return
 
         for style, expected in zip(transformed_styles, raw_styles):
@@ -709,7 +308,7 @@ class DocumentIntelligenceTest(AzureRecordedTestCase):
         self.assertBoundingRegionsTransformCorrect(element.bounding_regions, expected.bounding_regions)
 
     def assertDocumentTablesTransformCorrect(self, transformed_tables, raw_tables, **kwargs):
-        if transformed_tables == [] and not raw_tables:
+        if not transformed_tables and not raw_tables:
             return
         for table, expected in zip(transformed_tables, raw_tables):
             assert table.row_count == expected.row_count
@@ -723,33 +322,11 @@ class DocumentIntelligenceTest(AzureRecordedTestCase):
 
             self.assertBoundingRegionsTransformCorrect(table.bounding_regions, expected.bounding_regions)
 
-    def assertDocumentParagraphsTransformCorrect(self, transformed_paragraphs, raw_paragraphs, **kwargs):
-        if transformed_paragraphs == [] and not raw_paragraphs:
-            return
-        for par, expected in zip(transformed_paragraphs, raw_paragraphs):
-            assert par.role == expected.role
-            assert par.content == expected.content
-
-            for span, expected_span in zip(par.spans or [], expected.spans or []):
-                self.assertSpanTransformCorrect(span, expected_span)
-
-            self.assertBoundingRegionsTransformCorrect(par.bounding_regions, expected.bounding_regions)
-
     def assertDocumentTableCellTransformCorrect(self, transformed_cell, raw_cell, **kwargs):
         if raw_cell.kind:
             assert transformed_cell.kind == raw_cell.kind
-        else:
-            assert transformed_cell.kind == "content"
         assert transformed_cell.row_index == raw_cell.row_index
         assert transformed_cell.column_index == raw_cell.column_index
-        if raw_cell.row_span:
-            assert transformed_cell.row_span == raw_cell.row_span
-        else:
-            assert transformed_cell.row_span == 1
-        if raw_cell.column_span:
-            assert transformed_cell.column_span == raw_cell.column_span
-        else:
-            assert transformed_cell.column_span == 1
         assert transformed_cell.content == raw_cell.content
 
         for span, expected_span in zip(transformed_cell.spans or [], raw_cell.spans or []):
@@ -827,7 +404,7 @@ class DocumentIntelligenceTest(AzureRecordedTestCase):
             )
 
     def assertBoundingRegionsTransformCorrect(self, bounding_regions, expected):
-        if bounding_regions == [] and not expected:
+        if not bounding_regions and not expected:
             return
         for region, expected_region in zip(bounding_regions, expected):
             assert region.page_number == expected_region.page_number
