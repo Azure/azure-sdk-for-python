@@ -628,6 +628,7 @@ class WebPubSubJsonReliableProtocol(WebPubSubClientProtocol):
         self.is_reliable_sub_protocol = True
         self.name = "json.reliable.webpubsub.azure.v1"
 
+
 class _SendMessageErrorOptions:
     """Options for send message error
     :ivar ack_id: The ack id of the message.
@@ -643,6 +644,7 @@ class _SendMessageErrorOptions:
     ) -> None:
         self.ack_id = ack_id
         self.error_detail = error_detail
+
 
 class SendMessageErrorOptions(_SendMessageErrorOptions):
     """Options for send message error
@@ -676,6 +678,7 @@ class SendMessageErrorOptionsAsync(_SendMessageErrorOptions):
     ) -> None:
         super().__init__(ack_id, error_detail)
         self.event = asyncio.Event()
+
 
 class SendMessageError(AzureError):
     """Exception raised when fail to send message
@@ -1010,6 +1013,7 @@ class AckMapAsync:
                 _LOGGER.debug("clear ack map with ack id: %s", key)
                 value.event.set()
             self.ack_map.clear()
+
 
 class OpenClientError(AzureError):
     """Exception raised when fail to start the client"""

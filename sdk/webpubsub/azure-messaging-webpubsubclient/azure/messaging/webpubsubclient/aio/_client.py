@@ -47,14 +47,26 @@ from ..models._enums import (
     CallbackType,
     WebPubSubProtocolType,
 )
-from .._client import WebPubSubClientCredential, _RETRY_TOTAL, _RETRY_BACKOFF_FACTOR, _RETRY_BACKOFF_MAX, _RECOVERY_TIMEOUT, _RECOVERY_RETRY_INTERVAL, _USER_AGENT, _ACK_TIMEOUT, _START_TIMEOUT
+from .._client import (
+    WebPubSubClientCredential,
+    _RETRY_TOTAL,
+    _RETRY_BACKOFF_FACTOR,
+    _RETRY_BACKOFF_MAX,
+    _RECOVERY_TIMEOUT,
+    _RECOVERY_RETRY_INTERVAL,
+    _USER_AGENT,
+    _ACK_TIMEOUT,
+    _START_TIMEOUT,
+)
 from .._util import format_user_agent
 
 _LOGGER = logging.getLogger(__name__)
 
-class WebSocketAppAsync:
 
-    def __init__(self, url, on_open=None, subprotocols: Optional[List[str]]=None,header: Optional[Dict[str, str]]=None) -> None:
+class WebSocketAppAsync:
+    def __init__(
+        self, url, on_open=None, subprotocols: Optional[List[str]] = None, header: Optional[Dict[str, str]] = None
+    ) -> None:
         self.url = url
         self.on_open = on_open
         self.subprotocols = subprotocols
@@ -78,17 +90,18 @@ class WebSocketAppAsync:
     async def close(self):
         try:
             await self.sock.close()
-        except Exception as e: # pylint: disable=broad-except
+        except Exception as e:  # pylint: disable=broad-except
             _LOGGER.info("Fail to close websocket connection: %s", e)
         finally:
             try:
                 await self.session.close()
-            except Exception as e: # pylint: disable=broad-except
+            except Exception as e:  # pylint: disable=broad-except
                 _LOGGER.info("Fail to close websocket connection: %s", e)
-    
+
     @property
     def closed(self):
         return self.sock.closed
+
 
 class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """WebPubSubClient
@@ -295,6 +308,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         :type group_name: str.
         :keyword int ack_id: The optional ackId. If not specified, client will generate one.
         """
+
         async def leave_group_attempt():
             group = await self._get_or_add_group(group_name)
             ack_id = kwargs.pop("ack_id", None)
@@ -404,6 +418,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         :keyword bool ack: If False, the message won't contains ackId and no AckMessage
          will be returned from the service. Default is True.
         """
+
         async def send_event_attempt():
             ack = kwargs.pop("ack", True)
             ack_id = kwargs.pop("ack_id", None)
@@ -648,13 +663,14 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
                 )
 
         await _rejoin_group()
+
     @staticmethod
     def _cancel_task(task: Optional[asyncio.Task]) -> None:
         if task and not task.done():
             task.cancel()
 
     async def _connect(self, url: str):  # pylint: disable=too-many-statements
-        async def on_close(close_status_code: int, close_msg: Optional[str]=None):
+        async def on_close(close_status_code: int, close_msg: Optional[str] = None):
             if self._state == WebPubSubClientState.CONNECTED:
                 _LOGGER.info(
                     "WebSocket connection closed. Code: %s, Reason: %s",
@@ -700,7 +716,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
 
                 _LOGGER.warning("Recovery attempts failed after 30 seconds or the client is stopping")
                 await self._handle_connection_close_and_no_recovery()
- 
+
         async def on_message(data: str):
             async def handle_ack_message(message: AckMessage):
                 ack_option = await self._ack_map.get(message.ack_id)
@@ -799,7 +815,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
                     break
                 else:
                     _LOGGER.debug("Unknown message: %s", msg)
-                
+
         async def on_open():
             try:
                 await self._ws.connect()
@@ -824,6 +840,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
 
         # set coroutine to check sequence id if needed
         if self._protocol.is_reliable_sub_protocol:
+
             async def sequence_id_ack_periodically():
                 while self._is_connected():
                     try:
