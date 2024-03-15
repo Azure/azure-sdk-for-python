@@ -29,11 +29,11 @@ parameters:
   - name: InjectedPackages
     type: string
     default: ''
-  - name: DependsOn
-    type: object
-    default: []
   - name: Matrix
     type: string
+  - name: DependsOn
+    type: string
+    default: ''
   - name: UsePlatformContainer
     type: boolean
     default: false
@@ -43,8 +43,6 @@ parameters:
   - name: TestProxy
     type: boolean
     default: false
-  - name: OSName
-    type: string
 
 jobs:
   - job:
@@ -58,26 +56,23 @@ jobs:
     timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
 
     dependsOn:
-      - ${{ parameters.DependsOn }}
+       - ${{ parameters.DependsOn }}
 
     strategy:
       matrix: $[ ${{ parameters.Matrix }} ]
 
     pool:
       name: $(Pool)
-      # 1es pipeline templates converts `image` to demands: ImageOverride under the hood
-      # which is incompatible with image selection in the default non-1es hosted pools
-      ${{ if eq(parameters.OSName, 'macOS') }}:
-        vmImage: $(OSVmImage)
-      ${{ else }}:
-        image: $(OSVmImage)
-      os: ${{ parameters.OSName }}
+      vmImage: $(OSVmImage)
+
+    ${{ if eq(parameters.UsePlatformContainer, 'true') }}:
+      # Add a default so the job doesn't fail when the matrix is empty
+      container: $[ variables['Container'] ]
 
     variables:
     - template: ../variables/globals.yml
     - name: InjectedPackages
       value: ${{ parameters.InjectedPackages }}
-
 
     steps:
     - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
@@ -86,7 +81,7 @@ jobs:
 
     - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
       parameters:
-        AgentImage: ${{ parameters.OSName }}
+        AgentImage: $(OSVmImage)
 
     - task: UsePythonVersion@0
       inputs:
@@ -116,6 +111,7 @@ jobs:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
         AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
+        OSVmImage: $(OSVmImage)
         CoverageArg: $(CoverageArg)
         PythonVersion: $(PythonVersion)
         ToxTestEnv: $(toxenv)
@@ -131,7 +127,7 @@ jobs:
           - template: ../steps/set-dev-build.yml
             parameters:
               ServiceDirectory: ${{ parameters.ServiceDirectory }}
-
+          
           - ${{ each step in parameters.BeforeTestSteps }}:
             -  ${{ step }}
         AfterTestSteps: ${{ parameters.AfterTestSteps }}

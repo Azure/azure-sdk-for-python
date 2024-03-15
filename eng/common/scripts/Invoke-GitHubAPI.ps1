@@ -402,8 +402,7 @@ function Update-GitHubIssue {
           -Body ($parameters | ConvertTo-Json) `
           -Uri $uri `
           -Headers (Get-GitHubApiHeaders -token $AuthToken) `
-          -MaximumRetryCount 3 `
-          -ContentType "application/json"
+          -MaximumRetryCount 3
 }
 
 function Remove-GitHubSourceReferences  {
@@ -451,24 +450,4 @@ function Get-GithubReferenceCommitDate($commitUrl, $AuthToken) {
     return $null
   }
   return $commitResponse.committer.date
-}
-
-function Search-GitHubCommit {
-  param (
-    [ValidateNotNullOrEmpty()]
-    $RepoOwner,
-    [ValidateNotNullOrEmpty()]
-    $RepoName,
-    [ValidateNotNullOrEmpty()]
-    $CommitHash,
-    [ValidateNotNullOrEmpty()]
-    $AuthToken
-  )
-  $uri = "https://api.github.com/search/commits?q=repo:$RepoOwner/$RepoName+hash:$CommitHash"
-
-  return Invoke-RestMethod `
-          -Method GET `
-          -Uri $uri `
-          -Headers (Get-GitHubApiHeaders -token $AuthToken) `
-          -MaximumRetryCount 3
 }

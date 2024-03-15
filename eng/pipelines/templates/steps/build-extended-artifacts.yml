@@ -43,9 +43,9 @@ steps:
     condition: and(eq(variables['Build.SourceBranchName'], variables['DefaultBranch']), eq(variables['Build.Reason'],'Schedule'))
 
   - task: UsePythonVersion@0
-    displayName: 'Use Python 3.11'
+    displayName: 'Use Python $(PythonVersion)'
     inputs:
-      versionSpec: '3.11'
+      versionSpec: $(PythonVersion)
 
   - script: |
       python -m pip install setuptools==58.3.0
@@ -81,18 +81,25 @@ steps:
 
   - ${{ parameters.BeforePublishSteps }}
 
-  - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
+  - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
     parameters:
       ArtifactPath: '$(Build.ArtifactStagingDirectory)'
       ArtifactName: 'packages_extended'
 
-  - pwsh: |
-      $directoryExists = Test-Path -Path "$(Build.SourcesDirectory)/_docs"
-      Write-Output "##vso[task.setvariable variable=DirectoryExists]$directoryExists"
-    displayName: Check if docs directory exists
-  
-  - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
+  - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
     parameters:
       ArtifactPath: '$(Build.SourcesDirectory)/_docs'
-      CustomCondition: and(${{ parameters.BuildDocs }}, eq(variables['DirectoryExists'], 'True'))
+      CustomCondition: ${{ parameters.BuildDocs }}
       ArtifactName: 'documentation'
+
+  - ${{if eq(variables['System.TeamProject'], 'internal') }}:
+    - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
+      displayName: 'Generate BOM'
+      condition: succeededOrFailed()
+      inputs:
+        BuildDropPath: $(Build.ArtifactStagingDirectory)
+
+    - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+      parameters:
+        ArtifactPath: '$(Build.ArtifactStagingDirectory)/_manifest'
+        ArtifactName: 'extended_manifest'

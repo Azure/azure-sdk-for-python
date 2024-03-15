@@ -61,9 +61,6 @@ parameters:
   - name: GenerateApiReviewForManualOnly
     type: boolean
     default: false
-  - name: AdvancedBuild
-    type: boolean
-    default: false
 
 jobs:
 
@@ -197,9 +194,30 @@ jobs:
     timeoutInMinutes: 90
 
     pool:
-      name: $(LINUXPOOL)
-      image: $(LINUXVMIMAGE)
-      os: linux
+      name: azsdk-pool-mms-ubuntu-2004-general
+      vmImage: MMSUbuntu20.04
+
+    steps:
+    - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
+      parameters:
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+
+    - template: ../steps/build-package-artifacts.yml
+      parameters:
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
+        TestPipeline: ${{ parameters.TestPipeline }}
+        Artifacts: ${{ parameters.Artifacts }}
+
+  - job: 'Build_Extended'
+    displayName: Build Extended
+    dependsOn: 
+      - 'Build'
+    timeoutInMinutes: 90
+
+    pool:
+      name: azsdk-pool-mms-ubuntu-2004-general
+      vmImage: MMSUbuntu20.04
 
     steps:
     - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
@@ -223,9 +241,8 @@ jobs:
       - 'Build_Extended'
 
     pool:
-      name: $(LINUXPOOL)
-      image: $(LINUXVMIMAGE)
-      os: linux
+      name: azsdk-pool-mms-ubuntu-2004-general
+      vmImage: MMSUbuntu20.04
 
     steps:
     - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
@@ -256,16 +273,33 @@ jobs:
         ValidateFormatting: ${{ parameters.ValidateFormatting }}
         GenerateApiReviewForManualOnly: ${{ parameters.GenerateApiReviewForManualOnly }}
 
-  - template: /eng/common/pipelines/templates/jobs/generate-job-matrix.yml
+  - job: Compliance
+    pool:
+      name: azsdk-pool-mms-win-2022-general
+      vmImage: MMS2022
+
+    variables:
+      Codeql.SkipTaskAutoInjection: false
+      Codeql.Enabled: true
+      Codeql.Language: python
+      Codeql.BuildIdentifier: "${{ parameters.ServiceDirectory }}"
+      Codeql.SourceRoot: "sdk/${{ parameters.ServiceDirectory }}"
+
+    # per the guidance of the codeql team:
+    # https://eng.ms/docs/cloud-ai-platform/devdiv/one-engineering-system-1es/1es-docs/codeql/snippets/codeql-3000-other-issues#timeouts
+    timeoutInMinutes: 360
+
+    steps:
+      - template: /eng/common/pipelines/templates/steps/credscan.yml
+        parameters:
+          ServiceDirectory: ${{ parameters.ServiceDirectory }}
+          BaselineFilePath: $(Build.SourcesDirectory)\eng\python.gdnbaselines
+
+  - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
     parameters:
       JobTemplatePath: /eng/pipelines/templates/jobs/ci.tests.yml
-      OsVmImage: azsdk-pool-mms-ubuntu-2004-1espt
-      Pool: azsdk-pool-mms-ubuntu-2004-general
       DependsOn:
-        - ${{ if eq(parameters['AdvancedBuild'], true) }}:
-          - 'CoalesceBuildArtifacts'
-        - ${{ else }}:
-          - 'Build'
+        - 'Build'
       MatrixConfigs: ${{ parameters.MatrixConfigs }}
       MatrixFilters: ${{ parameters.MatrixFilters }}
       MatrixReplace: ${{ parameters.MatrixReplace }}
@@ -284,11 +318,9 @@ jobs:
         UnsupportedToxEnvironments: ${{ parameters.UnsupportedToxEnvironments }}
         TestProxy: ${{ parameters.TestProxy }}
 
-  - template: /eng/common/pipelines/templates/jobs/generate-job-matrix.yml
+  - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
     parameters:
       JobTemplatePath: /eng/pipelines/templates/jobs/regression.yml
-      OsVmImage: azsdk-pool-mms-ubuntu-2004-1espt
-      Pool: azsdk-pool-mms-ubuntu-2004-general
       GenerateJobName: generate_regression_matrix
       SparseCheckoutPaths: [ "scripts/", "sdk/", "tools/azure-sdk-tools/" ]
       MatrixConfigs:
@@ -314,10 +346,7 @@ jobs:
       CloudConfig:
         Cloud: Public
       DependsOn:
-        - ${{ if eq(parameters['AdvancedBuild'], true) }}:
-          - 'CoalesceBuildArtifacts'
-        - ${{ else }}:
-          - 'Build'
+        - 'Build'
       AdditionalParameters:
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         ServiceDirectory: ${{ parameters.ServiceDirectory }}

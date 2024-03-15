@@ -67,7 +67,7 @@ param (
     [string] $Environment = 'AzureCloud',
 
     [Parameter()]
-    [ValidateSet('test', 'perf', 'stress-test')]
+    [ValidateSet('test', 'perf')]
     [string] $ResourceType = 'test',
 
     [Parameter()]
@@ -91,9 +91,6 @@ param (
 
     [Parameter()]
     [switch] $SuppressVsoCommands = ($null -eq $env:SYSTEM_TEAMPROJECTID),
-
-    [Parameter()]
-    [switch] $UserAuth,
 
     # Captures any arguments not declared here (no parameter errors)
     # This enables backwards compatibility with old script versions in
@@ -196,14 +193,14 @@ function NewServicePrincipalWrapper([string]$subscription, [string]$resourceGrou
             # Submitting a password credential object without specifying a password will result in one being generated on the server side.
             $password = New-Object -TypeName "Microsoft.Azure.PowerShell.Cmdlets.Resources.MSGraph.Models.ApiV10.MicrosoftGraphPasswordCredential"
             $password.DisplayName = "Password for $displayName"
-            $credential = Retry { New-AzADSpCredential -PasswordCredentials $password -ServicePrincipalObject $servicePrincipal -ErrorAction 'Stop' }
+            $credential = Retry { New-AzADSpCredential -PasswordCredentials $password -ServicePrincipalObject $servicePrincipal }
             $spPassword = ConvertTo-SecureString $credential.SecretText -AsPlainText -Force
             $appId = $servicePrincipal.AppId
         } else {
             Write-Verbose "Creating service principal credential via MS Graph API"
             # In 5.2.0 the password credential issue was fixed (see https://github.com/Azure/azure-powershell/pull/16690) but the
             # parameter set was changed making the above call fail due to a missing ServicePrincipalId parameter.
-            $credential = Retry { $servicePrincipal | New-AzADSpCredential -ErrorAction 'Stop' }
+            $credential = Retry { $servicePrincipal | New-AzADSpCredential }
             $spPassword = ConvertTo-SecureString $credential.SecretText -AsPlainText -Force
             $appId = $servicePrincipal.AppId
         }
@@ -293,14 +290,7 @@ function BuildDeploymentOutputs([string]$serviceName, [object]$azContext, [objec
         }
     }
 
-    # Force capitalization of all keys to avoid Azure Pipelines confusion with
-    # variable auto-capitalization and OS env var capitalization differences
-    $capitalized = @{}
-    foreach ($item in $deploymentOutputs.GetEnumerator()) {
-        $capitalized[$item.Name.ToUpperInvariant()] = $item.Value
-    }
-
-    return $capitalized
+    return $deploymentOutputs
 }
 
 function SetDeploymentOutputs(
@@ -614,19 +604,8 @@ try {
         }
     }
 
-    if ($UserAuth) {
-        if ($TestApplicationId) {
-            Write-Warning "The specified TestApplicationId '$TestApplicationId' will be ignored when UserAuth is set."
-        }
-
-        $userAccount = (Get-AzADUser -UserPrincipalName (Get-AzContext).Account)
-        $TestApplicationOid = $userAccount.Id
-        $TestApplicationId = $testApplicationOid
-        $userAccountName = $userAccount.UserPrincipalName
-        Log "User authentication with user '$userAccountName' ('$TestApplicationId') will be used."
-    }
     # If no test application ID was specified during an interactive session, create a new service principal.
-    elseif (!$CI -and !$TestApplicationId) {
+    if (!$CI -and !$TestApplicationId) {
         # Cache the created service principal in this session for frequent reuse.
         $servicePrincipal = if ($AzureTestPrincipal -and (Get-AzADServicePrincipal -ApplicationId $AzureTestPrincipal.AppId) -and $AzureTestSubscription -eq $SubscriptionId) {
             Log "TestApplicationId was not specified; loading cached service principal '$($AzureTestPrincipal.AppId)'"
@@ -688,11 +667,11 @@ try {
     $PSBoundParameters['TestApplicationOid'] = $TestApplicationOid
     $PSBoundParameters['TestApplicationSecret'] = $TestApplicationSecret
 
-    # If the role hasn't been explicitly assigned to the resource group and a cached service principal or user authentication is in use,
+    # If the role hasn't been explicitly assigned to the resource group and a cached service principal is in use,
     # query to see if the grant is needed.
-    if (!$resourceGroupRoleAssigned -and $TestApplicationOid) {
+    if (!$resourceGroupRoleAssigned -and $AzureTestPrincipal) {
         $roleAssignment = Get-AzRoleAssignment `
-                            -ObjectId $TestApplicationOid `
+                            -ObjectId $AzureTestPrincipal.Id `
                             -RoleDefinitionName 'Owner' `
                             -ResourceGroupName "$ResourceGroupName" `
                             -ErrorAction SilentlyContinue
@@ -704,20 +683,19 @@ try {
    # considered a critical failure, as the test application may have subscription-level permissions and not require
    # the explicit grant.
    if (!$resourceGroupRoleAssigned) {
-        $idSlug = if ($userAuth) { "User '$userAccountName' ('$TestApplicationId')"} else { "Test Application '$TestApplicationId'"};
-        Log "Attempting to assign the 'Owner' role for '$ResourceGroupName' to the $idSlug"
-        $ownerAssignment = New-AzRoleAssignment `
-                            -RoleDefinitionName "Owner" `
-                            -ObjectId "$TestApplicationOId" `
-                            -ResourceGroupName "$ResourceGroupName" `
-                            -ErrorAction SilentlyContinue
+        Log "Attempting to assigning the 'Owner' role for '$ResourceGroupName' to the Test Application '$TestApplicationId'"
+        $principalOwnerAssignment = New-AzRoleAssignment `
+                                        -RoleDefinitionName "Owner" `
+                                        -ApplicationId "$TestApplicationId" `
+                                        -ResourceGroupName "$ResourceGroupName" `
+                                        -ErrorAction SilentlyContinue
 
-        if ($ownerAssignment.RoleDefinitionName -eq 'Owner') {
-            Write-Verbose "Successfully assigned ownership of '$ResourceGroupName' to the $idSlug"
+        if ($principalOwnerAssignment.RoleDefinitionName -eq 'Owner') {
+            Write-Verbose "Successfully assigned ownership of '$ResourceGroupName' to the Test Application '$TestApplicationId'"
         } else {
             Write-Warning ("The 'Owner' role for '$ResourceGroupName' could not be assigned. " +
                           "You may need to manually grant 'Owner' for the resource group to the " +
-                          "$idSlug if it does not have subscription-level permissions.")
+                          "Test Application '$TestApplicationId' if it does not have subscription-level permissions.")
         }
     }
 
@@ -1011,14 +989,6 @@ Save test environment settings into a .env file next to test resources template.
 The contents of the file are protected via the .NET Data Protection API (DPAPI).
 This is supported only on Windows. The environment file is scoped to the current
 service directory.
-
-The environment file will be named for the test resources template that it was
-generated for. For ARM templates, it will be test-resources.json.env. For
-Bicep templates, test-resources.bicep.env.
-
-.PARAMETER UserAuth
-Create the resource group and deploy the template using the signed in user's credentials.
-No service principal will be created or used.
 
 The environment file will be named for the test resources template that it was
 generated for. For ARM templates, it will be test-resources.json.env. For
