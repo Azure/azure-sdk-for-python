@@ -5,7 +5,11 @@
 # --------------------------------------------------------------------------
 from typing import Optional
 from azure.core.pipeline.policies import UserAgentPolicy
+
+from .models._models import SendMessageErrorOptions, SendMessageError, AckMessageError
 from ._version import VERSION
+
+NO_ACK_MESSAGE_ERROR = "NoAckMessageReceivedFromServer"
 
 
 def format_user_agent(user_agent: Optional[str] = None) -> str:
@@ -16,3 +20,15 @@ def format_user_agent(user_agent: Optional[str] = None) -> str:
     :rtype: str
     """
     return UserAgentPolicy(user_agent=user_agent, sdk_moniker=f"webpubsub-client/{VERSION}").user_agent
+
+
+def raise_for_empty_message_ack(message_ack: Optional[SendMessageErrorOptions], ack_id: Optional[int] = None):
+    if not message_ack:
+        raise SendMessageError(
+            message="Failed to send message.",
+            ack_id=ack_id,
+            error_detail=AckMessageError(
+                name=NO_ACK_MESSAGE_ERROR,
+                message="The connection may have been lost during message sending or service don't send ack message.",
+            ),
+        )

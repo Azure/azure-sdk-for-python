@@ -58,7 +58,7 @@ from .._client import (
     _ACK_TIMEOUT,
     _START_TIMEOUT,
 )
-from .._util import format_user_agent
+from .._util import format_user_agent, raise_for_empty_message_ack, NO_ACK_MESSAGE_ERROR
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -254,18 +254,11 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
             raise e
 
         message_ack = await self._ack_map.get(ack_id)
-        if not message_ack:
-            raise SendMessageError(
-                message="Failed to send message.",
-                ack_id=ack_id,
-                error_detail=AckMessageError(
-                    name="NoAckMessageReceivedFromServer",
-                    message="The connection may have been lost during message sending or service don't send ack message.",
-                ),
-            )
+        raise_for_empty_message_ack(message_ack, ack_id)
+
         _LOGGER.debug("wait for ack message with ackId: %s", ack_id)
         await asyncio.wait_for(message_ack.event.wait(), timeout=self._ack_timeout)
-        await self._ack_map.pop(ack_id)
+        raise_for_empty_message_ack(await self._ack_map.pop(ack_id))
         if message_ack.error_detail is not None:
             raise SendMessageError(
                 message="Failed to send message.",
@@ -557,10 +550,12 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
             try:
                 await func()
                 return
-            except Exception as e:  # pylint: disable=broad-except
+            except (Exception, SendMessageError) as e:  # pylint: disable=broad-except
                 retry_attempt = retry_attempt + 1
                 delay_seconds = self._message_retry_policy.next_retry_delay(retry_attempt)
-                if delay_seconds is None:
+                if delay_seconds is None or (
+                    isinstance(e, SendMessageError) and e.error_detail and e.error_detail.name == NO_ACK_MESSAGE_ERROR
+                ):
                     raise e
                 _LOGGER.debug(
                     "will retry %sth times after %s seconds",
