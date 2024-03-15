@@ -34,12 +34,6 @@ client_basic = EventGridClient(EVENTGRID_ENDPOINT_GA, AzureKeyCredential(EVENTGR
 event = CloudEvent(data={"key": "value"}, type="Contoso.Items.ItemReceived", source="https://contoso.com/items")
 client_basic.send(TOPIC_NAME, event)
 
-# Try calling `send` method on the Cloud Event Topic client
-try:
-    client_basic.send(TOPIC_NAME, event)
-except AttributeError as e:
-    print(e)
-
 # Try Acknowledge the Cloud Event
 try:
     client_basic.acknowledge_cloud_events(TOPIC_NAME, EVENT_SUBSCRIPTION_NAME, AcknowledgeOptions(lock_tokens=["token"]))
@@ -59,12 +53,6 @@ eventgrid_event = EventGridEvent(
     data_version="2.0"
 )
 client_basic.send(TOPIC_NAME, [eventgrid_event])
-
-# Try calling `send` method on the EventGridEvent Topic client
-try:
-    client_basic.send(TOPIC_NAME, eventgrid_event)
-except AttributeError as e:
-    print(e)
 
 # Try Acknowledge the EventGridEvent
 try:
