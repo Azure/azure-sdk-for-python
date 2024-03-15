@@ -11,7 +11,6 @@ from ._models import AddParticipantRequest
 from ._models import AddParticipantResponse
 from ._models import AddParticipantSucceeded
 from ._models import AnswerCallRequest
-from ._models import AzureBlobStorage
 from ._models import CallConnected
 from ._models import CallConnectionProperties
 from ._models import CallDisconnected
@@ -105,7 +104,6 @@ __all__ = [
     "AddParticipantResponse",
     "AddParticipantSucceeded",
     "AnswerCallRequest",
-    "AzureBlobStorage",
     "CallConnected",
     "CallConnectionProperties",
     "CallDisconnected",

@@ -128,9 +128,12 @@ class RecordingFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class RecordingKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """RecordingKind."""
 
-    AZURE_COMMUNICATION_SERVICES = "azureCommunicationServices"
-    TEAMS = "teams"
-    TEAMS_COMPLIANCE = "teamsCompliance"
+    AZURE_COMMUNICATION_SERVICES = "AzureCommunicationServices"
+    """Recording initiated by Azure Communication Services"""
+    TEAMS = "Teams"
+    """Recording initiated by Teams user"""
+    TEAMS_COMPLIANCE = "TeamsCompliance"
+    """Recording initiated by Teams compliance policy"""
 
 
 class RecordingState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -143,8 +146,10 @@ class RecordingState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class RecordingStorageKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Defines the kind of external storage."""
 
-    AZURE_COMMUNICATION_SERVICES = "azureCommunicationServices"
-    AZURE_BLOB_STORAGE = "azureBlobStorage"
+    AZURE_COMMUNICATION_SERVICES = "AzureCommunicationServices"
+    """Storage managed by Azure Communication Services"""
+    AZURE_BLOB_STORAGE = "AzureBlobStorage"
+    """Storage managed by provided Azure blob"""
 
 
 class VoiceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):

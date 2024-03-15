@@ -23,7 +23,8 @@ from ._generated.models import (
     RedirectCallRequest,
     RejectCallRequest,
     StartCallRecordingRequest,
-    CallIntelligenceOptions
+    CallIntelligenceOptions,
+    ExternalStorage
 )
 from ._models import (
     CallConnectionProperties,
@@ -428,9 +429,9 @@ class CallAutomationClient:
          'channel' will be automatically assigned.
          Channel-Participant mapping details can be found in the metadata of the recording.
         :paramtype channel_affinity: list[~azure.communication.callautomation.ChannelAffinity] or None
-        :keyword recording_storage_type: Recording storage mode.
-         ``External`` enables bring your own storage.
-        :paramtype recording_storage_type: str or None
+        :keyword recording_storage_type: Defines the kind of external storage. Required. Known values are:
+          ``AzureCommunicationServices`` and ``AzureBlobStorage``.
+        :paramtype recording_storage_type: str or ~azure.communication.callautomation.models.RecordingStorageKind or None
         :keyword external_storage_location: The location where recording is stored,
          when RecordingStorageType is set to 'AzureBlobStorage'.
         :paramtype external_storage_location: str or ~azure.communication.callautomation.RecordingStorageKind or None
@@ -481,9 +482,9 @@ class CallAutomationClient:
          'channel' will be automatically assigned.
          Channel-Participant mapping details can be found in the metadata of the recording.
         :paramtype channel_affinity: list[~azure.communication.callautomation.ChannelAffinity] or None
-        :keyword recording_storage_type: Recording storage mode.
-         ``External`` enables bring your own storage.
-        :paramtype recording_storage_type: str or None
+        :keyword recording_storage_type: Defines the kind of external storage. Required. Known values are:
+          ``AzureCommunicationServices`` and ``AzureBlobStorage``.
+        :paramtype recording_storage_type: str or ~azure.communication.callautomation.models.RecordingStorageKind or None
         :keyword external_storage_location: The location where recording is stored,
          when RecordingStorageType is set to 'AzureBlobStorage'.
         :paramtype external_storage_location: str or ~azure.communication.callautomation.RecordingStorageKind or None
@@ -509,6 +510,12 @@ class CallAutomationClient:
             kwargs.pop("server_call_id", None),
             kwargs.pop("group_call_id", None)
         )
+
+        external_storage = ExternalStorage(
+            recording_destination_container_url=kwargs.pop("external_storage_location", None),
+            recording_storage_kind=kwargs.pop("recording_storage_type", None)
+        )
+
         start_recording_request = StartCallRecordingRequest(
             call_locator=call_locator,
             recording_state_callback_uri=kwargs.pop("recording_state_callback_url", None),
@@ -516,8 +523,7 @@ class CallAutomationClient:
             recording_channel_type=kwargs.pop("recording_channel_type", None),
             recording_format_type=kwargs.pop("recording_format_type", None),
             audio_channel_participant_ordering=kwargs.pop("audio_channel_participant_ordering", None),
-            recording_storage_type=kwargs.pop("recording_storage_type", None),
-            external_storage=kwargs.pop("external_storage_location", None),
+            external_storage=external_storage,
             channel_affinity=channel_affinity_internal,
             pause_on_start=kwargs.pop("pause_on_start", None)
         )
