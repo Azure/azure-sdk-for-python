@@ -25,7 +25,6 @@ from azure.core.exceptions import (
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.utils import CaseInsensitiveDict
 from ._sync_token_async import AsyncSyncTokenPolicy
-from .._azure_appconfiguration_client import _return_deserialized_and_headers
 from .._azure_appconfiguration_error import ResourceReadOnlyError
 from .._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
 from .._generated.aio import AzureAppConfiguration
@@ -232,7 +231,6 @@ class AzureAppConfigurationClient:
                 label=label_filter,
                 accept_datetime=accept_datetime,
                 select=select,
-                cls=_return_deserialized_and_headers,
                 page_iterator_class=ConfigurationSettingPropertiesPagedAsync,
             )
         except binascii.Error as exc:

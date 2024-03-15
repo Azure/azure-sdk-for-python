@@ -41,9 +41,6 @@ from ._utils import (
 )
 from ._sync_token import SyncTokenPolicy
 
-def _return_deserialized_and_headers(response, deserialized, response_headers):
-    return deserialized, response_headers
-
 
 class AzureAppConfigurationClient:
     """Represents a client that calls restful API of Azure App Configuration service.
@@ -228,7 +225,6 @@ class AzureAppConfigurationClient:
                 label=label_filter,
                 accept_datetime=accept_datetime,
                 select=select,
-                cls=_return_deserialized_and_headers,
                 page_iterator_class=ConfigurationSettingPropertiesPaged,
             )
 

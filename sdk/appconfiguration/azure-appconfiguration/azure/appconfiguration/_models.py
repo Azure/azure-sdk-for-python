@@ -540,6 +540,10 @@ class ConfigurationSnapshot:  # pylint: disable=too-many-instance-attributes
         )
 
 
+def _return_deserialized_and_headers(response, deserialized, response_headers):
+    return deserialized, response_headers
+
+
 class ConfigurationSettingPropertiesPaged(PageIterator):
     """An iterable of ConfigurationSetting properties."""
 
@@ -557,17 +561,16 @@ class ConfigurationSettingPropertiesPaged(PageIterator):
         self._label = kwargs.get("label")
         self._accept_datetime = kwargs.get("accept_datetime")
         self._select = kwargs.get("select")
-        self._cls = kwargs.get("cls")
         self._deserializer = lambda objs: [ConfigurationSetting._from_generated(x) for x in objs]
     
-    def _get_next_cb(self, continuation_token):
+    def _get_next_cb(self, continuation_token, **kwargs):
         return self._command(
             key=self._key,
             label=self._label,
             accept_datetime=self._accept_datetime,
             select=self._select,
             continuation_token=continuation_token,
-            cls=self._cls,
+            cls=kwargs.pop("cls", None) or _return_deserialized_and_headers,
         )
 
     def _extract_data_cb(self, get_next_return):
@@ -593,17 +596,16 @@ class ConfigurationSettingPropertiesPagedAsync(AsyncPageIterator):
         self._label = kwargs.get("label")
         self._accept_datetime = kwargs.get("accept_datetime")
         self._select = kwargs.get("select")
-        self._cls = kwargs.get("cls")
         self._deserializer = lambda objs: [ConfigurationSetting._from_generated(x) for x in objs]
     
-    async def _get_next_cb(self, continuation_token):
+    async def _get_next_cb(self, continuation_token, **kwargs):
         return await self._command(
             key=self._key,
             label=self._label,
             accept_datetime=self._accept_datetime,
             select=self._select,
             continuation_token=continuation_token,
-            cls=self._cls,
+            cls=kwargs.pop("cls", None) or _return_deserialized_and_headers,
         )
 
     async def _extract_data_cb(self, get_next_return):
