@@ -147,13 +147,16 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigOpGenerated):
 
         response_headers = response.headers
         deserialized = self._deserialize("KeyValueListResult", pipeline_response)
-        
+
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
-        
+
         return deserialized
 
-__all__: List[str] = ["AzureAppConfigurationOperationsMixin"]  # Add all objects you want publicly available to users at this package level
+
+__all__: List[str] = [
+    "AzureAppConfigurationOperationsMixin"
+]  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():

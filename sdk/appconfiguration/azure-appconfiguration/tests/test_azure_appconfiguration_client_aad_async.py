@@ -221,9 +221,7 @@ class TestAppConfigurationClientAADAsync(AsyncAppConfigTestCase):
     @recorded_by_proxy_async
     async def test_list_configuration_settings_key_label(self, appconfiguration_endpoint_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date"
-        )
+        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         await self.set_up(appconfiguration_endpoint_string, is_aad=True)
         items = await self.convert_to_list(self.client.list_configuration_settings(label_filter=LABEL, key_filter=KEY))
         assert len(items) == 1
@@ -234,9 +232,7 @@ class TestAppConfigurationClientAADAsync(AsyncAppConfigTestCase):
     @recorded_by_proxy_async
     async def test_list_configuration_settings_only_label(self, appconfiguration_endpoint_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date"
-        )
+        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         await self.set_up(appconfiguration_endpoint_string, is_aad=True)
         items = await self.convert_to_list(self.client.list_configuration_settings(label_filter=LABEL))
         assert len(items) == 1
@@ -247,9 +243,7 @@ class TestAppConfigurationClientAADAsync(AsyncAppConfigTestCase):
     @recorded_by_proxy_async
     async def test_list_configuration_settings_only_key(self, appconfiguration_endpoint_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date"
-        )
+        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         await self.set_up(appconfiguration_endpoint_string, is_aad=True)
         items = await self.convert_to_list(self.client.list_configuration_settings(key_filter=KEY))
         assert len(items) == 2
@@ -260,9 +254,7 @@ class TestAppConfigurationClientAADAsync(AsyncAppConfigTestCase):
     @recorded_by_proxy_async
     async def test_list_configuration_settings_fields(self, appconfiguration_endpoint_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date"
-        )
+        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         await self.set_up(appconfiguration_endpoint_string, is_aad=True)
         items = await self.convert_to_list(
             self.client.list_configuration_settings(key_filter="*", label_filter=LABEL, fields=["key", "content_type"])
@@ -275,9 +267,7 @@ class TestAppConfigurationClientAADAsync(AsyncAppConfigTestCase):
     @recorded_by_proxy_async
     async def test_list_configuration_settings_reserved_chars(self, appconfiguration_endpoint_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date"
-        )
+        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         async with self.create_aad_client(appconfiguration_endpoint_string) as client:
             reserved_char_kv = ConfigurationSetting(key=KEY, label=LABEL_RESERVED_CHARS, value=TEST_VALUE)
             reserved_char_kv = await client.add_configuration_setting(reserved_char_kv)
@@ -292,9 +282,7 @@ class TestAppConfigurationClientAADAsync(AsyncAppConfigTestCase):
     @recorded_by_proxy_async
     async def test_list_configuration_settings_contains(self, appconfiguration_endpoint_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date"
-        )
+        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         await self.set_up(appconfiguration_endpoint_string, is_aad=True)
         items = await self.convert_to_list(self.client.list_configuration_settings(label_filter=LABEL + "*"))
         assert len(items) == 1
@@ -305,9 +293,7 @@ class TestAppConfigurationClientAADAsync(AsyncAppConfigTestCase):
     @recorded_by_proxy_async
     async def test_list_configuration_settings_correct_etag(self, appconfiguration_endpoint_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date"
-        )
+        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         async with self.create_aad_client(appconfiguration_endpoint_string) as client:
             to_list_kv = self.create_config_setting()
             await self.add_for_test(client, to_list_kv)
@@ -326,9 +312,7 @@ class TestAppConfigurationClientAADAsync(AsyncAppConfigTestCase):
     @recorded_by_proxy_async
     async def test_list_configuration_settings_multi_pages(self, appconfiguration_endpoint_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date"
-        )
+        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         async with self.create_aad_client(appconfiguration_endpoint_string) as client:
             # create PAGE_SIZE+1 configuration settings to have at least two pages
             try:
@@ -370,9 +354,7 @@ class TestAppConfigurationClientAADAsync(AsyncAppConfigTestCase):
     @recorded_by_proxy_async
     async def test_list_configuration_settings_only_accepttime(self, appconfiguration_endpoint_string, **kwargs):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date"
-        )
+        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         recorded_variables = kwargs.pop("variables", {})
         await self.set_up(appconfiguration_endpoint_string, is_aad=True)
         exclude_today = await self.convert_to_list(
@@ -392,9 +374,7 @@ class TestAppConfigurationClientAADAsync(AsyncAppConfigTestCase):
     @recorded_by_proxy_async
     async def test_list_revisions_key_label(self, appconfiguration_endpoint_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date"
-        )
+        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         await self.set_up(appconfiguration_endpoint_string, is_aad=True)
         to_list = self.create_config_setting()
         items = await self.convert_to_list(
@@ -408,9 +388,7 @@ class TestAppConfigurationClientAADAsync(AsyncAppConfigTestCase):
     @recorded_by_proxy_async
     async def test_list_revisions_only_label(self, appconfiguration_endpoint_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date"
-        )
+        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         await self.set_up(appconfiguration_endpoint_string, is_aad=True)
         items = await self.convert_to_list(self.client.list_revisions(label_filter=LABEL))
         assert len(items) >= 1
@@ -421,9 +399,7 @@ class TestAppConfigurationClientAADAsync(AsyncAppConfigTestCase):
     @recorded_by_proxy_async
     async def test_list_revisions_key_no_label(self, appconfiguration_endpoint_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date"
-        )
+        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         await self.set_up(appconfiguration_endpoint_string, is_aad=True)
         items = await self.convert_to_list(self.client.list_revisions(key_filter=KEY))
         assert len(items) >= 1
@@ -434,9 +410,7 @@ class TestAppConfigurationClientAADAsync(AsyncAppConfigTestCase):
     @recorded_by_proxy_async
     async def test_list_revisions_fields(self, appconfiguration_endpoint_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date"
-        )
+        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         await self.set_up(appconfiguration_endpoint_string, is_aad=True)
         items = await self.convert_to_list(
             self.client.list_revisions(key_filter="*", label_filter=LABEL, fields=["key", "content_type"])

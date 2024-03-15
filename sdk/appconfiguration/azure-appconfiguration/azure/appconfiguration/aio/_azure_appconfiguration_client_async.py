@@ -139,7 +139,7 @@ class AzureAppConfigurationClient:
         :rtype: ~azure.core.rest.AsyncHttpResponse
         """
         return await self._impl._send_request(request, stream=stream, **kwargs)
-    
+
     @overload
     def list_configuration_settings(
         self,
@@ -224,7 +224,7 @@ class AzureAppConfigurationClient:
                 )
             key_filter, kwargs = get_key_filter(*args, **kwargs)
             label_filter, kwargs = get_label_filter(*args, **kwargs)
-            command = functools.partial(self._impl.get_key_values_in_one_page, **kwargs) # type: ignore[attr-defined]
+            command = functools.partial(self._impl.get_key_values_in_one_page, **kwargs)  # type: ignore[attr-defined]
             return AsyncItemPaged(
                 command,
                 key=key_filter,

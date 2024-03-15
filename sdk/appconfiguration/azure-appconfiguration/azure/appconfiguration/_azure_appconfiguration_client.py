@@ -116,7 +116,7 @@ class AzureAppConfigurationClient:
             id_credential=id_credential,
             **kwargs,
         )
-    
+
     @distributed_trace
     def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs) -> HttpResponse:
         """Runs a network request using the client's existing pipeline.
@@ -196,9 +196,7 @@ class AzureAppConfigurationClient:
         """
 
     @distributed_trace
-    def list_configuration_settings(
-        self, *args, **kwargs
-    ) -> ItemPaged[ConfigurationSetting]:
+    def list_configuration_settings(self, *args, **kwargs) -> ItemPaged[ConfigurationSetting]:
         accept_datetime = kwargs.pop("accept_datetime", None)
         if isinstance(accept_datetime, datetime):
             accept_datetime = str(accept_datetime)
@@ -218,7 +216,7 @@ class AzureAppConfigurationClient:
                 )
             key_filter, kwargs = get_key_filter(*args, **kwargs)
             label_filter, kwargs = get_label_filter(*args, **kwargs)
-            command = functools.partial(self._impl.get_key_values_in_one_page, **kwargs) # type: ignore[attr-defined]
+            command = functools.partial(self._impl.get_key_values_in_one_page, **kwargs)  # type: ignore[attr-defined]
             return ItemPaged(
                 command,
                 key=key_filter,
@@ -230,7 +228,7 @@ class AzureAppConfigurationClient:
 
         except binascii.Error as exc:
             raise binascii.Error("Connection string secret has incorrect padding") from exc
-    
+
     @distributed_trace
     def get_configuration_setting(
         self,

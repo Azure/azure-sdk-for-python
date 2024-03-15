@@ -549,7 +549,7 @@ class ConfigurationSettingPropertiesPaged(PageIterator):
 
     etag: str
     """The etag of current page."""
-    
+
     def __init__(self, command: Callable, **kwargs):
         super(ConfigurationSettingPropertiesPaged, self).__init__(
             self._get_next_cb,
@@ -562,7 +562,7 @@ class ConfigurationSettingPropertiesPaged(PageIterator):
         self._accept_datetime = kwargs.get("accept_datetime")
         self._select = kwargs.get("select")
         self._deserializer = lambda objs: [ConfigurationSetting._from_generated(x) for x in objs]
-    
+
     def _get_next_cb(self, continuation_token, **kwargs):
         return self._command(
             key=self._key,
@@ -575,7 +575,7 @@ class ConfigurationSettingPropertiesPaged(PageIterator):
 
     def _extract_data_cb(self, get_next_return):
         deserialized, response_headers = get_next_return
-        self.etag = response_headers.pop('ETag')
+        self.etag = response_headers.pop("ETag")
         return deserialized.next_link or None, iter(self._deserializer(deserialized.items))
 
 
@@ -584,7 +584,7 @@ class ConfigurationSettingPropertiesPagedAsync(AsyncPageIterator):
 
     etag: str
     """The etag of current page."""
-    
+
     def __init__(self, command: Callable, **kwargs):
         super(ConfigurationSettingPropertiesPagedAsync, self).__init__(
             self._get_next_cb,
@@ -597,7 +597,7 @@ class ConfigurationSettingPropertiesPagedAsync(AsyncPageIterator):
         self._accept_datetime = kwargs.get("accept_datetime")
         self._select = kwargs.get("select")
         self._deserializer = lambda objs: [ConfigurationSetting._from_generated(x) for x in objs]
-    
+
     async def _get_next_cb(self, continuation_token, **kwargs):
         return await self._command(
             key=self._key,
@@ -610,5 +610,5 @@ class ConfigurationSettingPropertiesPagedAsync(AsyncPageIterator):
 
     async def _extract_data_cb(self, get_next_return):
         deserialized, response_headers = get_next_return
-        self.etag = response_headers.pop('ETag')
+        self.etag = response_headers.pop("ETag")
         return deserialized.next_link or None, AsyncList(self._deserializer(deserialized.items))
