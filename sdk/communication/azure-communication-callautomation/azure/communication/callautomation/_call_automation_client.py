@@ -400,8 +400,8 @@ class CallAutomationClient:
         recording_format_type: Optional[Union[str, 'RecordingFormat']] = None,
         audio_channel_participant_ordering: Optional[List['CommunicationIdentifier']] = None,
         channel_affinity: Optional[List['ChannelAffinity']] = None,
-        recording_storage_type: Optional[Union[str, 'RecordingStorageKind']] = None,
-        external_storage_location: Optional[str] = None,
+        recording_storage_kind: Optional[Union[str, 'RecordingStorageKind']] = None,
+        recording_destination_container_url: Optional[str] = None,
         pause_on_start: Optional[bool] = None,
         **kwargs
     ) -> RecordingProperties:
@@ -429,12 +429,13 @@ class CallAutomationClient:
          'channel' will be automatically assigned.
          Channel-Participant mapping details can be found in the metadata of the recording.
         :paramtype channel_affinity: list[~azure.communication.callautomation.ChannelAffinity] or None
-        :keyword recording_storage_type: Defines the kind of external storage. Required. Known values are:
+        :keyword recording_storage_kind: Defines the kind of external storage. Required. Known values are:
           ``AzureCommunicationServices`` and ``AzureBlobStorage``.
-        :paramtype recording_storage_type: str or ~azure.communication.callautomation.models.RecordingStorageKind or None
-        :keyword external_storage_location: The location where recording is stored,
-         when RecordingStorageType is set to 'AzureBlobStorage'.
-        :paramtype external_storage_location: str or ~azure.communication.callautomation.RecordingStorageKind or None
+        :paramtype recording_storage_kind: str or ~azure.communication.callautomation.models.RecordingStorageKind
+        or None
+        :keyword recording_destination_container_url: The location where recording is stored,
+         when recording_storage_kind is set to 'AzureBlobStorage'.
+        :paramtype recording_destination_container_url: str or None
         :keyword pause_on_start: The state of the pause on start option.
         :paramtype pause_on_start: bool or None
         :return: RecordingProperties
@@ -453,8 +454,8 @@ class CallAutomationClient:
         recording_format_type: Optional[Union[str, 'RecordingFormat']] = None,
         audio_channel_participant_ordering: Optional[List['CommunicationIdentifier']] = None,
         channel_affinity: Optional[List['ChannelAffinity']] = None,
-        recording_storage_type: Optional[Union[str, 'RecordingStorageKind']] = None,
-        external_storage_location: Optional[str] = None,
+        recording_storage_kind: Optional[Union[str, 'RecordingStorageKind']] = None,
+        recording_destination_container_url: Optional[str] = None,
         pause_on_start: Optional[bool] = None,
         **kwargs
     ) -> RecordingProperties:
@@ -482,12 +483,13 @@ class CallAutomationClient:
          'channel' will be automatically assigned.
          Channel-Participant mapping details can be found in the metadata of the recording.
         :paramtype channel_affinity: list[~azure.communication.callautomation.ChannelAffinity] or None
-        :keyword recording_storage_type: Defines the kind of external storage. Required. Known values are:
+        :keyword recording_storage_kind: Defines the kind of external storage. Required. Known values are:
           ``AzureCommunicationServices`` and ``AzureBlobStorage``.
-        :paramtype recording_storage_type: str or ~azure.communication.callautomation.models.RecordingStorageKind or None
-        :keyword external_storage_location: The location where recording is stored,
-         when RecordingStorageType is set to 'AzureBlobStorage'.
-        :paramtype external_storage_location: str or ~azure.communication.callautomation.RecordingStorageKind or None
+        :paramtype recording_storage_kind: str or ~azure.communication.callautomation.models.RecordingStorageKind
+        or None
+        :keyword recording_destination_container_url: The location where recording is stored,
+         when recording_storage_kind is set to 'AzureBlobStorage'.
+        :paramtype recording_destination_container_url: str or None
         :keyword pause_on_start: The state of the pause on start option.
         :paramtype pause_on_start: bool or None
         :return: RecordingProperties
@@ -512,8 +514,8 @@ class CallAutomationClient:
         )
 
         external_storage = ExternalStorage(
-            recording_destination_container_url=kwargs.pop("external_storage_location", None),
-            recording_storage_kind=kwargs.pop("recording_storage_type", None)
+            recording_destination_container_url=kwargs.pop("recording_destination_container_url", None),
+            recording_storage_kind=kwargs.pop("recording_storage_kind", None)
         )
 
         start_recording_request = StartCallRecordingRequest(
