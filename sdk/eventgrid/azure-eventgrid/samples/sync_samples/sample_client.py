@@ -32,7 +32,7 @@ client_basic = EventGridClient(EVENTGRID_ENDPOINT_GA, AzureKeyCredential(EVENTGR
 
 # Create a Cloud Event and publish it to the topic
 event = CloudEvent(data={"key": "value"}, type="Contoso.Items.ItemReceived", source="https://contoso.com/items")
-client_basic.publish(TOPIC_NAME, event)
+client_basic.send(TOPIC_NAME, event)
 
 # Try calling `send` method on the Cloud Event Topic client
 try:
@@ -58,7 +58,7 @@ eventgrid_event = EventGridEvent(
     event_type="Contoso.Items.ItemReceived",
     data_version="2.0"
 )
-client_basic.publish(TOPIC_NAME, [eventgrid_event])
+client_basic.send(TOPIC_NAME, [eventgrid_event])
 
 # Try calling `send` method on the EventGridEvent Topic client
 try:
@@ -77,7 +77,7 @@ except AttributeError as e:
 # Create a Namespace client
 client_standard = EventGridClient(EVENTGRID_ENDPOINT, AzureKeyCredential(EVENTGRID_KEY))
 
-# Create a Cloud Event and publish it to the topic
+# Create a Cloud Event and send it to the topic
 client_standard.send(TOPIC_NAME, event)
 
 # Create an EventGridEvent and send it to the topic
