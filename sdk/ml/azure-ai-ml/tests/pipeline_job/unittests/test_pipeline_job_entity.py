@@ -2195,11 +2195,7 @@ class TestPipelineJobEntity:
             "runtime_version": "3.2.0",
         }
 
-    def test_local_input_in_pipeline_job(
-        self,
-        client: MLClient,
-        tmp_path: Path
-    ):
+    def test_local_input_in_pipeline_job(self, client: MLClient, tmp_path: Path):
         file_path = tmp_path / "mock_input_file"
         file_path.touch(exist_ok=True)
         component_path = "./tests/test_configs/components/1in1out.yaml"
