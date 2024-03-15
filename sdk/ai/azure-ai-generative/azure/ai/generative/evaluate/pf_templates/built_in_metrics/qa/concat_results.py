@@ -16,6 +16,8 @@ def default_quality_results():
     result = {}
     for metric_name in supported_metrics:
         result[metric_name] = np.nan
+        if metric_name == "gpt_groundedness":
+            result[metric_name + "_reasoning"] = np.nan
     return result
 
 
@@ -23,11 +25,16 @@ def default_quality_results():
 # Adding type to arguments and return value will help the system show the types properly
 # Please update the function name/signature per need
 @tool
-def concat_results(selected_metrics: dict, quality_results: dict = None, safety_results: dict = None) -> dict:
+def concat_results(selected_metrics: dict, 
+        quality_results: dict = None, 
+        safety_results: dict = None,
+        groundedness_results: dict = None) -> dict:
     if quality_results:
         concated_results = quality_results.copy()
     else:
         concated_results = default_quality_results()
+    if groundedness_results:
+        concated_results.update(groundedness_results)
     if safety_results:
         concated_results.update(safety_results)
     else:

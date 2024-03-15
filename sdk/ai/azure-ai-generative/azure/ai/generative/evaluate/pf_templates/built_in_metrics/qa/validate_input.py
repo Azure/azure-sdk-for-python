@@ -5,7 +5,7 @@ from utils import is_valid_string
 def validate_input(question: str, answer: str, context: str, ground_truth: str, selected_metrics: dict) -> dict:
     input_data = {"question": question, "answer": answer, "context": context, "ground_truth": ground_truth}
     expected_input_cols = set(input_data.keys())
-    dict_metric_required_fields = {"gpt_groundedness": set(["answer", "context"]),
+    dict_metric_required_fields = {"gpt_groundedness": set(["question", "answer", "context"]),
                                    "gpt_relevance": set(["question", "answer", "context"]),
                                    "gpt_coherence": set(["question", "answer"]),
                                    "gpt_similarity": set(["question", "answer", "ground_truth"]),

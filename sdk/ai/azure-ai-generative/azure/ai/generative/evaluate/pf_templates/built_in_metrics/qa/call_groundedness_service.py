@@ -5,8 +5,7 @@ from rai_client import RAIServiceHandler
 # Adding type to arguments and return value will help the system show the types properly
 # Please update the function name/signature per need
 @tool
-def call_rai_service(request_body: dict) -> dict:
+def call_groundedness_service(request_body: dict) -> [dict]:
     service_handler = RAIServiceHandler()
     annotation_results = service_handler.get_annotation(request_body)
     return annotation_results
-    

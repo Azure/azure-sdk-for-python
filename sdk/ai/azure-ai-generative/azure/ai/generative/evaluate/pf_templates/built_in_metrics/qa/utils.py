@@ -19,7 +19,7 @@ def filter_metrics(selected_metrics):
     return [metric for metric in selected_metrics if selected_metrics[metric]]
 
 def get_harm_severity_level(harm_score: int) -> str:
-    HAMR_SEVERITY_LEVEL_MAPPING = {constants.HarmSeverityLevel.Safe: [0, 1],
+    HAMR_SEVERITY_LEVEL_MAPPING = {constants.HarmSeverityLevel.VeryLow: [0, 1],
                                    constants.HarmSeverityLevel.Low: [2, 3],
                                    constants.HarmSeverityLevel.Medium: [4, 5],
                                    constants.HarmSeverityLevel.High: [6, 7]
@@ -28,7 +28,7 @@ def get_harm_severity_level(harm_score: int) -> str:
         return np.nan
     for harm_level, harm_score_range in HAMR_SEVERITY_LEVEL_MAPPING.items():
         if harm_score >= harm_score_range[0] and harm_score <= harm_score_range[1]:
-            return harm_level.name
+            return harm_level.value
     return np.nan
 
 def is_valid_string(input_string: str) -> bool:

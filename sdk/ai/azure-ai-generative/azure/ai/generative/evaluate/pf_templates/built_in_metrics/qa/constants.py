@@ -36,10 +36,10 @@ class Metric:
     }
 
 class HarmSeverityLevel(Enum):
-    Safe = 0
-    Low = 1
-    Medium = 2
-    High = 3
+    VeryLow = "Very low"
+    Low = "Low"
+    Medium = "Medium"
+    High = "High"
 
 class Tasks:
     """Defines types of annotation tasks supported by RAI Service."""
