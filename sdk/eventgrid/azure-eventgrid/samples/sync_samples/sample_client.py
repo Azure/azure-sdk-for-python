@@ -62,7 +62,7 @@ client_basic.send(TOPIC_NAME, [eventgrid_event])
 
 # Try calling `send` method on the EventGridEvent Topic client
 try:
-    client_basic.send(TOPIC_NAME, event)
+    client_basic.send(TOPIC_NAME, eventgrid_event)
 except AttributeError as e:
     print(e)
 
@@ -88,7 +88,7 @@ except Exception as e:
 
 try:
     client_standard.send(TOPIC_NAME, [eventgrid_event])
-except AttributeError as e:
+except Exception as e:
     print(e)
 
 
