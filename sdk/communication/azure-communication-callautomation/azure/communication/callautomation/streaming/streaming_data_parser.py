@@ -7,7 +7,7 @@
 from typing import Union
 import json
 from azure.communication.callautomation._shared.models import identifier_from_raw_id
-from azure.communication.callautomation._streaming.models import (TranscriptionMetadata,TranscriptionData,WordData)
+from azure.communication.callautomation.streaming.models import (TranscriptionMetadata,TranscriptionData,WordData)
 
 class StreamingDataParser:
     @staticmethod
