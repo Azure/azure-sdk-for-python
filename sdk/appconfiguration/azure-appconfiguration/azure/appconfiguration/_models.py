@@ -575,7 +575,7 @@ class ConfigurationSettingPropertiesPaged(PageIterator):
 
     def _extract_data_cb(self, get_next_return):
         deserialized, response_headers = get_next_return
-        self.etag = response_headers.get('ETag')
+        self.etag = response_headers.pop('ETag')
         return deserialized.next_link or None, iter(self._deserializer(deserialized.items))
 
 
@@ -610,5 +610,5 @@ class ConfigurationSettingPropertiesPagedAsync(AsyncPageIterator):
 
     async def _extract_data_cb(self, get_next_return):
         deserialized, response_headers = get_next_return
-        self.etag = response_headers.get('ETag')
+        self.etag = response_headers.pop('ETag')
         return deserialized.next_link or None, AsyncList(self._deserializer(deserialized.items))
