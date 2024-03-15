@@ -43,10 +43,10 @@ client_basic_eventgrid_event = EventGridClient(EVENTGRID_ENDPOINT_GA_EVENTGRIDEV
 
 # Publish an event to a topic using basic client
 event = CloudEvent(data={"key": "value"}, type="Contoso.Items.ItemReceived", source="https://contoso.com/items")
-client_basic.publish(TOPIC_NAME, event)
+client_basic.send(TOPIC_NAME, event)
 
 # Publish an event to a topic using NameSpace client
-client_standard.publish(TOPIC_NAME, event)
+client_standard.send(TOPIC_NAME, event)
 
 # Publish an event to a topic using Publisher client
 publisher_client.send(event)
@@ -60,12 +60,12 @@ event = EventGridEvent(
     event_type="Contoso.Items.ItemReceived",
     data_version="2.0"
 )
-client_basic_eventgrid_event.publish(TOPIC_NAME, event)
+client_basic_eventgrid_event.send(TOPIC_NAME, event)
 
 
 # Try to publish an event to a topic using NameSpace client
 try:
-    client_standard.publish(TOPIC_NAME, event)
+    client_standard.send(TOPIC_NAME, event)
 except Exception as e:
     print(e)
 

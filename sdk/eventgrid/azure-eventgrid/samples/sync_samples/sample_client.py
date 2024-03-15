@@ -78,16 +78,16 @@ except AttributeError as e:
 client_standard = EventGridClient(EVENTGRID_ENDPOINT, AzureKeyCredential(EVENTGRID_KEY))
 
 # Create a Cloud Event and publish it to the topic
-client_standard.publish(TOPIC_NAME, event)
+client_standard.send(TOPIC_NAME, event)
 
-# Create an EventGridEvent and publish it to the topic
+# Create an EventGridEvent and send it to the topic
 try:
-    client_standard.publish(TOPIC_NAME, eventgrid_event)
+    client_standard.send(TOPIC_NAME, eventgrid_event)
 except Exception as e:
     print(e)
 
 try:
-    client_standard.publish(TOPIC_NAME, [eventgrid_event])
+    client_standard.send(TOPIC_NAME, [eventgrid_event])
 except AttributeError as e:
     print(e)
 
@@ -97,9 +97,3 @@ publisher_client = EventGridPublisherClient(EVENTGRID_ENDPOINT_GA, AzureKeyCrede
 
 # Create a Cloud Event and publish it to the topic
 publisher_client.send(event)
-
-# Try calling publish
-try:
-    publisher_client.publish(event)
-except AttributeError as e:
-    print(e)

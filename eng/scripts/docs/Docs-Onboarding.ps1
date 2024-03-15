@@ -18,6 +18,12 @@ function Set-python-DocsPackageOnboarding($moniker, $metadata, $docRepoLocation,
             exclude_path = @("test*","example*","sample*","doc*")
         }
 
+        # Data-plane packages (not mgmt packages, and not manually added '00`
+        # packages) should document inherited members
+        if ($package.Name -notlike 'azure-mgmt-*' -and $package.Name -notlike '*-00-*') {
+            $packageSpec['extension_config'] = @{ 'autodoc_default_options' = @{ 'inherited-members' = 1 } }
+        }
+
         if ($packageSourceOverride) {
             $packageSpec['package_info']['extra_index_url'] = $packageSourceOverride
         }
