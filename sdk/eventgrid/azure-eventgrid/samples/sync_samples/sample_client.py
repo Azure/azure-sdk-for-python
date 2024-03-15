@@ -27,6 +27,21 @@ TOPIC_NAME: str = os.environ["EVENTGRID_NAMESPACE_TOPIC_NAME"]
 EVENT_SUBSCRIPTION_NAME: str = os.environ["EVENTGRID_NAMESPACE_SUBSCRIPTION_NAME"]
 
 
+topic_key = os.environ["EVENTGRID_PARTNER_NAMESPACE_TOPIC_KEY"]
+endpoint = os.environ["EVENTGRID_PARTNER_NAMESPACE_TOPIC_ENDPOINT"]
+
+channel_name = os.environ["EVENTGRID_PARTNER_CHANNEL_NAME"]
+# Test Channel Name Kwarg
+client_channel_basic = EventGridClient(endpoint, AzureKeyCredential(topic_key))
+event = CloudEvent(
+    type="Contoso.Items.ItemReceived",
+    source="/contoso/items",
+    data={"itemSku": "Contoso Item SKU #1"},
+    subject="Door1",
+)
+client_channel_basic.send(TOPIC_NAME, event, channel_name=channel_name)
+
+
 # Create a Cloud Event Topic client
 client_basic = EventGridClient(EVENTGRID_ENDPOINT_GA, AzureKeyCredential(EVENTGRID_KEY_GA))
 
@@ -80,6 +95,13 @@ try:
     client_standard.send(TOPIC_NAME, [eventgrid_event])
 except Exception as e:
     print(e)
+
+
+# Pass Channel Name through Standard
+try:
+    client_standard.send(TOPIC_NAME, event, channel_name=channel_name)
+except Exception as e:
+    print(e)   
 
 
 
