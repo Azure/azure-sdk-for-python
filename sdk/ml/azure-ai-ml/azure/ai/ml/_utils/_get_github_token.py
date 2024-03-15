@@ -57,8 +57,3 @@ def parse_string_to_dict(token_text):
         key, value = pair.split('=')
         result_dict[key] = value    
     return result_dict
-
-    
-# Replace 'YOUR_CLIENT_ID' with your GitHub app client ID
-client_id = 'your client id'
-get_github_token(client_id)

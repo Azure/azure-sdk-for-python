@@ -7,10 +7,8 @@ import os
 import pathlib
 from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient
 
-def get_registry_model_details_for_non_azure_accounts(asset_id, bearer_token, env = 'prod'):
+def get_registry_model_details_for_non_azure_accounts(asset_id, bearer_token):
     url = "https://eastus.api.azureml.ms/modelregistry/v1.0/registry/models/nonazureaccount"
-    if (env == 'test'):
-        url = "https://int.api.azureml-test.ms/modelregistry/v1.0/registry/models/nonazureaccount"        
 
     headers = {
         "Authorization": f"Bearer {bearer_token}",
@@ -57,9 +55,9 @@ def download_blob_to_local(blob_sas_url, local_folder):
         print(f"Error copying blob to local folder: {e}")
         return None
 
-def download_model(model_asset_id, github_auth_token, local_destination_path, environment = 'test'):
+def download_model(model_asset_id, github_auth_token, local_destination_path):
     try:
-        model_entity, blob_sas_uri = get_registry_model_details_for_non_azure_accounts(model_asset_id, github_auth_token, environment)
+        model_entity, blob_sas_uri = get_registry_model_details_for_non_azure_accounts(model_asset_id, github_auth_token)
         if model_entity and blob_sas_uri:
             print(f"Model Entity: {model_entity} \n")
             print(f"Blob SAS URI: {blob_sas_uri} \n")
@@ -74,22 +72,3 @@ def download_model(model_asset_id, github_auth_token, local_destination_path, en
     except Exception as e:
         print(f"Error getting blob: {e}")
         return None
-    
-# Example usage
-if __name__ == "__main__":
-    # sample modelAssetId for test
-    # modelAssetId = "azureml://registries/testFeed/models/testMode/versions/13"
-    model_asset_id = "your model asset id"
-    
-    # github token
-    github_auth_token = "you git hub token"
-    
-    # sample local folder
-    #localDestinationPath = "C:\\PythonVirtualEnv\\venv1\\BlobDownLoad"
-    local_destination_path = "your local download path"
-    
-    # sample environment. either 'test' or 'prod'
-    environment = 'test'
-    
-    # call download_model
-    download_model(model_asset_id, github_auth_token, local_destination_path, environment)
