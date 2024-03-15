@@ -30,7 +30,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 class EventGridClientOperationsMixin(OperationsMixin):
 
     @overload
-    async def publish(
+    async def send(
         self,
         topic_name: str,
         body: List[CloudEvent],
@@ -62,7 +62,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         """
 
     @overload
-    async def publish(
+    async def send(
         self,
         topic_name: str,
         body: CloudEvent,
@@ -94,7 +94,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         """
 
     @overload
-    async def publish(
+    async def send(
         self,
         topic_name: str,
         body: Dict[str, Any],
@@ -126,7 +126,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         """
 
     @overload
-    async def publish(
+    async def send(
         self,
         topic_name: str,
         body: List[Dict[str, Any]],
@@ -158,7 +158,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         """
 
     @overload
-    async def publish(
+    async def send(
         self,
         topic_name: str,
         body: EventGridEvent,
@@ -186,7 +186,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         """
 
     @overload
-    async def publish(
+    async def send(
         self,
         topic_name: str,
         body: List[EventGridEvent],
@@ -214,7 +214,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         """
 
     @distributed_trace_async
-    async def publish(
+    async def send(
         self,
         topic_name: str,
         body: Union[List[CloudEvent], CloudEvent, List[Dict[str, Any]], Dict[str, Any], EventGridEvent, List[EventGridEvent]],

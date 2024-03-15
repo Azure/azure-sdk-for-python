@@ -48,7 +48,7 @@ def use_standard_only(func):
 
 class EventGridClientOperationsMixin(OperationsMixin):
     @overload
-    def publish(
+    def send(
         self,
         topic_name: str,
         body: List[CloudEvent],
@@ -80,7 +80,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         """
 
     @overload
-    def publish(
+    def send(
         self,
         topic_name: str,
         body: CloudEvent,
@@ -112,7 +112,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         """
 
     @overload
-    def publish(
+    def send(
         self,
         topic_name: str,
         body: Dict[str, Any],
@@ -144,7 +144,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         """
     
     @overload
-    def publish(
+    def send(
         self,
         topic_name: str,
         body: List[Dict[str, Any]],
@@ -175,7 +175,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         """
 
     @overload
-    def publish(
+    def send(
         self,
         topic_name: str,
         body: EventGridEvent,
@@ -203,7 +203,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         """
 
     @overload
-    def publish(
+    def send(
         self,
         topic_name: str,
         body: List[EventGridEvent],
@@ -231,7 +231,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         """
   
     @distributed_trace
-    def publish(
+    def send(
         self,
         topic_name: str,
         body: Union[List[CloudEvent], CloudEvent, List[Dict[str, Any]], Dict[str, Any], EventGridEvent, List[EventGridEvent]],
