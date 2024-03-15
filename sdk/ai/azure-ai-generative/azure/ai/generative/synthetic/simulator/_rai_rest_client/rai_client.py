@@ -1,25 +1,23 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+import logging
+import os
+from typing import Any
 from azure.ai.generative.synthetic.simulator._model_tools.models import (
     AsyncHTTPClientWithRetry,
 )
-from aiohttp_retry import JitterRetry
-import logging
-
-import os
 
 api_url = None
 if "rai_svc_url" in os.environ:
     api_url = os.environ["rai_svc_url"]
     api_url = api_url.rstrip("/")
-    print(
-        f"Found rai_svc_url in environment variable, using {api_url} for rai service endpoint."
-    )
+    print(f"Found rai_svc_url in environment variable, using {api_url} for rai service endpoint.")
 
 
-class RAIClient:
-    def __init__(self, ml_client, token_manager):
+class RAIClient:  # pylint: disable=client-accepts-api-version-keyword
+    # pylint: disable=missing-client-constructor-parameter-credential, missing-client-constructor-parameter-kwargs
+    def __init__(self, ml_client: Any, token_manager: Any) -> None:
         self.ml_client = ml_client
         self.token_manager = token_manager
 
@@ -40,28 +38,24 @@ class RAIClient:
 
         self.parameter_json_endpoint = self.api_url + "simulation/template/parameters"
         self.jailbreaks_json_endpoint = self.api_url + "simulation/jailbreak"
-        self.simulation_submit_endpoint = (
-            self.api_url + "simulation/chat/completions/submit"
-        )
+        self.simulation_submit_endpoint = self.api_url + "simulation/chat/completions/submit"
 
     def _create_async_client(self):
-        return AsyncHTTPClientWithRetry(
-            n_retry=6, retry_timeout=5, logger=logging.getLogger()
-        )
+        return AsyncHTTPClientWithRetry(n_retry=6, retry_timeout=5, logger=logging.getLogger())
 
-    async def get_contentharm_parameters(self):
+    async def get_contentharm_parameters(self) -> Any:
         if self.contentharm_parameters is None:
             self.contentharm_parameters = await self.get(self.parameter_json_endpoint)
 
         return self.contentharm_parameters
 
-    async def get_jailbreaks_dataset(self):
+    async def get_jailbreaks_dataset(self) -> Any:
         if self.jailbreaks_dataset is None:
             self.jailbreaks_dataset = await self.get(self.jailbreaks_json_endpoint)
 
         return self.jailbreaks_dataset
 
-    async def get(self, url):
+    async def get(self, url: str) -> Any:
         token = await self.token_manager.get_token()
         headers = {
             "Authorization": f"Bearer {token}",

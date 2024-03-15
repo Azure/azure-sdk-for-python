@@ -7,26 +7,24 @@ parameters:
       - azure-appconfiguration
       - azure-appconfiguration-provider
 
-stages:
-  - ${{ each service in parameters.Services }}:
-    - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
-      parameters:
-        ServiceDirectory: appconfiguration
-        BuildTargetingString: ${{ service }}
-        JobName: ${{ replace(service, '-', '_') }}
-        SupportedClouds: 'Public,UsGov,China'
-        TestTimeoutInMinutes: 240
-        CloudConfig:
-          Public:
-            SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
-          UsGov:
-            SubscriptionConfiguration: $(sub-config-gov-test-resources)
-          China:
-            SubscriptionConfiguration: $(sub-config-cn-test-resources)
-            Location: chinanorth3
-        MatrixReplace:
-          - TestSamples=.*/true
-        EnvVars:
-          TEST_MODE: 'RunLiveNoRecord'
-          AZURE_SKIP_LIVE_RECORDING: 'true'
-          AZURE_TEST_RUN_LIVE: 'true'
+extends:
+    template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
+    parameters:
+      ServiceDirectory: appconfiguration
+      Packages: ${{ parameters.Services }}
+      SupportedClouds: 'Public,UsGov,China'
+      TestTimeoutInMinutes: 240
+      CloudConfig:
+        Public:
+          SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
+        UsGov:
+          SubscriptionConfiguration: $(sub-config-gov-test-resources)
+        China:
+          SubscriptionConfiguration: $(sub-config-cn-test-resources)
+          Location: chinanorth3
+      MatrixReplace:
+        - TestSamples=.*/true
+      EnvVars:
+        TEST_MODE: 'RunLiveNoRecord'
+        AZURE_SKIP_LIVE_RECORDING: 'true'
+        AZURE_TEST_RUN_LIVE: 'true'
