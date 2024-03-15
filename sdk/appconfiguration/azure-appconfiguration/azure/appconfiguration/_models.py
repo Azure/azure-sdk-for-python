@@ -498,11 +498,11 @@ class ConfigurationSnapshot:  # pylint: disable=too-many-instance-attributes
         return snapshot
 
     @classmethod
-    def _from_deserialized(  # pylint:disable=unused-argument
+    def _from_deserialized(
         cls,
-        response: HttpResponse,
+        response: HttpResponse,  # pylint:disable=unused-argument
         deserialized: GeneratedConfigurationSnapshot,
-        response_headers: Dict,
+        response_headers: Dict,  # pylint:disable=unused-argument
     ) -> "ConfigurationSnapshot":
         if deserialized is None:
             return deserialized
@@ -540,7 +540,7 @@ class ConfigurationSnapshot:  # pylint: disable=too-many-instance-attributes
         )
 
 
-def _return_deserialized_and_headers(response, deserialized, response_headers):
+def _return_deserialized_and_headers(_, deserialized, response_headers):
     return deserialized, response_headers
 
 
@@ -561,7 +561,9 @@ class ConfigurationSettingPropertiesPaged(PageIterator):
         self._label = kwargs.get("label")
         self._accept_datetime = kwargs.get("accept_datetime")
         self._select = kwargs.get("select")
-        self._deserializer = lambda objs: [ConfigurationSetting._from_generated(x) for x in objs]
+        self._deserializer = lambda objs: [
+            ConfigurationSetting._from_generated(x) for x in objs  # pylint:disable=protected-access
+        ]
 
     def _get_next_cb(self, continuation_token, **kwargs):
         return self._command(
@@ -596,7 +598,9 @@ class ConfigurationSettingPropertiesPagedAsync(AsyncPageIterator):
         self._label = kwargs.get("label")
         self._accept_datetime = kwargs.get("accept_datetime")
         self._select = kwargs.get("select")
-        self._deserializer = lambda objs: [ConfigurationSetting._from_generated(x) for x in objs]
+        self._deserializer = lambda objs: [
+            ConfigurationSetting._from_generated(x) for x in objs  # pylint:disable=protected-access
+        ]
 
     async def _get_next_cb(self, continuation_token, **kwargs):
         return await self._command(
