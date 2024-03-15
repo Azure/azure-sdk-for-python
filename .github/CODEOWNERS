@@ -106,6 +106,9 @@
 # PRLabel: %Communication - SMS
 /sdk/communication/azure-communication-sms/                           @DimaKolomiiets @gfeitosa-msft @besh2014 @phermanov-msft @ilyapaliakou-msft
 
+# PRLabel: %Communication - Messages
+/sdk/communication/azure-communication-messages/                      @shamkh
+
 # PRLabel: %Communication - Identity
 /sdk/communication/azure-communication-identity/                     @Azure/acs-identity-sdk @AikoBB @maximrytych-ms @mjafferi-msft
 

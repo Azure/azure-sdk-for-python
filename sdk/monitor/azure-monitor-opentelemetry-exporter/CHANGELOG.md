@@ -8,12 +8,20 @@
     ([#34673](https://github.com/Azure/azure-sdk-for-python/pull/34673))
 - Add live metrics collection of cpu time/process memory
     ([#34735](https://github.com/Azure/azure-sdk-for-python/pull/34735))
+- Add live metrics collection feature detection to statsbeat
+    ([#34752](https://github.com/Azure/azure-sdk-for-python/pull/34752))
 
 ### Breaking Changes
+
+- Rename Statbeat environments variables to use `APPLICATIONINSIGHTS_*`
+    ([#34742](https://github.com/Azure/azure-sdk-for-python/pull/34742))
 
 ### Bugs Fixed
 
 ### Other Changes
+
+- Updated FastAPI sample
+    ([#34738](https://github.com/Azure/azure-sdk-for-python/pull/34738))
 
 ## 1.0.0b23 (2024-02-28)
 
