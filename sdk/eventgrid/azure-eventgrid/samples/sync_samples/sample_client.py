@@ -41,6 +41,7 @@ except AttributeError as e:
     print(e)
 
 
+
 # Create an EventGridEvent Topic client
 client_basic = EventGridClient(EVENTGRID_ENDPOINT_GA_EVENTGRIDEVENT, AzureKeyCredential(EVENTGRID_KEY_GA_EVENTGRIDEVENT))
 
@@ -56,9 +57,10 @@ client_basic.send(TOPIC_NAME, [eventgrid_event])
 
 # Try Acknowledge the EventGridEvent
 try:
-    client_basic.acknowledge_eventgrid_events(TOPIC_NAME, EVENT_SUBSCRIPTION_NAME, AcknowledgeOptions(lock_tokens=["token"]))
+    client_basic.acknowledge_cloud_events(TOPIC_NAME, EVENT_SUBSCRIPTION_NAME, AcknowledgeOptions(lock_tokens=["token"]))
 except AttributeError as e:
     print(e)
+
 
 
 
@@ -78,6 +80,7 @@ try:
     client_standard.send(TOPIC_NAME, [eventgrid_event])
 except Exception as e:
     print(e)
+
 
 
 # Create an EventGridPublisherClient
