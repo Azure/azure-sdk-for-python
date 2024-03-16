@@ -160,7 +160,7 @@ class DatabaseProxy(object):
     def create_container(  # pylint:disable=docstring-missing-param
         self,
         id: str,
-        partition_key: PartitionKey,
+        partition_key: Optional[PartitionKey],
         indexing_policy: Optional[Dict[str, Any]] = None,
         default_ttl: Optional[int] = None,
         populate_query_metrics: Optional[bool] = None,
@@ -268,7 +268,7 @@ class DatabaseProxy(object):
     def create_container_if_not_exists(  # pylint:disable=docstring-missing-param
         self,
         id: str,
-        partition_key: PartitionKey,
+        partition_key: Optional[PartitionKey],
         indexing_policy: Optional[Dict[str, Any]] = None,
         default_ttl: Optional[int] = None,
         populate_query_metrics: Optional[bool] = None,
@@ -519,7 +519,7 @@ class DatabaseProxy(object):
     def replace_container(  # pylint:disable=docstring-missing-param
         self,
         container: Union[str, ContainerProxy, Mapping[str, Any]],
-        partition_key: PartitionKey,
+        partition_key: Optional[PartitionKey],
         indexing_policy: Optional[Dict[str, Any]] = None,
         default_ttl: Optional[int] = None,
         conflict_resolution_policy: Optional[Dict[str, Any]] = None,

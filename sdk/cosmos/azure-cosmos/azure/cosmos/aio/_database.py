@@ -160,7 +160,7 @@ class DatabaseProxy(object):
     async def create_container(
         self,
         id: str,
-        partition_key: PartitionKey,
+        partition_key: Optional[PartitionKey],
         *,
         indexing_policy: Optional[Dict[str, str]] = None,
         default_ttl: Optional[int] = None,
@@ -266,7 +266,7 @@ class DatabaseProxy(object):
     async def create_container_if_not_exists(
         self,
         id: str,
-        partition_key: PartitionKey,
+        partition_key: Optional[PartitionKey],
         *,
         indexing_policy: Optional[Dict[str, str]] = None,
         default_ttl: Optional[int] = None,
@@ -461,7 +461,7 @@ class DatabaseProxy(object):
     async def replace_container(
         self,
         container: Union[str, ContainerProxy, Mapping[str, Any]],
-        partition_key: PartitionKey,
+        partition_key: Optional[PartitionKey],
         *,
         indexing_policy: Optional[Dict[str, str]] = None,
         default_ttl: Optional[int] = None,
