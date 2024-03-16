@@ -5,6 +5,8 @@
 import pytest
 import sys
 from unittest.mock import patch, Mock
+
+from azure.core.exceptions import ClientAuthenticationError
 from azure.identity.broker import InteractiveBrowserBrokerCredential
 
 
@@ -25,3 +27,31 @@ def test_interactive_browser_broker_cred_signed_in_account():
         except Exception:  # msal raises TypeError which is expected. We are not testing msal here.
             pass
         assert mock_signin_silently.called
+
+
+def test_enable_support_logging_default():
+    """The keyword argument for enabling PII in MSAL should be disabled by default."""
+
+    cred = InteractiveBrowserBrokerCredential(parent_window_handle="window_handle")
+    with patch("msal.PublicClientApplication") as mock_client_application:
+        with patch("msal.PublicClientApplication.acquire_token_interactive"):
+            with pytest.raises(ClientAuthenticationError):
+                cred.get_token("scope")
+
+        assert mock_client_application.call_count == 1, "credential didn't create an msal application"
+        _, kwargs = mock_client_application.call_args
+        assert not kwargs["enable_pii_log"]
+
+
+def test_enable_support_logging_enabled():
+    """The keyword argument for enabling PII in MSAL should be propagated correctly."""
+
+    cred = InteractiveBrowserBrokerCredential(parent_window_handle="window_handle", enable_support_logging=True)
+    with patch("msal.PublicClientApplication") as mock_client_application:
+        with patch("msal.PublicClientApplication.acquire_token_interactive"):
+            with pytest.raises(ClientAuthenticationError):
+                cred.get_token("scope")
+
+        assert mock_client_application.call_count == 1, "credential didn't create an msal application"
+        _, kwargs = mock_client_application.call_args
+        assert kwargs["enable_pii_log"]
