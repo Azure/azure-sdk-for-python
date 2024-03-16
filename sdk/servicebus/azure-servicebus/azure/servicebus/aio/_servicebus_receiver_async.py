@@ -444,6 +444,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
                         and self._amqp_transport.get_current_time(amqp_receive_client)
                         > abs_timeout
                     ):
+                        self._receive_context.clear()
                         expired = True
                         break
                     before = received_messages_queue.qsize()
