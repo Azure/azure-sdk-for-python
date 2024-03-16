@@ -11,14 +11,18 @@ def default_safety_results():
         result[metric_name + "_reasoning"] = np.nan
     return result
 
-def default_quality_results():
+def default_gpt_results():
     supported_metrics = constants.Metric.QUALITY_METRICS
     result = {}
     for metric_name in supported_metrics:
-        result[metric_name] = np.nan
-        if metric_name == "gpt_groundedness":
-            result[metric_name + "_reasoning"] = np.nan
+        if metric_name != "gpt_groundedness":
+            result[metric_name] = np.nan
     return result
+
+def default_groundedness_results():
+    return {"gpt_groundedness": np.nan,
+            "gpt_groundedness_reasoning": np.nan
+            }
 
 
 # The inputs section will change based on the arguments of the tool function, after you save the code
@@ -32,9 +36,11 @@ def concat_results(selected_metrics: dict,
     if quality_results:
         concated_results = quality_results.copy()
     else:
-        concated_results = default_quality_results()
+        concated_results = default_gpt_results()
     if groundedness_results:
         concated_results.update(groundedness_results)
+    else:
+        concated_results.update(default_groundedness_results())
     if safety_results:
         concated_results.update(safety_results)
     else:
