@@ -56,7 +56,7 @@ def download_blob_to_local(blob_sas_url, local_folder):
         return None
 
 # sample parameters
-# modelAssetId = "azureml://registries/testFeed/models/testModelb67845316abe49839cec18f3ab61fd8f/versions/13"
+# modelAssetId = "azureml://registries/testFeed/models/testModel/versions/13"
 # localDestinationPath = "C:\\PythonVirtualEnv\\venv1\\BlobDownLoad"
 # gitHubAuthToken = "ghu_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 def download_model(model_asset_id, github_auth_token, local_destination_path):
