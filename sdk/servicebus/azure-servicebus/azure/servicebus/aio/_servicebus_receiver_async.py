@@ -403,7 +403,11 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
             receiving = True
             while receiving and not expired and len(batch) < max_message_count:
                 while receiving and received_messages_queue.qsize() < max_message_count:
-                    if abs_timeout and self._amqp_transport.get_current_time(amqp_receive_client) > abs_timeout:
+                    if (
+                        abs_timeout
+                        and self._amqp_transport.get_current_time(amqp_receive_client)
+                        > abs_timeout
+                    ):
                         expired = True
                         break
                     before = received_messages_queue.qsize()
