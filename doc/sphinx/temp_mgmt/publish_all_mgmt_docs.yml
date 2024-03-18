@@ -34,10 +34,9 @@
         arguments: >-
           ${{ pkg.key }}
           --service=${{ pkg.value.ServiceDirectory }}
-          --dest-dir="$(Build.ArtifactStagingDirectory)"
           --toxenv=sphinx
 
   - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
     parameters:
-      ArtifactPath: "$(Build.ArtifactStagingDirectory)"
+      ArtifactPath: '$(Build.SourcesDirectory)/_docs'
       ArtifactName: 'documentation'
