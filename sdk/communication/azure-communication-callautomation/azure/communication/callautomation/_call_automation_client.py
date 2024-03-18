@@ -219,8 +219,7 @@ class CallAutomationClient:
             source_display_name=source_display_name,
             source=serialize_communication_user_identifier(self.source),
             operation_context=operation_context,
-            call_intelligence_options=call_intelligence_options,
-            cognitive_services_endpoint=cognitive_services_endpoint
+            call_intelligence_options=call_intelligence_options
         )
         process_repeatability_first_sent(kwargs)
         result = self._client.create_call(
@@ -315,7 +314,6 @@ class CallAutomationClient:
             call_intelligence_options=call_intelligence_options,
             answered_by=serialize_communication_user_identifier(
                 self.source) if self.source else None,
-            cognitive_services_endpoint=cognitive_services_endpoint,
             operation_context=operation_context
         )
 
