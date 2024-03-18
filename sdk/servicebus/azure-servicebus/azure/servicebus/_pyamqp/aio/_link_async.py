@@ -244,6 +244,9 @@ class Link:  # pylint: disable=too-many-instance-attributes
             self._error = error_cls(condition=frame[2][0], description=frame[2][1], info=frame[2][2])
             await self._set_state(LinkState.ERROR)
         else:
+            if self.state != LinkState.DETACH_SENT:
+                raise AMQPLinkError(condition=ErrorCondition.InternalError,
+                                          description="Link detached unexpectedly.", retryable=True) from None
             await self._set_state(LinkState.DETACHED)
 
     async def attach(self) -> None:
