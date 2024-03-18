@@ -384,6 +384,7 @@ class Simulator:
         asyncHttpClient = AsyncHTTPClientWithRetry(
             n_retry=api_call_retry_limit,
             retry_timeout=api_call_retry_sleep_sec,
+            logger=logger,
         )
         async with sem:
             async with asyncHttpClient.client as session:
