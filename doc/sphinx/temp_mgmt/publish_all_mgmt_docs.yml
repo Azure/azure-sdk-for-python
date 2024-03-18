@@ -580,8 +580,6 @@
         Version: '2.0.0b1'
 
  steps:
-  - timeoutInMinutes: 200
-
   - task: UsePythonVersion@0
     displayName: 'Use Python 3.11'
     inputs:
@@ -611,6 +609,7 @@
           --service=${{ pkg.value.ServiceDirectory }}
           --toxenv=sphinx
 
+    timeoutInMinutes: 200
   - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
     parameters:
       ArtifactPath: '$(Build.SourcesDirectory)/_docs'
