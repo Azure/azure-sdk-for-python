@@ -12,11 +12,6 @@
     inputs:
       versionSpec: '3.11'
   
-  - task: PythonScript@0
-    displayName: 'checkout eng/tools/doc/scripts from main'
-    inputs:
-      scriptPath: 'doc/sphinx/temp_mgmt/checkout_eng.py'
-
   - script: |
       python -m pip install setuptools==58.3.0
       python -m pip install -r eng/ci_tools.txt
@@ -35,7 +30,7 @@
     - task: PythonScript@0
       displayName: 'Generate Docs'
       inputs:
-        scriptPath: 'doc/sphinx/temp_mgmt/scripts/devops_tasks/dispatch_tox.py'
+        scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
         arguments: >-
           ${{ pkg.key }}
           --service=${{ pkg.value.ServiceDirectory }}

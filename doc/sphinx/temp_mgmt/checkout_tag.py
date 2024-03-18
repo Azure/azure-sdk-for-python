@@ -1,13 +1,9 @@
 import os
 import argparse
 import shutil
+import pathlib
 from checkout_eng import prep_directory, invoke_command, cleanup_directory
-
-
-def rewrite_dev_reqs(path: str) -> None:
-    with open(f"{path}/dev_requirements.txt", "w") as file:
-        file.writelines("-e ../../../tools/azure-sdk-tools\n")
-        file.writelines("-e ../../../tools/azure-devtools")
+root = pathlib.Path(__file__).resolve().parent.parent.parent.parent
 
 
 def get_release_tag(
@@ -25,11 +21,11 @@ def get_release_tag(
     invoke_command(f"git sparse-checkout init", clone_folder)
     invoke_command(f'git sparse-checkout add "{checkout_path}"', clone_folder)
     invoke_command(f"git -c advice.detachedHead=false checkout {target_package}_{target_version}", clone_folder)
-    rewrite_dev_reqs(os.path.join(clone_folder, checkout_path))
 
+    cleanup_directory(os.path.join(root, "sdk", service_directory, target_package))
     shutil.move(
-        os.path.join(assembly_area, "python-sdk", "sdk", service_directory),
-        os.path.join(assembly_area, "sdk", service_directory)
+        os.path.join(assembly_area, "python-sdk", "sdk", service_directory, target_package),
+        os.path.join(root, "sdk", service_directory)
     )
 
 
