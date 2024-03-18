@@ -351,7 +351,9 @@ class PipelineComponent(Component):
                             component_interface_dict["jobs"][job_name]["inputs"][input_name][
                                 "content_hash"
                             ] = get_object_hash(input_value.path)
-                            module_logger.debug(f"Takes {time.time() - start_time}s to caculate the content hash of local input {input_value.path}")
+                            module_logger.debug(
+                                f"Takes {time.time() - start_time}s to caculate the content hash of local input {input_value.path}"
+                            )
                     except ValidationException:
                         pass
         hash_value: str = hash_dict(
