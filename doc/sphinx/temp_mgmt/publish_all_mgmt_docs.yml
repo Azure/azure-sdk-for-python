@@ -23,9 +23,6 @@
       azure-mgmt-operationsmanagement:
         ServiceDirectory: operationsmanagement
         Version: '2.0.0b1'
-      azure-mgmt-edgegateway:
-        ServiceDirectory: edgegateway
-        Version: '0.1.0'
       azure-mgmt-servermanager:
         ServiceDirectory: servermanager
         Version: '2.0.0'
