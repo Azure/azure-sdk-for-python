@@ -1,6 +1,6 @@
 # Release History
 
-## 4.17.1 (Unreleased)
+## 4.18.1 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,12 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 4.18.0 (2024-03-12)
+
+### Features Added
+
+- Added new enum values to `SystemEventNames` related to Azure Api Center.
 
 ## 4.17.0 (2024-02-08)
 This version and all future versions will require Python 3.8+.

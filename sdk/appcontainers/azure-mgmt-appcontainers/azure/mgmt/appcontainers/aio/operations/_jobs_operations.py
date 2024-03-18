@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterable, Callable, Dict, IO, Literal, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -34,10 +34,13 @@ from ..._vendor import _convert_request
 from ...operations._jobs_operations import (
     build_create_or_update_request,
     build_delete_request,
+    build_get_detector_request,
     build_get_request,
     build_list_by_resource_group_request,
     build_list_by_subscription_request,
+    build_list_detectors_request,
     build_list_secrets_request,
+    build_proxy_get_request,
     build_start_request,
     build_stop_execution_request,
     build_stop_multiple_executions_request,
@@ -68,13 +71,198 @@ class JobsOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
+    @distributed_trace_async
+    async def list_detectors(
+        self, resource_group_name: str, job_name: str, **kwargs: Any
+    ) -> _models.DiagnosticsCollection:
+        """Get the list of diagnostics for a given Container App Job.
+
+        Get the list of diagnostics for a Container App Job.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param job_name: Job Name. Required.
+        :type job_name: str
+        :return: DiagnosticsCollection or the result of cls(response)
+        :rtype: ~azure.mgmt.appcontainers.models.DiagnosticsCollection
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[_models.DiagnosticsCollection] = kwargs.pop("cls", None)
+
+        _request = build_list_detectors_request(
+            resource_group_name=resource_group_name,
+            job_name=job_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("DiagnosticsCollection", pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def get_detector(
+        self, resource_group_name: str, job_name: str, detector_name: str, **kwargs: Any
+    ) -> _models.Diagnostics:
+        """Get the diagnostics data for a given Container App Job.
+
+        Get the diagnostics data for a Container App Job.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param job_name: Job Name. Required.
+        :type job_name: str
+        :param detector_name: Name of the Container App Job detector. Required.
+        :type detector_name: str
+        :return: Diagnostics or the result of cls(response)
+        :rtype: ~azure.mgmt.appcontainers.models.Diagnostics
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[_models.Diagnostics] = kwargs.pop("cls", None)
+
+        _request = build_get_detector_request(
+            resource_group_name=resource_group_name,
+            job_name=job_name,
+            detector_name=detector_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("Diagnostics", pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def proxy_get(self, resource_group_name: str, job_name: str, **kwargs: Any) -> _models.Job:
+        """Get the properties for a given Container App Job.
+
+        Get the properties of a Container App Job.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param job_name: Job Name. Required.
+        :type job_name: str
+        :return: Job or the result of cls(response)
+        :rtype: ~azure.mgmt.appcontainers.models.Job
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_name: Literal["rootApi"] = kwargs.pop("api_name", "rootApi")
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[_models.Job] = kwargs.pop("cls", None)
+
+        _request = build_proxy_get_request(
+            resource_group_name=resource_group_name,
+            job_name=job_name,
+            subscription_id=self._config.subscription_id,
+            api_name=api_name,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("Job", pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
     @distributed_trace
     def list_by_subscription(self, **kwargs: Any) -> AsyncIterable["_models.Job"]:
         """Get the Container Apps Jobs in a given subscription.
 
         Get the Container Apps Jobs in a given subscription.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Job or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.appcontainers.models.Job]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -96,15 +284,14 @@ class JobsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_subscription_request(
+                _request = build_list_by_subscription_request(
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_by_subscription.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -116,13 +303,13 @@ class JobsOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("JobsCollection", pipeline_response)
@@ -132,11 +319,11 @@ class JobsOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -148,8 +335,6 @@ class JobsOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_by_subscription.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.App/jobs"}
 
     @distributed_trace
     def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.Job"]:
@@ -160,7 +345,6 @@ class JobsOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Job or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.appcontainers.models.Job]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -182,16 +366,15 @@ class JobsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_resource_group_request(
+                _request = build_list_by_resource_group_request(
                     resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_by_resource_group.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -203,13 +386,13 @@ class JobsOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("JobsCollection", pipeline_response)
@@ -219,11 +402,11 @@ class JobsOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -235,10 +418,6 @@ class JobsOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_by_resource_group.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/jobs"
-    }
 
     @distributed_trace_async
     async def get(self, resource_group_name: str, job_name: str, **kwargs: Any) -> _models.Job:
@@ -251,7 +430,6 @@ class JobsOperations:
         :type resource_group_name: str
         :param job_name: Job Name. Required.
         :type job_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Job or the result of cls(response)
         :rtype: ~azure.mgmt.appcontainers.models.Job
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -270,21 +448,20 @@ class JobsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.Job] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             job_name=job_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -297,16 +474,12 @@ class JobsOperations:
         deserialized = self._deserialize("Job", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/jobs/{jobName}"
-    }
+        return deserialized  # type: ignore
 
     async def _create_or_update_initial(
-        self, resource_group_name: str, job_name: str, job_envelope: Union[_models.Job, IO], **kwargs: Any
+        self, resource_group_name: str, job_name: str, job_envelope: Union[_models.Job, IO[bytes]], **kwargs: Any
     ) -> _models.Job:
         error_map = {
             401: ClientAuthenticationError,
@@ -331,7 +504,7 @@ class JobsOperations:
         else:
             _json = self._serialize.body(job_envelope, "Job")
 
-        request = build_create_or_update_request(
+        _request = build_create_or_update_request(
             resource_group_name=resource_group_name,
             job_name=job_name,
             subscription_id=self._config.subscription_id,
@@ -339,16 +512,15 @@ class JobsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_or_update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -368,10 +540,6 @@ class JobsOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    _create_or_update_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/jobs/{jobName}"
-    }
 
     @overload
     async def begin_create_or_update(
@@ -397,14 +565,6 @@ class JobsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Job or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.Job]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -415,7 +575,7 @@ class JobsOperations:
         self,
         resource_group_name: str,
         job_name: str,
-        job_envelope: IO,
+        job_envelope: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -430,18 +590,10 @@ class JobsOperations:
         :param job_name: Job Name. Required.
         :type job_name: str
         :param job_envelope: Properties used to create a container apps job. Required.
-        :type job_envelope: IO
+        :type job_envelope: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Job or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.Job]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -449,7 +601,7 @@ class JobsOperations:
 
     @distributed_trace_async
     async def begin_create_or_update(
-        self, resource_group_name: str, job_name: str, job_envelope: Union[_models.Job, IO], **kwargs: Any
+        self, resource_group_name: str, job_name: str, job_envelope: Union[_models.Job, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[_models.Job]:
         """Create or Update a Container Apps Job.
 
@@ -461,19 +613,8 @@ class JobsOperations:
         :param job_name: Job Name. Required.
         :type job_name: str
         :param job_envelope: Properties used to create a container apps job. Is either a Job type or a
-         IO type. Required.
-        :type job_envelope: ~azure.mgmt.appcontainers.models.Job or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         IO[bytes] type. Required.
+        :type job_envelope: ~azure.mgmt.appcontainers.models.Job or IO[bytes]
         :return: An instance of AsyncLROPoller that returns either Job or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.Job]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -504,7 +645,7 @@ class JobsOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("Job", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -517,17 +658,15 @@ class JobsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.Job].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/jobs/{jobName}"
-    }
+        return AsyncLROPoller[_models.Job](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     async def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, job_name: str, **kwargs: Any
@@ -546,21 +685,20 @@ class JobsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             resource_group_name=resource_group_name,
             job_name=job_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._delete_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -575,11 +713,7 @@ class JobsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    _delete_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/jobs/{jobName}"
-    }
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def begin_delete(self, resource_group_name: str, job_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
@@ -592,14 +726,6 @@ class JobsOperations:
         :type resource_group_name: str
         :param job_name: Job Name. Required.
         :type job_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -626,7 +752,7 @@ class JobsOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: AsyncPollingMethod = cast(
@@ -637,23 +763,19 @@ class JobsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/jobs/{jobName}"
-    }
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     async def _update_initial(
         self,
         resource_group_name: str,
         job_name: str,
-        job_envelope: Union[_models.JobPatchProperties, IO],
+        job_envelope: Union[_models.JobPatchProperties, IO[bytes]],
         **kwargs: Any
     ) -> Optional[_models.Job]:
         error_map = {
@@ -679,7 +801,7 @@ class JobsOperations:
         else:
             _json = self._serialize.body(job_envelope, "JobPatchProperties")
 
-        request = build_update_request(
+        _request = build_update_request(
             resource_group_name=resource_group_name,
             job_name=job_name,
             subscription_id=self._config.subscription_id,
@@ -687,16 +809,15 @@ class JobsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -715,13 +836,9 @@ class JobsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    _update_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/jobs/{jobName}"
-    }
+        return deserialized  # type: ignore
 
     @overload
     async def begin_update(
@@ -747,14 +864,6 @@ class JobsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Job or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.Job]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -765,7 +874,7 @@ class JobsOperations:
         self,
         resource_group_name: str,
         job_name: str,
-        job_envelope: IO,
+        job_envelope: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -780,18 +889,10 @@ class JobsOperations:
         :param job_name: Job Name. Required.
         :type job_name: str
         :param job_envelope: Properties used to create a container apps job. Required.
-        :type job_envelope: IO
+        :type job_envelope: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Job or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.Job]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -802,7 +903,7 @@ class JobsOperations:
         self,
         resource_group_name: str,
         job_name: str,
-        job_envelope: Union[_models.JobPatchProperties, IO],
+        job_envelope: Union[_models.JobPatchProperties, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Job]:
         """Update properties of a Container Apps Job.
@@ -815,19 +916,8 @@ class JobsOperations:
         :param job_name: Job Name. Required.
         :type job_name: str
         :param job_envelope: Properties used to create a container apps job. Is either a
-         JobPatchProperties type or a IO type. Required.
-        :type job_envelope: ~azure.mgmt.appcontainers.models.JobPatchProperties or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         JobPatchProperties type or a IO[bytes] type. Required.
+        :type job_envelope: ~azure.mgmt.appcontainers.models.JobPatchProperties or IO[bytes]
         :return: An instance of AsyncLROPoller that returns either Job or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.Job]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -858,7 +948,7 @@ class JobsOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("Job", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -868,23 +958,21 @@ class JobsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.Job].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/jobs/{jobName}"
-    }
+        return AsyncLROPoller[_models.Job](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     async def _start_initial(
         self,
         resource_group_name: str,
         job_name: str,
-        template: Optional[Union[_models.JobExecutionTemplate, IO]] = None,
+        template: Optional[Union[_models.JobExecutionTemplate, IO[bytes]]] = None,
         **kwargs: Any
     ) -> Optional[_models.JobExecutionBase]:
         error_map = {
@@ -913,7 +1001,7 @@ class JobsOperations:
             else:
                 _json = None
 
-        request = build_start_request(
+        _request = build_start_request(
             resource_group_name=resource_group_name,
             job_name=job_name,
             subscription_id=self._config.subscription_id,
@@ -921,16 +1009,15 @@ class JobsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._start_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -949,13 +1036,9 @@ class JobsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    _start_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/jobs/{jobName}/start"
-    }
+        return deserialized  # type: ignore
 
     @overload
     async def begin_start(
@@ -981,14 +1064,6 @@ class JobsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either JobExecutionBase or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.JobExecutionBase]
@@ -1000,7 +1075,7 @@ class JobsOperations:
         self,
         resource_group_name: str,
         job_name: str,
-        template: Optional[IO] = None,
+        template: Optional[IO[bytes]] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1015,18 +1090,10 @@ class JobsOperations:
         :param job_name: Job Name. Required.
         :type job_name: str
         :param template: Properties used to start a job execution. Default value is None.
-        :type template: IO
+        :type template: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either JobExecutionBase or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.JobExecutionBase]
@@ -1038,7 +1105,7 @@ class JobsOperations:
         self,
         resource_group_name: str,
         job_name: str,
-        template: Optional[Union[_models.JobExecutionTemplate, IO]] = None,
+        template: Optional[Union[_models.JobExecutionTemplate, IO[bytes]]] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.JobExecutionBase]:
         """Start a Container Apps Job.
@@ -1051,19 +1118,8 @@ class JobsOperations:
         :param job_name: Job Name. Required.
         :type job_name: str
         :param template: Properties used to start a job execution. Is either a JobExecutionTemplate
-         type or a IO type. Default value is None.
-        :type template: ~azure.mgmt.appcontainers.models.JobExecutionTemplate or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         type or a IO[bytes] type. Default value is None.
+        :type template: ~azure.mgmt.appcontainers.models.JobExecutionTemplate or IO[bytes]
         :return: An instance of AsyncLROPoller that returns either JobExecutionBase or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.JobExecutionBase]
@@ -1095,7 +1151,7 @@ class JobsOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("JobExecutionBase", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -1107,17 +1163,15 @@ class JobsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.JobExecutionBase].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_start.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/jobs/{jobName}/start"
-    }
+        return AsyncLROPoller[_models.JobExecutionBase](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     async def _stop_execution_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, job_name: str, job_execution_name: str, **kwargs: Any
@@ -1136,22 +1190,21 @@ class JobsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_stop_execution_request(
+        _request = build_stop_execution_request(
             resource_group_name=resource_group_name,
             job_name=job_name,
             job_execution_name=job_execution_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._stop_execution_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1166,11 +1219,7 @@ class JobsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    _stop_execution_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/jobs/{jobName}/executions/{jobExecutionName}/stop"
-    }
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def begin_stop_execution(
@@ -1187,14 +1236,6 @@ class JobsOperations:
         :type job_name: str
         :param job_execution_name: Job execution name. Required.
         :type job_execution_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1222,7 +1263,7 @@ class JobsOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: AsyncPollingMethod = cast(
@@ -1233,17 +1274,13 @@ class JobsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_stop_execution.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/jobs/{jobName}/executions/{jobExecutionName}/stop"
-    }
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     async def _stop_multiple_executions_initial(
         self, resource_group_name: str, job_name: str, **kwargs: Any
@@ -1262,21 +1299,20 @@ class JobsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[Optional[_models.ContainerAppJobExecutions]] = kwargs.pop("cls", None)
 
-        request = build_stop_multiple_executions_request(
+        _request = build_stop_multiple_executions_request(
             resource_group_name=resource_group_name,
             job_name=job_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._stop_multiple_executions_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1295,13 +1331,9 @@ class JobsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    _stop_multiple_executions_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/jobs/{jobName}/stop"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def begin_stop_multiple_executions(
@@ -1316,14 +1348,6 @@ class JobsOperations:
         :type resource_group_name: str
         :param job_name: Job Name. Required.
         :type job_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ContainerAppJobExecutions or the
          result of cls(response)
         :rtype:
@@ -1353,7 +1377,7 @@ class JobsOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("ContainerAppJobExecutions", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -1365,17 +1389,15 @@ class JobsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.ContainerAppJobExecutions].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_stop_multiple_executions.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/jobs/{jobName}/stop"
-    }
+        return AsyncLROPoller[_models.ContainerAppJobExecutions](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace_async
     async def list_secrets(
@@ -1390,7 +1412,6 @@ class JobsOperations:
         :type resource_group_name: str
         :param job_name: Job Name. Required.
         :type job_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: JobSecretsCollection or the result of cls(response)
         :rtype: ~azure.mgmt.appcontainers.models.JobSecretsCollection
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1409,21 +1430,20 @@ class JobsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.JobSecretsCollection] = kwargs.pop("cls", None)
 
-        request = build_list_secrets_request(
+        _request = build_list_secrets_request(
             resource_group_name=resource_group_name,
             job_name=job_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.list_secrets.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1436,10 +1456,6 @@ class JobsOperations:
         deserialized = self._deserialize("JobSecretsCollection", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    list_secrets.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/jobs/{jobName}/listSecrets"
-    }
+        return deserialized  # type: ignore

@@ -267,6 +267,17 @@ class DatabaseProxy(object):
         self,
         id: str,
         partition_key: PartitionKey,
+        *,
+        indexing_policy: Optional[Dict[str, str]] = None,
+        default_ttl: Optional[int] = None,
+        offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
+        unique_key_policy: Optional[Dict[str, str]] = None,
+        conflict_resolution_policy: Optional[Dict[str, str]] = None,
+        session_token: Optional[str] = None,
+        initial_headers: Optional[Dict[str, str]] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        analytical_storage_ttl: Optional[int] = None,
         **kwargs: Any
     ) -> ContainerProxy:
         """Create a container if it does not exist already.
@@ -303,18 +314,14 @@ class DatabaseProxy(object):
         :returns: A `ContainerProxy` instance representing the new container.
         :rtype: ~azure.cosmos.aio.ContainerProxy
         """
-        indexing_policy = kwargs.pop('indexing_policy', None)
-        default_ttl = kwargs.pop('default_ttl', None)
-        unique_key_policy = kwargs.pop('unique_key_policy', None)
-        conflict_resolution_policy = kwargs.pop('conflict_resolution_policy', None)
-        analytical_storage_ttl = kwargs.pop("analytical_storage_ttl", None)
-        offer_throughput = kwargs.pop('offer_throughput', None)
         computed_properties = kwargs.pop("computed_properties", None)
-        etag = kwargs.pop("etag", None)
-        match_condition = kwargs.pop("match_condition", None)
         try:
             container_proxy = self.get_container_client(id)
-            await container_proxy.read(**kwargs)
+            await container_proxy.read(
+                session_token=session_token,
+                initial_headers=initial_headers,
+                **kwargs
+            )
             return container_proxy
         except CosmosResourceNotFoundError:
             return await self.create_container(
@@ -329,6 +336,8 @@ class DatabaseProxy(object):
                 computed_properties=computed_properties,
                 etag=etag,
                 match_condition=match_condition,
+                session_token=session_token,
+                initial_headers=initial_headers,
                 **kwargs
             )
 

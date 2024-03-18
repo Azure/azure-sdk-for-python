@@ -1,22 +1,44 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+# cSpell:disable
+
+import collections
 import platform
 import unittest
 from unittest import mock
 
-from opentelemetry.sdk.metrics import MeterProvider
+from opentelemetry.sdk.metrics import (
+    Counter,
+    Histogram,
+    Meter,
+    MeterProvider,
+    ObservableGauge,
+)
 from opentelemetry.sdk.resources import Resource, ResourceAttributes
 from opentelemetry.semconv.trace import SpanAttributes
 from opentelemetry.trace import SpanKind
 
 from azure.monitor.opentelemetry.exporter._generated.models import ContextTagKeys
+from azure.monitor.opentelemetry.exporter._quickpulse._constants import (
+    _COMMITTED_BYTES_NAME,
+    _DEPENDENCY_DURATION_NAME,
+    _DEPENDENCY_FAILURE_RATE_NAME,
+    _DEPENDENCY_RATE_NAME,
+    _EXCEPTION_RATE_NAME,
+    _PROCESSOR_TIME_NAME,
+    _REQUEST_DURATION_NAME,
+    _REQUEST_FAILURE_RATE_NAME,
+    _REQUEST_RATE_NAME,
+)
 from azure.monitor.opentelemetry.exporter._quickpulse._exporter import (
     _QuickpulseExporter,
     _QuickpulseMetricReader,
 )
 from azure.monitor.opentelemetry.exporter._quickpulse._live_metrics import (
     enable_live_metrics,
+    _get_process_memory,
+    _get_processor_time,
     _QuickpulseManager,
 )
 from azure.monitor.opentelemetry.exporter._quickpulse._state import (
@@ -92,6 +114,28 @@ class TestQuickpulseManager(unittest.TestCase):
         self.assertEqual(qpm._reader._base_monitoring_data_point, qpm._base_monitoring_data_point)
         self.assertTrue(isinstance(qpm._meter_provider, MeterProvider))
         self.assertEqual(qpm._meter_provider._sdk_config.metric_readers, [qpm._reader])
+        self.assertTrue(isinstance(qpm._meter, Meter))
+        self.assertEqual(qpm._meter.name, "azure_monitor_live_metrics")
+        self.assertTrue(isinstance(qpm._request_duration, Histogram))
+        self.assertEqual(qpm._request_duration.name, _REQUEST_DURATION_NAME[0])
+        self.assertTrue(isinstance(qpm._dependency_duration, Histogram))
+        self.assertEqual(qpm._dependency_duration.name, _DEPENDENCY_DURATION_NAME[0])
+        self.assertTrue(isinstance(qpm._request_rate_counter, Counter))
+        self.assertEqual(qpm._request_rate_counter.name, _REQUEST_RATE_NAME[0])
+        self.assertTrue(isinstance(qpm._request_failed_rate_counter, Counter))
+        self.assertEqual(qpm._request_failed_rate_counter.name, _REQUEST_FAILURE_RATE_NAME[0])
+        self.assertTrue(isinstance(qpm._dependency_rate_counter, Counter))
+        self.assertEqual(qpm._dependency_rate_counter.name, _DEPENDENCY_RATE_NAME[0])
+        self.assertTrue(isinstance(qpm._dependency_failure_rate_counter, Counter))
+        self.assertEqual(qpm._dependency_failure_rate_counter.name, _DEPENDENCY_FAILURE_RATE_NAME[0])
+        self.assertTrue(isinstance(qpm._exception_rate_counter, Counter))
+        self.assertEqual(qpm._exception_rate_counter.name, _EXCEPTION_RATE_NAME[0])
+        self.assertTrue(isinstance(qpm._process_memory_gauge, ObservableGauge))
+        self.assertEqual(qpm._process_memory_gauge.name, _COMMITTED_BYTES_NAME[0])
+        self.assertEqual(qpm._process_memory_gauge._callbacks, [_get_process_memory])
+        self.assertTrue(isinstance(qpm._processor_time_gauge, ObservableGauge))
+        self.assertEqual(qpm._processor_time_gauge.name, _PROCESSOR_TIME_NAME[0])
+        self.assertEqual(qpm._processor_time_gauge._callbacks, [_get_processor_time])
 
 
     def test_singleton(self):
@@ -247,3 +291,23 @@ class TestQuickpulseManager(unittest.TestCase):
         qpm._record_log_record(log_data_mock)
         append_doc_mock.assert_called_once_with(log_record_doc)
         qpm._exception_rate_counter.add.assert_called_once_with(1)
+
+    def test_process_memory(self):
+        with mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics.PROCESS") as process_mock:
+            memory = collections.namedtuple('memory', 'rss')
+            pmem = memory(rss=40)
+            process_mock.memory_info.return_value = pmem
+            mem = _get_process_memory(None)
+            obs = next(mem)
+            self.assertEqual(obs.value, 40)
+
+    @mock.patch("psutil.cpu_times_percent")
+    def test_processor_time(self, processor_mock):
+        cpu = collections.namedtuple('cpu', 'idle')
+        cpu_times = cpu(idle=94.5)
+        processor_mock.return_value = cpu_times
+        time = _get_processor_time(None)
+        obs = next(time)
+        self.assertEqual(obs.value, 5.5)
+
+# cSpell:enable
