@@ -142,7 +142,7 @@ class CallAutomationClient:
         endpoint, access_key = parse_connection_str(conn_str)
         return cls(endpoint, access_key, **kwargs)
 
-    def get_call_connection( # pylint: disable=client-method-missing-tracing-decorator
+    def get_call_connection( # pylint:disable=client-method-missing-tracing-decorator
         self,
         call_connection_id: str,
         **kwargs
@@ -158,7 +158,7 @@ class CallAutomationClient:
         if not call_connection_id:
             raise ValueError("call_connection_id can not be None")
 
-        return CallConnectionClient._from_callautomation_client( #pylint:disable=protected-access
+        return CallConnectionClient._from_callautomation_client( # pylint:disable=protected-access
             callautomation_client=self._client,
             call_connection_id=call_connection_id,
             **kwargs
@@ -219,7 +219,6 @@ class CallAutomationClient:
             source_display_name=source_display_name,
             source=serialize_communication_user_identifier(self.source),
             operation_context=operation_context,
-            cognitive_services_endpoint=cognitive_services_endpoint,
             call_intelligence_options=call_intelligence_options
         )
         process_repeatability_first_sent(kwargs)
@@ -312,15 +311,12 @@ class CallAutomationClient:
         answer_call_request = AnswerCallRequest(
             incoming_call_context=incoming_call_context,
             callback_uri=callback_url,
-            cognitive_services_endpoint=cognitive_services_endpoint,
             answered_by=serialize_communication_user_identifier(
                 self.source) if self.source else None,
             call_intelligence_options=call_intelligence_options,
             operation_context=operation_context,
         )
-
         process_repeatability_first_sent(kwargs)
-
         result = await self._client.answer_call(
             answer_call_request=answer_call_request,
             **kwargs
