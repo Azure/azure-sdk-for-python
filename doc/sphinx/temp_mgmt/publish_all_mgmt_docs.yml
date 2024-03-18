@@ -17,9 +17,6 @@
       azure-mgmt-managedapplications:
         ServiceDirectory: managedapplications
         Version: '1.0.0b1'
-      azure-mgmt-changeanalysis:
-        ServiceDirectory: changeanalysis
-        Version: '1.0.0'
       azure-mgmt-advisor:
         ServiceDirectory: advisor
         Version: '10.0.0b1'
