@@ -14,7 +14,7 @@ from azure.mgmt.nginx import NginxManagementClient
     pip install azure-identity
     pip install azure-mgmt-nginx
 # USAGE
-    python certificates_create_or_update.py
+    python deployments_get_auto_scale.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,14 +29,13 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.certificates.begin_create_or_update(
+    response = client.deployments.get(
         resource_group_name="myResourceGroup",
         deployment_name="myDeployment",
-        certificate_name="default",
-    ).result()
+    )
     print(response)
 
 
-# x-ms-original-file: specification/nginx/resource-manager/NGINX.NGINXPLUS/preview/2024-01-01-preview/examples/Certificates_CreateOrUpdate.json
+# x-ms-original-file: specification/nginx/resource-manager/NGINX.NGINXPLUS/preview/2024-01-01-preview/examples/Deployments_Get_AutoScale.json
 if __name__ == "__main__":
     main()
