@@ -14,7 +14,7 @@ from azure.mgmt.batch import BatchManagementClient
     pip install azure-identity
     pip install azure-mgmt-batch
 # USAGE
-    python pool_create_public_ips.py
+    python pool_create_upgrade_policy.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -38,27 +38,42 @@ def main():
                 "deploymentConfiguration": {
                     "virtualMachineConfiguration": {
                         "imageReference": {
-                            "id": "/subscriptions/subid/resourceGroups/networking-group/providers/Microsoft.Compute/galleries/testgallery/images/testimagedef/versions/0.0.1"
+                            "offer": "WindowsServer",
+                            "publisher": "MicrosoftWindowsServer",
+                            "sku": "2019-datacenter-smalldisk",
+                            "version": "latest",
                         },
-                        "nodeAgentSkuId": "batch.node.ubuntu 18.04",
+                        "nodeAgentSkuId": "batch.node.windows amd64",
+                        "nodePlacementConfiguration": {"policy": "Zonal"},
+                        "windowsConfiguration": {"enableAutomaticUpdates": False},
                     }
                 },
-                "networkConfiguration": {
-                    "publicIPAddressConfiguration": {
-                        "ipAddressIds": [
-                            "/subscriptions/subid1/resourceGroups/rg13/providers/Microsoft.Network/publicIPAddresses/ip135"
-                        ],
-                        "provision": "UserManaged",
+                "scaleSettings": {"fixedScale": {"targetDedicatedNodes": 2, "targetLowPriorityNodes": 0}},
+                "upgradePolicy": {
+                    "automaticOSUpgradePolicy": {
+                        "disableAutomaticRollback": True,
+                        "enableAutomaticOSUpgrade": True,
+                        "osRollingUpgradeDeferral": True,
+                        "useRollingUpgradePolicy": True,
                     },
-                    "subnetId": "/subscriptions/subid/resourceGroups/rg1234/providers/Microsoft.Network/virtualNetworks/network1234/subnets/subnet123",
+                    "mode": "automatic",
+                    "rollingUpgradePolicy": {
+                        "enableCrossZoneUpgrade": True,
+                        "maxBatchInstancePercent": 20,
+                        "maxUnhealthyInstancePercent": 20,
+                        "maxUnhealthyUpgradedInstancePercent": 20,
+                        "pauseTimeBetweenBatches": "PT0S",
+                        "prioritizeUnhealthyInstances": False,
+                        "rollbackFailedInstancesOnPolicyBreach": False,
+                    },
                 },
-                "vmSize": "STANDARD_D4",
+                "vmSize": "Standard_d4s_v3",
             }
         },
     )
     print(response)
 
 
-# x-ms-original-file: specification/batch/resource-manager/Microsoft.Batch/stable/2024-02-01/examples/PoolCreate_PublicIPs.json
+# x-ms-original-file: specification/batch/resource-manager/Microsoft.Batch/stable/2024-02-01/examples/PoolCreate_UpgradePolicy.json
 if __name__ == "__main__":
     main()
