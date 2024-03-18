@@ -27,8 +27,6 @@ class MetricsClient:  # pylint: disable=client-accepts-api-version-keyword
         resources. For global resources, the region should be 'global'. Required.
     :param credential: The credential to authenticate the client.
     :type credential: ~azure.core.credentials.TokenCredential
-    :keyword str audience: The audience to use when requesting a token. If not provided, the public cloud audience
-        will be assumed. Defaults to 'https://metrics.monitor.azure.com'.
     """
 
     def __init__(self, endpoint: str, credential: TokenCredential, **kwargs: Any) -> None:
