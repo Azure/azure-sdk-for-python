@@ -17,7 +17,12 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import Datastore as Data
 from azure.ai.ml._restclient.v2023_04_01_preview.models import DatastoreType
 from azure.ai.ml._schema._datastore import AzureBlobSchema, AzureDataLakeGen2Schema, AzureFileSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
-from azure.ai.ml.entities._credentials import AccountKeyConfiguration, SasTokenConfiguration
+from azure.ai.ml.entities._credentials import (
+    AccountKeyConfiguration,
+    CertificateConfiguration,
+    SasTokenConfiguration,
+    ServicePrincipalConfiguration,
+)
 from azure.ai.ml.entities._datastore.datastore import Datastore
 from azure.ai.ml.entities._datastore.utils import from_rest_datastore_credentials
 from azure.ai.ml.entities._util import load_from_dict
@@ -145,7 +150,8 @@ class AzureBlobDatastore(Datastore):
     :param properties: The asset property dictionary.
     :type properties: dict[str, str]
     :param credentials: Credentials to use for Azure ML workspace to connect to the storage.
-    :type credentials: Union[AccountKeySection, SasSection]
+    :type credentials: Union[~azure.ai.ml.entities.AccountKeyConfiguration,
+        ~azure.ai.ml.entities.SasTokenConfiguration]
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
     """
@@ -243,7 +249,11 @@ class AzureDataLakeGen2Datastore(Datastore):
     :param protocol: Protocol to use to connect with the Azure storage account
     :type protocol: str
     :param credentials: Credentials to use for Azure ML workspace to connect to the storage.
-    :type credentials: Union[ServicePrincipalConfiguration, CertificateConfiguration]
+    :type credentials: Union[
+        ~azure.ai.ml.entities.ServicePrincipalConfiguration,
+        ~azure.ai.ml.entities.CertificateConfiguration
+
+        ]
     :param properties: The asset property dictionary.
     :type properties: dict[str, str]
     :param kwargs: A dictionary of additional configuration parameters.
@@ -261,7 +271,7 @@ class AzureDataLakeGen2Datastore(Datastore):
         endpoint: str = _get_storage_endpoint_from_metadata(),
         protocol: str = HTTPS,
         properties: Optional[Dict] = None,
-        credentials: Optional[Union[AccountKeyConfiguration, SasTokenConfiguration]] = None,
+        credentials: Optional[Union[ServicePrincipalConfiguration, CertificateConfiguration]] = None,
         **kwargs: Any
     ):
         kwargs[TYPE] = DatastoreType.AZURE_DATA_LAKE_GEN2

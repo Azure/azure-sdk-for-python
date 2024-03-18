@@ -166,12 +166,12 @@ class ServicesOperations:
         :param resource_group_name: The name of the resource group within the current subscription. You
          can obtain this value from the Azure Resource Manager API or the portal. Required.
         :type resource_group_name: str
-        :param search_service_name: The name of the Azure Cognitive Search service to create or update.
-         Search service names must only contain lowercase letters, digits or dashes, cannot use dash as
-         the first two or last one characters, cannot contain consecutive dashes, and must be between 2
-         and 60 characters in length. Search service names must be globally unique since they are part
-         of the service URI (https://:code:`<name>`.search.windows.net). You cannot change the service
-         name after the service is created. Required.
+        :param search_service_name: The name of the Azure AI Search service to create or update. Search
+         service names must only contain lowercase letters, digits or dashes, cannot use dash as the
+         first two or last one characters, cannot contain consecutive dashes, and must be between 2 and
+         60 characters in length. Search service names must be globally unique since they are part of
+         the service URI (https://:code:`<name>`.search.windows.net). You cannot change the service name
+         after the service is created. Required.
         :type search_service_name: str
         :param service: The definition of the search service to create or update. Required.
         :type service: ~azure.mgmt.search.models.SearchService
@@ -215,12 +215,12 @@ class ServicesOperations:
         :param resource_group_name: The name of the resource group within the current subscription. You
          can obtain this value from the Azure Resource Manager API or the portal. Required.
         :type resource_group_name: str
-        :param search_service_name: The name of the Azure Cognitive Search service to create or update.
-         Search service names must only contain lowercase letters, digits or dashes, cannot use dash as
-         the first two or last one characters, cannot contain consecutive dashes, and must be between 2
-         and 60 characters in length. Search service names must be globally unique since they are part
-         of the service URI (https://:code:`<name>`.search.windows.net). You cannot change the service
-         name after the service is created. Required.
+        :param search_service_name: The name of the Azure AI Search service to create or update. Search
+         service names must only contain lowercase letters, digits or dashes, cannot use dash as the
+         first two or last one characters, cannot contain consecutive dashes, and must be between 2 and
+         60 characters in length. Search service names must be globally unique since they are part of
+         the service URI (https://:code:`<name>`.search.windows.net). You cannot change the service name
+         after the service is created. Required.
         :type search_service_name: str
         :param service: The definition of the search service to create or update. Required.
         :type service: IO
@@ -262,12 +262,12 @@ class ServicesOperations:
         :param resource_group_name: The name of the resource group within the current subscription. You
          can obtain this value from the Azure Resource Manager API or the portal. Required.
         :type resource_group_name: str
-        :param search_service_name: The name of the Azure Cognitive Search service to create or update.
-         Search service names must only contain lowercase letters, digits or dashes, cannot use dash as
-         the first two or last one characters, cannot contain consecutive dashes, and must be between 2
-         and 60 characters in length. Search service names must be globally unique since they are part
-         of the service URI (https://:code:`<name>`.search.windows.net). You cannot change the service
-         name after the service is created. Required.
+        :param search_service_name: The name of the Azure AI Search service to create or update. Search
+         service names must only contain lowercase letters, digits or dashes, cannot use dash as the
+         first two or last one characters, cannot contain consecutive dashes, and must be between 2 and
+         60 characters in length. Search service names must be globally unique since they are part of
+         the service URI (https://:code:`<name>`.search.windows.net). You cannot change the service name
+         after the service is created. Required.
         :type search_service_name: str
         :param service: The definition of the search service to create or update. Is either a
          SearchService type or a IO type. Required.
@@ -359,7 +359,7 @@ class ServicesOperations:
         :param resource_group_name: The name of the resource group within the current subscription. You
          can obtain this value from the Azure Resource Manager API or the portal. Required.
         :type resource_group_name: str
-        :param search_service_name: The name of the Azure Cognitive Search service to update. Required.
+        :param search_service_name: The name of the Azure AI Search service to update. Required.
         :type search_service_name: str
         :param service: The definition of the search service to update. Required.
         :type service: ~azure.mgmt.search.models.SearchServiceUpdate
@@ -394,7 +394,7 @@ class ServicesOperations:
         :param resource_group_name: The name of the resource group within the current subscription. You
          can obtain this value from the Azure Resource Manager API or the portal. Required.
         :type resource_group_name: str
-        :param search_service_name: The name of the Azure Cognitive Search service to update. Required.
+        :param search_service_name: The name of the Azure AI Search service to update. Required.
         :type search_service_name: str
         :param service: The definition of the search service to update. Required.
         :type service: IO
@@ -427,7 +427,7 @@ class ServicesOperations:
         :param resource_group_name: The name of the resource group within the current subscription. You
          can obtain this value from the Azure Resource Manager API or the portal. Required.
         :type resource_group_name: str
-        :param search_service_name: The name of the Azure Cognitive Search service to update. Required.
+        :param search_service_name: The name of the Azure AI Search service to update. Required.
         :type search_service_name: str
         :param service: The definition of the search service to update. Is either a SearchServiceUpdate
          type or a IO type. Required.
@@ -523,7 +523,7 @@ class ServicesOperations:
         :param resource_group_name: The name of the resource group within the current subscription. You
          can obtain this value from the Azure Resource Manager API or the portal. Required.
         :type resource_group_name: str
-        :param search_service_name: The name of the Azure Cognitive Search service associated with the
+        :param search_service_name: The name of the Azure AI Search service associated with the
          specified resource group. Required.
         :type search_service_name: str
         :param search_management_request_options: Parameter group. Default value is None.
@@ -603,7 +603,7 @@ class ServicesOperations:
         :param resource_group_name: The name of the resource group within the current subscription. You
          can obtain this value from the Azure Resource Manager API or the portal. Required.
         :type resource_group_name: str
-        :param search_service_name: The name of the Azure Cognitive Search service associated with the
+        :param search_service_name: The name of the Azure AI Search service associated with the
          specified resource group. Required.
         :type search_service_name: str
         :param search_management_request_options: Parameter group. Default value is None.

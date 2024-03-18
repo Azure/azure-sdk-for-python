@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-
+# pylint: disable=E0401
 # needed for 'list' type annotations on 3.8
 from __future__ import annotations
 
@@ -194,7 +194,7 @@ class Simulator:
     async def simulate_async(
         self,
         template: "Template",
-        max_conversation_turns: int,
+        max_conversation_turns: int = 2,
         parameters: Optional[List[dict]] = None,
         jailbreak: bool = False,
         api_call_retry_limit: int = 3,
@@ -208,6 +208,7 @@ class Simulator:
         :keyword template: An instance of the Template class defining the conversation structure.
         :paramtype template: Template
         :keyword max_conversation_turns: The maximum number of conversation turns to simulate.
+            Defaults to 2, change only applies to chat templates.
         :paramtype max_conversation_turns: int
         :keyword parameters: A list of dictionaries containing the parameter values to be used in the simulations.
             Defaults to an empty list.
@@ -239,7 +240,8 @@ class Simulator:
 
         if not isinstance(parameters, list):
             raise ValueError(f"Expect parameters to be a list of dictionary, but found {type(parameters)}")
-
+        if "conversation" not in template.template_name:
+            max_conversation_turns = 2
         if template.content_harm:
             self._ensure_service_dependencies()
             self.adversarial = True
@@ -392,13 +394,18 @@ class Simulator:
 
     def _to_chat_protocol(self, template, conversation_history, template_parameters):
         messages = []
-
         for i, m in enumerate(conversation_history):
             message = {"content": m.message, "role": m.role.value}
             if len(template.context_key) > 0:
                 citations = self._get_citations(template_parameters, template.context_key, i)
                 message["context"] = citations
+            elif "context" in m.full_response:
+                # adding context for adv_qa
+                message["context"] = m.full_response["context"]
             messages.append(message)
+        template_parameters['metadata'] = {}
+        if "ch_template_placeholder" in template_parameters:
+            del template_parameters["ch_template_placeholder"]
 
         return {
             "template_parameters": template_parameters,
