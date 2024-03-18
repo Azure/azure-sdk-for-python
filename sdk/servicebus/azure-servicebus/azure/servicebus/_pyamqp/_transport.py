@@ -663,7 +663,7 @@ class SSLTransport(_AbstractTransport):
                 # None.
                 n = 0
             if not n:
-                raise IOError("Socket has already been closed.")
+                raise IOError("Socket closed.")
             s = s[n:]
 
     def negotiate(self):
