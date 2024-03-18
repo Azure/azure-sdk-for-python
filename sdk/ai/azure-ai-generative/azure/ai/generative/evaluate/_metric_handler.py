@@ -74,12 +74,17 @@ class MetricHandler(object):
 
         openai_config = self.metrics_mapping.get("openai_params")
 
-        if openai_config is None and all(m in metrics for m in CONTENT_SAFETY_METRICS_LIST):
-            openai_config = {
-                "api_key": "api_key",
-                "api_base": "api_base",
-                "api_version": "api_version",
-            }
+        if openai_config is None:
+            if all(m in CONTENT_SAFETY_METRICS_LIST for m in metrics):
+                openai_config = {
+                    "api_key": "api_key",
+                    "api_base": "api_base",
+                    "api_version": "api_version",
+                    "api_type": "azure",
+                    "deployment_id" : "deployment_id"
+                }
+            else:
+                raise Exception("model_config is required for metrics other than content safety metrics")
 
         conn_name = "openai_connection"
         deployment_id = openai_config["deployment_id"]
