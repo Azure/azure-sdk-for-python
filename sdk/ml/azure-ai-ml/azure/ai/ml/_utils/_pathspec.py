@@ -16,7 +16,7 @@ from typing import Any, AnyStr, Iterable
 from typing import Match as MatchHint
 from typing import Optional
 from typing import Pattern as PatternHint
-from typing import Tuple, Union
+from typing import Tuple, Union, cast
 
 NORMALIZE_PATH_SEPS = [sep for sep in [os.sep, os.altsep] if sep and sep != posixpath.sep]
 
@@ -414,7 +414,7 @@ class GitWildMatchPattern(RegexPattern):
         if regex is not None and return_type is bytes:
             regex = regex.encode(_BYTES_ENCODING)
 
-        return regex, include
+        return cast(Tuple[Optional[AnyStr], Optional[bool]], (regex, include))
 
     @staticmethod
     def _translate_segment_glob(pattern: str) -> str:
@@ -526,7 +526,7 @@ class GitWildMatchPattern(RegexPattern):
         return regex
 
     @staticmethod
-    def escape(s: AnyStr) -> AnyStr:
+    def escape(s: AnyStr) -> Union[str, bytes]:
         """Escape special characters in the given string.
 
         :param s:  a filename or a string that you want to escape, usually before adding it to a ".gitignore".
