@@ -1,9 +1,10 @@
 import glob
 import pathlib
+import datetime
 from pypi_tools.pypi import PyPIClient
 
 root = file_path = pathlib.Path(__file__).resolve().parent.parent.parent.parent
-
+mgmt_docs_fix = datetime.datetime(2024, 3, 6, 12, 0, 0)
 
 def mgmt():
     client = PyPIClient()
@@ -19,7 +20,13 @@ def mgmt():
                 mgmt[package_name] = {}
                 mgmt[package_name].update({"service_directory": service_directory})
                 latest = client.get_ordered_versions(package_name)[-1]
-                mgmt[package_name].update({"version": str(latest)})
+                release = client.project_release(package_name, str(latest))
+                release_date = release["urls"][0]["upload_time"]
+                dt = datetime.datetime.strptime(release_date, '%Y-%m-%dT%H:%M:%S')
+                if dt < mgmt_docs_fix:
+                    mgmt[package_name].update({"version": str(latest)})
+                else:
+                    del mgmt[package_name]
     return mgmt
 
 
