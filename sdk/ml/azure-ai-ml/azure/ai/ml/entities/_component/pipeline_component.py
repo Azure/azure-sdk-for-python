@@ -8,6 +8,7 @@ import json
 import logging
 import os
 import re
+import time
 import typing
 from collections import Counter
 from typing import Any, Dict, List, Optional, Tuple, Union
@@ -346,9 +347,11 @@ class PipelineComponent(Component):
                             and input_value.path
                             and os.path.exists(input_value.path)
                         ):
+                            start_time = time.time()
                             component_interface_dict["jobs"][job_name]["inputs"][input_name][
                                 "content_hash"
                             ] = get_object_hash(input_value.path)
+                            module_logger.debug(f"Takes {time.time() - start_time}s to caculate the content hash of local input {input_value.path}")
                     except ValidationException:
                         pass
         hash_value: str = hash_dict(
