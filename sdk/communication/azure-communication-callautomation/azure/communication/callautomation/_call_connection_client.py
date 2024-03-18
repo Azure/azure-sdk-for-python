@@ -431,48 +431,6 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        self._play_media(
-            play_source=play_source,
-            play_to=play_to,
-            loop=loop,
-            operation_context=operation_context,
-            operation_callback_url=operation_callback_url,
-            **kwargs
-        )
-
-    @distributed_trace
-    def _play_media(
-        self,
-        play_source: Union['FileSource', 'TextSource', 'SsmlSource'],
-        play_to: Union[Literal["all"], List['CommunicationIdentifier']] = 'all',
-        *,
-        loop: bool = False,
-        operation_context: Optional[str] = None,
-        operation_callback_url: Optional[str] = None,
-        **kwargs
-    ) -> None:
-        """Play media to specific participant(s) in this call.
-
-        :param play_source: A PlaySource representing the source to play.
-        :type play_source: ~azure.communication.callautomation.FileSource or
-         ~azure.communication.callautomation.TextSource or
-         ~azure.communication.callautomation.SsmlSource
-        :param play_to: The targets to play media to. Default value is 'all', to play media
-         to all participants in the call.
-        :type play_to: list[~azure.communication.callautomation.CommunicationIdentifier]
-        :keyword loop: Whether the media should be repeated until cancelled.
-        :paramtype loop: bool
-        :keyword operation_context: Value that can be used to track this call and its associated events.
-        :paramtype operation_context: str or None
-        :keyword operation_callback_url: Set a callback URL that overrides the default callback URL set
-         by CreateCall/AnswerCall for this operation.
-         This setup is per-action. If this is not set, the default callback URL set by
-         CreateCall/AnswerCall will be used.
-        :paramtype operation_callback_url: str or None
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
         play_source_single: Optional[Union['FileSource', 'TextSource', 'SsmlSource']] = None
         if isinstance(play_source, list):
             warnings.warn("Currently only single play source per request is supported.")
@@ -525,7 +483,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             "The method 'play_media_to_all' is deprecated. Please use 'play_media' instead.",
             DeprecationWarning
         )
-        self._play_media(
+        self.play_media(
             play_source=play_source,
             loop=loop,
             operation_context=operation_context,
@@ -546,7 +504,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         interrupt_prompt: bool = False,
         dtmf_inter_tone_timeout: Optional[int] = None,
         dtmf_max_tones_to_collect: Optional[int] = None,
-        dtmf_stop_tones: Optional[List[str or 'DtmfTone']] = None,
+        dtmf_stop_tones: Optional[List[Union[str, 'DtmfTone']]] = None,
         speech_language: Optional[str] = None,
         choices: Optional[List['RecognitionChoice']] = None,
         end_silence_timeout: Optional[int] = None,
@@ -617,7 +575,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             play_source_single = play_prompt
 
         if input_type == RecognizeInputType.DTMF:
-            dtmf_options=DtmfOptions(
+            dtmf_options = DtmfOptions(
                 inter_tone_timeout_in_seconds=dtmf_inter_tone_timeout,
                 max_tones_to_collect=dtmf_max_tones_to_collect,
                 stop_tones=dtmf_stop_tones
@@ -628,7 +586,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
                 end_silence_timeout_in_ms=end_silence_timeout * 1000 if end_silence_timeout is not None else None)
             options.speech_options = speech_options
         elif input_type == RecognizeInputType.SPEECH_OR_DTMF:
-            dtmf_options=DtmfOptions(
+            dtmf_options = DtmfOptions(
                 inter_tone_timeout_in_seconds=dtmf_inter_tone_timeout,
                 max_tones_to_collect=dtmf_max_tones_to_collect,
                 stop_tones=dtmf_stop_tones
@@ -678,6 +636,8 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
 
         :param target_participant: Target participant.
         :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
+        :keyword operation_context: The value to identify context of the operation.
+        :paramtype operation_context: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -719,7 +679,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         continuous_dtmf_recognition_request = ContinuousDtmfRecognitionRequest(
             target_participant=serialize_identifier(target_participant),
             operation_context=operation_context,
-            operation_callback_url=operation_callback_url
+            operation_callback_uri=operation_callback_url
         )
         self._call_media_client.stop_continuous_dtmf_recognition(
             self._call_connection_id,
