@@ -14,7 +14,7 @@ from azure.mgmt.search import SearchManagementClient
     pip install azure-identity
     pip install azure-mgmt-search
 # USAGE
-    python search_create_or_update_service_auth_options.py
+    python search_update_service_to_allow_access_from_public_custom_ips_and_bypass.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,24 +29,24 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.services.begin_create_or_update(
+    response = client.services.update(
         resource_group_name="rg1",
         search_service_name="mysearchservice",
         service={
-            "location": "westus",
             "properties": {
-                "authOptions": {"aadOrApiKey": {"aadAuthFailureMode": "http401WithBearerChallenge"}},
-                "hostingMode": "default",
+                "networkRuleSet": {
+                    "bypass": "AzurePortal",
+                    "ipRules": [{"value": "123.4.5.6"}, {"value": "123.4.6.0/18"}],
+                },
                 "partitionCount": 1,
+                "publicNetworkAccess": "enabled",
                 "replicaCount": 3,
-            },
-            "sku": {"name": "standard"},
-            "tags": {"app-name": "My e-commerce app"},
+            }
         },
-    ).result()
+    )
     print(response)
 
 
-# x-ms-original-file: specification/search/resource-manager/Microsoft.Search/preview/2024-03-01-preview/examples/SearchCreateOrUpdateServiceAuthOptions.json
+# x-ms-original-file: specification/search/resource-manager/Microsoft.Search/preview/2024-03-01-preview/examples/SearchUpdateServiceToAllowAccessFromPublicCustomIPsAndBypass.json
 if __name__ == "__main__":
     main()

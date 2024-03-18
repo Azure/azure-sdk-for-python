@@ -47,7 +47,7 @@ def build_list_supported_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -58,7 +58,9 @@ def build_list_supported_request(
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "searchServiceName": _SERIALIZER.url("search_service_name", search_service_name, "str"),
+        "searchServiceName": _SERIALIZER.url(
+            "search_service_name", search_service_name, "str", pattern=r"^(?=.{2,60}$)[a-z0-9][a-z0-9]+(-[a-z0-9]+)*$"
+        ),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -109,7 +111,7 @@ class PrivateLinkResourcesOperations:
         :param resource_group_name: The name of the resource group within the current subscription. You
          can obtain this value from the Azure Resource Manager API or the portal. Required.
         :type resource_group_name: str
-        :param search_service_name: The name of the Azure Cognitive Search service associated with the
+        :param search_service_name: The name of the Azure AI Search service associated with the
          specified resource group. Required.
         :type search_service_name: str
         :param search_management_request_options: Parameter group. Default value is None.

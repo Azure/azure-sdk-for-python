@@ -14,7 +14,7 @@ from azure.mgmt.search import SearchManagementClient
     pip install azure-identity
     pip install azure-mgmt-search
 # USAGE
-    python search_create_or_update_service_auth_options.py
+    python search_create_or_update_service_with_data_exfiltration.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -35,7 +35,7 @@ def main():
         service={
             "location": "westus",
             "properties": {
-                "authOptions": {"aadOrApiKey": {"aadAuthFailureMode": "http401WithBearerChallenge"}},
+                "disabledDataExfiltrationOptions": ["All"],
                 "hostingMode": "default",
                 "partitionCount": 1,
                 "replicaCount": 3,
@@ -47,6 +47,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/search/resource-manager/Microsoft.Search/preview/2024-03-01-preview/examples/SearchCreateOrUpdateServiceAuthOptions.json
+# x-ms-original-file: specification/search/resource-manager/Microsoft.Search/preview/2024-03-01-preview/examples/SearchCreateOrUpdateServiceWithDataExfiltration.json
 if __name__ == "__main__":
     main()
