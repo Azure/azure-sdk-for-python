@@ -281,7 +281,7 @@ class Simulator:
         tasks = []
         total_tasks = sum(len(t.template_parameters) for t in templates)
 
-        if simulation_result_limit > total_tasks:
+        if simulation_result_limit > total_tasks and self.adversarial:
             logging.getLogger(__name__).warning(
                 "Cannot provide %s results due to maximum number of adversarial simulations that can be generated: %s."
                 "%s simulations will be generated.",
@@ -290,7 +290,7 @@ class Simulator:
                 total_tasks,
             )
         total_tasks = min(total_tasks, simulation_result_limit)
-        pbar = tqdm(
+        progress_bar = tqdm(
             total=total_tasks,
             desc="generating simulations",
             ncols=100,
@@ -331,9 +331,9 @@ class Simulator:
         for task in asyncio.as_completed(tasks):
             result = await task
             sim_results.append(result)  # Store the result
-            pbar.update(1)
+            progress_bar.update(1)
 
-        pbar.close()
+        progress_bar.close()
 
         return JsonLineList(sim_results)
 
