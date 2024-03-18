@@ -31,3 +31,5 @@ extends:
     Artifacts:
     - name: azure-mgmt-workloads
       safeName: azuremgmtworkloads
+    - name: azure-mgmt-workloadssapvirtualinstance
+      safeName: azuremgmtworkloadssapvirtualinstance
