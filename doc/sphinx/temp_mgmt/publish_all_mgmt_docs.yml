@@ -23,9 +23,6 @@
       azure-mgmt-operationsmanagement:
         ServiceDirectory: operationsmanagement
         Version: '2.0.0b1'
-      azure-mgmt-servermanager:
-        ServiceDirectory: servermanager
-        Version: '2.0.0'
       azure-mgmt-iothub:
         ServiceDirectory: iothub
         Version: '3.0.0'
@@ -35,9 +32,6 @@
       azure-mgmt-iotcentral:
         ServiceDirectory: iothub
         Version: '10.0.0b2'
-      azure-mgmt-scheduler:
-        ServiceDirectory: scheduler
-        Version: '7.0.0b1'
       azure-mgmt-managedservices:
         ServiceDirectory: managedservices
         Version: '7.0.0b1'
@@ -89,9 +83,6 @@
       azure-mgmt-notificationhubs:
         ServiceDirectory: notificationhubs
         Version: '8.1.0b1'
-      azure-mgmt-powerbiembedded:
-        ServiceDirectory: powerbiembedded
-        Version: '2.0.0'
       azure-mgmt-streamanalytics:
         ServiceDirectory: streamanalytics
         Version: '2.0.0b2'
@@ -242,9 +233,6 @@
       azure-mgmt-kusto:
         ServiceDirectory: kusto
         Version: '3.3.0'
-      azure-mgmt-regionmove:
-        ServiceDirectory: regionmove
-        Version: '1.0.0b1'
       azure-mgmt-hybridkubernetes:
         ServiceDirectory: hybridkubernetes
         Version: '1.2.0b1'
@@ -422,12 +410,6 @@
       azure-mgmt-cosmosdb:
         ServiceDirectory: cosmos
         Version: '10.0.0b2'
-      azure-mgmt-documentdb:
-        ServiceDirectory: cosmos
-        Version: '0.1.3'
-      azure-mgmt-batchai:
-        ServiceDirectory: batchai
-        Version: '7.0.0b1'
       azure-mgmt-attestation:
         ServiceDirectory: attestation
         Version: '2.0.0b1'
