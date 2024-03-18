@@ -75,11 +75,9 @@ def call_build_config(package_name: str, folder_name: str):
     #     shell=True,
     # )
 
-def init_new_service(package_name, folder_name, is_typespec = False):
-    if not is_typespec:
-        setup = Path(folder_name, package_name, "setup.py")
-        if not setup.exists():
-            call_build_config(package_name, folder_name)
+def init_new_service(package_name, folder_name):
+    if "azure-mgmt-" in package_name:
+        call_build_config(package_name, folder_name)
     else:
         output_path = Path(folder_name) / package_name
         if not (output_path / CONF_NAME).exists():
