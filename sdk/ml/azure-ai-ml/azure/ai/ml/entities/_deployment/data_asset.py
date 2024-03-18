@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Any, Dict, Optional
+from typing import Dict, Optional
 
 from azure.ai.ml._schema._deployment.online.data_asset_schema import DataAssetSchema
 from azure.ai.ml._utils._experimental import experimental
@@ -26,7 +26,6 @@ class DataAsset:
         name: Optional[str] = None,
         path: Optional[str] = None,
         version: Optional[int] = None,
-        **kwargs: Any,
     ):  # pylint: disable=unused-argument
         self.data_id = data_id
         self.name = name
