@@ -6,6 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from typing import Any, IO, Union
+
 from azure.identity import DefaultAzureCredential
 
 from azure.mgmt.rdbms.postgresql_flexibleservers import PostgreSQLManagementClient
@@ -15,7 +17,7 @@ from azure.mgmt.rdbms.postgresql_flexibleservers import PostgreSQLManagementClie
     pip install azure-identity
     pip install azure-mgmt-rdbms
 # USAGE
-    python migrations_get_migration_with_successful_validation_but_migration_failure.py
+    python migrations_create_with_private_endpoint_servers.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,15 +32,28 @@ def main():
         subscription_id="ffffffff-ffff-ffff-ffff-ffffffffffff",
     )
 
-    response = client.migrations.get(
+    response = client.migrations.create(
         subscription_id="ffffffff-ffff-ffff-ffff-ffffffffffff",
         resource_group_name="testrg",
         target_db_server_name="testtarget",
-        migration_name="testmigrationwithsuccessfulvalidationbutmigrationfailure",
+        migration_name="testmigration",
+        parameters={
+            "location": "westus",
+            "properties": {
+                "dbsToMigrate": ["db1", "db2", "db3", "db4"],
+                "migrationInstanceResourceId": "/subscriptions/ffffffff-ffff-ffff-ffff-ffffffffffff/resourceGroups/testrg/providers/Microsoft.DBForPostgreSql/flexibleServers/testsourcemigration",
+                "migrationMode": "Offline",
+                "overwriteDbsInTarget": "True",
+                "secretParameters": {
+                    "adminCredentials": {"sourceServerPassword": "xxxxxxxx", "targetServerPassword": "xxxxxxxx"}
+                },
+                "sourceDbServerResourceId": "/subscriptions/ffffffff-ffff-ffff-ffff-ffffffffffff/resourceGroups/testrg/providers/Microsoft.DBForPostgreSql/servers/testsource",
+            },
+        },
     )
     print(response)
 
 
-# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/preview/2023-12-01-preview/examples/Migrations_GetMigrationWithSuccessfulValidationButMigrationFailure.json
+# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/preview/2023-12-01-preview/examples/Migrations_Create_With_PrivateEndpoint_Servers.json
 if __name__ == "__main__":
     main()

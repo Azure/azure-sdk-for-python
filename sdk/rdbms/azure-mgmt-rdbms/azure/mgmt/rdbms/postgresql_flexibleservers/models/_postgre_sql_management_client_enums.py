@@ -184,6 +184,13 @@ class LogicalReplicationOnSourceDbEnum(str, Enum, metaclass=CaseInsensitiveEnumM
     FALSE = "False"
 
 
+class MigrateRolesEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """To migrate roles and permissions we need to send this flag as True."""
+
+    TRUE = "True"
+    FALSE = "False"
+
+
 class MigrationDbState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Migration db state of an individual database."""
 
@@ -423,13 +430,22 @@ class SkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class SourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Migration source server type : OnPremises, AWS, GCP, AzureVM or PostgreSQLSingleServer."""
+    """Migration source server type : OnPremises, AWS, GCP, AzureVM, PostgreSQLSingleServer, AWS_RDS,
+    AWS_AURORA, AWS_EC2, GCP_CloudSQL, GCP_AlloyDB, GCP_Compute, or EDB.
+    """
 
     ON_PREMISES = "OnPremises"
     AWS = "AWS"
     GCP = "GCP"
     AZURE_VM = "AzureVM"
     POSTGRE_SQL_SINGLE_SERVER = "PostgreSQLSingleServer"
+    AWS_RDS = "AWS_RDS"
+    AWS_AURORA = "AWS_AURORA"
+    AWS_EC2 = "AWS_EC2"
+    GCP_CLOUD_SQL = "GCP_CloudSQL"
+    GCP_ALLOY_DB = "GCP_AlloyDB"
+    GCP_COMPUTE = "GCP_Compute"
+    EDB = "EDB"
 
 
 class SslMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):

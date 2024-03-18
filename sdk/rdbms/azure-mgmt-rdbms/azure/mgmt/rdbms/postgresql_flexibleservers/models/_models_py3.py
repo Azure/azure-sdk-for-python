@@ -23,7 +23,7 @@ class Resource(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -65,7 +65,7 @@ class ProxyResource(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -77,24 +77,6 @@ class ProxyResource(Resource):
     :vartype system_data: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.SystemData
     """
 
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-
 
 class ActiveDirectoryAdministrator(ProxyResource):
     """Represents an Active Directory administrator.
@@ -102,7 +84,7 @@ class ActiveDirectoryAdministrator(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -216,7 +198,7 @@ class ActiveDirectoryAdministratorAdd(_serialization.Model):
 class AdminCredentials(_serialization.Model):
     """Server admin credentials.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar source_server_password: Password for source server. Required.
     :vartype source_server_password: str
@@ -376,7 +358,7 @@ class Backup(_serialization.Model):
 class BackupRequestBase(_serialization.Model):
     """BackupRequestBase is the base for all backup request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar backup_settings: Backup Settings. Required.
     :vartype backup_settings: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.BackupSettings
@@ -402,7 +384,7 @@ class BackupRequestBase(_serialization.Model):
 class BackupSettings(_serialization.Model):
     """The settings for the long term backup.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar backup_name: Backup Name for the current backup. Required.
     :vartype backup_name: str
@@ -428,7 +410,7 @@ class BackupSettings(_serialization.Model):
 class BackupStoreDetails(_serialization.Model):
     """Details about the target where the backup content will be stored.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar sas_uri_list: List of SAS uri of storage containers where backup data is to be
      streamed/copied. Required.
@@ -586,7 +568,7 @@ class Configuration(ProxyResource):  # pylint: disable=too-many-instance-attribu
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -789,7 +771,7 @@ class Database(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1356,10 +1338,10 @@ class FirewallRule(ProxyResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1657,7 +1639,7 @@ class LogFile(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1759,7 +1741,7 @@ class LogFileListResult(_serialization.Model):
 class LtrBackupRequest(BackupRequestBase):
     """The request that is made for a long term retention backup.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar backup_settings: Backup Settings. Required.
     :vartype backup_settings: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.BackupSettings
@@ -1888,32 +1870,17 @@ class LtrBackupResponse(_serialization.Model):
 class LtrPreBackupRequest(BackupRequestBase):
     """A request that is made for pre-backup.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar backup_settings: Backup Settings. Required.
     :vartype backup_settings: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.BackupSettings
     """
 
-    _validation = {
-        "backup_settings": {"required": True},
-    }
-
-    _attribute_map = {
-        "backup_settings": {"key": "backupSettings", "type": "BackupSettings"},
-    }
-
-    def __init__(self, *, backup_settings: "_models.BackupSettings", **kwargs: Any) -> None:
-        """
-        :keyword backup_settings: Backup Settings. Required.
-        :paramtype backup_settings: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.BackupSettings
-        """
-        super().__init__(backup_settings=backup_settings, **kwargs)
-
 
 class LtrPreBackupResponse(_serialization.Model):
     """Response for the LTR pre-backup API call.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar number_of_containers: Number of storage containers the plugin will use during backup.
      More than one containers may be used for size limitations, parallelism, or redundancy etc.
@@ -1946,7 +1913,7 @@ class LtrServerBackupOperation(ProxyResource):  # pylint: disable=too-many-insta
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2138,7 +2105,7 @@ class MigrationNameAvailabilityResource(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The resource name to verify. Required.
     :vartype name: str
@@ -2191,10 +2158,10 @@ class TrackedResource(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2244,10 +2211,10 @@ class MigrationResource(TrackedResource):  # pylint: disable=too-many-instance-a
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2265,6 +2232,8 @@ class MigrationResource(TrackedResource):  # pylint: disable=too-many-instance-a
     :vartype migration_id: str
     :ivar current_status: Current status of migration.
     :vartype current_status: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.MigrationStatus
+    :ivar migration_instance_resource_id: ResourceId of the private endpoint migration instance.
+    :vartype migration_instance_resource_id: str
     :ivar migration_mode: There are two types of migration modes Online and Offline. Known values
      are: "Offline" and "Online".
     :vartype migration_mode: str or
@@ -2273,9 +2242,10 @@ class MigrationResource(TrackedResource):  # pylint: disable=too-many-instance-a
      values are: "Validate", "Migrate", and "ValidateAndMigrate".
     :vartype migration_option: str or
      ~azure.mgmt.rdbms.postgresql_flexibleservers.models.MigrationOption
-    :ivar source_type: migration source server type : OnPremises, AWS, GCP, AzureVM or
-     PostgreSQLSingleServer. Known values are: "OnPremises", "AWS", "GCP", "AzureVM", and
-     "PostgreSQLSingleServer".
+    :ivar source_type: migration source server type : OnPremises, AWS, GCP, AzureVM,
+     PostgreSQLSingleServer, AWS_RDS, AWS_AURORA, AWS_EC2, GCP_CloudSQL, GCP_AlloyDB, GCP_Compute,
+     or EDB. Known values are: "OnPremises", "AWS", "GCP", "AzureVM", "PostgreSQLSingleServer",
+     "AWS_RDS", "AWS_AURORA", "AWS_EC2", "GCP_CloudSQL", "GCP_AlloyDB", "GCP_Compute", and "EDB".
     :vartype source_type: str or ~azure.mgmt.rdbms.postgresql_flexibleservers.models.SourceType
     :ivar ssl_mode: SSL modes for migration. Default SSL mode for PostgreSQLSingleServer is
      VerifyFull and Prefer for other source types. Known values are: "Prefer", "Require",
@@ -2318,6 +2288,10 @@ class MigrationResource(TrackedResource):  # pylint: disable=too-many-instance-a
     :vartype migration_window_start_time_in_utc: ~datetime.datetime
     :ivar migration_window_end_time_in_utc: End time in UTC for migration window.
     :vartype migration_window_end_time_in_utc: ~datetime.datetime
+    :ivar migrate_roles: To migrate roles and permissions we need to send this flag as True. Known
+     values are: "True" and "False".
+    :vartype migrate_roles: str or
+     ~azure.mgmt.rdbms.postgresql_flexibleservers.models.MigrateRolesEnum
     :ivar start_data_migration: Indicates whether the data migration should start right away. Known
      values are: "True" and "False".
     :vartype start_data_migration: str or
@@ -2360,6 +2334,7 @@ class MigrationResource(TrackedResource):  # pylint: disable=too-many-instance-a
         "location": {"key": "location", "type": "str"},
         "migration_id": {"key": "properties.migrationId", "type": "str"},
         "current_status": {"key": "properties.currentStatus", "type": "MigrationStatus"},
+        "migration_instance_resource_id": {"key": "properties.migrationInstanceResourceId", "type": "str"},
         "migration_mode": {"key": "properties.migrationMode", "type": "str"},
         "migration_option": {"key": "properties.migrationOption", "type": "str"},
         "source_type": {"key": "properties.sourceType", "type": "str"},
@@ -2385,6 +2360,7 @@ class MigrationResource(TrackedResource):  # pylint: disable=too-many-instance-a
         "overwrite_dbs_in_target": {"key": "properties.overwriteDbsInTarget", "type": "str"},
         "migration_window_start_time_in_utc": {"key": "properties.migrationWindowStartTimeInUtc", "type": "iso-8601"},
         "migration_window_end_time_in_utc": {"key": "properties.migrationWindowEndTimeInUtc", "type": "iso-8601"},
+        "migrate_roles": {"key": "properties.migrateRoles", "type": "str"},
         "start_data_migration": {"key": "properties.startDataMigration", "type": "str"},
         "trigger_cutover": {"key": "properties.triggerCutover", "type": "str"},
         "dbs_to_trigger_cutover_on": {"key": "properties.dbsToTriggerCutoverOn", "type": "[str]"},
@@ -2397,6 +2373,7 @@ class MigrationResource(TrackedResource):  # pylint: disable=too-many-instance-a
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
+        migration_instance_resource_id: Optional[str] = None,
         migration_mode: Optional[Union[str, "_models.MigrationMode"]] = None,
         migration_option: Optional[Union[str, "_models.MigrationOption"]] = None,
         source_type: Optional[Union[str, "_models.SourceType"]] = None,
@@ -2412,6 +2389,7 @@ class MigrationResource(TrackedResource):  # pylint: disable=too-many-instance-a
         overwrite_dbs_in_target: Optional[Union[str, "_models.OverwriteDbsInTargetEnum"]] = None,
         migration_window_start_time_in_utc: Optional[datetime.datetime] = None,
         migration_window_end_time_in_utc: Optional[datetime.datetime] = None,
+        migrate_roles: Optional[Union[str, "_models.MigrateRolesEnum"]] = None,
         start_data_migration: Optional[Union[str, "_models.StartDataMigrationEnum"]] = None,
         trigger_cutover: Optional[Union[str, "_models.TriggerCutoverEnum"]] = None,
         dbs_to_trigger_cutover_on: Optional[List[str]] = None,
@@ -2424,6 +2402,8 @@ class MigrationResource(TrackedResource):  # pylint: disable=too-many-instance-a
         :paramtype tags: dict[str, str]
         :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
+        :keyword migration_instance_resource_id: ResourceId of the private endpoint migration instance.
+        :paramtype migration_instance_resource_id: str
         :keyword migration_mode: There are two types of migration modes Online and Offline. Known
          values are: "Offline" and "Online".
         :paramtype migration_mode: str or
@@ -2432,9 +2412,10 @@ class MigrationResource(TrackedResource):  # pylint: disable=too-many-instance-a
          Known values are: "Validate", "Migrate", and "ValidateAndMigrate".
         :paramtype migration_option: str or
          ~azure.mgmt.rdbms.postgresql_flexibleservers.models.MigrationOption
-        :keyword source_type: migration source server type : OnPremises, AWS, GCP, AzureVM or
-         PostgreSQLSingleServer. Known values are: "OnPremises", "AWS", "GCP", "AzureVM", and
-         "PostgreSQLSingleServer".
+        :keyword source_type: migration source server type : OnPremises, AWS, GCP, AzureVM,
+         PostgreSQLSingleServer, AWS_RDS, AWS_AURORA, AWS_EC2, GCP_CloudSQL, GCP_AlloyDB, GCP_Compute,
+         or EDB. Known values are: "OnPremises", "AWS", "GCP", "AzureVM", "PostgreSQLSingleServer",
+         "AWS_RDS", "AWS_AURORA", "AWS_EC2", "GCP_CloudSQL", "GCP_AlloyDB", "GCP_Compute", and "EDB".
         :paramtype source_type: str or ~azure.mgmt.rdbms.postgresql_flexibleservers.models.SourceType
         :keyword ssl_mode: SSL modes for migration. Default SSL mode for PostgreSQLSingleServer is
          VerifyFull and Prefer for other source types. Known values are: "Prefer", "Require",
@@ -2471,6 +2452,10 @@ class MigrationResource(TrackedResource):  # pylint: disable=too-many-instance-a
         :paramtype migration_window_start_time_in_utc: ~datetime.datetime
         :keyword migration_window_end_time_in_utc: End time in UTC for migration window.
         :paramtype migration_window_end_time_in_utc: ~datetime.datetime
+        :keyword migrate_roles: To migrate roles and permissions we need to send this flag as True.
+         Known values are: "True" and "False".
+        :paramtype migrate_roles: str or
+         ~azure.mgmt.rdbms.postgresql_flexibleservers.models.MigrateRolesEnum
         :keyword start_data_migration: Indicates whether the data migration should start right away.
          Known values are: "True" and "False".
         :paramtype start_data_migration: str or
@@ -2492,6 +2477,7 @@ class MigrationResource(TrackedResource):  # pylint: disable=too-many-instance-a
         super().__init__(tags=tags, location=location, **kwargs)
         self.migration_id = None
         self.current_status = None
+        self.migration_instance_resource_id = migration_instance_resource_id
         self.migration_mode = migration_mode
         self.migration_option = migration_option
         self.source_type = source_type
@@ -2508,6 +2494,7 @@ class MigrationResource(TrackedResource):  # pylint: disable=too-many-instance-a
         self.overwrite_dbs_in_target = overwrite_dbs_in_target
         self.migration_window_start_time_in_utc = migration_window_start_time_in_utc
         self.migration_window_end_time_in_utc = migration_window_end_time_in_utc
+        self.migrate_roles = migrate_roles
         self.start_data_migration = start_data_migration
         self.trigger_cutover = trigger_cutover
         self.dbs_to_trigger_cutover_on = dbs_to_trigger_cutover_on
@@ -2545,6 +2532,10 @@ class MigrationResourceForPatch(_serialization.Model):  # pylint: disable=too-ma
      ~azure.mgmt.rdbms.postgresql_flexibleservers.models.OverwriteDbsInTargetEnum
     :ivar migration_window_start_time_in_utc: Start time in UTC for migration window.
     :vartype migration_window_start_time_in_utc: ~datetime.datetime
+    :ivar migrate_roles: To migrate roles and permissions we need to send this flag as True. Known
+     values are: "True" and "False".
+    :vartype migrate_roles: str or
+     ~azure.mgmt.rdbms.postgresql_flexibleservers.models.MigrateRolesEnum
     :ivar start_data_migration: Indicates whether the data migration should start right away. Known
      values are: "True" and "False".
     :vartype start_data_migration: str or
@@ -2591,6 +2582,7 @@ class MigrationResourceForPatch(_serialization.Model):  # pylint: disable=too-ma
         },
         "overwrite_dbs_in_target": {"key": "properties.overwriteDbsInTarget", "type": "str"},
         "migration_window_start_time_in_utc": {"key": "properties.migrationWindowStartTimeInUtc", "type": "iso-8601"},
+        "migrate_roles": {"key": "properties.migrateRoles", "type": "str"},
         "start_data_migration": {"key": "properties.startDataMigration", "type": "str"},
         "trigger_cutover": {"key": "properties.triggerCutover", "type": "str"},
         "dbs_to_trigger_cutover_on": {"key": "properties.dbsToTriggerCutoverOn", "type": "[str]"},
@@ -2613,6 +2605,7 @@ class MigrationResourceForPatch(_serialization.Model):  # pylint: disable=too-ma
         ] = None,
         overwrite_dbs_in_target: Optional[Union[str, "_models.OverwriteDbsInTargetEnum"]] = None,
         migration_window_start_time_in_utc: Optional[datetime.datetime] = None,
+        migrate_roles: Optional[Union[str, "_models.MigrateRolesEnum"]] = None,
         start_data_migration: Optional[Union[str, "_models.StartDataMigrationEnum"]] = None,
         trigger_cutover: Optional[Union[str, "_models.TriggerCutoverEnum"]] = None,
         dbs_to_trigger_cutover_on: Optional[List[str]] = None,
@@ -2651,6 +2644,10 @@ class MigrationResourceForPatch(_serialization.Model):  # pylint: disable=too-ma
          ~azure.mgmt.rdbms.postgresql_flexibleservers.models.OverwriteDbsInTargetEnum
         :keyword migration_window_start_time_in_utc: Start time in UTC for migration window.
         :paramtype migration_window_start_time_in_utc: ~datetime.datetime
+        :keyword migrate_roles: To migrate roles and permissions we need to send this flag as True.
+         Known values are: "True" and "False".
+        :paramtype migrate_roles: str or
+         ~azure.mgmt.rdbms.postgresql_flexibleservers.models.MigrateRolesEnum
         :keyword start_data_migration: Indicates whether the data migration should start right away.
          Known values are: "True" and "False".
         :paramtype start_data_migration: str or
@@ -2683,6 +2680,7 @@ class MigrationResourceForPatch(_serialization.Model):  # pylint: disable=too-ma
         self.setup_logical_replication_on_source_db_if_needed = setup_logical_replication_on_source_db_if_needed
         self.overwrite_dbs_in_target = overwrite_dbs_in_target
         self.migration_window_start_time_in_utc = migration_window_start_time_in_utc
+        self.migrate_roles = migrate_roles
         self.start_data_migration = start_data_migration
         self.trigger_cutover = trigger_cutover
         self.dbs_to_trigger_cutover_on = dbs_to_trigger_cutover_on
@@ -2722,7 +2720,7 @@ class MigrationResourceListResult(_serialization.Model):
 class MigrationSecretParameters(_serialization.Model):
     """Migration secret parameters.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar admin_credentials: Admin credentials for source and target servers. Required.
     :vartype admin_credentials:
@@ -3132,7 +3130,7 @@ class PrivateEndpointConnection(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -3237,7 +3235,7 @@ class PrivateLinkResource(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -3548,10 +3546,10 @@ class Server(TrackedResource):  # pylint: disable=too-many-instance-attributes
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -3791,7 +3789,7 @@ class ServerBackup(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -4168,7 +4166,7 @@ class ServerThreatProtectionSettingsModel(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -4257,7 +4255,7 @@ class ServerVersionCapability(CapabilityBase):
 class Sku(_serialization.Model):
     """Sku information related properties of a server.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the sku, typically, tier + family + cores, e.g. Standard_D4s_v3.
      Required.
@@ -4587,7 +4585,7 @@ class UserAssignedIdentity(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar user_assigned_identities: represents user assigned identities map.
     :vartype user_assigned_identities: dict[str,
@@ -4845,7 +4843,7 @@ class VirtualEndpointResource(VirtualEndpointResourceForPatch, Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
