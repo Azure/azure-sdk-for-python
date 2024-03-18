@@ -26,7 +26,7 @@ class DataAsset:
         name: Optional[str] = None,
         path: Optional[str] = None,
         version: Optional[int] = None,
-    ):  # pylint: disable=unused-argument
+    ):
         self.data_id = data_id
         self.name = name
         self.path = path
