@@ -13,10 +13,10 @@ from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 class DataAsset:
     """Data Asset entity
 
-    :keyword str data_id: Arm id of registered data asset
-    :keyword str name: Name of data asset
-    :keyword str path: Path where the data asset is stored.
-    :keyword int version: Version of data asset.
+    :keyword Optional[str] data_id: Arm id of registered data asset
+    :keyword Optional[str] name: Name of data asset
+    :keyword Optional[str] path: Path where the data asset is stored.
+    :keyword Optional[int] version: Version of data asset.
     """
 
     def __init__(
