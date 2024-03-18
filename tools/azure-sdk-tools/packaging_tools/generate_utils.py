@@ -7,7 +7,7 @@ from functools import wraps
 
 from ci_tools.git_tools import get_add_diff_file_list
 from pathlib import Path
-from subprocess import check_output, CalledProcessError, check_call
+from subprocess import check_output, CalledProcessError, check_call, getoutput
 from typing import Dict, Any
 from glob import glob
 import yaml
@@ -99,16 +99,11 @@ def update_servicemetadata(sdk_folder, data, config, folder_name, package_name, 
     if not package_folder.exists():
         _LOGGER.info(f"Fail to save metadata since package folder doesn't exist: {package_folder}")
         return
-    if not (package_folder / "_meta.json").exists():
-        metadata = {}
-    else:
-        with open(str(package_folder / "_meta.json"), "r") as file_in:
-            metadata = json.load(file_in)
 
-    metadata.update({
+    metadata = {
         "commit": data["headSha"],
         "repository_url": data["repoHttpsUrl"],
-    })
+    }
     if "meta" in config:
         readme_file = str(Path(spec_folder, input_readme))
         global_conf = config["meta"]
@@ -383,7 +378,7 @@ def generate_ci(template_path: Path, folder_path: Path, package_name: str) -> No
 
 def gen_typespec(typespec_relative_path: str, spec_folder: str, head_sha: str, rest_repo_url: str) -> Dict[str, Any]:
     typespec_python = "@azure-tools/typespec-python"
-
+    autorest_python = "@autorest/python"
     # call scirpt to generate sdk
     try:
         check_output(f'pwsh {Path("eng/common/scripts/TypeSpec-Project-Process.ps1")} {(Path(spec_folder) / typespec_relative_path).resolve()} {head_sha} {rest_repo_url}', shell=True)
@@ -392,8 +387,12 @@ def gen_typespec(typespec_relative_path: str, spec_folder: str, head_sha: str, r
         raise e
 
     # get version of codegen used in generation
+    autorest_python_version = getoutput(f"npm show {autorest_python} version")
     with open(Path("eng/emitter-package.json"), "r") as file_in:
         data = json.load(file_in)
-        npm_package_verstion = {typespec_python: data["dependencies"][typespec_python]}
+        npm_package_verstion = {
+            typespec_python: data["dependencies"][typespec_python],
+            autorest_python: autorest_python_version,    
+        }
 
     return npm_package_verstion
