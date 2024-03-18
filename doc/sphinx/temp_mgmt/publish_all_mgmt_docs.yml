@@ -5,6 +5,12 @@
       azure-mgmt-advisor:
         ServiceDirectory: advisor
         Version: '9.0.0'
+      azure-mgmt-iothub:
+        ServiceDirectory: iothub
+        Version: '3.0.0'
+      azure-mgmt-iothubprovisioningservices:
+        ServiceDirectory: iothub
+        Version: '1.2.0b2'
 
  steps:
   - task: UsePythonVersion@0
