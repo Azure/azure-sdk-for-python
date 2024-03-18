@@ -206,8 +206,8 @@ class ArtifactCache:
                 with zipfile.ZipFile(BytesIO(response.content)) as zip_file:
                     zip_file.extractall(artifacts_tool_path)
                 os.environ["AZURE_DEVOPS_EXT_ARTIFACTTOOL_OVERRIDE_PATH"] = str(
-                    artifacts_tool_path.resolve()
-                )  # type: ignore[attr-defined]
+                    artifacts_tool_path.resolve()  # type: ignore[attr-defined]
+                )
                 self._artifacts_tool_path = artifacts_tool_path
             else:
                 _logger.warning("Download artifact tool failed: %s", response.text)

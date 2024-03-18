@@ -22,7 +22,7 @@ from datetime import timedelta
 from functools import singledispatch, wraps
 from os import PathLike
 from pathlib import Path, PureWindowsPath
-from typing import IO, Any, AnyStr, Callable, Dict, Iterable, List, Optional, Tuple, Union
+from typing import IO, Any, AnyStr, Callable, Dict, Iterable, List, Optional, Tuple, Union, cast
 from urllib.parse import urlparse
 from uuid import UUID
 
@@ -86,7 +86,7 @@ def snake_to_pascal(text: Optional[str]) -> str:
         * Converted text from snake_case to PascalCase
     :rtype: Optional[str]
     """
-    return _csv_parser(text, _snake_to_pascal_convert)
+    return str(_csv_parser(text, _snake_to_pascal_convert))
 
 
 def snake_to_kebab(text: Optional[str]) -> Optional[str]:
@@ -270,7 +270,7 @@ def load_json(file_path: Optional[Union[str, os.PathLike]]) -> Dict:
     # exceptions.py via _get_mfe_url_override
 
     try:
-        with open(file_path, "r", encoding=DefaultOpenEncoding.READ) as f:
+        with open(cast(Union[str, os.PathLike], file_path), "r", encoding=DefaultOpenEncoding.READ) as f:
             cfg = json.load(f)
     except OSError as e:  # FileNotFoundError introduced in Python 3
         msg = "No such file or directory: {}"
@@ -304,6 +304,8 @@ def load_yaml(source: Optional[Union[AnyStr, PathLike, IO]]) -> Dict:
     # These imports can't be placed in at top file level because it will cause a circular import in
     # exceptions.py via _get_mfe_url_override
 
+    cm: Any = None
+
     if source is None:
         return {}
 
@@ -321,7 +323,7 @@ def load_yaml(source: Optional[Union[AnyStr, PathLike, IO]]) -> Dict:
             ) from e
     else:
         # source is a subclass of IO
-        if not source.readable():
+        if not source.readable():  # type: ignore[union-attr]
             msg = "File Permissions Error: The already-open \n\n inputted file is not readable."
             raise ValidationException(
                 message=msg,
@@ -337,7 +339,7 @@ def load_yaml(source: Optional[Union[AnyStr, PathLike, IO]]) -> Dict:
         try:
             return yaml.safe_load(f)
         except yaml.YAMLError as e:
-            msg = f"Error while parsing yaml file: {source} \n\n {str(e)}"
+            msg = f"Error while parsing yaml file: {source} \n\n {str(e)}"  # type: ignore[str-bytes-safe]
             raise ValidationException(
                 message=msg,
                 no_personal_data_message="Error while parsing yaml file",
@@ -394,6 +396,7 @@ def dump_yaml_to_file(
     # exceptions.py via _get_mfe_url_override
     # Check for deprecated path input, either named or as first unnamed input
     path = kwargs.pop("path", None)
+    cm: Any = None
     if dest is None:
         if path is not None:
             dest = path
@@ -424,7 +427,8 @@ def dump_yaml_to_file(
             ) from e
     else:
         # dest is a subclass of IO
-        if not dest.writable():  # dest is misformatted stream or file
+        # dest is misformatted stream or file
+        if not dest.writable():  # type: ignore[union-attr]
             msg = "File Permissions Error: The already-open \n\n inputted file is not writable."
             raise ValidationException(
                 message=msg,
@@ -513,12 +517,12 @@ def resolve_short_datastore_url(value: Union[PathLike, str], workspace: Operatio
         if urlparse(str(value)).scheme == "azureml":
             from azure.ai.ml._utils._storage_utils import AzureMLDatastorePathUri
 
-            data_store_path_uri = AzureMLDatastorePathUri(value)
+            data_store_path_uri = AzureMLDatastorePathUri(str(value))
             if data_store_path_uri.uri_type == "Datastore":
-                return AzureMLDatastorePathUri(value).to_long_uri(
+                return AzureMLDatastorePathUri(str(value)).to_long_uri(
                     subscription_id=workspace.subscription_id,
                     resource_group_name=workspace.resource_group_name,
-                    workspace_name=workspace.workspace_name,
+                    workspace_name=str(workspace.workspace_name),
                 )
 
     except (ValueError, ValidationException):
@@ -526,7 +530,7 @@ def resolve_short_datastore_url(value: Union[PathLike, str], workspace: Operatio
 
     # If the URL is not an valid URL (e.g. a local path) or not an azureml URL
     # (e.g. a http URL), just return the same value
-    return value
+    return str(value)
 
 
 def is_mlflow_uri(value: Union[PathLike, str]) -> bool:
@@ -543,7 +547,7 @@ def is_mlflow_uri(value: Union[PathLike, str]) -> bool:
         return False
 
 
-def validate_ml_flow_folder(path: str, model_type: string) -> None:
+def validate_ml_flow_folder(path: str, model_type: str) -> None:
     """Validate that the path is a valid ml flow folder.
 
     :param path: The path to validate
@@ -590,7 +594,7 @@ def is_valid_uuid(test_uuid: str) -> bool:
 
 
 @singledispatch
-def from_iso_duration_format(duration: Optional[Any] = None) -> int:  # pylint: disable=unused-argument
+def from_iso_duration_format(duration: Optional[Any] = None) -> Optional[int]:  # pylint: disable=unused-argument
     """Convert ISO duration format to seconds.
 
     :param duration: The duration to convert
@@ -622,7 +626,7 @@ def to_iso_duration_format_mins(time_in_mins: Optional[Union[int, float]]) -> st
     return isodate.duration_isoformat(timedelta(minutes=time_in_mins)) if time_in_mins else None
 
 
-def from_iso_duration_format_mins(duration: Optional[str]) -> int:
+def from_iso_duration_format_mins(duration: Optional[str]) -> Optional[int]:
     """Convert ISO duration format to minutes.
 
     :param duration: The duration to convert
@@ -630,7 +634,7 @@ def from_iso_duration_format_mins(duration: Optional[str]) -> int:
     :return: The converted duration
     :rtype: int
     """
-    return int(from_iso_duration_format(duration) / 60) if duration else None
+    return int(from_iso_duration_format(duration) / 60) if duration else None  # type: ignore[operator]
 
 
 def to_iso_duration_format(time_in_seconds: Optional[Union[int, float]]) -> str:
@@ -655,7 +659,7 @@ def to_iso_duration_format_ms(time_in_ms: Optional[Union[int, float]]) -> str:
     return isodate.duration_isoformat(timedelta(milliseconds=time_in_ms)) if time_in_ms else None
 
 
-def from_iso_duration_format_ms(duration: Optional[str]) -> int:
+def from_iso_duration_format_ms(duration: Optional[str]) -> Optional[int]:
     """Convert ISO duration format to milliseconds.
 
     :param duration: The duration to convert
@@ -663,7 +667,7 @@ def from_iso_duration_format_ms(duration: Optional[str]) -> int:
     :return: The converted duration
     :rtype: int
     """
-    return from_iso_duration_format(duration) * 1000 if duration else None
+    return from_iso_duration_format(duration) * 1000 if duration else None  # type: ignore[operator]
 
 
 def to_iso_duration_format_days(time_in_days: Optional[int]) -> str:
@@ -678,7 +682,7 @@ def to_iso_duration_format_days(time_in_days: Optional[int]) -> str:
 
 
 @singledispatch
-def from_iso_duration_format_days(duration: Optional[Any] = None) -> int:  # pylint: disable=unused-argument
+def from_iso_duration_format_days(duration: Optional[Any] = None) -> Optional[int]:  # pylint: disable=unused-argument
     return None
 
 
@@ -732,7 +736,7 @@ def _get_workspace_base_url(workspace_operations: Any, workspace_name: str, requ
     return all_urls[API_URL_KEY]
 
 
-def _get_mfe_base_url_from_batch_endpoint(endpoint: "BatchEndpoint") -> str:
+def _get_mfe_base_url_from_batch_endpoint(endpoint: "BatchEndpoint") -> str:  # type: ignore[name-defined]
     return endpoint.scoring_uri.split("/subscriptions/")[0]
 
 
@@ -769,7 +773,7 @@ def from_iso_duration_format_min_sec(duration: Optional[str]) -> str:
     :return: The converted duration
     :rtype: str
     """
-    return duration.split(".")[0].replace("PT", "").replace("M", "m ") + "s"
+    return str(duration).split(".", maxsplit=1)[0].replace("PT", "").replace("M", "m ") + "s"
 
 
 def hash_dict(items: Dict[str, Any], keys_to_omit: Optional[Iterable[str]] = None) -> str:
@@ -809,7 +813,7 @@ def convert_identity_dict(
             if identity.user_assigned_identities:
                 if isinstance(identity.user_assigned_identities, dict):  # if the identity is already in right format
                     return identity
-                ids = {}
+                ids: Dict = {}
                 for id in identity.user_assigned_identities:  # pylint: disable=redefined-builtin
                     ids[id["resource_id"]] = {}
                 identity.user_assigned_identities = ids
@@ -868,7 +872,9 @@ def map_single_brackets_and_warn(command: str) -> str:
     return command
 
 
-def transform_dict_keys(data: Dict[str, Any], casing_transform: Callable[[str], Optional[str]]) -> Dict[str, Any]:
+def transform_dict_keys(
+    data: Dict[str, Any], casing_transform: Callable[[str], Optional[str]]
+) -> Dict[Optional[str], Any]:
     """Convert all keys of a nested dictionary according to the passed casing_transform function.
 
     :param data: The data to transform
@@ -913,7 +919,7 @@ def retry(
     failure_msg: str,
     logger: Any,
     max_attempts: int = 1,
-    delay_multiplier: int = 0.25,
+    delay_multiplier: float = 0.25,
 ) -> Callable:
     """Retry a function if it fails.
 
@@ -1390,8 +1396,8 @@ def get_versioned_base_directory_for_cache() -> Path:
 # pylint: disable-next=name-too-long
 def get_resource_and_group_name_from_resource_id(armstr: str) -> str:
     if armstr.find("/") == -1:
-        return armstr, None
-    return armstr.split("/")[-1], armstr.split("/")[-5]
+        return armstr, None  # type: ignore[return-value]
+    return armstr.split("/")[-1], armstr.split("/")[-5]  # type: ignore[return-value]
 
 
 # pylint: disable-next=name-too-long
