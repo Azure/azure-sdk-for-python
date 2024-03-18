@@ -579,38 +579,39 @@
         ServiceDirectory: azurestack
         Version: '2.0.0b1'
 
- steps:
-  - task: UsePythonVersion@0
-    displayName: 'Use Python 3.11'
-    inputs:
-      versionSpec: '3.11'
-  
-  - script: |
-      python -m pip install setuptools==58.3.0
-      python -m pip install -r eng/ci_tools.txt
-    displayName: 'Prep Environment'
-
-  - ${{ each pkg in parameters.MgmtPackages }}:
-    - task: PythonScript@0
-      displayName: 'checkout library tag'
+- job: 'Fix Mgmt Docs'
+  timeoutInMinutes: 200
+  steps:
+    - task: UsePythonVersion@0
+      displayName: 'Use Python 3.11'
       inputs:
-        scriptPath: 'doc/sphinx/temp_mgmt/checkout_tag.py'
-        arguments: >-
-          --package=${{ pkg.key }}
-          --service=${{ pkg.value.ServiceDirectory }}
-          --version=${{ pkg.value.Version }}
+        versionSpec: '3.11'
+    
+    - script: |
+        python -m pip install setuptools==58.3.0
+        python -m pip install -r eng/ci_tools.txt
+      displayName: 'Prep Environment'
 
-    - task: PythonScript@0
-      displayName: 'Generate Docs'
-      inputs:
-        scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
-        arguments: >-
-          ${{ pkg.key }}
-          --service=${{ pkg.value.ServiceDirectory }}
-          --toxenv=sphinx
+    - ${{ each pkg in parameters.MgmtPackages }}:
+      - task: PythonScript@0
+        displayName: 'checkout library tag'
+        inputs:
+          scriptPath: 'doc/sphinx/temp_mgmt/checkout_tag.py'
+          arguments: >-
+            --package=${{ pkg.key }}
+            --service=${{ pkg.value.ServiceDirectory }}
+            --version=${{ pkg.value.Version }}
 
-    timeoutInMinutes: 200
-  - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
-    parameters:
-      ArtifactPath: '$(Build.SourcesDirectory)/_docs'
-      ArtifactName: 'documentation'
+      - task: PythonScript@0
+        displayName: 'Generate Docs'
+        inputs:
+          scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
+          arguments: >-
+            ${{ pkg.key }}
+            --service=${{ pkg.value.ServiceDirectory }}
+            --toxenv=sphinx
+
+    - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+      parameters:
+        ArtifactPath: '$(Build.SourcesDirectory)/_docs'
+        ArtifactName: 'documentation'
