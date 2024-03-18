@@ -49,7 +49,7 @@
         Version: '7.0.0b1'
       azure-mgmt-datafactory:
         ServiceDirectory: datafactory
-        Version: '6.0.0'
+        Version: '6.1.0'
       azure-mgmt-signalr:
         ServiceDirectory: signalr
         Version: '2.0.0b2'
@@ -178,7 +178,7 @@
         Version: '8.0.0'
       azure-mgmt-compute:
         ServiceDirectory: compute
-        Version: '30.5.0'
+        Version: '30.6.0'
       azure-mgmt-imagebuilder:
         ServiceDirectory: compute
         Version: '1.3.0'
@@ -205,10 +205,10 @@
         Version: '1.1.0b2'
       azure-mgmt-cosmosdbforpostgresql:
         ServiceDirectory: cosmosdbforpostgresql
-        Version: '1.0.0'
+        Version: '1.1.0b1'
       azure-mgmt-newrelicobservability:
         ServiceDirectory: newrelicobservability
-        Version: '1.0.0'
+        Version: '1.1.0'
       azure-mgmt-redhatopenshift:
         ServiceDirectory: redhatopenshift
         Version: '1.4.0'
@@ -262,7 +262,7 @@
         Version: '3.3.0'
       azure-mgmt-communication:
         ServiceDirectory: communication
-        Version: '2.1.0b2'
+        Version: '2.1.0'
       azure-mgmt-regionmove:
         ServiceDirectory: regionmove
         Version: '1.0.0b1'
@@ -337,7 +337,7 @@
         Version: '1.0.0b1'
       azure-mgmt-search:
         ServiceDirectory: search
-        Version: '9.1.0'
+        Version: '9.2.0b1'
       azure-mgmt-loganalytics:
         ServiceDirectory: loganalytics
         Version: '13.0.0b6'
@@ -349,7 +349,7 @@
         Version: '8.2.0'
       azure-mgmt-batch:
         ServiceDirectory: batch
-        Version: '17.2.0'
+        Version: '17.3.0'
       azure-mgmt-iotfirmwaredefense:
         ServiceDirectory: iotfirmwaredefense
         Version: '1.0.0b1'
@@ -391,7 +391,7 @@
         Version: '1.0.0'
       azure-mgmt-nginx:
         ServiceDirectory: nginx
-        Version: '3.0.0'
+        Version: '3.1.0b1'
       azure-mgmt-dns:
         ServiceDirectory: network
         Version: '8.1.0'
@@ -493,7 +493,7 @@
         Version: '1.0.0b2'
       azure-mgmt-confluent:
         ServiceDirectory: confluent
-        Version: '2.0.0'
+        Version: '2.1.0'
       azure-mgmt-chaos:
         ServiceDirectory: chaos
         Version: '1.1.0'
@@ -580,10 +580,10 @@
         Version: '2.2.0b1'
       azure-mgmt-appcontainers:
         ServiceDirectory: appcontainers
-        Version: '3.0.0'
+        Version: '3.1.0b1'
       azure-mgmt-mobilenetwork:
         ServiceDirectory: mobilenetwork
-        Version: '3.1.0'
+        Version: '3.2.0'
       azure-mgmt-fluidrelay:
         ServiceDirectory: fluidrelay
         Version: '1.1.0b1'
