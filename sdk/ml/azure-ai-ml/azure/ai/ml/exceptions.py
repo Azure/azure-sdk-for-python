@@ -113,8 +113,8 @@ class MlException(AzureError):
         message: str,
         no_personal_data_message: str,
         *args,
-        target: Union[str, ErrorTarget] = ErrorTarget.UNKNOWN,
-        error_category: Union[str, ErrorTarget] = ErrorCategory.UNKNOWN,
+        target: Union[str, ErrorTarget, ErrorCategory] = ErrorTarget.UNKNOWN,
+        error_category: Union[str, ErrorTarget, ErrorCategory] = ErrorCategory.UNKNOWN,
         **kwargs,
     ):
         self._error_category = error_category
@@ -187,11 +187,9 @@ class DeploymentException(MlException):
     ):
         super(DeploymentException, self).__init__(
             message=message,
+            no_personal_data_message=no_personal_data_message,
             target=target,
             error_category=error_category,
-            no_personal_data_message=no_personal_data_message,
-            *args,
-            **kwargs,
         )
 
 
@@ -220,11 +218,9 @@ class ComponentException(MlException):
     ):
         super(ComponentException, self).__init__(
             message=message,
+            no_personal_data_message=no_personal_data_message,
             target=target,
             error_category=error_category,
-            no_personal_data_message=no_personal_data_message,
-            *args,
-            **kwargs,
         )
 
 
@@ -253,11 +249,9 @@ class JobException(MlException):
     ):
         super(JobException, self).__init__(
             message=message,
+            no_personal_data_message=no_personal_data_message,
             target=target,
             error_category=error_category,
-            no_personal_data_message=no_personal_data_message,
-            *args,
-            **kwargs,
         )
 
 
@@ -286,11 +280,9 @@ class ModelException(MlException):
     ):
         super(ModelException, self).__init__(
             message=message,
+            no_personal_data_message=no_personal_data_message,
             target=target,
             error_category=error_category,
-            no_personal_data_message=no_personal_data_message,
-            *args,
-            **kwargs,
         )
 
 
@@ -319,11 +311,9 @@ class AssetException(MlException):
     ):
         super(AssetException, self).__init__(
             message=message,
+            no_personal_data_message=no_personal_data_message,
             target=target,
             error_category=error_category,
-            no_personal_data_message=no_personal_data_message,
-            *args,
-            **kwargs,
         )
 
 
@@ -352,11 +342,9 @@ class ScheduleException(MlException):
     ):
         super(ScheduleException, self).__init__(
             message=message,
+            no_personal_data_message=no_personal_data_message,
             target=target,
             error_category=error_category,
-            no_personal_data_message=no_personal_data_message,
-            *args,
-            **kwargs,
         )
 
 
@@ -389,11 +377,9 @@ class ValidationException(MlException):
         """
         super(ValidationException, self).__init__(
             message=message,
+            no_personal_data_message=no_personal_data_message,
             target=target,
             error_category=error_category,
-            no_personal_data_message=no_personal_data_message,
-            *args,
-            **kwargs,
         )
 
         self.raw_error = message  # used for CLI error formatting
@@ -443,11 +429,9 @@ class AssetPathException(MlException):
     ):
         super(AssetPathException, self).__init__(
             message=message,
+            no_personal_data_message=no_personal_data_message,
             target=target,
             error_category=error_category,
-            no_personal_data_message=no_personal_data_message,
-            *args,
-            **kwargs,
         )
 
 
@@ -478,7 +462,7 @@ class UserErrorException(MlException):
         message,
         no_personal_data_message=None,
         error_category=ErrorCategory.USER_ERROR,
-        target: ErrorTarget = ErrorTarget.PIPELINE,
+        target: Union[str, ErrorTarget] = ErrorTarget.PIPELINE,
     ):
         super().__init__(
             message=message,
@@ -707,7 +691,7 @@ class CloudArtifactsNotSupportedError(MlException):
             resource_name,
         )
         super().__init__(
-            message=err,
+            message=str(err),
             target=ErrorTarget.LOCAL_ENDPOINT,
             no_personal_data_message="Local endpoints only support local artifacts.",
             error_category=error_category,
@@ -740,7 +724,7 @@ class RequiredLocalArtifactsNotFoundError(MlException):
             required_artifact_type,
         )
         super().__init__(
-            message=err,
+            message=str(err),
             target=ErrorTarget.LOCAL_ENDPOINT,
             no_personal_data_message="Resource group did not contain required local artifact.",
             error_category=error_category,
