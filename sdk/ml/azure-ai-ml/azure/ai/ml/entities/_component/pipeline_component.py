@@ -352,7 +352,7 @@ class PipelineComponent(Component):
                                 "content_hash"
                             ] = get_object_hash(input_value.path)
                             module_logger.debug(
-                                f"Takes {time.time() - start_time}s to caculate the content hash of local input {input_value.path}"
+                                f"Takes {time.time() - start_time}s to calculate the content hash of local input {input_value.path}"
                             )
                     except ValidationException:
                         pass
