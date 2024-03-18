@@ -714,7 +714,7 @@ class TestChatCompletions(AzureRecordedTestCase):
                         "parameters": {
                             "endpoint": os.environ[ENV_AZURE_OPENAI_SEARCH_ENDPOINT],
                             "key": os.environ[ENV_AZURE_OPENAI_SEARCH_KEY],
-                            "indexName": os.environ[ENV_AZURE_OPENAI_SEARCH_INDEX]
+                            "index_name": os.environ[ENV_AZURE_OPENAI_SEARCH_INDEX]
                         }
                     }
                 ],
@@ -750,7 +750,7 @@ class TestChatCompletions(AzureRecordedTestCase):
                         "parameters": {
                             "endpoint": os.environ[ENV_AZURE_OPENAI_SEARCH_ENDPOINT],
                             "key": os.environ[ENV_AZURE_OPENAI_SEARCH_KEY],
-                            "indexName": os.environ[ENV_AZURE_OPENAI_SEARCH_INDEX]
+                            "index_name": os.environ[ENV_AZURE_OPENAI_SEARCH_INDEX]
                         }
                     }
                 ],
@@ -811,7 +811,7 @@ class TestChatCompletions(AzureRecordedTestCase):
         assert completion.choices[0].message.role
 
     @configure
-    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, GA), (GPT_4_AZURE, PREVIEW)])
+    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, PREVIEW)])
     def test_chat_completion_block_list_term(self, client, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},

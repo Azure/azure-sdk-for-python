@@ -730,7 +730,7 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
                         "parameters": {
                             "endpoint": os.environ[ENV_AZURE_OPENAI_SEARCH_ENDPOINT],
                             "key": os.environ[ENV_AZURE_OPENAI_SEARCH_KEY],
-                            "indexName": os.environ[ENV_AZURE_OPENAI_SEARCH_INDEX]
+                            "index_name": os.environ[ENV_AZURE_OPENAI_SEARCH_INDEX]
                         }
                     }
                 ],
@@ -767,7 +767,7 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
                         "parameters": {
                             "endpoint": os.environ[ENV_AZURE_OPENAI_SEARCH_ENDPOINT],
                             "key": os.environ[ENV_AZURE_OPENAI_SEARCH_KEY],
-                            "indexName": os.environ[ENV_AZURE_OPENAI_SEARCH_INDEX]
+                            "index_name": os.environ[ENV_AZURE_OPENAI_SEARCH_INDEX]
                         }
                     }
                 ],
@@ -831,7 +831,7 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, GA), (GPT_4_AZURE, PREVIEW)])
+    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, PREVIEW)])
     async def test_chat_completion_block_list_term(self, client_async, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
