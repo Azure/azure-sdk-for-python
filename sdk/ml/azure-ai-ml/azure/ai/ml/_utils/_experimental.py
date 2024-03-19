@@ -6,7 +6,7 @@ import functools
 import inspect
 import logging
 import sys
-from typing import Callable, Type, TypeVar, Union
+from typing import Callable, Optional, Type, TypeVar, Union, cast
 
 from typing_extensions import ParamSpec
 
@@ -35,9 +35,9 @@ def experimental(wrapped: TExperimental) -> TExperimental:
     :rtype: TExperimental
     """
     if inspect.isclass(wrapped):
-        return _add_class_docstring(wrapped)
+        return _add_class_docstring(wrapped)  # type: ignore[return-value]
     if inspect.isfunction(wrapped):
-        return _add_method_docstring(wrapped)
+        return _add_method_docstring(wrapped)  # type: ignore[return-value]
     return wrapped
 
 
@@ -73,11 +73,11 @@ def _add_class_docstring(cls: Type[T]) -> Type[T]:
         cls.__doc__ = _add_note_to_docstring(cls.__doc__, doc_string)
     else:
         cls.__doc__ = doc_string + ">"
-    cls.__init__ = _add_class_warning(cls.__init__)
+    cls.__init__ = _add_class_warning(cls.__init__)  # type: ignore[method-assign]
     return cls
 
 
-def _add_method_docstring(func: Callable[P, T] = None) -> Callable[P, T]:
+def _add_method_docstring(func: Optional[Callable[P, T]] = None) -> Callable[P, T]:
     """Add experimental tag to the method doc string.
 
     :param func: The function to update
@@ -92,12 +92,14 @@ def _add_method_docstring(func: Callable[P, T] = None) -> Callable[P, T]:
         # '>' is required. Otherwise the note section can't be generated
         func.__doc__ = doc_string + ">"
 
-    @functools.wraps(func)
+    @functools.wraps(cast(Callable[P, T], func))
     def wrapped(*args: P.args, **kwargs: P.kwargs) -> T:
-        message = "Method {0}: {1} {2}".format(func.__name__, EXPERIMENTAL_METHOD_MESSAGE, EXPERIMENTAL_LINK_MESSAGE)
+        message = "Method {0}: {1} {2}".format(
+            cast(Callable[P, T], func).__name__, EXPERIMENTAL_METHOD_MESSAGE, EXPERIMENTAL_LINK_MESSAGE
+        )
         if not _should_skip_warning() and not _is_warning_cached(message):
             module_logger.warning(message)
-        return func(*args, **kwargs)
+        return func(*args, **kwargs)  # type: ignore[misc]
 
     return wrapped
 
