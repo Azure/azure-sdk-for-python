@@ -19,7 +19,7 @@ class TestMgmtServiceLinker(AzureMgmtRecordedTestCase):
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_list_by_resource_group(self, resource_group):
-        assert list(self.client.connector.list_by_resource_group(self.get_settings_value("SUBSCRIPTION_ID"), resource_group.name, AZURE_LOCATION)) == []
+        assert list(self.client.connector.list(self.get_settings_value("SUBSCRIPTION_ID"), resource_group.name, AZURE_LOCATION)) == []
 
     @recorded_by_proxy
     def test_list_operations(self):
