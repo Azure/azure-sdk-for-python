@@ -8,7 +8,7 @@ jobs:
   - job: 'MarkPackageAsShipped'
     displayName: "Mark Package as Shipped"
     condition: and(succeeded(), ne(variables['Skip.MarkPackageAsShipped'], 'true'))
-    dependsOn: $${{parameters.DependsOn}}
+    dependsOn: ${{parameters.DependsOn}}
 
     pool:
       image: azsdk-pool-mms-ubuntu-2004-1espt
