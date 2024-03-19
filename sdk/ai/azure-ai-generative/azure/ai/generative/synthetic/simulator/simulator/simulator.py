@@ -14,6 +14,8 @@ import json
 import random
 from tqdm import tqdm
 
+logger = logging.getLogger(__name__)
+
 from azure.ai.generative.synthetic.simulator._conversation import (
     ConversationBot,
     ConversationRole,
@@ -282,7 +284,7 @@ class Simulator:
         total_tasks = sum(len(t.template_parameters) for t in templates)
 
         if simulation_result_limit > total_tasks and self.adversarial:
-            logging.getLogger(__name__).warning(
+            logger.warning(
                 "Cannot provide %s results due to maximum number of adversarial simulations that can be generated: %s."
                 "%s simulations will be generated.",
                 simulation_result_limit,
@@ -370,7 +372,6 @@ class Simulator:
         """
         if parameters is None:
             parameters = {}
-        logger = logging.getLogger(__name__)
         # create user bot
         user_bot = self._setup_bot(ConversationRole.USER, template, parameters)
         system_bot = self._setup_bot(
