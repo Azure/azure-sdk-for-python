@@ -41,5 +41,4 @@ extends:
         compiled: true
         break: true
       policy: M365
-
-  stages: ${{ parameters.stages }}
+    stages: ${{ parameters.stages }}
