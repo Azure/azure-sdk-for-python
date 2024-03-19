@@ -21,7 +21,7 @@ def test_interactive_browser_broker_cred_signed_in_account():
     with patch("msal.broker._signin_silently", Mock(return_value="token")) as mock_signin_silently:
         try:
             cred = InteractiveBrowserBrokerCredential(
-                parent_window_handle="window_handle", use_operating_system_account=True
+                parent_window_handle="window_handle", use_default_broker_account=True
             )
             cred.get_token("scope")
         except Exception:  # msal raises TypeError which is expected. We are not testing msal here.
