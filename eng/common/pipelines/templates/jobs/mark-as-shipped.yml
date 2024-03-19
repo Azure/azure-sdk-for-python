@@ -23,7 +23,7 @@ jobs:
       - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
       - template: /eng/common/pipelines/templates/steps/create-apireview.yml
         parameters:
-          ArtifactPath: $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{parameters.PackageName}}
+          ArtifactPath: $(Pipeline.Workspace)/${{parameters.ArtifactName}}
           Artifacts: ${{parameters.Artifacts}}
           ConfigFileDir: $(Pipeline.Workspace)/PackageInfo
           MarkPackageAsShipped: true
