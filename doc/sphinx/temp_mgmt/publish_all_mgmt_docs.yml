@@ -2,171 +2,171 @@ parameters:
   - name: MgmtPackages
     type: object
     default:
-      azure-mgmt-connectedvmware:
-        ServiceDirectory: connectedvmware
-        Version: '1.0.0'
-      azure-mgmt-oep:
-        ServiceDirectory: oep
-        Version: '1.0.0b2'
-      azure-mgmt-devhub:
-        ServiceDirectory: devhub
-        Version: '1.0.0b1'
-      azure-mgmt-consumption:
-        ServiceDirectory: consumption
-        Version: '11.0.0b1'
-      azure-mgmt-managedapplications:
-        ServiceDirectory: managedapplications
-        Version: '1.0.0b1'
-      azure-mgmt-advisor:
-        ServiceDirectory: advisor
-        Version: '10.0.0b1'
-      azure-mgmt-operationsmanagement:
-        ServiceDirectory: operationsmanagement
-        Version: '2.0.0b1'
-      azure-mgmt-iothub:
-        ServiceDirectory: iothub
-        Version: '3.0.0'
-      azure-mgmt-iothubprovisioningservices:
-        ServiceDirectory: iothub
-        Version: '1.2.0b2'
-      azure-mgmt-iotcentral:
-        ServiceDirectory: iothub
-        Version: '10.0.0b2'
-      azure-mgmt-managedservices:
-        ServiceDirectory: managedservices
-        Version: '7.0.0b1'
-      azure-mgmt-signalr:
-        ServiceDirectory: signalr
-        Version: '2.0.0b2'
-      azure-mgmt-extendedlocation:
-        ServiceDirectory: extendedlocation
-        Version: '1.2.0b1'
-      azure-mgmt-automation:
-        ServiceDirectory: automation
-        Version: '1.1.0b3'
-      azure-mgmt-networkcloud:
-        ServiceDirectory: networkcloud
-        Version: '1.0.0'
-      azure-mgmt-appcomplianceautomation:
-        ServiceDirectory: appcomplianceautomation
-        Version: '1.0.0b1'
-      azure-mgmt-billing:
-        ServiceDirectory: billing
-        Version: '6.1.0b1'
-      azure-mgmt-media:
-        ServiceDirectory: media
-        Version: '10.2.0'
-      azure-mgmt-dnsresolver:
-        ServiceDirectory: dnsresolver
-        Version: '1.1.0b1'
-      azure-mgmt-storagecache:
-        ServiceDirectory: storage
-        Version: '1.6.0b1'
-      azure-mgmt-storage:
-        ServiceDirectory: storage
-        Version: '21.1.0'
-      azure-mgmt-storagesync:
-        ServiceDirectory: storage
-        Version: '2.0.0b1'
-      azure-mgmt-storageimportexport:
-        ServiceDirectory: storage
-        Version: '1.0.0b2'
-      azure-mgmt-timeseriesinsights:
-        ServiceDirectory: timeseriesinsights
-        Version: '2.0.0b1'
-      azure-mgmt-synapse:
-        ServiceDirectory: synapse
-        Version: '2.1.0b7'
-      azure-mgmt-resourceconnector:
-        ServiceDirectory: resourceconnector
-        Version: '1.0.0'
-      azure-mgmt-notificationhubs:
-        ServiceDirectory: notificationhubs
-        Version: '8.1.0b1'
-      azure-mgmt-streamanalytics:
-        ServiceDirectory: streamanalytics
-        Version: '2.0.0b2'
-      azure-mgmt-customproviders:
-        ServiceDirectory: customproviders
-        Version: '1.1.0b1'
-      azure-mgmt-containerregistry:
-        ServiceDirectory: containerregistry
-        Version: '10.3.0'
-      azure-mgmt-web:
-        ServiceDirectory: appservice
-        Version: '7.2.0'
-      azure-mgmt-monitor:
-        ServiceDirectory: monitor
-        Version: '6.0.2'
-      azure-mgmt-managednetworkfabric:
-        ServiceDirectory: managednetworkfabric
-        Version: '1.0.0'
-      azure-mgmt-appplatform:
-        ServiceDirectory: appplatform
-        Version: '9.0.0'
-      azure-mgmt-msi:
-        ServiceDirectory: resources
-        Version: '7.1.0b1'
-      azure-mgmt-resource:
-        ServiceDirectory: resources
-        Version: '23.1.0b2'
-      azure-mgmt-resourcegraph:
-        ServiceDirectory: resources
-        Version: '8.1.0b3'
-      azure-mgmt-databox:
-        ServiceDirectory: databox
-        Version: '2.0.0'
-      azure-mgmt-maps:
-        ServiceDirectory: maps
-        Version: '2.1.0'
-      azure-mgmt-education:
-        ServiceDirectory: education
-        Version: '1.0.0b2'
-      azure-mgmt-costmanagement:
-        ServiceDirectory: costmanagement
-        Version: '4.0.1'
-      azure-mgmt-workloadmonitor:
-        ServiceDirectory: workloadmonitor
-        Version: '1.0.0b4'
-      azure-mgmt-cognitiveservices:
-        ServiceDirectory: cognitiveservices
-        Version: '13.5.0'
-      azure-mgmt-workloads:
-        ServiceDirectory: workloads
-        Version: '1.0.0'
-      azure-mgmt-datadog:
-        ServiceDirectory: datadog
-        Version: '2.1.0'
-      azure-mgmt-resourcemover:
-        ServiceDirectory: resourcemover
-        Version: '1.1.0'
-      azure-mgmt-paloaltonetworksngfw:
-        ServiceDirectory: paloaltonetworks
-        Version: '2.0.0b1'
-      azure-mgmt-recoveryservicessiterecovery:
-        ServiceDirectory: recoveryservices
-        Version: '1.2.0'
-      azure-mgmt-recoveryservices:
-        ServiceDirectory: recoveryservices
-        Version: '2.5.0'
-      azure-mgmt-recoveryservicesbackup:
-        ServiceDirectory: recoveryservices
-        Version: '9.0.0'
-      azure-mgmt-vmwarecloudsimple:
-        ServiceDirectory: compute
-        Version: '1.0.0b2'
-      azure-mgmt-avs:
-        ServiceDirectory: compute
-        Version: '8.0.0'
-      azure-mgmt-imagebuilder:
-        ServiceDirectory: compute
-        Version: '1.3.0'
-      azure-mgmt-portal:
-        ServiceDirectory: portal
-        Version: '1.1.0b1'
-      azure-mgmt-logic:
-        ServiceDirectory: logic
-        Version: '10.1.0b1'
+      # azure-mgmt-connectedvmware:
+      #   ServiceDirectory: connectedvmware
+      #   Version: '1.0.0'
+      # azure-mgmt-oep:
+      #   ServiceDirectory: oep
+      #   Version: '1.0.0b2'
+      # azure-mgmt-devhub:
+      #   ServiceDirectory: devhub
+      #   Version: '1.0.0b1'
+      # azure-mgmt-consumption:
+      #   ServiceDirectory: consumption
+      #   Version: '11.0.0b1'
+      # azure-mgmt-managedapplications:
+      #   ServiceDirectory: managedapplications
+      #   Version: '1.0.0b1'
+      # azure-mgmt-advisor:
+      #   ServiceDirectory: advisor
+      #   Version: '10.0.0b1'
+      # azure-mgmt-operationsmanagement:
+      #   ServiceDirectory: operationsmanagement
+      #   Version: '2.0.0b1'
+      # azure-mgmt-iothub:
+      #   ServiceDirectory: iothub
+      #   Version: '3.0.0'
+      # azure-mgmt-iothubprovisioningservices:
+      #   ServiceDirectory: iothub
+      #   Version: '1.2.0b2'
+      # azure-mgmt-iotcentral:
+      #   ServiceDirectory: iothub
+      #   Version: '10.0.0b2'
+      # azure-mgmt-managedservices:
+      #   ServiceDirectory: managedservices
+      #   Version: '7.0.0b1'
+      # azure-mgmt-signalr:
+      #   ServiceDirectory: signalr
+      #   Version: '2.0.0b2'
+      # azure-mgmt-extendedlocation:
+      #   ServiceDirectory: extendedlocation
+      #   Version: '1.2.0b1'
+      # azure-mgmt-automation:
+      #   ServiceDirectory: automation
+      #   Version: '1.1.0b3'
+      # azure-mgmt-networkcloud:
+      #   ServiceDirectory: networkcloud
+      #   Version: '1.0.0'
+      # azure-mgmt-appcomplianceautomation:
+      #   ServiceDirectory: appcomplianceautomation
+      #   Version: '1.0.0b1'
+      # azure-mgmt-billing:
+      #   ServiceDirectory: billing
+      #   Version: '6.1.0b1'
+      # azure-mgmt-media:
+      #   ServiceDirectory: media
+      #   Version: '10.2.0'
+      # azure-mgmt-dnsresolver:
+      #   ServiceDirectory: dnsresolver
+      #   Version: '1.1.0b1'
+      # azure-mgmt-storagecache:
+      #   ServiceDirectory: storage
+      #   Version: '1.6.0b1'
+      # azure-mgmt-storage:
+      #   ServiceDirectory: storage
+      #   Version: '21.1.0'
+      # azure-mgmt-storagesync:
+      #   ServiceDirectory: storage
+      #   Version: '2.0.0b1'
+      # azure-mgmt-storageimportexport:
+      #   ServiceDirectory: storage
+      #   Version: '1.0.0b2'
+      # azure-mgmt-timeseriesinsights:
+      #   ServiceDirectory: timeseriesinsights
+      #   Version: '2.0.0b1'
+      # azure-mgmt-synapse:
+      #   ServiceDirectory: synapse
+      #   Version: '2.1.0b7'
+      # azure-mgmt-resourceconnector:
+      #   ServiceDirectory: resourceconnector
+      #   Version: '1.0.0'
+      # azure-mgmt-notificationhubs:
+      #   ServiceDirectory: notificationhubs
+      #   Version: '8.1.0b1'
+      # azure-mgmt-streamanalytics:
+      #   ServiceDirectory: streamanalytics
+      #   Version: '2.0.0b2'
+      # azure-mgmt-customproviders:
+      #   ServiceDirectory: customproviders
+      #   Version: '1.1.0b1'
+      # azure-mgmt-containerregistry:
+      #   ServiceDirectory: containerregistry
+      #   Version: '10.3.0'
+      # azure-mgmt-web:
+      #   ServiceDirectory: appservice
+      #   Version: '7.2.0'
+      # azure-mgmt-monitor:
+      #   ServiceDirectory: monitor
+      #   Version: '6.0.2'
+      # azure-mgmt-managednetworkfabric:
+      #   ServiceDirectory: managednetworkfabric
+      #   Version: '1.0.0'
+      # azure-mgmt-appplatform:
+      #   ServiceDirectory: appplatform
+      #   Version: '9.0.0'
+      # azure-mgmt-msi:
+      #   ServiceDirectory: resources
+      #   Version: '7.1.0b1'
+      # azure-mgmt-resource:
+      #   ServiceDirectory: resources
+      #   Version: '23.1.0b2'
+      # azure-mgmt-resourcegraph:
+      #   ServiceDirectory: resources
+      #   Version: '8.1.0b3'
+      # azure-mgmt-databox:
+      #   ServiceDirectory: databox
+      #   Version: '2.0.0'
+      # azure-mgmt-maps:
+      #   ServiceDirectory: maps
+      #   Version: '2.1.0'
+      # azure-mgmt-education:
+      #   ServiceDirectory: education
+      #   Version: '1.0.0b2'
+      # azure-mgmt-costmanagement:
+      #   ServiceDirectory: costmanagement
+      #   Version: '4.0.1'
+      # azure-mgmt-workloadmonitor:
+      #   ServiceDirectory: workloadmonitor
+      #   Version: '1.0.0b4'
+      # azure-mgmt-cognitiveservices:
+      #   ServiceDirectory: cognitiveservices
+      #   Version: '13.5.0'
+      # azure-mgmt-workloads:
+      #   ServiceDirectory: workloads
+      #   Version: '1.0.0'
+      # azure-mgmt-datadog:
+      #   ServiceDirectory: datadog
+      #   Version: '2.1.0'
+      # azure-mgmt-resourcemover:
+      #   ServiceDirectory: resourcemover
+      #   Version: '1.1.0'
+      # azure-mgmt-paloaltonetworksngfw:
+      #   ServiceDirectory: paloaltonetworks
+      #   Version: '2.0.0b1'
+      # azure-mgmt-recoveryservicessiterecovery:
+      #   ServiceDirectory: recoveryservices
+      #   Version: '1.2.0'
+      # azure-mgmt-recoveryservices:
+      #   ServiceDirectory: recoveryservices
+      #   Version: '2.5.0'
+      # azure-mgmt-recoveryservicesbackup:
+      #   ServiceDirectory: recoveryservices
+      #   Version: '9.0.0'
+      # azure-mgmt-vmwarecloudsimple:
+      #   ServiceDirectory: compute
+      #   Version: '1.0.0b2'
+      # azure-mgmt-avs:
+      #   ServiceDirectory: compute
+      #   Version: '8.0.0'
+      # azure-mgmt-imagebuilder:
+      #   ServiceDirectory: compute
+      #   Version: '1.3.0'
+      # azure-mgmt-portal:
+      #   ServiceDirectory: portal
+      #   Version: '1.1.0b1'
+      # azure-mgmt-logic:
+      #   ServiceDirectory: logic
+      #   Version: '10.1.0b1'
       azure-mgmt-graphservices:
         ServiceDirectory: graphservices
         Version: '1.0.0'
