@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING, Optional, cast, List, Union
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
 from ._generated._client import PhoneNumbersClient as PhoneNumbersClientGen
@@ -13,6 +13,9 @@ from ._generated.models import (
     PhoneNumberCapabilitiesRequest,
     PhoneNumberPurchaseRequest,
     PhoneNumberType,
+    OperatorInformationRequest,
+    OperatorInformationOptions,
+    OperatorInformationResult,
 )
 from ._shared.auth_policy_utils import get_authentication_policy
 from ._shared.utils import parse_connection_str
@@ -36,6 +39,10 @@ if TYPE_CHECKING:
         PurchasedPhoneNumber,
     )
 
+PhoneNumberSearchType = Union[
+    str,
+    List[str],
+]
 
 class PhoneNumbersClient(object):
     """A client to interact with the AzureCommunicationService Phone Numbers gateway.
@@ -99,7 +106,8 @@ class PhoneNumbersClient(object):
     def begin_purchase_phone_numbers(
             self,
             search_id,  # type: str
-            consent_dnr=False, # type: bool
+            *,
+            no_resale_consent=False, # type: bool
             **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
@@ -107,7 +115,7 @@ class PhoneNumbersClient(object):
 
         :param search_id: The search id.
         :type search_id: str
-        :param consent_to_not_resell_numbers/consent_dnr: The consent provided to not resell phone numbers.
+        :param consent_to_not_resell_numbers/no_resale_consent: The consent provided to not resell phone numbers.
         :type consent_to_not_resell_numbers: bool
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
@@ -119,7 +127,7 @@ class PhoneNumbersClient(object):
         """
         purchase_request = PhoneNumberPurchaseRequest(
             search_id=search_id,
-            consent_to_not_resell_numbers=consent_dnr
+            consent_to_not_resell_numbers=no_resale_consent
             )
 
         polling_interval = kwargs.pop(
@@ -427,5 +435,32 @@ class PhoneNumbersClient(object):
                 "locality", None),
             administrative_division=kwargs.pop(
                 "administrative_division", None),
+            **kwargs
+        )
+
+    @distributed_trace
+    def search_operator_information(
+            self,
+            phone_numbers,  # type: PhoneNumberSearchType
+            options:Optional[OperatorInformationOptions]=None, #type: OperatorInformationOptions
+            **kwargs  # type: Any
+    ) -> OperatorInformationResult:
+        """
+        Searches for operator information for a given list of phone numbers.
+
+        :param phone_numbers: The phone number(s) whose operator information should be searched
+        :type phone_numbers: str or List[str]
+        :param options: Options for the operator information search
+        :type options: ~azure.communication.phonenumbers.models.OperatorInformationOptions
+        :return: A search result containing operator information associated with the requested phone numbers
+        :rtype: ~azure.communication.phonenumbers.models.OperatorInformationResult
+        """
+        if not isinstance(phone_numbers, list):
+            phone_numbers = cast(PhoneNumberSearchType, [phone_numbers])
+        if options is None:
+            options = OperatorInformationOptions(include_additional_phone_and_operator_details=False)
+        request = OperatorInformationRequest(phone_numbers=phone_numbers, options=options)
+        return self._phone_number_client.phone_numbers.operator_information_search(
+            request,
             **kwargs
         )

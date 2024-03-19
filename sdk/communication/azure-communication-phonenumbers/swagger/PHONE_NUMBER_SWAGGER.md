@@ -24,18 +24,20 @@ title: Phone Numbers Client
 models-mode: msrest
 ```
 
-### Removed Property error from PhoneNumberSearchResult
 ``` yaml
 directive:
-  where-model: PhoneNumberSearchResult
-  remove-property: error
+  from: swagger-document
+  where: $.definitions.PhoneNumberSearchResult.properties.error.x-ms-enum
+  transform: >
+    $["name"] = "PhoneNumberSearchResultError";
 ```
 
-### Removed Property errorCode from PhoneNumberSearchResult
 ``` yaml
 directive:
-  where-model: PhoneNumberSearchResult
-  remove-property: errorCode
+  from: swagger-document
+  where: $.parameters.Endpoint
+  transform: >
+    $["format"] = "";
 ```
 
 # Removed Models
@@ -49,7 +51,6 @@ directive:
   - remove-model: PhoneNumbersBrowseResult
   - remove-model: PhoneNumberBrowseCapabilitiesRequest
   - remove-model: PhoneNumbersReservationPurchaseRequest
-  - remove-model: Error
   - remove-model: AvailablePhoneNumber
   - remove-model: AvailablePhoneNumberCost
 ```

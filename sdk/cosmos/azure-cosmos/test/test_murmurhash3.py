@@ -6,7 +6,7 @@ import unittest
 
 import pytest
 
-from azure.cosmos._cosmos_integers import UInt128
+from azure.cosmos._cosmos_integers import _UInt128
 from azure.cosmos._cosmos_murmurhash3 import murmurhash3_128
 
 
@@ -16,7 +16,7 @@ class TestMurmurHash3(unittest.TestCase):
         """
     string_low_value = 2792699143512860960
     string_high_value = 15069672278200047189
-    test_seed = UInt128(0, 0)
+    test_seed = _UInt128(0, 0)
     float_low_value = 16628891264555680919
     float_high_value = 12953474369317462
 

@@ -4,7 +4,6 @@
 # license information.
 # -------------------------------------------------------------------------
 from __future__ import annotations
-from collections import namedtuple
 from types import TracebackType
 from typing import Any, NamedTuple, Optional, AsyncContextManager, Type
 from typing_extensions import Protocol, runtime_checkable
@@ -40,7 +39,12 @@ class TokenCredential(Protocol):
         ...
 
 
-ServiceNamedKey = namedtuple("ServiceNamedKey", ["name", "key"])
+class ServiceNamedKey(NamedTuple):
+    """Represents a name and key pair."""
+
+    name: str
+    key: str
+
 
 __all__ = [
     "AccessToken",

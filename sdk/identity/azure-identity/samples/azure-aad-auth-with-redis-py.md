@@ -36,7 +36,7 @@ Integrate the logic in your application code to fetch a Microsoft Entra access t
 import redis
 from azure.identity import DefaultAzureCredential
 
-scope = "acca5fbb-b7e4-4009-81f1-37e38fd66d78/.default"  # The current scope is for public preview and may change for GA release.
+scope = "https://redis.azure.com/.default"  # The current scope is for public preview and may change for GA release.
 host = ""  # Required
 port = 6380  # Required
 user_name = ""  # Required
@@ -86,7 +86,7 @@ import logging
 import redis
 from azure.identity import DefaultAzureCredential
 
-scope = "acca5fbb-b7e4-4009-81f1-37e38fd66d78/.default"  # The current scope is for public preview and may change for GA release.
+scope = "https://redis.azure.com/.default"  # The current scope is for public preview and may change for GA release.
 host = ""  # Required
 port = 6380  # Required
 user_name = ""  # Required
@@ -143,7 +143,7 @@ In this error scenario, the username provided and the access token used as passw
 To mitigate this error, navigate to your Azure Cache for Redis resource in the Azure portal. Confirm that:
 
 - In **Data Access Configuration**, you've assigned the required role to your user/service principal identity.
-- In **Advanced settings**, the **Microsoft Entra Authentication** box is selected. If not, select it and select the **Save** button.
+- Under **Authentication** -> **Microsoft Entra Authentication** category the **Enable Microsoft Entra Authentication** box is selected. If not, select it and select the **Save** button.
 
 ##### Permissions not granted / NOPERM Error
 

@@ -230,7 +230,7 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
         )
         phone_number_to_buy = search_poller.result()
         purchase_poller = self.phone_number_client.begin_purchase_phone_numbers(
-            phone_number_to_buy.search_id, consent_dnr=True, polling=True)
+        phone_number_to_buy.search_id, no_resale_consent=True, polling=True)
         purchase_poller.result()
         assert purchase_poller.status() == PhoneNumberOperationStatus.SUCCEEDED.value
 
@@ -247,7 +247,7 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
             sms=PhoneNumberCapabilityType.NONE
         )
         search_poller = self.phone_number_client.begin_search_available_phone_numbers(
-            "US",
+            "CA",
             PhoneNumberType.TOLL_FREE,
             PhoneNumberAssignmentType.APPLICATION,
             capabilities,
@@ -257,7 +257,7 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
 
         with pytest.raises(Exception) as ex:
             self.phone_number_client.begin_purchase_phone_numbers(
-                phone_number_to_buy.search_id, consent_dnr=False, polling=True)
+                phone_number_to_buy.search_id, no_resale_consent=False, polling=True)
         # purchase_poller.result()
         # assert purchase_poller.status() == PhoneNumberOperationStatus.FAILED.value
         assert is_client_error_status_code(
@@ -433,3 +433,39 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
     def test_list_offerings(self):
         offerings = self.phone_number_client.list_available_offerings("US")
         assert offerings.next()
+
+    @recorded_by_proxy
+    def test_search_operator_information_with_too_many_phone_numbers(self):
+        if self.is_playback():
+            phone_numbers = [ "sanitized", "sanitized" ]
+        else:
+            phone_numbers = [ self.phone_number, self.phone_number ]
+
+        with pytest.raises(Exception) as ex:
+            self.phone_number_client.search_operator_information(phone_numbers)
+
+        assert is_client_error_status_code(
+            ex.value.status_code) is True, 'Status code {ex.value.status_code} does not indicate a client error'  # type: ignore
+        assert ex.value.message is not None  # type: ignore
+
+    @recorded_by_proxy
+    def test_search_operator_information_with_list(self):
+        if self.is_playback():
+            phone_number = "sanitized"
+        else:
+            phone_number = self.phone_number
+
+        results = self.phone_number_client.search_operator_information([ phone_number ])
+        assert len(results.values) == 1
+        assert results.values[0].phone_number == self.phone_number
+
+    @recorded_by_proxy
+    def test_search_operator_information_with_single_string(self):
+        if self.is_playback():
+            phone_number = "sanitized"
+        else:
+            phone_number = self.phone_number
+
+        results = self.phone_number_client.search_operator_information(phone_number)
+        assert len(results.values) == 1
+        assert results.values[0].phone_number == self.phone_number
