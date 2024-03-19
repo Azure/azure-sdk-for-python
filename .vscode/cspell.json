@@ -577,6 +577,12 @@
       ]
     },
     {
+      "filename": "sdk/identity/azure-identity-broker/tests/*.py",
+      "words": [
+        "signin"
+      ]
+    },
+    {
       "filename": "sdk/tables/azure-data-tables/tests/**/*.py",
       "words": [
         "tzutc",
@@ -1674,6 +1680,12 @@
       "filename": "sdk/appconfiguration/test-resources.json",
       "words": [
         "azconfig"
+      ]
+    },
+    {
+      "filename": "sdk/appconfiguration/azure-appconfiguration/**",
+      "words": [
+        "kvset"
       ]
     },
     {
