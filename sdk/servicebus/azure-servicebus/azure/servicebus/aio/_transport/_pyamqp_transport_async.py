@@ -296,7 +296,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
 
     @staticmethod
     async def reset_link_credit_async(
-        handler: "ReceiveClientAsync", link_credit: int
+        handler: "ReceiveClientAsync", message_count: int
     ) -> None:
         """
         Resets the link credit on the link.
@@ -304,7 +304,9 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         :param int link_credit: Link credit needed.
         :rtype: None
         """
-        await handler._link.flow(link_credit=link_credit)   # pylint: disable=protected-access
+        link_credit_needed = message_count - handler._link.current_link_credit
+        if link_credit_needed > 0:
+            await handler._link.flow(link_credit=link_credit_needed)   # pylint: disable=protected-access
 
     @staticmethod
     async def settle_message_via_receiver_link_async(
