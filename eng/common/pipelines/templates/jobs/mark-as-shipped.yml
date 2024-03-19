@@ -5,7 +5,7 @@ parameters:
   DependsOn:
 
 jobs:
-  - Job: 'MarkPackageAsShipped'
+  - job: 'MarkPackageAsShipped'
     displayName: "Mark Package as Shipped"
     condition: and(succeeded(), ne(variables['Skip.MarkPackageAsShipped'], 'true'))
     dependsOn: $${{parameters.DependsOn}}
