@@ -29,7 +29,6 @@ from ._operations import (
     build_send_to_group_request,
 )
 
-
 class _UTC_TZ(tzinfo):
     """from https://docs.python.org/2/library/datetime.html#tzinfo-objects"""
 
@@ -128,7 +127,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
 
     @distributed_trace
     def send_to_all(  # pylint: disable=inconsistent-return-statements
-        self, message: IO, *, excluded: Optional[List[str]] = None, filter: Optional[str] = None, content_type: Optional[str] = None, **kwargs: Any
+        self, message: Union[IO, str, JSON], *, excluded: Optional[List[str]] = None, filter: Optional[str] = None, content_type: Optional[str] = None, **kwargs: Any
     ) -> None:
         """Broadcast content inside request body to all the connected client connections.
 
@@ -203,7 +202,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
 
     @distributed_trace
     def send_to_user(  # pylint: disable=inconsistent-return-statements
-        self, user_id: str, message: IO, *, filter: Optional[str] = None, content_type: Optional[str] = None, **kwargs: Any
+        self, user_id: str, message: Union[IO, str, JSON], *, filter: Optional[str] = None, content_type: Optional[str] = None, **kwargs: Any
     ) -> None:
         """Send content inside request body to the specific user.
 
