@@ -203,12 +203,6 @@ parameters:
       azure-mgmt-sphere:
         ServiceDirectory: sphere
         Version: '1.0.0b1'
-      azure-mgmt-datalake-nspkg:
-        ServiceDirectory: nspkg
-        Version: '3.0.1'
-      azure-mgmt-nspkg:
-        ServiceDirectory: nspkg
-        Version: '3.0.2'
       azure-mgmt-keyvault:
         ServiceDirectory: keyvault
         Version: '10.3.0'
