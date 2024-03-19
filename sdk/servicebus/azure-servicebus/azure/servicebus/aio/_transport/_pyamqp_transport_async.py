@@ -296,15 +296,15 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
 
     @staticmethod
     async def reset_link_credit_async(
-        handler: "ReceiveClientAsync", max_message_count: int
+        handler: "ReceiveClientAsync", link_credit: int
     ) -> None:
         """
         Resets the link credit on the link.
         :param ReceiveClientAsync handler: Client with link to reset link credit.
-        :param int max_message_count: Max message count.
+        :param int link_credit: Total link credit wanted.
         :rtype: None
         """
-        link_credit_needed = max_message_count - handler._link.current_link_credit
+        link_credit_needed = link_credit - handler._link.current_link_credit
         if link_credit_needed > 0:
             await handler._link.flow(link_credit=link_credit_needed)   # pylint: disable=protected-access
 
