@@ -443,8 +443,7 @@ class ServiceBusReceiver(
                 and self._prefetch_count == 0
                 and max_message_count >= 1
             ):
-                link_credit_needed = max_message_count - self._handler._link.current_link_credit
-                self._amqp_transport.reset_link_credit(amqp_receive_client, link_credit_needed)
+                self._amqp_transport.reset_link_credit(amqp_receive_client, max_message_count)
 
             first_message_received = expired = False
             receiving = True

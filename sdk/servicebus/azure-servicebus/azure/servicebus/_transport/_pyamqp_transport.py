@@ -759,7 +759,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
 
     @staticmethod
     def reset_link_credit(
-        handler: "ReceiveClient", link_credit: int
+        handler: "ReceiveClient", message_count: int
     ) -> None:
         """
         Resets the link credit on the link.
@@ -767,7 +767,9 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :param int link_credit: Link credit needed.
         :rtype: None
         """
-        handler._link.flow(link_credit=link_credit) # pylint: disable=protected-access
+        link_credit_needed = message_count - handler._link.current_link_credit
+        if link_credit_needed > 0:
+            handler._link.flow(link_credit=link_credit_needed) # pylint: disable=protected-access
 
     @staticmethod
     def settle_message_via_receiver_link(
