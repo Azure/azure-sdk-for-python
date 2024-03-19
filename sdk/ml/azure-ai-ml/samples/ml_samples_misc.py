@@ -463,13 +463,18 @@ class MiscConfigurationOptions(object):
     def ml_misc_config_1(self):
         from random import randint
 
-        from azure.ai.ml import load_batch_endpoint
+        
         from azure.ai.ml.entities import BatchEndpoint
 
+        # [START batch_endpoint_load_example]
+        from azure.ai.ml import load_batch_endpoint
+        
         endpoint_example = load_batch_endpoint(
             source="./sdk/ml/azure-ai-ml/tests/test_configs/endpoints/batch/batch_endpoint_mlflow_new.yaml",
             params_override=[{"name": f"endpoint-{randint(0, 1000)}"}],
         )
+        # [END batch_endpoint_load_example]
+        
         ml_client.batch_endpoints.begin_create_or_update(endpoint_example)
         endpoint_name = endpoint_example.name
 

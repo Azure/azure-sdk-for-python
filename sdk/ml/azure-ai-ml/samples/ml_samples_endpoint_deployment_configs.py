@@ -379,28 +379,48 @@ class EndpointsDeploymentsConfigurationOptions(object):
     def ml_endpoints_deployments_config_1(self):
         from random import randint
 
+        # [START online_deployment_load_example]
         from azure.ai.ml import load_online_endpoint
 
         endpoint_example = load_online_endpoint(
             source="./sdk/ml/azure-ai-ml/tests/test_configs/endpoints/online/online_endpoint_minimal.yaml",
             params_override=[{"name": f"endpoint-{randint(0, 1000)}"}],
         )
+        # [END online_deployment_load_example]
         ml_client.online_endpoints.begin_create_or_update(endpoint_example)
         endpoint_name = endpoint_example.name
+
+        # [START batch_deployment_load_example]
+        from azure.ai.ml import load_batch_deployment
+
+        deployment_example = load_batch_deployment(
+            source="./sdk/ml/azure-ai-ml/tests/test_configs/deployments/batch/batch_deployment_anon_env_with_image.yaml",
+            params_override=[{"name": f"deployment-{randint(0, 1000)}", "endpoint_name": endpoint_example.name}],
+        )
+        # [END batch_deployment_load_example]
+
+        # [START online_deployment_load_example]
+        from azure.ai.ml import load_online_deployment
+
+        deployment_example = load_online_deployment(
+            source="./sdk/ml/azure-ai-ml/tests/test_configs/deployments/online/online_deployment_1.yaml",
+            params_override=[{"name": f"deployment-{randint(0, 1000)}", "endpoint_name": endpoint_name}],
+        )
+        # [END online_deployment_load_example]
 
         # [START online_deployment_begin_create_update_operation]
         from azure.ai.ml import load_online_deployment
 
         deployment_example = load_online_deployment(
             source="./sdk/ml/azure-ai-ml/tests/test_configs/deployments/online/online_deployment_1.yaml",
-            params_override=[{"name": f"deployment-{randint(0, 1000)}", "endpoint_name": "endpoint_name"}],
+            params_override=[{"name": f"deployment-{randint(0, 1000)}", "endpoint_name": endpoint_name}],
         )
 
         ml_client.online_deployments.begin_create_or_update(deployment=deployment_example, skip_script_validation=True)
         # [END online_deployment_begin_create_update_operation]
-        
+
         deployment_name = deployment_example.name
-        
+
         # [START online_deployment_get_operation]
         ml_client.online_deployments.get(deployment_name, endpoint_name)
         # [END online_deployment_get_operation]
@@ -452,7 +472,25 @@ class EndpointsDeploymentsConfigurationOptions(object):
         ml_client.online_endpoints.begin_regenerate_keys(endpoint_name_2)
         # [END online_endpoint_begin_regenerate_keys_operation]
 
+    def ml_endpoints_deployments_config_2(self):
+        from random import randint
+        from azure.ai.ml import load_online_endpoint
 
+        endpoint_example = load_online_endpoint(
+            source="./sdk/ml/azure-ai-ml/tests/test_configs/endpoints/online/online_endpoint_minimal.yaml",
+            params_override=[{"name": f"endpoint-{randint(0, 1000)}"}],
+        )
+
+        endpoint_name = endpoint_example.name
+
+        # [START model_batch_deployment_load_example]
+        from azure.ai.ml import load_model_batch_deployment
+
+        deployment_example = load_model_batch_deployment(
+            source="./sdk/ml/azure-ai-ml/tests/test_configs/deployments/batch/batch_deployment_anon_env_with_image.yaml",
+            params_override=[{"name": f"deployment-{randint(0, 1000)}", "endpoint_name": endpoint_name}],
+        )
+        # [END model_batch_deployment_load_example]
 
 
 

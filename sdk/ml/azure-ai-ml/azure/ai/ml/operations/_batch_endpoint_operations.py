@@ -268,6 +268,13 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         :keyword inputs: (Optional) A dictionary of existing data asset, public uri file or folder
             to use with the deployment
         :paramtype inputs: Dict[str, Input]
+        :keyword outputs: (Optional) A dictionary of output data asset, public uri file or folder
+            to use with the deployment
+        :paramtype outputs: Dict[str, Input]
+        :keyword job_name: (Optional) The name of the job. If not provided, a unique name will be generated.
+        :paramtype job_name: str
+        :keyword experiment_name: (Optional) The name of the experiment. If not provided, a unique name will be generated.
+        :paramtype experiment_name: str
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if deployment cannot be successfully validated.
             Details will be provided in the error message.
         :raises ~azure.ai.ml.exceptions.AssetException: Raised if BatchEndpoint assets
