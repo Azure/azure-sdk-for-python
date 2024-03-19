@@ -141,9 +141,9 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         :keyword filter: Following OData filter syntax to filter out the subscribers receiving the
          messages. Default value is None.
         :paramtype filter: str
-        :return: None
         :keyword content_type: The content type of the payload. Default value is None. Allowed values are 'application/json', 'application/octet-stream' and 'text/plain'
         :paramtype content_type: str
+        :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
