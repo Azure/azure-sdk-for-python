@@ -40,7 +40,7 @@ ms-appx-web://Microsoft.AAD.BrokerPlugin/{client_id}
 
 ## Use the default account for sign-in
 
-When this option is specified the credential will attempt to silently use the default broker account. If using the default account fails, the credential will fall back to interactive authentication.
+When the `use_default_broker_account` argument is set to `True`, the credential will attempt to silently use the default broker account. If using the default account fails, the credential will fall back to interactive authentication.
 
 ```
 cred = new InteractiveBrowserBrokerCredential(use_default_broker_account=True)
