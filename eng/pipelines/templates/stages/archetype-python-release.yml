@@ -252,30 +252,12 @@ stages:
                           PRTitle: "Increment version for ${{ parameters.ServiceDirectory }} releases"
                           CloseAfterOpenForTesting: '${{ parameters.TestPipeline }}'
           
-          - deployment: MarkPackageAsShipped
-            displayName: "Mark Package as Shipped"
-            condition: and(succeeded(), ne(variables['Skip.MarkPackageAsShipped'], 'true'))
-            dependsOn: PublishPackage
-
-            pool:
-              image: azsdk-pool-mms-ubuntu-2004-1espt
-              name: azsdk-pool-mms-ubuntu-2004-general
-              os: linux
-
-            strategy:
-              runOnce:
-                deploy:
-                  steps:
-                    - checkout: self
-                    - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
-                    - template: /eng/common/pipelines/templates/steps/create-apireview.yml
-                      parameters:
-                        ArtifactPath: $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}
-                        Artifacts: ${{parameters.Artifacts}}
-                        ConfigFileDir: $(Pipeline.Workspace)/PackageInfo
-                        MarkPackageAsShipped: true
-                        ArtifactName: '${{parameters.ArtifactName}}'
-                        PackageName: ${{artifact.name}}
+          - template: /eng/common/pipelines/templates/jobs/mark-as-shipped.yml
+            parameters:
+              Artifacts: ${{parameters.Artifacts}}
+              ArtifactName: ${{parameters.ArtifactName}}
+              PackageName: ${{artifact.name}}
+              DependsOn: PublishPackage
 
           - ${{if and(eq(variables['Build.Reason'], 'Manual'), eq(variables['System.TeamProject'], 'internal'))}}:
             - template: /eng/pipelines/templates/jobs/smoke.tests.yml
