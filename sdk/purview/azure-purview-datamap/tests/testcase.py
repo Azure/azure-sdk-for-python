@@ -10,7 +10,6 @@ from azure.purview.datamap import DataMapClient
 
 
 class DataMapTest(AzureRecordedTestCase):
-
     def create_client(self, endpoint):
         credential = self.get_credential(DataMapClient)
         return self.create_client_from_credential(
@@ -21,7 +20,5 @@ class DataMapTest(AzureRecordedTestCase):
 
 
 DataMapPowerShellPreparer = functools.partial(
-    PowerShellPreparer,
-    "purviewdatamap",
-    purviewdatamap_endpoint="https://fakeaccount.purview.azure.com"
+    PowerShellPreparer, "purviewdatamap", purviewdatamap_endpoint="https://fakeaccount.purview.azure.com"
 )

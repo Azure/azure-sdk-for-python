@@ -7,6 +7,8 @@
 # --------------------------------------------------------------------------
 
 from ._client import DevCenterClient
+from ._client import DevBoxesClient
+from ._client import DeploymentEnvironmentsClient
 
 try:
     from ._patch import __all__ as _patch_all
@@ -17,6 +19,8 @@ from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "DevCenterClient",
+    "DevBoxesClient",
+    "DeploymentEnvironmentsClient",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 

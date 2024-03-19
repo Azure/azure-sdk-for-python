@@ -1769,10 +1769,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         """
 
     def upsert_job(
-            self,
-            job_id: str,
-            *args: Union[_models.RouterJob, JSON, IO[bytes]],
-            **kwargs: Any
+        self, job_id: str, *args: Union[_models.RouterJob, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.RouterJob:
         """Update a job.
 

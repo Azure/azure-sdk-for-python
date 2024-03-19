@@ -34,7 +34,8 @@ from devtools_testutils import (
     add_body_key_sanitizer,
     add_oauth_response_sanitizer,
     add_general_string_sanitizer,
-    add_general_regex_sanitizer)
+    add_general_regex_sanitizer,
+)
 from azure.communication.messages._shared.utils import parse_connection_str
 
 # autouse=True will trigger this fixture on each pytest run, even if it's not explicitly used by a test method
@@ -42,10 +43,10 @@ from azure.communication.messages._shared.utils import parse_connection_str
 def start_proxy(test_proxy):
     set_default_session_settings()
     add_oauth_response_sanitizer()
-    
+
     FAKE_CONNECTION_STRING = "endpoint=https://sanitized.unitedstates.communication.azure.com/;accesskey=fake==="
     FAKE_ENDPOINT = "sanitized.unitedstates.communication.azure.com"
-    connection_str = os.environ.get('COMMUNICATION_LIVETEST_DYNAMIC_CONNECTION_STRING', FAKE_CONNECTION_STRING)
+    connection_str = os.environ.get("COMMUNICATION_LIVETEST_DYNAMIC_CONNECTION_STRING", FAKE_CONNECTION_STRING)
     if connection_str is not None:
         endpoint, _ = parse_connection_str(connection_str)
         resource_name = endpoint.split(".")[0]
@@ -71,7 +72,6 @@ def start_proxy(test_proxy):
     add_body_key_sanitizer(json_path="repeatability-first-sent", value="sanitized")
     add_body_key_sanitizer(json_path="*.repeatability-first-sent", value="sanitized")
     add_body_key_sanitizer(json_path="*..repeatability-first-sent", value="sanitized")
-
 
     add_header_regex_sanitizer(key="P3P", value="sanitized")
     add_header_regex_sanitizer(key="Set-Cookie", value="sanitized")

@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -30,40 +30,40 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
 from ..._operations._operations import (
-    build_dev_center_create_dev_box_request,
-    build_dev_center_create_or_update_environment_request,
-    build_dev_center_delay_all_dev_box_actions_request,
-    build_dev_center_delay_dev_box_action_request,
-    build_dev_center_delete_dev_box_request,
-    build_dev_center_delete_environment_request,
-    build_dev_center_get_catalog_request,
-    build_dev_center_get_dev_box_action_request,
-    build_dev_center_get_dev_box_request,
-    build_dev_center_get_environment_definition_request,
-    build_dev_center_get_environment_request,
-    build_dev_center_get_pool_request,
+    build_deployment_environments_create_or_update_environment_request,
+    build_deployment_environments_delete_environment_request,
+    build_deployment_environments_get_catalog_request,
+    build_deployment_environments_get_environment_definition_request,
+    build_deployment_environments_get_environment_request,
+    build_deployment_environments_list_all_environments_request,
+    build_deployment_environments_list_catalogs_request,
+    build_deployment_environments_list_environment_definitions_by_catalog_request,
+    build_deployment_environments_list_environment_definitions_request,
+    build_deployment_environments_list_environment_types_request,
+    build_deployment_environments_list_environments_request,
+    build_dev_boxes_create_dev_box_request,
+    build_dev_boxes_delay_action_request,
+    build_dev_boxes_delay_all_actions_request,
+    build_dev_boxes_delete_dev_box_request,
+    build_dev_boxes_get_dev_box_action_request,
+    build_dev_boxes_get_dev_box_request,
+    build_dev_boxes_get_pool_request,
+    build_dev_boxes_get_remote_connection_request,
+    build_dev_boxes_get_schedule_request,
+    build_dev_boxes_list_all_dev_boxes_by_user_request,
+    build_dev_boxes_list_all_dev_boxes_request,
+    build_dev_boxes_list_dev_box_actions_request,
+    build_dev_boxes_list_dev_boxes_request,
+    build_dev_boxes_list_pools_request,
+    build_dev_boxes_list_schedules_request,
+    build_dev_boxes_restart_dev_box_request,
+    build_dev_boxes_skip_action_request,
+    build_dev_boxes_start_dev_box_request,
+    build_dev_boxes_stop_dev_box_request,
     build_dev_center_get_project_request,
-    build_dev_center_get_remote_connection_request,
-    build_dev_center_get_schedule_request,
-    build_dev_center_list_all_dev_boxes_by_user_request,
-    build_dev_center_list_all_dev_boxes_request,
-    build_dev_center_list_all_environments_request,
-    build_dev_center_list_catalogs_request,
-    build_dev_center_list_dev_box_actions_request,
-    build_dev_center_list_dev_boxes_request,
-    build_dev_center_list_environment_definitions_by_catalog_request,
-    build_dev_center_list_environment_definitions_request,
-    build_dev_center_list_environment_types_request,
-    build_dev_center_list_environments_request,
-    build_dev_center_list_pools_request,
     build_dev_center_list_projects_request,
-    build_dev_center_list_schedules_request,
-    build_dev_center_restart_dev_box_request,
-    build_dev_center_skip_dev_box_action_request,
-    build_dev_center_start_dev_box_request,
-    build_dev_center_stop_dev_box_request,
 )
-from .._vendor import DevCenterClientMixinABC
+from .._vendor import DeploymentEnvironmentsClientMixinABC, DevBoxesClientMixinABC, DevCenterClientMixinABC
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -74,11 +74,12 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disable=too-many-public-methods
+class DevCenterClientOperationsMixin(DevCenterClientMixinABC):
     @distributed_trace
     def list_projects(
         self, *, filter: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
     ) -> AsyncIterable[JSON]:
+        # pylint: disable=line-too-long
         """Lists all projects.
 
         :keyword filter: An OData filter clause to apply to the operation. Default value is None.
@@ -181,12 +182,11 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
     @distributed_trace_async
     async def get_project(self, project_name: str, **kwargs: Any) -> JSON:
+        # pylint: disable=line-too-long
         """Gets a project.
 
         :param project_name: The DevCenter Project upon which to execute operations. Required.
         :type project_name: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: JSON object
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -252,10 +252,13 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
         return cast(JSON, deserialized)  # type: ignore
 
+
+class DevBoxesClientOperationsMixin(DevBoxesClientMixinABC):  # pylint: disable=too-many-public-methods
     @distributed_trace
     def list_pools(
         self, project_name: str, *, filter: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
     ) -> AsyncIterable[JSON]:
+        # pylint: disable=line-too-long
         """Lists available pools.
 
         :param project_name: The DevCenter Project upon which to execute operations. Required.
@@ -336,7 +339,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_dev_center_list_pools_request(
+                _request = build_dev_boxes_list_pools_request(
                     project_name=project_name,
                     filter=filter,
                     top=top,
@@ -401,14 +404,13 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
     @distributed_trace_async
     async def get_pool(self, project_name: str, pool_name: str, **kwargs: Any) -> JSON:
+        # pylint: disable=line-too-long
         """Gets a pool.
 
         :param project_name: The DevCenter Project upon which to execute operations. Required.
         :type project_name: str
         :param pool_name: The name of a pool of Dev Boxes. Required.
         :type pool_name: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: JSON object
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -477,7 +479,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        _request = build_dev_center_get_pool_request(
+        _request = build_dev_boxes_get_pool_request(
             project_name=project_name,
             pool_name=pool_name,
             api_version=self._config.api_version,
@@ -572,7 +574,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_dev_center_list_schedules_request(
+                _request = build_dev_boxes_list_schedules_request(
                     project_name=project_name,
                     pool_name=pool_name,
                     filter=filter,
@@ -646,8 +648,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         :type pool_name: str
         :param schedule_name: The name of a schedule. Required.
         :type schedule_name: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: JSON object
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -681,7 +681,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        _request = build_dev_center_get_schedule_request(
+        _request = build_dev_boxes_get_schedule_request(
             project_name=project_name,
             pool_name=pool_name,
             schedule_name=schedule_name,
@@ -724,6 +724,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
     def list_all_dev_boxes(
         self, *, filter: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
     ) -> AsyncIterable[JSON]:
+        # pylint: disable=line-too-long
         """Lists Dev Boxes that the caller has access to in the DevCenter.
 
         :keyword filter: An OData filter clause to apply to the operation. Default value is None.
@@ -823,7 +824,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_dev_center_list_all_dev_boxes_request(
+                _request = build_dev_boxes_list_all_dev_boxes_request(
                     filter=filter,
                     top=top,
                     api_version=self._config.api_version,
@@ -889,6 +890,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
     def list_all_dev_boxes_by_user(
         self, user_id: str, *, filter: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
     ) -> AsyncIterable[JSON]:
+        # pylint: disable=line-too-long
         """Lists Dev Boxes in the Dev Center for a particular user.
 
         :param user_id: The AAD object id of the user. If value is 'me', the identity is taken from the
@@ -991,7 +993,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_dev_center_list_all_dev_boxes_by_user_request(
+                _request = build_dev_boxes_list_all_dev_boxes_by_user_request(
                     user_id=user_id,
                     filter=filter,
                     top=top,
@@ -1058,6 +1060,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
     def list_dev_boxes(
         self, project_name: str, user_id: str, *, filter: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
     ) -> AsyncIterable[JSON]:
+        # pylint: disable=line-too-long
         """Lists Dev Boxes in the project for a particular user.
 
         :param project_name: The DevCenter Project upon which to execute operations. Required.
@@ -1162,7 +1165,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_dev_center_list_dev_boxes_request(
+                _request = build_dev_boxes_list_dev_boxes_request(
                     project_name=project_name,
                     user_id=user_id,
                     filter=filter,
@@ -1228,6 +1231,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
     @distributed_trace_async
     async def get_dev_box(self, project_name: str, user_id: str, dev_box_name: str, **kwargs: Any) -> JSON:
+        # pylint: disable=line-too-long
         """Gets a Dev Box.
 
         :param project_name: The DevCenter Project upon which to execute operations. Required.
@@ -1237,8 +1241,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         :type user_id: str
         :param dev_box_name: The name of a Dev Box. Required.
         :type dev_box_name: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: JSON object
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1328,7 +1330,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        _request = build_dev_center_get_dev_box_request(
+        _request = build_dev_boxes_get_dev_box_request(
             project_name=project_name,
             user_id=user_id,
             dev_box_name=dev_box_name,
@@ -1368,7 +1370,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         return cast(JSON, deserialized)  # type: ignore
 
     async def _create_dev_box_initial(
-        self, project_name: str, user_id: str, dev_box_name: str, body: Union[JSON, IO], **kwargs: Any
+        self, project_name: str, user_id: str, dev_box_name: str, body: Union[JSON, IO[bytes]], **kwargs: Any
     ) -> JSON:
         error_map = {
             401: ClientAuthenticationError,
@@ -1392,7 +1394,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         else:
             _json = body
 
-        _request = build_dev_center_create_dev_box_request(
+        _request = build_dev_boxes_create_dev_box_request(
             project_name=project_name,
             user_id=user_id,
             dev_box_name=dev_box_name,
@@ -1455,6 +1457,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[JSON]:
+        # pylint: disable=line-too-long
         """Creates or replaces a Dev Box.
 
         :param project_name: The DevCenter Project upon which to execute operations. Required.
@@ -1469,13 +1472,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns JSON object
         :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1628,11 +1624,12 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         project_name: str,
         user_id: str,
         dev_box_name: str,
-        body: IO,
+        body: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[JSON]:
+        # pylint: disable=line-too-long
         """Creates or replaces a Dev Box.
 
         :param project_name: The DevCenter Project upon which to execute operations. Required.
@@ -1643,17 +1640,10 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         :param dev_box_name: The name of a Dev Box. Required.
         :type dev_box_name: str
         :param body: Represents a environment. Required.
-        :type body: IO
+        :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns JSON object
         :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1733,8 +1723,9 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
     @distributed_trace_async
     async def begin_create_dev_box(
-        self, project_name: str, user_id: str, dev_box_name: str, body: Union[JSON, IO], **kwargs: Any
+        self, project_name: str, user_id: str, dev_box_name: str, body: Union[JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[JSON]:
+        # pylint: disable=line-too-long
         """Creates or replaces a Dev Box.
 
         :param project_name: The DevCenter Project upon which to execute operations. Required.
@@ -1744,18 +1735,8 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         :type user_id: str
         :param dev_box_name: The name of a Dev Box. Required.
         :type dev_box_name: str
-        :param body: Represents a environment. Is either a JSON type or a IO type. Required.
-        :type body: JSON or IO
-        :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
-         value is None.
-        :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+        :param body: Represents a environment. Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
         :return: An instance of AsyncLROPoller that returns JSON object
         :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1971,7 +1952,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
         cls: ClsType[Optional[JSON]] = kwargs.pop("cls", None)
 
-        _request = build_dev_center_delete_dev_box_request(
+        _request = build_dev_boxes_delete_dev_box_request(
             project_name=project_name,
             user_id=user_id,
             dev_box_name=dev_box_name,
@@ -2019,6 +2000,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
     async def begin_delete_dev_box(
         self, project_name: str, user_id: str, dev_box_name: str, **kwargs: Any
     ) -> AsyncLROPoller[JSON]:
+        # pylint: disable=line-too-long
         """Deletes a Dev Box.
 
         :param project_name: The DevCenter Project upon which to execute operations. Required.
@@ -2028,13 +2010,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         :type user_id: str
         :param dev_box_name: The name of a Dev Box. Required.
         :type dev_box_name: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns JSON object
         :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2133,7 +2108,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        _request = build_dev_center_start_dev_box_request(
+        _request = build_dev_boxes_start_dev_box_request(
             project_name=project_name,
             user_id=user_id,
             dev_box_name=dev_box_name,
@@ -2176,6 +2151,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
     async def begin_start_dev_box(
         self, project_name: str, user_id: str, dev_box_name: str, **kwargs: Any
     ) -> AsyncLROPoller[JSON]:
+        # pylint: disable=line-too-long
         """Starts a Dev Box.
 
         :param project_name: The DevCenter Project upon which to execute operations. Required.
@@ -2185,13 +2161,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         :type user_id: str
         :param dev_box_name: The name of a Dev Box. Required.
         :type dev_box_name: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns JSON object
         :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2291,7 +2260,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        _request = build_dev_center_stop_dev_box_request(
+        _request = build_dev_boxes_stop_dev_box_request(
             project_name=project_name,
             user_id=user_id,
             dev_box_name=dev_box_name,
@@ -2335,6 +2304,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
     async def begin_stop_dev_box(
         self, project_name: str, user_id: str, dev_box_name: str, *, hibernate: Optional[bool] = None, **kwargs: Any
     ) -> AsyncLROPoller[JSON]:
+        # pylint: disable=line-too-long
         """Stops a Dev Box.
 
         :param project_name: The DevCenter Project upon which to execute operations. Required.
@@ -2346,13 +2316,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         :type dev_box_name: str
         :keyword hibernate: Optional parameter to hibernate the dev box. Default value is None.
         :paramtype hibernate: bool
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns JSON object
         :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2451,7 +2414,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        _request = build_dev_center_restart_dev_box_request(
+        _request = build_dev_boxes_restart_dev_box_request(
             project_name=project_name,
             user_id=user_id,
             dev_box_name=dev_box_name,
@@ -2494,6 +2457,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
     async def begin_restart_dev_box(
         self, project_name: str, user_id: str, dev_box_name: str, **kwargs: Any
     ) -> AsyncLROPoller[JSON]:
+        # pylint: disable=line-too-long
         """Restarts a Dev Box.
 
         :param project_name: The DevCenter Project upon which to execute operations. Required.
@@ -2503,13 +2467,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         :type user_id: str
         :param dev_box_name: The name of a Dev Box. Required.
         :type dev_box_name: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns JSON object
         :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2604,8 +2561,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         :type user_id: str
         :param dev_box_name: The name of a Dev Box. Required.
         :type dev_box_name: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: JSON object
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2633,7 +2588,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        _request = build_dev_center_get_remote_connection_request(
+        _request = build_dev_boxes_get_remote_connection_request(
             project_name=project_name,
             user_id=user_id,
             dev_box_name=dev_box_name,
@@ -2722,7 +2677,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_dev_center_list_dev_box_actions_request(
+                _request = build_dev_boxes_list_dev_box_actions_request(
                     project_name=project_name,
                     user_id=user_id,
                     dev_box_name=dev_box_name,
@@ -2800,8 +2755,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         :type dev_box_name: str
         :param action_name: The name of an action that will take place on a Dev Box. Required.
         :type action_name: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: JSON object
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2836,7 +2789,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        _request = build_dev_center_get_dev_box_action_request(
+        _request = build_dev_boxes_get_dev_box_action_request(
             project_name=project_name,
             user_id=user_id,
             dev_box_name=dev_box_name,
@@ -2877,7 +2830,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         return cast(JSON, deserialized)  # type: ignore
 
     @distributed_trace_async
-    async def skip_dev_box_action(  # pylint: disable=inconsistent-return-statements
+    async def skip_action(  # pylint: disable=inconsistent-return-statements
         self, project_name: str, user_id: str, dev_box_name: str, action_name: str, **kwargs: Any
     ) -> None:
         """Skips an occurrence of an action.
@@ -2891,8 +2844,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         :type dev_box_name: str
         :param action_name: The name of an action that will take place on a Dev Box. Required.
         :type action_name: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2910,7 +2861,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_dev_center_skip_dev_box_action_request(
+        _request = build_dev_boxes_skip_action_request(
             project_name=project_name,
             user_id=user_id,
             dev_box_name=dev_box_name,
@@ -2924,7 +2875,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = kwargs.pop("stream", False)
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -2941,7 +2892,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
-    async def delay_dev_box_action(
+    async def delay_action(
         self,
         project_name: str,
         user_id: str,
@@ -2964,8 +2915,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         :type action_name: str
         :keyword delay_until: The time to delay the Dev Box action or actions until. Required.
         :paramtype delay_until: ~datetime.datetime
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: JSON object
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3000,7 +2949,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        _request = build_dev_center_delay_dev_box_action_request(
+        _request = build_dev_boxes_delay_action_request(
             project_name=project_name,
             user_id=user_id,
             dev_box_name=dev_box_name,
@@ -3042,9 +2991,10 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         return cast(JSON, deserialized)  # type: ignore
 
     @distributed_trace
-    def delay_all_dev_box_actions(
+    def delay_all_actions(
         self, project_name: str, user_id: str, dev_box_name: str, *, delay_until: datetime.datetime, **kwargs: Any
     ) -> AsyncIterable[JSON]:
+        # pylint: disable=line-too-long
         """Delays all actions.
 
         :param project_name: The DevCenter Project upon which to execute operations. Required.
@@ -3114,7 +3064,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_dev_center_delay_all_dev_box_actions_request(
+                _request = build_dev_boxes_delay_all_actions_request(
                     project_name=project_name,
                     user_id=user_id,
                     dev_box_name=dev_box_name,
@@ -3178,6 +3128,10 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
         return AsyncItemPaged(get_next, extract_data)
 
+
+class DeploymentEnvironmentsClientOperationsMixin(  # pylint: disable=name-too-long
+    DeploymentEnvironmentsClientMixinABC
+):
     @distributed_trace
     def list_all_environments(
         self, project_name: str, *, top: Optional[int] = None, **kwargs: Any
@@ -3243,7 +3197,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_dev_center_list_all_environments_request(
+                _request = build_deployment_environments_list_all_environments_request(
                     project_name=project_name,
                     top=top,
                     api_version=self._config.api_version,
@@ -3373,7 +3327,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_dev_center_list_environments_request(
+                _request = build_deployment_environments_list_environments_request(
                     project_name=project_name,
                     user_id=user_id,
                     top=top,
@@ -3447,8 +3401,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         :type user_id: str
         :param environment_name: The name of the environment. Required.
         :type environment_name: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: JSON object
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3500,7 +3452,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        _request = build_dev_center_get_environment_request(
+        _request = build_deployment_environments_get_environment_request(
             project_name=project_name,
             user_id=user_id,
             environment_name=environment_name,
@@ -3540,7 +3492,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         return cast(JSON, deserialized)  # type: ignore
 
     async def _create_or_update_environment_initial(
-        self, project_name: str, user_id: str, environment_name: str, body: Union[JSON, IO], **kwargs: Any
+        self, project_name: str, user_id: str, environment_name: str, body: Union[JSON, IO[bytes]], **kwargs: Any
     ) -> JSON:
         error_map = {
             401: ClientAuthenticationError,
@@ -3564,7 +3516,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         else:
             _json = body
 
-        _request = build_dev_center_create_or_update_environment_request(
+        _request = build_deployment_environments_create_or_update_environment_request(
             project_name=project_name,
             user_id=user_id,
             environment_name=environment_name,
@@ -3631,13 +3583,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns JSON object
         :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3714,7 +3659,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         project_name: str,
         user_id: str,
         environment_name: str,
-        body: IO,
+        body: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3729,17 +3674,10 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         :param environment_name: The name of the environment. Required.
         :type environment_name: str
         :param body: Represents an environment. Required.
-        :type body: IO
+        :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns JSON object
         :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3781,7 +3719,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
     @distributed_trace_async
     async def begin_create_or_update_environment(
-        self, project_name: str, user_id: str, environment_name: str, body: Union[JSON, IO], **kwargs: Any
+        self, project_name: str, user_id: str, environment_name: str, body: Union[JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[JSON]:
         """Creates or updates an environment.
 
@@ -3792,18 +3730,8 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         :type user_id: str
         :param environment_name: The name of the environment. Required.
         :type environment_name: str
-        :param body: Represents an environment. Is either a JSON type or a IO type. Required.
-        :type body: JSON or IO
-        :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
-         value is None.
-        :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+        :param body: Represents an environment. Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
         :return: An instance of AsyncLROPoller that returns JSON object
         :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3948,7 +3876,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
         cls: ClsType[Optional[JSON]] = kwargs.pop("cls", None)
 
-        _request = build_dev_center_delete_environment_request(
+        _request = build_deployment_environments_delete_environment_request(
             project_name=project_name,
             user_id=user_id,
             environment_name=environment_name,
@@ -3996,6 +3924,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
     async def begin_delete_environment(
         self, project_name: str, user_id: str, environment_name: str, **kwargs: Any
     ) -> AsyncLROPoller[JSON]:
+        # pylint: disable=line-too-long
         """Deletes an environment and all its associated resources.
 
         :param project_name: The DevCenter Project upon which to execute operations. Required.
@@ -4005,13 +3934,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         :type user_id: str
         :param environment_name: The name of the environment. Required.
         :type environment_name: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns JSON object
         :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4133,7 +4055,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_dev_center_list_catalogs_request(
+                _request = build_deployment_environments_list_catalogs_request(
                     project_name=project_name,
                     top=top,
                     api_version=self._config.api_version,
@@ -4203,8 +4125,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         :type project_name: str
         :param catalog_name: The name of the catalog. Required.
         :type catalog_name: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: JSON object
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4230,7 +4150,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        _request = build_dev_center_get_catalog_request(
+        _request = build_deployment_environments_get_catalog_request(
             project_name=project_name,
             catalog_name=catalog_name,
             api_version=self._config.api_version,
@@ -4272,6 +4192,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
     def list_environment_definitions(
         self, project_name: str, *, top: Optional[int] = None, **kwargs: Any
     ) -> AsyncIterable[JSON]:
+        # pylint: disable=line-too-long
         """Lists all environment definitions available for a project.
 
         :param project_name: The DevCenter Project upon which to execute operations. Required.
@@ -4335,7 +4256,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_dev_center_list_environment_definitions_request(
+                _request = build_deployment_environments_list_environment_definitions_request(
                     project_name=project_name,
                     top=top,
                     api_version=self._config.api_version,
@@ -4401,6 +4322,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
     def list_environment_definitions_by_catalog(
         self, project_name: str, catalog_name: str, *, top: Optional[int] = None, **kwargs: Any
     ) -> AsyncIterable[JSON]:
+        # pylint: disable=line-too-long
         """Lists all environment definitions available within a catalog.
 
         :param project_name: The DevCenter Project upon which to execute operations. Required.
@@ -4466,7 +4388,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_dev_center_list_environment_definitions_by_catalog_request(
+                _request = build_deployment_environments_list_environment_definitions_by_catalog_request(
                     project_name=project_name,
                     catalog_name=catalog_name,
                     top=top,
@@ -4533,6 +4455,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
     async def get_environment_definition(
         self, project_name: str, catalog_name: str, definition_name: str, **kwargs: Any
     ) -> JSON:
+        # pylint: disable=line-too-long
         """Get an environment definition from a catalog.
 
         :param project_name: The DevCenter Project upon which to execute operations. Required.
@@ -4541,8 +4464,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         :type catalog_name: str
         :param definition_name: The name of the environment definition. Required.
         :type definition_name: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: JSON object
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4596,7 +4517,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        _request = build_dev_center_get_environment_definition_request(
+        _request = build_deployment_environments_get_environment_definition_request(
             project_name=project_name,
             catalog_name=catalog_name,
             definition_name=definition_name,
@@ -4639,6 +4560,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
     def list_environment_types(
         self, project_name: str, *, top: Optional[int] = None, **kwargs: Any
     ) -> AsyncIterable[JSON]:
+        # pylint: disable=line-too-long
         """Lists all environment types configured for a project.
 
         :param project_name: The DevCenter Project upon which to execute operations. Required.
@@ -4679,7 +4601,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_dev_center_list_environment_types_request(
+                _request = build_deployment_environments_list_environment_types_request(
                     project_name=project_name,
                     top=top,
                     api_version=self._config.api_version,

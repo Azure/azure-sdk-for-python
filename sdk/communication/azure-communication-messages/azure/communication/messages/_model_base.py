@@ -324,17 +324,9 @@ def _get_type_alias_type(module_name: str, alias_name: str):
 
 
 def _get_model(module_name: str, model_name: str):
-    models = {
-        k: v
-        for k, v in sys.modules[module_name].__dict__.items()
-        if isinstance(v, type)
-    }
+    models = {k: v for k, v in sys.modules[module_name].__dict__.items() if isinstance(v, type)}
     module_end = module_name.rsplit(".", 1)[0]
-    models.update({
-        k: v
-        for k, v in sys.modules[module_end].__dict__.items()
-        if isinstance(v, type)
-    })
+    models.update({k: v for k, v in sys.modules[module_end].__dict__.items() if isinstance(v, type)})
     if isinstance(model_name, str):
         model_name = model_name.split(".")[-1]
     if model_name not in models:
@@ -550,7 +542,9 @@ class Model(_MyMutableMapping):
     @classmethod
     def _get_discriminator(cls, exist_discriminators) -> typing.Optional[str]:
         for v in cls.__dict__.values():
-            if isinstance(v, _RestField) and v._is_discriminator and v._rest_name not in exist_discriminators:  # pylint: disable=protected-access
+            if (
+                isinstance(v, _RestField) and v._is_discriminator and v._rest_name not in exist_discriminators
+            ):  # pylint: disable=protected-access
                 return v._rest_name  # pylint: disable=protected-access
         return None
 
@@ -581,8 +575,9 @@ class Model(_MyMutableMapping):
                 continue
             is_multipart_file_input = False
             try:
-                is_multipart_file_input = next(rf for rf in self._attr_to_rest_field.values()
-                                                if rf._rest_name == k)._is_multipart_file_input
+                is_multipart_file_input = next(
+                    rf for rf in self._attr_to_rest_field.values() if rf._rest_name == k
+                )._is_multipart_file_input
             except StopIteration:
                 pass
             result[k] = v if is_multipart_file_input else Model._as_dict_value(v, exclude_readonly=exclude_readonly)
@@ -593,15 +588,9 @@ class Model(_MyMutableMapping):
         if v is None or isinstance(v, _Null):
             return None
         if isinstance(v, (list, tuple, set)):
-            return type(v)(
-                Model._as_dict_value(x, exclude_readonly=exclude_readonly)
-                for x in v
-            )
+            return type(v)(Model._as_dict_value(x, exclude_readonly=exclude_readonly) for x in v)
         if isinstance(v, dict):
-            return {
-                dk: Model._as_dict_value(dv, exclude_readonly=exclude_readonly)
-                for dk, dv in v.items()
-            }
+            return {dk: Model._as_dict_value(dv, exclude_readonly=exclude_readonly) for dk, dv in v.items()}
         return v.as_dict(exclude_readonly=exclude_readonly) if hasattr(v, "as_dict") else v
 
 
@@ -669,8 +658,8 @@ def _get_deserialize_callable_from_annotation(  # pylint: disable=R0911, R0915, 
         deserializers = [
             _get_deserialize_callable_from_annotation(arg, module, rf)
             for arg in sorted(
-            annotation.__args__, key=lambda x: hasattr(x, "__name__") and x.__name__ == "str"  # pyright: ignore
-        )
+                annotation.__args__, key=lambda x: hasattr(x, "__name__") and x.__name__ == "str"  # pyright: ignore
+            )
         ]
 
         def _deserialize_with_union(deserializers, obj):
@@ -695,10 +684,7 @@ def _get_deserialize_callable_from_annotation(  # pylint: disable=R0911, R0915, 
             ):
                 if obj is None:
                     return obj
-                return {
-                    k: _deserialize(value_deserializer, v, module)
-                    for k, v in obj.items()
-                }
+                return {k: _deserialize(value_deserializer, v, module) for k, v in obj.items()}
 
             return functools.partial(
                 _deserialize_dict,
@@ -723,7 +709,7 @@ def _get_deserialize_callable_from_annotation(  # pylint: disable=R0911, R0915, 
 
                 entry_deserializers = [
                     _get_deserialize_callable_from_annotation(dt, module, rf)
-                        for dt in annotation.__args__  # pyright: ignore
+                    for dt in annotation.__args__  # pyright: ignore
                 ]
                 return functools.partial(_deserialize_multiple_sequence, entry_deserializers)
             deserializer = _get_deserialize_callable_from_annotation(
@@ -876,7 +862,9 @@ def rest_field(
         visibility=visibility,
         default=default,
         format=format,
-        is_multipart_file_input=is_multipart_file_input)
+        is_multipart_file_input=is_multipart_file_input,
+    )
+
 
 def rest_discriminator(
     *,

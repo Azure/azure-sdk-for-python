@@ -46,6 +46,7 @@ USAGE:
     1) DEVCENTER_ENDPOINT - the endpoint for your devcenter
 """
 
+
 def main():
 
     # Set the values of the dev center endpoint, client ID, and client secret of the AAD application as environment variables:
@@ -62,13 +63,9 @@ def main():
     target_project_name = list(client.list_projects(top=1))[0]["name"]
     target_catalog_name = list(client.list_catalogs(target_project_name, top=1))[0]["name"]
     target_environment_definition_name = list(
-        client.list_environment_definitions_by_catalog(
-            target_project_name, target_catalog_name, top=1
-        )
+        client.list_environment_definitions_by_catalog(target_project_name, target_catalog_name, top=1)
     )[0]["name"]
-    target_environment_type_name = list(
-        client.list_environment_types(target_project_name, top=1)
-    )[0]["name"]
+    target_environment_type_name = list(client.list_environment_types(target_project_name, top=1))[0]["name"]
 
     # Stand up a new environment
     environment = {
@@ -77,9 +74,7 @@ def main():
         "environmentType": target_environment_type_name,
     }
 
-    create_response = client.begin_create_or_update_environment(
-        target_project_name, "me", "DevTestEnv", environment
-    )
+    create_response = client.begin_create_or_update_environment(target_project_name, "me", "DevTestEnv", environment)
     environment_result = create_response.result()
 
     print(f"Provisioned environment with status {environment_result['provisioningState']}.")
