@@ -14,7 +14,7 @@ from azure.mgmt.servicelinker import ServiceLinkerManagementClient
     pip install azure-identity
     pip install azure-mgmt-servicelinker
 # USAGE
-    python patch_connector.py
+    python get_dapr_configurations.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -28,29 +28,13 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.connector.begin_update(
-        subscription_id="00000000-0000-0000-0000-000000000000",
-        resource_group_name="test-rg",
-        location="westus",
-        connector_name="connectorName",
-        parameters={
-            "properties": {
-                "authInfo": {
-                    "authType": "servicePrincipalSecret",
-                    "clientId": "name",
-                    "principalId": "id",
-                    "secret": "secret",
-                },
-                "targetService": {
-                    "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.DocumentDb/databaseAccounts/test-acc/mongodbDatabases/test-db",
-                    "type": "AzureResource",
-                },
-            }
-        },
-    ).result()
-    print(response)
+    response = client.linkers.list_dapr_configurations(
+        resource_uri="subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Web/sites/test-app",
+    )
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: specification/servicelinker/resource-manager/Microsoft.ServiceLinker/preview/2023-04-01-preview/examples/PatchConnector.json
+# x-ms-original-file: specification/servicelinker/resource-manager/Microsoft.ServiceLinker/preview/2023-04-01-preview/examples/GetDaprConfigurations.json
 if __name__ == "__main__":
     main()
