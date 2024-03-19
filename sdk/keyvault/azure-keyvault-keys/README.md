@@ -378,14 +378,13 @@ client.get_key("my-key", logging_enable=True)
 ## Next steps
 Several samples are available in the Azure SDK for Python GitHub repository.
 These provide example code for additional Key Vault scenarios:
-| File | Description |
-|-------------|-------------|
-| [hello_world.py][hello_world_sample] ([async version][hello_world_async_sample]) | create/get/update/delete keys |
-| [list_operations.py][list_operations_sample] ([async version][list_operations_async_sample]) | basic list operations for keys |
-| [backup_restore_operations.py][backup_operations_sample] ([async version][backup_operations_async_sample]) | back up and recover keys |
-| [recover_purge_operations.py][recover_purge_sample] ([async version][recover_purge_async_sample]) | recover and purge keys |
-| [key_rotation.py][key_rotation_sample] ([async version][key_rotation_async_sample]) | create/update key rotation policies and rotate keys on-demand |
-| [send_request.py][send_request_sample] | use the `send_request` client method |
+
+- [Create/get/update/delete keys][hello_world_sample] ([async version][hello_world_async_sample])
+- [Basic list operations for keys][list_operations_sample] ([async version][list_operations_async_sample])
+- [Back up and recover keys][backup_operations_sample] ([async version][backup_operations_async_sample])
+- [Recover and purge keys][recover_purge_sample] ([async version][recover_purge_async_sample])
+- [Create/update key rotation policies and rotate keys on-demand][key_rotation_sample] ([async version][key_rotation_async_sample])
+- [Use the `send_request` client method][send_request_sample]
 
 ###  Additional documentation
 For more extensive documentation on Azure Key Vault, see the

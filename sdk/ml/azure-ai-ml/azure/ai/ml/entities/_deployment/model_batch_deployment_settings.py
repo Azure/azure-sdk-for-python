@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Dict, Optional
+from typing import Any, Dict, Optional
 
 from azure.ai.ml._schema._deployment.batch.model_batch_deployment_settings import ModelBatchDeploymentSettingsSchema
 from azure.ai.ml._utils._experimental import experimental
@@ -62,7 +62,8 @@ class ModelBatchDeploymentSettings:
         environment_variables: Optional[Dict[str, str]] = None,
         error_threshold: Optional[int] = None,
         logging_level: Optional[str] = None,
-        **kwargs,  # pylint: disable=unused-argument
+        # pylint: disable=unused-argument
+        **kwargs: Any,
     ):
         self.mini_batch_size = mini_batch_size
         self.instance_count = instance_count
@@ -74,7 +75,7 @@ class ModelBatchDeploymentSettings:
         self.error_threshold = error_threshold
         self.logging_level = logging_level
 
-
-def _to_dict(self) -> Dict:
-    # pylint: disable=no-member
-    return ModelBatchDeploymentSettingsSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+    def _to_dict(self) -> Dict:
+        # pylint: disable=no-member
+        res: dict = ModelBatchDeploymentSettingsSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return res

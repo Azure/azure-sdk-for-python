@@ -316,16 +316,15 @@ certificate = certificate_client.get_certificate(certificate_name="cert-name", l
 
 ## Next steps
 Several samples are available in the Azure SDK for Python GitHub repository. These samples provide example code for additional Key Vault scenarios:
-| File | Description |
-|-------------|-------------|
-| [hello_world.py][hello_world_sample] ([async version][hello_world_async_sample]) | create/get/update/delete certificates |
-| [backup_restore_operations.py][backup_operations_sample] ([async version][backup_operations_async_sample]) | back up and recover certificates |
-| [import_certificate.py][import_certificate_sample] ([async version][import_certificate_async_sample]) | import PKCS#12 (PFX) and PEM-formatted certificates into Key Vault |
-| [list_operations.py][list_operations_sample] ([async version][list_operations_async_sample]) | list certificates |
-| [recover_purge_operations.py][recover_purge_operations_sample] ([async version][recover_purge_operations_async_sample]) | recover and purge certificates |
-| [issuers.py][issuers_sample] ([async version][issuers_async_sample]) | manage certificate issuers |
-| [contacts.py][contacts_sample] ([async version][contacts_async_sample]) | manage certificate contacts |
-| [parse_certificate.py][parse_sample] ([async version][parse_async_sample]) | extract a certificate's private key |
+
+- [Create/get/update/delete certificates][hello_world_sample] ([async version][hello_world_async_sample])
+- [Back up and recover certificates][backup_operations_sample] ([async version][backup_operations_async_sample])
+- [Import PKCS#12 (PFX) and PEM-formatted certificates into Key Vault][import_certificate_sample] ([async version][import_certificate_async_sample])
+- [List certificates][list_operations_sample] ([async version][list_operations_async_sample])
+- [Recover and purge certificates][recover_purge_operations_sample] ([async version][recover_purge_operations_async_sample])
+- [Manage certificate issuers][issuers_sample] ([async version][issuers_async_sample])
+- [Manage certificate contacts][contacts_sample] ([async version][contacts_async_sample])
+- [Extract a certificate's private key][parse_sample] ([async version][parse_async_sample])
 
 ###  Additional documentation
 For more extensive documentation on Azure Key Vault, see the [API reference documentation][reference_docs].

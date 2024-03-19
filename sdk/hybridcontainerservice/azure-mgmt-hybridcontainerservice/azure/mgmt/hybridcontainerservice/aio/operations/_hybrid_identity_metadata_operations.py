@@ -76,10 +76,10 @@ class HybridIdentityMetadataOperations:
         Creates the hybrid identity metadata proxy resource that facilitates the managed identity
         provisioning.
 
-        :param connected_cluster_resource_uri: The fully qualified Azure Resource manager identifier of
+        :param connected_cluster_resource_uri: The fully qualified Azure Resource Manager identifier of
          the connected cluster resource. Required.
         :type connected_cluster_resource_uri: str
-        :param body: Required.
+        :param body: Hybrid Identity Metadata resource definition. Required.
         :type body: ~azure.mgmt.hybridcontainerservice.models.HybridIdentityMetadata
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -99,10 +99,10 @@ class HybridIdentityMetadataOperations:
         Creates the hybrid identity metadata proxy resource that facilitates the managed identity
         provisioning.
 
-        :param connected_cluster_resource_uri: The fully qualified Azure Resource manager identifier of
+        :param connected_cluster_resource_uri: The fully qualified Azure Resource Manager identifier of
          the connected cluster resource. Required.
         :type connected_cluster_resource_uri: str
-        :param body: Required.
+        :param body: Hybrid Identity Metadata resource definition. Required.
         :type body: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -122,10 +122,11 @@ class HybridIdentityMetadataOperations:
         Creates the hybrid identity metadata proxy resource that facilitates the managed identity
         provisioning.
 
-        :param connected_cluster_resource_uri: The fully qualified Azure Resource manager identifier of
+        :param connected_cluster_resource_uri: The fully qualified Azure Resource Manager identifier of
          the connected cluster resource. Required.
         :type connected_cluster_resource_uri: str
-        :param body: Is either a HybridIdentityMetadata type or a IO type. Required.
+        :param body: Hybrid Identity Metadata resource definition. Is either a HybridIdentityMetadata
+         type or a IO type. Required.
         :type body: ~azure.mgmt.hybridcontainerservice.models.HybridIdentityMetadata or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -204,7 +205,7 @@ class HybridIdentityMetadataOperations:
 
         Get the hybrid identity metadata proxy resource.
 
-        :param connected_cluster_resource_uri: The fully qualified Azure Resource manager identifier of
+        :param connected_cluster_resource_uri: The fully qualified Azure Resource Manager identifier of
          the connected cluster resource. Required.
         :type connected_cluster_resource_uri: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -315,7 +316,7 @@ class HybridIdentityMetadataOperations:
 
         Deletes the hybrid identity metadata proxy resource.
 
-        :param connected_cluster_resource_uri: The fully qualified Azure Resource manager identifier of
+        :param connected_cluster_resource_uri: The fully qualified Azure Resource Manager identifier of
          the connected cluster resource. Required.
         :type connected_cluster_resource_uri: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -383,7 +384,7 @@ class HybridIdentityMetadataOperations:
 
         Lists the hybrid identity metadata proxy resource in a provisioned cluster instance.
 
-        :param connected_cluster_resource_uri: The fully qualified Azure Resource manager identifier of
+        :param connected_cluster_resource_uri: The fully qualified Azure Resource Manager identifier of
          the connected cluster resource. Required.
         :type connected_cluster_resource_uri: str
         :keyword callable cls: A custom type or function that will be passed the direct response

@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 import re
-from typing import Dict, Optional, Union
+from typing import Any, Dict, Optional, Union, cast
 
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
@@ -19,26 +19,28 @@ class SparkJobEntryMixin:
         )
     )
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any):
         self._entry = None
         self.entry = kwargs.get("entry", None)
 
     @property
-    def entry(self) -> Optional[SparkJobEntry]:
+    def entry(self) -> Optional[Union[Dict[str, str], SparkJobEntry]]:
         return self._entry
 
     @entry.setter
-    def entry(self, value: Union[Dict[str, str], SparkJobEntry, None]):
+    def entry(self, value: Optional[Union[Dict[str, str], SparkJobEntry]]) -> None:
         if isinstance(value, dict):
             if value.get("file", None):
-                self._entry = SparkJobEntry(entry=value.get("file"), type=SparkJobEntryType.SPARK_JOB_FILE_ENTRY)
+                _entry = cast(str, value.get("file"))
+                self._entry = SparkJobEntry(entry=_entry, type=SparkJobEntryType.SPARK_JOB_FILE_ENTRY)
                 return
             if value.get("class_name", None):
-                self._entry = SparkJobEntry(entry=value.get("class_name"), type=SparkJobEntryType.SPARK_JOB_CLASS_ENTRY)
+                _entry = cast(str, value.get("class_name"))
+                self._entry = SparkJobEntry(entry=_entry, type=SparkJobEntryType.SPARK_JOB_CLASS_ENTRY)
                 return
         self._entry = value
 
-    def _validate_entry(self):
+    def _validate_entry(self) -> None:
         if self.entry is None:
             # Entry is a required field for local component and when we load a remote job, component now is an arm_id,
             # entry is from node level returned from service. Entry is only None when we reference an existing

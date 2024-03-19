@@ -6,24 +6,24 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from ._alerts_suppression_rules_operations import AlertsSuppressionRulesOperations
+from ._automations_operations import AutomationsOperations
 from ._regulatory_compliance_standards_operations import RegulatoryComplianceStandardsOperations
 from ._regulatory_compliance_controls_operations import RegulatoryComplianceControlsOperations
 from ._regulatory_compliance_assessments_operations import RegulatoryComplianceAssessmentsOperations
 from ._sub_assessments_operations import SubAssessmentsOperations
-from ._automations_operations import AutomationsOperations
-from ._alerts_suppression_rules_operations import AlertsSuppressionRulesOperations
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "AlertsSuppressionRulesOperations",
+    "AutomationsOperations",
     "RegulatoryComplianceStandardsOperations",
     "RegulatoryComplianceControlsOperations",
     "RegulatoryComplianceAssessmentsOperations",
     "SubAssessmentsOperations",
-    "AutomationsOperations",
-    "AlertsSuppressionRulesOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

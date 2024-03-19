@@ -27,7 +27,7 @@ class Notification(RestTranslatableMixin):
         return RestNotificationSetting(email_on=self.email_on, emails=self.emails)
 
     @classmethod
-    def _from_rest_object(cls, obj: RestNotificationSetting) -> "Notification":
+    def _from_rest_object(cls, obj: RestNotificationSetting) -> Optional["Notification"]:
         if not obj:
             return None
         return Notification(email_on=obj.email_on, emails=obj.emails)

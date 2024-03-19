@@ -342,13 +342,18 @@ class KeyClient(AsyncKeyVaultClientBase):
         polling_interval = kwargs.pop("_polling_interval", None)
         if polling_interval is None:
             polling_interval = 2
-        deleted_key = DeletedKey._from_deleted_key_bundle(
-            await self._client.delete_key(self.vault_url, name, **kwargs)
+        pipeline_response, deleted_key_bundle = await self._client.delete_key(
+            vault_base_url=self.vault_url,
+            key_name=name,
+            cls=lambda pipeline_response, deserialized, _: (pipeline_response, deserialized),
+            **kwargs,
         )
+        deleted_key = DeletedKey._from_deleted_key_bundle(deleted_key_bundle)
 
         polling_method = AsyncDeleteRecoverPollingMethod(
             # no recovery ID means soft-delete is disabled, in which case we initialize the poller as finished
             finished=deleted_key.recovery_id is None,
+            pipeline_response=pipeline_response,
             command=partial(self.get_deleted_key, name=name, **kwargs),
             final_resource=deleted_key,
             interval=polling_interval,
@@ -541,13 +546,21 @@ class KeyClient(AsyncKeyVaultClientBase):
         polling_interval = kwargs.pop("_polling_interval", None)
         if polling_interval is None:
             polling_interval = 2
-        recovered_key = KeyVaultKey._from_key_bundle(
-            await self._client.recover_deleted_key(self.vault_url, name, **kwargs)
+        pipeline_response, recovered_key_bundle = await self._client.recover_deleted_key(
+            vault_base_url=self.vault_url,
+            key_name=name,
+            cls=lambda pipeline_response, deserialized, _: (pipeline_response, deserialized),
+            **kwargs,
         )
+        recovered_key = KeyVaultKey._from_key_bundle(recovered_key_bundle)
 
         command = partial(self.get_key, name=name, **kwargs)
         polling_method = AsyncDeleteRecoverPollingMethod(
-            command=command, final_resource=recovered_key, finished=False, interval=polling_interval
+            pipeline_response=pipeline_response,
+            command=command,
+            final_resource=recovered_key,
+            finished=False,
+            interval=polling_interval
         )
         await polling_method.run()
 

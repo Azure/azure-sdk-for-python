@@ -1,20 +1,47 @@
 # Release History
 
-## 11.5.0b1 (Unreleased)
+## 11.6.0b3 (Unreleased)
 
 ### Features Added
 
-- Added `semantic_query` for `Search` method.
-- Added back alias operations to `SearchIndexClient`
-- Added back `query_language`, `query_speller`, `semantic_fields` and `debug` for `Search` method.
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 11.6.0b2 (2024-03-05)
 
 ### Breaking Changes
+
+- `SearchIndexerSkillset`, `SearchField`, `SearchIndex`, `AnalyzeTextOptions`, `SearchResourceEncryptionKey`, `SynonymMap`, `SearchIndexerDataSourceConnection` are no longer subclasses of `_serialization.Model`.
+
+### Bugs Fixed
+
+- Fixed the issue that `SearchIndexerSkillset`, `SearchField`, `SearchIndex`, `AnalyzeTextOptions`, `SearchResourceEncryptionKey`, `SynonymMap`, `SearchIndexerDataSourceConnection` could not be serialized and `as_dict` did not work.
+- Fixed the issue that `context` was missing for `EntityRecognitionSkill` and `SentimentSkill`. #34623
+
+### Other Changes
+
+- Default to API version `V2024_03_01_PREVIEW`
+
+## 11.6.0b1 (2024-01-31)
+
+### Features Added
+
+- Added back `semantic_query` for `Search` method.
+- Added back alias operations to `SearchIndexClient`.
+- Added back `AzureOpenAIEmbeddingSkill`, `AzureOpenAIParameters` and `AzureOpenAIVectorizer`.
+- Added back `query_language`, `query_speller`, `semantic_fields` and `debug` for `Search` method.
+- Added `send_request` method for `SearchClient` & `SearchIndexClient` to run a network request using the client's existing pipeline.
 
 ### Bugs Fixed
 
 - Fixed the issue that we added unexpected `retrievable` property for `SearchField`.
 
 ### Other Changes
+
+- Python 3.7 is no longer supported. Please use Python version 3.8 or later.
 
 ## 11.4.0 (2023-10-13)
 
@@ -62,6 +89,9 @@
 - Renamed `query_caption_highlight` to `query_caption_highlight_enabled`.
 - `query_language` and `query_speller` are not available for `Search` method in this stable release.
 - `alias` operations are not available in this stable release.
+- `AzureOpenAIEmbeddingSkill`, `AzureOpenAIParameters` and `AzureOpenAIVectorizer` are not available in 11.4.0.
+- Renamed `vector_search_profile` to `vector_search_profile_name` in `SearchField`.
+- Renamed `SemanticSettings` to `SemanticSearch`.
 
 ### Other Changes
 

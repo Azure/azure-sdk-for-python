@@ -38,11 +38,10 @@ setup(
     url="https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity",
     keywords="azure, azure sdk",
     classifiers=[
-        "Development Status :: 5 - Production/Stable",
+        "Development Status :: 4 - Beta",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
@@ -58,11 +57,11 @@ setup(
             "azure",
         ]
     ),
-    python_requires=">=3.7",
+    python_requires=">=3.8",
     install_requires=[
-        "azure-core<2.0.0,>=1.23.0",
+        "azure-core>=1.23.0",
         "cryptography>=2.5",
-        "msal<2.0.0,>=1.24.0",
-        "msal-extensions<2.0.0,>=0.3.0",
+        "msal>=1.24.0",
+        "msal-extensions>=0.3.0",
     ],
 )

@@ -38,6 +38,7 @@ async def analyze_custom_documents(custom_model_id):
     # [START analyze_custom_documents]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence.aio import DocumentIntelligenceClient
+    from azure.ai.documentintelligence.models import AnalyzeResult
 
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
@@ -50,26 +51,30 @@ async def analyze_custom_documents(custom_model_id):
         poller = await document_intelligence_client.begin_analyze_document(
             model_id=model_id, analyze_request=f, content_type="application/octet-stream"
         )
-    result = await poller.result()
+    result: AnalyzeResult = await poller.result()
 
-    for idx, document in enumerate(result.documents):
-        print(f"--------Analyzing document #{idx + 1}--------")
-        print(f"Document has type {document.doc_type}")
-        print(f"Document has document type confidence {document.confidence}")
-        print(f"Document was analyzed with model with ID {result.model_id}")
-        for name, field in document.fields.items():
-            field_value = field.get("valueString") if field.get("valueString") else field.content
-            print(
-                f"......found field of type '{field.type}' with value '{field_value}' and with confidence {field.confidence}"
-            )
+    if result.documents:
+        for idx, document in enumerate(result.documents):
+            print(f"--------Analyzing document #{idx + 1}--------")
+            print(f"Document has type {document.doc_type}")
+            print(f"Document has document type confidence {document.confidence}")
+            print(f"Document was analyzed with model with ID {result.model_id}")
+            if document.fields:
+                for name, field in document.fields.items():
+                    field_value = field.get("valueString") if field.get("valueString") else field.content
+                    print(
+                        f"......found field of type '{field.type}' with value '{field_value}' and with confidence {field.confidence}"
+                    )
 
     # iterate over tables, lines, and selection marks on each page
     for page in result.pages:
         print(f"\nLines found on page {page.page_number}")
-        for line in page.lines:
-            print(f"...Line '{line.content}'")
-        for word in page.words:
-            print(f"...Word '{word.content}' has a confidence of {word.confidence}")
+        if page.lines:
+            for line in page.lines:
+                print(f"...Line '{line.content}'")
+        if page.words:
+            for word in page.words:
+                print(f"...Word '{word.content}' has a confidence of {word.confidence}")
         if page.selection_marks:
             print(f"\nSelection marks found on page {page.page_number}")
             for selection_mark in page.selection_marks:
@@ -77,12 +82,14 @@ async def analyze_custom_documents(custom_model_id):
                     f"...Selection mark is '{selection_mark.state}' and has a confidence of {selection_mark.confidence}"
                 )
 
-    for i, table in enumerate(result.tables):
-        print(f"\nTable {i + 1} can be found on page:")
-        for region in table.bounding_regions:
-            print(f"...{region.page_number}")
-        for cell in table.cells:
-            print(f"...Cell[{cell.row_index}][{cell.column_index}] has text '{cell.content}'")
+    if result.tables:
+        for i, table in enumerate(result.tables):
+            print(f"\nTable {i + 1} can be found on page:")
+            if table.bounding_regions:
+                for region in table.bounding_regions:
+                    print(f"...{region.page_number}")
+            for cell in table.cells:
+                print(f"...Cell[{cell.row_index}][{cell.column_index}] has text '{cell.content}'")
     print("-----------------------------------")
     # [END analyze_custom_documents]
 

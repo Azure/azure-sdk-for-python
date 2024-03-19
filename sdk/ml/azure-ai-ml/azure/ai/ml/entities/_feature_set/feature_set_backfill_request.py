@@ -6,7 +6,7 @@
 
 from os import PathLike
 from pathlib import Path
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 from azure.ai.ml._schema._feature_set.feature_set_backfill_schema import FeatureSetBackfillSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
@@ -47,8 +47,8 @@ class FeatureSetBackfillRequest(RestTranslatableMixin):
         spark_configuration: Optional[Dict[str, str]] = None,
         data_status: Optional[List[str]] = None,
         job_id: Optional[str] = None,
-        **kwargs,
-    ) -> None:
+        **kwargs: Any,
+    ):
         self.name = name
         self.version = version
         self.feature_window = feature_window
@@ -61,7 +61,7 @@ class FeatureSetBackfillRequest(RestTranslatableMixin):
 
     @classmethod
     # pylint: disable=unused-argument
-    def _resolve_cls_and_type(cls, data, params_override):
+    def _resolve_cls_and_type(cls, data: Dict, params_override: Tuple) -> Tuple:
         """Resolve the class to use for deserializing the data. Return current class if no override is provided.
 
         :param data: Data to deserialize.
@@ -79,7 +79,7 @@ class FeatureSetBackfillRequest(RestTranslatableMixin):
         data: Optional[Dict] = None,
         yaml_path: Optional[Union[PathLike, str]] = None,
         params_override: Optional[list] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> "FeatureSetBackfillRequest":
         data = data or {}
         params_override = params_override or []

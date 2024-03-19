@@ -35,6 +35,7 @@ async def sample_manage_classifiers():
         AzureBlobContentSource,
         ClassifierDocumentTypeDetails,
         BuildDocumentClassifierRequest,
+        DocumentClassifierDetails,
     )
 
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
@@ -64,14 +65,15 @@ async def sample_manage_classifiers():
                 description="IRS document classifier",
             )
         )
-        classifier = await poller.result()
+        classifier: DocumentClassifierDetails = await poller.result()
         print(f"Built classifier with ID: {classifier.classifier_id}")
         print(f"API version used to build the classifier model: {classifier.api_version}")
         print(f"Classifier description: {classifier.description}")
         print(f"Document classes used for training the model:")
-        for doc_type, details in classifier                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         .doc_types.items():
+        for doc_type, details in classifier.doc_types.items():
             print(f"Document type: {doc_type}")
-            print(f"Container source: {details.azure_blob_source.container_url}\n")
+            if details.azure_blob_source:
+                print(f"Container source: {details.azure_blob_source.container_url}\n")
         # [END build_classifier]
 
         # Next, we get a paged list of all of our document classifiers
@@ -97,11 +99,12 @@ async def sample_manage_classifiers():
         # [END delete_document_classifier]
 
         from azure.core.exceptions import ResourceNotFoundError
+
         try:
             await document_intelligence_admin_client.get_classifier(classifier_id=my_classifier.classifier_id)
         except ResourceNotFoundError:
             print(f"Successfully deleted classifier with ID {my_classifier.classifier_id}")
-    
+
 
 async def main():
     await sample_manage_classifiers()

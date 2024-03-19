@@ -1,13 +1,19 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+from typing import Any, Dict, List, Union
+
+from azure.ai.ml.entities._builders import BaseNode
 from azure.ai.ml.entities._builders.parallel_for import ParallelFor
+from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput
 
 
-def parallel_for(*, body, items, **kwargs):
+def parallel_for(
+    *, body: BaseNode, items: Union[List, Dict, str, PipelineInput, NodeOutput], **kwargs: Any
+) -> ParallelFor:
     """Build a parallel for loop by specifying the loop body and input items.
 
-    .. remarks::
+    .. note::
         The following example shows how to use parallel for API to create a pipeline with parallel for node.
 
         .. code-block:: python
@@ -53,7 +59,7 @@ def parallel_for(*, body, items, **kwargs):
     :rtype: ~azure.ai.ml.entities._builders.parallel_for.ParallelFor
     """
     parallel_for_node = ParallelFor(
-        body=body,
+        body=body,  # type: ignore[arg-type]
         items=items,
         _from_component_func=True,
         **kwargs,

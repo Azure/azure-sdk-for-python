@@ -42,15 +42,15 @@ def get_audience(authority):
 def get_credential(authority, **kwargs):
     if kwargs.pop("is_async", False):
         return AsyncClientSecretCredential(
-            tenant_id=os.environ.get("APPCONFIGURATION_TENANT_ID"),
-            client_id=os.environ.get("APPCONFIGURATION_CLIENT_ID"),
-            client_secret=os.environ.get("APPCONFIGURATION_CLIENT_SECRET"),
+            tenant_id=os.environ["APPCONFIGURATION_TENANT_ID"],
+            client_id=os.environ["APPCONFIGURATION_CLIENT_ID"],
+            client_secret=os.environ["APPCONFIGURATION_CLIENT_SECRET"],
             authority=authority,
         )
     return ClientSecretCredential(
-        tenant_id=os.environ.get("APPCONFIGURATION_TENANT_ID"),
-        client_id=os.environ.get("APPCONFIGURATION_CLIENT_ID"),
-        client_secret=os.environ.get("APPCONFIGURATION_CLIENT_SECRET"),
+        tenant_id=os.environ["APPCONFIGURATION_TENANT_ID"],
+        client_id=os.environ["APPCONFIGURATION_CLIENT_ID"],
+        client_secret=os.environ["APPCONFIGURATION_CLIENT_SECRET"],
         authority=authority,
     )
 

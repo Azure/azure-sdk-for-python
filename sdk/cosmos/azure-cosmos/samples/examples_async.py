@@ -4,7 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 import asyncio
-from azure.cosmos import exceptions, CosmosClient, PartitionKey
+from azure.cosmos import exceptions, PartitionKey
 from azure.cosmos.aio import CosmosClient
 
 import os

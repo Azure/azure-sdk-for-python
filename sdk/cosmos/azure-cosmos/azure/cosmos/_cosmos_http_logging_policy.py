@@ -76,7 +76,7 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
     def on_response(
         self,
         request: PipelineRequest[HTTPRequestType],
-        response: PipelineResponse[HTTPRequestType, HTTPResponseType],
+        response: PipelineResponse[HTTPRequestType, HTTPResponseType],  # type: ignore[override]
     ) -> None:
         super().on_response(request, response)
         if self._enable_diagnostics_logging:
@@ -84,7 +84,10 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
             options = response.context.options
             logger = request.context.setdefault("logger", options.pop("logger", self.logger))
             try:
-                logger.info("Elapsed time in seconds: {}".format(time.time() - request.context.get("start_time")))
+                if "start_time" in request.context:
+                    logger.info("Elapsed time in seconds: {}".format(time.time() - request.context["start_time"]))
+                else:
+                    logger.info("Elapsed time in seconds: unknown")
                 if http_response.status_code >= 400:
                     logger.info("Response error message: %r", _format_error(http_response.text()))
             except Exception as err:  # pylint: disable=broad-except

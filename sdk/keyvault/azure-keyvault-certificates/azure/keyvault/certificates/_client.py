@@ -110,8 +110,12 @@ class CertificateClient(KeyVaultClientBase):
             tags=kwargs.pop("tags", None),
         )
 
-        cert_bundle = self._client.create_certificate(
-            vault_base_url=self.vault_url, certificate_name=certificate_name, parameters=parameters, **kwargs
+        pipeline_response, cert_bundle = self._client.create_certificate(
+            vault_base_url=self.vault_url,
+            certificate_name=certificate_name,
+            parameters=parameters,
+            cls=lambda pipeline_response, deserialized, _: (pipeline_response, deserialized),
+            **kwargs,
         )
 
         create_certificate_operation = CertificateOperation._from_certificate_operation_bundle(cert_bundle)
@@ -121,7 +125,9 @@ class CertificateClient(KeyVaultClientBase):
         get_certificate_command = partial(self.get_certificate, certificate_name=certificate_name, **kwargs)
 
         create_certificate_polling = CreateCertificatePoller(
-            get_certificate_command=get_certificate_command, interval=polling_interval
+            pipeline_response=pipeline_response,
+            get_certificate_command=get_certificate_command,
+            interval=polling_interval
         )
 
         def no_op(*_, **__) -> Any:  # The deserialization callback is ignored based on polling implementation
@@ -217,14 +223,18 @@ class CertificateClient(KeyVaultClientBase):
         polling_interval = kwargs.pop("_polling_interval", None)
         if polling_interval is None:
             polling_interval = 2
-        deleted_cert_bundle = self._client.delete_certificate(
-            vault_base_url=self.vault_url, certificate_name=certificate_name, **kwargs
+        pipeline_response, deleted_cert_bundle = self._client.delete_certificate(
+            vault_base_url=self.vault_url,
+            certificate_name=certificate_name,
+            cls=lambda pipeline_response, deserialized, _: (pipeline_response, deserialized),
+            **kwargs,
         )
         deleted_cert = DeletedCertificate._from_deleted_certificate_bundle(deleted_cert_bundle)
 
         polling_method = DeleteRecoverPollingMethod(
             # no recovery ID means soft-delete is disabled, in which case we initialize the poller as finished
             finished=deleted_cert.recovery_id is None,
+            pipeline_response=pipeline_response,
             command=partial(self.get_deleted_certificate, certificate_name=certificate_name, **kwargs),
             final_resource=deleted_cert,
             interval=polling_interval,
@@ -312,13 +322,20 @@ class CertificateClient(KeyVaultClientBase):
         if polling_interval is None:
             polling_interval = 2
 
-        recovered_cert_bundle = self._client.recover_deleted_certificate(
-            vault_base_url=self.vault_url, certificate_name=certificate_name, **kwargs
+        pipeline_response, recovered_cert_bundle = self._client.recover_deleted_certificate(
+            vault_base_url=self.vault_url,
+            certificate_name=certificate_name,
+            cls=lambda pipeline_response, deserialized, _: (pipeline_response, deserialized),
+            **kwargs,
         )
         recovered_certificate = KeyVaultCertificate._from_certificate_bundle(recovered_cert_bundle)
         command = partial(self.get_certificate, certificate_name=certificate_name, **kwargs)
         polling_method = DeleteRecoverPollingMethod(
-            finished=False, command=command, final_resource=recovered_certificate, interval=polling_interval
+            finished=False,
+            pipeline_response=pipeline_response,
+            command=command,
+            final_resource=recovered_certificate,
+            interval=polling_interval
         )
 
         return KeyVaultOperationPoller(polling_method)

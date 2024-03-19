@@ -30,12 +30,15 @@ from azure.monitor.opentelemetry._constants import (
     DISABLE_LOGGING_ARG,
     DISABLE_METRICS_ARG,
     DISABLE_TRACING_ARG,
+    DISTRO_VERSION_ARG,
     INSTRUMENTATION_OPTIONS_ARG,
     LOGGER_NAME_ARG,
     RESOURCE_ARG,
     SAMPLING_RATIO_ARG,
+    SPAN_PROCESSORS_ARG,
 )
 from azure.monitor.opentelemetry._types import ConfigurationValue
+from azure.monitor.opentelemetry._version import VERSION
 
 
 _INVALID_FLOAT_MESSAGE = "Value of %s must be a float. Defaulting to %s: %s"
@@ -55,6 +58,7 @@ def _get_configurations(**kwargs) -> Dict[str, ConfigurationValue]:
 
     for key, val in kwargs.items():
         configurations[key] = val
+    configurations[DISTRO_VERSION_ARG] = VERSION
 
     _default_disable_logging(configurations)
     _default_disable_metrics(configurations)
@@ -63,6 +67,7 @@ def _get_configurations(**kwargs) -> Dict[str, ConfigurationValue]:
     _default_resource(configurations)
     _default_sampling_ratio(configurations)
     _default_instrumentation_options(configurations)
+    _default_span_processors(configurations)
 
     return configurations
 
@@ -136,6 +141,11 @@ def _default_instrumentation_options(configurations):
         merged_instrumentation_options[lib_name] = options
 
     configurations[INSTRUMENTATION_OPTIONS_ARG] = merged_instrumentation_options
+
+
+def _default_span_processors(configurations):
+    if SPAN_PROCESSORS_ARG not in configurations:
+        configurations[SPAN_PROCESSORS_ARG] = []
 
 
 def _get_otel_disabled_instrumentations():

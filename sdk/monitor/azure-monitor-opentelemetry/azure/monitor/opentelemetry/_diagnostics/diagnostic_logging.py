@@ -51,7 +51,7 @@ class AzureDiagnosticLogging:
                         + '"message":"%(message)s", '
                         + '"properties":{'
                         + '"operation":"Startup", '
-                        + f'"sitename":"{_SITE_NAME}", '
+                        + f'"siteName":"{_SITE_NAME}", '
                         + f'"ikey":"{_get_customer_ikey_from_env_var()}", '
                         + f'"extensionVersion":"{_EXTENSION_VERSION}", '
                         + f'"sdkVersion":"{VERSION}", '

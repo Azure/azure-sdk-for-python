@@ -595,6 +595,10 @@ class RouterWorkerValidator(object):
             assert entity.state == RouterWorkerState.DRAINING or entity.state == RouterWorkerState.INACTIVE
 
     @staticmethod
+    def validate_max_concurrent_offers(entity, max_concurrent_offers, **kwargs):
+        assert entity.max_concurrent_offers == max_concurrent_offers
+
+    @staticmethod
     def validate_worker(worker, **kwargs):
         if "identifier" in kwargs:
             RouterWorkerValidator.validate_id(worker, kwargs.pop("identifier"))
@@ -616,6 +620,9 @@ class RouterWorkerValidator(object):
 
         if "available_for_offers" in kwargs:
             RouterWorkerValidator.validate_worker_availability(worker, kwargs.pop("available_for_offers"))
+
+        if "max_concurrent_offers" in kwargs:
+            RouterWorkerValidator.validate_max_concurrent_offers(worker, kwargs.pop("max_concurrent_offers"))
 
 
 class RouterJobValidator(object):

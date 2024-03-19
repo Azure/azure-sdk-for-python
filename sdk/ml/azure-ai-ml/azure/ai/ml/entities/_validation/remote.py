@@ -46,7 +46,7 @@ class PreflightResource(msrest.serialization.Model):
         "properties": {"key": "properties", "type": "object"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: typing.Any):
         super(PreflightResource, self).__init__(**kwargs)
         self.name = kwargs.get("name", None)
         self.type = kwargs.get("type", None)
@@ -77,7 +77,7 @@ class ValidationTemplateRequest(msrest.serialization.Model):
         },
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: typing.Any):
         super(ValidationTemplateRequest, self).__init__(**kwargs)
         self._schema = kwargs.get("_schema", None)
         self.content_version = kwargs.get("content_version", None)
@@ -97,7 +97,7 @@ class RemoteValidatableMixin(RestTranslatableMixin):
         """
         raise NotImplementedError()
 
-    def _get_resource_name_version(self) -> typing.Tuple[str, str]:
+    def _get_resource_name_version(self) -> typing.Tuple:
         """Return resource name and version to be used in remote validation.
 
         Should be overridden by subclass.

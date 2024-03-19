@@ -4,12 +4,14 @@
 
 import functools
 import os
+from typing import Any, Optional, Union
 
+from azure.core.credentials import AccessToken
 from azure.core.pipeline.transport import HttpRequest
 
-from ._AzureMLSparkOnBehalfOfCredential import _AzureMLSparkOnBehalfOfCredential
 from .._internal.managed_identity_base import ManagedIdentityBase
 from .._internal.managed_identity_client import ManagedIdentityClient
+from ._AzureMLSparkOnBehalfOfCredential import _AzureMLSparkOnBehalfOfCredential
 
 
 class AzureMLOnBehalfOfCredential(object):
@@ -23,14 +25,16 @@ class AzureMLOnBehalfOfCredential(object):
     """
     # pylint: enable=line-too-long
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any):
         provider_type = os.environ.get("AZUREML_DATAPREP_TOKEN_PROVIDER")
+        self._credential: Union[_AzureMLSparkOnBehalfOfCredential, _AzureMLOnBehalfOfCredential]
+
         if provider_type == "sparkobo":  # cspell:disable-line
             self._credential = _AzureMLSparkOnBehalfOfCredential(**kwargs)
         else:
             self._credential = _AzureMLOnBehalfOfCredential(**kwargs)
 
-    def get_token(self, *scopes, **kwargs):
+    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         """Request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients.
@@ -43,11 +47,11 @@ class AzureMLOnBehalfOfCredential(object):
 
         return self._credential.get_token(*scopes, **kwargs)
 
-    def __enter__(self):
+    def __enter__(self) -> "AzureMLOnBehalfOfCredential":
         self._credential.__enter__()
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, *args: Any) -> None:
         self._credential.__exit__(*args)
 
     def close(self):
@@ -84,7 +88,7 @@ def _get_client_args(**kwargs):
 
 
 def _get_request(url, resource):
-    # type: (str, str, dict) -> HttpRequest
+    # type: (str, str) -> HttpRequest
     request = HttpRequest("GET", url)
     request.format_parameters(dict({"resource": resource}))
     return request

@@ -46,7 +46,7 @@ Then for common search index operations:
 
 ## Prerequisites
 
-* Python 3.7 or later is required to use this package
+* Python 3.8 or later is required to use this package
 * You must have an [Azure subscription](https://azure.microsoft.com/free/)
 * You must create the "Hotels" sample index [in the Azure Portal](https://docs.microsoft.com/azure/search/search-get-started-portal)
 

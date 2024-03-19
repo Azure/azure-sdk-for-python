@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+from enum import Enum
 import json
 import os
 import platform
@@ -23,6 +24,10 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _REQ_RETRY_NAME,
     _REQ_SUCCESS_NAME,
     _REQ_THROTTLE_NAME,
+    _WEBSITE_HOME_STAMPNAME,
+    _WEBSITE_HOSTNAME,
+    _WEBSITE_SITE_NAME,
+    _AKS_ARM_NAMESPACE_ID,
 )
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     _REQUESTS_MAP_LOCK,
@@ -38,7 +43,12 @@ _AIMS_API_VERSION = "api-version=2017-12-01"
 _AIMS_FORMAT = "format=json"
 
 _ENDPOINT_TYPES = ["breeze"]
-_RP_NAMES = ["appsvc", "functions", "vm", "unknown"]
+class _RP_Names(Enum):
+    APP_SERVICE = "appsvc"
+    FUNCTIONS = "functions"
+    AKS = "aks"
+    VM = "vm"
+    UNKNOWN = "unknown"
 
 _HOST_PATTERN = re.compile('^https?://(?:www\\.)?([^/.]+)')
 
@@ -53,6 +63,7 @@ class _StatsbeatFeature:
     DISK_RETRY = 1
     AAD = 2
     CUSTOM_EVENTS_EXTENSION = 4
+    DISTRO = 8
 
 
 class _AttachTypes:
@@ -65,12 +76,12 @@ class _AttachTypes:
 class _StatsbeatMetrics:
 
     _COMMON_ATTRIBUTES: Dict[str, Any] = {
-        "rp": _RP_NAMES[3],
+        "rp": _RP_Names.UNKNOWN.value,
         "attach": _AttachTypes.MANUAL,
         "cikey": None,
         "runtimeVersion": platform.python_version(),
         "os": platform.system(),
-        "language": "Python",
+        "language": "python",
         "version": VERSION
     }
 
@@ -97,6 +108,7 @@ class _StatsbeatMetrics:
         disable_offline_storage: bool,
         long_interval_threshold: int,
         has_credential: bool,
+        distro_version: str = "",
     ) -> None:
         self._ikey = instrumentation_key
         self._feature = _StatsbeatFeature.NONE
@@ -104,6 +116,8 @@ class _StatsbeatMetrics:
             self._feature |= _StatsbeatFeature.DISK_RETRY
         if has_credential:
             self._feature |= _StatsbeatFeature.AAD
+        if distro_version:
+            self._feature |= _StatsbeatFeature.DISTRO
         if get_statsbeat_custom_events_feature_set():
             self._feature |= _StatsbeatFeature.CUSTOM_EVENTS_EXTENSION
         self._ikey = instrumentation_key
@@ -155,28 +169,32 @@ class _StatsbeatMetrics:
         rpId = ''
         os_type = platform.system()
         # rp, rpId
-        if os.environ.get("WEBSITE_SITE_NAME") is not None:
+        if _utils._is_on_app_service():
             # Web apps
-            rp = _RP_NAMES[0]
+            rp = _RP_Names.APP_SERVICE.value
             rpId = '{}/{}'.format(
-                        os.environ.get("WEBSITE_SITE_NAME"),
-                        os.environ.get("WEBSITE_HOME_STAMPNAME", '')
+                        os.environ.get(_WEBSITE_SITE_NAME),
+                        os.environ.get(_WEBSITE_HOME_STAMPNAME, '')
             )
-        elif os.environ.get("FUNCTIONS_WORKER_RUNTIME") is not None:
+        elif _utils._is_on_functions():
             # Function apps
-            rp = _RP_NAMES[1]
-            rpId = os.environ.get("WEBSITE_HOSTNAME", '')
+            rp = _RP_Names.FUNCTIONS.value
+            rpId = os.environ.get(_WEBSITE_HOSTNAME, '')
+        elif _utils._is_on_aks():
+            # AKS
+            rp = _RP_Names.AKS.value
+            rpId = os.environ.get(_AKS_ARM_NAMESPACE_ID, '')
         elif self._vm_retry and self._get_azure_compute_metadata():
             # VM
-            rp = _RP_NAMES[2]
+            rp = _RP_Names.VM.value
             rpId = '{}/{}'.format(
                         self._vm_data.get("vmId", ''),
                         self._vm_data.get("subscriptionId", ''))
             os_type = self._vm_data.get("osType", '')
         else:
             # Not in any rp or VM metadata failed
-            rp = _RP_NAMES[3]
-            rpId = _RP_NAMES[3]
+            rp = _RP_Names.UNKNOWN.value
+            rpId = _RP_Names.UNKNOWN.value
 
         _StatsbeatMetrics._COMMON_ATTRIBUTES["rp"] = rp
         _StatsbeatMetrics._COMMON_ATTRIBUTES["os"] = os_type or platform.system()

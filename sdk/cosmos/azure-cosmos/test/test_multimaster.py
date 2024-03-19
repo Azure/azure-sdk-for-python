@@ -1,52 +1,55 @@
+# The MIT License (MIT)
+# Copyright (c) Microsoft Corporation. All rights reserved.
+
 import unittest
 import uuid
-import azure.cosmos.cosmos_client as cosmos_client
+
 import pytest
+
 import azure.cosmos._constants as constants
-from azure.cosmos.http_constants import HttpHeaders
-from azure.cosmos import _retry_utility
+import azure.cosmos.cosmos_client as cosmos_client
 import test_config
-from azure.cosmos.partition_key import PartitionKey
+from azure.cosmos import _retry_utility
+from azure.cosmos.http_constants import HttpHeaders
 
-pytestmark = pytest.mark.cosmosEmulator
 
-@pytest.mark.usefixtures("teardown")
-class MultiMasterTests(unittest.TestCase):
-
-    host = test_config._test_config.host
-    masterKey = test_config._test_config.masterKey
-    connectionPolicy = test_config._test_config.connectionPolicy
+@pytest.mark.cosmosEmulator
+class TestMultiMaster(unittest.TestCase):
+    host = test_config.TestConfig.host
+    masterKey = test_config.TestConfig.masterKey
+    connectionPolicy = test_config.TestConfig.connectionPolicy
     counter = 0
     last_headers = []
+    configs = test_config.TestConfig
 
     def test_tentative_writes_header_present(self):
         self.last_headers = []
         self.EnableMultipleWritableLocations = True
         self._validate_tentative_write_headers()
-        
+
     def test_tentative_writes_header_not_present(self):
         self.last_headers = []
         self.EnableMultipleWritableLocations = False
         self._validate_tentative_write_headers()
 
-    
     def _validate_tentative_write_headers(self):
         self.OriginalExecuteFunction = _retry_utility.ExecuteFunction
         _retry_utility.ExecuteFunction = self._MockExecuteFunction
 
-        connectionPolicy = MultiMasterTests.connectionPolicy
+        connectionPolicy = TestMultiMaster.connectionPolicy
         connectionPolicy.UseMultipleWriteLocations = True
-        client = cosmos_client.CosmosClient(MultiMasterTests.host, MultiMasterTests.masterKey, consistency_level="Session",
+        client = cosmos_client.CosmosClient(TestMultiMaster.host, TestMultiMaster.masterKey,
+                                            consistency_level="Session",
                                             connection_policy=connectionPolicy)
 
-        created_db = client.create_database(id='multi_master_tests ' + str(uuid.uuid4()))
+        created_db = client.get_database_client(self.configs.TEST_DATABASE_ID)
 
-        created_collection = created_db.create_container(id='test_db', partition_key=PartitionKey(path='/pk', kind='Hash'))
+        created_collection = created_db.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
 
-        document_definition = { 'id': 'doc' + str(uuid.uuid4()),
-                                'pk': 'pk',
-                                'name': 'sample document',
-                                'operation': 'insertion'}
+        document_definition = {'id': 'doc' + str(uuid.uuid4()),
+                               'pk': 'pk',
+                               'name': 'sample document',
+                               'operation': 'insertion'}
         created_document = created_collection.create_item(body=document_definition)
 
         sproc_definition = {
@@ -79,41 +82,30 @@ class MultiMasterTests(unittest.TestCase):
             partition_key='pk'
         )
 
-        client.delete_database(created_db)
-
         print(len(self.last_headers))
         is_allow_tentative_writes_set = self.EnableMultipleWritableLocations is True
 
-        # Create Database
+        # Create Document - Makes one initial call to fetch collection
         self.assertEqual(self.last_headers[0], is_allow_tentative_writes_set)
-
-        # Create Container
         self.assertEqual(self.last_headers[1], is_allow_tentative_writes_set)
 
-        # Create Document - Makes one initial call to fetch collection
-        self.assertEqual(self.last_headers[2], is_allow_tentative_writes_set)
-        self.assertEqual(self.last_headers[3], is_allow_tentative_writes_set)
-
         # Create Stored procedure
-        self.assertEqual(self.last_headers[4], is_allow_tentative_writes_set)
+        self.assertEqual(self.last_headers[2], is_allow_tentative_writes_set)
 
         # Execute Stored procedure
-        self.assertEqual(self.last_headers[5], is_allow_tentative_writes_set)
+        self.assertEqual(self.last_headers[3], is_allow_tentative_writes_set)
 
         # Read Document
-        self.assertEqual(self.last_headers[6], is_allow_tentative_writes_set)
+        self.assertEqual(self.last_headers[4], is_allow_tentative_writes_set)
 
         # Replace Document
-        self.assertEqual(self.last_headers[7], is_allow_tentative_writes_set)
+        self.assertEqual(self.last_headers[5], is_allow_tentative_writes_set)
 
         # Upsert Document
-        self.assertEqual(self.last_headers[8], is_allow_tentative_writes_set)
+        self.assertEqual(self.last_headers[6], is_allow_tentative_writes_set)
 
         # Delete Document
-        self.assertEqual(self.last_headers[9], is_allow_tentative_writes_set)
-
-        # Delete Database
-        self.assertEqual(self.last_headers[10], is_allow_tentative_writes_set)
+        self.assertEqual(self.last_headers[7], is_allow_tentative_writes_set)
 
         _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
 

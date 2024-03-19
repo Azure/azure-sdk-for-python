@@ -1,14 +1,65 @@
 # Release History
 
-## 1.0.0b21 (Unreleased)
+## 1.0.0b24 (Unreleased)
 
 ### Features Added
+
+- Add live metrics collection of requests/dependencies/exceptions
+    ([#34673](https://github.com/Azure/azure-sdk-for-python/pull/34673))
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.0.0b23 (2024-02-28)
+
+### Features Added
+
+- Add device.* to part A fields
+    ([#34229](https://github.com/Azure/azure-sdk-for-python/pull/34229))
+- Add live metrics exporting functionality
+    ([#34141](https://github.com/Azure/azure-sdk-for-python/pull/34141))
+- Add application.ver to part A fields
+    ([#34401](https://github.com/Azure/azure-sdk-for-python/pull/34401))
+- Add `APPLICATIONINSIGHTS_METRIC_NAMESPACE_OPT_IN`
+    ([#34463](https://github.com/Azure/azure-sdk-for-python/pull/34463))
+
+### Other Changes
+
+- Add attachType character to sdkVersion prefix
+    ([#34226](https://github.com/Azure/azure-sdk-for-python/pull/34226))
+- Add AKS scenarios to statsbeat metric and sdkVersion prefix
+    ([#34427](https://github.com/Azure/azure-sdk-for-python/pull/34427))
+
+## 1.0.0b22 (2024-02-01)
+
+### Features Added
+
+- Add live metrics skeleton + swagger definitions
+    ([#33983](https://github.com/Azure/azure-sdk-for-python/pull/33983))
+- Only create temporary folder if local storage is enabled without storage directory.
+    ([#34061](https://github.com/Azure/azure-sdk-for-python/pull/34061))
+
+### Bugs Fixed
+
+- Update exception details messsage based on `LogRecord` body
+    ([#34020](https://github.com/Azure/azure-sdk-for-python/pull/34020))
+
+### Other Changes
+
+- Drop support for Python 3.7
+    ([#34105](https://github.com/Azure/azure-sdk-for-python/pull/34105))
+
+## 1.0.0b21 (2024-01-16)
+
+### Other Changes
+
+- Update to OTel SKD/API 1.21
+    ([#33864](https://github.com/Azure/azure-sdk-for-python/pull/33864))
+- Update Django sample
+    ([#33834](https://github.com/Azure/azure-sdk-for-python/pull/33834))
 
 ## 1.0.0b20 (2024-01-04)
 
@@ -22,6 +73,10 @@
     ([#33667](https://github.com/Azure/azure-sdk-for-python/pull/33667))
 - Readme examples are updated with correct imports
     ([#33691](https://github.com/Azure/azure-sdk-for-python/pull/33691))
+- Implement distro detection for statsbeat feature
+    ([#33761](https://github.com/Azure/azure-sdk-for-python/pull/33761))
+- Use empty resource for statsbeat `MeterProvider`
+    ([#33768](https://github.com/Azure/azure-sdk-for-python/pull/33768))
 
 ## 1.0.0b19 (2023-11-20)
 

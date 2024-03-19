@@ -309,6 +309,9 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
         result = self.mgmt_client.gallery_images.begin_delete(resource_group.name, GALLERY_NAME, IMAGE_NAME)
         result = result.result()
 
+        import time
+        time.sleep(180)
+
         # TODO: need finish
         # # Delete a gallery Application Version.[delete]
         # result = self.mgmt_client.gallery_application_versions.delete(resource_group.name, GALLERY_NAME, APPLICATION_NAME, VERSION_NAME)

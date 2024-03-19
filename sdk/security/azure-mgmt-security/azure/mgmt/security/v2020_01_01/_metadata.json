@@ -105,20 +105,20 @@
         "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMHttpLoggingPolicy\", \"AsyncARMChallengeAuthenticationPolicy\"]}, \"local\": {\".._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
     },
     "operation_groups": {
-        "server_vulnerability_assessment": "ServerVulnerabilityAssessmentOperations",
-        "assessments_metadata": "AssessmentsMetadataOperations",
-        "assessments": "AssessmentsOperations",
-        "adaptive_application_controls": "AdaptiveApplicationControlsOperations",
         "adaptive_network_hardenings": "AdaptiveNetworkHardeningsOperations",
         "allowed_connections": "AllowedConnectionsOperations",
-        "topology": "TopologyOperations",
-        "jit_network_access_policies": "JitNetworkAccessPoliciesOperations",
+        "adaptive_application_controls": "AdaptiveApplicationControlsOperations",
+        "assessments_metadata": "AssessmentsMetadataOperations",
+        "assessments": "AssessmentsOperations",
         "discovered_security_solutions": "DiscoveredSecuritySolutionsOperations",
-        "security_solutions_reference_data": "SecuritySolutionsReferenceDataOperations",
         "external_security_solutions": "ExternalSecuritySolutionsOperations",
+        "jit_network_access_policies": "JitNetworkAccessPoliciesOperations",
         "secure_scores": "SecureScoresOperations",
         "secure_score_controls": "SecureScoreControlsOperations",
         "secure_score_control_definitions": "SecureScoreControlDefinitionsOperations",
-        "security_solutions": "SecuritySolutionsOperations"
+        "security_solutions": "SecuritySolutionsOperations",
+        "security_solutions_reference_data": "SecuritySolutionsReferenceDataOperations",
+        "server_vulnerability_assessment": "ServerVulnerabilityAssessmentOperations",
+        "topology": "TopologyOperations"
     }
 }

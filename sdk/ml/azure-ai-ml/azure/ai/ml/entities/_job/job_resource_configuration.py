@@ -4,7 +4,7 @@
 
 import json
 import logging
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union, cast
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
 from azure.ai.ml.constants._job.job import JobComputePropertyFields
@@ -46,7 +46,8 @@ class BaseProperty(dict):
         return False
 
     def as_dict(self) -> Dict[str, Any]:
-        return self._to_dict(self)
+        res: dict = self._to_dict(self)
+        return res
 
     @classmethod
     def _to_dict(cls, obj: Any) -> Any:
@@ -80,14 +81,14 @@ class Properties(BaseProperty):
                 key = self._KEY_MAPPING[key.lower()]
             result[key] = value
         # recursively convert Ordered Dict to dictionary
-        return convert_ordered_dict_to_dict(result)
+        return cast(dict, convert_ordered_dict_to_dict(result))
 
 
 class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
     """Job resource configuration class, inherited and extended functionalities from ResourceConfiguration.
 
     :keyword locations: A list of locations where the job can run.
-    :paramtype locations: Optional[list[str]]
+    :paramtype locations: Optional[List[str]]
     :keyword instance_count: The number of instances or nodes used by the compute target.
     :paramtype instance_count: Optional[int]
     :keyword instance_type: The type of VM to be used, as supported by the compute target.
@@ -118,16 +119,16 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
     """
 
     def __init__(
-        self,
+        self,  # pylint: disable=unused-argument
         *,
         locations: Optional[List[str]] = None,
         instance_count: Optional[int] = None,
-        instance_type: Optional[str] = None,
-        properties: Optional[Dict[str, Any]] = None,
+        instance_type: Optional[Union[str, List]] = None,
+        properties: Optional[Union[Properties, Dict]] = None,
         docker_args: Optional[str] = None,
         shm_size: Optional[str] = None,
         max_instance_count: Optional[int] = None,
-        **kwargs  # pylint: disable=unused-argument
+        **kwargs: Any
     ) -> None:
         self.locations = locations
         self.instance_count = instance_count
@@ -139,7 +140,7 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
         self.properties = properties
 
     @property
-    def properties(self) -> Properties:
+    def properties(self) -> Optional[Union[Properties, Dict]]:
         """The properties of the job.
 
         :rtype: ~azure.ai.ml.entities._job.job_resource_configuration.Properties
@@ -147,7 +148,7 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
         return self._properties
 
     @properties.setter
-    def properties(self, properties: Dict[str, Any]):
+    def properties(self, properties: Dict[str, Any]) -> None:
         """Sets the properties of the job.
 
         :param properties: A dictionary of properties for the job.
@@ -167,7 +168,7 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
             instance_count=self.instance_count,
             instance_type=self.instance_type,
             max_instance_count=self.max_instance_count,
-            properties=self.properties.as_dict(),
+            properties=self.properties.as_dict() if isinstance(self.properties, Properties) else None,
             docker_args=self.docker_args,
             shm_size=self.shm_size,
         )

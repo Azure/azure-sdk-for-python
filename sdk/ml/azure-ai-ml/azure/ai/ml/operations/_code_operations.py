@@ -4,7 +4,7 @@
 import re
 from os import PathLike
 from pathlib import Path
-from typing import Dict, Union
+from typing import Dict, Optional, Union
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
@@ -50,7 +50,7 @@ from azure.core.exceptions import HttpResponseError
 
 
 ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
+module_logger = ops_logger.module_logger
 
 
 class CodeOperations(_ScopeDependentOperations):
@@ -89,7 +89,7 @@ class CodeOperations(_ScopeDependentOperations):
         self._datastore_operation = datastore_operations
         self._init_kwargs = kwargs
 
-    @monitor_with_activity(logger, "Code.CreateOrUpdate", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Code.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(self, code: Code) -> Code:
         """Returns created or updated code asset.
 
@@ -211,7 +211,7 @@ class CodeOperations(_ScopeDependentOperations):
                     ) from ex
             raise ex
 
-    @monitor_with_activity(logger, "Code.Get", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Code.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, version: str) -> Code:
         """Returns information about the specified code asset.
 
@@ -236,7 +236,7 @@ class CodeOperations(_ScopeDependentOperations):
         return self._get(name=name, version=version)
 
     # this is a public API but CodeOperations is hidden, so it may only monitor internal calls
-    @monitor_with_activity(logger, "Code.Download", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Code.Download", ActivityType.PUBLICAPI)
     def download(self, name: str, version: str, download_path: Union[PathLike, str]) -> None:
         """Download content of a code.
 
@@ -258,7 +258,7 @@ class CodeOperations(_ScopeDependentOperations):
         m = re.match(
             r"https://(?P<account_name>.+)\.blob\.core\.windows\.net"
             r"(:[0-9]+)?/(?P<container_name>.+)/(?P<blob_name>.*)",
-            code.path,
+            str(code.path),
         )
         if not m:
             raise ValueError(f"Invalid code path: {code.path}")
@@ -292,7 +292,7 @@ class CodeOperations(_ScopeDependentOperations):
         if not output_dir.is_dir() or not any(output_dir.iterdir()):
             raise RuntimeError(f"Failed to download code to {output_dir}")
 
-    def _get(self, name: str, version: str = None) -> Code:
+    def _get(self, name: str, version: Optional[str] = None) -> Code:
         if not version:
             msg = "Code asset version must be specified as part of name parameter, in format 'name:version'."
             raise ValidationException(

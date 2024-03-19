@@ -10,6 +10,7 @@ from functools import wraps
 from typing import List, Any, Dict
 from packaging.version import Version
 from ghapi.all import GhApi
+from github import Github
 from azure.storage.blob import BlobServiceClient, ContainerClient
 from datetime import datetime, timedelta
 
@@ -237,10 +238,18 @@ class CodegenTestPR:
 
         modify_file(sdk_readme, edit_sdk_readme)
 
+    @property
+    def readme_md_path(self)-> Path:
+        return Path(self.spec_repo) / "specification" / self.spec_readme.split("specification/")[-1]
+
+    @property
+    def readme_python_md_path(self)-> Path:
+        return Path(str(self.readme_md_path).replace("readme.md", "readme.python.md"))
+
     # Use the template to update readme and setup by packaging_tools
     @return_origin_path
     def check_file_with_packaging_tool(self):
-        python_md = Path(self.spec_repo) / "specification" / self.spec_readme.split("specification/")[-1].replace("readme.md", "readme.python.md")
+        python_md = self.readme_python_md_path
         title = ""
         if python_md.exists():
             with open(python_md, "r") as file_in:
@@ -250,7 +259,7 @@ class CodegenTestPR:
                     title = line.replace("title:", "").strip(" \r\n")
                     break
         else:
-            log("{python_md} does not exist")
+            log(f"{python_md} does not exist")
         os.chdir(Path(f'sdk/{self.sdk_folder}'))
         # add `title` and update `is_stable` in sdk_packaging.toml
         toml = Path(f"azure-mgmt-{self.package_name}") / "sdk_packaging.toml"
@@ -398,6 +407,24 @@ class CodegenTestPR:
                 if os.path.getsize(package) > 2 * 1024 * 1024:
                     self.check_package_size_result.append(f'ERROR: Package size is over 2MBytes: {Path(package).name}!!!')
 
+    def check_model_flatten(self):
+        last_version = self.get_last_release_version()
+        if last_version == "" or last_version.startswith("1.0.0b"):
+            with open(self.readme_md_path, 'r') as file_in:
+                readme_md_content = file_in.read()
+
+            with open(self.readme_python_md_path, 'r') as file_in:
+                readme_python_md_content = file_in.read()
+            
+            if "flatten-models: false" not in readme_md_content and "flatten-models: false" not in readme_python_md_content and self.issue_link:
+                api = Github(self.bot_token).get_repo("Azure/sdk-release-request")
+                issue_number = int(self.issue_link.split('/')[-1])
+                issue = api.get_issue(issue_number)
+                assignee = issue.assignee.login if issue.assignee else ""
+                message = "please set `flatten-models: false` in readme.md or readme.python.md"
+                issue.create_comment(f'@{assignee}, {message}')
+                raise Exception(message)
+
     def check_file(self):
         self.check_file_with_packaging_tool()
         self.check_pprint_name()
@@ -406,6 +433,7 @@ class CodegenTestPR:
         self.check_changelog_file()
         self.check_dev_requirement()
         self.check_package_size()
+        self.check_model_flatten()
 
     def sdk_code_path(self) -> str:
         return str(Path(f'sdk/{self.sdk_folder}/azure-mgmt-{self.package_name}'))

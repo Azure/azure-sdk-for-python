@@ -55,7 +55,7 @@ async def analyze_formulas():
     # [START analyze_formulas]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence.aio import DocumentIntelligenceClient
-    from azure.ai.documentintelligence.models import DocumentAnalysisFeature
+    from azure.ai.documentintelligence.models import DocumentAnalysisFeature, AnalyzeResult
 
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
@@ -71,26 +71,27 @@ async def analyze_formulas():
                 features=[DocumentAnalysisFeature.FORMULAS],
                 content_type="application/octet-stream",
             )
-        result = await poller.result()
+        result: AnalyzeResult = await poller.result()
 
     # Iterate over extracted formulas on each page and print inline and display formulas
     # separately.
     for page in result.pages:
         print(f"----Formulas detected from page #{page.page_number}----")
-        inline_formulas = [f for f in page.formulas if f.kind == "inline"]
-        display_formulas = [f for f in page.formulas if f.kind == "display"]
+        if page.formulas:
+            inline_formulas = [f for f in page.formulas if f.kind == "inline"]
+            display_formulas = [f for f in page.formulas if f.kind == "display"]
 
-        print(f"Detected {len(inline_formulas)} inline formulas.")
-        for formula_idx, formula in enumerate(inline_formulas):
-            print(f"- Inline #{formula_idx}: {formula.value}")
-            print(f"  Confidence: {formula.confidence}")
-            print(f"  Bounding regions: {formula.polygon}")
+            print(f"Detected {len(inline_formulas)} inline formulas.")
+            for formula_idx, formula in enumerate(inline_formulas):
+                print(f"- Inline #{formula_idx}: {formula.value}")
+                print(f"  Confidence: {formula.confidence}")
+                print(f"  Bounding regions: {formula.polygon}")
 
-        print(f"\nDetected {len(display_formulas)} display formulas.")
-        for formula_idx, formula in enumerate(display_formulas):
-            print(f"- Display #{formula_idx}: {formula.value}")
-            print(f"  Confidence: {formula.confidence}")
-            print(f"  Bounding regions: {formula.polygon}")
+            print(f"\nDetected {len(display_formulas)} display formulas.")
+            for formula_idx, formula in enumerate(display_formulas):
+                print(f"- Display #{formula_idx}: {formula.value}")
+                print(f"  Confidence: {formula.confidence}")
+                print(f"  Bounding regions: {formula.polygon}")
 
     print("----------------------------------------")
     # [END analyze_formulas]

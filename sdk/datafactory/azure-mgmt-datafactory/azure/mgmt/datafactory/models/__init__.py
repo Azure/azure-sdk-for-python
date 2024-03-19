@@ -587,8 +587,16 @@ from ._models_py3 import SalesforceServiceCloudLinkedService
 from ._models_py3 import SalesforceServiceCloudObjectDataset
 from ._models_py3 import SalesforceServiceCloudSink
 from ._models_py3 import SalesforceServiceCloudSource
+from ._models_py3 import SalesforceServiceCloudV2LinkedService
+from ._models_py3 import SalesforceServiceCloudV2ObjectDataset
+from ._models_py3 import SalesforceServiceCloudV2Sink
+from ._models_py3 import SalesforceServiceCloudV2Source
 from ._models_py3 import SalesforceSink
 from ._models_py3 import SalesforceSource
+from ._models_py3 import SalesforceV2LinkedService
+from ._models_py3 import SalesforceV2ObjectDataset
+from ._models_py3 import SalesforceV2Sink
+from ._models_py3 import SalesforceV2Source
 from ._models_py3 import SapBWLinkedService
 from ._models_py3 import SapBwCubeDataset
 from ._models_py3 import SapBwSource
@@ -650,6 +658,10 @@ from ._models_py3 import SnowflakeImportCopyCommand
 from ._models_py3 import SnowflakeLinkedService
 from ._models_py3 import SnowflakeSink
 from ._models_py3 import SnowflakeSource
+from ._models_py3 import SnowflakeV2Dataset
+from ._models_py3 import SnowflakeV2LinkedService
+from ._models_py3 import SnowflakeV2Sink
+from ._models_py3 import SnowflakeV2Source
 from ._models_py3 import SparkConfigurationParametrizationReference
 from ._models_py3 import SparkLinkedService
 from ._models_py3 import SparkObjectDataset
@@ -734,6 +746,10 @@ from ._models_py3 import VerticaLinkedService
 from ._models_py3 import VerticaSource
 from ._models_py3 import VerticaTableDataset
 from ._models_py3 import WaitActivity
+from ._models_py3 import WarehouseLinkedService
+from ._models_py3 import WarehouseSink
+from ._models_py3 import WarehouseSource
+from ._models_py3 import WarehouseTableDataset
 from ._models_py3 import WebActivity
 from ._models_py3 import WebActivityAuthentication
 from ._models_py3 import WebAnonymousAuthentication
@@ -839,6 +855,7 @@ from ._data_factory_management_client_enums import RunQueryOrder
 from ._data_factory_management_client_enums import RunQueryOrderByField
 from ._data_factory_management_client_enums import SalesforceSinkWriteBehavior
 from ._data_factory_management_client_enums import SalesforceSourceReadBehavior
+from ._data_factory_management_client_enums import SalesforceV2SinkWriteBehavior
 from ._data_factory_management_client_enums import SapCloudForCustomerSinkWriteBehavior
 from ._data_factory_management_client_enums import SapHanaAuthenticationType
 from ._data_factory_management_client_enums import SapHanaPartitionOption
@@ -851,6 +868,7 @@ from ._data_factory_management_client_enums import SelfHostedIntegrationRuntimeN
 from ._data_factory_management_client_enums import ServiceNowAuthenticationType
 from ._data_factory_management_client_enums import ServicePrincipalCredentialType
 from ._data_factory_management_client_enums import SftpAuthenticationType
+from ._data_factory_management_client_enums import SnowflakeAuthenticationType
 from ._data_factory_management_client_enums import SparkAuthenticationType
 from ._data_factory_management_client_enums import SparkConfigurationReferenceType
 from ._data_factory_management_client_enums import SparkJobReferenceType
@@ -1464,8 +1482,16 @@ __all__ = [
     "SalesforceServiceCloudObjectDataset",
     "SalesforceServiceCloudSink",
     "SalesforceServiceCloudSource",
+    "SalesforceServiceCloudV2LinkedService",
+    "SalesforceServiceCloudV2ObjectDataset",
+    "SalesforceServiceCloudV2Sink",
+    "SalesforceServiceCloudV2Source",
     "SalesforceSink",
     "SalesforceSource",
+    "SalesforceV2LinkedService",
+    "SalesforceV2ObjectDataset",
+    "SalesforceV2Sink",
+    "SalesforceV2Source",
     "SapBWLinkedService",
     "SapBwCubeDataset",
     "SapBwSource",
@@ -1527,6 +1553,10 @@ __all__ = [
     "SnowflakeLinkedService",
     "SnowflakeSink",
     "SnowflakeSource",
+    "SnowflakeV2Dataset",
+    "SnowflakeV2LinkedService",
+    "SnowflakeV2Sink",
+    "SnowflakeV2Source",
     "SparkConfigurationParametrizationReference",
     "SparkLinkedService",
     "SparkObjectDataset",
@@ -1611,6 +1641,10 @@ __all__ = [
     "VerticaSource",
     "VerticaTableDataset",
     "WaitActivity",
+    "WarehouseLinkedService",
+    "WarehouseSink",
+    "WarehouseSource",
+    "WarehouseTableDataset",
     "WebActivity",
     "WebActivityAuthentication",
     "WebAnonymousAuthentication",
@@ -1715,6 +1749,7 @@ __all__ = [
     "RunQueryOrderByField",
     "SalesforceSinkWriteBehavior",
     "SalesforceSourceReadBehavior",
+    "SalesforceV2SinkWriteBehavior",
     "SapCloudForCustomerSinkWriteBehavior",
     "SapHanaAuthenticationType",
     "SapHanaPartitionOption",
@@ -1727,6 +1762,7 @@ __all__ = [
     "ServiceNowAuthenticationType",
     "ServicePrincipalCredentialType",
     "SftpAuthenticationType",
+    "SnowflakeAuthenticationType",
     "SparkAuthenticationType",
     "SparkConfigurationReferenceType",
     "SparkJobReferenceType",

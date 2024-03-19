@@ -5,3 +5,4 @@
 -e ../../ml/azure-ai-ml
 pytest
 pytest-xdist
+openai

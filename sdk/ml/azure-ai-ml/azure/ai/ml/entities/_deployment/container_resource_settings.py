@@ -45,7 +45,7 @@ class ResourceSettings(RestTranslatableMixin):
         return ContainerResourceSettings(cpu=self.cpu, memory=self.memory, gpu=self.gpu)
 
     @classmethod
-    def _from_rest_object(cls, settings: ContainerResourceSettings) -> "ResourceSettings":
+    def _from_rest_object(cls, settings: ContainerResourceSettings) -> Optional["ResourceSettings"]:
         return (
             ResourceSettings(
                 cpu=settings.cpu,
@@ -56,7 +56,7 @@ class ResourceSettings(RestTranslatableMixin):
             else None
         )
 
-    def _merge_with(self, other: "ResourceSettings") -> None:
+    def _merge_with(self, other: Optional["ResourceSettings"]) -> None:
         if other:
             self.cpu = other.cpu or self.cpu
             self.memory = other.memory or self.memory

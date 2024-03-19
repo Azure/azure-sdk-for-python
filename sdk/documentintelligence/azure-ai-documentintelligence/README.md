@@ -26,12 +26,13 @@ This table shows the relationship between SDK versions and supported API service
 |SDK version|Supported API service version
 |-|-
 |1.0.0b1 | 2023-10-31-preview
+|1.0.0b2 | 2024-02-29-preview
 
 Older API versions are supported in `azure-ai-formrecognizer`, please see the [Migration Guide][migration-guide] for detailed instructions on how to update application.
 
 #### Prequisites
 
-- Python 3.7 or later is required to use this package.
+- Python 3.8 or later is required to use this package.
 - You need an [Azure subscription][azure_sub] to use this package.
 - An existing Azure AI Document Intelligence instance.
 
@@ -203,6 +204,7 @@ Extract text, selection marks, text styles, and table structures, along with the
 ```python
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.documentintelligence import DocumentIntelligenceClient
+from azure.ai.documentintelligence.models import AnalyzeResult
 
 endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
 key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
@@ -212,9 +214,9 @@ with open(path_to_sample_documents, "rb") as f:
     poller = document_intelligence_client.begin_analyze_document(
         "prebuilt-layout", analyze_request=f, content_type="application/octet-stream"
     )
-result = poller.result()
+result: AnalyzeResult = poller.result()
 
-if any([style.is_handwritten for style in result.styles]):
+if result.styles and any([style.is_handwritten for style in result.styles]):
     print("Document contains handwritten content")
 else:
     print("Document does not contain handwritten content")
@@ -223,30 +225,35 @@ for page in result.pages:
     print(f"----Analyzing layout from page #{page.page_number}----")
     print(f"Page has width: {page.width} and height: {page.height}, measured with unit: {page.unit}")
 
-    for line_idx, line in enumerate(page.lines):
-        words = get_words(page, line)
-        print(
-            f"...Line # {line_idx} has word count {len(words)} and text '{line.content}' "
-            f"within bounding polygon '{line.polygon}'"
-        )
+    if page.lines:
+        for line_idx, line in enumerate(page.lines):
+            words = get_words(page, line)
+            print(
+                f"...Line # {line_idx} has word count {len(words)} and text '{line.content}' "
+                f"within bounding polygon '{line.polygon}'"
+            )
 
-        for word in words:
-            print(f"......Word '{word.content}' has a confidence of {word.confidence}")
+            for word in words:
+                print(f"......Word '{word.content}' has a confidence of {word.confidence}")
 
-    for selection_mark in page.selection_marks:
-        print(
-            f"Selection mark is '{selection_mark.state}' within bounding polygon "
-            f"'{selection_mark.polygon}' and has a confidence of {selection_mark.confidence}"
-        )
+    if page.selection_marks:
+        for selection_mark in page.selection_marks:
+            print(
+                f"Selection mark is '{selection_mark.state}' within bounding polygon "
+                f"'{selection_mark.polygon}' and has a confidence of {selection_mark.confidence}"
+            )
 
-for table_idx, table in enumerate(result.tables):
-    print(f"Table # {table_idx} has {table.row_count} rows and " f"{table.column_count} columns")
-    for region in table.bounding_regions:
-        print(f"Table # {table_idx} location on page: {region.page_number} is {region.polygon}")
-    for cell in table.cells:
-        print(f"...Cell[{cell.row_index}][{cell.column_index}] has text '{cell.content}'")
-        for region in cell.bounding_regions:
-            print(f"...content on page {region.page_number} is within bounding polygon '{region.polygon}'")
+if result.tables:
+    for table_idx, table in enumerate(result.tables):
+        print(f"Table # {table_idx} has {table.row_count} rows and " f"{table.column_count} columns")
+        if table.bounding_regions:
+            for region in table.bounding_regions:
+                print(f"Table # {table_idx} location on page: {region.page_number} is {region.polygon}")
+        for cell in table.cells:
+            print(f"...Cell[{cell.row_index}][{cell.column_index}] has text '{cell.content}'")
+            if cell.bounding_regions:
+                for region in cell.bounding_regions:
+                    print(f"...content on page {region.page_number} is within bounding polygon '{region.polygon}'")
 
 print("----------------------------------------")
 ```
@@ -264,6 +271,7 @@ For example, to analyze fields from a sales receipt, use the prebuilt receipt mo
 ```python
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.documentintelligence import DocumentIntelligenceClient
+from azure.ai.documentintelligence.models import AnalyzeResult
 
 endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
 key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
@@ -273,55 +281,63 @@ with open(path_to_sample_documents, "rb") as f:
     poller = document_intelligence_client.begin_analyze_document(
         "prebuilt-receipt", analyze_request=f, locale="en-US", content_type="application/octet-stream"
     )
-receipts = poller.result()
+receipts: AnalyzeResult = poller.result()
 
-for idx, receipt in enumerate(receipts.documents):
-    print(f"--------Analysis of receipt #{idx + 1}--------")
-    print(f"Receipt type: {receipt.doc_type if receipt.doc_type else 'N/A'}")
-    merchant_name = receipt.fields.get("MerchantName")
-    if merchant_name:
-        print(f"Merchant Name: {merchant_name.get('valueString')} has confidence: " f"{merchant_name.confidence}")
-    transaction_date = receipt.fields.get("TransactionDate")
-    if transaction_date:
-        print(
-            f"Transaction Date: {transaction_date.get('valueDate')} has confidence: "
-            f"{transaction_date.confidence}"
-        )
-    if receipt.fields.get("Items"):
-        print("Receipt items:")
-        for idx, item in enumerate(receipt.fields.get("Items").get("valueArray")):
-            print(f"...Item #{idx + 1}")
-            item_description = item.get("valueObject").get("Description")
-            if item_description:
+if receipts.documents:
+    for idx, receipt in enumerate(receipts.documents):
+        print(f"--------Analysis of receipt #{idx + 1}--------")
+        print(f"Receipt type: {receipt.doc_type if receipt.doc_type else 'N/A'}")
+        if receipt.fields:
+            merchant_name = receipt.fields.get("MerchantName")
+            if merchant_name:
                 print(
-                    f"......Item Description: {item_description.get('valueString')} has confidence: "
-                    f"{item_description.confidence}"
+                    f"Merchant Name: {merchant_name.get('valueString')} has confidence: "
+                    f"{merchant_name.confidence}"
                 )
-            item_quantity = item.get("valueObject").get("Quantity")
-            if item_quantity:
+            transaction_date = receipt.fields.get("TransactionDate")
+            if transaction_date:
                 print(
-                    f"......Item Quantity: {item_quantity.get('valueString')} has confidence: "
-                    f"{item_quantity.confidence}"
+                    f"Transaction Date: {transaction_date.get('valueDate')} has confidence: "
+                    f"{transaction_date.confidence}"
                 )
-            item_total_price = item.get("valueObject").get("TotalPrice")
-            if item_total_price:
+            items = receipt.fields.get("Items")
+            if items:
+                print("Receipt items:")
+                for idx, item in enumerate(items.get("valueArray")):
+                    print(f"...Item #{idx + 1}")
+                    item_description = item.get("valueObject").get("Description")
+                    if item_description:
+                        print(
+                            f"......Item Description: {item_description.get('valueString')} has confidence: "
+                            f"{item_description.confidence}"
+                        )
+                    item_quantity = item.get("valueObject").get("Quantity")
+                    if item_quantity:
+                        print(
+                            f"......Item Quantity: {item_quantity.get('valueString')} has confidence: "
+                            f"{item_quantity.confidence}"
+                        )
+                    item_total_price = item.get("valueObject").get("TotalPrice")
+                    if item_total_price:
+                        print(
+                            f"......Total Item Price: {format_price(item_total_price.get('valueCurrency'))} has confidence: "
+                            f"{item_total_price.confidence}"
+                        )
+            subtotal = receipt.fields.get("Subtotal")
+            if subtotal:
                 print(
-                    f"......Total Item Price: {format_price(item_total_price.get('valueCurrency'))} has confidence: "
-                    f"{item_total_price.confidence}"
+                    f"Subtotal: {format_price(subtotal.get('valueCurrency'))} has confidence: {subtotal.confidence}"
                 )
-    subtotal = receipt.fields.get("Subtotal")
-    if subtotal:
-        print(f"Subtotal: {format_price(subtotal.get('valueCurrency'))} has confidence: {subtotal.confidence}")
-    tax = receipt.fields.get("TotalTax")
-    if tax:
-        print(f"Total tax: {format_price(tax.get('valueCurrency'))} has confidence: {tax.confidence}")
-    tip = receipt.fields.get("Tip")
-    if tip:
-        print(f"Tip: {format_price(tip.get('valueCurrency'))} has confidence: {tip.confidence}")
-    total = receipt.fields.get("Total")
-    if total:
-        print(f"Total: {format_price(total.get('valueCurrency'))} has confidence: {total.confidence}")
-    print("--------------------------------------")
+            tax = receipt.fields.get("TotalTax")
+            if tax:
+                print(f"Total tax: {format_price(tax.get('valueCurrency'))} has confidence: {tax.confidence}")
+            tip = receipt.fields.get("Tip")
+            if tip:
+                print(f"Tip: {format_price(tip.get('valueCurrency'))} has confidence: {tip.confidence}")
+            total = receipt.fields.get("Total")
+            if total:
+                print(f"Total: {format_price(total.get('valueCurrency'))} has confidence: {total.confidence}")
+        print("--------------------------------------")
 ```
 
 <!-- END SNIPPET -->
@@ -345,6 +361,7 @@ from azure.ai.documentintelligence.models import (
     DocumentBuildMode,
     BuildDocumentModelRequest,
     AzureBlobContentSource,
+    DocumentModelDetails,
 )
 from azure.core.credentials import AzureKeyCredential
 
@@ -352,9 +369,7 @@ endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
 key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
 container_sas_url = os.environ["DOCUMENTINTELLIGENCE_STORAGE_CONTAINER_SAS_URL"]
 
-document_intelligence_admin_client = DocumentIntelligenceAdministrationClient(
-    endpoint, AzureKeyCredential(key)
-)
+document_intelligence_admin_client = DocumentIntelligenceAdministrationClient(endpoint, AzureKeyCredential(key))
 poller = document_intelligence_admin_client.begin_build_document_model(
     BuildDocumentModelRequest(
         model_id=str(uuid.uuid4()),
@@ -363,22 +378,22 @@ poller = document_intelligence_admin_client.begin_build_document_model(
         description="my model description",
     )
 )
-model = poller.result()
+model: DocumentModelDetails = poller.result()
 
 print(f"Model ID: {model.model_id}")
 print(f"Description: {model.description}")
 print(f"Model created on: {model.created_date_time}")
 print(f"Model expires on: {model.expiration_date_time}")
-print("Doc types the model can recognize:")
-for name, doc_type in model.doc_types.items():
-    print(
-        f"Doc Type: '{name}' built with '{doc_type.build_mode}' mode which has the following fields:"
-    )
-    for field_name, field in doc_type.field_schema.items():
-        print(
-            f"Field: '{field_name}' has type '{field['type']}' and confidence score "
-            f"{doc_type.field_confidence[field_name]}"
-        )
+if model.doc_types:
+    print("Doc types the model can recognize:")
+    for name, doc_type in model.doc_types.items():
+        print(f"Doc Type: '{name}' built with '{doc_type.build_mode}' mode which has the following fields:")
+        for field_name, field in doc_type.field_schema.items():
+            if doc_type.field_confidence:
+                print(
+                    f"Field: '{field_name}' has type '{field['type']}' and confidence score "
+                    f"{doc_type.field_confidence[field_name]}"
+                )
 ```
 
 <!-- END SNIPPET -->
@@ -393,6 +408,7 @@ For best results, you should only analyze documents of the same document type th
 ```python
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.documentintelligence import DocumentIntelligenceClient
+from azure.ai.documentintelligence.models import AnalyzeResult
 
 endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
 key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
@@ -405,26 +421,30 @@ with open(path_to_sample_documents, "rb") as f:
     poller = document_intelligence_client.begin_analyze_document(
         model_id=model_id, analyze_request=f, content_type="application/octet-stream"
     )
-result = poller.result()
+result: AnalyzeResult = poller.result()
 
-for idx, document in enumerate(result.documents):
-    print(f"--------Analyzing document #{idx + 1}--------")
-    print(f"Document has type {document.doc_type}")
-    print(f"Document has document type confidence {document.confidence}")
-    print(f"Document was analyzed with model with ID {result.model_id}")
-    for name, field in document.fields.items():
-        field_value = field.get("valueString") if field.get("valueString") else field.content
-        print(
-            f"......found field of type '{field.type}' with value '{field_value}' and with confidence {field.confidence}"
-        )
+if result.documents:
+    for idx, document in enumerate(result.documents):
+        print(f"--------Analyzing document #{idx + 1}--------")
+        print(f"Document has type {document.doc_type}")
+        print(f"Document has document type confidence {document.confidence}")
+        print(f"Document was analyzed with model with ID {result.model_id}")
+        if document.fields:
+            for name, field in document.fields.items():
+                field_value = field.get("valueString") if field.get("valueString") else field.content
+                print(
+                    f"......found field of type '{field.type}' with value '{field_value}' and with confidence {field.confidence}"
+                )
 
 # iterate over tables, lines, and selection marks on each page
 for page in result.pages:
     print(f"\nLines found on page {page.page_number}")
-    for line in page.lines:
-        print(f"...Line '{line.content}'")
-    for word in page.words:
-        print(f"...Word '{word.content}' has a confidence of {word.confidence}")
+    if page.lines:
+        for line in page.lines:
+            print(f"...Line '{line.content}'")
+    if page.words:
+        for word in page.words:
+            print(f"...Word '{word.content}' has a confidence of {word.confidence}")
     if page.selection_marks:
         print(f"\nSelection marks found on page {page.page_number}")
         for selection_mark in page.selection_marks:
@@ -432,12 +452,14 @@ for page in result.pages:
                 f"...Selection mark is '{selection_mark.state}' and has a confidence of {selection_mark.confidence}"
             )
 
-for i, table in enumerate(result.tables):
-    print(f"\nTable {i + 1} can be found on page:")
-    for region in table.bounding_regions:
-        print(f"...{region.page_number}")
-    for cell in table.cells:
-        print(f"...Cell[{cell.row_index}][{cell.column_index}] has text '{cell.content}'")
+if result.tables:
+    for i, table in enumerate(result.tables):
+        print(f"\nTable {i + 1} can be found on page:")
+        if table.bounding_regions:
+            for region in table.bounding_regions:
+                print(f"...{region.page_number}")
+        for cell in table.cells:
+            print(f"...Cell[{cell.row_index}][{cell.column_index}] has text '{cell.content}'")
 print("-----------------------------------")
 ```
 
@@ -450,15 +472,17 @@ Additionally, a document URL can also be used to analyze documents using the `be
 ```python
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.documentintelligence import DocumentIntelligenceClient
-from azure.ai.documentintelligence.models import AnalyzeDocumentRequest
+from azure.ai.documentintelligence.models import AnalyzeDocumentRequest, AnalyzeResult
 
 endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
 key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
 
 document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 url = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/documentintelligence/azure-ai-documentintelligence/samples/sample_forms/receipt/contoso-receipt.png"
-poller = document_intelligence_client.begin_analyze_document("prebuilt-receipt", AnalyzeDocumentRequest(url_source=url))
-receipts = poller.result()
+poller = document_intelligence_client.begin_analyze_document(
+    "prebuilt-receipt", AnalyzeDocumentRequest(url_source=url)
+)
+receipts: AnalyzeResult = poller.result()
 ```
 
 <!-- END SNIPPET -->
@@ -477,6 +501,7 @@ from azure.ai.documentintelligence.models import (
     DocumentBuildMode,
     BuildDocumentModelRequest,
     AzureBlobContentSource,
+    DocumentModelDetails,
 )
 from azure.core.credentials import AzureKeyCredential
 
@@ -484,9 +509,7 @@ endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
 key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
 container_sas_url = os.environ["DOCUMENTINTELLIGENCE_STORAGE_CONTAINER_SAS_URL"]
 
-document_intelligence_admin_client = DocumentIntelligenceAdministrationClient(
-    endpoint, AzureKeyCredential(key)
-)
+document_intelligence_admin_client = DocumentIntelligenceAdministrationClient(endpoint, AzureKeyCredential(key))
 poller = document_intelligence_admin_client.begin_build_document_model(
     BuildDocumentModelRequest(
         model_id=str(uuid.uuid4()),
@@ -495,22 +518,22 @@ poller = document_intelligence_admin_client.begin_build_document_model(
         description="my model description",
     )
 )
-model = poller.result()
+model: DocumentModelDetails = poller.result()
 
 print(f"Model ID: {model.model_id}")
 print(f"Description: {model.description}")
 print(f"Model created on: {model.created_date_time}")
 print(f"Model expires on: {model.expiration_date_time}")
-print("Doc types the model can recognize:")
-for name, doc_type in model.doc_types.items():
-    print(
-        f"Doc Type: '{name}' built with '{doc_type.build_mode}' mode which has the following fields:"
-    )
-    for field_name, field in doc_type.field_schema.items():
-        print(
-            f"Field: '{field_name}' has type '{field['type']}' and confidence score "
-            f"{doc_type.field_confidence[field_name]}"
-        )
+if model.doc_types:
+    print("Doc types the model can recognize:")
+    for name, doc_type in model.doc_types.items():
+        print(f"Doc Type: '{name}' built with '{doc_type.build_mode}' mode which has the following fields:")
+        for field_name, field in doc_type.field_schema.items():
+            if doc_type.field_confidence:
+                print(
+                    f"Field: '{field_name}' has type '{field['type']}' and confidence score "
+                    f"{doc_type.field_confidence[field_name]}"
+                )
 ```
 
 <!-- END SNIPPET -->
@@ -553,6 +576,10 @@ print(f"\nModel ID: {my_model.model_id}")
 print(f"Description: {my_model.description}")
 print(f"Model created on: {my_model.created_date_time}")
 print(f"Model expires on: {my_model.expiration_date_time}")
+if my_model.warnings:
+    print("Warnings encountered while building the model:")
+    for warning in my_model.warnings:
+        print(f"warning code: {warning.code}, message: {warning.message}, target of the error: {warning.target}")
 ```
 
 <!-- END SNIPPET -->
@@ -564,6 +591,7 @@ print(f"Model expires on: {my_model.expiration_date_time}")
 document_intelligence_admin_client.delete_model(model_id=my_model.model_id)
 
 from azure.core.exceptions import ResourceNotFoundError
+
 try:
     document_intelligence_admin_client.get_model(model_id=my_model.model_id)
 except ResourceNotFoundError:

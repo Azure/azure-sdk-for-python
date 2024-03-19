@@ -2,11 +2,19 @@
 # Licensed under the MIT License.
 # cSpell:disable
 
+from opentelemetry.semconv.metrics import MetricInstruments
+
 # Environment variables
 
 _APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL = "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL"
 _APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED = \
     "APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED"
+_APPLICATIONINSIGHTS_METRIC_NAMESPACE_OPT_IN = "APPLICATIONINSIGHTS_METRIC_NAMESPACE_OPT_IN"
+_WEBSITE_SITE_NAME = "WEBSITE_SITE_NAME"
+_WEBSITE_HOME_STAMPNAME = "WEBSITE_HOME_STAMPNAME"
+_WEBSITE_HOSTNAME = "WEBSITE_HOSTNAME"
+_FUNCTIONS_WORKER_RUNTIME = "FUNCTIONS_WORKER_RUNTIME"
+_AKS_ARM_NAMESPACE_ID = "AKS_ARM_NAMESPACE_ID"
 
 # Network
 
@@ -45,6 +53,10 @@ _EXCEPTION_ENVELOPE_NAME = "Microsoft.ApplicationInsights.Exception"
 _MESSAGE_ENVELOPE_NAME = "Microsoft.ApplicationInsights.Message"
 _REQUEST_ENVELOPE_NAME = "Microsoft.ApplicationInsights.Request"
 _REMOTE_DEPENDENCY_ENVELOPE_NAME = "Microsoft.ApplicationInsights.RemoteDependency"
+
+# Feature constants
+_APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE = "APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE"
+_AZURE_MONITOR_DISTRO_VERSION_ARG = "distro_version"
 
 # Statsbeat
 
@@ -119,6 +131,8 @@ _INSTRUMENTATIONS_LIST = [
     "urllib",
     "urllib3",
     _AZURE_SDK_OPENTELEMETRY_NAME,
+    "cassandra",
+    "tortoiseorm",
 ]
 
 _INSTRUMENTATIONS_BIT_MAP = {_INSTRUMENTATIONS_LIST[i]: _BASE**i for i in range(len(_INSTRUMENTATIONS_LIST))}
@@ -126,15 +140,14 @@ _INSTRUMENTATIONS_BIT_MAP = {_INSTRUMENTATIONS_LIST[i]: _BASE**i for i in range(
 # Standard metrics
 
 # List of metric instrument names that are autocollected from instrumentations
-# TODO: switch to semconv constants
 _AUTOCOLLECTED_INSTRUMENT_NAMES = (
-    "http.server.duration",
-    "http.server.request.size",
-    "http.server.response.size",
-    "http.server.active_requests",
-    "http.client.duration",
-    "http.client.request.size",
-    "http.client.response.size",
+    MetricInstruments.HTTP_SERVER_DURATION,
+    MetricInstruments.HTTP_SERVER_REQUEST_SIZE,
+    MetricInstruments.HTTP_SERVER_RESPONSE_SIZE,
+    MetricInstruments.HTTP_SERVER_ACTIVE_REQUESTS,
+    MetricInstruments.HTTP_CLIENT_DURATION,
+    MetricInstruments.HTTP_CLIENT_REQUEST_SIZE,
+    MetricInstruments.HTTP_CLIENT_RESPONSE_SIZE,
 )
 
 # Temporary solution for checking which instrumentations support metric collection

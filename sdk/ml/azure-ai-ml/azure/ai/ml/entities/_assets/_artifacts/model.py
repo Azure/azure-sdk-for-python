@@ -81,7 +81,7 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
         tags: Optional[Dict] = None,
         properties: Optional[Dict] = None,
         stage: Optional[str] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         self.job_name = kwargs.pop("job_name", None)
         self._intellectual_property = kwargs.pop("intellectual_property", None)
@@ -110,7 +110,7 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
         data: Optional[Dict] = None,
         yaml_path: Optional[Union[PathLike, str]] = None,
         params_override: Optional[list] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> "Model":
         params_override = params_override or []
         data = data or {}
@@ -118,10 +118,11 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
             BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),
             PARAMS_OVERRIDE_KEY: params_override,
         }
-        return load_from_dict(ModelSchema, data, context, **kwargs)
+        res: Model = load_from_dict(ModelSchema, data, context, **kwargs)
+        return res
 
     def _to_dict(self) -> Dict:
-        return ModelSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member
+        return dict(ModelSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self))  # pylint: disable=no-member
 
     @classmethod
     def _from_rest_object(cls, model_rest_object: ModelVersion) -> "Model":
@@ -197,7 +198,7 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
                 asset_artifact.relative_path,
             )
 
-    def _to_arm_resource_param(self, **kwargs):  # pylint: disable=unused-argument
+    def _to_arm_resource_param(self, **kwargs: Any) -> Dict:  # pylint: disable=unused-argument
         properties = self._to_rest_object().properties
 
         return {

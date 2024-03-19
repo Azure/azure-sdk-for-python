@@ -13,6 +13,9 @@ from pathlib import Path
 from azure.monitor.opentelemetry.exporter._connection_string_parser import (  # pylint: disable=import-error,no-name-in-module
     ConnectionStringParser,
 )
+from azure.monitor.opentelemetry.exporter._constants import (  # pylint: disable=import-error,no-name-in-module
+    _AZURE_MONITOR_DISTRO_VERSION_ARG,
+)
 
 # --------------------Configuration------------------------------------------
 
@@ -21,10 +24,12 @@ DISABLE_AZURE_CORE_TRACING_ARG = "disable_azure_core_tracing"
 DISABLE_LOGGING_ARG = "disable_logging"
 DISABLE_METRICS_ARG = "disable_metrics"
 DISABLE_TRACING_ARG = "disable_tracing"
+DISTRO_VERSION_ARG = _AZURE_MONITOR_DISTRO_VERSION_ARG
 LOGGER_NAME_ARG = "logger_name"
 INSTRUMENTATION_OPTIONS_ARG = "instrumentation_options"
 RESOURCE_ARG = "resource"
 SAMPLING_RATIO_ARG = "sampling_ratio"
+SPAN_PROCESSORS_ARG = "span_processors"
 
 
 # --------------------Diagnostic/status logging------------------------------

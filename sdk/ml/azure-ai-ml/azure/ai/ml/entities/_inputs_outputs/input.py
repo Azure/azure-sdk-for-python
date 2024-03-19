@@ -7,7 +7,7 @@
 
 import math
 from inspect import Parameter
-from typing import Any, Dict, Optional, TypeVar, Union, overload
+from typing import Any, Dict, List, Optional, Union, overload
 
 from typing_extensions import Literal
 
@@ -76,12 +76,12 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         *,
-        type: Literal["uri_folder"] = "uri_folder",
+        type: str,
         path: Optional[str] = None,
         mode: Optional[str] = None,
         optional: Optional[bool] = None,
         description: Optional[str] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         """"""
 
@@ -95,7 +95,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         max: Optional[float] = None,
         optional: Optional[bool] = None,
         description: Optional[str] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         """Initialize a number input.
 
@@ -105,10 +105,10 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         :paramtype default: Union[str, int, float, bool]
         :keyword min: The minimum value for the input. If a value smaller than the minimum is passed to the job, the job
             execution will fail.
-        :paramtype min: Union[int, float]
+        :paramtype min: Optional[float]
         :keyword max: The maximum value for the input. If a value larger than the maximum is passed to a job, the job
             execution will fail.
-        :paramtype max: Union[int, float]
+        :paramtype max: Optional[float]
         :keyword optional: Specifies if the input is optional.
         :paramtype optional: bool
         :keyword description: Description of the input
@@ -127,7 +127,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         max: Optional[int] = None,
         optional: Optional[bool] = None,
         description: Optional[str] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         """Initialize an integer input.
 
@@ -137,10 +137,10 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         :paramtype default: Union[str, int, float, bool]
         :keyword min: The minimum value for the input. If a value smaller than the minimum is passed to the job, the job
             execution will fail.
-        :paramtype min: Union[int, float]
+        :paramtype min: Optional[int]
         :keyword max: The maximum value for the input. If a value larger than the maximum is passed to a job, the job
             execution will fail.
-        :paramtype max: Union[int, float]
+        :paramtype max: Optional[int]
         :keyword optional: Specifies if the input is optional.
         :paramtype optional: bool
         :keyword description: Description of the input
@@ -156,7 +156,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         optional: Optional[bool] = None,
         description: Optional[str] = None,
         path: Optional[str] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         """Initialize a string input.
 
@@ -180,7 +180,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         default: Optional[bool] = None,
         optional: Optional[bool] = None,
         description: Optional[str] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         """Initialize a bool input.
 
@@ -209,15 +209,16 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         optional: Optional[bool] = None,
         min: Optional[Union[int, float]] = None,
         max: Optional[Union[int, float]] = None,
-        enum=None,
+        enum: Any = None,
         description: Optional[str] = None,
         datastore: Optional[str] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         super(Input, self).__init__(type=type)
         # As an annotation, it is not allowed to initialize the _port_name.
         self._port_name = None
         self.description = description
+        self.path: Any = None
 
         if path is not None and not isinstance(path, str):
             # this logic will make dsl data binding expression working in the same way as yaml
@@ -247,13 +248,13 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         self._validate_parameter_combinations()
 
     @property
-    def _allowed_types(self):
+    def _allowed_types(self) -> Any:
         if self._multiple_types:
             return None
         return IOConstants.PRIMITIVE_STR_2_TYPE.get(self.type)
 
     @property
-    def _is_primitive_type(self):
+    def _is_primitive_type(self) -> bool:
         if self._multiple_types:
             # note: we suppose that no primitive type will be included when there are multiple types
             return False
@@ -288,9 +289,10 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         :return: True if the input is enum.
         :rtype: bool
         """
-        return self.type == ComponentParameterTypes.STRING and self.enum
+        res: bool = self.type == ComponentParameterTypes.STRING and self.enum
+        return res
 
-    def _to_dict(self):
+    def _to_dict(self) -> Dict:
         """Convert the Input object to a dict.
 
         :return: Dictionary representation of Input
@@ -298,11 +300,10 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         """
         keys = self._IO_KEYS
         result = {key: getattr(self, key) for key in keys}
-        return _remove_empty_values(result)
+        res: dict = _remove_empty_values(result)
+        return res
 
-    T = TypeVar("T")
-
-    def _parse(self, val: T) -> Union[int, float, bool, str, T]:
+    def _parse(self, val: Any) -> Union[int, float, bool, str, Any]:
         """Parse value passed from command line.
 
         :param val: The input value
@@ -330,7 +331,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
             return val if isinstance(val, str) else str(val)
         return val
 
-    def _parse_and_validate(self, val: T) -> Union[int, float, bool, str, T]:
+    def _parse_and_validate(self, val: Any) -> Union[int, float, bool, str, Any]:
         """Parse the val passed from the command line and validate the value.
 
         :param val: The input string value from the command line.
@@ -343,10 +344,10 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
             self._validate_or_throw(val)
         return val
 
-    def _update_name(self, name):
+    def _update_name(self, name: Any) -> None:
         self._port_name = name
 
-    def _update_default(self, default_value: Any):
+    def _update_default(self, default_value: Any) -> None:
         """Update provided default values.
 
         :param default_value: The default value of the Input
@@ -385,7 +386,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
                     raise UserErrorException(msg) from e
         self.default = default_value
 
-    def _validate_or_throw(self, value: Any):
+    def _validate_or_throw(self, value: Any) -> None:
         """Validate input parameter value, throw exception if not as expected.
 
         It will throw exception if validate failed, otherwise do nothing.
@@ -444,19 +445,21 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         if self._multiple_types:
             return "[" + ", ".join(self.type) + "]"
         if self._is_primitive_type:
-            return IOConstants.PRIMITIVE_STR_2_TYPE[self.type].__name__
-        return self.type
+            res_primitive_type: str = IOConstants.PRIMITIVE_STR_2_TYPE[self.type].__name__
+            return res_primitive_type
+        res: str = self.type
+        return res
 
-    def _validate_parameter_combinations(self):
+    def _validate_parameter_combinations(self) -> None:
         """Validate different parameter combinations according to type."""
         parameters = ["type", "path", "mode", "default", "min", "max"]
-        parameters = {key: getattr(self, key, None) for key in parameters}
-        type = parameters.pop("type")
+        parameters_dict: dict = {key: getattr(self, key, None) for key in parameters}
+        type = parameters_dict.pop("type")
 
         # validate parameter combination
         if not self._multiple_types and type in IOConstants.INPUT_TYPE_COMBINATION:
             valid_parameters = IOConstants.INPUT_TYPE_COMBINATION[type]
-            for key, value in parameters.items():
+            for key, value in parameters_dict.items():
                 if key not in valid_parameters and value is not None:
                     msg = "Invalid parameter for '{}' Input, parameter '{}' should be None but got '{}'"
                     raise ValidationException(
@@ -467,7 +470,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
                         error_type=ValidationErrorType.INVALID_VALUE,
                     )
 
-    def _simple_parse(self, value, _type=None):
+    def _simple_parse(self, value: Any, _type: Any = None) -> Any:
         if self._multiple_types:
             return value
         if _type is None:
@@ -476,7 +479,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
             return IOConstants.PARAM_PARSERS[_type](value)
         return value
 
-    def _normalize_self_properties(self):
+    def _normalize_self_properties(self) -> None:
         # parse value from string to its original type. eg: "false" -> False
         for key in ["min", "max"]:
             if getattr(self, key) is not None:
@@ -487,18 +490,19 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
             self.optional = self._simple_parse(getattr(self, "optional", "false"), _type="boolean")
 
     @classmethod
-    def _get_input_by_type(cls, t: type, optional=None) -> Optional["Input"]:
+    def _get_input_by_type(cls, t: type, optional: Any = None) -> Optional["Input"]:
         if t in IOConstants.PRIMITIVE_TYPE_2_STR:
             return cls(type=IOConstants.PRIMITIVE_TYPE_2_STR[t], optional=optional)
         return None
 
     @classmethod
-    def _get_default_unknown_input(cls, optional=None) -> "Input":
+    def _get_default_unknown_input(cls, optional: Optional[bool] = None) -> "Input":
         # Set type as None here to avoid schema validation failed
-        return cls(type=None, optional=optional)
+        res: Input = cls(type=None, optional=optional)  # type: ignore
+        return res
 
     @classmethod
-    def _get_param_with_standard_annotation(cls, func):
+    def _get_param_with_standard_annotation(cls, func: Any) -> Dict:
         return _get_param_with_standard_annotation(func, is_func=True)
 
     def _to_rest_object(self) -> Dict:
@@ -511,12 +515,13 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         return result
 
     @classmethod
-    def _map_from_rest_type(cls, _type):
+    def _map_from_rest_type(cls, _type: Union[str, List]) -> Union[str, List]:
         # this is for component rest object when using Input as component inputs
         reversed_data_type_mapping = {v: k for k, v in IOConstants.TYPE_MAPPING_YAML_2_REST.items()}
         # parse String -> string, Integer -> integer, etc
         if not isinstance(_type, list) and _type in reversed_data_type_mapping:
-            return reversed_data_type_mapping[_type]
+            res: str = reversed_data_type_mapping[_type]
+            return res
         return _type
 
     @classmethod

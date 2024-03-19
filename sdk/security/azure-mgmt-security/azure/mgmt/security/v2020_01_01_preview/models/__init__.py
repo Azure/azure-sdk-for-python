@@ -17,13 +17,20 @@ from ._models_py3 import GcpCredentialsDetailsProperties
 from ._models_py3 import HybridComputeSettingsProperties
 from ._models_py3 import ProxyServerProperties
 from ._models_py3 import Resource
+from ._models_py3 import SecurityContact
+from ._models_py3 import SecurityContactList
+from ._models_py3 import SecurityContactPropertiesAlertNotifications
+from ._models_py3 import SecurityContactPropertiesNotificationsByRole
 from ._models_py3 import ServicePrincipalProperties
 
 from ._security_center_enums import AuthenticationProvisioningState
 from ._security_center_enums import AuthenticationType
 from ._security_center_enums import AutoProvision
 from ._security_center_enums import HybridComputeProvisioningState
+from ._security_center_enums import MinimalSeverity
 from ._security_center_enums import PermissionProperty
+from ._security_center_enums import Roles
+from ._security_center_enums import State
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
@@ -40,12 +47,19 @@ __all__ = [
     "HybridComputeSettingsProperties",
     "ProxyServerProperties",
     "Resource",
+    "SecurityContact",
+    "SecurityContactList",
+    "SecurityContactPropertiesAlertNotifications",
+    "SecurityContactPropertiesNotificationsByRole",
     "ServicePrincipalProperties",
     "AuthenticationProvisioningState",
     "AuthenticationType",
     "AutoProvision",
     "HybridComputeProvisioningState",
+    "MinimalSeverity",
     "PermissionProperty",
+    "Roles",
+    "State",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()
