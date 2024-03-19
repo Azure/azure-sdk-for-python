@@ -270,7 +270,7 @@ class TestDMACTraining(FormRecognizerTest):
         poller = client.begin_build_document_model("template", blob_container_url=None, continuation_token=cont_token)
         result = poller.result()
         assert result
-        initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
+        initial_poller.wait()  # necessary so devtools_testutils doesn't throw assertion error
 
     @skip_flaky_test
     @FormRecognizerPreparer()
