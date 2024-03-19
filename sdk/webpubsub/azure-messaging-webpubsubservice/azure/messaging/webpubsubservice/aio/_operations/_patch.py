@@ -102,7 +102,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
 
     @distributed_trace_async
     async def send_to_all(  # pylint: disable=inconsistent-return-statements
-        self, message: IO, *, excluded: Optional[List[str]] = None, filter: Optional[str] = None, **kwargs: Any
+        self, message: IO, *, excluded: Optional[List[str]] = None, filter: Optional[str] = None, content_type: Optional[str] = None, **kwargs: Any
     ) -> None:
         """Broadcast content inside request body to all the connected client connections.
 
@@ -115,6 +115,8 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         :keyword filter: Following OData filter syntax to filter out the subscribers receiving the
          messages. Default value is None.
         :paramtype filter: str
+        :keyword content_type: The content type of the payload. Default value is None. Allowed values are 'application/json', 'application/octet-stream' and 'text/plain'
+        :paramtype content_type: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -130,7 +132,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))  # type: str
+        content_type = _headers.pop("Content-Type", "application/json") if content_type is None else content_type # type: str
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _json = None
@@ -145,7 +147,6 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
                 "The content_type '{}' is not one of the allowed values: "
                 "['application/json', 'application/octet-stream', 'text/plain']".format(content_type)
             )
-
         request = build_send_to_all_request(
             hub=self._config.hub,
             excluded=excluded,
@@ -171,7 +172,6 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
-
         if cls:
             return cls(pipeline_response, None, {})
 
@@ -183,6 +183,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         *,
         excluded: Optional[List[str]] = None,
         filter: Optional[str] = None,
+        content_type: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Send content inside request body to a group of connections.
@@ -199,6 +200,8 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         :keyword filter: Following OData filter syntax to filter out the subscribers receiving the
          messages. Default value is None.
         :paramtype filter: str
+        :keyword content_type: The content type of the payload. Default value is None. Allowed values are 'application/json', 'application/octet-stream' and 'text/plain'
+        :paramtype content_type: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -214,7 +217,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))  # type: str
+        content_type = _headers.pop("Content-Type", "application/json") if content_type is None else content_type # type: str
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _json = None
@@ -229,7 +232,6 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
                 "The content_type '{}' is not one of the allowed values: "
                 "['application/json', 'application/octet-stream', 'text/plain']".format(content_type)
             )
-
         request = build_send_to_group_request(
             group=group,
             hub=self._config.hub,
@@ -256,13 +258,12 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
-
         if cls:
             return cls(pipeline_response, None, {})
 
     @distributed_trace_async
     async def send_to_connection(  # pylint: disable=inconsistent-return-statements
-        self, connection_id: str, message: IO, **kwargs: Any
+        self, connection_id: str, message: IO, *, content_type: Optional[str] = None, **kwargs: Any
     ) -> None:
         """Send content inside request body to the specific connection.
 
@@ -272,6 +273,8 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         :type connection_id: str
         :param message: The payload body. Required.
         :type message: IO
+        :keyword content_type: The content type of the payload. Default value is None. Allowed values are 'application/json', 'application/octet-stream' and 'text/plain'
+        :paramtype content_type: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -287,7 +290,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))  # type: str
+        content_type = _headers.pop("Content-Type", "application/json") if content_type is None else content_type  # type: str
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _json = None
@@ -302,7 +305,6 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
                 "The content_type '{}' is not one of the allowed values: "
                 "['application/json', 'application/octet-stream', 'text/plain']".format(content_type)
             )
-
         request = build_send_to_connection_request(
             connection_id=connection_id,
             hub=self._config.hub,
@@ -327,13 +329,12 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
-
         if cls:
             return cls(pipeline_response, None, {})
 
     @distributed_trace_async
     async def send_to_user(  # pylint: disable=inconsistent-return-statements
-        self, user_id: str, message: IO, *, filter: Optional[str] = None, **kwargs: Any
+        self, user_id: str, message: IO, *, filter: Optional[str] = None, content_type: Optional[str] = None, **kwargs: Any
     ) -> None:
         """Send content inside request body to the specific user.
 
@@ -346,6 +347,8 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         :keyword filter: Following OData filter syntax to filter out the subscribers receiving the
          messages. Default value is None.
         :paramtype filter: str
+        :keyword content_type: The content type of the payload. Default value is None. Allowed values are 'application/json', 'application/octet-stream' and 'text/plain'
+        :paramtype content_type: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -361,7 +364,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))  # type: str
+        content_type = _headers.pop("Content-Type", "application/json") if content_type is None else content_type  # type: str
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _json = None
@@ -376,7 +379,6 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
                 "The content_type '{}' is not one of the allowed values: "
                 "['application/json', 'application/octet-stream', 'text/plain']".format(content_type)
             )
-
         request = build_send_to_user_request(
             user_id=user_id,
             hub=self._config.hub,
@@ -402,7 +404,6 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
-
         if cls:
             return cls(pipeline_response, None, {})
 

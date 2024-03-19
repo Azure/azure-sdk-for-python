@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -141,6 +142,54 @@ class SearchIndexerSkillset:
         """
         return cls._from_generated(_SearchIndexerSkillset.deserialize(data, content_type=content_type))
 
+    def as_dict(self, keep_readonly: bool = True, **kwargs: Any) -> MutableMapping[str, Any]:
+        """Return a dict that can be serialized using json.dump.
+
+        :param bool keep_readonly: If you want to serialize the readonly attributes
+        :returns: A dict JSON compatible object
+        :rtype: dict
+        """
+        return self._to_generated().as_dict(keep_readonly=keep_readonly, **kwargs)  # type: ignore
+
+    @classmethod
+    def from_dict(
+        cls,
+        data: Any,
+        content_type: Optional[str] = None,
+    ) -> "SearchIndexerSkillset":
+        """Parse a dict using given key extractor return a model.
+
+        :param dict data: A dict using RestAPI structure
+        :param str content_type: JSON by default, set application/xml if XML.
+        :returns: A SearchIndexerSkillset instance
+        :rtype: SearchIndexerSkillset
+        :raises: DeserializationError if something went wrong
+        """
+        return cls._from_generated(_SearchIndexerSkillset.from_dict(data, content_type=content_type))
+
+    def __eq__(self, other: Any) -> bool:
+        """Compare objects by comparing all attributes.
+
+        :param Any other: the object to compare with
+        :returns: True if all attributes are equal, else False
+        :rtype: bool
+        """
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        return False
+
+    def __ne__(self, other: Any) -> bool:
+        """Compare objects by comparing all attributes.
+
+        :param Any other: the object to compare with
+        :returns: False if all attributes are equal, else True
+        :rtype: bool
+        """
+        return not self.__eq__(other)
+
+    def __str__(self) -> str:
+        return str(self.__dict__)
+
 
 class EntityRecognitionSkillVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the Entity Recognition skill version to use."""
@@ -245,6 +294,8 @@ class EntityRecognitionSkill(SearchIndexerSkill):
                 inputs=self.inputs,
                 outputs=self.outputs,
                 name=self.name,
+                description=self.description,
+                context=self.context,
                 odata_type=self.odata_type,
                 categories=self.categories,
                 default_language_code=self.default_language_code,
@@ -358,6 +409,8 @@ class SentimentSkill(SearchIndexerSkill):
                 inputs=self.inputs,
                 outputs=self.outputs,
                 name=self.name,
+                description=self.description,
+                context=self.context,
                 odata_type=self.odata_type,
                 default_language_code=self.default_language_code,
                 include_opinion_mining=self.include_opinion_mining,
@@ -464,6 +517,54 @@ class AnalyzeTextOptions:
         :raises: DeserializationError if something went wrong
         """
         return cls._from_analyze_request(AnalyzeRequest.deserialize(data, content_type=content_type))
+
+    def as_dict(self, keep_readonly: bool = True, **kwargs: Any) -> MutableMapping[str, Any]:
+        """Return a dict that can be serialized using json.dump.
+
+        :param bool keep_readonly: If you want to serialize the readonly attributes
+        :returns: A dict JSON compatible object
+        :rtype: dict
+        """
+        return self._to_analyze_request().as_dict(keep_readonly=keep_readonly, **kwargs)  # type: ignore
+
+    @classmethod
+    def from_dict(
+        cls,
+        data: Any,
+        content_type: Optional[str] = None,
+    ) -> "AnalyzeTextOptions":
+        """Parse a dict using given key extractor return a model.
+
+        :param dict data: A dict using RestAPI structure
+        :param str content_type: JSON by default, set application/xml if XML.
+        :returns: A AnalyzeTextOptions instance
+        :rtype: AnalyzeTextOptions
+        :raises: DeserializationError if something went wrong
+        """
+        return cls._from_analyze_request(AnalyzeRequest.from_dict(data, content_type=content_type))
+
+    def __eq__(self, other: Any) -> bool:
+        """Compare objects by comparing all attributes.
+
+        :param Any other: the object to compare with
+        :returns: True if all attributes are equal, else False
+        :rtype: bool
+        """
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        return False
+
+    def __ne__(self, other: Any) -> bool:
+        """Compare objects by comparing all attributes.
+
+        :param Any other: the object to compare with
+        :returns: False if all attributes are equal, else True
+        :rtype: bool
+        """
+        return not self.__eq__(other)
+
+    def __str__(self) -> str:
+        return str(self.__dict__)
 
 
 class CustomAnalyzer(LexicalAnalyzer):
@@ -726,7 +827,7 @@ class SearchResourceEncryptionKey:
         )
 
     @classmethod
-    def _from_generated(cls, search_resource_encryption_key):
+    def _from_generated(cls, search_resource_encryption_key) -> Optional["SearchResourceEncryptionKey"]:
         if not search_resource_encryption_key:
             return None
         if search_resource_encryption_key.access_credentials:
@@ -752,7 +853,7 @@ class SearchResourceEncryptionKey:
         return self._to_generated().serialize(keep_readonly=keep_readonly, **kwargs)  # type: ignore
 
     @classmethod
-    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> "SearchResourceEncryptionKey":
+    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Optional["SearchResourceEncryptionKey"]:
         """Parse a str using the RestAPI syntax and return a SearchResourceEncryptionKey instance.
 
         :param str data: A str using RestAPI structure. JSON by default.
@@ -763,6 +864,54 @@ class SearchResourceEncryptionKey:
         return cls._from_generated(  # type: ignore
             _SearchResourceEncryptionKey.deserialize(data, content_type=content_type)
         )
+
+    def as_dict(self, keep_readonly: bool = True, **kwargs: Any) -> MutableMapping[str, Any]:
+        """Return a dict that can be serialized using json.dump.
+
+        :param bool keep_readonly: If you want to serialize the readonly attributes
+        :returns: A dict JSON compatible object
+        :rtype: dict
+        """
+        return self._to_generated().as_dict(keep_readonly=keep_readonly, **kwargs)  # type: ignore
+
+    @classmethod
+    def from_dict(
+        cls,
+        data: Any,
+        content_type: Optional[str] = None,
+    ) -> Optional["SearchResourceEncryptionKey"]:
+        """Parse a dict using given key extractor return a model.
+
+        :param dict data: A dict using RestAPI structure
+        :param str content_type: JSON by default, set application/xml if XML.
+        :returns: A SearchResourceEncryptionKey instance
+        :rtype: SearchResourceEncryptionKey
+        :raises: DeserializationError if something went wrong
+        """
+        return cls._from_generated(_SearchResourceEncryptionKey.from_dict(data, content_type=content_type))
+
+    def __eq__(self, other: Any) -> bool:
+        """Compare objects by comparing all attributes.
+
+        :param Any other: the object to compare with
+        :returns: True if all attributes are equal, else False
+        :rtype: bool
+        """
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        return False
+
+    def __ne__(self, other: Any) -> bool:
+        """Compare objects by comparing all attributes.
+
+        :param Any other: the object to compare with
+        :returns: False if all attributes are equal, else True
+        :rtype: bool
+        """
+        return not self.__eq__(other)
+
+    def __str__(self) -> str:
+        return str(self.__dict__)
 
 
 class SynonymMap:
@@ -840,6 +989,54 @@ class SynonymMap:
         :raises: DeserializationError if something went wrong
         """
         return cls._from_generated(_SynonymMap.deserialize(data, content_type=content_type))
+
+    def as_dict(self, keep_readonly: bool = True, **kwargs: Any) -> MutableMapping[str, Any]:
+        """Return a dict that can be serialized using json.dump.
+
+        :param bool keep_readonly: If you want to serialize the readonly attributes
+        :returns: A dict JSON compatible object
+        :rtype: dict
+        """
+        return self._to_generated().as_dict(keep_readonly=keep_readonly, **kwargs)  # type: ignore
+
+    @classmethod
+    def from_dict(
+        cls,
+        data: Any,
+        content_type: Optional[str] = None,
+    ) -> "SynonymMap":
+        """Parse a dict using given key extractor return a model.
+
+        :param dict data: A dict using RestAPI structure
+        :param str content_type: JSON by default, set application/xml if XML.
+        :returns: A SynonymMap instance
+        :rtype: SynonymMap
+        :raises: DeserializationError if something went wrong
+        """
+        return cls._from_generated(_SynonymMap.from_dict(data, content_type=content_type))
+
+    def __eq__(self, other: Any) -> bool:
+        """Compare objects by comparing all attributes.
+
+        :param Any other: the object to compare with
+        :returns: True if all attributes are equal, else False
+        :rtype: bool
+        """
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        return False
+
+    def __ne__(self, other: Any) -> bool:
+        """Compare objects by comparing all attributes.
+
+        :param Any other: the object to compare with
+        :returns: False if all attributes are equal, else True
+        :rtype: bool
+        """
+        return not self.__eq__(other)
+
+    def __str__(self) -> str:
+        return str(self.__dict__)
 
 
 class SearchIndexerDataSourceConnection:
@@ -945,6 +1142,54 @@ class SearchIndexerDataSourceConnection:
         :raises: DeserializationError if something went wrong
         """
         return cls._from_generated(_SearchIndexerDataSource.deserialize(data, content_type=content_type))
+
+    def as_dict(self, keep_readonly: bool = True, **kwargs: Any) -> MutableMapping[str, Any]:
+        """Return a dict that can be serialized using json.dump.
+
+        :param bool keep_readonly: If you want to serialize the readonly attributes
+        :returns: A dict JSON compatible object
+        :rtype: dict
+        """
+        return self._to_generated().as_dict(keep_readonly=keep_readonly, **kwargs)  # type: ignore
+
+    @classmethod
+    def from_dict(
+        cls,
+        data: Any,
+        content_type: Optional[str] = None,
+    ) -> "SearchIndexerDataSourceConnection":
+        """Parse a dict using given key extractor return a model.
+
+        :param dict data: A dict using RestAPI structure
+        :param str content_type: JSON by default, set application/xml if XML.
+        :returns: A SearchIndexerDataSourceConnection instance
+        :rtype: SearchIndexerDataSourceConnection
+        :raises: DeserializationError if something went wrong
+        """
+        return cls._from_generated(_SearchIndexerDataSource.from_dict(data, content_type=content_type))
+
+    def __eq__(self, other: Any) -> bool:
+        """Compare objects by comparing all attributes.
+
+        :param Any other: the object to compare with
+        :returns: True if all attributes are equal, else False
+        :rtype: bool
+        """
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        return False
+
+    def __ne__(self, other: Any) -> bool:
+        """Compare objects by comparing all attributes.
+
+        :param Any other: the object to compare with
+        :returns: False if all attributes are equal, else True
+        :rtype: bool
+        """
+        return not self.__eq__(other)
+
+    def __str__(self) -> str:
+        return str(self.__dict__)
 
 
 def pack_analyzer(analyzer):

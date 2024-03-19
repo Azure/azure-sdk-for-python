@@ -7,3 +7,6 @@ httpx>=0.25.0
 -e ../../../tools/azure-devtools
 -e tests/testserver_tests/coretestserver
 ../../core/azure-core
+azure-storage-blob
+azure-data-tables
+azure-identity

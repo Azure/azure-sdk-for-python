@@ -4,10 +4,13 @@
 # ------------------------------------
 import json
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Union, cast
+from typing import Any, Dict, List, Optional, Union, cast, Callable
 from typing_extensions import Literal
 
+from azure.core.async_paging import AsyncList
 from azure.core.rest import HttpResponse
+from azure.core.paging import PageIterator
+from azure.core.async_paging import AsyncPageIterator
 from ._generated._serialization import Model
 from ._generated.models import (
     KeyValue,
@@ -495,11 +498,11 @@ class ConfigurationSnapshot:  # pylint: disable=too-many-instance-attributes
         return snapshot
 
     @classmethod
-    def _from_deserialized(  # pylint:disable=unused-argument
+    def _from_deserialized(
         cls,
-        response: HttpResponse,
+        response: HttpResponse,  # pylint:disable=unused-argument
         deserialized: GeneratedConfigurationSnapshot,
-        response_headers: Dict,
+        response_headers: Dict,  # pylint:disable=unused-argument
     ) -> "ConfigurationSnapshot":
         if deserialized is None:
             return deserialized
@@ -535,3 +538,81 @@ class ConfigurationSnapshot:  # pylint: disable=too-many-instance-attributes
             retention_period=self.retention_period,
             tags=self.tags,
         )
+
+
+def _return_deserialized_and_headers(_, deserialized, response_headers):
+    return deserialized, response_headers
+
+
+class ConfigurationSettingPropertiesPaged(PageIterator):
+    """An iterable of ConfigurationSetting properties."""
+
+    etag: str
+    """The etag of current page."""
+
+    def __init__(self, command: Callable, **kwargs):
+        super(ConfigurationSettingPropertiesPaged, self).__init__(
+            self._get_next_cb,
+            self._extract_data_cb,
+            continuation_token=kwargs.get("continuation_token"),
+        )
+        self._command = command
+        self._key = kwargs.get("key")
+        self._label = kwargs.get("label")
+        self._accept_datetime = kwargs.get("accept_datetime")
+        self._select = kwargs.get("select")
+        self._deserializer = lambda objs: [
+            ConfigurationSetting._from_generated(x) for x in objs  # pylint:disable=protected-access
+        ]
+
+    def _get_next_cb(self, continuation_token, **kwargs):
+        return self._command(
+            key=self._key,
+            label=self._label,
+            accept_datetime=self._accept_datetime,
+            select=self._select,
+            continuation_token=continuation_token,
+            cls=kwargs.pop("cls", None) or _return_deserialized_and_headers,
+        )
+
+    def _extract_data_cb(self, get_next_return):
+        deserialized, response_headers = get_next_return
+        self.etag = response_headers.pop("ETag")
+        return deserialized.next_link or None, iter(self._deserializer(deserialized.items))
+
+
+class ConfigurationSettingPropertiesPagedAsync(AsyncPageIterator):
+    """An iterable of ConfigurationSetting properties."""
+
+    etag: str
+    """The etag of current page."""
+
+    def __init__(self, command: Callable, **kwargs):
+        super(ConfigurationSettingPropertiesPagedAsync, self).__init__(
+            self._get_next_cb,
+            self._extract_data_cb,
+            continuation_token=kwargs.get("continuation_token"),
+        )
+        self._command = command
+        self._key = kwargs.get("key")
+        self._label = kwargs.get("label")
+        self._accept_datetime = kwargs.get("accept_datetime")
+        self._select = kwargs.get("select")
+        self._deserializer = lambda objs: [
+            ConfigurationSetting._from_generated(x) for x in objs  # pylint:disable=protected-access
+        ]
+
+    async def _get_next_cb(self, continuation_token, **kwargs):
+        return await self._command(
+            key=self._key,
+            label=self._label,
+            accept_datetime=self._accept_datetime,
+            select=self._select,
+            continuation_token=continuation_token,
+            cls=kwargs.pop("cls", None) or _return_deserialized_and_headers,
+        )
+
+    async def _extract_data_cb(self, get_next_return):
+        deserialized, response_headers = get_next_return
+        self.etag = response_headers.pop("ETag")
+        return deserialized.next_link or None, AsyncList(self._deserializer(deserialized.items))
