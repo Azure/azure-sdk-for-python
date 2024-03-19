@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Any, Optional, TYPE_CHECKING, Union
+from typing import Any, Optional, TYPE_CHECKING
 import uuid
 import logging
 
