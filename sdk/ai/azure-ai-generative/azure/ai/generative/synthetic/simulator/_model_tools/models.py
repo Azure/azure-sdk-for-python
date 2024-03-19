@@ -47,8 +47,9 @@ class AsyncHTTPClientWithRetry:
         # Set up async HTTP client with retry
 
         trace_config = TraceConfig()  # set up request logging
-        trace_config.on_request_start.append(self.on_request_start)
-        trace_config.on_request_end.append(self.on_request_end)
+        trace_config.on_request_end.append(self.delete_auth_header)
+        # trace_config.on_request_start.append(self.on_request_start)
+        # trace_config.on_request_end.append(self.on_request_end) 
         if retry_options is None:
             retry_options = RandomRetry(  # set up retry configuration
                 statuses=[104, 408, 409, 424, 429, 500, 502,
@@ -66,6 +67,13 @@ class AsyncHTTPClientWithRetry:
         self.logger.info("[ATTEMPT %s] Sending %s request to %s" % (
             current_attempt, params.method, params.url
         ))
+
+    async def delete_auth_header(self, session, trace_config_ctx, params):
+        request_headers = dict(params.request_info.headers)
+        if "Authorization" in request_headers:
+            del request_headers["Authorization"]
+        if "api-key" in request_headers:
+            del request_headers["api-key"]
 
     async def on_request_end(self, session, trace_config_ctx, params):
         current_attempt = trace_config_ctx.trace_request_ctx["current_attempt"]
