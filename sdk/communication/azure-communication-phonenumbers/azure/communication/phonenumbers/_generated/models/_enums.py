@@ -19,7 +19,7 @@ class BillingFrequency(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class OperatorNumberType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of service associated with the phone number."""
 
-    UNAVAILABLE = "unavailable"
+    UNKNOWN = "unknown"
     OTHER = "other"
     GEOGRAPHIC = "geographic"
     MOBILE = "mobile"
@@ -57,12 +57,8 @@ class PhoneNumberOperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     RELEASE_PHONE_NUMBER = "releasePhoneNumber"
     SEARCH = "search"
     UPDATE_PHONE_NUMBER_CAPABILITIES = "updatePhoneNumberCapabilities"
+    RESERVATION_PURCHASE = "reservationPurchase"
 
-class PhoneNumberSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Source of the number, e.g. Cloud or OperatorConnect."""
-
-    CLOUD = "cloud"
-    OPERATOR_CONNECT = "operatorConnect"
 
 class PhoneNumberSearchResultError(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Mapping Error Messages to Codes."""
@@ -84,6 +80,13 @@ class PhoneNumberSearchResultError(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     BILLING_UNAVAILABLE = "BillingUnavailable"
     PROVISIONING_FAILED = "ProvisioningFailed"
     UNKNOWN_SEARCH_ERROR = "UnknownSearchError"
+
+
+class PhoneNumberSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Source of the number, e.g. Cloud or OperatorConnect."""
+
+    CLOUD = "cloud"
+    OPERATOR_CONNECT = "operatorConnect"
 
 
 class PhoneNumberType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
