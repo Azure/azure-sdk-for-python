@@ -25,7 +25,7 @@ def get_release_tag(
     invoke_command(f"git sparse-checkout init", clone_folder)
     invoke_command(f'git sparse-checkout add "{checkout_path}"', clone_folder)
     invoke_command(f"git -c advice.detachedHead=false checkout {target_package}_{target_version}", clone_folder)
-    if target_package in ["azure-mgmt-storage"]:
+    if target_package in ["azure-mgmt-storage", "azure-mgmt-storagesync"]:
         # rewrite dev reqs for problematic tagged package test deps like tools/vcrpy
         rewrite_dev_reqs(os.path.join(clone_folder, checkout_path))
 
