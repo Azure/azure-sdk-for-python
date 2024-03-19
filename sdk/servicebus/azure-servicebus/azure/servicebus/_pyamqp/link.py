@@ -240,8 +240,10 @@ class Link:  # pylint: disable=too-many-instance-attributes
             self._set_state(LinkState.ERROR)
         else:
             if self.state != LinkState.DETACH_SENT:
-                raise AMQPLinkError(condition=ErrorCondition.InternalError,
-                                          description="Link detached unexpectedly.", retryable=True) from None
+                # Handle the case of when the remote side starts detaches without sending an error.
+                # We should detach as per the spec but then retry connecting
+                self._error = AMQPLinkError(condition=ErrorCondition.InternalError,
+                                          description="Link detached unexpectedly.", retryable=True)
             self._set_state(LinkState.DETACHED)
 
     def attach(self) -> None:
