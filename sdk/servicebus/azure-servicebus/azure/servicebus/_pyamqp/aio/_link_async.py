@@ -202,11 +202,10 @@ class Link:  # pylint: disable=too-many-instance-attributes
                 _LOGGER.warning("Callback for link attach raised error: %s", e, extra=self.network_trace_params)
 
     async def _outgoing_flow(self, **kwargs: Any) -> None:
-        link_credit = kwargs.get("link_credit", None) or self.current_link_credit
         flow_frame = {
             "handle": self.handle,
             "delivery_count": self.delivery_count,
-            "link_credit": link_credit,
+            "link_credit": self.current_link_credit,
             "available": kwargs.get("available"),
             "drain": kwargs.get("drain"),
             "echo": kwargs.get("echo"),
