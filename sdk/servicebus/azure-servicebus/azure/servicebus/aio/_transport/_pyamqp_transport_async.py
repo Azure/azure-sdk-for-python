@@ -296,7 +296,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
 
     @staticmethod
     async def reset_link_credit_async(
-        handler: "ReceiveClientAsync", Maxmessage_count: int
+        handler: "ReceiveClientAsync", max_message_count: int
     ) -> None:
         """
         Resets the link credit on the link.
