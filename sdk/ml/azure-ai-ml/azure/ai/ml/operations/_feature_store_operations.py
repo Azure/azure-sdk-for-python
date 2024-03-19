@@ -508,7 +508,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
         self,
         *,
         feature_store_name: Optional[str] = None,
-        include_spark: Optional[bool] = False,
+        include_spark: bool = False,
         **kwargs: Any,
     ) -> LROPoller[ManagedNetworkProvisionStatus]:
         """Triggers the feature store to provision the managed network. Specifying spark enabled
