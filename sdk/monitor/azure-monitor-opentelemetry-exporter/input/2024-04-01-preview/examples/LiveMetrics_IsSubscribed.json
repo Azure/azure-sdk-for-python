@@ -1,0 +1,119 @@
+{
+  "operationId": "IsSubscribed",
+  "title": "Live Metrics client checks if its data is subscribed to.",
+  "parameters": {
+    "Host": "southcentralus.livediagnostics.monitor.azure.com",
+    "Authorization": "Bearer xxxxx.yyyyy.zzzzz",
+    "api-version": "2024-04-01-preview",
+    "content-type": "application/json",
+    "ikey": "4473b98e-c70d-4220-b57c-2984c2a0e5cd",
+    "x-ms-qps-transmission-time": 638422471817023737,
+    "x-ms-qps-machine-name": "SERVER-PC-NAME",
+    "x-ms-qps-instance-name": "server-pc-name",
+    "x-ms-qps-stream-id": "41112328328b4edb9aa777aa6d675186",
+    "x-ms-qps-role-name": "server-role-name",
+    "x-ms-qps-invariant-version": "5",
+    "x-ms-qps-configuration-etag": "1::bu8uyb2wr89ycvvn0iznpa4a9ufqax76::2::",
+    "monitoringDataPoint": {
+      "Instance": "server-pc-name",
+      "InvariantVersion": 5,
+      "IsWebApp": false,
+      "MachineName": "SERVER-PC-NAME",
+      "PerformanceCollectionSupported": true,
+      "RoleName": "",
+      "StreamId": "41112328328b4edb9aa777aa6d675186",
+      "Timestamp": "2024-02-01T21:36:32.5717105Z",
+      "Version": "2.21.0-429"
+    }
+  },
+  "responses": {
+    "200": {
+      "headers": {
+        "x-ms-qps-subscribed": "true",
+        "x-ms-qps-configuration-etag": "1::bu8uyb2wr89ycvvn0iznpa4a9ufqax76::2::"
+      },
+      "body": {
+        "ETag": "1::bu8uyb2wr89ycvvn0iznpa4a9ufqax76::2::",
+        "Metrics": [
+          {
+            "Id": "141.8a7513a4",
+            "TelemetryType": "Request",
+            "FilterGroups": [
+              {
+                "Filters": [
+                  {
+                    "FieldName": "Duration",
+                    "Predicate": "GreaterThan",
+                    "Comparand": "0.0:0:10"
+                  },
+                  {
+                    "FieldName": "CustomDimensions.UXCustomFilterKey",
+                    "Predicate": "Equal",
+                    "Comparand": "UXCustomFilterValue"
+                  }
+                ]
+              }
+            ],
+            "Projection": "Duration",
+            "Aggregation": "Avg",
+            "BackEndAggregation": "Avg"
+          }
+        ],
+        "DocumentStreams": [
+          {
+            "Id": "200.ecb0e7dd",
+            "DocumentFilterGroups": [
+              {
+                "TelemetryType": "Request",
+                "Filters": {
+                  "Filters": [
+                    {
+                      "FieldName": "Success",
+                      "Predicate": "Equal",
+                      "Comparand": "False"
+                    }
+                  ]
+                }
+              },
+              {
+                "TelemetryType": "Dependency",
+                "Filters": {
+                  "Filters": [
+                    {
+                      "FieldName": "Success",
+                      "Predicate": "Equal",
+                      "Comparand": "False"
+                    }
+                  ]
+                }
+              },
+              {
+                "TelemetryType": "Exception",
+                "Filters": {
+                  "Filters": []
+                }
+              },
+              {
+                "TelemetryType": "Event",
+                "Filters": {
+                  "Filters": []
+                }
+              },
+              {
+                "TelemetryType": "Trace",
+                "Filters": {
+                  "Filters": []
+                }
+              }
+            ]
+          }
+        ],
+        "QuotaInfo": {
+          "InitialQuota": 200,
+          "MaxQuota": 200,
+          "QuotaAccrualRatePerSec": 200
+        }
+      }
+    }
+  }
+}
