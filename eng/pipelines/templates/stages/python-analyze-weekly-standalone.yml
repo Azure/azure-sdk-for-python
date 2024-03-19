@@ -1,0 +1,19 @@
+parameters:
+  - name: ServiceDirectory
+    type: string
+    default: ''
+  - name: BuildTargetingString
+    type: string
+    default: 'azure-*'
+  - name: JobName
+    type: string
+    default: 'Test'
+
+extends: /eng/pipelines/templates/stages/1es-redirect.yml
+parameters:
+  stages:
+    - template: /eng/pipelines/templates/stages/python-analyze-weekly.yml@self
+      parameters:
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        JobName: ${{ parameters.JobName }}
