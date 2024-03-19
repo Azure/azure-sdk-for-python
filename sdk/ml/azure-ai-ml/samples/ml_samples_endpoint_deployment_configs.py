@@ -499,3 +499,4 @@ if __name__ == "__main__":
     sample = EndpointsDeploymentsConfigurationOptions()
     sample.ml_endpoints_deployments_config_0()
     sample.ml_endpoints_deployments_config_1()
+    sample.ml_endpoints_deployments_config_2()
