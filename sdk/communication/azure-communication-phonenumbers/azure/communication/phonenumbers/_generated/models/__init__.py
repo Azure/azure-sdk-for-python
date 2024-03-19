@@ -8,6 +8,11 @@
 
 from ._models import CommunicationError
 from ._models import CommunicationErrorResponse
+from ._models import OperatorDetails
+from ._models import OperatorInformation
+from ._models import OperatorInformationOptions
+from ._models import OperatorInformationRequest
+from ._models import OperatorInformationResult
 from ._models import PhoneNumberAdministrativeDivision
 from ._models import PhoneNumberAreaCode
 from ._models import PhoneNumberCapabilities
@@ -21,12 +26,15 @@ from ._models import PhoneNumberPurchaseRequest
 from ._models import PhoneNumberSearchRequest
 from ._models import PhoneNumberSearchResult
 from ._models import PurchasedPhoneNumber
+from ._models import PurchasedPhoneNumberCapabilities
 
 from ._enums import BillingFrequency
+from ._enums import OperatorNumberType
 from ._enums import PhoneNumberAssignmentType
 from ._enums import PhoneNumberCapabilityType
 from ._enums import PhoneNumberOperationStatus
 from ._enums import PhoneNumberOperationType
+from ._enums import PhoneNumberSearchResultError
 from ._enums import PhoneNumberType
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
@@ -35,6 +43,11 @@ from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     "CommunicationError",
     "CommunicationErrorResponse",
+    "OperatorDetails",
+    "OperatorInformation",
+    "OperatorInformationOptions",
+    "OperatorInformationRequest",
+    "OperatorInformationResult",
     "PhoneNumberAdministrativeDivision",
     "PhoneNumberAreaCode",
     "PhoneNumberCapabilities",
@@ -48,11 +61,15 @@ __all__ = [
     "PhoneNumberSearchRequest",
     "PhoneNumberSearchResult",
     "PurchasedPhoneNumber",
+    "PurchasedPhoneNumberCapabilities",
     "BillingFrequency",
+    "OperatorNumberType",
     "PhoneNumberAssignmentType",
     "PhoneNumberCapabilityType",
     "PhoneNumberOperationStatus",
     "PhoneNumberOperationType",
+    "PhoneNumberSource",
+    "PhoneNumberSearchResultError",
     "PhoneNumberType",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
