@@ -100,7 +100,7 @@ class Link:  # pylint: disable=too-many-instance-attributes
         self._is_closed = False
         self._on_link_state_change = kwargs.get("on_link_state_change")
         self._on_attach = kwargs.get("on_attach")
-        self._error = None
+        self._error: Optional[AMQPLinkError] = None
 
     async def __aenter__(self) -> "Link":
         await self.attach()
