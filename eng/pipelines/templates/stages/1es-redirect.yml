@@ -37,6 +37,9 @@ extends:
         suppressionsFile: '$(Build.SourcesDirectory)/eng/CredScanSuppression.json'
         toolVersion: '2.3.12.23'
         baselineFiles: $(Build.SourcesDirectory)/eng/python.gdnbaselines
+      eslint:
+        enabled: false
+        justificationForDisabling: "ESLint injected task has failures because it uses an old version of mkdirp. We should not fail for tools not controlled by the repo. See: https://dev.azure.com/azure-sdk/internal/_build/results?buildId=3556850"
       psscriptanalyzer:
         compiled: true
         break: true
