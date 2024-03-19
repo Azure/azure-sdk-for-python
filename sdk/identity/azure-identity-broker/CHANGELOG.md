@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- `InteractiveBrowserBrokerCredential` now supports a `use_operating_system_account` property to enable the use of the currently logged in operating system account for authentication rather than prompting for a credential.
+- `InteractiveBrowserBrokerCredential` now supports a `use_default_broker_account` property to enable the use of the currently logged in operating system account for authentication rather than prompting for a credential.
 - Added `enable_support_logging` as a keyword argument to `InteractiveBrowserBrokerCredential`. This allows additional support logging which may contain PII.
 
 ### Breaking Changes
