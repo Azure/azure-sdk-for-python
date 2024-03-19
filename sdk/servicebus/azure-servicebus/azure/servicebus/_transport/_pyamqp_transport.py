@@ -742,7 +742,7 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
         """
         Resets the link credit on the link.
         :param ReceiveClient handler: Client with link to reset link credit.
-        :param int link_credit: Link credit needed.
+        :param int max_message_count: Max message count.
         :rtype: None
         """
         handler._link.flow(link_credit=link_credit)  # pylint: disable=protected-access
