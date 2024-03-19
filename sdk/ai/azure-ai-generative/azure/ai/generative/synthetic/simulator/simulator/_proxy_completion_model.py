@@ -1,24 +1,26 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from aiohttp_retry import RetryClient, RandomRetry, JitterRetry
-from aiohttp.web import HTTPException
-from azure.ai.generative.synthetic.simulator._model_tools.models import (
-    OpenAIChatCompletionsModel,
-    AsyncHTTPClientWithRetry,
-)
+#pylint: skip-file
 from typing import List
 import uuid
-
-from azure.ai.generative.synthetic.simulator.simulator._simulation_request_dto import (
-    SimulationRequestDTO,
-)
-
 import time
 import logging
 import copy
 
 import asyncio
+
+from aiohttp_retry import RetryClient, JitterRetry  # pylint: disable=networking-import-outside-azure-core-transport
+from aiohttp.web import HTTPException  # pylint: disable=networking-import-outside-azure-core-transport
+from azure.ai.generative.synthetic.simulator._model_tools.models import (
+    OpenAIChatCompletionsModel,
+    AsyncHTTPClientWithRetry,
+)
+
+
+from azure.ai.generative.synthetic.simulator.simulator._simulation_request_dto import (
+    SimulationRequestDTO,
+)
 
 
 class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
@@ -44,12 +46,16 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
         """
         Query the model a single time with a message.
 
-        Parameters
-        ----------
-        messages: List of messages to query the model with. Expected format: [{"role": "user", "content": "Hello!"}, ...]
-        session: aiohttp RetryClient object to query the model with.
-        role: Not used for this model, since it is a chat model.
-        request_params: Additional parameters to pass to the model.
+        :param messages: List of messages to query the model with.
+                         Expected format: [{"role": "user", "content": "Hello!"}, ...]
+        :type messages: List[dict]
+        :param session: aiohttp RetryClient object to query the model with.
+        :type session: RetryClient
+        :param role: Not used for this model, since it is a chat model.
+        :type role: str
+        :keyword **request_params: Additional parameters to pass to the model.
+        :return: A dictionary representing the completion of the conversation query.
+        :rtype: dict
         """
         request_data = self.format_request_data(
             messages=messages,
@@ -72,6 +78,13 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
         ----------
         session: HTTPS Session for invoking the endpoint.
         request_data: Prompt dictionary to query the model with. (Pass {"prompt": prompt} instead of prompt.)
+
+        :param session: HTTPS Session for invoking the endpoint.
+        :type session: RetryClient
+        :param request_data: Prompt dictionary to query the model with. (Pass {"prompt": prompt} instead of prompt.)
+        :type request_data: dict
+        :return: A body of data.
+        :rtype: dict
         """
 
         self._log_request(request_data)
@@ -89,7 +102,7 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
             "X-ModelType": self.model or "",
         }
         # add all additional headers
-        headers.update(self.additional_headers) # type: ignore[arg-type]
+        headers.update(self.additional_headers)  # type: ignore[arg-type]
 
         params = {}
         if self.api_version:
@@ -123,7 +136,7 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
             attempts=7,
             start_timeout=10,
             max_timeout=180,
-            retry_all_server_errors=False
+            retry_all_server_errors=False,
         )
 
         exp_retry_client = AsyncHTTPClientWithRetry(
@@ -137,19 +150,18 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
         await asyncio.sleep(10)
 
         async with exp_retry_client.client as expsession:
-            async with expsession.get(
-                url=self.result_url, headers=proxy_headers
-            ) as response:
+            async with expsession.get(url=self.result_url, headers=proxy_headers) as response:
                 if response.status == 200:
                     response_data = await response.json()
-                    self.logger.info(f"Response: {response_data}")
+                    self.logger.info("Response: %s", response_data)
 
                     # Copy the full response and return it to be saved in jsonl.
                     full_response = copy.copy(response_data)
 
                     time_taken = time.time() - time_start
 
-                    parsed_response = self._parse_response(
+                    # pylint: disable=unexpected-keyword-arg
+                    parsed_response = self._parse_response(  # type: ignore[call-arg]
                         response_data, request_data=request_data
                     )
                 else:

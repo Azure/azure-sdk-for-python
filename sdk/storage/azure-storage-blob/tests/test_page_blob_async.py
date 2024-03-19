@@ -2240,6 +2240,45 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy_async
+    async def test_download_sparse_page_blob_uneven_chunks(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key)
+        await self._setup(bsc)
+
+        # Choose an initial size, chunk size, and blob size, so the last chunk spills over end of blob
+        self.config.max_single_get_size = 4 * 1024
+        self.config.max_chunk_get_size = 4 * 1024
+        sparse_page_blob_size = 10 * 1024
+
+        blob_client = self._get_blob_reference(bsc)
+        await blob_client.create_page_blob(sparse_page_blob_size)
+
+        data = b'12345678' * 128  # 1024 bytes
+        range_start = 2 * 1024 + 512
+        await blob_client.upload_page(data, offset=range_start, length=len(data))
+
+        # Act
+        content = await (await blob_client.download_blob()).readall()
+
+        # Assert
+        assert sparse_page_blob_size == len(content)
+        start = end = 0
+        async for r in blob_client.list_page_ranges():
+            if not r.cleared:
+                start = r.start
+                end = r.end
+
+        assert data == content[start: end + 1]
+        for byte in content[:start - 1]:
+            assert byte == 0
+        for byte in content[end + 1:]:
+            assert byte == 0
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
     async def test_upload_progress_chunked_non_parallel(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")

@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -442,6 +443,52 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        await self._play_media(
+            play_source=play_source,
+            play_to=play_to,
+            loop=loop,
+            operation_context=operation_context,
+            operation_callback_url=operation_callback_url,
+            **kwargs
+        )
+
+    @distributed_trace_async
+    async def _play_media(
+        self,
+        play_source: Union['FileSource', 'TextSource', 'SsmlSource'],
+        play_to: Union[Literal["all"], List['CommunicationIdentifier']] = 'all',
+        *,
+        loop: bool = False,
+        operation_context: Optional[str] = None,
+        operation_callback_url: Optional[str] = None,
+        interrupt_call_media_operation: Optional[bool] = None,
+        **kwargs
+    ) -> None:
+        """Play media to specific participant(s) in this call.
+
+        :param play_source: A PlaySource representing the source to play.
+        :type play_source: ~azure.communication.callautomation.FileSource or
+         ~azure.communication.callautomation.TextSource or
+         ~azure.communication.callautomation.SsmlSource
+        :param play_to: The targets to play media to. Default value is 'all', to play media
+         to all participants in the call.
+        :type play_to: list[~azure.communication.callautomation.CommunicationIdentifier]
+        :keyword loop: Whether the media should be repeated until cancelled.
+        :paramtype loop: bool
+        :keyword operation_context: Value that can be used to track this call and its associated events.
+        :paramtype operation_context: str or None
+        :keyword operation_callback_url: Set a callback URL that overrides the default callback URL set
+         by CreateCall/AnswerCall for this operation.
+         This setup is per-action. If this is not set, the default callback URL set by
+         CreateCall/AnswerCall will be used.
+        :paramtype operation_callback_url: str or None
+        :keyword interrupt_call_media_operation: If set play can barge into other existing
+         queued-up/currently-processing requests.
+        :paramtype interrupt_call_media_operation: bool
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
         play_source_single: Optional[Union['FileSource', 'TextSource', 'SsmlSource']] = None
         if isinstance(play_source, list):
             warnings.warn("Currently only single play source per request is supported.")
@@ -454,7 +501,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         play_request = PlayRequest(
             play_sources=[play_source_single._to_generated()],  # pylint:disable=protected-access
             play_to=audience,
-            play_options=PlayOptions(loop=loop),
+            play_options=PlayOptions(loop=loop, interrupt_call_media_operation=interrupt_call_media_operation),
             operation_context=operation_context,
             operation_callback_uri=operation_callback_url,
             **kwargs
@@ -469,6 +516,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         loop: bool = False,
         operation_context: Optional[str] = None,
         operation_callback_url: Optional[str] = None,
+        interrupt_call_media_operation: bool = False,
         **kwargs
     ) -> None:
         """Play media to all participants in this call.
@@ -486,6 +534,9 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
          This setup is per-action. If this is not set, the default callback URL set by
          CreateCall/AnswerCall will be used.
         :paramtype operation_callback_url: str or None
+        :keyword interrupt_call_media_operation: If set play can barge into other existing
+         queued-up/currently-processing requests.
+        :paramtype interrupt_call_media_operation: bool
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -494,11 +545,12 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             "The method 'play_media_to_all' is deprecated. Please use 'play_media' instead.",
             DeprecationWarning
         )
-        await self.play_media(
+        await self._play_media(
             play_source=play_source,
             loop=loop,
             operation_context=operation_context,
             operation_callback_url=operation_callback_url,
+            interrupt_call_media_operation=interrupt_call_media_operation,
             **kwargs
         )
 

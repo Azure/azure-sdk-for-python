@@ -4,7 +4,7 @@ pyright = false
 type_check_samples = false
 verifytypes = false
 pylint = true
-strict_sphinx = false
+strict_sphinx = true
 
 
 [tool.isort]

@@ -1,7 +1,7 @@
 from promptflow import tool
 import mlflow
 from mlflow.utils.rest_utils import http_request
-from utils import get_cred
+from utils import get_cred, is_conversation_valid
 
 def is_service_available():
     try:
@@ -35,13 +35,21 @@ def is_safety_metrics_selected(selected_metrics):
     print("No safety metrics are selected.")
     return False
 
+def is_chat_valid(chat) -> bool:
+    try:
+        is_valid_chat_format = is_conversation_valid(chat)
+    except:
+        print("The chat format is not valid for safety metrics")
+        is_valid_chat_format = False
+    return is_valid_chat_format
+
 
 # check if RAI service is avilable in this region. If not, return False.
 # check if tracking_uri is set. If not, return False
 # if tracking_rui is set, check if any safety metric is selected. 
 # if no safety metric is selected, return False
 @tool
-def validate_safety_metric_input(selected_metrics: dict) -> dict:
+def validate_safety_metric_input(selected_metrics: dict, chat: [dict]) -> dict:
     return is_safety_metrics_selected(selected_metrics) and \
             is_service_available() and \
-            is_tracking_uri_set()
+            is_tracking_uri_set() and is_chat_valid(chat)

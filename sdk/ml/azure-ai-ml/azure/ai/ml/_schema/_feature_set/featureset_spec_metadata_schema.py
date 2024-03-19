@@ -22,7 +22,7 @@ class FeaturesetSpecMetadataSchema(YamlFileSchema):
     source = fields.Nested(SourceMetadataSchema, required=True)
     feature_transformation_code = fields.Nested(FeatureTransformationCodeMetadataSchema, required=False)
     features = fields.List(NestedField(FeatureSchema), required=True, allow_none=False)
-    index_columns = fields.List(NestedField(DataColumnSchema), required=True, allow_none=False)
+    index_columns = fields.List(NestedField(DataColumnSchema), required=False)
     source_lookback = fields.Nested(DelayMetadataSchema, required=False)
     temporal_join_lookback = fields.Nested(DelayMetadataSchema, required=False)
 

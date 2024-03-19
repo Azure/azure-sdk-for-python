@@ -36,7 +36,7 @@ def sample_send_request():
 
     # The `send_request` method can send custom HTTP requests that share the client's existing pipeline,
     # while adding convenience for endpoint construction.
-    request = HttpRequest(method="GET", url=f"/docs/$count?api-version=2023-10-01-Preview")
+    request = HttpRequest(method="GET", url=f"/docs/$count?api-version=2024-03-01-Preview")
     response = client.send_request(request)
     response.raise_for_status()
     response_body = response.json()

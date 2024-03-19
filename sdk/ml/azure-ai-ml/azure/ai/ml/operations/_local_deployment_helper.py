@@ -233,7 +233,7 @@ class _LocalDeploymentHelper(object):
             endpoint_name=endpoint_name,
             deployment_name=str(deployment_name),
             yaml_code_directory_path=str(code_directory_path),
-            yaml_code_scoring_script_file_name=deployment.code_configuration.scoring_script
+            yaml_code_scoring_script_file_name=deployment.code_configuration.scoring_script  # type: ignore
             if code_directory_path
             else None,
             model_directory_path=model_directory_path,

@@ -19,6 +19,11 @@ def tiktoken_cache_dir(cache_dir: Union[str, Path] = "default"):
 
     Default cache_dir is the encodings cached in `azure.ai.generative.index._utils.encodings`.
     cl100k_base and gpt2 encodings are cached.
+
+    :param cache_dir: The cache directory. Defaults to "default".
+    :type cache_dir: Union[str, Path]
+    :return: None
+    :rtype: None
     """
     if cache_dir == "default":
         cache_dir = tiktoken_encodings_path
@@ -57,15 +62,38 @@ class TikTokenEstimator:
             self.encoder = tiktoken.get_encoding(encoding)
 
     def estimate(self, text: str) -> int:
-        """Estimate the number of tokens in the text."""
+        """
+        Estimate the number of tokens in the text.
+
+        :param text: The input text.
+        :type text: str
+        :return: The estimated number of tokens.
+        :rtype: int
+        """
         return len(self.encoder.encode(text, disallowed_special=(), allowed_special="all"))
 
     def truncate(self, text: str, max_tokens: int) -> str:
-        """Truncate the text to the max number of tokens."""
+        """
+        Truncate the text to the max number of tokens.
+
+        :param text: The input text.
+        :type text: str
+        :param max_tokens: The maximum number of tokens.
+        :type max_tokens: int
+        :return: The truncated text.
+        :rtype: str
+        """
         return self.encoder.decode(self.encoder.encode(text, disallowed_special=(), allowed_special="all")[:max_tokens])
 
 
 @lru_cache(maxsize=1)
 def token_length_function(encoding: str = "cl100k_base") -> Callable[[str], int]:
-    """Get the token length function."""
+    """
+    Get the token length function.
+
+    :param encoding: The encoding to use. Defaults to "cl100k_base".
+    :type encoding: str
+    :return: The token length function.
+    :rtype: Callable[[str], int]
+    """
     return TikTokenEstimator(encoding).estimate

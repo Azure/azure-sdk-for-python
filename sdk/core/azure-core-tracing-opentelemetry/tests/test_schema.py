@@ -11,8 +11,8 @@ from azure.core.tracing.ext.opentelemetry_span._schema import OpenTelemetrySchem
 
 
 class TestOpenTelemetrySchema:
-    def test_latest_schema_attributes_renamed(self, tracer):
-        with tracer.start_as_current_span("Root", kind=OpenTelemetrySpanKind.CLIENT) as parent:
+    def test_latest_schema_attributes_renamed(self, tracing_helper):
+        with tracing_helper.tracer.start_as_current_span("Root", kind=OpenTelemetrySpanKind.CLIENT) as parent:
             wrapped_class = OpenTelemetrySpan(span=parent)
             schema_version = OpenTelemetrySchema.get_latest_version()
             attribute_mappings = OpenTelemetrySchema.get_attribute_mappings(schema_version)
@@ -30,8 +30,8 @@ class TestOpenTelemetrySchema:
                 # Check that original attribute is not present.
                 assert wrapped_class.span_instance.attributes.get(key) is None
 
-    def test_latest_schema_attributes_not_renamed(self, tracer):
-        with tracer.start_as_current_span("Root", kind=OpenTelemetrySpanKind.CLIENT) as parent:
+    def test_latest_schema_attributes_not_renamed(self, tracing_helper):
+        with tracing_helper.tracer.start_as_current_span("Root", kind=OpenTelemetrySpanKind.CLIENT) as parent:
             wrapped_class = OpenTelemetrySpan(span=parent)
 
             wrapped_class.add_attribute("foo", "bar")

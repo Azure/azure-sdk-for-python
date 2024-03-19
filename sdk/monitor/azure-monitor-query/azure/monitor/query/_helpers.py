@@ -168,22 +168,22 @@ def process_prefer(server_timeout, include_statistics, include_visualization):
     return prefer.rstrip(",")
 
 
-def get_subscription_id_from_resource(resource_uri: str) -> str:
-    """Get the subscription ID from the provided resource URI.
+def get_subscription_id_from_resource(resource_id: str) -> str:
+    """Get the subscription ID from the provided resource ID.
 
-    The format of the resource URI is:
+    The format of the resource ID is:
         /subscriptions/{subscriptionId}/resourceGroups/{group}/providers/{provider}/{type}/{name}
 
-    :param str resource_uri: The resource URI to parse.
+    :param str resource_id: The resource ID to parse.
     :returns: The subscription ID.
     :rtype: str
     """
-    if not resource_uri:
-        raise ValueError("Resource URI must not be None or empty.")
+    if not resource_id:
+        raise ValueError("Resource ID must not be None or empty.")
 
-    parts = resource_uri.split("subscriptions/")
+    parts = resource_id.split("subscriptions/")
     if len(parts) != 2:
-        raise ValueError("Resource URI must contain a subscription ID.")
+        raise ValueError("Resource ID must contain a subscription ID.")
 
     subscription_id = parts[1].split("/")[0]
     return subscription_id

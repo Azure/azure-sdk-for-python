@@ -7,7 +7,13 @@
 from marshmallow import fields, post_load
 
 from azure.ai.ml._schema.assets.data import DataSchema
-from azure.ai.ml._schema.core.fields import ArmVersionedStr, LocalPathField, NestedField, StringTransformedEnum, UnionField
+from azure.ai.ml._schema.core.fields import (
+    ArmVersionedStr,
+    LocalPathField,
+    NestedField,
+    StringTransformedEnum,
+    UnionField,
+)
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 from azure.ai.ml._schema.job.input_output_entry import generate_datastore_property
 from azure.ai.ml._utils._experimental import experimental
@@ -200,9 +206,10 @@ class IndexStoreSchema(metaclass=PatchedSchemaMeta):
     config = fields.Dict(
         required=False,
         metadata={
-            "description": "Configuration for the index. Primary use is to configure Azure Cognitive Search specific settings."
+            "description": "Configuration for the index."
+            " Primary use is to configure Azure Cognitive Search specific settings."
             "Such as custom `field_mapping` for known field types."
-        }
+        },
     )
 
     @post_load

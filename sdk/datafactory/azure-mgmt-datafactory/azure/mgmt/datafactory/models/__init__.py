@@ -268,6 +268,7 @@ from ._models_py3 import ExposureControlBatchResponse
 from ._models_py3 import ExposureControlRequest
 from ._models_py3 import ExposureControlResponse
 from ._models_py3 import Expression
+from ._models_py3 import ExpressionV2
 from ._models_py3 import Factory
 from ._models_py3 import FactoryGitHubConfiguration
 from ._models_py3 import FactoryIdentity
@@ -307,6 +308,9 @@ from ._models_py3 import GoogleAdWordsSource
 from ._models_py3 import GoogleBigQueryLinkedService
 from ._models_py3 import GoogleBigQueryObjectDataset
 from ._models_py3 import GoogleBigQuerySource
+from ._models_py3 import GoogleBigQueryV2LinkedService
+from ._models_py3 import GoogleBigQueryV2ObjectDataset
+from ._models_py3 import GoogleBigQueryV2Source
 from ._models_py3 import GoogleCloudStorageLinkedService
 from ._models_py3 import GoogleCloudStorageLocation
 from ._models_py3 import GoogleCloudStorageReadSettings
@@ -530,6 +534,9 @@ from ._models_py3 import PolybaseSettings
 from ._models_py3 import PostgreSqlLinkedService
 from ._models_py3 import PostgreSqlSource
 from ._models_py3 import PostgreSqlTableDataset
+from ._models_py3 import PostgreSqlV2LinkedService
+from ._models_py3 import PostgreSqlV2Source
+from ._models_py3 import PostgreSqlV2TableDataset
 from ._models_py3 import PowerQuerySink
 from ._models_py3 import PowerQuerySinkMapping
 from ._models_py3 import PowerQuerySource
@@ -638,6 +645,9 @@ from ._models_py3 import SelfHostedIntegrationRuntimeStatus
 from ._models_py3 import ServiceNowLinkedService
 from ._models_py3 import ServiceNowObjectDataset
 from ._models_py3 import ServiceNowSource
+from ._models_py3 import ServiceNowV2LinkedService
+from ._models_py3 import ServiceNowV2ObjectDataset
+from ._models_py3 import ServiceNowV2Source
 from ._models_py3 import ServicePrincipalCredential
 from ._models_py3 import SetVariableActivity
 from ._models_py3 import SftpLocation
@@ -658,6 +668,10 @@ from ._models_py3 import SnowflakeImportCopyCommand
 from ._models_py3 import SnowflakeLinkedService
 from ._models_py3 import SnowflakeSink
 from ._models_py3 import SnowflakeSource
+from ._models_py3 import SnowflakeV2Dataset
+from ._models_py3 import SnowflakeV2LinkedService
+from ._models_py3 import SnowflakeV2Sink
+from ._models_py3 import SnowflakeV2Source
 from ._models_py3 import SparkConfigurationParametrizationReference
 from ._models_py3 import SparkLinkedService
 from ._models_py3 import SparkObjectDataset
@@ -742,6 +756,10 @@ from ._models_py3 import VerticaLinkedService
 from ._models_py3 import VerticaSource
 from ._models_py3 import VerticaTableDataset
 from ._models_py3 import WaitActivity
+from ._models_py3 import WarehouseLinkedService
+from ._models_py3 import WarehouseSink
+from ._models_py3 import WarehouseSource
+from ._models_py3 import WarehouseTableDataset
 from ._models_py3 import WebActivity
 from ._models_py3 import WebActivityAuthentication
 from ._models_py3 import WebAnonymousAuthentication
@@ -795,12 +813,14 @@ from ._data_factory_management_client_enums import DynamicsDeploymentType
 from ._data_factory_management_client_enums import DynamicsSinkWriteBehavior
 from ._data_factory_management_client_enums import EventSubscriptionStatus
 from ._data_factory_management_client_enums import ExpressionType
+from ._data_factory_management_client_enums import ExpressionV2Type
 from ._data_factory_management_client_enums import FactoryIdentityType
 from ._data_factory_management_client_enums import FrequencyType
 from ._data_factory_management_client_enums import FtpAuthenticationType
 from ._data_factory_management_client_enums import GlobalParameterType
 from ._data_factory_management_client_enums import GoogleAdWordsAuthenticationType
 from ._data_factory_management_client_enums import GoogleBigQueryAuthenticationType
+from ._data_factory_management_client_enums import GoogleBigQueryV2AuthenticationType
 from ._data_factory_management_client_enums import HBaseAuthenticationType
 from ._data_factory_management_client_enums import HDInsightActivityDebugInfoOption
 from ._data_factory_management_client_enums import HdiNodeTypes
@@ -848,7 +868,6 @@ from ._data_factory_management_client_enums import RunQueryOrderByField
 from ._data_factory_management_client_enums import SalesforceSinkWriteBehavior
 from ._data_factory_management_client_enums import SalesforceSourceReadBehavior
 from ._data_factory_management_client_enums import SalesforceV2SinkWriteBehavior
-from ._data_factory_management_client_enums import SalesforceV2SourceReadBehavior
 from ._data_factory_management_client_enums import SapCloudForCustomerSinkWriteBehavior
 from ._data_factory_management_client_enums import SapHanaAuthenticationType
 from ._data_factory_management_client_enums import SapHanaPartitionOption
@@ -859,8 +878,10 @@ from ._data_factory_management_client_enums import ScriptActivityParameterType
 from ._data_factory_management_client_enums import ScriptType
 from ._data_factory_management_client_enums import SelfHostedIntegrationRuntimeNodeStatus
 from ._data_factory_management_client_enums import ServiceNowAuthenticationType
+from ._data_factory_management_client_enums import ServiceNowV2AuthenticationType
 from ._data_factory_management_client_enums import ServicePrincipalCredentialType
 from ._data_factory_management_client_enums import SftpAuthenticationType
+from ._data_factory_management_client_enums import SnowflakeAuthenticationType
 from ._data_factory_management_client_enums import SparkAuthenticationType
 from ._data_factory_management_client_enums import SparkConfigurationReferenceType
 from ._data_factory_management_client_enums import SparkJobReferenceType
@@ -1155,6 +1176,7 @@ __all__ = [
     "ExposureControlRequest",
     "ExposureControlResponse",
     "Expression",
+    "ExpressionV2",
     "Factory",
     "FactoryGitHubConfiguration",
     "FactoryIdentity",
@@ -1194,6 +1216,9 @@ __all__ = [
     "GoogleBigQueryLinkedService",
     "GoogleBigQueryObjectDataset",
     "GoogleBigQuerySource",
+    "GoogleBigQueryV2LinkedService",
+    "GoogleBigQueryV2ObjectDataset",
+    "GoogleBigQueryV2Source",
     "GoogleCloudStorageLinkedService",
     "GoogleCloudStorageLocation",
     "GoogleCloudStorageReadSettings",
@@ -1417,6 +1442,9 @@ __all__ = [
     "PostgreSqlLinkedService",
     "PostgreSqlSource",
     "PostgreSqlTableDataset",
+    "PostgreSqlV2LinkedService",
+    "PostgreSqlV2Source",
+    "PostgreSqlV2TableDataset",
     "PowerQuerySink",
     "PowerQuerySinkMapping",
     "PowerQuerySource",
@@ -1525,6 +1553,9 @@ __all__ = [
     "ServiceNowLinkedService",
     "ServiceNowObjectDataset",
     "ServiceNowSource",
+    "ServiceNowV2LinkedService",
+    "ServiceNowV2ObjectDataset",
+    "ServiceNowV2Source",
     "ServicePrincipalCredential",
     "SetVariableActivity",
     "SftpLocation",
@@ -1545,6 +1576,10 @@ __all__ = [
     "SnowflakeLinkedService",
     "SnowflakeSink",
     "SnowflakeSource",
+    "SnowflakeV2Dataset",
+    "SnowflakeV2LinkedService",
+    "SnowflakeV2Sink",
+    "SnowflakeV2Source",
     "SparkConfigurationParametrizationReference",
     "SparkLinkedService",
     "SparkObjectDataset",
@@ -1629,6 +1664,10 @@ __all__ = [
     "VerticaSource",
     "VerticaTableDataset",
     "WaitActivity",
+    "WarehouseLinkedService",
+    "WarehouseSink",
+    "WarehouseSource",
+    "WarehouseTableDataset",
     "WebActivity",
     "WebActivityAuthentication",
     "WebAnonymousAuthentication",
@@ -1681,12 +1720,14 @@ __all__ = [
     "DynamicsSinkWriteBehavior",
     "EventSubscriptionStatus",
     "ExpressionType",
+    "ExpressionV2Type",
     "FactoryIdentityType",
     "FrequencyType",
     "FtpAuthenticationType",
     "GlobalParameterType",
     "GoogleAdWordsAuthenticationType",
     "GoogleBigQueryAuthenticationType",
+    "GoogleBigQueryV2AuthenticationType",
     "HBaseAuthenticationType",
     "HDInsightActivityDebugInfoOption",
     "HdiNodeTypes",
@@ -1734,7 +1775,6 @@ __all__ = [
     "SalesforceSinkWriteBehavior",
     "SalesforceSourceReadBehavior",
     "SalesforceV2SinkWriteBehavior",
-    "SalesforceV2SourceReadBehavior",
     "SapCloudForCustomerSinkWriteBehavior",
     "SapHanaAuthenticationType",
     "SapHanaPartitionOption",
@@ -1745,8 +1785,10 @@ __all__ = [
     "ScriptType",
     "SelfHostedIntegrationRuntimeNodeStatus",
     "ServiceNowAuthenticationType",
+    "ServiceNowV2AuthenticationType",
     "ServicePrincipalCredentialType",
     "SftpAuthenticationType",
+    "SnowflakeAuthenticationType",
     "SparkAuthenticationType",
     "SparkConfigurationReferenceType",
     "SparkJobReferenceType",

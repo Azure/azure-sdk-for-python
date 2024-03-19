@@ -619,6 +619,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         # assert on the number of converted jobs to make sure we didn't drop the parallel job
         assert len(created_job.jobs.items()) == 3
 
+    @pytest.mark.skip("Will renable when parallel e2e recording issue is fixed")
     def test_pipeline_job_with_command_job_with_dataset_short_uri(
         self, client: MLClient, randstr: Callable[[str], str]
     ) -> None:
@@ -2059,7 +2060,8 @@ jobs:
         # constructed based on response of code pending upload requests, and those requests have been normalized
         # in playback mode and mixed up.
         pipeline_job = load_job(source=test_path, params_override=[{"name": randstr("name")}])
-        assert client.jobs.validate(pipeline_job).passed
+        validation_result = client.jobs.validate(pipeline_job)
+        assert validation_result.passed, validation_result
 
         created_pipeline_job = assert_job_cancel(pipeline_job, client)
 

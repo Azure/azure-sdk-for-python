@@ -14,7 +14,6 @@ from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWork
 from azure.ai.ml._restclient.v2023_08_01_preview.models import ManagedNetworkProvisionOptions
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.constants import ManagedServiceIdentityType
@@ -46,7 +45,7 @@ from azure.core.tracing.decorator import distributed_trace
 from ._workspace_operations_base import WorkspaceOperationsBase
 
 ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
+module_logger = ops_logger.module_logger
 
 
 class FeatureStoreOperations(WorkspaceOperationsBase):
@@ -77,7 +76,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
         self._workspace_connection_operation = service_client.workspace_connections
 
     @distributed_trace
-    @monitor_with_activity(logger, "FeatureStore.List", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "FeatureStore.List", ActivityType.PUBLICAPI)
     # pylint: disable=unused-argument
     def list(self, *, scope: str = Scope.RESOURCE_GROUP, **kwargs: Dict) -> Iterable[FeatureStore]:
         """List all feature stores that the user has access to in the current
@@ -111,18 +110,20 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
         )
 
     @distributed_trace
-    @monitor_with_activity(logger, "FeatureStore.Get", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "FeatureStore.Get", ActivityType.PUBLICAPI)
     # pylint: disable=arguments-renamed
-    def get(self, name: str, **kwargs: Any) -> Optional[FeatureStore]:
+    def get(self, name: str, **kwargs: Any) -> FeatureStore:
         """Get a feature store by name.
 
         :param name: Name of the feature store.
         :type name: str
+        :raises ~azure.core.exceptions.HttpResponseError: Raised if the corresponding name and version cannot be
+            retrieved from the service.
         :return: The feature store with the provided name.
         :rtype: FeatureStore
         """
 
-        feature_store = None
+        feature_store: Any = None
         resource_group = kwargs.get("resource_group") or self._resource_group_name
         rest_workspace_obj = kwargs.get("rest_workspace_obj", None) or self._operation.get(resource_group, name)
         if rest_workspace_obj and rest_workspace_obj.kind and rest_workspace_obj.kind.lower() == FEATURE_STORE_KIND:
@@ -185,7 +186,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
         return feature_store
 
     @distributed_trace
-    @monitor_with_activity(logger, "FeatureStore.BeginCreate", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "FeatureStore.BeginCreate", ActivityType.PUBLICAPI)
     # pylint: disable=arguments-differ
     def begin_create(
         self,
@@ -250,7 +251,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
         )
 
     @distributed_trace
-    @monitor_with_activity(logger, "FeatureStore.BeginUpdate", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "FeatureStore.BeginUpdate", ActivityType.PUBLICAPI)
     # pylint: disable=arguments-renamed
     # pylint: disable=too-many-locals, too-many-branches, too-many-statements
     def begin_update(
@@ -479,7 +480,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
         )
 
     @distributed_trace
-    @monitor_with_activity(logger, "FeatureStore.BeginDelete", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "FeatureStore.BeginDelete", ActivityType.PUBLICAPI)
     def begin_delete(self, name: str, *, delete_dependent_resources: bool = False, **kwargs: Any) -> LROPoller[None]:
         """Delete a FeatureStore.
 
@@ -502,13 +503,12 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
         return super().begin_delete(name=name, delete_dependent_resources=delete_dependent_resources, **kwargs)
 
     @distributed_trace
-    @monitor_with_activity(logger, "FeatureStore.BeginProvisionNetwork", ActivityType.PUBLICAPI)
-    @experimental
+    @monitor_with_activity(ops_logger, "FeatureStore.BeginProvisionNetwork", ActivityType.PUBLICAPI)
     def begin_provision_network(
         self,
         *,
         feature_store_name: Optional[str] = None,
-        include_spark: Optional[bool] = False,
+        include_spark: bool = False,
         **kwargs: Any,
     ) -> LROPoller[ManagedNetworkProvisionStatus]:
         """Triggers the feature store to provision the managed network. Specifying spark enabled

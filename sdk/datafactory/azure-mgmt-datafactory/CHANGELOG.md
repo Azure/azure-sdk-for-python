@@ -1,5 +1,37 @@
 # Release History
 
+## 6.1.0 (2024-03-18)
+
+### Features Added
+
+  - Added model ExpressionV2
+  - Added model ExpressionV2Type
+  - Added model GoogleBigQueryV2AuthenticationType
+  - Added model GoogleBigQueryV2LinkedService
+  - Added model GoogleBigQueryV2ObjectDataset
+  - Added model GoogleBigQueryV2Source
+  - Added model PostgreSqlV2LinkedService
+  - Added model PostgreSqlV2Source
+  - Added model PostgreSqlV2TableDataset
+  - Added model ServiceNowV2AuthenticationType
+  - Added model ServiceNowV2LinkedService
+  - Added model ServiceNowV2ObjectDataset
+  - Added model ServiceNowV2Source
+
+## 6.0.0 (2024-03-04)
+
+### Features Added
+
+  - Model SalesforceServiceCloudV2LinkedService has a new parameter authentication_type
+  - Model SalesforceServiceCloudV2Source has a new parameter include_deleted_objects
+  - Model SalesforceV2LinkedService has a new parameter authentication_type
+  - Model SalesforceV2Source has a new parameter include_deleted_objects
+
+### Breaking Changes
+
+  - Model SalesforceServiceCloudV2Source no longer has parameter read_behavior
+  - Model SalesforceV2Source no longer has parameter read_behavior
+
 ## 5.0.0 (2024-01-26)
 
 ### Features Added

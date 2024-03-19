@@ -60,12 +60,12 @@ class TestServiceBusTracing:
         assert span.attributes["messaging.destination.name"] == dest
 
     @pytest.mark.live_test_only
-    def test_servicebus_client_tracing_queue(self, config, exporter, tracer):
+    def test_servicebus_client_tracing_queue(self, config, tracing_helper):
         connection_string = config["servicebus_connection_string"]
         queue_name = config["servicebus_queue_name"]
         client = ServiceBusClient.from_connection_string(connection_string)
 
-        with tracer.start_as_current_span(name="root"):
+        with tracing_helper.tracer.start_as_current_span(name="root"):
             with client.get_queue_sender(queue_name) as sender:
 
                 # Sending a single message
@@ -77,7 +77,7 @@ class TestServiceBusTracing:
                 message_batch.add_message(ServiceBusMessage("Second batch foo message"))
                 sender.send_messages(message_batch)
 
-            send_spans = exporter.get_finished_spans()
+            send_spans = tracing_helper.exporter.get_finished_spans()
             server_address = sender.fully_qualified_namespace
 
             # We expect 5 spans to have finished: 2 send spans, and 3 message spans.
@@ -107,7 +107,7 @@ class TestServiceBusTracing:
             assert link.context.span_id == send_spans[3].context.span_id
             assert link.context.trace_id == send_spans[3].context.trace_id
 
-            exporter.clear()
+            tracing_helper.exporter.clear()
 
             # Receive all the sent spans.
             receiver = client.get_queue_receiver(queue_name=queue_name)
@@ -117,7 +117,7 @@ class TestServiceBusTracing:
                     assert "foo" in str(msg)
                     receiver.complete_message(msg)
 
-            receive_spans = exporter.get_finished_spans()
+            receive_spans = tracing_helper.exporter.get_finished_spans()
 
             # We expect 4 spans to have finished: 1 receive span, and 3 settlement spans.
             assert len(receive_spans) == 4
@@ -135,13 +135,13 @@ class TestServiceBusTracing:
             self._verify_complete(span=receive_spans[3], dest=queue_name, server_address=server_address)
 
     @pytest.mark.live_test_only
-    def test_servicebus_client_tracing_topic(self, config, exporter, tracer):
+    def test_servicebus_client_tracing_topic(self, config, tracing_helper):
         connection_string = config["servicebus_connection_string"]
         topic_name = config["servicebus_topic_name"]
         subscription_name = config["servicebus_subscription_name"]
         client = ServiceBusClient.from_connection_string(connection_string)
 
-        with tracer.start_as_current_span(name="root"):
+        with tracing_helper.tracer.start_as_current_span(name="root"):
             with client.get_topic_sender(topic_name) as sender:
 
                 # Sending a single message
@@ -153,7 +153,7 @@ class TestServiceBusTracing:
                 message_batch.add_message(ServiceBusMessage("Second batch foo message"))
                 sender.send_messages(message_batch)
 
-            send_spans = exporter.get_finished_spans()
+            send_spans = tracing_helper.exporter.get_finished_spans()
             server_address = sender.fully_qualified_namespace
 
             # We expect 5 spans to have finished: 2 send spans, and 3 message spans.
@@ -183,7 +183,7 @@ class TestServiceBusTracing:
             assert link.context.span_id == send_spans[3].context.span_id
             assert link.context.trace_id == send_spans[3].context.trace_id
 
-            exporter.clear()
+            tracing_helper.exporter.clear()
 
             # Receive all the sent spans.
             receiver = client.get_subscription_receiver(topic_name, subscription_name)
@@ -193,7 +193,7 @@ class TestServiceBusTracing:
                     assert "foo" in str(msg)
                     receiver.complete_message(msg)
 
-            receive_spans = exporter.get_finished_spans()
+            receive_spans = tracing_helper.exporter.get_finished_spans()
 
             # We expect 4 spans to have finished: 1 receive span, and 3 settlement spans.
             assert len(receive_spans) == 4

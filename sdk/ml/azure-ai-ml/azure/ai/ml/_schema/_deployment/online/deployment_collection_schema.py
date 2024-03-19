@@ -18,8 +18,8 @@ class DeploymentCollectionSchema(metaclass=PatchedSchemaMeta):
     enabled = StringTransformedEnum(required=True, allowed_values=[Boolean.TRUE, Boolean.FALSE])
     data = UnionField(
         [
-            fields.Str(),
             NestedField(DataAssetSchema),
+            fields.Str(),
         ]
     )
     client_id = fields.Str()

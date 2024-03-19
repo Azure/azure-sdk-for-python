@@ -11,7 +11,7 @@ from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
 from azure.core.tracing import SpanKind
 
 
-def test_get_span_from_thread(tracer):
+def test_get_span_from_thread(tracing_helper):
 
     result = []
 
@@ -19,7 +19,7 @@ def test_get_span_from_thread(tracer):
         current_span = OpenTelemetrySpan.get_current_span()
         output.append(current_span)
 
-    with tracer.start_as_current_span(name="TestSpan") as span:
+    with tracing_helper.tracer.start_as_current_span(name="TestSpan") as span:
 
         thread = threading.Thread(target=OpenTelemetrySpan.with_current_context(get_span_from_thread), args=(result,))
         thread.start()
@@ -28,7 +28,7 @@ def test_get_span_from_thread(tracer):
         assert span is result[0]
 
 
-def test_nest_span_with_thread_pool_executor(tracer, exporter):
+def test_nest_span_with_thread_pool_executor(tracing_helper):
     def nest_spans():
         with OpenTelemetrySpan(name="outer-span", kind=SpanKind.INTERNAL) as outer_span:
             with outer_span.span(name="inner-span", kind=SpanKind.INTERNAL) as inner_span:
@@ -36,11 +36,11 @@ def test_nest_span_with_thread_pool_executor(tracer, exporter):
                 assert inner_span.get_current_span() == outer_span
 
     futures = []
-    with tracer.start_as_current_span(name="TestSpan"):
+    with tracing_helper.tracer.start_as_current_span(name="TestSpan"):
         with ThreadPoolExecutor() as executor:
             for _ in range(3):
                 futures.append(executor.submit(OpenTelemetrySpan.with_current_context(nest_spans)))
         wait(futures)
 
     # Each thread should produce 1 span, so we should have 3 spans plus the parent span.
-    assert len(exporter.get_finished_spans()) == 4
+    assert len(tracing_helper.exporter.get_finished_spans()) == 4

@@ -30,14 +30,14 @@ class SearchManagementClientConfiguration(Configuration):  # pylint: disable=too
     :param subscription_id: The unique identifier for a Microsoft Azure subscription. You can
      obtain this value from the Azure Resource Manager API or the portal. Required.
     :type subscription_id: str
-    :keyword api_version: Api Version. Default value is "2023-11-01". Note that overriding this
-     default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2024-03-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, credential: "AsyncTokenCredential", subscription_id: str, **kwargs: Any) -> None:
         super(SearchManagementClientConfiguration, self).__init__(**kwargs)
-        api_version: str = kwargs.pop("api_version", "2023-11-01")
+        api_version: str = kwargs.pop("api_version", "2024-03-01-preview")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")

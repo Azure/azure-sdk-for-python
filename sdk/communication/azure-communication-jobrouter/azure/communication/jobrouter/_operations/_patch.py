@@ -169,7 +169,7 @@ class JobRouterAdministrationClientOperationsMixin(
     def upsert_exception_policy(
         self,
         exception_policy_id: str,
-        resource: IO,
+        resource: IO[bytes],
         *,
         content_type: str = "application/merge-patch+json",
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -184,7 +184,7 @@ class JobRouterAdministrationClientOperationsMixin(
         :param exception_policy_id: The Id of the exception policy. Required.
         :type exception_policy_id: str
         :param resource: The resource instance. Required.
-        :type resource: IO
+        :type resource: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
@@ -204,7 +204,7 @@ class JobRouterAdministrationClientOperationsMixin(
         """
 
     def upsert_exception_policy(
-        self, exception_policy_id: str, *args: Union[_models.ExceptionPolicy, JSON, IO], **kwargs: Any
+        self, exception_policy_id: str, *args: Union[_models.ExceptionPolicy, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.ExceptionPolicy:
         """Update an exception policy.
 
@@ -242,7 +242,7 @@ class JobRouterAdministrationClientOperationsMixin(
         if not exception_policy_id:
             raise ValueError("exception_policy_id cannot be None.")
 
-        exception_policy: Union[_models.ExceptionPolicy, JSON, IO] = _models.ExceptionPolicy()
+        exception_policy: Union[_models.ExceptionPolicy, JSON, IO[bytes]] = _models.ExceptionPolicy()
         if len(args) == 1:
             exception_policy = args[0]
 
@@ -431,7 +431,7 @@ class JobRouterAdministrationClientOperationsMixin(
     def upsert_distribution_policy(
         self,
         distribution_policy_id: str,
-        resource: IO,
+        resource: IO[bytes],
         *,
         content_type: str = "application/merge-patch+json",
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -446,7 +446,7 @@ class JobRouterAdministrationClientOperationsMixin(
         :param distribution_policy_id: The unique identifier of the policy. Required.
         :type distribution_policy_id: str
         :param resource: The resource instance. Required.
-        :type resource: IO
+        :type resource: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
@@ -466,7 +466,7 @@ class JobRouterAdministrationClientOperationsMixin(
         """
 
     def upsert_distribution_policy(
-        self, distribution_policy_id: str, *args: Union[_models.DistributionPolicy, JSON, IO], **kwargs: Any
+        self, distribution_policy_id: str, *args: Union[_models.DistributionPolicy, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.DistributionPolicy:
         """Update a distribution policy.
 
@@ -511,7 +511,7 @@ class JobRouterAdministrationClientOperationsMixin(
         if not distribution_policy_id:
             raise ValueError("distribution_policy_id cannot be None.")
 
-        distribution_policy: Union[_models.DistributionPolicy, JSON, IO] = _models.DistributionPolicy()
+        distribution_policy: Union[_models.DistributionPolicy, JSON, IO[bytes]] = _models.DistributionPolicy()
         if len(args) == 1:
             distribution_policy = args[0]
 
@@ -710,7 +710,7 @@ class JobRouterAdministrationClientOperationsMixin(
     def upsert_queue(
         self,
         queue_id: str,
-        resource: IO,
+        resource: IO[bytes],
         *,
         content_type: str = "application/merge-patch+json",
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -725,7 +725,7 @@ class JobRouterAdministrationClientOperationsMixin(
         :param queue_id: The Id of this queue. Required.
         :type queue_id: str
         :param resource: The resource instance. Required.
-        :type resource: IO
+        :type resource: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
@@ -745,7 +745,7 @@ class JobRouterAdministrationClientOperationsMixin(
         """
 
     def upsert_queue(
-        self, queue_id: str, *args: Union[_models.RouterQueue, JSON, IO], **kwargs: Any
+        self, queue_id: str, *args: Union[_models.RouterQueue, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.RouterQueue:
         """Update a job queue
 
@@ -792,7 +792,7 @@ class JobRouterAdministrationClientOperationsMixin(
         if not queue_id:
             raise ValueError("queue_id cannot be None.")
 
-        queue: Union[_models.RouterQueue, JSON, IO] = _models.RouterQueue()
+        queue: Union[_models.RouterQueue, JSON, IO[bytes]] = _models.RouterQueue()
         if len(args) == 1:
             queue = args[0]
 
@@ -1027,7 +1027,7 @@ class JobRouterAdministrationClientOperationsMixin(
     def upsert_classification_policy(
         self,
         classification_policy_id: str,
-        resource: IO,
+        resource: IO[bytes],
         *,
         content_type: str = "application/merge-patch+json",
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -1042,7 +1042,7 @@ class JobRouterAdministrationClientOperationsMixin(
         :param classification_policy_id: Unique identifier of this policy. Required.
         :type classification_policy_id: str
         :param resource: The resource instance. Required.
-        :type resource: IO
+        :type resource: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
@@ -1062,7 +1062,7 @@ class JobRouterAdministrationClientOperationsMixin(
         """
 
     def upsert_classification_policy(
-        self, classification_policy_id: str, *args: Union[_models.ClassificationPolicy, JSON, IO], **kwargs: Any
+        self, classification_policy_id: str, *args: Union[_models.ClassificationPolicy, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.ClassificationPolicy:
         """Update a classification policy
 
@@ -1120,7 +1120,7 @@ class JobRouterAdministrationClientOperationsMixin(
         if not classification_policy_id:
             raise ValueError("classification_policy_id cannot be None.")
 
-        classification_policy: Union[_models.ClassificationPolicy, JSON, IO] = _models.ClassificationPolicy()
+        classification_policy: Union[_models.ClassificationPolicy, JSON, IO[bytes]] = _models.ClassificationPolicy()
         if len(args) == 1:
             classification_policy = args[0]
 
@@ -1199,6 +1199,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         tags: Optional[Dict[str, Union[int, float, str, bool]]],
         channels: Optional[List[_models.RouterChannel]],
         available_for_offers: Optional[bool],
+        max_concurrent_offers: Optional[int],
         if_unmodified_since: Optional[datetime.datetime] = None,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -1229,6 +1230,10 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
 
         :keyword available_for_offers: A flag indicating this worker is open to receive offers or not.
         :paramtype available_for_offers: Optional[bool]
+
+        :keyword max_concurrent_offers: If this is set, the worker will only receive up to this many new
+          offers at a time.
+        :paramtype max_concurrent_offers: Optional[int]
 
         :keyword if_unmodified_since: The request should only proceed if the entity was not modified
          after this time. Default value is None.
@@ -1351,7 +1356,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
     def upsert_worker(
         self,
         worker_id: str,
-        resource: IO,
+        resource: IO[bytes],
         *,
         content_type: str = "application/merge-patch+json",
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -1366,7 +1371,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         :param worker_id: Id of the worker. Required.
         :type worker_id: str
         :param resource: The resource instance. Required.
-        :type resource: IO
+        :type resource: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
@@ -1386,7 +1391,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         """
 
     def upsert_worker(
-        self, worker_id: str, *args: Union[_models.RouterWorker, JSON, IO], **kwargs: Any
+        self, worker_id: str, *args: Union[_models.RouterWorker, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.RouterWorker:
         """Update a router worker.
 
@@ -1413,6 +1418,10 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
 
         :keyword available_for_offers: A flag indicating this worker is open to receive offers or not.
         :paramtype available_for_offers: Optional[bool]
+
+        :keyword max_concurrent_offers: If this is set, the worker will only receive up to this many new
+          offers at a time.
+        :paramtype max_concurrent_offers: Optional[int]
 
         :keyword if_unmodified_since: The request should only proceed if the entity was not modified
          after this time. Default value is None.
@@ -1453,11 +1462,20 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
                 :language: python
                 :dedent: 8
                 :caption: Use a JobRouterClient to de-register a worker
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/router_worker_crud_ops.py
+                :start-after: [START create_worker_w_limit_concurrent_offers]
+                :end-before: [END create_worker_w_limit_concurrent_offers]
+                :language: python
+                :dedent: 8
+                :caption: Use a JobRouterClient to create a worker with concurrent offer limit
         """
         if not worker_id:
             raise ValueError("worker_id cannot be None.")
 
-        router_worker: Union[_models.RouterWorker, JSON, IO] = _models.RouterWorker()
+        router_worker: Union[_models.RouterWorker, JSON, IO[bytes]] = _models.RouterWorker()
         if len(args) == 1:
             router_worker = args[0]
 
@@ -1470,6 +1488,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
                 tags=kwargs.pop("tags", router_worker.tags),
                 channels=kwargs.pop("channels", router_worker.channels),
                 available_for_offers=kwargs.pop("available_for_offers", router_worker.available_for_offers),
+                max_concurrent_offers=kwargs.pop("max_concurrent_offers", router_worker.max_concurrent_offers),
             )
 
         if_unmodified_since = kwargs.pop("if_unmodified_since", None)
@@ -1715,7 +1734,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
     def upsert_job(
         self,
         job_id: str,
-        resource: IO,
+        resource: IO[bytes],
         *,
         content_type: str = "application/merge-patch+json",
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -1730,7 +1749,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         :param job_id: The id of the job. Required.
         :type job_id: str
         :param resource: The resource instance. Required.
-        :type resource: IO
+        :type resource: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
@@ -1749,7 +1768,12 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    def upsert_job(self, job_id: str, *args: Union[_models.RouterJob, JSON, IO], **kwargs: Any) -> _models.RouterJob:
+    def upsert_job(
+            self,
+            job_id: str,
+            *args: Union[_models.RouterJob, JSON, IO[bytes]],
+            **kwargs: Any
+    ) -> _models.RouterJob:
         """Update a job.
 
         :param str job_id: Id of the job.
@@ -1816,7 +1840,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         if not job_id:
             raise ValueError("job_id cannot be None.")
 
-        router_job: Union[_models.RouterJob, JSON, IO] = _models.RouterJob()
+        router_job: Union[_models.RouterJob, JSON, IO[bytes]] = _models.RouterJob()
         if len(args) == 1:
             router_job = args[0]
 

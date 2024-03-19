@@ -26,6 +26,7 @@ This table shows the relationship between SDK versions and supported API service
 |SDK version|Supported API service version
 |-|-
 |1.0.0b1 | 2023-10-31-preview
+|1.0.0b2 | 2024-02-29-preview
 
 Older API versions are supported in `azure-ai-formrecognizer`, please see the [Migration Guide][migration-guide] for detailed instructions on how to update application.
 
@@ -575,6 +576,10 @@ print(f"\nModel ID: {my_model.model_id}")
 print(f"Description: {my_model.description}")
 print(f"Model created on: {my_model.created_date_time}")
 print(f"Model expires on: {my_model.expiration_date_time}")
+if my_model.warnings:
+    print("Warnings encountered while building the model:")
+    for warning in my_model.warnings:
+        print(f"warning code: {warning.code}, message: {warning.message}, target of the error: {warning.target}")
 ```
 
 <!-- END SNIPPET -->

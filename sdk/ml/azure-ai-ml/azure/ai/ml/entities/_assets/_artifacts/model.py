@@ -76,7 +76,7 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
         type: Optional[str] = None,  # pylint: disable=redefined-builtin
         path: Optional[Union[str, PathLike]] = None,
         utc_time_created: Optional[str] = None,
-        flavors: Optional[Dict] = None,
+        flavors: Optional[Dict[str, Dict[str, Any]]] = None,
         description: Optional[str] = None,
         tags: Optional[Dict] = None,
         properties: Optional[Dict] = None,

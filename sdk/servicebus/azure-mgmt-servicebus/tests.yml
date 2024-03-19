@@ -1,7 +1,7 @@
 trigger: none
 
-stages:
-  - template: ../../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
+extends:
+    template: ../../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       ServiceDirectory: servicebus
       BuildTargetingString: azure-mgmt-servicebus

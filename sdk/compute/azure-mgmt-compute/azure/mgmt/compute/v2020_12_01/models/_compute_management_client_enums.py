@@ -80,21 +80,18 @@ class DiskCreateOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Disk will be attached to a VM."""
     FROM_IMAGE = "FromImage"
     """Create a new disk from a platform image specified by the given imageReference or
-    #: galleryImageReference."""
-    IMPORT = "Import"
+    galleryImageReference."""
+    IMPORT_ENUM = "Import"
     """Create a disk by importing from a blob specified by a sourceUri in a storage account specified
-    #: by storageAccountId."""
+    by storageAccountId."""
     COPY = "Copy"
     """Create a new disk or snapshot by copying from a disk or snapshot specified by the given
-    #: sourceResourceId."""
+    sourceResourceId."""
     RESTORE = "Restore"
     """Create a new disk by copying from a backup recovery point."""
     UPLOAD = "Upload"
     """Create a new disk by obtaining a write token and using it to directly upload the contents of
-    #: the disk."""
-    IMPORT_ENUM = "Import"
-    """Create a disk by importing from a blob specified by a sourceUri in a storage account specified
-    #: by storageAccountId."""
+    the disk."""
 
 
 class DiskCreateOptionTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -142,10 +139,10 @@ class DiskEncryptionSetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ENCRYPTION_AT_REST_WITH_CUSTOMER_KEY = "EncryptionAtRestWithCustomerKey"
     """Resource using diskEncryptionSet would be encrypted at rest with Customer managed key that can
-    #: be changed and revoked by a customer."""
+    be changed and revoked by a customer."""
     ENCRYPTION_AT_REST_WITH_PLATFORM_AND_CUSTOMER_KEYS = "EncryptionAtRestWithPlatformAndCustomerKeys"
     """Resource using diskEncryptionSet would be encrypted at rest with two layers of encryption. One
-    #: of the keys is Customer managed and the other key is Platform managed."""
+    of the keys is Customer managed and the other key is Platform managed."""
 
 
 class DiskSecurityTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -153,7 +150,7 @@ class DiskSecurityTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     TRUSTED_LAUNCH = "TrustedLaunch"
     """Trusted Launch provides security features such as secure boot and virtual Trusted Platform
-    #: Module (vTPM)"""
+    Module (vTPM)"""
 
 
 class DiskState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -182,16 +179,16 @@ class DiskStorageAccountTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Premium SSD locally redundant storage. Best for production and performance sensitive workloads."""
     STANDARD_SSD_LRS = "StandardSSD_LRS"
     """Standard SSD locally redundant storage. Best for web servers, lightly used enterprise
-    #: applications and dev/test."""
+    applications and dev/test."""
     ULTRA_SSD_LRS = "UltraSSD_LRS"
     """Ultra SSD locally redundant storage. Best for IO-intensive workloads such as SAP HANA, top tier
-    #: databases (for example, SQL, Oracle), and other transaction-heavy workloads."""
+    databases (for example, SQL, Oracle), and other transaction-heavy workloads."""
     PREMIUM_ZRS = "Premium_ZRS"
     """Premium SSD zone redundant storage. Best for the production workloads that need storage
-    #: resiliency against zone failures."""
+    resiliency against zone failures."""
     STANDARD_SSD_ZRS = "StandardSSD_ZRS"
     """Standard SSD zone redundant storage. Best for web servers, lightly used enterprise applications
-    #: and dev/test that need storage resiliency against zone failures."""
+    and dev/test that need storage resiliency against zone failures."""
 
 
 class EncryptionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -199,13 +196,13 @@ class EncryptionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ENCRYPTION_AT_REST_WITH_PLATFORM_KEY = "EncryptionAtRestWithPlatformKey"
     """Disk is encrypted at rest with Platform managed key. It is the default encryption type. This is
-    #: not a valid encryption type for disk encryption sets."""
+    not a valid encryption type for disk encryption sets."""
     ENCRYPTION_AT_REST_WITH_CUSTOMER_KEY = "EncryptionAtRestWithCustomerKey"
     """Disk is encrypted at rest with Customer managed key that can be changed and revoked by a
-    #: customer."""
+    customer."""
     ENCRYPTION_AT_REST_WITH_PLATFORM_AND_CUSTOMER_KEYS = "EncryptionAtRestWithPlatformAndCustomerKeys"
     """Disk is encrypted at rest with 2 layers of encryption. One of the keys is Customer managed and
-    #: the other key is Platform managed."""
+    the other key is Platform managed."""
 
 
 class ExecutionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):

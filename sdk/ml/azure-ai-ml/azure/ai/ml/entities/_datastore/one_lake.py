@@ -6,7 +6,7 @@
 
 from abc import ABC
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import Datastore as DatastoreData
 from azure.ai.ml._restclient.v2023_04_01_preview.models import DatastoreType
@@ -16,6 +16,7 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import OneLakeDatastore 
 from azure.ai.ml._schema._datastore.one_lake import OneLakeSchema
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
+from azure.ai.ml.entities._credentials import NoneCredentialConfiguration, ServicePrincipalConfiguration
 from azure.ai.ml.entities._datastore.datastore import Datastore
 from azure.ai.ml.entities._datastore.utils import from_rest_datastore_credentials
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
@@ -88,7 +89,7 @@ class OneLakeDatastore(Datastore):
         description: Optional[str] = None,
         tags: Optional[Dict] = None,
         properties: Optional[Dict] = None,
-        credentials: Any = None,
+        credentials: Optional[Union[NoneCredentialConfiguration, ServicePrincipalConfiguration]] = None,
         **kwargs: Any
     ):
         kwargs[TYPE] = DatastoreType.ONE_LAKE
@@ -126,7 +127,7 @@ class OneLakeDatastore(Datastore):
             artifact=LakeHouseArtifact(name=properties.artifact.artifact_name),
             one_lake_workspace_name=properties.one_lake_workspace_name,
             endpoint=properties.endpoint,
-            credentials=from_rest_datastore_credentials(properties.credentials),
+            credentials=from_rest_datastore_credentials(properties.credentials),  # type: ignore[arg-type]
             description=properties.description,
             tags=properties.tags,
         )

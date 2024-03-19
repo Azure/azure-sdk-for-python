@@ -12,6 +12,7 @@ from azure.ai.ml._restclient.v2022_05_01.models import BatchOutputAction
 from azure.ai.ml._restclient.v2022_05_01.models import CodeConfiguration as RestCodeConfiguration
 from azure.ai.ml._restclient.v2022_05_01.models import IdAssetReference
 from azure.ai.ml._schema._deployment.batch.model_batch_deployment import ModelBatchDeploymentSchema
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
 from azure.ai.ml.constants._deployment import BatchDeploymentOutputAction
 from azure.ai.ml.entities._assets import Environment, Model
@@ -25,6 +26,7 @@ from .code_configuration import CodeConfiguration
 from .model_batch_deployment_settings import ModelBatchDeploymentSettings
 
 
+@experimental
 class ModelBatchDeployment(Deployment):
     """Job Definition entity.
 

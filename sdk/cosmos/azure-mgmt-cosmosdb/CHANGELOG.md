@@ -1,5 +1,20 @@
 # Release History
 
+## 10.0.0b3 (2024-03-18)
+
+### Features Added
+
+  - Added operation DataTransferJobsOperations.complete
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter enable_per_region_per_partition_autoscale
+  - Model DatabaseAccountGetResults has a new parameter enable_per_region_per_partition_autoscale
+  - Model DatabaseAccountUpdateParameters has a new parameter enable_per_region_per_partition_autoscale
+  - Model PrivateEndpointConnection has a new parameter system_data
+  - Model ProxyResource has a new parameter system_data
+  - Model Resource has a new parameter system_data
+  - Model ResourceRestoreParameters has a new parameter restore_with_ttl_disabled
+  - Model RestoreParameters has a new parameter restore_with_ttl_disabled
+  - Model RestoreParametersBase has a new parameter restore_with_ttl_disabled
+
 ## 10.0.0b2 (2024-01-26)
 
 ### Features Added

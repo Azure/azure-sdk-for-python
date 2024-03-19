@@ -22,7 +22,7 @@ from azure.core.tracing.decorator import distributed_trace
 from ._workspace_operations_base import WorkspaceOperationsBase
 
 ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
+module_logger = ops_logger.module_logger
 
 
 class WorkspaceHubOperations(WorkspaceOperationsBase):
@@ -49,7 +49,7 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
             **kwargs,
         )
 
-    @monitor_with_activity(logger, "WorkspaceHub.List", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "WorkspaceHub.List", ActivityType.PUBLICAPI)
     def list(self, *, scope: str = Scope.RESOURCE_GROUP) -> Iterable[WorkspaceHub]:
         """List all WorkspaceHubs that the user has access to in the current resource group or subscription.
 
@@ -90,13 +90,15 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
         )
 
     @distributed_trace
-    @monitor_with_activity(logger, "WorkspaceHub.Get", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "WorkspaceHub.Get", ActivityType.PUBLICAPI)
     # pylint: disable=arguments-renamed, arguments-differ
-    def get(self, name: str, **kwargs: Dict) -> Optional[WorkspaceHub]:
+    def get(self, name: str, **kwargs: Dict) -> WorkspaceHub:
         """Get a Workspace WorkspaceHub by name.
 
         :param name: Name of the WorkspaceHub.
         :type name: str
+        :raises ~azure.core.exceptions.HttpResponseError: Raised if the corresponding name and version cannot be
+            retrieved from the service.
         :return: The WorkspaceHub with the provided name.
         :rtype: ~azure.ai.ml.entities.WorkspaceHub
 
@@ -116,10 +118,10 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
         if rest_workspace_obj and rest_workspace_obj.kind and rest_workspace_obj.kind.lower() == WORKSPACE_HUB_KIND:
             workspace_hub = WorkspaceHub._from_rest_object(rest_workspace_obj)
 
-        return workspace_hub
+        return workspace_hub  # type: ignore[return-value]
 
     @distributed_trace
-    @monitor_with_activity(logger, "WorkspaceHub.BeginCreate", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "WorkspaceHub.BeginCreate", ActivityType.PUBLICAPI)
     # pylint: disable=arguments-differ
     def begin_create(
         self,
@@ -176,7 +178,7 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
         )
 
     @distributed_trace
-    @monitor_with_activity(logger, "WorkspaceHub.BeginUpdate", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "WorkspaceHub.BeginUpdate", ActivityType.PUBLICAPI)
     # pylint: disable=arguments-renamed
     def begin_update(
         self,
@@ -232,7 +234,7 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
         )
 
     @distributed_trace
-    @monitor_with_activity(logger, "WorkspaceHub.BeginDelete", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "WorkspaceHub.BeginDelete", ActivityType.PUBLICAPI)
     def begin_delete(
         self, name: str, *, delete_dependent_resources: bool, permanently_delete: bool = False, **kwargs: Dict
     ) -> LROPoller[None]:

@@ -1047,7 +1047,7 @@ class TestCommandFunction:
         test_command_params["identity"] = UserIdentityConfiguration()
         command_node = command(**test_command_params)
         rest_dict = command_node._to_rest_object()
-        assert rest_dict["identity"] == {"type": "user_identity"}
+        assert rest_dict["identity"] == {"identity_type": "UserIdentity"}
 
         @pipeline
         def my_pipeline():
@@ -1063,7 +1063,7 @@ class TestCommandFunction:
                 "display_name": "my-fancy-job",
                 "distribution": {"distribution_type": "Mpi", "process_count_per_instance": 4},
                 "environment_variables": {"foo": "bar"},
-                "identity": {"type": "user_identity"},
+                "identity": {"identity_type": "UserIdentity"},
                 "inputs": {
                     "boolean": {"job_input_type": "literal", "value": "False"},
                     "float": {"job_input_type": "literal", "value": "0.01"},

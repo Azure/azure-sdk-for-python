@@ -13,7 +13,13 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import Datastore as Data
 from azure.ai.ml._restclient.v2023_04_01_preview.models import DatastoreType
 from azure.ai.ml._utils.utils import camel_to_snake, dump_yaml_to_file
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, CommonYamlFields
-from azure.ai.ml.entities._credentials import NoneCredentialConfiguration
+from azure.ai.ml.entities._credentials import (
+    AccountKeyConfiguration,
+    CertificateConfiguration,
+    NoneCredentialConfiguration,
+    SasTokenConfiguration,
+    ServicePrincipalConfiguration,
+)
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._util import find_type_in_override
@@ -28,7 +34,14 @@ class Datastore(Resource, RestTranslatableMixin, ABC):
     :param description: Description of the resource.
     :type description: str
     :param credentials: Credentials to use for Azure ML workspace to connect to the storage.
-    :type credentials: Union[ServicePrincipalSection, CertificateSection]
+    :type credentials: Optional[Union[
+        ~azure.ai.ml.entities.ServicePrincipalConfiguration,
+        ~azure.ai.ml.entities.CertificateConfiguration,
+        ~azure.ai.ml.entities.NoneCredentialConfiguration,
+        ~azure.ai.ml.entities.AccountKeyConfiguration,
+        ~azure.ai.ml.entities.SasTokenConfiguration
+
+        ]]
     :param tags: Tag dictionary. Tags can be added, removed, and updated.
     :type tags: dict[str, str]
     :param properties: The asset property dictionary.
@@ -39,7 +52,15 @@ class Datastore(Resource, RestTranslatableMixin, ABC):
 
     def __init__(
         self,
-        credentials: Any,
+        credentials: Optional[
+            Union[
+                ServicePrincipalConfiguration,
+                CertificateConfiguration,
+                NoneCredentialConfiguration,
+                AccountKeyConfiguration,
+                SasTokenConfiguration,
+            ]
+        ],
         name: Optional[str] = None,
         description: Optional[str] = None,
         tags: Optional[Dict] = None,

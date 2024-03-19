@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -40,7 +40,7 @@ def build_list_detectors_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -49,7 +49,7 @@ def build_list_detectors_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{environmentName}/detectors",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
@@ -73,7 +73,7 @@ def build_get_detector_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -82,7 +82,7 @@ def build_get_detector_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{environmentName}/detectors/{detectorName}",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
@@ -133,7 +133,6 @@ class ManagedEnvironmentDiagnosticsOperations:
         :type resource_group_name: str
         :param environment_name: Name of the Environment. Required.
         :type environment_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DiagnosticsCollection or the result of cls(response)
         :rtype: ~azure.mgmt.appcontainers.models.DiagnosticsCollection
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -152,21 +151,20 @@ class ManagedEnvironmentDiagnosticsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.DiagnosticsCollection] = kwargs.pop("cls", None)
 
-        request = build_list_detectors_request(
+        _request = build_list_detectors_request(
             resource_group_name=resource_group_name,
             environment_name=environment_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.list_detectors.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -179,13 +177,9 @@ class ManagedEnvironmentDiagnosticsOperations:
         deserialized = self._deserialize("DiagnosticsCollection", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    list_detectors.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{environmentName}/detectors"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def get_detector(
@@ -202,7 +196,6 @@ class ManagedEnvironmentDiagnosticsOperations:
         :type environment_name: str
         :param detector_name: Name of the Managed Environment detector. Required.
         :type detector_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Diagnostics or the result of cls(response)
         :rtype: ~azure.mgmt.appcontainers.models.Diagnostics
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -221,22 +214,21 @@ class ManagedEnvironmentDiagnosticsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.Diagnostics] = kwargs.pop("cls", None)
 
-        request = build_get_detector_request(
+        _request = build_get_detector_request(
             resource_group_name=resource_group_name,
             environment_name=environment_name,
             detector_name=detector_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_detector.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -249,10 +241,6 @@ class ManagedEnvironmentDiagnosticsOperations:
         deserialized = self._deserialize("Diagnostics", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_detector.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{environmentName}/detectors/{detectorName}"
-    }
+        return deserialized  # type: ignore

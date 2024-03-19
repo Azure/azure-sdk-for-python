@@ -24,6 +24,7 @@ from azure.ai.ml.entities._credentials import (
     UserIdentityConfiguration,
     _BaseJobIdentityConfiguration,
 )
+from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job._input_output_helpers import (
     from_rest_data_outputs,
     from_rest_inputs_to_dataset_literal,
@@ -105,8 +106,8 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
         dynamic_allocation_enabled: Optional[Union[bool, str]] = None,
         dynamic_allocation_min_executors: Optional[Union[int, str]] = None,
         dynamic_allocation_max_executors: Optional[Union[int, str]] = None,
-        inputs: Optional[Dict] = None,
-        outputs: Optional[Dict] = None,
+        inputs: Optional[Dict[str, Union[Input, str, bool, int, float]]] = None,
+        outputs: Optional[Dict[str, Output]] = None,
         compute: Optional[str] = None,
         identity: Optional[
             Union[Dict[str, str], ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
@@ -127,8 +128,8 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
         self.dynamic_allocation_enabled = dynamic_allocation_enabled
         self.dynamic_allocation_min_executors = dynamic_allocation_min_executors
         self.dynamic_allocation_max_executors = dynamic_allocation_max_executors
-        self.inputs = inputs
-        self.outputs = outputs
+        self.inputs = inputs  # type: ignore[assignment]
+        self.outputs = outputs  # type: ignore[assignment]
         self.compute = compute
         self.resources = resources
         self.identity = identity
@@ -373,8 +374,8 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
             dynamic_allocation_min_executors=self.dynamic_allocation_min_executors,
             dynamic_allocation_max_executors=self.dynamic_allocation_max_executors,
             conf=self.conf,
-            inputs=self.inputs,
-            outputs=self.outputs,
+            inputs=self.inputs,  # type: ignore[arg-type]
+            outputs=self.outputs,  # type: ignore[arg-type]
             compute=self.compute,
             resources=self.resources,
             properties=self.properties_sparkJob,

@@ -35,13 +35,13 @@ def main():
         private_endpoint_connection_name="testEndpoint.50bf4fbe-d7c1-4b48-a642-4f5892642546",
         private_endpoint_connection={
             "properties": {
-                "privateLinkServiceConnectionState": {"description": "Rejected for some reason", "status": "Rejected"}
+                "privateLinkServiceConnectionState": {"description": "Rejected for some reason.", "status": "Rejected"}
             }
         },
     )
     print(response)
 
 
-# x-ms-original-file: specification/search/resource-manager/Microsoft.Search/stable/2023-11-01/examples/UpdatePrivateEndpointConnection.json
+# x-ms-original-file: specification/search/resource-manager/Microsoft.Search/preview/2024-03-01-preview/examples/UpdatePrivateEndpointConnection.json
 if __name__ == "__main__":
     main()

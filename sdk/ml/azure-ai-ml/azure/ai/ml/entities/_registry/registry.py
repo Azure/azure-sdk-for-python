@@ -41,7 +41,7 @@ class Registry(Resource):
         intellectual_property: Optional[IntellectualProperty] = None,
         managed_resource_group: Optional[str] = None,
         mlflow_registry_uri: Optional[str] = None,
-        replication_locations: Optional[List],
+        replication_locations: Optional[List[RegistryRegionDetails]],
         **kwargs: Any,
     ):
         """Azure ML registry.
@@ -115,7 +115,7 @@ class Registry(Resource):
         # limited, and would probably just confuse most users.
         if self.replication_locations and len(self.replication_locations) > 0:
             if self.replication_locations[0].acr_config and len(self.replication_locations[0].acr_config) > 0:
-                self.container_registry = self.replication_locations[0].acr_config[0]
+                self.container_registry = self.replication_locations[0].acr_config[0]  # type: ignore[assignment]
 
         res: dict = schema.dump(self)
         return res
@@ -170,7 +170,7 @@ class Registry(Resource):
             else None,
             managed_resource_group=real_registry.managed_resource_group,
             mlflow_registry_uri=real_registry.ml_flow_registry_uri,
-            replication_locations=replication_locations,
+            replication_locations=replication_locations,  # type: ignore[arg-type]
         )
 
     # There are differences between what our registry validation schema

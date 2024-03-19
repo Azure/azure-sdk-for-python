@@ -9,7 +9,11 @@ import functools
 from devtools_testutils import recorded_by_proxy
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.documentintelligence import DocumentIntelligenceClient
-from azure.ai.documentintelligence.models import DocumentAnalysisFeature, AnalyzeDocumentRequest
+from azure.ai.documentintelligence.models import (
+    DocumentAnalysisFeature,
+    AnalyzeDocumentRequest,
+    AnalyzeResultOperation,
+)
 from testcase import DocumentIntelligenceTest
 from conftest import skip_flaky_test
 from preparers import DocumentIntelligencePreparer, GlobalClientPreparer as _GlobalClientPreparer
@@ -44,20 +48,43 @@ class TestDACAnalyzeLayout(DocumentIntelligenceTest):
         with open(self.invoice_pdf, "rb") as fd:
             document = fd.read()
 
+        def callback(raw_response, _, headers):
+            return raw_response
+
+        poller = client.begin_analyze_document(
+            "prebuilt-layout",
+            document,
+            features=[DocumentAnalysisFeature.STYLE_FONT],
+            content_type="application/octet-stream",
+            cls=callback,
+        )
+        raw_response = poller.result()
+        raw_analyze_result = AnalyzeResultOperation._deserialize(raw_response.http_response.json(), []).analyze_result
+
         poller = client.begin_analyze_document(
             "prebuilt-layout",
             document,
             features=[DocumentAnalysisFeature.STYLE_FONT],
             content_type="application/octet-stream",
         )
-        result = poller.result()
-        assert result.model_id == "prebuilt-layout"
-        assert len(result.pages) == 1
-        assert len(result.tables) == 1
-        assert len(result.paragraphs) == 15
-        assert len(result.styles) == 20
-        assert result.string_index_type == "textElements"
-        assert result.content_format == "text"
+        returned_model = poller.result()
+
+        assert returned_model.model_id == raw_analyze_result.model_id
+        assert returned_model.api_version == raw_analyze_result.api_version
+        assert returned_model.content == raw_analyze_result.content
+
+        assert len(returned_model.pages) == len(raw_analyze_result.pages)
+        assert len(returned_model.tables) == len(raw_analyze_result.tables)
+        assert len(returned_model.paragraphs) == len(raw_analyze_result.paragraphs)
+        assert len(returned_model.styles) == len(raw_analyze_result.styles)
+
+        self.assertDocumentPagesTransformCorrect(returned_model.pages, raw_analyze_result.pages)
+        self.assertDocumentTransformCorrect(returned_model.documents, raw_analyze_result.documents)
+        self.assertDocumentTablesTransformCorrect(returned_model.tables, raw_analyze_result.tables)
+        self.assertDocumentKeyValuePairsTransformCorrect(
+            returned_model.key_value_pairs, raw_analyze_result.key_value_pairs
+        )
+        self.assertDocumentStylesTransformCorrect(returned_model.styles, raw_analyze_result.styles)
 
     @skip_flaky_test
     @DocumentIntelligencePreparer()
@@ -67,19 +94,41 @@ class TestDACAnalyzeLayout(DocumentIntelligenceTest):
         with open(self.form_jpg, "rb") as fd:
             document = fd.read()
 
+        def callback(raw_response, _, headers):
+            return raw_response
+
+        poller = client.begin_analyze_document(
+            "prebuilt-layout",
+            document,
+            content_type="application/octet-stream",
+            cls=callback,
+        )
+        raw_response = poller.result()
+        raw_analyze_result = AnalyzeResultOperation._deserialize(raw_response.http_response.json(), []).analyze_result
+
         poller = client.begin_analyze_document(
             "prebuilt-layout",
             document,
             content_type="application/octet-stream",
         )
-        result = poller.result()
-        assert result.model_id == "prebuilt-layout"
-        assert len(result.pages) == 1
-        assert len(result.tables) == 2
-        assert len(result.paragraphs) == 41
-        assert len(result.styles) == 1
-        assert result.string_index_type == "textElements"
-        assert result.content_format == "text"
+        returned_model = poller.result()
+
+        assert returned_model.model_id == raw_analyze_result.model_id
+        assert returned_model.api_version == raw_analyze_result.api_version
+        assert returned_model.content == raw_analyze_result.content
+
+        assert len(returned_model.pages) == len(raw_analyze_result.pages)
+        assert len(returned_model.tables) == len(raw_analyze_result.tables)
+        assert len(returned_model.paragraphs) == len(raw_analyze_result.paragraphs)
+        assert len(returned_model.styles) == len(raw_analyze_result.styles)
+
+        self.assertDocumentPagesTransformCorrect(returned_model.pages, raw_analyze_result.pages)
+        self.assertDocumentTransformCorrect(returned_model.documents, raw_analyze_result.documents)
+        self.assertDocumentTablesTransformCorrect(returned_model.tables, raw_analyze_result.tables)
+        self.assertDocumentKeyValuePairsTransformCorrect(
+            returned_model.key_value_pairs, raw_analyze_result.key_value_pairs
+        )
+        self.assertDocumentStylesTransformCorrect(returned_model.styles, raw_analyze_result.styles)
 
     @skip_flaky_test
     @DocumentIntelligencePreparer()
@@ -89,19 +138,41 @@ class TestDACAnalyzeLayout(DocumentIntelligenceTest):
         with open(self.multipage_invoice_pdf, "rb") as fd:
             document = fd.read()
 
+        def callback(raw_response, _, headers):
+            return raw_response
+
+        poller = client.begin_analyze_document(
+            "prebuilt-layout",
+            document,
+            content_type="application/octet-stream",
+            cls=callback,
+        )
+        raw_response = poller.result()
+        raw_analyze_result = AnalyzeResultOperation._deserialize(raw_response.http_response.json(), []).analyze_result
+
         poller = client.begin_analyze_document(
             "prebuilt-layout",
             document,
             content_type="application/octet-stream",
         )
-        result = poller.result()
-        assert result.model_id == "prebuilt-layout"
-        assert len(result.pages) == 2
-        assert len(result.tables) == 1
-        assert len(result.paragraphs) == 40
-        assert len(result.styles) == 0
-        assert result.string_index_type == "textElements"
-        assert result.content_format == "text"
+        returned_model = poller.result()
+
+        assert returned_model.model_id == raw_analyze_result.model_id
+        assert returned_model.api_version == raw_analyze_result.api_version
+        assert returned_model.content == raw_analyze_result.content
+
+        assert len(returned_model.pages) == len(raw_analyze_result.pages)
+        assert len(returned_model.tables) == len(raw_analyze_result.tables)
+        assert len(returned_model.paragraphs) == len(raw_analyze_result.paragraphs)
+        assert len(returned_model.styles) == len(raw_analyze_result.styles)
+
+        self.assertDocumentPagesTransformCorrect(returned_model.pages, raw_analyze_result.pages)
+        self.assertDocumentTransformCorrect(returned_model.documents, raw_analyze_result.documents)
+        self.assertDocumentTablesTransformCorrect(returned_model.tables, raw_analyze_result.tables)
+        self.assertDocumentKeyValuePairsTransformCorrect(
+            returned_model.key_value_pairs, raw_analyze_result.key_value_pairs
+        )
+        self.assertDocumentStylesTransformCorrect(returned_model.styles, raw_analyze_result.styles)
 
     @pytest.mark.live_test_only
     @skip_flaky_test

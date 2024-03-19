@@ -18,7 +18,8 @@ from opentelemetry.sdk.trace.export import BatchSpanProcessor
 
 from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
 
-# Enable instrumentation in the flask library.
+# This method instruments all of FastAPI.
+# You can also use FlaskInstrumentor().instrument_app(app) to instrument a specific app after it is created.
 FlaskInstrumentor().instrument()
 app = flask.Flask(__name__)
 

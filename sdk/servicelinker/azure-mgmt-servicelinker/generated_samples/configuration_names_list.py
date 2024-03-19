@@ -33,6 +33,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/servicelinker/resource-manager/Microsoft.ServiceLinker/preview/2022-11-01-preview/examples/ConfigurationNamesList.json
+# x-ms-original-file: specification/servicelinker/resource-manager/Microsoft.ServiceLinker/preview/2023-04-01-preview/examples/ConfigurationNamesList.json
 if __name__ == "__main__":
     main()

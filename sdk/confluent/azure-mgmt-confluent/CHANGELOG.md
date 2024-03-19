@@ -1,5 +1,23 @@
 # Release History
 
+## 2.1.0 (2024-03-18)
+
+### Features Added
+
+  - Added operation AccessOperations.create_role_binding
+  - Added operation AccessOperations.delete_role_binding
+  - Added operation AccessOperations.list_role_binding_name_list
+  - Added operation OrganizationOperations.create_api_key
+  - Added operation OrganizationOperations.delete_cluster_api_key
+  - Added operation OrganizationOperations.get_cluster_api_key
+  - Added operation OrganizationOperations.get_cluster_by_id
+  - Added operation OrganizationOperations.get_environment_by_id
+  - Added operation OrganizationOperations.get_schema_registry_cluster_by_id
+  - Added operation OrganizationOperations.list_clusters
+  - Added operation OrganizationOperations.list_environments
+  - Added operation OrganizationOperations.list_regions
+  - Added operation OrganizationOperations.list_schema_registry_clusters
+
 ## 2.0.0 (2023-11-20)
 
 ### Features Added

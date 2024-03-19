@@ -1,5 +1,11 @@
 # Release History
 
+## 1.0.0b5 (2024-02-29)
+
+### Other Changes
+
+- Accept float for `retry_after` header.
+
 ## 1.0.0b4 (2024-02-23)
 
 ### Other Changes

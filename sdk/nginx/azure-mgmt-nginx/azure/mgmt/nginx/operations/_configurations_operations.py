@@ -45,7 +45,7 @@ def build_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -58,7 +58,12 @@ def build_list_request(
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
-        "deploymentName": _SERIALIZER.url("deployment_name", deployment_name, "str"),
+        "deploymentName": _SERIALIZER.url(
+            "deployment_name",
+            deployment_name,
+            "str",
+            pattern=r"^([a-z0-9A-Z][a-z0-9A-Z-]{0,28}[a-z0-9A-Z]|[a-z0-9A-Z])$",
+        ),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -78,7 +83,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -91,7 +96,12 @@ def build_get_request(
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
-        "deploymentName": _SERIALIZER.url("deployment_name", deployment_name, "str"),
+        "deploymentName": _SERIALIZER.url(
+            "deployment_name",
+            deployment_name,
+            "str",
+            pattern=r"^([a-z0-9A-Z][a-z0-9A-Z-]{0,28}[a-z0-9A-Z]|[a-z0-9A-Z])$",
+        ),
         "configurationName": _SERIALIZER.url("configuration_name", configuration_name, "str"),
     }
 
@@ -112,7 +122,7 @@ def build_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -126,7 +136,12 @@ def build_create_or_update_request(
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
-        "deploymentName": _SERIALIZER.url("deployment_name", deployment_name, "str"),
+        "deploymentName": _SERIALIZER.url(
+            "deployment_name",
+            deployment_name,
+            "str",
+            pattern=r"^([a-z0-9A-Z][a-z0-9A-Z-]{0,28}[a-z0-9A-Z]|[a-z0-9A-Z])$",
+        ),
         "configurationName": _SERIALIZER.url("configuration_name", configuration_name, "str"),
     }
 
@@ -149,7 +164,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -162,7 +177,12 @@ def build_delete_request(
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
-        "deploymentName": _SERIALIZER.url("deployment_name", deployment_name, "str"),
+        "deploymentName": _SERIALIZER.url(
+            "deployment_name",
+            deployment_name,
+            "str",
+            pattern=r"^([a-z0-9A-Z][a-z0-9A-Z-]{0,28}[a-z0-9A-Z]|[a-z0-9A-Z])$",
+        ),
         "configurationName": _SERIALIZER.url("configuration_name", configuration_name, "str"),
     }
 
@@ -175,6 +195,50 @@ def build_delete_request(
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_analysis_request(
+    resource_group_name: str, deployment_name: str, configuration_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-01-preview"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Nginx.NginxPlus/nginxDeployments/{deploymentName}/configurations/{configurationName}/analyze",
+    )  # pylint: disable=line-too-long
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "deploymentName": _SERIALIZER.url(
+            "deployment_name",
+            deployment_name,
+            "str",
+            pattern=r"^([a-z0-9A-Z][a-z0-9A-Z-]{0,28}[a-z0-9A-Z]|[a-z0-9A-Z])$",
+        ),
+        "configurationName": _SERIALIZER.url(
+            "configuration_name", configuration_name, "str", pattern=r"^[a-z][a-z0-9]*$"
+        ),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 class ConfigurationsOperations:
@@ -740,4 +804,171 @@ class ConfigurationsOperations:
 
     begin_delete.metadata = {
         "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Nginx.NginxPlus/nginxDeployments/{deploymentName}/configurations/{configurationName}"
+    }
+
+    @overload
+    def analysis(
+        self,
+        resource_group_name: str,
+        deployment_name: str,
+        configuration_name: str,
+        body: Optional[_models.AnalysisCreate] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.AnalysisResult:
+        """Analyze an NGINX configuration without applying it to the NGINXaaS deployment.
+
+        Analyze an NGINX configuration without applying it to the NGINXaaS deployment.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param deployment_name: The name of targeted NGINX deployment. Required.
+        :type deployment_name: str
+        :param configuration_name: The name of configuration, only 'default' is supported value due to
+         the singleton of NGINX conf. Required.
+        :type configuration_name: str
+        :param body: The NGINX configuration to analyze. Default value is None.
+        :type body: ~azure.mgmt.nginx.models.AnalysisCreate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: AnalysisResult or the result of cls(response)
+        :rtype: ~azure.mgmt.nginx.models.AnalysisResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def analysis(
+        self,
+        resource_group_name: str,
+        deployment_name: str,
+        configuration_name: str,
+        body: Optional[IO] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.AnalysisResult:
+        """Analyze an NGINX configuration without applying it to the NGINXaaS deployment.
+
+        Analyze an NGINX configuration without applying it to the NGINXaaS deployment.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param deployment_name: The name of targeted NGINX deployment. Required.
+        :type deployment_name: str
+        :param configuration_name: The name of configuration, only 'default' is supported value due to
+         the singleton of NGINX conf. Required.
+        :type configuration_name: str
+        :param body: The NGINX configuration to analyze. Default value is None.
+        :type body: IO
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: AnalysisResult or the result of cls(response)
+        :rtype: ~azure.mgmt.nginx.models.AnalysisResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def analysis(
+        self,
+        resource_group_name: str,
+        deployment_name: str,
+        configuration_name: str,
+        body: Optional[Union[_models.AnalysisCreate, IO]] = None,
+        **kwargs: Any
+    ) -> _models.AnalysisResult:
+        """Analyze an NGINX configuration without applying it to the NGINXaaS deployment.
+
+        Analyze an NGINX configuration without applying it to the NGINXaaS deployment.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param deployment_name: The name of targeted NGINX deployment. Required.
+        :type deployment_name: str
+        :param configuration_name: The name of configuration, only 'default' is supported value due to
+         the singleton of NGINX conf. Required.
+        :type configuration_name: str
+        :param body: The NGINX configuration to analyze. Is either a AnalysisCreate type or a IO type.
+         Default value is None.
+        :type body: ~azure.mgmt.nginx.models.AnalysisCreate or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: AnalysisResult or the result of cls(response)
+        :rtype: ~azure.mgmt.nginx.models.AnalysisResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AnalysisResult] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            if body is not None:
+                _json = self._serialize.body(body, "AnalysisCreate")
+            else:
+                _json = None
+
+        request = build_analysis_request(
+            resource_group_name=resource_group_name,
+            deployment_name=deployment_name,
+            configuration_name=configuration_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            content=_content,
+            template_url=self.analysis.metadata["url"],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ResourceProviderDefaultErrorResponse, pipeline_response
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("AnalysisResult", pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    analysis.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Nginx.NginxPlus/nginxDeployments/{deploymentName}/configurations/{configurationName}/analyze"
     }

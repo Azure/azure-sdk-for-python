@@ -135,7 +135,7 @@ class CopyCompletionError(_serialization.Model):
     """Indicates the error details if the background copy of a resource created via the CopyStart
     operation fails.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar error_code: Indicates the error code if the background copy of a resource created via the
      CopyStart operation fails. Required. "CopySourceNotFound"
@@ -176,11 +176,11 @@ class CreationData(_serialization.Model):  # pylint: disable=too-many-instance-a
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar create_option: This enumerates the possible sources of a disk's creation. Required. Known
      values are: "Empty", "Attach", "FromImage", "Import", "Copy", "Restore", "Upload", "CopyStart",
-     "ImportSecure", "UploadPreparedSecure", "CopyFromSanSnapshot", and "Import".
+     "ImportSecure", "UploadPreparedSecure", and "CopyFromSanSnapshot".
     :vartype create_option: str or ~azure.mgmt.compute.v2023_04_02.models.DiskCreateOption
     :ivar storage_account_id: Required if createOption is Import. The Azure Resource Manager
      identifier of the storage account containing the blob to import as a disk.
@@ -258,7 +258,7 @@ class CreationData(_serialization.Model):  # pylint: disable=too-many-instance-a
         """
         :keyword create_option: This enumerates the possible sources of a disk's creation. Required.
          Known values are: "Empty", "Attach", "FromImage", "Import", "Copy", "Restore", "Upload",
-         "CopyStart", "ImportSecure", "UploadPreparedSecure", "CopyFromSanSnapshot", and "Import".
+         "CopyStart", "ImportSecure", "UploadPreparedSecure", and "CopyFromSanSnapshot".
         :paramtype create_option: str or ~azure.mgmt.compute.v2023_04_02.models.DiskCreateOption
         :keyword storage_account_id: Required if createOption is Import. The Azure Resource Manager
          identifier of the storage account containing the blob to import as a disk.
@@ -313,7 +313,7 @@ class Resource(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -362,7 +362,7 @@ class Disk(Resource):  # pylint: disable=too-many-instance-attributes
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -731,7 +731,7 @@ class DiskAccess(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -808,7 +808,7 @@ class DiskAccess(Resource):
 class DiskAccessList(_serialization.Model):
     """The List disk access operation response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: A list of disk access resources. Required.
     :vartype value: list[~azure.mgmt.compute.v2023_04_02.models.DiskAccess]
@@ -864,7 +864,7 @@ class DiskEncryptionSet(Resource):  # pylint: disable=too-many-instance-attribut
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -985,7 +985,7 @@ class DiskEncryptionSet(Resource):  # pylint: disable=too-many-instance-attribut
 class DiskEncryptionSetList(_serialization.Model):
     """The List disk encryption set operation response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: A list of disk encryption sets. Required.
     :vartype value: list[~azure.mgmt.compute.v2023_04_02.models.DiskEncryptionSet]
@@ -1096,7 +1096,7 @@ class DiskEncryptionSetUpdate(_serialization.Model):
 class DiskList(_serialization.Model):
     """The List Disks operation response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: A list of disks. Required.
     :vartype value: list[~azure.mgmt.compute.v2023_04_02.models.Disk]
@@ -1321,7 +1321,7 @@ class DiskRestorePoint(ProxyOnlyResource):  # pylint: disable=too-many-instance-
 class DiskRestorePointList(_serialization.Model):
     """The List Disk Restore Points operation response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: A list of disk restore points. Required.
     :vartype value: list[~azure.mgmt.compute.v2023_04_02.models.DiskRestorePoint]
@@ -1724,7 +1724,7 @@ class EncryptionSetIdentity(_serialization.Model):
     :vartype tenant_id: str
     :ivar user_assigned_identities: The list of user identities associated with the disk encryption
      set. The user identity dictionary key references will be ARM resource ids in the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long
     :vartype user_assigned_identities: dict[str,
      ~azure.mgmt.compute.v2023_04_02.models.UserAssignedIdentitiesValue]
     """
@@ -1758,7 +1758,7 @@ class EncryptionSetIdentity(_serialization.Model):
         :keyword user_assigned_identities: The list of user identities associated with the disk
          encryption set. The user identity dictionary key references will be ARM resource ids in the
          form:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long
         :paramtype user_assigned_identities: dict[str,
          ~azure.mgmt.compute.v2023_04_02.models.UserAssignedIdentitiesValue]
         """
@@ -1772,7 +1772,7 @@ class EncryptionSetIdentity(_serialization.Model):
 class EncryptionSettingsCollection(_serialization.Model):
     """Encryption settings for disk or snapshot.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar enabled: Set this flag to true and provide DiskEncryptionKey and optional
      KeyEncryptionKey to enable encryption. Set this flag to false and remove DiskEncryptionKey and
@@ -1896,7 +1896,7 @@ class ExtendedLocation(_serialization.Model):
 class GrantAccessData(_serialization.Model):
     """Data used for requesting a SAS.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar access: Required. Known values are: "None", "Read", and "Write".
     :vartype access: str or ~azure.mgmt.compute.v2023_04_02.models.AccessLevel
@@ -2035,7 +2035,7 @@ class InnerError(_serialization.Model):
 class KeyForDiskEncryptionSet(_serialization.Model):
     """Key Vault Key Url to be used for server side encryption of Managed Disks and Snapshots.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar source_vault: Resource id of the KeyVault containing the key or secret. This property is
      optional and cannot be used if the KeyVault subscription is not the same as the Disk Encryption
@@ -2074,7 +2074,7 @@ class KeyVaultAndKeyReference(_serialization.Model):
     """Key Vault Key Url and vault id of KeK, KeK is optional and when provided is used to unwrap the
     encryptionKey.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar source_vault: Resource id of the KeyVault containing the key or secret. Required.
     :vartype source_vault: ~azure.mgmt.compute.v2023_04_02.models.SourceVault
@@ -2107,7 +2107,7 @@ class KeyVaultAndKeyReference(_serialization.Model):
 class KeyVaultAndSecretReference(_serialization.Model):
     """Key Vault Secret Url and vault id of the encryption key.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar source_vault: Resource id of the KeyVault containing the key or secret. Required.
     :vartype source_vault: ~azure.mgmt.compute.v2023_04_02.models.SourceVault
@@ -2399,7 +2399,7 @@ class PropertyUpdatesInProgress(_serialization.Model):
 class PurchasePlan(_serialization.Model):
     """Used for establishing the purchase context of any 3rd Party artifact through MarketPlace.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The plan ID. Required.
     :vartype name: str
@@ -2449,7 +2449,7 @@ class PurchasePlan(_serialization.Model):
 class ResourceUriList(_serialization.Model):
     """The List resources which are encrypted with the disk encryption set.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: A list of IDs or Owner IDs of resources which are encrypted with the disk
      encryption set. Required.
@@ -2556,7 +2556,7 @@ class Snapshot(Resource):  # pylint: disable=too-many-instance-attributes
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -2823,7 +2823,7 @@ class Snapshot(Resource):  # pylint: disable=too-many-instance-attributes
 class SnapshotList(_serialization.Model):
     """The List Snapshots operation response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: A list of snapshots. Required.
     :vartype value: list[~azure.mgmt.compute.v2023_04_02.models.Snapshot]

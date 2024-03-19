@@ -21,6 +21,8 @@ from ._sim_groups_operations import SimGroupsOperations
 from ._sim_policies_operations import SimPoliciesOperations
 from ._sites_operations import SitesOperations
 from ._slices_operations import SlicesOperations
+from ._extended_ue_information_operations import ExtendedUeInformationOperations
+from ._ue_information_operations import UeInformationOperations
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
@@ -42,6 +44,8 @@ __all__ = [
     "SimPoliciesOperations",
     "SitesOperations",
     "SlicesOperations",
+    "ExtendedUeInformationOperations",
+    "UeInformationOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

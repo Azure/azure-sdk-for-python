@@ -1,13 +1,24 @@
 # Release History
 
-## 1.2.1 (Unreleased)
+## 1.3.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+- Updated FastAPI sample
+    ([#34738](https://github.com/Azure/azure-sdk-for-python/pull/34738))
+
+## 1.3.0 (2024-02-29)
 
 ### Features Added
 
 - Add custom span processors configuration option
     ([#34326](https://github.com/Azure/azure-sdk-for-python/pull/34326))
-
-### Bugs Fixed
 
 ### Other Changes
 

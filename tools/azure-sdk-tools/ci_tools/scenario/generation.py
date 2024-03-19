@@ -335,7 +335,7 @@ def prepare_and_test_optional(mapped_args: argparse.Namespace) -> int:
 
     if in_ci():
         if not is_check_enabled(mapped_args.target, "optional", False):
-            logging.info(f"Package {parsed_package.package_name} opts-out of optional check.")
+            logging.info(f"Package {parsed_package.name} opts-out of optional check.")
             return 0
 
     optional_configs = get_config_setting(mapped_args.target, "optional")

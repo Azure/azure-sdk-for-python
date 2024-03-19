@@ -1,0 +1,6 @@
+{
+    "AssetsRepo": "Azure/azure-sdk-assets",
+    "AssetsRepoPrefixPath": "python",
+    "TagPrefix": "python/cosmosdbforpostgresql/azure-mgmt-cosmosdbforpostgresql",
+    "Tag": "python/cosmosdbforpostgresql/azure-mgmt-cosmosdbforpostgresql_cdd94fdb03"
+}

@@ -16,6 +16,7 @@ from ._models_py3 import AutoScaleSettings
 from ._models_py3 import AutoStorageBaseProperties
 from ._models_py3 import AutoStorageProperties
 from ._models_py3 import AutoUserSpecification
+from ._models_py3 import AutomaticOSUpgradePolicy
 from ._models_py3 import AzureBlobFileSystemConfiguration
 from ._models_py3 import AzureFileShareConfiguration
 from ._models_py3 import BatchAccount
@@ -92,6 +93,7 @@ from ._models_py3 import ResizeError
 from ._models_py3 import ResizeOperationStatus
 from ._models_py3 import Resource
 from ._models_py3 import ResourceFile
+from ._models_py3 import RollingUpgradePolicy
 from ._models_py3 import ScaleSettings
 from ._models_py3 import SecurityProfile
 from ._models_py3 import ServiceArtifactReference
@@ -102,6 +104,7 @@ from ._models_py3 import SupportedSkusResult
 from ._models_py3 import TaskContainerSettings
 from ._models_py3 import TaskSchedulingPolicy
 from ._models_py3 import UefiSettings
+from ._models_py3 import UpgradePolicy
 from ._models_py3 import UserAccount
 from ._models_py3 import UserAssignedIdentities
 from ._models_py3 import UserIdentity
@@ -148,6 +151,7 @@ from ._batch_management_client_enums import ProvisioningState
 from ._batch_management_client_enums import PublicNetworkAccessType
 from ._batch_management_client_enums import ResourceIdentityType
 from ._batch_management_client_enums import StorageAccountType
+from ._batch_management_client_enums import UpgradeMode
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
@@ -163,6 +167,7 @@ __all__ = [
     "AutoStorageBaseProperties",
     "AutoStorageProperties",
     "AutoUserSpecification",
+    "AutomaticOSUpgradePolicy",
     "AzureBlobFileSystemConfiguration",
     "AzureFileShareConfiguration",
     "BatchAccount",
@@ -239,6 +244,7 @@ __all__ = [
     "ResizeOperationStatus",
     "Resource",
     "ResourceFile",
+    "RollingUpgradePolicy",
     "ScaleSettings",
     "SecurityProfile",
     "ServiceArtifactReference",
@@ -249,6 +255,7 @@ __all__ = [
     "TaskContainerSettings",
     "TaskSchedulingPolicy",
     "UefiSettings",
+    "UpgradePolicy",
     "UserAccount",
     "UserAssignedIdentities",
     "UserIdentity",
@@ -294,6 +301,7 @@ __all__ = [
     "PublicNetworkAccessType",
     "ResourceIdentityType",
     "StorageAccountType",
+    "UpgradeMode",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

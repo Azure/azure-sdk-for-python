@@ -23,14 +23,16 @@ steps:
     displayName: Install build script requirements
 
   - pwsh: |
-      $argument = @'
-      ${{ replace(convertToJson(parameters.CondaArtifacts), '"', '\"') }}
+      $argContent = @'
+      ${{ convertToJson(parameters.CondaArtifacts) }}
       '@
-
-      sdk_build_conda -c "$argument" ${{ parameters.Arguments }}
+      $argFile = "$(Agent.TempDirectory)/conda-args.json"
+      Set-Content -Path $argFile -Value $argContent
+      cat $argFile
+      sdk_build_conda -f "$argFile" ${{ parameters.Arguments }}
     displayName: Assemble Conda Packages
   
-  - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+  - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
     parameters:
       ArtifactPath: '$(Build.SourcesDirectory)/conda/assembled'
       ArtifactName: '${{ parameters.ArtifactPrefix }}distributions'
@@ -42,7 +44,7 @@ steps:
       inputs:
         BuildDropPath: '$(Build.SourcesDirectory)/conda/output'
 
-  - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+  - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
     parameters:
       ArtifactPath: '$(Build.SourcesDirectory)/conda/output'
       ArtifactName: '${{ parameters.ArtifactPrefix }}conda'

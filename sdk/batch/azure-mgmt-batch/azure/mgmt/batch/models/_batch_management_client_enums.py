@@ -444,3 +444,23 @@ class StorageAccountType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The data disk / OS disk should use premium locally redundant storage."""
     STANDARD_SSD_LRS = "StandardSSD_LRS"
     """The data disk / OS disk should use standard SSD locally redundant storage."""
+
+
+class UpgradeMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the mode of an upgrade to virtual machines in the scale set.:code:`<br />`:code:`<br
+    />` Possible values are::code:`<br />`:code:`<br />` **Manual** - You  control the application
+    of updates to virtual machines in the scale set. You do this by using the manualUpgrade
+    action.:code:`<br />`:code:`<br />` **Automatic** - All virtual machines in the scale set are
+    automatically updated at the same time.:code:`<br />`:code:`<br />` **Rolling** - Scale set
+    performs updates in batches with an optional pause time in between.
+    """
+
+    AUTOMATIC = "automatic"
+    """All virtual machines in the scale set are automatically updated at the same time."""
+    MANUAL = "manual"
+    """You control the application of updates to virtual machines in the scale set. You do this by
+    #: using the manualUpgrade action."""
+    ROLLING = "rolling"
+    """The existing instances in a scale set are brought down in batches to be upgraded. Once the
+    #: upgraded batch is complete, the instances will begin taking traffic again and the next batch
+    #: will begin. This continues until all instances brought up-to-date."""

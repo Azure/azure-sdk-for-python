@@ -66,17 +66,26 @@ class ParameterizedSweep:
         :param early_termination: Early termination policy for sweep job.
         :type early_termination: ~azure.ai.ml.entities._job.sweep.early_termination_policy.EarlyTerminationPolicy
         :param search_space: Search space for sweep job.
-        :type search_space: Dict[str, Union[~azure.ai.ml.sweep.Choice, ~azure.ai.ml.sweep.LogNormal,
-        ~azure.ai.ml.sweep.LogUniform, ~azure.ai.ml.sweep.Normal, ~azure.ai.ml.sweep.QLogNormal,
-        ~azure.ai.ml.sweep.QLogUniform, ~azure.ai.ml.sweep.QNormal, ~azure.ai.ml.sweep.QUniform,
-        ~azure.ai.ml.sweep.Randint, ~azure.ai.ml.sweep.Uniform]]
+        :type search_space: Dict[str, Union[
+            ~azure.ai.ml.sweep.Choice,
+            ~azure.ai.ml.sweep.LogNormal,
+            ~azure.ai.ml.sweep.LogUniform,
+            ~azure.ai.ml.sweep.Normal,
+            ~azure.ai.ml.sweep.QLogNormal,
+            ~azure.ai.ml.sweep.QLogUniform,
+            ~azure.ai.ml.sweep.QNormal,
+            ~azure.ai.ml.sweep.QUniform,
+            ~azure.ai.ml.sweep.Randint,
+            ~azure.ai.ml.sweep.Uniform
+
+            ]]
         :param queue_settings: Queue settings for sweep job.
         :type queue_settings: ~azure.ai.ml.entities.QueueSettings
         :param resources: Compute Resource configuration for the job.
         :type resources: ~azure.ai.ml.entities.ResourceConfiguration
         """
         self.sampling_algorithm = sampling_algorithm
-        self.early_termination = early_termination
+        self.early_termination = early_termination  # type: ignore[assignment]
         self._limits = limits
         self.search_space = search_space
         self.queue_settings = queue_settings
@@ -270,7 +279,7 @@ class ParameterizedSweep:
         )
 
     @property
-    def early_termination(self) -> Any:
+    def early_termination(self) -> Optional[Union[str, EarlyTerminationPolicy]]:
         """Early termination policy for sweep job.
 
         :returns: Early termination policy for sweep job.
@@ -285,6 +294,7 @@ class ParameterizedSweep:
         :param value: Early termination policy for sweep job.
         :type value: ~azure.ai.ml.entities._job.sweep.early_termination_policy.EarlyTerminationPolicy
         """
+        self._early_termination: Optional[Union[str, EarlyTerminationPolicy]]
         if value is None:
             self._early_termination = None
         elif isinstance(value, EarlyTerminationPolicy):

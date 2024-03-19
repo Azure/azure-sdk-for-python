@@ -11,8 +11,6 @@ from ._communication_services_operations import CommunicationServicesOperations
 from ._domains_operations import DomainsOperations
 from ._email_services_operations import EmailServicesOperations
 from ._sender_usernames_operations import SenderUsernamesOperations
-from ._suppression_lists_operations import SuppressionListsOperations
-from ._suppression_list_addresses_operations import SuppressionListAddressesOperations
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
@@ -24,8 +22,6 @@ __all__ = [
     "DomainsOperations",
     "EmailServicesOperations",
     "SenderUsernamesOperations",
-    "SuppressionListsOperations",
-    "SuppressionListAddressesOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

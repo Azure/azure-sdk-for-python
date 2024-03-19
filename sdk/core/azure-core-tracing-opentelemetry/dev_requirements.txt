@@ -5,4 +5,5 @@ opentelemetry-sdk<2.0.0,>=1.12.0
 opentelemetry-instrumentation-requests>=0.32b0
 requests
 azure-storage-blob
--e ../../servicebus/azure-servicebus
+../../servicebus/azure-servicebus
+../../eventhub/azure-eventhub

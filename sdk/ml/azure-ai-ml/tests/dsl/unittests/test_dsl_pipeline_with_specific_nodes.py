@@ -1912,7 +1912,7 @@ class TestDSLPipelineWithSpecificNodes:
                                 "value": "${{parent.outputs.pipeline_job_out}}",
                             }
                         },
-                        "identity": {"type": "user_identity"},
+                        "identity": {"identity_type": "UserIdentity"},
                         "resources": {"instance_count": 2},
                         "task": {
                             "code": parse_local_path(
@@ -2016,7 +2016,7 @@ class TestDSLPipelineWithSpecificNodes:
                         "display_name": "my-evaluate-job",
                         "environment_variables": {"key": "val"},
                         "error_threshold": 1,
-                        "identity": {"type": "user_identity"},
+                        "identity": {"identity_type": "UserIdentity"},
                         "input_data": "${{inputs.job_data_path}}",
                         "inputs": {
                             "job_data_path": {
@@ -2052,7 +2052,7 @@ class TestDSLPipelineWithSpecificNodes:
                         "display_name": "my-evaluate-job",
                         "environment_variables": {"key": "val"},
                         "error_threshold": 1,
-                        "identity": {"type": "user_identity"},
+                        "identity": {"identity_type": "UserIdentity"},
                         "input_data": "${{inputs.job_data_path}}",
                         "inputs": {
                             "job_data_path": {

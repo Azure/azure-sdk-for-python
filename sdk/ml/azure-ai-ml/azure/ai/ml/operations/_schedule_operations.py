@@ -53,7 +53,7 @@ from ._job_ops_helper import stream_logs_until_completion
 from ._operation_orchestrator import OperationOrchestrator
 
 ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
+module_logger = ops_logger.module_logger
 
 
 class ScheduleOperations(_ScopeDependentOperations):
@@ -124,7 +124,7 @@ class ScheduleOperations(_ScopeDependentOperations):
         )
 
     @distributed_trace
-    @monitor_with_activity(logger, "Schedule.List", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Schedule.List", ActivityType.PUBLICAPI)
     def list(
         self,
         *,
@@ -180,7 +180,7 @@ class ScheduleOperations(_ScopeDependentOperations):
         )
 
     @distributed_trace
-    @monitor_with_activity(logger, "Schedule.Delete", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Schedule.Delete", ActivityType.PUBLICAPI)
     def begin_delete(
         self,
         name: str,
@@ -204,7 +204,7 @@ class ScheduleOperations(_ScopeDependentOperations):
         return poller
 
     @distributed_trace
-    @monitor_with_telemetry_mixin(logger, "Schedule.Get", ActivityType.PUBLICAPI)
+    @monitor_with_telemetry_mixin(ops_logger, "Schedule.Get", ActivityType.PUBLICAPI)
     def get(
         self,
         name: str,
@@ -227,7 +227,7 @@ class ScheduleOperations(_ScopeDependentOperations):
         )
 
     @distributed_trace
-    @monitor_with_telemetry_mixin(logger, "Schedule.CreateOrUpdate", ActivityType.PUBLICAPI)
+    @monitor_with_telemetry_mixin(ops_logger, "Schedule.CreateOrUpdate", ActivityType.PUBLICAPI)
     def begin_create_or_update(
         self,
         schedule: Schedule,
@@ -265,7 +265,7 @@ class ScheduleOperations(_ScopeDependentOperations):
         return poller
 
     @distributed_trace
-    @monitor_with_activity(logger, "Schedule.Enable", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Schedule.Enable", ActivityType.PUBLICAPI)
     def begin_enable(
         self,
         name: str,
@@ -283,7 +283,7 @@ class ScheduleOperations(_ScopeDependentOperations):
         return self.begin_create_or_update(schedule, **kwargs)
 
     @distributed_trace
-    @monitor_with_activity(logger, "Schedule.Disable", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Schedule.Disable", ActivityType.PUBLICAPI)
     def begin_disable(
         self,
         name: str,
@@ -301,7 +301,7 @@ class ScheduleOperations(_ScopeDependentOperations):
         return self.begin_create_or_update(schedule, **kwargs)
 
     @distributed_trace
-    @monitor_with_activity(logger, "Schedule.Trigger", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Schedule.Trigger", ActivityType.PUBLICAPI)
     def trigger(
         self,
         name: str,
@@ -380,14 +380,14 @@ class ScheduleOperations(_ScopeDependentOperations):
         # resolve ARM id for each signal and populate any defaults if needed
         for signal_name, signal in schedule.create_monitor.monitoring_signals.items():  # type: ignore
             if signal.type == MonitorSignalType.GENERATION_SAFETY_QUALITY:
-                for llm_data in signal.production_data:
+                for llm_data in signal.production_data:  # type: ignore[union-attr]
                     self._job_operations._resolve_job_input(llm_data.input_data, schedule._base_path)
                 continue
             if signal.type == MonitorSignalType.CUSTOM:
-                if signal.inputs:
-                    for inputs in signal.inputs.values():
+                if signal.inputs:  # type: ignore[union-attr]
+                    for inputs in signal.inputs.values():  # type: ignore[union-attr]
                         self._job_operations._resolve_job_input(inputs, schedule._base_path)
-                for data in signal.input_data.values():
+                for data in signal.input_data.values():  # type: ignore[union-attr]
                     if data.input_data is not None:
                         for inputs in data.input_data.values():
                             self._job_operations._resolve_job_input(inputs, schedule._base_path)
@@ -397,14 +397,14 @@ class ScheduleOperations(_ScopeDependentOperations):
                     )
                 continue
             error_messages = []
-            if not signal.production_data or not signal.reference_data:
+            if not signal.production_data or not signal.reference_data:  # type: ignore[union-attr]
                 # if there is no target dataset, we check the type of signal
                 if signal.type in {MonitorSignalType.DATA_DRIFT, MonitorSignalType.DATA_QUALITY}:
                     if mdc_input_enabled:
-                        if not signal.production_data:
+                        if not signal.production_data:  # type: ignore[union-attr]
                             # if target dataset is absent and data collector for input is enabled,
                             # create a default target dataset with production model inputs as target
-                            signal.production_data = ProductionData(
+                            signal.production_data = ProductionData(  # type: ignore[union-attr]
                                 input_data=Input(
                                     path=f"{model_inputs_name}:{model_inputs_version}",
                                     type=self._data_operations.get(model_inputs_name, model_inputs_version).type,
@@ -414,8 +414,8 @@ class ScheduleOperations(_ScopeDependentOperations):
                                     lookback_window_size="default", lookback_window_offset="P0D"
                                 ),
                             )
-                        if not signal.reference_data:
-                            signal.reference_data = ReferenceData(
+                        if not signal.reference_data:  # type: ignore[union-attr]
+                            signal.reference_data = ReferenceData(  # type: ignore[union-attr]
                                 input_data=Input(
                                     path=f"{model_inputs_name}:{model_inputs_version}",
                                     type=self._data_operations.get(model_inputs_name, model_inputs_version).type,
@@ -425,7 +425,9 @@ class ScheduleOperations(_ScopeDependentOperations):
                                     lookback_window_size="default", lookback_window_offset="default"
                                 ),
                             )
-                    elif not mdc_input_enabled and not (signal.production_data and signal.reference_data):
+                    elif not mdc_input_enabled and not (
+                        signal.production_data and signal.reference_data  # type: ignore[union-attr]
+                    ):
                         # if target or baseline dataset is absent and data collector for input is not enabled,
                         # collect exception message
                         msg = (
@@ -436,10 +438,10 @@ class ScheduleOperations(_ScopeDependentOperations):
                         error_messages.append(msg)
                 elif signal.type == MonitorSignalType.PREDICTION_DRIFT:
                     if mdc_output_enabled:
-                        if not signal.production_data:
+                        if not signal.production_data:  # type: ignore[union-attr]
                             # if target dataset is absent and data collector for output is enabled,
                             # create a default target dataset with production model outputs as target
-                            signal.production_data = ProductionData(
+                            signal.production_data = ProductionData(  # type: ignore[union-attr]
                                 input_data=Input(
                                     path=f"{model_outputs_name}:{model_outputs_version}",
                                     type=self._data_operations.get(model_outputs_name, model_outputs_version).type,
@@ -449,8 +451,8 @@ class ScheduleOperations(_ScopeDependentOperations):
                                     lookback_window_size="default", lookback_window_offset="P0D"
                                 ),
                             )
-                        if not signal.reference_data:
-                            signal.reference_data = ReferenceData(
+                        if not signal.reference_data:  # type: ignore[union-attr]
+                            signal.reference_data = ReferenceData(  # type: ignore[union-attr]
                                 input_data=Input(
                                     path=f"{model_outputs_name}:{model_outputs_version}",
                                     type=self._data_operations.get(model_outputs_name, model_outputs_version).type,
@@ -460,7 +462,9 @@ class ScheduleOperations(_ScopeDependentOperations):
                                     lookback_window_size="default", lookback_window_offset="default"
                                 ),
                             )
-                    elif not mdc_output_enabled and not (signal.production_data and signal.reference_data):
+                    elif not mdc_output_enabled and not (
+                        signal.production_data and signal.reference_data  # type: ignore[union-attr]
+                    ):
                         # if target dataset is absent and data collector for output is not enabled,
                         # collect exception message
                         msg = (
@@ -471,10 +475,10 @@ class ScheduleOperations(_ScopeDependentOperations):
                         error_messages.append(msg)
                 elif signal.type == MonitorSignalType.FEATURE_ATTRIBUTION_DRIFT:
                     if mdc_input_enabled:
-                        if not signal.production_data:
+                        if not signal.production_data:  # type: ignore[union-attr]
                             # if production dataset is absent and data collector for input is enabled,
                             # create a default prod dataset with production model inputs and outputs as target
-                            signal.production_data = [
+                            signal.production_data = [  # type: ignore[union-attr]
                                 FADProductionData(
                                     input_data=Input(
                                         path=f"{model_inputs_name}:{model_inputs_version}",
@@ -496,7 +500,7 @@ class ScheduleOperations(_ScopeDependentOperations):
                                     ),
                                 ),
                             ]
-                    elif not mdc_output_enabled and not signal.production_data:
+                    elif not mdc_output_enabled and not signal.production_data:  # type: ignore[union-attr]
                         # if target dataset is absent and data collector for output is not enabled,
                         # collect exception message
                         msg = (
@@ -516,27 +520,32 @@ class ScheduleOperations(_ScopeDependentOperations):
                     ErrorCategory=ErrorCategory.USER_ERROR,
                 )
             if signal.type == MonitorSignalType.FEATURE_ATTRIBUTION_DRIFT:
-                for prod_data in signal.production_data:
+                for prod_data in signal.production_data:  # type: ignore[union-attr]
                     self._job_operations._resolve_job_input(prod_data.input_data, schedule._base_path)
-                    prod_data.pre_processing_component = self._orchestrators.get_asset_arm_id(
-                        asset=prod_data.pre_processing_component, azureml_type=AzureMLResourceType.COMPONENT
+                    prod_data.pre_processing_component = self._orchestrators.get_asset_arm_id(  # type: ignore
+                        asset=prod_data.pre_processing_component,  # type: ignore[union-attr]
+                        azureml_type=AzureMLResourceType.COMPONENT,
                     )
-                self._job_operations._resolve_job_input(signal.reference_data.input_data, schedule._base_path)
-                signal.reference_data.pre_processing_component = self._orchestrators.get_asset_arm_id(
-                    asset=signal.reference_data.pre_processing_component, azureml_type=AzureMLResourceType.COMPONENT
+                self._job_operations._resolve_job_input(
+                    signal.reference_data.input_data, schedule._base_path  # type: ignore[union-attr]
+                )
+                signal.reference_data.pre_processing_component = self._orchestrators.get_asset_arm_id(  # type: ignore
+                    asset=signal.reference_data.pre_processing_component,  # type: ignore[union-attr]
+                    azureml_type=AzureMLResourceType.COMPONENT,
                 )
                 continue
 
             self._job_operations._resolve_job_inputs(
-                [signal.production_data.input_data, signal.reference_data.input_data],
+                [signal.production_data.input_data, signal.reference_data.input_data],  # type: ignore[union-attr]
                 schedule._base_path,
             )
-            signal.production_data.pre_processing_component = self._orchestrators.get_asset_arm_id(
-                asset=signal.production_data.pre_processing_component,
+            signal.production_data.pre_processing_component = self._orchestrators.get_asset_arm_id(  # type: ignore
+                asset=signal.production_data.pre_processing_component,  # type: ignore[union-attr]
                 azureml_type=AzureMLResourceType.COMPONENT,
             )
-            signal.reference_data.pre_processing_component = self._orchestrators.get_asset_arm_id(
-                asset=signal.reference_data.pre_processing_component, azureml_type=AzureMLResourceType.COMPONENT
+            signal.reference_data.pre_processing_component = self._orchestrators.get_asset_arm_id(  # type: ignore
+                asset=signal.reference_data.pre_processing_component,  # type: ignore[union-attr]
+                azureml_type=AzureMLResourceType.COMPONENT,
             )
 
     def _process_and_get_endpoint_deployment_names_from_id(self, target: MonitoringTarget) -> Tuple:

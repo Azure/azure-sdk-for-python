@@ -73,14 +73,31 @@ resource serviceBusSubscription 'Microsoft.ServiceBus/namespaces/topics/subscrip
   properties: {}
 }
 
+resource eventHubNamespace 'Microsoft.EventHub/namespaces@2021-11-01' = {
+  name: '${baseName}eh'
+  location: location
+  sku: {
+    capacity: 5
+    name: 'Standard'
+    tier: 'Standard'
+  }
+
+  resource eventHub 'eventhubs' = {
+    name: 'eh-${baseName}-hub'
+    properties: {
+      partitionCount: 3
+    }
+  }
+}
+
+var authRuleResourceId = resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', serviceBusNamespace.name, 'RootManageSharedAccessKey')
+var eventHubsAuthRuleResourceId = resourceId('Microsoft.EventHub/namespaces/authorizationRules', eventHubNamespace.name, 'RootManageSharedAccessKey')
 
 var name = storageAccount.name
 var key = storageAccount.listKeys().keys[0].value
 var storageConnectionString = 'DefaultEndpointsProtocol=https;AccountName=${name};AccountKey=${key}'
 var serviceBusConnectionString = listkeys(authRuleResourceId, sbVersion).primaryConnectionString
-
-
-var authRuleResourceId = resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', serviceBusNamespace.name, 'RootManageSharedAccessKey')
+var eventHubsConnectionString = listkeys(eventHubsAuthRuleResourceId, '2021-11-01').primaryConnectionString
 
 output AZURE_STORAGE_ACCOUNT_NAME string = name
 output AZURE_STORAGE_ACCOUNT_KEY string = key
@@ -89,3 +106,5 @@ output AZURE_SERVICEBUS_CONNECTION_STRING string = serviceBusConnectionString
 output AZURE_SERVICEBUS_QUEUE_NAME string =  serviceBusQueue.name
 output AZURE_SERVICEBUS_TOPIC_NAME string =  serviceBusTopic.name
 output AZURE_SERVICEBUS_SUBSCRIPTION_NAME string =  serviceBusSubscription.name
+output AZURE_EVENTHUB_CONNECTION_STRING string = eventHubsConnectionString
+output AZURE_EVENTHUB_NAME string = eventHubNamespace::eventHub.name

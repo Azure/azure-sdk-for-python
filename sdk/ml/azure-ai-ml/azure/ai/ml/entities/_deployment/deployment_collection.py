@@ -2,12 +2,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import Collection as RestCollection
 from azure.ai.ml._schema._deployment.online.deployment_collection_schema import DeploymentCollectionSchema
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
+from .data_asset import DataAsset
 
 
 @experimental
@@ -27,7 +28,7 @@ class DeploymentCollection:
         self,
         *,
         enabled: Optional[str] = None,
-        data: Optional[str] = None,
+        data: Optional[Union[str, DataAsset]] = None,
         client_id: Optional[str] = None,
         **kwargs: Any
     ):

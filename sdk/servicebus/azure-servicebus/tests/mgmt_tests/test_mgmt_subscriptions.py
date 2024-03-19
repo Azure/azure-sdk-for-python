@@ -8,14 +8,14 @@ import pytest
 import datetime
 
 from azure.servicebus.management import ServiceBusAdministrationClient, SubscriptionProperties
-from utilities import get_logger
+from tests.utilities import get_logger
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
 
 from devtools_testutils import AzureMgmtRecordedTestCase, CachedResourceGroupPreparer, recorded_by_proxy
-from sb_env_loader import (
+from tests.sb_env_loader import (
     ServiceBusPreparer
 )
-from servicebus_preparer import (
+from tests.servicebus_preparer import (
     SERVICEBUS_ENDPOINT_SUFFIX
 )
 

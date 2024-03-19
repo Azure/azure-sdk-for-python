@@ -45,11 +45,11 @@ class ConfluentManagementClient:  # pylint: disable=client-accepts-api-version-k
     :vartype access: azure.mgmt.confluent.operations.AccessOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
+    :param subscription_id: Microsoft Azure subscription id. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2023-08-22". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2024-02-13". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no

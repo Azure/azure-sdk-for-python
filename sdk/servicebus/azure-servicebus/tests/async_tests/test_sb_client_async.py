@@ -26,7 +26,7 @@ from azure.servicebus.exceptions import (
     ServiceBusConnectionError
 )
 from devtools_testutils import AzureMgmtRecordedTestCase
-from servicebus_preparer import (
+from tests.servicebus_preparer import (
     CachedServiceBusNamespacePreparer, 
     ServiceBusTopicPreparer, 
     ServiceBusQueuePreparer,
@@ -38,7 +38,7 @@ from servicebus_preparer import (
     CachedServiceBusResourceGroupPreparer,
     SERVICEBUS_ENDPOINT_SUFFIX
 )
-from utilities import get_logger, uamqp_transport as get_uamqp_transport, ArgPasserAsync
+from tests.utilities import get_logger, uamqp_transport as get_uamqp_transport, ArgPasserAsync
 
 uamqp_transport_params, uamqp_transport_ids = get_uamqp_transport()
 

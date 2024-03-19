@@ -16,6 +16,7 @@ from azure.ai.ml._schema._deployment.batch.pipeline_component_batch_deployment_s
     PipelineComponentBatchDeploymentSchema,
 )
 from azure.ai.ml._utils._arm_id_utils import _parse_endpoint_name_from_deployment_id
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
 from azure.ai.ml.entities import PipelineComponent
@@ -25,6 +26,7 @@ from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._util import load_from_dict
 
 
+@experimental
 class PipelineComponentBatchDeployment(Resource):
     """Pipeline Component Batch Deployment entity.
 

@@ -5,7 +5,7 @@
 # pylint: disable=protected-access,no-member
 
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     AzureDataLakeGen1Datastore as RestAzureDatalakeGen1Datastore,
@@ -14,6 +14,7 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import Datastore as Data
 from azure.ai.ml._restclient.v2023_04_01_preview.models import DatastoreType
 from azure.ai.ml._schema._datastore.adls_gen1 import AzureDataLakeGen1Schema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
+from azure.ai.ml.entities._credentials import CertificateConfiguration, ServicePrincipalConfiguration
 from azure.ai.ml.entities._datastore.datastore import Datastore
 from azure.ai.ml.entities._datastore.utils import from_rest_datastore_credentials
 from azure.ai.ml.entities._util import load_from_dict
@@ -46,7 +47,7 @@ class AzureDataLakeGen1Datastore(Datastore):
         description: Optional[str] = None,
         tags: Optional[Dict] = None,
         properties: Optional[Dict] = None,
-        credentials: Any = None,
+        credentials: Optional[Union[CertificateConfiguration, ServicePrincipalConfiguration]] = None,
         **kwargs: Any
     ):
         kwargs[TYPE] = DatastoreType.AZURE_DATA_LAKE_GEN1
@@ -81,7 +82,7 @@ class AzureDataLakeGen1Datastore(Datastore):
             id=datastore_resource.id,
             name=datastore_resource.name,
             store_name=properties.store_name,
-            credentials=from_rest_datastore_credentials(properties.credentials),
+            credentials=from_rest_datastore_credentials(properties.credentials),  # type: ignore[arg-type]
             description=properties.description,
             tags=properties.tags,
         )

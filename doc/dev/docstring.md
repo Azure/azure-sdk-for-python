@@ -3,9 +3,9 @@
 All public methods should have docstrings to document the parameters, keywords, exceptions raised, and return types for each method. Models and clients should also document properties, instance variables, and class variables.
 
 * [Docstrings](#docstrings)
-    * [Method Docstrings](#method_docstrings)
-    * [Model and Client Docstrings](#model_and_client_docstrings)
-
+    * [Method Docstrings](#method-docstrings)
+    * [Model and Client Docstrings](#model-and-client-docstrings)
+* [Additional references](#additional-references)
 
 ## Docstrings
 
@@ -190,3 +190,8 @@ class DocumentTranslationInput(object):  # pylint: disable=useless-object-inheri
 ```
 
 Positional parameters and keyword arguments are documented in the exact same way as a client method would be, using the `param` and `keyword` descriptors. Although not required, a new line between `param` and `keyword` descriptors helps to separate the docstring into logically separated groups.
+
+## Additional references
+
+- [Official Sphinx documentation](https://www.sphinx-doc.org/en/master/usage/domains/python.html)
+- [Microsoft - How to document a Python API (internal)](https://review.learn.microsoft.com/help/onboard/admin/reference/python/documenting-api)

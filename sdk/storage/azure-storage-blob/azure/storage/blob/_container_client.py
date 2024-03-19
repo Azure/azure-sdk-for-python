@@ -792,8 +792,11 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             process_storage_error(error)
 
     @distributed_trace
-    def list_blobs(self, name_starts_with=None, include=None, **kwargs):
-        # type: (Optional[str], Optional[Union[str, List[str]]], **Any) -> ItemPaged[BlobProperties]
+    def list_blobs(
+        self, name_starts_with: Optional[str] = None,
+        include: Optional[Union[str, List[str]]] = None,
+        **kwargs: Any
+    ) -> ItemPaged[BlobProperties]:
         """Returns a generator to list the blobs under the specified container.
         The generator will lazily follow the continuation tokens returned by
         the service.
@@ -824,6 +827,10 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
                 :dedent: 8
                 :caption: List the blobs in the container.
         """
+        if kwargs.pop('prefix', None):
+            raise ValueError("Passing 'prefix' has no effect on filtering, " +
+                             "please use the 'name_starts_with' parameter instead.")
+
         if include and not isinstance(include, list):
             include = [include]
 
@@ -860,6 +867,10 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         :returns: An iterable (auto-paging) response of blob names as strings.
         :rtype: ~azure.core.paging.ItemPaged[str]
         """
+        if kwargs.pop('prefix', None):
+            raise ValueError("Passing 'prefix' has no effect on filtering, " +
+                             "please use the 'name_starts_with' parameter instead.")
+
         name_starts_with = kwargs.pop('name_starts_with', None)
         results_per_page = kwargs.pop('results_per_page', None)
         timeout = kwargs.pop('timeout', None)
@@ -881,12 +892,11 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
 
     @distributed_trace
     def walk_blobs(
-            self, name_starts_with=None, # type: Optional[str]
-            include=None, # type: Optional[Union[List[str], str]]
-            delimiter="/", # type: str
-            **kwargs # type: Optional[Any]
-        ):
-        # type: (...) -> ItemPaged[BlobProperties]
+        self, name_starts_with: Optional[str] = None,
+        include: Optional[Union[List[str], str]] = None,
+        delimiter: str = "/",
+        **kwargs: Any
+        ) -> ItemPaged[BlobProperties]:
         """Returns a generator to list the blobs under the specified container.
         The generator will lazily follow the continuation tokens returned by
         the service. This operation will list blobs in accordance with a hierarchy,
@@ -914,6 +924,10 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         :returns: An iterable (auto-paging) response of BlobProperties.
         :rtype: ~azure.core.paging.ItemPaged[~azure.storage.blob.BlobProperties]
         """
+        if kwargs.pop('prefix', None):
+            raise ValueError("Passing 'prefix' has no effect on filtering, " +
+                             "please use the 'name_starts_with' parameter instead.")
+
         if include and not isinstance(include, list):
             include = [include]
 

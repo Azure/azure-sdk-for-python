@@ -48,8 +48,7 @@ class SearchManagementClientOperationsMixin(SearchManagementClientMixinABC):
 
         :param location: The unique location name for a Microsoft Azure geographic region. Required.
         :type location: str
-        :param sku_name: The unique search service sku name supported by Azure Cognitive Search.
-         Required.
+        :param sku_name: The unique SKU name that identifies a billable tier. Required.
         :type sku_name: str
         :param search_management_request_options: Parameter group. Default value is None.
         :type search_management_request_options:

@@ -12,7 +12,7 @@ K = TypeVar("K")
 V = TypeVar("V")
 
 
-class _AttrDict(Generic[K, V], dict, ABC):
+class _AttrDict(Generic[K, V], Dict, ABC):
     """This class is used for accessing values with instance.some_key. It supports the following scenarios:
 
     1. Setting arbitrary attribute, eg: obj.resource_layout.node_count = 2
@@ -34,6 +34,7 @@ class _AttrDict(Generic[K, V], dict, ABC):
 
         :param allowed_keys: A dictionary of keys that allowed to set as arbitrary attributes. None means all keys can
             be set as arbitrary attributes.
+
         :type dict
         :param kwargs: A dictionary of additional configuration parameters.
         :type kwargs: dict

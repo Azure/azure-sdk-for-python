@@ -26,6 +26,7 @@ from ._models import PhoneNumberPurchaseRequest
 from ._models import PhoneNumberSearchRequest
 from ._models import PhoneNumberSearchResult
 from ._models import PurchasedPhoneNumber
+from ._models import PurchasedPhoneNumberCapabilities
 
 from ._enums import BillingFrequency
 from ._enums import OperatorNumberType
@@ -60,6 +61,7 @@ __all__ = [
     "PhoneNumberSearchRequest",
     "PhoneNumberSearchResult",
     "PurchasedPhoneNumber",
+    "PurchasedPhoneNumberCapabilities",
     "BillingFrequency",
     "OperatorNumberType",
     "PhoneNumberAssignmentType",

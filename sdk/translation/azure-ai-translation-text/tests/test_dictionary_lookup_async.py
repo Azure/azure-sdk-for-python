@@ -4,7 +4,6 @@
 # ------------------------------------
 
 from devtools_testutils.aio import recorded_by_proxy_async
-from azure.ai.translation.text.models import InputTextItem
 from preparer import TextTranslationPreparer
 from testcase import TextTranslationTest
 
@@ -20,7 +19,7 @@ class TestDictionaryLookupAsync(TextTranslationTest):
 
         source_language = "en"
         target_language = "es"
-        input_text_elements = [InputTextItem(text="fly")]
+        input_text_elements = ["fly"]
 
         async with client:
             response = await client.lookup_dictionary_entries(
@@ -40,7 +39,7 @@ class TestDictionaryLookupAsync(TextTranslationTest):
 
         source_language = "en"
         target_language = "es"
-        input_text_elements = [InputTextItem(text="fly"), InputTextItem(text="fox")]
+        input_text_elements = ["fly", "fox"]
 
         async with client:
             response = await client.lookup_dictionary_entries(

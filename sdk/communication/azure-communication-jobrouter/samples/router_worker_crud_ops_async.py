@@ -112,6 +112,41 @@ class RouterWorkerSamplesAsync(object):
 
         # [END create_worker_async]
 
+    async def create_worker_w_limit_concurrent_offers(self):
+        connection_string = self.endpoint
+        worker_id = self._worker_id
+        # [START create_worker_w_limit_concurrent_offers_async]
+        from azure.communication.jobrouter.aio import JobRouterClient
+        from azure.communication.jobrouter.models import (
+            RouterWorker,
+            RouterChannel,
+        )
+
+        # set `connection_string` to an existing ACS endpoint
+        router_client = JobRouterClient.from_connection_string(conn_str=connection_string)
+        print("JobRouterClient created successfully!")
+
+        async with router_client:
+            router_worker: RouterWorker = await router_client.upsert_worker(
+                worker_id,
+                RouterWorker(
+                    capacity=100,
+                    queues=["worker-q-1", "worker-q-2"],
+                    channels=[
+                        RouterChannel(channel_id="WebChat", capacity_cost_per_job=1),
+                        RouterChannel(channel_id="WebChatEscalated", capacity_cost_per_job=20),
+                        RouterChannel(channel_id="Voip", capacity_cost_per_job=100),
+                    ],
+                    labels={"Location": "NA", "English": 7, "O365": True, "Xbox_Support": False},
+                    tags={"Name": "John Doe", "Department": "IT_HelpDesk"},
+                    max_concurrent_offers = 1,
+                ),
+            )
+
+            print(f"Router worker successfully created with id: {router_worker.id}")
+
+        # [END create_worker_w_limit_concurrent_offers_async]
+
     async def update_worker(self):
         connection_string = self.endpoint
         worker_id = self._worker_id
@@ -247,6 +282,7 @@ async def main():
     await sample.setup_distribution_policy()
     await sample.setup_queues()
     await sample.create_worker()
+    await sample.create_worker_w_limit_concurrent_offers()
     await sample.update_worker()
     await sample.get_worker()
     await sample.register_worker()

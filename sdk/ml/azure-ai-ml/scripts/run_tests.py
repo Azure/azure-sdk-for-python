@@ -111,7 +111,7 @@ def run_simple(
         stdout = None
         json_log_file_path = log_file_path.with_suffix(log_file_path.suffix + ".log")
     else:
-        stdout = open(log_file_path.with_suffix(log_file_path.suffix + ".txt"), "wb", encoding="utf-8")
+        stdout = open(log_file_path.with_suffix(log_file_path.suffix + ".txt"), "w", encoding="utf-8")
         json_log_file_path = None
 
     with update_dot_env_file(
@@ -134,7 +134,7 @@ def run_simple(
                 + tmp_extra_params,
                 cwd=working_dir,
                 stdout=stdout,
-                check=True,
+                check=False,
             )
             if log_in_json:
                 # append temp json file to the final log file

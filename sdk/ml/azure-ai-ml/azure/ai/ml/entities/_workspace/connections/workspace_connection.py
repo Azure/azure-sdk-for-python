@@ -4,35 +4,31 @@
 
 # pylint: disable=protected-access
 
+import warnings
 from os import PathLike
 from pathlib import Path
-import warnings
 from typing import IO, Any, AnyStr, Dict, List, Optional, Type, Union, cast
 
+from azure.ai.ml._restclient.v2023_08_01_preview.models import (
+    WorkspaceConnectionPropertiesV2BasicResource as RestWorkspaceConnection,
+)
 from azure.ai.ml._restclient.v2024_01_01_preview.models import (
     ConnectionCategory,
     NoneAuthTypeWorkspaceConnectionProperties,
 )
-from azure.ai.ml._restclient.v2023_08_01_preview.models import (
-    WorkspaceConnectionPropertiesV2BasicResource as RestWorkspaceConnection,
-)
 from azure.ai.ml._schema.workspace.connections.workspace_connection import WorkspaceConnectionSchema
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import _snake_to_camel, camel_to_snake, dump_yaml_to_file
-from azure.ai.ml.constants._common import (
-    BASE_PATH_CONTEXT_KEY,
-    PARAMS_OVERRIDE_KEY,
-    WorkspaceConnectionTypes,
-)
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, WorkspaceConnectionTypes
 from azure.ai.ml.entities._credentials import (
     AccessKeyConfiguration,
     ApiKeyConfiguration,
     ManagedIdentityConfiguration,
+    NoneCredentialConfiguration,
     PatTokenConfiguration,
     SasTokenConfiguration,
     ServicePrincipalConfiguration,
     UsernamePasswordConfiguration,
-    NoneCredentialConfiguration,
     _BaseIdentityConfiguration,
 )
 from azure.ai.ml.entities._resource import Resource
@@ -174,6 +170,7 @@ class WorkspaceConnection(Resource):
             ~azure.ai.ml.entities.ServicePrincipalConfiguration,
             ~azure.ai.ml.entities.AccessKeyConfiguration,
             ~azure.ai.ml.entities.ApiKeyConfiguration
+
         ]
         """
         return self._credentials
@@ -373,8 +370,8 @@ class WorkspaceConnection(Resource):
         from .workspace_connection_subtypes import (
             AzureAISearchWorkspaceConnection,
             AzureAIServiceWorkspaceConnection,
-            AzureOpenAIWorkspaceConnection,
             AzureBlobStoreWorkspaceConnection,
+            AzureOpenAIWorkspaceConnection,
         )
 
         # Connection categories don't perfectly follow perfect camel casing, so lower

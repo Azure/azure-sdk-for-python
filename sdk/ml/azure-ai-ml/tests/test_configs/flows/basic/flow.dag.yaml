@@ -26,3 +26,8 @@ nodes:
     max_tokens: "120"
 environment:
   python_requirements_txt: requirements.txt
+environment_variables:
+  AZURE_OPENAI_API_TYPE: azure
+  AZURE_OPENAI_API_VERSION: 2023-03-15-preview
+  AZURE_OPENAI_API_KEY: ${my_connection.api_key}
+  AZURE_OPENAI_API_BASE: ${my_connection.api_base}

@@ -9,7 +9,7 @@
 
 import datetime
 import sys
-from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Literal, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
@@ -17,10 +17,6 @@ if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -336,7 +332,7 @@ class AutomaticOSUpgradePolicy(_serialization.Model):
      applied to scale set instances in a rolling fashion when a newer version of the OS image
      becomes available. Default value is false. :code:`<br>`:code:`<br>` If this is set to true for
      Windows based scale sets, `enableAutomaticUpdates
-     <https://docs.microsoft.com/dotnet/api/microsoft.azure.management.compute.models.windowsconfiguration.enableautomaticupdates?view=azure-dotnet>`_
+     <https://docs.microsoft.com/dotnet/api/microsoft.azure.management.compute.models.windowsconfiguration.enableautomaticupdates?view=azure-dotnet>`_  # pylint: disable=line-too-long
      is automatically set to false and cannot be set to true.
     :vartype enable_automatic_os_upgrade: bool
     :ivar disable_automatic_rollback: Whether OS image rollback feature should be disabled. Default
@@ -361,7 +357,7 @@ class AutomaticOSUpgradePolicy(_serialization.Model):
          applied to scale set instances in a rolling fashion when a newer version of the OS image
          becomes available. Default value is false. :code:`<br>`:code:`<br>` If this is set to true for
          Windows based scale sets, `enableAutomaticUpdates
-         <https://docs.microsoft.com/dotnet/api/microsoft.azure.management.compute.models.windowsconfiguration.enableautomaticupdates?view=azure-dotnet>`_
+         <https://docs.microsoft.com/dotnet/api/microsoft.azure.management.compute.models.windowsconfiguration.enableautomaticupdates?view=azure-dotnet>`_  # pylint: disable=line-too-long
          is automatically set to false and cannot be set to true.
         :paramtype enable_automatic_os_upgrade: bool
         :keyword disable_automatic_rollback: Whether OS image rollback feature should be disabled.
@@ -376,7 +372,7 @@ class AutomaticOSUpgradePolicy(_serialization.Model):
 class AutomaticOSUpgradeProperties(_serialization.Model):
     """Describes automatic OS upgrade properties on the image.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar automatic_os_upgrade_supported: Specifies whether automatic OS upgrade is supported on
      the image. Required.
@@ -442,7 +438,7 @@ class Resource(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -499,7 +495,7 @@ class AvailabilitySet(Resource):  # pylint: disable=too-many-instance-attributes
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -598,7 +594,7 @@ class AvailabilitySet(Resource):  # pylint: disable=too-many-instance-attributes
 class AvailabilitySetListResult(_serialization.Model):
     """The List Availability Set operation response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The list of availability sets. Required.
     :vartype value: list[~azure.mgmt.compute.v2021_03_01.models.AvailabilitySet]
@@ -951,7 +947,7 @@ class CloudService(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -1206,7 +1202,7 @@ class CloudServiceInstanceView(_serialization.Model):
 class CloudServiceListResult(_serialization.Model):
     """CloudServiceListResult.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: Required.
     :vartype value: list[~azure.mgmt.compute.v2021_03_01.models.CloudService]
@@ -1506,7 +1502,7 @@ class CloudServiceRole(_serialization.Model):
 class CloudServiceRoleListResult(_serialization.Model):
     """CloudServiceRoleListResult.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: Required.
     :vartype value: list[~azure.mgmt.compute.v2021_03_01.models.CloudServiceRole]
@@ -1836,7 +1832,7 @@ class DataDisk(_serialization.Model):  # pylint: disable=too-many-instance-attri
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar lun: Specifies the logical unit number of the data disk. This value is used to identify
      data disks within the VM and therefore must be unique for each data disk attached to a VM.
@@ -2047,7 +2043,7 @@ class DedicatedHost(Resource):  # pylint: disable=too-many-instance-attributes
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -2224,7 +2220,7 @@ class DedicatedHostGroup(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -2340,7 +2336,7 @@ class DedicatedHostGroupInstanceView(_serialization.Model):
 class DedicatedHostGroupListResult(_serialization.Model):
     """The List Dedicated Host Group with resource group response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The list of dedicated host groups. Required.
     :vartype value: list[~azure.mgmt.compute.v2021_03_01.models.DedicatedHostGroup]
@@ -2544,7 +2540,7 @@ class DedicatedHostInstanceViewWithName(DedicatedHostInstanceView):
 class DedicatedHostListResult(_serialization.Model):
     """The list dedicated host operation response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The list of dedicated hosts. Required.
     :vartype value: list[~azure.mgmt.compute.v2021_03_01.models.DedicatedHost]
@@ -2791,17 +2787,6 @@ class DiskEncryptionSetParameters(SubResource):
     :ivar id: Resource Id.
     :vartype id: str
     """
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-    }
-
-    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
-        """
-        :keyword id: Resource Id.
-        :paramtype id: str
-        """
-        super().__init__(id=id, **kwargs)
 
 
 class DiskEncryptionSettings(_serialization.Model):
@@ -3071,7 +3056,7 @@ class Image(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -3251,7 +3236,7 @@ class ImageDisk(_serialization.Model):
 class ImageDataDisk(ImageDisk):
     """Describes a data disk.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar snapshot: The snapshot.
     :vartype snapshot: ~azure.mgmt.compute.v2021_03_01.models.SubResource
@@ -3359,7 +3344,7 @@ class ImageDataDisk(ImageDisk):
 class ImageListResult(_serialization.Model):
     """The List Image operation response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The list of Images. Required.
     :vartype value: list[~azure.mgmt.compute.v2021_03_01.models.Image]
@@ -3393,7 +3378,7 @@ class ImageListResult(_serialization.Model):
 class ImageOSDisk(ImageDisk):
     """Describes an Operating System disk.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar snapshot: The snapshot.
     :vartype snapshot: ~azure.mgmt.compute.v2021_03_01.models.SubResource
@@ -3839,7 +3824,7 @@ class InstanceViewStatusesSummary(_serialization.Model):
 class KeyVaultKeyReference(_serialization.Model):
     """Describes a reference to Key Vault Key.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar key_url: The URL referencing a key encryption key in Key Vault. Required.
     :vartype key_url: str
@@ -3872,7 +3857,7 @@ class KeyVaultKeyReference(_serialization.Model):
 class KeyVaultSecretReference(_serialization.Model):
     """Describes a reference to Key Vault Secret.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar secret_url: The URL referencing a secret in a Key Vault. Required.
     :vartype secret_url: str
@@ -4158,7 +4143,7 @@ class LinuxPatchSettings(_serialization.Model):
 class ListUsagesResult(_serialization.Model):
     """The List Usages operation response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The list of compute resource usages. Required.
     :vartype value: list[~azure.mgmt.compute.v2021_03_01.models.Usage]
@@ -4192,7 +4177,7 @@ class ListUsagesResult(_serialization.Model):
 class LoadBalancerConfiguration(_serialization.Model):
     """Describes the load balancer configuration.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -4239,7 +4224,7 @@ class LoadBalancerConfiguration(_serialization.Model):
 class LoadBalancerConfigurationProperties(_serialization.Model):
     """LoadBalancerConfigurationProperties.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar frontend_ip_configurations: Specifies the frontend IP to be used for the load balancer.
      Only IPv4 frontend IP address is supported. Each load balancer configuration must have exactly
@@ -4276,7 +4261,7 @@ class LoadBalancerConfigurationProperties(_serialization.Model):
 class LoadBalancerFrontendIPConfiguration(_serialization.Model):
     """LoadBalancerFrontendIPConfiguration.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the resource that is unique within the set of frontend IP
      configurations used by the load balancer. This name can be used to access the resource.
@@ -4314,7 +4299,7 @@ class LoadBalancerFrontendIPConfiguration(_serialization.Model):
         self.properties = properties
 
 
-class LoadBalancerFrontendIPConfigurationProperties(_serialization.Model):
+class LoadBalancerFrontendIPConfigurationProperties(_serialization.Model):  # pylint: disable=name-too-long
     """Describes a cloud service IP Configuration.
 
     :ivar public_ip_address: The reference to the public ip address resource.
@@ -4356,7 +4341,7 @@ class LoadBalancerFrontendIPConfigurationProperties(_serialization.Model):
 class LogAnalyticsInputBase(_serialization.Model):
     """Api input base class for LogAnalytics Api.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar blob_container_sas_uri: SAS Uri of the logging blob container to which LogAnalytics Api
      writes output logs to. Required.
@@ -4704,7 +4689,7 @@ class NetworkProfile(_serialization.Model):
 class OrchestrationServiceStateInput(_serialization.Model):
     """The input for OrchestrationServiceState.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar service_name: The name of the service. Required. "AutomaticRepairs"
     :vartype service_name: str or ~azure.mgmt.compute.v2021_03_01.models.OrchestrationServiceNames
@@ -4777,7 +4762,7 @@ class OSDisk(_serialization.Model):  # pylint: disable=too-many-instance-attribu
     :code:`<br>`:code:`<br>` For more information about disks, see `About disks and VHDs for Azure
     virtual machines <https://docs.microsoft.com/azure/virtual-machines/managed-disks-overview>`_.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar os_type: This property allows you to specify the type of the OS that is included in the
      disk if creating a VM from user-image or a specialized VHD. :code:`<br>`:code:`<br>` Possible
@@ -4939,7 +4924,7 @@ class OSDisk(_serialization.Model):  # pylint: disable=too-many-instance-attribu
 class OSDiskImage(_serialization.Model):
     """Contains the os disk image information.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar operating_system: The operating system of the osDiskImage. Required. Known values are:
      "Windows" and "Linux".
@@ -5012,7 +4997,7 @@ class OSFamily(_serialization.Model):
 class OSFamilyListResult(_serialization.Model):
     """OSFamilyListResult.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: Required.
     :vartype value: list[~azure.mgmt.compute.v2021_03_01.models.OSFamily]
@@ -5301,7 +5286,7 @@ class OSVersion(_serialization.Model):
 class OSVersionListResult(_serialization.Model):
     """OSVersionListResult.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: Required.
     :vartype value: list[~azure.mgmt.compute.v2021_03_01.models.OSVersion]
@@ -5599,7 +5584,7 @@ class ProximityPlacementGroup(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -5693,7 +5678,7 @@ class ProximityPlacementGroup(Resource):
 class ProximityPlacementGroupListResult(_serialization.Model):
     """The List Proximity Placement Group operation response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The list of proximity placement groups. Required.
     :vartype value: list[~azure.mgmt.compute.v2021_03_01.models.ProximityPlacementGroup]
@@ -5730,17 +5715,6 @@ class ProximityPlacementGroupUpdate(UpdateResource):
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     """
-
-    _attribute_map = {
-        "tags": {"key": "tags", "type": "{str}"},
-    }
-
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
-        """
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
-        """
-        super().__init__(tags=tags, **kwargs)
 
 
 class ProxyResource(_serialization.Model):
@@ -5782,7 +5756,7 @@ class PublicIPAddressSku(_serialization.Model):
 
     :ivar name: Specify public IP sku name. Known values are: "Basic" and "Standard".
     :vartype name: str or ~azure.mgmt.compute.v2021_03_01.models.PublicIPAddressSkuName
-    :ivar tier: Specify public IP sku tier. Known values are: "Regional", "Global", and "Global".
+    :ivar tier: Specify public IP sku tier. Known values are: "Regional" and "Global".
     :vartype tier: str or ~azure.mgmt.compute.v2021_03_01.models.PublicIPAddressSkuTier
     """
 
@@ -5801,8 +5775,7 @@ class PublicIPAddressSku(_serialization.Model):
         """
         :keyword name: Specify public IP sku name. Known values are: "Basic" and "Standard".
         :paramtype name: str or ~azure.mgmt.compute.v2021_03_01.models.PublicIPAddressSkuName
-        :keyword tier: Specify public IP sku tier. Known values are: "Regional", "Global", and
-         "Global".
+        :keyword tier: Specify public IP sku tier. Known values are: "Regional" and "Global".
         :paramtype tier: str or ~azure.mgmt.compute.v2021_03_01.models.PublicIPAddressSkuTier
         """
         super().__init__(**kwargs)
@@ -5813,7 +5786,7 @@ class PublicIPAddressSku(_serialization.Model):
 class PurchasePlan(_serialization.Model):
     """Used for establishing the purchase context of any 3rd Party artifact through MarketPlace.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar publisher: The publisher ID. Required.
     :vartype publisher: str
@@ -5884,7 +5857,7 @@ class RecoveryWalkResponse(_serialization.Model):
 class RequestRateByIntervalInput(LogAnalyticsInputBase):
     """Api request input for LogAnalytics getRequestRateByInterval Api.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar blob_container_sas_uri: SAS Uri of the logging blob container to which LogAnalytics Api
      writes output logs to. Required.
@@ -6096,7 +6069,7 @@ class RestorePointCollection(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -6622,7 +6595,7 @@ class RoleInstance(_serialization.Model):
 class RoleInstanceListResult(_serialization.Model):
     """RoleInstanceListResult.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: Required.
     :vartype value: list[~azure.mgmt.compute.v2021_03_01.models.RoleInstance]
@@ -6710,7 +6683,7 @@ class RoleInstanceProperties(_serialization.Model):
 class RoleInstances(_serialization.Model):
     """Specifies a list of role instances from the cloud service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar role_instances: List of cloud service role instance names. Value of '*' will signify all
      role instances of the cloud service. Required.
@@ -6989,7 +6962,7 @@ class RollingUpgradeStatusInfo(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -7052,7 +7025,7 @@ class RollingUpgradeStatusInfo(Resource):
 class RunCommandDocumentBase(_serialization.Model):
     """Describes the properties of a Run Command metadata.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar schema: The VM run command schema. Required.
     :vartype schema: str
@@ -7115,7 +7088,7 @@ class RunCommandDocumentBase(_serialization.Model):
 class RunCommandDocument(RunCommandDocumentBase):
     """Describes the properties of a Run Command.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar schema: The VM run command schema. Required.
     :vartype schema: str
@@ -7189,7 +7162,7 @@ class RunCommandDocument(RunCommandDocumentBase):
 class RunCommandInput(_serialization.Model):
     """Capture Virtual Machine parameters.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar command_id: The run command id. Required.
     :vartype command_id: str
@@ -7236,7 +7209,7 @@ class RunCommandInput(_serialization.Model):
 class RunCommandInputParameter(_serialization.Model):
     """Describes the properties of a run command parameter.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The run command parameter name. Required.
     :vartype name: str
@@ -7269,7 +7242,7 @@ class RunCommandInputParameter(_serialization.Model):
 class RunCommandListResult(_serialization.Model):
     """The List Virtual Machine operation response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The list of virtual machine run commands. Required.
     :vartype value: list[~azure.mgmt.compute.v2021_03_01.models.RunCommandDocumentBase]
@@ -7305,7 +7278,7 @@ class RunCommandListResult(_serialization.Model):
 class RunCommandParameterDefinition(_serialization.Model):
     """Describes the properties of a run command parameter.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The run command parameter name. Required.
     :vartype name: str
@@ -7601,7 +7574,7 @@ class SshPublicKey(_serialization.Model):
 class SshPublicKeyGenerateKeyPairResult(_serialization.Model):
     """Response from generation of an SSH key pair.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar private_key: Private key portion of the key pair used to authenticate to a virtual
      machine through ssh. The private key is returned in RFC3447 format and should be treated as a
@@ -7611,7 +7584,7 @@ class SshPublicKeyGenerateKeyPairResult(_serialization.Model):
      through ssh. The public key is in ssh-rsa format. Required.
     :vartype public_key: str
     :ivar id: The ARM resource id in the form of
-     /subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Compute/sshPublicKeys/{SshPublicKeyName}.
+     /subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Compute/sshPublicKeys/{SshPublicKeyName}.  # pylint: disable=line-too-long
      Required.
     :vartype id: str
     """
@@ -7640,7 +7613,7 @@ class SshPublicKeyGenerateKeyPairResult(_serialization.Model):
          machine through ssh. The public key is in ssh-rsa format. Required.
         :paramtype public_key: str
         :keyword id: The ARM resource id in the form of
-         /subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Compute/sshPublicKeys/{SshPublicKeyName}.
+         /subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Compute/sshPublicKeys/{SshPublicKeyName}.  # pylint: disable=line-too-long
          Required.
         :paramtype id: str
         """
@@ -7655,7 +7628,7 @@ class SshPublicKeyResource(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -7711,7 +7684,7 @@ class SshPublicKeyResource(Resource):
 class SshPublicKeysGroupListResult(_serialization.Model):
     """The list SSH public keys operation response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The list of SSH public keys. Required.
     :vartype value: list[~azure.mgmt.compute.v2021_03_01.models.SshPublicKeyResource]
@@ -7955,7 +7928,7 @@ class TerminateNotificationProfile(_serialization.Model):
 class ThrottledRequestsInput(LogAnalyticsInputBase):
     """Api request input for LogAnalytics getThrottledRequests Api.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar blob_container_sas_uri: SAS Uri of the logging blob container to which LogAnalytics Api
      writes output logs to. Required.
@@ -7975,67 +7948,6 @@ class ThrottledRequestsInput(LogAnalyticsInputBase):
     :ivar group_by_user_agent: Group query result by User Agent.
     :vartype group_by_user_agent: bool
     """
-
-    _validation = {
-        "blob_container_sas_uri": {"required": True},
-        "from_time": {"required": True},
-        "to_time": {"required": True},
-    }
-
-    _attribute_map = {
-        "blob_container_sas_uri": {"key": "blobContainerSasUri", "type": "str"},
-        "from_time": {"key": "fromTime", "type": "iso-8601"},
-        "to_time": {"key": "toTime", "type": "iso-8601"},
-        "group_by_throttle_policy": {"key": "groupByThrottlePolicy", "type": "bool"},
-        "group_by_operation_name": {"key": "groupByOperationName", "type": "bool"},
-        "group_by_resource_name": {"key": "groupByResourceName", "type": "bool"},
-        "group_by_client_application_id": {"key": "groupByClientApplicationId", "type": "bool"},
-        "group_by_user_agent": {"key": "groupByUserAgent", "type": "bool"},
-    }
-
-    def __init__(
-        self,
-        *,
-        blob_container_sas_uri: str,
-        from_time: datetime.datetime,
-        to_time: datetime.datetime,
-        group_by_throttle_policy: Optional[bool] = None,
-        group_by_operation_name: Optional[bool] = None,
-        group_by_resource_name: Optional[bool] = None,
-        group_by_client_application_id: Optional[bool] = None,
-        group_by_user_agent: Optional[bool] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword blob_container_sas_uri: SAS Uri of the logging blob container to which LogAnalytics
-         Api writes output logs to. Required.
-        :paramtype blob_container_sas_uri: str
-        :keyword from_time: From time of the query. Required.
-        :paramtype from_time: ~datetime.datetime
-        :keyword to_time: To time of the query. Required.
-        :paramtype to_time: ~datetime.datetime
-        :keyword group_by_throttle_policy: Group query result by Throttle Policy applied.
-        :paramtype group_by_throttle_policy: bool
-        :keyword group_by_operation_name: Group query result by Operation Name.
-        :paramtype group_by_operation_name: bool
-        :keyword group_by_resource_name: Group query result by Resource Name.
-        :paramtype group_by_resource_name: bool
-        :keyword group_by_client_application_id: Group query result by Client Application ID.
-        :paramtype group_by_client_application_id: bool
-        :keyword group_by_user_agent: Group query result by User Agent.
-        :paramtype group_by_user_agent: bool
-        """
-        super().__init__(
-            blob_container_sas_uri=blob_container_sas_uri,
-            from_time=from_time,
-            to_time=to_time,
-            group_by_throttle_policy=group_by_throttle_policy,
-            group_by_operation_name=group_by_operation_name,
-            group_by_resource_name=group_by_resource_name,
-            group_by_client_application_id=group_by_client_application_id,
-            group_by_user_agent=group_by_user_agent,
-            **kwargs
-        )
 
 
 class UefiSettings(_serialization.Model):
@@ -8102,7 +8014,7 @@ class UpdateDomain(_serialization.Model):
 class UpdateDomainListResult(_serialization.Model):
     """UpdateDomainListResult.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: Required.
     :vartype value: list[~azure.mgmt.compute.v2021_03_01.models.UpdateDomain]
@@ -8165,7 +8077,7 @@ class UpgradeOperationHistoricalStatusInfo(_serialization.Model):
         self.location = None
 
 
-class UpgradeOperationHistoricalStatusInfoProperties(_serialization.Model):
+class UpgradeOperationHistoricalStatusInfoProperties(_serialization.Model):  # pylint: disable=name-too-long
     """Describes each OS upgrade on the Virtual Machine Scale Set.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -8308,7 +8220,7 @@ class Usage(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar unit: An enum describing the unit of usage measurement. Required. Default value is
      "Count".
@@ -8526,7 +8438,7 @@ class VirtualMachine(Resource):  # pylint: disable=too-many-instance-attributes
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -8992,7 +8904,7 @@ class VirtualMachineAssessPatchesResult(_serialization.Model):
 class VirtualMachineCaptureParameters(_serialization.Model):
     """Capture Virtual Machine parameters.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar vhd_prefix: The captured virtual hard disk's name prefix. Required.
     :vartype vhd_prefix: str
@@ -9082,7 +8994,7 @@ class VirtualMachineExtension(Resource):  # pylint: disable=too-many-instance-at
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -9209,7 +9121,7 @@ class VirtualMachineExtension(Resource):  # pylint: disable=too-many-instance-at
         self.instance_view = instance_view
 
 
-class VirtualMachineExtensionHandlerInstanceView(_serialization.Model):
+class VirtualMachineExtensionHandlerInstanceView(_serialization.Model):  # pylint: disable=name-too-long
     """The instance view of a virtual machine extension handler.
 
     :ivar type: Specifies the type of the extension; an example is "CustomScriptExtension".
@@ -9253,7 +9165,7 @@ class VirtualMachineExtensionImage(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -9543,7 +9455,7 @@ class VirtualMachineIdentity(_serialization.Model):
     :vartype type: str or ~azure.mgmt.compute.v2021_03_01.models.ResourceIdentityType
     :ivar user_assigned_identities: The list of user identities associated with the Virtual
      Machine. The user identity dictionary key references will be ARM resource ids in the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long
     :vartype user_assigned_identities: dict[str,
      ~azure.mgmt.compute.v2021_03_01.models.UserAssignedIdentitiesValue]
     """
@@ -9575,7 +9487,7 @@ class VirtualMachineIdentity(_serialization.Model):
         :paramtype type: str or ~azure.mgmt.compute.v2021_03_01.models.ResourceIdentityType
         :keyword user_assigned_identities: The list of user identities associated with the Virtual
          Machine. The user identity dictionary key references will be ARM resource ids in the form:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long
         :paramtype user_assigned_identities: dict[str,
          ~azure.mgmt.compute.v2021_03_01.models.UserAssignedIdentitiesValue]
         """
@@ -9589,7 +9501,7 @@ class VirtualMachineIdentity(_serialization.Model):
 class VirtualMachineImageResource(SubResource):
     """Virtual machine image resource information.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -9652,7 +9564,7 @@ class VirtualMachineImageResource(SubResource):
 class VirtualMachineImage(VirtualMachineImageResource):  # pylint: disable=too-many-instance-attributes
     """Describes a Virtual Machine Image.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -9799,7 +9711,7 @@ class VirtualMachineImageFeature(_serialization.Model):
 class VirtualMachineInstallPatchesParameters(_serialization.Model):
     """Input for InstallPatches as directly received by the API.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar maximum_duration: Specifies the maximum amount of time that the operation will run. It
      must be an ISO 8601-compliant duration string such as PT4H (4 hours). Required.
@@ -10125,7 +10037,7 @@ class VirtualMachineIpTag(_serialization.Model):
 class VirtualMachineListResult(_serialization.Model):
     """The List Virtual Machine operation response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The list of virtual machines. Required.
     :vartype value: list[~azure.mgmt.compute.v2021_03_01.models.VirtualMachine]
@@ -10158,10 +10070,10 @@ class VirtualMachineListResult(_serialization.Model):
         self.next_link = next_link
 
 
-class VirtualMachineNetworkInterfaceConfiguration(_serialization.Model):
+class VirtualMachineNetworkInterfaceConfiguration(_serialization.Model):  # pylint: disable=name-too-long
     """Describes a virtual machine network interface configurations.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The network interface configuration name. Required.
     :vartype name: str
@@ -10268,7 +10180,7 @@ class VirtualMachineNetworkInterfaceConfiguration(_serialization.Model):
         self.dscp_configuration = dscp_configuration
 
 
-class VirtualMachineNetworkInterfaceDnsSettingsConfiguration(_serialization.Model):
+class VirtualMachineNetworkInterfaceDnsSettingsConfiguration(_serialization.Model):  # pylint: disable=name-too-long
     """Describes a virtual machines network configuration's DNS settings.
 
     :ivar dns_servers: List of DNS servers IP addresses.
@@ -10288,10 +10200,10 @@ class VirtualMachineNetworkInterfaceDnsSettingsConfiguration(_serialization.Mode
         self.dns_servers = dns_servers
 
 
-class VirtualMachineNetworkInterfaceIPConfiguration(_serialization.Model):
+class VirtualMachineNetworkInterfaceIPConfiguration(_serialization.Model):  # pylint: disable=name-too-long
     """Describes a virtual machine network profile's IP configuration.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The IP configuration name. Required.
     :vartype name: str
@@ -10457,10 +10369,10 @@ class VirtualMachinePatchStatus(_serialization.Model):
         self.configuration_statuses = None
 
 
-class VirtualMachinePublicIPAddressConfiguration(_serialization.Model):
+class VirtualMachinePublicIPAddressConfiguration(_serialization.Model):  # pylint: disable=name-too-long
     """Describes a virtual machines IP Configuration's PublicIPAddress configuration.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The publicIP address configuration name. Required.
     :vartype name: str
@@ -10559,10 +10471,10 @@ class VirtualMachinePublicIPAddressConfiguration(_serialization.Model):
         self.public_ip_allocation_method = public_ip_allocation_method
 
 
-class VirtualMachinePublicIPAddressDnsSettingsConfiguration(_serialization.Model):
+class VirtualMachinePublicIPAddressDnsSettingsConfiguration(_serialization.Model):  # pylint: disable=name-too-long
     """Describes a virtual machines network configuration's DNS settings.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar domain_name_label: The Domain name label prefix of the PublicIPAddress resources that
      will be created. The generated name label is the concatenation of the domain name label and vm
@@ -10617,7 +10529,7 @@ class VirtualMachineRunCommand(Resource):  # pylint: disable=too-many-instance-a
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -10864,7 +10776,7 @@ class VirtualMachineRunCommandScriptSource(_serialization.Model):
 class VirtualMachineRunCommandsListResult(_serialization.Model):
     """The List run command operation response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The list of run commands. Required.
     :vartype value: list[~azure.mgmt.compute.v2021_03_01.models.VirtualMachineRunCommand]
@@ -11013,7 +10925,7 @@ class VirtualMachineScaleSet(Resource):  # pylint: disable=too-many-instance-att
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -11245,7 +11157,7 @@ class VirtualMachineScaleSet(Resource):  # pylint: disable=too-many-instance-att
 class VirtualMachineScaleSetDataDisk(_serialization.Model):
     """Describes a virtual machine scale set data disk.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The disk name.
     :vartype name: str
@@ -11479,10 +11391,10 @@ class VirtualMachineScaleSetExtension(SubResourceReadOnly):  # pylint: disable=t
         self.provision_after_extensions = provision_after_extensions
 
 
-class VirtualMachineScaleSetExtensionListResult(_serialization.Model):
+class VirtualMachineScaleSetExtensionListResult(_serialization.Model):  # pylint: disable=name-too-long
     """The List VM scale set extension operation response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The list of VM scale set extensions. Required.
     :vartype value: list[~azure.mgmt.compute.v2021_03_01.models.VirtualMachineScaleSetExtension]
@@ -11693,7 +11605,7 @@ class VirtualMachineScaleSetIdentity(_serialization.Model):
     :vartype type: str or ~azure.mgmt.compute.v2021_03_01.models.ResourceIdentityType
     :ivar user_assigned_identities: The list of user identities associated with the virtual machine
      scale set. The user identity dictionary key references will be ARM resource ids in the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long
     :vartype user_assigned_identities: dict[str,
      ~azure.mgmt.compute.v2021_03_01.models.VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue]
     """
@@ -11732,7 +11644,7 @@ class VirtualMachineScaleSetIdentity(_serialization.Model):
         :keyword user_assigned_identities: The list of user identities associated with the virtual
          machine scale set. The user identity dictionary key references will be ARM resource ids in the
          form:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long
         :paramtype user_assigned_identities: dict[str,
          ~azure.mgmt.compute.v2021_03_01.models.VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue]
         """
@@ -11743,7 +11655,7 @@ class VirtualMachineScaleSetIdentity(_serialization.Model):
         self.user_assigned_identities = user_assigned_identities
 
 
-class VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue(_serialization.Model):
+class VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue(_serialization.Model):  # pylint: disable=name-too-long
     """VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -11814,7 +11726,7 @@ class VirtualMachineScaleSetInstanceView(_serialization.Model):
         self.orchestration_services = None
 
 
-class VirtualMachineScaleSetInstanceViewStatusesSummary(_serialization.Model):
+class VirtualMachineScaleSetInstanceViewStatusesSummary(_serialization.Model):  # pylint: disable=name-too-long
     """Instance view statuses summary for virtual machines of a virtual machine scale set.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -11841,7 +11753,7 @@ class VirtualMachineScaleSetInstanceViewStatusesSummary(_serialization.Model):
 class VirtualMachineScaleSetIPConfiguration(SubResource):
     """Describes a virtual machine scale set network profile's IP configuration.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -11996,10 +11908,10 @@ class VirtualMachineScaleSetIpTag(_serialization.Model):
         self.tag = tag
 
 
-class VirtualMachineScaleSetListOSUpgradeHistory(_serialization.Model):
+class VirtualMachineScaleSetListOSUpgradeHistory(_serialization.Model):  # pylint: disable=name-too-long
     """List of Virtual Machine Scale Set OS Upgrade History operation response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The list of OS upgrades performed on the virtual machine scale set. Required.
     :vartype value:
@@ -12041,7 +11953,7 @@ class VirtualMachineScaleSetListOSUpgradeHistory(_serialization.Model):
 class VirtualMachineScaleSetListResult(_serialization.Model):
     """The List Virtual Machine operation response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The list of virtual machine scale sets. Required.
     :vartype value: list[~azure.mgmt.compute.v2021_03_01.models.VirtualMachineScaleSet]
@@ -12077,7 +11989,7 @@ class VirtualMachineScaleSetListResult(_serialization.Model):
 class VirtualMachineScaleSetListSkusResult(_serialization.Model):
     """The Virtual Machine Scale Set List Skus operation response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The list of skus available for the virtual machine scale set. Required.
     :vartype value: list[~azure.mgmt.compute.v2021_03_01.models.VirtualMachineScaleSetSku]
@@ -12113,7 +12025,7 @@ class VirtualMachineScaleSetListSkusResult(_serialization.Model):
 class VirtualMachineScaleSetListWithLinkResult(_serialization.Model):
     """The List Virtual Machine operation response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The list of virtual machine scale sets. Required.
     :vartype value: list[~azure.mgmt.compute.v2021_03_01.models.VirtualMachineScaleSet]
@@ -12146,7 +12058,7 @@ class VirtualMachineScaleSetListWithLinkResult(_serialization.Model):
         self.next_link = next_link
 
 
-class VirtualMachineScaleSetManagedDiskParameters(_serialization.Model):
+class VirtualMachineScaleSetManagedDiskParameters(_serialization.Model):  # pylint: disable=name-too-long
     """Describes the parameters of a ScaleSet managed disk.
 
     :ivar storage_account_type: Specifies the storage account type for the managed disk. NOTE:
@@ -12190,10 +12102,10 @@ class VirtualMachineScaleSetManagedDiskParameters(_serialization.Model):
         self.disk_encryption_set = disk_encryption_set
 
 
-class VirtualMachineScaleSetNetworkConfiguration(SubResource):
+class VirtualMachineScaleSetNetworkConfiguration(SubResource):  # pylint: disable=name-too-long
     """Describes a virtual machine scale set network profile's network configurations.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -12296,7 +12208,7 @@ class VirtualMachineScaleSetNetworkConfiguration(SubResource):
         self.delete_option = delete_option
 
 
-class VirtualMachineScaleSetNetworkConfigurationDnsSettings(_serialization.Model):
+class VirtualMachineScaleSetNetworkConfigurationDnsSettings(_serialization.Model):  # pylint: disable=name-too-long
     """Describes a virtual machines scale sets network configuration's DNS settings.
 
     :ivar dns_servers: List of DNS servers IP addresses.
@@ -12321,7 +12233,7 @@ class VirtualMachineScaleSetNetworkProfile(_serialization.Model):
 
     :ivar health_probe: A reference to a load balancer probe used to determine the health of an
      instance in the virtual machine scale set. The reference will be in the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}/probes/{probeName}'.
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}/probes/{probeName}'.  # pylint: disable=line-too-long
     :vartype health_probe: ~azure.mgmt.compute.v2021_03_01.models.ApiEntityReference
     :ivar network_interface_configurations: The list of network configurations.
     :vartype network_interface_configurations:
@@ -12352,7 +12264,7 @@ class VirtualMachineScaleSetNetworkProfile(_serialization.Model):
         """
         :keyword health_probe: A reference to a load balancer probe used to determine the health of an
          instance in the virtual machine scale set. The reference will be in the form:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}/probes/{probeName}'.
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}/probes/{probeName}'.  # pylint: disable=line-too-long
         :paramtype health_probe: ~azure.mgmt.compute.v2021_03_01.models.ApiEntityReference
         :keyword network_interface_configurations: The list of network configurations.
         :paramtype network_interface_configurations:
@@ -12371,7 +12283,7 @@ class VirtualMachineScaleSetNetworkProfile(_serialization.Model):
 class VirtualMachineScaleSetOSDisk(_serialization.Model):
     """Describes a virtual machine scale set operating system disk.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The disk name.
     :vartype name: str
@@ -12632,10 +12544,10 @@ class VirtualMachineScaleSetOSProfile(_serialization.Model):
         self.secrets = secrets
 
 
-class VirtualMachineScaleSetPublicIPAddressConfiguration(_serialization.Model):
+class VirtualMachineScaleSetPublicIPAddressConfiguration(_serialization.Model):  # pylint: disable=name-too-long
     """Describes a virtual machines scale set IP Configuration's PublicIPAddress configuration.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The publicIP address configuration name. Required.
     :vartype name: str
@@ -12723,10 +12635,12 @@ class VirtualMachineScaleSetPublicIPAddressConfiguration(_serialization.Model):
         self.delete_option = delete_option
 
 
-class VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings(_serialization.Model):
+class VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings(
+    _serialization.Model
+):  # pylint: disable=name-too-long
     """Describes a virtual machines scale sets network configuration's DNS settings.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar domain_name_label: The Domain name label.The concatenation of the domain name label and
      vm index will be the domain name labels of the PublicIPAddress resources that will be created.
@@ -12753,25 +12667,13 @@ class VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings(_serializati
         self.domain_name_label = domain_name_label
 
 
-class VirtualMachineScaleSetVMReimageParameters(VirtualMachineReimageParameters):
+class VirtualMachineScaleSetVMReimageParameters(VirtualMachineReimageParameters):  # pylint: disable=name-too-long
     """Describes a Virtual Machine Scale Set VM Reimage Parameters.
 
     :ivar temp_disk: Specifies whether to reimage temp disk. Default value: false. Note: This temp
      disk reimage parameter is only supported for VM/VMSS with Ephemeral OS disk.
     :vartype temp_disk: bool
     """
-
-    _attribute_map = {
-        "temp_disk": {"key": "tempDisk", "type": "bool"},
-    }
-
-    def __init__(self, *, temp_disk: Optional[bool] = None, **kwargs: Any) -> None:
-        """
-        :keyword temp_disk: Specifies whether to reimage temp disk. Default value: false. Note: This
-         temp disk reimage parameter is only supported for VM/VMSS with Ephemeral OS disk.
-        :paramtype temp_disk: bool
-        """
-        super().__init__(temp_disk=temp_disk, **kwargs)
 
 
 class VirtualMachineScaleSetReimageParameters(VirtualMachineScaleSetVMReimageParameters):
@@ -13081,7 +12983,7 @@ class VirtualMachineScaleSetUpdate(UpdateResource):  # pylint: disable=too-many-
         self.proximity_placement_group = proximity_placement_group
 
 
-class VirtualMachineScaleSetUpdateIPConfiguration(SubResource):
+class VirtualMachineScaleSetUpdateIPConfiguration(SubResource):  # pylint: disable=name-too-long
     """Describes a virtual machine scale set network profile's IP configuration. NOTE: The subnet of a
     scale set may be modified as long as the original subnet and the new subnet are in the same
     virtual network.
@@ -13199,7 +13101,7 @@ class VirtualMachineScaleSetUpdateIPConfiguration(SubResource):
         self.load_balancer_inbound_nat_pools = load_balancer_inbound_nat_pools
 
 
-class VirtualMachineScaleSetUpdateNetworkConfiguration(SubResource):
+class VirtualMachineScaleSetUpdateNetworkConfiguration(SubResource):  # pylint: disable=name-too-long
     """Describes a virtual machine scale set network profile's network configurations.
 
     :ivar id: Resource Id.
@@ -13300,12 +13202,12 @@ class VirtualMachineScaleSetUpdateNetworkConfiguration(SubResource):
         self.delete_option = delete_option
 
 
-class VirtualMachineScaleSetUpdateNetworkProfile(_serialization.Model):
+class VirtualMachineScaleSetUpdateNetworkProfile(_serialization.Model):  # pylint: disable=name-too-long
     """Describes a virtual machine scale set network profile.
 
     :ivar health_probe: A reference to a load balancer probe used to determine the health of an
      instance in the virtual machine scale set. The reference will be in the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}/probes/{probeName}'.
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}/probes/{probeName}'.  # pylint: disable=line-too-long
     :vartype health_probe: ~azure.mgmt.compute.v2021_03_01.models.ApiEntityReference
     :ivar network_interface_configurations: The list of network configurations.
     :vartype network_interface_configurations:
@@ -13338,7 +13240,7 @@ class VirtualMachineScaleSetUpdateNetworkProfile(_serialization.Model):
         """
         :keyword health_probe: A reference to a load balancer probe used to determine the health of an
          instance in the virtual machine scale set. The reference will be in the form:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}/probes/{probeName}'.
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}/probes/{probeName}'.  # pylint: disable=line-too-long
         :paramtype health_probe: ~azure.mgmt.compute.v2021_03_01.models.ApiEntityReference
         :keyword network_interface_configurations: The list of network configurations.
         :paramtype network_interface_configurations:
@@ -13473,7 +13375,7 @@ class VirtualMachineScaleSetUpdateOSProfile(_serialization.Model):
         self.secrets = secrets
 
 
-class VirtualMachineScaleSetUpdatePublicIPAddressConfiguration(_serialization.Model):
+class VirtualMachineScaleSetUpdatePublicIPAddressConfiguration(_serialization.Model):  # pylint: disable=name-too-long
     """Describes a virtual machines scale set IP Configuration's PublicIPAddress configuration.
 
     :ivar name: The publicIP address configuration name.
@@ -13526,7 +13428,7 @@ class VirtualMachineScaleSetUpdatePublicIPAddressConfiguration(_serialization.Mo
         self.delete_option = delete_option
 
 
-class VirtualMachineScaleSetUpdateStorageProfile(_serialization.Model):
+class VirtualMachineScaleSetUpdateStorageProfile(_serialization.Model):  # pylint: disable=name-too-long
     """Describes a virtual machine scale set storage profile.
 
     :ivar image_reference: The image reference.
@@ -13674,7 +13576,7 @@ class VirtualMachineScaleSetVM(Resource):  # pylint: disable=too-many-instance-a
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -14041,7 +13943,7 @@ class VirtualMachineScaleSetVMExtension(SubResourceReadOnly):  # pylint: disable
         self.instance_view = instance_view
 
 
-class VirtualMachineScaleSetVMExtensionsListResult(_serialization.Model):
+class VirtualMachineScaleSetVMExtensionsListResult(_serialization.Model):  # pylint: disable=name-too-long
     """The List VMSS VM Extension operation response.
 
     :ivar value: The list of VMSS VM extensions.
@@ -14064,7 +13966,7 @@ class VirtualMachineScaleSetVMExtensionsListResult(_serialization.Model):
         self.value = value
 
 
-class VirtualMachineScaleSetVMExtensionsSummary(_serialization.Model):
+class VirtualMachineScaleSetVMExtensionsSummary(_serialization.Model):  # pylint: disable=name-too-long
     """Extensions summary for virtual machines of a virtual machine scale set.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -14222,10 +14124,10 @@ class VirtualMachineScaleSetVMInstanceIDs(_serialization.Model):
         self.instance_ids = instance_ids
 
 
-class VirtualMachineScaleSetVMInstanceRequiredIDs(_serialization.Model):
+class VirtualMachineScaleSetVMInstanceRequiredIDs(_serialization.Model):  # pylint: disable=name-too-long
     """Specifies a list of virtual machine instance IDs from the VM scale set.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar instance_ids: The virtual machine scale set instance ids. Required.
     :vartype instance_ids: list[str]
@@ -14369,7 +14271,7 @@ class VirtualMachineScaleSetVMInstanceView(_serialization.Model):  # pylint: dis
 class VirtualMachineScaleSetVMListResult(_serialization.Model):
     """The List Virtual Machine Scale Set VMs operation response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The list of virtual machine scale sets VMs. Required.
     :vartype value: list[~azure.mgmt.compute.v2021_03_01.models.VirtualMachineScaleSetVM]
@@ -14402,7 +14304,7 @@ class VirtualMachineScaleSetVMListResult(_serialization.Model):
         self.next_link = next_link
 
 
-class VirtualMachineScaleSetVMNetworkProfileConfiguration(_serialization.Model):
+class VirtualMachineScaleSetVMNetworkProfileConfiguration(_serialization.Model):  # pylint: disable=name-too-long
     """Describes a virtual machine scale set VM network profile.
 
     :ivar network_interface_configurations: The list of network configurations.
@@ -15146,7 +15048,7 @@ class VirtualMachineUpdate(UpdateResource):  # pylint: disable=too-many-instance
         self.user_data = user_data
 
 
-class VMScaleSetConvertToSinglePlacementGroupInput(_serialization.Model):
+class VMScaleSetConvertToSinglePlacementGroupInput(_serialization.Model):  # pylint: disable=name-too-long
     """VMScaleSetConvertToSinglePlacementGroupInput.
 
     :ivar active_placement_group_id: Id of the placement group in which you want future virtual

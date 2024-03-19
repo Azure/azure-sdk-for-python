@@ -29,15 +29,14 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.databases.begin_export(
+    client.databases.begin_export(
         resource_group_name="rg1",
         cluster_name="cache1",
         database_name="default",
         parameters={"sasUri": "https://contosostorage.blob.core.window.net/urlToBlobContainer?sasKeyParameters"},
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/redisenterprise/resource-manager/Microsoft.Cache/preview/2023-03-01-preview/examples/RedisEnterpriseDatabasesExport.json
+# x-ms-original-file: specification/redisenterprise/resource-manager/Microsoft.Cache/stable/2023-11-01/examples/RedisEnterpriseDatabasesExport.json
 if __name__ == "__main__":
     main()

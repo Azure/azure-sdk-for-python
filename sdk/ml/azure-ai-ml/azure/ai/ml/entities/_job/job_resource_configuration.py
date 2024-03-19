@@ -124,7 +124,7 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
         locations: Optional[List[str]] = None,
         instance_count: Optional[int] = None,
         instance_type: Optional[Union[str, List]] = None,
-        properties: Optional[Properties] = None,
+        properties: Optional[Union[Properties, Dict]] = None,
         docker_args: Optional[str] = None,
         shm_size: Optional[str] = None,
         max_instance_count: Optional[int] = None,

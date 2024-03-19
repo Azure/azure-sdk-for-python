@@ -3994,6 +3994,9 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):  # pylint: d
     :ivar default_priority_level: Enum to indicate default Priority Level of request for Priority
      Based Execution. Known values are: "High" and "Low".
     :vartype default_priority_level: str or ~azure.mgmt.cosmosdb.models.DefaultPriorityLevel
+    :ivar enable_per_region_per_partition_autoscale: Flag to indicate enabling/disabling of
+     Per-Region Per-partition autoscale Preview feature on the account.
+    :vartype enable_per_region_per_partition_autoscale: bool
     """
 
     _validation = {
@@ -4055,6 +4058,10 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):  # pylint: d
         "customer_managed_key_status": {"key": "properties.customerManagedKeyStatus", "type": "str"},
         "enable_priority_based_execution": {"key": "properties.enablePriorityBasedExecution", "type": "bool"},
         "default_priority_level": {"key": "properties.defaultPriorityLevel", "type": "str"},
+        "enable_per_region_per_partition_autoscale": {
+            "key": "properties.enablePerRegionPerPartitionAutoscale",
+            "type": "bool",
+        },
     }
 
     database_account_offer_type = "Standard"
@@ -4100,6 +4107,7 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):  # pylint: d
         customer_managed_key_status: Optional[str] = None,
         enable_priority_based_execution: Optional[bool] = None,
         default_priority_level: Optional[Union[str, "_models.DefaultPriorityLevel"]] = None,
+        enable_per_region_per_partition_autoscale: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4212,6 +4220,9 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):  # pylint: d
         :keyword default_priority_level: Enum to indicate default Priority Level of request for
          Priority Based Execution. Known values are: "High" and "Low".
         :paramtype default_priority_level: str or ~azure.mgmt.cosmosdb.models.DefaultPriorityLevel
+        :keyword enable_per_region_per_partition_autoscale: Flag to indicate enabling/disabling of
+         Per-Region Per-partition autoscale Preview feature on the account.
+        :paramtype enable_per_region_per_partition_autoscale: bool
         """
         super().__init__(location=location, tags=tags, identity=identity, **kwargs)
         self.kind = kind
@@ -4250,6 +4261,7 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):  # pylint: d
         self.customer_managed_key_status = customer_managed_key_status
         self.enable_priority_based_execution = enable_priority_based_execution
         self.default_priority_level = default_priority_level
+        self.enable_per_region_per_partition_autoscale = enable_per_region_per_partition_autoscale
 
 
 class DatabaseAccountGetResults(ARMResourceProperties):  # pylint: disable=too-many-instance-attributes
@@ -4402,6 +4414,9 @@ class DatabaseAccountGetResults(ARMResourceProperties):  # pylint: disable=too-m
     :ivar default_priority_level: Enum to indicate default Priority Level of request for Priority
      Based Execution. Known values are: "High" and "Low".
     :vartype default_priority_level: str or ~azure.mgmt.cosmosdb.models.DefaultPriorityLevel
+    :ivar enable_per_region_per_partition_autoscale: Flag to indicate enabling/disabling of
+     Per-Region Per-partition autoscale Preview feature on the account.
+    :vartype enable_per_region_per_partition_autoscale: bool
     """
 
     _validation = {
@@ -4482,6 +4497,10 @@ class DatabaseAccountGetResults(ARMResourceProperties):  # pylint: disable=too-m
         "customer_managed_key_status": {"key": "properties.customerManagedKeyStatus", "type": "str"},
         "enable_priority_based_execution": {"key": "properties.enablePriorityBasedExecution", "type": "bool"},
         "default_priority_level": {"key": "properties.defaultPriorityLevel", "type": "str"},
+        "enable_per_region_per_partition_autoscale": {
+            "key": "properties.enablePerRegionPerPartitionAutoscale",
+            "type": "bool",
+        },
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -4524,6 +4543,7 @@ class DatabaseAccountGetResults(ARMResourceProperties):  # pylint: disable=too-m
         customer_managed_key_status: Optional[str] = None,
         enable_priority_based_execution: Optional[bool] = None,
         default_priority_level: Optional[Union[str, "_models.DefaultPriorityLevel"]] = None,
+        enable_per_region_per_partition_autoscale: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4633,6 +4653,9 @@ class DatabaseAccountGetResults(ARMResourceProperties):  # pylint: disable=too-m
         :keyword default_priority_level: Enum to indicate default Priority Level of request for
          Priority Based Execution. Known values are: "High" and "Low".
         :paramtype default_priority_level: str or ~azure.mgmt.cosmosdb.models.DefaultPriorityLevel
+        :keyword enable_per_region_per_partition_autoscale: Flag to indicate enabling/disabling of
+         Per-Region Per-partition autoscale Preview feature on the account.
+        :paramtype enable_per_region_per_partition_autoscale: bool
         """
         super().__init__(location=location, tags=tags, identity=identity, **kwargs)
         self.kind = kind
@@ -4680,6 +4703,7 @@ class DatabaseAccountGetResults(ARMResourceProperties):  # pylint: disable=too-m
         self.customer_managed_key_status = customer_managed_key_status
         self.enable_priority_based_execution = enable_priority_based_execution
         self.default_priority_level = default_priority_level
+        self.enable_per_region_per_partition_autoscale = enable_per_region_per_partition_autoscale
 
 
 class DatabaseAccountKeysMetadata(_serialization.Model):
@@ -4972,6 +4996,9 @@ class DatabaseAccountUpdateParameters(_serialization.Model):  # pylint: disable=
     :ivar default_priority_level: Enum to indicate default Priority Level of request for Priority
      Based Execution. Known values are: "High" and "Low".
     :vartype default_priority_level: str or ~azure.mgmt.cosmosdb.models.DefaultPriorityLevel
+    :ivar enable_per_region_per_partition_autoscale: Flag to indicate enabling/disabling of
+     Per-Region Per-partition autoscale Preview feature on the account.
+    :vartype enable_per_region_per_partition_autoscale: bool
     """
 
     _validation = {
@@ -5021,6 +5048,10 @@ class DatabaseAccountUpdateParameters(_serialization.Model):  # pylint: disable=
         "customer_managed_key_status": {"key": "properties.customerManagedKeyStatus", "type": "str"},
         "enable_priority_based_execution": {"key": "properties.enablePriorityBasedExecution", "type": "bool"},
         "default_priority_level": {"key": "properties.defaultPriorityLevel", "type": "str"},
+        "enable_per_region_per_partition_autoscale": {
+            "key": "properties.enablePerRegionPerPartitionAutoscale",
+            "type": "bool",
+        },
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -5061,6 +5092,7 @@ class DatabaseAccountUpdateParameters(_serialization.Model):  # pylint: disable=
         customer_managed_key_status: Optional[str] = None,
         enable_priority_based_execution: Optional[bool] = None,
         default_priority_level: Optional[Union[str, "_models.DefaultPriorityLevel"]] = None,
+        enable_per_region_per_partition_autoscale: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -5165,6 +5197,9 @@ class DatabaseAccountUpdateParameters(_serialization.Model):  # pylint: disable=
         :keyword default_priority_level: Enum to indicate default Priority Level of request for
          Priority Based Execution. Known values are: "High" and "Low".
         :paramtype default_priority_level: str or ~azure.mgmt.cosmosdb.models.DefaultPriorityLevel
+        :keyword enable_per_region_per_partition_autoscale: Flag to indicate enabling/disabling of
+         Per-Region Per-partition autoscale Preview feature on the account.
+        :paramtype enable_per_region_per_partition_autoscale: bool
         """
         super().__init__(**kwargs)
         self.tags = tags
@@ -5203,6 +5238,7 @@ class DatabaseAccountUpdateParameters(_serialization.Model):  # pylint: disable=
         self.customer_managed_key_status = customer_managed_key_status
         self.enable_priority_based_execution = enable_priority_based_execution
         self.default_priority_level = default_priority_level
+        self.enable_per_region_per_partition_autoscale = enable_per_region_per_partition_autoscale
 
 
 class DatabaseRestoreResource(_serialization.Model):
@@ -6139,7 +6175,7 @@ class FailoverPolicy(_serialization.Model):
         self.failover_priority = failover_priority
 
 
-class ResourceAutoGenerated(_serialization.Model):
+class Resource(_serialization.Model):
     """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6180,7 +6216,7 @@ class ResourceAutoGenerated(_serialization.Model):
         self.system_data = None
 
 
-class ProxyResourceAutoGenerated(ResourceAutoGenerated):
+class ProxyResource(Resource):
     """The resource model definition for a Azure Resource Manager proxy resource. It will not have
     tags and a location.
 
@@ -6218,7 +6254,7 @@ class ProxyResourceAutoGenerated(ResourceAutoGenerated):
         super().__init__(**kwargs)
 
 
-class FirewallRule(ProxyResourceAutoGenerated):
+class FirewallRule(ProxyResource):
     """Represents a mongo cluster firewall rule.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -8631,7 +8667,7 @@ class MetricValue(_serialization.Model):
         self.total = None
 
 
-class TrackedResource(ResourceAutoGenerated):
+class TrackedResource(Resource):
     """The resource model definition for an Azure Resource Manager tracked top level resource which
     has 'tags' and a 'location'.
 
@@ -11123,87 +11159,22 @@ class PhysicalPartitionThroughputInfoResultPropertiesResource(PhysicalPartitionT
         super().__init__(physical_partition_throughput_info=physical_partition_throughput_info, **kwargs)
 
 
-class Resource(_serialization.Model):
-    """Common fields that are returned in the response for all Azure Resource Manager resources.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-
-
-class ProxyResource(Resource):
-    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
-    tags and a location.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-
-
 class PrivateEndpointConnection(ProxyResource):
     """A private endpoint connection.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
     :ivar private_endpoint: Private endpoint which the connection belongs to.
     :vartype private_endpoint: ~azure.mgmt.cosmosdb.models.PrivateEndpointProperty
     :ivar private_link_service_connection_state: Connection State of the Private Endpoint
@@ -11220,12 +11191,14 @@ class PrivateEndpointConnection(ProxyResource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "private_endpoint": {"key": "properties.privateEndpoint", "type": "PrivateEndpointProperty"},
         "private_link_service_connection_state": {
             "key": "properties.privateLinkServiceConnectionState",
@@ -11635,11 +11608,15 @@ class RestoreParametersBase(_serialization.Model):
     :vartype restore_source: str
     :ivar restore_timestamp_in_utc: Time to which the account has to be restored (ISO-8601 format).
     :vartype restore_timestamp_in_utc: ~datetime.datetime
+    :ivar restore_with_ttl_disabled: Specifies whether the restored account will have Time-To-Live
+     disabled upon the successful restore.
+    :vartype restore_with_ttl_disabled: bool
     """
 
     _attribute_map = {
         "restore_source": {"key": "restoreSource", "type": "str"},
         "restore_timestamp_in_utc": {"key": "restoreTimestampInUtc", "type": "iso-8601"},
+        "restore_with_ttl_disabled": {"key": "restoreWithTtlDisabled", "type": "bool"},
     }
 
     def __init__(
@@ -11647,6 +11624,7 @@ class RestoreParametersBase(_serialization.Model):
         *,
         restore_source: Optional[str] = None,
         restore_timestamp_in_utc: Optional[datetime.datetime] = None,
+        restore_with_ttl_disabled: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -11657,10 +11635,14 @@ class RestoreParametersBase(_serialization.Model):
         :keyword restore_timestamp_in_utc: Time to which the account has to be restored (ISO-8601
          format).
         :paramtype restore_timestamp_in_utc: ~datetime.datetime
+        :keyword restore_with_ttl_disabled: Specifies whether the restored account will have
+         Time-To-Live disabled upon the successful restore.
+        :paramtype restore_with_ttl_disabled: bool
         """
         super().__init__(**kwargs)
         self.restore_source = restore_source
         self.restore_timestamp_in_utc = restore_timestamp_in_utc
+        self.restore_with_ttl_disabled = restore_with_ttl_disabled
 
 
 class ResourceRestoreParameters(RestoreParametersBase):
@@ -11672,11 +11654,15 @@ class ResourceRestoreParameters(RestoreParametersBase):
     :vartype restore_source: str
     :ivar restore_timestamp_in_utc: Time to which the account has to be restored (ISO-8601 format).
     :vartype restore_timestamp_in_utc: ~datetime.datetime
+    :ivar restore_with_ttl_disabled: Specifies whether the restored account will have Time-To-Live
+     disabled upon the successful restore.
+    :vartype restore_with_ttl_disabled: bool
     """
 
     _attribute_map = {
         "restore_source": {"key": "restoreSource", "type": "str"},
         "restore_timestamp_in_utc": {"key": "restoreTimestampInUtc", "type": "iso-8601"},
+        "restore_with_ttl_disabled": {"key": "restoreWithTtlDisabled", "type": "bool"},
     }
 
     def __init__(
@@ -11684,6 +11670,7 @@ class ResourceRestoreParameters(RestoreParametersBase):
         *,
         restore_source: Optional[str] = None,
         restore_timestamp_in_utc: Optional[datetime.datetime] = None,
+        restore_with_ttl_disabled: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -11694,8 +11681,16 @@ class ResourceRestoreParameters(RestoreParametersBase):
         :keyword restore_timestamp_in_utc: Time to which the account has to be restored (ISO-8601
          format).
         :paramtype restore_timestamp_in_utc: ~datetime.datetime
+        :keyword restore_with_ttl_disabled: Specifies whether the restored account will have
+         Time-To-Live disabled upon the successful restore.
+        :paramtype restore_with_ttl_disabled: bool
         """
-        super().__init__(restore_source=restore_source, restore_timestamp_in_utc=restore_timestamp_in_utc, **kwargs)
+        super().__init__(
+            restore_source=restore_source,
+            restore_timestamp_in_utc=restore_timestamp_in_utc,
+            restore_with_ttl_disabled=restore_with_ttl_disabled,
+            **kwargs
+        )
 
 
 class RestorableDatabaseAccountGetResult(_serialization.Model):
@@ -13398,6 +13393,9 @@ class RestoreParameters(RestoreParametersBase):
     :vartype restore_source: str
     :ivar restore_timestamp_in_utc: Time to which the account has to be restored (ISO-8601 format).
     :vartype restore_timestamp_in_utc: ~datetime.datetime
+    :ivar restore_with_ttl_disabled: Specifies whether the restored account will have Time-To-Live
+     disabled upon the successful restore.
+    :vartype restore_with_ttl_disabled: bool
     :ivar restore_mode: Describes the mode of the restore. "PointInTime"
     :vartype restore_mode: str or ~azure.mgmt.cosmosdb.models.RestoreMode
     :ivar databases_to_restore: List of specific databases available for restore.
@@ -13414,6 +13412,7 @@ class RestoreParameters(RestoreParametersBase):
     _attribute_map = {
         "restore_source": {"key": "restoreSource", "type": "str"},
         "restore_timestamp_in_utc": {"key": "restoreTimestampInUtc", "type": "iso-8601"},
+        "restore_with_ttl_disabled": {"key": "restoreWithTtlDisabled", "type": "bool"},
         "restore_mode": {"key": "restoreMode", "type": "str"},
         "databases_to_restore": {"key": "databasesToRestore", "type": "[DatabaseRestoreResource]"},
         "gremlin_databases_to_restore": {
@@ -13429,6 +13428,7 @@ class RestoreParameters(RestoreParametersBase):
         *,
         restore_source: Optional[str] = None,
         restore_timestamp_in_utc: Optional[datetime.datetime] = None,
+        restore_with_ttl_disabled: Optional[bool] = None,
         restore_mode: Optional[Union[str, "_models.RestoreMode"]] = None,
         databases_to_restore: Optional[List["_models.DatabaseRestoreResource"]] = None,
         gremlin_databases_to_restore: Optional[List["_models.GremlinDatabaseRestoreResource"]] = None,
@@ -13444,6 +13444,9 @@ class RestoreParameters(RestoreParametersBase):
         :keyword restore_timestamp_in_utc: Time to which the account has to be restored (ISO-8601
          format).
         :paramtype restore_timestamp_in_utc: ~datetime.datetime
+        :keyword restore_with_ttl_disabled: Specifies whether the restored account will have
+         Time-To-Live disabled upon the successful restore.
+        :paramtype restore_with_ttl_disabled: bool
         :keyword restore_mode: Describes the mode of the restore. "PointInTime"
         :paramtype restore_mode: str or ~azure.mgmt.cosmosdb.models.RestoreMode
         :keyword databases_to_restore: List of specific databases available for restore.
@@ -13457,7 +13460,12 @@ class RestoreParameters(RestoreParametersBase):
         :keyword source_backup_location: The source backup location for restore.
         :paramtype source_backup_location: str
         """
-        super().__init__(restore_source=restore_source, restore_timestamp_in_utc=restore_timestamp_in_utc, **kwargs)
+        super().__init__(
+            restore_source=restore_source,
+            restore_timestamp_in_utc=restore_timestamp_in_utc,
+            restore_with_ttl_disabled=restore_with_ttl_disabled,
+            **kwargs
+        )
         self.restore_mode = restore_mode
         self.databases_to_restore = databases_to_restore
         self.gremlin_databases_to_restore = gremlin_databases_to_restore
@@ -16133,7 +16141,7 @@ class ThroughputPoolAccountCreateParameters(_serialization.Model):
         self.account_location = account_location
 
 
-class ThroughputPoolAccountResource(ProxyResourceAutoGenerated):
+class ThroughputPoolAccountResource(ProxyResource):
     """An Azure Cosmos DB Throughputpool Account.
 
     Variables are only populated by the server, and will be ignored when sending a request.

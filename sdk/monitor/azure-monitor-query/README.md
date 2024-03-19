@@ -73,8 +73,15 @@ async_metrics_client = MetricsClient("https://<regional endpoint>", credential)
 By default, `LogsQueryClient` and `MetricsQueryClient` are configured to connect to the public Azure cloud. These can be configured to connect to non-public Azure clouds by passing in the correct `endpoint` argument: For example:
 
 ```python
-logs_query_client = LogsQueryClient(credential, endpoint="https://api.loganalytics.azure.cn/v1")
-metrics_query_client = MetricsQueryClient(credential, endpoint="https://management.chinacloudapi.cn")
+from azure.identity import AzureAuthorityHosts, DefaultAzureCredential
+from azure.monitor.query import LogsQueryClient, MetricsQueryClient
+
+# Authority can also be set via the AZURE_AUTHORITY_HOST environment variable.
+credential = DefaultAzureCredential(authority=AzureAuthorityHosts.AZURE_GOVERNMENT)
+
+logs_query_client = LogsQueryClient(credential, endpoint="https://api.loganalytics.us/v1")
+metrics_query_client = MetricsQueryClient(credential, endpoint="https://management.usgovcloudapi.net")
+
 ```
 
 **Note**: Currently, `MetricsQueryClient` uses the Azure Resource Manager (ARM) endpoint for querying metrics, so you will need the corresponding management endpoint for your cloud when using this client. This is subject to change in the future.
@@ -442,15 +449,15 @@ Interpretation of the visualization data is left to the library consumer. To use
 
 ### Metrics query
 
-The following example gets metrics for an Event Grid subscription. The resource URI is that of an Event Grid topic.
+The following example gets metrics for an Event Grid subscription. The resource ID (also known as resource URI) is that of an Event Grid topic.
 
-The resource URI must be that of the resource for which metrics are being queried. It's normally of the format `/subscriptions/<id>/resourceGroups/<rg-name>/providers/<source>/topics/<resource-name>`.
+The resource ID must be that of the resource for which metrics are being queried. It's normally of the format `/subscriptions/<id>/resourceGroups/<rg-name>/providers/<source>/topics/<resource-name>`.
 
-To find the resource URI:
+To find the resource ID/URI:
 
 1. Navigate to your resource's page in the Azure portal.
-2. From the **Overview** blade, select the **JSON View** link.
-3. In the resulting JSON, copy the value of the `id` property.
+1. Select the **JSON View** link in the **Overview** section.
+1. Copy the value in the **Resource ID** text box at the top of the JSON view.
 
 **NOTE**: The metrics are returned in the order of the metric_names sent.
 
@@ -544,17 +551,17 @@ from azure.core.exceptions import HttpResponseError
 from azure.identity import DefaultAzureCredential
 from azure.monitor.query import MetricsClient, MetricAggregationType
 
-
+endpoint = "https://westus3.metrics.monitor.azure.com"
 credential = DefaultAzureCredential()
 client = MetricsClient(endpoint, credential)
 
-resource_uris = [
+resource_ids = [
     "/subscriptions/<id>/resourceGroups/<rg-name>/providers/<source>/storageAccounts/<resource-name-1>",
     "/subscriptions/<id>/resourceGroups/<rg-name>/providers/<source>/storageAccounts/<resource-name-2>"
 ]
 
 response = client.query_resources(
-    resource_uris=resource_uris,
+    resource_ids=resource_ids,
     metric_namespace="Microsoft.Storage/storageAccounts",
     metric_names=["Ingress"],
     timespan=timedelta(hours=2),
@@ -611,7 +618,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [azure_subscription]: https://azure.microsoft.com/free/python/
 [changelog]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-query/CHANGELOG.md
 [kusto_query_language]: https://learn.microsoft.com/azure/data-explorer/kusto/query/
-[metric_namespaces]: https://learn.microsoft.com/azure/azure-monitor/reference/supported-metrics/metrics-index#metrics-by-resource-provider
+[metric_namespaces]: https://learn.microsoft.com/azure/azure-monitor/reference/supported-metrics/metrics-index#supported-metrics-and-log-categories-by-resource-type
 [package]: https://aka.ms/azsdk-python-monitor-query-pypi
 [pip]: https://pypi.org/project/pip/
 [python_logging]: https://docs.python.org/3/library/logging.html

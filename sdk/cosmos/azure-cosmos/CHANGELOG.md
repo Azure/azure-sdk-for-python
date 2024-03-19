@@ -1,12 +1,20 @@
 ## Release History
 
-### 4.5.2b5 (Unreleased)
+### 4.6.0 (2024-03-14)
 
 #### Features Added
-
-#### Breaking Changes
+* GA release of hierarchical partitioning, index metrics and transactional batch.
 
 #### Bugs Fixed
+* Keyword arguments were not being passed down for `create_container_if_not_exists()` methods. See [PR 34286](https://github.com/Azure/azure-sdk-for-python/pull/34286).
+
+#### Other Changes
+* Made several updates to the type hints used throughout the SDK for greater detail. See [PR 33269](https://github.com/Azure/azure-sdk-for-python/pull/33269), [PR 33341](https://github.com/Azure/azure-sdk-for-python/pull/33341), [PR 33738](https://github.com/Azure/azure-sdk-for-python/pull/33738).
+
+### 4.5.2b5 (2024-03-02)
+
+#### Bugs Fixed
+* Fixed bug with async lock not properly releasing on async global endpoint manager. see [PR 34579](https://github.com/Azure/azure-sdk-for-python/pull/34579).
 
 #### Other Changes
 * Marked `computed_properties` keyword as provisional, un-marked `continuation_token_limit` as provisional. See [PR 34207](https://github.com/Azure/azure-sdk-for-python/pull/34207).

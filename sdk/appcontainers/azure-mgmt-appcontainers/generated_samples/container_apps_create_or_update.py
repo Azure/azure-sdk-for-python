@@ -6,7 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from typing import Any, IO, Union
+
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.appcontainers import ContainerAppsAPIClient
 
 """
@@ -46,6 +49,10 @@ def main():
                         "logLevel": "debug",
                     },
                     "ingress": {
+                        "additionalPortMappings": [
+                            {"external": True, "targetPort": 1234},
+                            {"exposedPort": 3456, "external": False, "targetPort": 2345},
+                        ],
                         "clientCertificateMode": "accept",
                         "corsPolicy": {
                             "allowCredentials": True,
@@ -107,6 +114,10 @@ def main():
                                     "type": "Liveness",
                                 }
                             ],
+                            "volumeMounts": [
+                                {"mountPath": "/mnt/path1", "subPath": "subPath1", "volumeName": "azurefile"},
+                                {"mountPath": "/mnt/path2", "subPath": "subPath2", "volumeName": "nfsazurefile"},
+                            ],
                         }
                     ],
                     "initContainers": [
@@ -130,9 +141,15 @@ def main():
                     },
                     "serviceBinds": [
                         {
+                            "clientType": "dotnet",
+                            "customizedKeys": {"DesiredKey": "defaultKey"},
                             "name": "redisService",
                             "serviceId": "/subscriptions/34adfa4f-cedf-4dc0-ba29-b6d1a69ab345/resourceGroups/rg/providers/Microsoft.App/containerApps/redisService",
                         }
+                    ],
+                    "volumes": [
+                        {"name": "azurefile", "storageName": "storage", "storageType": "AzureFile"},
+                        {"name": "nfsazurefile", "storageName": "nfsStorage", "storageType": "NfsAzureFile"},
                     ],
                 },
                 "workloadProfileName": "My-GP-01",
@@ -142,6 +159,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2023-05-01/examples/ContainerApps_CreateOrUpdate.json
+# x-ms-original-file: specification/app/resource-manager/Microsoft.App/preview/2023-11-02-preview/examples/ContainerApps_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

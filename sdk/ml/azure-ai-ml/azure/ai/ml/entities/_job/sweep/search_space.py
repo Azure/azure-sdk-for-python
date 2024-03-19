@@ -76,7 +76,7 @@ class Choice(SweepDistribution):
             :caption: Using Choice distribution to set values for a hyperparameter sweep
     """
 
-    def __init__(self, values: Optional[List] = None, **kwargs: Any) -> None:
+    def __init__(self, values: Optional[List[Union[float, str, dict]]] = None, **kwargs: Any) -> None:
         kwargs.setdefault(TYPE, SearchSpace.CHOICE)
         super().__init__(**kwargs)
         self.values = values
@@ -116,7 +116,7 @@ class Choice(SweepDistribution):
                 from_rest_values.append(from_rest_dict)
             else:
                 from_rest_values.append(rest_value)
-        return Choice(values=from_rest_values)
+        return Choice(values=from_rest_values)  # type: ignore[arg-type]
 
 
 class Normal(SweepDistribution):
@@ -267,7 +267,6 @@ class Randint(SweepDistribution):
 
 class Uniform(SweepDistribution):
     """
-    :noindex:
 
     Uniform distribution configuration.
 

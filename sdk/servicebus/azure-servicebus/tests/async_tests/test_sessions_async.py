@@ -34,7 +34,7 @@ from azure.servicebus.exceptions import (
     AutoLockRenewTimeout
 )
 from devtools_testutils import AzureMgmtRecordedTestCase
-from servicebus_preparer import (
+from tests.servicebus_preparer import (
     CachedServiceBusNamespacePreparer,
     CachedServiceBusQueuePreparer,
     ServiceBusTopicPreparer,
@@ -42,7 +42,7 @@ from servicebus_preparer import (
     ServiceBusSubscriptionPreparer,
     CachedServiceBusResourceGroupPreparer
 )
-from utilities import get_logger, print_message, uamqp_transport as get_uamqp_transport, ArgPasserAsync
+from tests.utilities import get_logger, print_message, uamqp_transport as get_uamqp_transport, ArgPasserAsync
 
 uamqp_transport_params, uamqp_transport_ids = get_uamqp_transport()
 

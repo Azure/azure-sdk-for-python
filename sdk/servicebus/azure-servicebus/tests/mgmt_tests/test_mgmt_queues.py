@@ -12,15 +12,15 @@ import functools
 
 from azure.servicebus.management import ServiceBusAdministrationClient, QueueProperties, ApiVersion
 from azure.servicebus._common.utils import utc_now
-from utilities import get_logger
+from tests.utilities import get_logger
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError
 from azure.servicebus._base_handler import ServiceBusSharedKeyCredential
 
 from devtools_testutils import AzureMgmtRecordedTestCase, CachedResourceGroupPreparer, recorded_by_proxy
-from sb_env_loader import (
+from tests.sb_env_loader import (
     ServiceBusPreparer,
 )
-from servicebus_preparer import (
+from tests.servicebus_preparer import (
     SERVICEBUS_ENDPOINT_SUFFIX
 )
 

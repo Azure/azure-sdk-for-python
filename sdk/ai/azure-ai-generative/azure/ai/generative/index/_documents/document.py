@@ -2,10 +2,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 """Document abstraction."""
-from abc import ABC
 from dataclasses import dataclass
 from typing import Optional
 from pathlib import Path
+
 
 @dataclass
 class DocumentSource:
@@ -23,7 +23,12 @@ class DocumentSource:
             self.url = self.url.replace("\\", "/")
 
     def get_metadata(self) -> dict:
-        """Get the metadata of the document source."""
+        """
+        Get the metadata of the document source.
+
+        :return: The metadata of the document source.
+        :rtype: dict
+        """
         return {
             "filename": self.filename,
             "url": self.url,

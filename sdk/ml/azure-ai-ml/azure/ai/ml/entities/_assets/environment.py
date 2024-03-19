@@ -124,7 +124,7 @@ class Environment(Asset, LocalizableMixin):
         **kwargs: Any,
     ):
         self._arm_type: str = ""
-        self.latest_version: str = ""
+        self.latest_version: str = ""  # type: ignore[assignment]
         self.image: Optional[str] = None
         inference_config = kwargs.pop("inference_config", None)
         os_type = kwargs.pop("os_type", None)

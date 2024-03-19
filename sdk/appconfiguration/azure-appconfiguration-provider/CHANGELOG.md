@@ -12,6 +12,8 @@
 
 ### Bugs Fixed
 
+* Fixes issue where loading configurations were slower do to returning a copy of the configurations.
+
 ### Other Changes
 
 ## 1.1.0 (2024-01-29)

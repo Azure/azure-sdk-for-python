@@ -589,9 +589,6 @@ class QueryOperations:
         :keyword prefer: Optional. The prefer header to set server timeout, query statistics and
          visualization information. Default value is None.
         :paramtype prefer: str
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
         :return: JSON object
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1034,9 +1031,6 @@ class QueryOperations:
         :keyword prefer: Optional. The prefer header to set server timeout, query statistics and
          visualization information. Default value is None.
         :paramtype prefer: str
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
         :return: JSON object
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1387,9 +1381,6 @@ class QueryOperations:
 
         :param body: The batch request body. Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
         :return: JSON object
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1874,9 +1865,6 @@ class QueryOperations:
         :keyword prefer: Optional. The prefer header to set server timeout, query statistics and
          visualization information. Default value is None.
         :paramtype prefer: str
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
         :return: JSON object
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:

@@ -7,8 +7,12 @@ def format_rag_results(rag_results: dict, supported_metrics):
     result_per_turn = {}
     if rag_results:
         for metric, value in rag_results['artifacts'].items():
-            result_per_chat[metric] = rag_results['metrics']["mean_" + metric]
-            result_per_turn[metric] = {"reason": value['reason'], "score": value['score_per_turn']}
+            try:
+                result_per_chat[metric] = rag_results['metrics']["mean_" + metric]
+                result_per_turn[metric] = {"reason": value['reason'], "score": value['score_per_turn']}
+            except KeyError:
+                result_per_chat[metric] = np.nan
+                result_per_turn[metric] = np.nan
     for metric in supported_metrics:
         if metric not in result_per_turn:
             result_per_chat[metric] = np.nan
@@ -21,7 +25,10 @@ def format_non_rag_results(non_rag_results: dict, supported_metrics):
     result_per_turn = {}
     if non_rag_results:
         for metric in non_rag_results['artifacts']:
-            result_per_chat[metric] = non_rag_results['metrics']['mean_' + metric]
+            try:
+                result_per_chat[metric] = non_rag_results['metrics']['mean_' + metric]
+            except:
+                result_per_chat[metric] = np.nan
         result_per_turn = non_rag_results['artifacts']
     for metric in supported_metrics:
         if metric not in result_per_turn:

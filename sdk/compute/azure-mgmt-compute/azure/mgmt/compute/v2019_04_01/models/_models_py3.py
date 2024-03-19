@@ -308,7 +308,7 @@ class ResourceSkuRestrictions(_serialization.Model):
 class ResourceSkusResult(_serialization.Model):
     """The List Resource Skus operation response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The list of skus available for the subscription. Required.
     :vartype value: list[~azure.mgmt.compute.v2019_04_01.models.ResourceSku]

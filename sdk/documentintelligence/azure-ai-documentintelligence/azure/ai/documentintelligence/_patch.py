@@ -26,9 +26,11 @@ class DocumentIntelligenceClient(DIClientGenerated):  # pylint: disable=client-a
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials.TokenCredential
     :keyword api_version: The API version to use for this operation. Default value is
-     "2023-10-31-preview". Note that overriding this default value may result in unsupported
+     "2024-02-29-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+     Retry-After header is present.
     """
 
     def __init__(
@@ -59,9 +61,11 @@ class DocumentIntelligenceAdministrationClient(
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials.TokenCredential
     :keyword api_version: The API version to use for this operation. Default value is
-     "2023-10-31-preview". Note that overriding this default value may result in unsupported
+     "2024-02-29-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+     Retry-After header is present.
     """
 
     def __init__(

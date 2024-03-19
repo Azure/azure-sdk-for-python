@@ -4,7 +4,7 @@
 # pylint: disable=protected-access
 
 import re
-from typing import Optional
+from typing import Optional, cast
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import ScriptReference as RestScriptReference
 from azure.ai.ml._restclient.v2022_10_01_preview.models import ScriptsToExecute as RestScriptsToExecute
@@ -24,7 +24,7 @@ class ScriptReference(RestTranslatableMixin):
     """
 
     def __init__(
-        self, *, path: Optional[str] = None, command: Optional[str] = None, timeout_minutes: Optional[str] = None
+        self, *, path: Optional[str] = None, command: Optional[str] = None, timeout_minutes: Optional[int] = None
     ) -> None:
         self.path = path
         self.command = command
@@ -47,7 +47,7 @@ class ScriptReference(RestTranslatableMixin):
         script_reference = ScriptReference(
             path=obj.script_data if obj.script_data else None,
             command=obj.script_arguments if obj.script_arguments else None,
-            timeout_minutes=timeout_minutes,
+            timeout_minutes=cast(Optional[int], timeout_minutes),
         )
         return script_reference
 

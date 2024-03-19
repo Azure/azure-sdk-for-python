@@ -139,9 +139,9 @@ class ProbeSettings(RestTranslatableMixin):
         :type success_threshold: int
         :param timeout: timeout in seconds, defaults to 2
         :type timeout: int
-        :param period: [description], defaults to 10
+        :param period: How often (in seconds) to perform the probe, defaults to 10
         :type period: int
-        :param initial_delay: How to to wait for the first probe, defaults to 10
+        :param initial_delay: How long (in seconds) to wait for the first probe, defaults to 10
         :type initial_delay: int
         """
 

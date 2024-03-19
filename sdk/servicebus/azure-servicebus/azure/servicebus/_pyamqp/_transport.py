@@ -648,7 +648,11 @@ class SSLTransport(_AbstractTransport):
         """Write a string out to the SSL socket fully.
         :param str s: The string to write.
         """
-        write = self.sock.send
+        try:
+            write = self.sock.send
+        except AttributeError:
+            raise IOError("Socket has already been closed.") from None
+
         while s:
             try:
                 n = write(s)
@@ -659,7 +663,7 @@ class SSLTransport(_AbstractTransport):
                 # None.
                 n = 0
             if not n:
-                raise IOError("Socket closed")
+                raise IOError("Socket closed.")
             s = s[n:]
 
     def negotiate(self):

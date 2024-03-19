@@ -404,7 +404,7 @@ class KubernetesOnlineEndpoint(OnlineEndpoint):
         self,
         dest: Optional[Union[str, PathLike, IO[AnyStr]]] = None,  # pylint: disable=unused-argument
         **kwargs: Any,  # pylint: disable=unused-argument
-    ) -> Dict:
+    ) -> Dict[str, Any]:
         context = {BASE_PATH_CONTEXT_KEY: Path(".").parent}
         res: dict = KubernetesOnlineEndpointSchema(context=context).dump(self)
         return res

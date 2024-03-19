@@ -60,7 +60,7 @@ class UsagesOperations:
         search_management_request_options: Optional[_models.SearchManagementRequestOptions] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.QuotaUsageResult"]:
-        """Gets a list of all Search quota usages in the given subscription.
+        """Get a list of all Azure AI Search quota usages across the subscription.
 
         .. seealso::
            - https://aka.ms/search-manage

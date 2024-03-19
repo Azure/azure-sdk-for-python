@@ -81,7 +81,7 @@ steps:
 
   - ${{ parameters.BeforePublishSteps }}
 
-  - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+  - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
     parameters:
       ArtifactPath: '$(Build.ArtifactStagingDirectory)'
       ArtifactName: 'packages_extended'
@@ -91,20 +91,8 @@ steps:
       Write-Output "##vso[task.setvariable variable=DirectoryExists]$directoryExists"
     displayName: Check if docs directory exists
   
-  - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+  - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
     parameters:
       ArtifactPath: '$(Build.SourcesDirectory)/_docs'
       CustomCondition: and(${{ parameters.BuildDocs }}, eq(variables['DirectoryExists'], 'True'))
       ArtifactName: 'documentation'
-
-  - ${{if eq(variables['System.TeamProject'], 'internal') }}:
-    - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
-      displayName: 'Generate BOM'
-      condition: succeededOrFailed()
-      inputs:
-        BuildDropPath: $(Build.ArtifactStagingDirectory)
-
-    - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
-      parameters:
-        ArtifactPath: '$(Build.ArtifactStagingDirectory)/_manifest'
-        ArtifactName: 'extended_manifest'

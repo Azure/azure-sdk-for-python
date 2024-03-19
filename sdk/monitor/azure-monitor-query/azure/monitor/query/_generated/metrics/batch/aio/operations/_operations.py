@@ -465,9 +465,6 @@ class MetricsBatchOperations:
          separate values for each city, you can specify 'RollUpBy=City' to see the results for Seattle
          and Tacoma rolled up into one timeseries. Default value is None.
         :paramtype rollupby: str
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
         :return: JSON object
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:

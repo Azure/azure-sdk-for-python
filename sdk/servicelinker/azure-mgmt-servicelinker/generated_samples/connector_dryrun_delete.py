@@ -28,15 +28,14 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.connector.delete_dryrun(
+    client.connector.delete_dryrun(
         subscription_id="00000000-0000-0000-0000-000000000000",
         resource_group_name="test-rg",
         location="westus",
         dryrun_name="dryrunName",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/servicelinker/resource-manager/Microsoft.ServiceLinker/preview/2022-11-01-preview/examples/ConnectorDryrunDelete.json
+# x-ms-original-file: specification/servicelinker/resource-manager/Microsoft.ServiceLinker/preview/2023-04-01-preview/examples/ConnectorDryrunDelete.json
 if __name__ == "__main__":
     main()

@@ -17,6 +17,7 @@ from ._configuration import SearchManagementClientConfiguration
 from ._serialization import Deserializer, Serializer
 from .operations import (
     AdminKeysOperations,
+    NetworkSecurityPerimeterConfigurationsOperations,
     Operations,
     PrivateEndpointConnectionsOperations,
     PrivateLinkResourcesOperations,
@@ -35,7 +36,7 @@ if TYPE_CHECKING:
 class SearchManagementClient(
     SearchManagementClientOperationsMixin
 ):  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
-    """Client that can be used to manage Azure Cognitive Search services and API keys.
+    """Client that can be used to manage Azure AI Search services and API keys.
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.search.operations.Operations
@@ -55,6 +56,10 @@ class SearchManagementClient(
      azure.mgmt.search.operations.SharedPrivateLinkResourcesOperations
     :ivar usages: UsagesOperations operations
     :vartype usages: azure.mgmt.search.operations.UsagesOperations
+    :ivar network_security_perimeter_configurations:
+     NetworkSecurityPerimeterConfigurationsOperations operations
+    :vartype network_security_perimeter_configurations:
+     azure.mgmt.search.operations.NetworkSecurityPerimeterConfigurationsOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The unique identifier for a Microsoft Azure subscription. You can
@@ -62,8 +67,8 @@ class SearchManagementClient(
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2023-11-01". Note that overriding this
-     default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2024-03-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -99,6 +104,9 @@ class SearchManagementClient(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.usages = UsagesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.network_security_perimeter_configurations = NetworkSecurityPerimeterConfigurationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.

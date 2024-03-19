@@ -1,5 +1,28 @@
 # Release History
 
+## 1.2.0b2 (2024-03-19)
+
+### Features Added
+
+  - Added operation LinkersOperations.list_dapr_configurations
+  - Model AccessKeyInfoBase has a new parameter auth_mode
+  - Model AuthInfoBase has a new parameter auth_mode
+  - Model ConfigurationInfo has a new parameter additional_connection_string_properties
+  - Model ConfigurationInfo has a new parameter configuration_store
+  - Model ConfigurationInfo has a new parameter dapr_properties
+  - Model ConfigurationName has a new parameter required
+  - Model ConfigurationNameItem has a new parameter dapr_properties
+  - Model ConfigurationNameItem has a new parameter secret_type
+  - Model SecretAuthInfo has a new parameter auth_mode
+  - Model ServicePrincipalCertificateAuthInfo has a new parameter auth_mode
+  - Model ServicePrincipalSecretAuthInfo has a new parameter auth_mode
+  - Model SourceConfiguration has a new parameter config_type
+  - Model SourceConfiguration has a new parameter description
+  - Model SourceConfiguration has a new parameter key_vault_reference_identity
+  - Model SystemAssignedIdentityAuthInfo has a new parameter auth_mode
+  - Model UserAccountAuthInfo has a new parameter auth_mode
+  - Model UserAssignedIdentityAuthInfo has a new parameter auth_mode
+
 ## 1.2.0b1 (2022-12-02)
 
 ### Features Added

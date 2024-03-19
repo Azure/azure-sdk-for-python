@@ -461,11 +461,15 @@ class PhoneNumberCapabilitiesRequest(_serialization.Model):
     :ivar sms: Capability value for SMS. Known values are: "none", "inbound", "outbound", and
      "inbound+outbound".
     :vartype sms: str or ~azure.communication.phonenumbers.models.PhoneNumberCapabilityType
+    :ivar ten_dlc_campaign_brief_id: Campaign Brief Id to attach to a number. For adding SMS to
+     local numbers.
+    :vartype ten_dlc_campaign_brief_id: str
     """
 
     _attribute_map = {
         "calling": {"key": "calling", "type": "str"},
         "sms": {"key": "sms", "type": "str"},
+        "ten_dlc_campaign_brief_id": {"key": "tenDLCCampaignBriefId", "type": "str"},
     }
 
     def __init__(
@@ -473,6 +477,7 @@ class PhoneNumberCapabilitiesRequest(_serialization.Model):
         *,
         calling: Optional[Union[str, "_models.PhoneNumberCapabilityType"]] = None,
         sms: Optional[Union[str, "_models.PhoneNumberCapabilityType"]] = None,
+        ten_dlc_campaign_brief_id: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -482,10 +487,14 @@ class PhoneNumberCapabilitiesRequest(_serialization.Model):
         :keyword sms: Capability value for SMS. Known values are: "none", "inbound", "outbound", and
          "inbound+outbound".
         :paramtype sms: str or ~azure.communication.phonenumbers.models.PhoneNumberCapabilityType
+        :keyword ten_dlc_campaign_brief_id: Campaign Brief Id to attach to a number. For adding SMS to
+         local numbers.
+        :paramtype ten_dlc_campaign_brief_id: str
         """
         super().__init__(**kwargs)
         self.calling = calling
         self.sms = sms
+        self.ten_dlc_campaign_brief_id = ten_dlc_campaign_brief_id
 
 
 class PhoneNumberCost(_serialization.Model):
@@ -1049,7 +1058,8 @@ class PurchasedPhoneNumber(_serialization.Model):  # pylint: disable=too-many-in
      values are: "geographic" and "tollFree".
     :vartype phone_number_type: str or ~azure.communication.phonenumbers.models.PhoneNumberType
     :ivar capabilities: Capabilities of a phone number. Required.
-    :vartype capabilities: ~azure.communication.phonenumbers.models.PhoneNumberCapabilities
+    :vartype capabilities:
+     ~azure.communication.phonenumbers.models.PurchasedPhoneNumberCapabilities
     :ivar assignment_type: The assignment type of the phone number. A phone number can be assigned
      to a person, or to an application. Required. Known values are: "person" and "application".
     :vartype assignment_type: str or
@@ -1083,7 +1093,7 @@ class PurchasedPhoneNumber(_serialization.Model):  # pylint: disable=too-many-in
         "phone_number": {"key": "phoneNumber", "type": "str"},
         "country_code": {"key": "countryCode", "type": "str"},
         "phone_number_type": {"key": "phoneNumberType", "type": "str"},
-        "capabilities": {"key": "capabilities", "type": "PhoneNumberCapabilities"},
+        "capabilities": {"key": "capabilities", "type": "PurchasedPhoneNumberCapabilities"},
         "assignment_type": {"key": "assignmentType", "type": "str"},
         "purchase_date": {"key": "purchaseDate", "type": "iso-8601"},
         "cost": {"key": "cost", "type": "PhoneNumberCost"},
@@ -1099,7 +1109,7 @@ class PurchasedPhoneNumber(_serialization.Model):  # pylint: disable=too-many-in
         phone_number: str,
         country_code: str,
         phone_number_type: Union[str, "_models.PhoneNumberType"],
-        capabilities: "_models.PhoneNumberCapabilities",
+        capabilities: "_models.PurchasedPhoneNumberCapabilities",
         assignment_type: Union[str, "_models.PhoneNumberAssignmentType"],
         purchase_date: datetime.datetime,
         cost: "_models.PhoneNumberCost",
@@ -1120,7 +1130,8 @@ class PurchasedPhoneNumber(_serialization.Model):  # pylint: disable=too-many-in
          values are: "geographic" and "tollFree".
         :paramtype phone_number_type: str or ~azure.communication.phonenumbers.models.PhoneNumberType
         :keyword capabilities: Capabilities of a phone number. Required.
-        :paramtype capabilities: ~azure.communication.phonenumbers.models.PhoneNumberCapabilities
+        :paramtype capabilities:
+         ~azure.communication.phonenumbers.models.PurchasedPhoneNumberCapabilities
         :keyword assignment_type: The assignment type of the phone number. A phone number can be
          assigned to a person, or to an application. Required. Known values are: "person" and
          "application".
@@ -1151,6 +1162,56 @@ class PurchasedPhoneNumber(_serialization.Model):  # pylint: disable=too-many-in
         self.operator_id = operator_id
         self.operator_name = operator_name
         self.phone_number_source = phone_number_source
+
+
+class PurchasedPhoneNumberCapabilities(_serialization.Model):
+    """Capabilities of a phone number.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar calling: Capability value for calling. Required. Known values are: "none", "inbound",
+     "outbound", and "inbound+outbound".
+    :vartype calling: str or ~azure.communication.phonenumbers.models.PhoneNumberCapabilityType
+    :ivar sms: Capability value for SMS. Required. Known values are: "none", "inbound", "outbound",
+     and "inbound+outbound".
+    :vartype sms: str or ~azure.communication.phonenumbers.models.PhoneNumberCapabilityType
+    :ivar ten_dlc_campaign_brief_id: Ten DLC campaign brief id attached to the number.
+    :vartype ten_dlc_campaign_brief_id: str
+    """
+
+    _validation = {
+        "calling": {"required": True},
+        "sms": {"required": True},
+    }
+
+    _attribute_map = {
+        "calling": {"key": "calling", "type": "str"},
+        "sms": {"key": "sms", "type": "str"},
+        "ten_dlc_campaign_brief_id": {"key": "tenDLCCampaignBriefId", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        calling: Union[str, "_models.PhoneNumberCapabilityType"],
+        sms: Union[str, "_models.PhoneNumberCapabilityType"],
+        ten_dlc_campaign_brief_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword calling: Capability value for calling. Required. Known values are: "none", "inbound",
+         "outbound", and "inbound+outbound".
+        :paramtype calling: str or ~azure.communication.phonenumbers.models.PhoneNumberCapabilityType
+        :keyword sms: Capability value for SMS. Required. Known values are: "none", "inbound",
+         "outbound", and "inbound+outbound".
+        :paramtype sms: str or ~azure.communication.phonenumbers.models.PhoneNumberCapabilityType
+        :keyword ten_dlc_campaign_brief_id: Ten DLC campaign brief id attached to the number.
+        :paramtype ten_dlc_campaign_brief_id: str
+        """
+        super().__init__(**kwargs)
+        self.calling = calling
+        self.sms = sms
+        self.ten_dlc_campaign_brief_id = ten_dlc_campaign_brief_id
 
 
 class PurchasedPhoneNumbers(_serialization.Model):

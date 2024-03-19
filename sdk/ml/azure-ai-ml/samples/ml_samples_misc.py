@@ -111,7 +111,16 @@ class MiscConfigurationOptions(object):
             },
             stage="Production",
         )
+        ml_client.models.create_or_update(model)
         # [END model_entity_create]
+
+        # [START model_operations_archive]
+        ml_client.models.archive(name="model1", version="5")
+        # [END model_operations_archive]
+
+        # [START model_operations_restore]
+        ml_client.models.restore(name="model1", version="5")
+        # [END model_operations_restore]
 
         # [START model_batch_deployment_settings_entity_create]
         from azure.ai.ml.entities._deployment.model_batch_deployment_settings import ModelBatchDeploymentSettings
