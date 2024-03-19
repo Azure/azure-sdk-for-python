@@ -254,9 +254,6 @@ parameters:
       azure-mgmt-securitydevops:
         ServiceDirectory: securitydevops
         Version: '1.0.0b2'
-      azure-mgmt:
-        ServiceDirectory: core
-        Version: '5.0.0'
       azure-mgmt-core:
         ServiceDirectory: core
         Version: '1.4.0'
