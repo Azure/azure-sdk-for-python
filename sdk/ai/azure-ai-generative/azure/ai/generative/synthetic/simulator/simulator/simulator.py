@@ -286,7 +286,7 @@ class Simulator:
         if simulation_result_limit > total_tasks and self.adversarial:
             logger.warning(
                 "Cannot provide %s results due to maximum number of adversarial simulations that can be generated: %s."
-                "%s simulations will be generated.",
+                "\n %s simulations will be generated.",
                 simulation_result_limit,
                 total_tasks,
                 total_tasks,
