@@ -17,6 +17,9 @@ jobs:
 
     steps:
       - checkout: self
+      - download: current
+        artifact: ${{parameters.ArtifactName}}
+        timeoutInMinutes: 5
       - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
       - template: /eng/common/pipelines/templates/steps/create-apireview.yml
         parameters:
