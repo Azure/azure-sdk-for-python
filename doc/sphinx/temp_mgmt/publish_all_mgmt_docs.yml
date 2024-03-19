@@ -1,4 +1,4 @@
- parameters:
+parameters:
   - name: MgmtPackages
     type: object
     default:
@@ -557,7 +557,7 @@
 
 jobs:
   - job: 'PublishAllMgmtDocs'
-    timeoutInMinutes: 200
+    timeoutInMinutes: 240
     steps:
       - task: UsePythonVersion@0
         displayName: 'Use Python 3.11'
