@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-# pylint: disable=E0401
+# pylint: skip-file
 # needed for 'list' type annotations on 3.8
 from __future__ import annotations
 
@@ -12,6 +12,9 @@ import asyncio
 import threading
 import json
 import random
+from tqdm import tqdm
+
+logger = logging.getLogger(__name__)
 
 from azure.ai.generative.synthetic.simulator._conversation import (
     ConversationBot,
@@ -78,7 +81,9 @@ class Simulator:
         if (ai_client is None and simulator_connection is None) or (
             ai_client is not None and simulator_connection is not None
         ):
-            raise ValueError("One and only one of the parameters [ai_client, simulator_connection] has to be set.")
+            raise ValueError(
+                "One and only one of the parameters [ai_client, simulator_connection] has to be set."
+            )
 
         if simulate_callback is None:
             raise ValueError("Callback cannot be None.")
@@ -87,7 +92,9 @@ class Simulator:
             raise ValueError("Callback has to be an async function.")
 
         self.ai_client = ai_client
-        self.simulator_connection = self._to_openai_chat_completion_model(simulator_connection)
+        self.simulator_connection = self._to_openai_chat_completion_model(
+            simulator_connection
+        )
         self.adversarial = False
         self.rai_client = None
         if ai_client:
@@ -168,19 +175,33 @@ class Simulator:
             instantiation_parameters=instantiation_parameters,
         )
 
-    def _setup_bot(self, role: Union[str, ConversationRole], template: "Template", parameters: dict):
+    def _setup_bot(
+        self,
+        role: Union[str, ConversationRole],
+        template: "Template",
+        parameters: dict,
+    ):
         if role == ConversationRole.ASSISTANT:
             return self._create_bot(role, str(template), parameters)
         if role == ConversationRole.USER:
             if template.content_harm:
-                return self._create_bot(role, str(template), parameters, template.template_name)
+                return self._create_bot(
+                    role, str(template), parameters, template.template_name
+                )
 
-            return self._create_bot(role, str(template), parameters, model=self.simulator_connection)
+            return self._create_bot(
+                role,
+                str(template),
+                parameters,
+                model=self.simulator_connection,
+            )
         return None
 
     def _ensure_service_dependencies(self):
         if self.rai_client is None:
-            raise ValueError("Simulation options require rai services but ai client is not provided.")
+            raise ValueError(
+                "Simulation options require rai services but ai client is not provided."
+            )
 
     def _join_conversation_starter(self, parameters, to_join):
         key = "conversation_starter"
@@ -236,17 +257,23 @@ class Simulator:
         if parameters is None:
             parameters = []
         if not isinstance(template, Template):
-            raise ValueError(f"Please use simulator to construct template. Found {type(template)}")
+            raise ValueError(
+                f"Please use simulator to construct template. Found {type(template)}"
+            )
 
         if not isinstance(parameters, list):
-            raise ValueError(f"Expect parameters to be a list of dictionary, but found {type(parameters)}")
+            raise ValueError(
+                f"Expect parameters to be a list of dictionary, but found {type(parameters)}"
+            )
         if "conversation" not in template.template_name:
             max_conversation_turns = 2
         if template.content_harm:
             self._ensure_service_dependencies()
             self.adversarial = True
             # pylint: disable=protected-access
-            templates = await self.template_handler._get_ch_template_collections(template.template_name)
+            templates = await self.template_handler._get_ch_template_collections(
+                template.template_name
+            )
         else:
             template.template_parameters = parameters
             templates = [template]
@@ -254,12 +281,32 @@ class Simulator:
         semaphore = asyncio.Semaphore(concurrent_async_task)
         sim_results = []
         tasks = []
+        total_tasks = sum(len(t.template_parameters) for t in templates)
+
+        if simulation_result_limit > total_tasks and self.adversarial:
+            logger.warning(
+                "Cannot provide %s results due to maximum number of adversarial simulations that can be generated: %s."
+                "\n %s simulations will be generated.",
+                simulation_result_limit,
+                total_tasks,
+                total_tasks,
+            )
+        total_tasks = min(total_tasks, simulation_result_limit)
+        progress_bar = tqdm(
+            total=total_tasks,
+            desc="generating simulations",
+            ncols=100,
+            unit="simulations",
+        )
+
         for t in templates:
             for p in t.template_parameters:
                 if jailbreak:
                     self._ensure_service_dependencies()
                     jailbreak_dataset = await self.rai_client.get_jailbreaks_dataset()  # type: ignore[union-attr]
-                    p = self._join_conversation_starter(p, random.choice(jailbreak_dataset))
+                    p = self._join_conversation_starter(
+                        p, random.choice(jailbreak_dataset)
+                    )
 
                 tasks.append(
                     asyncio.create_task(
@@ -280,7 +327,15 @@ class Simulator:
             if len(tasks) >= simulation_result_limit:
                 break
 
-        sim_results = await asyncio.gather(*tasks)
+        sim_results = []
+
+        # Use asyncio.as_completed to update the progress bar when a task is complete
+        for task in asyncio.as_completed(tasks):
+            result = await task
+            sim_results.append(result)  # Store the result
+            progress_bar.update(1)
+
+        progress_bar.close()
 
         return JsonLineList(sim_results)
 
@@ -319,7 +374,9 @@ class Simulator:
             parameters = {}
         # create user bot
         user_bot = self._setup_bot(ConversationRole.USER, template, parameters)
-        system_bot = self._setup_bot(ConversationRole.ASSISTANT, template, parameters)
+        system_bot = self._setup_bot(
+            ConversationRole.ASSISTANT, template, parameters
+        )
 
         bots = [user_bot, system_bot]
 
@@ -328,7 +385,7 @@ class Simulator:
         asyncHttpClient = AsyncHTTPClientWithRetry(
             n_retry=api_call_retry_limit,
             retry_timeout=api_call_retry_sleep_sec,
-            logger=logging.getLogger(),
+            logger=logger,
         )
         async with sem:
             async with asyncHttpClient.client as session:
@@ -357,7 +414,9 @@ class Simulator:
                 else:
                     for k, v in parameters[c_key].items():
                         if k not in ["callback_citations", "callback_citation_key"]:
-                            citations.append({"id": k, "content": self._to_citation_content(v)})
+                            citations.append(
+                                {"id": k, "content": self._to_citation_content(v)}
+                            )
             else:
                 citations.append(
                     {
@@ -373,7 +432,9 @@ class Simulator:
             return obj
         return json.dumps(obj)
 
-    def _get_callback_citations(self, callback_citations: dict, turn_num: Optional[int] = None):
+    def _get_callback_citations(
+        self, callback_citations: dict, turn_num: Optional[int] = None
+    ):
         if turn_num is None:
             return []
         current_turn_citations = []
@@ -382,7 +443,9 @@ class Simulator:
             citations = callback_citations[current_turn_str]
             if isinstance(citations, dict):
                 for k, v in citations.items():
-                    current_turn_citations.append({"id": k, "content": self._to_citation_content(v)})
+                    current_turn_citations.append(
+                        {"id": k, "content": self._to_citation_content(v)}
+                    )
             else:
                 current_turn_citations.append(
                     {
@@ -397,13 +460,15 @@ class Simulator:
         for i, m in enumerate(conversation_history):
             message = {"content": m.message, "role": m.role.value}
             if len(template.context_key) > 0:
-                citations = self._get_citations(template_parameters, template.context_key, i)
+                citations = self._get_citations(
+                    template_parameters, template.context_key, i
+                )
                 message["context"] = citations
             elif "context" in m.full_response:
                 # adding context for adv_qa
                 message["context"] = m.full_response["context"]
             messages.append(message)
-        template_parameters['metadata'] = {}
+        template_parameters["metadata"] = {}
         if "ch_template_placeholder" in template_parameters:
             del template_parameters["ch_template_placeholder"]
 
@@ -524,8 +589,13 @@ class Simulator:
         if hasattr(fn, "__wrapped__"):
             func_module = fn.__wrapped__.__module__
             func_name = fn.__wrapped__.__name__
-            if func_module == "openai.resources.chat.completions" and func_name == "create":
-                return Simulator._from_openai_chat_completions(fn, simulator_connection, ai_client, **kwargs)
+            if (
+                func_module == "openai.resources.chat.completions"
+                and func_name == "create"
+            ):
+                return Simulator._from_openai_chat_completions(
+                    fn, simulator_connection, ai_client, **kwargs
+                )
 
         return Simulator(
             simulator_connection=simulator_connection,
@@ -534,7 +604,9 @@ class Simulator:
         )
 
     @staticmethod
-    def _from_openai_chat_completions(fn: Callable[[Any], dict], simulator_connection=None, ai_client=None, **kwargs):
+    def _from_openai_chat_completions(
+        fn: Callable[[Any], dict], simulator_connection=None, ai_client=None, **kwargs
+    ):
         return Simulator(
             simulator_connection=simulator_connection,
             ai_client=ai_client,
@@ -625,7 +697,9 @@ class Simulator:
                 input_data[chat_history_key] = all_messages
 
             response = flow.invoke(input_data).output
-            chat_protocol_message["messages"].append({"role": "assistant", "content": response[chat_output_key]})
+            chat_protocol_message["messages"].append(
+                {"role": "assistant", "content": response[chat_output_key]}
+            )
 
             return chat_protocol_message
 
@@ -657,8 +731,12 @@ class Simulator:
         One of 'template' or 'template_path' must be provided to create a template. If 'template' is provided,
         it is used directly; if 'template_path' is provided, the content is read from the file at that path.
         """
-        if (template is None and template_path is None) or (template is not None and template_path is not None):
-            raise ValueError("One and only one of the parameters [template, template_path] has to be set.")
+        if (template is None and template_path is None) or (
+            template is not None and template_path is not None
+        ):
+            raise ValueError(
+                "One and only one of the parameters [template, template_path] has to be set."
+            )
 
         if template is not None:
             return Template(template_name=name, text=template, context_key=context_key)
@@ -669,7 +747,9 @@ class Simulator:
 
             return Template(template_name=name, text=tc, context_key=context_key)
 
-        raise ValueError("Condition not met for creating template, please check examples and parameter list.")
+        raise ValueError(
+            "Condition not met for creating template, please check examples and parameter list."
+        )
 
     @staticmethod
     def get_template(template_name: str):
