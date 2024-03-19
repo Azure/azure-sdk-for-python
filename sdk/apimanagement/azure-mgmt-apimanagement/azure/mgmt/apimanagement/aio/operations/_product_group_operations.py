@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -89,7 +89,6 @@ class ProductGroupOperations:
         :type top: int
         :param skip: Number of records to skip. Default value is None.
         :type skip: int
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either GroupContract or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.apimanagement.models.GroupContract]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -111,7 +110,7 @@ class ProductGroupOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_product_request(
+                _request = build_list_by_product_request(
                     resource_group_name=resource_group_name,
                     service_name=service_name,
                     product_id=product_id,
@@ -120,12 +119,11 @@ class ProductGroupOperations:
                     top=top,
                     skip=skip,
                     api_version=api_version,
-                    template_url=self.list_by_product.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -137,13 +135,13 @@ class ProductGroupOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("GroupCollection", pipeline_response)
@@ -153,11 +151,11 @@ class ProductGroupOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -169,10 +167,6 @@ class ProductGroupOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_by_product.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/products/{productId}/groups"
-    }
 
     @distributed_trace_async
     async def check_entity_exists(
@@ -191,7 +185,6 @@ class ProductGroupOperations:
         :param group_id: Group identifier. Must be unique in the current API Management service
          instance. Required.
         :type group_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: bool or the result of cls(response)
         :rtype: bool
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -210,23 +203,22 @@ class ProductGroupOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_check_entity_exists_request(
+        _request = build_check_entity_exists_request(
             resource_group_name=resource_group_name,
             service_name=service_name,
             product_id=product_id,
             group_id=group_id,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.check_entity_exists.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -237,12 +229,8 @@ class ProductGroupOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})  # type: ignore
         return 200 <= response.status_code <= 299
-
-    check_entity_exists.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/products/{productId}/groups/{groupId}"
-    }
 
     @distributed_trace_async
     async def create_or_update(
@@ -261,7 +249,6 @@ class ProductGroupOperations:
         :param group_id: Group identifier. Must be unique in the current API Management service
          instance. Required.
         :type group_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: GroupContract or the result of cls(response)
         :rtype: ~azure.mgmt.apimanagement.models.GroupContract
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -280,23 +267,22 @@ class ProductGroupOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.GroupContract] = kwargs.pop("cls", None)
 
-        request = build_create_or_update_request(
+        _request = build_create_or_update_request(
             resource_group_name=resource_group_name,
             service_name=service_name,
             product_id=product_id,
             group_id=group_id,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.create_or_update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -317,10 +303,6 @@ class ProductGroupOperations:
 
         return deserialized  # type: ignore
 
-    create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/products/{productId}/groups/{groupId}"
-    }
-
     @distributed_trace_async
     async def delete(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, service_name: str, product_id: str, group_id: str, **kwargs: Any
@@ -338,7 +320,6 @@ class ProductGroupOperations:
         :param group_id: Group identifier. Must be unique in the current API Management service
          instance. Required.
         :type group_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -357,23 +338,22 @@ class ProductGroupOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             resource_group_name=resource_group_name,
             service_name=service_name,
             product_id=product_id,
             group_id=group_id,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.delete.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -384,8 +364,4 @@ class ProductGroupOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/products/{productId}/groups/{groupId}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore

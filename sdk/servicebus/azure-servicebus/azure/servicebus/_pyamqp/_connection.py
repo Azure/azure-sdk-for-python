@@ -667,7 +667,10 @@ class Connection:  # pylint:disable=too-many-instance-attributes
             ConnectionState.OPEN_SENT,
             ConnectionState.OPENED,
         ]:
-            raise ValueError("Connection not open.")
+            raise AMQPConnectionError(
+                ErrorCondition.SocketError,
+                description="Connection not open."
+            )
         now = time.time()
         if get_local_timeout(
             now,

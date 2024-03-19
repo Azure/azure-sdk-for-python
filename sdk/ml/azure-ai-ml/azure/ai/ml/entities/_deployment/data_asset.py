@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Any, Dict, Optional
+from typing import Dict, Optional
 
 from azure.ai.ml._schema._deployment.online.data_asset_schema import DataAssetSchema
 from azure.ai.ml._utils._experimental import experimental
@@ -14,7 +14,7 @@ class DataAsset:
     """Data Asset entity
 
     :param data_id: Arm id of registered data asset. If not set, data_id defaults to None.
-    :param data_id: typing.Optional[str]
+    :type data_id: typing.Optional[str]
     :param name: Name of data asset. If not set, name defaults to None.
     :type name: typing.Optional[str]
     :param path: Path where the data asset is stored. If not set, path defaults to None.
@@ -35,12 +35,12 @@ class DataAsset:
 
     def __init__(
         self,
+        *,
         data_id: Optional[str] = None,
         name: Optional[str] = None,
         path: Optional[str] = None,
         version: Optional[int] = None,
-        **kwargs: Any,
-    ):  # pylint: disable=unused-argument
+    ):
         self.data_id = data_id
         self.name = name
         self.path = path

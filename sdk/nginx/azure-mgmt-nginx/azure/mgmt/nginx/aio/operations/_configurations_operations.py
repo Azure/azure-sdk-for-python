@@ -32,6 +32,7 @@ from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._configurations_operations import (
+    build_analysis_request,
     build_create_or_update_request,
     build_delete_request,
     build_get_request,
@@ -606,4 +607,171 @@ class ConfigurationsOperations:
 
     begin_delete.metadata = {
         "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Nginx.NginxPlus/nginxDeployments/{deploymentName}/configurations/{configurationName}"
+    }
+
+    @overload
+    async def analysis(
+        self,
+        resource_group_name: str,
+        deployment_name: str,
+        configuration_name: str,
+        body: Optional[_models.AnalysisCreate] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.AnalysisResult:
+        """Analyze an NGINX configuration without applying it to the NGINXaaS deployment.
+
+        Analyze an NGINX configuration without applying it to the NGINXaaS deployment.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param deployment_name: The name of targeted NGINX deployment. Required.
+        :type deployment_name: str
+        :param configuration_name: The name of configuration, only 'default' is supported value due to
+         the singleton of NGINX conf. Required.
+        :type configuration_name: str
+        :param body: The NGINX configuration to analyze. Default value is None.
+        :type body: ~azure.mgmt.nginx.models.AnalysisCreate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: AnalysisResult or the result of cls(response)
+        :rtype: ~azure.mgmt.nginx.models.AnalysisResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def analysis(
+        self,
+        resource_group_name: str,
+        deployment_name: str,
+        configuration_name: str,
+        body: Optional[IO] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.AnalysisResult:
+        """Analyze an NGINX configuration without applying it to the NGINXaaS deployment.
+
+        Analyze an NGINX configuration without applying it to the NGINXaaS deployment.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param deployment_name: The name of targeted NGINX deployment. Required.
+        :type deployment_name: str
+        :param configuration_name: The name of configuration, only 'default' is supported value due to
+         the singleton of NGINX conf. Required.
+        :type configuration_name: str
+        :param body: The NGINX configuration to analyze. Default value is None.
+        :type body: IO
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: AnalysisResult or the result of cls(response)
+        :rtype: ~azure.mgmt.nginx.models.AnalysisResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def analysis(
+        self,
+        resource_group_name: str,
+        deployment_name: str,
+        configuration_name: str,
+        body: Optional[Union[_models.AnalysisCreate, IO]] = None,
+        **kwargs: Any
+    ) -> _models.AnalysisResult:
+        """Analyze an NGINX configuration without applying it to the NGINXaaS deployment.
+
+        Analyze an NGINX configuration without applying it to the NGINXaaS deployment.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param deployment_name: The name of targeted NGINX deployment. Required.
+        :type deployment_name: str
+        :param configuration_name: The name of configuration, only 'default' is supported value due to
+         the singleton of NGINX conf. Required.
+        :type configuration_name: str
+        :param body: The NGINX configuration to analyze. Is either a AnalysisCreate type or a IO type.
+         Default value is None.
+        :type body: ~azure.mgmt.nginx.models.AnalysisCreate or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: AnalysisResult or the result of cls(response)
+        :rtype: ~azure.mgmt.nginx.models.AnalysisResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AnalysisResult] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            if body is not None:
+                _json = self._serialize.body(body, "AnalysisCreate")
+            else:
+                _json = None
+
+        request = build_analysis_request(
+            resource_group_name=resource_group_name,
+            deployment_name=deployment_name,
+            configuration_name=configuration_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            content=_content,
+            template_url=self.analysis.metadata["url"],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ResourceProviderDefaultErrorResponse, pipeline_response
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("AnalysisResult", pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    analysis.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Nginx.NginxPlus/nginxDeployments/{deploymentName}/configurations/{configurationName}/analyze"
     }
