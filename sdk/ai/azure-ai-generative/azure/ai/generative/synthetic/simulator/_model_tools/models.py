@@ -69,7 +69,7 @@ class AsyncHTTPClientWithRetry:
         ))
 
     async def delete_auth_header(self, session, trace_config_ctx, params):
-        request_headers = dict(params.request_info.headers)
+        request_headers = dict(params.response.request_info.headers)
         if "Authorization" in request_headers:
             del request_headers["Authorization"]
         if "api-key" in request_headers:
