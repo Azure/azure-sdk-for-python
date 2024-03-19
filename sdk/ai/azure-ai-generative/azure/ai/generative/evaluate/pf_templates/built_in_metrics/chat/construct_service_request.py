@@ -7,11 +7,16 @@ def parse_chat(user_text: list):
         try:
             role = turn["role"]
             content = turn["content"]
-            content_str = "<" + role + ">" + content + "</>\n"
+            if role == "user":
+                content_str = "<Human>" + content + "</>\n"
+            elif role == "assistant":
+                content_str = "<System>" + content + "</>\n"
+            else:
+                content_str = "<" + role + ">" + content + "</>\n"
         except KeyError:
             content_str = json.dumps(turn) + "\n"
         parsed_chat.append(content_str)
-    return "{\"conversation\": \"" + "".join(parsed_chat) + "\"}"
+    return "".join(parsed_chat)
         
 def normalize_user_text(user_text):
     return user_text.replace("'", "\\\"")
