@@ -6,7 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from typing import Any, IO, Union
+
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.apimanagement import ApiManagementClient
 
 """
@@ -41,7 +44,7 @@ def main():
                     "grantTypes": {
                         "authorizationCode": {
                             "clientId": "59790825-fdd3-4b10-bc7a-4c3aaf25801d",
-                            "clientSecret": "Q3iPSaKQ~fZFcJk5vKmqzUAfJagcJ8",
+                            "clientSecret": "xxxxxxxxxxxxxxxxxxxxxxxx",
                             "resourceUri": "https://graph.microsoft.com",
                             "scopes": "User.Read.All Group.Read.All",
                         }

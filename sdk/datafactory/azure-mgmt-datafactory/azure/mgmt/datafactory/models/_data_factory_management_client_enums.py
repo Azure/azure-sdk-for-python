@@ -271,6 +271,15 @@ class ExpressionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     EXPRESSION = "Expression"
 
 
+class ExpressionV2Type(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of expressions supported by the system. Type: string."""
+
+    CONSTANT = "Constant"
+    FIELD = "Field"
+    UNARY = "Unary"
+    BINARY = "Binary"
+
+
 class FactoryIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The identity type."""
 
@@ -318,6 +327,13 @@ class GoogleBigQueryAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumM
     """The OAuth 2.0 authentication mechanism used for authentication. ServiceAuthentication can only
     be used on self-hosted IR.
     """
+
+    SERVICE_AUTHENTICATION = "ServiceAuthentication"
+    USER_AUTHENTICATION = "UserAuthentication"
+
+
+class GoogleBigQueryV2AuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The OAuth 2.0 authentication mechanism used for authentication."""
 
     SERVICE_AUTHENTICATION = "ServiceAuthentication"
     USER_AUTHENTICATION = "UserAuthentication"
@@ -813,6 +829,13 @@ class SelfHostedIntegrationRuntimeNodeStatus(str, Enum, metaclass=CaseInsensitiv
 
 
 class ServiceNowAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The authentication type to use."""
+
+    BASIC = "Basic"
+    O_AUTH2 = "OAuth2"
+
+
+class ServiceNowV2AuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The authentication type to use."""
 
     BASIC = "Basic"
