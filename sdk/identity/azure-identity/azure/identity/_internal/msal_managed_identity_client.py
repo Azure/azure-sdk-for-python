@@ -40,13 +40,13 @@ class MsalManagedIdentityClient:  # pylint: disable=too-many-instance-attributes
         return self._msal_client.acquire_token_for_client(resource)
 
     def get_managed_identity(self, **kwargs: Any) -> msal.ManagedIdentity:
-        if "client_id" in kwargs:
+        if "client_id" in kwargs and kwargs["client_id"]:
             return msal.UserAssignedManagedIdentity(client_id=kwargs["client_id"])
         identity_config = kwargs.pop("identity_config", None) or {}
-        if "client_id" in identity_config:
+        if "client_id" in identity_config and identity_config["client_id"]:
             return msal.UserAssignedManagedIdentity(client_id=identity_config["client_id"])
-        if "resource_id" in identity_config:
+        if "resource_id" in identity_config and identity_config["resource_id"]:
             return msal.UserAssignedManagedIdentity(resource_id=identity_config["resource_id"])
-        if "object_id" in identity_config:
+        if "object_id" in identity_config and identity_config["object_id"]:
             return msal.UserAssignedManagedIdentity(object_id=identity_config["object_id"])
         return msal.SystemAssignedManagedIdentity()
