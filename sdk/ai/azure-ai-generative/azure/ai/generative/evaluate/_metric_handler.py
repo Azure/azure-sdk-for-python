@@ -16,7 +16,7 @@ from ._utils import run_pf_flow_with_dict_list, df_to_dict_list, wait_for_pf_run
 LOGGER = logging.getLogger(__name__)
 
 NODE_LIST_BY_TASK = {
-    "qa": ["gpt_coherence", "gpt_similarity", "gpt_relevance", "gpt_fluency"],
+    "qa": ["gpt_coherence", "gpt_similarity", "gpt_relevance", "gpt_fluency", "gpt_groundedness"],
     "chat": ["evaluate_chat_rag", "evaluate_coherence_fluency"],
 }
 
