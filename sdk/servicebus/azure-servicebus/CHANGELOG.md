@@ -8,6 +8,9 @@
 
 ### Bugs Fixed
 
+- Fixed a bug where the client was not retrying when a connection drop happened ([34786](https://github.com/Azure/azure-sdk-for-python/pull/34786))
+- Fixed a bug where the client would not handle a role instance swap on the service correctly ([34820](https://github.com/Azure/azure-sdk-for-python/pull/34820))
+
 ### Other Changes
 
 ## 7.12.0 (2024-03-06)
