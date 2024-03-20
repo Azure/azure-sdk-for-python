@@ -213,7 +213,7 @@ class Compute(Resource, RestTranslatableMixin):
 
 
 class NetworkSettings:
-    """Network settings for a compute resource. If the workspace and VNet are in different resource groups, 
+    """Network settings for a compute resource. If the workspace and VNet are in different resource groups,
     please provide the full URI for subnet and leave vnet_name as None.
 
     :param vnet_name: The virtual network name.
