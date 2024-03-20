@@ -366,7 +366,7 @@ class ServiceBusReceiver(
             if self._max_wait_time
             else 0,
             # set link_credit to at least 1 so that messages can be received
-            link_credit=self._prefetch_count + 1 if self._prefetch_count else self._message_count,
+            link_credit=self._prefetch_count + 1,
             # If prefetch is "off", then keep_alive coroutine frequently listens on the connection for messages and
             # releases right away, since no "prefetched" messages should be in the internal buffer.
             keep_alive_interval=self._config.keep_alive
