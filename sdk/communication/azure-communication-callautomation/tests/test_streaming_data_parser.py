@@ -56,9 +56,9 @@ class TestStreamDataParser(unittest.TestCase):
         self.assertEqual(transcriptionData.words[1].text, "everything")
         self.assertEqual(transcriptionData.words[1].offset, 870864674)
         self.assertEqual(transcriptionData.words[1].duration, 5200000)
-        self.assertEqual(transcriptionData.words[3].text, "fine")
-        self.assertEqual(transcriptionData.words[3].offset, 876064674)
-        self.assertEqual(transcriptionData.words[3].duration, 4000000)
-        self.assertEqual(transcriptionData.participant.raw_id, "+910000000000")
+        self.assertEqual(transcriptionData.words[2].text, "fine")
+        self.assertEqual(transcriptionData.words[2].offset, 876064674)
+        self.assertEqual(transcriptionData.words[2].duration, 4000000)
+        self.assertEqual(transcriptionData.participant.raw_id, "4:+910000000000")
 
 
