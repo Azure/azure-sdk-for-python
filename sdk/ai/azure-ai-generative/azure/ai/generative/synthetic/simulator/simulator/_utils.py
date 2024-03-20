@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-# pylint: disable=C0303
+# pylint: skip-file
 """
 This module contains a utility class for managing a list of JSON lines.
 """
@@ -52,14 +52,17 @@ class JsonLineList(list):
                     assistant_message = message['content']
                 if 'context' in message:
                     context = message.get("context", None)
-            if user_message and assistant_message:
-                if context:
-                    json_lines += json.dumps({
-                        'question': user_message, 
-                        'answer': assistant_message, 
-                        'context': context}) + "\n"
-                else:
-                    json_lines += json.dumps({
-                        'question': user_message, 
-                        'answer': assistant_message}) + "\n"
+                if user_message and assistant_message:
+                    if context:
+                        json_lines += json.dumps({
+                            'question': user_message, 
+                            'answer': assistant_message, 
+                            'context': context}) + "\n"
+                        user_message = assistant_message = context = None
+                    else:
+                        json_lines += json.dumps({
+                            'question': user_message, 
+                            'answer': assistant_message}) + "\n"
+                        user_message = assistant_message = None
+                    
         return json_lines

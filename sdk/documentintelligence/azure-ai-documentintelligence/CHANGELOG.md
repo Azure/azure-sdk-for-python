@@ -1,6 +1,16 @@
 # Release History
 
-## 1.0.0b2 (Unreleased)
+## 1.0.0b3 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0b2 (2024-03-07)
 
 ### Features Added
 
@@ -16,8 +26,6 @@
 
 - Changed property name from `items` to `items_property` in model `DocumentFieldSchema` and `DocumentList`.
 - Changed property name from `base64_source` to `bytes_source` in model `AnalyzeDocumentRequest` and `ClassifyDocumentRequest`.
-
-### Bugs Fixed
 
 ### Other Changes
 

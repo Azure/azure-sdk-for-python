@@ -74,6 +74,7 @@ jobs:
 
     variables:
       - template: ../variables/globals.yml
+      - template: ../variables/image.yml
 
       - name: skipComponentGovernanceDetection
         value: true

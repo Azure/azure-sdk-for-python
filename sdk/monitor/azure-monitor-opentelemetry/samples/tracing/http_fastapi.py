@@ -4,6 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 import fastapi
+import uvicorn
+
 from azure.monitor.opentelemetry import configure_azure_monitor
 
 # Configure Azure monitor collection telemetry pipeline
@@ -29,3 +31,9 @@ async def exception():
 @app.get("/exclude")
 async def exclude():
     return {"message": "Telemetry was not captured"}
+
+
+if __name__ == "__main__":
+    # cSpell:disable
+    uvicorn.run("http_fastapi:app", port=8008, reload=True)
+    # cSpell:disable

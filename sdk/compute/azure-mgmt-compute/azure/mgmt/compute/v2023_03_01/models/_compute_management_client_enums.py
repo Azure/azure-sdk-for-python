@@ -429,7 +429,6 @@ class PublicIPAddressSkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specify public IP sku tier."""
 
     REGIONAL = "Regional"
-    GLOBAL = "Global"
     GLOBAL_ENUM = "Global"
 
 
@@ -475,10 +474,10 @@ class RestorePointEncryptionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Disk Restore Point is encrypted at rest with Platform managed key."""
     ENCRYPTION_AT_REST_WITH_CUSTOMER_KEY = "EncryptionAtRestWithCustomerKey"
     """Disk Restore Point is encrypted at rest with Customer managed key that can be changed and
-    #: revoked by a customer."""
+    revoked by a customer."""
     ENCRYPTION_AT_REST_WITH_PLATFORM_AND_CUSTOMER_KEYS = "EncryptionAtRestWithPlatformAndCustomerKeys"
     """Disk Restore Point is encrypted at rest with 2 layers of encryption. One of the keys is
-    #: Customer managed and the other key is Platform managed."""
+    Customer managed and the other key is Platform managed."""
 
 
 class RestorePointExpandOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
