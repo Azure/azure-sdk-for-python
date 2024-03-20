@@ -11,6 +11,7 @@ GENERATED_PACKAGES_LIST_FILE = "toc_tree.rst"
 
 _LOGGER = logging.getLogger(__name__)
 
+MULTIAPI_SLIM_PACKAGES = ["azure.mgmt.network"]
 
 def make_title(title):
     """Create a underlined title with the correct number of =."""
@@ -160,7 +161,7 @@ def generate_doc(output_directory: str = "./ref/", package_root: str = None) -> 
 
     for namespace, multi_api_versions in namespaces.items():
         _LOGGER.info("Working on %s", namespace)
-        if not multi_api_versions:
+        if not multi_api_versions or namespace in MULTIAPI_SLIM_PACKAGES:
             write_rst(namespace, rst_path_template, rst_namespace_template, package_list_path)
             continue
 
