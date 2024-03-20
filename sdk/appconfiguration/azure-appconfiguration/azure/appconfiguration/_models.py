@@ -77,9 +77,12 @@ class ConfigurationSetting(Model):
                 ) and key_value.key.startswith(  # type: ignore
                     FeatureFlagConfigurationSetting._key_prefix  # pylint: disable=protected-access
                 ):
-                    return FeatureFlagConfigurationSetting._from_generated(  # pylint: disable=protected-access
+                    config_setting = FeatureFlagConfigurationSetting._from_generated(
                         key_value
-                    )
+                    )  # pylint: disable=protected-access
+                    if key_value.value:
+                        config_setting.value = key_value.value
+                    return config_setting
                 if key_value.content_type.startswith(
                     SecretReferenceConfigurationSetting._secret_reference_content_type  # pylint:disable=protected-access
                 ):
@@ -161,7 +164,7 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
         self,
         feature_id: str,
         *,
-        enabled: Optional[bool] = None,
+        enabled: Optional[bool] = False,
         filters: Optional[List[Dict[str, Any]]] = None,
         **kwargs: Any,
     ) -> None:
@@ -170,8 +173,8 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
         :type feature_id: str
         :keyword enabled: The value indicating whether the feature flag is enabled.
             A feature is OFF if enabled is false. If enabled is true, then the feature is ON
-            if there are no conditions or if all conditions are satisfied.
-        :paramtype enabled: bool or None
+            if there are no conditions or if all conditions are satisfied. Default value of this property is False.
+        :paramtype enabled: bool
         :keyword filters: Filters that must run on the client and be evaluated as true for the feature
             to be considered enabled.
         :paramtype filters: list[dict[str, Any]] or None
@@ -204,6 +207,8 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
             temp = json.loads(self._value)
             temp["id"] = self.feature_id
             temp["enabled"] = self.enabled
+            temp["display_name"] = self.display_name
+            temp["description"] = self.description
             if "conditions" not in temp.keys():
                 temp["conditions"] = {}
             temp["conditions"]["client_filters"] = self.filters
@@ -218,14 +223,16 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
             temp = json.loads(new_value)
             temp["id"] = self.feature_id
             self._value = json.dumps(temp)
-            self.enabled = temp.get("enabled", None)
+            self.enabled = temp.get("enabled", False)
+            self.display_name = temp.get("display_name", None)
+            self.description = temp.get("description", None)
             self.filters = None
             conditions = temp.get("conditions", None)
             if conditions:
                 self.filters = conditions.get("client_filters", None)
         except (json.JSONDecodeError, ValueError):
             self._value = new_value
-            self.enabled = None
+            self.enabled = False
             self.filters = None
 
     @classmethod
@@ -234,10 +241,14 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
             return key_value
         enabled = None
         filters = None
+        display_name = None
+        description = None
         try:
             temp = json.loads(key_value.value)  # type: ignore
             if isinstance(temp, dict):
                 enabled = temp.get("enabled")
+                display_name = temp.get("display_name")
+                description = temp.get("description")
                 if "conditions" in temp.keys():
                     filters = temp["conditions"].get("client_filters")
         except (ValueError, json.JSONDecodeError):
@@ -253,6 +264,8 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
             etag=key_value.etag,
             enabled=enabled,
             filters=filters,
+            display_name=display_name,
+            description=description,
         )
 
     def _to_generated(self) -> KeyValue:
