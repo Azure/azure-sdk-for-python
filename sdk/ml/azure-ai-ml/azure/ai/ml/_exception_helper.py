@@ -5,7 +5,7 @@
 import json
 import logging
 import traceback
-from typing import Dict, NoReturn, Optional, Tuple, Union
+from typing import Dict, NoReturn, Optional, Tuple, Union, cast
 
 from colorama import Fore, Style, init
 from marshmallow.exceptions import ValidationError as SchemaValidationError
@@ -162,7 +162,7 @@ def format_details_section(
                 field_error = f"{list(field_error.keys())[0]}:\n    - {list(field_error.values())[0][0]}"
 
             details += f"{Fore.RED}\n(x) {field}:\n- {field_error}{Fore.RESET}\n"
-    return error_types, details
+    return cast(Tuple[Dict[str, bool], str], (error_types, details))
 
 
 def format_errors_and_resolutions_sections(entity_type: str, error_types: Dict, cli: bool) -> Tuple[str, str]:
