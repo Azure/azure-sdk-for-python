@@ -516,7 +516,7 @@ class Connection:  # pylint:disable=too-many-instance-attributes
             self._error = AMQPConnectionError(
                 condition=frame[0][0], description=frame[0][1], info=frame[0][2]
             )
-            _LOGGER.error(
+            _LOGGER.warning(
                 "Connection closed with error: %r", frame[0],
                 extra=self._network_trace_params
             )
@@ -667,7 +667,10 @@ class Connection:  # pylint:disable=too-many-instance-attributes
             ConnectionState.OPEN_SENT,
             ConnectionState.OPENED,
         ]:
-            raise ValueError("Connection not open.")
+            raise AMQPConnectionError(
+                ErrorCondition.SocketError,
+                description="Connection not open."
+            )
         now = time.time()
         if get_local_timeout(
             now,

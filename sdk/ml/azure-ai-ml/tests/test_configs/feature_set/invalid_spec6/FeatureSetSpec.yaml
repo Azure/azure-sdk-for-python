@@ -1,0 +1,25 @@
+# timestamp_column is not supported for featureset feature source
+source:
+  type: featureset
+  path: azureml://subscriptions/my_sub/resourcegroups/my_rg/workspaces/my_fs/feturesets/source_feature_set_name/versions/version1
+  timestamp_column:
+    name: timestamp
+    format: "%Y-%m-%d %H:%M:%S"
+feature_transformation_code:
+  path: ./code
+  transformer_class: driver_hourly_transform.DriverHourlyTransformer
+features:
+  - name: conv_rate
+    type: double
+  - name: acc_rate
+    type: double
+  - name: avg_daily_trips
+    type: double
+source_lookback:
+    days: 30
+    hours: 0
+    minutes: 0
+temporal_join_lookback:
+    days: 2
+    hours: 0
+    minutes: 0

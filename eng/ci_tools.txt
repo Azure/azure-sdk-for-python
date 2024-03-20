@@ -13,7 +13,7 @@ wrapt==1.12.1; python_version <= '3.10'
 wrapt==1.15.0; python_version >= '3.11'
 typing-extensions<=4.6.3
 pyproject-api<1.6
-cibuildwheel==2.16.2 ; python_version > '3.8'
+cibuildwheel==2.16.5
 
 # requirements leveraged for testing
 pytest==7.3.1

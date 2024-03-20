@@ -132,12 +132,12 @@ nodes:
     type: code
     path: evaluate_chat_rag.py
   inputs:
-    connection: Default_AzureOpenAI
+    connection: openai_connection
     chat: ${inputs.messages}
     deployment_name: ${inputs.deployment_name}
     selected_metrics: ${select_metrics.output}
   activate:
-    when: ${validate_conversation.output}
+    when: ${validate_conversation.output.rag_metrics}
     is: true
   use_variants: false
 - name: evaluate_coherence_fluency
@@ -146,12 +146,12 @@ nodes:
     type: code
     path: evaluate_coherence_fluency.py
   inputs:
-    connection: Default_AzureOpenAI
+    connection: openai_connection
     deployment_name: ${inputs.deployment_name}
     parsed_qa: ${parse_chat.output}
     selected_metrics: ${select_metrics.output}
   activate:
-    when: ${validate_conversation.output}
+    when: ${validate_conversation.output.non_rag_metrics}
     is: true
   use_variants: false
 - name: parse_chat
@@ -162,7 +162,7 @@ nodes:
   inputs:
     chat: ${inputs.messages}
   activate:
-    when: ${validate_conversation.output}
+    when: ${validate_conversation.output.non_rag_metrics}
     is: true
   use_variants: false
 - name: concatenate_metrics
@@ -191,6 +191,7 @@ nodes:
     type: code
     path: validate_service.py
   inputs:
+    chat: ${inputs.messages}
     selected_metrics: ${select_metrics.output}
   use_variants: false
 - name: construct_service_request
