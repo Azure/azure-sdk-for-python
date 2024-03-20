@@ -64,7 +64,7 @@ __all__ = [
     "CallConnectionClient",
 
     # parser
-    "StreamingDataParser"
+    "StreamingDataParser",
 
     # models for input
     "FileSource",
@@ -95,10 +95,10 @@ __all__ = [
     "CommunicationIdentifierKind",
     "CommunicationCloudEnvironment",
     "UnknownIdentifier",
-    
+
     # streaming models
     "TranscriptionMetadata",
-    "TranscriptionData"
+    "TranscriptionData",
 
     # enums
     "CallRejectReason",
