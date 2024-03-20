@@ -25,7 +25,7 @@ from ci_tools.variables import in_ci
 
 from .config import PROXY_URL
 from .helpers import get_http_client, is_live_and_not_recording
-from .sanitizers import add_remove_header_sanitizer, set_custom_default_matcher
+from .sanitizers import add_oauth_response_sanitizer, add_remove_header_sanitizer, set_custom_default_matcher
 
 
 load_dotenv(find_dotenv())
@@ -339,6 +339,7 @@ def start_test_proxy(request) -> None:
     headers_to_ignore = "Authorization, x-ms-client-request-id, x-ms-request-id"
     add_remove_header_sanitizer(headers=headers_to_ignore)
     set_custom_default_matcher(excluded_headers=headers_to_ignore)
+    add_oauth_response_sanitizer()
 
 
 def stop_test_proxy() -> None:
