@@ -461,9 +461,6 @@ parameters:
       azure-mgmt-rdbms:
         ServiceDirectory: rdbms
         Version: '10.2.0b15'
-      azure-mgmt-app:
-        ServiceDirectory: app
-        Version: '1.0.0b2'
       azure-mgmt-netapp:
         ServiceDirectory: netapp
         Version: '12.0.0b1'
