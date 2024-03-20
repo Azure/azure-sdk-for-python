@@ -67,22 +67,20 @@ async def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statem
 
         # Do single put if the size is smaller than config.max_single_put_size
         if adjusted_count is not None and (adjusted_count <= blob_settings.max_single_put_size):
-            # Test the output type of the stream and determine if read is awaitable
-            awaitable = False
-            read_type = stream.read(0)
-            if inspect.isawaitable(read_type):
-                awaitable = True
-                read_type = await read_type
-            if not isinstance(read_type, bytes):
-                raise TypeError('Blob data should be of type bytes.')
-
             data: Union[bytes, IO[bytes]]
-            # Aiohttp requires streams to be IOBase, which most async streams will not be.
-            # So we just read the data out here instead.
-            if awaitable:
-                data = await stream.read()
-            else:
+            try:
+                read_type = await stream.read(0)
+                if not isinstance(read_type, bytes):
+                    raise TypeError('Blob data should be of type bytes.')
+            except TypeError:
+                read_type = stream.read(0)
+                if not isinstance(read_type, bytes):
+                    raise TypeError('Blob data should be of type bytes.')
                 data = stream
+            else:
+                # Aiohttp requires streams to be IOBase, which most async streams will not be.
+                # So we just read the data out here instead.
+                data = await stream.read(length)
 
             if encryption_options.get('key'):
                 encryption_data, data = encrypt_blob(data, encryption_options['key'], encryption_options['version'])
