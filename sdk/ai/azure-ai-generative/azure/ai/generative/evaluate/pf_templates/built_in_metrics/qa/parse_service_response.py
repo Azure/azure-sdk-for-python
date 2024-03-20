@@ -7,8 +7,8 @@ def parse_single_sample(response: dict, selected_metrics: dict) -> list:
     selected_label_keys = selected_metrics["safety_metrics"]
     parsed_response = []
     for key in response:
-        if selected_label_keys[key]:
-            harm_type = key#.replace("_flattened.md", "")
+        harm_type = key.replace("_fairness", "_unfairness")
+        if selected_label_keys[harm_type]:
             parsed_harm_response = {}
             try:
                 harm_response = eval(response[key])
@@ -50,7 +50,8 @@ def parse_single_sample(response: dict, selected_metrics: dict) -> list:
                 else:
                     metric_value = np.nan
                 reasoning = harm_response
-            elif harm_response != "" and (isinstance(harm_response, int) or isinstance(harm_response, float)):
+            elif harm_response != "" and (isinstance(harm_response, int) \
+                                    or isinstance(harm_response, float)):
                 if harm_response >= 0 and harm_response <= 7:
                     metric_value = harm_response
                 else:
@@ -64,9 +65,7 @@ def parse_single_sample(response: dict, selected_metrics: dict) -> list:
             parsed_response.append(parsed_harm_response)
     return parsed_response
 
-# The inputs section will change based on the arguments of the tool function, after you save the code
-# Adding type to arguments and return value will help the system show the types properly
-# Please update the function name/signature per need
+
 @tool
 def parse_response(batch_response: List[dict], selected_label_keys: dict) -> List[List[dict]]:
 

@@ -8,14 +8,13 @@ def concat_results(gpt_coherence_score: str = None,
                    gpt_similarity_score: str = None,
                    gpt_fluency_score: str = None,
                    gpt_relevance_score: str = None,
-                   #gpt_groundedness_score: str = None,
-                   f1_score: float = None) -> dict:
+                   f1_score: float = None
+                   ) -> dict:
 
     load_list = [{'name': 'gpt_coherence', 'score': gpt_coherence_score},
                  {'name': 'gpt_similarity', 'score': gpt_similarity_score},
                  {'name': 'gpt_fluency', 'score': gpt_fluency_score},
                  {'name': 'gpt_relevance', 'score': gpt_relevance_score},
-                 #{'name': 'gpt_groundedness', 'score': gpt_groundedness_score},
                  {'name': 'f1_score', 'score': f1_score}
                  ]
 

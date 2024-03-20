@@ -8,8 +8,9 @@ def default_safety_results():
     for metric_name in supported_metrics:
         result[metric_name] = np.nan
         result[metric_name + "_score"] = np.nan
-        result[metric_name + "_reasoning"] = np.nan
+        result[metric_name + "_reason"] = np.nan
     return result
+
 
 def default_gpt_results():
     supported_metrics = constants.Metric.QUALITY_METRICS
@@ -19,14 +20,17 @@ def default_gpt_results():
             result[metric_name] = np.nan
     return result
 
+
 def default_groundedness_results():
     return {"gpt_groundedness": np.nan,
-            "gpt_groundedness_reasoning": np.nan
+            "gpt_groundedness_reason": np.nan
             }
 
 
-# The inputs section will change based on the arguments of the tool function, after you save the code
-# Adding type to arguments and return value will help the system show the types properly
+# The inputs section will change based on the arguments
+# of the tool function, after you save the code
+# Adding type to arguments and return value will help
+# the system show the types properly
 # Please update the function name/signature per need
 @tool
 def concat_results(selected_metrics: dict, 

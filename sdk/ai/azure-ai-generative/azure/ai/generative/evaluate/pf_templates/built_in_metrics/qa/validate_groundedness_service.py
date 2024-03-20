@@ -5,23 +5,36 @@ from utils import get_cred, is_valid_string
 
 
 def is_service_available():
+    content_harm_service = False
+    groundedness_service = False
     try:
         cred = get_cred()
-        cred.host = cred.host.split("/subscriptions")[0]
 
         response = http_request(
-                host_creds=cred,
-                endpoint="/meta/version",
-                method="GET"
-            )
+            host_creds=cred,
+            endpoint="/checkannotation",
+            method="GET",
+        )
+
         if response.status_code != 200:
-            print("RAI service is not available in this region.")
-            return False
+            print("status_code not 200. Fail to get RAI service availability in this region.")
+            print(response.status_code)
         else:
-            return True
+            available_service = response.json()
+            if "content harm" in available_service:
+                content_harm_service = True
+            else:
+                print("RAI content harm service is not available in this region.")
+            if "groundedness" in available_service:
+                groundedness_service = True
+            else:
+                print("AACS service is not available in this region.")
     except Exception:
-        print("RAI service is not available in this region.")
-        return False
+        print("Fail to get RAI service availability in this region.")
+    return {"content_harm_service": content_harm_service,
+            "groundedness_service": groundedness_service
+            }
+
 
 def is_tracking_uri_set():
     if not mlflow.is_tracking_uri_set():
@@ -29,6 +42,7 @@ def is_tracking_uri_set():
         return False
     else:
         return True
+
 
 def is_safety_metric_selected(selected_metrics: dict) -> bool:
     selected_safety_metrics = selected_metrics["safety_metrics"]
@@ -38,8 +52,10 @@ def is_safety_metric_selected(selected_metrics: dict) -> bool:
     print("no safety_metrics are selected.")
     return False
 
+
 def is_groundedness_metric_selected(selected_metrics: dict) -> bool:
     return selected_metrics["quality_metrics"]["gpt_groundedness"]
+
 
 def is_input_valid_for_safety_metrics(question: str, answer: str):
     if is_valid_string(question) and is_valid_string(answer):
@@ -55,21 +71,29 @@ def is_input_valid_for_safety_metrics(question: str, answer: str):
 # if no safety metric is selected, return False
 @tool
 def validate_safety_metric_input(
-        selected_metrics: dict, 
+        selected_metrics: dict,
+        validate_input_result: dict,
         question: str, 
         answer: str,
         context: str = None) -> dict:
     service_available = is_service_available()
     tracking_uri_set = is_tracking_uri_set()
-    input_valid_for_safety_metrics = is_input_valid_for_safety_metrics(question, answer)
+    input_valid_for_safety_metrics = is_input_valid_for_safety_metrics(
+        question, answer)
 
     content_harm_service = is_safety_metric_selected(selected_metrics) \
-        and service_available and tracking_uri_set \
-        and is_input_valid_for_safety_metrics(question, answer)
+        and service_available["content_harm_service"] and tracking_uri_set \
+        and validate_input_result["safety_metrics"]
     
     groundedness_service = is_groundedness_metric_selected(selected_metrics) \
-        and service_available and tracking_uri_set
+        and validate_input_result["gpt_groundedness"] and tracking_uri_set \
+        and service_available["groundedness_service"]
+
+    groundedness_prompt = is_groundedness_metric_selected(selected_metrics) \
+        and validate_input_result["gpt_groundedness"] and tracking_uri_set\
+        and (not service_available["groundedness_service"])
     
     return {"content_harm_service": content_harm_service,
-            "groundedness_service": groundedness_service}
-    
+            "groundedness_service": groundedness_service,
+            "groundedness_prompt": groundedness_prompt
+            }

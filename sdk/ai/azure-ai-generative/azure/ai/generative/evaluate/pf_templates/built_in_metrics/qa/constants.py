@@ -1,12 +1,13 @@
 import sys
 from enum import Enum
-#import numpy as np
+
 
 class RAIService:
     """Define constants related to RAI service"""
     TIMEOUT = 1800
     SLEEPTIME = 2
     HARM_SEVERITY_THRESHOLD = 4
+
 
 class Metric:
     """Defines all metrics supported by RAI service"""
@@ -16,7 +17,7 @@ class Metric:
     SelfHarm = "self_harm"
     Violence = "violence"
     Sexual = "sexual"
-    HateFairness = "hate_fairness"
+    HateFairness = "hate_unfairness"
 
     QUALITY_METRICS = {
         "gpt_groundedness",
@@ -35,11 +36,13 @@ class Metric:
         HateFairness
     }
 
+
 class HarmSeverityLevel(Enum):
     VeryLow = "Very low"
     Low = "Low"
     Medium = "Medium"
     High = "High"
+
 
 class Tasks:
     """Defines types of annotation tasks supported by RAI Service."""

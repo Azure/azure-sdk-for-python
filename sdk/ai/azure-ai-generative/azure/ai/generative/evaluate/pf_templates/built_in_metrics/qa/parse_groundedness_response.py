@@ -50,21 +50,52 @@ def parse_single_sample(response: dict, selected_metrics: dict) -> list:
             metric_value = np.nan
             reasoning = ""
         parsed_harm_response[harm_type] = metric_value
-        parsed_harm_response[harm_type + "_reasoning"] = reasoning
+        parsed_harm_response[harm_type + "_reason"] = reasoning
         parsed_response.append(parsed_harm_response)
     return parsed_response
 
-# The inputs section will change based on the arguments of the tool function, after you save the code
-# Adding type to arguments and return value will help the system show the types properly
+
+def parse_groundedness_llm_response(llm_groundedness_response = None) -> dict:
+    item = {'name': 'gpt_groundedness', 
+            'score': llm_groundedness_response}
+    if item['score']:
+        try:
+            score = item["score"]
+            match = re.search(r'\d', score)
+            if match:
+                score = float(match.group())
+            else:
+                score = np.nan
+        except Exception as e:
+            score = np.nan
+            errors.append({
+                "name": item["name"], 
+                "msg":   str(e), "data": item["score"]})
+    else:
+        score = np.nan
+    return {"gpt_groundedness": score,
+            "gpt_groundedness_reason": np.nan}
+    
+
+
+# The inputs section will change based on the arguments
+# of the tool function, after you save the code
+# Adding type to arguments and return value will help
+# the system show the types properly
 # Please update the function name/signature per need
 @tool
-def parse_response(batch_response: List[dict], selected_label_keys: dict) -> List[List[dict]]:
-
-    if batch_response:
-        single_sample_response = batch_response[0]
-        parsed_single_sample_response = parse_single_sample(single_sample_response,
-            selected_label_keys)[0]
+def parse_response(selected_label_keys: dict,
+                   is_service_available: dict,
+                   llm_groundedness_response: dict = None,
+                   batch_response: List[dict] = None):
+    parsed_single_sample_response = None
+    if is_service_available["groundedness_service"]:
+        if batch_response:
+            single_sample_response = batch_response[0]
+            parsed_single_sample_response = parse_single_sample(
+                single_sample_response,
+                selected_label_keys)[0]
     else:
-        parsed_single_sample_response = None
+        parsed_single_sample_response = parse_groundedness_llm_response(llm_groundedness_response)
 
     return parsed_single_sample_response

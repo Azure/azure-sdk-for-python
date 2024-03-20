@@ -27,42 +27,36 @@ outputs:
   gpt_coherence:
     type: string
     reference: ${concat_scores.output.gpt_coherence}
-  hate_fairness_score:
-    type: string
-    reference: ${concat_scores.output.hate_fairness_score}
   gpt_relevance:
     type: string
     reference: ${concat_scores.output.gpt_relevance}
-  self_harm_reasoning:
-    type: string
-    reference: ${concat_scores.output.self_harm_reasoning}
   self_harm:
     type: string
     reference: ${concat_scores.output.self_harm}
+  violence_reason:
+    type: string
+    reference: ${concat_scores.output.violence_reason}
+  sexual_reason:
+    type: string
+    reference: ${concat_scores.output.sexual_reason}
+  hate_unfairness:
+    type: string
+    reference: ${concat_scores.output.hate_unfairness}
   sexual_score:
     type: string
     reference: ${concat_scores.output.sexual_score}
   violence_score:
     type: string
     reference: ${concat_scores.output.violence_score}
-  hate_fairness_reasoning:
-    type: string
-    reference: ${concat_scores.output.hate_fairness_reasoning}
-  hate_fairness:
-    type: string
-    reference: ${concat_scores.output.hate_fairness}
-  gpt_groundedness_reasoning:
-    type: string
-    reference: ${concat_scores.output.gpt_groundedness_reasoning}
   gpt_groundedness:
     type: string
     reference: ${concat_scores.output.gpt_groundedness}
+  gpt_groundedness_reason:
+    type: string
+    reference: ${concat_scores.output.gpt_groundedness_reason}
   gpt_similarity:
     type: string
     reference: ${concat_scores.output.gpt_similarity}
-  sexual_reasoning:
-    type: string
-    reference: ${concat_scores.output.sexual_reasoning}
   gpt_fluency:
     type: string
     reference: ${concat_scores.output.gpt_fluency}
@@ -72,12 +66,18 @@ outputs:
   self_harm_score:
     type: string
     reference: ${concat_scores.output.self_harm_score}
-  violence_reasoning:
+  hate_unfairness_reason:
     type: string
-    reference: ${concat_scores.output.violence_reasoning}
+    reference: ${concat_scores.output.hate_unfairness_reason}
   violence:
     type: string
     reference: ${concat_scores.output.violence}
+  hate_unfairness_score:
+    type: string
+    reference: ${concat_scores.output.hate_unfairness_score}
+  self_harm_reason:
+    type: string
+    reference: ${concat_scores.output.self_harm_reason}
   f1_score:
     type: string
     reference: ${concat_scores.output.f1_score}
@@ -295,6 +295,7 @@ nodes:
     context: ${inputs.context}
     question: ${inputs.question}
     selected_metrics: ${select_metrics.output}
+    validate_input_result: ${validate_input.output}
   use_variants: false
 - name: construct_groundedness_request
   type: python
@@ -327,9 +328,29 @@ nodes:
     path: parse_groundedness_response.py
   inputs:
     batch_response: ${call_groundedness_service.output}
+    is_service_available: ${validate_service.output}
+    llm_groundedness_response: ${gpt_groundedness.output}
     selected_label_keys: ${select_metrics.output}
+  use_variants: false
+- name: gpt_groundedness
+  type: llm
+  source:
+    type: code
+    path: gpt_groundedness_prompt.jinja2
+  inputs:
+    deployment_name: GPT-4-Prod
+    temperature: 1
+    top_p: 1
+    presence_penalty: 0
+    frequency_penalty: 0
+    answer: ${inputs.answer}
+    context: ${inputs.context}
+  provider: AzureOpenAI
+  connection: Default_AzureOpenAI
+  api: chat
+  module: promptflow.tools.aoai
   activate:
-    when: ${validate_service.output.groundedness_service}
+    when: ${validate_service.output.groundedness_prompt}
     is: true
   use_variants: false
 node_variants: {}

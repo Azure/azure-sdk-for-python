@@ -2,6 +2,7 @@ import constants
 import numpy as np
 import re
 
+
 def get_cred():
     from mlflow.tracking import MlflowClient
     import mlflow
@@ -11,12 +12,16 @@ def get_cred():
         return None
     
     mlflow_client = MlflowClient()
-    cred = mlflow_client._tracking_client.store.get_host_creds()  # pylint: disable=protected-access
-    cred.host = cred.host.replace("mlflow/v2.0", "mlflow/v1.0").replace("mlflow/v1.0", "raisvc/v1.0")
+    cred = mlflow_client._tracking_client.store.get_host_creds()
+    cred.host = cred.host\
+                    .replace("mlflow/v2.0", "mlflow/v1.0")\
+                    .replace("mlflow/v1.0", "raisvc/v1.0")
     return cred
+
 
 def filter_metrics(selected_metrics):
     return [metric for metric in selected_metrics if selected_metrics[metric]]
+
 
 def get_harm_severity_level(harm_score: int) -> str:
     HAMR_SEVERITY_LEVEL_MAPPING = {constants.HarmSeverityLevel.VeryLow: [0, 1],
@@ -30,6 +35,7 @@ def get_harm_severity_level(harm_score: int) -> str:
         if harm_score >= harm_score_range[0] and harm_score <= harm_score_range[1]:
             return harm_level.value
     return np.nan
+
 
 def is_valid_string(input_string: str) -> bool:
     # if input_string contains any letter or number, 
