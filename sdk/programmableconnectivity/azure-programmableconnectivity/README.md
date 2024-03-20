@@ -108,6 +108,41 @@ except HttpResponseError as e:
     print('service responds error: {}'.format(e.response.json()))
 ```
 
+### Number Verification
+This flow involves 2 calls, with the user of the SDK needing to follow the redirect URI given in the `location` header value from the first call.
+
+```python
+location = None
+
+def callback(response):
+    location = response.http_response.headers.get("location")
+
+network_identifier = NetworkIdentifier(identifier_type="NetworkCode", identifier="Telefonica_Brazil")
+
+content = NumberVerificationWithoutCodeContent(
+    phone_number="<number>",
+    redirect_uri="<redirect_uri>",
+    network_identifier=network_identifier
+)
+client.number_verification.verify_without_code(
+    body=content,
+    apc_gateway_id=APC_GATEWAY_ID,
+    raw_response_hook=callback)
+
+# After this call, `location` will contain the URI of the redirect that you have to follow
+```
+
+Second call
+```python
+content = NumberVerificationWithCodeContent(
+    apc_code="<code from step 1>"
+)
+client.number_verification.verify_with_code(
+    body=content,
+    apc_gateway_id=APC_GATEWAY_ID
+)
+```
+
 
 ## Contributing
 
