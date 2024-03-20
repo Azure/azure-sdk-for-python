@@ -167,225 +167,225 @@ parameters:
       # azure-mgmt-logic:
       #   ServiceDirectory: logic
       #   Version: '10.1.0b1'
-      azure-mgmt-graphservices:
-        ServiceDirectory: graphservices
-        Version: '1.0.0'
-      azure-mgmt-deploymentmanager:
-        ServiceDirectory: deploymentmanager
-        Version: '2.0.0b1'
-      azure-mgmt-azurearcdata:
-        ServiceDirectory: azurearcdata
-        Version: '2.0.0b1'
-      azure-mgmt-selfhelp:
-        ServiceDirectory: selfhelp
-        Version: '2.0.0b2'
-      azure-mgmt-baremetalinfrastructure:
-        ServiceDirectory: baremetalinfrastructure
-        Version: '1.1.0b2'
-      azure-mgmt-redhatopenshift:
-        ServiceDirectory: redhatopenshift
-        Version: '1.4.0'
-      azure-mgmt-cdn:
-        ServiceDirectory: cdn
-        Version: '13.0.0'
-      azure-mgmt-datalake-store:
-        ServiceDirectory: datalake
-        Version: '1.1.0b1'
-      azure-mgmt-datalake-analytics:
-        ServiceDirectory: datalake
-        Version: '1.0.0b2'
-      azure-mgmt-quantum:
-        ServiceDirectory: quantum
-        Version: '1.0.0b4'
-      azure-mgmt-astro:
-        ServiceDirectory: astro
-        Version: '1.0.0b1'
-      azure-mgmt-sphere:
-        ServiceDirectory: sphere
-        Version: '1.0.0b1'
-      azure-mgmt-keyvault:
-        ServiceDirectory: keyvault
-        Version: '10.3.0'
-      azure-mgmt-azurestackhci:
-        ServiceDirectory: azurestackhci
-        Version: '8.0.0b3'
-      azure-mgmt-hybridconnectivity:
-        ServiceDirectory: hybridconnectivity
-        Version: '1.0.0'
-      azure-mgmt-managementpartner:
-        ServiceDirectory: managementpartner
-        Version: '1.1.0b1'
-      azure-mgmt-serialconsole:
-        ServiceDirectory: serialconsole
-        Version: '1.1.0b1'
-      azure-mgmt-security:
-        ServiceDirectory: security
-        Version: '6.0.0'
-      azure-mgmt-dashboard:
-        ServiceDirectory: dashboard
-        Version: '1.1.0'
-      azure-mgmt-kusto:
-        ServiceDirectory: kusto
-        Version: '3.3.0'
-      azure-mgmt-hybridkubernetes:
-        ServiceDirectory: hybridkubernetes
-        Version: '1.2.0b1'
-      azure-mgmt-servicefabricmanagedclusters:
-        ServiceDirectory: servicefabricmanagedclusters
-        Version: '2.0.0b6'
-      azure-mgmt-commerce:
-        ServiceDirectory: commerce
-        Version: '6.1.0b1'
-      azure-mgmt-orbital:
-        ServiceDirectory: orbital
-        Version: '2.0.0'
-      azure-mgmt-servicelinker:
-        ServiceDirectory: servicelinker
-        Version: '1.2.0b1'
-      azure-mgmt-servicenetworking:
-        ServiceDirectory: servicenetworking
-        Version: '1.0.0'
-      azure-mgmt-servicefabric:
-        ServiceDirectory: servicefabric
-        Version: '2.2.0b1'
-      azure-mgmt-elastic:
-        ServiceDirectory: elastic
-        Version: '1.1.0b3'
-      azure-mgmt-securitydevops:
-        ServiceDirectory: securitydevops
-        Version: '1.0.0b2'
-      azure-mgmt-core:
-        ServiceDirectory: core
-        Version: '1.4.0'
-      azure-mgmt-alertsmanagement:
-        ServiceDirectory: alertsmanagement
-        Version: '2.0.0b2'
-      azure-mgmt-support:
-        ServiceDirectory: support
-        Version: '6.1.0b2'
-      azure-mgmt-containerinstance:
-        ServiceDirectory: containerinstance
-        Version: '10.1.0'
-      azure-mgmt-hdinsight:
-        ServiceDirectory: hdinsight
-        Version: '9.0.0'
-      azure-mgmt-hdinsightcontainers:
-        ServiceDirectory: hdinsight
-        Version: '1.0.0b1'
-      azure-mgmt-marketplaceordering:
-        ServiceDirectory: marketplaceordering
-        Version: '1.2.0b1'
-      azure-mgmt-deviceupdate:
-        ServiceDirectory: deviceupdate
-        Version: '1.1.0'
-      azure-mgmt-reservations:
-        ServiceDirectory: reservations
-        Version: '2.3.0'
-      azure-mgmt-apimanagement:
-        ServiceDirectory: apimanagement
-        Version: '4.0.0'
-      azure-mgmt-containerservice:
-        ServiceDirectory: containerservice
-        Version: '29.1.0'
-      azure-mgmt-containerservicefleet:
-        ServiceDirectory: containerservice
-        Version: '1.0.0'
-      azure-mgmt-defendereasm:
-        ServiceDirectory: defendereasm
-        Version: '1.0.0b1'
-      azure-mgmt-loganalytics:
-        ServiceDirectory: loganalytics
-        Version: '13.0.0b6'
-      azure-mgmt-authorization:
-        ServiceDirectory: authorization
-        Version: '4.0.0'
-      azure-mgmt-servicebus:
-        ServiceDirectory: servicebus
-        Version: '8.2.0'
-      azure-mgmt-iotfirmwaredefense:
-        ServiceDirectory: iotfirmwaredefense
-        Version: '1.0.0b1'
-      azure-mgmt-peering:
-        ServiceDirectory: peering
-        Version: '2.0.0b1'
-      azure-mgmt-redis:
-        ServiceDirectory: redis
-        Version: '14.3.0'
-      azure-mgmt-hanaonazure:
-        ServiceDirectory: hanaonazure
-        Version: '1.1.0b1'
-      azure-mgmt-quota:
-        ServiceDirectory: quota
-        Version: '1.1.0'
-      azure-mgmt-webpubsub:
-        ServiceDirectory: webpubsub
-        Version: '2.0.0b2'
-      azure-mgmt-databricks:
-        ServiceDirectory: databricks
-        Version: '2.0.0'
-      azure-mgmt-appconfiguration:
-        ServiceDirectory: appconfiguration
-        Version: '3.0.0'
-      azure-mgmt-hybridcompute:
-        ServiceDirectory: hybridcompute
-        Version: '9.0.0b1'
-      azure-mgmt-managementgroups:
-        ServiceDirectory: managementgroups
-        Version: '1.1.0b1'
-      azure-mgmt-edgeorder:
-        ServiceDirectory: edgeorder
-        Version: '2.0.0b1'
-      azure-mgmt-networkanalytics:
-        ServiceDirectory: networkanalytics
-        Version: '1.0.0'
-      azure-mgmt-qumulo:
-        ServiceDirectory: qumulo
-        Version: '1.0.0'
-      azure-mgmt-dns:
-        ServiceDirectory: network
-        Version: '8.1.0'
-      azure-mgmt-network:
-        ServiceDirectory: network
-        Version: '25.3.0'
-      azure-mgmt-privatedns:
-        ServiceDirectory: network
-        Version: '1.1.0'
-      azure-mgmt-frontdoor:
-        ServiceDirectory: network
-        Version: '1.1.0'
-      azure-mgmt-digitaltwins:
-        ServiceDirectory: digitaltwins
-        Version: '6.4.0'
-      azure-mgmt-hybridnetwork:
-        ServiceDirectory: hybridnetwork
-        Version: '2.0.0'
-      azure-mgmt-playwrighttesting:
-        ServiceDirectory: playwrighttesting
-        Version: '1.0.0b2'
-      azure-mgmt-azurelargeinstance:
-        ServiceDirectory: azurelargeinstance
-        Version: '1.0.0b1'
-      azure-mgmt-datamigration:
-        ServiceDirectory: datamigration
-        Version: '10.1.0b1'
-      azure-mgmt-voiceservices:
-        ServiceDirectory: voiceservices
-        Version: '1.0.0'
-      azure-mgmt-policyinsights:
-        ServiceDirectory: policyinsights
-        Version: '1.1.0b4'
-      azure-mgmt-storagemover:
-        ServiceDirectory: storagemover
-        Version: '2.0.0'
-      azure-mgmt-subscription:
-        ServiceDirectory: subscription
-        Version: '3.2.0b1'
-      azure-mgmt-hybridcontainerservice:
-        ServiceDirectory: hybridcontainerservice
-        Version: '1.0.0'
-      azure-mgmt-kubernetesconfiguration:
-        ServiceDirectory: kubernetesconfiguration
-        Version: '3.1.0'
+      # azure-mgmt-graphservices:
+      #   ServiceDirectory: graphservices
+      #   Version: '1.0.0'
+      # azure-mgmt-deploymentmanager:
+      #   ServiceDirectory: deploymentmanager
+      #   Version: '2.0.0b1'
+      # azure-mgmt-azurearcdata:
+      #   ServiceDirectory: azurearcdata
+      #   Version: '2.0.0b1'
+      # azure-mgmt-selfhelp:
+      #   ServiceDirectory: selfhelp
+      #   Version: '2.0.0b2'
+      # azure-mgmt-baremetalinfrastructure:
+      #   ServiceDirectory: baremetalinfrastructure
+      #   Version: '1.1.0b2'
+      # azure-mgmt-redhatopenshift:
+      #   ServiceDirectory: redhatopenshift
+      #   Version: '1.4.0'
+      # azure-mgmt-cdn:
+      #   ServiceDirectory: cdn
+      #   Version: '13.0.0'
+      # azure-mgmt-datalake-store:
+      #   ServiceDirectory: datalake
+      #   Version: '1.1.0b1'
+      # azure-mgmt-datalake-analytics:
+      #   ServiceDirectory: datalake
+      #   Version: '1.0.0b2'
+      # azure-mgmt-quantum:
+      #   ServiceDirectory: quantum
+      #   Version: '1.0.0b4'
+      # azure-mgmt-astro:
+      #   ServiceDirectory: astro
+      #   Version: '1.0.0b1'
+      # azure-mgmt-sphere:
+      #   ServiceDirectory: sphere
+      #   Version: '1.0.0b1'
+      # azure-mgmt-keyvault:
+      #   ServiceDirectory: keyvault
+      #   Version: '10.3.0'
+      # azure-mgmt-azurestackhci:
+      #   ServiceDirectory: azurestackhci
+      #   Version: '8.0.0b3'
+      # azure-mgmt-hybridconnectivity:
+      #   ServiceDirectory: hybridconnectivity
+      #   Version: '1.0.0'
+      # azure-mgmt-managementpartner:
+      #   ServiceDirectory: managementpartner
+      #   Version: '1.1.0b1'
+      # azure-mgmt-serialconsole:
+      #   ServiceDirectory: serialconsole
+      #   Version: '1.1.0b1'
+      # azure-mgmt-security:
+      #   ServiceDirectory: security
+      #   Version: '6.0.0'
+      # azure-mgmt-dashboard:
+      #   ServiceDirectory: dashboard
+      #   Version: '1.1.0'
+      # azure-mgmt-kusto:
+      #   ServiceDirectory: kusto
+      #   Version: '3.3.0'
+      # azure-mgmt-hybridkubernetes:
+      #   ServiceDirectory: hybridkubernetes
+      #   Version: '1.2.0b1'
+      # azure-mgmt-servicefabricmanagedclusters:
+      #   ServiceDirectory: servicefabricmanagedclusters
+      #   Version: '2.0.0b6'
+      # azure-mgmt-commerce:
+      #   ServiceDirectory: commerce
+      #   Version: '6.1.0b1'
+      # azure-mgmt-orbital:
+      #   ServiceDirectory: orbital
+      #   Version: '2.0.0'
+      # azure-mgmt-servicelinker:
+      #   ServiceDirectory: servicelinker
+      #   Version: '1.2.0b1'
+      # azure-mgmt-servicenetworking:
+      #   ServiceDirectory: servicenetworking
+      #   Version: '1.0.0'
+      # azure-mgmt-servicefabric:
+      #   ServiceDirectory: servicefabric
+      #   Version: '2.2.0b1'
+      # azure-mgmt-elastic:
+      #   ServiceDirectory: elastic
+      #   Version: '1.1.0b3'
+      # azure-mgmt-securitydevops:
+      #   ServiceDirectory: securitydevops
+      #   Version: '1.0.0b2'
+      # azure-mgmt-core:
+      #   ServiceDirectory: core
+      #   Version: '1.4.0'
+      # azure-mgmt-alertsmanagement:
+      #   ServiceDirectory: alertsmanagement
+      #   Version: '2.0.0b2'
+      # azure-mgmt-support:
+      #   ServiceDirectory: support
+      #   Version: '6.1.0b2'
+      # azure-mgmt-containerinstance:
+      #   ServiceDirectory: containerinstance
+      #   Version: '10.1.0'
+      # azure-mgmt-hdinsight:
+      #   ServiceDirectory: hdinsight
+      #   Version: '9.0.0'
+      # azure-mgmt-hdinsightcontainers:
+      #   ServiceDirectory: hdinsight
+      #   Version: '1.0.0b1'
+      # azure-mgmt-marketplaceordering:
+      #   ServiceDirectory: marketplaceordering
+      #   Version: '1.2.0b1'
+      # azure-mgmt-deviceupdate:
+      #   ServiceDirectory: deviceupdate
+      #   Version: '1.1.0'
+      # azure-mgmt-reservations:
+      #   ServiceDirectory: reservations
+      #   Version: '2.3.0'
+      # azure-mgmt-apimanagement:
+      #   ServiceDirectory: apimanagement
+      #   Version: '4.0.0'
+      # azure-mgmt-containerservice:
+      #   ServiceDirectory: containerservice
+      #   Version: '29.1.0'
+      # azure-mgmt-containerservicefleet:
+      #   ServiceDirectory: containerservice
+      #   Version: '1.0.0'
+      # azure-mgmt-defendereasm:
+      #   ServiceDirectory: defendereasm
+      #   Version: '1.0.0b1'
+      # azure-mgmt-loganalytics:
+      #   ServiceDirectory: loganalytics
+      #   Version: '13.0.0b6'
+      # azure-mgmt-authorization:
+      #   ServiceDirectory: authorization
+      #   Version: '4.0.0'
+      # azure-mgmt-servicebus:
+      #   ServiceDirectory: servicebus
+      #   Version: '8.2.0'
+      # azure-mgmt-iotfirmwaredefense:
+      #   ServiceDirectory: iotfirmwaredefense
+      #   Version: '1.0.0b1'
+      # azure-mgmt-peering:
+      #   ServiceDirectory: peering
+      #   Version: '2.0.0b1'
+      # azure-mgmt-redis:
+      #   ServiceDirectory: redis
+      #   Version: '14.3.0'
+      # azure-mgmt-hanaonazure:
+      #   ServiceDirectory: hanaonazure
+      #   Version: '1.1.0b1'
+      # azure-mgmt-quota:
+      #   ServiceDirectory: quota
+      #   Version: '1.1.0'
+      # azure-mgmt-webpubsub:
+      #   ServiceDirectory: webpubsub
+      #   Version: '2.0.0b2'
+      # azure-mgmt-databricks:
+      #   ServiceDirectory: databricks
+      #   Version: '2.0.0'
+      # azure-mgmt-appconfiguration:
+      #   ServiceDirectory: appconfiguration
+      #   Version: '3.0.0'
+      # azure-mgmt-hybridcompute:
+      #   ServiceDirectory: hybridcompute
+      #   Version: '9.0.0b1'
+      # azure-mgmt-managementgroups:
+      #   ServiceDirectory: managementgroups
+      #   Version: '1.1.0b1'
+      # azure-mgmt-edgeorder:
+      #   ServiceDirectory: edgeorder
+      #   Version: '2.0.0b1'
+      # azure-mgmt-networkanalytics:
+      #   ServiceDirectory: networkanalytics
+      #   Version: '1.0.0'
+      # azure-mgmt-qumulo:
+      #   ServiceDirectory: qumulo
+      #   Version: '1.0.0'
+      # azure-mgmt-dns:
+      #   ServiceDirectory: network
+      #   Version: '8.1.0'
+      # azure-mgmt-network:
+      #   ServiceDirectory: network
+      #   Version: '25.3.0'
+      # azure-mgmt-privatedns:
+      #   ServiceDirectory: network
+      #   Version: '1.1.0'
+      # azure-mgmt-frontdoor:
+      #   ServiceDirectory: network
+      #   Version: '1.1.0'
+      # azure-mgmt-digitaltwins:
+      #   ServiceDirectory: digitaltwins
+      #   Version: '6.4.0'
+      # azure-mgmt-hybridnetwork:
+      #   ServiceDirectory: hybridnetwork
+      #   Version: '2.0.0'
+      # azure-mgmt-playwrighttesting:
+      #   ServiceDirectory: playwrighttesting
+      #   Version: '1.0.0b2'
+      # azure-mgmt-azurelargeinstance:
+      #   ServiceDirectory: azurelargeinstance
+      #   Version: '1.0.0b1'
+      # azure-mgmt-datamigration:
+      #   ServiceDirectory: datamigration
+      #   Version: '10.1.0b1'
+      # azure-mgmt-voiceservices:
+      #   ServiceDirectory: voiceservices
+      #   Version: '1.0.0'
+      # azure-mgmt-policyinsights:
+      #   ServiceDirectory: policyinsights
+      #   Version: '1.1.0b4'
+      # azure-mgmt-storagemover:
+      #   ServiceDirectory: storagemover
+      #   Version: '2.0.0'
+      # azure-mgmt-subscription:
+      #   ServiceDirectory: subscription
+      #   Version: '3.2.0b1'
+      # azure-mgmt-hybridcontainerservice:
+      #   ServiceDirectory: hybridcontainerservice
+      #   Version: '1.0.0'
+      # azure-mgmt-kubernetesconfiguration:
+      #   ServiceDirectory: kubernetesconfiguration
+      #   Version: '3.1.0'
       azure-mgmt-recoveryservicesdatareplication:
         ServiceDirectory: recoveryservicesdatareplication
         Version: '1.0.0b1'
