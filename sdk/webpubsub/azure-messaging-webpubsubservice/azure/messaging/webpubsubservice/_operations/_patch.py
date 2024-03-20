@@ -128,7 +128,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
 
     @overload
     def send_to_all(  # pylint: disable=inconsistent-return-statements
-        self, message: Union[str, JSON], *, excluded: Optional[List[str]] = None, filter: Optional[str] = None, content_type: Optional[str] = "application/json", **kwargs: Any
+        self, message: JSON, *, excluded: Optional[List[str]] = None, filter: Optional[str] = None, content_type: Optional[str] = "application/json", **kwargs: Any
     ) -> None:
         """Broadcast content inside request body to all the connected client connections.
 
@@ -148,6 +148,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
+    @overload
     def send_to_all(  # pylint: disable=inconsistent-return-statements
         self, message: str, *, excluded: Optional[List[str]] = None, filter: Optional[str] = None, content_type: Optional[str] = "text/plain", **kwargs: Any
     ) -> None:
@@ -169,6 +170,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
+    @overload
     def send_to_all(  # pylint: disable=inconsistent-return-statements
         self, message: IO, *, excluded: Optional[List[str]] = None, filter: Optional[str] = None, content_type: Optional[str] = "application/octet-stream", **kwargs: Any
     ) -> None:
@@ -267,7 +269,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
 
     @overload
     def send_to_user(  # pylint: disable=inconsistent-return-statements
-        self, user_id: str, message: Union[str, JSON], *, filter: Optional[str] = None, content_type: Optional[str] = "application/json", **kwargs: Any
+        self, user_id: str, message: JSON, *, filter: Optional[str] = None, content_type: Optional[str] = "application/json", **kwargs: Any
     ) -> None:
         """Send content inside request body to the specific user.
 
@@ -410,7 +412,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
     def send_to_group(  # pylint: disable=inconsistent-return-statements
         self,
         group: str,
-        message: Union[str, JSON],
+        message: JSON,
         *,
         excluded: Optional[List[str]] = None,
         filter: Optional[str] = None,
@@ -587,9 +589,10 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
             raise HttpResponseError(response=response)
         if cls:
             return cls(pipeline_response, None, {})
+        
     @overload
     def send_to_connection(  # pylint: disable=inconsistent-return-statements
-        self, connection_id: str, message: Union[str, JSON], *, content_type: Optional[str] = "application/json", **kwargs: Any
+        self, connection_id: str, message: JSON, *, content_type: Optional[str] = "application/json", **kwargs: Any
     ) -> None:
         """Send content inside request body to the specific connection.
 
