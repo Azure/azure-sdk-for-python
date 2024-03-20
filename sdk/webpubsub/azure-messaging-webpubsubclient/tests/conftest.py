@@ -25,13 +25,14 @@
 # --------------------------------------------------------------------------
 import os
 import pytest
-
+import asyncio
 from dotenv import load_dotenv
-
 from devtools_testutils import test_proxy, add_general_regex_sanitizer
 
 load_dotenv()
 
+if os.name == "nt":
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):

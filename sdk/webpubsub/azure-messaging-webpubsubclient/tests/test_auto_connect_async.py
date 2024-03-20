@@ -11,14 +11,13 @@ from testcase_async import WebpubsubClientTestAsync, TEST_RESULT_ASYNC, on_group
 from testcase import WebpubsubClientPowerShellPreparer
 from azure.messaging.webpubsubclient.models import WebPubSubProtocolType
 
-
 @pytest.mark.live_test_only
 class TestWebpubsubClientAutoConnectAsync(WebpubsubClientTestAsync):
     # auto_connect will be triggered if connection is dropped by accident and we disable recovery
-    # @pytest.mark.asyncio
     @WebpubsubClientPowerShellPreparer()
     @recorded_by_proxy_async
     async def test_auto_connect(self, webpubsubclient_connection_string):
+        assert isinstance(asyncio.get_event_loop_policy(), asyncio.WindowsSelectorEventLoopPolicy) 
         client = self.create_client(
             connection_string=webpubsubclient_connection_string,
             protocol_type=WebPubSubProtocolType.JSON,
@@ -34,7 +33,9 @@ class TestWebpubsubClientAutoConnectAsync(WebpubsubClientTestAsync):
             group_name = name
             await client.subscribe("group-message", on_group_message)
             await client.join_group(group_name)
-            await client._ws.sock.close(code=1001)  # close the connection to trigger auto connect
+            await client._ws.sock.close(
+                code=1001
+            )  # close the connection to trigger auto connect
             await asyncio.sleep(3)  # wait for reconnect
             await client.send_to_group(group_name, name, "text")
             await asyncio.sleep(1)  # wait for on_group_message to be called
