@@ -2,12 +2,15 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Any, Union, Dict
+from typing import Any, Optional
+import time
 
 import msal
+from azure.core.credentials import AccessToken
 
 from .msal_client import MsalClient
 from .._internal import _scopes_to_resource
+from .._exceptions import CredentialUnavailableError
 
 
 class MsalManagedIdentityClient:  # pylint: disable=too-many-instance-attributes
@@ -35,9 +38,16 @@ class MsalManagedIdentityClient:  # pylint: disable=too-many-instance-attributes
     def close(self) -> None:
         self.__exit__()
 
-    def get_token(self, *scopes: str, **kwargs: Any) -> Dict[str, Any]:
+    def get_token(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:
+        if not scopes:
+            raise ValueError('"get_token" requires at least one scope')
         resource = _scopes_to_resource(*scopes)
-        return self._msal_client.acquire_token_for_client(resource)
+        result = self._msal_client.acquire_token_for_client(resource)
+        now = int(time.time())
+        if result and "access_token" in result and "expires_in" in result:
+            return AccessToken(result["access_token"], now + int(result["expires_in"]))
+        error_message = self.get_unavailable_message()
+        raise CredentialUnavailableError(error_message)
 
     def get_managed_identity(self, **kwargs: Any) -> msal.ManagedIdentity:
         if "client_id" in kwargs and kwargs["client_id"]:

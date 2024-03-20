@@ -117,3 +117,6 @@ class ImdsCredential(MsalManagedIdentityClient):
             error_message = "ManagedIdentityCredential authentication unavailable, no response from the IMDS endpoint."
             raise CredentialUnavailableError(error_message) from ex
         return token
+
+    def get_unavailable_message(self) -> str:
+        return "ManagedIdentityCredential authentication unavailable, no response from the IMDS endpoint."
