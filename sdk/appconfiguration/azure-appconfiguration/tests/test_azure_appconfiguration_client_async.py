@@ -609,15 +609,15 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
             assert temp["conditions"] == set_flag_value["conditions"]
 
             changed_flag.value = json.dumps({})
-            assert changed_flag.enabled == None
+            assert changed_flag.enabled == False
             temp = json.loads(changed_flag.value)
             assert temp["id"] == set_flag_value["id"]
-            assert temp["enabled"] == None
+            assert temp["enabled"] == False
             assert temp["conditions"] != None
             assert temp["conditions"]["client_filters"] == None
 
             set_flag.value = "bad_value"
-            assert set_flag.enabled == None
+            assert set_flag.enabled == False
             assert set_flag.filters == None
             assert set_flag.value == "bad_value"
 
@@ -806,6 +806,34 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
 
     @app_config_decorator_async
     @recorded_by_proxy_async
+    async def test_feature_custom_fields(self, appconfiguration_connection_string):
+        custom_fields = {
+            "variants": [
+                {"name": "Off", "configuration_value": "Off", "status_override": "Enabled"},
+                {"name": "On", "configuration_value": "On", "status_override": "Disabled"},
+            ],
+            "allocation": {
+                "percentile": [{"variant": "Off", "from": 0, "to": 100}],
+                "user": [{"variant": "Off", "users": ["Adam"]}],
+                "seed": "adfsasdfzsd",
+                "default_when_enabled": "Off",
+                "default_when_disabled": "Off",
+            },
+        }
+        async with self.create_client(appconfiguration_connection_string) as client:
+            new = FeatureFlagConfigurationSetting(
+                "Beta",
+                description="Matt's variant FF",
+                enabled=True,
+            )
+            new.value = json.dumps(custom_fields)
+            sent = await client.set_configuration_setting(new)
+            self._assert_same_keys(sent, new)
+
+            await client.delete_configuration_setting(new.key)
+
+    @app_config_decorator_async
+    @recorded_by_proxy_async
     async def test_breaking_with_feature_flag_configuration_setting(self, appconfiguration_connection_string):
         async with self.create_client(appconfiguration_connection_string) as client:
             new = FeatureFlagConfigurationSetting(
@@ -823,6 +851,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
             )
             await client.set_configuration_setting(new)
             await client.get_configuration_setting(new.key)
+            await client.delete_configuration_setting(new.key)
 
             new = FeatureFlagConfigurationSetting(
                 "breaking2",
@@ -839,6 +868,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
             )
             await client.set_configuration_setting(new)
             await client.get_configuration_setting(new.key)
+            await client.delete_configuration_setting(new.key)
 
             # This will show up as a Custom filter
             new = FeatureFlagConfigurationSetting(
@@ -856,6 +886,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
             )
             await client.set_configuration_setting(new)
             await client.get_configuration_setting(new.key)
+            await client.delete_configuration_setting(new.key)
 
             new = FeatureFlagConfigurationSetting(
                 "breaking4",
@@ -866,6 +897,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
             )
             await client.set_configuration_setting(new)
             await client.get_configuration_setting(new.key)
+            await client.delete_configuration_setting(new.key)
 
             new = FeatureFlagConfigurationSetting(
                 "breaking5",
@@ -874,22 +906,24 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
             )
             await client.set_configuration_setting(new)
             await client.get_configuration_setting(new.key)
+            await client.delete_configuration_setting(new.key)
 
             new = FeatureFlagConfigurationSetting(
                 "breaking6", enabled=True, filters=[{"name": FILTER_TARGETING, "parameters": "invalidformat"}]
             )
             await client.set_configuration_setting(new)
             await client.get_configuration_setting(new.key)
+            await client.delete_configuration_setting(new.key)
 
             new = FeatureFlagConfigurationSetting("breaking7", enabled=True, filters=[{"abc": "def"}])
             await client.set_configuration_setting(new)
             await client.get_configuration_setting(new.key)
+            await client.delete_configuration_setting(new.key)
 
             new = FeatureFlagConfigurationSetting("breaking8", enabled=True, filters=[{"abc": "def"}])
             new.feature_flag_content_type = "fakeyfakey"  # cspell:disable-line
             await client.set_configuration_setting(new)
             await client.get_configuration_setting(new.key)
-
             await client.delete_configuration_setting(new.key)
 
     @app_config_decorator_async
