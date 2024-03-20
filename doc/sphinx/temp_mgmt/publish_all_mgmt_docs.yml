@@ -497,9 +497,6 @@ parameters:
       azure-mgmt-trafficmanager:
         ServiceDirectory: trafficmanager
         Version: '1.1.0'
-      azure-mgmt-videoanalyzer:
-        ServiceDirectory: videoanalyzer
-        Version: '1.0.0b4'
       azure-mgmt-redisenterprise:
         ServiceDirectory: redisenterprise
         Version: '3.0.0'
