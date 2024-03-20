@@ -1,0 +1,31 @@
+parameters:
+  Artifacts: []
+  ArtifactName: 'packages'
+  PackageName: ''
+  DependsOn:
+
+jobs:
+  - job: 'MarkPackageAsShipped'
+    displayName: "Mark Package as Shipped"
+    condition: and(succeeded(), ne(variables['Skip.MarkPackageAsShipped'], 'true'))
+    dependsOn: ${{parameters.DependsOn}}
+
+    pool:
+      image: azsdk-pool-mms-ubuntu-2004-1espt
+      name: azsdk-pool-mms-ubuntu-2004-general
+      os: linux
+
+    steps:
+      - checkout: self
+      - download: current
+        artifact: ${{parameters.ArtifactName}}
+        timeoutInMinutes: 5
+      - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
+      - template: /eng/common/pipelines/templates/steps/create-apireview.yml
+        parameters:
+          ArtifactPath: $(Pipeline.Workspace)/${{parameters.ArtifactName}}
+          Artifacts: ${{parameters.Artifacts}}
+          ConfigFileDir: $(Pipeline.Workspace)/${{parameters.ArtifactName}}/PackageInfo
+          MarkPackageAsShipped: true
+          ArtifactName: '${{parameters.ArtifactName}}'
+          PackageName: '${{parameters.PackageName}}'
