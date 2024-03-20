@@ -86,7 +86,8 @@ class AuthorizationCodeCredential(GetTokenMixin):
           ``response`` attribute.
         """
         # pylint:disable=useless-super-delegation
-        return super(AuthorizationCodeCredential, self).get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
+        client_secret =  kwargs.pop("client_secret", None) or self._client_secret # If secret not provided in method, use init secret
+        return super(AuthorizationCodeCredential, self).get_token(*scopes, claims=claims, tenant_id=tenant_id, client_secret=client_secret, **kwargs)
 
     def _acquire_token_silently(self, *scopes: str, **kwargs) -> Optional[AccessToken]:
         return self._client.get_cached_access_token(scopes, **kwargs)

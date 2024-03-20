@@ -92,7 +92,8 @@ class AuthorizationCodeCredential(AsyncContextManager, GetTokenMixin):
           attribute gives a reason. Any error response from Microsoft Entra ID is available as the error's
           ``response`` attribute.
         """
-        return await super().get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
+        client_secret =  kwargs.pop("client_secret", None) or self._client_secret # If secret not provided in method, use init secret
+        return await super(AuthorizationCodeCredential, self).get_token(*scopes, claims=claims, tenant_id=tenant_id, client_secret=client_secret, **kwargs)
 
     async def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:
         return self._client.get_cached_access_token(scopes, **kwargs)
