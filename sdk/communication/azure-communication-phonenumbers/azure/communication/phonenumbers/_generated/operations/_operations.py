@@ -51,7 +51,7 @@ def build_phone_numbers_list_area_codes_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -90,7 +90,7 @@ def build_phone_numbers_list_available_countries_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -123,7 +123,7 @@ def build_phone_numbers_list_available_localities_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -164,7 +164,7 @@ def build_phone_numbers_list_offerings_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -201,7 +201,7 @@ def build_phone_numbers_search_available_phone_numbers_request(  # pylint: disab
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -229,7 +229,7 @@ def build_phone_numbers_get_search_result_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -254,7 +254,7 @@ def build_phone_numbers_purchase_phone_numbers_request(**kwargs: Any) -> HttpReq
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -277,7 +277,7 @@ def build_phone_numbers_get_operation_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -303,7 +303,7 @@ def build_phone_numbers_cancel_operation_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -330,7 +330,7 @@ def build_phone_numbers_update_capabilities_request(  # pylint: disable=name-too
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -358,7 +358,7 @@ def build_phone_numbers_get_by_number_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -384,7 +384,7 @@ def build_phone_numbers_release_phone_number_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -410,7 +410,7 @@ def build_phone_numbers_list_phone_numbers_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -436,7 +436,7 @@ def build_phone_numbers_operator_information_search_request(  # pylint: disable=
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1947,11 +1947,12 @@ class PhoneNumbersOperations:
     def operator_information_search(
         self, body: _models.OperatorInformationRequest, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.OperatorInformationResult:
-        """Searches for operator information for a given list of phone numbers.
+        """Searches for number format and operator information for a given list of phone numbers.
 
-        Searches for operator information for a given list of phone numbers.
+        Searches for number format and operator information for a given list of phone numbers.
 
-        :param body: The phone number(s) whose operator information should be searched. Required.
+        :param body: The phone number(s) whose number format and operator information should be
+         searched. Required.
         :type body: ~azure.communication.phonenumbers.models.OperatorInformationRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -1965,11 +1966,12 @@ class PhoneNumbersOperations:
     def operator_information_search(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.OperatorInformationResult:
-        """Searches for operator information for a given list of phone numbers.
+        """Searches for number format and operator information for a given list of phone numbers.
 
-        Searches for operator information for a given list of phone numbers.
+        Searches for number format and operator information for a given list of phone numbers.
 
-        :param body: The phone number(s) whose operator information should be searched. Required.
+        :param body: The phone number(s) whose number format and operator information should be
+         searched. Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -1983,12 +1985,12 @@ class PhoneNumbersOperations:
     def operator_information_search(
         self, body: Union[_models.OperatorInformationRequest, IO[bytes]], **kwargs: Any
     ) -> _models.OperatorInformationResult:
-        """Searches for operator information for a given list of phone numbers.
+        """Searches for number format and operator information for a given list of phone numbers.
 
-        Searches for operator information for a given list of phone numbers.
+        Searches for number format and operator information for a given list of phone numbers.
 
-        :param body: The phone number(s) whose operator information should be searched. Is either a
-         OperatorInformationRequest type or a IO[bytes] type. Required.
+        :param body: The phone number(s) whose number format and operator information should be
+         searched. Is either a OperatorInformationRequest type or a IO[bytes] type. Required.
         :type body: ~azure.communication.phonenumbers.models.OperatorInformationRequest or IO[bytes]
         :return: OperatorInformationResult
         :rtype: ~azure.communication.phonenumbers.models.OperatorInformationResult

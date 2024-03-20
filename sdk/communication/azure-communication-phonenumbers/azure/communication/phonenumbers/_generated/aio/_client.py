@@ -28,7 +28,7 @@ class PhoneNumbersClient:  # pylint: disable=client-accepts-api-version-keyword
     :param endpoint: The communication resource, for example
      https://resourcename.communication.azure.com. Required.
     :type endpoint: str
-    :keyword api_version: Api Version. Default value is "2024-01-31-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2024-03-01-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
