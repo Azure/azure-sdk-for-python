@@ -713,8 +713,11 @@ class TestChatCompletions(AzureRecordedTestCase):
                         "type": "azure_search",
                         "parameters": {
                             "endpoint": os.environ[ENV_AZURE_OPENAI_SEARCH_ENDPOINT],
-                            "key": os.environ[ENV_AZURE_OPENAI_SEARCH_KEY],
-                            "index_name": os.environ[ENV_AZURE_OPENAI_SEARCH_INDEX]
+                            "index_name": os.environ[ENV_AZURE_OPENAI_SEARCH_INDEX],
+                            "authentication": {
+                                "type": "api_key",
+                                "key": os.environ[ENV_AZURE_OPENAI_SEARCH_KEY],
+                            }
                         }
                     }
                 ],
@@ -749,8 +752,11 @@ class TestChatCompletions(AzureRecordedTestCase):
                         "type": "azure_search",
                         "parameters": {
                             "endpoint": os.environ[ENV_AZURE_OPENAI_SEARCH_ENDPOINT],
-                            "key": os.environ[ENV_AZURE_OPENAI_SEARCH_KEY],
-                            "index_name": os.environ[ENV_AZURE_OPENAI_SEARCH_INDEX]
+                            "index_name": os.environ[ENV_AZURE_OPENAI_SEARCH_INDEX],
+                            "authentication": {
+                                "type": "api_key",
+                                "key": os.environ[ENV_AZURE_OPENAI_SEARCH_KEY],
+                            }
                         }
                     }
                 ],
