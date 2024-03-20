@@ -1,14 +1,15 @@
 # Release History
 
-## 7.12.1 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 7.12.1 (2024-03-20)
 
 ### Bugs Fixed
 
+- Fixed a bug where the client was not retrying when a connection drop happened ([34786](https://github.com/Azure/azure-sdk-for-python/pull/34786))
+- Fixed a bug where the client would not handle a role instance swap on the service correctly ([34820](https://github.com/Azure/azure-sdk-for-python/pull/34820))
+
 ### Other Changes
+
+- Updated the logging to more accurately represent when frames are being sent to prevent a client-side idle timeout ([#34793](https://github.com/Azure/azure-sdk-for-python/pull/34793)).
 
 ## 7.12.0 (2024-03-06)
 
