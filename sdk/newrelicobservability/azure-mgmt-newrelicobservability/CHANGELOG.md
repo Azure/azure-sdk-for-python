@@ -1,5 +1,16 @@
 # Release History
 
+## 2.0.0 (2024-03-18)
+
+### Features Added
+
+  - Added operation MonitoredSubscriptionsOperations.begin_create_or_update
+
+### Breaking Changes
+
+  - Removed operation MonitoredSubscriptionsOperations.begin_createor_update
+  - Renamed operation MonitorsOperations.update to MonitorsOperations.begin_update
+
 ## 1.1.0 (2024-03-18)
 
 ### Features Added

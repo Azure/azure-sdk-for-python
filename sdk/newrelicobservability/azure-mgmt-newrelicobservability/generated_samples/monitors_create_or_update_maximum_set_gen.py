@@ -6,7 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from typing import Any, IO, Union
+
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.newrelicobservability import NewRelicObservabilityMgmtClient
 
 """
@@ -53,7 +56,7 @@ def main():
                 },
                 "orgCreationSource": "LIFTR",
                 "planData": {
-                    "billingCycle": "YEARLY",
+                    "billingCycle": "Yearly",
                     "effectiveDate": "2022-12-05T14:11:37.786Z",
                     "planDetails": "tbbiaga",
                     "usageType": "PAYG",
@@ -75,6 +78,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/newrelic/resource-manager/NewRelic.Observability/stable/2024-01-01/examples/Monitors_CreateOrUpdate_MaximumSet_Gen.json
+# x-ms-original-file: specification/newrelic/resource-manager/NewRelic.Observability/stable/2024-03-01/examples/Monitors_CreateOrUpdate_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

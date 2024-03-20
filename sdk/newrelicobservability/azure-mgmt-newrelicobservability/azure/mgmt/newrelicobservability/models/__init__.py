@@ -73,7 +73,6 @@ from ._models_py3 import VMInfo
 
 from ._new_relic_observability_mgmt_client_enums import AccountCreationSource
 from ._new_relic_observability_mgmt_client_enums import ActionType
-from ._new_relic_observability_mgmt_client_enums import BillingCycle
 from ._new_relic_observability_mgmt_client_enums import BillingSource
 from ._new_relic_observability_mgmt_client_enums import ConfigurationName
 from ._new_relic_observability_mgmt_client_enums import CreatedByType
@@ -166,7 +165,6 @@ __all__ = [
     "VMInfo",
     "AccountCreationSource",
     "ActionType",
-    "BillingCycle",
     "BillingSource",
     "ConfigurationName",
     "CreatedByType",

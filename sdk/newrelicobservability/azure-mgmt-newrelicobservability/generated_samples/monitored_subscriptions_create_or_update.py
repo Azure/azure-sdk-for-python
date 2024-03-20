@@ -6,15 +6,21 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from typing import TYPE_CHECKING, Union
+
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.newrelicobservability import NewRelicObservabilityMgmtClient
 
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 """
 # PREREQUISITES
     pip install azure-identity
     pip install azure-mgmt-newrelicobservability
 # USAGE
-    python monitored_subscriptions_createor_update.py
+    python monitored_subscriptions_create_or_update.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,7 +35,7 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.monitored_subscriptions.begin_createor_update(
+    response = client.monitored_subscriptions.begin_create_or_update(
         resource_group_name="myResourceGroup",
         monitor_name="myMonitor",
         configuration_name="default",
@@ -37,6 +43,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/newrelic/resource-manager/NewRelic.Observability/stable/2024-01-01/examples/MonitoredSubscriptions_CreateorUpdate.json
+# x-ms-original-file: specification/newrelic/resource-manager/NewRelic.Observability/stable/2024-03-01/examples/MonitoredSubscriptions_CreateOrUpdate.json
 if __name__ == "__main__":
     main()
