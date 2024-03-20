@@ -7,6 +7,8 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Changed invalid default value `None` to `False` for property `enabled` in `FeatureFlagConfigurationSetting`.
+- Fixed the issue that `description`, `display_name` and other customer fields are missing when de/serializing `FeatureFlagConfigurationSetting` objects.
 
 ### Other Changes
 
