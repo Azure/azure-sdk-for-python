@@ -444,7 +444,7 @@ parameters:
         ServiceDirectory: databoxedge
         Version: '2.0.0b1'
       azure-mgmt-loadtesting:
-        ServiceDirectory: loadtesting
+        ServiceDirectory: loadtestservice
         Version: '1.0.0'
       azure-mgmt-mixedreality:
         ServiceDirectory: mixedreality
