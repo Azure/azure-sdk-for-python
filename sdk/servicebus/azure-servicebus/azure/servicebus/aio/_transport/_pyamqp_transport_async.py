@@ -304,7 +304,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         :param int link_credit: Total link credit wanted.
         :rtype: None
         """
-        link_credit_needed = link_credit - handler._link.current_link_credit
+        link_credit_needed = link_credit - handler._link.current_link_credit # pylint: disable=protected-access
         if link_credit_needed > 0:
             await handler._link.flow(link_credit=link_credit_needed)   # pylint: disable=protected-access
 
