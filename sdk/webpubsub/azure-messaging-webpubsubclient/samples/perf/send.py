@@ -14,7 +14,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-MESSAGE_COUNT = 1
+MESSAGE_COUNT = 100
 TIME_COST = 0
 TIME_COST_ASYNC = 0
 

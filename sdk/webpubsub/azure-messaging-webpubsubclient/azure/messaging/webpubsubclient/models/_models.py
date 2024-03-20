@@ -971,9 +971,8 @@ class AckMapAsync:
 
     def __init__(self) -> None:
         self.ack_map: Dict[int, SendMessageErrorOptionsAsync] = {}
-        self.lock = asyncio.Lock()
 
-    async def add(self, ack_id: int, options: SendMessageErrorOptionsAsync) -> None:
+    def add(self, ack_id: int, options: SendMessageErrorOptionsAsync) -> None:
         """Add ack id to ack map
 
         :param ack_id: The ack id. Required.
@@ -981,10 +980,9 @@ class AckMapAsync:
         :param options: The options. Required.
         :type options: SendMessageErrorOptions
         """
-        async with self.lock:
-            self.ack_map[ack_id] = options
+        self.ack_map[ack_id] = options
 
-    async def pop(self, ack_id: int) -> Optional[SendMessageErrorOptionsAsync]:
+    def pop(self, ack_id: int) -> Optional[SendMessageErrorOptionsAsync]:
         """Pop ack id from ack map
 
         :param ack_id: The ack id. Required.
@@ -992,10 +990,9 @@ class AckMapAsync:
         :return: The options.
         :rtype: SendMessageErrorOptions or None
         """
-        async with self.lock:
-            return self.ack_map.pop(ack_id, None)
+        return self.ack_map.pop(ack_id, None)
 
-    async def get(self, ack_id: int) -> Optional[SendMessageErrorOptionsAsync]:
+    def get(self, ack_id: int) -> Optional[SendMessageErrorOptionsAsync]:
         """Get ack id from ack map
 
         :param ack_id: The ack id. Required.
@@ -1003,16 +1000,14 @@ class AckMapAsync:
         :return: The options.
         :rtype: SendMessageErrorOptions or None
         """
-        async with self.lock:
-            return self.ack_map.get(ack_id)
+        return self.ack_map.get(ack_id)
 
-    async def clear(self) -> None:
+    def clear(self) -> None:
         """Clear ack map"""
-        async with self.lock:
-            for key, value in self.ack_map.items():
-                _LOGGER.debug("clear ack map with ack id: %s", key)
-                value.event.set()
-            self.ack_map.clear()
+        for key, value in self.ack_map.items():
+            _LOGGER.debug("clear ack map with ack id: %s", key)
+            value.event.set()
+        self.ack_map.clear()
 
 
 class OpenClientError(AzureError):

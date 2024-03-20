@@ -186,12 +186,10 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
             mode=message_retry_mode,
         )
         self._group_map: Dict[str, WebPubSubGroup] = {}
-        self._group_map_lock = asyncio.Lock()
         self._ack_map: AckMapAsync = AckMapAsync()
         self._sequence_id = SequenceId()
         self._state = WebPubSubClientState.STOPPED
         self._ack_id = 0
-        self._ack_id_lock = asyncio.Lock()
         self._url = None
         self._ws: Optional[WebSocketAppAsync] = None
         self._handler: Dict[str, List[Callable]] = {
@@ -215,9 +213,8 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         self._user_agent: Optional[str] = user_agent
         self._logging_enable: bool = logging_enable
 
-    async def _next_ack_id(self) -> int:
-        async with self._ack_id_lock:
-            self._ack_id = self._ack_id + 1
+    def _next_ack_id(self) -> int:
+        self._ack_id = self._ack_id + 1
         return self._ack_id
 
     async def _send_message(self, message: WebPubSubMessage, **kwargs: Any) -> None:
@@ -236,12 +233,12 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         **kwargs: Any,
     ) -> None:
         if ack_id is None:
-            ack_id = await self._next_ack_id()
+            ack_id = self._next_ack_id()
 
         message = message_provider(ack_id)
         # Unless receive ack message, we assume the message is not sent successfully.
-        if not (await self._ack_map.get(ack_id)):
-            await self._ack_map.add(
+        if not self._ack_map.get(ack_id):
+            self._ack_map.add(
                 ack_id,
                 SendMessageErrorOptionsAsync(
                     error_detail=AckMessageError(name="", message="Timeout while waiting for ack message.")
@@ -250,15 +247,15 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         try:
             await self._send_message(message, **kwargs)
         except Exception as e:
-            await self._ack_map.pop(ack_id)
+            self._ack_map.pop(ack_id)
             raise e
 
-        message_ack = await self._ack_map.get(ack_id)
+        message_ack = self._ack_map.get(ack_id)
         raise_for_empty_message_ack(message_ack, ack_id)
 
         _LOGGER.debug("wait for ack message with ackId: %s", ack_id)
         await asyncio.wait_for(message_ack.event.wait(), timeout=self._ack_timeout)
-        raise_for_empty_message_ack(await self._ack_map.pop(ack_id))
+        raise_for_empty_message_ack(self._ack_map.pop(ack_id))
         if message_ack.error_detail is not None:
             raise SendMessageError(
                 message="Failed to send message.",
@@ -266,11 +263,10 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
                 error_detail=message_ack.error_detail,
             )
 
-    async def _get_or_add_group(self, name: str) -> WebPubSubGroup:
-        async with self._group_map_lock:
-            if name not in self._group_map:
-                self._group_map[name] = WebPubSubGroup(name=name)
-            return self._group_map[name]
+    def _get_or_add_group(self, name: str) -> WebPubSubGroup:
+        if name not in self._group_map:
+            self._group_map[name] = WebPubSubGroup(name=name)
+        return self._group_map[name]
 
     async def join_group(self, group_name: str, **kwargs: Any) -> None:
         """Join the client to group.
@@ -281,7 +277,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         """
 
         async def join_group_attempt():
-            group = await self._get_or_add_group(group_name)
+            group = self._get_or_add_group(group_name)
             await self._join_group_core(group_name, **kwargs)
             group.is_joined = True
 
@@ -303,7 +299,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         """
 
         async def leave_group_attempt():
-            group = await self._get_or_add_group(group_name)
+            group = self._get_or_add_group(group_name)
             ack_id = kwargs.pop("ack_id", None)
             await self._send_message_with_ack_id(
                 message_provider=lambda id: LeaveGroupMessage(group=group_name, ack_id=id),
@@ -675,7 +671,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
 
                 self._last_close_event = CloseEvent(close_status_code=close_status_code, close_reason=close_msg)
                 # clean ack cache
-                await self._ack_map.clear()
+                self._ack_map.clear()
 
                 if self._is_stopping:
                     _LOGGER.warning("The client is stopping state. Stop recovery.")
@@ -714,7 +710,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
 
         async def on_message(data: str):
             async def handle_ack_message(message: AckMessage):
-                ack_option = await self._ack_map.get(message.ack_id)
+                ack_option = self._ack_map.get(message.ack_id)
                 if ack_option:
                     if not (message.success or (message.error and message.error.name == "Duplicate")):
                         ack_option.error_detail = message.error
@@ -732,10 +728,9 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
                 if not self._is_initial_connected:
                     self._is_initial_connected = True
                     if self._auto_rejoin_groups:
-                        async with self._group_map_lock:
-                            for group_name, group in self._group_map.items():
-                                if group.is_joined:
-                                    asyncio.create_task(self._rejoin_group(group_name))
+                        for group_name, group in self._group_map.items():
+                            if group.is_joined:
+                                asyncio.create_task(self._rejoin_group(group_name))
 
                     self._call_back(
                         CallbackType.CONNECTED,
