@@ -25,7 +25,7 @@ jobs:
         parameters:
           ArtifactPath: $(Pipeline.Workspace)/${{parameters.ArtifactName}}
           Artifacts: ${{parameters.Artifacts}}
-          ConfigFileDir: $(Pipeline.Workspace)/PackageInfo
+          ConfigFileDir: $(Pipeline.Workspace)/${{parameters.ArtifactName}}/PackageInfo
           MarkPackageAsShipped: true
           ArtifactName: '${{parameters.ArtifactName}}'
           PackageName: '${{parameters.PackageName}}'
