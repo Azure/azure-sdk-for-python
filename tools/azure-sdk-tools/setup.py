@@ -56,7 +56,7 @@ setup(
     extras_require={
         ":python_version>='3.5'": ["pytest-asyncio>=0.9.0"],
         ":python_version<'3.11'": ["tomli==2.0.1"],
-        "build": ["six", "setuptools", "pyparsing", "certifi", "cibuildwheel"],
+        "build": ["six", "setuptools", "pyparsing", "certifi", "cibuildwheel", "ConfigArgParse>=0.12.0"],
         "conda": ["beautifulsoup4"],
         "systemperf": ["aiohttp>=3.0", "requests>=2.0", "tornado==6.0.3", "httpx>=0.21", "azure-core"],
         "ghtools": ["PyGithub>=1.59.0"],
