@@ -302,7 +302,7 @@ class AadClientBase(abc.ABC):
             "client_id": self._client_id,
             "client_info": 1,  # request Microsoft Entra ID include home_account_id in its response
         }
-        client_secret = kwargs.pop('client_secret', None)
+        client_secret = kwargs.pop("client_secret", None)
         if client_secret:
             data["client_secret"] = client_secret
 
