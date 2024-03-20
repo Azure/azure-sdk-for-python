@@ -379,7 +379,7 @@ class EnvironmentDefinition(_model_base.Model):
     :ivar parameters: Input parameters passed to an environment.
     :vartype parameters: list[~azure.developer.devcenter.models.EnvironmentDefinitionParameter]
     :ivar parameters_schema: JSON schema defining the parameters object passed to an environment.
-    :vartype parameters_schema: any
+    :vartype parameters_schema: str
     :ivar template_path: Path to the Environment Definition entrypoint file.
     :vartype template_path: str
     """
@@ -394,7 +394,7 @@ class EnvironmentDefinition(_model_base.Model):
     """A short description of the environment definition."""
     parameters: Optional[List["_models.EnvironmentDefinitionParameter"]] = rest_field()
     """Input parameters passed to an environment."""
-    parameters_schema: Optional[Any] = rest_field(name="parametersSchema")
+    parameters_schema: Optional[str] = rest_field(name="parametersSchema")
     """JSON schema defining the parameters object passed to an environment."""
     template_path: Optional[str] = rest_field(name="templatePath")
     """Path to the Environment Definition entrypoint file."""
@@ -407,7 +407,7 @@ class EnvironmentDefinition(_model_base.Model):
         catalog_name: str,
         description: Optional[str] = None,
         parameters: Optional[List["_models.EnvironmentDefinitionParameter"]] = None,
-        parameters_schema: Optional[Any] = None,
+        parameters_schema: Optional[str] = None,
         template_path: Optional[str] = None,
     ):
         ...

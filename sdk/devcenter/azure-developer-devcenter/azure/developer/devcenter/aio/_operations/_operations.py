@@ -4554,7 +4554,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                               is read-only.  If true, default should have a value.
                         }
                     ],
-                    "parametersSchema": {},  # Optional. JSON schema defining the parameters
+                    "parametersSchema": "str",  # Optional. JSON schema defining the parameters
                       object passed to an environment.
                     "templatePath": "str"  # Optional. Path to the Environment Definition
                       entrypoint file.
@@ -4683,7 +4683,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                               is read-only.  If true, default should have a value.
                         }
                     ],
-                    "parametersSchema": {},  # Optional. JSON schema defining the parameters
+                    "parametersSchema": "str",  # Optional. JSON schema defining the parameters
                       object passed to an environment.
                     "templatePath": "str"  # Optional. Path to the Environment Definition
                       entrypoint file.
@@ -4814,7 +4814,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
                               is read-only.  If true, default should have a value.
                         }
                     ],
-                    "parametersSchema": {},  # Optional. JSON schema defining the parameters
+                    "parametersSchema": "str",  # Optional. JSON schema defining the parameters
                       object passed to an environment.
                     "templatePath": "str"  # Optional. Path to the Environment Definition
                       entrypoint file.
