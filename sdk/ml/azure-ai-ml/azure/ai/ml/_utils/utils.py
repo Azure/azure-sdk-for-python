@@ -28,7 +28,7 @@ from uuid import UUID
 
 import isodate
 import pydash
-import yaml
+import yaml  # type: ignore[import-untyped]
 
 from azure.ai.ml._restclient.v2022_05_01.models import ListViewType, ManagedServiceIdentity
 from azure.ai.ml._scope_dependent_operations import OperationScope

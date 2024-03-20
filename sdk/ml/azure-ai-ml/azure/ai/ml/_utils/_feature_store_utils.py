@@ -9,7 +9,7 @@ from tempfile import TemporaryDirectory
 from typing import TYPE_CHECKING, Dict, Union
 from urllib.parse import urlparse
 
-import yaml
+import yaml  # type: ignore[import-untyped]
 
 from .._artifacts._artifact_utilities import get_datastore_info, get_storage_client
 from .._restclient.v2023_10_01.operations import (  # pylint: disable = unused-import
