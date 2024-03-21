@@ -2,5 +2,4 @@
 -e ../../../tools/azure-sdk-tools
 ../../core/azure-core
 ../../identity/azure-identity
-aiohttp
 azure-messaging-webpubsubservice==1.1.0b1
