@@ -37,7 +37,7 @@ async def on_group_message(msg: OnGroupDataMessageArgs):
 
 
 async def main():
-    service_client = WebPubSubServiceClient.from_connection_string(
+    service_client = WebPubSubServiceClient.from_connection_string(  # type: ignore
         connection_string=os.getenv("WEBPUBSUB_CONNECTION_STRING", ""), hub="hub"
     )
     client = WebPubSubClient(
@@ -58,7 +58,7 @@ async def main():
             group_name, "hello text", "text", no_echo=False, ack=False
         )
         await client.send_to_group(group_name, {"hello": "json"}, "json")
-        await client.send_to_group(group_name, "hello json", "json")
+        await client.send_to_group(group_name, "hello text", "text")
         content = memoryview("hello binary".encode())
         await client.send_to_group(group_name, content, "binary")
 

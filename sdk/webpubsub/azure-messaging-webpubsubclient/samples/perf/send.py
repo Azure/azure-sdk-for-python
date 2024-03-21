@@ -15,12 +15,12 @@ from dotenv import load_dotenv
 load_dotenv()
 
 MESSAGE_COUNT = 100
-TIME_COST = 0
-TIME_COST_ASYNC = 0
+TIME_COST = 0.0
+TIME_COST_ASYNC = 0.0
 
 
 def client_access_url_provider():
-    service_client = WebPubSubServiceClient.from_connection_string(
+    service_client = WebPubSubServiceClient.from_connection_string( # type: ignore
         connection_string=os.getenv("WEBPUBSUB_CONNECTION_STRING", ""), hub="hub"
     )
     return service_client.get_client_access_token(
@@ -28,7 +28,7 @@ def client_access_url_provider():
     )["url"]
 
 
-def send() -> int:
+def send() -> None:
     global TIME_COST
     client = Client(
         credential=WebPubSubClientCredential(
@@ -51,7 +51,7 @@ async def send_item_async(client_async, idx):
     await client_async.send_to_group("test", {"hello": "json"}, "json")
 
 
-async def send_async() -> int:
+async def send_async() -> None:
     global TIME_COST_ASYNC
     client_async = AsyncClient(
         credential=WebPubSubClientCredential(

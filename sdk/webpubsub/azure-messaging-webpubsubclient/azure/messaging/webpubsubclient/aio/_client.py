@@ -75,10 +75,10 @@ class WebSocketAppAsync:
         self.sock: Optional[aiohttp.client._WSRequestContextManager] = None
 
     async def receive(self) -> aiohttp.WSMessage:
-        return await self.sock.receive()
+        return await self.sock.receive()  # type: ignore
 
     async def send(self, message: str) -> None:
-        await self.sock.send_str(message)
+        await self.sock.send_str(message)  # type: ignore
 
     async def run_forever(self):
         await self.on_open()
@@ -219,10 +219,10 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
 
     async def _send_message(self, message: WebPubSubMessage, **kwargs: Any) -> None:
         pay_load = self._protocol.write_message(message)
-        if self._ws.closed:
+        if self._ws.closed:  # type: ignore
             raise SendMessageError("The websocket connection is not connected.")
 
-        await self._ws.send(pay_load)
+        await self._ws.send(pay_load)  # type: ignore
         if kwargs.pop("logging_enable", False) or self._logging_enable:
             _LOGGER.debug("\nconnection_id: %s\npay_load: %s", self._connection_id, pay_load)
 
@@ -254,14 +254,15 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         raise_for_empty_message_ack(message_ack, ack_id)
 
         _LOGGER.debug("wait for ack message with ackId: %s", ack_id)
-        await asyncio.wait_for(message_ack.event.wait(), timeout=self._ack_timeout)
-        raise_for_empty_message_ack(self._ack_map.pop(ack_id))
-        if message_ack.error_detail is not None:
-            raise SendMessageError(
-                message="Failed to send message.",
-                ack_id=message_ack.ack_id,
-                error_detail=message_ack.error_detail,
-            )
+        if message_ack:
+            await asyncio.wait_for(message_ack.event.wait(), timeout=self._ack_timeout)
+            raise_for_empty_message_ack(self._ack_map.pop(ack_id))
+            if message_ack.error_detail is not None:
+                raise SendMessageError(
+                    message="Failed to send message.",
+                    ack_id=message_ack.ack_id,
+                    error_detail=message_ack.error_detail,
+                )
 
     def _get_or_add_group(self, name: str) -> WebPubSubGroup:
         if name not in self._group_map:
@@ -639,7 +640,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         :return: True if the client is connected to server, otherwise False
         :rtype: bool
         """
-        return self._state == WebPubSubClientState.CONNECTED and not self._ws.closed
+        return self._state == WebPubSubClientState.CONNECTED and not self._ws.closed  # type: ignore
 
     async def _rejoin_group(self, group_name: str):
         async def _rejoin_group():
@@ -791,7 +792,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
 
         async def _listen():
             while self._is_connected():
-                msg: aiohttp.WSMessage = await self._ws.receive()
+                msg: aiohttp.WSMessage = await self._ws.receive()  # type: ignore
                 if msg.type == aiohttp.WSMsgType.TEXT:
                     await on_message(msg.data)
                 elif msg.type == aiohttp.WSMsgType.CLOSING:
@@ -883,7 +884,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
             return
         self._is_stopping = True
 
-        await self._ws.close()
+        await self._ws.close()  # type: ignore
         for task in [self._task_listen, self._task_seq_ack]:
             self._cancel_task(task)
         _LOGGER.info("close client successfully")

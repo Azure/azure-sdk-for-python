@@ -238,16 +238,17 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         message_ack = self._ack_map.get(ack_id)
         raise_for_empty_message_ack(message_ack, ack_id)
 
-        with message_ack.cv:
-            _LOGGER.debug("wait for ack message with ackId: %s", ack_id)
-            message_ack.cv.wait(self._ack_timeout)
-            raise_for_empty_message_ack(self._ack_map.pop(ack_id))
-            if message_ack.error_detail is not None:
-                raise SendMessageError(
-                    message="Failed to send message.",
-                    ack_id=message_ack.ack_id,
-                    error_detail=message_ack.error_detail,
-                )
+        if message_ack is not None:
+            with message_ack.cv:
+                _LOGGER.debug("wait for ack message with ackId: %s", ack_id)
+                message_ack.cv.wait(self._ack_timeout)
+                raise_for_empty_message_ack(self._ack_map.pop(ack_id))
+                if message_ack.error_detail is not None:
+                    raise SendMessageError(
+                        message="Failed to send message.",
+                        ack_id=message_ack.ack_id,
+                        error_detail=message_ack.error_detail,
+                    )
 
     def _get_or_add_group(self, name: str) -> WebPubSubGroup:
         with self._group_map_lock:
