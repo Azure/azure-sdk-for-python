@@ -57,7 +57,7 @@ jobs:
               - checkout: self
 
               - pwsh: |
-                  Get-ChildItem -Recurse $(Pipeline.Workspace)/${{parameters.DocArtifact}}/${{artifact.name}}
+                  Get-ChildItem -Recurse $(Pipeline.Workspace)/${{parameters.DocArtifact}}/${{pkg.key}}
                 workingDirectory: $(Pipeline.Workspace)
                 displayName: Output Visible Artifacts
 
