@@ -12,7 +12,7 @@ from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy, Azure
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 
-from .._patch import DEFAULT_TOKEN_SCOPE, get_translation_endpoint, TranslatorAuthenticationPolicy, TranslatorCredential, TranslatorAADCredential
+from .._patch import DEFAULT_TOKEN_SCOPE, get_translation_endpoint, TranslatorAuthenticationPolicy, TranslatorCredential
 
 from ._client import TextTranslationClient as ServiceClientGenerated
 
@@ -25,6 +25,14 @@ def patch_sdk():
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
 
+class AsyncTranslatorAADCredential:
+    """Credential for Translator Service when using AAD authentication."""
+
+    def __init__(self, tokenCredential: AsyncTokenCredential, resourceId: str, region: str) -> None:
+        self.tokenCredential = tokenCredential
+        self.resourceId = resourceId
+        self.region = region
+
 class AsyncTranslatorAADAuthenticationPolicy(AsyncBearerTokenCredentialPolicy):
     """Translator AAD Authentication Policy. Adds headers that are required by Translator Service
     when global endpoint is used with AAD policy.
@@ -32,7 +40,7 @@ class AsyncTranslatorAADAuthenticationPolicy(AsyncBearerTokenCredentialPolicy):
     Ocp-Apim-ResourceId header contains Azure resource Id - Translator resource.
     """
 
-    def __init__(self, credential: TranslatorAADCredential, **kwargs: Any)-> None:
+    def __init__(self, credential: AsyncTranslatorAADCredential, **kwargs: Any)-> None:
         super(AsyncTranslatorAADAuthenticationPolicy, self).__init__(credential.tokenCredential, "https://cognitiveservices.azure.com/.default", **kwargs)
         self.translatorCredential = credential
 
@@ -46,7 +54,7 @@ def set_authentication_policy(credential, kwargs):
     if isinstance(credential, TranslatorCredential):
         if not kwargs.get("authentication_policy"):
             kwargs["authentication_policy"] = TranslatorAuthenticationPolicy(credential)
-    elif isinstance(credential, TranslatorAADCredential):
+    elif isinstance(credential, AsyncTranslatorAADCredential):
         if not kwargs.get("authentication_policy"):
             kwargs["authentication_policy"] = AsyncTranslatorAADAuthenticationPolicy(credential)
     elif isinstance(credential, AzureKeyCredential):
@@ -97,7 +105,7 @@ class TextTranslationClient(ServiceClientGenerated):
          https://api.cognitive.microsofttranslator.com). Required.
     :type endpoint: str
     :param credential: Credential used to authenticate with the Translator service
-    :type credential: Union[AzureKeyCredential , AsyncTokenCredential , TranslatorCredential, TranslatorAADCredential]
+    :type credential: Union[AzureKeyCredential , AsyncTokenCredential , TranslatorCredential, AsyncTranslatorAADCredential]
     :keyword api_version: Default value is "3.0". Note that overriding this default value may
      result in unsupported behavior.
     :paramtype api_version: str
@@ -105,7 +113,7 @@ class TextTranslationClient(ServiceClientGenerated):
 
     def __init__(
         self,
-        credential: Union[AzureKeyCredential, AsyncTokenCredential, TranslatorCredential, TranslatorAADCredential],
+        credential: Union[AzureKeyCredential, AsyncTokenCredential, TranslatorCredential, AsyncTranslatorAADCredential],
         *,
         endpoint: Optional[str] = None,
         api_version="3.0",
@@ -119,4 +127,4 @@ class TextTranslationClient(ServiceClientGenerated):
         super().__init__(endpoint=translation_endpoint, api_version=api_version, **kwargs)
 
 
-__all__ = ["TextTranslationClient"]
+__all__ = ["TextTranslationClient", "AsyncTranslatorAADCredential"]

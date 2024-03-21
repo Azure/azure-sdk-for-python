@@ -52,8 +52,8 @@ class TextTranslationTest(AzureRecordedTestCase):
         return client
     
     def create_async_text_translation_client_with_aad(self, innerCredential, aadRegion, aadResourceId):
-        from azure.ai.translation.text.aio import TextTranslationClient as TextTranslationClientAsync
-        credential = TranslatorAADCredential(innerCredential, aadResourceId, aadRegion)
+        from azure.ai.translation.text.aio import TextTranslationClient as TextTranslationClientAsync, AsyncTranslatorAADCredential
+        credential = AsyncTranslatorAADCredential(innerCredential, aadResourceId, aadRegion)
         text_translator = TextTranslationClientAsync(credential=credential)
         return text_translator
 
