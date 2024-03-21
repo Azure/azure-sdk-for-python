@@ -215,14 +215,14 @@ class Simulator:
     async def simulate_async(
         self,
         template: "Template",
-        max_conversation_turns: int = 2,
+        max_conversation_turns: int = 1,
         parameters: Optional[List[dict]] = None,
         jailbreak: bool = False,
         api_call_retry_limit: int = 3,
         api_call_retry_sleep_sec: int = 1,  # pylint: disable=unused-argument
         api_call_delay_sec: float = 0,
         concurrent_async_task: int = 3,
-        simulation_result_limit: int = 3,
+        max_simulation: int = 3,
     ):
         """Asynchronously simulate conversations using the provided template and parameters
 
@@ -245,8 +245,8 @@ class Simulator:
         :paramtype api_call_delay_sec: float, optional
         :keyword concurrent_async_task: The maximum number of asynchronous tasks to run concurrently. Defaults to 3.
         :paramtype concurrent_async_task: int, optional
-        :keyword simulation_result_limit: The maximum number of simulation results to return. Defaults to 3.
-        :paramtype simulation_result_limit: int, optional
+        :keyword max_simulation: The maximum number of simulation results to return. Defaults to 3.
+        :paramtype max_simulation: int, optional
 
         :return: A list of dictionaries containing the simulation results.
         :rtype: List[Dict]
@@ -267,6 +267,8 @@ class Simulator:
             )
         if "conversation" not in template.template_name:
             max_conversation_turns = 2
+        else:
+            max_conversation_turns = max_conversation_turns * 2
         if template.content_harm:
             self._ensure_service_dependencies()
             self.adversarial = True
@@ -283,15 +285,15 @@ class Simulator:
         tasks = []
         total_tasks = sum(len(t.template_parameters) for t in templates)
 
-        if simulation_result_limit > total_tasks and self.adversarial:
+        if max_simulation > total_tasks and self.adversarial:
             logger.warning(
                 "Cannot provide %s results due to maximum number of adversarial simulations that can be generated: %s."
                 "\n %s simulations will be generated.",
-                simulation_result_limit,
+                max_simulation,
                 total_tasks,
                 total_tasks,
             )
-        total_tasks = min(total_tasks, simulation_result_limit)
+        total_tasks = min(total_tasks, max_simulation)
         progress_bar = tqdm(
             total=total_tasks,
             desc="generating simulations",
@@ -321,10 +323,10 @@ class Simulator:
                     )
                 )
 
-                if len(tasks) >= simulation_result_limit:
+                if len(tasks) >= max_simulation:
                     break
 
-            if len(tasks) >= simulation_result_limit:
+            if len(tasks) >= max_simulation:
                 break
 
         sim_results = []
