@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -28,7 +28,7 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import ApiManagementClientMixinABC, _convert_request, _format_url_section
+from .._vendor import ApiManagementClientMixinABC, _convert_request
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -74,7 +74,7 @@ def build_list_by_api_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
@@ -129,7 +129,7 @@ def build_list_by_user_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
@@ -184,7 +184,7 @@ def build_list_by_operation_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
@@ -239,7 +239,7 @@ def build_list_by_product_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
@@ -293,7 +293,7 @@ def build_list_by_geo_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
@@ -346,7 +346,7 @@ def build_list_by_subscription_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
@@ -402,7 +402,7 @@ def build_list_by_time_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
@@ -457,7 +457,7 @@ def build_list_by_request_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
@@ -518,7 +518,6 @@ class ReportsOperations:
         :type skip: int
         :param orderby: OData order by query option. Default value is None.
         :type orderby: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ReportRecordContract or the result of
          cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.apimanagement.models.ReportRecordContract]
@@ -541,7 +540,7 @@ class ReportsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_api_request(
+                _request = build_list_by_api_request(
                     resource_group_name=resource_group_name,
                     service_name=service_name,
                     subscription_id=self._config.subscription_id,
@@ -550,12 +549,11 @@ class ReportsOperations:
                     skip=skip,
                     orderby=orderby,
                     api_version=api_version,
-                    template_url=self.list_by_api.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -567,13 +565,13 @@ class ReportsOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("ReportCollection", pipeline_response)
@@ -583,11 +581,11 @@ class ReportsOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -599,10 +597,6 @@ class ReportsOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_by_api.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/reports/byApi"
-    }
 
     @distributed_trace
     def list_by_user(
@@ -643,7 +637,6 @@ class ReportsOperations:
         :type skip: int
         :param orderby: OData order by query option. Default value is None.
         :type orderby: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ReportRecordContract or the result of
          cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.apimanagement.models.ReportRecordContract]
@@ -666,7 +659,7 @@ class ReportsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_user_request(
+                _request = build_list_by_user_request(
                     resource_group_name=resource_group_name,
                     service_name=service_name,
                     subscription_id=self._config.subscription_id,
@@ -675,12 +668,11 @@ class ReportsOperations:
                     skip=skip,
                     orderby=orderby,
                     api_version=api_version,
-                    template_url=self.list_by_user.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -692,13 +684,13 @@ class ReportsOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("ReportCollection", pipeline_response)
@@ -708,11 +700,11 @@ class ReportsOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -724,10 +716,6 @@ class ReportsOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_by_user.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/reports/byUser"
-    }
 
     @distributed_trace
     def list_by_operation(
@@ -768,7 +756,6 @@ class ReportsOperations:
         :type skip: int
         :param orderby: OData order by query option. Default value is None.
         :type orderby: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ReportRecordContract or the result of
          cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.apimanagement.models.ReportRecordContract]
@@ -791,7 +778,7 @@ class ReportsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_operation_request(
+                _request = build_list_by_operation_request(
                     resource_group_name=resource_group_name,
                     service_name=service_name,
                     subscription_id=self._config.subscription_id,
@@ -800,12 +787,11 @@ class ReportsOperations:
                     skip=skip,
                     orderby=orderby,
                     api_version=api_version,
-                    template_url=self.list_by_operation.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -817,13 +803,13 @@ class ReportsOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("ReportCollection", pipeline_response)
@@ -833,11 +819,11 @@ class ReportsOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -849,10 +835,6 @@ class ReportsOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_by_operation.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/reports/byOperation"
-    }
 
     @distributed_trace
     def list_by_product(
@@ -892,7 +874,6 @@ class ReportsOperations:
         :type skip: int
         :param orderby: OData order by query option. Default value is None.
         :type orderby: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ReportRecordContract or the result of
          cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.apimanagement.models.ReportRecordContract]
@@ -915,7 +896,7 @@ class ReportsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_product_request(
+                _request = build_list_by_product_request(
                     resource_group_name=resource_group_name,
                     service_name=service_name,
                     subscription_id=self._config.subscription_id,
@@ -924,12 +905,11 @@ class ReportsOperations:
                     skip=skip,
                     orderby=orderby,
                     api_version=api_version,
-                    template_url=self.list_by_product.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -941,13 +921,13 @@ class ReportsOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("ReportCollection", pipeline_response)
@@ -957,11 +937,11 @@ class ReportsOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -973,10 +953,6 @@ class ReportsOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_by_product.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/reports/byProduct"
-    }
 
     @distributed_trace
     def list_by_geo(
@@ -1013,7 +989,6 @@ class ReportsOperations:
         :type top: int
         :param skip: Number of records to skip. Default value is None.
         :type skip: int
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ReportRecordContract or the result of
          cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.apimanagement.models.ReportRecordContract]
@@ -1036,7 +1011,7 @@ class ReportsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_geo_request(
+                _request = build_list_by_geo_request(
                     resource_group_name=resource_group_name,
                     service_name=service_name,
                     subscription_id=self._config.subscription_id,
@@ -1044,12 +1019,11 @@ class ReportsOperations:
                     top=top,
                     skip=skip,
                     api_version=api_version,
-                    template_url=self.list_by_geo.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -1061,13 +1035,13 @@ class ReportsOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("ReportCollection", pipeline_response)
@@ -1077,11 +1051,11 @@ class ReportsOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1093,10 +1067,6 @@ class ReportsOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_by_geo.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/reports/byGeo"
-    }
 
     @distributed_trace
     def list_by_subscription(
@@ -1136,7 +1106,6 @@ class ReportsOperations:
         :type skip: int
         :param orderby: OData order by query option. Default value is None.
         :type orderby: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ReportRecordContract or the result of
          cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.apimanagement.models.ReportRecordContract]
@@ -1159,7 +1128,7 @@ class ReportsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_subscription_request(
+                _request = build_list_by_subscription_request(
                     resource_group_name=resource_group_name,
                     service_name=service_name,
                     subscription_id=self._config.subscription_id,
@@ -1168,12 +1137,11 @@ class ReportsOperations:
                     skip=skip,
                     orderby=orderby,
                     api_version=api_version,
-                    template_url=self.list_by_subscription.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -1185,13 +1153,13 @@ class ReportsOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("ReportCollection", pipeline_response)
@@ -1201,11 +1169,11 @@ class ReportsOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1217,10 +1185,6 @@ class ReportsOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_by_subscription.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/reports/bySubscription"
-    }
 
     @distributed_trace
     def list_by_time(
@@ -1265,7 +1229,6 @@ class ReportsOperations:
         :type skip: int
         :param orderby: OData order by query option. Default value is None.
         :type orderby: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ReportRecordContract or the result of
          cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.apimanagement.models.ReportRecordContract]
@@ -1288,7 +1251,7 @@ class ReportsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_time_request(
+                _request = build_list_by_time_request(
                     resource_group_name=resource_group_name,
                     service_name=service_name,
                     subscription_id=self._config.subscription_id,
@@ -1298,12 +1261,11 @@ class ReportsOperations:
                     skip=skip,
                     orderby=orderby,
                     api_version=api_version,
-                    template_url=self.list_by_time.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -1315,13 +1277,13 @@ class ReportsOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("ReportCollection", pipeline_response)
@@ -1331,11 +1293,11 @@ class ReportsOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1347,10 +1309,6 @@ class ReportsOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_by_time.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/reports/byTime"
-    }
 
     @distributed_trace
     def list_by_request(
@@ -1379,7 +1337,6 @@ class ReportsOperations:
         :type top: int
         :param skip: Number of records to skip. Default value is None.
         :type skip: int
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either RequestReportRecordContract or the result of
          cls(response)
         :rtype:
@@ -1403,7 +1360,7 @@ class ReportsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_request_request(
+                _request = build_list_by_request_request(
                     resource_group_name=resource_group_name,
                     service_name=service_name,
                     subscription_id=self._config.subscription_id,
@@ -1411,12 +1368,11 @@ class ReportsOperations:
                     top=top,
                     skip=skip,
                     api_version=api_version,
-                    template_url=self.list_by_request.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -1428,13 +1384,13 @@ class ReportsOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("RequestReportCollection", pipeline_response)
@@ -1444,11 +1400,11 @@ class ReportsOperations:
             return None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1460,7 +1416,3 @@ class ReportsOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_by_request.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/reports/byRequest"
-    }

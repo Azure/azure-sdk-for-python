@@ -8,15 +8,18 @@ import pytest
 import pathlib
 import uuid
 from devtools_testutils import AzureRecordedTestCase
-from conftest import configure_async, ALL, ASST_AZURE, OPENAI
+from conftest import configure_async, ASST_AZURE, OPENAI, AZURE, AZURE_AD, PREVIEW, GA
 
 
 class TestModelsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", ALL)
-    async def test_models_list(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(AZURE, GA), (AZURE, PREVIEW), (AZURE_AD, GA), (AZURE_AD, PREVIEW), (OPENAI, "v1")]
+    )
+    async def test_models_list(self, client_async, api_type, api_version, **kwargs):
 
         models = client_async.models.list()
         async for model in models:
@@ -24,16 +27,22 @@ class TestModelsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", ALL)
-    async def test_models_retrieve(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(AZURE, GA), (AZURE, PREVIEW), (AZURE_AD, GA), (AZURE_AD, PREVIEW), (OPENAI, "v1")]
+    )
+    async def test_models_retrieve(self, client_async, api_type, api_version, **kwargs):
 
         model = await client_async.models.retrieve(**kwargs)
         assert model.id
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [OPENAI, ASST_AZURE])
-    async def test_files(self, client_async, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(OPENAI, "v1"), (ASST_AZURE, PREVIEW)]
+    )
+    async def test_files(self, client_async, api_type, api_version, **kwargs):
         file_name = f"test{uuid.uuid4()}.txt"
         with open(file_name, "w") as f:
             f.write("test")

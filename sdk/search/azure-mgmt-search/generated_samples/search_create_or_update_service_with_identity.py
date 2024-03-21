@@ -33,7 +33,12 @@ def main():
         resource_group_name="rg1",
         search_service_name="mysearchservice",
         service={
-            "identity": {"type": "SystemAssigned"},
+            "identity": {
+                "type": "SystemAssigned, UserAssigned",
+                "userAssignedIdentities": {
+                    "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg1/providers/Microsoft.ManagedIdentity/userAssignedIdentities/user-mi": {}
+                },
+            },
             "location": "westus",
             "properties": {"hostingMode": "default", "partitionCount": 1, "replicaCount": 3},
             "sku": {"name": "standard"},
@@ -43,6 +48,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/search/resource-manager/Microsoft.Search/stable/2023-11-01/examples/SearchCreateOrUpdateServiceWithIdentity.json
+# x-ms-original-file: specification/search/resource-manager/Microsoft.Search/preview/2024-03-01-preview/examples/SearchCreateOrUpdateServiceWithIdentity.json
 if __name__ == "__main__":
     main()
