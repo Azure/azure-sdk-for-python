@@ -80,7 +80,7 @@ class ConfigurationSetting(Model):
                     FeatureFlagConfigurationSetting._key_prefix
                 ):
                     config_setting = FeatureFlagConfigurationSetting._from_generated(key_value)
-                    if key_value.value and not config_setting:
+                    if key_value.value:
                         config_setting.value = key_value.value
                     return config_setting
                 if key_value.content_type.startswith(
