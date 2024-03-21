@@ -15,6 +15,7 @@ from azure.core.exceptions import (
     ResourceExistsError,
     AzureError,
 )
+from azure.core.rest import HttpRequest
 from azure.appconfiguration import (
     ResourceReadOnlyError,
     ConfigurationSetting,
@@ -36,6 +37,7 @@ from consts import (
     PAGE_SIZE,
     KEY_UUID,
 )
+from devtools_testutils import set_custom_default_matcher
 from devtools_testutils.aio import recorded_by_proxy_async
 from async_preparers import app_config_decorator_async
 from uuid import uuid4
@@ -221,6 +223,8 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     @app_config_decorator_async
     @recorded_by_proxy_async
     async def test_list_configuration_settings_key_label(self, appconfiguration_connection_string):
+        # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
+        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         await self.set_up(appconfiguration_connection_string)
         items = await self.convert_to_list(self.client.list_configuration_settings(KEY, LABEL))
         assert len(items) == 1
@@ -256,6 +260,8 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     @app_config_decorator_async
     @recorded_by_proxy_async
     async def test_list_configuration_settings_only_label(self, appconfiguration_connection_string):
+        # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
+        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         await self.set_up(appconfiguration_connection_string)
         items = await self.convert_to_list(self.client.list_configuration_settings(label_filter=LABEL))
         assert len(items) == 1
@@ -265,6 +271,8 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     @app_config_decorator_async
     @recorded_by_proxy_async
     async def test_list_configuration_settings_only_key(self, appconfiguration_connection_string):
+        # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
+        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         await self.set_up(appconfiguration_connection_string)
         items = await self.convert_to_list(self.client.list_configuration_settings(KEY))
         assert len(items) == 2
@@ -274,6 +282,8 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     @app_config_decorator_async
     @recorded_by_proxy_async
     async def test_list_configuration_settings_fields(self, appconfiguration_connection_string):
+        # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
+        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         await self.set_up(appconfiguration_connection_string)
         items = await self.convert_to_list(
             self.client.list_configuration_settings(key_filter="*", label_filter=LABEL, fields=["key", "content_type"])
@@ -285,6 +295,8 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     @app_config_decorator_async
     @recorded_by_proxy_async
     async def test_list_configuration_settings_reserved_chars(self, appconfiguration_connection_string):
+        # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
+        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         async with self.create_client(appconfiguration_connection_string) as client:
             reserved_char_kv = ConfigurationSetting(key=KEY, label=LABEL_RESERVED_CHARS, value=TEST_VALUE)
             reserved_char_kv = await client.add_configuration_setting(reserved_char_kv)
@@ -297,6 +309,8 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     @app_config_decorator_async
     @recorded_by_proxy_async
     async def test_list_configuration_settings_contains(self, appconfiguration_connection_string):
+        # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
+        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         await self.set_up(appconfiguration_connection_string)
         items = await self.convert_to_list(self.client.list_configuration_settings(label_filter=LABEL + "*"))
         assert len(items) == 1
@@ -306,6 +320,8 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     @app_config_decorator_async
     @recorded_by_proxy_async
     async def test_list_configuration_settings_correct_etag(self, appconfiguration_connection_string):
+        # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
+        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         async with self.create_client(appconfiguration_connection_string) as client:
             to_list_kv = self.create_config_setting()
             await self.add_for_test(client, to_list_kv)
@@ -323,6 +339,8 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     @app_config_decorator_async
     @recorded_by_proxy_async
     async def test_list_configuration_settings_multi_pages(self, appconfiguration_connection_string):
+        # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
+        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         async with self.create_client(appconfiguration_connection_string) as client:
             # create PAGE_SIZE+1 configuration settings to have at least two pages
             try:
@@ -355,6 +373,8 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     @app_config_decorator_async
     @recorded_by_proxy_async
     async def test_list_configuration_settings_no_label(self, appconfiguration_connection_string):
+        # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
+        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         await self.set_up(appconfiguration_connection_string)
         items = await self.convert_to_list(self.client.list_configuration_settings(label_filter="\0"))
         assert len(items) > 0
@@ -363,6 +383,8 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     @app_config_decorator_async
     @recorded_by_proxy_async
     async def test_list_configuration_settings_only_accepttime(self, appconfiguration_connection_string, **kwargs):
+        # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
+        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         recorded_variables = kwargs.pop("variables", {})
         recorded_variables.setdefault("timestamp", str(datetime.utcnow()))
 
@@ -388,6 +410,8 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     @app_config_decorator_async
     @recorded_by_proxy_async
     async def test_list_revisions_key_label(self, appconfiguration_connection_string):
+        # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
+        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         await self.set_up(appconfiguration_connection_string)
         to_list1 = self.create_config_setting()
         items = await self.convert_to_list(
@@ -400,6 +424,8 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     @app_config_decorator_async
     @recorded_by_proxy_async
     async def test_list_revisions_only_label(self, appconfiguration_connection_string):
+        # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
+        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         await self.set_up(appconfiguration_connection_string)
         items = await self.convert_to_list(self.client.list_revisions(label_filter=LABEL))
         assert len(items) >= 1
@@ -409,6 +435,8 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     @app_config_decorator_async
     @recorded_by_proxy_async
     async def test_list_revisions_key_no_label(self, appconfiguration_connection_string):
+        # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
+        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         await self.set_up(appconfiguration_connection_string)
         items = await self.convert_to_list(self.client.list_revisions(key_filter=KEY))
         assert len(items) >= 1
@@ -418,6 +446,8 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     @app_config_decorator_async
     @recorded_by_proxy_async
     async def test_list_revisions_fields(self, appconfiguration_connection_string):
+        # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
+        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         await self.set_up(appconfiguration_connection_string)
         items = await self.convert_to_list(
             self.client.list_revisions(key_filter="*", label_filter=LABEL, fields=["key", "content_type"])
@@ -912,6 +942,8 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     @app_config_decorator_async
     @recorded_by_proxy_async
     async def test_create_snapshot(self, appconfiguration_connection_string):
+        # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
+        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         await self.set_up(appconfiguration_connection_string)
         snapshot_name = self.get_resource_name("snapshot")
         filters = [ConfigurationSettingsFilter(key=KEY, label=LABEL)]
@@ -931,6 +963,8 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     @app_config_decorator_async
     @recorded_by_proxy_async
     async def test_update_snapshot_status(self, appconfiguration_connection_string):
+        # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
+        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         await self.set_up(appconfiguration_connection_string)
         snapshot_name = self.get_resource_name("snapshot")
         filters = [ConfigurationSettingsFilter(key=KEY, label=LABEL)]
@@ -949,6 +983,8 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     @app_config_decorator_async
     @recorded_by_proxy_async
     async def test_update_snapshot_status_with_etag(self, appconfiguration_connection_string):
+        # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
+        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         await self.set_up(appconfiguration_connection_string)
         snapshot_name = self.get_resource_name("snapshot")
         filters = [ConfigurationSettingsFilter(key=KEY, label=LABEL)]
@@ -969,6 +1005,8 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     @app_config_decorator_async
     @recorded_by_proxy_async
     async def test_list_snapshots(self, appconfiguration_connection_string):
+        # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
+        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         await self.set_up(appconfiguration_connection_string)
 
         result = await self.convert_to_list(self.client.list_snapshots())
@@ -993,6 +1031,8 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     @app_config_decorator_async
     @recorded_by_proxy_async
     async def test_list_snapshot_configuration_settings(self, appconfiguration_connection_string):
+        # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
+        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         await self.set_up(appconfiguration_connection_string)
         snapshot_name = self.get_resource_name("snapshot")
         filters = [ConfigurationSettingsFilter(key=KEY, label=LABEL)]
@@ -1004,6 +1044,122 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         assert len(items) == 1
 
         await self.tear_down()
+
+    @app_config_decorator_async
+    @recorded_by_proxy_async
+    async def test_monitor_configuration_settings_by_page_etag(self, appconfiguration_connection_string):
+        # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
+        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
+        async with AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string) as client:
+            # prepare 200 configuration settings
+            for i in range(200):
+                await client.add_configuration_setting(
+                    ConfigurationSetting(
+                        key=f"async_sample_key_{str(i)}",
+                        label=f"async_sample_label_{str(i)}",
+                    )
+                )
+            # there will have 2 pages while listing, there are 100 configuration settings per page.
+
+            # get page etags
+            page_etags = []
+            items = client.list_configuration_settings(
+                key_filter="async_sample_key_*", label_filter="async_sample_label_*"
+            )
+            iterator = items.by_page()
+            async for page in iterator:
+                etag = iterator.etag
+                page_etags.append(etag)
+
+            # monitor page updates without changes
+            continuation_token = None
+            index = 0
+            request = HttpRequest(
+                method="GET",
+                url="/kv?key=async_sample_key_%2A&label=async_sample_label_%2A&api-version=2023-10-01",
+                headers={
+                    "If-None-Match": page_etags[index],
+                    "Accept": "application/vnd.microsoft.appconfig.kvset+json, application/problem+json",
+                },
+            )
+            first_page_response = await client.send_request(request)
+            assert first_page_response.status_code == 304
+
+            link = first_page_response.headers.get("Link", None)
+            continuation_token = link[1 : link.index(">")] if link else None
+            index += 1
+            while continuation_token:
+                request = HttpRequest(
+                    method="GET", url=f"{continuation_token}", headers={"If-None-Match": page_etags[index]}
+                )
+                index += 1
+                response = await client.send_request(request)
+                assert response.status_code == 304
+
+                link = response.headers.get("Link", None)
+                continuation_token = link[1 : link.index(">")] if link else None
+
+            # do some changes
+            await client.add_configuration_setting(
+                ConfigurationSetting(
+                    key="async_sample_key_201",
+                    label="async_sample_label_202",
+                )
+            )
+            # now we have three pages, 100 settings in first two pages and 1 setting in the last page
+
+            # get page etags after updates
+            new_page_etags = []
+            items = client.list_configuration_settings(
+                key_filter="async_sample_key_*", label_filter="async_sample_label_*"
+            )
+            iterator = items.by_page()
+            async for page in iterator:
+                etag = iterator.etag
+                new_page_etags.append(etag)
+
+            assert page_etags[0] == new_page_etags[0]
+            assert page_etags[1] != new_page_etags[1]
+            assert page_etags[2] != new_page_etags[2]
+
+            # monitor page after updates
+            continuation_token = None
+            index = 0
+            request = HttpRequest(
+                method="GET",
+                url="/kv?key=async_sample_key_%2A&label=async_sample_label_%2A&api-version=2023-10-01",
+                headers={
+                    "If-None-Match": page_etags[index],
+                    "Accept": "application/vnd.microsoft.appconfig.kvset+json, application/problem+json",
+                },
+            )
+            first_page_response = await client.send_request(request)
+            # 304 means the page doesn't have changes.
+            assert first_page_response.status_code == 304
+
+            link = first_page_response.headers.get("Link", None)
+            continuation_token = link[1 : link.index(">")] if link else None
+            index += 1
+            while continuation_token:
+                request = HttpRequest(
+                    method="GET", url=f"{continuation_token}", headers={"If-None-Match": page_etags[index]}
+                )
+                index += 1
+                response = await client.send_request(request)
+
+                # 200 means the page has changes.
+                assert response.status_code == 200
+                items = response.json()["items"]
+                for item in items:
+                    print(f"Key: {item['key']}, Label: {item['label']}")
+
+                link = response.headers.get("Link", None)
+                continuation_token = link[1 : link.index(">")] if link else None
+
+            # clean up
+            config_settings = client.list_configuration_settings()
+            async for config_setting in config_settings:
+                await client.delete_configuration_setting(key=config_setting.key, label=config_setting.label)
 
 
 class TestAppConfigurationClientUnitTest:
