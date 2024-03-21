@@ -222,7 +222,7 @@ class Simulator:
         api_call_retry_sleep_sec: int = 1,  # pylint: disable=unused-argument
         api_call_delay_sec: float = 0,
         concurrent_async_task: int = 3,
-        max_simulation: int = 3,
+        max_simulation_results: int = 3,
     ):
         """Asynchronously simulate conversations using the provided template and parameters
 
@@ -245,8 +245,8 @@ class Simulator:
         :paramtype api_call_delay_sec: float, optional
         :keyword concurrent_async_task: The maximum number of asynchronous tasks to run concurrently. Defaults to 3.
         :paramtype concurrent_async_task: int, optional
-        :keyword max_simulation: The maximum number of simulation results to return. Defaults to 3.
-        :paramtype max_simulation: int, optional
+        :keyword max_simulation_results: The maximum number of simulation results to return. Defaults to 3.
+        :paramtype max_simulation_results: int, optional
 
         :return: A list of dictionaries containing the simulation results.
         :rtype: List[Dict]
@@ -285,15 +285,15 @@ class Simulator:
         tasks = []
         total_tasks = sum(len(t.template_parameters) for t in templates)
 
-        if max_simulation > total_tasks and self.adversarial:
+        if max_simulation_results > total_tasks and self.adversarial:
             logger.warning(
                 "Cannot provide %s results due to maximum number of adversarial simulations that can be generated: %s."
                 "\n %s simulations will be generated.",
-                max_simulation,
+                max_simulation_results,
                 total_tasks,
                 total_tasks,
             )
-        total_tasks = min(total_tasks, max_simulation)
+        total_tasks = min(total_tasks, max_simulation_results)
         progress_bar = tqdm(
             total=total_tasks,
             desc="generating simulations",
@@ -323,10 +323,10 @@ class Simulator:
                     )
                 )
 
-                if len(tasks) >= max_simulation:
+                if len(tasks) >= max_simulation_results:
                     break
 
-            if len(tasks) >= max_simulation:
+            if len(tasks) >= max_simulation_results:
                 break
 
         sim_results = []
