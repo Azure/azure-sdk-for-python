@@ -25,6 +25,7 @@ from .. import models as _models
 from functools import wraps
 
 from .._legacy import EventGridEvent
+from .._legacy._helpers import _is_eventgrid_event
 
 from .._serialization import Serializer
 if sys.version_info >= (3, 9):
@@ -230,7 +231,8 @@ class EventGridClientOperationsMixin(OperationsMixin):
                     event = [CloudEvent.from_dict(e) for e in event]
                 except:
                     try:
-                        event = [cast(EventGridEvent, EventGridEvent.from_dict(e)) for e in event if _is_eventgrid_event(e)]
+                        if _is_eventgrid_event(event[0]):
+                            event = [cast(EventGridEvent, EventGridEvent.from_dict(e)) for e in event]
                     except:
                         pass
             else:
@@ -238,7 +240,8 @@ class EventGridClientOperationsMixin(OperationsMixin):
                     event = CloudEvent.from_dict(event)
                 except:
                     try:
-                        event = cast(EventGridEvent, EventGridEvent.from_dict(event))
+                        if _is_eventgrid_event(event):
+                            event = cast(EventGridEvent, EventGridEvent.from_dict(event)) 
                     except:
                         pass
 
@@ -256,7 +259,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         
         # Allow for custom events/cncf events
         else:
-            self._send_custom_event(topic_name, event, **kwargs)
+            self._send_custom_event(event, channel_name=channel_name, **kwargs)
             return
         
     def _send_cloud_event(self, topic_name: str, event: CLOUD_EVENT_TYPE_ALIAS, binary_mode, channel_name, **kwargs: Any) -> None:

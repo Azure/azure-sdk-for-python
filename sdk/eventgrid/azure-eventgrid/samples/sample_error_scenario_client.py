@@ -1,7 +1,7 @@
 import os
 from azure.core.credentials import AzureKeyCredential
 from azure.core.messaging import CloudEvent
-from azure.eventgrid import EventGridClient, EventGridEvent
+from azure.eventgrid import EventGridClient, EventGridEvent, ClientLevel
 
 
 # Cloud Event Topic
@@ -43,28 +43,28 @@ def send_eventgrid_to_namespace():
     try:
         credential = AzureKeyCredential(EVENTGRID_KEY)
         client = EventGridClient(EVENTGRID_ENDPOINT, credential=credential)
-        client.send(topic_name=TOPIC_NAME, body=eventgrid_event)
+        client.send(eventgrid_event, topic_name=TOPIC_NAME, binary_mode=True)
     except Exception as e:
         print(f"Error occured: {e} \n")
 
     try:
         credential = AzureKeyCredential(EVENTGRID_KEY)
         client = EventGridClient(EVENTGRID_ENDPOINT, credential=credential)
-        client.send(topic_name=TOPIC_NAME, body=list_eventgrid_event)
+        client.send(list_eventgrid_event, topic_name=TOPIC_NAME)
     except Exception as e:
         print(f"Error occured: {e} \n")
 
     try:
         credential = AzureKeyCredential(EVENTGRID_KEY)
         client = EventGridClient(EVENTGRID_ENDPOINT, credential=credential)
-        client.send(topic_name=TOPIC_NAME, body=eventgrid_event_dict)
+        client.send(eventgrid_event_dict, topic_name=TOPIC_NAME)
     except Exception as e:
         print(f"Error occured: {e} \n")
 
     try:
         credential = AzureKeyCredential(EVENTGRID_KEY)
         client = EventGridClient(EVENTGRID_ENDPOINT, credential=credential)
-        client.send(topic_name=TOPIC_NAME, body=list_eventgrid_event_dict)
+        client.send(list_eventgrid_event_dict, topic_name=TOPIC_NAME)
     except Exception as e:
         print(f"Error occured: {e} \n")
 
@@ -74,7 +74,7 @@ def send_partner_to_namespace():
     try:
         credential = AzureKeyCredential(EVENTGRID_KEY)
         client = EventGridClient(EVENTGRID_ENDPOINT, credential=credential)
-        client.send(topic_name=TOPIC_NAME, body=cloud_event, channel_name=CHANNEL_NAME)
+        client.send(cloud_event, topic_name=TOPIC_NAME, channel_name=CHANNEL_NAME)
     except Exception as e:
         print(f"Error occured: {e} \n")
 
