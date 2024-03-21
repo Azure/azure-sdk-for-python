@@ -2,10 +2,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-import requests
 import os
 import pathlib
-from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient
+import requests
+from azure.storage.blob import ContainerClient
 
 def get_registry_model_details_for_non_azure_accounts(asset_id, bearer_token):
     url = "https://eastus.api.azureml.ms/modelregistry/v1.0/registry/models/nonazureaccount"
@@ -40,7 +40,7 @@ def download_blob_to_local(blob_sas_url, local_folder):
         for blob_prop in blob_list:
             blobDirectory = os.path.dirname(blob_prop.name)
             blobFileName = os.path.basename(blob_prop.name)
-            destinationFolder = os.path.join(local_folder, blobDirectory)  
+            destinationFolder = os.path.join(local_folder, blobDirectory)
             if not os.path.exists(destinationFolder):
                 os.makedirs(destinationFolder)
             
@@ -66,7 +66,7 @@ def download_model(model_asset_id, github_auth_token, local_destination_path):
             print(f"Model Entity: {model_entity} \n")
             print(f"Blob SAS URI: {blob_sas_uri} \n")
         else:
-            print("Failed to fetch model details.")            
+            print("Failed to fetch model details.")        
         
         copied_file_path = download_blob_to_local(blob_sas_uri, local_destination_path)
         if copied_file_path:
